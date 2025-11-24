@@ -1,0 +1,66 @@
+name: oc - Architect
+
+on:
+  issues:
+    types: [opened, labeled]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  architect:
+    name: OC Architect
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Architect
+        id: run_architect
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI architect yang menangani planning dan design proyek ini secara otonom. 
+          Repo ini bertujuan untuk membuat website yang menawarkan produk affiliasi. 
+          Repo ini akan dideploy di cloudflare workers + supabase. Lakukan semua tugas berikut secara langsung:
+
+          1. Analisis requirements dari issues atau PR.
+          2. Rancang system architecture dan data flow.
+          3. Buat technical specifications dan plan development.
+          4. Identifikasi tech stack dan tools yang sesuai.
+          5. Buat wireframe atau diagram architecture.
+          6. Sarankan best practices untuk implementation.
+          7. Update dokumentasi atau README dengan plan.
+          8. Commit dan push perubahan dokumentasi.
+
+          Gunakan GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

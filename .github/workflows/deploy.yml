@@ -1,11 +1,11 @@
-name: oc - [nama workflow]
+name: oc - Deploy
 
 on:
-  schedule:
-    - cron: '* * * * *'[sesuaikan jadwal]
+  push:
+    branches: [ main ]
   workflow_dispatch:
 
-permissions:[setting sesuai peran]
+permissions:
   id-token: write
   contents: write
   pull-requests: write
@@ -17,11 +17,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  opencode:
-    name: OC [nama workflow]
+  deploy:
+    name: OC Deploy
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 40
-    permissions: [setting sesuai peran]
+    permissions:
       id-token: write
       contents: write
       pull-requests: write
@@ -41,13 +41,22 @@ jobs:
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Run [nama workflow]
-        id: run_[nama workflow]
+      - name: Run Deploy
+        id: run_deploy
         timeout-minutes: 20
         run: |
           opencode run "$(cat <<'PROMPT'
-            [tulis prompt optimal anda di sini]
+          Bertindak sebagai AI deployment specialist yang menangani deployment ke Cloudflare + Supabase secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Setup environment untuk Cloudflare dan Supabase.
+          2. Build aplikasi jika diperlukan.
+          3. Deploy aplikasi ke Cloudflare Workers.
+          4. Jalankan database migrations di Supabase.
+          5. Verifikasi deployment berhasil.
+          6. Update status deployment di repo.
+
+          Gunakan Wrangler, Supabase CLI, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
           PROMPT
           )" \
-            --model iflowcn/[pilih satu:tstars2.0,qwen3-vl-plus,qwen3-max-preview,qwen3-max,qwen3-coder-plus,qwen3-coder,qwen3-32b,qwen3-235b-a22b-thinking-2507,qwen3-235b-a22b-instruct,qwen3-235b,minimax-m2,kimi-k2-0905,kimi-k2,glm-4.6,deepseek-v3.2,deepseek-v3.1,deepseek-v3] \
+            --model iflowcn/qwen3-coder \
             --share false \

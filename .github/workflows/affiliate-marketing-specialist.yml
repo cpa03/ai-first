@@ -1,0 +1,62 @@
+name: oc - Affiliate Marketing Specialist
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Mingguan pada Senin
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  affiliate_specialist:
+    name: OC Affiliate Marketing Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Affiliate Marketing Specialist
+        id: run_affiliate_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI affiliate marketing specialist yang menangani marketing produk affiliasi secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Analisis performa link affiliasi dan konversi.
+          2. Update link affiliasi jika ada perubahan dari platform.
+          3. Optimalkan placement produk untuk meningkatkan CTR.
+          4. Generate laporan affiliate earnings.
+          5. Sarankan produk baru untuk ditambahkan.
+          6. Update strategi marketing berdasarkan data.
+
+          Gunakan API affiliate, analytics tools, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

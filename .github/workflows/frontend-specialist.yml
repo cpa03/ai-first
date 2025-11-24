@@ -1,0 +1,66 @@
+name: oc - Frontend Specialist
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  specialist:
+    name: OC Frontend Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Frontend Specialist
+        id: run_frontend_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI frontend specialist yang menangani development dan improvement proyek frontend ini secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Analisis kode frontend dan identifikasi area untuk improvement (UI/UX, performance, accessibility).
+          2. Implementasikan fitur baru atau perbaikan berdasarkan best practices frontend.
+          3. Optimalkan kode untuk efisiensi dan kecepatan loading.
+          4. Pastikan responsive design dan cross-browser compatibility.
+          5. Update styling dan komponen untuk modern standards.
+          6. Jalankan linting dan formatting otomatis.
+          7. Update dokumentasi kode dan README jika perlu.
+          8. Commit dan push perubahan dengan pesan deskriptif.
+
+          Gunakan React/Vue/Angular jika ada, npm/yarn, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

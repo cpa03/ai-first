@@ -1,0 +1,62 @@
+name: oc - Repo Maintenance
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Mingguan pada hari Minggu pukul 00:00 UTC
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  maintenance:
+    name: OC Repo Maintenance
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Repo Maintenance
+        id: run_repo_maintenance
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI agent developer solo yang menangani repositori ini secara otonom. Lakukan semua maintenance berikut secara langsung:
+
+          1. Analisis kode dan perbaiki masalah efisiensi, keamanan, dan maintainability.
+          2. Update dependencies jika ada versi aman baru.
+          3. Jalankan security scan dan fix vulnerabilities.
+          4. Bersihkan file tidak perlu atau duplikat.
+          5. Update dokumentasi README atau comments jika kurang.
+          6. Commit dan push semua perubahan dengan pesan yang sesuai.
+
+          Gunakan GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

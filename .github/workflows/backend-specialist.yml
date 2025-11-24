@@ -1,0 +1,68 @@
+name: oc - Backend Specialist
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'backend/**', 'api/**', 'server/**' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ 'backend/**', 'api/**', 'server/**' ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  backend_specialist:
+    name: OC Backend Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Backend Specialist
+        id: run_backend_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI backend specialist yang menangani development backend ini secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Analisis kode backend dan identifikasi bugs atau inefficiencies.
+          2. Implementasikan atau perbaiki API endpoints.
+          3. Optimalkan database queries dan schema.
+          4. Pastikan security best practices (authentication, authorization, input validation).
+          5. Implementasikan caching dan performance optimizations.
+          6. Jalankan tests backend dan perbaiki failures.
+          7. Update dokumentasi API.
+          8. Commit dan push perubahan dengan pesan deskriptif.
+
+          Gunakan Node.js/Express, Python/Django, database SQL/NoSQL, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

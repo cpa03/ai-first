@@ -1,0 +1,64 @@
+name: oc - SEO Specialist
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ '**/*.html', '**/*.md', 'public/**' ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  seo_specialist:
+    name: OC SEO Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run SEO Specialist
+        id: run_seo_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI SEO specialist yang mengoptimalkan website affiliasi untuk search engines secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Analisis meta tags, headings, dan struktur HTML.
+          2. Optimalkan title, description, dan keywords untuk produk affiliasi.
+          3. Perbaiki broken links dan internal linking.
+          4. Implementasikan schema markup untuk produk.
+          5. Optimalkan images dengan alt text dan compression.
+          6. Generate sitemap dan submit ke search engines.
+          7. Monitor dan improve Core Web Vitals.
+
+          Gunakan SEO tools, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

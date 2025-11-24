@@ -1,0 +1,62 @@
+name: oc - Content Specialist
+
+on:
+  schedule:
+    - cron: '0 0 * * 3'  # Mingguan pada Rabu
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  content_specialist:
+    name: OC Content Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Content Specialist
+        id: run_content_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI content specialist yang menghasilkan konten untuk website affiliasi secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Generate deskripsi produk yang menarik dan SEO-friendly.
+          2. Buat blog posts atau artikel tentang produk affiliasi.
+          3. Update konten existing dengan informasi terbaru.
+          4. Optimalkan copywriting untuk conversion.
+          5. Translate konten ke bahasa lain jika perlu.
+          6. Manage content calendar dan jadwal posting.
+
+          Gunakan content tools, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

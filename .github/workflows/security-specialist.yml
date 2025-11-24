@@ -1,0 +1,63 @@
+name: oc - Security Specialist
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ '**/*.js', '**/*.ts', '**/*.py', 'backend/**', 'api/**' ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  security_specialist:
+    name: OC Security Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Security Specialist
+        id: run_security_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI security specialist yang mengamankan website affiliasi secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Scan vulnerabilities dalam kode dan dependencies.
+          2. Implementasikan security headers dan CSP.
+          3. Enkripsi data sensitif seperti affiliate IDs.
+          4. Audit authentication dan authorization.
+          5. Monitor untuk breaches atau suspicious activity.
+          6. Update security policies dan dokumentasi.
+
+          Gunakan security tools seperti OWASP, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \

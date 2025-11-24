@@ -1,0 +1,64 @@
+name: oc - Testing Specialist
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  testing_specialist:
+    name: OC Testing Specialist
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Testing Specialist
+        id: run_testing_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+          Bertindak sebagai AI testing specialist yang menguji website affiliasi secara otonom. Lakukan semua tugas berikut secara langsung:
+
+          1. Jalankan unit tests, integration tests, dan e2e tests.
+          2. Test affiliate links dan konversi tracking.
+          3. Periksa cross-browser compatibility.
+          4. Test performance dan load times.
+          5. Validate HTML, CSS, dan accessibility.
+          6. Generate test reports dan fix failures.
+
+          Gunakan testing frameworks seperti Jest, Cypress, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
+          PROMPT
+          )" \
+            --model iflowcn/qwen3-coder \
+            --share false \
