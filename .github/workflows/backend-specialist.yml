@@ -64,5 +64,5 @@ jobs:
           Gunakan Node.js/Express, Python/Django, database SQL/NoSQL, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
           PROMPT
           )" \
-            --model iflowcn/qwen3-coder \
+            --model iflowcn/qwen3-coder-plus \
             --share false \
