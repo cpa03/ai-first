@@ -60,5 +60,5 @@ jobs:
           Gunakan testing frameworks seperti Jest, Cypress, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
           PROMPT
           )" \
-            --model iflowcn/qwen3-coder \
+            --model iflowcn/qwen3-coder-plus \
             --share false \
