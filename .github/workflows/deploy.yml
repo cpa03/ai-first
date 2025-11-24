@@ -58,5 +58,5 @@ jobs:
           Gunakan Wrangler, Supabase CLI, GH CLI, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
           PROMPT
           )" \
-            --model iflowcn/qwen3-coder \
+            --model iflowcn/glm-4.6 \
             --share false \
