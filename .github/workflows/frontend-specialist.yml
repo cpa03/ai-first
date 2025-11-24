@@ -62,5 +62,5 @@ jobs:
           Gunakan React/Vue/Angular jika ada, npm/yarn, git, dan tools standar. Lakukan aksi langsung tanpa output deskripsi.
           PROMPT
           )" \
-            --model iflowcn/qwen3-coder \
+            --model iflowcn/glm-4.6 \
             --share false \
