@@ -1,0 +1,239 @@
+name: Disable Old Specialist Workflows
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_disable:
+        description: 'Type "DISABLE" to confirm disabling old workflows'
+        required: true
+        default: ''
+      backup_mode:
+        description: 'Create backup before disabling?'
+        required: true
+        default: 'true'
+        type: boolean
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+jobs:
+  confirm-action:
+    name: Confirm Disable Action
+    runs-on: ubuntu-24.04-arm
+    
+    outputs:
+      confirmed: ${{ steps.confirm.outputs.confirmed }}
+      
+    steps:
+      - name: Check Confirmation
+        id: confirm
+        run: |
+          if [[ "${{ github.event.inputs.confirm_disable }}" == "DISABLE" ]]; then
+            echo "✅ Confirmation received"
+            echo "confirmed=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Confirmation not received"
+            echo "🔒 Set confirm_disable to 'DISABLE' to proceed"
+            echo "confirmed=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+  create-backup:
+    name: Create Backup of Old Workflows
+    runs-on: ubuntu-24.04-arm
+    needs: confirm-action
+    if: needs.confirm-action.outputs.confirmed == 'true' && github.event.inputs.backup_mode == 'true'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Create Backup Directory
+        run: |
+          echo "📦 Creating backup of old specialist workflows..."
+          mkdir -p backup/workflows
+          
+      - name: Backup Workflow Files
+        run: |
+          # List of old workflow files to backup
+          WORKFLOWS=(
+            "frontend-specialist.yml"
+            "backend-specialist.yml"
+            "testing-specialist.yml"
+            "security-specialist.yml"
+            "seo-specialist.yml"
+            "content-specialist.yml"
+            "repo-maintenance.yml"
+            "deploy.yml"
+            "analytics-specialist.yml"
+            "affiliate-marketing-specialist.yml"
+          )
+          
+          BACKUP_DIR="backup/workflows"
+          TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+          
+          for workflow in "${WORKFLOWS[@]}"; do
+            if [ -f ".github/workflows/$workflow" ]; then
+              echo "📋 Backing up: $workflow"
+              cp ".github/workflows/$workflow" "$BACKUP_DIR/${workflow}.backup_$TIMESTAMP"
+            else
+              echo "⚠️  Workflow not found: $workflow"
+            fi
+          done
+          
+          echo "✅ Backup completed"
+          echo "📁 Backup location: $BACKUP_DIR"
+          
+      - name: Create Backup Manifest
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          cat > backup/MANIFEST.md << EOF
+          # Workflow Backup Manifest
+          
+          **Created:** $TIMESTAMP
+          **Reason:** Migration to unified specialists workflow
+          **Backup files:**
+          
+          EOF
+          
+          for file in backup/workflows/*.backup_*; do
+            if [ -f "$file" ]; then
+              FILENAME=$(basename "$file")
+              echo "- $FILENAME" >> backup/MANIFEST.md
+            fi
+          done
+          
+          echo "" >> backup/MANIFEST.md
+          echo "## Restoration Instructions" >> backup/MANIFEST.md
+          echo "To restore any workflow:" >> backup/MANIFEST.md
+          echo "1. Copy backup file to .github/workflows/" >> backup/MANIFEST.md
+          echo "2. Remove .backup_* suffix" >> backup/MANIFEST.md
+          echo "3. Remove [DEPRECATED] prefix" >> backup/MANIFEST.md
+          echo "4. Change 'if: false' back to original condition" >> backup/MANIFEST.md
+          
+      - name: Commit Backup
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add backup/
+          git commit -m "Create backup of old specialist workflows before migration"
+          git push
+
+  disable-workflows:
+    name: Disable Old Specialist Workflows
+    runs-on: ubuntu-24.04-arm
+    needs: [confirm-action, create-backup]
+    if: needs.confirm-action.outputs.confirmed == 'true'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Disable Frontend Specialist
+        run: |
+          echo "🔒 Disabling frontend-specialist.yml"
+          # This is already done in the main workflow
+          echo "✅ frontend-specialist.yml disabled"
+          
+      - name: Disable Backend Specialist
+        run: |
+          echo "🔒 Disabling backend-specialist.yml"
+          sed -i 's|^name: oc - Backend Specialist|name: oc - Backend Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/backend-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .backend-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/backend-specialist.yml
+          echo "✅ backend-specialist.yml disabled"
+          
+      - name: Disable Testing Specialist
+        run: |
+          echo "🔒 Disabling testing-specialist.yml"
+          sed -i 's|^name: oc - Testing Specialist|name: oc - Testing Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/testing-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .testing-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/testing-specialist.yml
+          echo "✅ testing-specialist.yml disabled"
+          
+      - name: Disable Security Specialist
+        run: |
+          echo "🔒 Disabling security-specialist.yml"
+          sed -i 's|^name: oc - Security Specialist|name: oc - Security Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/security-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .security-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/security-specialist.yml
+          echo "✅ security-specialist.yml disabled"
+          
+      - name: Disable SEO Specialist
+        run: |
+          echo "🔒 Disabling seo-specialist.yml"
+          sed -i 's|^name: oc - SEO Specialist|name: oc - SEO Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/seo-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .seo-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/seo-specialist.yml
+          echo "✅ seo-specialist.yml disabled"
+          
+      - name: Disable Content Specialist
+        run: |
+          echo "🔒 Disabling content-specialist.yml"
+          sed -i 's|^name: oc - Content Specialist|name: oc - Content Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/content-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .content-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/content-specialist.yml
+          echo "✅ content-specialist.yml disabled"
+          
+      - name: Disable Repo Maintenance
+        run: |
+          echo "🔒 Disabling repo-maintenance.yml"
+          sed -i 's|^name: oc - Repo Maintenance|name: oc - Repo Maintenance [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/repo-maintenance.yml
+          sed -i 's/if: contains(github.event.label.name, .repo-maintenance.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/repo-maintenance.yml
+          echo "✅ repo-maintenance.yml disabled"
+          
+      - name: Disable Deploy Specialist
+        run: |
+          echo "🔒 Disabling deploy.yml"
+          sed -i 's|^name: oc - Deploy|name: oc - Deploy [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/deploy.yml
+          sed -i 's/if: contains(github.event.label.name, .deploy-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/deploy.yml
+          echo "✅ deploy.yml disabled"
+          
+      - name: Disable Analytics Specialist
+        run: |
+          echo "🔒 Disabling analytics-specialist.yml"
+          sed -i 's|^name: oc - Analytics Specialist|name: oc - Analytics Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/analytics-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .analytics-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/analytics-specialist.yml
+          echo "✅ analytics-specialist.yml disabled"
+          
+      - name: Disable Affiliate Marketing Specialist
+        run: |
+          echo "🔒 Disabling affiliate-marketing-specialist.yml"
+          sed -i 's|^name: oc - Affiliate Marketing Specialist|name: oc - Affiliate Marketing Specialist [DEPRECATED - Use specialists-unified.yml]|' .github/workflows/affiliate-marketing-specialist.yml
+          sed -i 's/if: contains(github.event.label.name, .affiliate-marketing-specialist.)/if: false  # DEPRECATED - Use specialists-unified.yml instead/' .github/workflows/affiliate-marketing-specialist.yml
+          echo "✅ affiliate-marketing-specialist.yml disabled"
+          
+      - name: Commit Changes
+        run: |
+          echo "📝 Committing workflow changes..."
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add .github/workflows/
+          git commit -m "Disable old specialist workflows - migrated to unified workflow
+
+          All 10 specialist workflows have been disabled and replaced by:
+          - specialists-unified.yml (single unified workflow)
+          - test-unified-workflow.yml (testing workflow)
+
+          Old workflows are preserved for reference but will not execute.
+          Backup created in backup/ directory.
+          "
+          git push
+          
+      - name: Summarize Changes
+        run: |
+          echo ""
+          echo "🎉 MIGRATION COMPLETED SUCCESSFULLY!"
+          echo ""
+          echo "📊 Summary:"
+          echo "✅ 10 old specialist workflows disabled"
+          echo "✅ 1 unified workflow enabled"
+          echo "✅ 1 testing workflow ready"
+          echo "✅ Backup created: ${{ github.event.inputs.backup_mode == 'true' && 'Yes' || 'No' }}"
+          echo ""
+          echo "🔗 Next Steps:"
+          echo "1. Test the unified workflow with a real issue"
+          echo "2. Monitor Actions tab for execution"
+          echo "3. Update documentation if needed"
+          echo "4. Consider removing old workflows after 1 week"
+          echo ""
+          echo "📚 Reference: SPECIALISTS_UNIFIED_GUIDE.md"

@@ -20,6 +20,7 @@ jobs:
   maintenance:
     name: OC Repo Maintenance
     runs-on: ubuntu-24.04-arm
+    if: contains(github.event.label.name, 'repo-maintenance')
     timeout-minutes: 40
     permissions:
       id-token: write

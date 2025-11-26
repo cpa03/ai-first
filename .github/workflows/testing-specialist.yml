@@ -20,6 +20,7 @@ jobs:
   testing_specialist:
     name: OC Testing Specialist
     runs-on: ubuntu-24.04-arm
+    if: contains(github.event.label.name, 'testing-specialist')
     timeout-minutes: 40
     permissions:
       id-token: write

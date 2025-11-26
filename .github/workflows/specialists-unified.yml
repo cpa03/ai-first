@@ -1,0 +1,460 @@
+name: oc - Unified Specialists
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate-label:
+    name: Validate Issue Label
+    runs-on: ubuntu-24.04-arm
+    outputs:
+      valid-label: ${{ steps.check.outputs.valid }}
+      matched-specialist: ${{ steps.check.outputs.specialist }}
+      
+    steps:
+      - name: Check Valid Label
+        id: check
+        run: |
+          LABEL="${{ github.event.label.name }}"
+          VALID_LABELS=("frontend-specialist" "backend-specialist" "testing-specialist" "security-specialist" "seo-specialist" "content-specialist" "repo-maintenance" "deploy-specialist" "analytics-specialist" "affiliate-marketing-specialist")
+          
+          echo "🏷️  Checking label: $LABEL"
+          
+          if [[ -z "$LABEL" ]]; then
+            echo "❌ No label found"
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "specialist=none" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          for valid_label in "${VALID_LABELS[@]}"; do
+            if [[ "$LABEL" == *"$valid_label"* ]]; then
+              echo "✅ Valid label found: $valid_label"
+              echo "valid=true" >> $GITHUB_OUTPUT
+              echo "specialist=$valid_label" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          done
+          
+          echo "❌ Invalid label: $LABEL"
+          echo "valid=false" >> $GITHUB_OUTPUT
+          echo "specialist=none" >> $GITHUB_OUTPUT
+
+  specialist:
+    name: OC ${{ matrix.specialist.display_name }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 40
+    needs: validate-label
+    if: needs.validate-label.outputs.valid == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        specialist:
+          - {
+              name: "frontend",
+              display_name: "Frontend Specialist",
+              condition: "frontend-specialist",
+              role: "FRONTEND SPECIALIST",
+              description: "autonomous frontend developer",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Analyze frontend code and identify areas for improvement (UI/UX, performance, accessibility)",
+                "Implement new features or improvements based on frontend best practices",
+                "Optimize code for efficiency and loading speed",
+                "Ensure responsive design and cross-browser compatibility",
+                "Update styling and components for modern standards",
+                "Run linting and automatic formatting for changes"
+              ]
+            }
+          - {
+              name: "backend",
+              display_name: "Backend Specialist", 
+              condition: "backend-specialist",
+              role: "BACKEND SPECIALIST",
+              description: "autonomous backend developer",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Analyze code backend and identify bugs or inefficiencies",
+                "Implement or improve API endpoints as specified",
+                "Optimize database queries and schema as needed",
+                "Ensure security best practices (authentication, authorization, input validation)",
+                "Implement caching and performance optimizations",
+                "Update API documentation for changes"
+              ]
+            }
+          - {
+              name: "testing",
+              display_name: "Testing Specialist",
+              condition: "testing-specialist", 
+              role: "TESTING SPECIALIST",
+              description: "autonomous testing engineer",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Run unit tests, integration tests, and e2e tests for assigned tasks",
+                "Test cross-browser compatibility based on task requirements",
+                "Test performance and load times as part of task execution",
+                "Validate HTML, CSS, and accessibility for the task",
+                "Generate test reports and fix failures as needed"
+              ]
+            }
+          - {
+              name: "security",
+              display_name: "Security Specialist",
+              condition: "security-specialist",
+              role: "SECURITY SPECIALIST", 
+              description: "autonomous security engineer",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Scan vulnerabilities in code and dependencies for assigned tasks",
+                "Implement security headers and CSP as required",
+                "Encrypt sensitive data like affiliate IDs as part of task execution",
+                "Audit authentication and authorization systems based on task requirements",
+                "Monitor for breaches or suspicious activity related to the task",
+                "Update security policies and documentation as needed"
+              ]
+            }
+          - {
+              name: "seo",
+              display_name: "SEO Specialist",
+              condition: "seo-specialist",
+              role: "SEO SPECIALIST",
+              description: "autonomous SEO expert", 
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Analyze meta tags, headings, and HTML structure for assigned tasks",
+                "Optimize title, description, and keywords for affiliate products as specified",
+                "Fix broken links and internal linking based on task requirements",
+                "Implement schema markup for products as part of task execution",
+                "Optimize images with alt text and compression as needed",
+                "Generate sitemap and submit to search engines for the task"
+              ]
+            }
+          - {
+              name: "content",
+              display_name: "Content Specialist",
+              condition: "content-specialist",
+              role: "CONTENT SPECIALIST",
+              description: "autonomous content manager",
+              actions: "create-pr | update-issue | none", 
+              responsibilities: [
+                "Generate compelling and SEO-friendly product descriptions for assigned tasks",
+                "Create blog posts or articles about affiliate products as specified",
+                "Update existing content with latest information based on task requirements",
+                "Optimize copywriting for conversion as part of task execution",
+                "Translate content to other languages if needed for the task"
+              ]
+            }
+          - {
+              name: "repo-maintenance",
+              display_name: "Repo Maintenance",
+              condition: "repo-maintenance",
+              role: "REPO MAINTENANCE",
+              description: "autonomous repository maintainer",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Analyze code and fix efficiency, security, and maintainability issues for assigned tasks",
+                "Update dependencies if there are new safe versions as part of task execution",
+                "Run security scans and fix vulnerabilities as required",
+                "Clean up unnecessary or duplicate files based on task requirements",
+                "Update README documentation or comments if lacking for the task"
+              ]
+            }
+          - {
+              name: "deploy",
+              display_name: "Deploy Specialist",
+              condition: "deploy-specialist",
+              role: "DEPLOY SPECIALIST",
+              description: "autonomous deployment engineer",
+              actions: "create-pr | deploy | update-issue | none",
+              responsibilities: [
+                "Setup environment for Cloudflare and Supabase as specified in the task",
+                "Build application if necessary for deployment",
+                "Deploy application to Cloudflare Workers as directed",
+                "Run database migrations in Supabase if required",
+                "Verify successful deployment and provide status update",
+                "Update deployment status in the repository"
+              ]
+            }
+          - {
+              name: "analytics",
+              display_name: "Analytics Specialist",
+              condition: "analytics-specialist", 
+              role: "ANALYTICS SPECIALIST",
+              description: "autonomous data analyst",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Analyze traffic, conversion rates, and affiliate earnings for assigned tasks",
+                "Generate weekly/monthly reports as needed",
+                "Identify trends and insights based on task requirements",
+                "Suggest improvements based on data analysis",
+                "Setup or update tracking pixels and scripts as required",
+                "Monitor A/B tests for affiliate links as part of task execution"
+              ]
+            }
+          - {
+              name: "affiliate-marketing",
+              display_name: "Affiliate Marketing Specialist",
+              condition: "affiliate-marketing-specialist",
+              role: "AFFILIATE MARKETING SPECIALIST",
+              description: "autonomous affiliate marketing manager",
+              actions: "create-pr | update-issue | none",
+              responsibilities: [
+                "Analyze affiliate link performance and conversions for assigned tasks",
+                "Update affiliate links if there are changes from the platform",
+                "Optimize product placement to increase CTR based on task requirements",
+                "Generate affiliate earnings reports as needed",
+                "Suggest new products to add as part of task execution",
+                "Update marketing strategy based on data analysis"
+              ]
+            }
+    
+    # Only run the job if the issue label matches the specialist condition
+    if: contains(github.event.label.name, matrix.specialist.condition)
+    
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      SPECIALIST_NAME: ${{ matrix.specialist.name }}
+      SPECIALIST_ROLE: ${{ matrix.specialist.role }}
+      SPECIALIST_DESCRIPTION: ${{ matrix.specialist.description }}
+      SPECIALIST_ACTIONS: ${{ matrix.specialist.actions }}
+      
+    steps:
+      - name: Log Specialist Information
+        run: |
+          echo "🚀 Running ${{ matrix.specialist.display_name }}"
+          echo "📋 Issue: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}"
+          echo "🏷️  Label: ${{ github.event.label.name }}"
+          echo "✅ Condition matched: ${{ matrix.specialist.condition }}"
+          
+      - name: Validate Required Secrets
+        run: |
+          echo "🔍 Validating required secrets..."
+          
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo "❌ GH_TOKEN secret is missing"
+            exit 1
+          fi
+          
+          if [[ -z "$IFLOW_API_KEY" ]]; then
+            echo "❌ IFLOW_API_KEY secret is missing"
+            exit 1
+          fi
+          
+          echo "✅ All required secrets are present"
+          
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+          
+      - name: Verify Repository Access
+        run: |
+          echo "🔐 Verifying repository access..."
+          
+          # Test basic git operations
+          if ! git status; then
+            echo "❌ Failed to access repository"
+            exit 1
+          fi
+          
+          if ! git remote -v; then
+            echo "❌ Failed to get repository information"
+            exit 1
+          fi
+          
+          echo "✅ Repository access verified"
+          
+      - name: Install OpenCode CLI
+        run: |
+          echo "📦 Installing OpenCode CLI..."
+          
+          if ! curl -fsSL https://opencode.ai/install | bash; then
+            echo "❌ Failed to install OpenCode CLI"
+            exit 1
+          fi
+          
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+          
+          # Verify installation
+          if ! command -v opencode &> /dev/null; then
+            echo "❌ OpenCode CLI not found after installation"
+            exit 1
+          fi
+          
+          echo "✅ OpenCode CLI installed successfully"
+          
+      - name: Generate Dynamic Prompt
+        id: generate_prompt
+        run: |
+          # Convert responsibilities array to formatted list
+          RESPONSIBILITIES_LIST=$(printf '%s\n' "${{ join(matrix.specialist.responsibilities, '\n') }}" | sed 's/^/          - /')
+          
+          # Generate the complete prompt
+          cat << 'EOF' > /tmp/specialist_prompt.txt
+          You are the ${SPECIALIST_ROLE} agent of the IdeaFlow repository.
+          Your authority level: SPECIALIST
+          You act as the ${SPECIALIST_DESCRIPTION} of the project.
+          You ONLY execute tasks assigned by the ARCHITECT agent through labeled issues.
+          
+          Current Issue Information:
+          - Issue Number: ${{ github.event.issue.number }}
+          - Issue Title: ${{ github.event.issue.title }}
+          - Issue Body: ${{ github.event.issue.body }}
+          - Assigned Label: ${{ github.event.label.name }}
+          
+          Your responsibilities:
+          1. Check for issues with label "${{ matrix.specialist.condition }}" assigned to you.
+          2. Execute the task described in the issue thoroughly.
+          EOF
+          
+          # Add responsibilities dynamically
+          echo "$RESPONSIBILITIES_LIST" >> /tmp/specialist_prompt.txt
+          
+          cat << 'EOF' >> /tmp/specialist_prompt.txt
+          10. For each workflow run, perform:
+             - create feature branch from main
+             - implement changes based on the assigned issue
+             - create pull request with detailed description
+             - link the original issue in the PR description
+          11. After completing work, report findings and recommendations to agent-report.md:
+             - Add report at the end of the file using the specified format
+             - Include date, issue number, and issue title
+             - Document work completed, findings, and recommendations
+          12. Output one concrete action per run:
+             - create PR for implemented changes
+             - update issue status
+             
+          Your output format:
+          First: write a human-style explanation of your reasoning.
+          Finally: output STRICT JSON as the last content of stdout:
+          
+          {
+            "agent": "${{ matrix.specialist.name }}-specialist",
+            "action": "<${{ matrix.specialist.actions }}>",
+            "target_agent": "<name or null>",
+            "task_title": "<short title or null>",
+            "task_summary": "<description or null>",
+            "confidence": <0-100>
+          }
+          
+          Rules:
+          - JSON must be the final output with no trailing text.
+          - ONLY work on issues with "${{ matrix.specialist.condition }}" label assigned by architect.
+          - NEVER create new issues - only execute tasks assigned by architect.
+          - NEVER push to main. All implementations must be executed through branches and PRs.
+          - Always reference the original issue number in your PR.
+          - ALWAYS add a report to agent-report.md after completing your work.
+          EOF
+          
+          # Store the prompt for the next step
+          echo "prompt<<EOF" >> $GITHUB_OUTPUT
+          cat /tmp/specialist_prompt.txt >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - name: Run ${{ matrix.specialist.display_name }}
+        id: run_specialist
+        timeout-minutes: 20
+        continue-on-error: true
+        run: |
+          echo "🤖 Executing ${{ matrix.specialist.display_name }}..."
+          
+          # Retry logic for OpenCode execution
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            echo "🔄 Attempt $((RETRY_COUNT + 1)) of $MAX_RETRIES"
+            
+            if opencode run "${{ steps.generate_prompt.outputs.prompt }}" \
+              --model iflowcn/glm-4.6 \
+              --share false; then
+              echo "✅ OpenCode execution successful"
+              echo "success=true" >> $GITHUB_OUTPUT
+              break
+            else
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              echo "❌ Attempt $RETRY_COUNT failed"
+              
+              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
+                echo "⏳ Waiting 30 seconds before retry..."
+                sleep 30
+              else
+                echo "💥 All attempts failed"
+                echo "success=false" >> $GITHUB_OUTPUT
+                exit 1
+              fi
+            fi
+          done
+          
+      - name: Handle Execution Failure
+        if: steps.run_specialist.outputs.success == 'false' || failure()
+        run: |
+          echo "💥 ${{ matrix.specialist.display_name }} execution failed"
+          echo "📊 Creating failure report..."
+          
+          # Add failure report to agent-report.md
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          REPORT_TEXT="
+          
+          ### [${{ matrix.specialist.display_name }}] Report - FAILED
+          **Date:** $TIMESTAMP
+          **Issue:** #${{ github.event.issue.number }} - ${{ github.event.issue.title }}
+          **Label:** ${{ github.event.label.name }}
+
+          #### Execution Status
+          ❌ **FAILED** - Could not complete assigned task
+
+          #### Error Details
+          - Specialist: ${{ matrix.specialist.display_name }}
+          - Issue Number: ${{ github.event.issue.number }}
+          - Attempts Made: 3 (with 30-second intervals)
+          - Last Attempt: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+
+          #### Next Steps Required
+          - [ ] Manual review of the issue requirements
+          - [ ] Check OpenCode API connectivity
+          - [ ] Verify IFLOW_API_KEY configuration
+          - [ ] Retry execution manually if needed
+
+          ---
+          "
+          
+          echo "$REPORT_TEXT" >> agent-report.md
+          
+          # Commit the failure report
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add agent-report.md
+          git commit -m "Add failure report for ${{ matrix.specialist.name }} - Issue #${{ github.event.issue.number }}" || true
+          git push || true
+          
+      - name: Log Completion
+        if: always()
+        run: |
+          if [ "${{ steps.run_specialist.outputs.success }}" == "true" ]; then
+            echo "✅ ${{ matrix.specialist.display_name }} execution completed successfully"
+          else
+            echo "❌ ${{ matrix.specialist.display_name }} execution failed after 3 attempts"
+          fi
+          echo "📊 Status: ${{ job.status }}"

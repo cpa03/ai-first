@@ -20,6 +20,7 @@ jobs:
   content_specialist:
     name: OC Content Specialist
     runs-on: ubuntu-24.04-arm
+    if: contains(github.event.label.name, 'content-specialist')
     timeout-minutes: 40
     permissions:
       id-token: write

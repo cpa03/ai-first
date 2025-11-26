@@ -20,6 +20,7 @@ jobs:
   seo_specialist:
     name: OC SEO Specialist
     runs-on: ubuntu-24.04-arm
+    if: contains(github.event.label.name, 'seo-specialist')
     timeout-minutes: 40
     permissions:
       id-token: write

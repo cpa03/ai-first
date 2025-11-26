@@ -1,0 +1,310 @@
+
+name: Test - Unified Workflow Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_label:
+        description: 'Test label to simulate'
+        required: true
+        default: 'frontend-specialist'
+        type: choice
+        options:
+          - frontend-specialist
+          - backend-specialist
+          - testing-specialist
+          - security-specialist
+          - seo-specialist
+          - content-specialist
+          - repo-maintenance
+          - deploy-specialist
+          - analytics-specialist
+          - affiliate-marketing-specialist
+          - invalid-label
+      test_mode:
+        description: 'Test mode'
+        required: true
+        default: 'dry-run'
+        type: choice
+        options:
+          - dry-run
+          - full-run
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+jobs:
+  create-test-issue:
+    name: Create Test Issue
+    runs-on: ubuntu-24.04-arm
+    outputs:
+      issue_number: ${{ steps.create.outputs.issue_number }}
+      issue_url: ${{ steps.create.outputs.issue_url }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        
+      - name: Create Test Issue
+        id: create
+        run: |
+          echo "🧪 Creating test issue with label: ${{ github.event.inputs.test_label }}"
+          
+          # Create test issue
+          ISSUE_BODY="This is a test issue for validating the unified specialists workflow.
+
+          **Test Details:**
+          - Test Label: ${{ github.event.inputs.test_label }}
+          - Test Mode: ${{ github.event.inputs.test_mode }}
+          - Created At: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          - Workflow: ${{ github.workflow }}
+
+          **Expected Behavior:**
+          - Only the specialist matching the label should run
+          - Other specialists should be skipped
+          - All validations should pass
+
+          **Test Task:**
+          Please analyze this test request and confirm you received the correct parameters.
+          "
+          
+          ISSUE_RESPONSE=$(gh issue create \
+            --title "Test Issue - ${{ github.event.inputs.test_label }}" \
+            --body "$ISSUE_BODY" \
+            --label "${{ github.event.inputs.test_label }}" \
+            --assignee "${{ github.actor }}" \
+            --json number,url)
+          
+          ISSUE_NUMBER=$(echo "$ISSUE_RESPONSE" | jq -r '.number')
+          ISSUE_URL=$(echo "$ISSUE_RESPONSE" | jq -r '.url')
+          
+          echo "issue_number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+          echo "issue_url=$ISSUE_URL" >> $GITHUB_OUTPUT
+          
+          echo "✅ Test issue created: #$ISSUE_NUMBER"
+          echo "🔗 Issue URL: $ISSUE_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  wait-for-workflow:
+    name: Wait for Unified Workflow
+    runs-on: ubuntu-24.04-arm
+    needs: create-test-issue
+    outputs:
+      workflow_status: ${{ steps.wait.outputs.status }}
+      
+    steps:
+      - name: Wait and Check Workflow
+        id: wait
+        run: |
+          echo "⏳ Waiting for unified specialists workflow to trigger..."
+          
+          MAX_WAIT=300  # 5 minutes
+          WAIT_TIME=0
+          
+          while [ $WAIT_TIME -lt $MAX_WAIT ]; do
+            echo "🔍 Checking workflow runs... ($((WAIT_TIME / 60))m $((WAIT_TIME % 60))s elapsed)"
+            
+            # Get the latest workflow run for specialists-unified
+            WORKFLOW_RUN=$(gh run list \
+              --workflow="specialists-unified.yml" \
+              --branch="main" \
+              --limit=1 \
+              --json status,conclusion,created_at,databaseId)
+            
+            if [ -n "$WORKFLOW_RUN" ]; then
+              STATUS=$(echo "$WORKFLOW_RUN" | jq -r '.status')
+              CONCLUSION=$(echo "$WORKFLOW_RUN" | jq -r '.conclusion')
+              CREATED_AT=$(echo "$WORKFLOW_RUN" | jq -r '.created_at')
+              
+              echo "📊 Workflow Status: $STATUS"
+              echo "📋 Conclusion: $CONCLUSION"
+              echo "🕐 Created: $CREATED_AT"
+              
+              if [ "$STATUS" = "completed" ]; then
+                echo "✅ Workflow completed successfully"
+                echo "status=completed" >> $GITHUB_OUTPUT
+                break
+              elif [ "$STATUS" = "failure" ]; then
+                echo "❌ Workflow failed"
+                echo "status=failed" >> $GITHUB_OUTPUT
+                break
+              fi
+            fi
+            
+            sleep 30
+            WAIT_TIME=$((WAIT_TIME + 30))
+          done
+          
+          if [ $WAIT_TIME -ge $MAX_WAIT ]; then
+            echo "⏰ Timeout waiting for workflow"
+            echo "status=timeout" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  analyze-results:
+    name: Analyze Test Results
+    runs-on: ubuntu-24.04-arm
+    needs: [create-test-issue, wait-for-workflow]
+    if: always()
+    
+    steps:
+      - name: Analyze Workflow Execution
+        run: |
+          echo "📊 Analyzing test results for label: ${{ github.event.inputs.test_label }}"
+          
+          # Get workflow runs
+          WORKFLOW_RUNS=$(gh run list \
+            --workflow="specialists-unified.yml" \
+            --branch="main" \
+            --limit=5 \
+            --json status,conclusion,jobs)
+          
+          echo "=== RECENT WORKFLOW RUNS ==="
+          echo "$WORKFLOW_RUNS"
+          
+          # Get the latest run details
+          LATEST_RUN=$(echo "$WORKFLOW_RUNS" | jq -r '.[0].jobs')
+          
+          if [ -n "$LATEST_RUN" ]; then
+            echo ""
+            echo "=== LATEST RUN JOB DETAILS ==="
+            echo "$LATEST_RUN" | jq -r '.[] | "\(.name): \(.status) - \(.conclusion)"'
+            
+            # Check if only the expected specialist ran
+            EXPECTED_SPECIALIST="${{ github.event.inputs.test_label }}"
+            ACTUAL_JOBS=$(echo "$LATEST_RUN" | jq -r '.[].name' | grep -i "specialist" || true)
+            
+            echo ""
+            echo "=== SPECIALIST EXECUTION ANALYSIS ==="
+            echo "Expected label: $EXPECTED_SPECIALIST"
+            echo "Actual jobs:"
+            echo "$ACTUAL_JOBS"
+            
+            # Validate results
+            if echo "$ACTUAL_JOBS" | grep -qi "validate"; then
+              echo "✅ Validation job ran"
+            else
+              echo "❌ Validation job not found"
+            fi
+            
+            case "$EXPECTED_SPECIALIST" in
+              "frontend-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "frontend"; then
+                  echo "✅ Frontend specialist executed as expected"
+                else
+                  echo "❌ Frontend specialist not executed"
+                fi
+                ;;
+              "backend-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "backend"; then
+                  echo "✅ Backend specialist executed as expected"
+                else
+                  echo "❌ Backend specialist not executed"
+                fi
+                ;;
+              "testing-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "testing"; then
+                  echo "✅ Testing specialist executed as expected"
+                else
+                  echo "❌ Testing specialist not executed"
+                fi
+                ;;
+              "security-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "security"; then
+                  echo "✅ Security specialist executed as expected"
+                else
+                  echo "❌ Security specialist not executed"
+                fi
+                ;;
+              "seo-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "seo"; then
+                  echo "✅ SEO specialist executed as expected"
+                else
+                  echo "❌ SEO specialist not executed"
+                fi
+                ;;
+              "content-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "content"; then
+                  echo "✅ Content specialist executed as expected"
+                else
+                  echo "❌ Content specialist not executed"
+                fi
+                ;;
+              "repo-maintenance")
+                if echo "$ACTUAL_JOBS" | grep -qi "maintenance"; then
+                  echo "✅ Repo maintenance executed as expected"
+                else
+                  echo "❌ Repo maintenance not executed"
+                fi
+                ;;
+              "deploy-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "deploy"; then
+                  echo "✅ Deploy specialist executed as expected"
+                else
+                  echo "❌ Deploy specialist not executed"
+                fi
+                ;;
+              "analytics-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "analytics"; then
+                  echo "✅ Analytics specialist executed as expected"
+                else
+                  echo "❌ Analytics specialist not executed"
+                fi
+                ;;
+              "affiliate-marketing-specialist")
+                if echo "$ACTUAL_JOBS" | grep -qi "affiliate"; then
+                  echo "✅ Affiliate marketing specialist executed as expected"
+                else
+                  echo "❌ Affiliate marketing specialist not executed"
+                fi
+                ;;
+              "invalid-label")
+                if echo "$ACTUAL_JOBS" | grep -qi "specialist"; then
+                  echo "❌ Unexpected specialist executed for invalid label"
+                else
+                  echo "✅ No specialists executed for invalid label (expected)"
+                fi
+                ;;
+            esac
+          else
+            echo "❌ No workflow runs found"
+          fi
+          
+          echo ""
+          echo "=== TEST SUMMARY ==="
+          echo "Test Label: ${{ github.event.inputs.test_label }}"
+          echo "Workflow Status: ${{ needs.wait-for-workflow.outputs.workflow_status }}"
+          echo "Test Issue: #${{ needs.create-test-issue.outputs.issue_number }}"
+          echo "Test Completed: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  cleanup:
+    name: Cleanup Test artifacts
+    runs-on: ubuntu-24.04-arm
+    needs: [create-test-issue, analyze-results]
+    if: always()
+    
+    steps:
+      - name: Close Test Issue
+        run: |
+          echo "🧹 Cleaning up test issue..."
+          
+          if gh issue close ${{ needs.create-test-issue.outputs.issue_number }} \
+            --comment "Test completed successfully. Issue closed by cleanup workflow." \
+            --reason "completed"; then
+            echo "✅ Test issue closed: #${{ needs.create-test-issue.outputs.issue_number }}"
+          else
+            echo "⚠️ Could not close test issue (may already be closed)"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+content>
+<line_count>207</line_count>
+</write_to_file>
