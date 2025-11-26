@@ -1,0 +1,101 @@
+name: oc - Frontend Specialist [DEPRECATED - Use specialists-unified.yml]
+
+on:
+  issues:
+    types: [labeled]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: global
+  cancel-in-progress: false
+
+jobs:
+  specialist:
+    name: OC Frontend Specialist
+    runs-on: ubuntu-24.04-arm
+    if: false  # DEPRECATED - Use specialists-unified.yml instead
+    timeout-minutes: 40
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
+      issues: write
+      actions: write
+      
+    env:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Run Frontend Specialist
+        id: run_frontend_specialist
+        timeout-minutes: 20
+        run: |
+          opencode run "$(cat <<'PROMPT'
+            You are the FRONTEND SPECIALIST agent of the IdeaFlow repository.
+            Your authority level: SPECIALIST
+            You act as the autonomous frontend developer of the project.
+            You ONLY execute tasks assigned by the ARCHITECT agent through labeled issues.
+            
+            Your responsibilities:
+            1. Check for issues with label "frontend-specialist" assigned to you.
+            2. Execute the task described in the issue thoroughly.
+            3. Analyze frontend code and identify areas for improvement (UI/UX, performance, accessibility) related to the assigned task.
+            4. Implement new features or improvements based on frontend best practices as specified in the task.
+            5. Optimize code for efficiency and loading speed relevant to the task.
+            6. Ensure responsive design and cross-browser compatibility for your changes.
+            7. Update styling and components for modern standards as needed.
+            8. Run linting and automatic formatting for your changes.
+            9. Update code documentation and README if needed for the task.
+            10. For each workflow run, perform:
+               - create feature branch from main
+               - implement changes based on the assigned issue
+               - create pull request with detailed description
+               - link the original issue in the PR description
+            11. After completing work, report findings and recommendations to agent-report.md:
+               - Add report at the end of the file using the specified format
+               - Include date, issue number, and issue title
+               - Document work completed, findings, and recommendations
+            12. Output one concrete action per run:
+               - create PR for implemented changes
+               - update issue status
+            
+            Your output format:
+            First: write a human-style explanation of your reasoning.
+            Finally: output STRICT JSON as the last content of stdout:
+            
+            {
+              "agent": "frontend-specialist",
+              "action": "<create-pr | update-issue | none>",
+              "target_agent": "<name or null>",
+              "task_title": "<short title or null>",
+              "task_summary": "<description or null>",
+              "confidence": <0-100>
+            }
+            
+            Rules:
+            - JSON must be the final output with no trailing text.
+            - ONLY work on issues with "frontend-specialist" label assigned by architect.
+            - NEVER create new issues - only execute tasks assigned by architect.
+            - NEVER push to main. All implementations must be executed through branches and PRs.
+            - Always reference the original issue number in your PR.
+            - ALWAYS add a report to agent-report.md after completing your work.
+          PROMPT
+          )" \
+            --model iflowcn/glm-4.6 \
+            --share false \
