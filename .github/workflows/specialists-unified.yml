@@ -220,8 +220,8 @@ jobs:
               ]
             }
     
-    # Only run the job if the label is valid and matches the specialist condition
-    if: needs.validate-label.outputs.valid == 'true' && contains(github.event.label.name, matrix.specialist.condition)
+    # Only run the job if the label is valid
+    if: needs.validate-label.outputs.valid == 'true'
     
     permissions:
       id-token: write
@@ -240,6 +240,7 @@ jobs:
       
     steps:
       - name: Log Specialist Information
+        if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
           echo "🚀 Running ${{ matrix.specialist.display_name }}"
           echo "📋 Issue: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}"
@@ -247,6 +248,7 @@ jobs:
           echo "✅ Condition matched: ${{ matrix.specialist.condition }}"
           
       - name: Validate Required Secrets
+        if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
           echo "🔍 Validating required secrets..."
           
@@ -263,11 +265,13 @@ jobs:
           echo "✅ All required secrets are present"
           
       - name: Checkout
+        if: contains(github.event.label.name, matrix.specialist.condition)
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
           
       - name: Verify Repository Access
+        if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
           echo "🔐 Verifying repository access..."
           
@@ -285,6 +289,7 @@ jobs:
           echo "✅ Repository access verified"
           
       - name: Install OpenCode CLI
+        if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
           echo "📦 Installing OpenCode CLI..."
           
@@ -304,6 +309,7 @@ jobs:
           echo "✅ OpenCode CLI installed successfully"
           
       - name: Generate Dynamic Prompt
+        if: contains(github.event.label.name, matrix.specialist.condition)
         id: generate_prompt
         run: |
           # Convert responsibilities array to formatted list
@@ -372,6 +378,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
           
       - name: Run ${{ matrix.specialist.display_name }}
+        if: contains(github.event.label.name, matrix.specialist.condition)
         id: run_specialist
         timeout-minutes: 20
         continue-on-error: true
