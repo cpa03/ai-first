@@ -58,7 +58,6 @@ jobs:
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 40
     needs: validate-label
-    if: needs.validate-label.outputs.valid == 'true'
     strategy:
       fail-fast: false
       matrix:
@@ -221,8 +220,8 @@ jobs:
               ]
             }
     
-    # Only run the job if the issue label matches the specialist condition
-    if: contains(github.event.label.name, matrix.specialist.condition)
+    # Only run the job if the label is valid and matches the specialist condition
+    if: needs.validate-label.outputs.valid == 'true' && contains(github.event.label.name, matrix.specialist.condition)
     
     permissions:
       id-token: write
