@@ -79,7 +79,6 @@ jobs:
     name: OC ${{ matrix.specialist.display_name }}
     needs: validate-label
     runs-on: ubuntu-24.04-arm
-    if: contains(needs.validate-label.outputs.matched-list, matrix.specialist.condition)
     timeout-minutes: 40
     strategy:
       fail-fast: false
