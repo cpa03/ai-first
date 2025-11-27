@@ -356,7 +356,7 @@ jobs:
           TITLE_ESCAPED=$(printf '%s' "$TITLE")
           BODY_ESCAPED=$(printf '%s' "$BODY")
 
-          sed -i "s|${ISSUE_NUMBER_PLACEHOLDER}|${ISSUE_NUM}|" /tmp/specialist_prompt.txt
+          sed -i "s|ISSUE_NUMBER_PLACEHOLDER|${ISSUE_NUM}|" /tmp/specialist_prompt.txt
           sed -i "s|__REPLACE_TITLE__|$TITLE_ESCAPED|" /tmp/specialist_prompt.txt
           sed -i "s|__REPLACE_BODY__|$BODY_ESCAPED|" /tmp/specialist_prompt.txt
           sed -i "s|__REPLACE_LABEL__|$LABEL|" /tmp/specialist_prompt.txt
