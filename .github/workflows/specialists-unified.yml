@@ -52,10 +52,8 @@ jobs:
           echo "❌ Invalid label: $LABEL"
           echo "valid=false" >> $GITHUB_OUTPUT
           echo "specialist=none" >> $GITHUB_OUTPUT
-jobs:
-  validate-label:
-    runs-on: ubuntu-latest
-    steps:
+
+    check-issue:
       - name: Check all issue labels
         id: check
         run: |
@@ -81,6 +79,7 @@ jobs:
             echo "valid=true" >> $GITHUB_OUTPUT
             echo "specialist=$FOUND_LABEL" >> $GITHUB_OUTPUT
           fi
+          
   specialist:
     name: OC ${{ matrix.specialist.display_name }}
     runs-on: ubuntu-24.04-arm
