@@ -11,7 +11,7 @@ permissions:
   actions: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: global
   cancel-in-progress: false
 
 jobs:
@@ -234,7 +234,13 @@ jobs:
         id: issue
         run: |
           set -euo pipefail
-          ISSUE_NUM=$(echo "$MATCHED_LIST" | tr ',' '\n' | grep "${{ matrix.specialist.condition }}" | head -n 1 | cut -d':' -f1 || true)
+          ISSUE_NUM=$(echo "${MATCHED_LIST}" \
+            | tr ',' '\n' \
+            | grep -F "${{ matrix.specialist.condition }}" \
+            | awk -F':' '!seen[$1]++' \
+            | head -n 1 \
+            | cut -d':' -f1 || true)
+          ISSUE_NUM=${ISSUE_NUM:-}
           echo "ISSUE_NUMBER=$ISSUE_NUM" >> $GITHUB_OUTPUT
 
       - name: Stop if no issue selected
