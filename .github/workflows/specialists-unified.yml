@@ -43,34 +43,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-
-          VALID_LABELS=("frontend-specialist" "backend-specialist" "testing-specialist" "security-specialist" "seo-specialist" "content-specialist" "repo-maintenance" "deploy-specialist" "analytics-specialist" "affiliate-marketing-specialist")
-
-          MATCHED_LIST=""
-
-          # Fetch open issues via API (first page)
-          ISSUES_JSON=$(gh api repos/$REPO/issues --jq '.[] | select(.state=="open")' || echo "")
-
-          if [ -z "$ISSUES_JSON" ]; then
-            echo "No open issues returned by API"
-            echo "MATCHED_LIST=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          while IFS= read -r ISSUE; do
-            NUMBER=$(echo "$ISSUE" | jq -r '.number')
-            LABELS=$(echo "$ISSUE" | jq -r '.labels[]?.name' || true)
-            for L in $LABELS; do
-              for V in "${VALID_LABELS[@]}"; do
-                if [[ "$L" == "$V" ]]; then
-                  MATCHED_LIST+="${NUMBER}:${V},"
-                fi
+            
+            VALID_LABELS=("frontend-specialist" "backend-specialist" "testing-specialist" "security-specialist" "seo-specialist" "content-specialist" "repo-maintenance" "deploy-specialist" "analytics-specialist" "affiliate-marketing-specialist")
+            
+            MATCHED=""
+            ISSUES=$(gh api repos/$REPO/issues --jq '.[] | select(.state=="open")')
+            
+            while IFS= read -r ISSUE; do
+              NUMBER=$(echo "$ISSUE" | jq -r '.number')
+              LABELS=$(echo "$ISSUE" | jq -r '.labels[].name' || true)
+              for L in $LABELS; do
+                for V in "${VALID_LABELS[@]}"; do
+                  if [[ "$L" == "$V" ]]; then
+                    MATCHED="${NUMBER}:${V}"
+                    break 3
+                  fi
+                done
               done
-            done
-          done <<< "$(echo "$ISSUES_JSON" | jq -c '.')"
-
-          MATCHED_LIST="${MATCHED_LIST%,}"
-          echo "MATCHED_LIST=$MATCHED_LIST" >> $GITHUB_OUTPUT
+            done <<< "$(echo "$ISSUES" | jq -c '.')"
+            
+            echo "MATCHED=$MATCHED" >> $GITHUB_OUTPUT
 
       - name: Print scan result
         run: |
@@ -234,13 +226,14 @@ jobs:
         id: issue
         run: |
           set -euo pipefail
-          ISSUE_NUM=$(echo "${MATCHED_LIST}" \
-            | tr ',' '\n' \
-            | grep -F "${{ matrix.specialist.condition }}" \
-            | awk -F':' '!seen[$1]++' \
-            | head -n 1 \
-            | cut -d':' -f1 || true)
-          ISSUE_NUM=${ISSUE_NUM:-}
+          PAIR="${MATCHED_LIST}"
+          ISSUE_NUM=$(echo "$PAIR" | cut -d':' -f1)
+          ISSUE_LABEL=$(echo "$PAIR" | cut -d':' -f2)
+          
+          if [[ "${ISSUE_LABEL}" != "${{ matrix.specialist.condition }}" ]]; then
+            ISSUE_NUM=""
+          fi
+          
           echo "ISSUE_NUMBER=$ISSUE_NUM" >> $GITHUB_OUTPUT
 
       - name: Stop if no issue selected
