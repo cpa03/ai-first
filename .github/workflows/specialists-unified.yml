@@ -378,12 +378,11 @@ jobs:
         run: |
           set -euo pipefail
           echo "Executing specialist for issue #${{ steps.issue.outputs.ISSUE_NUMBER }}"
-
           MAX_RETRIES=3
           RETRY_COUNT=0
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
             echo "Attempt $((RETRY_COUNT+1))"
-            if opencode run "${{ steps.generate_prompt.outputs.prompt }}" --model iflowcn/glm-4.6 --share false; then
+            if opencode run --file /tmp/specialist_prompt.txt --model iflowcn/glm-4.6 --share false; then
               echo "success=true" >> $GITHUB_OUTPUT
               break
             else
