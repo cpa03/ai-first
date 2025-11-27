@@ -40,6 +40,7 @@ jobs:
         id: scan
         env:
           REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
