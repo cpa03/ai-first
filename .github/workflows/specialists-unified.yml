@@ -28,15 +28,14 @@ jobs:
         id: check_label
         shell: bash
         run: |
-          # Valid labels
+          set -euo pipefail
+
           VALID_LABELS=("frontend-specialist" "backend-specialist" "testing-specialist" "security-specialist" "seo-specialist" "content-specialist" "repo-maintenance" "deploy-specialist" "analytics-specialist" "affiliate-marketing-specialist")
 
-          # event JSON from GH
           EVENT_JSON='${{ toJson(github.event) }}'
-
           FOUND_LABEL="none"
 
-          # If .issue.labels exists in the event, check them first
+          # If issue.labels exists in payload, prefer that (covers existing labels)
           if echo "$EVENT_JSON" | jq -e '.issue.labels' >/dev/null 2>&1; then
             for item in $(echo "$EVENT_JSON" | jq -r '.issue.labels[].name'); do
               echo "Checking label: $item"
@@ -48,7 +47,7 @@ jobs:
               done
             done
           else
-            # Fallback to github.event.label.name (for labeled event payloads)
+            # Fallback to github.event.label.name (labeled event)
             LABEL='${{ github.event.label.name }}'
             echo "Event label: $LABEL"
             if [[ -n "$LABEL" ]]; then
@@ -74,9 +73,9 @@ jobs:
   specialist:
     name: OC ${{ matrix.specialist.display_name }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 40
     needs: validate-label
     if: needs.validate-label.outputs.valid == 'true'
+    timeout-minutes: 40
     strategy:
       fail-fast: false
       matrix:
@@ -101,7 +100,7 @@ jobs:
             description: "autonomous backend developer"
             actions: "create-pr | update-issue | none"
             responsibilities:
-              - "Analyze code backend and identify bugs or inefficiencies"
+              - "Analyze backend code and identify bugs or inefficiencies"
               - "Implement or improve API endpoints as specified"
               - "Optimize database queries and schema as needed"
               - "Ensure security best practices (authentication, authorization, input validation)"
@@ -228,17 +227,15 @@ jobs:
       - name: Validate Required Secrets
         if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
-          if [[ -z "$GH_TOKEN" ]]; then
-            echo "❌ GH_TOKEN secret is missing"
+          if [[ -z "${GH_TOKEN:-}" ]]; then
+            echo "GH_TOKEN secret is missing"
             exit 1
           fi
-
-          if [[ -z "$IFLOW_API_KEY" ]]; then
-            echo "❌ IFLOW_API_KEY secret is missing"
+          if [[ -z "${IFLOW_API_KEY:-}" ]]; then
+            echo "IFLOW_API_KEY secret is missing"
             exit 1
           fi
-
-          echo "✅ All required secrets are present"
+          echo "All required secrets are present"
 
       - name: Checkout
         if: contains(github.event.label.name, matrix.specialist.condition)
@@ -249,38 +246,35 @@ jobs:
       - name: Verify Repository Access
         if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
-          echo "🔐 Verifying repository access..."
           if ! git status >/dev/null 2>&1; then
-            echo "❌ Failed to access repository"
+            echo "Failed to access repository"
             exit 1
           fi
           if ! git remote -v >/dev/null 2>&1; then
-            echo "❌ Failed to get repository information"
+            echo "Failed to get repository information"
             exit 1
           fi
-          echo "✅ Repository access verified"
 
       - name: Install OpenCode CLI
         if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
-          echo "📦 Installing OpenCode CLI..."
           if ! curl -fsSL https://opencode.ai/install | bash; then
-            echo "❌ Failed to install OpenCode CLI"
+            echo "Failed to install OpenCode CLI"
             exit 1
           fi
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
           if ! command -v opencode &> /dev/null; then
-            echo "❌ OpenCode CLI not found after installation"
+            echo "OpenCode CLI not found after installation"
             exit 1
           fi
-          echo "✅ OpenCode CLI installed successfully"
 
       - name: Generate Dynamic Prompt
         if: contains(github.event.label.name, matrix.specialist.condition)
         id: generate_prompt
         shell: bash
         run: |
-          # Build responsibilities list from matrix (JSON)
+          set -euo pipefail
+
           RESP_JSON='${{ toJson(matrix.specialist.responsibilities) }}'
           RESPONSIBILITIES_LIST=$(python3 - <<PY
 import json,sys
@@ -290,7 +284,7 @@ for item in arr:
 PY
 <<<"$RESP_JSON")
 
-          cat <<EOF > /tmp/specialist_prompt.txt
+          cat <<'PROMPT' > /tmp/specialist_prompt.txt
 You are the ${SPECIALIST_ROLE} agent of the IdeaFlow repository.
 Your authority level: SPECIALIST
 You act as the ${SPECIALIST_DESCRIPTION} of the project.
@@ -303,8 +297,11 @@ Current Issue Information:
 - Assigned Label: ${{ github.event.label.name }}
 
 Your responsibilities:
-$RESPONSIBILITIES_LIST
+PROMPT
 
+          printf "%s\n" "$RESPONSIBILITIES_LIST" >> /tmp/specialist_prompt.txt
+
+          cat <<'PROMPT2' >> /tmp/specialist_prompt.txt
 10. For each workflow run, perform:
    - create feature branch from main
    - implement changes based on the assigned issue
@@ -338,9 +335,9 @@ Rules:
 - NEVER push to main. All implementations must be executed through branches and PRs.
 - Always reference the original issue number in your PR.
 - ALWAYS add a report to agent-report.md after completing your work.
-EOF
+PROMPT2
 
-          # Output prompt as step output (multi-line)
+          # Emit prompt as step output (multiline)
           echo "prompt<<EOF" >> "$GITHUB_OUTPUT"
           cat /tmp/specialist_prompt.txt >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
@@ -348,10 +345,10 @@ EOF
       - name: Log Specialist Information
         if: contains(github.event.label.name, matrix.specialist.condition)
         run: |
-          echo "🚀 Running ${{ matrix.specialist.display_name }}"
-          echo "📋 Issue: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}"
-          echo "🏷️  Label: ${{ github.event.label.name }}"
-          echo "✅ Condition matched: ${{ matrix.specialist.condition }}"
+          echo "Running ${{ matrix.specialist.display_name }}"
+          echo "Issue: #${{ github.event.issue.number }} - ${{ github.event.issue.title }}"
+          echo "Label: ${{ github.event.label.name }}"
+          echo "Condition matched: ${{ matrix.specialist.condition }}"
 
       - name: Run ${{ matrix.specialist.display_name }}
         if: contains(github.event.label.name, matrix.specialist.condition)
@@ -359,23 +356,18 @@ EOF
         timeout-minutes: 20
         continue-on-error: true
         run: |
-          echo "🤖 Executing ${{ matrix.specialist.display_name }}..."
-          # Retry logic for OpenCode execution
+          set -euo pipefail
           MAX_RETRIES=3
           RETRY_COUNT=0
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            echo "🔄 Attempt $((RETRY_COUNT + 1)) of $MAX_RETRIES"
             if opencode run "${{ steps.generate_prompt.outputs.prompt }}" --model iflowcn/glm-4.6 --share false; then
-              echo "✅ OpenCode execution successful"
               echo "success=true" >> "$GITHUB_OUTPUT"
               break
             else
               RETRY_COUNT=$((RETRY_COUNT + 1))
-              echo "❌ Attempt $RETRY_COUNT failed"
               if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
                 sleep 30
               else
-                echo "💥 All attempts failed"
                 echo "success=false" >> "$GITHUB_OUTPUT"
                 exit 1
               fi
@@ -385,7 +377,6 @@ EOF
       - name: Handle Execution Failure
         if: steps.run_specialist.outcome == 'failure' || steps.run_specialist.outputs.success == 'false'
         run: |
-          echo "💥 ${{ matrix.specialist.display_name }} execution failed"
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
           REPORT_TEXT="
 ### [${{ matrix.specialist.display_name }}] Report - FAILED
@@ -421,8 +412,8 @@ EOF
         if: always()
         run: |
           if [ "${{ steps.run_specialist.outputs.success }}" == "true" ]; then
-            echo "✅ ${{ matrix.specialist.display_name }} execution completed successfully"
+            echo "Execution completed successfully"
           else
-            echo "❌ ${{ matrix.specialist.display_name }} execution failed after attempts"
+            echo "Execution failed after attempts"
           fi
-          echo "📊 Status: ${{ job.status }}"
+          echo "Status: ${{ job.status }}"
