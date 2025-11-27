@@ -382,7 +382,7 @@ jobs:
           RETRY_COUNT=0
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
             echo "Attempt $((RETRY_COUNT+1))"
-            if opencode run --file /tmp/specialist_prompt.txt --model iflowcn/glm-4.6 --share false; then
+            if opencode run "$(cat /tmp/specialist_prompt.txt)" --model iflowcn/glm-4.6 --share false; then
               echo "success=true" >> $GITHUB_OUTPUT
               break
             else
