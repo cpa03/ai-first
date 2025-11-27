@@ -277,65 +277,65 @@ jobs:
 
           RESP_JSON='${{ toJson(matrix.specialist.responsibilities) }}'
           RESPONSIBILITIES_LIST=$(python3 - <<PY
-import json,sys
-arr=json.loads(sys.stdin.read() or "[]")
-for item in arr:
-    print("          - " + item)
-PY
-<<<"$RESP_JSON")
-
-          cat <<'PROMPT' > /tmp/specialist_prompt.txt
-You are the ${SPECIALIST_ROLE} agent of the IdeaFlow repository.
-Your authority level: SPECIALIST
-You act as the ${SPECIALIST_DESCRIPTION} of the project.
-You ONLY execute tasks assigned by the ARCHITECT agent through labeled issues.
-
-Current Issue Information:
-- Issue Number: ${{ github.event.issue.number }}
-- Issue Title: ${{ github.event.issue.title }}
-- Issue Body: ${{ github.event.issue.body }}
-- Assigned Label: ${{ github.event.label.name }}
-
-Your responsibilities:
-PROMPT
+          import json,sys
+          arr=json.loads(sys.stdin.read() or "[]")
+          for item in arr:
+              print("          - " + item)
+          PY
+          <<<"$RESP_JSON")
+          
+                    cat <<'PROMPT' > /tmp/specialist_prompt.txt
+          You are the ${SPECIALIST_ROLE} agent of the IdeaFlow repository.
+          Your authority level: SPECIALIST
+          You act as the ${SPECIALIST_DESCRIPTION} of the project.
+          You ONLY execute tasks assigned by the ARCHITECT agent through labeled issues.
+          
+          Current Issue Information:
+          - Issue Number: ${{ github.event.issue.number }}
+          - Issue Title: ${{ github.event.issue.title }}
+          - Issue Body: ${{ github.event.issue.body }}
+          - Assigned Label: ${{ github.event.label.name }}
+          
+          Your responsibilities:
+          PROMPT
 
           printf "%s\n" "$RESPONSIBILITIES_LIST" >> /tmp/specialist_prompt.txt
 
           cat <<'PROMPT2' >> /tmp/specialist_prompt.txt
-10. For each workflow run, perform:
-   - create feature branch from main
-   - implement changes based on the assigned issue
-   - create pull request with detailed description
-   - link the original issue in the PR description
-11. After completing work, report findings and recommendations to agent-report.md:
-   - Add report at the end of the file using the specified format
-   - Include date, issue number, and issue title
-   - Document work completed, findings, and recommendations
-12. Output one concrete action per run:
-   - create PR for implemented changes
-   - update issue status
-
-Your output format:
-First: write a human-style explanation of your reasoning.
-Finally: output STRICT JSON as the last content of stdout:
-
-{
-  "agent": "${{ matrix.specialist.name }}-specialist",
-  "action": "<${{ matrix.specialist.actions }}>",
-  "target_agent": "<name or null>",
-  "task_title": "<short title or null>",
-  "task_summary": "<description or null>",
-  "confidence": <0-100>
-}
-
-Rules:
-- JSON must be the final output with no trailing text.
-- ONLY work on issues with "${{ matrix.specialist.condition }}" label assigned by architect.
-- NEVER create new issues - only execute tasks assigned by architect.
-- NEVER push to main. All implementations must be executed through branches and PRs.
-- Always reference the original issue number in your PR.
-- ALWAYS add a report to agent-report.md after completing your work.
-PROMPT2
+          10. For each workflow run, perform:
+             - create feature branch from main
+             - implement changes based on the assigned issue
+             - create pull request with detailed description
+             - link the original issue in the PR description
+          11. After completing work, report findings and recommendations to agent-report.md:
+             - Add report at the end of the file using the specified format
+             - Include date, issue number, and issue title
+             - Document work completed, findings, and recommendations
+          12. Output one concrete action per run:
+             - create PR for implemented changes
+             - update issue status
+          
+          Your output format:
+          First: write a human-style explanation of your reasoning.
+          Finally: output STRICT JSON as the last content of stdout:
+          
+          {
+            "agent": "${{ matrix.specialist.name }}-specialist",
+            "action": "<${{ matrix.specialist.actions }}>",
+            "target_agent": "<name or null>",
+            "task_title": "<short title or null>",
+            "task_summary": "<description or null>",
+            "confidence": <0-100>
+          }
+          
+          Rules:
+          - JSON must be the final output with no trailing text.
+          - ONLY work on issues with "${{ matrix.specialist.condition }}" label assigned by architect.
+          - NEVER create new issues - only execute tasks assigned by architect.
+          - NEVER push to main. All implementations must be executed through branches and PRs.
+          - Always reference the original issue number in your PR.
+          - ALWAYS add a report to agent-report.md after completing your work.
+          PROMPT2
 
           # Emit prompt as step output (multiline)
           echo "prompt<<EOF" >> "$GITHUB_OUTPUT"
@@ -379,28 +379,28 @@ PROMPT2
         run: |
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
           REPORT_TEXT="
-### [${{ matrix.specialist.display_name }}] Report - FAILED
-**Date:** $TIMESTAMP
-**Issue:** #${{ github.event.issue.number }} - ${{ github.event.issue.title }}
-**Label:** ${{ github.event.label.name }}
-
-#### Execution Status
-❌ **FAILED** - Could not complete assigned task
-
-#### Error Details
-- Specialist: ${{ matrix.specialist.display_name }}
-- Issue Number: ${{ github.event.issue.number }}
-- Attempts Made: 3 (with 30-second intervals)
-- Last Attempt: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-
-#### Next Steps Required
-- [ ] Manual review of the issue requirements
-- [ ] Check OpenCode API connectivity
-- [ ] Verify IFLOW_API_KEY configuration
-- [ ] Retry execution manually if needed
-
----
-"
+          ### [${{ matrix.specialist.display_name }}] Report - FAILED
+          **Date:** $TIMESTAMP
+          **Issue:** #${{ github.event.issue.number }} - ${{ github.event.issue.title }}
+          **Label:** ${{ github.event.label.name }}
+          
+          #### Execution Status
+          ❌ **FAILED** - Could not complete assigned task
+          
+          #### Error Details
+          - Specialist: ${{ matrix.specialist.display_name }}
+          - Issue Number: ${{ github.event.issue.number }}
+          - Attempts Made: 3 (with 30-second intervals)
+          - Last Attempt: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          #### Next Steps Required
+          - [ ] Manual review of the issue requirements
+          - [ ] Check OpenCode API connectivity
+          - [ ] Verify IFLOW_API_KEY configuration
+          - [ ] Retry execution manually if needed
+          
+          ---
+          "
           echo "$REPORT_TEXT" >> agent-report.md
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
