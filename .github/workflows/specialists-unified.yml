@@ -52,7 +52,35 @@ jobs:
           echo "❌ Invalid label: $LABEL"
           echo "valid=false" >> $GITHUB_OUTPUT
           echo "specialist=none" >> $GITHUB_OUTPUT
+jobs:
+  validate-label:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all issue labels
+        id: check
+        run: |
+          VALID_LABELS=("frontend-specialist" "backend-specialist" "testing-specialist" "security-specialist" "seo-specialist" "content-specialist" "repo-maintenance" "deploy-specialist" "analytics-specialist" "affiliate-marketing-specialist")
 
+          FOUND_LABEL="none"
+          for item in $(jq -r '.issue.labels[].name' <<< '${{ toJson(github.event) }}'); do
+            echo "Checking label: $item"
+            for valid in "${VALID_LABELS[@]}"; do
+              if [[ "$item" == "$valid" ]]; then
+                FOUND_LABEL="$valid"
+                break
+              fi
+            done
+          done
+
+          if [[ "$FOUND_LABEL" == "none" ]]; then
+            echo "No valid label found"
+            echo "valid=false" >> $GITHUB_OUTPUT
+            echo "specialist=none" >> $GITHUB_OUTPUT
+          else
+            echo "Valid label found: $FOUND_LABEL"
+            echo "valid=true" >> $GITHUB_OUTPUT
+            echo "specialist=$FOUND_LABEL" >> $GITHUB_OUTPUT
+          fi
   specialist:
     name: OC ${{ matrix.specialist.display_name }}
     runs-on: ubuntu-24.04-arm
