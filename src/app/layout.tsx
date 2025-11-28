@@ -2,9 +2,65 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'IdeaFlow - Turn Ideas into Action Plans',
+  title: 'IdeaFlow - AI-Powered Project Planning & Task Management Tool',
   description:
-    'Transform your raw ideas into production-ready plans with AI-powered clarification and task breakdown.',
+    'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, timelines, and roadmaps. Free project planning tool for developers and teams.',
+  keywords: [
+    'AI project planning',
+    'task management',
+    'project roadmap',
+    'idea to action',
+    'automated planning',
+    'project management tool',
+    'AI task breakdown',
+  ],
+  authors: [{ name: 'IdeaFlow Team' }],
+  creator: 'IdeaFlow',
+  publisher: 'IdeaFlow',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://ideaflow.ai'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'IdeaFlow - AI-Powered Project Planning & Task Management',
+    description:
+      'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, timelines, and roadmaps.',
+    url: 'https://ideaflow.ai',
+    siteName: 'IdeaFlow',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'IdeaFlow - AI Project Planning Tool',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'IdeaFlow - AI-Powered Project Planning',
+    description:
+      'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, timelines, and roadmaps.',
+    images: ['/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
