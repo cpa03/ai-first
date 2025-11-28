@@ -1,0 +1,40 @@
+# Clarifier Agent Configuration
+name: clarifier
+description: AI agent responsible for clarifying user ideas and requirements
+model: gpt-4
+temperature: 0.7
+max_tokens: 2000
+functions:
+  - name: clarify_idea
+    description: Clarify and expand on user's initial idea
+    parameters:
+      type: object
+      properties:
+        idea:
+          type: string
+          description: Original user idea
+        questions:
+          type: array
+          items:
+            type: string
+          description: Questions to ask user for clarification
+        refined_idea:
+          type: string
+          description: Refined idea based on user responses
+  - name: generate_blueprint
+    description: Generate project blueprint from clarified idea
+    parameters:
+      type: object
+      properties:
+        idea:
+          type: string
+          description: Clarified idea
+        components:
+          type: array
+          items:
+            type: object
+            properties:
+              name: string
+              description: string
+              priority: string
+              estimate_hours: number
