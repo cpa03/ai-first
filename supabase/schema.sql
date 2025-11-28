@@ -88,3 +88,32 @@ CREATE POLICY "Users can update their own ideas" ON ideas
 
 CREATE POLICY "Users can delete their own ideas" ON ideas
     FOR DELETE USING (auth.uid() = user_id OR auth.role() = 'service_role');
+
+-- Additional RLS policies for other tables
+CREATE POLICY "Users can view their own idea sessions" ON idea_sessions
+    FOR SELECT USING (EXISTS (SELECT 1 FROM ideas WHERE ideas.id = idea_sessions.idea_id AND ideas.user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can manage their own idea sessions" ON idea_sessions
+    FOR ALL USING (EXISTS (SELECT 1 FROM ideas WHERE ideas.id = idea_sessions.idea_id AND ideas.user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can view their own deliverables" ON deliverables
+    FOR SELECT USING (EXISTS (SELECT 1 FROM ideas WHERE ideas.id = deliverables.idea_id AND ideas.user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can manage their own deliverables" ON deliverables
+    FOR ALL USING (EXISTS (SELECT 1 FROM ideas WHERE ideas.id = deliverables.idea_id AND ideas.user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can view their own tasks" ON tasks
+    FOR SELECT USING (EXISTS (SELECT 1 FROM deliverables WHERE deliverables.id = tasks.deliverable_id AND EXISTS (SELECT 1 FROM ideas WHERE ideas.id = deliverables.idea_id AND ideas.user_id = auth.uid())) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can manage their own tasks" ON tasks
+    FOR ALL USING (EXISTS (SELECT 1 FROM deliverables WHERE deliverables.id = tasks.deliverable_id AND EXISTS (SELECT 1 FROM ideas WHERE ideas.id = deliverables.idea_id AND ideas.user_id = auth.uid())) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can view their own vectors" ON vectors
+    FOR SELECT USING (EXISTS (SELECT 1 FROM ideas WHERE ideas.id = vectors.idea_id AND ideas.user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can manage their own vectors" ON vectors
+    FOR ALL USING (EXISTS (SELECT 1 FROM ideas WHERE ideas.id = vectors.idea_id AND ideas.user_id = auth.uid()) OR auth.role() = 'service_role');
+
+-- Agent logs are only accessible by service role
+CREATE POLICY "Only service role can access agent logs" ON agent_logs
+    FOR ALL USING (auth.role() = 'service_role');
