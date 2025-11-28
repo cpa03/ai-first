@@ -291,3 +291,18 @@ _No agent reports yet. This section will be populated as agents complete their t
 - [ ] Retry execution manually if needed
 
 ---
+### [Architect] Report - FAILED
+**Date:** 2025-11-28 04:41 UTC
+**Event:** push
+**Ref:** refs/heads/main
+
+#### Execution Status
+❌ **FAILED** - Architect run did not complete successfully.
+
+#### Next Steps Required
+- [ ] Check OpenCode API connectivity
+- [ ] Verify IFLOW_API_KEY configuration
+- [ ] Inspect Architect workflow logs for errors
+- [ ] Retry execution manually if needed
+
+---
