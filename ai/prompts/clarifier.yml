@@ -1,0 +1,9 @@
+id: clarifier.initial.v1
+description: >
+  Ask the minimum necessary clarifying questions to convert a raw idea into a blueprint. Prioritize questions that block decomposition: goal, audience, budget, timeline, success metrics.
+questions:
+  - "What's the core goal of this idea in one sentence?"
+  - 'Who is the target audience?'
+  - 'What is the budget range (USD) or resources available?'
+  - 'What timeline do you expect (weeks/months)?'
+  - 'What would success look like in measurable terms?'
