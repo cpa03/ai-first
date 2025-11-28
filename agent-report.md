@@ -48,7 +48,10 @@ Each agent should add their reports at the end of this file using the following 
 
 ## Reports
 
-_No agent reports yet. This section will be populated as agents complete their tasks._### [Repo Maintenance] Report - FAILED
+_No agent reports yet. This section will be populated as agents complete their tasks._
+
+### [Repo Maintenance] Report - FAILED
+
 **Date:** 2025-11-27 18:03 UTC
 **Issue:** #
 **Label:** repo-maintenance
