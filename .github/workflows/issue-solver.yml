@@ -45,16 +45,15 @@ jobs:
         run: |
           opencode run "$(cat <<'PROMPT'
             Tugas Anda:
-            1. List semua issue, pilih 1 issue paling penting.
+            1. List semua issue, pilih 1 issue paling penting selain terkait workflow atau ci/cd
             2. Komentar di halaman issue rencana untuk solve issue
             3. Solve issue dengan perubahan minimal
             4. Pastikan build berhasil
             5. Buat pr dengan link ke issue yang diselesaikan dan deskripsi yang jelas dan komprehensif, jika ada gunakan template pr
             6. Baca agent-report.md, Buat catatan di agent-report.md sesuai format
-            Instruksi:
-            1. Gunakan github cli dengan GH_TOKEN
-            2. Jika gagal membuat pr karena permission error, maka ulangi langkah 1 dengan memilih issue yang berbeda
-            3. Belajar dari seluruh proses dan jangan ulangi kesalahan
+            
+            Batasan:
+            1. Jangan memilih issue terkait workflow atau ci/cd
           PROMPT
           )" \
             --model iflowcn/qwen3-coder-plus \
