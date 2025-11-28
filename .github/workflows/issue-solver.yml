@@ -49,7 +49,7 @@ jobs:
             2. Komentar di halaman issue rencana untuk solve issue
             3. Solve issue dengan perubahan minimal
             4. Pastikan build berhasil
-            5. Buat pr dengan deskripsi yang jelas dan komprehensif, jika ada gunakan template pr
+            5. Buat pr dengan link ke issue yang diselesaikan dan deskripsi yang jelas dan komprehensif, jika ada gunakan template pr
             6. Baca agent-report.md, Buat catatan di agent-report.md sesuai format
             Instruksi:
             1. Gunakan github cli dengan GH_TOKEN
@@ -59,3 +59,4 @@ jobs:
           )" \
             --model iflowcn/qwen3-coder-plus \
             --share false \
+            --token ${{ secrets.GH_TOKEN }} \
