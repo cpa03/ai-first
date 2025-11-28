@@ -1,26 +1,42 @@
 'use client';
 
 import { useState } from 'react';
+import { dbService, Idea } from '@/lib/db';
 
 interface IdeaInputProps {
-  onSubmit: (idea: string) => void;
+  onSubmit: (idea: string, ideaId: string) => void;
 }
 
 export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [idea, setIdea] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!idea.trim()) return;
 
     setIsSubmitting(true);
+    setError(null);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Create a new idea in the database
+      const newIdea: Omit<Idea, 'id' | 'created_at'> = {
+        user_id: 'default_user', // In a real app, this would come from auth
+        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''), // Truncate title
+        raw_text: idea,
+        status: 'draft',
+      };
 
-    onSubmit(idea.trim());
-    setIsSubmitting(false);
+      const savedIdea = await dbService.createIdea(newIdea);
+
+      onSubmit(idea.trim(), savedIdea.id);
+    } catch (err) {
+      console.error('Error saving idea:', err);
+      setError('Failed to save your idea. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -45,6 +61,12 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
           details.
         </p>
       </div>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800 text-sm">{error}</p>
+        </div>
+      )}
 
       <div className="flex justify-end">
         <button

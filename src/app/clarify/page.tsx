@@ -1,18 +1,84 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ClarificationFlow from '@/components/ClarificationFlow';
+import { useRouter } from 'next/navigation';
+import { dbService } from '@/lib/db';
 
 export default function ClarifyPage() {
-  const [idea] = useState('Sample idea for demonstration'); // This would come from previous step
+  const router = useRouter();
+  const [idea, setIdea] = useState<string>('');
+  const [ideaId, setIdeaId] = useState<string>('');
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleClarificationComplete = (
+  useEffect(() => {
+    // Get idea from query params or session storage
+    const urlParams = new URLSearchParams(window.location.search);
+    const ideaFromUrl = urlParams.get('idea');
+    const ideaIdFromUrl = urlParams.get('ideaId');
+
+    if (ideaFromUrl) {
+      setIdea(decodeURIComponent(ideaFromUrl));
+    }
+
+    if (ideaIdFromUrl) {
+      setIdeaId(ideaIdFromUrl);
+    }
+
+    setLoading(false);
+  }, []);
+
+  const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
   ) => {
-    setAnswers(completedAnswers);
-    // In a real app, this would navigate to the results page
+    try {
+      // Store answers in database if ideaId is available
+      if (ideaId) {
+        // Update idea status to 'clarified'
+        await dbService.updateIdea(ideaId, { status: 'clarified' });
+      }
+
+      setAnswers(completedAnswers);
+
+      // In a real app, this would navigate to the results page
+      // For now, we'll just show the completion message
+    } catch (err) {
+      console.error('Error storing clarification answers:', err);
+      setError('Failed to save your answers. Please try again.');
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-600">Loading clarification flow...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
+          <p className="text-red-800">{error}</p>
+          <button
+            onClick={() => router.back()}
+            className="mt-4 btn btn-primary"
+          >
+            Go Back
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (answers) {
     return (
@@ -32,9 +98,33 @@ export default function ClarifyPage() {
               </div>
             ))}
           </div>
-          <p className="text-sm text-green-600 mt-4">
-            This would navigate to the results page to show your blueprint.
-          </p>
+          <div className="mt-6">
+            <button
+              onClick={() => router.push('/results')}
+              className="btn btn-primary"
+            >
+              Generate Blueprint
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!idea) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-yellow-900 mb-4">
+            No Idea Provided
+          </h2>
+          <p className="text-yellow-800">Please provide an idea to clarify.</p>
+          <button
+            onClick={() => router.push('/')}
+            className="mt-4 btn btn-primary"
+          >
+            Go to Home
+          </button>
         </div>
       </div>
     );
@@ -51,10 +141,18 @@ export default function ClarifyPage() {
             Answer a few questions to help us create the perfect action plan for
             your project.
           </p>
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600">Your idea:</p>
+            <p className="font-medium text-gray-900">{idea}</p>
+          </div>
         </div>
       </div>
 
-      <ClarificationFlow onComplete={handleClarificationComplete} />
+      <ClarificationFlow
+        idea={idea}
+        ideaId={ideaId}
+        onComplete={handleClarificationComplete}
+      />
     </div>
   );
 }
