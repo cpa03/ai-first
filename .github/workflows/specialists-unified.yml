@@ -1,6 +1,8 @@
 name: oc - Unified Specialists
 
 on:
+  issues:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 permissions:
