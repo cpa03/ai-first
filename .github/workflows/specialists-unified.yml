@@ -19,19 +19,21 @@ jobs:
     name: Scan Open Issues and Match Labels
     runs-on: ubuntu-24.04-arm
     outputs:
-      matched-list: ${{ steps.scan.outputs.MATCHED_LIST }}
+      issue_number: ${{ steps.scan.outputs.issue_number }}
+      issue_label: ${{ steps.scan.outputs.issue_label }}
 
     steps:
       - name: Install gh and jq
         run: |
+          set -euo pipefail
           sudo apt-get update -y
           sudo apt-get install -y jq
           if ! command -v gh >/dev/null 2>&1; then
             curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
             sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
             echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-            sudo apt update
-            sudo apt install -y gh
+            sudo apt-get update -y
+            sudo apt-get install -y gh
           fi
           gh --version
           jq --version
@@ -43,36 +45,60 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-            
-            VALID_LABELS=("frontend-specialist" "backend-specialist" "testing-specialist" "security-specialist" "seo-specialist" "content-specialist" "repo-maintenance" "deploy-specialist" "analytics-specialist" "affiliate-marketing-specialist")
-            
-            MATCHED=""
-            ISSUES=$(gh api repos/$REPO/issues --jq '.[] | select(.state=="open")')
-            
+
+          VALID_LABELS=(
+            "frontend-specialist"
+            "backend-specialist"
+            "testing-specialist"
+            "security-specialist"
+            "seo-specialist"
+            "content-specialist"
+            "repo-maintenance"
+            "deploy-specialist"
+            "analytics-specialist"
+            "affiliate-marketing-specialist"
+          )
+
+          MATCHED_NUMBER=""
+          MATCHED_LABEL=""
+
+          ISSUES=$(gh api repos/"$REPO"/issues \
+            --paginate \
+            --jq '.[] | select(.state=="open" and (.pull_request | not)) | {number, labels: [.labels[].name]}')
+
+          if [[ -n "$ISSUES" ]]; then
             while IFS= read -r ISSUE; do
-              NUMBER=$(echo "$ISSUE" | jq -r '.number')
-              LABELS=$(echo "$ISSUE" | jq -r '.labels[].name' || true)
+              NUMBER=$(jq -r '.number' <<<"$ISSUE")
+              LABELS=$(jq -r '.labels[]' <<<"$ISSUE" || true)
+
               for L in $LABELS; do
                 for V in "${VALID_LABELS[@]}"; do
                   if [[ "$L" == "$V" ]]; then
-                    MATCHED="${NUMBER}:${V}"
+                    MATCHED_NUMBER="$NUMBER"
+                    MATCHED_LABEL="$L"
                     break 3
                   fi
                 done
               done
-            done <<< "$(echo "$ISSUES" | jq -c '.')"
-            
-            echo "MATCHED=$MATCHED" >> $GITHUB_OUTPUT
+            done <<<"$ISSUES"
+          fi
+
+          echo "Matched issue: ${MATCHED_NUMBER:-<none>} with label: ${MATCHED_LABEL:-<none>}"
+          echo "issue_number=$MATCHED_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "issue_label=$MATCHED_LABEL"  >> "$GITHUB_OUTPUT"
 
       - name: Print scan result
         run: |
-          echo "Matched list: ${{ steps.scan.outputs.MATCHED_LIST }}"
+          echo "Matched issue: ${{ steps.scan.outputs.issue_number }} / ${{ steps.scan.outputs.issue_label }}"
 
   specialist:
     name: OC ${{ matrix.specialist.display_name }}
     needs: validate-label
+    # Hanya jalan kalau memang ada issue yang terpilih
+    if: ${{ needs.validate-label.outputs.issue_number != '' }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 40
+
     strategy:
       fail-fast: false
       matrix:
@@ -219,35 +245,28 @@ jobs:
       SPECIALIST_ROLE: ${{ matrix.specialist.role }}
       SPECIALIST_DESCRIPTION: ${{ matrix.specialist.description }}
       SPECIALIST_ACTIONS: ${{ matrix.specialist.actions }}
-      MATCHED_LIST: ${{ needs.validate-label.outputs.matched-list }}
+      ISSUE_NUMBER: ${{ needs.validate-label.outputs.issue_number }}
+      ISSUE_LABEL: ${{ needs.validate-label.outputs.issue_label }}
 
     steps:
-      - name: Determine issue number for this specialist
-        id: issue
+      - name: Guard – check if this specialist matches label
+        id: guard
         run: |
-          set -euo pipefail
-          PAIR="${MATCHED_LIST}"
-          ISSUE_NUM=$(echo "$PAIR" | cut -d':' -f1)
-          ISSUE_LABEL=$(echo "$PAIR" | cut -d':' -f2)
-          
-          if [[ "${ISSUE_LABEL}" != "${{ matrix.specialist.condition }}" ]]; then
-            ISSUE_NUM=""
+          if [[ "${ISSUE_LABEL}" == "${{ matrix.specialist.condition }}" ]]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
           fi
-          
-          echo "ISSUE_NUMBER=$ISSUE_NUM" >> $GITHUB_OUTPUT
-
-      - name: Stop if no issue selected
-        if: ${{ steps.issue.outputs.ISSUE_NUMBER == '' }}
-        run: |
-          echo "No issue selected for ${{ matrix.specialist.name }} - skipping"
-          exit 0
 
       - name: Log Specialist Information
+        if: ${{ steps.guard.outputs.run == 'true' }}
         run: |
           echo "🚀 Running ${{ matrix.specialist.display_name }}"
-          echo "📋 Issue: #${{ steps.issue.outputs.ISSUE_NUMBER }}"
+          echo "📋 Issue: #${ISSUE_NUMBER}"
+          echo "🏷️ Label: ${ISSUE_LABEL}"
 
       - name: Validate Required Secrets
+        if: ${{ steps.guard.outputs.run == 'true' }}
         run: |
           if [[ -z "${GH_TOKEN:-}" ]]; then
             echo "❌ GH_TOKEN secret is missing"
@@ -260,11 +279,13 @@ jobs:
           echo "✅ All required secrets are present"
 
       - name: Checkout
+        if: ${{ steps.guard.outputs.run == 'true' }}
         uses: actions/checkout@v5
         with:
           fetch-depth: 1
 
       - name: Verify Repository Access
+        if: ${{ steps.guard.outputs.run == 'true' }}
         run: |
           if ! git status >/dev/null 2>&1; then
             echo "Failed to access repository"
@@ -276,42 +297,44 @@ jobs:
           fi
 
       - name: Install OpenCode CLI
+        if: ${{ steps.guard.outputs.run == 'true' }}
         run: |
+          set -euo pipefail
           curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+          echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
 
       - name: Generate Dynamic Prompt
+        if: ${{ steps.guard.outputs.run == 'true' }}
         id: generate_prompt
         run: |
           set -euo pipefail
 
           RESP_JSON='${{ toJson(matrix.specialist.responsibilities) }}'
           RESPONSIBILITIES_LIST=$(python3 - <<'PY'
-          import json,sys
-          arr=json.loads(sys.stdin.read() or "[]")
-          for item in arr:
-              print("          - " + item)
+          import json, sys
+          arr = json.loads(sys.stdin.read() or "[]")
+          for i, item in enumerate(arr, start=1):
+              print(f"  {i}. {item}")
           PY
           <<<"$RESP_JSON")
-          
-                    cat <<'PROMPT' > /tmp/specialist_prompt.txt
+
+          TITLE=$(gh api repos/${{ github.repository }}/issues/"$ISSUE_NUMBER" --jq '.title' 2>/dev/null || echo "")
+          BODY=$(gh api repos/${{ github.repository }}/issues/"$ISSUE_NUMBER" --jq '.body' 2>/dev/null || echo "")
+
+          cat > /tmp/specialist_prompt.txt <<PROMPT
           You are the ${SPECIALIST_ROLE} agent of the IdeaFlow repository.
           Your authority level: SPECIALIST
           You act as the ${SPECIALIST_DESCRIPTION} of the project.
           You ONLY execute tasks assigned by the ARCHITECT agent through labeled issues.
-          
+
           Current Issue Information:
-          - Issue Number: ${ISSUE_NUMBER_PLACEHOLDER}
-          - Issue Title: __REPLACE_TITLE__
-          - Issue Body: __REPLACE_BODY__
-          - Assigned Label: __REPLACE_LABEL__
-          
+          - Issue Number: ${ISSUE_NUMBER}
+          - Issue Title: ${TITLE}
+          - Issue Body: ${BODY}
+          - Assigned Label: ${ISSUE_LABEL}
+
           Your responsibilities:
-          PROMPT
-          
-                    printf "%s\n" "$RESPONSIBILITIES_LIST" >> /tmp/specialist_prompt.txt
-          
-                    cat <<'PROMPT2' >> /tmp/specialist_prompt.txt
+          ${RESPONSIBILITIES_LIST}
           10. For each workflow run, perform:
              - create feature branch from main
              - implement changes based on the assigned issue
@@ -324,11 +347,11 @@ jobs:
           12. Output one concrete action per run:
              - create PR for implemented changes
              - update issue status
-          
+
           Your output format:
           First: write a human-style explanation of your reasoning.
           Finally: output STRICT JSON as the last content of stdout:
-          
+
           {
             "agent": "${{ matrix.specialist.name }}-specialist",
             "action": "<${{ matrix.specialist.actions }}>",
@@ -337,7 +360,7 @@ jobs:
             "task_summary": "<description or null>",
             "confidence": <0-100>
           }
-          
+
           Rules:
           - JSON must be the final output with no trailing text.
           - ONLY work on issues with "${{ matrix.specialist.condition }}" label assigned by architect.
@@ -345,89 +368,78 @@ jobs:
           - NEVER push to main. All implementations must be executed through branches and PRs.
           - Always reference the original issue number in your PR.
           - ALWAYS add a report to agent-report.md after completing your work.
-          PROMPT2
+          PROMPT
 
-          ISSUE_NUM=${{ steps.issue.outputs.ISSUE_NUMBER }}
-          TITLE=$(gh api repos/${{ github.repository }}/issues/$ISSUE_NUM --jq '.title' -q || echo "")
-          BODY=$(gh api repos/${{ github.repository }}/issues/$ISSUE_NUM --jq '.body' -q || echo "")
-          LABEL=$(gh api repos/${{ github.repository }}/issues/$ISSUE_NUM --jq '.labels[0].name' -q || echo "")
-
-          TITLE_ESCAPED=$(printf '%s' "$TITLE")
-          BODY_ESCAPED=$(printf '%s' "$BODY")
-
-          sed -i "s|ISSUE_NUMBER_PLACEHOLDER|${ISSUE_NUM}|" /tmp/specialist_prompt.txt
-          sed -i "s|__REPLACE_TITLE__|$TITLE_ESCAPED|" /tmp/specialist_prompt.txt
-          sed -i "s|__REPLACE_BODY__|$BODY_ESCAPED|" /tmp/specialist_prompt.txt
-          sed -i "s|__REPLACE_LABEL__|$LABEL|" /tmp/specialist_prompt.txt
-
-          echo "prompt<<EOF" >> $GITHUB_OUTPUT
-          cat /tmp/specialist_prompt.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "prompt<<EOF" >> "$GITHUB_OUTPUT"
+          cat /tmp/specialist_prompt.txt >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: Run ${{ matrix.specialist.display_name }}
+        if: ${{ steps.guard.outputs.run == 'true' }}
         id: run_specialist
         continue-on-error: true
         timeout-minutes: 20
         run: |
           set -euo pipefail
-          echo "Executing specialist for issue #${{ steps.issue.outputs.ISSUE_NUMBER }}"
+          echo "Executing specialist for issue #${ISSUE_NUMBER}"
           MAX_RETRIES=3
           RETRY_COUNT=0
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
             echo "Attempt $((RETRY_COUNT+1))"
             if opencode run "$(cat /tmp/specialist_prompt.txt)" --model iflowcn/glm-4.6 --share false; then
-              echo "success=true" >> $GITHUB_OUTPUT
+              echo "success=true" >> "$GITHUB_OUTPUT"
               break
             else
               RETRY_COUNT=$((RETRY_COUNT+1))
               if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
                 sleep 30
               else
-                echo "success=false" >> $GITHUB_OUTPUT
+                echo "success=false" >> "$GITHUB_OUTPUT"
                 exit 1
               fi
             fi
           done
 
       - name: Handle Execution Failure
-        if: steps.run_specialist.outcome == 'failure' || steps.run_specialist.outputs.success == 'false'
+        if: ${{ steps.guard.outputs.run == 'true' && (steps.run_specialist.outcome == 'failure' || steps.run_specialist.outputs.success == 'false') }}
         run: |
+          set -euo pipefail
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
           cat >> agent-report.md <<EOR
           ### [${{ matrix.specialist.display_name }}] Report - FAILED
           **Date:** $TIMESTAMP
-          **Issue:** #${{ steps.issue.outputs.ISSUE_NUMBER }}
-          **Label:** ${{ matrix.specialist.condition }}
-          
+          **Issue:** #${ISSUE_NUMBER}
+          **Label:** ${ISSUE_LABEL}
+
           #### Execution Status
           ❌ **FAILED** - Could not complete assigned task
-          
+
           #### Error Details
           - Specialist: ${{ matrix.specialist.display_name }}
-          - Issue Number: ${{ steps.issue.outputs.ISSUE_NUMBER }}
+          - Issue Number: ${ISSUE_NUMBER}
           - Attempts Made: 3 (with 30-second intervals)
           - Last Attempt: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          
+
           #### Next Steps Required
           - [ ] Manual review of the issue requirements
           - [ ] Check OpenCode API connectivity
           - [ ] Verify IFLOW_API_KEY configuration
           - [ ] Retry execution manually if needed
-          
+
           ---
           EOR
 
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add agent-report.md || true
-          git commit -m "Add failure report for ${{ matrix.specialist.name }} - Issue #${{ steps.issue.outputs.ISSUE_NUMBER }}" || true
+          git commit -m "Add failure report for ${{ matrix.specialist.name }} - Issue #${ISSUE_NUMBER}" || true
           git push || true
 
       - name: Log Completion
-        if: always()
+        if: ${{ steps.guard.outputs.run == 'true' && always() }}
         run: |
           if [[ "${{ steps.run_specialist.outputs.success }}" == "true" ]]; then
-            echo "✅ ${{ matrix.specialist.display_name }} execution completed successfully for #${{ steps.issue.outputs.ISSUE_NUMBER }}"
+            echo "✅ ${{ matrix.specialist.display_name }} execution completed successfully for #${ISSUE_NUMBER}"
           else
-            echo "❌ ${{ matrix.specialist.display_name }} execution failed for #${{ steps.issue.outputs.ISSUE_NUMBER }}"
+            echo "❌ ${{ matrix.specialist.display_name }} execution failed for #${ISSUE_NUMBER}"
           fi
