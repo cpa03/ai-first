@@ -51,6 +51,10 @@ jobs:
             4. Pastikan build berhasil
             5. Buat pr dengan deskripsi yang jelas dan komprehensif, jika ada gunakan template pr
             6. Baca agent-report.md, Buat catatan di agent-report.md sesuai format
+            Instruksi:
+            1. Gunakan github cli dengan GH_TOKEN
+            2. Jika gagal membuat pr karena permission error, maka ulangi langkah 1 dengan memilih issue yang berbeda
+            3. Belajar dari seluruh proses dan jangan ulangi kesalahan
           PROMPT
           )" \
             --model iflowcn/qwen3-coder-plus \
