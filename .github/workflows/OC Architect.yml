@@ -160,7 +160,7 @@ jobs:
             PROMPT
             )" \
             --model iflowcn/glm-4.6 \
-            --share false
+            --share false \
 
       - name: Handle Execution Failure
         if: ${{ steps.run_architect.outcome == 'failure' }}
