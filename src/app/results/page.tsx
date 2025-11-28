@@ -6,6 +6,7 @@ import { dbService, Idea, IdeaSession } from '@/lib/db';
 import { exportManager, exportUtils } from '@/lib/exports';
 import { clarifierAgent } from '@/lib/clarifier';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
+import ExportOptions from '@/components/ExportOptions';
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -13,8 +14,11 @@ export default function ResultsPage() {
   const [session, setSession] = useState<IdeaSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [exportLoading, setExportLoading] = useState(false);
-  const [exportUrl, setExportUrl] = useState<string | null>(null);
+  const [exportResult, setExportResult] = useState<{
+    success: boolean;
+    url?: string;
+    error?: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchResults = async () => {
@@ -52,48 +56,41 @@ export default function ResultsPage() {
     fetchResults();
   }, []);
 
-  const handleExport = async (format: 'markdown' | 'json') => {
-    if (!idea) return;
+  const handleExportComplete = (result: {
+    success: boolean;
+    url?: string;
+    error?: string;
+  }) => {
+    setExportResult(result);
 
-    setExportLoading(true);
-
-    try {
-      // Prepare data for export
-      const exportData = exportUtils.normalizeData(idea);
-
-      if (session && session.state.answers) {
-        exportData.metadata.goals = session.state.answers.main_goal || '';
-        exportData.metadata.target_audience =
-          session.state.answers.target_audience || '';
+    if (result.success && result.url) {
+      // For markdown and JSON, trigger download
+      if (result.url.startsWith('data:')) {
+        const link = document.createElement('a');
+        link.href = result.url;
+        const format = result.url.includes('markdown') ? 'md' : 'json';
+        link.download = `project-blueprint-${idea?.id}.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
-
-      // Export the data
-      const result = await exportManager.export({
-        type: format,
-        data: exportData,
-      });
-
-      if (result.success && result.url) {
-        setExportUrl(result.url);
-
-        // For markdown, we'll create a download link
-        if (format === 'markdown') {
-          const link = document.createElement('a');
-          link.href = result.url;
-          link.download = `project-blueprint-${idea.id}.md`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-        }
-      } else {
-        throw new Error(result.error || 'Export failed');
-      }
-    } catch (err) {
-      console.error('Export error:', err);
-      setError(err instanceof Error ? err.message : 'Export failed');
-    } finally {
-      setExportLoading(false);
+    } else if (result.error) {
+      setError(result.error);
     }
+  };
+
+  const getExportData = () => {
+    if (!idea) return null;
+
+    const exportData = exportUtils.normalizeData(idea);
+
+    if (session && session.state.answers) {
+      exportData.metadata.goals = session.state.answers.main_goal || '';
+      exportData.metadata.target_audience =
+        session.state.answers.target_audience || '';
+    }
+
+    return exportData;
   };
 
   if (loading) {
@@ -163,41 +160,31 @@ export default function ResultsPage() {
       />
 
       {/* Export Options */}
-      <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          Export Your Blueprint
-        </h2>
+      <ExportOptions
+        data={getExportData()}
+        onExportComplete={handleExportComplete}
+      />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            onClick={() => handleExport('markdown')}
-            disabled={exportLoading}
-            className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+      {/* Export Result Messages */}
+      {exportResult && (
+        <div
+          className={`mt-6 p-4 rounded-lg ${
+            exportResult.success
+              ? 'bg-green-50 border border-green-200'
+              : 'bg-red-50 border border-red-200'
+          }`}
+        >
+          <p
+            className={exportResult.success ? 'text-green-800' : 'text-red-800'}
           >
-            {exportLoading ? 'Exporting...' : 'Download Markdown'}
-          </button>
-
-          <button
-            onClick={() => handleExport('json')}
-            disabled={exportLoading}
-            className="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {exportLoading ? 'Exporting...' : 'Export JSON'}
-          </button>
-
-          <button className="btn btn-outline" disabled>
-            Export to Notion
-          </button>
+            {exportResult.success
+              ? exportResult.url && !exportResult.url.startsWith('data:')
+                ? `Export successful! View your project at: ${exportResult.url}`
+                : 'Export successful! The file should download automatically.'
+              : exportResult.error}
+          </p>
         </div>
-
-        {exportUrl && (
-          <div className="mt-6 p-4 bg-green-50 rounded-lg">
-            <p className="text-green-800">
-              Export successful! The file should download automatically.
-            </p>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 }
