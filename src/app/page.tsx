@@ -1,15 +1,22 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import IdeaInput from '@/components/IdeaInput';
 
 export default function HomePage() {
+  const router = useRouter();
   const [idea, setIdea] = useState('');
+  const [ideaId, setIdeaId] = useState('');
 
-  const handleIdeaSubmit = (submittedIdea: string) => {
+  const handleIdeaSubmit = (submittedIdea: string, submittedIdeaId: string) => {
     setIdea(submittedIdea);
-    // In a real app, this would navigate to the clarification page
-    // For now, we'll just update state
+    setIdeaId(submittedIdeaId);
+
+    // Navigate to the clarification page with the idea and ideaId
+    router.push(
+      `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`
+    );
   };
 
   return (
@@ -36,7 +43,7 @@ export default function HomePage() {
           </h3>
           <p className="text-blue-800">{idea}</p>
           <p className="text-sm text-blue-600 mt-4">
-            Ready to clarify? This would navigate to the clarification step.
+            Saved with ID: {ideaId}. Redirecting to clarification...
           </p>
         </div>
       )}
