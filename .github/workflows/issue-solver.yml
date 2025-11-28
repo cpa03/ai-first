@@ -59,4 +59,3 @@ jobs:
           )" \
             --model iflowcn/qwen3-coder-plus \
             --share false \
-            --token ${{ secrets.GH_TOKEN }} \
