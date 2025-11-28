@@ -157,8 +157,8 @@ jobs:
             - JSON must be the final output with no trailing text.
             - Be decisive. This project depends entirely on you.
             - You are responsible for IdeaFlow’s ongoing evolution and success.
-            PROMPT
-            )" \
+          PROMPT
+          )" \
             --model iflowcn/glm-4.6 \
             --share false \
 
