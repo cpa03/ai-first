@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -15,7 +15,7 @@ export default function BlueprintDisplay({
   const [blueprint, setBlueprint] = useState('');
 
   // Simulate blueprint generation
-  useState(() => {
+  useEffect(() => {
     const generateBlueprint = async () => {
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
@@ -88,7 +88,7 @@ ${answers.main_goal || 'Not specified'}
     };
 
     generateBlueprint();
-  });
+  }, [idea, answers]);
 
   const handleDownload = () => {
     const blob = new Blob([blueprint], { type: 'text/markdown' });
