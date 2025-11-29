@@ -1,0 +1,148 @@
+name: 'Breakdown Engine'
+description: 'AI-powered engine for breaking down clarified ideas into structured deliverables and tasks'
+model: 'gpt-4'
+temperature: 0.3
+max_tokens: 4000
+estimation_model: 'gpt-3.5-turbo'
+dependency_threshold: 0.7
+
+# Prompt templates for different breakdown phases
+prompts:
+  idea_analysis: |
+    You are an expert project analyst and systems architect. Analyze the following clarified idea and extract key components.
+
+    Consider the user's responses to clarifying questions to understand context, constraints, and requirements.
+
+    Provide a comprehensive analysis including:
+    1. Main objectives (3-5 specific, measurable goals)
+    2. Key deliverables (5-10 concrete outputs)  
+    3. Technical complexity assessment (1-10 scale with factors)
+    4. Estimated scope (size and duration)
+    5. Risk factors with impact and probability
+    6. Success criteria (measurable outcomes)
+
+    For each item, include a confidence score (0-1) indicating certainty.
+
+    Be specific, realistic, and consider typical project constraints.
+
+  task_decomposition: |
+    You are an expert project manager with experience in agile and waterfall methodologies.
+
+    Break down the deliverable into specific, actionable tasks that can be completed by a single person or small team.
+
+    Each task should:
+    - Start with a strong action verb (Design, Develop, Test, Implement, etc.)
+    - Be specific and measurable
+    - Have a clear definition of done
+    - Estimate between 1-40 hours
+    - Identify required skills and expertise
+    - Note logical dependencies on other tasks
+
+    Consider the project complexity and team size when determining task granularity.
+
+  dependency_analysis: |
+    You are a project scheduling expert specializing in dependency management and critical path analysis.
+
+    Analyze the task list and identify:
+    1. Finish-to-start dependencies (most common)
+    2. Start-to-start dependencies (parallel work)
+    3. Any circular dependencies that need resolution
+    4. Critical path items that determine project duration
+    5. Opportunities for parallel execution
+
+    Consider technical dependencies, resource constraints, and logical workflow.
+
+  estimation: |
+    You are an experienced project estimator using multiple estimation techniques.
+
+    Provide three-point estimates for each task:
+    - Optimistic: Best case scenario (10% probability)
+    - Most likely: Normal case (60% probability)  
+    - Pessimistic: Worst case scenario (10% probability)
+
+    Consider:
+    - Task complexity and uncertainty
+    - Team experience and skill level
+    - Historical data from similar projects
+    - Risk factors and external dependencies
+    - Communication overhead
+    - Testing and validation time
+
+    Use PERT formula: (Optimistic + 4 × Most Likely + Pessimistic) ÷ 6
+
+# Breakdown patterns and templates
+patterns:
+  software_development:
+    phases: ['Discovery', 'Design', 'Development', 'Testing', 'Deployment']
+    typical_deliverables:
+      ['Requirements', 'Architecture', 'Code', 'Tests', 'Documentation']
+    task_complexity_factors:
+      ['technical_complexity', 'team_size', 'integration_points']
+
+  marketing_campaign:
+    phases: ['Research', 'Strategy', 'Content Creation', 'Launch', 'Analysis']
+    typical_deliverables:
+      [
+        'Research Report',
+        'Strategy Document',
+        'Creative Assets',
+        'Campaign Results',
+      ]
+    task_complexity_factors:
+      ['channel_complexity', 'content_volume', 'target_audience_size']
+
+  product_launch:
+    phases:
+      [
+        'Market Research',
+        'Product Development',
+        'Marketing',
+        'Sales Prep',
+        'Launch',
+      ]
+    typical_deliverables:
+      [
+        'Market Analysis',
+        'Product MVP',
+        'Marketing Materials',
+        'Sales Training',
+      ]
+    task_complexity_factors:
+      ['product_complexity', 'market_competition', 'sales_channels']
+
+# Risk assessment matrix
+risk_matrix:
+  probability_levels:
+    very_low: 0.1
+    low: 0.3
+    medium: 0.5
+    high: 0.7
+    very_high: 0.9
+
+  impact_levels:
+    very_low: 1
+    low: 2
+    medium: 3
+    high: 4
+    very_high: 5
+
+# Priority scoring weights
+priority_weights:
+  business_value: 0.4
+  urgency: 0.2
+  effort: 0.2
+  dependencies: 0.1
+  risk: 0.1
+
+# Estimation parameters
+estimation:
+  default_team_velocity: 40 # hours per week per person
+  buffer_percentage: 0.2 # 20% buffer for uncertainty
+  max_task_hours: 40 # maximum hours for a single task
+  min_task_hours: 1 # minimum hours for a single task
+
+# Confidence thresholds
+confidence_thresholds:
+  high: 0.8
+  medium: 0.6
+  low: 0.4
