@@ -160,20 +160,6 @@ export default function ClarificationFlow({
     );
   }
 
-  if (error) {
-    return (
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-red-900 mb-2">Error</h3>
-          <p className="text-red-800">{error}</p>
-          <p className="text-sm text-red-600 mt-4">
-            We're using fallback questions to continue.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   if (questions.length === 0) {
     return (
       <div className="max-w-2xl mx-auto">
@@ -196,6 +182,19 @@ export default function ClarificationFlow({
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Error Alert */}
+      {error && (
+        <div className="mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-red-900 mb-2">Error</h3>
+            <p className="text-red-800">{error}</p>
+            <p className="text-sm text-red-600 mt-4">
+              We're using fallback questions to continue.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Progress Bar */}
       <div className="mb-8">
         <div className="flex justify-between items-center mb-2">
