@@ -198,12 +198,15 @@ export class NotionExporter extends ExportConnector {
     data: any,
     options?: Record<string, any>
   ): Promise<ExportResult> {
-    try {
-      const apiKey = process.env.NOTION_API_KEY;
-      if (!apiKey) {
-        throw new Error('Notion API key is required');
-      }
+    const apiKey = process.env.NOTION_API_KEY;
+    if (!apiKey) {
+      return {
+        success: false,
+        error: 'Notion API key is required',
+      };
+    }
 
+    try {
       const { Client } = await import('@notionhq/client');
 
       if (!this.client) {
@@ -454,15 +457,18 @@ export class TrelloExporter extends ExportConnector {
     data: any,
     options?: Record<string, any>
   ): Promise<ExportResult> {
+    const { idea, deliverables = [], tasks = [] } = data;
+    const apiKey = process.env.TRELLO_API_KEY;
+    const token = process.env.TRELLO_TOKEN;
+
+    if (!apiKey || !token) {
+      return {
+        success: false,
+        error: 'Trello API key and token are required',
+      };
+    }
+
     try {
-      const { idea, deliverables = [], tasks = [] } = data;
-      const apiKey = process.env.TRELLO_API_KEY;
-      const token = process.env.TRELLO_TOKEN;
-
-      if (!apiKey || !token) {
-        throw new Error('Trello API key and token are required');
-      }
-
       // Create a new board
       const boardData = await this.createBoard(idea.title, apiKey, token);
       const boardId = boardData.id;
@@ -799,13 +805,16 @@ export class GitHubProjectsExporter extends ExportConnector {
     data: any,
     options?: Record<string, any>
   ): Promise<ExportResult> {
+    const token = process.env.GITHUB_TOKEN;
+    if (!token) {
+      return {
+        success: false,
+        error: 'GitHub token is required',
+      };
+    }
+
     try {
       const { idea, deliverables = [], tasks = [] } = data;
-      const token = process.env.GITHUB_TOKEN;
-
-      if (!token) {
-        throw new Error('GitHub token is required');
-      }
 
       // Get authenticated user
       const user = await this.getAuthenticatedUser(token);
