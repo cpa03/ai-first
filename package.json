@@ -4,11 +4,17 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:check": "npm run env:check && npm run dev",
     "build": "next build",
+    "build:check": "npm run env:check && npm run build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "env:check": "bash scripts/validate-env.sh",
+    "db:migrate": "supabase db push",
+    "db:reset": "supabase db reset"
   },
   "dependencies": {
     "@eslint/eslintrc": "^3.3.1",
