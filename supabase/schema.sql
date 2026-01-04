@@ -88,3 +88,132 @@ CREATE POLICY "Users can update their own ideas" ON ideas
 
 CREATE POLICY "Users can delete their own ideas" ON ideas
     FOR DELETE USING (auth.uid() = user_id OR auth.role() = 'service_role');
+
+-- Idea sessions policies
+CREATE POLICY "Users can view their own idea sessions" ON idea_sessions
+    FOR SELECT USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create their own idea sessions" ON idea_sessions
+    FOR INSERT WITH CHECK (
+        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update their own idea sessions" ON idea_sessions
+    FOR UPDATE USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete their own idea sessions" ON idea_sessions
+    FOR DELETE USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+-- Deliverables policies
+CREATE POLICY "Users can view their own deliverables" ON deliverables
+    FOR SELECT USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create their own deliverables" ON deliverables
+    FOR INSERT WITH CHECK (
+        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update their own deliverables" ON deliverables
+    FOR UPDATE USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete their own deliverables" ON deliverables
+    FOR DELETE USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+-- Tasks policies
+CREATE POLICY "Users can view their own tasks" ON tasks
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM deliverables d
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create their own tasks" ON tasks
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM deliverables d
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update their own tasks" ON tasks
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM deliverables d
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete their own tasks" ON tasks
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM deliverables d
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
+-- Vectors policies
+CREATE POLICY "Users can view their own vectors" ON vectors
+    FOR SELECT USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create their own vectors" ON vectors
+    FOR INSERT WITH CHECK (
+        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update their own vectors" ON vectors
+    FOR UPDATE USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete their own vectors" ON vectors
+    FOR DELETE USING (
+        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+-- Agent logs policies (restricted to service role only for security)
+CREATE POLICY "Only service role can view agent logs" ON agent_logs
+    FOR SELECT USING (auth.role() = 'service_role');
+
+CREATE POLICY "Only service role can create agent logs" ON agent_logs
+    FOR INSERT WITH CHECK (auth.role() = 'service_role');
+
+CREATE POLICY "Only service role can update agent logs" ON agent_logs
+    FOR UPDATE USING (auth.role() = 'service_role');
+
+CREATE POLICY "Only service role can delete agent logs" ON agent_logs
+    FOR DELETE USING (auth.role() = 'service_role');
