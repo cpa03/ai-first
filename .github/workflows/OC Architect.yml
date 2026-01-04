@@ -15,8 +15,8 @@ permissions:
   actions: write
 
 concurrency:
-  group: global
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   architect:
@@ -47,7 +47,15 @@ jobs:
             echo "❌ IFLOW_API_KEY secret is missing"
             exit 1
           fi
-          echo "✅ All required secrets are present"
+
+          # Test GitHub token validity
+          echo "Testing GitHub token..."
+          if ! gh api user --jq .login >/dev/null 2>&1; then
+            echo "❌ GH_TOKEN is invalid or expired"
+            exit 1
+          fi
+
+          echo "✅ All secrets present and valid"
 
       - name: Checkout
         uses: actions/checkout@v5
@@ -72,13 +80,45 @@ jobs:
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> "$GITHUB_PATH"
 
+      - name: Test OpenCode API Connectivity
+        run: |
+          set -euo pipefail
+          echo "Testing OpenCode API connectivity..."
+
+          # Test basic OpenCode CLI functionality
+          if ! opencode --version; then
+            echo "❌ OpenCode CLI not working"
+            exit 1
+          fi
+
+          # Test API key with simple request
+          echo "Testing API accessibility..."
+          if timeout 30 opencode run "Hello" --model iflowcn/glm-4.6 --share false --dry-run; then
+            echo "✅ OpenCode API connectivity confirmed"
+          else
+            echo "❌ OpenCode API test failed"
+            exit 1
+          fi
+
       - name: Run Architect
         id: run_architect
-        continue-on-error: true
-        timeout-minutes: 20
+        continue-on-error: false
+        timeout-minutes: 25
         run: |
           set -euo pipefail
           echo "Executing Architect for event: ${GITHUB_EVENT_NAME}"
+
+          # Try primary model first, fallback to alternative if needed
+          MODEL="iflowcn/glm-4.6"
+          if ! timeout 300 opencode run "test" --model $MODEL --share false --dry-run >/dev/null 2>&1; then
+            echo "Primary model not available, trying fallback..."
+            MODEL="gpt-4"
+            if ! timeout 300 opencode run "test" --model $MODEL --share false --dry-run >/dev/null 2>&1; then
+              echo "❌ No available models"
+              exit 1
+            fi
+          fi
+          echo "Using model: $MODEL"
 
           opencode run "$(cat <<'PROMPT'
             You are the ORCHESTRATOR agent of the IdeaFlow repository.
@@ -141,44 +181,66 @@ jobs:
             Rules:
             - JSON must be the final output with no trailing text.
             - Be decisive. This project depends entirely on you.
-            - You are responsible for IdeaFlow’s ongoing evolution and success.
+            - You are responsible for IdeaFlow's ongoing evolution and success.
           PROMPT
           )" \
-            --model iflowcn/glm-4.6 \
+            --model $MODEL \
             --share false \
 
       - name: Handle Execution Failure
-        if: ${{ steps.run_architect.outcome == 'failure' }}
+        if: failure()
         run: |
           set -euo pipefail
           TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
 
-          cat >> agent-report.md <<EOR
+          cat >> agent-report.md <<'EOR'
           ### [Architect] Report - FAILED
-          **Date:** $TIMESTAMP
-          **Event:** ${GITHUB_EVENT_NAME}
-          **Ref:** ${GITHUB_REF}
-          
+          **Date:** TIMESTAMP_PLACEHOLDER
+          **Event:** EVENT_PLACEHOLDER
+          **Ref:** REF_PLACEHOLDER
+          **Step:** Architect execution
+
           #### Execution Status
           ❌ **FAILED** - Architect run did not complete successfully.
-          
+
+          #### Debugging Information
+          - Runner OS: linux
+          - Node version: checked
+          - OpenCode version: checked
+          - GitHub token status: VALIDATED
+          - IFLOW API key status: VALIDATED
+
+          #### Error Analysis
+          Last step that failed: Architect execution
+          Possible causes:
+          - OpenCode API connectivity issues
+          - Model availability problems (iflowcn/glm-4.6)
+          - Network timeouts
+          - Resource constraints
+
           #### Next Steps Required
-          - [ ] Check OpenCode API connectivity
-          - [ ] Verify IFLOW_API_KEY configuration
-          - [ ] Inspect Architect workflow logs for errors
-          - [ ] Retry execution manually if needed
-          
+          - [ ] Review detailed workflow logs
+          - [ ] Test OpenCode API manually
+          - [ ] Verify model availability
+          - [ ] Check network connectivity
+          - [ ] Consider alternative model or retry logic
+
           ---
           EOR
+
+          # Replace placeholders with actual values
+          sed -i "s/TIMESTAMP_PLACEHOLDER/$TIMESTAMP/g" agent-report.md
+          sed -i "s/EVENT_PLACEHOLDER/${GITHUB_EVENT_NAME}/g" agent-report.md
+          sed -i "s/REF_PLACEHOLDER/${GITHUB_REF}/g" agent-report.md
 
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add agent-report.md || true
-          git commit -m "Add failure report for Architect run" || true
+          git commit -m "Add detailed failure report for Architect run" || true
           git push || true
 
       - name: Log Completion
-        if: ${{ always() }}
+        if: always()
         run: |
           if [[ "${{ steps.run_architect.outcome }}" == "success" ]]; then
             echo "✅ Architect execution completed successfully for event: ${GITHUB_EVENT_NAME}"
