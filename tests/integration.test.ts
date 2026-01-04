@@ -233,7 +233,7 @@ describe('Integration Tests', () => {
     it('should handle export connector failures', async () => {
       // Test with non-existent connector
       const result = await exportManager.export({
-        type: 'non-existent',
+        type: 'non-existent' as any,
         data: {},
       });
 
@@ -303,7 +303,10 @@ describe('Integration Tests', () => {
           title: `Task ${i}`,
           description: `Description for task ${i}`,
           assignee: `User ${i % 10}`,
-          status: ['todo', 'in_progress', 'completed'][i % 3] as const,
+          status: ['todo', 'in_progress', 'completed'][i % 3] as
+            | 'todo'
+            | 'in_progress'
+            | 'completed',
           estimate: (i % 4) + 1,
         })),
       };
