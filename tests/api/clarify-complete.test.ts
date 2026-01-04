@@ -1,9 +1,9 @@
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/complete/route';
-import { clarifierAgent } from '@/lib/clarifier';
+import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
 
 // Mock the dependencies
-jest.mock('@/lib/clarifier');
+jest.mock('@/lib/agents/clarifier');
 
 const mockClarifierAgent = clarifierAgent as jest.Mocked<typeof clarifierAgent>;
 
@@ -14,10 +14,23 @@ describe('/api/clarify/complete', () => {
 
   describe('POST', () => {
     it('should complete clarification successfully', async () => {
-      const mockResult = {
-        refinedIdea: 'Refined idea description based on answers',
-        status: 'completed' as const,
+      const mockResult: ClarificationSession & { refinedIdea: string } = {
+        ideaId: 'idea-123',
+        originalIdea: 'Test idea',
+        questions: [
+          {
+            id: 'q1',
+            question: 'What is your target audience?',
+            type: 'open' as const,
+            required: true,
+          },
+        ],
+        answers: { q1: 'Developers' },
         confidence: 0.9,
+        status: 'completed' as const,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        refinedIdea: 'Refined idea description based on answers',
       };
 
       mockClarifierAgent.completeClarification.mockResolvedValue(mockResult);
@@ -160,10 +173,23 @@ describe('/api/clarify/complete', () => {
     });
 
     it('should include proper content-type headers', async () => {
-      const mockResult = {
-        refinedIdea: 'Refined idea',
-        status: 'completed' as const,
+      const mockResult: ClarificationSession & { refinedIdea: string } = {
+        ideaId: 'idea-123',
+        originalIdea: 'Test idea',
+        questions: [
+          {
+            id: 'q1',
+            question: 'What is your target audience?',
+            type: 'open' as const,
+            required: true,
+          },
+        ],
+        answers: { q1: 'Developers' },
         confidence: 0.9,
+        status: 'completed' as const,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        refinedIdea: 'Refined idea',
       };
 
       mockClarifierAgent.completeClarification.mockResolvedValue(mockResult);

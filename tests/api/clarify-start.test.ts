@@ -1,10 +1,10 @@
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/start/route';
-import { clarifierAgent } from '@/lib/clarifier';
+import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
 
 // Mock the dependencies
-jest.mock('@/lib/clarifier');
+jest.mock('@/lib/agents/clarifier');
 jest.mock('@/lib/db');
 
 const mockClarifierAgent = clarifierAgent as jest.Mocked<typeof clarifierAgent>;
@@ -17,14 +17,14 @@ describe('/api/clarify/start', () => {
 
   describe('POST', () => {
     it('should start clarification session successfully', async () => {
-      const mockSession = {
+      const mockSession: ClarificationSession = {
         ideaId: 'idea-123',
         originalIdea: 'Test idea',
         questions: [
           {
             id: 'q1',
             question: 'What is your target audience?',
-            type: 'open',
+            type: 'open' as const,
             required: true,
           },
         ],

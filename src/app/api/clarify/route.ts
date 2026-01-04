@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { clarifierAgent } from '@/lib/clarifier';
+import { clarifierAgent } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
@@ -13,32 +13,25 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Generate clarifying questions using the clarifier agent
-    const response = await clarifierAgent.generateClarifyingQuestions(idea);
+    // Generate ideaId if not provided
+    const finalIdeaId =
+      ideaId || `idea_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    // If ideaId is provided, store the questions in the session
-    if (ideaId) {
-      const sessionData = {
-        idea_id: ideaId,
-        state: {
-          questions: response.questions,
-          status: 'clarifying',
-        },
-        last_agent: 'clarifier',
-        metadata: {
-          agent: 'clarifier',
-          timestamp: new Date().toISOString(),
-          question_count: response.questions.length,
-        },
-      };
+    // Start clarification session using the clarifier agent
+    const session = await clarifierAgent.startClarification(finalIdeaId, idea);
 
-      await dbService.upsertIdeaSession(sessionData);
-    }
-
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({
+        questions: session.questions,
+        ideaId: session.ideaId,
+        status: session.status,
+        confidence: session.confidence,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }
+    );
   } catch (error) {
     console.error('Error in clarify API:', error);
     return new Response(
