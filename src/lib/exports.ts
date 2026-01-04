@@ -79,7 +79,7 @@ export class JSONExporter extends ExportConnector {
     throw new Error('JSON export does not require authentication');
   }
 
-  async handleAuthCallback(code: string): Promise<void> {
+  async handleAuthCallback(_code: string): Promise<void> {
     throw new Error('JSON export does not require authentication');
   }
 
@@ -129,7 +129,7 @@ export class MarkdownExporter extends ExportConnector {
     throw new Error('Markdown export does not require authentication');
   }
 
-  async handleAuthCallback(code: string): Promise<void> {
+  async handleAuthCallback(_code: string): Promise<void> {
     throw new Error('Markdown export does not require authentication');
   }
 
@@ -353,7 +353,7 @@ export class NotionExporter extends ExportConnector {
         },
       });
 
-      deliverables.forEach((deliverable, index) => {
+      deliverables.forEach((deliverable) => {
         blocks.push({
           object: 'block',
           type: 'bulleted_list_item',

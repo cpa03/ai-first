@@ -437,10 +437,7 @@ export class DatabaseService {
     try {
       if (!this.client) throw new Error('Supabase client not initialized');
 
-      const { data, error } = await this.client
-        .from('ideas')
-        .select('id')
-        .limit(1);
+      const { error } = await this.client.from('ideas').select('id').limit(1);
 
       if (error) throw error;
 
@@ -448,7 +445,7 @@ export class DatabaseService {
         status: 'healthy',
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch {
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
