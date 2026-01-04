@@ -12,6 +12,12 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
+    "test:ci": "jest --coverage --ci --watchAll=false --passWithNoTests",
+    "test:unit": "jest --testPathPattern='tests/(backend-comprehensive|frontend-comprehensive)'",
+    "test:integration": "jest --testPathPattern='tests/integration-comprehensive'",
+    "test:e2e": "jest --testPathPattern='tests/e2e-comprehensive'",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "env:check": "bash scripts/validate-env.sh",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset"
@@ -34,6 +40,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
     "@types/react": "^18",

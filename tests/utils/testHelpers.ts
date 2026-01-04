@@ -1,0 +1,183 @@
+/**
+ * Mock utilities for consistent test environment setup
+ */
+
+// Enhanced environment variable mocking
+export const mockEnvVars = {
+  OPENAI_API_KEY: 'test-openai-key',
+  NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+  SUPABASE_SERVICE_ROLE_KEY: 'test-service-key',
+  NOTION_API_KEY: 'test-notion-key',
+  TRELLO_API_KEY: 'test-trello-key',
+  TRELLO_TOKEN: 'test-trello-token',
+  GITHUB_TOKEN: 'test-github-token',
+  GOOGLE_CLIENT_ID: 'test-google-client-id',
+  GOOGLE_CLIENT_SECRET: 'test-google-client-secret',
+};
+
+// Mock Supabase client
+export const createMockSupabaseClient = () => ({
+  from: jest.fn(() => ({
+    insert: jest.fn().mockResolvedValue({
+      data: [{ id: 'test-id', created_at: new Date().toISOString() }],
+      error: null,
+    }),
+    select: jest.fn(() => ({
+      eq: jest.fn(() => ({
+        single: jest.fn().mockResolvedValue({
+          data: { id: 'test-id', content: 'test-content' },
+          error: null,
+        }),
+        data: [{ id: 'test-id', content: 'test-content' }],
+        error: null,
+      })),
+      order: jest.fn(() => ({
+        data: [],
+        error: null,
+      })),
+    })),
+    update: jest.fn(() => ({
+      eq: jest.fn().mockResolvedValue({
+        data: { id: 'test-id', updated: true },
+        error: null,
+      }),
+    })),
+    delete: jest.fn(() => ({
+      eq: jest.fn().mockResolvedValue({
+        data: null,
+        error: null,
+      }),
+    })),
+  })),
+  auth: {
+    getUser: jest.fn().mockResolvedValue({
+      data: { user: { id: 'test-user-id' } },
+      error: null,
+    }),
+  },
+});
+
+// Mock OpenAI responses
+export const mockOpenAIResponses = {
+  clarificationQuestions: [
+    {
+      id: '1',
+      question: 'What is the primary goal of this project?',
+      type: 'text',
+      required: true,
+    },
+    {
+      id: '2',
+      question: 'Who is the target audience?',
+      type: 'text',
+      required: true,
+    },
+  ],
+  refinedIdea: 'This is a refined idea based on user answers',
+  breakdownBlueprint: {
+    title: 'Test Project',
+    description: 'Test Description',
+    phases: [
+      {
+        name: 'Phase 1',
+        tasks: [
+          {
+            title: 'Task 1',
+            description: 'Description 1',
+            estimated: '2 days',
+          },
+        ],
+      },
+    ],
+  },
+};
+
+// Mock API responses
+export const mockAPIResponses = {
+  success: { success: true, data: 'test-data' },
+  error: { success: false, error: 'Test error message' },
+  networkError: new Error('Network error'),
+  unauthorized: { success: false, error: 'Unauthorized' },
+};
+
+// Mock export results
+export const mockExportResults = {
+  markdown: {
+    success: true,
+    url: 'https://example.com/export.md',
+    content: '# Test Project\n\nTest content',
+  },
+  notion: {
+    success: true,
+    url: 'https://notion.so/test-page',
+    notionPageId: 'test-page-id',
+  },
+  trello: {
+    success: true,
+    url: 'https://trello.com/b/test-board',
+    boardId: 'test-board-id',
+  },
+  github: {
+    success: true,
+    url: 'https://github.com/test/repo/projects/1',
+    projectId: 1,
+  },
+};
+
+// Mock user journey data
+export const mockUserJourney = {
+  ideaInput: 'I want to build a habit tracking app',
+  questions: mockOpenAIResponses.clarificationQuestions,
+  answers: {
+    '1': 'To help people build better habits',
+    '2': 'People looking to improve their daily routines',
+  },
+  refinedIdea: mockOpenAIResponses.refinedIdea,
+  blueprint: mockOpenAIResponses.breakdownBlueprint,
+  exports: mockExportResults,
+};
+
+// Helper function to wait for async operations
+export const waitForAsync = (ms = 100) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+// Helper to create mock fetch responses
+export const createMockFetch = (response, options = {}) => {
+  const { status = 200, ok = true, delay = 0 } = options;
+
+  return jest.fn().mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            ok,
+            status,
+            json: async () => response,
+            text: async () => JSON.stringify(response),
+          });
+        }, delay);
+      })
+  );
+};
+
+// Helper to mock console methods
+export const mockConsole = () => {
+  const originalConsole = { ...console };
+  const mockConsole = {
+    log: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+  };
+
+  beforeEach(() => {
+    Object.assign(console, mockConsole);
+  });
+
+  afterEach(() => {
+    Object.assign(console, originalConsole);
+  });
+
+  return mockConsole;
+};
