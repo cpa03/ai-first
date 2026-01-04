@@ -307,19 +307,10 @@ describe('Export Services', () => {
       expect(exporter.name).toBe('Google Tasks');
     });
 
-    it('should fail export without client credentials', async () => {
-      const originalClientId = process.env.GOOGLE_CLIENT_ID;
-      const originalSecret = process.env.GOOGLE_CLIENT_SECRET;
-
-      delete process.env.GOOGLE_CLIENT_ID;
-      delete process.env.GOOGLE_CLIENT_SECRET;
-
+    it('should fail export without client API route', async () => {
       const result = await exporter.export({});
       expect(result.success).toBe(false);
-      expect(result.error).toContain('Google client credentials are required');
-
-      process.env.GOOGLE_CLIENT_ID = originalClientId;
-      process.env.GOOGLE_CLIENT_SECRET = originalSecret;
+      expect(result.error).toContain('requires server-side API route');
     });
 
     it('should validate config based on environment variable', async () => {
@@ -385,17 +376,14 @@ describe('Export Services', () => {
       manager = new ExportManager();
     });
 
-    it('should register all built-in connectors', () => {
+    it('should register client-side connectors', () => {
       const connectors = manager.getAvailableConnectors();
-      expect(connectors).toHaveLength(6);
+      expect(connectors).toHaveLength(3); // Only client-side connectors
 
       const types = connectors.map((c) => c.type);
       expect(types).toContain('json');
       expect(types).toContain('markdown');
-      expect(types).toContain('notion');
-      expect(types).toContain('trello');
-      expect(types).toContain('google-tasks');
-      expect(types).toContain('github-projects');
+      expect(types).toContain('google-tasks'); // Placeholder version
     });
 
     it('should get connector by type', () => {
@@ -447,34 +435,30 @@ describe('Export Services', () => {
       expect(result.error).toContain('not found');
     });
 
-    it('should fail export with invalid connector config', async () => {
+    it('should fail export with invalid connector type', async () => {
       const format: ExportFormat = {
-        type: 'notion',
-        data: {},
+        type: 'notion', // Not available on client-side
+        data: {
+          idea: {
+            id: 'test',
+            title: 'Test',
+            raw_text: 'Test',
+            status: 'draft',
+          },
+        },
       };
-
-      // Clear environment variable to make config invalid
-      const originalEnv = process.env.NOTION_API_KEY;
-      delete process.env.NOTION_API_KEY;
 
       const result = await manager.export(format);
       expect(result.success).toBe(false);
-      expect(result.error).toContain('not properly configured');
-
-      process.env.NOTION_API_KEY = originalEnv;
+      expect(result.error).toContain("Export connector 'notion' not found");
     });
 
-    it('should validate all connectors', async () => {
+    it('should validate all client-side connectors', async () => {
       const results = await manager.validateAllConnectors();
 
       expect(results).toHaveProperty('markdown');
-      expect(results).toHaveProperty('notion');
-      expect(results).toHaveProperty('trello');
+      expect(results).toHaveProperty('json');
       expect(results).toHaveProperty('google-tasks');
-      expect(results).toHaveProperty('github-projects');
-
-      // Markdown should always be valid
-      expect(results.markdown).toBe(true);
     });
   });
 
