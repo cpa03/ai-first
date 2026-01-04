@@ -298,6 +298,6 @@ class AIService {
 // Singleton instance
 export const aiService = new AIService();
 
-// Export types and utilities
-export type { AIService };
+// Export the class and utilities
+export { AIService };
 export { createClient };

@@ -6,10 +6,17 @@
 import 'openai/shims/node';
 
 // Mock external dependencies
-jest.mock('@/lib/db');
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(),
+}));
 
-import AIService from '@/lib/ai';
-import DatabaseService from '@/lib/db';
+jest.mock('openai', () => {
+  return jest.fn();
+});
+
+import { AIService, aiService } from '@/lib/ai';
+import { createClient } from '@supabase/supabase-js';
+import OpenAI from 'openai';
 import { ExportService } from '@/lib/exports';
 import ClarifierAgent from '@/lib/agents/clarifier';
 import {
@@ -23,6 +30,12 @@ import {
 
 // Mock environment variables
 Object.assign(process.env, mockEnvVars);
+
+// Get mocked constructors
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
+const mockOpenAIConstructor = OpenAI as jest.MockedClass<typeof OpenAI>;
 
 describe('Backend Service Tests', () => {
   let mockSupabase: any;
@@ -39,8 +52,11 @@ describe('Backend Service Tests', () => {
       },
     };
 
-    // Mock DatabaseService constructor
-    (DatabaseService as jest.Mock).mockImplementation(() => mockSupabase);
+    // Mock createClient function
+    mockCreateClient.mockReturnValue(mockSupabase);
+
+    // Mock OpenAI constructor
+    mockOpenAIConstructor.mockImplementation(() => mockOpenAI);
   });
 
   describe('AIService', () => {
@@ -56,12 +72,28 @@ describe('Backend Service Tests', () => {
       mockOpenAI.chat.completions.create.mockResolvedValue(mockResponse);
 
       const aiService = new AIService();
-      const result = await aiService.createCompletion('test prompt');
+      await aiService.initialize({
+        provider: 'openai',
+        model: 'gpt-3.5-turbo',
+        maxTokens: 1000,
+        temperature: 0.7,
+      });
+      const result = await aiService.callModel(
+        [{ role: 'user', content: 'test prompt' }],
+        {
+          provider: 'openai',
+          model: 'gpt-3.5-turbo',
+          maxTokens: 1000,
+          temperature: 0.7,
+        }
+      );
 
       expect(result).toBe('Test response');
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith({
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: 'test prompt' }],
+        max_tokens: 1000,
+        temperature: 0.7,
       });
     });
 
@@ -71,10 +103,21 @@ describe('Backend Service Tests', () => {
       );
 
       const aiService = new AIService();
+      await aiService.initialize({
+        provider: 'openai',
+        model: 'gpt-3.5-turbo',
+        maxTokens: 1000,
+        temperature: 0.7,
+      });
 
-      await expect(aiService.createCompletion('test prompt')).rejects.toThrow(
-        'API Error'
-      );
+      await expect(
+        aiService.callModel([{ role: 'user', content: 'test prompt' }], {
+          provider: 'openai',
+          model: 'gpt-3.5-turbo',
+          maxTokens: 1000,
+          temperature: 0.7,
+        })
+      ).rejects.toThrow('API Error');
     });
 
     it('should retry on failure', async () => {
@@ -85,7 +128,21 @@ describe('Backend Service Tests', () => {
         });
 
       const aiService = new AIService();
-      const result = await aiService.createCompletion('test prompt');
+      await aiService.initialize({
+        provider: 'openai',
+        model: 'gpt-3.5-turbo',
+        maxTokens: 1000,
+        temperature: 0.7,
+      });
+      const result = await aiService.callModel(
+        [{ role: 'user', content: 'test prompt' }],
+        {
+          provider: 'openai',
+          model: 'gpt-3.5-turbo',
+          maxTokens: 1000,
+          temperature: 0.7,
+        }
+      );
 
       expect(result).toBe('Success after retry');
       expect(mockOpenAI.chat.completions.create).toHaveBeenCalledTimes(2);
