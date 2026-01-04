@@ -16,13 +16,14 @@ const customJestConfig = {
     '!src/app/layout.tsx',
     '!src/app/robots.ts',
     '!src/app/sitemap.ts',
+    '!src/middleware.ts',
   ],
   coverageThreshold: {
     global: {
-      branches: 70,
-      functions: 70,
-      lines: 70,
-      statements: 70,
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80,
     },
   },
   testMatch: [
@@ -34,8 +35,6 @@ const customJestConfig = {
     '<rootDir>/node_modules/',
     '<rootDir>/tests/fixtures/',
     '<rootDir>/tests/api/',
-    '<rootDir>/tests/backend.test.ts',
-    '<rootDir>/tests/integration.test.ts',
   ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
