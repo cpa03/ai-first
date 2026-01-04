@@ -3,6 +3,63 @@ import '@testing-library/jest-dom';
 // Mock OpenAI shims
 import 'openai/shims/node';
 
+// Mock OpenAI module - must be before imports that use it
+jest.mock('openai', () => ({
+  default: jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: jest.fn().mockResolvedValue({
+          choices: [
+            {
+              message: {
+                content: 'Mock AI response',
+              },
+            },
+          ],
+        }),
+      },
+    },
+  })),
+}));
+
+// Mock OpenAI module
+jest.mock('openai', () => {
+  return jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: jest.fn().mockResolvedValue({
+          choices: [
+            {
+              message: {
+                content: 'Mock AI response',
+              },
+            },
+          ],
+        }),
+      },
+    },
+  }));
+});
+
+// Mock OpenAI module
+jest.mock('openai', () => {
+  return jest.fn().mockImplementation(() => ({
+    chat: {
+      completions: {
+        create: jest.fn().mockResolvedValue({
+          choices: [
+            {
+              message: {
+                content: 'Mock AI response',
+              },
+            },
+          ],
+        }),
+      },
+    },
+  }));
+});
+
 // Mock environment variables for all tests
 process.env.OPENAI_API_KEY = 'test-key';
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';

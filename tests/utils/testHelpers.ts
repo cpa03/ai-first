@@ -143,7 +143,10 @@ export const waitForAsync = (ms = 100) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
 // Helper to create mock fetch responses
-export const createMockFetch = (response, options = {}) => {
+export const createMockFetch = (
+  response: any,
+  options: { status?: number; ok?: boolean; delay?: number } = {}
+) => {
   const { status = 200, ok = true, delay = 0 } = options;
 
   return jest.fn().mockImplementation(

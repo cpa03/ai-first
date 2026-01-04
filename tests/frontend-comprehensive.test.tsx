@@ -20,7 +20,7 @@ import {
   createMockFetch,
   mockConsole,
   waitForAsync,
-} from '../utils/testHelpers';
+} from './utils/testHelpers';
 
 // Mock external dependencies
 jest.mock('@/lib/db');

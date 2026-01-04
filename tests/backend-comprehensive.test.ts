@@ -5,6 +5,9 @@
 // Mock OpenAI shims first
 import 'openai/shims/node';
 
+// Mock external dependencies
+jest.mock('@/lib/db');
+
 import AIService from '@/lib/ai';
 import DatabaseService from '@/lib/db';
 import { ExportService } from '@/lib/exports';
@@ -16,22 +19,10 @@ import {
   mockAPIResponses,
   waitForAsync,
   createMockFetch,
-} from '../utils/testHelpers';
+} from './utils/testHelpers';
 
 // Mock environment variables
 Object.assign(process.env, mockEnvVars);
-
-// Mock external dependencies
-jest.mock('@/lib/db');
-jest.mock('openai', () => ({
-  default: jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
-        create: jest.fn(),
-      },
-    },
-  })),
-}));
 
 describe('Backend Service Tests', () => {
   let mockSupabase: any;
