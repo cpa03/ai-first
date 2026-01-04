@@ -4,7 +4,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mockUserJourney, createMockFetch } from '../utils/testHelpers';
+import { mockUserJourney, createMockFetch } from './utils/testHelpers';
 
 // Mock the entire app for e2e testing
 const mockApp = () => {
