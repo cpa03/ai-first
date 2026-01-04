@@ -59,7 +59,9 @@ jobs:
             "deploy-specialist"
             "analytics-specialist"
             "affiliate-marketing-specialist"
+            "backlog-specialist"      # ← tambah baris ini
           )
+
 
           MATCHED_NUMBER=""
           MATCHED_LABEL=""
@@ -232,6 +234,20 @@ jobs:
               - "Generate affiliate earnings reports as needed"
               - "Suggest new products to add as part of task execution"
               - "Update marketing strategy based on data analysis"
+          - name: "backlog"
+            display_name: "Backlog Specialist"
+            condition: "backlog-specialist"
+            role: "BACKLOG SPECIALIST"
+            description: "autonomous backlog and project management specialist"
+            actions: "update-issue | create-issue | none"
+            responsibilities:
+              - "Identify and consolidate duplicate issues in the backlog"
+              - "Close duplicate issues with clear references to their primary issue"
+              - "Update titles, descriptions, labels, and assignees for clarity and consistency"
+              - "Organize issues into milestones or epics based on project priorities"
+              - "Prioritize issues by urgency and impact to support effective planning"
+              - "Keep TODO.md, roadmap, and other project docs in sync with the current backlog"
+              - "Define and maintain issue templates and labeling conventions for the repository"
 
     permissions:
       id-token: write
@@ -337,15 +353,15 @@ jobs:
 
           Your responsibilities:
           ${RESPONSIBILITIES_LIST}
-          10. For each workflow run, perform:
+          10. report findings and recommendations to agent-report.md:
+             - Add report at the end of the file using the specified format
+             - Include date, issue number, and issue title
+             - Document work completed, findings, and recommendations
+          11. For each workflow run, perform:
              - create feature branch from main
              - implement changes based on the assigned issue
              - create pull request with detailed description
              - link the original issue in the PR description
-          11. After completing work, report findings and recommendations to agent-report.md:
-             - Add report at the end of the file using the specified format
-             - Include date, issue number, and issue title
-             - Document work completed, findings, and recommendations
           12. Output one concrete action per run:
              - create PR for implemented changes
              - update issue status

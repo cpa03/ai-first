@@ -41,6 +41,17 @@ export interface Database {
           idea_id: string;
           priority: number;
           title: string;
+          milestone_id: string | null;
+          completion_percentage: number;
+          business_value: number;
+          risk_factors: string[] | null;
+          acceptance_criteria: Json | null;
+          deliverable_type:
+            | 'feature'
+            | 'documentation'
+            | 'testing'
+            | 'deployment'
+            | 'research';
         };
         Insert: {
           created_at?: string;
@@ -50,6 +61,17 @@ export interface Database {
           idea_id: string;
           priority?: number;
           title: string;
+          milestone_id?: string | null;
+          completion_percentage?: number;
+          business_value?: number;
+          risk_factors?: string[] | null;
+          acceptance_criteria?: Json | null;
+          deliverable_type?:
+            | 'feature'
+            | 'documentation'
+            | 'testing'
+            | 'deployment'
+            | 'research';
         };
         Update: {
           created_at?: string;
@@ -59,6 +81,17 @@ export interface Database {
           idea_id?: string;
           priority?: number;
           title?: string;
+          milestone_id?: string | null;
+          completion_percentage?: number;
+          business_value?: number;
+          risk_factors?: string[] | null;
+          acceptance_criteria?: Json | null;
+          deliverable_type?:
+            | 'feature'
+            | 'documentation'
+            | 'testing'
+            | 'deployment'
+            | 'research';
         };
       };
       idea_sessions: {
@@ -120,6 +153,16 @@ export interface Database {
           id: string;
           status: 'todo' | 'in_progress' | 'completed';
           title: string;
+          start_date: string | null;
+          end_date: string | null;
+          actual_hours: number | null;
+          completion_percentage: number;
+          priority_score: number;
+          complexity_score: number;
+          risk_level: 'low' | 'medium' | 'high';
+          tags: string[] | null;
+          custom_fields: Json | null;
+          milestone_id: string | null;
         };
         Insert: {
           assignee?: string | null;
@@ -130,6 +173,16 @@ export interface Database {
           id?: string;
           status?: 'todo' | 'in_progress' | 'completed';
           title: string;
+          start_date?: string | null;
+          end_date?: string | null;
+          actual_hours?: number | null;
+          completion_percentage?: number;
+          priority_score?: number;
+          complexity_score?: number;
+          risk_level?: 'low' | 'medium' | 'high';
+          tags?: string[] | null;
+          custom_fields?: Json | null;
+          milestone_id?: string | null;
         };
         Update: {
           assignee?: string | null;
@@ -140,6 +193,326 @@ export interface Database {
           id?: string;
           status?: 'todo' | 'in_progress' | 'completed';
           title?: string;
+          start_date?: string | null;
+          end_date?: string | null;
+          actual_hours?: number | null;
+          completion_percentage?: number;
+          priority_score?: number;
+          complexity_score?: number;
+          risk_level?: 'low' | 'medium' | 'high';
+          tags?: string[] | null;
+          custom_fields?: Json | null;
+          milestone_id?: string | null;
+        };
+      };
+      task_dependencies: {
+        Row: {
+          created_at: string;
+          dependency_type:
+            | 'finish_to_start'
+            | 'start_to_start'
+            | 'finish_to_finish'
+            | 'start_to_finish';
+          id: string;
+          lag_days: number;
+          predecessor_task_id: string;
+          successor_task_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          dependency_type?:
+            | 'finish_to_start'
+            | 'start_to_start'
+            | 'finish_to_finish'
+            | 'start_to_finish';
+          id?: string;
+          lag_days?: number;
+          predecessor_task_id: string;
+          successor_task_id: string;
+        };
+        Update: {
+          created_at?: string;
+          dependency_type?:
+            | 'finish_to_start'
+            | 'start_to_start'
+            | 'finish_to_finish'
+            | 'start_to_finish';
+          id?: string;
+          lag_days?: number;
+          predecessor_task_id?: string;
+          successor_task_id?: string;
+        };
+      };
+      milestones: {
+        Row: {
+          created_at: string;
+          description: string | null;
+          id: string;
+          idea_id: string;
+          priority: number;
+          status: 'pending' | 'completed' | 'delayed' | 'cancelled';
+          target_date: string | null;
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          idea_id: string;
+          priority?: number;
+          status?: 'pending' | 'completed' | 'delayed' | 'cancelled';
+          target_date?: string | null;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string | null;
+          id?: string;
+          idea_id?: string;
+          priority?: number;
+          status?: 'pending' | 'completed' | 'delayed' | 'cancelled';
+          target_date?: string | null;
+          title?: string;
+          updated_at?: string;
+        };
+      };
+      task_assignments: {
+        Row: {
+          allocation_percentage: number;
+          assigned_at: string;
+          assigned_by: string | null;
+          id: string;
+          role: 'assignee' | 'reviewer' | 'contributor';
+          task_id: string;
+          user_id: string;
+        };
+        Insert: {
+          allocation_percentage?: number;
+          assigned_at?: string;
+          assigned_by?: string | null;
+          id?: string;
+          role?: 'assignee' | 'reviewer' | 'contributor';
+          task_id: string;
+          user_id: string;
+        };
+        Update: {
+          allocation_percentage?: number;
+          assigned_at?: string;
+          assigned_by?: string | null;
+          id?: string;
+          role?: 'assignee' | 'reviewer' | 'contributor';
+          task_id?: string;
+          user_id?: string;
+        };
+      };
+      time_tracking: {
+        Row: {
+          created_at: string;
+          date_logged: string;
+          hours_logged: number;
+          id: string;
+          notes: string | null;
+          task_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          date_logged: string;
+          hours_logged: number;
+          id?: string;
+          notes?: string | null;
+          task_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          date_logged?: string;
+          hours_logged?: number;
+          id?: string;
+          notes?: string | null;
+          task_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+      };
+      task_comments: {
+        Row: {
+          comment: string;
+          created_at: string;
+          id: string;
+          parent_comment_id: string | null;
+          task_id: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          comment: string;
+          created_at?: string;
+          id?: string;
+          parent_comment_id?: string | null;
+          task_id: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          comment?: string;
+          created_at?: string;
+          id?: string;
+          parent_comment_id?: string | null;
+          task_id?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+      };
+      breakdown_sessions: {
+        Row: {
+          ai_model_version: string | null;
+          confidence_score: number | null;
+          created_at: string;
+          id: string;
+          idea_id: string;
+          processing_time_ms: number | null;
+          session_data: Json;
+          status:
+            | 'analyzing'
+            | 'decomposing'
+            | 'scheduling'
+            | 'completed'
+            | 'failed';
+          updated_at: string;
+        };
+        Insert: {
+          ai_model_version?: string | null;
+          confidence_score?: number | null;
+          created_at?: string;
+          id?: string;
+          idea_id: string;
+          processing_time_ms?: number | null;
+          session_data: Json;
+          status?:
+            | 'analyzing'
+            | 'decomposing'
+            | 'scheduling'
+            | 'completed'
+            | 'failed';
+          updated_at?: string;
+        };
+        Update: {
+          ai_model_version?: string | null;
+          confidence_score?: number | null;
+          created_at?: string;
+          id?: string;
+          idea_id?: string;
+          processing_time_ms?: number | null;
+          session_data?: Json;
+          status?:
+            | 'analyzing'
+            | 'decomposing'
+            | 'scheduling'
+            | 'completed'
+            | 'failed';
+          updated_at?: string;
+        };
+      };
+      timelines: {
+        Row: {
+          created_at: string;
+          critical_path: Json | null;
+          end_date: string;
+          id: string;
+          idea_id: string;
+          milestone_data: Json | null;
+          phase_data: Json | null;
+          resource_allocation: Json | null;
+          start_date: string;
+          total_weeks: number;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          critical_path?: Json | null;
+          end_date: string;
+          id?: string;
+          idea_id: string;
+          milestone_data?: Json | null;
+          phase_data?: Json | null;
+          resource_allocation?: Json | null;
+          start_date: string;
+          total_weeks: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          critical_path?: Json | null;
+          end_date?: string;
+          id?: string;
+          idea_id?: string;
+          milestone_data?: Json | null;
+          phase_data?: Json | null;
+          resource_allocation?: Json | null;
+          start_date?: string;
+          total_weeks?: number;
+          updated_at?: string;
+        };
+      };
+      risk_assessments: {
+        Row: {
+          created_at: string;
+          id: string;
+          idea_id: string;
+          impact_level: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
+          mitigation_strategy: string | null;
+          probability_level:
+            | 'very_low'
+            | 'low'
+            | 'medium'
+            | 'high'
+            | 'very_high';
+          risk_factor: string;
+          risk_score: number | null;
+          status: 'open' | 'mitigated' | 'accepted' | 'closed';
+          task_id: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          idea_id: string;
+          impact_level: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
+          mitigation_strategy?: string | null;
+          probability_level:
+            | 'very_low'
+            | 'low'
+            | 'medium'
+            | 'high'
+            | 'very_high';
+          risk_factor: string;
+          risk_score?: number | null;
+          status?: 'open' | 'mitigated' | 'accepted' | 'closed';
+          task_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          idea_id?: string;
+          impact_level?: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
+          mitigation_strategy?: string | null;
+          probability_level?:
+            | 'very_low'
+            | 'low'
+            | 'medium'
+            | 'high'
+            | 'very_high';
+          risk_factor?: string;
+          risk_score?: number | null;
+          status?: 'open' | 'mitigated' | 'accepted' | 'closed';
+          task_id?: string;
+          updated_at?: string;
         };
       };
       vectors: {
