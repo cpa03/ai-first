@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { dbService } from '@/lib/db';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     // Test database connection and basic operations
     const healthCheck = await dbService.healthCheck();

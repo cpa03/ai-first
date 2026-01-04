@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { breakdownEngine } from '@/lib/agents/breakdown-engine';
-import { dbService } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {

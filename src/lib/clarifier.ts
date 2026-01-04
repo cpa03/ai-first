@@ -1,5 +1,5 @@
 import { aiService, AIModelConfig } from './ai';
-import { dbService, Idea, IdeaSession } from './db';
+import { dbService, IdeaSession } from './db';
 
 export interface ClarifierConfig {
   model: string;

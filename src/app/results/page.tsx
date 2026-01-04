@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
 import { exportManager, exportUtils } from '@/lib/exports';
-import { clarifierAgent } from '@/lib/clarifier';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
 
 export default function ResultsPage() {

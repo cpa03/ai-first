@@ -1,13 +1,27 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 // Environment validation endpoint
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const envStatus: any = {
+    const envStatus: {
+      status: string;
+      timestamp: string;
+      environment: string;
+      checks: Record<string, { present: boolean; required: boolean }>;
+      error?: string;
+      warning?: string;
+      summary?: {
+        requiredVarsSet: number;
+        totalRequiredVars: number;
+        hasAIProvider: boolean;
+        aiProvider: string;
+        environment: string;
+      };
+    } = {
       status: 'healthy',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV || 'development',
-      checks: {} as Record<string, any>,
+      checks: {},
     };
 
     // Check required environment variables
@@ -22,7 +36,7 @@ export async function GET(request: NextRequest) {
     // Check AI provider variables
     const aiVars = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY'];
 
-    let missingVars: string[] = [];
+    const missingVars: string[] = [];
     let hasAIProvider = false;
 
     // Check required variables
