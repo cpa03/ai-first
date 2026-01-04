@@ -9,13 +9,15 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - Supabase account (free tier)
 - GitHub account (for repository automation)
 
 ### Local Development Setup
 
 1. **Clone and install dependencies**
+
    ```bash
    git clone https://github.com/your-username/ai-first.git
    cd ai-first
@@ -23,24 +25,35 @@
    ```
 
 2. **Set up environment variables**
+
    ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your Supabase credentials
+   cp config/.env.example .env.local
+   # Edit .env.local with your Supabase and AI provider credentials
    ```
 
-3. **Initialize Supabase database**
+3. **Validate environment setup**
+
+   ```bash
+   npm run env:check
+   ```
+
+4. **Initialize Supabase database**
+
    ```bash
    # Apply schema from supabase/schema.sql
-   supabase db push
+   npm run db:migrate
    ```
 
-4. **Run the development server**
+5. **Run the development server**
+
    ```bash
-   npm run dev
+   npm run dev:check
    ```
 
-5. **Open your browser**
+6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+   **Check health status**: [http://localhost:3000/api/health](http://localhost:3000/api/health)
 
 ## 📁 Project Structure
 
@@ -73,7 +86,7 @@
 IdeaFlow uses specialized AI agents that automate repository management:
 
 1. **Clarification Agent** - Asks targeted questions to refine raw ideas
-2. **Breakdown Agent** - Decomposes ideas into deliverables and tasks  
+2. **Breakdown Agent** - Decomposes ideas into deliverables and tasks
 3. **Timeline Agent** - Generates realistic project timelines
 4. **Export Agent** - Creates downloadable plans and integrates with external tools
 
@@ -82,12 +95,14 @@ Agents operate through GitHub Actions, creating branches, making commits, and op
 ## 🛠️ Development Guidelines
 
 ### Coding Conventions
+
 - **TypeScript** (strict mode) for all code
 - **ESLint + Prettier** with shared configuration
 - **Tailwind CSS** for styling
 - **Jest + React Testing Library** for testing
 
 ### Agent Contribution Rules
+
 - All agent work must go through feature branches + PRs
 - Commits must include `AGENT=<agent-name>` in the message
 - Never push directly to `main`
@@ -95,15 +110,25 @@ Agents operate through GitHub Actions, creating branches, making commits, and op
 - Run tests and linting before merging
 
 ### Testing & Deployment
+
 ```bash
 # Run tests
 npm test
 
+# Run tests in watch mode
+npm run test:watch
+
 # Run linting
 npm run lint
 
+# Type checking
+npm run type-check
+
 # Build for production
-npm run build
+npm run build:check
+
+# Check environment configuration
+npm run env:check
 
 # Deploy to Vercel
 vercel --prod
@@ -112,6 +137,7 @@ vercel --prod
 ## 🏗️ Architecture Summary
 
 ### Tech Stack
+
 - **Frontend**: Next.js 14+ with App Router
 - **Backend**: Supabase (PostgreSQL + Auth + Storage + Vector)
 - **AI**: OpenAI/Anthropic APIs via abstraction layer
@@ -119,6 +145,7 @@ vercel --prod
 - **CI/CD**: GitHub Actions with OpenCode CLI agents
 
 ### Component Interaction
+
 ```
 User Input → Clarification Agent → Breakdown Engine → Timeline Generator → Export System
      ↓              ↓                    ↓                    ↓              ↓
@@ -126,6 +153,7 @@ User Input → Clarification Agent → Breakdown Engine → Timeline Generator �
 ```
 
 ### Phase 0 Current Capabilities
+
 - ✅ Repository structure and agent workflows
 - ✅ Basic Next.js scaffold
 - ✅ Supabase database schema
@@ -136,6 +164,7 @@ User Input → Clarification Agent → Breakdown Engine → Timeline Generator �
 ## 🤝 Contributing & Issues
 
 ### How to Contribute
+
 1. Check [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines
 2. Look for issues labeled `good first issue` or `help wanted`
 3. Create a feature branch from `main`
@@ -143,13 +172,16 @@ User Input → Clarification Agent → Breakdown Engine → Timeline Generator �
 5. Submit a PR with the machine-readable template
 
 ### Reporting Bugs or Requesting Features
+
 - Use the [GitHub Issues](https://github.com/your-username/ai-first/issues) page
 - Provide clear reproduction steps for bugs
 - Include detailed requirements for feature requests
 - Tag relevant team members if needed
 
 ### Agent Workflow
+
 All automated work follows this pattern:
+
 1. Agent receives task via GitHub Actions
 2. Creates feature branch `agent/<agent>-YYYYMMDD-HHMM`
 3. Implements changes with proper commit messages
@@ -168,6 +200,7 @@ All automated work follows this pattern:
 ## 🗺️ Roadmap
 
 ### Phase 0 (Current) - Foundation
+
 - [x] Repository structure and automation
 - [x] Basic frontend scaffold
 - [x] Database schema
@@ -175,17 +208,20 @@ All automated work follows this pattern:
 - [ ] Blueprint export functionality
 
 ### Phase 1 - MVP
+
 - [ ] Automatic breakdown engine
 - [ ] Timeline generator
 - [ ] Task management UI
 - [ ] Vector store integration
 
 ### Phase 2 - Integrations
+
 - [ ] Notion/Trello exports
 - [ ] Advanced agent orchestration
 - [ ] Progress analytics
 
 ### Phase 3 - Scale
+
 - [ ] Team collaboration features
 - [ ] Advanced analytics
 - [ ] Paid plans and billing
