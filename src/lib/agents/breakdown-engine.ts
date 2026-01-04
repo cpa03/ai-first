@@ -430,7 +430,6 @@ Format as JSON array:
   private calculateCriticalPath(nodes: any[], edges: any[]): string[] {
     // Simplified critical path calculation
     // In production, use proper CPM algorithm
-    const taskMap = new Map(nodes.map((n) => [n.id, n]));
     const visited = new Set<string>();
     const path: string[] = [];
 

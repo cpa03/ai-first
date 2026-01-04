@@ -23,7 +23,6 @@
     "db:reset": "supabase db reset"
   },
   "dependencies": {
-    "@eslint/eslintrc": "^3.3.1",
     "@notionhq/client": "^5.4.0",
     "@octokit/graphql": "^9.0.3",
     "@supabase/supabase-js": "^2.39.0",

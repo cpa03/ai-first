@@ -60,10 +60,15 @@ export default function ResultsPage() {
       // Prepare data for export
       const exportData = exportUtils.normalizeData(idea);
 
-      if (session && session.state.answers) {
-        exportData.metadata.goals = session.state.answers.main_goal || '';
+      if (
+        session &&
+        session.state.answers &&
+        typeof session.state.answers === 'object'
+      ) {
+        const answers = session.state.answers as Record<string, unknown>;
+        exportData.metadata.goals = (answers.main_goal as string) || '';
         exportData.metadata.target_audience =
-          session.state.answers.target_audience || '';
+          (answers.target_audience as string) || '';
       }
 
       // Export the data
@@ -158,7 +163,16 @@ export default function ResultsPage() {
 
       <BlueprintDisplay
         idea={idea.raw_text}
-        answers={session?.state.answers || {}}
+        answers={
+          session?.state.answers && typeof session.state.answers === 'object'
+            ? Object.fromEntries(
+                Object.entries(session.state.answers).map(([key, value]) => [
+                  key,
+                  String(value),
+                ])
+              )
+            : {}
+        }
       />
 
       {/* Export Options */}

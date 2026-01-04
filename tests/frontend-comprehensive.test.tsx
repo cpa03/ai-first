@@ -18,7 +18,6 @@ import {
   mockUserJourney,
   mockOpenAIResponses,
   createMockFetch,
-  mockConsole,
   waitForAsync,
 } from './utils/testHelpers';
 
@@ -28,11 +27,22 @@ jest.mock('next/navigation');
 
 describe('Frontend Component Tests', () => {
   let user: any;
+  const originalConsole = { ...console };
+  const mockConsoleConfig = {
+    log: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+  };
 
   beforeEach(() => {
     user = userEvent.setup();
     jest.clearAllMocks();
-    mockConsole();
+    Object.assign(console, mockConsoleConfig);
+  });
+
+  afterEach(() => {
+    Object.assign(console, originalConsole);
   });
 
   describe('IdeaInput Component', () => {
