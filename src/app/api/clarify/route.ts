@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import { dbService } from '@/lib/db';
 
 export async function POST(request: NextRequest) {
   try {
