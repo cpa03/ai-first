@@ -6,6 +6,7 @@ import {
   TrelloExporter,
   GoogleTasksExporter,
   GitHubProjectsExporter,
+  ExportConnector,
   exportUtils,
   IdeaFlowExportSchema,
   RateLimiter,
@@ -395,9 +396,31 @@ describe('Export Services', () => {
     });
 
     it('should register custom connector', () => {
-      class CustomExporter extends MarkdownExporter {
+      class CustomExporter extends ExportConnector {
         readonly type = 'custom';
         readonly name = 'Custom';
+
+        async export(
+          data: any,
+          options?: Record<string, any>
+        ): Promise<ExportResult> {
+          return {
+            success: true,
+            url: `data:text/plain;charset=utf-8,${encodeURIComponent(JSON.stringify(data))}`,
+          };
+        }
+
+        async validateConfig(): Promise<boolean> {
+          return true;
+        }
+
+        async getAuthUrl(): Promise<string> {
+          return 'https://example.com/auth';
+        }
+
+        async handleAuthCallback(code: string): Promise<void> {
+          // No-op for test
+        }
       }
 
       const customConnector = new CustomExporter();

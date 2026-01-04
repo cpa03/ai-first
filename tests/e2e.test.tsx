@@ -10,7 +10,27 @@ import {
 } from './fixtures/testDataFactory';
 
 // Mock fetch for all E2E tests
-global.fetch = jest.fn();
+const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
+
+// Declare mockFetch on globalThis for test helpers
+(globalThis as any).mockFetch = (
+  response: any,
+  ok: boolean = true,
+  status: number = 200
+) => {
+  mockFetch.mockResolvedValue({
+    ok,
+    status,
+    json: async () => response,
+    headers: new Headers({ 'Content-Type': 'application/json' }),
+    text: async () => JSON.stringify(response),
+  } as Response);
+};
+
+// Type declaration for global mockFetch
+declare global {
+  var mockFetch: (response: any, ok?: boolean, status?: number) => void;
+}
 
 describe('End-to-End User Flow Tests', () => {
   beforeEach(() => {
@@ -350,7 +370,7 @@ describe('End-to-End User Flow Tests', () => {
   describe('Error Recovery Tests', () => {
     it('should recover from network errors', async () => {
       // Simulate network failure
-      global.fetch.mockRejectedValueOnce(new Error('Network error'));
+      mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
       const mockOnComplete = jest.fn();
       render(

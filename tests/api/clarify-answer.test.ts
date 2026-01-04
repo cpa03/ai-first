@@ -1,9 +1,13 @@
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/answer/route';
-import { clarifierAgent } from '@/lib/clarifier';
+import {
+  clarifierAgent,
+  ClarifierQuestion,
+  ClarificationSession,
+} from '@/lib/agents/clarifier';
 
 // Mock the dependencies
-jest.mock('@/lib/clarifier');
+jest.mock('@/lib/agents/clarifier');
 
 const mockClarifierAgent = clarifierAgent as jest.Mocked<typeof clarifierAgent>;
 
@@ -14,14 +18,14 @@ describe('/api/clarify/answer', () => {
 
   describe('POST', () => {
     it('should submit answer successfully', async () => {
-      const mockUpdatedSession = {
+      const mockUpdatedSession: ClarificationSession = {
         ideaId: 'idea-123',
         originalIdea: 'Test idea',
         questions: [
           {
             id: 'q1',
             question: 'What is your target audience?',
-            type: 'open',
+            type: 'open' as const,
             required: true,
           },
         ],
@@ -169,14 +173,14 @@ describe('/api/clarify/answer', () => {
 
     it('should handle long answers', async () => {
       const longAnswer = 'a'.repeat(5000);
-      const mockUpdatedSession = {
+      const mockUpdatedSession: ClarificationSession = {
         ideaId: 'idea-123',
         originalIdea: 'Test idea',
         questions: [
           {
             id: 'q1',
             question: 'What is your target audience?',
-            type: 'open',
+            type: 'open' as const,
             required: true,
           },
         ],
@@ -214,14 +218,14 @@ describe('/api/clarify/answer', () => {
 
     it('should handle special characters in answers', async () => {
       const specialAnswer = 'Developers & Designers 🚀 with "special" chars!';
-      const mockUpdatedSession = {
+      const mockUpdatedSession: ClarificationSession = {
         ideaId: 'idea-123',
         originalIdea: 'Test idea',
         questions: [
           {
             id: 'q1',
             question: 'What is your target audience?',
-            type: 'open',
+            type: 'open' as const,
             required: true,
           },
         ],
