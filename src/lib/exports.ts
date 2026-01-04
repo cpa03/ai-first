@@ -250,7 +250,7 @@ export class NotionExporter extends ExportConnector {
 
       // If no parent page specified, create in workspace
       if (!pageData.parent.page_id && !process.env.NOTION_PARENT_PAGE_ID) {
-        delete pageData.parent;
+        delete (pageData as any).parent;
       }
 
       const response = await this.client.pages.create(pageData);
@@ -397,8 +397,9 @@ export class NotionExporter extends ExportConnector {
       );
 
       Object.entries(tasksByDeliverable).forEach(
-        ([deliverableId, deliverableTasks]: [string, any[]]) => {
+        ([deliverableId, deliverableTasks]: [string, unknown]) => {
           const deliverable = deliverables.find((d) => d.id === deliverableId);
+          const tasks = deliverableTasks as any[];
 
           if (deliverable) {
             blocks.push({
@@ -417,7 +418,7 @@ export class NotionExporter extends ExportConnector {
             });
           }
 
-          deliverableTasks.forEach((task: any) => {
+          tasks.forEach((task: any) => {
             const isCompleted = task.status === 'completed';
             blocks.push({
               object: 'block',
@@ -741,139 +742,27 @@ export class TrelloExporter extends ExportConnector {
   }
 }
 
-// Google Tasks export connector
+// Google Tasks export connector (server-side only)
 export class GoogleTasksExporter extends ExportConnector {
   readonly type = 'google-tasks';
   readonly name = 'Google Tasks';
-  private oauth2Client: any = null;
-  private tasksClient: any = null;
 
   async export(
     data: any,
     options?: Record<string, any>
   ): Promise<ExportResult> {
-    try {
-      const clientId = process.env.GOOGLE_CLIENT_ID;
-      const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-
-      if (!clientId || !clientSecret) {
-        throw new Error('Google client credentials are required');
-      }
-
-      const { google } = await import('googleapis');
-
-      if (!this.oauth2Client) {
-        await this.setupAuthClient();
-      }
-
-      if (!this.tasksClient) {
-        this.tasksClient = google.tasks({
-          version: 'v1',
-          auth: this.oauth2Client,
-        });
-      }
-
-      if (!data || !data.idea) {
-        throw new Error('Invalid export data: idea object is required');
-      }
-
-      const { idea, deliverables = [], tasks = [] } = data;
-
-      // Create a new task list for the project
-      const taskList = await this.createTaskList(idea.title);
-      const taskListId = taskList.id;
-
-      // Group tasks by deliverable
-      const tasksByDeliverable = tasks.reduce(
-        (acc, task) => {
-          const deliverableId = task.deliverable_id || 'uncategorized';
-          if (!acc[deliverableId]) acc[deliverableId] = [];
-          acc[deliverableId].push(task);
-          return acc;
-        },
-        {} as Record<string, any[]>
-      );
-
-      // Create tasks for each deliverable
-      const createdTasks: string[] = [];
-
-      for (const [deliverableId, deliverableTasks] of Object.entries(
-        tasksByDeliverable
-      )) {
-        const deliverable = deliverables.find((d) => d.id === deliverableId);
-
-        if (deliverable) {
-          // Create a parent task for the deliverable
-          const parentTask = await this.createTask(taskListId, {
-            title: `📋 ${deliverable.title}`,
-            notes: deliverable.description || '',
-          });
-          createdTasks.push(parentTask.id);
-
-          // Create subtasks for each task in this deliverable
-          for (const task of deliverableTasks as any[]) {
-            const subtask = await this.createTask(taskListId, {
-              title: task.title,
-              notes: `${task.description || ''}\n\nAssignee: ${task.assignee || 'Unassigned'}\nEstimate: ${task.estimate || 0}h`,
-              due: task.due_date,
-              status: task.status === 'completed' ? 'completed' : 'needsAction',
-            });
-            createdTasks.push(subtask.id);
-          }
-        } else {
-          // Create tasks without deliverable grouping
-          for (const task of deliverableTasks as any[]) {
-            const createdTask = await this.createTask(taskListId, {
-              title: task.title,
-              notes: `${task.description || ''}\n\nAssignee: ${task.assignee || 'Unassigned'}\nEstimate: ${task.estimate || 0}h`,
-              due: task.due_date,
-              status: task.status === 'completed' ? 'completed' : 'needsAction',
-            });
-            createdTasks.push(createdTask.id);
-          }
-        }
-      }
-
-      // Add project overview as the first task
-      if (idea.raw_text) {
-        await this.createTask(taskListId, {
-          title: '📋 Project Overview',
-          notes: idea.raw_text,
-        });
-      }
-
-      return {
-        success: true,
-        url: `https://tasks.google.com/tasklist/${taskListId}`,
-        id: taskListId,
-      };
-    } catch (error) {
-      console.error('Google Tasks export error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-      };
-    }
+    // This connector requires server-side execution
+    return {
+      success: false,
+      error:
+        'Google Tasks export requires server-side API route. Use /api/export/google-tasks endpoint.',
+    };
   }
 
   async validateConfig(): Promise<boolean> {
-    try {
-      const clientId = process.env.GOOGLE_CLIENT_ID;
-      const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-      const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
-
-      if (!clientId || !clientSecret) return false;
-
-      // If we have a refresh token, try to use it
-      if (refreshToken) {
-        await this.setupAuthClient();
-        return true;
-      }
-
-      return false;
-    } catch (error) {
-      return false;
-    }
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    return !!(clientId && clientSecret);
   }
 
   async getAuthUrl(): Promise<string> {
@@ -882,103 +771,21 @@ export class GoogleTasksExporter extends ExportConnector {
       process.env.GOOGLE_REDIRECT_URI ||
       `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`;
 
-    const { google } = await import('googleapis');
-
-    const oauth2Client = new google.auth.OAuth2(
-      clientId,
-      process.env.GOOGLE_CLIENT_SECRET,
-      redirectUri
-    );
-
-    const scopes = [
-      'https://www.googleapis.com/auth/tasks',
-      'https://www.googleapis.com/auth/tasks.readonly',
-    ];
-
-    return oauth2Client.generateAuthUrl({
+    const params = new URLSearchParams({
+      client_id: clientId || '',
+      redirect_uri: redirectUri,
+      scope: 'https://www.googleapis.com/auth/tasks',
       access_type: 'offline',
-      scope: scopes,
       prompt: 'consent',
     });
+
+    return `https://accounts.google.com/oauth/authorize?${params.toString()}`;
   }
 
   async handleAuthCallback(code: string): Promise<void> {
-    try {
-      const { google } = await import('googleapis');
-
-      const redirectUri =
-        process.env.GOOGLE_REDIRECT_URI ||
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`;
-
-      const oauth2Client = new google.auth.OAuth2(
-        process.env.GOOGLE_CLIENT_ID,
-        process.env.GOOGLE_CLIENT_SECRET,
-        redirectUri
-      );
-
-      const { tokens } = await oauth2Client.getToken(code);
-
-      // In a real implementation, you would store these tokens securely
-      // For now, we'll just log that the callback was handled
-      console.log('Google OAuth tokens received:', tokens);
-
-      throw new Error('Token storage requires server-side implementation');
-    } catch (error) {
-      throw new Error(`Google OAuth callback failed: ${error}`);
-    }
-  }
-
-  private async setupAuthClient(): Promise<void> {
-    const { google } = await import('googleapis');
-
-    this.oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI ||
-        `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`
+    throw new Error(
+      'Google OAuth callback handling requires server-side implementation'
     );
-
-    // Use refresh token if available
-    if (process.env.GOOGLE_REFRESH_TOKEN) {
-      this.oauth2Client.setCredentials({
-        refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
-      });
-    }
-  }
-
-  private async createTaskList(title: string): Promise<any> {
-    const response = await this.tasksClient.tasklists.insert({
-      requestBody: {
-        title: title,
-      },
-    });
-
-    return response.data;
-  }
-
-  private async createTask(taskListId: string, taskData: any): Promise<any> {
-    const requestBody: any = {
-      title: taskData.title,
-    };
-
-    if (taskData.notes) {
-      requestBody.notes = taskData.notes;
-    }
-
-    if (taskData.due) {
-      requestBody.due = taskData.due;
-    }
-
-    if (taskData.status) {
-      requestBody.status = taskData.status;
-    }
-
-    const response = await this.tasksClient.tasks.insert({
-      tasklist: taskListId,
-      requestBody,
-    });
-
-    return response.data;
   }
 }
 
@@ -1449,13 +1256,20 @@ export class ExportManager {
   private connectors: Map<string, ExportConnector> = new Map();
 
   constructor() {
-    // Register built-in connectors
+    // Register built-in connectors (client-side only)
     this.registerConnector(new JSONExporter());
     this.registerConnector(new MarkdownExporter());
-    this.registerConnector(new NotionExporter());
-    this.registerConnector(new TrelloExporter());
-    this.registerConnector(new GoogleTasksExporter());
-    this.registerConnector(new GitHubProjectsExporter());
+
+    // Only register server-side connectors if we're on the server
+    if (typeof window === 'undefined') {
+      this.registerConnector(new NotionExporter());
+      this.registerConnector(new TrelloExporter());
+      this.registerConnector(new GoogleTasksExporter());
+      this.registerConnector(new GitHubProjectsExporter());
+    } else {
+      // On client-side, register placeholder connectors
+      this.registerConnector(new GoogleTasksExporter());
+    }
   }
 
   registerConnector(connector: ExportConnector): void {
