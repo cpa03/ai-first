@@ -44,7 +44,7 @@ describe('ClarificationFlow', () => {
     });
 
     expect(screen.getByText(/question 1 of 2/i)).toBeInTheDocument();
-    expect(screen.getByText('33%')).toBeInTheDocument();
+    expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
   it('uses fallback questions when API returns no questions', async () => {
@@ -75,7 +75,7 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/error/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /error/i })).toBeInTheDocument();
     expect(
       screen.getByText(/we're using fallback questions/i)
     ).toBeInTheDocument();
@@ -137,13 +137,32 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    // Navigate to timeline question (3rd question)
+    // Answer first question to enable navigation
+    const textarea = screen.getByPlaceholderText(/enter your answer here/i);
+    fireEvent.change(textarea, { target: { value: 'Developers' } });
+
+    // Navigate to second question
     const nextButton = screen.getByText('Next →');
     fireEvent.click(nextButton);
 
+    // Answer second question
     await waitFor(() => {
       expect(
-        screen.getByText(/what is your desired timeline/i)
+        screen.getByText(/what is the main goal you want to achieve/i)
+      ).toBeInTheDocument();
+    });
+    const secondTextarea = screen.getByPlaceholderText(
+      /enter your answer here/i
+    );
+    fireEvent.change(secondTextarea, { target: { value: 'Build a MVP' } });
+
+    // Navigate to timeline question (3rd question)
+    const secondNextButton = screen.getByText('Next →');
+    fireEvent.click(secondNextButton);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/what is your desired timeline for this project/i)
       ).toBeInTheDocument();
     });
 
@@ -181,7 +200,7 @@ describe('ClarificationFlow', () => {
     });
 
     expect(screen.getByText(/question 2 of 2/i)).toBeInTheDocument();
-    expect(screen.getByText('67%')).toBeInTheDocument();
+    expect(screen.getByText('100%')).toBeInTheDocument();
 
     const previousButton = screen.getByText('← Previous');
     fireEvent.click(previousButton);
@@ -232,7 +251,7 @@ describe('ClarificationFlow', () => {
       expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
     });
 
-    const nextButton = screen.getByText('Next →');
+    const nextButton = screen.getByText('Complete');
     expect(nextButton).toBeDisabled();
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -265,7 +284,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(/error/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: /error/i })
+      ).toBeInTheDocument();
     });
 
     expect(screen.getByText(/network error/i)).toBeInTheDocument();
