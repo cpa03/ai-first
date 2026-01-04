@@ -83,7 +83,7 @@ describe('End-to-End Tests', () => {
       });
 
       // Step 1: Load homepage
-      const { default: HomePage } = require('@/app/page');
+      const HomePage = require('@/app/page').default;
       render(<HomePage />);
 
       expect(screen.getByText(/transform your ideas/i)).toBeInTheDocument();
@@ -200,7 +200,8 @@ describe('End-to-End Tests', () => {
       });
 
       // Simulate page refresh
-      const { ClarificationFlow } = require('@/components/ClarificationFlow');
+      const ClarificationFlow =
+        require('@/components/ClarificationFlow').default;
       render(
         <ClarificationFlow
           sessionId="session-123"
@@ -251,7 +252,7 @@ describe('End-to-End Tests', () => {
         global.fetch = createMockFetch({ data: { success: true } });
 
         // Test core functionality in each browser
-        const { IdeaInput } = require('@/components/IdeaInput');
+        const IdeaInput = require('@/components/IdeaInput').default;
         const { unmount } = render(<IdeaInput onSubmit={jest.fn()} />);
 
         expect(screen.getByLabelText(/what's your idea/i)).toBeInTheDocument();
@@ -291,10 +292,15 @@ describe('End-to-End Tests', () => {
         { delay: 100 }
       );
 
-      const { BlueprintDisplay } = require('@/components/BlueprintDisplay');
+      const BlueprintDisplay = require('@/components/BlueprintDisplay').default;
 
       performance.mark('render-start');
-      render(<BlueprintDisplay blueprint={mockUserJourney.blueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
       performance.mark('render-end');
 
       const renderMeasurement = global.performance.measure(
@@ -312,13 +318,13 @@ describe('End-to-End Tests', () => {
       const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
 
       // Test component mounting and unmounting
-      const {
-        BlueprintDisplay,
-        unmount,
-      } = require('@/components/BlueprintDisplay');
+      const BlueprintDisplay = require('@/components/BlueprintDisplay').default;
 
       const { unmount: cleanup } = render(
-        <BlueprintDisplay blueprint={mockUserJourney.blueprint} />
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
       );
 
       // Event listeners should be added
@@ -339,13 +345,12 @@ describe('End-to-End Tests', () => {
     it('should be fully accessible via keyboard navigation', async () => {
       global.fetch = createMockFetch({ data: mockUserJourney.questions });
 
-      const { ClarificationFlow } = require('@/components/ClarificationFlow');
+      const ClarificationFlow =
+        require('@/components/ClarificationFlow').default;
       render(
         <ClarificationFlow
-          sessionId="session-123"
           idea={mockUserJourney.ideaInput}
           onComplete={jest.fn()}
-          onError={jest.fn()}
         />
       );
 
@@ -376,8 +381,13 @@ describe('End-to-End Tests', () => {
     it('should support screen readers', async () => {
       global.fetch = createMockFetch({ data: mockUserJourney.blueprint });
 
-      const { BlueprintDisplay } = require('@/components/BlueprintDisplay');
-      render(<BlueprintDisplay blueprint={mockUserJourney.blueprint} />);
+      const BlueprintDisplay = require('@/components/BlueprintDisplay').default;
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       // Check for ARIA labels and roles
       expect(screen.getByRole('main')).toBeInTheDocument();
@@ -406,15 +416,14 @@ describe('End-to-End Tests', () => {
         });
       });
 
-      const { ClarificationFlow } = require('@/components/ClarificationFlow');
+      const ClarificationFlow =
+        require('@/components/ClarificationFlow').default;
       const mockOnError = jest.fn();
 
       render(
         <ClarificationFlow
-          sessionId="session-123"
           idea={mockUserJourney.ideaInput}
           onComplete={jest.fn()}
-          onError={mockOnError}
         />
       );
 
@@ -447,8 +456,13 @@ describe('End-to-End Tests', () => {
         });
       });
 
-      const { BlueprintDisplay } = require('@/components/BlueprintDisplay');
-      render(<BlueprintDisplay blueprint={mockUserJourney.blueprint} />);
+      const BlueprintDisplay = require('@/components/BlueprintDisplay').default;
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       // Notion export should fail gracefully
       const notionButton = screen.getByRole('button', { name: /notion/i });

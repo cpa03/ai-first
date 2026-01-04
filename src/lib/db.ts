@@ -40,9 +40,9 @@ export interface Idea {
 
 export interface IdeaSession {
   idea_id: string;
-  state: Record<string, any>;
+  state: Record<string, unknown>;
   last_agent: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   updated_at: string;
 }
 
