@@ -394,7 +394,12 @@ Format as JSON array:
       estimatedHours: task.estimatedHours,
     }));
 
-    const edges = [];
+    const edges: Array<{
+      from: string;
+      to: string;
+      type: 'finish_to_start' | 'start_to_start' | 'finish_to_finish';
+      lag: number;
+    }> = [];
     const dependencyMap = new Map<string, string[]>();
 
     // Build dependency map from task dependencies
@@ -608,7 +613,7 @@ Format as JSON array:
       }
 
       // Store tasks
-      const deliverables = await dbService.getDeliverables(session.ideaId);
+      const deliverables = await dbService.getIdeaDeliverables(session.ideaId);
       const deliverableMap = new Map(deliverables.map((d) => [d.title, d.id]));
 
       for (const task of session.tasks.tasks) {
