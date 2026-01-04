@@ -88,13 +88,24 @@ export interface AgentLog {
 export class DatabaseService {
   private client = supabaseClient;
   private admin = supabaseAdmin;
+  private static instance: DatabaseService;
 
-  constructor() {
+  private constructor() {
+    this.client = supabaseClient;
+    this.admin = supabaseAdmin;
+
     if (!this.client || !this.admin) {
       console.warn(
         'Supabase clients not initialized. Check environment variables.'
       );
     }
+  }
+
+  static getInstance(): DatabaseService {
+    if (!DatabaseService.instance) {
+      DatabaseService.instance = new DatabaseService();
+    }
+    return DatabaseService.instance;
   }
 
   // Ideas CRUD operations
@@ -447,7 +458,7 @@ export class DatabaseService {
 }
 
 // Export singleton instance
-export const dbService = new DatabaseService();
+export const dbService = DatabaseService.getInstance();
 
 // Export types for external use
 export type { Database };

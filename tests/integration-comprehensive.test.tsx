@@ -212,8 +212,7 @@ describe('Integration Tests - User Workflows', () => {
 
       global.fetch = createMockFetch(mockDbData);
 
-      const DatabaseService = require('@/lib/db').default;
-      const dbService = new DatabaseService();
+      const { dbService } = require('@/lib/db');
 
       // Test complete CRUD cycle
       const idea = await dbService.createIdea('Test idea');

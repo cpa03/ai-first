@@ -19,6 +19,7 @@ import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { ExportService } from '@/lib/exports';
 import ClarifierAgent from '@/lib/agents/clarifier';
+import { DatabaseService } from '@/lib/db';
 import {
   mockEnvVars,
   createMockSupabaseClient,
@@ -165,7 +166,7 @@ describe('Backend Service Tests', () => {
           error: null,
         });
 
-      const dbService = new DatabaseService();
+      const dbService = DatabaseService.getInstance();
       const result = await dbService.createIdea('Test idea');
 
       expect(result).toEqual(mockIdea);
@@ -179,7 +180,7 @@ describe('Backend Service Tests', () => {
         error: mockError,
       });
 
-      const dbService = new DatabaseService();
+      const dbService = DatabaseService.getInstance();
 
       await expect(dbService.createIdea('Test idea')).rejects.toThrow(
         'Database error'
@@ -197,7 +198,7 @@ describe('Backend Service Tests', () => {
         error: null,
       });
 
-      const dbService = new DatabaseService();
+      const dbService = DatabaseService.getInstance();
       const result = await dbService.getIdea('test-id');
 
       expect(result).toEqual(mockIdea);
@@ -218,7 +219,7 @@ describe('Backend Service Tests', () => {
           error: null,
         });
 
-      const dbService = new DatabaseService();
+      const dbService = DatabaseService.getInstance();
       const result = await dbService.createClarificationSession('idea-id');
 
       expect(result).toEqual(mockSession);
@@ -232,7 +233,7 @@ describe('Backend Service Tests', () => {
 
       mockSupabase.from().insert().mockResolvedValue(mockAnswers);
 
-      const dbService = new DatabaseService();
+      const dbService = DatabaseService.getInstance();
       const result = await dbService.saveAnswers('session-id', {
         '1': 'answer1',
       });
