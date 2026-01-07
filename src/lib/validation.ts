@@ -177,3 +177,52 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
     }
   );
 }
+
+export function safeJsonParse<T = unknown>(
+  jsonString: unknown,
+  fallback: T,
+  schemaValidator?: (data: unknown) => data is T
+): T {
+  try {
+    if (typeof jsonString !== 'string') {
+      return fallback;
+    }
+
+    const trimmed = jsonString.trim();
+    if (trimmed.length === 0) {
+      return fallback;
+    }
+
+    const parsed = JSON.parse(trimmed);
+
+    if (schemaValidator && !schemaValidator(parsed)) {
+      return fallback;
+    }
+
+    return parsed as T;
+  } catch {
+    return fallback;
+  }
+}
+
+export function isArrayOf<T>(
+  value: unknown,
+  itemValidator: (item: unknown) => item is T
+): value is T[] {
+  return Array.isArray(value) && value.every(itemValidator);
+}
+
+export function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+export function hasProperty<K extends string>(
+  obj: unknown,
+  prop: K
+): obj is Record<K, unknown> {
+  return isObject(obj) && prop in obj;
+}

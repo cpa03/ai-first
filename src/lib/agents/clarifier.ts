@@ -2,6 +2,13 @@ import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService } from '@/lib/config-service';
 import { promptService } from '@/lib/prompt-service';
+import {
+  safeJsonParse,
+  isArrayOf,
+  isObject,
+  isString,
+  hasProperty,
+} from '@/lib/validation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -39,6 +46,21 @@ export interface ClarifierConfig {
       properties: Record<string, any>;
     };
   }>;
+}
+
+function isClarifierQuestion(data: unknown): data is ClarifierQuestion {
+  if (!isObject(data)) return false;
+  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
+  if (!hasProperty(data, 'question') || !isString(data.question)) return false;
+  if (!hasProperty(data, 'type') || !isString(data.type)) return false;
+  if (!['open', 'multiple_choice', 'yes_no'].includes(data.type)) return false;
+  if (hasProperty(data, 'options') && !isArrayOf(data.options, isString)) {
+    return false;
+  }
+  if (!hasProperty(data, 'required') || typeof data.required !== 'boolean') {
+    return false;
+  }
+  return true;
 }
 
 export class ClarifierAgent {
@@ -126,11 +148,16 @@ export class ClarifierAgent {
 
       const response = await aiService.callModel(messages, this.aiConfig);
 
-      // Parse JSON response
-      const questionsData = JSON.parse(response);
+      // Parse JSON response with validation
+      const questionsData = safeJsonParse<ClarifierQuestion[]>(
+        response,
+        [],
+        (data): data is ClarifierQuestion[] =>
+          isArrayOf(data, isClarifierQuestion)
+      );
 
       // Validate and format questions
-      return questionsData.map((q: any, index: number) => ({
+      return questionsData.map((q, index: number) => ({
         id: q.id || `q_${index + 1}`,
         question: q.question || `Question ${index + 1}`,
         type: q.type || 'open',
