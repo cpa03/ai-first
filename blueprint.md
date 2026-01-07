@@ -476,6 +476,97 @@ All DatabaseService methods updated to support:
 
 ---
 
+## 25. Schema and Type Synchronization (2025-01-07)
+
+### Overview
+
+Critical data architecture fix to resolve schema drift between base `schema.sql` and migration files, and to synchronize TypeScript type definitions with actual database structure.
+
+### Issues Identified
+
+1. **Schema Drift**: Base `schema.sql` was missing columns and tables added by migrations
+   - Missing `deleted_at` columns for soft-delete support
+   - Missing pgvector extension and `embedding` column in vectors table
+   - Missing all breakdown engine tables from migration 001
+
+2. **Type Mismatch**: TypeScript types in `src/types/database.ts` were incomplete
+   - Missing `deleted_at` fields in Idea, Deliverable, and Task types
+   - Missing `embedding` field in Vector type
+   - Missing `match_vectors` function in Functions section
+
+### Completed Work
+
+**Base Schema Updates** (`supabase/schema.sql`):
+
+1. **Soft-Delete Support**:
+   - Added `deleted_at TIMESTAMP WITH TIME ZONE` to `ideas`, `deliverables`, `tasks` tables
+   - Updated RLS policies to filter out soft-deleted records automatically
+   - Created indexes on `deleted_at` columns for efficient queries
+
+2. **pgvector Integration**:
+   - Added `CREATE EXTENSION IF NOT EXISTS vector;`
+   - Added `embedding vector(1536)` column to vectors table
+   - Created IVFFlat indexes for cosine and L2 distance similarity search
+   - Added `match_vectors()` function for efficient similarity search
+
+3. **Breakdown Engine Tables** (from migration 001):
+   - `task_dependencies` - Task predecessor/successor relationships
+   - `milestones` - Project milestones with status tracking
+   - `task_assignments` - User assignments with role-based allocation
+   - `time_tracking` - Hours logged per user per task
+   - `task_comments` - Threaded task discussions
+   - `breakdown_sessions` - AI breakdown process tracking
+   - `timelines` - Project timeline data with critical path
+   - `risk_assessments` - Risk identification and mitigation
+
+4. **Additional Indexes**:
+   - All new tables properly indexed
+   - Composite indexes for common query patterns
+   - `deleted_at` indexes for soft-delete queries
+
+5. **Data Integrity**:
+   - `CHECK` constraints for `estimate_hours >= 0` and `estimate >= 0`
+   - `updated_at` triggers for tables with `updated_at` column
+   - RLS policies for all new tables with proper access control
+
+**TypeScript Type Updates** (`src/types/database.ts`):
+
+1. **Added `deleted_at` fields** to `ideas`, `deliverables`, and `tasks` tables:
+   - Row, Insert, and Update interfaces include `deleted_at: string | null`
+   - Matches database schema exactly
+
+2. **Added `embedding` field** to `vectors` table:
+   - Type: `number[]` (array of floats representing vector)
+   - Row, Insert, and Update interfaces include this field
+
+3. **Added `match_vectors` function** to Functions section:
+   - Full type definition with Args and Returns
+   - Supports similarity search parameters (threshold, count, filter)
+
+### Benefits
+
+1. **Schema Consistency**: Base schema now accurately represents production database state
+2. **Type Safety**: TypeScript types match database exactly, preventing runtime errors
+3. **Full Feature Support**: All migration features now available in base schema
+4. **Developer Experience**: IDE autocomplete and type checking work correctly
+5. **Deployment Safety**: New deployments use complete schema from scratch
+
+### Verification
+
+- [x] Build passes successfully
+- [x] Type-check passes (no errors in lib/types directories)
+- [x] All migrations reflected in base schema
+- [x] TypeScript types match database schema
+- [x] Zero breaking changes (all additions)
+- [x] Backward compatible
+
+### Files Modified
+
+- `supabase/schema.sql` - Comprehensive update with all migration changes
+- `src/types/database.ts` - Added missing type fields and function definitions
+
+---
+
 ## 26. Integration Hardening (2025-01-07)
 
 ### Resilience Patterns Implementation
