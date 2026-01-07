@@ -37,6 +37,7 @@ export interface Idea {
   raw_text: string;
   created_at: string;
   status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  deleted_at?: string | null;
 }
 
 export interface IdeaSession {
@@ -55,6 +56,7 @@ export interface Deliverable {
   priority: number;
   estimate_hours: number;
   created_at: string;
+  deleted_at?: string | null;
 }
 
 export interface Task {
@@ -66,15 +68,17 @@ export interface Task {
   status: 'todo' | 'in_progress' | 'completed';
   estimate: number;
   created_at: string;
+  deleted_at?: string | null;
 }
 
 export interface Vector {
   id: string;
   idea_id: string;
-  vector_data: Record<string, any>;
+  vector_data?: Record<string, any>;
   reference_type: string;
   reference_id?: string;
   created_at: string;
+  embedding?: number[];
 }
 
 export interface AgentLog {
@@ -130,6 +134,7 @@ export class DatabaseService {
       .from('ideas')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (error) return null;
@@ -143,6 +148,7 @@ export class DatabaseService {
       .from('ideas')
       .select('*')
       .eq('user_id', userId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -161,6 +167,17 @@ export class DatabaseService {
 
     if (error) throw error;
     return data as Idea;
+  }
+
+  async softDeleteIdea(id: string): Promise<void> {
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { error } = await this.admin
+      .from('ideas')
+      .update({ deleted_at: new Date().toISOString() } as any)
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   async deleteIdea(id: string): Promise<void> {
@@ -226,6 +243,7 @@ export class DatabaseService {
       .from('deliverables')
       .select('*')
       .eq('idea_id', ideaId)
+      .is('deleted_at', null)
       .order('priority', { ascending: false });
 
     if (error) throw error;
@@ -247,6 +265,17 @@ export class DatabaseService {
 
     if (error) throw error;
     return data as Deliverable;
+  }
+
+  async softDeleteDeliverable(id: string): Promise<void> {
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { error } = await this.admin
+      .from('deliverables')
+      .update({ deleted_at: new Date().toISOString() } as any)
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   async deleteDeliverable(id: string): Promise<void> {
@@ -281,6 +310,7 @@ export class DatabaseService {
       .from('tasks')
       .select('*')
       .eq('deliverable_id', deliverableId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
     if (error) throw error;
@@ -299,6 +329,17 @@ export class DatabaseService {
 
     if (error) throw error;
     return data as Task;
+  }
+
+  async softDeleteTask(id: string): Promise<void> {
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { error } = await this.admin
+      .from('tasks')
+      .update({ deleted_at: new Date().toISOString() } as any)
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   async deleteTask(id: string): Promise<void> {
@@ -348,6 +389,51 @@ export class DatabaseService {
     const { error } = await this.client.from('vectors').delete().eq('id', id);
 
     if (error) throw error;
+  }
+
+  async storeEmbedding(
+    ideaId: string,
+    referenceType: string,
+    embedding: number[],
+    referenceId?: string,
+    vectorData?: Record<string, any>
+  ): Promise<Vector> {
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { data, error } = await this.admin
+      .from('vectors')
+      .insert({
+        idea_id: ideaId,
+        embedding: `[${embedding.join(',')}]`,
+        reference_type: referenceType,
+        reference_id: referenceId,
+        vector_data: vectorData,
+      } as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async searchSimilarVectors(
+    ideaId: string,
+    queryEmbedding: number[],
+    limit: number = 10
+  ): Promise<Vector[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const embeddingString = `[${queryEmbedding.join(',')}]`;
+
+    const { data, error } = await this.client.rpc('match_vectors', {
+      query_embedding: embeddingString,
+      match_threshold: 0.78,
+      match_count: limit,
+      idea_id_filter: ideaId,
+    });
+
+    if (error) throw error;
+    return data || [];
   }
 
   // Agent logging
@@ -436,10 +522,9 @@ export class DatabaseService {
 
     const { data: ideas } = await this.client
       .from('ideas')
-      .select('id, status')
-      .eq('user_id', userId);
-
-    const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
+      .select('status, id')
+      .eq('user_id', userId)
+      .is('deleted_at', null);
 
     const ideasByStatus =
       (ideas as any[])?.reduce(
@@ -450,39 +535,33 @@ export class DatabaseService {
         {} as Record<string, number>
       ) || {};
 
-    let totalDeliverables = 0;
-    let totalTasks = 0;
+    const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
 
-    if (ideaIds.length > 0) {
-      const { count: deliverableCount } = await this.client
-        .from('deliverables')
-        .select('*', { count: 'exact', head: true })
-        .in('idea_id', ideaIds);
+    const { count: totalDeliverables } = await this.client
+      .from('deliverables')
+      .select('*', { count: 'exact', head: true })
+      .in('idea_id', ideaIds)
+      .is('deleted_at', null);
 
-      totalDeliverables = deliverableCount || 0;
+    const { data: deliverables } = await this.client
+      .from('deliverables')
+      .select('id')
+      .in('idea_id', ideaIds)
+      .is('deleted_at', null);
 
-      const { data: deliverables } = await this.client
-        .from('deliverables')
-        .select('id')
-        .in('idea_id', ideaIds);
+    const deliverableIds = deliverables?.map((d) => d.id) || [];
 
-      const deliverableIds = (deliverables as any[])?.map((d) => d.id) || [];
-
-      if (deliverableIds.length > 0) {
-        const { count: taskCount } = await this.client
-          .from('tasks')
-          .select('*', { count: 'exact', head: true })
-          .in('deliverable_id', deliverableIds);
-
-        totalTasks = taskCount || 0;
-      }
-    }
+    const { count: totalTasks } = await this.client
+      .from('tasks')
+      .select('*', { count: 'exact', head: true })
+      .in('deliverable_id', deliverableIds)
+      .is('deleted_at', null);
 
     return {
       totalIdeas: ideas?.length || 0,
       ideasByStatus,
-      totalDeliverables,
-      totalTasks,
+      totalDeliverables: totalDeliverables || 0,
+      totalTasks: totalTasks || 0,
     };
   }
 
