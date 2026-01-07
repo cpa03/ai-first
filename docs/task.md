@@ -477,3 +477,72 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Effort**: Small
 - **Impact**: Removes code duplication, improves maintainability
 - **Status**: ✅ Implemented in PR #127
+
+---
+
+### Task 4: Critical Path Testing - API Handler, Rate Limiting, PII Redaction ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Test API Handler abstraction (withApiHandler, successResponse, notFoundResponse, badRequestResponse)
+- Test Rate Limiting module (checkRateLimit, getClientIdentifier, rateLimitResponse)
+- Verify PII Redaction tests already exist and are comprehensive
+
+#### Completed Work
+
+1. **Created comprehensive test suite** (`tests/api-handler.test.ts`)
+   - withApiHandler: Successful requests, request ID generation, rate limiting, error handling, request size validation, combined scenarios (20 tests)
+   - successResponse: Default status, custom status, data serialization, arrays, null/strings (6 tests)
+   - notFoundResponse: Default/custom messages, correct headers (2 tests)
+   - badRequestResponse: Message/details, empty details, correct headers (4 tests)
+
+2. **Created comprehensive test suite** (`tests/rate-limit.test.ts`)
+   - checkRateLimit: New identifier, within window, limit exceeded, window expired, different configs, edge cases (18 tests)
+   - getClientIdentifier: x-forwarded-for, multiple IPs, x-real-ip, no headers, preference logic (5 tests)
+   - rateLimitConfigs: strict, moderate, lenient configs (3 tests)
+   - createRateLimitMiddleware: Create middleware, client identifier, different config (3 tests)
+   - cleanupExpiredEntries: No errors, no entries, multiple calls (3 tests)
+   - rateLimitResponse: Status, content type, body, headers, various scenarios (9 tests)
+
+3. **Verified PII Redaction tests** (`tests/pii-redaction.test.ts`)
+   - Confirmed comprehensive tests already exist (79 tests covering all PII types and edge cases)
+
+4. **Updated Jest Setup** (`jest.setup.js`)
+   - Added Headers polyfill with full Web API compliance (entries, keys, values, forEach, iterator)
+   - Added Request polyfill for Next.js compatibility
+   - Enhanced Response polyfill with static json() method
+   - Added NextResponse mock to handle Next.js response creation
+
+5. **Test Coverage**
+   - API Handler: 32 comprehensive tests
+   - Rate Limiting: 41 comprehensive tests
+   - PII Redaction: 79 existing tests (verified)
+   - Total: 152 tests for critical infrastructure modules
+
+#### Success Criteria Met
+
+- [x] Critical paths covered
+- [x] All new tests created
+- [x] Tests readable and maintainable
+- [x] AAA pattern followed throughout
+- [x] Lint passes
+- [x] Type-check passes
+
+#### Files Modified
+
+- `tests/api-handler.test.ts` (NEW)
+- `tests/rate-limit.test.ts` (NEW)
+- `jest.setup.js` (UPDATED - added Headers, Request polyfills, NextResponse mock)
+
+#### Notes
+
+- Pre-existing test failures in resilience.test.ts are unrelated to this work
+- All new tests pass successfully (73 tests)
+- Lint passes with zero errors
+- Type-check passes with zero errors
+
+---
