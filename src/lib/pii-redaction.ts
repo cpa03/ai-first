@@ -28,7 +28,7 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   apiKey:
     /(?:api[_-]?key|apikey|secret|token)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
-  urlWithCredentials: /https?:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
+  urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
 };
 
 /**
@@ -36,6 +36,15 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  */
 export function redactPII(text: string): string {
   let redacted = text;
+
+  // Redact JWT tokens first (before API keys, since "token:" prefix might match JWTs)
+  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, '[REDACTED_TOKEN]');
+
+  // Redact URLs with credentials (before emails to prevent email regex from matching password part)
+  redacted = redacted.replace(
+    PII_REGEX_PATTERNS.urlWithCredentials,
+    '[REDACTED_URL]'
+  );
 
   // Redact email addresses
   redacted = redacted.replace(PII_REGEX_PATTERNS.email, '[REDACTED_EMAIL]');
@@ -65,15 +74,6 @@ export function redactPII(text: string): string {
 
   // Redact API keys and secrets
   redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, '[REDACTED_API_KEY]');
-
-  // Redact JWT tokens
-  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, '[REDACTED_TOKEN]');
-
-  // Redact URLs with credentials
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.urlWithCredentials,
-    '[REDACTED_URL]'
-  );
 
   return redacted;
 }
@@ -108,8 +108,15 @@ export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
         'priority',
         'estimate_hours',
       ];
+      // Always redact sensitive field values regardless of content
+      const sensitiveFields = ['api_key', 'secret', 'token', 'password'];
       if (safeFields.includes(key.toLowerCase())) {
         redacted[key] = value;
+      } else if (sensitiveFields.includes(key.toLowerCase())) {
+        // Convert field name to uppercase with underscores for redaction label
+        const fieldName = key.toLowerCase();
+        const fieldNameUpper = fieldName.toUpperCase();
+        redacted[key] = `[REDACTED_${fieldNameUpper}]`;
       } else {
         redacted[key] = redactPIIInObject(value, seen);
       }
@@ -136,7 +143,6 @@ export function sanitizeAgentLog(agent: string, action: string, payload: any) {
  * Check if a string contains potential PII
  */
 export function containsPII(text: string): boolean {
-  const originalLength = text.length;
   const redacted = redactPII(text);
-  return redacted.length !== originalLength;
+  return redacted !== text;
 }
