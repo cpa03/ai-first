@@ -34,6 +34,38 @@
   .textarea {
     @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-y;
   }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .skeleton {
+    @apply bg-gray-200 animate-pulse rounded;
+  }
+
+  .skeleton-text {
+    @apply h-4 bg-gray-200 animate-pulse rounded;
+  }
+
+  .skeleton-text-sm {
+    @apply h-3 bg-gray-200 animate-pulse rounded;
+  }
+
+  .skeleton-text-lg {
+    @apply h-6 bg-gray-200 animate-pulse rounded;
+  }
+
+  .skeleton-button {
+    @apply h-10 bg-gray-200 animate-pulse rounded-md;
+  }
 }
 
 @layer utilities {

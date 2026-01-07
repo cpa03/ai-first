@@ -104,40 +104,76 @@ ${answers.main_goal || 'Not specified'}
 
   if (isGenerating) {
     return (
-      <div
-        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="text-center">
-          <div
-            className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"
-            aria-hidden="true"
-          ></div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-            Generating Your Blueprint...
-          </h2>
-          <p className="text-gray-600">
-            Our AI is analyzing your answers and creating a detailed action
-            plan.
-          </p>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div
+          className="bg-white rounded-lg shadow-lg p-6 sm:p-8"
+          role="status"
+          aria-live="polite"
+          aria-label="Generating your blueprint"
+        >
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4">
+              <div
+                className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-4 border-primary-600 border-t-transparent"
+                aria-hidden="true"
+              ></div>
+              <div>
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-1">
+                  Generating Your Blueprint...
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600">
+                  Our AI is analyzing your answers and creating a detailed
+                  action plan.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-gray-200">
+              <div className="skeleton-text-lg h-6 w-2/3"></div>
+              <div className="space-y-2">
+                <div className="skeleton-text h-4 w-full"></div>
+                <div className="skeleton-text h-4 w-11/12"></div>
+                <div className="skeleton-text h-4 w-4/5"></div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200">
+                <div className="skeleton-text h-5 w-1/2 mb-2"></div>
+                <div className="space-y-2 pl-4">
+                  <div className="flex items-start space-x-2">
+                    <div className="skeleton w-5 h-5 rounded flex-shrink-0"></div>
+                    <div className="skeleton-text h-4 flex-1"></div>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <div className="skeleton w-5 h-5 rounded flex-shrink-0"></div>
+                    <div className="skeleton-text h-4 flex-1"></div>
+                  </div>
+                  <div className="flex items-start space-x-2">
+                    <div className="skeleton w-5 h-5 rounded flex-shrink-0"></div>
+                    <div className="skeleton-text h-4 flex-1"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-200 flex justify-between items-center">
+                <div className="skeleton-text h-4 w-1/3"></div>
+                <div className="space-x-3">
+                  <div className="skeleton-button w-24 inline-block"></div>
+                  <div className="skeleton-button w-32 inline-block"></div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <section
-        aria-labelledby="blueprint-heading"
-        className="bg-white rounded-lg shadow-lg"
-      >
-        <header className="border-b border-gray-200 px-8 py-6">
-          <div className="flex justify-between items-center">
-            <h2
-              id="blueprint-heading"
-              className="text-2xl font-semibold text-gray-900"
-            >
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <article className="bg-white rounded-lg shadow-lg">
+        <header className="border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-900">
               Your Project Blueprint
             </h2>
             <button
@@ -150,41 +186,47 @@ ${answers.main_goal || 'Not specified'}
           </div>
         </header>
 
-        <div className="p-8">
-          <div className="prose prose-lg max-w-none">
+        <main className="p-4 sm:p-8">
+          <div className="prose prose-sm sm:prose-lg max-w-none">
             <pre
-              className="whitespace-pre-wrap font-mono text-sm text-gray-800 bg-gray-50 p-6 rounded-lg overflow-x-auto"
-              aria-label="Generated project blueprint content"
+              className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
+              role="textbox"
+              aria-label="Blueprint content"
               tabIndex={0}
             >
               {blueprint}
             </pre>
           </div>
-        </div>
+        </main>
 
-        <footer className="border-t border-gray-200 px-8 py-6 bg-gray-50">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">
+        <footer className="border-t border-gray-200 px-4 sm:px-8 py-4 sm:py-6 bg-gray-50">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <p className="text-xs sm:text-sm text-gray-600">
               Ready to start implementing? Share this blueprint with your team
               or keep it as your guide.
             </p>
-            <div className="space-x-4">
+            <nav
+              className="flex sm:space-x-4 space-y-2 sm:space-y-0 flex-col sm:flex-row"
+              aria-label="Blueprint actions"
+            >
               <button
+                type="button"
                 className="btn btn-secondary"
                 aria-label="Start over with a new idea"
               >
                 Start Over
               </button>
               <button
+                type="button"
                 className="btn btn-primary"
-                aria-label="Export blueprint to project management tools"
+                aria-label="Export blueprint to external tools"
               >
                 Export to Tools
               </button>
-            </div>
+            </nav>
           </div>
         </footer>
-      </section>
+      </article>
     </div>
   );
 }
