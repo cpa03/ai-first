@@ -478,6 +478,81 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Impact**: Removes code duplication, improves maintainability
 - **Status**: ✅ Implemented in PR #127
 
+## [REFACTOR] Extract Common Timeout Handling Pattern
+
+- **Location**: `src/lib/exports.ts` (TrelloExporter, GitHubProjectsExporter, NotionExporter)
+- **Issue**: Multiple export connectors implement nearly identical timeout handling logic using `AbortController` and `setTimeout`. This pattern is duplicated at least 9 times across the file, creating maintenance burden and inconsistency in timeout values.
+- **Suggestion**: Create a reusable `withTimeout()` utility function that wraps any async operation with configurable timeout. The function should:
+  - Accept the operation, timeout duration, and optional AbortSignal
+  - Clean up AbortController on success or error
+  - Provide consistent error handling for timeout errors
+  - Be type-safe and composable with other patterns
+
+- **Priority**: Medium
+- **Effort**: Small
+- **Impact**: Reduces code duplication (~50 lines), improves consistency, easier to test timeout logic
+
+---
+
+## [REFACTOR] Simplify Export Architecture (ExportService vs ExportManager)
+
+- **Location**: `src/lib/exports.ts` (lines 1313-1386 and 1468-1518)
+- **Issue**: Both `ExportManager` and `ExportService` classes exist with overlapping functionality. ExportManager uses a Map-based registry pattern while ExportService directly instantiates each exporter. This creates confusion about which class to use and duplicate initialization logic.
+- **Suggestion**: Consolidate into a single `ExportManager` class that:
+  - Maintains the Map-based registry for extensibility
+  - Provides convenience methods for common export operations
+  - Deprecates or removes the ExportService class
+  - Updates all internal references to use the unified class
+
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Reduces confusion, eliminates duplicate code, clearer API
+
+---
+
+## [REFACTOR] Extract Error Handling Utilities for Export Connectors
+
+- **Location**: `src/lib/exports.ts` (all ExportConnector implementations)
+- **Issue**: Each exporter implements nearly identical error handling logic: wrapping errors in try-catch, checking response.ok, and returning `{ success: false, error: ... }` objects. This pattern is repeated 6+ times, making it hard to change error handling consistently.
+- **Suggestion**: Create a `handleExportError()` utility function that:
+  - Accepts error objects and error contexts
+  - Standardizes error message formatting
+  - Logs errors consistently
+  - Returns properly shaped ExportResult objects
+  - Supports custom error transformers per exporter
+
+- **Priority**: Low
+- **Effort**: Small
+- **Impact**: Improves consistency, reduces code duplication, easier debugging
+
+---
+
+## [REFACTOR] Remove Duplicated getPriorityLabel Implementation
+
+- **Location**: `src/lib/exports.ts` (TrelloExporter:762-766, GitHubProjectsExporter:1296-1300)
+- **Issue**: Both TrelloExporter and GitHubProjectsExporter have identical `getPriorityLabel()` methods that map priority numbers to colors/labels. This is exact duplication with no variation between implementations.
+- **Suggestion**: Extract this method to a shared utility function in a new `src/lib/priority-utils.ts` file. Both exporters should import and use this shared implementation. Consider making it more flexible to support different label formats.
+
+- **Priority**: Low
+- **Effort**: Small
+- **Impact**: Removes duplication, ensures consistency across export formats
+
+---
+
+## [REFACTOR] Extract Prompt Parsing Logic from Clarifier Agent
+
+- **Location**: `src/lib/clarifier.ts` (lines 62-127)
+- **Issue**: The `generateClarifyingQuestions()` method contains complex parsing logic for extracting questions and refined ideas from AI responses. This 65-line block includes multiple conditional branches, regex matching, and state tracking, making it hard to test and maintain.
+- **Suggestion**: Extract the parsing logic into a separate class or utility functions:
+  - Create a `PromptParser` class with methods like `extractQuestions()`, `extractRefinedIdea()`
+  - Support multiple parsing strategies (regex-based, structured, fallback)
+  - Make parsing logic testable without calling the AI service
+  - Add unit tests for each parsing scenario
+
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Improves testability, reduces method complexity, easier to iterate on parsing
+
 ---
 
 ### Task 4: Critical Path Testing - API Handler, Rate Limiting, PII Redaction ✅ COMPLETE
