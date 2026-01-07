@@ -3,10 +3,11 @@ import { NextResponse } from 'next/server';
 export function middleware() {
   const response = NextResponse.next();
 
-  // Content Security Policy
+  const isDevelopment = process.env.NODE_ENV !== 'production';
+
   const cspHeader = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live",
+    "script-src 'self' 'unsafe-inline' https://vercel.live",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
@@ -15,22 +16,25 @@ export function middleware() {
     "form-action 'self'",
     "frame-ancestors 'none'",
     'upgrade-insecure-requests',
-  ].join('; ');
+    "connect-src 'self' https://*.supabase.co",
+    isDevelopment
+      ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live"
+      : "script-src 'self' 'unsafe-inline' https://vercel.live",
+  ]
+    .filter((directive, index, array) => array.indexOf(directive) === index)
+    .join('; ');
 
-  // Security headers
   response.headers.set('Content-Security-Policy', cspHeader);
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
-  // Permissions Policy
   response.headers.set(
     'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(), browsing-topics=()'
+    'camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
   );
 
-  // HSTS (only in production)
   if (process.env.NODE_ENV === 'production') {
     response.headers.set(
       'Strict-Transport-Security',

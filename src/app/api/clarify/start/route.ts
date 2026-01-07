@@ -1,22 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
+import {
+  validateIdea,
+  validateIdeaId,
+  validateRequestSize,
+  buildErrorResponse,
+} from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
-    const { ideaId, ideaText } = await request.json();
-
-    if (!ideaId || !ideaText) {
-      return NextResponse.json(
-        { error: 'ideaId and ideaText are required' },
-        { status: 400 }
-      );
+    const sizeValidation = validateRequestSize(request);
+    if (!sizeValidation.valid) {
+      return buildErrorResponse(sizeValidation.errors);
     }
 
-    // Initialize clarifier agent
+    const { ideaId, ideaText } = await request.json();
+
+    const idValidation = validateIdeaId(ideaId);
+    if (!idValidation.valid) {
+      return buildErrorResponse(idValidation.errors);
+    }
+
+    const ideaValidation = validateIdea(ideaText);
+    if (!ideaValidation.valid) {
+      return buildErrorResponse(ideaValidation.errors);
+    }
+
     await clarifierAgent.initialize();
 
-    // Start clarification session
-    const session = await clarifierAgent.startClarification(ideaId, ideaText);
+    const session = await clarifierAgent.startClarification(
+      ideaId.trim(),
+      ideaText.trim()
+    );
 
     return NextResponse.json({ success: true, session });
   } catch (error) {
@@ -37,14 +52,17 @@ export async function GET(request: NextRequest) {
     const ideaId = searchParams.get('ideaId');
 
     if (!ideaId) {
-      return NextResponse.json(
-        { error: 'ideaId is required' },
-        { status: 400 }
-      );
+      return buildErrorResponse([
+        { field: 'ideaId', message: 'ideaId is required' },
+      ]);
     }
 
-    // Get clarification session
-    const session = await clarifierAgent.getSession(ideaId);
+    const idValidation = validateIdeaId(ideaId);
+    if (!idValidation.valid) {
+      return buildErrorResponse(idValidation.errors);
+    }
+
+    const session = await clarifierAgent.getSession(ideaId.trim());
 
     if (!session) {
       return NextResponse.json(
