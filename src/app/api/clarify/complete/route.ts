@@ -1,37 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import { validateIdeaId, validateRequestSize } from '@/lib/validation';
-import {
-  toErrorResponse,
-  generateRequestId,
-  ValidationError,
-} from '@/lib/errors';
+import { validateIdeaId } from '@/lib/validation';
+import { ValidationError } from '@/lib/errors';
+import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
-export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
+async function handlePost(context: ApiContext) {
+  const { request } = context;
+  const { ideaId } = await request.json();
 
-  try {
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      throw new ValidationError(sizeValidation.errors);
-    }
-
-    const { ideaId } = await request.json();
-
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
-    }
-
-    const result = await clarifierAgent.completeClarification(ideaId.trim());
-
-    return NextResponse.json(
-      { success: true, ...result, requestId },
-      {
-        headers: { 'X-Request-ID': requestId },
-      }
-    );
-  } catch (error) {
-    return toErrorResponse(error, requestId);
+  const idValidation = validateIdeaId(ideaId);
+  if (!idValidation.valid) {
+    throw new ValidationError(idValidation.errors);
   }
+
+  const result = await clarifierAgent.completeClarification(ideaId.trim());
+
+  return successResponse({
+    success: true,
+    ...result,
+    requestId: context.requestId,
+  });
 }
+
+export const POST = withApiHandler(handlePost);

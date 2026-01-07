@@ -92,6 +92,26 @@ jest.mock('next/navigation', () => ({
   },
 }));
 
+// Mock NextResponse
+jest.mock('next/server', () => {
+  const actualModule = jest.requireActual('next/server');
+  return {
+    ...actualModule,
+    NextResponse: {
+      json: (data, init = {}) => {
+        const response = new actualModule.NextResponse(JSON.stringify(data), {
+          ...init,
+          headers: {
+            'content-type': 'application/json',
+            ...init.headers,
+          },
+        });
+        return response;
+      },
+    },
+  };
+});
+
 // Mock fetch globally
 global.fetch = jest.fn();
 
@@ -141,15 +161,176 @@ global.open = jest.fn();
 // Mock URL.createObjectURL
 global.URL.createObjectURL = jest.fn(() => 'mock-url');
 
-// Reset all mocks before each test
-beforeEach(() => {
-  jest.clearAllMocks();
-  localStorageMock.getItem.mockClear();
-  localStorageMock.setItem.mockClear();
-  sessionStorageMock.getItem.mockClear();
-  sessionStorageMock.setItem.mockClear();
-  global.fetch?.mockClear?.();
-});
+// Polyfill Headers for Node.js environment
+if (typeof Headers === 'undefined') {
+  global.Headers = class Headers {
+    constructor(init = {}) {
+      this._headers = {};
+
+      if (init) {
+        if (init instanceof Headers) {
+          init.forEach((value, key) => {
+            this._headers[key.toLowerCase()] = value;
+          });
+        } else if (Array.isArray(init)) {
+          init.forEach(([key, value]) => {
+            this._headers[key.toLowerCase()] = value;
+          });
+        } else if (typeof init === 'object') {
+          Object.keys(init).forEach((key) => {
+            this._headers[key.toLowerCase()] = init[key];
+          });
+        }
+      }
+    }
+
+    append(name, value) {
+      const key = name.toLowerCase();
+      const existing = this._headers[key];
+      this._headers[key] = existing ? `${existing}, ${value}` : value;
+    }
+
+    delete(name) {
+      delete this._headers[name.toLowerCase()];
+    }
+
+    get(name) {
+      return this._headers[name.toLowerCase()] || null;
+    }
+
+    has(name) {
+      return this._headers[name.toLowerCase()] !== undefined;
+    }
+
+    set(name, value) {
+      this._headers[name.toLowerCase()] = value;
+    }
+
+    forEach(callback, thisArg) {
+      Object.entries(this._headers).forEach(([key, value]) => {
+        callback.call(thisArg, value, key, this);
+      });
+    }
+
+    *entries() {
+      for (const [key, value] of Object.entries(this._headers)) {
+        yield [key, value];
+      }
+    }
+
+    *keys() {
+      for (const key of Object.keys(this._headers)) {
+        yield key;
+      }
+    }
+
+    *values() {
+      for (const value of Object.values(this._headers)) {
+        yield value;
+      }
+    }
+
+    [Symbol.iterator]() {
+      return this.entries();
+    }
+  };
+}
+
+// Polyfill Request for Node.js environment
+if (typeof Request === 'undefined') {
+  global.Request = class Request {
+    constructor(input, init = {}) {
+      this._url = typeof input === 'string' ? input : input.url;
+      this._method = init.method || 'GET';
+      this._headers = new Headers(init.headers);
+    }
+
+    get url() {
+      return this._url;
+    }
+
+    get method() {
+      return this._method;
+    }
+
+    get headers() {
+      return this._headers;
+    }
+  };
+}
+
+// Polyfill Response for Node.js environment
+if (typeof Response === 'undefined') {
+  global.Response = class Response {
+    constructor(body, init = {}) {
+      this._body = body;
+      this._status = init.status || 200;
+      this._headers = {};
+
+      if (init.headers) {
+        if (init.headers instanceof Headers) {
+          init.headers.forEach((value, key) => {
+            this._headers[key.toLowerCase()] = value;
+          });
+        } else if (typeof init.headers === 'object') {
+          Object.keys(init.headers).forEach((key) => {
+            this._headers[key.toLowerCase()] = init.headers[key];
+          });
+        }
+      }
+    }
+
+    get status() {
+      return this._status;
+    }
+
+    get headers() {
+      return {
+        get: (key) => this._headers[key.toLowerCase()],
+        set: (key, value) => {
+          this._headers[key.toLowerCase()] = value;
+        },
+        has: (key) => this._headers[key.toLowerCase()] !== undefined,
+      };
+    }
+
+    static json(data, init = {}) {
+      const response = new Response(JSON.stringify(data), {
+        ...init,
+        headers: {
+          'content-type': 'application/json',
+          ...init.headers,
+        },
+      });
+      return response;
+    }
+
+    async json() {
+      return JSON.parse(this._body);
+    }
+
+    async text() {
+      return this._body;
+    }
+
+    clone() {
+      return new Response(this._body, {
+        status: this._status,
+        headers: this._headers,
+      });
+    }
+  };
+}
+
+// Mock setTimeout to support unref() for Jest timers
+const originalSetTimeout = global.setTimeout;
+global.setTimeout = ((callback, delay, ...args) => {
+  const timeoutId = originalSetTimeout(callback, delay, ...args);
+  if (timeoutId && typeof timeoutId.unref === 'function') {
+    timeoutId.unref();
+  }
+  return timeoutId;
+}).bind(global);
 
 // Cleanup after each test
 afterEach(() => {

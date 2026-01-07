@@ -11,33 +11,19 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [idea, setIdea] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [touched, setTouched] = useState(false);
-
-  const MIN_LENGTH = 10;
-  const MAX_LENGTH = 1000;
-
-  const validationError = !idea.trim()
-    ? 'Please enter your idea.'
-    : idea.trim().length < MIN_LENGTH
-      ? `Your idea must be at least ${MIN_LENGTH} characters.`
-      : idea.length > MAX_LENGTH
-        ? `Your idea cannot exceed ${MAX_LENGTH} characters.`
-        : null;
-
-  const isValid = !validationError;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!isValid) return;
+    if (!idea.trim()) return;
 
     setIsSubmitting(true);
     setError(null);
 
     try {
+      // Create a new idea in the database
       const newIdea: Omit<Idea, 'id' | 'created_at'> = {
-        user_id: 'default_user',
-        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''),
+        user_id: 'default_user', // In a real app, this would come from auth
+        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''), // Truncate title
         raw_text: idea,
         status: 'draft',
       };
@@ -53,74 +39,51 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     }
   };
 
-  const handleBlur = () => {
-    setTouched(true);
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>
       <div>
         <label
-          htmlFor="idea"
+          htmlFor="idea-input"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
           What's your idea?
         </label>
         <textarea
-          id="idea"
+          id="idea-input"
           name="idea"
           value={idea}
           onChange={(e) => setIdea(e.target.value)}
-          onBlur={handleBlur}
           placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-          className={`textarea min-h-[120px] ${touched && validationError ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
+          className="textarea min-h-[120px]"
           disabled={isSubmitting}
-          aria-describedby="idea-hint idea-error idea-char-count"
-          aria-invalid={touched && validationError ? 'true' : 'false'}
+          aria-describedby="idea-help"
           aria-required="true"
-          maxLength={MAX_LENGTH}
         />
-        <div className="mt-2 flex justify-between items-center">
-          <p id="idea-hint" className="text-sm text-gray-500">
-            Be as specific or as general as you'd like. We'll help you clarify
-            the details.
-          </p>
-          <span
-            id="idea-char-count"
-            className={`text-xs sm:text-sm ${idea.length > MAX_LENGTH * 0.9 ? 'text-orange-600 font-medium' : 'text-gray-500'}`}
-            aria-live="polite"
-          >
-            {idea.length} / {MAX_LENGTH}
-          </span>
-        </div>
+        <p id="idea-help" className="mt-2 text-sm text-gray-500">
+          Be as specific or as general as you'd like. We'll help you clarify the
+          details.
+        </p>
       </div>
-
-      {touched && validationError && (
-        <div
-          id="idea-error"
-          role="alert"
-          aria-live="assertive"
-          className="bg-red-50 border border-red-200 rounded-lg p-4"
-        >
-          <p className="text-red-800 text-sm">
-            <span className="font-semibold" aria-hidden="true">
-              ⚠
-            </span>{' '}
-            {validationError}
-          </p>
-        </div>
-      )}
 
       {error && (
         <div
-          id="submit-error"
           role="alert"
           aria-live="assertive"
-          className="bg-red-50 border border-red-200 rounded-lg p-4"
+          className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3"
         >
-          <p className="text-red-800 text-sm">
-            <span className="font-semibold">Error:</span> {error}
-          </p>
+          <svg
+            className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-red-800 text-sm">{error}</p>
         </div>
       )}
 

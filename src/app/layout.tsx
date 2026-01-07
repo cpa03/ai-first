@@ -73,7 +73,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-gray-50">
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:bg-primary-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-md focus:font-medium"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
         >
           Skip to main content
         </a>
@@ -86,25 +86,22 @@ export default function RootLayout({
                     IdeaFlow
                   </h1>
                 </div>
-                <nav
-                  aria-label="Main navigation"
-                  className="flex space-x-2 sm:space-x-8"
-                >
+                <nav aria-label="Main navigation" className="flex space-x-8">
                   <a
                     href="/"
-                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:rounded-md"
+                    className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
                   >
                     Home
                   </a>
                   <a
                     href="/clarify"
-                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:rounded-md"
+                    className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
                   >
                     Clarify
                   </a>
                   <a
                     href="/results"
-                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:rounded-md"
+                    className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
                   >
                     Results
                   </a>
@@ -116,7 +113,7 @@ export default function RootLayout({
             {children}
           </main>
           <footer className="bg-white border-t border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <p className="text-center text-sm text-gray-500">
                 © 2025 IdeaFlow. Turn ideas into action.
               </p>

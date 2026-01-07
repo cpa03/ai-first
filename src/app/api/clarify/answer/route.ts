@@ -1,56 +1,59 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import {
-  validateIdeaId,
-  validateQuestionId,
-  validateAnswer,
-  validateRequestSize,
-} from '@/lib/validation';
-import {
-  toErrorResponse,
-  generateRequestId,
-  ValidationError,
-} from '@/lib/errors';
+import { validateIdeaId } from '@/lib/validation';
+import { ValidationError } from '@/lib/errors';
+import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
-export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
+const MAX_ANSWER_LENGTH = 5000;
 
-  try {
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      throw new ValidationError(sizeValidation.errors);
-    }
+async function handlePost(context: ApiContext) {
+  const { request } = context;
+  const { ideaId, questionId, answer } = await request.json();
 
-    const { ideaId, questionId, answer } = await request.json();
-
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
-    }
-
-    const questionIdValidation = validateQuestionId(questionId);
-    if (!questionIdValidation.valid) {
-      throw new ValidationError(questionIdValidation.errors);
-    }
-
-    const answerValidation = validateAnswer(answer);
-    if (!answerValidation.valid) {
-      throw new ValidationError(answerValidation.errors);
-    }
-
-    const session = await clarifierAgent.submitAnswer(
-      ideaId.trim(),
-      questionId.trim(),
-      answer.trim()
-    );
-
-    return NextResponse.json(
-      { success: true, session, requestId },
-      {
-        headers: { 'X-Request-ID': requestId },
-      }
-    );
-  } catch (error) {
-    return toErrorResponse(error, requestId);
+  const idValidation = validateIdeaId(ideaId);
+  if (!idValidation.valid) {
+    throw new ValidationError(idValidation.errors);
   }
+
+  if (
+    !questionId ||
+    typeof questionId !== 'string' ||
+    questionId.trim().length === 0
+  ) {
+    throw new ValidationError([
+      {
+        field: 'questionId',
+        message: 'questionId is required and must be a non-empty string',
+      },
+    ]);
+  }
+
+  if (!answer || typeof answer !== 'string') {
+    throw new ValidationError([
+      { field: 'answer', message: 'answer is required and must be a string' },
+    ]);
+  }
+
+  const trimmedAnswer = answer.trim();
+  if (trimmedAnswer.length > MAX_ANSWER_LENGTH) {
+    throw new ValidationError([
+      {
+        field: 'answer',
+        message: `answer must not exceed ${MAX_ANSWER_LENGTH} characters`,
+      },
+    ]);
+  }
+
+  const session = await clarifierAgent.submitAnswer(
+    ideaId.trim(),
+    questionId.trim(),
+    trimmedAnswer
+  );
+
+  return successResponse({
+    success: true,
+    session,
+    requestId: context.requestId,
+  });
 }
+
+export const POST = withApiHandler(handlePost);
