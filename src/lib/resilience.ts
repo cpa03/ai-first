@@ -210,17 +210,22 @@ export function createResilientWrapper<T>(
     const { circuitBreaker, timeoutMs, retryConfig } = options;
 
     const wrappedOperation = async () => {
-      let op = operation;
+      if (timeoutMs && retryConfig) {
+        return await withRetry(
+          () => withTimeout(operation, timeoutMs),
+          retryConfig
+        );
+      }
 
       if (timeoutMs) {
-        op = () => withTimeout(op, timeoutMs);
+        return await withTimeout(operation, timeoutMs);
       }
 
       if (retryConfig) {
-        return await withRetry(op, retryConfig);
+        return await withRetry(operation, retryConfig);
       }
 
-      return await op();
+      return await operation();
     };
 
     if (circuitBreaker) {
