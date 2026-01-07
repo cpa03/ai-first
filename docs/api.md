@@ -42,6 +42,161 @@ All errors follow a consistent format:
 
 For detailed error codes, see [Error Code Documentation](./error-codes.md).
 
+## Resilience Patterns
+
+The IdeaFlow API implements several resilience patterns to ensure reliable operation when integrating with external services:
+
+### Circuit Breaker Pattern
+
+Circuit breakers prevent cascading failures by stopping calls to failing services. When a service reaches a failure threshold, the circuit opens and subsequent calls fail fast without waiting for timeouts.
+
+**Circuit Breaker States:**
+
+- `closed`: Normal operation, requests flow through
+- `open`: Service is failing, requests fail immediately
+- `half-open`: Testing if service has recovered
+
+**Circuit Breaker Behavior:**
+
+1. **Failure Threshold**: After 5 consecutive failures, circuit opens
+2. **Reset Timeout**: Circuit stays open for 60 seconds, then enters half-open
+3. **Recovery Test**: In half-open, next request tests service health
+4. **Close on Success**: Successful request closes circuit
+
+**Monitoring Circuit Breakers:**
+
+Check `/api/health/detailed` to see all circuit breaker states:
+
+```json
+{
+  "circuitBreakers": [
+    {
+      "service": "openai",
+      "state": "closed",
+      "failures": 0
+    },
+    {
+      "service": "trello",
+      "state": "open",
+      "failures": 6
+    }
+  ]
+}
+```
+
+### Retry Logic
+
+External API calls automatically retry with exponential backoff:
+
+**Default Retry Configuration:**
+
+- `maxRetries`: 3 attempts
+- `initialDelayMs`: 1000ms
+- `maxDelayMs`: 30000ms
+- `backoffMultiplier`: 2x (delays: 1s, 2s, 4s)
+
+**Retryable Errors:**
+
+The system automatically retries on these errors:
+
+- Network errors (ECONNRESET, ECONNREFUSED, ETIMEDOUT, ENOTFOUND)
+- HTTP 429 (Rate Limit)
+- HTTP 502, 503, 504 (Gateway/Service errors)
+- QUOTA_EXCEEDED errors
+
+**Non-Retryable Errors:**
+
+These errors fail immediately:
+
+- HTTP 400, 401, 403, 404, 409
+- Validation errors
+- Authentication errors
+
+### Timeouts
+
+All external API calls have timeout protection:
+
+**Default Timeouts:**
+
+- `OpenAI`: 60 seconds
+- `Notion`: 30 seconds
+- `Trello`: 30 seconds
+- `GitHub`: 30 seconds
+- `Database`: 10 seconds
+
+Timeout errors return `TIMEOUT_ERROR` code with retryable=true, allowing automatic retry.
+
+### Error Recovery
+
+When an external service fails:
+
+1. **Automatic Retry**: System retries with exponential backoff
+2. **Circuit Breaker**: Repeated failures open circuit, preventing further calls
+3. **Degraded Mode**: Export connectors show "degraded" status when some are down
+4. **Health Monitoring**: `/api/health/detailed` shows real-time service health
+5. **Manual Recovery**: Circuit breakers auto-reset after 60 seconds, or use admin endpoint to reset
+
+### Client-Side Recommendations
+
+**Best Practices:**
+
+1. **Check Health First**: Call `/api/health/detailed` before bulk operations
+2. **Handle Retryable Errors**: Implement exponential backoff for `retryable: true` errors
+3. **Respect Rate Limits**: Include `Retry-After` header in retry logic
+4. **Use Request IDs**: Log `X-Request-ID` for debugging failed requests
+
+**Example Retry Implementation:**
+
+```typescript
+async function resilientCall(url: string, data: any) {
+  let lastError: Error;
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (result.code === 'CIRCUIT_BREAKER_OPEN') {
+          // Wait and retry
+          const retryAfter = new Date(result.nextAttemptTime);
+          const delayMs = retryAfter.getTime() - Date.now();
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          continue;
+        }
+
+        if (result.retryable) {
+          // Exponential backoff
+          const delay = Math.pow(2, attempt - 1) * 1000;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        throw new Error(result.error);
+      }
+
+      return result;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      if (attempt === 3) break;
+
+      // Network errors - retry with backoff
+      const delay = Math.pow(2, attempt - 1) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  throw lastError;
+}
+```
+
+---
+
 ## Health Endpoints
 
 ### GET /api/health

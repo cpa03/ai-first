@@ -410,198 +410,348 @@ questions:
 
 ---
 
-## 24. API Route Handler Abstraction
+## 24. Data Architecture Improvements (2025-01-07)
 
-### Purpose
+### Database Schema Optimization
 
-To eliminate code duplication across API routes and enforce consistent patterns for request handling, validation, error handling, and response formatting.
+**Migration 002**: Database schema optimization with the following improvements:
 
-### Architecture
+**Performance Indexes Added**:
 
-All API routes MUST use the handler abstraction in `src/lib/api-handler.ts`:
+- Indexes on `ideas.user_id`, `ideas.status`, `ideas.created_at` for fast user queries
+- Composite index `ideas(user_id, status)` for dashboard filtering
+- Indexes on `deliverables.idea_id`, `tasks.deliverable_id` for efficient joins
+- Indexes on agent_logs for audit log querying
 
-#### Core Components:
+**Soft-Delete Mechanism**:
 
-**`withApiHandler`**: Higher-order function that wraps route handlers with:
+- Added `deleted_at` columns to `ideas`, `deliverables`, and `tasks` tables
+- Updated RLS policies to automatically filter out soft-deleted records
+- Created indexes on `deleted_at` for efficient soft-delete queries
+- Implemented soft-delete methods in DatabaseService (`softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`)
+- All SELECT queries now filter out soft-deleted records by default
 
-- **Request ID generation**: Unique ID for distributed tracing
-- **Rate limiting**: Per-route configurable rate limits
-- **Request size validation**: Prevents payload attacks
-- **Error handling**: Automatic conversion to standardized error responses
-- **Response formatting**: Consistent headers (X-Request-ID)
+**Data Integrity Constraints**:
 
-**`ApiContext`**: Provides access to:
+- Added NOT NULL constraints to critical fields (`ideas.title`, `ideas.raw_text`, `deliverables.title`, `tasks.title`)
+- Added CHECK constraints for positive estimates (`estimate_hours >= 0`, `estimate >= 0`)
 
-- `requestId`: Unique request identifier
-- `request`: NextRequest object
+**Fixed N+1 Query Problem**:
 
-**`ApiHandler`**: Type-safe handler function signature:
+- Optimized `getIdeaStats()` method to use proper joins and IN clauses
+- Reduced database queries from 3-4 to exactly 3 optimized queries
+- Fixed task counting to count tasks for all ideas, not just the first one
 
-```typescript
-type ApiHandler<T> = (context: ApiContext) => Promise<NextResponse>;
-```
+**Migration Safety**:
 
-#### Helper Functions:
+- All migrations include reversible down scripts (`002_schema_optimization_down.sql`)
+- Non-destructive changes: additions only, no destructive modifications
+- Batch operations for large datasets (indexes created with IF NOT EXISTS)
 
-- `successResponse<T>(data, status?)`: Creates successful JSON responses
-- `notFoundResponse(message?)`: Creates 404 responses
-- `badRequestResponse(message, details?)`: Creates 400 error responses
+### pgvector Support for AI/ML
 
-### Usage Pattern
+**Migration 003**: Enhanced vectors table for efficient similarity search:
 
-**Before** (duplicated code):
+**pgvector Integration**:
 
-```typescript
-export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
-  try {
-    const rateLimitResult = checkRateLimit(...);
-    if (!rateLimitResult.allowed) {
-      return rateLimitResponse(...);
-    }
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      return buildErrorResponse(...);
-    }
-    // Business logic here...
-    return NextResponse.json({ success: true, ... }, {
-      headers: { 'X-Request-ID': requestId }
-    });
-  } catch (error) {
-    return toErrorResponse(error, requestId);
-  }
-}
-```
+- Added `embedding` column using pgvector type (1536 dimensions for OpenAI ada-002)
+- Created IVFFlat indexes for cosine and L2 distance similarity search
+- Added vector similarity search function `match_vectors()` with configurable threshold
+- Enabled efficient nearest neighbor search for AI-powered features
 
-**After** (clean, declarative):
+**API Enhancements**:
 
-```typescript
-async function handlePost(context: ApiContext) {
-  const { request } = context;
-  const { ideaId, ideaText } = await request.json();
-  // Validation and business logic here...
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
-}
+- New `storeEmbedding()` method for storing vector embeddings
+- New `searchSimilarVectors()` method for semantic similarity search
+- Updated Vector interface to include `embedding` field
+- Backward compatible with existing `vector_data` JSONB column
 
-export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
-```
+### Database Service Updates
 
-### Configuration Options
+All DatabaseService methods updated to support:
 
-**`rateLimit`**: Optional rate limit configuration
+1. **Soft-delete filtering**: All SELECT queries now filter out soft-deleted records
+2. **Vector operations**: New methods for embedding storage and similarity search
+3. **Performance optimizations**: Efficient queries with proper indexing strategy
 
-```typescript
-{
-  rateLimit: 'moderate';
-} // Uses rateLimitConfigs.moderate
-```
+---
 
-**`validateSize`**: Disable size validation (default: true)
+## 25. Schema and Type Synchronization (2025-01-07)
 
-```typescript
-{
-  validateSize: false;
-} // For health endpoints, etc.
-```
+### Overview
+
+Critical data architecture fix to resolve schema drift between base `schema.sql` and migration files, and to synchronize TypeScript type definitions with actual database structure.
+
+### Issues Identified
+
+1. **Schema Drift**: Base `schema.sql` was missing columns and tables added by migrations
+   - Missing `deleted_at` columns for soft-delete support
+   - Missing pgvector extension and `embedding` column in vectors table
+   - Missing all breakdown engine tables from migration 001
+
+2. **Type Mismatch**: TypeScript types in `src/types/database.ts` were incomplete
+   - Missing `deleted_at` fields in Idea, Deliverable, and Task types
+   - Missing `embedding` field in Vector type
+   - Missing `match_vectors` function in Functions section
+
+### Completed Work
+
+**Base Schema Updates** (`supabase/schema.sql`):
+
+1. **Soft-Delete Support**:
+   - Added `deleted_at TIMESTAMP WITH TIME ZONE` to `ideas`, `deliverables`, `tasks` tables
+   - Updated RLS policies to filter out soft-deleted records automatically
+   - Created indexes on `deleted_at` columns for efficient queries
+
+2. **pgvector Integration**:
+   - Added `CREATE EXTENSION IF NOT EXISTS vector;`
+   - Added `embedding vector(1536)` column to vectors table
+   - Created IVFFlat indexes for cosine and L2 distance similarity search
+   - Added `match_vectors()` function for efficient similarity search
+
+3. **Breakdown Engine Tables** (from migration 001):
+   - `task_dependencies` - Task predecessor/successor relationships
+   - `milestones` - Project milestones with status tracking
+   - `task_assignments` - User assignments with role-based allocation
+   - `time_tracking` - Hours logged per user per task
+   - `task_comments` - Threaded task discussions
+   - `breakdown_sessions` - AI breakdown process tracking
+   - `timelines` - Project timeline data with critical path
+   - `risk_assessments` - Risk identification and mitigation
+
+4. **Additional Indexes**:
+   - All new tables properly indexed
+   - Composite indexes for common query patterns
+   - `deleted_at` indexes for soft-delete queries
+
+5. **Data Integrity**:
+   - `CHECK` constraints for `estimate_hours >= 0` and `estimate >= 0`
+   - `updated_at` triggers for tables with `updated_at` column
+   - RLS policies for all new tables with proper access control
+
+**TypeScript Type Updates** (`src/types/database.ts`):
+
+1. **Added `deleted_at` fields** to `ideas`, `deliverables`, and `tasks` tables:
+   - Row, Insert, and Update interfaces include `deleted_at: string | null`
+   - Matches database schema exactly
+
+2. **Added `embedding` field** to `vectors` table:
+   - Type: `number[]` (array of floats representing vector)
+   - Row, Insert, and Update interfaces include this field
+
+3. **Added `match_vectors` function** to Functions section:
+   - Full type definition with Args and Returns
+   - Supports similarity search parameters (threshold, count, filter)
 
 ### Benefits
 
-1. **DRY Principle**: Eliminates ~40 lines of duplicated code per route
-2. **Consistency**: All routes follow same patterns
-3. **Maintainability**: Changes to error handling or rate limiting propagate automatically
-4. **Type Safety**: Strongly typed context and handler signatures
-5. **Separation of Concerns**: Infrastructure concerns abstracted away from business logic
-6. **Open/Closed Principle**: Easy to add new middleware features without modifying existing routes
+1. **Schema Consistency**: Base schema now accurately represents production database state
+2. **Type Safety**: TypeScript types match database exactly, preventing runtime errors
+3. **Full Feature Support**: All migration features now available in base schema
+4. **Developer Experience**: IDE autocomplete and type checking work correctly
+5. **Deployment Safety**: New deployments use complete schema from scratch
 
-### Refactored Routes
+### Verification
 
-All API routes have been refactored to use the handler abstraction:
+- [x] Build passes successfully
+- [x] Type-check passes (no errors in lib/types directories)
+- [x] All migrations reflected in base schema
+- [x] TypeScript types match database schema
+- [x] Zero breaking changes (all additions)
+- [x] Backward compatible
 
-- `/api/breakdown` - POST and GET
-- `/api/clarify/start` - POST and GET
-- `/api/clarify/answer` - POST
-- `/api/clarify/complete` - POST
-- `/api/clarify` - POST
-- `/api/health` - GET
-- `/api/health/database` - GET
-- `/api/health/detailed` - GET
+### Files Modified
 
-### Future Enhancements
-
-Potential middleware to add:
-
-- Authentication/Authorization checks
-- Request logging/metrics
-- Request validation schema (Zod/Joi integration)
-- CORS handling
-- Request timeout enforcement
-- Custom rate limit strategies (per-user, per-API-key)
+- `supabase/schema.sql` - Comprehensive update with all migration changes
+- `src/types/database.ts` - Added missing type fields and function definitions
 
 ---
 
-## 25. Integration Resilience Patterns
+## 26. Integration Hardening (2025-01-07)
 
-### Resilience Framework
+### Resilience Patterns Implementation
 
-All external service integrations MUST use the resilience framework in `src/lib/resilience.ts`:
+**Purpose**: Ensure robust operation when integrating with external services (OpenAI, Notion, Trello, GitHub, etc.) through automatic failure recovery and graceful degradation.
 
-#### Features:
+#### Core Resilience Components
 
-- **Retry with exponential backoff**: Automatic retries on transient failures
-- **Timeouts**: All external calls have configurable timeouts
-- **Circuit breakers**: Stop calling failing services temporarily
-- **Configurable per-service**: Each service has optimized settings
+**1. Circuit Breaker Pattern**
 
-#### Configuration (defaultResilienceConfigs):
+- **File**: `src/lib/resilience.ts`
+- **Purpose**: Prevent cascading failures by stopping calls to repeatedly failing services
+- **Implementation**: `CircuitBreaker` class with state management
+- **States**:
+  - `closed`: Normal operation, requests flow through
+  - `open`: Service failing, requests fail immediately
+  - `half-open`: Testing recovery after timeout
+- **Configuration**:
+  - Failure threshold: 5 consecutive failures
+  - Reset timeout: 60 seconds
+  - Auto-recovery: Opens circuit after threshold, closes on successful test
+
+**2. Timeout Protection**
+
+- **File**: `src/lib/resilience.ts` - `withTimeout()` function
+- **Purpose**: Prevent indefinite hangs on unresponsive services
+- **Default Timeouts**:
+  - OpenAI: 60 seconds
+  - Notion: 30 seconds
+  - Trello: 30 seconds
+  - GitHub: 30 seconds
+  - Database: 10 seconds
+
+**3. Retry Logic with Exponential Backoff**
+
+- **File**: `src/lib/resilience.ts` - `withRetry()` function
+- **Purpose**: Automatically retry transient failures with intelligent delays
+- **Configuration**:
+  - Max retries: 3 attempts
+  - Initial delay: 1000ms
+  - Max delay: 30000ms
+  - Backoff multiplier: 2x (delays: 1s, 2s, 4s)
+- **Retryable Errors**:
+  - Network errors (ECONNRESET, ECONNREFUSED, ETIMEDOUT, ENOTFOUND)
+  - HTTP 429 (Rate Limit)
+  - HTTP 502, 503, 504 (Gateway/Service errors)
+  - QUOTA_EXCEEDED errors
+
+#### Integration Points Hardened
+
+**AI Service** (`src/lib/ai.ts`):
+
+- OpenAI API calls wrapped with:
+  - Circuit breaker for `ai-openai` service
+  - 60-second timeout
+  - 3 retries with exponential backoff
+- Health check includes circuit breaker status
+- Removed basic client-side rate limiting (now handled by resilience patterns)
+
+**Export Connectors** (`src/lib/exports.ts`):
+
+**TrelloExporter**:
+
+- All API calls use circuit breaker for `trello` service
+- 30-second timeout on all operations
+- 3 retries for critical operations (board/list/card creation)
+- 2 retries for non-critical operations (labels/comments)
+
+**GitHubProjectsExporter**:
+
+- Circuit breaker for `github` service
+- 30-second timeout on all operations
+- 3 retries for critical operations
+- Config validation uses timeout protection
+
+**NotionExporter**:
+
+- Circuit breaker for `notion` service
+- 30-second timeout on connection tests
+- Uses Notion SDK's built-in retry mechanisms
+
+#### Health Monitoring
+
+**Detailed Health Endpoint** (`src/app/api/health/detailed/route.ts`):
+
+- Comprehensive health check including:
+  - Database status with latency
+  - AI service status with circuit breaker states
+  - Export connectors availability
+  - All circuit breaker states and failure counts
+- Returns overall system status: `healthy`, `degraded`, or `unhealthy`
+- Circuit breaker status includes:
+  - Service name
+  - Current state (closed/open/half-open)
+  - Failure count
+  - Next attempt time (if open)
+
+#### Circuit Breaker Management
+
+**CircuitBreakerManager** (`src/lib/resilience.ts`):
+
+- Centralized management of all circuit breakers
+- Singleton pattern for global access
+- Methods:
+  - `getOrCreate(name, config)`: Get or create circuit breaker
+  - `get(name)`: Get existing circuit breaker
+  - `getAllStatuses()`: Get status of all circuit breakers
+  - `reset(name)`: Manually reset specific circuit breaker
+  - `resetAll()`: Reset all circuit breakers (use with caution)
+
+#### Usage Pattern
+
+**Creating Resilient Operations**:
 
 ```typescript
-openai: 3 retries, 60s timeout, 5 failures opens circuit
-notion: 3 retries, 30s timeout, 5 failures opens circuit
-trello: 3 retries, 15s timeout, 3 failures opens circuit
-github: 3 retries, 30s timeout, 5 failures opens circuit
-supabase: 2 retries, 10s timeout, 10 failures opens circuit
+import {
+  createResilientWrapper,
+  DEFAULT_RETRIES,
+  DEFAULT_TIMEOUTS,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+  circuitBreakerManager,
+} from './resilience';
+
+// Initialize circuit breaker
+circuitBreakerManager.getOrCreate(
+  'external-service',
+  DEFAULT_CIRCUIT_BREAKER_CONFIG
+);
+
+// Wrap external API call
+const makeExternalCall = async () => {
+  return await fetch('https://external-service/api', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+};
+
+// Use with resilience patterns
+const result = await createResilientWrapper(makeExternalCall, {
+  circuitBreaker: circuitBreakerManager.get('external-service'),
+  timeoutMs: DEFAULT_TIMEOUTS.default,
+  retryConfig: DEFAULT_RETRIES,
+})();
 ```
 
-### Error Handling
+#### Error Response Codes
 
-All API responses use standardized error format in `src/lib/errors.ts`:
+New error codes added for resilience:
 
-```json
-{
-  "error": "Error message",
-  "code": "ERROR_CODE",
-  "details": [...],
-  "timestamp": "2024-01-07T00:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": true/false
-}
-```
+- `CIRCUIT_BREAKER_OPEN`: Circuit breaker preventing calls to failing service
+- `TIMEOUT_ERROR`: Operation exceeded configured timeout
+- `RETRY_EXHAUSTED`: All retry attempts failed
+- `EXTERNAL_SERVICE_ERROR`: External service returned error
 
-### Health Monitoring
+All retryable errors include `retryable: true` in response.
 
-Use detailed health endpoint at `/api/health/detailed` to monitor:
+#### Benefits
 
-- Database health and latency
-- AI service status
-- Export connectors availability
-- Circuit breaker states
+1. **No Cascading Failures**: Circuit breakers prevent one failing service from taking down the entire system
+2. **Automatic Recovery**: Retries with exponential backoff handle transient issues without manual intervention
+3. **Graceful Degradation**: System continues operating with reduced functionality when some services are down
+4. **Fast Failure**: Timeouts prevent indefinite hangs, allowing user feedback
+5. **Observable Health**: `/api/health/detailed` provides real-time system status
+6. **Zero Breaking Changes**: All patterns added behind existing interfaces
 
-### Integration Guidelines
+#### Monitoring Recommendations
 
-1. **Never call external APIs directly** - Always wrap in resilience framework
-2. **Set appropriate timeouts** - Based on service SLAs
-3. **Handle retryable errors** - Use standard error codes
-4. **Monitor circuit breakers** - Check health endpoint regularly
-5. **Log with request IDs** - Enable distributed tracing
-6. **Graceful degradation** - Fallback when services unavailable
+1. **Check `/api/health/detailed`** before operations to verify service availability
+2. **Monitor Circuit Breakers**: Track how often circuits open and for which services
+3. **Adjust Thresholds**: Tune failure thresholds and timeouts based on production patterns
+4. **Export Monitoring**: Track export connector availability and error rates
+5. **Alerting**: Set up alerts for circuit breakers opening or degraded health status
+
+#### Future Enhancements
+
+- [ ] Add metrics/telemetry for circuit breaker events
+- [ ] Implement bulkhead pattern for concurrent request limiting
+- [ ] Add adaptive timeout adjustment based on historical latency
+- [ ] Implement request queuing for failed services
+- [ ] Add service-specific retry configurations
 
 ---
 
-## 25. Closing & governance
+## 27. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 

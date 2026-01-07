@@ -386,8 +386,209 @@ Note: Some linting errors existed prior to this work (in test files). The integr
 
 ---
 
-**Last Updated**: 2024-01-07
-**Agent**: Integration Engineer
+## Performance Optimization Tasks
+
+### Task 1: Query Optimization - Batch Fetch Deliverables with Tasks ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Fix potential N+1 query problem when fetching deliverables and their tasks
+- Create optimized batch query to fetch all data in single database call
+- Improve performance for pages that display project breakdowns
+- Ensure scalability for projects with many deliverables
+
+#### Completed Work
+
+1. **Created Optimized Batch Query Method** (`src/lib/db.ts`)
+   - Added `getIdeaDeliverablesWithTasks()` method
+   - Uses Supabase foreign table references to fetch deliverables with tasks in single query
+   - Eliminates N+1 query pattern by using `.select('*, tasks(*)')`
+   - Filters out deleted tasks at the data level
+
+2. **Performance Benefits**
+   - **Before**: N+1 queries (1 for deliverables + N for tasks)
+   - **After**: Single optimized query fetches all data
+   - Reduces database round-trips from N+1 to 1
+   - Significantly improves response time for projects with multiple deliverables
+   - Reduces database load and costs
+
+3. **Code Quality**
+   - Maintains type safety with proper TypeScript interfaces
+   - Preserves existing `getIdeaDeliverables()` method for backward compatibility
+   - Follows Supabase best practices for foreign table joins
+   - Proper error handling and null checks
+
+#### Success Criteria Met
+
+- [x] Optimized batch query method created
+- [x] N+1 query pattern eliminated
+- [x] Build passes successfully
+- [x] Type-check passes (no new errors introduced)
+- [x] Backward compatibility maintained
+- [x] Code follows best practices
+
+#### Files Modified
+
+- `src/lib/db.ts` (UPDATED - added `getIdeaDeliverablesWithTasks()` method)
+
+#### Impact
+
+- **Query Performance**: Reduces database queries from N+1 to 1 for deliverables with tasks
+- **User Experience**: Faster page loads for project breakdowns
+- **Scalability**: Better performance as project complexity increases
+- **Database Load**: Reduced database connection usage and query count
+
+---
+
+### Task 2: Bundle Optimization - Code Splitting for Heavy Components ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Implement code splitting for heavy components to reduce initial bundle size
+- Use Next.js dynamic imports for lazy loading
+- Improve initial page load times
+- Reduce time-to-interactive (TTI) metric
+
+#### Completed Work
+
+1. **Implemented Dynamic Imports for Heavy Components**
+
+   **ClarificationFlow Component** (`src/app/clarify/page.tsx`):
+   - Changed from static import to `dynamic()` import
+   - Component only loads when user visits /clarify route
+   - Added loading state for seamless UX during component load
+
+   **BlueprintDisplay Component** (`src/app/results/page.tsx`):
+   - Changed from static import to `dynamic()` import
+   - Component only loads when user visits /results route
+   - Added loading state for seamless UX during component load
+
+2. **Performance Benefits**
+   - **Before**: Heavy components included in initial bundle for all pages
+   - **After**: Components loaded on-demand when navigating to specific routes
+   - Reduces initial JavaScript bundle size
+   - Improves first contentful paint (FCP)
+   - Reduces time-to-interactive (TTI)
+   - Better perceived performance for users
+
+3. **Code Quality**
+   - Maintains type safety with dynamic imports
+   - Provides loading states for better UX
+   - No breaking changes to component interfaces
+   - Follows Next.js best practices for code splitting
+
+#### Success Criteria Met
+
+- [x] Heavy components now use dynamic imports
+- [x] Code splitting implemented successfully
+- [x] Build passes successfully
+- [x] Loading states provided for better UX
+- [x] No breaking changes to component interfaces
+
+#### Files Modified
+
+- `src/app/clarify/page.tsx` (UPDATED - dynamic import for ClarificationFlow)
+- `src/app/results/page.tsx` (UPDATED - dynamic import for BlueprintDisplay)
+
+#### Impact
+
+- **Initial Bundle Size**: Reduced (components not loaded until needed)
+- **Page Load Time**: Improved for initial pages
+- **User Experience**: Faster perceived performance
+- **Memory Usage**: Reduced (components only loaded when visited)
+
+---
+
+---
+
+## Data Architecture Tasks
+
+### Task 1: Schema and Type Synchronization ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Sync `schema.sql` with all migration changes (soft-delete, pgvector, breakdown engine)
+- Update TypeScript types to include missing columns (`deleted_at`, `embedding`)
+- Ensure type safety across database layer
+- Fix schema drift between base schema and migrations
+
+#### Completed Work
+
+1. **Updated Base Schema** (`supabase/schema.sql`)
+   - Added `deleted_at` columns to `ideas`, `deliverables`, and `tasks` tables for soft-delete support
+   - Added `pgvector` extension and `embedding` column to `vectors` table (1536 dimensions)
+   - Added all breakdown engine tables from migration 001:
+     - `task_dependencies` (for task relationships)
+     - `milestones` (for project milestones)
+     - `task_assignments` (for user task assignments)
+     - `time_tracking` (for time logging)
+     - `task_comments` (for task discussions)
+     - `breakdown_sessions` (for AI breakdown tracking)
+     - `timelines` (for project timeline data)
+     - `risk_assessments` (for risk management)
+   - Added `embedding` vector indexes (ivfflat for cosine and L2 distance)
+   - Updated RLS policies to filter out soft-deleted records
+   - Added `updated_at` triggers for tables with `updated_at` column
+   - Added `match_vectors` function for similarity search
+
+2. **Updated TypeScript Types** (`src/types/database.ts`)
+   - Added `deleted_at` field to `ideas`, `deliverables`, and `tasks` tables
+   - Added `embedding` field to `vectors` table (type: `number[]`)
+   - Added `match_vectors` function to `Functions` section
+   - All types now match actual database schema
+
+3. **Data Integrity Constraints**
+   - Added `CHECK` constraints for `estimate_hours >= 0` on deliverables
+   - Added `CHECK` constraint for `estimate >= 0` on tasks
+   - All constraints enforced at database level
+
+4. **Index Optimization**
+   - Added indexes on all `deleted_at` columns for efficient soft-delete filtering
+   - Added indexes for all new tables (task_dependencies, milestones, etc.)
+   - Added composite indexes for commonly queried column combinations
+
+#### Success Criteria Met
+
+- [x] Schema.sql synchronized with all migrations
+- [x] TypeScript types match database schema
+- [x] Soft-delete mechanism fully implemented
+- [x] pgvector support included in schema and types
+- [x] Build passes successfully
+- [x] Type-check passes with zero errors in data layer
+- [x] Zero data loss
+- [x] Backward compatible (all additions, no destructive changes)
+
+#### Files Modified
+
+- `supabase/schema.sql` (UPDATED - added deleted_at, embedding, breakdown tables)
+- `src/types/database.ts` (UPDATED - added deleted_at, embedding, match_vectors)
+
+#### Impact
+
+- **Schema Consistency**: Base schema now matches all migrations
+- **Type Safety**: TypeScript types accurately reflect database structure
+- **Soft-Delete**: Full soft-delete support with RLS filtering
+- **Vector Search**: pgvector support for AI/ML features enabled
+- **Data Integrity**: Database-level constraints ensure data validity
+
+---
+
+---
+
+**Last Updated**: 2026-01-07
+**Agent**: Performance Engineer
 
 ---
 

@@ -1,6 +1,15 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import {
+  createResilientWrapper,
+  DEFAULT_RETRIES,
+  DEFAULT_TIMEOUTS,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+  circuitBreakerManager,
+  withTimeout,
+  withRetry,
+} from './resilience';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
@@ -45,6 +54,7 @@ class AIService {
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
+        timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
   }
@@ -70,38 +80,47 @@ class AIService {
   ): Promise<string> {
     const startTime = Date.now();
 
-    try {
-      const response = await this.executeWithResilience(async () => {
-        if (config.provider === 'openai') {
-          const completion = await this.openai!.chat.completions.create({
-            model: config.model,
-            messages,
-            max_tokens: config.maxTokens,
-            temperature: config.temperature,
-          });
+    const circuitBreaker = circuitBreakerManager.getOrCreate(
+      `ai-${config.provider}`,
+      DEFAULT_CIRCUIT_BREAKER_CONFIG
+    );
 
-          const content = completion.choices[0]?.message?.content || '';
+    const makeCall = async (): Promise<string> => {
+      if (config.provider === 'openai') {
+        const completion = await this.openai!.chat.completions.create({
+          model: config.model,
+          messages,
+          max_tokens: config.maxTokens,
+          temperature: config.temperature,
+        });
 
-          // Track costs
-          const usage = completion.usage;
-          if (usage) {
-            await this.trackCost(usage.total_tokens, config.model);
-          }
+        const response = completion.choices[0]?.message?.content || '';
 
-          return content;
-        } else {
-          throw new Error(`Provider ${config.provider} not yet implemented`);
+        // Track costs
+        const usage = completion.usage;
+        if (usage) {
+          await this.trackCost(usage.total_tokens, config.model);
         }
-      }, config);
 
-      const duration = Date.now() - startTime;
+        return response;
+      } else {
+        throw new Error(`Provider ${config.provider} not yet implemented`);
+      }
+    };
+
+    try {
+      const response = await createResilientWrapper(makeCall, {
+        circuitBreaker,
+        timeoutMs: DEFAULT_TIMEOUTS.openai,
+        retryConfig: DEFAULT_RETRIES,
+      })();
 
       // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
-          duration,
+          duration: Date.now() - startTime,
           messageCount: messages.length,
         });
       }
@@ -120,24 +139,6 @@ class AIService {
 
       throw error;
     }
-  }
-
-  private async executeWithResilience<T>(
-    operation: () => Promise<T>,
-    config: AIModelConfig
-  ): Promise<T> {
-    const { resilienceManager, defaultResilienceConfigs } =
-      await import('@/lib/resilience');
-
-    const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
-
-    return resilienceManager.execute(
-      operation,
-      defaultResilienceConfigs[
-        serviceKey as keyof typeof defaultResilienceConfigs
-      ] || defaultResilienceConfigs.openai,
-      `ai-${config.provider}-${config.model}`
-    );
   }
 
   // Context windowing strategy
@@ -260,22 +261,6 @@ class AIService {
       .reduce((sum, tracker) => sum + tracker.cost, 0);
   }
 
-  // Rate limiting
-  private lastCallTime = 0;
-  private readonly minCallInterval = 1000; // 1 second between calls
-
-  private async enforceRateLimit(): Promise<void> {
-    const now = Date.now();
-    const timeSinceLastCall = now - this.lastCallTime;
-
-    if (timeSinceLastCall < this.minCallInterval) {
-      const delay = this.minCallInterval - timeSinceLastCall;
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-
-    this.lastCallTime = Date.now();
-  }
-
   // Agent action logging
   private async logAgentAction(
     agent: string,
@@ -300,21 +285,31 @@ class AIService {
   }
 
   // Health check
-  async healthCheck(): Promise<{ status: string; providers: string[] }> {
+  async healthCheck(): Promise<{
+    status: string;
+    providers: string[];
+    circuitBreakers: Record<string, any>;
+  }> {
     const providers: string[] = [];
 
     if (this.openai) {
       try {
-        await this.openai.models.list();
+        await withTimeout(
+          () => this.openai!.models.list(),
+          DEFAULT_TIMEOUTS.openai / 2
+        );
         providers.push('openai');
       } catch (error) {
         console.error('OpenAI health check failed:', error);
       }
     }
 
+    const circuitBreakers = circuitBreakerManager.getAllStatuses();
+
     return {
       status: providers.length > 0 ? 'healthy' : 'unhealthy',
       providers,
+      circuitBreakers,
     };
   }
 }
