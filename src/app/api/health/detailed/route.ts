@@ -2,7 +2,7 @@ import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { resilienceManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/exports';
-import { ApiContext, withApiHandler, successResponse } from '@/lib/api-handler';
+import { ApiContext, withApiHandler } from '@/lib/api-handler';
 import { NextResponse } from 'next/server';
 
 interface HealthStatus {
