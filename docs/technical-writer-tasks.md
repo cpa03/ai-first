@@ -414,6 +414,96 @@ Updated `blueprint.md` and `README.md` to include all new documentation files:
 
 ---
 
+### Task 7: Comprehensive Troubleshooting Guide ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Create comprehensive troubleshooting guide for common issues
+- Cover environment, build, API, database, agent, and deployment issues
+- Provide diagnostic steps and solutions
+- Include quick reference tables and helpful commands
+
+#### Completed Work
+
+Created `docs/troubleshooting.md` with:
+
+1. **Quick Diagnostics Section**
+   - Diagnostic commands for initial troubleshooting
+   - Health check endpoints usage
+   - Step-by-step diagnostic workflow
+
+2. **Environment Setup Issues**
+   - Environment variables not loading
+   - Supabase connection failures
+   - AI provider API errors
+   - Diagnosis commands and solutions
+
+3. **Build and Development Issues**
+   - Build fails with TypeScript errors
+   - Linting errors
+   - Development server not starting
+   - Port conflicts and module issues
+
+4. **API and Integration Issues**
+   - Validation errors (400)
+   - Rate limit exceeded (429)
+   - Circuit breaker open (503)
+   - Timeout errors (504)
+
+5. **Database Issues**
+   - Database connection failures
+   - Schema mismatch errors
+   - Migration issues
+
+6. **Agent Issues**
+   - Agent not responding
+   - Poor AI-generated results
+   - Prompt configuration issues
+
+7. **Deployment Issues**
+   - Build failures in production
+   - Runtime errors in production
+   - Vercel deployment troubleshooting
+
+8. **Performance Issues**
+   - Slow API responses
+   - AI provider optimization
+   - Database query optimization
+
+9. **Getting Help Section**
+   - Before seeking help checklist
+   - Issue template with required information
+   - External resource links
+
+10. **Quick Reference Table**
+    - Common error messages and solutions
+    - Error codes and retryability
+    - Quick lookup for common issues
+
+#### Success Criteria Met
+
+- [x] Covers all major issue categories
+- [x] Provides diagnostic steps
+- [x] Clear, actionable solutions
+- [x] Quick reference tables included
+- [x] Links to related documentation
+- [x] Issue template for users
+
+#### Files Created
+
+- `docs/troubleshooting.md` (NEW - 400+ lines of troubleshooting guidance)
+
+#### Files Updated
+
+- `README.md` - Added troubleshooting guide to documentation index
+- `blueprint.md` - Added troubleshooting guide to developer docs section
+
+---
+
 ## Documentation Quality Checklist
 
 All documentation follows these standards:
@@ -488,6 +578,6 @@ Potential improvements for future iterations:
 
 ---
 
-**Last Updated**: 2025-01-07
+**Last Updated**: 2026-01-07
 **Agent**: Technical Writer
-**Documentation Version**: 0.2.0
+**Documentation Version**: 0.3.0

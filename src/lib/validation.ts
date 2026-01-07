@@ -20,7 +20,7 @@ export function validateIdea(idea: unknown): ValidationResult {
   if (!idea || typeof idea !== 'string') {
     errors.push({
       field: 'idea',
-      message: 'Idea is required and must be a string',
+      message: 'idea is required and must be a string',
     });
     return { valid: false, errors };
   }
@@ -30,14 +30,14 @@ export function validateIdea(idea: unknown): ValidationResult {
   if (trimmed.length < MIN_IDEA_LENGTH) {
     errors.push({
       field: 'idea',
-      message: `Idea must be at least ${MIN_IDEA_LENGTH} characters`,
+      message: `idea must be at least ${MIN_IDEA_LENGTH} characters`,
     });
   }
 
   if (trimmed.length > MAX_IDEA_LENGTH) {
     errors.push({
       field: 'idea',
-      message: `Idea must not exceed ${MAX_IDEA_LENGTH} characters`,
+      message: `idea must not exceed ${MAX_IDEA_LENGTH} characters`,
     });
   }
 
@@ -102,7 +102,7 @@ export function validateUserResponses(responses: unknown): ValidationResult {
   if (jsonStr.length > MAX_USER_RESPONSE_SIZE) {
     errors.push({
       field: 'userResponses',
-      message: `userResponses is too large (max ${MAX_USER_RESPONSE_SIZE} characters)`,
+      message: `userResponses must not exceed ${MAX_USER_RESPONSE_SIZE} characters`,
     });
   }
 
@@ -124,7 +124,7 @@ export function validateUserResponses(responses: unknown): ValidationResult {
     if (typeof value === 'string' && value.length > 1000) {
       errors.push({
         field: 'userResponses',
-        message: `Value for key "${key}" is too long (max 1000 characters)`,
+        message: `Value for key "${key}" must not exceed 1000 characters`,
       });
     }
   }
@@ -144,7 +144,7 @@ export function validateRequestSize(
     if (size > maxSizeBytes) {
       errors.push({
         field: 'request',
-        message: `Request body too large (max ${maxSizeBytes} bytes)`,
+        message: `request must not exceed ${maxSizeBytes} bytes`,
       });
     }
   }
@@ -176,4 +176,53 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
       headers: { 'Content-Type': 'application/json' },
     }
   );
+}
+
+export function safeJsonParse<T = unknown>(
+  jsonString: unknown,
+  fallback: T,
+  schemaValidator?: (data: unknown) => data is T
+): T {
+  try {
+    if (typeof jsonString !== 'string') {
+      return fallback;
+    }
+
+    const trimmed = jsonString.trim();
+    if (trimmed.length === 0) {
+      return fallback;
+    }
+
+    const parsed = JSON.parse(trimmed);
+
+    if (schemaValidator && !schemaValidator(parsed)) {
+      return fallback;
+    }
+
+    return parsed as T;
+  } catch {
+    return fallback;
+  }
+}
+
+export function isArrayOf<T>(
+  value: unknown,
+  itemValidator: (item: unknown) => item is T
+): value is T[] {
+  return Array.isArray(value) && value.every(itemValidator);
+}
+
+export function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+export function isString(value: unknown): value is string {
+  return typeof value === 'string';
+}
+
+export function hasProperty<K extends string>(
+  obj: unknown,
+  prop: K
+): obj is Record<K, unknown> {
+  return isObject(obj) && prop in obj;
 }
