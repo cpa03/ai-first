@@ -1,6 +1,78 @@
 // Export connectors for IdeaFlow integrations
 // Supports Notion, Trello, Google Tasks, GitHub Projects
 
+export interface Idea {
+  id: string;
+  title: string;
+  raw_text: string;
+  status?: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  created_at?: string;
+}
+
+export interface Deliverable {
+  id: string;
+  title: string;
+  description?: string;
+  priority?: number;
+  estimate_hours?: number;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  assignee?: string | null;
+  status?: 'todo' | 'in_progress' | 'completed';
+  estimate?: number;
+  priority?: number;
+  deliverable_id?: string;
+  due_date?: string;
+}
+
+export interface ExportData {
+  idea: Idea;
+  deliverables?: Deliverable[];
+  tasks?: Task[];
+}
+
+export interface GitHubUser {
+  login: string;
+  id: number;
+}
+
+export interface GitHubRepository {
+  id: number;
+  name: string;
+  html_url: string;
+  url: string;
+}
+
+export interface GitHubProject {
+  id: string;
+  name: string;
+}
+
+export interface GitHubProjectColumn {
+  id: string;
+  name: string;
+}
+
+export interface GitHubIssue {
+  id: number;
+  url: string;
+}
+
+export interface MarkdownExportOptions {
+  goals?: string[];
+  targetAudience?: string;
+  roadmap?: Array<{
+    phase: string;
+    start: string;
+    end: string;
+    deliverables: string[];
+  }>;
+}
+
 export interface ExportFormat {
   type:
     | 'markdown'
@@ -9,8 +81,8 @@ export interface ExportFormat {
     | 'trello'
     | 'google-tasks'
     | 'github-projects';
-  data: any;
-  metadata?: Record<string, any>;
+  data: ExportData;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ExportResult {
@@ -39,8 +111,8 @@ export abstract class ExportConnector {
   abstract readonly name: string;
 
   abstract export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult>;
   abstract validateConfig(): Promise<boolean>;
   abstract getAuthUrl?(): Promise<string>;
@@ -53,8 +125,8 @@ export class JSONExporter extends ExportConnector {
   readonly name = 'JSON';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult> {
     try {
       const jsonData = this.generateJSON(data, options);
@@ -83,7 +155,10 @@ export class JSONExporter extends ExportConnector {
     throw new Error('JSON export does not require authentication');
   }
 
-  private generateJSON(data: any, options?: Record<string, any>): string {
+  private generateJSON(
+    data: ExportData,
+    options?: Record<string, unknown>
+  ): string {
     const exportData = {
       ...data,
       metadata: {
@@ -103,8 +178,8 @@ export class MarkdownExporter extends ExportConnector {
   readonly name = 'Markdown';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult> {
     try {
       const markdown = this.generateMarkdown(data, options);
@@ -133,8 +208,12 @@ export class MarkdownExporter extends ExportConnector {
     throw new Error('Markdown export does not require authentication');
   }
 
-  private generateMarkdown(data: any, options?: Record<string, any>): string {
+  private generateMarkdown(
+    data: ExportData,
+    options?: Record<string, unknown>
+  ): string {
     const { idea, deliverables, tasks } = data;
+    const markdownOptions = options as MarkdownExportOptions;
 
     let markdown = `# Project Blueprint — ${idea.title}\n\n`;
 
@@ -142,23 +221,23 @@ export class MarkdownExporter extends ExportConnector {
     markdown += `## Summary\n${idea.raw_text}\n\n`;
 
     // Goals section
-    if (options?.goals) {
+    if (markdownOptions?.goals) {
       markdown += `## Goals\n`;
-      options.goals.forEach((goal: string) => {
+      markdownOptions.goals.forEach((goal: string) => {
         markdown += `- ${goal}\n`;
       });
       markdown += `\n`;
     }
 
     // Target audience
-    if (options?.targetAudience) {
-      markdown += `## Target Audience\n${options.targetAudience}\n\n`;
+    if (markdownOptions?.targetAudience) {
+      markdown += `## Target Audience\n${markdownOptions.targetAudience}\n\n`;
     }
 
     // Deliverables
     if (deliverables && deliverables.length > 0) {
       markdown += `## Deliverables\n`;
-      deliverables.forEach((deliverable: any, index: number) => {
+      deliverables.forEach((deliverable: Deliverable, index: number) => {
         markdown += `${index + 1}. **${deliverable.title}** — ${deliverable.description || 'No description'} — ${deliverable.estimate_hours}h estimated\n`;
       });
       markdown += `\n`;
@@ -167,7 +246,7 @@ export class MarkdownExporter extends ExportConnector {
     // Tasks
     if (tasks && tasks.length > 0) {
       markdown += `## Tasks\n`;
-      tasks.forEach((task: any) => {
+      tasks.forEach((task: Task) => {
         const status = task.status === 'completed' ? 'x' : ' ';
         markdown += `- [${status}] ${task.title} — ${task.assignee || 'Unassigned'} — ${task.estimate}h\n`;
       });
@@ -175,13 +254,20 @@ export class MarkdownExporter extends ExportConnector {
     }
 
     // Roadmap
-    if (options?.roadmap) {
+    if (markdownOptions?.roadmap) {
       markdown += `## Roadmap\n`;
       markdown += `| Phase | Start | End | Key deliverables |\n`;
       markdown += `|-------|-------|-----|------------------|\n`;
-      options.roadmap.forEach((phase: any) => {
-        markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
-      });
+      markdownOptions.roadmap.forEach(
+        (phase: {
+          phase: string;
+          start: string;
+          end: string;
+          deliverables: string[];
+        }) => {
+          markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
+        }
+      );
     }
 
     return markdown;
@@ -192,11 +278,13 @@ export class MarkdownExporter extends ExportConnector {
 export class NotionExporter extends ExportConnector {
   readonly type = 'notion';
   readonly name = 'Notion';
-  private client: any = null;
+  private client: {
+    pages: { create: (data: unknown) => Promise<{ url: string; id: string }> };
+  } | null = null;
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const apiKey = process.env.NOTION_API_KEY;
     if (!apiKey) {
@@ -212,7 +300,11 @@ export class NotionExporter extends ExportConnector {
       if (!this.client) {
         this.client = new Client({
           auth: apiKey,
-        });
+        }) as {
+          pages: {
+            create: (data: unknown) => Promise<{ url: string; id: string }>;
+          };
+        };
       }
 
       if (!data || !data.idea) {
@@ -221,12 +313,17 @@ export class NotionExporter extends ExportConnector {
 
       const { idea, deliverables = [], tasks = [] } = data;
 
+      const parentPageId =
+        (options?.parentPageId as string) || process.env.NOTION_PARENT_PAGE_ID;
+
       // Create a new page for the project
       const pageData = {
-        parent: {
-          type: 'page_id',
-          page_id: options?.parentPageId || process.env.NOTION_PARENT_PAGE_ID,
-        },
+        parent: parentPageId
+          ? {
+              type: 'page_id',
+              page_id: parentPageId,
+            }
+          : undefined,
         properties: {
           title: {
             title: [
@@ -250,11 +347,6 @@ export class NotionExporter extends ExportConnector {
         },
         children: this.buildNotionBlocks(idea, deliverables, tasks),
       };
-
-      // If no parent page specified, create in workspace
-      if (!pageData.parent.page_id && !process.env.NOTION_PARENT_PAGE_ID) {
-        delete (pageData as any).parent;
-      }
 
       const response = await this.client.pages.create(pageData);
 
@@ -283,17 +375,17 @@ export class NotionExporter extends ExportConnector {
       // Test the connection by retrieving user info
       await client.users.me({});
       return true;
-    } catch (_error) {
+    } catch {
       return false;
     }
   }
 
   private buildNotionBlocks(
-    idea: any,
-    deliverables: any[],
-    tasks: any[]
-  ): any[] {
-    const blocks: any[] = [];
+    idea: Idea,
+    deliverables: Deliverable[],
+    tasks: Task[]
+  ): Array<Record<string, unknown>> {
+    const blocks: Array<Record<string, unknown>> = [];
 
     // Add description
     blocks.push({
@@ -419,8 +511,8 @@ export class TrelloExporter extends ExportConnector {
   private readonly API_BASE = 'https://api.trello.com/1';
 
   async export(
-    data: any,
-    _options?: Record<string, any>
+    data: ExportData,
+    _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const { idea, deliverables = [], tasks = [] } = data;
     const apiKey = process.env.TRELLO_API_KEY;
@@ -514,7 +606,7 @@ export class TrelloExporter extends ExportConnector {
         `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
       );
       return response.ok;
-    } catch (_error) {
+    } catch {
       return false;
     }
   }
@@ -767,8 +859,8 @@ export class GitHubProjectsExporter extends ExportConnector {
   private readonly API_BASE = 'https://api.github.com';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
@@ -857,6 +949,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           user.login,
           repository.name,
           {
+            id: 'overview',
             title: '📋 Project Overview',
             description: idea.raw_text,
             assignee: null,
@@ -905,7 +998,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       });
 
       return response.ok;
-    } catch (_error) {
+    } catch {
       return false;
     }
   }
@@ -933,7 +1026,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     );
   }
 
-  private async getAuthenticatedUser(token: string): Promise<any> {
+  private async getAuthenticatedUser(token: string): Promise<GitHubUser> {
     const response = await fetch(`${this.API_BASE}/user`, {
       headers: {
         Authorization: `token ${token}`,
@@ -953,9 +1046,9 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createOrUpdateRepository(
     owner: string,
     repoName: string,
-    idea: any,
+    idea: Idea,
     token: string
-  ): Promise<any> {
+  ): Promise<GitHubRepository> {
     // Try to create the repository first
     const createResponse = await fetch(`${this.API_BASE}/user/repos`, {
       method: 'POST',
@@ -1001,7 +1094,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     repo: string,
     projectName: string,
     token: string
-  ): Promise<any> {
+  ): Promise<GitHubProject> {
     const response = await fetch(
       `${this.API_BASE}/repos/${owner}/${repo}/projects`,
       {
@@ -1031,7 +1124,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     projectId: string,
     columnName: string,
     token: string
-  ): Promise<any> {
+  ): Promise<GitHubProjectColumn> {
     const response = await fetch(
       `${this.API_BASE}/projects/${projectId}/columns`,
       {
@@ -1059,10 +1152,10 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createIssue(
     owner: string,
     repo: string,
-    task: any,
+    task: Task,
     token: string
-  ): Promise<any> {
-    const issueData: any = {
+  ): Promise<GitHubIssue> {
+    const issueData: Record<string, unknown> = {
       title: task.title,
       body: task.description || '',
     };
@@ -1109,7 +1202,7 @@ export class GitHubProjectsExporter extends ExportConnector {
 
   private async addIssueToProjectCard(
     columnId: string,
-    issueId: string,
+    issueId: string | number,
     token: string
   ): Promise<void> {
     const response = await fetch(
@@ -1138,9 +1231,9 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createReadme(
     owner: string,
     repo: string,
-    idea: any,
-    deliverables: any[],
-    tasks: any[],
+    idea: Idea,
+    deliverables: Deliverable[],
+    tasks: Task[],
     token: string
   ): Promise<void> {
     let readme = `# ${idea.title}\n\n`;
@@ -1187,7 +1280,7 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private getTaskColumnId(
-    task: any,
+    task: Task,
     deliverableColumns: Record<string, string>,
     todoColumnId: string,
     inProgressColumnId: string,
@@ -1288,7 +1381,7 @@ export class ExportManager {
       if (connector) {
         try {
           results[type] = await connector.validateConfig();
-        } catch (_error) {
+        } catch {
           results[type] = false;
         }
       }
