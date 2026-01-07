@@ -1,7 +1,16 @@
 // Export connectors for IdeaFlow integrations
 // Supports Notion, Trello, Google Tasks, GitHub Projects
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  createResilientWrapper,
+  DEFAULT_RETRIES,
+  DEFAULT_TIMEOUTS,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+  circuitBreakerManager,
+  withRetry,
+  withTimeout,
+  RetryConfig,
+} from './resilience';
 
 export interface ExportFormat {
   type:
@@ -196,6 +205,11 @@ export class NotionExporter extends ExportConnector {
   readonly name = 'Notion';
   private client: any = null;
 
+  constructor() {
+    super();
+    circuitBreakerManager.getOrCreate('notion', DEFAULT_CIRCUIT_BREAKER_CONFIG);
+  }
+
   async export(
     data: any,
     options?: Record<string, any>
@@ -300,10 +314,14 @@ export class NotionExporter extends ExportConnector {
       const { Client } = await import('@notionhq/client');
       const client = new Client({ auth: apiKey });
 
-      // Test the connection by retrieving user info
-      await client.users.me({});
-      return true;
-    } catch (_error) {
+      // Test the connection by retrieving user info with timeout
+      const testConnection = async () => {
+        await client.users.me({});
+        return true;
+      };
+
+      return await withTimeout(testConnection, DEFAULT_TIMEOUTS.notion / 2);
+    } catch (error) {
       return false;
     }
   }
@@ -438,6 +456,11 @@ export class TrelloExporter extends ExportConnector {
   readonly name = 'Trello';
   private readonly API_BASE = 'https://api.trello.com/1';
 
+  constructor() {
+    super();
+    circuitBreakerManager.getOrCreate('trello', DEFAULT_CIRCUIT_BREAKER_CONFIG);
+  }
+
   async export(
     data: any,
     _options?: Record<string, any>
@@ -529,12 +552,25 @@ export class TrelloExporter extends ExportConnector {
 
       if (!apiKey || !token) return false;
 
-      // Test the connection by getting member info
-      const response = await fetch(
-        `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
+      // Test the connection by getting member info with timeout and retry
+      const testConnection = async () => {
+        const response = await fetch(
+          `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
+        );
+        return response.ok;
+      };
+
+      return await withTimeout(
+        () =>
+          withRetry(testConnection, {
+            maxRetries: 2,
+            initialDelayMs: 500,
+            maxDelayMs: 2000,
+            backoffMultiplier: 2,
+          }),
+        DEFAULT_TIMEOUTS.trello / 2
       );
-      return response.ok;
-    } catch (_error) {
+    } catch (error) {
       return false;
     }
   }
@@ -570,19 +606,19 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const circuitBreaker = circuitBreakerManager.get('trello')!;
+    const retryConfig: RetryConfig = {
+      ...DEFAULT_RETRIES,
+      maxRetries: 3,
+    };
 
-    try {
+    const makeRequest = async () => {
       const response = await fetch(
         `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
         {
           method: 'POST',
-          signal: controller.signal,
         }
       );
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(
@@ -591,10 +627,13 @@ export class TrelloExporter extends ExportConnector {
       }
 
       return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
+    };
+
+    return await createResilientWrapper(makeRequest, {
+      circuitBreaker,
+      timeoutMs: DEFAULT_TIMEOUTS.trello,
+      retryConfig,
+    })();
   }
 
   private async createList(
@@ -603,29 +642,32 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const circuitBreaker = circuitBreakerManager.get('trello')!;
+    const retryConfig: RetryConfig = {
+      ...DEFAULT_RETRIES,
+      maxRetries: 3,
+    };
 
-    try {
+    const makeRequest = async () => {
       const response = await fetch(
         `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
         {
           method: 'POST',
-          signal: controller.signal,
         }
       );
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Failed to create Trello list: ${response.statusText}`);
       }
 
       return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
+    };
+
+    return await createResilientWrapper(makeRequest, {
+      circuitBreaker,
+      timeoutMs: DEFAULT_TIMEOUTS.trello,
+      retryConfig,
+    })();
   }
 
   private async createCard(
@@ -634,8 +676,18 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const circuitBreaker = circuitBreakerManager.get('trello')!;
+    const retryConfig: RetryConfig = {
+      ...DEFAULT_RETRIES,
+      maxRetries: 3,
+    };
+
+    const cardData = {
+      name: task.title,
+      desc: task.description || '',
+      key: apiKey,
+      token: token,
+    };
 
     try {
       const cardData = {
@@ -645,20 +697,14 @@ export class TrelloExporter extends ExportConnector {
         token: token,
       };
 
-      if (task.due_date) {
-        (cardData as any).due = task.due_date;
-      }
-
+    const makeRequest = async () => {
       const params = new URLSearchParams(cardData as any);
       const response = await fetch(
         `${this.API_BASE}/cards?${params.toString()}`,
         {
           method: 'POST',
-          signal: controller.signal,
         }
       );
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(`Failed to create Trello card: ${response.statusText}`);
@@ -666,6 +712,7 @@ export class TrelloExporter extends ExportConnector {
 
       const card = await response.json();
 
+      // Add labels for priority and assignee
       if (task.priority) {
         await this.addCardLabel(
           card.id,
@@ -694,10 +741,13 @@ export class TrelloExporter extends ExportConnector {
       }
 
       return card;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
+    };
+
+    return await createResilientWrapper(makeRequest, {
+      circuitBreaker,
+      timeoutMs: DEFAULT_TIMEOUTS.trello,
+      retryConfig,
+    })();
   }
 
   private async addCardLabel(
@@ -706,16 +756,25 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<void> {
-    const response = await fetch(
-      `${this.API_BASE}/cards/${cardId}/labels?color=${label}&key=${apiKey}&token=${token}`,
-      {
-        method: 'POST',
-      }
-    );
+    const makeRequest = async () => {
+      const response = await fetch(
+        `${this.API_BASE}/cards/${cardId}/labels?color=${label}&key=${apiKey}&token=${token}`,
+        {
+          method: 'POST',
+        }
+      );
 
-    if (!response.ok) {
-      console.warn(`Failed to add label to card: ${response.statusText}`);
-    }
+      if (!response.ok) {
+        console.warn(`Failed to add label to card: ${response.statusText}`);
+      }
+    };
+
+    await withRetry(makeRequest, {
+      maxRetries: 2,
+      initialDelayMs: 500,
+      maxDelayMs: 5000,
+      backoffMultiplier: 2,
+    });
   }
 
   private async addCardComment(
@@ -724,16 +783,25 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<void> {
-    const response = await fetch(
-      `${this.API_BASE}/cards/${cardId}/actions/comments?text=${encodeURIComponent(comment)}&key=${apiKey}&token=${token}`,
-      {
-        method: 'POST',
-      }
-    );
+    const makeRequest = async () => {
+      const response = await fetch(
+        `${this.API_BASE}/cards/${cardId}/actions/comments?text=${encodeURIComponent(comment)}&key=${apiKey}&token=${token}`,
+        {
+          method: 'POST',
+        }
+      );
 
-    if (!response.ok) {
-      console.warn(`Failed to add comment to card: ${response.statusText}`);
-    }
+      if (!response.ok) {
+        console.warn(`Failed to add comment to card: ${response.statusText}`);
+      }
+    };
+
+    await withRetry(makeRequest, {
+      maxRetries: 2,
+      initialDelayMs: 500,
+      maxDelayMs: 5000,
+      backoffMultiplier: 2,
+    });
   }
 
   private getTaskListId(
@@ -818,6 +886,11 @@ export class GitHubProjectsExporter extends ExportConnector {
   readonly type = 'github-projects';
   readonly name = 'GitHub Projects';
   private readonly API_BASE = 'https://api.github.com';
+
+  constructor() {
+    super();
+    circuitBreakerManager.getOrCreate('github', DEFAULT_CIRCUIT_BREAKER_CONFIG);
+  }
 
   async export(
     data: any,
@@ -949,16 +1022,29 @@ export class GitHubProjectsExporter extends ExportConnector {
       const token = process.env.GITHUB_TOKEN;
       if (!token) return false;
 
-      // Test the connection by getting user info
-      const response = await fetch(`${this.API_BASE}/user`, {
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-      });
+      // Test the connection by getting user info with timeout and retry
+      const testConnection = async () => {
+        const response = await fetch(`${this.API_BASE}/user`, {
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+          },
+        });
 
-      return response.ok;
-    } catch (_error) {
+        return response.ok;
+      };
+
+      return await withTimeout(
+        () =>
+          withRetry(testConnection, {
+            maxRetries: 2,
+            initialDelayMs: 500,
+            maxDelayMs: 2000,
+            backoffMultiplier: 2,
+          }),
+        DEFAULT_TIMEOUTS.github / 2
+      );
+    } catch (error) {
       return false;
     }
   }
@@ -987,19 +1073,19 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private async getAuthenticatedUser(token: string): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const circuitBreaker = circuitBreakerManager.get('github')!;
+    const retryConfig: RetryConfig = {
+      ...DEFAULT_RETRIES,
+      maxRetries: 3,
+    };
 
-    try {
+    const makeRequest = async () => {
       const response = await fetch(`${this.API_BASE}/user`, {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
         },
-        signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
 
       if (!response.ok) {
         throw new Error(
@@ -1008,10 +1094,13 @@ export class GitHubProjectsExporter extends ExportConnector {
       }
 
       return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
+    };
+
+    return await createResilientWrapper(makeRequest, {
+      circuitBreaker,
+      timeoutMs: DEFAULT_TIMEOUTS.github,
+      retryConfig,
+    })();
   }
 
   private async createOrUpdateRepository(
@@ -1020,18 +1109,20 @@ export class GitHubProjectsExporter extends ExportConnector {
     idea: any,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const circuitBreaker = circuitBreakerManager.get('github')!;
+    const retryConfig: RetryConfig = {
+      ...DEFAULT_RETRIES,
+      maxRetries: 3,
+    };
 
-    try {
-      const createResponse = await fetch(`${this.API_BASE}/user/repos`, {
+    const createRepo = async () => {
+      return await fetch(`${this.API_BASE}/user/repos`, {
         method: 'POST',
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
           'Content-Type': 'application/json',
         },
-        signal: controller.signal,
         body: JSON.stringify({
           name: repoName,
           description: idea.raw_text || `Project: ${idea.title}`,
@@ -1039,45 +1130,46 @@ export class GitHubProjectsExporter extends ExportConnector {
           auto_init: true,
         }),
       });
+    };
 
-      clearTimeout(timeoutId);
+    const getRepo = async () => {
+      return await fetch(`${this.API_BASE}/repos/${owner}/${repoName}`, {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+        },
+      });
+    };
+
+    const tryCreate = async () => {
+      const createResponse = await createResilientWrapper(createRepo, {
+        circuitBreaker,
+        timeoutMs: DEFAULT_TIMEOUTS.github,
+        retryConfig,
+      })();
 
       if (createResponse.ok) {
         return createResponse.json();
       }
 
-      const getController = new AbortController();
-      const getTimeoutId = setTimeout(() => getController.abort(), 10000);
+      // If creation fails (e.g., repo already exists), try to get the existing repo
+      const getResponse = await createResilientWrapper(getRepo, {
+        circuitBreaker,
+        timeoutMs: DEFAULT_TIMEOUTS.github,
+        retryConfig,
+      })();
 
-      try {
-        const getResponse = await fetch(
-          `${this.API_BASE}/repos/${owner}/${repoName}`,
-          {
-            headers: {
-              Authorization: `token ${token}`,
-              Accept: 'application/vnd.github.v3+json',
-            },
-            signal: getController.signal,
-          }
+      if (!getResponse.ok) {
+        throw new Error(
+          `Failed to create or get repository: ${getResponse.statusText}`
         );
-
-        clearTimeout(getTimeoutId);
-
-        if (!getResponse.ok) {
-          throw new Error(
-            `Failed to create or get repository: ${getResponse.statusText}`
-          );
-        }
-
-        return getResponse.json();
-      } catch (error) {
-        clearTimeout(getTimeoutId);
-        throw error;
       }
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
+
+      return getResponse.json();
+    };
+
+    return await tryCreate();
   }
 
   private async createProject(
