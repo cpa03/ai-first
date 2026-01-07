@@ -1,28 +1,57 @@
 import { NextRequest } from 'next/server';
 import { breakdownEngine } from '@/lib/agents/breakdown-engine';
+import {
+  validateIdea,
+  validateIdeaId,
+  validateUserResponses,
+  validateRequestSize,
+  buildErrorResponse,
+} from '@/lib/validation';
+import {
+  checkRateLimit,
+  rateLimitConfigs,
+  rateLimitResponse,
+} from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    const rateLimitResult = checkRateLimit(
+      request.headers.get('x-forwarded-for') || 'unknown',
+      rateLimitConfigs.moderate
+    );
+
+    if (!rateLimitResult.allowed) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
+
+    const sizeValidation = validateRequestSize(request);
+    if (!sizeValidation.valid) {
+      return buildErrorResponse(sizeValidation.errors);
+    }
+
     const { ideaId, refinedIdea, userResponses, options } =
       await request.json();
 
-    if (!ideaId || !refinedIdea) {
-      return new Response(
-        JSON.stringify({ error: 'ideaId and refinedIdea are required' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+    const idValidation = validateIdeaId(ideaId);
+    if (!idValidation.valid) {
+      return buildErrorResponse(idValidation.errors);
     }
 
-    // Initialize breakdown engine
+    const ideaValidation = validateIdea(refinedIdea);
+    if (!ideaValidation.valid) {
+      return buildErrorResponse(ideaValidation.errors);
+    }
+
+    const responsesValidation = validateUserResponses(userResponses);
+    if (!responsesValidation.valid) {
+      return buildErrorResponse(responsesValidation.errors);
+    }
+
     await breakdownEngine.initialize();
 
-    // Start the breakdown process
     const session = await breakdownEngine.startBreakdown(
-      ideaId,
-      refinedIdea,
+      ideaId.trim(),
+      refinedIdea.trim(),
       userResponses || {},
       options || {}
     );
@@ -45,21 +74,30 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const rateLimitResult = checkRateLimit(
+      request.headers.get('x-forwarded-for') || 'unknown',
+      rateLimitConfigs.lenient
+    );
+
+    if (!rateLimitResult.allowed) {
+      return rateLimitResponse(rateLimitResult.resetTime);
+    }
+
     const { searchParams } = new URL(request.url);
     const ideaId = searchParams.get('ideaId');
 
     if (!ideaId) {
-      return new Response(
-        JSON.stringify({ error: 'ideaId parameter is required' }),
-        {
-          status: 400,
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      return buildErrorResponse([
+        { field: 'ideaId', message: 'ideaId parameter is required' },
+      ]);
     }
 
-    // Get existing breakdown session
-    const session = await breakdownEngine.getBreakdownSession(ideaId);
+    const idValidation = validateIdeaId(ideaId);
+    if (!idValidation.valid) {
+      return buildErrorResponse(idValidation.errors);
+    }
+
+    const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
 
     if (!session) {
       return new Response(
