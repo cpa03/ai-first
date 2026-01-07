@@ -58,7 +58,8 @@ export class CircuitBreaker {
       this.onSuccess(now);
       return result;
     } catch (error) {
-      const retryCount = (error as any).attemptCount || 1;
+      const retryCount =
+        (error as Error & { attemptCount?: number }).attemptCount || 1;
       this.onError(error as Error, now, retryCount);
       throw error;
     }
@@ -72,7 +73,7 @@ export class CircuitBreaker {
     this.state.failures = this.recentFailures.length;
   }
 
-  private onSuccess(now: number): void {
+  private onSuccess(_now: number): void {
     this.recentFailures = [];
     this.state.failures = 0;
     this.state.state = 'closed';
@@ -85,16 +86,16 @@ export class CircuitBreaker {
     }
   }
 
-  private onError(error: Error, now: number, attemptCount: number = 1): void {
+  private onError(error: Error, _now: number, attemptCount: number = 1): void {
     for (let i = 0; i < attemptCount; i++) {
-      this.recentFailures.push(now);
+      this.recentFailures.push(_now);
     }
     this.state.failures = this.recentFailures.length;
-    this.state.lastFailureTime = now;
+    this.state.lastFailureTime = _now;
 
     if (this.state.failures >= this.options.failureThreshold) {
       this.state.state = 'open';
-      this.state.nextAttemptTime = now + this.options.resetTimeout;
+      this.state.nextAttemptTime = _now + this.options.resetTimeout;
     }
 
     if (this.cachedState) {
@@ -135,7 +136,7 @@ export class RetryManager {
       shouldRetry,
     } = options;
 
-    const defaultShouldRetry = (error: Error, attempt: number): boolean => {
+    const defaultShouldRetry = (error: Error, _attempt: number): boolean => {
       const retryableStatuses = [
         408,
         429,
@@ -179,7 +180,8 @@ export class RetryManager {
             lastError,
             attempt
           );
-          (exhaustedError as any).attemptCount = attempt;
+          (exhaustedError as Error & { attemptCount?: number }).attemptCount =
+            attempt;
           throw exhaustedError;
         }
 
@@ -215,8 +217,8 @@ export class TimeoutManager {
           reject(new TimeoutError(`Operation timed out after ${timeoutMs}ms`));
         }, timeoutMs);
 
-        if (typeof (timeoutId as any).unref === 'function') {
-          (timeoutId as any).unref();
+        if (typeof (timeoutId as NodeJS.Timeout).unref === 'function') {
+          (timeoutId as NodeJS.Timeout).unref();
         }
       }),
     ]);
