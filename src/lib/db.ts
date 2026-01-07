@@ -367,6 +367,44 @@ export class DatabaseService {
     if (error) throw error;
   }
 
+  // Clarification session operations
+  async createClarificationSession(ideaId: string): Promise<any> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('clarification_sessions')
+      .insert({
+        idea_id: ideaId,
+        status: 'active',
+      } as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async saveAnswers(
+    sessionId: string,
+    answers: Record<string, string>
+  ): Promise<any> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const entries = Object.entries(answers).map(([questionId, answer]) => ({
+      session_id: sessionId,
+      question_id: questionId,
+      answer,
+    }));
+
+    const { data, error } = await this.client
+      .from('clarification_answers')
+      .insert(entries as any)
+      .select();
+
+    if (error) throw error;
+    return data;
+  }
+
   async getAgentLogs(agent?: string, limit: number = 100): Promise<AgentLog[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
