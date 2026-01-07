@@ -5,15 +5,23 @@ import {
   validateIdeaId,
   validateUserResponses,
   validateRequestSize,
-  buildErrorResponse,
 } from '@/lib/validation';
 import {
   checkRateLimit,
   rateLimitConfigs,
   rateLimitResponse,
 } from '@/lib/rate-limit';
+import {
+  toErrorResponse,
+  generateRequestId,
+  ValidationError,
+  ErrorCode,
+  AppError,
+} from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
+  const requestId = generateRequestId();
+
   try {
     const rateLimitResult = checkRateLimit(
       request.headers.get('x-forwarded-for') || 'unknown',
@@ -26,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     const sizeValidation = validateRequestSize(request);
     if (!sizeValidation.valid) {
-      return buildErrorResponse(sizeValidation.errors);
+      throw new ValidationError(sizeValidation.errors);
     }
 
     const { ideaId, refinedIdea, userResponses, options } =
@@ -34,17 +42,17 @@ export async function POST(request: NextRequest) {
 
     const idValidation = validateIdeaId(ideaId);
     if (!idValidation.valid) {
-      return buildErrorResponse(idValidation.errors);
+      throw new ValidationError(idValidation.errors);
     }
 
     const ideaValidation = validateIdea(refinedIdea);
     if (!ideaValidation.valid) {
-      return buildErrorResponse(ideaValidation.errors);
+      throw new ValidationError(ideaValidation.errors);
     }
 
     const responsesValidation = validateUserResponses(userResponses);
     if (!responsesValidation.valid) {
-      return buildErrorResponse(responsesValidation.errors);
+      throw new ValidationError(responsesValidation.errors);
     }
 
     await breakdownEngine.initialize();
@@ -56,23 +64,28 @@ export async function POST(request: NextRequest) {
       options || {}
     );
 
-    return new Response(JSON.stringify({ session }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error in breakdown API:', error);
     return new Response(
       JSON.stringify({
-        error: 'Failed to start breakdown process',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        success: true,
+        session,
+        requestId,
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Request-ID': requestId,
+        },
+      }
     );
+  } catch (error) {
+    return toErrorResponse(error, requestId);
   }
 }
 
 export async function GET(request: NextRequest) {
+  const requestId = generateRequestId();
+
   try {
     const rateLimitResult = checkRateLimit(
       request.headers.get('x-forwarded-for') || 'unknown',
@@ -87,40 +100,42 @@ export async function GET(request: NextRequest) {
     const ideaId = searchParams.get('ideaId');
 
     if (!ideaId) {
-      return buildErrorResponse([
+      throw new ValidationError([
         { field: 'ideaId', message: 'ideaId parameter is required' },
       ]);
     }
 
     const idValidation = validateIdeaId(ideaId);
     if (!idValidation.valid) {
-      return buildErrorResponse(idValidation.errors);
+      throw new ValidationError(idValidation.errors);
     }
 
     const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
 
     if (!session) {
-      return new Response(
-        JSON.stringify({ error: 'No breakdown session found for this idea' }),
-        {
-          status: 404,
-          headers: { 'Content-Type': 'application/json' },
-        }
+      const error = new AppError(
+        'No breakdown session found for this idea',
+        ErrorCode.NOT_FOUND,
+        404
       );
+      return toErrorResponse(error, requestId);
     }
 
-    return new Response(JSON.stringify({ session }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error getting breakdown session:', error);
     return new Response(
       JSON.stringify({
-        error: 'Failed to retrieve breakdown session',
-        details: error instanceof Error ? error.message : 'Unknown error',
+        success: true,
+        session,
+        requestId,
       }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Request-ID': requestId,
+        },
+      }
     );
+  } catch (error) {
+    return toErrorResponse(error, requestId);
   }
 }
