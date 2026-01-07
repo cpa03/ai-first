@@ -4,7 +4,21 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
 import { exportManager, exportUtils } from '@/lib/exports';
-import BlueprintDisplay from '@/components/BlueprintDisplay';
+import dynamic from 'next/dynamic';
+
+const BlueprintDisplay = dynamic(
+  () => import('@/components/BlueprintDisplay').then((mod) => mod.default),
+  {
+    loading: () => (
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className="flex justify-center mb-4">
+          <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+        </div>
+        <p className="text-gray-600">Loading blueprint...</p>
+      </div>
+    ),
+  }
+);
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -58,7 +72,10 @@ export default function ResultsPage() {
 
     try {
       // Prepare data for export
-      const exportData = exportUtils.normalizeData(idea);
+      const exportData = exportUtils.normalizeData({
+        ...idea,
+        deleted_at: idea.deleted_at ?? null,
+      });
 
       if (
         session &&
@@ -66,7 +83,8 @@ export default function ResultsPage() {
         typeof session.state.answers === 'object'
       ) {
         const answers = session.state.answers as Record<string, unknown>;
-        exportData.metadata.goals = (answers.main_goal as string) || '';
+        exportData.metadata = exportData.metadata || {};
+        exportData.metadata.goals = [(answers.main_goal as string) || ''];
         exportData.metadata.target_audience =
           (answers.target_audience as string) || '';
       }

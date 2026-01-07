@@ -5,7 +5,7 @@ export function middleware() {
 
   const isDevelopment = process.env.NODE_ENV !== 'production';
 
-  const cspHeader = [
+  const cspDirectives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://vercel.live",
     "style-src 'self' 'unsafe-inline'",
@@ -17,12 +17,11 @@ export function middleware() {
     "frame-ancestors 'none'",
     'upgrade-insecure-requests',
     "connect-src 'self' https://*.supabase.co",
-    isDevelopment
-      ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live"
-      : "script-src 'self' 'unsafe-inline' https://vercel.live",
-  ]
-    .filter((directive, index, array) => array.indexOf(directive) === index)
-    .join('; ');
+    "worker-src 'self'",
+    "manifest-src 'self'",
+  ];
+
+  const cspHeader = cspDirectives.join('; ');
 
   response.headers.set('Content-Security-Policy', cspHeader);
   response.headers.set('X-Frame-Options', 'DENY');

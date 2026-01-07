@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { dbService, Idea } from '@/lib/db';
 
 interface IdeaInputProps {
@@ -12,32 +12,35 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!idea.trim()) return;
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!idea.trim()) return;
 
-    setIsSubmitting(true);
-    setError(null);
+      setIsSubmitting(true);
+      setError(null);
 
-    try {
-      // Create a new idea in the database
-      const newIdea: Omit<Idea, 'id' | 'created_at'> = {
-        user_id: 'default_user', // In a real app, this would come from auth
-        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''), // Truncate title
-        raw_text: idea,
-        status: 'draft',
-      };
+      try {
+        // Create a new idea in the database
+        const newIdea: Omit<Idea, 'id' | 'created_at'> = {
+          user_id: 'default_user', // In a real app, this would come from auth
+          title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''), // Truncate title
+          raw_text: idea,
+          status: 'draft',
+        };
 
-      const savedIdea = await dbService.createIdea(newIdea);
+        const savedIdea = await dbService.createIdea(newIdea);
 
-      onSubmit(idea.trim(), savedIdea.id);
-    } catch (err) {
-      console.error('Error saving idea:', err);
-      setError('Failed to save your idea. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+        onSubmit(idea.trim(), savedIdea.id);
+      } catch (err) {
+        console.error('Error saving idea:', err);
+        setError('Failed to save your idea. Please try again.');
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [idea, onSubmit]
+  );
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6" noValidate>

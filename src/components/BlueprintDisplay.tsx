@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -90,7 +90,7 @@ ${answers.main_goal || 'Not specified'}
     generateBlueprint();
   }, [idea, answers]);
 
-  const handleDownload = () => {
+  const handleDownload = useCallback(() => {
     const blob = new Blob([blueprint], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -100,7 +100,7 @@ ${answers.main_goal || 'Not specified'}
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
+  }, [blueprint]);
 
   if (isGenerating) {
     return (

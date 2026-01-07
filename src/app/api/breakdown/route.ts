@@ -35,11 +35,15 @@ async function handlePost(context: ApiContext) {
     options || {}
   );
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    context.rateLimit
+  );
 }
 
 async function handleGet(context: ApiContext) {
@@ -67,11 +71,15 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    context.rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });

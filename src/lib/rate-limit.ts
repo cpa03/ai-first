@@ -3,10 +3,12 @@ interface RateLimitEntry {
   resetTime: number;
 }
 
-interface RateLimitConfig {
+export interface RateLimitConfig {
   windowMs: number;
   maxRequests: number;
 }
+
+export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
@@ -60,6 +62,13 @@ export const rateLimitConfigs = {
   lenient: { windowMs: 60 * 1000, maxRequests: 60 },
 } as const;
 
+export const tieredRateLimits: Record<UserRole, RateLimitConfig> = {
+  anonymous: { windowMs: 60 * 1000, maxRequests: 30 },
+  authenticated: { windowMs: 60 * 1000, maxRequests: 60 },
+  premium: { windowMs: 60 * 1000, maxRequests: 120 },
+  enterprise: { windowMs: 60 * 1000, maxRequests: 300 },
+};
+
 export function createRateLimitMiddleware(config: RateLimitConfig) {
   return (request: Request) => {
     const identifier = getClientIdentifier(request);
@@ -78,7 +87,10 @@ export function cleanupExpiredEntries(): void {
 
 setInterval(cleanupExpiredEntries, 60 * 1000);
 
-export function rateLimitResponse(resetTime: number): Response {
+export function rateLimitResponse(
+  resetTime: number,
+  limit: number = 60
+): Response {
   return new Response(
     JSON.stringify({
       error: 'Too many requests',
@@ -89,7 +101,7 @@ export function rateLimitResponse(resetTime: number): Response {
       headers: {
         'Content-Type': 'application/json',
         'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
-        'X-RateLimit-Limit': String(60),
+        'X-RateLimit-Limit': String(limit),
         'X-RateLimit-Remaining': '0',
         'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
       },

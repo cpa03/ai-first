@@ -22,8 +22,20 @@ Authorization: Bearer <your-supabase-token>
 All API responses include these headers:
 
 - `X-Request-ID`: Unique identifier for the request (useful for debugging)
+- `X-RateLimit-Limit`: Total requests allowed per rate limit window
+- `X-RateLimit-Remaining`: Number of requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
 - `X-Error-Code`: Error code if the request failed
 - `X-Retryable`: Whether the error is retryable (`true`/`false`)
+
+**Example Headers:**
+
+```http
+X-Request-ID: req_1234567890_abc123
+X-RateLimit-Limit: 50
+X-RateLimit-Remaining: 47
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
 
 ## Error Response Format
 
@@ -41,6 +53,161 @@ All errors follow a consistent format:
 ```
 
 For detailed error codes, see [Error Code Documentation](./error-codes.md).
+
+## Resilience Patterns
+
+The IdeaFlow API implements several resilience patterns to ensure reliable operation when integrating with external services:
+
+### Circuit Breaker Pattern
+
+Circuit breakers prevent cascading failures by stopping calls to failing services. When a service reaches a failure threshold, the circuit opens and subsequent calls fail fast without waiting for timeouts.
+
+**Circuit Breaker States:**
+
+- `closed`: Normal operation, requests flow through
+- `open`: Service is failing, requests fail immediately
+- `half-open`: Testing if service has recovered
+
+**Circuit Breaker Behavior:**
+
+1. **Failure Threshold**: After 5 consecutive failures, circuit opens
+2. **Reset Timeout**: Circuit stays open for 60 seconds, then enters half-open
+3. **Recovery Test**: In half-open, next request tests service health
+4. **Close on Success**: Successful request closes circuit
+
+**Monitoring Circuit Breakers:**
+
+Check `/api/health/detailed` to see all circuit breaker states:
+
+```json
+{
+  "circuitBreakers": [
+    {
+      "service": "openai",
+      "state": "closed",
+      "failures": 0
+    },
+    {
+      "service": "trello",
+      "state": "open",
+      "failures": 6
+    }
+  ]
+}
+```
+
+### Retry Logic
+
+External API calls automatically retry with exponential backoff:
+
+**Default Retry Configuration:**
+
+- `maxRetries`: 3 attempts
+- `initialDelayMs`: 1000ms
+- `maxDelayMs`: 30000ms
+- `backoffMultiplier`: 2x (delays: 1s, 2s, 4s)
+
+**Retryable Errors:**
+
+The system automatically retries on these errors:
+
+- Network errors (ECONNRESET, ECONNREFUSED, ETIMEDOUT, ENOTFOUND)
+- HTTP 429 (Rate Limit)
+- HTTP 502, 503, 504 (Gateway/Service errors)
+- QUOTA_EXCEEDED errors
+
+**Non-Retryable Errors:**
+
+These errors fail immediately:
+
+- HTTP 400, 401, 403, 404, 409
+- Validation errors
+- Authentication errors
+
+### Timeouts
+
+All external API calls have timeout protection:
+
+**Default Timeouts:**
+
+- `OpenAI`: 60 seconds
+- `Notion`: 30 seconds
+- `Trello`: 30 seconds
+- `GitHub`: 30 seconds
+- `Database`: 10 seconds
+
+Timeout errors return `TIMEOUT_ERROR` code with retryable=true, allowing automatic retry.
+
+### Error Recovery
+
+When an external service fails:
+
+1. **Automatic Retry**: System retries with exponential backoff
+2. **Circuit Breaker**: Repeated failures open circuit, preventing further calls
+3. **Degraded Mode**: Export connectors show "degraded" status when some are down
+4. **Health Monitoring**: `/api/health/detailed` shows real-time service health
+5. **Manual Recovery**: Circuit breakers auto-reset after 60 seconds, or use admin endpoint to reset
+
+### Client-Side Recommendations
+
+**Best Practices:**
+
+1. **Check Health First**: Call `/api/health/detailed` before bulk operations
+2. **Handle Retryable Errors**: Implement exponential backoff for `retryable: true` errors
+3. **Respect Rate Limits**: Include `Retry-After` header in retry logic
+4. **Use Request IDs**: Log `X-Request-ID` for debugging failed requests
+
+**Example Retry Implementation:**
+
+```typescript
+async function resilientCall(url: string, data: any) {
+  let lastError: Error;
+
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        if (result.code === 'CIRCUIT_BREAKER_OPEN') {
+          // Wait and retry
+          const retryAfter = new Date(result.nextAttemptTime);
+          const delayMs = retryAfter.getTime() - Date.now();
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+          continue;
+        }
+
+        if (result.retryable) {
+          // Exponential backoff
+          const delay = Math.pow(2, attempt - 1) * 1000;
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          continue;
+        }
+
+        throw new Error(result.error);
+      }
+
+      return result;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      if (attempt === 3) break;
+
+      // Network errors - retry with backoff
+      const delay = Math.pow(2, attempt - 1) * 1000;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  throw lastError;
+}
+```
+
+---
 
 ## Health Endpoints
 
@@ -444,25 +611,46 @@ GET /api/breakdown?ideaId=550e8400-e29b-41d4-a716-446655440000
 
 ## Rate Limiting
 
-All API endpoints are rate-limited to prevent abuse. Rate limit headers are included in responses:
-
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-X-RateLimit-Reset: 1704614400
-```
+All API endpoints are rate-limited to prevent abuse. Rate limit headers are included in **all responses** (both successful and errors):
 
 **Rate Limit Tiers:**
 
+The API supports two types of rate limiting:
+
+### Endpoint-based Rate Limiting
+
+Each endpoint can be configured with specific rate limits:
+
 - `strict`: 10 requests per minute
-- `moderate`: 50 requests per minute
-- `lenient`: 100 requests per minute
+- `moderate`: 30 requests per minute
+- `lenient`: 60 requests per minute
+
+### User Role-based Rate Limiting (Future)
+
+The system supports tiered rate limiting based on user roles (when authentication is implemented):
+
+- `anonymous`: 30 requests per minute
+- `authenticated`: 60 requests per minute
+- `premium`: 120 requests per minute
+- `enterprise`: 300 requests per minute
+
+**Headers on All Responses:**
+
+```http
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 57
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
+
+- `X-RateLimit-Limit`: Your rate limit for this endpoint
+- `X-RateLimit-Remaining`: Requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
 
 When rate limit is exceeded:
 
 ```json
 {
-  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "error": "Too many requests",
   "code": "RATE_LIMIT_EXCEEDED",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
@@ -470,12 +658,9 @@ When rate limit is exceeded:
 }
 ```
 
-**HTTP Headers:**
+**Additional Headers on Rate Limit Errors:**
 
 - `Retry-After`: Seconds until retry is allowed
-- `X-RateLimit-Limit`: Your rate limit
-- `X-RateLimit-Remaining`: Remaining requests
-- `X-RateLimit-Reset`: Unix timestamp when limit resets
 
 ---
 
