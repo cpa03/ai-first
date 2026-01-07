@@ -1,36 +1,24 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import {
-  validateIdeaId,
-  validateRequestSize,
-  buildErrorResponse,
-} from '@/lib/validation';
+import { validateIdeaId } from '@/lib/validation';
+import { ValidationError } from '@/lib/errors';
+import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
-export async function POST(request: NextRequest) {
-  try {
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      return buildErrorResponse(sizeValidation.errors);
-    }
+async function handlePost(context: ApiContext) {
+  const { request } = context;
+  const { ideaId } = await request.json();
 
-    const { ideaId } = await request.json();
-
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      return buildErrorResponse(idValidation.errors);
-    }
-
-    const result = await clarifierAgent.completeClarification(ideaId.trim());
-
-    return NextResponse.json({ success: true, ...result });
-  } catch (error) {
-    console.error('Error completing clarification:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to complete clarification',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
+  const idValidation = validateIdeaId(ideaId);
+  if (!idValidation.valid) {
+    throw new ValidationError(idValidation.errors);
   }
+
+  const result = await clarifierAgent.completeClarification(ideaId.trim());
+
+  return successResponse({
+    success: true,
+    ...result,
+    requestId: context.requestId,
+  });
 }
+
+export const POST = withApiHandler(handlePost);
