@@ -141,15 +141,67 @@ global.open = jest.fn();
 // Mock URL.createObjectURL
 global.URL.createObjectURL = jest.fn(() => 'mock-url');
 
-// Reset all mocks before each test
-beforeEach(() => {
-  jest.clearAllMocks();
-  localStorageMock.getItem.mockClear();
-  localStorageMock.setItem.mockClear();
-  sessionStorageMock.getItem.mockClear();
-  sessionStorageMock.setItem.mockClear();
-  global.fetch?.mockClear?.();
-});
+// Polyfill Response for Node.js environment
+if (typeof Response === 'undefined') {
+  global.Response = class Response {
+    constructor(body, init = {}) {
+      this._body = body;
+      this._status = init.status || 200;
+      this._headers = {};
+
+      if (init.headers) {
+        if (init.headers instanceof Headers) {
+          init.headers.forEach((value, key) => {
+            this._headers[key.toLowerCase()] = value;
+          });
+        } else if (typeof init.headers === 'object') {
+          Object.keys(init.headers).forEach((key) => {
+            this._headers[key.toLowerCase()] = init.headers[key];
+          });
+        }
+      }
+    }
+
+    get status() {
+      return this._status;
+    }
+
+    get headers() {
+      return {
+        get: (key) => this._headers[key.toLowerCase()],
+        set: (key, value) => {
+          this._headers[key.toLowerCase()] = value;
+        },
+        has: (key) => this._headers[key.toLowerCase()] !== undefined,
+      };
+    }
+
+    async json() {
+      return JSON.parse(this._body);
+    }
+
+    async text() {
+      return this._body;
+    }
+
+    clone() {
+      return new Response(this._body, {
+        status: this._status,
+        headers: this._headers,
+      });
+    }
+  };
+}
+
+// Mock setTimeout to support unref() for Jest timers
+const originalSetTimeout = global.setTimeout;
+global.setTimeout = ((callback, delay, ...args) => {
+  const timeoutId = originalSetTimeout(callback, delay, ...args);
+  if (timeoutId && typeof timeoutId.unref === 'function') {
+    timeoutId.unref();
+  }
+  return timeoutId;
+}).bind(global);
 
 // Cleanup after each test
 afterEach(() => {
