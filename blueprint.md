@@ -476,7 +476,191 @@ All DatabaseService methods updated to support:
 
 ---
 
-## 25. Closing & governance
+## 26. Integration Hardening (2025-01-07)
+
+### Resilience Patterns Implementation
+
+**Purpose**: Ensure robust operation when integrating with external services (OpenAI, Notion, Trello, GitHub, etc.) through automatic failure recovery and graceful degradation.
+
+#### Core Resilience Components
+
+**1. Circuit Breaker Pattern**
+
+- **File**: `src/lib/resilience.ts`
+- **Purpose**: Prevent cascading failures by stopping calls to repeatedly failing services
+- **Implementation**: `CircuitBreaker` class with state management
+- **States**:
+  - `closed`: Normal operation, requests flow through
+  - `open`: Service failing, requests fail immediately
+  - `half-open`: Testing recovery after timeout
+- **Configuration**:
+  - Failure threshold: 5 consecutive failures
+  - Reset timeout: 60 seconds
+  - Auto-recovery: Opens circuit after threshold, closes on successful test
+
+**2. Timeout Protection**
+
+- **File**: `src/lib/resilience.ts` - `withTimeout()` function
+- **Purpose**: Prevent indefinite hangs on unresponsive services
+- **Default Timeouts**:
+  - OpenAI: 60 seconds
+  - Notion: 30 seconds
+  - Trello: 30 seconds
+  - GitHub: 30 seconds
+  - Database: 10 seconds
+
+**3. Retry Logic with Exponential Backoff**
+
+- **File**: `src/lib/resilience.ts` - `withRetry()` function
+- **Purpose**: Automatically retry transient failures with intelligent delays
+- **Configuration**:
+  - Max retries: 3 attempts
+  - Initial delay: 1000ms
+  - Max delay: 30000ms
+  - Backoff multiplier: 2x (delays: 1s, 2s, 4s)
+- **Retryable Errors**:
+  - Network errors (ECONNRESET, ECONNREFUSED, ETIMEDOUT, ENOTFOUND)
+  - HTTP 429 (Rate Limit)
+  - HTTP 502, 503, 504 (Gateway/Service errors)
+  - QUOTA_EXCEEDED errors
+
+#### Integration Points Hardened
+
+**AI Service** (`src/lib/ai.ts`):
+
+- OpenAI API calls wrapped with:
+  - Circuit breaker for `ai-openai` service
+  - 60-second timeout
+  - 3 retries with exponential backoff
+- Health check includes circuit breaker status
+- Removed basic client-side rate limiting (now handled by resilience patterns)
+
+**Export Connectors** (`src/lib/exports.ts`):
+
+**TrelloExporter**:
+
+- All API calls use circuit breaker for `trello` service
+- 30-second timeout on all operations
+- 3 retries for critical operations (board/list/card creation)
+- 2 retries for non-critical operations (labels/comments)
+
+**GitHubProjectsExporter**:
+
+- Circuit breaker for `github` service
+- 30-second timeout on all operations
+- 3 retries for critical operations
+- Config validation uses timeout protection
+
+**NotionExporter**:
+
+- Circuit breaker for `notion` service
+- 30-second timeout on connection tests
+- Uses Notion SDK's built-in retry mechanisms
+
+#### Health Monitoring
+
+**Detailed Health Endpoint** (`src/app/api/health/detailed/route.ts`):
+
+- Comprehensive health check including:
+  - Database status with latency
+  - AI service status with circuit breaker states
+  - Export connectors availability
+  - All circuit breaker states and failure counts
+- Returns overall system status: `healthy`, `degraded`, or `unhealthy`
+- Circuit breaker status includes:
+  - Service name
+  - Current state (closed/open/half-open)
+  - Failure count
+  - Next attempt time (if open)
+
+#### Circuit Breaker Management
+
+**CircuitBreakerManager** (`src/lib/resilience.ts`):
+
+- Centralized management of all circuit breakers
+- Singleton pattern for global access
+- Methods:
+  - `getOrCreate(name, config)`: Get or create circuit breaker
+  - `get(name)`: Get existing circuit breaker
+  - `getAllStatuses()`: Get status of all circuit breakers
+  - `reset(name)`: Manually reset specific circuit breaker
+  - `resetAll()`: Reset all circuit breakers (use with caution)
+
+#### Usage Pattern
+
+**Creating Resilient Operations**:
+
+```typescript
+import {
+  createResilientWrapper,
+  DEFAULT_RETRIES,
+  DEFAULT_TIMEOUTS,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+  circuitBreakerManager,
+} from './resilience';
+
+// Initialize circuit breaker
+circuitBreakerManager.getOrCreate(
+  'external-service',
+  DEFAULT_CIRCUIT_BREAKER_CONFIG
+);
+
+// Wrap external API call
+const makeExternalCall = async () => {
+  return await fetch('https://external-service/api', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+};
+
+// Use with resilience patterns
+const result = await createResilientWrapper(makeExternalCall, {
+  circuitBreaker: circuitBreakerManager.get('external-service'),
+  timeoutMs: DEFAULT_TIMEOUTS.default,
+  retryConfig: DEFAULT_RETRIES,
+})();
+```
+
+#### Error Response Codes
+
+New error codes added for resilience:
+
+- `CIRCUIT_BREAKER_OPEN`: Circuit breaker preventing calls to failing service
+- `TIMEOUT_ERROR`: Operation exceeded configured timeout
+- `RETRY_EXHAUSTED`: All retry attempts failed
+- `EXTERNAL_SERVICE_ERROR`: External service returned error
+
+All retryable errors include `retryable: true` in response.
+
+#### Benefits
+
+1. **No Cascading Failures**: Circuit breakers prevent one failing service from taking down the entire system
+2. **Automatic Recovery**: Retries with exponential backoff handle transient issues without manual intervention
+3. **Graceful Degradation**: System continues operating with reduced functionality when some services are down
+4. **Fast Failure**: Timeouts prevent indefinite hangs, allowing user feedback
+5. **Observable Health**: `/api/health/detailed` provides real-time system status
+6. **Zero Breaking Changes**: All patterns added behind existing interfaces
+
+#### Monitoring Recommendations
+
+1. **Check `/api/health/detailed`** before operations to verify service availability
+2. **Monitor Circuit Breakers**: Track how often circuits open and for which services
+3. **Adjust Thresholds**: Tune failure thresholds and timeouts based on production patterns
+4. **Export Monitoring**: Track export connector availability and error rates
+5. **Alerting**: Set up alerts for circuit breakers opening or degraded health status
+
+#### Future Enhancements
+
+- [ ] Add metrics/telemetry for circuit breaker events
+- [ ] Implement bulkhead pattern for concurrent request limiting
+- [ ] Add adaptive timeout adjustment based on historical latency
+- [ ] Implement request queuing for failed services
+- [ ] Add service-specific retry configurations
+
+---
+
+## 27. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 
