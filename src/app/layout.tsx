@@ -78,7 +78,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <div className="min-h-screen flex flex-col">
-          <header className="bg-white shadow-sm border-b border-gray-200">
+          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex justify-between items-center h-16">
                 <div className="flex items-center">
@@ -86,22 +86,25 @@ export default function RootLayout({
                     IdeaFlow
                   </h1>
                 </div>
-                <nav aria-label="Main navigation" className="flex space-x-8">
+                <nav
+                  aria-label="Main navigation"
+                  className="flex space-x-4 sm:space-x-8"
+                >
                   <a
                     href="/"
-                    className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
+                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
                   >
                     Home
                   </a>
                   <a
                     href="/clarify"
-                    className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
+                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
                   >
                     Clarify
                   </a>
                   <a
                     href="/results"
-                    className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
+                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
                   >
                     Results
                   </a>
