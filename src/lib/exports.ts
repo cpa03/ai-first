@@ -1,6 +1,8 @@
 // Export connectors for IdeaFlow integrations
 // Supports Notion, Trello, Google Tasks, GitHub Projects
 
+import { TIMEOUT_CONFIG } from './config/constants';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface ExportFormat {
@@ -214,7 +216,7 @@ export class NotionExporter extends ExportConnector {
       if (!this.client) {
         this.client = new Client({
           auth: apiKey,
-          timeoutMs: 30000,
+          timeoutMs: TIMEOUT_CONFIG.NOTION.CLIENT_TIMEOUT,
         });
       }
 
@@ -277,7 +279,7 @@ export class NotionExporter extends ExportConnector {
 
   private async executeWithTimeout<T>(
     operation: () => Promise<T>,
-    timeoutMs: number = 30000
+    timeoutMs: number = TIMEOUT_CONFIG.DEFAULT
   ): Promise<T> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
@@ -571,7 +573,10 @@ export class TrelloExporter extends ExportConnector {
     token: string
   ): Promise<any> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      TIMEOUT_CONFIG.TRELLO.CREATE_BOARD
+    );
 
     try {
       const response = await fetch(
@@ -604,7 +609,10 @@ export class TrelloExporter extends ExportConnector {
     token: string
   ): Promise<any> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      TIMEOUT_CONFIG.TRELLO.CREATE_LIST
+    );
 
     try {
       const response = await fetch(
@@ -635,7 +643,10 @@ export class TrelloExporter extends ExportConnector {
     token: string
   ): Promise<any> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      TIMEOUT_CONFIG.TRELLO.CREATE_CARD
+    );
 
     try {
       const cardData = {
@@ -988,7 +999,10 @@ export class GitHubProjectsExporter extends ExportConnector {
 
   private async getAuthenticatedUser(token: string): Promise<any> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      TIMEOUT_CONFIG.GITHUB.GET_USER
+    );
 
     try {
       const response = await fetch(`${this.API_BASE}/user`, {
@@ -1021,7 +1035,10 @@ export class GitHubProjectsExporter extends ExportConnector {
     token: string
   ): Promise<any> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      TIMEOUT_CONFIG.GITHUB.CREATE_REPO
+    );
 
     try {
       const createResponse = await fetch(`${this.API_BASE}/user/repos`, {

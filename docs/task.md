@@ -2,6 +2,95 @@
 
 ## Code Sanitizer Tasks
 
+### Task 3: Remove Dead Code - Duplicate Clarifier ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Identify and remove dead code
+- Eliminate duplicate files
+- Improve code organization
+- Reduce maintenance burden
+
+#### Completed Work
+
+1. **Identified Dead Code**
+   - Found duplicate `ClarifierAgent` class in `src/lib/clarifier.ts` (167 lines)
+   - Older, simplified implementation with inline prompts
+   - Different interfaces (ClarifierResponse vs ClarifierSession)
+   - Unused by any imports (all routes use `@/lib/agents/clarifier`)
+
+2. **Removed Dead Code**
+   - Deleted `src/lib/clarifier.ts` (167 lines removed)
+   - All code now consolidated in `src/lib/agents/clarifier.ts`
+
+#### Success Criteria Met
+
+- [x] Dead code identified and removed
+- [x] No imports reference deleted file
+- [x] Build passes
+- [x] Lint passes
+- [x] Type-check passes
+- [x] Zero regressions
+
+#### Files Modified
+
+- `src/lib/clarifier.ts` (DELETED - dead code)
+
+---
+
+### Task 2: Extract Hardcoded Timeout Values ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Extract hardcoded timeout values from export connectors
+- Create centralized configuration for API timeouts
+- Replace magic numbers with named constants
+- Improve maintainability and configurability
+
+#### Completed Work
+
+1. **Created Configuration File** (`src/lib/config/constants.ts`)
+   - `TIMEOUT_CONFIG` with centralized timeout values
+   - Service-specific timeouts (TRELLO, GITHUB, NOTION)
+   - Default timeout categories (DEFAULT, QUICK, STANDARD, LONG)
+   - Rate limiting configuration
+   - Retry configuration
+
+2. **Updated Export Connectors** (`src/lib/exports.ts`)
+   - Replaced hardcoded `10000` (10s) with `TIMEOUT_CONFIG.TRELLO.CREATE_BOARD`
+   - Replaced hardcoded `10000` (10s) with `TIMEOUT_CONFIG.TRELLO.CREATE_LIST`
+   - Replaced hardcoded `10000` (10s) with `TIMEOUT_CONFIG.TRELLO.CREATE_CARD`
+   - Replaced hardcoded `10000` (10s) with `TIMEOUT_CONFIG.GITHUB.GET_USER`
+   - Replaced hardcoded `30000` (30s) with `TIMEOUT_CONFIG.GITHUB.CREATE_REPO`
+   - Replaced hardcoded `30000` (30s) with `TIMEOUT_CONFIG.NOTION.CLIENT_TIMEOUT`
+   - Replaced hardcoded `30000` (30s) with `TIMEOUT_CONFIG.DEFAULT` in executeWithTimeout
+
+#### Success Criteria Met
+
+- [x] All magic numbers replaced with constants
+- [x] Centralized configuration created
+- [x] Build passes
+- [x] Lint passes
+- [x] Type-check passes
+- [x] Zero regressions
+
+#### Files Modified
+
+- `src/lib/config/constants.ts` (NEW)
+- `src/lib/exports.ts` (UPDATED - imported constants, replaced hardcoded values)
+
+---
+
+## Code Sanitizer Tasks
+
 ### Task 1: Fix Build, Lint, and Type Errors ✅ COMPLETE
 
 **Priority**: HIGH
@@ -411,7 +500,7 @@ This document contains refactoring tasks identified during code review. Tasks ar
 
 ---
 
-## [REFACTOR] Extract Prompt Templates from Inline Strings
+## [REFACTOR] Extract Prompt Templates from Inline Strings ✅ COMPLETED
 
 - **Location**: `src/lib/agents/clarifier.ts` (lines 126-150, 317-331), `src/lib/agents/breakdown-engine.ts` (lines 255-280, 314-339)
 - **Issue**: Large prompt strings are embedded directly in the code, making them hard to maintain, version control, and A/B test. Prompts are not reusable and difficult to modify without code changes.
@@ -426,6 +515,62 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Priority**: High
 - **Effort**: Large
 - **Impact**: Improves maintainability, enables A/B testing of prompts, separates concerns
+- **Status**: ✅ Completed on 2026-01-07
+
+### Completed Work
+
+1. **Created Prompt Service** (`src/lib/prompt-service.ts`)
+   - PromptService class for loading and interpolating prompt templates
+   - Caching mechanism to avoid repeated file reads
+   - Variable substitution using `{variable}` syntax
+   - Helper methods: `getPrompt()`, `getSystemPrompt()`, `getUserPrompt()`
+
+2. **Created Prompt Templates** (`src/lib/prompts/` directory)
+   - `clarifier/generate-questions-system.txt` - System prompt for generating questions
+   - `clarifier/generate-questions-user.txt` - User prompt template with variables
+   - `clarifier/refine-idea-system.txt` - System prompt for refining ideas
+   - `clarifier/refine-idea-user.txt` - User prompt template with variables
+   - `breakdown/analyze-idea-system.txt` - System prompt for analyzing ideas
+   - `breakdown/analyze-idea-user.txt` - User prompt template with variables
+   - `breakdown/decompose-tasks-system.txt` - System prompt for decomposing tasks
+   - `breakdown/decompose-tasks-user.txt` - User prompt template with variables
+
+3. **Updated Clarifier Agent** (`src/lib/agents/clarifier.ts`)
+   - Replaced inline prompts with PromptService calls
+   - `generateQuestions()` now uses prompt templates
+   - `generateRefinedIdea()` now uses prompt templates
+   - Removed ~40 lines of inline prompt strings
+
+4. **Updated Breakdown Engine** (`src/lib/agents/breakdown-engine.ts`)
+   - Replaced inline prompts with PromptService calls
+   - `analyzeIdea()` now uses prompt templates
+   - `decomposeTasks()` now uses prompt templates
+   - Removed ~50 lines of inline prompt strings
+
+### Success Criteria Met
+
+- [x] All prompt templates extracted to separate files
+- [x] PromptService created for loading and interpolation
+- [x] Agent files updated to use PromptService
+- [x] Build passes
+- [x] Lint passes
+- [x] Type-check passes
+- [x] Zero regressions
+
+### Files Modified
+
+- `src/lib/prompt-service.ts` (NEW)
+- `src/lib/prompts/clarifier/generate-questions-system.txt` (NEW)
+- `src/lib/prompts/clarifier/generate-questions-user.txt` (NEW)
+- `src/lib/prompts/clarifier/refine-idea-system.txt` (NEW)
+- `src/lib/prompts/clarifier/refine-idea-user.txt` (NEW)
+- `src/lib/prompts/breakdown/analyze-idea-system.txt` (NEW)
+- `src/lib/prompts/breakdown/analyze-idea-user.txt` (NEW)
+- `src/lib/prompts/breakdown/decompose-tasks-system.txt` (NEW)
+- `src/lib/prompts/breakdown/decompose-tasks-user.txt` (NEW)
+- `src/lib/agents/clarifier.ts` (UPDATED)
+- `src/lib/agents/breakdown-engine.ts` (UPDATED)
+- `docs/task.md` (UPDATED)
 
 ---
 
