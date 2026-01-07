@@ -1,4 +1,42 @@
-# Integration Engineer Tasks
+# Code Sanitizer Tasks
+
+## Code Review & Refactoring Tasks
+
+### Task 1: Remove Duplicate Fallback Questions Logic ✅ COMPLETE
+
+**Priority**: LOW
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Remove duplicate fallback questions array in `src/components/ClarificationFlow.tsx`
+- Extract to constant to improve maintainability
+- Reduce code duplication
+
+#### Completed Work
+
+1. **Extracted Fallback Questions** (`src/components/ClarificationFlow.tsx`)
+   - Created `FALLBACK_QUESTIONS` constant at top of file
+   - Replaced duplicate array definitions (lines 62-86 and 96-113)
+   - Reduced ~30 lines of duplicate code to 1 line in each location
+   - Single source of truth for fallback questions
+
+#### Success Criteria Met
+
+- [x] Code duplication removed
+- [x] Build passes
+- [x] Lint passes
+- [x] Type-check passes
+- [x] Zero regressions
+
+#### Files Modified
+
+- `src/components/ClarificationFlow.tsx` (UPDATED)
+
+---
+
+## Integration Engineer Tasks
 
 ## Task Tracking
 

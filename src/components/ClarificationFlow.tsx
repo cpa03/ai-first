@@ -15,6 +15,25 @@ interface ClarificationFlowProps {
   onComplete: (answers: Record<string, string>) => void;
 }
 
+const FALLBACK_QUESTIONS: Question[] = [
+  {
+    id: 'target_audience',
+    question: 'Who is your target audience?',
+    type: 'textarea',
+  },
+  {
+    id: 'main_goal',
+    question: 'What is the main goal you want to achieve?',
+    type: 'textarea',
+  },
+  {
+    id: 'timeline',
+    question: 'What is your desired timeline for this project?',
+    type: 'select',
+    options: ['1-2 weeks', '1 month', '3 months', '6 months', '1 year'],
+  },
+];
+
 export default function ClarificationFlow({
   idea,
   ideaId,
@@ -59,30 +78,7 @@ export default function ClarificationFlow({
 
         // If no questions were generated, use fallback questions
         if (formattedQuestions.length === 0) {
-          formattedQuestions.push(
-            {
-              id: 'target_audience',
-              question: 'Who is your target audience?',
-              type: 'textarea',
-            },
-            {
-              id: 'main_goal',
-              question: 'What is the main goal you want to achieve?',
-              type: 'textarea',
-            },
-            {
-              id: 'timeline',
-              question: 'What is your desired timeline for this project?',
-              type: 'select',
-              options: [
-                '1-2 weeks',
-                '1 month',
-                '3 months',
-                '6 months',
-                '1 year',
-              ],
-            }
-          );
+          formattedQuestions.push(...FALLBACK_QUESTIONS);
         }
 
         setQuestions(formattedQuestions);
@@ -93,24 +89,7 @@ export default function ClarificationFlow({
         );
 
         // Use fallback questions if API fails
-        setQuestions([
-          {
-            id: 'target_audience',
-            question: 'Who is your target audience?',
-            type: 'textarea',
-          },
-          {
-            id: 'main_goal',
-            question: 'What is the main goal you want to achieve?',
-            type: 'textarea',
-          },
-          {
-            id: 'timeline',
-            question: 'What is your desired timeline for this project?',
-            type: 'select',
-            options: ['1-2 weeks', '1 month', '3 months', '6 months', '1 year'],
-          },
-        ]);
+        setQuestions(FALLBACK_QUESTIONS);
       } finally {
         setLoading(false);
       }
