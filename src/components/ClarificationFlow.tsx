@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Alert from '@/components/Alert';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
 import InputWithValidation from '@/components/InputWithValidation';
