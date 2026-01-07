@@ -685,17 +685,10 @@ export class TrelloExporter extends ExportConnector {
     const cardData = {
       name: task.title,
       desc: task.description || '',
+      idList: listId,
       key: apiKey,
       token: token,
     };
-
-    try {
-      const cardData = {
-        name: task.title,
-        desc: task.description || '',
-        key: apiKey,
-        token: token,
-      };
 
     const makeRequest = async () => {
       const params = new URLSearchParams(cardData as any);
@@ -710,44 +703,57 @@ export class TrelloExporter extends ExportConnector {
         throw new Error(`Failed to create Trello card: ${response.statusText}`);
       }
 
-      const card = await response.json();
+      return response.json();
+    };
 
-      // Add labels for priority and assignee
-      if (task.priority) {
+    const card = await createResilientWrapper(makeRequest, {
+      circuitBreaker,
+      timeoutMs: DEFAULT_TIMEOUTS.trello,
+      retryConfig,
+    })();
+
+    // Add labels for priority
+    if (task.priority) {
+      try {
         await this.addCardLabel(
           card.id,
           this.getPriorityLabel(task.priority),
           apiKey,
           token
         );
+      } catch (error) {
+        console.warn('Failed to add priority label:', error);
       }
+    }
 
-      if (task.assignee) {
+    // Add comments for assignee and estimate
+    if (task.assignee) {
+      try {
         await this.addCardComment(
           card.id,
           `Assigned to: ${task.assignee}`,
           apiKey,
           token
         );
+      } catch (error) {
+        console.warn('Failed to add assignee comment:', error);
       }
+    }
 
-      if (task.estimate) {
+    if (task.estimate) {
+      try {
         await this.addCardComment(
           card.id,
           `Estimate: ${task.estimate}h`,
           apiKey,
           token
         );
+      } catch (error) {
+        console.warn('Failed to add estimate comment:', error);
       }
+    }
 
-      return card;
-    };
-
-    return await createResilientWrapper(makeRequest, {
-      circuitBreaker,
-      timeoutMs: DEFAULT_TIMEOUTS.trello,
-      retryConfig,
-    })();
+    return card;
   }
 
   private async addCardLabel(

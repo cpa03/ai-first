@@ -250,6 +250,28 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getIdeaDeliverablesWithTasks(
+    ideaId: string
+  ): Promise<(Deliverable & { tasks: Task[] })[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('deliverables')
+      .select('*, tasks(*)')
+      .eq('idea_id', ideaId)
+      .is('deleted_at', null)
+      .order('priority', { ascending: false });
+
+    if (error) throw error;
+
+    const deliverables = (data as any[]) || [];
+
+    return deliverables.map((d) => ({
+      ...d,
+      tasks: (d.tasks || []).filter((t: Task) => !t.deleted_at),
+    }));
+  }
+
   async updateDeliverable(
     id: string,
     updates: Partial<Deliverable>
