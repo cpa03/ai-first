@@ -12,7 +12,7 @@ import {
 } from './utils/testHelpers';
 
 // Mock all API calls
-global.fetch = jest.fn();
+global.fetch = jest.fn() as jest.Mock;
 
 describe('Integration Tests - User Workflows', () => {
   let user: any;
@@ -25,7 +25,7 @@ describe('Integration Tests - User Workflows', () => {
   describe('Complete User Journey', () => {
     it('should handle full workflow from idea to export', async () => {
       // Mock API responses for each step
-      global.fetch
+      (global.fetch as jest.Mock)
         // Step 1: Create idea
         .mockResolvedValueOnce({
           ok: true,
@@ -154,7 +154,7 @@ describe('Integration Tests - User Workflows', () => {
 
     it('should handle error recovery throughout the workflow', async () => {
       // Mock error responses
-      global.fetch
+      (global.fetch as jest.Mock)
         // Idea creation fails
         .mockResolvedValueOnce({
           ok: false,
@@ -260,7 +260,7 @@ describe('Integration Tests - User Workflows', () => {
 
   describe('Real-time Feature Integration', () => {
     it('should handle WebSocket updates for live collaboration', async () => {
-      const mockWebSocket = {
+      const mockWebSocketInstance = {
         send: jest.fn(),
         close: jest.fn(),
         addEventListener: jest.fn(),
@@ -268,32 +268,35 @@ describe('Integration Tests - User Workflows', () => {
         readyState: 1, // OPEN
       };
 
-      global.WebSocket = jest.fn().mockImplementation(() => mockWebSocket);
+      global.WebSocket = jest
+        .fn()
+        .mockImplementation(() => mockWebSocketInstance) as any;
 
       // Simulate real-time updates
       const ws = new WebSocket('ws://localhost:3001/ws');
 
-      expect(mockWebSocket.addEventListener).toHaveBeenCalledWith(
+      expect(mockWebSocketInstance.addEventListener).toHaveBeenCalledWith(
         'open',
         expect.any(Function)
       );
-      expect(mockWebSocket.addEventListener).toHaveBeenCalledWith(
+      expect(mockWebSocketInstance.addEventListener).toHaveBeenCalledWith(
         'message',
         expect.any(Function)
       );
-      expect(mockWebSocket.addEventListener).toHaveBeenCalledWith(
+      expect(mockWebSocketInstance.addEventListener).toHaveBeenCalledWith(
         'close',
         expect.any(Function)
       );
-      expect(mockWebSocket.addEventListener).toHaveBeenCalledWith(
+      expect(mockWebSocketInstance.addEventListener).toHaveBeenCalledWith(
         'error',
         expect.any(Function)
       );
 
       // Simulate receiving updates
-      const messageHandler = mockWebSocket.addEventListener.mock.calls.find(
-        (call) => call[0] === 'message'
-      )[1];
+      const messageHandler =
+        mockWebSocketInstance.addEventListener.mock.calls.find(
+          (call: any) => call[0] === 'message'
+        )[1];
 
       const updateData = {
         type: 'BLUEPRINT_UPDATE',

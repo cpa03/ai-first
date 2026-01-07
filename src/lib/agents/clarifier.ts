@@ -4,6 +4,7 @@ import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ClarifierQuestion {
   id: string;
   question: string;
@@ -43,6 +44,7 @@ export interface ClarifierConfig {
 export class ClarifierAgent {
   private config: ClarifierConfig | null = null;
   private aiConfig: AIModelConfig | null = null;
+  public aiService = aiService;
 
   constructor() {
     this.loadConfig();

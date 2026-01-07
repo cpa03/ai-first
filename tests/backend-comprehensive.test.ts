@@ -330,40 +330,53 @@ describe('Backend Service Tests', () => {
       clarifierAgent = new ClarifierAgent();
       // Mock AI service dependency
       clarifierAgent.aiService = {
-        createCompletion: jest.fn(),
-      };
+        callModel: jest.fn(),
+        initialize: jest.fn().mockResolvedValue(undefined),
+      } as any;
     });
 
     it('should generate clarification questions', async () => {
-      clarifierAgent.aiService.createCompletion.mockResolvedValue(
+      (clarifierAgent.aiService.callModel as jest.Mock).mockResolvedValue(
         JSON.stringify(mockOpenAIResponses.clarificationQuestions)
       );
 
       const result = await clarifierAgent.generateQuestions('Test idea');
 
       expect(result).toEqual(mockOpenAIResponses.clarificationQuestions);
-      expect(clarifierAgent.aiService.createCompletion).toHaveBeenCalledWith(
-        expect.stringContaining('Test idea')
+      expect(clarifierAgent.aiService.callModel).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            content: expect.stringContaining('Test idea'),
+          }),
+        ]),
+        expect.any(Object)
       );
     });
 
     it('should generate refined idea from answers', async () => {
       const answers = { '1': 'Answer 1', '2': 'Answer 2' };
+      const session = {
+        ideaId: 'test-idea',
+        originalIdea: 'Test idea',
+        questions: mockOpenAIResponses.clarificationQuestions as any,
+        answers,
+        confidence: 0.5,
+        status: 'in_progress' as const,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
 
-      clarifierAgent.aiService.createCompletion.mockResolvedValue(
+      (clarifierAgent.aiService.callModel as jest.Mock).mockResolvedValue(
         mockOpenAIResponses.refinedIdea
       );
 
-      const result = await clarifierAgent.generateRefinedIdea(
-        'Test idea',
-        answers
-      );
+      const result = await clarifierAgent.generateRefinedIdea(session);
 
       expect(result).toBe(mockOpenAIResponses.refinedIdea);
     });
 
     it('should handle AI service failures gracefully', async () => {
-      clarifierAgent.aiService.createCompletion.mockRejectedValue(
+      (clarifierAgent.aiService.callModel as jest.Mock).mockRejectedValue(
         new Error('AI Error')
       );
 
@@ -377,7 +390,7 @@ describe('Backend Service Tests', () => {
         { id: '1', question: 'Test' }, // Missing type and required
       ];
 
-      clarifierAgent.aiService.createCompletion.mockResolvedValue(
+      (clarifierAgent.aiService.callModel as jest.Mock).mockResolvedValue(
         JSON.stringify(invalidQuestions)
       );
 

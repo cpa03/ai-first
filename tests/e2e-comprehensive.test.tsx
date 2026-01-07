@@ -74,8 +74,8 @@ describe('End-to-End Tests', () => {
         mockUserJourney.exports.github,
       ];
 
-      global.fetch = jest.fn().mockImplementation((url) => {
-        const responseIndex = global.fetch.mock.calls.length - 1;
+      (global.fetch as jest.Mock).mockImplementation((url) => {
+        const responseIndex = (global.fetch as jest.Mock).mock.calls.length - 1;
         return Promise.resolve({
           ok: true,
           json: async () => apiResponses[responseIndex] || { data: null },
@@ -116,7 +116,9 @@ describe('End-to-End Tests', () => {
       for (let i = 0; i < mockUserJourney.questions.length; i++) {
         const question = mockUserJourney.questions[i];
         const answerKey = (i + 1).toString();
-        const answer = mockUserJourney.answers[answerKey];
+        const answer = (mockUserJourney.answers as Record<string, string>)[
+          answerKey
+        ];
 
         if (answer) {
           const input =
@@ -267,28 +269,36 @@ describe('End-to-End Tests', () => {
 
   describe('Performance E2E', () => {
     it('should load within performance budgets', async () => {
-      const performanceMarks = {};
+      const performanceMarks: Record<string, number> = {};
 
       // Mock performance API
       global.performance = {
         ...global.performance,
-        mark: jest.fn((name) => {
+        mark: jest.fn((name: string) => {
           performanceMarks[name] = Date.now();
-        }),
-        measure: jest.fn((name, startMark, endMark) => {
-          return {
-            name,
-            startTime: performanceMarks[startMark] || 0,
-            duration:
-              (performanceMarks[endMark] || Date.now()) -
-              (performanceMarks[startMark] || 0),
-          };
-        }),
+        }) as jest.Mock,
+        measure: jest.fn(
+          (
+            name: string,
+            startMark: string | PerformanceMeasureOptions,
+            endMark?: string
+          ) => {
+            const startMarkStr =
+              typeof startMark === 'string' ? startMark : 'start';
+            const endMarkStr = typeof endMark === 'string' ? endMark : 'end';
+            return {
+              name,
+              startTime: performanceMarks[startMarkStr] || 0,
+              duration:
+                (performanceMarks[endMarkStr] || Date.now()) -
+                (performanceMarks[startMarkStr] || 0),
+            };
+          }
+        ) as jest.Mock,
       };
 
       global.fetch = createMockFetch(
         { data: mockUserJourney.blueprint },
-        {},
         { delay: 100 }
       );
 
@@ -303,7 +313,8 @@ describe('End-to-End Tests', () => {
       );
       performance.mark('render-end');
 
-      const renderMeasurement = global.performance.measure(
+      const measureFn = global.performance.measure as jest.Mock;
+      const renderMeasurement = measureFn(
         'render-time',
         'render-start',
         'render-end'
