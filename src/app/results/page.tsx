@@ -1,10 +1,24 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
 import { exportManager, exportUtils } from '@/lib/exports';
-import BlueprintDisplay from '@/components/BlueprintDisplay';
+import dynamic from 'next/dynamic';
+
+const BlueprintDisplay = dynamic(
+  () => import('@/components/BlueprintDisplay').then((mod) => mod.default),
+  {
+    loading: () => (
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className="flex justify-center mb-4">
+          <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+        </div>
+        <p className="text-gray-600">Loading blueprint...</p>
+      </div>
+    ),
+  }
+);
 
 export default function ResultsPage() {
   const router = useRouter();
