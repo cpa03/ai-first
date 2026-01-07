@@ -1,6 +1,8 @@
 // Export connectors for IdeaFlow integrations
 // Supports Notion, Trello, Google Tasks, GitHub Projects
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface ExportFormat {
   type:
     | 'markdown'
@@ -819,7 +821,7 @@ export class GitHubProjectsExporter extends ExportConnector {
 
   async export(
     data: any,
-    options?: Record<string, any>
+    _options?: Record<string, any>
   ): Promise<ExportResult> {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {

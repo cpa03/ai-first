@@ -5,6 +5,8 @@
  * to ensure user privacy and security compliance.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface PIIPatterns {
   email: RegExp;
   phone: RegExp;
