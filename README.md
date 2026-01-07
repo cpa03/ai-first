@@ -196,6 +196,7 @@ All automated work follows this pattern:
 - [API Reference](./docs/api.md) - Complete API documentation with examples
 - [Error Codes](./docs/error-codes.md) - Error code reference
 - [Health Monitoring](./docs/health-monitoring.md) - Health check guide
+- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
 - [Agent Guidelines](./docs/agent-guidelines.md) - Agent behavior rules
 - [Deployment](./docs/deploy.md) - Production deployment guide
 - [Integration Hardening](./docs/integration-hardening.md) - Resilience patterns

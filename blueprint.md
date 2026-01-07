@@ -351,6 +351,7 @@ Each case should map to reusable prompts & templates.
 
 - `docs/error-codes.md` - Comprehensive error code reference with troubleshooting
 - `docs/health-monitoring.md` - Health monitoring guide for /api/health endpoints
+- `docs/troubleshooting.md` - Comprehensive troubleshooting guide for common issues
 
 ### Security & Integration
 
