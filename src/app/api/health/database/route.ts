@@ -1,28 +1,18 @@
-import { NextResponse } from 'next/server';
 import { dbService } from '@/lib/db';
+import { successResponse, ApiContext, withApiHandler } from '@/lib/api-handler';
 
-export async function GET() {
-  try {
-    // Test database connection and basic operations
-    const healthCheck = await dbService.healthCheck();
+async function handleGet(context: ApiContext) {
+  const healthCheck = await dbService.healthCheck();
 
-    const response = {
-      ...healthCheck,
-      service: 'database',
-      timestamp: new Date().toISOString(),
-      environment: process.env.NODE_ENV || 'development',
-    };
+  const response = {
+    ...healthCheck,
+    service: 'database',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    requestId: context.requestId,
+  };
 
-    return NextResponse.json(response);
-  } catch (error) {
-    return NextResponse.json(
-      {
-        status: 'error',
-        service: 'database',
-        timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-      { status: 500 }
-    );
-  }
+  return successResponse(response);
 }
+
+export const GET = withApiHandler(handleGet, { validateSize: false });

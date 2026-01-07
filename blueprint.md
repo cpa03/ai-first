@@ -410,7 +410,140 @@ questions:
 
 ---
 
-## 24. Integration Resilience Patterns
+## 24. API Route Handler Abstraction
+
+### Purpose
+
+To eliminate code duplication across API routes and enforce consistent patterns for request handling, validation, error handling, and response formatting.
+
+### Architecture
+
+All API routes MUST use the handler abstraction in `src/lib/api-handler.ts`:
+
+#### Core Components:
+
+**`withApiHandler`**: Higher-order function that wraps route handlers with:
+
+- **Request ID generation**: Unique ID for distributed tracing
+- **Rate limiting**: Per-route configurable rate limits
+- **Request size validation**: Prevents payload attacks
+- **Error handling**: Automatic conversion to standardized error responses
+- **Response formatting**: Consistent headers (X-Request-ID)
+
+**`ApiContext`**: Provides access to:
+
+- `requestId`: Unique request identifier
+- `request`: NextRequest object
+
+**`ApiHandler`**: Type-safe handler function signature:
+
+```typescript
+type ApiHandler<T> = (context: ApiContext) => Promise<NextResponse>;
+```
+
+#### Helper Functions:
+
+- `successResponse<T>(data, status?)`: Creates successful JSON responses
+- `notFoundResponse(message?)`: Creates 404 responses
+- `badRequestResponse(message, details?)`: Creates 400 error responses
+
+### Usage Pattern
+
+**Before** (duplicated code):
+
+```typescript
+export async function POST(request: NextRequest) {
+  const requestId = generateRequestId();
+  try {
+    const rateLimitResult = checkRateLimit(...);
+    if (!rateLimitResult.allowed) {
+      return rateLimitResponse(...);
+    }
+    const sizeValidation = validateRequestSize(request);
+    if (!sizeValidation.valid) {
+      return buildErrorResponse(...);
+    }
+    // Business logic here...
+    return NextResponse.json({ success: true, ... }, {
+      headers: { 'X-Request-ID': requestId }
+    });
+  } catch (error) {
+    return toErrorResponse(error, requestId);
+  }
+}
+```
+
+**After** (clean, declarative):
+
+```typescript
+async function handlePost(context: ApiContext) {
+  const { request } = context;
+  const { ideaId, ideaText } = await request.json();
+  // Validation and business logic here...
+  return successResponse({
+    success: true,
+    session,
+    requestId: context.requestId,
+  });
+}
+
+export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
+```
+
+### Configuration Options
+
+**`rateLimit`**: Optional rate limit configuration
+
+```typescript
+{
+  rateLimit: 'moderate';
+} // Uses rateLimitConfigs.moderate
+```
+
+**`validateSize`**: Disable size validation (default: true)
+
+```typescript
+{
+  validateSize: false;
+} // For health endpoints, etc.
+```
+
+### Benefits
+
+1. **DRY Principle**: Eliminates ~40 lines of duplicated code per route
+2. **Consistency**: All routes follow same patterns
+3. **Maintainability**: Changes to error handling or rate limiting propagate automatically
+4. **Type Safety**: Strongly typed context and handler signatures
+5. **Separation of Concerns**: Infrastructure concerns abstracted away from business logic
+6. **Open/Closed Principle**: Easy to add new middleware features without modifying existing routes
+
+### Refactored Routes
+
+All API routes have been refactored to use the handler abstraction:
+
+- `/api/breakdown` - POST and GET
+- `/api/clarify/start` - POST and GET
+- `/api/clarify/answer` - POST
+- `/api/clarify/complete` - POST
+- `/api/clarify` - POST
+- `/api/health` - GET
+- `/api/health/database` - GET
+- `/api/health/detailed` - GET
+
+### Future Enhancements
+
+Potential middleware to add:
+
+- Authentication/Authorization checks
+- Request logging/metrics
+- Request validation schema (Zod/Joi integration)
+- CORS handling
+- Request timeout enforcement
+- Custom rate limit strategies (per-user, per-API-key)
+
+---
+
+## 25. Integration Resilience Patterns
 
 ### Resilience Framework
 

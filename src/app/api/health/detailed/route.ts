@@ -3,6 +3,7 @@ import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { resilienceManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/exports';
+import { ApiContext, withApiHandler } from '@/lib/api-handler';
 
 interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -31,7 +32,7 @@ interface CircuitBreakerHealth {
   nextAttemptTime?: string;
 }
 
-export async function GET(_request: NextRequest) {
+async function handleGet(context: ApiContext) {
   const checks = await Promise.all([
     checkDatabaseHealth(),
     checkAIHealth(),
@@ -72,13 +73,16 @@ export async function GET(_request: NextRequest) {
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
-  return NextResponse.json(healthStatus, {
+  const response = NextResponse.json(healthStatus, {
     status: statusCode,
     headers: {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
       'Content-Type': 'application/health+json',
+      'X-Request-ID': context.requestId,
     },
   });
+
+  return response;
 }
 
 async function checkDatabaseHealth(): Promise<ServiceHealth> {
@@ -213,3 +217,5 @@ function determineOverallStatus(
 
   return 'healthy';
 }
+
+export const GET = withApiHandler(handleGet, { validateSize: false });
