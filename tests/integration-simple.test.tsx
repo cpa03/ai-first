@@ -24,8 +24,8 @@ describe('Integration Tests - Basic', () => {
         { success: true, data: { refined: 'Refined idea' } },
       ];
 
-      global.fetch = jest.fn().mockImplementation((url) => {
-        const responseIndex = global.fetch.mock.calls.length - 1;
+      (global.fetch as jest.Mock).mockImplementation((url) => {
+        const responseIndex = (global.fetch as jest.Mock).mock.calls.length - 1;
         return Promise.resolve({
           ok: true,
           json: async () => mockResponses[responseIndex] || { success: false },
@@ -74,7 +74,7 @@ describe('Integration Tests - Basic', () => {
         await fetch('/api/test');
         fail('Should have thrown an error');
       } catch (error) {
-        expect(error.message).toBe('Network error');
+        expect((error as Error).message).toBe('Network error');
       }
     });
   });
