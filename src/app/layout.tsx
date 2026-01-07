@@ -71,6 +71,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-gray-50">
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
+        >
+          Skip to main content
+        </a>
         <div className="min-h-screen flex flex-col">
           <header className="bg-white shadow-sm border-b border-gray-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -80,7 +86,7 @@ export default function RootLayout({
                     IdeaFlow
                   </h1>
                 </div>
-                <nav className="flex space-x-8">
+                <nav aria-label="Main navigation" className="flex space-x-8">
                   <a
                     href="/"
                     className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium transition-colors"
@@ -103,7 +109,9 @@ export default function RootLayout({
               </div>
             </div>
           </header>
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">
+            {children}
+          </main>
           <footer className="bg-white border-t border-gray-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
               <p className="text-center text-sm text-gray-500">
