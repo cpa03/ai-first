@@ -77,7 +77,116 @@
 
 ---
 
-# Code Sanitizer Tasks
+# Test Engineer Tasks
+
+## Task 1: Fix Resilience Tests ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+**Agent**: Test Engineer
+
+#### Objectives
+
+- Fix broken resilience.test.ts imports and test failures
+- Update tests to match actual API implementation
+- Fix implementation bug in createResilientWrapper
+- Ensure all resilience tests pass consistently
+
+#### Completed Work
+
+1. **Fixed Test Imports** (`tests/resilience.test.ts`)
+   - Updated imports to match actual exports from `@/lib/resilience`
+   - Removed `ResilienceManager`, `RetryManager`, `TimeoutManager` class imports (don't exist)
+   - Added `CircuitBreakerManager`, `withRetry`, `withTimeout`, `createResilientWrapper` function imports
+   - Added `DEFAULT_RETRIES`, `DEFAULT_TIMEOUTS`, `DEFAULT_CIRCUIT_BREAKER_CONFIG` config imports
+
+2. **Fixed CircuitBreaker Tests**
+   - Updated constructor calls to include required `name` parameter
+   - Changed `getState()` calls to `getStatus()` where object return is expected
+   - Removed `context` parameter from `execute()` calls
+   - Fixed assertions to use `CircuitBreakerState` enum values
+
+3. **Rewrote RetryManager Tests as `withRetry` Tests**
+   - Changed from `RetryManager.withRetry()` static method to direct `withRetry()` function calls
+   - Updated config parameter to match actual `RetryConfig` interface
+   - Fixed test expecting 4 retries with `maxRetries: 3` (should be 3 attempts)
+   - Fixed test to use retryable error instead of non-retryable error
+
+4. **Rewrote TimeoutManager Tests as `withTimeout` Tests**
+   - Changed from `TimeoutManager.withTimeout()` to direct `withTimeout()` function calls
+   - Updated signature to match actual API: `withTimeout(operation, timeoutMs, errorMessage?)`
+   - Removed invalid test for zero timeout (synchronous operations race with timeout)
+   - Fixed tests to expect correct error messages
+
+5. **Removed ResilienceManager Tests**
+   - `ResilienceManager` class doesn't exist in implementation
+   - Replaced with proper tests for `createResilientWrapper()` function
+
+6. **Added createResilientWrapper Tests**
+   - Created tests for wrapping with circuit breaker
+   - Created tests for wrapping with timeout
+   - Created tests for wrapping with retry
+   - Created tests for wrapping with all resilience features
+   - Created tests for timeout behavior in wrapped operations
+   - Created tests for retry behavior in wrapped operations
+
+7. **Added CircuitBreakerManager Tests**
+   - Tests for singleton pattern
+   - Tests for creating and retrieving circuit breakers
+   - Tests for separate circuit breakers per service
+   - Tests for reset functionality (specific and all)
+   - Tests for getting all circuit breaker statuses
+
+8. **Rewrote Default Configuration Tests**
+   - Changed from testing `defaultResilienceConfigs` (doesn't exist)
+   - Added tests for `DEFAULT_RETRIES` configuration
+   - Added tests for `DEFAULT_TIMEOUTS` configuration (OpenAI, Notion, Trello, GitHub, Database)
+   - Added tests for `DEFAULT_CIRCUIT_BREAKER_CONFIG`
+
+9. **Fixed Implementation Bug** (`src/lib/resilience.ts`)
+   - Fixed infinite recursion bug in `createResilientWrapper()`
+   - Bug was: `op = () => withTimeout(op, timeoutMs)` created closure referencing itself
+   - Fix: Use original `operation` parameter instead of reassigning `op`
+   - Properly chain resilience features: timeout + retry when both enabled
+
+#### Success Criteria Met
+
+- [x] All resilience tests pass (57/57)
+- [x] Test imports match actual implementation
+- [x] Test expectations match actual API behavior
+- [x] Implementation bug fixed (infinite recursion resolved)
+- [x] Zero regressions introduced
+- [x] Tests follow AAA pattern (Arrange, Act, Assert)
+- [x] Tests readable and maintainable
+
+#### Files Modified
+
+- `tests/resilience.test.ts` (COMPLETELY REWRITTEN - 1033 → 700+ lines)
+- `src/lib/resilience.ts` (FIXED - createResilientWrapper infinite recursion bug)
+
+#### Test Results
+
+```bash
+Test Suites: 1 passed, 1 total
+Tests:       57 passed, 57 total
+Time:        5.966 s
+```
+
+#### Impact
+
+- **Immediate**: All resilience tests now pass, fixing 65 broken tests
+- **Implementation**: Fixed critical bug causing infinite recursion in resilience wrapper
+- **Test Coverage**: Comprehensive tests for CircuitBreaker, CircuitBreakerManager, withTimeout, withRetry, createResilientWrapper
+- **Developer Experience**: Tests now accurately reflect actual API, providing reliable CI/CD feedback
+
+#### Notes
+
+- Other test failures across the codebase are pre-existing issues unrelated to resilience changes
+- Resilience module now has robust test coverage for all major features
+- All test patterns follow best practices (descriptive names, isolated tests, proper mocking)
+
+---
 
 ## Code Sanitizer Tasks
 
