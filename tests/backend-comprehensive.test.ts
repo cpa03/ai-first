@@ -18,7 +18,7 @@ import { AIService, aiService } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { ExportService } from '@/lib/exports';
-import ClarifierAgent from '@/lib/agents/clarifier';
+import { ClarifierAgent } from '@/lib/agents/clarifier';
 import { DatabaseService } from '@/lib/db';
 import {
   mockEnvVars,
@@ -154,20 +154,25 @@ describe('Backend Service Tests', () => {
     it('should create idea successfully', async () => {
       const mockIdea = {
         id: 'test-id',
-        content: 'Test idea',
+        user_id: 'user-123',
+        title: 'Test idea',
+        raw_text: 'Test idea content',
+        status: 'draft' as const,
         created_at: new Date().toISOString(),
       };
 
-      mockSupabase
-        .from()
-        .insert()
-        .mockResolvedValue({
-          data: [mockIdea],
-          error: null,
-        });
+      mockSupabase.from().insert().mockResolvedValue({
+        data: mockIdea,
+        error: null,
+      });
 
       const dbService = DatabaseService.getInstance();
-      const result = await dbService.createIdea('Test idea');
+      const result = await dbService.createIdea({
+        user_id: 'user-123',
+        title: 'Test idea',
+        raw_text: 'Test idea content',
+        status: 'draft',
+      });
 
       expect(result).toEqual(mockIdea);
       expect(mockSupabase.from).toHaveBeenCalledWith('ideas');
@@ -182,9 +187,14 @@ describe('Backend Service Tests', () => {
 
       const dbService = DatabaseService.getInstance();
 
-      await expect(dbService.createIdea('Test idea')).rejects.toThrow(
-        'Database error'
-      );
+      await expect(
+        dbService.createIdea({
+          user_id: 'user-123',
+          title: 'Test idea',
+          raw_text: 'Test idea content',
+          status: 'draft',
+        })
+      ).rejects.toThrow('Database error');
     });
 
     it('should get idea by id', async () => {

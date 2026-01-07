@@ -63,10 +63,10 @@ export class JSONExporter extends ExportConnector {
         success: true,
         url: `data:application/json;charset=utf-8,${encodeURIComponent(jsonData)}`,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: _error instanceof Error ? _error.message : 'Unknown error',
       };
     }
   }
@@ -113,10 +113,10 @@ export class MarkdownExporter extends ExportConnector {
         success: true,
         url: `data:text/markdown;charset=utf-8,${encodeURIComponent(markdown)}`,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: _error instanceof Error ? _error.message : 'Unknown error',
       };
     }
   }
@@ -263,11 +263,11 @@ export class NotionExporter extends ExportConnector {
         url: response.url,
         id: response.id,
       };
-    } catch (error) {
-      console.error('Notion export error:', error);
+    } catch (_error) {
+      console.error('Unknown export error:', _error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: _error instanceof Error ? _error.message : 'Unknown error',
       };
     }
   }
@@ -283,9 +283,107 @@ export class NotionExporter extends ExportConnector {
       // Test the connection by retrieving user info
       await client.users.me({});
       return true;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
+  }
+
+  private buildNotionBlocks(
+    idea: any,
+    deliverables: any[],
+    tasks: any[]
+  ): any[] {
+    const blocks: any[] = [];
+
+    // Add description
+    blocks.push({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [
+          {
+            type: 'text',
+            text: {
+              content: idea.raw_text || idea.title || 'No description',
+            },
+          },
+        ],
+      },
+    });
+
+    // Add deliverables section
+    if (deliverables && deliverables.length > 0) {
+      blocks.push({
+        object: 'block',
+        type: 'heading_2',
+        heading_2: {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Deliverables',
+              },
+            },
+          ],
+        },
+      });
+
+      deliverables.forEach((deliverable) => {
+        blocks.push({
+          object: 'block',
+          type: 'bulleted_list_item',
+          bulleted_list_item: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: `${deliverable.title} - ${deliverable.description || ''} (${deliverable.estimate_hours}h)`,
+                },
+              },
+            ],
+          },
+        });
+      });
+    }
+
+    // Add tasks section
+    if (tasks && tasks.length > 0) {
+      blocks.push({
+        object: 'block',
+        type: 'heading_2',
+        heading_2: {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: 'Tasks',
+              },
+            },
+          ],
+        },
+      });
+
+      tasks.forEach((task) => {
+        const statusIcon = task.status === 'completed' ? '✅' : '⬜';
+        blocks.push({
+          object: 'block',
+          type: 'to_do',
+          to_do: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: `${statusIcon} ${task.title} (${task.estimate}h)`,
+                },
+              },
+            ],
+            checked: task.status === 'completed',
+          },
+        });
+      });
+    }
+
+    return blocks;
   }
 
   async getAuthUrl(): Promise<string> {
@@ -305,145 +403,12 @@ export class NotionExporter extends ExportConnector {
     return `https://api.notion.com/v1/oauth/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(code: string): Promise<void> {
+  async handleAuthCallback(_code: string): Promise<void> {
     // This would typically exchange the code for an access token
     // For now, we assume the API key is set manually
     throw new Error(
       'OAuth callback handling requires server-side implementation'
     );
-  }
-
-  private buildNotionBlocks(
-    idea: any,
-    deliverables: any[],
-    tasks: any[]
-  ): any[] {
-    const blocks: any[] = [];
-
-    // Project description
-    blocks.push({
-      object: 'block',
-      type: 'paragraph',
-      paragraph: {
-        rich_text: [
-          {
-            type: 'text',
-            text: {
-              content: idea.raw_text || 'No description available',
-            },
-          },
-        ],
-      },
-    });
-
-    // Deliverables section
-    if (deliverables.length > 0) {
-      blocks.push({
-        object: 'block',
-        type: 'heading_2',
-        heading_2: {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: '📋 Deliverables',
-              },
-            },
-          ],
-        },
-      });
-
-      deliverables.forEach((deliverable) => {
-        blocks.push({
-          object: 'block',
-          type: 'bulleted_list_item',
-          bulleted_list_item: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: `${deliverable.title} — ${deliverable.description || 'No description'} — ${deliverable.estimate_hours || 0}h`,
-                },
-              },
-            ],
-          },
-        });
-      });
-    }
-
-    // Tasks section
-    if (tasks.length > 0) {
-      blocks.push({
-        object: 'block',
-        type: 'heading_2',
-        heading_2: {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: '✅ Tasks',
-              },
-            },
-          ],
-        },
-      });
-
-      // Group tasks by deliverable
-      const tasksByDeliverable = tasks.reduce(
-        (acc: any, task: any) => {
-          const deliverableId = task.deliverable_id || 'uncategorized';
-          if (!acc[deliverableId]) acc[deliverableId] = [];
-          acc[deliverableId].push(task);
-          return acc;
-        },
-        {} as Record<string, any[]>
-      );
-
-      Object.entries(tasksByDeliverable).forEach(
-        ([deliverableId, deliverableTasks]: [string, unknown]) => {
-          const deliverable = deliverables.find((d) => d.id === deliverableId);
-          const tasks = deliverableTasks as any[];
-
-          if (deliverable) {
-            blocks.push({
-              object: 'block',
-              type: 'heading_3',
-              heading_3: {
-                rich_text: [
-                  {
-                    type: 'text',
-                    text: {
-                      content: deliverable.title,
-                    },
-                  },
-                ],
-              },
-            });
-          }
-
-          tasks.forEach((task: any) => {
-            const isCompleted = task.status === 'completed';
-            blocks.push({
-              object: 'block',
-              type: 'to_do',
-              to_do: {
-                rich_text: [
-                  {
-                    type: 'text',
-                    text: {
-                      content: `${task.title} — ${task.assignee || 'Unassigned'} — ${task.estimate || 0}h`,
-                    },
-                  },
-                ],
-                checked: isCompleted,
-              },
-            });
-          });
-        }
-      );
-    }
-
-    return blocks;
   }
 }
 
@@ -455,7 +420,7 @@ export class TrelloExporter extends ExportConnector {
 
   async export(
     data: any,
-    options?: Record<string, any>
+    _options?: Record<string, any>
   ): Promise<ExportResult> {
     const { idea, deliverables = [], tasks = [] } = data;
     const apiKey = process.env.TRELLO_API_KEY;
@@ -528,11 +493,11 @@ export class TrelloExporter extends ExportConnector {
         url: boardUrl,
         id: boardId,
       };
-    } catch (error) {
-      console.error('Trello export error:', error);
+    } catch (_error) {
+      console.error('Unknown export error:', _error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: _error instanceof Error ? _error.message : 'Unknown error',
       };
     }
   }
@@ -549,7 +514,7 @@ export class TrelloExporter extends ExportConnector {
         `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
       );
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -573,8 +538,8 @@ export class TrelloExporter extends ExportConnector {
     return `https://trello.com/1/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(code: string): Promise<void> {
-    // Trello uses token-based auth, so this would handle the token from the callback
+  async handleAuthCallback(_code: string): Promise<void> {
+    // Trello uses token-based auth, so this would handle the token from callback
     throw new Error(
       'Trello token handling requires server-side implementation'
     );
@@ -754,8 +719,8 @@ export class GoogleTasksExporter extends ExportConnector {
   readonly name = 'Google Tasks';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    _data: any,
+    _options?: Record<string, any>
   ): Promise<ExportResult> {
     // This connector requires server-side execution
     return {
@@ -788,7 +753,7 @@ export class GoogleTasksExporter extends ExportConnector {
     return `https://accounts.google.com/oauth/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(code: string): Promise<void> {
+  async handleAuthCallback(_code: string): Promise<void> {
     throw new Error(
       'Google OAuth callback handling requires server-side implementation'
     );
@@ -917,11 +882,11 @@ export class GitHubProjectsExporter extends ExportConnector {
         url: repository.html_url,
         id: repository.id.toString(),
       };
-    } catch (error) {
-      console.error('GitHub Projects export error:', error);
+    } catch (_error) {
+      console.error('Unknown export error:', _error);
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: _error instanceof Error ? _error.message : 'Unknown error',
       };
     }
   }
@@ -940,7 +905,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       });
 
       return response.ok;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -961,7 +926,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     return `https://github.com/login/oauth/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(code: string): Promise<void> {
+  async handleAuthCallback(_code: string): Promise<void> {
     // This would exchange the code for an access token
     throw new Error(
       'GitHub OAuth callback handling requires server-side implementation'
@@ -1323,7 +1288,7 @@ export class ExportManager {
       if (connector) {
         try {
           results[type] = await connector.validateConfig();
-        } catch (error) {
+        } catch (_error) {
           results[type] = false;
         }
       }
@@ -1414,6 +1379,59 @@ export const IdeaFlowExportSchema = {
   },
   required: ['idea'],
 };
+
+// ExportService: unified interface for all export operations
+export class ExportService {
+  private markdownExporter: MarkdownExporter;
+  private jsonExporter: JSONExporter;
+  private notionExporter: NotionExporter;
+  private trelloExporter: TrelloExporter;
+  private googleTasksExporter: GoogleTasksExporter;
+  private githubProjectsExporter: GitHubProjectsExporter;
+
+  constructor() {
+    this.markdownExporter = new MarkdownExporter();
+    this.jsonExporter = new JSONExporter();
+    this.notionExporter = new NotionExporter();
+    this.trelloExporter = new TrelloExporter();
+    this.googleTasksExporter = new GoogleTasksExporter();
+    this.githubProjectsExporter = new GitHubProjectsExporter();
+  }
+
+  async exportToMarkdown(
+    data: any
+  ): Promise<ExportResult & { content?: string; url?: string }> {
+    return await this.markdownExporter.export(data);
+  }
+
+  async exportToJSON(data: any): Promise<ExportResult> {
+    return await this.jsonExporter.export(data);
+  }
+
+  async exportToNotion(
+    data: any
+  ): Promise<ExportResult & { notionPageId?: string }> {
+    return (await this.notionExporter.export(data)) as ExportResult & {
+      notionPageId?: string;
+    };
+  }
+
+  async exportToTrello(
+    data: any
+  ): Promise<ExportResult & { boardId?: string }> {
+    return (await this.trelloExporter.export(data)) as ExportResult & {
+      boardId?: string;
+    };
+  }
+
+  async exportToGoogleTasks(data: any): Promise<ExportResult> {
+    return await this.googleTasksExporter.export(data);
+  }
+
+  async exportToGitHubProjects(data: any): Promise<ExportResult> {
+    return await this.githubProjectsExporter.export(data);
+  }
+}
 
 // Rate limiting utility
 export class RateLimiter {
@@ -1550,8 +1568,9 @@ export const exportUtils = {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
-      } catch (error) {
-        lastError = error instanceof Error ? error : new Error('Unknown error');
+      } catch (_error) {
+        lastError =
+          _error instanceof Error ? _error : new Error('Unknown error');
 
         if (attempt === maxRetries) {
           throw lastError;
