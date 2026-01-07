@@ -104,9 +104,16 @@ ${answers.main_goal || 'Not specified'}
 
   if (isGenerating) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div
+        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        role="status"
+        aria-live="polite"
+      >
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"></div>
+          <div
+            className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"
+            aria-hidden="true"
+          ></div>
           <h2 className="text-2xl font-semibold text-gray-900 mb-2">
             Generating Your Blueprint...
           </h2>
@@ -121,39 +128,63 @@ ${answers.main_goal || 'Not specified'}
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="bg-white rounded-lg shadow-lg">
-        <div className="border-b border-gray-200 px-8 py-6">
+      <section
+        aria-labelledby="blueprint-heading"
+        className="bg-white rounded-lg shadow-lg"
+      >
+        <header className="border-b border-gray-200 px-8 py-6">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-900">
+            <h2
+              id="blueprint-heading"
+              className="text-2xl font-semibold text-gray-900"
+            >
               Your Project Blueprint
             </h2>
-            <button onClick={handleDownload} className="btn btn-primary">
+            <button
+              onClick={handleDownload}
+              className="btn btn-primary"
+              aria-label="Download blueprint as Markdown file"
+            >
               Download Markdown
             </button>
           </div>
-        </div>
+        </header>
 
         <div className="p-8">
           <div className="prose prose-lg max-w-none">
-            <pre className="whitespace-pre-wrap font-mono text-sm text-gray-800 bg-gray-50 p-6 rounded-lg overflow-x-auto">
+            <pre
+              className="whitespace-pre-wrap font-mono text-sm text-gray-800 bg-gray-50 p-6 rounded-lg overflow-x-auto"
+              aria-label="Generated project blueprint content"
+              tabIndex={0}
+            >
               {blueprint}
             </pre>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 px-8 py-6 bg-gray-50">
+        <footer className="border-t border-gray-200 px-8 py-6 bg-gray-50">
           <div className="flex justify-between items-center">
             <p className="text-sm text-gray-600">
               Ready to start implementing? Share this blueprint with your team
               or keep it as your guide.
             </p>
             <div className="space-x-4">
-              <button className="btn btn-secondary">Start Over</button>
-              <button className="btn btn-primary">Export to Tools</button>
+              <button
+                className="btn btn-secondary"
+                aria-label="Start over with a new idea"
+              >
+                Start Over
+              </button>
+              <button
+                className="btn btn-primary"
+                aria-label="Export blueprint to project management tools"
+              >
+                Export to Tools
+              </button>
             </div>
           </div>
-        </div>
-      </div>
+        </footer>
+      </section>
     </div>
   );
 }
