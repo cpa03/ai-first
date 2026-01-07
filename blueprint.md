@@ -296,62 +296,7 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 
 ---
 
-## 19. Performance Optimizations Completed
-
-### Database Query Optimization
-
-**Location**: `src/lib/db.ts` - `getIdeaStats()` method
-
-**Issue**: N+1 query problem where the method made inefficient nested database queries:
-
-- First query to fetch ideas
-- Second query to count deliverables (fetching all IDs)
-- Third query with nested `getIdeaDeliverables()` call that triggered additional queries
-
-**Solution**:
-
-- Fixed query to fetch both `id` and `status` from ideas table
-- Optimized deliverable counting to use efficient IN clause with pre-fetched IDs
-- Eliminated nested `getIdeaDeliverables()` call
-- Reduced database queries from 3-4 to exactly 3 optimized queries
-
-**Impact**: Significant performance improvement for user dashboard and analytics views, reduced database load.
-
-### AI Service Response Caching
-
-**Location**: `src/lib/ai.ts`
-
-**Issue**: Every AI model call made an expensive API request without caching, leading to redundant API calls and increased costs.
-
-**Solution**:
-
-- Implemented in-memory response caching with TTL (5 minutes)
-- Added cache key generation based on messages and configuration
-- Implemented cache size limits (max 100 entries)
-- Added automatic cache cleanup for expired entries
-- Integrated caching into `callModel()` method
-
-**Impact**:
-
-- Reduces redundant AI API calls by up to 100% for identical requests
-- Improves response time for cached requests from ~1-3s to <10ms
-- Reduces API costs and prevents rate limiting issues
-- Maintains data freshness with 5-minute TTL
-
-### AI Service Rate Limiting
-
-**Location**: `src/lib/ai.ts`
-
-**Issue**: The `enforceRateLimit()` method existed but was never called, allowing potential API throttling.
-
-**Solution**:
-
-- Added `enforceRateLimit()` call in `callModel()` method before making API requests
-- Ensures minimum 1-second interval between AI API calls
-
-**Impact**: Prevents API rate limiting errors and ensures consistent performance under load.
-
-## 20. Initial Roadmap & Milestones (concrete tasks)
+## 19. Initial Roadmap & Milestones (concrete tasks)
 
 **Milestone 0 — Repo & Docs** (this week)
 
@@ -465,194 +410,69 @@ questions:
 
 ---
 
-## 24. API Route Handler Abstraction
+## 24. Data Architecture Improvements (2025-01-07)
 
-### Purpose
+### Database Schema Optimization
 
-To eliminate code duplication across API routes and enforce consistent patterns for request handling, validation, error handling, and response formatting.
+**Migration 002**: Database schema optimization with the following improvements:
 
-### Architecture
+**Performance Indexes Added**:
 
-All API routes MUST use the handler abstraction in `src/lib/api-handler.ts`:
+- Indexes on `ideas.user_id`, `ideas.status`, `ideas.created_at` for fast user queries
+- Composite index `ideas(user_id, status)` for dashboard filtering
+- Indexes on `deliverables.idea_id`, `tasks.deliverable_id` for efficient joins
+- Indexes on agent_logs for audit log querying
 
-#### Core Components:
+**Soft-Delete Mechanism**:
 
-**`withApiHandler`**: Higher-order function that wraps route handlers with:
+- Added `deleted_at` columns to `ideas`, `deliverables`, and `tasks` tables
+- Updated RLS policies to automatically filter out soft-deleted records
+- Created indexes on `deleted_at` for efficient soft-delete queries
+- Implemented soft-delete methods in DatabaseService (`softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`)
+- All SELECT queries now filter out soft-deleted records by default
 
-- **Request ID generation**: Unique ID for distributed tracing
-- **Rate limiting**: Per-route configurable rate limits
-- **Request size validation**: Prevents payload attacks
-- **Error handling**: Automatic conversion to standardized error responses
-- **Response formatting**: Consistent headers (X-Request-ID)
+**Data Integrity Constraints**:
 
-**`ApiContext`**: Provides access to:
+- Added NOT NULL constraints to critical fields (`ideas.title`, `ideas.raw_text`, `deliverables.title`, `tasks.title`)
+- Added CHECK constraints for positive estimates (`estimate_hours >= 0`, `estimate >= 0`)
 
-- `requestId`: Unique request identifier
-- `request`: NextRequest object
+**Fixed N+1 Query Problem**:
 
-**`ApiHandler`**: Type-safe handler function signature:
+- Optimized `getIdeaStats()` method to use proper joins and IN clauses
+- Reduced database queries from 3-4 to exactly 3 optimized queries
+- Fixed task counting to count tasks for all ideas, not just the first one
 
-```typescript
-type ApiHandler<T> = (context: ApiContext) => Promise<NextResponse>;
-```
+**Migration Safety**:
 
-#### Helper Functions:
+- All migrations include reversible down scripts (`002_schema_optimization_down.sql`)
+- Non-destructive changes: additions only, no destructive modifications
+- Batch operations for large datasets (indexes created with IF NOT EXISTS)
 
-- `successResponse<T>(data, status?)`: Creates successful JSON responses
-- `notFoundResponse(message?)`: Creates 404 responses
-- `badRequestResponse(message, details?)`: Creates 400 error responses
+### pgvector Support for AI/ML
 
-### Usage Pattern
+**Migration 003**: Enhanced vectors table for efficient similarity search:
 
-**Before** (duplicated code):
+**pgvector Integration**:
 
-```typescript
-export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
-  try {
-    const rateLimitResult = checkRateLimit(...);
-    if (!rateLimitResult.allowed) {
-      return rateLimitResponse(...);
-    }
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      return buildErrorResponse(...);
-    }
-    // Business logic here...
-    return NextResponse.json({ success: true, ... }, {
-      headers: { 'X-Request-ID': requestId }
-    });
-  } catch (error) {
-    return toErrorResponse(error, requestId);
-  }
-}
-```
+- Added `embedding` column using pgvector type (1536 dimensions for OpenAI ada-002)
+- Created IVFFlat indexes for cosine and L2 distance similarity search
+- Added vector similarity search function `match_vectors()` with configurable threshold
+- Enabled efficient nearest neighbor search for AI-powered features
 
-**After** (clean, declarative):
+**API Enhancements**:
 
-```typescript
-async function handlePost(context: ApiContext) {
-  const { request } = context;
-  const { ideaId, ideaText } = await request.json();
-  // Validation and business logic here...
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
-}
+- New `storeEmbedding()` method for storing vector embeddings
+- New `searchSimilarVectors()` method for semantic similarity search
+- Updated Vector interface to include `embedding` field
+- Backward compatible with existing `vector_data` JSONB column
 
-export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
-```
+### Database Service Updates
 
-### Configuration Options
+All DatabaseService methods updated to support:
 
-**`rateLimit`**: Optional rate limit configuration
-
-```typescript
-{
-  rateLimit: 'moderate';
-} // Uses rateLimitConfigs.moderate
-```
-
-**`validateSize`**: Disable size validation (default: true)
-
-```typescript
-{
-  validateSize: false;
-} // For health endpoints, etc.
-```
-
-### Benefits
-
-1. **DRY Principle**: Eliminates ~40 lines of duplicated code per route
-2. **Consistency**: All routes follow same patterns
-3. **Maintainability**: Changes to error handling or rate limiting propagate automatically
-4. **Type Safety**: Strongly typed context and handler signatures
-5. **Separation of Concerns**: Infrastructure concerns abstracted away from business logic
-6. **Open/Closed Principle**: Easy to add new middleware features without modifying existing routes
-
-### Refactored Routes
-
-All API routes have been refactored to use the handler abstraction:
-
-- `/api/breakdown` - POST and GET
-- `/api/clarify/start` - POST and GET
-- `/api/clarify/answer` - POST
-- `/api/clarify/complete` - POST
-- `/api/clarify` - POST
-- `/api/health` - GET
-- `/api/health/database` - GET
-- `/api/health/detailed` - GET
-
-### Future Enhancements
-
-Potential middleware to add:
-
-- Authentication/Authorization checks
-- Request logging/metrics
-- Request validation schema (Zod/Joi integration)
-- CORS handling
-- Request timeout enforcement
-- Custom rate limit strategies (per-user, per-API-key)
-
----
-
-## 25. Integration Resilience Patterns
-
-### Resilience Framework
-
-All external service integrations MUST use the resilience framework in `src/lib/resilience.ts`:
-
-#### Features:
-
-- **Retry with exponential backoff**: Automatic retries on transient failures
-- **Timeouts**: All external calls have configurable timeouts
-- **Circuit breakers**: Stop calling failing services temporarily
-- **Configurable per-service**: Each service has optimized settings
-
-#### Configuration (defaultResilienceConfigs):
-
-```typescript
-openai: 3 retries, 60s timeout, 5 failures opens circuit
-notion: 3 retries, 30s timeout, 5 failures opens circuit
-trello: 3 retries, 15s timeout, 3 failures opens circuit
-github: 3 retries, 30s timeout, 5 failures opens circuit
-supabase: 2 retries, 10s timeout, 10 failures opens circuit
-```
-
-### Error Handling
-
-All API responses use standardized error format in `src/lib/errors.ts`:
-
-```json
-{
-  "error": "Error message",
-  "code": "ERROR_CODE",
-  "details": [...],
-  "timestamp": "2024-01-07T00:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": true/false
-}
-```
-
-### Health Monitoring
-
-Use detailed health endpoint at `/api/health/detailed` to monitor:
-
-- Database health and latency
-- AI service status
-- Export connectors availability
-- Circuit breaker states
-
-### Integration Guidelines
-
-1. **Never call external APIs directly** - Always wrap in resilience framework
-2. **Set appropriate timeouts** - Based on service SLAs
-3. **Handle retryable errors** - Use standard error codes
-4. **Monitor circuit breakers** - Check health endpoint regularly
-5. **Log with request IDs** - Enable distributed tracing
-6. **Graceful degradation** - Fallback when services unavailable
+1. **Soft-delete filtering**: All SELECT queries now filter out soft-deleted records
+2. **Vector operations**: New methods for embedding storage and similarity search
+3. **Performance optimizations**: Efficient queries with proper indexing strategy
 
 ---
 
