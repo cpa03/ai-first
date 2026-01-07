@@ -1,6 +1,15 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import {
+  createResilientWrapper,
+  DEFAULT_RETRIES,
+  DEFAULT_TIMEOUTS,
+  DEFAULT_CIRCUIT_BREAKER_CONFIG,
+  circuitBreakerManager,
+  withTimeout,
+  withRetry,
+} from './resilience';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
@@ -26,18 +35,10 @@ export interface ContextWindow {
   maxTokens: number;
 }
 
-interface CacheEntry {
-  response: string;
-  timestamp: number;
-}
-
 class AIService {
   private openai: OpenAI | null = null;
   private supabase: any = null;
   private costTrackers: CostTracker[] = [];
-  private cache: Map<string, CacheEntry> = new Map();
-  private readonly CACHE_TTL = 300000;
-  private readonly MAX_CACHE_SIZE = 100;
 
   constructor() {
     if (
@@ -53,6 +54,7 @@ class AIService {
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
+        timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
   }
@@ -71,79 +73,20 @@ class AIService {
     });
   }
 
-  private generateCacheKey(
-    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
-    config: AIModelConfig
-  ): string {
-    const messagesString = JSON.stringify(messages);
-    const configString = `${config.provider}-${config.model}-${config.maxTokens}-${config.temperature}`;
-    return `${configString}-${Buffer.from(messagesString).toString('base64')}`;
-  }
-
-  private getFromCache(key: string): string | null {
-    const entry = this.cache.get(key);
-    if (!entry) return null;
-
-    const now = Date.now();
-    if (now - entry.timestamp > this.CACHE_TTL) {
-      this.cache.delete(key);
-      return null;
-    }
-
-    return entry.response;
-  }
-
-  private setInCache(key: string, response: string): void {
-    if (this.cache.size >= this.MAX_CACHE_SIZE) {
-      const firstKey = this.cache.keys().next().value;
-      if (firstKey) {
-        this.cache.delete(firstKey);
-      }
-    }
-
-    this.cache.set(key, {
-      response,
-      timestamp: Date.now(),
-    });
-  }
-
-  private cleanExpiredCache(): void {
-    const now = Date.now();
-    const keysToDelete: string[] = [];
-    this.cache.forEach((entry, key) => {
-      if (now - entry.timestamp > this.CACHE_TTL) {
-        keysToDelete.push(key);
-      }
-    });
-    keysToDelete.forEach((key) => this.cache.delete(key));
-  }
-
   // Make a model call with context windowing
   async callModel(
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
   ): Promise<string> {
     const startTime = Date.now();
-    const cacheKey = this.generateCacheKey(messages, config);
 
-    const cachedResponse = this.getFromCache(cacheKey);
-    if (cachedResponse) {
-      return cachedResponse;
-    }
+    const circuitBreaker = circuitBreakerManager.getOrCreate(
+      `ai-${config.provider}`,
+      DEFAULT_CIRCUIT_BREAKER_CONFIG
+    );
 
-    try {
-      const response = await this.executeWithResilience(async () => {
-        if (config.provider === 'openai') {
-          const completion = await this.openai!.chat.completions.create({
-            model: config.model,
-            messages,
-            max_tokens: config.maxTokens,
-            temperature: config.temperature,
-          });
-
+    const makeCall = async (): Promise<string> => {
       if (config.provider === 'openai') {
-        await this.enforceRateLimit();
-
         const completion = await this.openai!.chat.completions.create({
           model: config.model,
           messages,
@@ -151,34 +94,40 @@ class AIService {
           temperature: config.temperature,
         });
 
-          // Track costs
-          const usage = completion.usage;
-          if (usage) {
-            await this.trackCost(usage.total_tokens, config.model);
-          }
+        const response = completion.choices[0]?.message?.content || '';
 
-        this.setInCache(cacheKey, response);
-
+        // Track costs
         const usage = completion.usage;
         if (usage) {
           await this.trackCost(usage.total_tokens, config.model);
         }
-      }, config);
 
-      const duration = Date.now() - startTime;
+        return response;
+      } else {
+        throw new Error(`Provider ${config.provider} not yet implemented`);
+      }
+    };
 
+    try {
+      const response = await createResilientWrapper(makeCall, {
+        circuitBreaker,
+        timeoutMs: DEFAULT_TIMEOUTS.openai,
+        retryConfig: DEFAULT_RETRIES,
+      })();
+
+      // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
           duration,
           messageCount: messages.length,
-          cached: false,
         });
       }
 
       return response;
     } catch (error) {
+      // Log error
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,
@@ -330,22 +279,6 @@ class AIService {
       .reduce((sum, tracker) => sum + tracker.cost, 0);
   }
 
-  // Rate limiting
-  private lastCallTime = 0;
-  private readonly minCallInterval = 1000; // 1 second between calls
-
-  private async enforceRateLimit(): Promise<void> {
-    const now = Date.now();
-    const timeSinceLastCall = now - this.lastCallTime;
-
-    if (timeSinceLastCall < this.minCallInterval) {
-      const delay = this.minCallInterval - timeSinceLastCall;
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-
-    this.lastCallTime = Date.now();
-  }
-
   // Agent action logging
   private async logAgentAction(
     agent: string,
@@ -364,31 +297,37 @@ class AIService {
     }
   }
 
-  clearCache(): void {
-    this.cache.clear();
-  }
-
   // Get cost tracking data
   getCostTracking(): CostTracker[] {
     return [...this.costTrackers];
   }
 
   // Health check
-  async healthCheck(): Promise<{ status: string; providers: string[] }> {
+  async healthCheck(): Promise<{
+    status: string;
+    providers: string[];
+    circuitBreakers: Record<string, any>;
+  }> {
     const providers: string[] = [];
 
     if (this.openai) {
       try {
-        await this.openai.models.list();
+        await withTimeout(
+          () => this.openai!.models.list(),
+          DEFAULT_TIMEOUTS.openai / 2
+        );
         providers.push('openai');
       } catch (error) {
         console.error('OpenAI health check failed:', error);
       }
     }
 
+    const circuitBreakers = circuitBreakerManager.getAllStatuses();
+
     return {
       status: providers.length > 0 ? 'healthy' : 'unhealthy',
       providers,
+      circuitBreakers,
     };
   }
 }
