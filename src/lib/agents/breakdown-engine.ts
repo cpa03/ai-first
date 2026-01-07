@@ -1,8 +1,6 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import yaml from 'js-yaml';
-import fs from 'fs';
-import path from 'path';
+import { configurationService } from '@/lib/config-service';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -119,30 +117,9 @@ class BreakdownEngine {
   private aiConfig: AIModelConfig | null = null;
 
   constructor() {
-    this.loadConfig();
-  }
-
-  private loadConfig(): void {
-    try {
-      const configPath = path.join(
-        process.cwd(),
-        'ai',
-        'agent-configs',
-        'breakdown-engine.yml'
-      );
-      const configContent = fs.readFileSync(configPath, 'utf8');
-      this.config = yaml.load(configContent) as BreakdownConfig;
-
-      this.aiConfig = {
-        provider: 'openai',
-        model: this.config.model,
-        maxTokens: this.config.max_tokens,
-        temperature: this.config.temperature,
-      };
-    } catch (error) {
-      console.error('Failed to load breakdown engine config:', error);
-      throw new Error('Breakdown engine configuration not found or invalid');
-    }
+    this.config =
+      configurationService.loadAgentConfig<BreakdownConfig>('breakdown-engine');
+    this.aiConfig = configurationService.loadAIModelConfig('breakdown-engine');
   }
 
   async initialize(): Promise<void> {

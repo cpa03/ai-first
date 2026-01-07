@@ -1,10 +1,9 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import yaml from 'js-yaml';
-import fs from 'fs';
-import path from 'path';
+import { configurationService } from '@/lib/config-service';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface ClarifierQuestion {
   id: string;
   question: string;
@@ -47,30 +46,9 @@ export class ClarifierAgent {
   public aiService = aiService;
 
   constructor() {
-    this.loadConfig();
-  }
-
-  private loadConfig(): void {
-    try {
-      const configPath = path.join(
-        process.cwd(),
-        'ai',
-        'agent-configs',
-        'clarifier.yml'
-      );
-      const configContent = fs.readFileSync(configPath, 'utf8');
-      this.config = yaml.load(configContent) as ClarifierConfig;
-
-      this.aiConfig = {
-        provider: 'openai',
-        model: this.config.model,
-        maxTokens: this.config.max_tokens,
-        temperature: this.config.temperature,
-      };
-    } catch (error) {
-      console.error('Failed to load clarifier config:', error);
-      throw new Error('Clarifier configuration not found or invalid');
-    }
+    this.config =
+      configurationService.loadAgentConfig<ClarifierConfig>('clarifier');
+    this.aiConfig = configurationService.loadAIModelConfig('clarifier');
   }
 
   async initialize(): Promise<void> {
