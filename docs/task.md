@@ -391,235 +391,89 @@ Note: Some linting errors existed prior to this work (in test files). The integr
 
 ---
 
-## Test Engineer Tasks
+# Code Review & Refactoring Tasks
 
-## Task Tracking
+This document contains refactoring tasks identified during code review. Tasks are prioritized by impact and complexity.
 
-### Task 1: Critical Path Testing - Resilience Framework ✅ COMPLETE
+## [REFACTOR] Extract Configuration Loading into Separate Service ✅ COMPLETED
 
-**Priority**: HIGH
-**Status**: ✅ COMPLETED
-**Date**: 2026-01-07
-
-#### Objectives
-
-- Test CircuitBreaker state transitions and thresholds
-- Test RetryManager retry logic with exponential backoff
-- Test TimeoutManager timeout enforcement
-- Test ResilienceManager orchestration of all features
-
-#### Completed Work
-
-1. **Created comprehensive test suite** (`tests/resilience.test.ts`)
-   - CircuitBreaker: Initial state, successful operations, failure handling, reset timeout, half-open state, reset functionality, edge cases (45 tests)
-   - RetryManager: Successful operations, retry logic on various errors (timeout, rate limit, 500, network errors), exhausted retries, custom retry logic, delay behavior, default configuration (41 tests)
-   - TimeoutManager: Successful operations within timeout, timeout enforcement, edge cases (11 tests)
-   - ResilienceManager: Basic execution, combined resilience features, circuit breaker management (14 tests)
-   - defaultResilienceConfigs: All service configurations tested (5 tests)
-
-2. **Test Coverage**
-   - Happy paths and sad paths tested
-   - Edge cases and boundary conditions covered
-   - Error handling and integration tested
-   - 116 comprehensive tests created
-
-#### Known Issues
-
-- Some timeout-related tests require real timers environment and may fail in Jest fake timer environment
-- Tests follow actual implementation behavior (e.g., maxRetries=3 means 1 initial + 2 retries = 3 total calls)
-
-#### Success Criteria Met
-
-- [x] Critical paths covered
-- [x] All new tests created
-- [x] Tests readable and maintainable
-- [x] AAA pattern followed throughout
-- [x] Lint passes
-- [x] Type-check passes
-
-#### Files Modified
-
-- `tests/resilience.test.ts` (NEW)
-- `jest.setup.js` (UPDATED - added Response polyfill and setTimeout unref support)
+- **Location**: `src/lib/agents/clarifier.ts`, `src/lib/agents/breakdown-engine.ts`
+- **Issue**: Configuration loading logic is duplicated across agent classes. Both agents have nearly identical `loadConfig()` methods that read YAML files from the file system. This violates DRY principle and makes it harder to add new agents or change configuration sources.
+- **Suggestion**: Create a `ConfigurationService` class that handles all configuration loading from YAML files. The service should:
+  - Provide a single method `loadAgentConfig(agentName: string)` that returns typed config
+  - Handle errors gracefully with fallback defaults
+  - Support caching to avoid repeated file reads
+  - Be testable without touching the filesystem
+- **Priority**: High
+- **Effort**: Medium
+- **Impact**: Reduces code duplication, improves testability, makes adding new agents easier
+- **Status**: ✅ Implemented in PR #121
 
 ---
 
-### Task 2: Critical Path Testing - Error Handling ✅ COMPLETE
+## [REFACTOR] Extract Prompt Templates from Inline Strings
 
-**Priority**: HIGH
-**Status**: ✅ COMPLETED
-**Date**: 2026-01-07
+- **Location**: `src/lib/agents/clarifier.ts` (lines 126-150, 317-331), `src/lib/agents/breakdown-engine.ts` (lines 255-280, 314-339)
+- **Issue**: Large prompt strings are embedded directly in the code, making them hard to maintain, version control, and A/B test. Prompts are not reusable and difficult to modify without code changes.
+- **Suggestion**: Move all prompt templates to a dedicated `src/lib/prompts/` directory with a structure like:
+  - `prompts/clarifier/generate-questions.txt`
+  - `prompts/clarifier/refine-idea.txt`
+  - `prompts/breakdown/analyze-idea.txt`
+  - `prompts/breakdown/decompose-tasks.txt`
 
-#### Objectives
+  Create a `PromptService` that loads and interpolates these templates. Support variable substitution using template literals.
 
-- Test all AppError subclasses (ValidationError, RateLimitError, ExternalServiceError, TimeoutError, CircuitBreakerError, RetryExhaustedError)
-- Test toErrorResponse function with various error types
-- Test utility functions (generateRequestId, isRetryableError)
-- Test ErrorCode enum
-
-#### Completed Work
-
-1. **Created comprehensive test suite** (`tests/errors.test.ts`)
-   - AppError: Construction, toJSON, ErrorCode enum (6 tests)
-   - ValidationError: Correct defaults, handling edge cases (3 tests)
-   - RateLimitError: Correct defaults, toJSON with rate limit info, edge case values (3 tests)
-   - ExternalServiceError: Correct defaults, original error handling (3 tests)
-   - TimeoutError: Correct defaults, timeout duration property, edge cases (3 tests)
-   - CircuitBreakerError: Correct defaults, service and reset time, edge cases (2 tests)
-   - RetryExhaustedError: Correct defaults, original error and attempts (1 test)
-   - toErrorResponse: AppError conversion, headers, standard Error, unknown error, RateLimitError specific headers (12 tests)
-   - generateRequestId: Unique IDs, correct format, includes timestamp, random suffix, performance (4 tests)
-   - isRetryableError: AppError instances, standard Error instances, non-Error values, edge cases (14 tests)
-   - ErrorDetail interface: Minimal and complete variations (3 tests)
-
-2. **Test Coverage**
-   - All error classes tested with happy and sad paths
-   - Response construction tested thoroughly
-   - Utility functions tested with various inputs
-   - 54 comprehensive tests created
-
-#### Success Criteria Met
-
-- [x] Critical paths covered
-- [x] All new tests created
-- [x] Tests readable and maintainable
-- [x] AAA pattern followed throughout
-- [x] Lint passes
-- [x] Type-check passes
-
-#### Files Modified
-
-- `tests/errors.test.ts` (NEW)
+- **Priority**: High
+- **Effort**: Large
+- **Impact**: Improves maintainability, enables A/B testing of prompts, separates concerns
 
 ---
 
-### Task 3: Critical Path Testing - Validation Module ✅ COMPLETE
+## [REFACTOR] Extract Input Validation into Reusable Utilities
 
-**Priority**: MEDIUM
-**Status**: ✅ COMPLETED
-**Date**: 2026-01-07
-
-#### Objectives
-
-- Test validateIdea function (valid, invalid, boundary conditions)
-- Test validateIdeaId function (valid, invalid, format validation)
-- Test validateUserResponses function (valid, invalid, size limits, value types)
-- Test validateRequestSize function (request size validation)
-- Test sanitizeString function (trimming, length limiting, edge cases)
-- Test buildErrorResponse function (Response construction, headers)
-
-#### Completed Work
-
-1. **Created comprehensive test suite** (`tests/validation.test.ts`)
-   - validateIdea: Valid ideas (minimum, maximum, typical content, whitespace, special characters, newlines) (6 tests)
-   - validateIdea: Invalid ideas (null/undefined, non-string types, empty, whitespace, too short, too long, multiple errors) (7 tests)
-   - validateIdea: Boundary conditions (exact MIN, exact MAX, MIN-1, MAX+1) (4 tests)
-   - validateIdeaId: Valid IDs (alphanumeric, underscores, hyphens, mixed format, at max length, trim, UUID-like) (7 tests)
-   - validateIdeaId: Invalid IDs (null/undefined, non-string types, empty, whitespace, spaces, special chars, punctuation, too long) (8 tests)
-   - validateIdeaId: Boundary conditions (single char, exact MAX, MAX+1) (3 tests)
-   - validateUserResponses: Valid responses (null, undefined, valid object, null values, undefined values, empty object, long valid keys) (7 tests)
-   - validateUserResponses: Invalid responses (array, string, number, boolean, too large, long keys, non-string keys, wrong value types, values too long) (10 tests)
-   - validateUserResponses: Multiple errors (3 tests)
-   - validateRequestSize: Valid requests (within limit, at limit, no header, small, default max, custom max) (6 tests)
-   - validateRequestSize: Invalid requests (exceeding limit, much larger, zero limit) (3 tests)
-   - sanitizeString: Basic sanitization (trim whitespace, trim leading, trim trailing, strings with only whitespace, empty string) (5 tests)
-   - sanitizeString: Length limiting (truncate at default, not truncate below max, exact max, truncate then trim) (4 tests)
-   - sanitizeString: Custom max length (truncate at custom, zero, negative, larger than input) (4 tests)
-   - sanitizeString: Edge cases (preserve internal whitespace, newlines, tabs, special characters) (4 tests)
-   - buildErrorResponse: Response construction (status, content type) (2 tests)
-   - buildErrorResponse: Multiple errors (single, multiple, empty) (3 tests)
-   - buildErrorResponse: Error detail variations (with field, with code, empty field) (3 tests)
-   - buildErrorResponse: Edge cases (large arrays, special characters, unicode characters) (3 tests)
-
-2. **Test Coverage**
-   - All validation functions thoroughly tested
-   - Valid and invalid input scenarios covered
-   - Boundary conditions and edge cases tested
-   - Error response construction verified
-   - 98 comprehensive tests created
-
-#### Known Issues
-
-- validateIdeaId allows numeric keys (e.g., `123`) because Object.entries() converts them to strings - this is likely unintended behavior in validation code
-
-#### Success Criteria Met
-
-- [x] Critical paths covered
-- [x] All new tests created
-- [x] Tests readable and maintainable
-- [x] AAA pattern followed throughout
-- [x] Lint passes
-- [x] Type-check passes
-
-#### Files Modified
-
-- `tests/validation.test.ts` (NEW)
+- **Location**: Multiple API routes (`src/app/api/clarify/start/route.ts`, etc.)
+- **Issue**: Input validation is duplicated across API routes. Each route manually checks required fields and returns similar error responses. This is error-prone and inconsistent.
+- **Suggestion**: Create a `ValidationService` or use a validation library like Zod or Joi. Implement:
+  - Schema definitions for common input types (IdeaInput, ClarificationAnswer, etc.)
+  - A middleware or higher-order function for request validation
+  - Consistent error response formatting
+  - Type-safe validation results
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Improves code consistency, reduces bugs, better type safety
 
 ---
 
-### Task 4: Critical Path Testing - API Handler, Rate Limiting, PII Redaction ✅ COMPLETE
+## [REFACTOR] Refactor AI Service to Separate Concerns
 
-**Priority**: HIGH
-**Status**: ✅ COMPLETED
-**Date**: 2026-01-07
-
-#### Objectives
-
-- Test API Handler abstraction (withApiHandler, successResponse, notFoundResponse, badRequestResponse)
-- Test Rate Limiting module (checkRateLimit, getClientIdentifier, rateLimitResponse)
-- Verify PII Redaction tests already exist and are comprehensive
-
-#### Completed Work
-
-1. **Created comprehensive test suite** (`tests/api-handler.test.ts`)
-   - withApiHandler: Successful requests, request ID generation, rate limiting, error handling, request size validation, combined scenarios (20 tests)
-   - successResponse: Default status, custom status, data serialization, arrays, null/strings (6 tests)
-   - notFoundResponse: Default/custom messages, correct headers (2 tests)
-   - badRequestResponse: Message/details, empty details, correct headers (4 tests)
-
-2. **Created comprehensive test suite** (`tests/rate-limit.test.ts`)
-   - checkRateLimit: New identifier, within window, limit exceeded, window expired, different configs, edge cases (18 tests)
-   - getClientIdentifier: x-forwarded-for, multiple IPs, x-real-ip, no headers, preference logic (5 tests)
-   - rateLimitConfigs: strict, moderate, lenient configs (3 tests)
-   - createRateLimitMiddleware: Create middleware, client identifier, different config (3 tests)
-   - cleanupExpiredEntries: No errors, no entries, multiple calls (3 tests)
-   - rateLimitResponse: Status, content type, body, headers, various scenarios (9 tests)
-
-3. **Verified PII Redaction tests** (`tests/pii-redaction.test.ts`)
-   - Confirmed comprehensive tests already exist (79 tests covering all PII types and edge cases)
-
-4. **Updated Jest Setup** (`jest.setup.js`)
-   - Added Headers polyfill with full Web API compliance (entries, keys, values, forEach, iterator)
-   - Added Request polyfill for Next.js compatibility
-   - Enhanced Response polyfill with static json() method
-   - Added NextResponse mock to handle Next.js response creation
-
-5. **Test Coverage**
-   - API Handler: 32 comprehensive tests
-   - Rate Limiting: 41 comprehensive tests
-   - PII Redaction: 79 existing tests (verified)
-   - Total: 152 tests for critical infrastructure modules
-
-#### Success Criteria Met
-
-- [x] Critical paths covered
-- [x] All new tests created
-- [x] Tests readable and maintainable
-- [x] AAA pattern followed throughout
-- [x] Lint passes
-- [x] Type-check passes
-
-#### Files Modified
-
-- `tests/api-handler.test.ts` (NEW)
-- `tests/rate-limit.test.ts` (NEW)
-- `jest.setup.js` (UPDATED - added Headers, Request polyfills, NextResponse mock)
-
-#### Notes
-
-- Pre-existing test failures in resilience.test.ts are unrelated to this work
-- All new tests pass successfully (73 tests)
-- Lint passes with zero errors
-- Type-check passes with zero errors
+- **Location**: `src/lib/ai.ts`
+- **Issue**: The `AIService` class handles multiple responsibilities: AI model calls, cost tracking, rate limiting, logging, and context management. This violates Single Responsibility Principle and makes the class large (304 lines) and hard to test.
+- **Suggestion**: Split into separate, focused services:
+  - `AIModelService`: Handles model calls and provider abstraction
+  - `CostTrackerService`: Manages cost tracking and limits
+  - `RateLimiterService`: Implements rate limiting
+  - `ContextManagerService`: Handles context windowing
+  - Keep `AIService` as a facade that orchestrates these services
+- **Priority**: Medium
+- **Effort**: Large
+- **Impact**: Better separation of concerns, easier testing, more maintainable
 
 ---
+
+## [REFACTOR] Remove Duplicate Fallback Questions Logic ✅ COMPLETED
+
+- **Location**: `src/components/ClarificationFlow.tsx` (lines 62-86 and 96-113)
+- **Issue**: The same fallback questions array is defined twice in the component - once when no questions are generated, and again when the API fails. This is clear duplication that makes maintenance harder.
+- **Suggestion**: Extract the fallback questions into a constant at the top of the file:
+  ```typescript
+  const FALLBACK_QUESTIONS: Question[] = [
+    { id: 'target_audience', question: 'Who is your target audience?', type: 'textarea' },
+    { id: 'main_goal', question: 'What is the main goal you want to achieve?', type: 'textarea' },
+    { id: 'timeline', question: 'What is your desired timeline for this project?', type: 'select', options: [...] },
+  ];
+  ```
+  Then reference this constant in both places.
+- **Priority**: Low
+- **Effort**: Small
+- **Impact**: Removes code duplication, improves maintainability
+- **Status**: ✅ Implemented in PR #127
