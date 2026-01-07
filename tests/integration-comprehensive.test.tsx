@@ -25,7 +25,8 @@ describe('Integration Tests - User Workflows', () => {
   describe('Complete User Journey', () => {
     it('should handle full workflow from idea to export', async () => {
       // Mock API responses for each step
-      global.fetch
+      const mockFetch = global.fetch as jest.Mock;
+      mockFetch
         // Step 1: Create idea
         .mockResolvedValueOnce({
           ok: true,
@@ -154,7 +155,8 @@ describe('Integration Tests - User Workflows', () => {
 
     it('should handle error recovery throughout the workflow', async () => {
       // Mock error responses
-      global.fetch
+      const mockFetch = global.fetch as jest.Mock;
+      mockFetch
         // Idea creation fails
         .mockResolvedValueOnce({
           ok: false,
@@ -268,7 +270,9 @@ describe('Integration Tests - User Workflows', () => {
         readyState: 1, // OPEN
       };
 
-      global.WebSocket = jest.fn().mockImplementation(() => mockWebSocket);
+      global.WebSocket = jest
+        .fn()
+        .mockImplementation(() => mockWebSocket) as any;
 
       // Simulate real-time updates
       const ws = new WebSocket('ws://localhost:3001/ws');

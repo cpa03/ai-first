@@ -55,6 +55,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
           placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
           className="textarea min-h-[120px]"
           disabled={isSubmitting}
+          autoFocus
         />
         <p className="mt-2 text-sm text-gray-500">
           Be as specific or as general as you'd like. We'll help you clarify the

@@ -2,6 +2,20 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import IdeaInput from '@/components/IdeaInput';
 
+jest.mock('@/lib/db', () => {
+  return {
+    dbService: {
+      createIdea: jest.fn().mockResolvedValue({ id: 'test-idea-id' }),
+      getIdea: jest.fn(),
+      createClarificationSession: jest.fn(),
+      saveAnswers: jest.fn(),
+    },
+    Idea: function (data: any) {
+      return { ...data };
+    },
+  };
+});
+
 describe('IdeaInput', () => {
   it('renders textarea and submit button', () => {
     const mockOnSubmit = jest.fn();
@@ -28,7 +42,7 @@ describe('IdeaInput', () => {
     await waitFor(
       () => {
         expect(mockOnSubmit).toHaveBeenCalledTimes(1);
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea');
+        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea', 'test-idea-id');
       },
       { timeout: 3000 }
     );

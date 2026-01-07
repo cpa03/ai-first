@@ -6,6 +6,21 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { mockUserJourney, createMockFetch } from './utils/testHelpers';
 
+declare global {
+  var localStorageMock: {
+    getItem: jest.Mock;
+    setItem: jest.Mock;
+    removeItem: jest.Mock;
+    clear: jest.Mock;
+  };
+  var sessionStorageMock: {
+    getItem: jest.Mock;
+    setItem: jest.Mock;
+    removeItem: jest.Mock;
+    clear: jest.Mock;
+  };
+}
+
 // Mock the entire app for e2e testing
 const mockApp = () => {
   // Setup comprehensive mocking
@@ -74,13 +89,14 @@ describe('End-to-End Tests', () => {
         mockUserJourney.exports.github,
       ];
 
+      const mockFetch = global.fetch as jest.Mock;
       global.fetch = jest.fn().mockImplementation((url) => {
-        const responseIndex = global.fetch.mock.calls.length - 1;
+        const responseIndex = mockFetch.mock.calls.length - 1;
         return Promise.resolve({
           ok: true,
           json: async () => apiResponses[responseIndex] || { data: null },
         });
-      });
+      }) as any;
 
       // Step 1: Load homepage
       const HomePage = require('@/app/page').default;
@@ -116,7 +132,10 @@ describe('End-to-End Tests', () => {
       for (let i = 0; i < mockUserJourney.questions.length; i++) {
         const question = mockUserJourney.questions[i];
         const answerKey = (i + 1).toString();
-        const answer = mockUserJourney.answers[answerKey];
+        const answer =
+          mockUserJourney.answers[
+            answerKey as keyof typeof mockUserJourney.answers
+          ];
 
         if (answer) {
           const input =
@@ -267,28 +286,27 @@ describe('End-to-End Tests', () => {
 
   describe('Performance E2E', () => {
     it('should load within performance budgets', async () => {
-      const performanceMarks = {};
+      const performanceMarks: Record<string, number> = {};
 
       // Mock performance API
       global.performance = {
         ...global.performance,
         mark: jest.fn((name) => {
           performanceMarks[name] = Date.now();
-        }),
+        }) as any,
         measure: jest.fn((name, startMark, endMark) => {
           return {
             name,
-            startTime: performanceMarks[startMark] || 0,
+            startTime: performanceMarks[startMark as string] || 0,
             duration:
-              (performanceMarks[endMark] || Date.now()) -
-              (performanceMarks[startMark] || 0),
+              (performanceMarks[endMark as string] || Date.now()) -
+              (performanceMarks[startMark as string] || 0),
           };
-        }),
+        }) as any,
       };
 
       global.fetch = createMockFetch(
         { data: mockUserJourney.blueprint },
-        {},
         { delay: 100 }
       );
 

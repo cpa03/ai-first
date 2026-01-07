@@ -64,7 +64,7 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith(idea);
+        expect(mockOnSubmit).toHaveBeenCalledWith(idea, expect.any(String));
       });
 
       // Step 2: Clarification flow
@@ -159,7 +159,10 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea');
+        expect(mockOnSubmit).toHaveBeenCalledWith(
+          'Test idea',
+          expect.any(String)
+        );
       });
 
       // Test clarification flow with API error
@@ -253,7 +256,10 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.keyDown(submitButton, { key: 'Enter' });
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea');
+        expect(mockOnSubmit).toHaveBeenCalledWith(
+          'Test idea',
+          expect.any(String)
+        );
       });
     });
 
@@ -319,7 +325,10 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith(largeIdea);
+        expect(mockOnSubmit).toHaveBeenCalledWith(
+          largeIdea,
+          expect.any(String)
+        );
       });
 
       const endTime = performance.now();

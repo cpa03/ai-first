@@ -23,6 +23,10 @@ describe('Backend Services', () => {
     });
 
     it('should handle initialization errors gracefully', async () => {
+      // Temporarily remove API key to test error handling
+      const originalApiKey = process.env.OPENAI_API_KEY;
+      delete process.env.OPENAI_API_KEY;
+
       const config = {
         provider: 'openai' as const,
         model: 'gpt-3.5-turbo',
@@ -30,10 +34,15 @@ describe('Backend Services', () => {
         temperature: 0.7,
       };
 
-      // Should handle missing API key gracefully
-      await expect(aiService.initialize(config)).rejects.toThrow(
-        'OpenAI API key not configured'
-      );
+      try {
+        // Should handle missing API key gracefully
+        await expect(aiService.initialize(config)).rejects.toThrow(
+          'OpenAI API key not configured'
+        );
+      } finally {
+        // Restore API key
+        process.env.OPENAI_API_KEY = originalApiKey;
+      }
     });
   });
 

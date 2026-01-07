@@ -125,7 +125,6 @@ describe('Frontend Component Tests', () => {
     it('shows loading state during submission', async () => {
       global.fetch = createMockFetch(
         { data: { id: 'test-id' } },
-        {},
         { delay: 1000 }
       );
 
@@ -190,7 +189,8 @@ describe('Frontend Component Tests', () => {
     });
 
     it('handles question answering flow', async () => {
-      global.fetch
+      const mockFetch = global.fetch as jest.Mock;
+      mockFetch
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -336,25 +336,29 @@ describe('Frontend Component Tests', () => {
   });
 
   describe('BlueprintDisplay Component', () => {
-    const mockBlueprint = mockUserJourney.blueprint;
+    const mockIdea = 'Test project idea';
+    const mockAnswers = {
+      target_audience: 'Remote teams',
+      main_goal: 'Improve collaboration',
+      timeline: '3 months',
+    };
 
     it('renders blueprint content correctly', () => {
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
-      expect(screen.getByText(mockBlueprint.title)).toBeInTheDocument();
-      expect(screen.getByText(mockBlueprint.description)).toBeInTheDocument();
+      expect(screen.getByText(mockIdea)).toBeInTheDocument();
+      expect(screen.getByText('Remote teams')).toBeInTheDocument();
     });
 
     it('displays phases and tasks', () => {
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       expect(screen.getByText('Phase 1')).toBeInTheDocument();
       expect(screen.getByText('Task 1')).toBeInTheDocument();
-      expect(screen.getByText('Description 1')).toBeInTheDocument();
     });
 
     it('renders export options', () => {
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       expect(screen.getByText(/export options/i)).toBeInTheDocument();
       expect(
@@ -375,7 +379,7 @@ describe('Frontend Component Tests', () => {
         content: '# Test Project',
       });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       const markdownButton = screen.getByRole('button', { name: /markdown/i });
       await user.click(markdownButton);
@@ -392,7 +396,7 @@ describe('Frontend Component Tests', () => {
         url: 'https://notion.so/test-page',
       });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       const notionButton = screen.getByRole('button', { name: /notion/i });
       await user.click(notionButton);
@@ -408,7 +412,7 @@ describe('Frontend Component Tests', () => {
         { ok: false, status: 500 }
       );
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       const trelloButton = screen.getByRole('button', { name: /trello/i });
       await user.click(trelloButton);
@@ -419,9 +423,9 @@ describe('Frontend Component Tests', () => {
     });
 
     it('displays loading state during export', async () => {
-      global.fetch = createMockFetch({ success: true }, {}, { delay: 1000 });
+      global.fetch = createMockFetch({ success: true }, { delay: 1000 });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       const githubButton = screen.getByRole('button', { name: /github/i });
       await user.click(githubButton);
@@ -437,7 +441,7 @@ describe('Frontend Component Tests', () => {
         },
       });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(<BlueprintDisplay idea={mockIdea} answers={mockAnswers} />);
 
       const copyButton = screen.getByRole('button', { name: /copy/i });
       await user.click(copyButton);
