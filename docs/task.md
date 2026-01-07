@@ -895,6 +895,132 @@ This document contains refactoring tasks identified during code review. Tasks ar
 
 ---
 
+## [REFACTOR] Split Monolithic Exports File into Separate Modules
+
+- **Location**: `src/lib/exports.ts` (1688 lines)
+- **Issue**: The exports.ts file is a monolith containing 7 export connector classes (JSON, Markdown, Notion, Trello, GoogleTasks, GitHubProjects) and 109 functions/methods in a single file. This violates the Single Responsibility Principle and makes the file extremely difficult to navigate, test, and maintain. Each connector is a distinct responsibility that should have its own file.
+- **Suggestion**: Restructure the exports module as follows:
+  - Create `src/lib/export-connectors/base.ts` - Export abstract ExportConnector class and common interfaces
+  - Create `src/lib/export-connectors/json-exporter.ts` - JSONExporter class
+  - Create `src/lib/export-connectors/markdown-exporter.ts` - MarkdownExporter class
+  - Create `src/lib/export-connectors/notion-exporter.ts` - NotionExporter class
+  - Create `src/lib/export-connectors/trello-exporter.ts` - TrelloExporter class
+  - Create `src/lib/export-connectors/google-tasks-exporter.ts` - GoogleTasksExporter class
+  - Create `src/lib/export-connectors/github-projects-exporter.ts` - GitHubProjectsExporter class
+  - Create `src/lib/export-connectors/index.ts` - Re-export all connectors for backward compatibility
+  - Each connector file should export only its class and related helper functions
+- **Priority**: High
+- **Effort**: Medium
+- **Impact**: Improves code organization, makes connectors easier to test, enables independent connector development, reduces merge conflicts
+
+---
+
+## [REFACTOR] Create Agent Base Class for Common Agent Patterns
+
+- **Location**: `src/lib/agents/breakdown-engine.ts`, `src/lib/agents/clarifier.ts`
+- **Issue**: Both ClarifierAgent and BreakdownEngineAgent have identical patterns:
+  - Config loading from ConfigurationService (lines 71-74 in clarifier.ts, similar in breakdown-engine.ts)
+  - AI service initialization (lines 77-83 in clarifier.ts, similar pattern)
+  - Config and AIConfig as private properties
+  - Similar logging patterns using dbService.logAgentAction
+  - Similar error handling patterns
+    This duplication violates DRY and makes adding new agents more difficult.
+- **Suggestion**: Create `src/lib/agents/base-agent.ts` with:
+  - `BaseAgent` abstract class with:
+    - `protected config: T | null`
+    - `protected aiConfig: AIModelConfig | null`
+    - `protected aiService = aiService`
+    - Constructor that loads config by agent name
+    - `initialize()` method for AI service setup
+    - `logAction()` protected method for consistent logging
+    - Protected methods for config validation
+  - Both ClarifierAgent and BreakdownEngineAgent should extend BaseAgent
+  - Pass agent name to base class constructor
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Reduces code duplication, makes adding new agents easier, improves consistency, easier testing of agent patterns
+
+---
+
+## [REFACTOR] Extract Trello API Service from Export Logic
+
+- **Location**: `src/lib/exports.ts` (TrelloExporter class, lines 438-780)
+- **Issue**: TrelloExporter mixes export orchestration logic with low-level Trello API calls. The class has methods like `createBoard()`, `createList()`, `createCard()` (lines 543-647) that are pure Trello API wrapper logic. This makes it hard to test, hard to reuse Trello API logic elsewhere, and violates Single Responsibility Principle. The exporter should focus on "how to export to Trello format" not "how to call Trello API".
+- **Suggestion**: Create separate `src/lib/export-connectors/trello-api.ts` with:
+  - `TrelloAPI` class with:
+    - `constructor(apiKey: string, token: string)`
+    - `getMember()` - Test connection
+    - `createBoard(name: string)` - Create Trello board
+    - `createList(boardId: string, name: string)` - Create Trello list
+    - `createCard(listId: string, title: string, description?: string)` - Create Trello card
+    - All methods should use TIMEOUT_CONFIG for timeouts
+    - Centralized error handling with Trello-specific error messages
+  - Refactor TrelloExporter to:
+    - Initialize TrelloAPI in constructor
+    - Call TrelloAPI methods instead of direct fetch
+    - Focus on mapping Idea/Deliverables/Task data to Trello structure
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Better separation of concerns, reusable Trello API logic, easier testing, cleaner export logic
+
+---
+
+## [REFACTOR] Centralize Type Validation Utilities
+
+- **Location**: `src/lib/agents/breakdown-engine.ts` (validation functions scattered), `src/lib/agents/clarifier.ts` (lines 51-64)
+- **Issue**: Type guard and validation functions are scattered across agent files:
+  - `isClarifierQuestion()` function in clarifier.ts (lines 51-64)
+  - Similar validation logic likely exists in breakdown-engine.ts
+  - Validation utilities are not reusable across the codebase
+  - Makes it harder to maintain validation rules consistently
+    This creates duplication and makes validation logic harder to test in isolation.
+- **Suggestion**: Create `src/lib/validation/guards.ts` (or add to existing validation.ts) with:
+  - `isClarifierQuestion(data: unknown)` - Type guard for ClarifierQuestion
+  - `isIdeaAnalysis(data: unknown)` - Type guard for IdeaAnalysis
+  - `isTaskDecomposition(data: unknown)` - Type guard for TaskDecomposition
+  - `isBreakdownSession(data: unknown)` - Type guard for BreakdownSession
+  - `isClarificationSession(data: unknown)` - Type guard for ClarificationSession
+  - Generic utilities:
+    - `isString(data: unknown): data is string`
+    - `isObject(data: unknown): data is Record<string, unknown>`
+    - `isArray(data: unknown): data is unknown[]`
+    - `hasProperty(data: unknown, key: string)` - Type-safe property check
+  - Export all type guards from `src/lib/validation/index.ts`
+  - Update agent files to import from validation module
+- **Priority**: Medium
+- **Effort**: Small
+- **Impact**: Improves type safety, makes validation logic reusable, easier to test, single source of truth for validation
+
+---
+
+## [REFACTOR] Extract Markdown Generation Service from Exporter
+
+- **Location**: `src/lib/exports.ts` (MarkdownExporter class, lines 105-193)
+- **Issue**: The `generateMarkdown()` method (lines 140-192) contains complex logic for formatting Idea, Deliverables, Tasks, and Roadmap data into Markdown. This 50+ line method:
+  - Has nested conditionals and loops
+  - Mixes data formatting with export logic
+  - Is hard to test in isolation
+  - Cannot be reused outside of the export context
+  - Makes changing Markdown formatting difficult
+    The method has 10+ formatting rules that could evolve independently.
+- **Suggestion**: Create `src/lib/export-connectors/markdown-formatter.ts` with:
+  - `MarkdownFormatter` class with:
+    - `formatHeader(title: string, level: number)` - Generate MD headers
+    - `formatList(items: string[], prefix: string)` - Generate MD lists
+    - `formatTable(headers: string[], rows: string[][])` - Generate MD tables
+    - `formatTask(tasks: Task[])` - Format tasks as checkboxes
+    - `formatDeliverables(deliverables: Deliverable[])` - Format deliverables
+    - `formatRoadmap(roadmap: RoadmapData[])` - Format roadmap as table
+    - Main method: `formatBlueprint(data: BlueprintData)` - Orchestrate formatting
+  - Make formatting functions pure (no side effects)
+  - Each formatting function should be independently testable
+  - MarkdownExporter should use MarkdownFormatter for generation
+- **Priority**: Low
+- **Effort**: Medium
+- **Impact**: Makes Markdown formatting reusable, easier to test, enables format customization, separates formatting from export
+
+---
+
 ### Task 4: Critical Path Testing - API Handler, Rate Limiting, PII Redaction ✅ COMPLETE
 
 **Priority**: HIGH
