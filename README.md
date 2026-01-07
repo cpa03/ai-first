@@ -19,7 +19,7 @@
 1. **Clone and install dependencies**
 
    ```bash
-   git clone https://github.com/your-username/ai-first.git
+   git clone https://github.com/cpa03/ai-first.git
    cd ai-first
    npm install
    ```
@@ -173,7 +173,7 @@ User Input → Clarification Agent → Breakdown Engine → Timeline Generator �
 
 ### Reporting Bugs or Requesting Features
 
-- Use the [GitHub Issues](https://github.com/your-username/ai-first/issues) page
+- Use the [GitHub Issues](https://github.com/cpa03/ai-first/issues) page
 - Provide clear reproduction steps for bugs
 - Include detailed requirements for feature requests
 - Tag relevant team members if needed
