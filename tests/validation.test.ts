@@ -474,7 +474,7 @@ describe('validateUserResponses', () => {
 
       expect(result.valid).toBe(false);
       expect(result.errors[0].field).toBe('userResponses');
-      expect(result.errors[0].message).toContain('too large');
+      expect(result.errors[0].message).toContain('must not exceed');
     });
 
     it('should reject responses with keys longer than 100 characters', () => {
@@ -535,7 +535,7 @@ describe('validateUserResponses', () => {
       const result = validateUserResponses(responses);
 
       expect(result.valid).toBe(false);
-      expect(result.errors[0].message).toContain('is too long');
+      expect(result.errors[0].message).toContain('must not exceed');
     });
   });
 
@@ -622,7 +622,7 @@ describe('validateRequestSize', () => {
       expect(result.valid).toBe(false);
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0].field).toBe('request');
-      expect(result.errors[0].message).toContain('too large');
+      expect(result.errors[0].message).toContain('must not exceed');
     });
 
     it('should reject request much larger than limit', () => {
