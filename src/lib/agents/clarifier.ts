@@ -40,7 +40,7 @@ export interface ClarifierConfig {
   }>;
 }
 
-class ClarifierAgent {
+export class ClarifierAgent {
   private config: ClarifierConfig | null = null;
   private aiConfig: AIModelConfig | null = null;
 
