@@ -397,8 +397,10 @@ export class DatabaseService {
 
     const { data: ideas } = await this.client
       .from('ideas')
-      .select('status')
+      .select('id, status')
       .eq('user_id', userId);
+
+    const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
 
     const ideasByStatus =
       (ideas as any[])?.reduce(
@@ -409,26 +411,39 @@ export class DatabaseService {
         {} as Record<string, number>
       ) || {};
 
-    const { count: totalDeliverables } = await this.client
-      .from('deliverables')
-      .select('*', { count: 'exact', head: true })
-      .in('idea_id', (ideas as any[])?.map((i) => i.id) || []);
+    let totalDeliverables = 0;
+    let totalTasks = 0;
 
-    const { count: totalTasks } = await this.client
-      .from('tasks')
-      .select('*', { count: 'exact', head: true })
-      .in(
-        'deliverable_id',
-        (await this.getIdeaDeliverables((ideas as any[])?.[0]?.id || '')).map(
-          (d) => d.id
-        )
-      );
+    if (ideaIds.length > 0) {
+      const { count: deliverableCount } = await this.client
+        .from('deliverables')
+        .select('*', { count: 'exact', head: true })
+        .in('idea_id', ideaIds);
+
+      totalDeliverables = deliverableCount || 0;
+
+      const { data: deliverables } = await this.client
+        .from('deliverables')
+        .select('id')
+        .in('idea_id', ideaIds);
+
+      const deliverableIds = (deliverables as any[])?.map((d) => d.id) || [];
+
+      if (deliverableIds.length > 0) {
+        const { count: taskCount } = await this.client
+          .from('tasks')
+          .select('*', { count: 'exact', head: true })
+          .in('deliverable_id', deliverableIds);
+
+        totalTasks = taskCount || 0;
+      }
+    }
 
     return {
       totalIdeas: ideas?.length || 0,
       ideasByStatus,
-      totalDeliverables: totalDeliverables || 0,
-      totalTasks: totalTasks || 0,
+      totalDeliverables,
+      totalTasks,
     };
   }
 

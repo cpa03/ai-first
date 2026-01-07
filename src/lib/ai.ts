@@ -25,10 +25,18 @@ export interface ContextWindow {
   maxTokens: number;
 }
 
+interface CacheEntry {
+  response: string;
+  timestamp: number;
+}
+
 class AIService {
   private openai: OpenAI | null = null;
   private supabase: any = null;
   private costTrackers: CostTracker[] = [];
+  private cache: Map<string, CacheEntry> = new Map();
+  private readonly CACHE_TTL = 300000;
+  private readonly MAX_CACHE_SIZE = 100;
 
   constructor() {
     if (
@@ -62,17 +70,72 @@ class AIService {
     });
   }
 
+  private generateCacheKey(
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+    config: AIModelConfig
+  ): string {
+    const messagesString = JSON.stringify(messages);
+    const configString = `${config.provider}-${config.model}-${config.maxTokens}-${config.temperature}`;
+    return `${configString}-${Buffer.from(messagesString).toString('base64')}`;
+  }
+
+  private getFromCache(key: string): string | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    const now = Date.now();
+    if (now - entry.timestamp > this.CACHE_TTL) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.response;
+  }
+
+  private setInCache(key: string, response: string): void {
+    if (this.cache.size >= this.MAX_CACHE_SIZE) {
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey) {
+        this.cache.delete(firstKey);
+      }
+    }
+
+    this.cache.set(key, {
+      response,
+      timestamp: Date.now(),
+    });
+  }
+
+  private cleanExpiredCache(): void {
+    const now = Date.now();
+    const keysToDelete: string[] = [];
+    this.cache.forEach((entry, key) => {
+      if (now - entry.timestamp > this.CACHE_TTL) {
+        keysToDelete.push(key);
+      }
+    });
+    keysToDelete.forEach((key) => this.cache.delete(key));
+  }
+
   // Make a model call with context windowing
   async callModel(
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
   ): Promise<string> {
     const startTime = Date.now();
+    const cacheKey = this.generateCacheKey(messages, config);
+
+    const cachedResponse = this.getFromCache(cacheKey);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
 
     try {
       let response: string;
 
       if (config.provider === 'openai') {
+        await this.enforceRateLimit();
+
         const completion = await this.openai!.chat.completions.create({
           model: config.model,
           messages,
@@ -82,7 +145,8 @@ class AIService {
 
         response = completion.choices[0]?.message?.content || '';
 
-        // Track costs
+        this.setInCache(cacheKey, response);
+
         const usage = completion.usage;
         if (usage) {
           await this.trackCost(usage.total_tokens, config.model);
@@ -91,19 +155,18 @@ class AIService {
         throw new Error(`Provider ${config.provider} not yet implemented`);
       }
 
-      // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
           duration: Date.now() - startTime,
           messageCount: messages.length,
+          cached: false,
         });
       }
 
       return response;
     } catch (error) {
-      // Log error
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,
@@ -268,6 +331,10 @@ class AIService {
         },
       });
     }
+  }
+
+  clearCache(): void {
+    this.cache.clear();
   }
 
   // Get cost tracking data
