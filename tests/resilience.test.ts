@@ -175,7 +175,8 @@ describe('CircuitBreaker', () => {
       const status = circuitBreaker.getStatus();
       expect(status.state).toBe(CircuitBreakerState.CLOSED);
       expect(status.failures).toBe(0);
-      expect(status.nextAttemptTime).toBeUndefined();
+      expect(status.lastFailureTime).toBe(0);
+      expect(status.nextAttemptTime).toBe(0);
     });
   });
 

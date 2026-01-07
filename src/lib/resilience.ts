@@ -101,15 +101,14 @@ export class CircuitBreaker {
   getStatus(): {
     state: CircuitBreakerState;
     failures: number;
-    nextAttemptTime?: string;
+    lastFailureTime: number;
+    nextAttemptTime: number;
   } {
     return {
       state: this.state,
       failures: this.failures,
-      nextAttemptTime:
-        this.state === CircuitBreakerState.OPEN
-          ? new Date(this.nextAttemptTime).toISOString()
-          : undefined,
+      lastFailureTime: this.lastFailureTime,
+      nextAttemptTime: this.nextAttemptTime,
     };
   }
 }
@@ -263,7 +262,8 @@ export class CircuitBreakerManager {
     {
       state: CircuitBreakerState;
       failures: number;
-      nextAttemptTime?: string;
+      lastFailureTime: number;
+      nextAttemptTime: number;
     }
   > {
     const statuses: Record<

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 interface Question {
   id: string;
@@ -45,6 +45,17 @@ export default function ClarificationFlow({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const handleInputChange = useCallback(
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+      >
+    ) => {
+      setCurrentAnswer(e.target.value);
+    },
+    []
+  );
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -98,9 +109,12 @@ export default function ClarificationFlow({
     fetchQuestions();
   }, [idea, ideaId]);
 
-  const currentQuestion = questions[currentStep];
+  const currentQuestion = useMemo(
+    () => questions[currentStep],
+    [questions, currentStep]
+  );
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (!currentAnswer.trim()) return;
 
     const newAnswers = {
@@ -115,16 +129,23 @@ export default function ClarificationFlow({
     } else {
       onComplete(newAnswers);
     }
-  };
+  }, [
+    currentAnswer,
+    currentQuestion.id,
+    answers,
+    currentStep,
+    questions.length,
+    onComplete,
+  ]);
 
-  const handlePrevious = () => {
+  const handlePrevious = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
       // Restore previous answer
       const previousQuestionId = questions[currentStep - 1].id;
       setCurrentAnswer(answers[previousQuestionId] || '');
     }
-  };
+  }, [currentStep, questions, answers]);
 
   if (loading) {
     return (
