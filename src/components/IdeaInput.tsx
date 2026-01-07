@@ -2,28 +2,58 @@
 
 import { useState } from 'react';
 import { dbService, Idea } from '@/lib/db';
+import Alert from '@/components/Alert';
+import Button from '@/components/Button';
+import InputWithValidation from '@/components/InputWithValidation';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
 }
 
+const MIN_IDEA_LENGTH = 10;
+const MAX_IDEA_LENGTH = 500;
+
 export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [idea, setIdea] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string>('');
+
+  const validateIdea = (value: string): string => {
+    if (!value.trim()) {
+      return '';
+    }
+    if (value.trim().length < MIN_IDEA_LENGTH) {
+      return `Please provide at least ${MIN_IDEA_LENGTH} characters for your idea.`;
+    }
+    if (value.length > MAX_IDEA_LENGTH) {
+      return `Your idea must be ${MAX_IDEA_LENGTH} characters or less.`;
+    }
+    return '';
+  };
+
+  const handleIdeaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = e.target.value;
+    setIdea(newValue);
+    setValidationError(validateIdea(newValue));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!idea.trim()) return;
+
+    const validationError = validateIdea(idea);
+    if (validationError) {
+      setValidationError(validationError);
+      return;
+    }
 
     setIsSubmitting(true);
     setError(null);
 
     try {
-      // Create a new idea in the database
       const newIdea: Omit<Idea, 'id' | 'created_at'> = {
-        user_id: 'default_user', // In a real app, this would come from auth
-        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''), // Truncate title
+        user_id: 'default_user',
+        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''),
         raw_text: idea,
         status: 'draft',
       };
@@ -40,62 +70,42 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-      <div>
-        <label
-          htmlFor="idea-input"
-          className="block text-sm font-medium text-gray-700 mb-2"
-        >
-          What's your idea?
-        </label>
-        <textarea
-          id="idea-input"
-          name="idea"
-          value={idea}
-          onChange={(e) => setIdea(e.target.value)}
-          placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-          className="textarea min-h-[120px]"
-          disabled={isSubmitting}
-          aria-describedby="idea-help"
-          aria-required="true"
-        />
-        <p id="idea-help" className="mt-2 text-sm text-gray-500">
-          Be as specific or as general as you'd like. We'll help you clarify the
-          details.
-        </p>
-      </div>
+    <form onSubmit={handleSubmit} className="space-y-6 fade-in" noValidate>
+      <InputWithValidation
+        id="idea-input"
+        name="idea"
+        label="What's your idea?"
+        value={idea}
+        onChange={handleIdeaChange}
+        placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
+        helpText="Be as specific or as general as you'd like. We'll help you clarify the details."
+        multiline={true}
+        minLength={MIN_IDEA_LENGTH}
+        maxLength={MAX_IDEA_LENGTH}
+        showCharCount={true}
+        error={validationError}
+        required={true}
+        disabled={isSubmitting}
+        className="min-h-[120px]"
+      />
 
       {error && (
-        <div
-          role="alert"
-          aria-live="assertive"
-          className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3"
-        >
-          <svg
-            className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <p className="text-red-800 text-sm">{error}</p>
+        <div className="slide-up">
+          <Alert type="error">
+            <p className="text-sm">{error}</p>
+          </Alert>
         </div>
       )}
 
       <div className="flex justify-end">
-        <button
+        <Button
           type="submit"
-          disabled={!idea.trim() || isSubmitting}
-          className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-          aria-busy={isSubmitting}
+          variant="primary"
+          loading={isSubmitting}
+          disabled={!idea.trim() || !!validationError}
         >
           {isSubmitting ? 'Processing...' : 'Start Clarifying →'}
-        </button>
+        </Button>
       </div>
     </form>
   );
