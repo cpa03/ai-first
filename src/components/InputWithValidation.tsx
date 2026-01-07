@@ -24,7 +24,7 @@ const InputWithValidation = forwardRef<
       error,
       helpText,
       showCharCount = false,
-      minLength,
+      minLength: _minLength,
       maxLength,
       multiline = false,
       className = '',
