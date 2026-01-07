@@ -1,10 +1,3 @@
-import { NextRequest, NextResponse } from 'next/server';
-import {
-  toErrorResponse,
-  generateRequestId,
-  ValidationError as ValidationErrorClass,
-} from '@/lib/errors';
-
 export interface ValidationError {
   field: string;
   message: string;
@@ -20,8 +13,6 @@ export const MIN_IDEA_LENGTH = 10;
 export const MAX_TITLE_LENGTH = 500;
 export const MAX_IDEA_ID_LENGTH = 100;
 const MAX_USER_RESPONSE_SIZE = 5000;
-export const MAX_ANSWER_LENGTH = 5000;
-export const MAX_QUESTION_ID_LENGTH = 100;
 
 export function validateIdea(idea: unknown): ValidationResult {
   const errors: ValidationError[] = [];
@@ -161,62 +152,6 @@ export function validateRequestSize(
   return { valid: errors.length === 0, errors };
 }
 
-export function validateQuestionId(questionId: unknown): ValidationResult {
-  const errors: ValidationError[] = [];
-
-  if (!questionId || typeof questionId !== 'string') {
-    errors.push({
-      field: 'questionId',
-      message: 'questionId is required and must be a string',
-    });
-    return { valid: false, errors };
-  }
-
-  const trimmed = questionId.trim();
-
-  if (trimmed.length === 0) {
-    errors.push({
-      field: 'questionId',
-      message: 'questionId cannot be empty',
-    });
-  }
-
-  if (trimmed.length > MAX_QUESTION_ID_LENGTH) {
-    errors.push({
-      field: 'questionId',
-      message: `questionId must not exceed ${MAX_QUESTION_ID_LENGTH} characters`,
-    });
-  }
-
-  return { valid: errors.length === 0, errors };
-}
-
-export function validateAnswer(
-  answer: unknown,
-  maxLength: number = MAX_ANSWER_LENGTH
-): ValidationResult {
-  const errors: ValidationError[] = [];
-
-  if (!answer || typeof answer !== 'string') {
-    errors.push({
-      field: 'answer',
-      message: 'answer is required and must be a string',
-    });
-    return { valid: false, errors };
-  }
-
-  const trimmed = answer.trim();
-
-  if (trimmed.length > maxLength) {
-    errors.push({
-      field: 'answer',
-      message: `answer must not exceed ${maxLength} characters`,
-    });
-  }
-
-  return { valid: errors.length === 0, errors };
-}
-
 export function sanitizeString(
   input: string,
   maxLength: number = MAX_IDEA_LENGTH
@@ -241,59 +176,4 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
       headers: { 'Content-Type': 'application/json' },
     }
   );
-}
-
-export interface ValidationSchema {
-  [fieldName: string]: (value: unknown) => ValidationResult;
-}
-
-export async function validateRequestBody(
-  request: Request,
-  schema: ValidationSchema
-): Promise<{ valid: boolean; errors: ValidationError[]; data?: any }> {
-  let data;
-  try {
-    data = await request.json();
-  } catch {
-    return {
-      valid: false,
-      errors: [{ field: 'request', message: 'Invalid JSON in request body' }],
-    };
-  }
-
-  const allErrors: ValidationError[] = [];
-
-  for (const [fieldName, validator] of Object.entries(schema)) {
-    const result = validator(data[fieldName]);
-    if (!result.valid) {
-      allErrors.push(...result.errors);
-    }
-  }
-
-  return {
-    valid: allErrors.length === 0,
-    errors: allErrors,
-    data,
-  };
-}
-
-export function withValidation<T extends Record<string, unknown>>(
-  schema: ValidationSchema,
-  handler: (validatedData: T, request: NextRequest) => Promise<NextResponse>
-) {
-  return async function (request: NextRequest): Promise<NextResponse> {
-    const requestId = generateRequestId();
-
-    try {
-      const validation = await validateRequestBody(request, schema);
-
-      if (!validation.valid) {
-        throw new ValidationErrorClass(validation.errors);
-      }
-
-      return await handler(validation.data as T, request);
-    } catch (error) {
-      return toErrorResponse(error, requestId);
-    }
-  };
 }

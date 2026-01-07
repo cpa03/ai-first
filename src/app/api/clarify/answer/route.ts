@@ -2,55 +2,70 @@ import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import {
   validateIdeaId,
-  validateQuestionId,
-  validateAnswer,
   validateRequestSize,
+  buildErrorResponse,
 } from '@/lib/validation';
-import {
-  toErrorResponse,
-  generateRequestId,
-  ValidationError,
-} from '@/lib/errors';
+
+const MAX_ANSWER_LENGTH = 5000;
 
 export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
-
   try {
     const sizeValidation = validateRequestSize(request);
     if (!sizeValidation.valid) {
-      throw new ValidationError(sizeValidation.errors);
+      return buildErrorResponse(sizeValidation.errors);
     }
 
     const { ideaId, questionId, answer } = await request.json();
 
     const idValidation = validateIdeaId(ideaId);
     if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
+      return buildErrorResponse(idValidation.errors);
     }
 
-    const questionIdValidation = validateQuestionId(questionId);
-    if (!questionIdValidation.valid) {
-      throw new ValidationError(questionIdValidation.errors);
+    if (
+      !questionId ||
+      typeof questionId !== 'string' ||
+      questionId.trim().length === 0
+    ) {
+      return buildErrorResponse([
+        {
+          field: 'questionId',
+          message: 'questionId is required and must be a non-empty string',
+        },
+      ]);
     }
 
-    const answerValidation = validateAnswer(answer);
-    if (!answerValidation.valid) {
-      throw new ValidationError(answerValidation.errors);
+    if (!answer || typeof answer !== 'string') {
+      return buildErrorResponse([
+        { field: 'answer', message: 'answer is required and must be a string' },
+      ]);
+    }
+
+    const trimmedAnswer = answer.trim();
+    if (trimmedAnswer.length > MAX_ANSWER_LENGTH) {
+      return buildErrorResponse([
+        {
+          field: 'answer',
+          message: `answer must not exceed ${MAX_ANSWER_LENGTH} characters`,
+        },
+      ]);
     }
 
     const session = await clarifierAgent.submitAnswer(
       ideaId.trim(),
       questionId.trim(),
-      answer.trim()
+      trimmedAnswer
     );
 
-    return NextResponse.json(
-      { success: true, session, requestId },
-      {
-        headers: { 'X-Request-ID': requestId },
-      }
-    );
+    return NextResponse.json({ success: true, session });
   } catch (error) {
-    return toErrorResponse(error, requestId);
+    console.error('Error submitting answer:', error);
+    return NextResponse.json(
+      {
+        error: 'Failed to submit answer',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

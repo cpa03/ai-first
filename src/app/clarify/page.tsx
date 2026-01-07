@@ -53,12 +53,8 @@ export default function ClarifyPage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div
-          className="bg-white rounded-lg shadow-lg p-8 text-center"
-          role="status"
-          aria-live="polite"
-        >
-          <div className="flex justify-center mb-4" aria-hidden="true">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className="flex justify-center mb-4">
             <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
           </div>
           <p className="text-gray-600">Loading clarification flow...</p>
@@ -69,52 +65,41 @@ export default function ClarifyPage() {
 
   if (error) {
     return (
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div
-          className="bg-red-50 border border-red-200 rounded-lg p-6"
-          role="alert"
-          aria-live="assertive"
-        >
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
           <p className="text-red-800">{error}</p>
           <button
-            type="button"
             onClick={() => router.back()}
             className="mt-4 btn btn-primary"
-            aria-label="Go back to previous page"
           >
             Go Back
           </button>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (answers) {
     return (
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div
-          className="bg-green-50 border border-green-200 rounded-lg p-6"
-          role="status"
-          aria-live="polite"
-        >
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-green-900 mb-4">
             Clarification Complete!
           </h2>
           <p className="text-green-800 mb-4">
             Your answers have been collected. Ready to generate your blueprint?
           </p>
-          <dl className="space-y-2 mt-4">
+          <div className="space-y-2">
             {Object.entries(answers).map(([key, value]) => (
               <div key={key} className="text-sm">
-                <dt className="font-medium text-green-700">{key}:</dt>
-                <dd className="text-green-600">{value}</dd>
+                <span className="font-medium text-green-700">{key}:</span>{' '}
+                <span className="text-green-600">{value}</span>
               </div>
             ))}
-          </dl>
+          </div>
           <div className="mt-6">
             <button
-              type="button"
               onClick={() => router.push('/results')}
               className="btn btn-primary"
             >
@@ -122,54 +107,46 @@ export default function ClarifyPage() {
             </button>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (!idea) {
     return (
-      <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div
-          className="bg-yellow-50 border border-yellow-200 rounded-lg p-6"
-          role="alert"
-          aria-live="assertive"
-        >
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-yellow-900 mb-4">
             No Idea Provided
           </h2>
           <p className="text-yellow-800">Please provide an idea to clarify.</p>
           <button
-            type="button"
             onClick={() => router.push('/')}
             className="mt-4 btn btn-primary"
-            aria-label="Navigate to home page"
           >
             Go to Home
           </button>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <div className="py-8 sm:py-12">
-      <header className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8">
+    <div className="py-12">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
             Let's Clarify Your Idea
           </h1>
-          <p className="text-base sm:text-lg text-gray-600">
+          <p className="text-lg text-gray-600">
             Answer a few questions to help us create the perfect action plan for
             your project.
           </p>
-          <aside className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs sm:text-sm text-gray-600">Your idea:</p>
-            <p className="text-sm sm:text-base font-medium text-gray-900">
-              {idea}
-            </p>
-          </aside>
+          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <p className="text-sm text-gray-600">Your idea:</p>
+            <p className="font-medium text-gray-900">{idea}</p>
+          </div>
         </div>
-      </header>
+      </div>
 
       <ClarificationFlow
         idea={idea}

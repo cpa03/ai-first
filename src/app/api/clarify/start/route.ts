@@ -59,12 +59,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const ideaId = searchParams.get('ideaId');
 
+    if (!ideaId) {
+      throw new ValidationError([
+        { field: 'ideaId', message: 'ideaId is required' },
+      ]);
+    }
+
     const idValidation = validateIdeaId(ideaId);
     if (!idValidation.valid) {
       throw new ValidationError(idValidation.errors);
     }
 
-    const session = await clarifierAgent.getSession(ideaId!.trim());
+    const session = await clarifierAgent.getSession(ideaId.trim());
 
     if (!session) {
       const error = new AppError(

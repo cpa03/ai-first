@@ -1,6 +1,5 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import { promptService } from '@/lib/prompts';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
@@ -126,19 +125,38 @@ export class ClarifierAgent {
       throw new Error('AI configuration not loaded');
     }
 
-    const prompt = promptService.loadPrompt(
-      'clarifier',
-      'generate-questions.txt',
-      {
-        ideaText,
-      }
-    );
+    const prompt = `You are a clarifier agent for an idea development platform. Your task is to analyze the user's idea and generate clarifying questions to better understand their requirements.
+
+User's Idea: "${ideaText}"
+
+Generate 3-5 specific, targeted questions that will help clarify:
+1. The scope and boundaries of the idea
+2. The target audience or users
+3. The key features or functionality
+4. Technical requirements or constraints
+5. Success criteria or goals
+
+Each question should be:
+- Clear and concise
+- Open-ended to encourage detailed responses
+- Relevant to understanding the idea better
+
+Return your response as a JSON array of questions with this structure:
+[
+  {
+    "id": "unique_id",
+    "question": "Your question here",
+    "type": "open",
+    "required": true
+  }
+]`;
 
     try {
       const messages = [
         {
           role: 'system' as const,
-          content: promptService.loadSystemPrompt('clarifier'),
+          content:
+            'You are a helpful AI assistant that generates clarifying questions for ideas.',
         },
         { role: 'user' as const, content: prompt },
       ];
@@ -298,19 +316,28 @@ export class ClarifierAgent {
       })
       .join('\n\n');
 
-    const prompt = promptService.loadPrompt('clarifier', 'refine-idea.txt', {
-      originalIdea: session.originalIdea,
-      answersText,
-    });
+    const prompt = `Based on the original idea and the user's answers to clarifying questions, generate a refined, detailed description of the idea.
+
+Original Idea: "${session.originalIdea}"
+
+User's Answers:
+${answersText}
+
+Please create a refined idea description that:
+1. Incorporates the insights from the user's answers
+2. Provides clear scope and boundaries
+3. Identifies target audience and use cases
+4. Outlines key features and functionality
+5. Mentions any technical considerations
+
+The refined idea should be comprehensive (200-400 words) and serve as a foundation for creating a project blueprint.`;
 
     try {
       const messages = [
         {
           role: 'system' as const,
-          content: promptService.loadPrompt(
-            'clarifier',
-            'refine-idea-system.txt'
-          ),
+          content:
+            'You are a helpful AI assistant that refines and expands on ideas based on user feedback.',
         },
         { role: 'user' as const, content: prompt },
       ];

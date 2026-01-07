@@ -1,6 +1,5 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import { promptService } from '@/lib/prompts';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
@@ -255,20 +254,39 @@ class BreakdownEngine {
       throw new Error('AI configuration not loaded');
     }
 
-    const prompt = promptService.loadPrompt('breakdown', 'analyze-idea.txt', {
-      refinedIdea,
-      userResponses: JSON.stringify(userResponses, null, 2),
-      options: JSON.stringify(options, null, 2),
-    });
+    const prompt = `Analyze the following clarified idea and extract key components:
+
+Idea: "${refinedIdea}"
+User Responses: ${JSON.stringify(userResponses, null, 2)}
+Options: ${JSON.stringify(options, null, 2)}
+
+Provide a comprehensive analysis including:
+1. Main objectives (3-5 specific, measurable goals)
+2. Key deliverables (5-10 concrete outputs)
+3. Technical complexity assessment (1-10 scale with factors)
+4. Estimated scope (size and duration)
+5. Risk factors with impact and probability
+6. Success criteria (measurable outcomes)
+
+For each item, include a confidence score (0-1) indicating certainty.
+
+Format as JSON:
+{
+  "objectives": [{"title": "...", "description": "...", "confidence": 0.8}],
+  "deliverables": [{"title": "...", "description": "...", "priority": 1, "estimatedHours": 40, "confidence": 0.7}],
+  "complexity": {"score": 7, "factors": [...], "level": "complex"},
+  "scope": {"size": "medium", "estimatedWeeks": 12, "teamSize": 3},
+  "riskFactors": [{"factor": "...", "impact": "medium", "probability": 0.3}],
+  "successCriteria": ["..."],
+  "overallConfidence": 0.75
+}`;
 
     try {
       const messages = [
         {
           role: 'system' as const,
-          content: promptService.loadPrompt(
-            'breakdown',
-            'analyze-idea-system.txt'
-          ),
+          content:
+            'You are an expert project analyst and systems architect. Analyze ideas and provide structured breakdowns with confidence scoring.',
         },
         { role: 'user' as const, content: prompt },
       ];
@@ -295,25 +313,39 @@ class BreakdownEngine {
     let totalHours = 0;
 
     for (const deliverable of analysis.deliverables) {
-      const prompt = promptService.loadPrompt(
-        'breakdown',
-        'decompose-tasks.txt',
-        {
-          deliverableTitle: deliverable.title,
-          deliverableDescription: deliverable.description,
-          deliverablePriority: deliverable.priority,
-          deliverableEstimatedHours: deliverable.estimatedHours,
-        }
-      );
+      const prompt = `Break down the following deliverable into specific, actionable tasks:
+
+Deliverable: "${deliverable.title}"
+Description: "${deliverable.description}"
+Priority: ${deliverable.priority}
+Estimated Hours: ${deliverable.estimatedHours}
+
+Generate 3-8 tasks that collectively complete this deliverable. Each task should:
+- Have a clear, actionable title starting with a verb
+- Include detailed description of what needs to be done
+- Estimate hours (1-40 hours per task)
+- Identify required skills
+- Note any dependencies on other tasks (use task IDs like "t1", "t2")
+
+Format as JSON array:
+[
+  {
+    "id": "t1",
+    "title": "Design user interface mockups",
+    "description": "Create detailed wireframes and visual designs for all user-facing components",
+    "estimatedHours": 16,
+    "complexity": 5,
+    "requiredSkills": ["UI/UX Design", "Figma"],
+    "dependencies": []
+  }
+]`;
 
       try {
         const messages = [
           {
             role: 'system' as const,
-            content: promptService.loadPrompt(
-              'breakdown',
-              'decompose-tasks-system.txt'
-            ),
+            content:
+              'You are an expert project manager. Break down deliverables into specific, manageable tasks with accurate time estimates.',
           },
           { role: 'user' as const, content: prompt },
         ];
