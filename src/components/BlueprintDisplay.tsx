@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import Button from '@/components/Button';
+import Skeleton from '@/components/Skeleton';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -104,56 +107,95 @@ ${answers.main_goal || 'Not specified'}
 
   if (isGenerating) {
     return (
-      <div
-        className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
-        role="status"
-        aria-live="polite"
-      >
-        <div className="text-center">
-          <div
-            className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto mb-4"
-            aria-hidden="true"
-          ></div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+        <div className="text-center mb-8">
+          <LoadingSpinner
+            size="lg"
+            className="mb-4"
+            ariaLabel="Generating your blueprint"
+          />
+          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
             Generating Your Blueprint...
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm sm:text-base text-gray-600">
             Our AI is analyzing your answers and creating a detailed action
             plan.
           </p>
         </div>
+
+        <section
+          aria-labelledby="skeleton-heading"
+          className="bg-white rounded-lg shadow-lg"
+        >
+          <header className="border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <Skeleton className="h-6 sm:h-8 w-36 sm:w-48" variant="text" />
+              <Skeleton className="h-10 w-full sm:w-40" />
+            </div>
+          </header>
+
+          <div className="p-4 sm:p-8 space-y-4">
+            <Skeleton className="h-5 sm:h-6 w-3/4" variant="text" />
+            <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
+            <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
+            <Skeleton className="h-3 sm:h-4 w-5/6" variant="text" />
+
+            <div className="mt-6 sm:mt-8 space-y-2">
+              <Skeleton className="h-4 sm:h-5 w-1/2" variant="text" />
+              <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
+              <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
+            </div>
+
+            <div className="mt-4 sm:mt-6 space-y-2">
+              <Skeleton className="h-4 sm:h-5 w-1/2" variant="text" />
+              <Skeleton className="h-3 sm:h-4 w-11/12" variant="text" />
+              <Skeleton className="h-3 sm:h-4 w-10/12" variant="text" />
+            </div>
+          </div>
+
+          <footer className="border-t border-gray-200 px-4 sm:px-8 py-4 sm:py-6 bg-gray-50">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <Skeleton className="h-3 sm:h-4 w-full sm:w-1/2" variant="text" />
+              <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
+                <Skeleton className="h-10 w-full sm:w-28" />
+                <Skeleton className="h-10 w-full sm:w-36" />
+              </div>
+            </div>
+          </footer>
+        </section>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <section
         aria-labelledby="blueprint-heading"
         className="bg-white rounded-lg shadow-lg"
       >
-        <header className="border-b border-gray-200 px-8 py-6">
-          <div className="flex justify-between items-center">
+        <header className="border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2
               id="blueprint-heading"
-              className="text-2xl font-semibold text-gray-900"
+              className="text-xl sm:text-2xl font-semibold text-gray-900"
             >
               Your Project Blueprint
             </h2>
-            <button
+            <Button
               onClick={handleDownload}
-              className="btn btn-primary"
+              variant="primary"
+              fullWidth={false}
               aria-label="Download blueprint as Markdown file"
             >
               Download Markdown
-            </button>
+            </Button>
           </div>
         </header>
 
-        <div className="p-8">
-          <div className="prose prose-lg max-w-none">
+        <div className="p-4 sm:p-8">
+          <div className="prose prose-sm sm:prose-lg max-w-none">
             <pre
-              className="whitespace-pre-wrap font-mono text-sm text-gray-800 bg-gray-50 p-6 rounded-lg overflow-x-auto"
+              className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
               aria-label="Generated project blueprint content"
               tabIndex={0}
             >
@@ -162,25 +204,27 @@ ${answers.main_goal || 'Not specified'}
           </div>
         </div>
 
-        <footer className="border-t border-gray-200 px-8 py-6 bg-gray-50">
-          <div className="flex justify-between items-center">
-            <p className="text-sm text-gray-600">
+        <footer className="border-t border-gray-200 px-4 sm:px-8 py-4 sm:py-6 bg-gray-50">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <p className="text-xs sm:text-sm text-gray-600">
               Ready to start implementing? Share this blueprint with your team
               or keep it as your guide.
             </p>
-            <div className="space-x-4">
-              <button
-                className="btn btn-secondary"
+            <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
+              <Button
+                variant="secondary"
+                fullWidth={false}
                 aria-label="Start over with a new idea"
               >
                 Start Over
-              </button>
-              <button
-                className="btn btn-primary"
+              </Button>
+              <Button
+                variant="primary"
+                fullWidth={false}
                 aria-label="Export blueprint to project management tools"
               >
                 Export to Tools
-              </button>
+              </Button>
             </div>
           </div>
         </footer>
