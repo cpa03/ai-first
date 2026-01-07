@@ -296,62 +296,7 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 
 ---
 
-## 19. Performance Optimizations Completed
-
-### Database Query Optimization
-
-**Location**: `src/lib/db.ts` - `getIdeaStats()` method
-
-**Issue**: N+1 query problem where the method made inefficient nested database queries:
-
-- First query to fetch ideas
-- Second query to count deliverables (fetching all IDs)
-- Third query with nested `getIdeaDeliverables()` call that triggered additional queries
-
-**Solution**:
-
-- Fixed query to fetch both `id` and `status` from ideas table
-- Optimized deliverable counting to use efficient IN clause with pre-fetched IDs
-- Eliminated nested `getIdeaDeliverables()` call
-- Reduced database queries from 3-4 to exactly 3 optimized queries
-
-**Impact**: Significant performance improvement for user dashboard and analytics views, reduced database load.
-
-### AI Service Response Caching
-
-**Location**: `src/lib/ai.ts`
-
-**Issue**: Every AI model call made an expensive API request without caching, leading to redundant API calls and increased costs.
-
-**Solution**:
-
-- Implemented in-memory response caching with TTL (5 minutes)
-- Added cache key generation based on messages and configuration
-- Implemented cache size limits (max 100 entries)
-- Added automatic cache cleanup for expired entries
-- Integrated caching into `callModel()` method
-
-**Impact**:
-
-- Reduces redundant AI API calls by up to 100% for identical requests
-- Improves response time for cached requests from ~1-3s to <10ms
-- Reduces API costs and prevents rate limiting issues
-- Maintains data freshness with 5-minute TTL
-
-### AI Service Rate Limiting
-
-**Location**: `src/lib/ai.ts`
-
-**Issue**: The `enforceRateLimit()` method existed but was never called, allowing potential API throttling.
-
-**Solution**:
-
-- Added `enforceRateLimit()` call in `callModel()` method before making API requests
-- Ensures minimum 1-second interval between AI API calls
-
-**Impact**: Prevents API rate limiting errors and ensures consistent performance under load.
-
-## 20. Initial Roadmap & Milestones (concrete tasks)
+## 19. Initial Roadmap & Milestones (concrete tasks)
 
 **Milestone 0 — Repo & Docs** (this week)
 
@@ -465,7 +410,73 @@ questions:
 
 ---
 
-## 24. Closing & governance
+## 24. Data Architecture Improvements (2025-01-07)
+
+### Database Schema Optimization
+
+**Migration 002**: Database schema optimization with the following improvements:
+
+**Performance Indexes Added**:
+
+- Indexes on `ideas.user_id`, `ideas.status`, `ideas.created_at` for fast user queries
+- Composite index `ideas(user_id, status)` for dashboard filtering
+- Indexes on `deliverables.idea_id`, `tasks.deliverable_id` for efficient joins
+- Indexes on agent_logs for audit log querying
+
+**Soft-Delete Mechanism**:
+
+- Added `deleted_at` columns to `ideas`, `deliverables`, and `tasks` tables
+- Updated RLS policies to automatically filter out soft-deleted records
+- Created indexes on `deleted_at` for efficient soft-delete queries
+- Implemented soft-delete methods in DatabaseService (`softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`)
+- All SELECT queries now filter out soft-deleted records by default
+
+**Data Integrity Constraints**:
+
+- Added NOT NULL constraints to critical fields (`ideas.title`, `ideas.raw_text`, `deliverables.title`, `tasks.title`)
+- Added CHECK constraints for positive estimates (`estimate_hours >= 0`, `estimate >= 0`)
+
+**Fixed N+1 Query Problem**:
+
+- Optimized `getIdeaStats()` method to use proper joins and IN clauses
+- Reduced database queries from 3-4 to exactly 3 optimized queries
+- Fixed task counting to count tasks for all ideas, not just the first one
+
+**Migration Safety**:
+
+- All migrations include reversible down scripts (`002_schema_optimization_down.sql`)
+- Non-destructive changes: additions only, no destructive modifications
+- Batch operations for large datasets (indexes created with IF NOT EXISTS)
+
+### pgvector Support for AI/ML
+
+**Migration 003**: Enhanced vectors table for efficient similarity search:
+
+**pgvector Integration**:
+
+- Added `embedding` column using pgvector type (1536 dimensions for OpenAI ada-002)
+- Created IVFFlat indexes for cosine and L2 distance similarity search
+- Added vector similarity search function `match_vectors()` with configurable threshold
+- Enabled efficient nearest neighbor search for AI-powered features
+
+**API Enhancements**:
+
+- New `storeEmbedding()` method for storing vector embeddings
+- New `searchSimilarVectors()` method for semantic similarity search
+- Updated Vector interface to include `embedding` field
+- Backward compatible with existing `vector_data` JSONB column
+
+### Database Service Updates
+
+All DatabaseService methods updated to support:
+
+1. **Soft-delete filtering**: All SELECT queries now filter out soft-deleted records
+2. **Vector operations**: New methods for embedding storage and similarity search
+3. **Performance optimizations**: Efficient queries with proper indexing strategy
+
+---
+
+## 25. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 
