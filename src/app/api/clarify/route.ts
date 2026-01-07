@@ -1,18 +1,24 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import {
   validateIdea,
   validateIdeaId,
   validateRequestSize,
-  buildErrorResponse,
 } from '@/lib/validation';
 import {
   checkRateLimit,
   rateLimitConfigs,
   rateLimitResponse,
 } from '@/lib/rate-limit';
+import {
+  toErrorResponse,
+  generateRequestId,
+  ValidationError,
+} from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
+  const requestId = generateRequestId();
+
   try {
     const rateLimitResult = checkRateLimit(
       request.headers.get('x-forwarded-for') || 'unknown',
@@ -25,14 +31,14 @@ export async function POST(request: NextRequest) {
 
     const sizeValidation = validateRequestSize(request);
     if (!sizeValidation.valid) {
-      return buildErrorResponse(sizeValidation.errors);
+      throw new ValidationError(sizeValidation.errors);
     }
 
     const { idea, ideaId } = await request.json();
 
     const ideaValidation = validateIdea(idea);
     if (!ideaValidation.valid) {
-      return buildErrorResponse(ideaValidation.errors);
+      throw new ValidationError(ideaValidation.errors);
     }
 
     const validatedIdea = idea.trim();
@@ -42,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (finalIdeaId) {
       const idValidation = validateIdeaId(finalIdeaId);
       if (!idValidation.valid) {
-        return buildErrorResponse(idValidation.errors);
+        throw new ValidationError(idValidation.errors);
       }
       finalIdeaId = finalIdeaId.trim();
     } else {
@@ -54,26 +60,19 @@ export async function POST(request: NextRequest) {
       validatedIdea
     );
 
-    return new Response(
-      JSON.stringify({
+    return NextResponse.json(
+      {
         questions: session.questions,
         ideaId: session.ideaId,
         status: session.status,
         confidence: session.confidence,
-      }),
+        requestId,
+      },
       {
-        status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'X-Request-ID': requestId },
       }
     );
   } catch (error) {
-    console.error('Error in clarify API:', error);
-    return new Response(
-      JSON.stringify({
-        error: 'Failed to generate clarifying questions',
-        details: error instanceof Error ? error.message : 'Unknown error',
-      }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    return toErrorResponse(error, requestId);
   }
 }

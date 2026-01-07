@@ -74,7 +74,7 @@ This document contains refactoring tasks identified during code review. Tasks ar
 
 ---
 
-## [REFACTOR] Extract Input Validation into Reusable Utilities
+## [COMPLETED] Extract Input Validation into Reusable Utilities
 
 - **Location**: Multiple API routes (`src/app/api/clarify/start/route.ts`, etc.)
 - **Issue**: Input validation is duplicated across API routes. Each route manually checks required fields and returns similar error responses. This is error-prone and inconsistent.
@@ -86,6 +86,30 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Priority**: Medium
 - **Effort**: Medium
 - **Impact**: Improves code consistency, reduces bugs, better type safety
+
+**Implementation**:
+
+- Added new validators to `src/lib/validation.ts`:
+  - `validateQuestionId(questionId)` - validates questionId field with length and format checks
+  - `validateAnswer(answer, maxLength)` - validates answer field with configurable max length
+  - `withValidation<T>(schema, handler)` - HOF for request validation middleware
+  - `validateRequestBody(request, schema)` - validates request body against a schema
+  - Added constants: `MAX_ANSWER_LENGTH`, `MAX_QUESTION_ID_LENGTH`
+
+- Refactored API routes to use consistent error handling:
+  - `src/app/api/clarify/start/route.ts` - removed manual validation in GET handler
+  - `src/app/api/clarify/answer/route.ts` - replaced manual validation with `validateQuestionId` and `validateAnswer`
+  - `src/app/api/clarify/route.ts` - switched from `buildErrorResponse` to `toErrorResponse` for consistency
+  - `src/app/api/clarify/complete/route.ts` - switched from `buildErrorResponse` to `toErrorResponse` for consistency
+
+- Benefits:
+  - Consistent validation logic across all routes
+  - Single source of truth for validation rules
+  - Type-safe validation results
+  - Reusable validation middleware
+  - Consistent error response format using `toErrorResponse` from errors.ts
+  - Reduced code duplication
+  - Easier to add new validators in the future
 
 ---
 
