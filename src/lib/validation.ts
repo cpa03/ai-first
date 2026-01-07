@@ -250,7 +250,11 @@ export interface ValidationSchema {
 export async function validateRequestBody(
   request: Request,
   schema: ValidationSchema
-): Promise<{ valid: boolean; errors: ValidationError[]; data?: any }> {
+): Promise<{
+  valid: boolean;
+  errors: ValidationError[];
+  data?: Record<string, unknown>;
+}> {
   let data;
   try {
     data = await request.json();
@@ -293,7 +297,12 @@ export function withValidation<T extends Record<string, unknown>>(
 
       return await handler(validation.data as T, request);
     } catch (error) {
-      return toErrorResponse(error, requestId);
+      const errorResponse = toErrorResponse(error, requestId);
+      const body = await errorResponse.json();
+      return NextResponse.json(body, {
+        status: errorResponse.status,
+        headers: errorResponse.headers,
+      });
     }
   };
 }

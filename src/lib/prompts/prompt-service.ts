@@ -41,7 +41,7 @@ class PromptService {
 
   private interpolateVariables(
     template: string,
-    variables: Record<string, any>
+    variables: Record<string, unknown>
   ): string {
     let result = template;
 
@@ -60,7 +60,7 @@ class PromptService {
   loadPrompt(
     agentName: string,
     promptName: string,
-    variables?: Record<string, any>
+    variables?: Record<string, unknown>
   ): string {
     const cacheKey = `${agentName}/${promptName}`;
 
