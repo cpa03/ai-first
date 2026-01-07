@@ -509,6 +509,84 @@ Note: Some linting errors existed prior to this work (in test files). The integr
 
 ---
 
+## Data Architecture Tasks
+
+### Task 1: Schema and Type Synchronization ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-07
+
+#### Objectives
+
+- Sync `schema.sql` with all migration changes (soft-delete, pgvector, breakdown engine)
+- Update TypeScript types to include missing columns (`deleted_at`, `embedding`)
+- Ensure type safety across database layer
+- Fix schema drift between base schema and migrations
+
+#### Completed Work
+
+1. **Updated Base Schema** (`supabase/schema.sql`)
+   - Added `deleted_at` columns to `ideas`, `deliverables`, and `tasks` tables for soft-delete support
+   - Added `pgvector` extension and `embedding` column to `vectors` table (1536 dimensions)
+   - Added all breakdown engine tables from migration 001:
+     - `task_dependencies` (for task relationships)
+     - `milestones` (for project milestones)
+     - `task_assignments` (for user task assignments)
+     - `time_tracking` (for time logging)
+     - `task_comments` (for task discussions)
+     - `breakdown_sessions` (for AI breakdown tracking)
+     - `timelines` (for project timeline data)
+     - `risk_assessments` (for risk management)
+   - Added `embedding` vector indexes (ivfflat for cosine and L2 distance)
+   - Updated RLS policies to filter out soft-deleted records
+   - Added `updated_at` triggers for tables with `updated_at` column
+   - Added `match_vectors` function for similarity search
+
+2. **Updated TypeScript Types** (`src/types/database.ts`)
+   - Added `deleted_at` field to `ideas`, `deliverables`, and `tasks` tables
+   - Added `embedding` field to `vectors` table (type: `number[]`)
+   - Added `match_vectors` function to `Functions` section
+   - All types now match actual database schema
+
+3. **Data Integrity Constraints**
+   - Added `CHECK` constraints for `estimate_hours >= 0` on deliverables
+   - Added `CHECK` constraint for `estimate >= 0` on tasks
+   - All constraints enforced at database level
+
+4. **Index Optimization**
+   - Added indexes on all `deleted_at` columns for efficient soft-delete filtering
+   - Added indexes for all new tables (task_dependencies, milestones, etc.)
+   - Added composite indexes for commonly queried column combinations
+
+#### Success Criteria Met
+
+- [x] Schema.sql synchronized with all migrations
+- [x] TypeScript types match database schema
+- [x] Soft-delete mechanism fully implemented
+- [x] pgvector support included in schema and types
+- [x] Build passes successfully
+- [x] Type-check passes with zero errors in data layer
+- [x] Zero data loss
+- [x] Backward compatible (all additions, no destructive changes)
+
+#### Files Modified
+
+- `supabase/schema.sql` (UPDATED - added deleted_at, embedding, breakdown tables)
+- `src/types/database.ts` (UPDATED - added deleted_at, embedding, match_vectors)
+
+#### Impact
+
+- **Schema Consistency**: Base schema now matches all migrations
+- **Type Safety**: TypeScript types accurately reflect database structure
+- **Soft-Delete**: Full soft-delete support with RLS filtering
+- **Vector Search**: pgvector support for AI/ML features enabled
+- **Data Integrity**: Database-level constraints ensure data validity
+
+---
+
+---
+
 **Last Updated**: 2026-01-07
 **Agent**: Performance Engineer
 
