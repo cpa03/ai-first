@@ -3,6 +3,8 @@ import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface AgentConfig {
   name: string;
   description: string;
@@ -97,4 +99,5 @@ class ConfigurationService {
 }
 
 export const configurationService = new ConfigurationService();
-export { ConfigurationService, AgentConfig };
+export { ConfigurationService };
+export type { AgentConfig };

@@ -3,6 +3,7 @@ import { dbService } from '@/lib/db';
 import { configurationService } from '@/lib/config-service';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
 export interface ClarifierQuestion {
   id: string;
   question: string;
