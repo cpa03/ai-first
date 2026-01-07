@@ -120,7 +120,7 @@ class AIService {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
-          duration,
+          duration: Date.now() - startTime,
           messageCount: messages.length,
         });
       }
@@ -139,24 +139,6 @@ class AIService {
 
       throw error;
     }
-  }
-
-  private async executeWithResilience<T>(
-    operation: () => Promise<T>,
-    config: AIModelConfig
-  ): Promise<T> {
-    const { resilienceManager, defaultResilienceConfigs } =
-      await import('@/lib/resilience');
-
-    const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
-
-    return resilienceManager.execute(
-      operation,
-      defaultResilienceConfigs[
-        serviceKey as keyof typeof defaultResilienceConfigs
-      ] || defaultResilienceConfigs.openai,
-      `ai-${config.provider}-${config.model}`
-    );
   }
 
   // Context windowing strategy

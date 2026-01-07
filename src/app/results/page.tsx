@@ -1,16 +1,27 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
-import BlueprintDisplay from '@/components/BlueprintDisplay';
-import Button from '@/components/Button';
-import Alert from '@/components/Alert';
-import { createLogger } from '@/lib/logger';
+import { exportManager, exportUtils } from '@/lib/exports';
+import dynamic from 'next/dynamic';
+
+const BlueprintDisplay = dynamic(
+  () => import('@/components/BlueprintDisplay').then((mod) => mod.default),
+  {
+    loading: () => (
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className="flex justify-center mb-4">
+          <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+        </div>
+        <p className="text-gray-600">Loading blueprint...</p>
+      </div>
+    ),
+  }
+);
 
 export default function ResultsPage() {
   const router = useRouter();
-  const logger = useMemo(() => createLogger('ResultsPage'), []);
   const [idea, setIdea] = useState<Idea | null>(null);
   const [session, setSession] = useState<IdeaSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,18 +31,18 @@ export default function ResultsPage() {
 
   useEffect(() => {
     const fetchResults = async () => {
-      let ideaId: string | null = null;
-
       try {
         setLoading(true);
 
+        // Get ideaId from query params
         const urlParams = new URLSearchParams(window.location.search);
-        ideaId = urlParams.get('ideaId');
+        const ideaId = urlParams.get('ideaId');
 
         if (!ideaId) {
           throw new Error('Idea ID is required');
         }
 
+        // Fetch the idea and session
         const ideaData = await dbService.getIdea(ideaId);
         if (!ideaData) {
           throw new Error('Idea not found');
@@ -42,14 +53,7 @@ export default function ResultsPage() {
         setIdea(ideaData);
         setSession(sessionData);
       } catch (err) {
-        logger.errorWithContext('Failed to fetch results', {
-          component: 'ResultsPage',
-          action: 'fetchResults',
-          metadata: {
-            ideaId,
-            error: err instanceof Error ? err.message : 'Unknown error',
-          },
-        });
+        console.error('Error fetching results:', err);
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );
@@ -59,7 +63,7 @@ export default function ResultsPage() {
     };
 
     fetchResults();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!idea) return;
@@ -67,26 +71,8 @@ export default function ResultsPage() {
     setExportLoading(true);
 
     try {
-      const lazyExporters = await import('@/lib/export-connectors/lazy');
-
       // Prepare data for export
-      const exportData = {
-        idea: {
-          id: idea.id,
-          title: idea.title,
-          raw_text: idea.raw_text,
-          status: idea.status,
-          created_at: idea.created_at,
-        },
-        deliverables: [],
-        tasks: [],
-        metadata: {
-          exported_at: new Date().toISOString(),
-          version: '1.0.0',
-          goals: '',
-          target_audience: '',
-        },
-      };
+      const exportData = exportUtils.normalizeData(idea);
 
       if (
         session &&
@@ -99,19 +85,11 @@ export default function ResultsPage() {
           (answers.target_audience as string) || '';
       }
 
-      // Export data using lazy loading
-      let result: {
-        success: boolean;
-        url?: string;
-        error?: string;
-        content?: string;
-      };
-
-      if (format === 'markdown') {
-        result = await lazyExporters.lazyExportToMarkdown(exportData);
-      } else {
-        result = await lazyExporters.lazyExportToJSON(exportData);
-      }
+      // Export the data
+      const result = await exportManager.export({
+        type: format,
+        data: exportData,
+      });
 
       if (result.success && result.url) {
         setExportUrl(result.url);
@@ -129,15 +107,7 @@ export default function ResultsPage() {
         throw new Error(result.error || 'Export failed');
       }
     } catch (err) {
-      logger.errorWithContext('Export failed', {
-        component: 'ResultsPage',
-        action: 'handleExport',
-        metadata: {
-          ideaId: idea?.id,
-          format,
-          error: err instanceof Error ? err.message : 'Unknown error',
-        },
-      });
+      console.error('Export error:', err);
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setExportLoading(false);
@@ -147,17 +117,9 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div
-          className="bg-white rounded-lg shadow-lg p-8 text-center"
-          role="status"
-          aria-live="polite"
-          aria-busy="true"
-        >
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <div className="flex justify-center mb-4">
-            <div
-              className="w-8 h-8 border-2 border-gray-300 border-t-primary-600 rounded-full animate-spin"
-              aria-hidden="true"
-            ></div>
+            <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
           </div>
           <p className="text-gray-600">Generating your project blueprint...</p>
         </div>
@@ -168,16 +130,16 @@ export default function ResultsPage() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Alert type="error" title="Error">
-          <p className="mb-4">{error}</p>
-          <Button
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
+          <p className="text-red-800">{error}</p>
+          <button
             onClick={() => router.back()}
-            variant="primary"
-            aria-label="Go back to previous page"
+            className="mt-4 btn btn-primary"
           >
             Go Back
-          </Button>
-        </Alert>
+          </button>
+        </div>
       </div>
     );
   }
@@ -185,16 +147,20 @@ export default function ResultsPage() {
   if (!idea) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Alert type="warning" title="No Idea Found">
-          <p className="mb-4">The idea you're looking for doesn't exist.</p>
-          <Button
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-yellow-900 mb-4">
+            No Idea Found
+          </h2>
+          <p className="text-yellow-800">
+            The idea you're looking for doesn't exist.
+          </p>
+          <button
             onClick={() => router.push('/')}
-            variant="primary"
-            aria-label="Navigate to home page"
+            className="mt-4 btn btn-primary"
           >
             Go Home
-          </Button>
-        </Alert>
+          </button>
+        </div>
       </div>
     );
   }
@@ -204,13 +170,9 @@ export default function ResultsPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Project Blueprint</h1>
-        <Button
-          onClick={() => router.back()}
-          variant="secondary"
-          aria-label="Go back to previous page"
-        >
+        <button onClick={() => router.back()} className="btn btn-secondary">
           ← Back
-        </Button>
+        </button>
       </div>
 
       <BlueprintDisplay
@@ -234,33 +196,25 @@ export default function ResultsPage() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Button
+          <button
             onClick={() => handleExport('markdown')}
             disabled={exportLoading}
-            loading={exportLoading}
-            variant="primary"
-            aria-label="Download project blueprint as Markdown file"
+            className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {exportLoading ? 'Exporting...' : 'Download Markdown'}
-          </Button>
+          </button>
 
-          <Button
+          <button
             onClick={() => handleExport('json')}
             disabled={exportLoading}
-            loading={exportLoading}
-            variant="secondary"
-            aria-label="Export project blueprint as JSON file"
+            className="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {exportLoading ? 'Exporting...' : 'Export JSON'}
-          </Button>
+          </button>
 
-          <Button
-            variant="outline"
-            disabled
-            aria-label="Export to Notion (coming soon)"
-          >
+          <button className="btn btn-outline" disabled>
             Export to Notion
-          </Button>
+          </button>
         </div>
 
         {exportUrl && (
