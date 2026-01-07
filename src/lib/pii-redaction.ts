@@ -17,7 +17,7 @@ interface PIIPatterns {
 }
 
 const PII_REGEX_PATTERNS: PIIPatterns = {
-  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,
   phone:
     /\b(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})\b/g,
   ssn: /\b\d{3}-\d{2}-\d{4}\b/g,
@@ -79,16 +79,22 @@ export function redactPII(text: string): string {
 /**
  * Redact PII from an object recursively
  */
-export function redactPIIInObject(obj: any): any {
+export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
   if (typeof obj === 'string') {
     return redactPII(obj);
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => redactPIIInObject(item));
+    return obj.map((item) => redactPIIInObject(item, seen));
   }
 
   if (obj !== null && typeof obj === 'object') {
+    // Handle circular references
+    if (seen.has(obj)) {
+      return '[Circular Reference]';
+    }
+    seen.add(obj);
+
     const redacted: any = {};
     for (const [key, value] of Object.entries(obj)) {
       // Skip redaction for known safe fields
@@ -103,7 +109,7 @@ export function redactPIIInObject(obj: any): any {
       if (safeFields.includes(key.toLowerCase())) {
         redacted[key] = value;
       } else {
-        redacted[key] = redactPIIInObject(value);
+        redacted[key] = redactPIIInObject(value, seen);
       }
     }
     return redacted;
