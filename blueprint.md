@@ -729,6 +729,67 @@ async function apiCall(url: string, data: any) {
 4. **Monitor by Endpoint**: Different endpoints have different rate limits
 5. **User Role Tracking**: (Future) Track rate limits by user role/plan
 
+#### Rate Limit Dashboard
+
+**Endpoint**: `/api/admin/rate-limit` (GET)
+
+Provides comprehensive real-time statistics on rate limiting:
+
+**Dashboard Data:**
+
+- `totalEntries`: Total number of rate limit entries in memory
+- `entriesByRole`: Breakdown of active entries by user role (anonymous, authenticated, premium, enterprise)
+- `expiredEntries`: Number of expired entries awaiting cleanup
+- `topUsers`: Top 10 users by request count (includes IP/identifier and role)
+- `rateLimitConfigs`: All endpoint-based rate limit configurations
+- `tieredRateLimits`: All user role-based rate limit configurations
+
+**Usage:**
+
+```bash
+curl https://example.com/api/admin/rate-limit
+```
+
+**Security Note:**
+
+- Dashboard endpoint uses `strict` rate limiting (10 requests per minute)
+- Should be protected with authentication in production
+- Consider role-based access control (admin only)
+
+**Example Dashboard Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "timestamp": "2026-01-07T12:00:00Z",
+    "totalEntries": 150,
+    "entriesByRole": {
+      "anonymous": 120,
+      "authenticated": 25,
+      "premium": 5
+    },
+    "expiredEntries": 10,
+    "topUsers": [
+      { "identifier": "192.168.1.1", "count": 50, "role": "anonymous" },
+      { "identifier": "192.168.1.2", "count": 35, "role": "authenticated" }
+    ],
+    "rateLimitConfigs": {
+      "strict": { "windowMs": 60000, "maxRequests": 10 },
+      "moderate": { "windowMs": 60000, "maxRequests": 30 },
+      "lenient": { "windowMs": 60000, "maxRequests": 60 }
+    },
+    "tieredRateLimits": {
+      "anonymous": { "windowMs": 60000, "maxRequests": 30 },
+      "authenticated": { "windowMs": 60000, "maxRequests": 60 },
+      "premium": { "windowMs": 60000, "maxRequests": 120 },
+      "enterprise": { "windowMs": 60000, "maxRequests": 300 }
+    }
+  },
+  "requestId": "req_1234567890_abc123"
+}
+```
+
 ---
 
 ## 28. Integration Hardening (2025-01-07)
