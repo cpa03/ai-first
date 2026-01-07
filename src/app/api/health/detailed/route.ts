@@ -73,14 +73,22 @@ async function handleGet(context: ApiContext) {
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
-  const response = NextResponse.json(healthStatus, {
-    status: statusCode,
-    headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Content-Type': 'application/health+json',
-      'X-Request-ID': context.requestId,
+  const response = NextResponse.json(
+    {
+      success: overallStatus === 'healthy',
+      data: healthStatus,
+      requestId: context.requestId,
+      timestamp: new Date().toISOString(),
     },
-  });
+    {
+      status: statusCode,
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Content-Type': 'application/health+json',
+        'X-Request-ID': context.requestId,
+      },
+    }
+  );
 
   return response;
 }

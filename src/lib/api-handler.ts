@@ -70,11 +70,33 @@ export function withApiHandler(
   };
 }
 
+export interface ApiResponse<T = unknown> {
+  success: true;
+  data: T;
+  requestId: string;
+  timestamp: string;
+}
+
 export function successResponse<T>(
   data: T,
   status: number = 200
 ): NextResponse {
   return NextResponse.json(data, { status });
+}
+
+export function standardSuccessResponse<T>(
+  data: T,
+  requestId: string,
+  status: number = 200
+): NextResponse {
+  const response: ApiResponse<T> = {
+    success: true,
+    data,
+    requestId,
+    timestamp: new Date().toISOString(),
+  };
+
+  return NextResponse.json(response, { status });
 }
 
 export function notFoundResponse(

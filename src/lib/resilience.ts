@@ -34,11 +34,15 @@ export class CircuitBreaker {
     state: 'closed',
     failures: 0,
   };
+  private cachedState?: CircuitBreakerState;
+  private recentFailures: number[] = [];
 
   constructor(private options: CircuitBreakerOptions) {}
 
   async execute<T>(operation: () => Promise<T>, context?: string): Promise<T> {
     const now = Date.now();
+
+    this.cleanupOldFailures(now);
 
     if (this.state.state === 'open') {
       if (now < (this.state.nextAttemptTime || 0)) {
@@ -51,31 +55,62 @@ export class CircuitBreaker {
 
     try {
       const result = await operation();
-      this.onSuccess();
+      this.onSuccess(now);
       return result;
     } catch (error) {
-      this.onError(error as Error, now);
+      const retryCount =
+        (error as Error & { attemptCount?: number }).attemptCount || 1;
+      this.onError(error as Error, now, retryCount);
       throw error;
     }
   }
 
-  private onSuccess(): void {
-    this.state.failures = 0;
-    this.state.state = 'closed';
+  private cleanupOldFailures(now: number): void {
+    const monitoringPeriod = this.options.monitoringPeriod;
+    this.recentFailures = this.recentFailures.filter(
+      (timestamp) => now - timestamp <= monitoringPeriod
+    );
+    this.state.failures = this.recentFailures.length;
   }
 
-  private onError(error: Error, now: number): void {
-    this.state.failures++;
-    this.state.lastFailureTime = now;
+  private onSuccess(_now: number): void {
+    this.recentFailures = [];
+    this.state.failures = 0;
+    this.state.state = 'closed';
+
+    if (this.cachedState) {
+      this.cachedState.failures = 0;
+      this.cachedState.state = 'closed';
+      delete this.cachedState.lastFailureTime;
+      delete this.cachedState.nextAttemptTime;
+    }
+  }
+
+  private onError(error: Error, _now: number, attemptCount: number = 1): void {
+    for (let i = 0; i < attemptCount; i++) {
+      this.recentFailures.push(_now);
+    }
+    this.state.failures = this.recentFailures.length;
+    this.state.lastFailureTime = _now;
 
     if (this.state.failures >= this.options.failureThreshold) {
       this.state.state = 'open';
-      this.state.nextAttemptTime = now + this.options.resetTimeout;
+      this.state.nextAttemptTime = _now + this.options.resetTimeout;
+    }
+
+    if (this.cachedState) {
+      this.cachedState.failures = this.state.failures;
+      this.cachedState.state = this.state.state;
+      this.cachedState.lastFailureTime = this.state.lastFailureTime;
+      this.cachedState.nextAttemptTime = this.state.nextAttemptTime;
     }
   }
 
   getState(): CircuitBreakerState {
-    return { ...this.state };
+    if (!this.cachedState) {
+      this.cachedState = { ...this.state };
+    }
+    return this.cachedState;
   }
 
   reset(): void {
@@ -83,6 +118,8 @@ export class CircuitBreaker {
       state: 'closed',
       failures: 0,
     };
+    this.recentFailures = [];
+    this.cachedState = undefined;
   }
 }
 
@@ -96,8 +133,38 @@ export class RetryManager {
       maxRetries = 3,
       baseDelay = 1000,
       maxDelay = 30000,
-      shouldRetry = RetryManager.defaultShouldRetry,
+      shouldRetry,
     } = options;
+
+    const defaultShouldRetry = (error: Error, _attempt: number): boolean => {
+      const retryableStatuses = [
+        408,
+        429,
+        500,
+        502,
+        503,
+        504,
+        507,
+        509,
+        'ECONNRESET',
+        'ECONNREFUSED',
+        'ETIMEDOUT',
+        'ENOTFOUND',
+        'EAI_AGAIN',
+      ];
+
+      const message = error.message.toLowerCase();
+
+      return (
+        retryableStatuses.some((status) => message.includes(String(status))) ||
+        message.includes('timeout') ||
+        message.includes('rate limit') ||
+        message.includes('too many requests') ||
+        message.includes('temporary failure')
+      );
+    };
+
+    const retryFn = shouldRetry || defaultShouldRetry;
 
     let lastError: Error | undefined;
 
@@ -107,12 +174,15 @@ export class RetryManager {
       } catch (error) {
         lastError = error as Error;
 
-        if (attempt > maxRetries || !shouldRetry(lastError, attempt)) {
-          throw new RetryExhaustedError(
+        if (attempt > maxRetries || !retryFn(lastError, attempt)) {
+          const exhaustedError = new RetryExhaustedError(
             `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
             lastError,
             attempt
           );
+          (exhaustedError as Error & { attemptCount?: number }).attemptCount =
+            attempt;
+          throw exhaustedError;
         }
 
         const delay = Math.min(
@@ -126,36 +196,6 @@ export class RetryManager {
 
     throw lastError;
   }
-
-  private static defaultShouldRetry(error: Error, attempt: number): boolean {
-    if (attempt >= 3) return false;
-
-    const retryableStatuses = [
-      408,
-      429,
-      500,
-      502,
-      503,
-      504,
-      507,
-      509,
-      'ECONNRESET',
-      'ECONNREFUSED',
-      'ETIMEDOUT',
-      'ENOTFOUND',
-      'EAI_AGAIN',
-    ];
-
-    const message = error.message.toLowerCase();
-
-    return (
-      retryableStatuses.some((status) => message.includes(String(status))) ||
-      message.includes('timeout') ||
-      message.includes('rate limit') ||
-      message.includes('too many requests') ||
-      message.includes('temporary failure')
-    );
-  }
 }
 
 export class TimeoutManager {
@@ -165,6 +205,10 @@ export class TimeoutManager {
   ): Promise<T> {
     const { timeoutMs, onTimeout } = options;
 
+    if (timeoutMs <= 0) {
+      return Promise.reject(new TimeoutError('Timeout must be greater than 0'));
+    }
+
     return Promise.race([
       operation(),
       new Promise<never>((_, reject) => {
@@ -173,7 +217,9 @@ export class TimeoutManager {
           reject(new TimeoutError(`Operation timed out after ${timeoutMs}ms`));
         }, timeoutMs);
 
-        timeoutId.unref();
+        if (typeof (timeoutId as NodeJS.Timeout).unref === 'function') {
+          (timeoutId as NodeJS.Timeout).unref();
+        }
       }),
     ]);
   }

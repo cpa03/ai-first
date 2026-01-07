@@ -1,7 +1,11 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdea, validateIdeaId } from '@/lib/validation';
 import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
-import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
+import {
+  withApiHandler,
+  standardSuccessResponse,
+  ApiContext,
+} from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -24,11 +28,7 @@ async function handlePost(context: ApiContext) {
     ideaText.trim()
   );
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return standardSuccessResponse({ session }, context.requestId);
 }
 
 async function handleGet(context: ApiContext) {
@@ -37,7 +37,7 @@ async function handleGet(context: ApiContext) {
 
   if (!ideaId) {
     throw new ValidationError([
-      { field: 'ideaId', message: 'ideaId is required' },
+      { field: 'ideaId', message: 'ideaId parameter is required' },
     ]);
   }
 
@@ -56,11 +56,7 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return standardSuccessResponse({ session }, context.requestId);
 }
 
 export const POST = withApiHandler(handlePost);
