@@ -32,6 +32,7 @@ async function handlePost(context: ApiContext) {
   );
 
   return successResponse({
+    success: true,
     questions: session.questions,
     ideaId: session.ideaId,
     status: session.status,

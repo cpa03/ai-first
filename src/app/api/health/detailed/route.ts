@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server';
 import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { resilienceManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/exports';
-import { ApiContext, withApiHandler } from '@/lib/api-handler';
+import { ApiContext, withApiHandler, successResponse } from '@/lib/api-handler';
 
 interface HealthStatus {
   status: 'healthy' | 'degraded' | 'unhealthy';
@@ -73,16 +72,14 @@ async function handleGet(context: ApiContext) {
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
-  const response = NextResponse.json(healthStatus, {
-    status: statusCode,
-    headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Content-Type': 'application/health+json',
-      'X-Request-ID': context.requestId,
+  return successResponse(
+    {
+      success: overallStatus === 'healthy',
+      data: healthStatus,
+      requestId: context.requestId,
     },
-  });
-
-  return response;
+    statusCode
+  );
 }
 
 async function checkDatabaseHealth(): Promise<ServiceHealth> {

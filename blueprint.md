@@ -601,7 +601,194 @@ Use detailed health endpoint at `/api/health/detailed` to monitor:
 
 ---
 
-## 25. Closing & governance
+## 26. API Standardization
+
+### API Response Format Standards
+
+All API responses MUST follow a consistent format to ensure predictability and ease of integration.
+
+#### Standard Success Response
+
+```typescript
+{
+  success: true,
+  data: T,
+  requestId: string,
+  // Optional additional fields
+}
+```
+
+#### Standard Error Response
+
+```typescript
+{
+  error: string,
+  code: string,
+  details?: ErrorDetail[],
+  timestamp: string,
+  requestId?: string,
+  retryable?: boolean
+}
+```
+
+### Naming Conventions
+
+**Route Naming:**
+
+- Resource collections: `/api/{resource}` (e.g., `/api/breakdown`, `/api/clarify`)
+- Resource actions: `/api/{resource}/{action}` (e.g., `/api/clarify/start`, `/api/clarify/answer`)
+- Health checks: `/api/health/*` (e.g., `/api/health/database`, `/api/health/detailed`)
+
+**Request Body Fields:**
+
+- `idea`: Raw idea text (string)
+- `ideaId`: Unique identifier for an idea (string)
+- `questionId`: Unique identifier for a question (string)
+- `answer`: User's answer to a question (string)
+- `refinedIdea`: Processed/refined idea text (string)
+- `userResponses`: Object containing user's answers (Record<string, string>)
+
+**Response Fields:**
+
+- `success`: Boolean indicating operation success (always present)
+- `data`: Payload data (wrapped for consistency)
+- `requestId`: Unique request identifier for tracing (always present)
+- `timestamp`: ISO 8601 timestamp (always present in health endpoints)
+
+### HTTP Status Codes
+
+- **200 OK**: Successful GET, POST, PUT, DELETE
+- **201 Created**: Successful resource creation (future use)
+- **204 No Content**: Successful DELETE with no body (future use)
+- **400 Bad Request**: Invalid request parameters or validation errors
+- **401 Unauthorized**: Missing or invalid authentication (future use)
+- **403 Forbidden**: Valid authentication but insufficient permissions (future use)
+- **404 Not Found**: Resource not found
+- **413 Payload Too Large**: Request body exceeds size limit
+- **429 Too Many Requests**: Rate limit exceeded
+- **500 Internal Server Error**: Unexpected server errors
+- **502 Bad Gateway**: External service errors
+- **503 Service Unavailable**: Service temporarily unavailable (circuit breaker, etc.)
+- **504 Gateway Timeout**: External service timeout
+
+### API Versioning Strategy
+
+**Current Version:** v1 (implicit, no version prefix)
+
+**Future Versioning (when needed):**
+
+1. **URL Path Versioning** (Recommended for breaking changes):
+
+   ```
+   /api/v1/breakdown
+   /api/v2/breakdown
+   ```
+
+2. **Header Versioning** (Alternative approach):
+   ```
+   API-Version: 1
+   ```
+
+**Version Management:**
+
+- Maintain previous major version for at least 6 months after new version release
+- Document breaking changes in migration guides
+- Use semantic versioning for API (MAJOR.MINOR.PATCH)
+  - MAJOR: Breaking changes to API contract
+  - MINOR: New features, backward compatible
+  - PATCH: Bug fixes, backward compatible
+
+**Breaking Change Policy:**
+
+- Never break existing API contracts without version increment
+- Deprecate endpoints with deprecation headers at least 30 days before removal
+- Provide clear migration documentation
+- Announce changes via changelog and deprecation notices
+
+**Non-Breaking Changes:**
+
+- Adding new optional fields to responses
+- Adding new query parameters
+- Adding new endpoints
+- Changing field order in responses
+- Adding new values to enum fields
+
+### Consistency Rules
+
+1. **All responses include `success` field** (except errors which use `error` field)
+2. **All successful responses include `requestId`** for distributed tracing
+3. **All health endpoints wrap data in `data` field**
+4. **Error responses use standardized error codes** from ErrorCode enum
+5. **All endpoints use `withApiHandler` wrapper** for consistent middleware
+6. **Rate limiting configured per-route** using `rateLimit` option
+7. **Request size validation** enabled by default (disable with `validateSize: false`)
+
+### Existing API Endpoints (v1)
+
+#### Clarification Endpoints
+
+- `POST /api/clarify` - Start clarification with generated questions
+  - Request: `{ idea, ideaId? }`
+  - Response: `{ success, questions, ideaId, status, confidence, requestId }`
+  - Rate Limit: moderate
+
+- `POST /api/clarify/start` - Start clarification session (alternative to /api/clarify)
+  - Request: `{ ideaId, ideaText }`
+  - Response: `{ success, session, requestId }`
+  - Rate Limit: default
+
+- `GET /api/clarify/start` - Get existing clarification session
+  - Query: `ideaId`
+  - Response: `{ success, session, requestId }`
+  - Rate Limit: default
+
+- `POST /api/clarify/answer` - Submit answer to a question
+  - Request: `{ ideaId, questionId, answer }`
+  - Response: `{ success, session, requestId }`
+  - Rate Limit: default
+
+- `POST /api/clarify/complete` - Complete clarification and generate refined idea
+  - Request: `{ ideaId }`
+  - Response: `{ success, ...result, requestId }`
+  - Rate Limit: default
+
+#### Breakdown Endpoints
+
+- `POST /api/breakdown` - Start idea breakdown
+  - Request: `{ ideaId, refinedIdea, userResponses, options }`
+  - Response: `{ success, session, requestId }`
+  - Rate Limit: moderate
+
+- `GET /api/breakdown` - Get existing breakdown session
+  - Query: `ideaId`
+  - Response: `{ success, session, requestId }`
+  - Rate Limit: lenient
+
+#### Health Endpoints
+
+- `GET /api/health` - Environment configuration health check
+  - Response: `{ success, data: { status, timestamp, environment, checks, summary, error?, warning? }, requestId }`
+  - Rate Limit: none (validateSize: false)
+
+- `GET /api/health/database` - Database health check
+  - Response: `{ success, data: { ...healthCheck, service, timestamp, environment }, requestId }`
+  - Rate Limit: none (validateSize: false)
+
+- `GET /api/health/detailed` - Comprehensive system health check
+  - Response: `{ success, data: HealthStatus, requestId }`
+  - Rate Limit: none (validateSize: false)
+  - Status Code: 200 (healthy) or 503 (unhealthy/degraded)
+
+### API Documentation
+
+- OpenAPI specification: `docs/api/openapi.yaml` (future)
+- API reference: `docs/api.md` (future)
+- Error codes: `docs/error-codes.md`
+- Integration examples: `docs/integration-examples.md` (future)
+
+---
+
+## 27. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 

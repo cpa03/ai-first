@@ -73,7 +73,11 @@ async function handleGet(_context: ApiContext) {
     environment: envStatus.environment,
   };
 
-  return successResponse(envStatus);
+  return successResponse({
+    success: true,
+    data: envStatus,
+    requestId: _context.requestId,
+  });
 }
 
 export const GET = withApiHandler(handleGet, { validateSize: false });
