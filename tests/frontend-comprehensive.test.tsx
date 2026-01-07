@@ -125,7 +125,6 @@ describe('Frontend Component Tests', () => {
     it('shows loading state during submission', async () => {
       global.fetch = createMockFetch(
         { data: { id: 'test-id' } },
-        {},
         { delay: 1000 }
       );
 
@@ -190,7 +189,7 @@ describe('Frontend Component Tests', () => {
     });
 
     it('handles question answering flow', async () => {
-      global.fetch
+      (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -339,14 +338,24 @@ describe('Frontend Component Tests', () => {
     const mockBlueprint = mockUserJourney.blueprint;
 
     it('renders blueprint content correctly', () => {
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       expect(screen.getByText(mockBlueprint.title)).toBeInTheDocument();
       expect(screen.getByText(mockBlueprint.description)).toBeInTheDocument();
     });
 
     it('displays phases and tasks', () => {
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       expect(screen.getByText('Phase 1')).toBeInTheDocument();
       expect(screen.getByText('Task 1')).toBeInTheDocument();
@@ -354,7 +363,12 @@ describe('Frontend Component Tests', () => {
     });
 
     it('renders export options', () => {
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       expect(screen.getByText(/export options/i)).toBeInTheDocument();
       expect(
@@ -375,7 +389,12 @@ describe('Frontend Component Tests', () => {
         content: '# Test Project',
       });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       const markdownButton = screen.getByRole('button', { name: /markdown/i });
       await user.click(markdownButton);
@@ -392,7 +411,12 @@ describe('Frontend Component Tests', () => {
         url: 'https://notion.so/test-page',
       });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       const notionButton = screen.getByRole('button', { name: /notion/i });
       await user.click(notionButton);
@@ -408,7 +432,12 @@ describe('Frontend Component Tests', () => {
         { ok: false, status: 500 }
       );
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       const trelloButton = screen.getByRole('button', { name: /trello/i });
       await user.click(trelloButton);
@@ -419,9 +448,14 @@ describe('Frontend Component Tests', () => {
     });
 
     it('displays loading state during export', async () => {
-      global.fetch = createMockFetch({ success: true }, {}, { delay: 1000 });
+      global.fetch = createMockFetch({ success: true }, { delay: 1000 });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       const githubButton = screen.getByRole('button', { name: /github/i });
       await user.click(githubButton);
@@ -437,7 +471,12 @@ describe('Frontend Component Tests', () => {
         },
       });
 
-      render(<BlueprintDisplay blueprint={mockBlueprint} />);
+      render(
+        <BlueprintDisplay
+          idea={mockUserJourney.ideaInput}
+          answers={mockUserJourney.answers}
+        />
+      );
 
       const copyButton = screen.getByRole('button', { name: /copy/i });
       await user.click(copyButton);

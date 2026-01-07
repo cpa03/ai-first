@@ -2,6 +2,7 @@ import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
 export interface AIModelConfig {
   provider: 'openai' | 'anthropic';
