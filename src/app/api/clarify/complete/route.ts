@@ -4,7 +4,7 @@ import { ValidationError } from '@/lib/errors';
 import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const { ideaId } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);
@@ -14,11 +14,15 @@ async function handlePost(context: ApiContext) {
 
   const result = await clarifierAgent.completeClarification(ideaId.trim());
 
-  return successResponse({
-    success: true,
-    ...result,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      success: true,
+      ...result,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost);

@@ -52,6 +52,7 @@ export interface Database {
             | 'testing'
             | 'deployment'
             | 'research';
+          deleted_at: string | null;
         };
         Insert: {
           created_at?: string;
@@ -72,6 +73,7 @@ export interface Database {
             | 'testing'
             | 'deployment'
             | 'research';
+          deleted_at?: string | null;
         };
         Update: {
           created_at?: string;
@@ -92,6 +94,7 @@ export interface Database {
             | 'testing'
             | 'deployment'
             | 'research';
+          deleted_at?: string | null;
         };
       };
       idea_sessions: {
@@ -125,6 +128,7 @@ export interface Database {
           status: 'draft' | 'clarified' | 'breakdown' | 'completed';
           title: string;
           user_id: string;
+          deleted_at: string | null;
         };
         Insert: {
           created_at?: string;
@@ -133,6 +137,7 @@ export interface Database {
           status?: 'draft' | 'clarified' | 'breakdown' | 'completed';
           title: string;
           user_id: string;
+          deleted_at?: string | null;
         };
         Update: {
           created_at?: string;
@@ -141,6 +146,7 @@ export interface Database {
           status?: 'draft' | 'clarified' | 'breakdown' | 'completed';
           title?: string;
           user_id?: string;
+          deleted_at?: string | null;
         };
       };
       tasks: {
@@ -163,6 +169,7 @@ export interface Database {
           tags: string[] | null;
           custom_fields: Json | null;
           milestone_id: string | null;
+          deleted_at: string | null;
         };
         Insert: {
           assignee?: string | null;
@@ -183,6 +190,7 @@ export interface Database {
           tags?: string[] | null;
           custom_fields?: Json | null;
           milestone_id?: string | null;
+          deleted_at?: string | null;
         };
         Update: {
           assignee?: string | null;
@@ -203,6 +211,7 @@ export interface Database {
           tags?: string[] | null;
           custom_fields?: Json | null;
           milestone_id?: string | null;
+          deleted_at?: string | null;
         };
       };
       task_dependencies: {
@@ -523,6 +532,7 @@ export interface Database {
           reference_id: string | null;
           reference_type: string;
           vector_data: Json | null;
+          embedding: number[];
         };
         Insert: {
           created_at?: string;
@@ -531,6 +541,7 @@ export interface Database {
           reference_id?: string | null;
           reference_type: string;
           vector_data?: Json | null;
+          embedding?: number[];
         };
         Update: {
           created_at?: string;
@@ -539,6 +550,7 @@ export interface Database {
           reference_id?: string | null;
           reference_type?: string;
           vector_data?: Json | null;
+          embedding?: number[];
         };
       };
     };
@@ -546,7 +558,21 @@ export interface Database {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      match_vectors: {
+        Args: {
+          idea_id_filter?: string | null;
+          match_count?: number;
+          match_threshold?: number;
+          query_embedding: number[];
+        };
+        Returns: {
+          id: string;
+          idea_id: string;
+          reference_id: string | null;
+          reference_type: string;
+          similarity: number;
+        };
+      };
     };
     Enums: {
       [_ in never]: never;
