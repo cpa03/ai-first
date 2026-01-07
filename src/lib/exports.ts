@@ -33,33 +33,10 @@ export interface ExportData {
   idea: Idea;
   deliverables?: Deliverable[];
   tasks?: Task[];
-}
-
-export interface GitHubUser {
-  login: string;
-  id: number;
-}
-
-export interface GitHubRepository {
-  id: number;
-  name: string;
-  html_url: string;
-  url: string;
-}
-
-export interface GitHubProject {
-  id: string;
-  name: string;
-}
-
-export interface GitHubProjectColumn {
-  id: string;
-  name: string;
-}
-
-export interface GitHubIssue {
-  id: number;
-  url: string;
+  metadata?: {
+    exported_at: string;
+    version: string;
+  };
 }
 
 export interface MarkdownExportOptions {
@@ -103,6 +80,48 @@ export interface AuthConfig {
   clientSecret?: string;
   redirectUri?: string;
   scopes?: string[];
+}
+
+export interface GitHubUser {
+  login: string;
+  id: number;
+}
+
+export interface GitHubRepository {
+  id: number;
+  name: string;
+  html_url: string;
+  url: string;
+}
+
+export interface GitHubProject {
+  id: string;
+  name: string;
+}
+
+export interface GitHubProjectColumn {
+  id: string;
+  name: string;
+}
+
+export interface GitHubIssue {
+  id: number;
+  url: string;
+}
+
+export interface TrelloList {
+  id: string;
+  name: string;
+}
+
+export interface TrelloBoard {
+  id: string;
+  url: string;
+}
+
+export interface TrelloCard {
+  id: string;
+  url: string;
 }
 
 // Base export connector interface
@@ -570,6 +589,7 @@ export class TrelloExporter extends ExportConnector {
         await this.createCard(
           todoList.id,
           {
+            id: 'overview',
             title: '📋 Project Overview',
             description: idea.raw_text,
             assignee: null,
@@ -641,7 +661,7 @@ export class TrelloExporter extends ExportConnector {
     name: string,
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<TrelloBoard> {
     const response = await fetch(
       `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
       {
@@ -661,7 +681,7 @@ export class TrelloExporter extends ExportConnector {
     name: string,
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<TrelloList> {
     const response = await fetch(
       `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
       {
@@ -678,23 +698,19 @@ export class TrelloExporter extends ExportConnector {
 
   private async createCard(
     listId: string,
-    task: any,
+    task: Task,
     apiKey: string,
     token: string
-  ): Promise<any> {
-    const cardData = {
+  ): Promise<{ id: string; url: string }> {
+    const cardData: Record<string, string | number | undefined> = {
       name: task.title,
       desc: task.description || '',
       key: apiKey,
       token: token,
+      due: task.due_date,
     };
 
-    // Add due date if available
-    if (task.due_date) {
-      (cardData as any).due = task.due_date;
-    }
-
-    const params = new URLSearchParams(cardData as any);
+    const params = new URLSearchParams(cardData as Record<string, string>);
     const response = await fetch(
       `${this.API_BASE}/cards?${params.toString()}`,
       {
@@ -776,7 +792,7 @@ export class TrelloExporter extends ExportConnector {
   }
 
   private getTaskListId(
-    task: any,
+    task: Task,
     deliverableLists: Record<string, string>,
     todoListId: string,
     inProgressListId: string,
@@ -811,8 +827,8 @@ export class GoogleTasksExporter extends ExportConnector {
   readonly name = 'Google Tasks';
 
   async export(
-    _data: any,
-    _options?: Record<string, any>
+    _data: ExportData,
+    _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     // This connector requires server-side execution
     return {
@@ -922,7 +938,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       }
 
       // Create issues for tasks
-      const createdIssues: any[] = [];
+      const createdIssues: GitHubIssue[] = [];
       for (const task of tasks) {
         const issue = await this.createIssue(
           user.login,
@@ -1492,17 +1508,17 @@ export class ExportService {
   }
 
   async exportToMarkdown(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { content?: string; url?: string }> {
     return await this.markdownExporter.export(data);
   }
 
-  async exportToJSON(data: any): Promise<ExportResult> {
+  async exportToJSON(data: ExportData): Promise<ExportResult> {
     return await this.jsonExporter.export(data);
   }
 
   async exportToNotion(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { notionPageId?: string }> {
     return (await this.notionExporter.export(data)) as ExportResult & {
       notionPageId?: string;
@@ -1510,18 +1526,18 @@ export class ExportService {
   }
 
   async exportToTrello(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { boardId?: string }> {
     return (await this.trelloExporter.export(data)) as ExportResult & {
       boardId?: string;
     };
   }
 
-  async exportToGoogleTasks(data: any): Promise<ExportResult> {
+  async exportToGoogleTasks(data: ExportData): Promise<ExportResult> {
     return await this.googleTasksExporter.export(data);
   }
 
-  async exportToGitHubProjects(data: any): Promise<ExportResult> {
+  async exportToGitHubProjects(data: ExportData): Promise<ExportResult> {
     return await this.githubProjectsExporter.export(data);
   }
 }
@@ -1593,7 +1609,11 @@ export class SyncStatusTracker {
 // Export utilities
 export const exportUtils = {
   // Convert IdeaFlow data to standard format
-  normalizeData(idea: any, deliverables: any[] = [], tasks: any[] = []): any {
+  normalizeData(
+    idea: Idea,
+    deliverables: Deliverable[] = [],
+    tasks: Task[] = []
+  ): ExportData {
     return {
       idea: {
         id: idea.id,
@@ -1626,17 +1646,26 @@ export const exportUtils = {
   },
 
   // Validate export data against schema
-  validateExportData(data: any): { valid: boolean; errors: string[] } {
+  validateExportData(data: unknown): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    if (!data.idea) {
+    if (typeof data !== 'object' || data === null) {
+      errors.push('Invalid data type');
+      return { valid: false, errors };
+    }
+
+    const exportData = data as Partial<ExportData>;
+
+    if (!exportData.idea) {
       errors.push('Missing required field: idea');
     } else {
-      if (!data.idea.id) errors.push('Missing required field: idea.id');
-      if (!data.idea.title) errors.push('Missing required field: idea.title');
-      if (!data.idea.raw_text)
+      if (!exportData.idea.id) errors.push('Missing required field: idea.id');
+      if (!exportData.idea.title)
+        errors.push('Missing required field: idea.title');
+      if (!exportData.idea.raw_text)
         errors.push('Missing required field: idea.raw_text');
-      if (!data.idea.status) errors.push('Missing required field: idea.status');
+      if (!exportData.idea.status)
+        errors.push('Missing required field: idea.status');
     }
 
     return {
