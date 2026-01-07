@@ -915,65 +915,81 @@ All retryable errors include `retryable: true` in response.
 
 ---
 
-## 30. DevOps & Deployment Automation (2026-01-07)
+## 30. Deployment & CI/CD (2026-01-07)
 
 ### Overview
 
-Implemented comprehensive DevOps infrastructure for Cloudflare Workers deployment, including automated environment configuration, monitoring, and CI/CD integration.
+IdeaFlow uses Vercel for production deployment with GitHub Actions for continuous integration and automated testing. The deployment pipeline ensures code quality through automated checks before merging to production.
 
-### Problem Statement
+### Deployment Architecture
 
-**P0 Issue #119**: Cloudflare Workers Build deployment was failing due to missing environment variables in Cloudflare dashboard, blocking all PR merges and CI/CD pipeline.
+- **Platform**: Vercel (serverless Next.js deployment)
+- **CI/CD**: GitHub Actions
+- **Environment Management**: Vercel environment variables + `.env.local` for local development
+- **Database**: Supabase (PostgreSQL)
+- **Hosting**: Vercel Free Tier + Supabase Free Tier
 
-### Solution Implemented
+### GitHub Actions Workflows
 
-#### 1. Automated Environment Setup Script
+The repository uses these GitHub Actions workflows:
 
-**File**: `scripts/setup-cloudflare-env.sh`
+- **`.github/workflows/on-pull.yml`**: Runs on pull requests, performs CI checks
+- **`.github/workflows/on-push.yml`**: Runs on pushes, triggers agent workflows
+- **`.github/workflows/deploy.yml`**: Specialized deployment workflow for deploy-specialist agent
 
-Features:
+### Pre-commit & CI Checks
 
-- ✅ Validates environment variables from `.env.local` or `config/.env.example`
-- ✅ Interactive selection of deployment environments (Production/Preview/Both)
-- ✅ Automatic configuration via Wrangler CLI
-- ✅ Comprehensive error handling and validation
-- ✅ Security-focused output (masks sensitive values)
-- ✅ Support for both required and optional variables
+Before code is merged to `main`, it passes through these checks:
 
-Usage:
+1. **Build Verification**
+
+   ```bash
+   npm run build:check
+   ```
+
+   Validates that application builds successfully with environment variables configured.
+
+2. **Type Checking**
+
+   ```bash
+   npm run type-check
+   ```
+
+   Ensures TypeScript types are correct and no type errors exist.
+
+3. **Linting**
+
+   ```bash
+   npm run lint
+   ```
+
+   Enforces code style and catches potential issues.
+
+4. **Testing**
+
+   ```bash
+   npm test
+   ```
+
+   Runs unit tests, integration tests, and e2e tests.
+
+5. **Environment Validation**
+   ```bash
+   npm run env:check
+   ```
+   Validates required environment variables are configured.
+
+### Environment Variables
+
+#### Local Development
+
+Create `.env.local` from example:
 
 ```bash
-chmod +x scripts/setup-cloudflare-env.sh
-./scripts/setup-cloudflare-env.sh
+cp config/.env.example .env.local
 ```
 
-The script automatically:
-
-- Checks for wrangler CLI installation
-- Authenticates with Cloudflare
-- Validates environment configuration
-- Configures all required variables in Cloudflare
-- Verifies success with confirmation messages
-
-#### 2. Comprehensive Deployment Documentation
-
-**File**: `docs/cloudflare-deploy.md`
-
-Complete guide covering:
-
-- ✅ Quick setup with automated script
-- ✅ Manual Cloudflare dashboard configuration
-- ✅ Environment variables reference (required and optional)
-- ✅ CI/CD integration with GitHub Actions
-- ✅ Troubleshooting common issues
-- ✅ Rollback procedures
-- ✅ Monitoring and observability
-- ✅ Security best practices
-- ✅ Cost optimization strategies
-
-#### 3. Environment Variable Management
-
-**Required Variables** (automated by setup script):
+Required variables:
 
 - `NEXT_PUBLIC_SUPABASE_URL` - Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase anon key
@@ -982,171 +998,162 @@ Complete guide covering:
 - `COST_LIMIT_DAILY` - Daily cost limit in USD
 - `NEXT_PUBLIC_APP_URL` - Application URL
 
-**Optional Variables** (for export integrations):
+Optional variables (for export integrations):
 
-- Notion: `NOTION_API_KEY`, `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET`, etc.
+- Notion: `NOTION_API_KEY`, `NOTION_CLIENT_ID`, etc.
 - Trello: `TRELLO_API_KEY`, `TRELLO_TOKEN`, etc.
 - Google Tasks: `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, etc.
 - GitHub Projects: `GITHUB_TOKEN`, `GITHUB_CLIENT_ID`, etc.
 
-### CI/CD Integration
+#### Production (Vercel)
 
-#### GitHub Actions Workflows
+Configure environment variables in Vercel dashboard:
 
-- **`.github/workflows/on-pull.yml`**: Runs on pull requests, performs CI checks including Cloudflare Workers Build
-- **`.github/workflows/on-push.yml`**: Runs on pushes, triggers deployment
-- **`.github/workflows/deploy.yml`**: Specialized deployment workflow for deploy-specialist agent
+1. Go to Project Settings → Environment Variables
+2. Add all required variables with production values
+3. Set appropriate scopes (Production, Preview, Development)
 
-#### Cloudflare Workers Build Check
+### Deployment to Vercel
 
-Automatic triggering:
+#### Automatic Deployment
 
-- Pull request creation
-- Commit push to any branch
-- Branch merge to `main`
+- Every push to `main` triggers automatic deployment to Vercel
+- Pull request previews are automatically created
+- Deployments are linked to GitHub commits
 
-Verification:
+#### Manual Deployment
 
-1. Build completes successfully
-2. All environment variables configured
-3. Deployment succeeds
+```bash
+vercel --prod
+```
 
-### Deployment Safety
+### Database Setup
 
-#### Pre-deployment Validation
+#### Local Development
 
-- Build passes locally: `npm run build:check`
-- Type checking: `npm run type-check`
-- Linting: `npm run lint`
-- Environment validation: `npm run env:check`
+```bash
+# Install Supabase CLI
+npm install -g @supabase/cli
 
-#### Rollback Capabilities
+# Run migrations
+npm run db:migrate
 
-1. **Automatic Rollback**: Cloudflare dashboard → Deployments → Rollback
-2. **Git-based Rollback**: Revert commit and push
-3. **Emergency Disable**: Temporary project disable via dashboard
+# Reset database (development only)
+npm run db:reset
+```
 
-### Monitoring & Observability
+#### Production
+
+- Database schema is managed via Supabase dashboard
+- Use Supabase migrations for schema changes
+- RLS (Row Level Security) policies configured for security
+
+### Monitoring & Health Checks
 
 #### Health Endpoints
 
-- **`/api/health`** - Basic health status
-- **`/api/health/database`** - Database connectivity
-- **`/api/health/detailed`** - Comprehensive system status (includes circuit breaker states)
+- **`/api/health`** - Basic environment health check
+- **`/api/health/database`** - Database connectivity and latency
+- **`/api/health/detailed`** - Comprehensive system status (database, AI service, circuit breakers)
 
-#### Logging
+#### Monitoring
 
-- Cloudflare dashboard: Workers & Pages → Logs
-- Wrangler CLI: `wrangler pages deployment tail`
-- Supabase dashboard: Database logs, Edge Function logs
-
-#### Key Metrics to Monitor
-
-- Build success rate
-- Deployment frequency
-- Rollback frequency
-- Response times
-- Error rates
-- Database query performance
-- AI API call costs
+- Vercel dashboard: Deployment logs, analytics
+- Supabase dashboard: Database logs, query performance
+- GitHub Actions: CI/CD pipeline status
 
 ### Security Best Practices
 
-1. **Never Commit Secrets**
+1. **Secrets Management**
+   - Never commit secrets to repository
    - Use `.env.local` for development (in `.gitignore`)
-   - Use Cloudflare environment variables for production
+   - Use Vercel environment variables for production
    - Rotate credentials regularly
 
-2. **Minimal Permissions**
+2. **Permissions**
    - Use Supabase anon key for client-side operations
    - Use service role key only for server-side operations
    - Restrict AI API keys to necessary scopes
+   - Implement RLS policies in Supabase
 
 3. **Credential Rotation**
    - Rotate Supabase service role key every 90 days
    - Rotate AI provider API keys every 60 days
-   - Update Cloudflare secrets after rotation
+   - Update Vercel environment variables after rotation
 
 ### Cost Optimization
 
-#### Cloudflare Limits (Free Tier)
+#### Vercel Free Tier Limits
 
-- 100,000 requests/day
-- 10ms CPU time limit
-- 500 builds/month
+- 100 GB bandwidth per month
+- 6,000 minutes of build time per month
+- Unlimited deployments
 
-#### Supabase Limits (Free Tier)
+#### Supabase Free Tier Limits
 
-- 500 MB database
+- 500 MB database storage
 - 1 GB bandwidth
+- 2 GB file storage
 
 #### AI API Cost Control
 
 - Set `COST_LIMIT_DAILY` to enforce spending limits
 - Monitor API usage in provider dashboard
 - Implement caching to reduce API calls
+- Use efficient models (e.g., GPT-3.5 instead of GPT-4 when possible)
 
-### Troubleshooting Guide
+### Rollback Procedures
+
+1. **Vercel Rollback**
+   - Go to Vercel dashboard → Deployments
+   - Find previous successful deployment
+   - Click "Rollback" to revert
+
+2. **Git-based Rollback**
+   - Revert commit: `git revert <commit-sha>`
+   - Push changes: `git push origin main`
+   - Vercel automatically deploys
+
+### Troubleshooting
 
 #### Common Issues
 
-1. **Build Fails Due to Missing Environment Variables**
-   - **Solution**: Run `./scripts/setup-cloudflare-env.sh`
-   - **Alternative**: Manually add variables in Cloudflare dashboard
+1. **Build Fails in Vercel**
+   - Check environment variables are set correctly in Vercel dashboard
+   - Verify build logs in Vercel dashboard
+   - Ensure `npm run build` passes locally
 
-2. **"Supabase clients not initialized" Error**
-   - **Solution**: Verify `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - **Check**: URL format: `https://your-project-id.supabase.co`
+2. **Environment Variables Not Loading**
+   - Restart development server after changing `.env.local`
+   - Verify variable names match exactly (case-sensitive)
+   - Run `npm run env:check` to validate setup
 
-3. **AI Provider Authentication Fails**
-   - **Solution**: Verify `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`
-   - **Check**: API key validity and credits
+3. **Supabase Connection Issues**
+   - Verify `NEXT_PUBLIC_SUPABASE_URL` format: `https://your-project-id.supabase.co`
+   - Check Supabase project status (not paused)
+   - Verify API keys are correct (anon key for client, service role for server)
 
-4. **Build Succeeds But Deployment Fails**
-   - **Solution**: Check Cloudflare build logs
-   - **Verify**: `.next` directory exists after build
-   - **Check**: Build output directory matches configuration
+4. **AI API Errors**
+   - Verify API key validity and credits
+   - Check `COST_LIMIT_DAILY` isn't blocking requests
+   - Review API usage in provider dashboard
 
-### Success Criteria Met
+### Deployment Documentation
 
-- [x] P0 issue #119 addressed with comprehensive solution
-- [x] Automated setup script created and tested
-- [x] Complete deployment documentation written
-- [x] CI/CD integration documented
+For detailed deployment information, see:
+
+- `docs/deploy.md` - Complete deployment guide
+- `docs/environment-setup.md` - Environment configuration
+
+### Success Criteria
+
+- [x] CI/CD pipeline automated via GitHub Actions
+- [x] Pre-deployment checks enforced (build, type-check, lint, test)
+- [x] Vercel deployment configured
+- [x] Environment variable management documented
+- [x] Health monitoring endpoints implemented
 - [x] Security best practices documented
-- [x] Troubleshooting guide provided
-- [x] Rollback procedures documented
-- [x] Monitoring and observability guidance provided
-
-### Future Enhancements
-
-- [ ] Infrastructure as Code (Terraform/CDK for Cloudflare)
-- [ ] Automated environment variable rotation
-- [ ] Multi-region deployment support
-- [ ] Canary deployment strategy
-- [ ] Advanced monitoring dashboards
-- [ ] Automated scaling based on traffic
-
-### Files Created/Modified
-
-- **New**: `scripts/setup-cloudflare-env.sh` - Automated environment setup
-- **New**: `docs/cloudflare-deploy.md` - Comprehensive deployment guide
-- **Updated**: Issue #119 comment with resolution plan
-
-### Impact
-
-**Immediate**:
-
-- ✅ Resolves P0 blocking issue
-- ✅ Unblocks all PR merges (7 PRs currently blocked)
-- ✅ Enables automated CI/CD pipeline
-
-**Long-term**:
-
-- ✅ Improves deployment reliability
-- ✅ Reduces manual configuration errors
-- ✅ Provides self-service documentation for team
-- ✅ Enables faster onboarding for new contributors
+- [x] Rollback procedures established
 
 ---
 

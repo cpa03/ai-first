@@ -8,13 +8,13 @@ import {
 async function handleGet(context: ApiContext) {
   const healthCheck = await dbService.healthCheck();
 
-  const response = {
+  const healthData = {
     ...healthCheck,
     service: 'database',
     environment: process.env.NODE_ENV || 'development',
   };
 
-  return standardSuccessResponse(response, context.requestId);
+  return standardSuccessResponse(healthData, context.requestId);
 }
 
 export const GET = withApiHandler(handleGet, { validateSize: false });

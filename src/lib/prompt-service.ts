@@ -1,12 +1,20 @@
 import fs from 'fs';
 import path from 'path';
+import { Cache } from './cache';
 
 export interface PromptVariable {
   [key: string]: string | number | object;
 }
 
 export class PromptService {
-  private promptsCache: Map<string, string> = new Map();
+  private promptsCache: Cache<string>;
+
+  constructor() {
+    this.promptsCache = new Cache<string>({
+      ttl: 10 * 60 * 1000,
+      maxSize: 200,
+    });
+  }
 
   private getTemplatePath(
     agent: string,
@@ -30,8 +38,9 @@ export class PromptService {
   ): string {
     const cacheKey = `${agent}:${templateName}:${role}`;
 
-    if (this.promptsCache.has(cacheKey)) {
-      return this.promptsCache.get(cacheKey)!;
+    const cached = this.promptsCache.get(cacheKey);
+    if (cached) {
+      return cached;
     }
 
     const templatePath = this.getTemplatePath(agent, templateName, role);
@@ -94,6 +103,10 @@ export class PromptService {
 
   clearCache(): void {
     this.promptsCache.clear();
+  }
+
+  getCacheStats(): ReturnType<Cache<string>['getStats']> {
+    return this.promptsCache.getStats();
   }
 }
 

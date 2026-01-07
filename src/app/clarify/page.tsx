@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import ClarificationFlow from '@/components/ClarificationFlow';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import Alert from '@/components/Alert';
+import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { dbService } from '@/lib/db';
 
@@ -14,7 +17,6 @@ export default function ClarifyPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Get idea from query params or session storage
     const urlParams = new URLSearchParams(window.location.search);
     const ideaFromUrl = urlParams.get('idea');
     const ideaIdFromUrl = urlParams.get('ideaId');
@@ -53,10 +55,12 @@ export default function ClarifyPage() {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
-          </div>
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+          <LoadingSpinner
+            size="md"
+            className="mb-4"
+            ariaLabel="Loading clarification flow"
+          />
           <p className="text-gray-600">Loading clarification flow...</p>
         </div>
       </div>
@@ -66,15 +70,17 @@ export default function ClarifyPage() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
-          <p className="text-red-800">{error}</p>
-          <button
-            onClick={() => router.back()}
-            className="mt-4 btn btn-primary"
-          >
-            Go Back
-          </button>
+        <div className="slide-up">
+          <Alert type="error" title="Error">
+            <p className="mb-4">{error}</p>
+            <Button
+              onClick={() => router.back()}
+              variant="primary"
+              aria-label="Go back to previous page"
+            >
+              Go Back
+            </Button>
+          </Alert>
         </div>
       </div>
     );
@@ -83,29 +89,30 @@ export default function ClarifyPage() {
   if (answers) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-green-900 mb-4">
-            Clarification Complete!
-          </h2>
-          <p className="text-green-800 mb-4">
-            Your answers have been collected. Ready to generate your blueprint?
-          </p>
-          <div className="space-y-2">
-            {Object.entries(answers).map(([key, value]) => (
-              <div key={key} className="text-sm">
-                <span className="font-medium text-green-700">{key}:</span>{' '}
-                <span className="text-green-600">{value}</span>
-              </div>
-            ))}
-          </div>
-          <div className="mt-6">
-            <button
+        <div className="slide-up">
+          <Alert type="success" title="Clarification Complete!">
+            <p className="mb-4">
+              Your answers have been collected. Ready to generate your
+              blueprint?
+            </p>
+            <div className="bg-white border border-gray-200 rounded-md p-4 mb-4 space-y-2">
+              {Object.entries(answers).map(([key, value]) => (
+                <div key={key} className="text-sm">
+                  <span className="font-medium text-gray-700">
+                    {key.replace(/_/g, ' ')}:
+                  </span>{' '}
+                  <span className="text-gray-600">{value}</span>
+                </div>
+              ))}
+            </div>
+            <Button
               onClick={() => router.push('/results')}
-              className="btn btn-primary"
+              variant="primary"
+              aria-label="Generate blueprint from clarified answers"
             >
               Generate Blueprint
-            </button>
-          </div>
+            </Button>
+          </Alert>
         </div>
       </div>
     );
@@ -114,17 +121,17 @@ export default function ClarifyPage() {
   if (!idea) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-yellow-900 mb-4">
-            No Idea Provided
-          </h2>
-          <p className="text-yellow-800">Please provide an idea to clarify.</p>
-          <button
-            onClick={() => router.push('/')}
-            className="mt-4 btn btn-primary"
-          >
-            Go to Home
-          </button>
+        <div className="slide-up">
+          <Alert type="warning" title="No Idea Provided">
+            <p className="mb-4">Please provide an idea to clarify.</p>
+            <Button
+              onClick={() => router.push('/')}
+              variant="primary"
+              aria-label="Navigate to home page to provide an idea"
+            >
+              Go to Home
+            </Button>
+          </Alert>
         </div>
       </div>
     );

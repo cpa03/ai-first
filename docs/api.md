@@ -153,6 +153,62 @@ Check database health specifically.
 
 The Clarification API helps refine raw ideas by asking targeted questions.
 
+### POST /api/clarify
+
+Clarify an idea by generating targeted questions. Returns questions to ask the user and an optional generated ideaId.
+
+**Request Body:**
+
+```json
+{
+  "idea": "I want to build a mobile app for tracking fitness goals",
+  "ideaId": "optional-existing-idea-id"
+}
+```
+
+**Fields:**
+
+- `idea` (required): The raw idea text to clarify (10-10000 characters)
+- `ideaId` (optional): Existing idea ID to use (if not provided, one is generated automatically)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "questions": [
+      {
+        "id": "q1",
+        "question": "What platform(s) should this app support?",
+        "type": "choice",
+        "options": ["iOS only", "Android only", "Both"]
+      },
+      {
+        "id": "q2",
+        "question": "What's your primary goal with this app?",
+        "type": "text"
+      }
+    ],
+    "ideaId": "idea_1704635200000_xyz123",
+    "status": "clarifying",
+    "confidence": 0.85
+  },
+  "requestId": "req_1234567890_abc123"
+}
+```
+
+**Rate Limit:** Moderate (30 requests per minute)
+
+**Status Codes:**
+
+- `200`: Clarification started, questions generated
+- `400`: Validation error (missing/invalid fields, idea text out of range)
+- `429`: Rate limit exceeded
+- `500`: Internal error
+
+---
+
 ### POST /api/clarify/start
 
 Start a new clarification session for an idea.

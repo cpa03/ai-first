@@ -2,6 +2,7 @@ import { AIModelConfig } from './ai';
 import yaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
+import { Cache } from './cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -15,12 +16,16 @@ interface AgentConfig {
 }
 
 class ConfigurationService {
-  private cache: Map<string, AgentConfig> = new Map();
+  private cache: Cache<AgentConfig>;
   private cacheEnabled: boolean = true;
   private configDir: string;
 
   constructor(configDir: string = 'ai/agent-configs') {
     this.configDir = configDir;
+    this.cache = new Cache<AgentConfig>({
+      ttl: 5 * 60 * 1000,
+      maxSize: 100,
+    });
   }
 
   setCacheEnabled(enabled: boolean): void {
@@ -57,8 +62,11 @@ class ConfigurationService {
   }
 
   loadAgentConfig<T extends AgentConfig = AgentConfig>(agentName: string): T {
-    if (this.cacheEnabled && this.cache.has(agentName)) {
-      return this.cache.get(agentName) as T;
+    if (this.cacheEnabled) {
+      const cached = this.cache.get(agentName);
+      if (cached) {
+        return cached as T;
+      }
     }
 
     const config = this.loadFromDisk(agentName);
@@ -95,6 +103,10 @@ class ConfigurationService {
 
   getCacheSize(): number {
     return this.cache.size;
+  }
+
+  getCacheStats(): ReturnType<Cache<AgentConfig>['getStats']> {
+    return this.cache.getStats();
   }
 }
 

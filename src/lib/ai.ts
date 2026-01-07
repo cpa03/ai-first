@@ -1,6 +1,7 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
+import { Cache } from './cache';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
@@ -30,8 +31,13 @@ class AIService {
   private openai: OpenAI | null = null;
   private supabase: any = null;
   private costTrackers: CostTracker[] = [];
+  private todayCostCache: Cache<number>;
 
   constructor() {
+    this.todayCostCache = new Cache<number>({
+      ttl: 60 * 1000,
+      maxSize: 1,
+    });
     if (
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -223,7 +229,8 @@ class AIService {
 
     this.costTrackers.push(tracker);
 
-    // Check cost limits
+    this.todayCostCache.clear();
+
     const dailyLimit = parseFloat(process.env.COST_LIMIT_DAILY || '10.0');
     const todayCost = this.getTodayCost();
 
@@ -255,9 +262,19 @@ class AIService {
 
   private getTodayCost(): number {
     const today = new Date().toDateString();
-    return this.costTrackers
+    const cacheKey = `today:${today}`;
+
+    const cachedCost = this.todayCostCache.get(cacheKey);
+    if (cachedCost !== null) {
+      return cachedCost;
+    }
+
+    const cost = this.costTrackers
       .filter((tracker) => tracker.timestamp.toDateString() === today)
       .reduce((sum, tracker) => sum + tracker.cost, 0);
+
+    this.todayCostCache.set(cacheKey, cost);
+    return cost;
   }
 
   // Rate limiting
@@ -297,6 +314,14 @@ class AIService {
   // Get cost tracking data
   getCostTracking(): CostTracker[] {
     return [...this.costTrackers];
+  }
+
+  getCacheStats(): ReturnType<Cache<number>['getStats']> {
+    return this.todayCostCache.getStats();
+  }
+
+  clearCostCache(): void {
+    this.todayCostCache.clear();
   }
 
   // Health check

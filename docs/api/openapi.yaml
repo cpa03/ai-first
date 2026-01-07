@@ -1,0 +1,962 @@
+openapi: 3.0.3
+info:
+  title: IdeaFlow API
+  description: API for turning raw ideas into production-ready plans with AI-powered clarification and breakdown
+  version: 1.0.0
+  contact:
+    name: IdeaFlow Team
+    url: https://github.com/cpa03/ai-first
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: Development server
+  - url: https://your-app.vercel.app
+    description: Production server
+
+tags:
+  - name: Clarification
+    description: AI-powered idea clarification and question generation
+  - name: Breakdown
+    description: Automatic idea decomposition into tasks and deliverables
+  - name: Health
+    description: System health monitoring and status checks
+
+paths:
+  /api/clarify:
+    post:
+      tags:
+        - Clarification
+      summary: Start clarification with generated questions
+      description: Generates clarifying questions based on the provided idea
+      operationId: startClarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartClarificationRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartClarificationResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/clarify/start:
+    post:
+      tags:
+        - Clarification
+      summary: Start clarification session
+      description: Alternative endpoint to start a clarification session
+      operationId: startClarificationSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartClarificationSessionRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartClarificationSessionResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Clarification
+      summary: Get clarification session
+      description: Retrieve an existing clarification session by idea ID
+      operationId: getClarificationSession
+      parameters:
+        - name: ideaId
+          in: query
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetClarificationSessionResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/clarify/answer:
+    post:
+      tags:
+        - Clarification
+      summary: Submit answer to question
+      description: Submit user's answer to a specific clarifying question
+      operationId: submitAnswer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAnswerRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitAnswerResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/clarify/complete:
+    post:
+      tags:
+        - Clarification
+      summary: Complete clarification
+      description: Complete the clarification process and generate refined idea
+      operationId: completeClarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteClarificationRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteClarificationResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/breakdown:
+    post:
+      tags:
+        - Breakdown
+      summary: Start idea breakdown
+      description: Decompose an idea into sub-ideas, deliverables, and tasks
+      operationId: startBreakdown
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartBreakdownRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartBreakdownResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Breakdown
+      summary: Get breakdown session
+      description: Retrieve an existing breakdown session by idea ID
+      operationId: getBreakdownSession
+      parameters:
+        - name: ideaId
+          in: query
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBreakdownSessionResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/health:
+    get:
+      tags:
+        - Health
+      summary: Environment health check
+      description: Check environment configuration and required variables
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+
+  /api/health/database:
+    get:
+      tags:
+        - Health
+      summary: Database health check
+      description: Check database connectivity and performance
+      operationId: databaseHealthCheck
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseHealthCheckResponse'
+
+  /api/health/detailed:
+    get:
+      tags:
+        - Health
+      summary: Comprehensive health check
+      description: Check all system components and services
+      operationId: detailedHealthCheck
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedHealthCheckResponse'
+        '503':
+          description: System is unhealthy or degraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedHealthCheckResponse'
+
+components:
+  schemas:
+    StartClarificationRequest:
+      type: object
+      required:
+        - idea
+      properties:
+        idea:
+          type: string
+          description: Raw idea text (10-10000 characters)
+          minLength: 10
+          maxLength: 10000
+          example: I want to build a landing page for my new SaaS product
+        ideaId:
+          type: string
+          description: Optional unique identifier (auto-generated if not provided)
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+
+    StartClarificationResponse:
+      type: object
+      required:
+        - success
+        - questions
+        - ideaId
+        - status
+        - confidence
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        status:
+          type: string
+          enum: [in_progress, completed]
+          example: in_progress
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.85
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    Question:
+      type: object
+      required:
+        - id
+        - question
+        - type
+      properties:
+        id:
+          type: string
+          example: target_audience
+        question:
+          type: string
+          example: Who is your target audience?
+        type:
+          type: string
+          enum: [text, textarea, select, multiselect]
+          example: select
+        options:
+          type: array
+          items:
+            type: string
+          example: ['Developers', 'Marketers', 'Small Business Owners']
+
+    StartClarificationSessionRequest:
+      type: object
+      required:
+        - ideaId
+        - ideaText
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+        ideaText:
+          type: string
+          description: Raw idea text (10-10000 characters)
+          minLength: 10
+          maxLength: 10000
+          example: I want to build a landing page for my new SaaS product
+
+    StartClarificationSessionResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/ClarificationSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    ClarificationSession:
+      type: object
+      required:
+        - ideaId
+        - ideaText
+        - status
+        - questions
+        - answers
+      properties:
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        ideaText:
+          type: string
+          example: I want to build a landing page for my new SaaS product
+        status:
+          type: string
+          enum: [in_progress, completed]
+          example: in_progress
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        answers:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            target_audience: Developers
+
+    GetClarificationSessionResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/ClarificationSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    SubmitAnswerRequest:
+      type: object
+      required:
+        - ideaId
+        - questionId
+        - answer
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+        questionId:
+          type: string
+          description: Unique identifier for the question
+          example: target_audience
+        answer:
+          type: string
+          description: User's answer to the question (max 5000 characters)
+          maxLength: 5000
+          example: Developers and technical teams
+
+    SubmitAnswerResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/ClarificationSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    CompleteClarificationRequest:
+      type: object
+      required:
+        - ideaId
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+
+    CompleteClarificationResponse:
+      type: object
+      required:
+        - success
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        refinedIdea:
+          type: string
+          description: Refined idea based on user responses
+          example: A modern landing page for SaaS product targeting developers
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.92
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    StartBreakdownRequest:
+      type: object
+      required:
+        - ideaId
+        - refinedIdea
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+        refinedIdea:
+          type: string
+          description: Refined idea from clarification process
+          minLength: 10
+          maxLength: 10000
+          example: A modern landing page for SaaS product targeting developers
+        userResponses:
+          type: object
+          description: User's responses to clarification questions
+          additionalProperties:
+            type: string
+          example:
+            target_audience: Developers
+            timeline: 4 weeks
+        options:
+          type: object
+          description: Additional options for breakdown
+          properties:
+            includeTimeline:
+              type: boolean
+              default: true
+            includeEstimates:
+              type: boolean
+              default: true
+
+    StartBreakdownResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/BreakdownSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    BreakdownSession:
+      type: object
+      required:
+        - ideaId
+        - refinedIdea
+        - status
+      properties:
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        refinedIdea:
+          type: string
+          example: A modern landing page for SaaS product targeting developers
+        status:
+          type: string
+          enum: [in_progress, completed]
+          example: in_progress
+        subIdeas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubIdea'
+        deliverables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deliverable'
+
+    SubIdea:
+      type: object
+      required:
+        - id
+        - title
+        - description
+      properties:
+        id:
+          type: string
+          example: subidea_1
+        title:
+          type: string
+          example: Design System
+        description:
+          type: string
+          example: Create a consistent design system for the landing page
+
+    Deliverable:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - priority
+        - estimateHours
+      properties:
+        id:
+          type: string
+          example: deliverable_1
+        title:
+          type: string
+          example: Hero Section Design
+        description:
+          type: string
+          example: Design the main hero section with CTA
+        priority:
+          type: string
+          enum: [high, medium, low]
+          example: high
+        estimateHours:
+          type: number
+          example: 8
+
+    GetBreakdownSessionResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/BreakdownSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    HealthCheckResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - timestamp
+            - environment
+            - checks
+          properties:
+            status:
+              type: string
+              enum: [healthy, unhealthy, warning]
+              example: healthy
+            timestamp:
+              type: string
+              format: date-time
+              example: '2024-01-07T00:00:00Z'
+            environment:
+              type: string
+              example: production
+            checks:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  present:
+                    type: boolean
+                  required:
+                    type: boolean
+            summary:
+              type: object
+              properties:
+                requiredVarsSet:
+                  type: integer
+                  example: 5
+                totalRequiredVars:
+                  type: integer
+                  example: 5
+                hasAIProvider:
+                  type: boolean
+                  example: true
+                environment:
+                  type: string
+                  example: production
+            error:
+              type: string
+              example: Missing required environment variables
+            warning:
+              type: string
+              example: No AI provider configured
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    DatabaseHealthCheckResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - service
+            - timestamp
+            - environment
+          properties:
+            status:
+              type: string
+              enum: [healthy, unhealthy]
+              example: healthy
+            service:
+              type: string
+              example: database
+            timestamp:
+              type: string
+              format: date-time
+              example: '2024-01-07T00:00:00Z'
+            environment:
+              type: string
+              example: production
+            latency:
+              type: integer
+              description: Response time in milliseconds
+              example: 15
+            error:
+              type: string
+              example: Connection timeout
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    DetailedHealthCheckResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - timestamp
+            - version
+            - uptime
+            - checks
+          properties:
+            status:
+              type: string
+              enum: [healthy, degraded, unhealthy]
+              example: healthy
+            timestamp:
+              type: string
+              format: date-time
+              example: '2024-01-07T00:00:00Z'
+            version:
+              type: string
+              example: 1.0.0
+            uptime:
+              type: number
+              format: float
+              description: Server uptime in seconds
+              example: 86400.5
+            checks:
+              type: object
+              required:
+                - database
+                - ai
+                - exports
+                - circuitBreakers
+              properties:
+                database:
+                  $ref: '#/components/schemas/ServiceHealth'
+                ai:
+                  $ref: '#/components/schemas/ServiceHealth'
+                exports:
+                  $ref: '#/components/schemas/ServiceHealth'
+                circuitBreakers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CircuitBreakerHealth'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    ServiceHealth:
+      type: object
+      required:
+        - status
+        - lastChecked
+      properties:
+        status:
+          type: string
+          enum: [up, down, degraded]
+          example: up
+        latency:
+          type: integer
+          description: Response time in milliseconds
+          example: 45
+        error:
+          type: string
+          example: Connection timeout
+        lastChecked:
+          type: string
+          format: date-time
+          example: '2024-01-07T00:00:00Z'
+
+    CircuitBreakerHealth:
+      type: object
+      required:
+        - service
+        - state
+        - failures
+      properties:
+        service:
+          type: string
+          example: openai
+        state:
+          type: string
+          enum: [closed, open, half-open]
+          example: closed
+        failures:
+          type: integer
+          example: 2
+        nextAttemptTime:
+          type: string
+          format: date-time
+          example: '2024-01-07T00:05:00Z'
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - code
+        - timestamp
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          example: Request validation failed
+        code:
+          type: string
+          description: Machine-readable error code
+          example: VALIDATION_ERROR
+          enum:
+            - VALIDATION_ERROR
+            - RATE_LIMIT_EXCEEDED
+            - INTERNAL_ERROR
+            - EXTERNAL_SERVICE_ERROR
+            - TIMEOUT_ERROR
+            - AUTHENTICATION_ERROR
+            - AUTHORIZATION_ERROR
+            - NOT_FOUND
+            - CONFLICT
+            - SERVICE_UNAVAILABLE
+            - CIRCUIT_BREAKER_OPEN
+            - RETRY_EXHAUSTED
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: idea
+              message:
+                type: string
+                example: Idea is required and must be a string
+              code:
+                type: string
+                example: REQUIRED_FIELD
+        timestamp:
+          type: string
+          format: date-time
+          example: '2024-01-07T00:00:00Z'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+        retryable:
+          type: boolean
+          description: Whether the request can be retried
+          example: false
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key authentication (future implementation)
+
+security: []
