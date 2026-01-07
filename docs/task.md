@@ -26,7 +26,7 @@ This document contains refactoring tasks identified during code review. Tasks ar
 
 ---
 
-## [REFACTOR] Extract Prompt Templates from Inline Strings
+## [COMPLETED] Extract Prompt Templates from Inline Strings
 
 - **Location**: `src/lib/agents/clarifier.ts` (lines 126-150, 317-331), `src/lib/agents/breakdown-engine.ts` (lines 255-280, 314-339)
 - **Issue**: Large prompt strings are embedded directly in the code, making them hard to maintain, version control, and A/B test. Prompts are not reusable and difficult to modify without code changes.
@@ -41,6 +41,36 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Priority**: High
 - **Effort**: Large
 - **Impact**: Improves maintainability, enables A/B testing of prompts, separates concerns
+
+**Implementation**:
+
+- Created `src/lib/prompts/prompt-service.ts` with `PromptService` class
+- Provides `loadPrompt(agentName, promptName, variables)` for template loading
+- Provides `loadSystemPrompt(agentName)` for system prompts
+- Supports variable interpolation using `{{variable}}` syntax
+- Includes caching to avoid repeated file reads
+- Graceful error handling with descriptive error messages
+- Created prompt template files in `src/lib/prompts/clarifier/`:
+  - `system.txt`
+  - `generate-questions.txt`
+  - `refine-idea-system.txt`
+  - `refine-idea.txt`
+- Created prompt template files in `src/lib/prompts/breakdown/`:
+  - `analyze-idea-system.txt`
+  - `analyze-idea.txt`
+  - `decompose-tasks-system.txt`
+  - `decompose-tasks.txt`
+- Refactored both `clarifier.ts` and `breakdown-engine.ts` to use the service
+- Created `docs/prompt-management.md` with comprehensive architecture documentation
+
+**Benefits**:
+
+- Separation of concerns: Prompts are separate from business logic
+- Maintainability: Easy to modify prompts without touching code
+- Version control: Prompt changes are tracked in Git
+- A/B testing: Easy to create multiple prompt versions
+- Reusability: Prompts can be shared across agents
+- Caching: Reduces file I/O and improves performance
 
 ---
 
