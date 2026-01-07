@@ -1,3 +1,82 @@
+# Documentation Improvements - 2025-01-07
+
+## Task 1: Comprehensive Developer Documentation ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2025-01-07
+**Agent**: Technical Writer
+
+#### Objectives
+
+- Expand CONTRIBUTING.md with comprehensive contributor onboarding guide
+- Create comprehensive troubleshooting guide for common issues
+- Create guide on how to add new AI agents
+- Add detailed testing documentation
+- Verify all documentation links work
+
+#### Completed Work
+
+1. **Expanded CONTRIBUTING.md** (46 lines → 550+ lines)
+   - Comprehensive getting started guide with prerequisites
+   - Detailed development setup instructions
+   - Complete code guidelines (TypeScript, style, components, APIs)
+   - Comprehensive testing documentation with examples
+   - Detailed commit message guidelines with format
+   - Pull request process and requirements
+   - Feature development guidelines
+   - Working with AI agents section
+   - Issue reporting templates
+
+2. **Created docs/troubleshooting.md** (800+ lines)
+   - Development environment issues (npm, Node, env, ports)
+   - Database issues (Supabase, migrations, queries)
+   - Build and deployment issues (TypeScript, linting, Vercel, Cloudflare)
+   - API and integration issues (500 errors, rate limits, AI, exports)
+   - Testing issues (CI failures, timeouts, missing tests)
+   - Performance issues (slow APIs, memory)
+   - Agent issues (startup, quality, stuck workflows)
+
+3. **Created docs/adding-agents.md** (750+ lines)
+   - Complete guide for creating new AI agents
+   - Agent architecture overview
+   - Step-by-step implementation with Cost Estimator example
+   - API endpoint creation guide
+   - Testing guide (unit, integration, manual)
+   - Best practices (error handling, validation, resilience, logging, PII)
+   - Troubleshooting common agent issues
+
+4. **Updated Documentation Index**
+   - README.md: Added troubleshooting.md and adding-agents.md links
+   - blueprint.md: Added new documentation sections
+
+#### Success Criteria Met
+
+- [x] CONTRIBUTING.md expanded with comprehensive guide
+- [x] Troubleshooting guide covering all major issue categories
+- [x] Agent creation guide with complete examples
+- [x] Testing documentation included in CONTRIBUTING.md
+- [x] All documentation links verified and working
+- [x] Markdown files properly formatted (Prettier check passes)
+
+#### Files Created
+
+- `docs/troubleshooting.md` (NEW - 800+ lines)
+- `docs/adding-agents.md` (NEW - 750+ lines)
+
+#### Files Modified
+
+- `CONTRIBUTING.md` (UPDATED - 46 → 550+ lines)
+- `README.md` (UPDATED - added new documentation links)
+- `blueprint.md` (UPDATED - added new documentation sections)
+
+#### Impact
+
+- **Immediate**: Faster onboarding, quicker issue resolution, easier agent creation
+- **Long-term**: Reduced onboarding time, faster development velocity, better code quality
+
+---
+
 # Code Sanitizer Tasks
 
 ## Code Sanitizer Tasks
@@ -831,5 +910,87 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - All new tests pass successfully (73 tests)
 - Lint passes with zero errors
 - Type-check passes with zero errors
+
+---
+
+## [REFACTOR] Extract Export Connectors to Separate Modules
+
+- **Location**: `src/lib/exports.ts` (1769 lines)
+- **Issue**: The exports file is excessively large (1769 lines) and contains multiple export connector classes (JSONExporter, MarkdownExporter, NotionExporter, TrelloExporter, GoogleTasksExporter, GitHubProjectsExporter) and management classes (ExportManager, ExportService, RateLimiter, SyncStatusTracker). This violates Single Responsibility Principle and makes the file difficult to navigate, test, and maintain.
+- **Suggestion**: Split the exports file into a module structure:
+  - `src/lib/export-connectors/` directory
+  - `src/lib/export-connectors/index.ts` - Main exports
+  - `src/lib/export-connectors/json-exporter.ts` - JSONExporter class
+  - `src/lib/export-connectors/markdown-exporter.ts` - MarkdownExporter class
+  - `src/lib/export-connectors/notion-exporter.ts` - NotionExporter class
+  - `src/lib/export-connectors/trello-exporter.ts` - TrelloExporter class
+  - `src/lib/export-connectors/google-tasks-exporter.ts` - GoogleTasksExporter class
+  - `src/lib/export-connectors/github-projects-exporter.ts` - GitHubProjectsExporter class
+  - `src/lib/export-manager.ts` - ExportManager and ExportService classes
+  - `src/lib/rate-limiter.ts` - RateLimiter class (extracted)
+  - `src/lib/sync-tracker.ts` - SyncStatusTracker class (extracted)
+- **Priority**: High
+- **Effort**: Large
+- **Impact**: Improves code organization, makes testing easier, reduces file size complexity
+
+---
+
+## [REFACTOR] Extract Blueprint Template to Service
+
+- **Location**: `src/components/BlueprintDisplay.tsx` (lines 22-84)
+- **Issue**: The BlueprintDisplay component contains a large, hardcoded project blueprint template as a template literal string embedded directly in the component. This is not reusable, difficult to maintain, and couples the component with presentation logic. The template includes project phases, resources, success metrics, and other content that should be data-driven or in a separate template file.
+- **Suggestion**: Create a `BlueprintTemplateService` that:
+  - Extracts the blueprint template to a separate file `src/lib/templates/blueprint-template.md`
+  - Provides a method `generateBlueprint(data: BlueprintData): string` that interpolates the template
+  - Supports multiple template variants (basic, detailed, custom)
+  - Allows template customization without component changes
+  - Can be tested independently from the component
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Separates concerns, improves maintainability, enables template customization
+
+---
+
+## [REFACTOR] Refactor Health Check Route Using Strategy Pattern
+
+- **Location**: `src/app/api/health/detailed/route.ts` (lines 65-130+)
+- **Issue**: The detailed health check route contains repetitive try-catch blocks for checking database, AI service, and export services. Each health check follows the same pattern: start timer, call service, calculate latency, update status, catch errors. This duplication makes the code harder to maintain and extend with new health checks.
+- **Suggestion**: Implement a strategy pattern for health checks:
+  - Create `HealthCheckStrategy` interface with `check()` method
+  - Implement `DatabaseHealthCheck`, `AIHealthCheck`, `ExportsHealthCheck` strategies
+  - Create `HealthCheckRunner` that executes strategies and aggregates results
+  - Each strategy handles its own error handling and latency tracking
+  - Adding new health checks becomes a simple matter of implementing the interface
+- **Priority**: Medium
+- **Effort**: Medium
+- **Impact**: Reduces code duplication, makes health checks extensible, improves maintainability
+
+---
+
+## [REFACTOR] Split Large Agent Classes
+
+- **Location**:
+  - `src/lib/agents/breakdown-engine.ts` (642 lines)
+  - `src/lib/agents/clarifier.ts` (400 lines)
+- **Issue**: Both agent classes are large and handle multiple responsibilities. breakdown-engine.ts includes idea analysis, task decomposition, dependency tracking, timeline generation, and risk assessment. clarifier.ts includes question generation, session management, and answer processing. These large classes are hard to test, understand, and maintain.
+- **Suggestion**: Split each agent into focused service modules:
+
+  **Breakdown Engine**:
+  - `src/lib/agents/breakdown/idea-analyzer.ts` - Analyzes ideas and objectives
+  - `src/lib/agents/breakdown/task-decomposer.ts` - Decomposes deliverables into tasks
+  - `src/lib/agents/breakdown/dependency-tracker.ts` - Manages task dependencies
+  - `src/lib/agents/breakdown/timeline-generator.ts` - Generates project timelines
+  - `src/lib/agents/breakdown/risk-assessor.ts` - Assesses project risks
+  - `src/lib/agents/breakdown-engine.ts` - Main orchestrator (reduced to ~200 lines)
+
+  **Clarifier**:
+  - `src/lib/agents/clarifier/question-generator.ts` - Generates clarifying questions
+  - `src/lib/agents/clarifier/session-manager.ts` - Manages clarification sessions
+  - `src/lib/agents/clarifier/answer-processor.ts` - Processes user answers
+  - `src/lib/agents/clarifier.ts` - Main orchestrator (reduced to ~150 lines)
+
+- **Priority**: High
+- **Effort**: Large
+- **Impact**: Improves testability, separates concerns, reduces cognitive complexity
 
 ---
