@@ -5,8 +5,6 @@
  * to ensure user privacy and security compliance.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 interface PIIPatterns {
   email: RegExp;
   phone: RegExp;
@@ -19,7 +17,7 @@ interface PIIPatterns {
 }
 
 const PII_REGEX_PATTERNS: PIIPatterns = {
-  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,
+  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
   phone:
     /\b(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})\b/g,
   ssn: /\b\d{3}-\d{2}-\d{4}\b/g,
@@ -28,7 +26,7 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   apiKey:
     /(?:api[_-]?key|apikey|secret|token)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
-  urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
+  urlWithCredentials: /https?:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
 };
 
 /**
@@ -36,15 +34,6 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  */
 export function redactPII(text: string): string {
   let redacted = text;
-
-  // Redact JWT tokens first (before API keys, since "token:" prefix might match JWTs)
-  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, '[REDACTED_TOKEN]');
-
-  // Redact URLs with credentials (before emails to prevent email regex from matching password part)
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.urlWithCredentials,
-    '[REDACTED_URL]'
-  );
 
   // Redact email addresses
   redacted = redacted.replace(PII_REGEX_PATTERNS.email, '[REDACTED_EMAIL]');
@@ -75,28 +64,31 @@ export function redactPII(text: string): string {
   // Redact API keys and secrets
   redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, '[REDACTED_API_KEY]');
 
+  // Redact JWT tokens
+  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, '[REDACTED_TOKEN]');
+
+  // Redact URLs with credentials
+  redacted = redacted.replace(
+    PII_REGEX_PATTERNS.urlWithCredentials,
+    '[REDACTED_URL]'
+  );
+
   return redacted;
 }
 
 /**
  * Redact PII from an object recursively
  */
-export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
+export function redactPIIInObject(obj: any): any {
   if (typeof obj === 'string') {
     return redactPII(obj);
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => redactPIIInObject(item, seen));
+    return obj.map((item) => redactPIIInObject(item));
   }
 
   if (obj !== null && typeof obj === 'object') {
-    // Handle circular references
-    if (seen.has(obj)) {
-      return '[Circular Reference]';
-    }
-    seen.add(obj);
-
     const redacted: any = {};
     for (const [key, value] of Object.entries(obj)) {
       // Skip redaction for known safe fields
@@ -108,17 +100,10 @@ export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
         'priority',
         'estimate_hours',
       ];
-      // Always redact sensitive field values regardless of content
-      const sensitiveFields = ['api_key', 'secret', 'token', 'password'];
       if (safeFields.includes(key.toLowerCase())) {
         redacted[key] = value;
-      } else if (sensitiveFields.includes(key.toLowerCase())) {
-        // Convert field name to uppercase with underscores for redaction label
-        const fieldName = key.toLowerCase();
-        const fieldNameUpper = fieldName.toUpperCase();
-        redacted[key] = `[REDACTED_${fieldNameUpper}]`;
       } else {
-        redacted[key] = redactPIIInObject(value, seen);
+        redacted[key] = redactPIIInObject(value);
       }
     }
     return redacted;
@@ -143,6 +128,7 @@ export function sanitizeAgentLog(agent: string, action: string, payload: any) {
  * Check if a string contains potential PII
  */
 export function containsPII(text: string): boolean {
+  const originalLength = text.length;
   const redacted = redactPII(text);
-  return redacted !== text;
+  return redacted.length !== originalLength;
 }

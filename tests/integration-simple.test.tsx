@@ -25,7 +25,7 @@ describe('Integration Tests - Basic', () => {
       ];
 
       global.fetch = jest.fn().mockImplementation((url) => {
-        const responseIndex = (global.fetch as jest.Mock).mock.calls.length - 1;
+        const responseIndex = (global.fetch as any).mock.calls.length - 1;
         return Promise.resolve({
           ok: true,
           json: async () => mockResponses[responseIndex] || { success: false },

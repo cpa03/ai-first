@@ -1,58 +1,23 @@
 import { NextRequest } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import {
-  validateIdea,
-  validateIdeaId,
-  validateRequestSize,
-  buildErrorResponse,
-} from '@/lib/validation';
-import {
-  checkRateLimit,
-  rateLimitConfigs,
-  rateLimitResponse,
-} from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
-    const rateLimitResult = checkRateLimit(
-      request.headers.get('x-forwarded-for') || 'unknown',
-      rateLimitConfigs.moderate
-    );
-
-    if (!rateLimitResult.allowed) {
-      return rateLimitResponse(rateLimitResult.resetTime);
-    }
-
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      return buildErrorResponse(sizeValidation.errors);
-    }
-
     const { idea, ideaId } = await request.json();
 
-    const ideaValidation = validateIdea(idea);
-    if (!ideaValidation.valid) {
-      return buildErrorResponse(ideaValidation.errors);
+    if (!idea) {
+      return new Response(JSON.stringify({ error: 'Idea is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
-    const validatedIdea = idea.trim();
+    // Generate ideaId if not provided
+    const finalIdeaId =
+      ideaId || `idea_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-    let finalIdeaId = ideaId;
-
-    if (finalIdeaId) {
-      const idValidation = validateIdeaId(finalIdeaId);
-      if (!idValidation.valid) {
-        return buildErrorResponse(idValidation.errors);
-      }
-      finalIdeaId = finalIdeaId.trim();
-    } else {
-      finalIdeaId = `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    }
-
-    const session = await clarifierAgent.startClarification(
-      finalIdeaId,
-      validatedIdea
-    );
+    // Start clarification session using the clarifier agent
+    const session = await clarifierAgent.startClarification(finalIdeaId, idea);
 
     return new Response(
       JSON.stringify({

@@ -337,6 +337,8 @@ Each case should map to reusable prompts & templates.
 
 ## 21. Developer & Contributor docs
 
+The following documentation has been completed:
+
 ### API Documentation
 
 - `docs/api.md` - Complete API reference with all endpoints, request/response examples, error handling
@@ -376,8 +378,6 @@ Each case should map to reusable prompts & templates.
 
 - `docs/phase-1-implementation-plan.md` - Phase 1 detailed implementation plan
 - `README.md` - Quick start guide with badges updated to actual repository
-- `CONTRIBUTING.md`
-- `CODE_OF_CONDUCT.md`
 
 ---
 
@@ -410,65 +410,7 @@ questions:
 
 ---
 
-## 24. Integration Resilience Patterns
-
-### Resilience Framework
-
-All external service integrations MUST use the resilience framework in `src/lib/resilience.ts`:
-
-#### Features:
-
-- **Retry with exponential backoff**: Automatic retries on transient failures
-- **Timeouts**: All external calls have configurable timeouts
-- **Circuit breakers**: Stop calling failing services temporarily
-- **Configurable per-service**: Each service has optimized settings
-
-#### Configuration (defaultResilienceConfigs):
-
-```typescript
-openai: 3 retries, 60s timeout, 5 failures opens circuit
-notion: 3 retries, 30s timeout, 5 failures opens circuit
-trello: 3 retries, 15s timeout, 3 failures opens circuit
-github: 3 retries, 30s timeout, 5 failures opens circuit
-supabase: 2 retries, 10s timeout, 10 failures opens circuit
-```
-
-### Error Handling
-
-All API responses use standardized error format in `src/lib/errors.ts`:
-
-```json
-{
-  "error": "Error message",
-  "code": "ERROR_CODE",
-  "details": [...],
-  "timestamp": "2024-01-07T00:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": true/false
-}
-```
-
-### Health Monitoring
-
-Use detailed health endpoint at `/api/health/detailed` to monitor:
-
-- Database health and latency
-- AI service status
-- Export connectors availability
-- Circuit breaker states
-
-### Integration Guidelines
-
-1. **Never call external APIs directly** - Always wrap in resilience framework
-2. **Set appropriate timeouts** - Based on service SLAs
-3. **Handle retryable errors** - Use standard error codes
-4. **Monitor circuit breakers** - Check health endpoint regularly
-5. **Log with request IDs** - Enable distributed tracing
-6. **Graceful degradation** - Fallback when services unavailable
-
----
-
-## 25. Closing & governance
+## 24. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 

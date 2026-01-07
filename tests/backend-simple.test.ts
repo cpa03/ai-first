@@ -45,7 +45,7 @@ jest.mock('openai', () => ({
 describe('Backend Service Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (global.fetch as jest.Mock)?.mockClear?.();
+    (global.fetch as any)?.mockClear?.();
   });
 
   describe('Database Operations', () => {

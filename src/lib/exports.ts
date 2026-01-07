@@ -1,8 +1,6 @@
 // Export connectors for IdeaFlow integrations
 // Supports Notion, Trello, Google Tasks, GitHub Projects
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export interface ExportFormat {
   type:
     | 'markdown'
@@ -65,10 +63,10 @@ export class JSONExporter extends ExportConnector {
         success: true,
         url: `data:application/json;charset=utf-8,${encodeURIComponent(jsonData)}`,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -82,6 +80,7 @@ export class JSONExporter extends ExportConnector {
   }
 
   async handleAuthCallback(_code: string): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     throw new Error('JSON export does not require authentication');
   }
 
@@ -115,10 +114,10 @@ export class MarkdownExporter extends ExportConnector {
         success: true,
         url: `data:text/markdown;charset=utf-8,${encodeURIComponent(markdown)}`,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -132,6 +131,7 @@ export class MarkdownExporter extends ExportConnector {
   }
 
   async handleAuthCallback(_code: string): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
     throw new Error('Markdown export does not require authentication');
   }
 
@@ -214,7 +214,6 @@ export class NotionExporter extends ExportConnector {
       if (!this.client) {
         this.client = new Client({
           auth: apiKey,
-          timeoutMs: 30000,
         });
       }
 
@@ -224,6 +223,7 @@ export class NotionExporter extends ExportConnector {
 
       const { idea, deliverables = [], tasks = [] } = data;
 
+      // Create a new page for the project
       const pageData = {
         parent: {
           type: 'page_id',
@@ -253,42 +253,24 @@ export class NotionExporter extends ExportConnector {
         children: this.buildNotionBlocks(idea, deliverables, tasks),
       };
 
+      // If no parent page specified, create in workspace
       if (!pageData.parent.page_id && !process.env.NOTION_PARENT_PAGE_ID) {
         delete (pageData as any).parent;
       }
 
-      const response = (await this.executeWithTimeout(() =>
-        this.client.pages.create(pageData)
-      )) as any;
+      const response = await this.client.pages.create(pageData);
 
       return {
         success: true,
         url: response.url,
         id: response.id,
       };
-    } catch (_error) {
-      console.error('Unknown export error:', _error);
+    } catch (error) {
+      console.error('Notion export error:', error);
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
-    }
-  }
-
-  private async executeWithTimeout<T>(
-    operation: () => Promise<T>,
-    timeoutMs: number = 30000
-  ): Promise<T> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const result = await operation();
-      clearTimeout(timeoutId);
-      return result;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
     }
   }
 
@@ -303,107 +285,10 @@ export class NotionExporter extends ExportConnector {
       // Test the connection by retrieving user info
       await client.users.me({});
       return true;
-    } catch (_error) {
+    } catch {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
       return false;
     }
-  }
-
-  private buildNotionBlocks(
-    idea: any,
-    deliverables: any[],
-    tasks: any[]
-  ): any[] {
-    const blocks: any[] = [];
-
-    // Add description
-    blocks.push({
-      object: 'block',
-      type: 'paragraph',
-      paragraph: {
-        rich_text: [
-          {
-            type: 'text',
-            text: {
-              content: idea.raw_text || idea.title || 'No description',
-            },
-          },
-        ],
-      },
-    });
-
-    // Add deliverables section
-    if (deliverables && deliverables.length > 0) {
-      blocks.push({
-        object: 'block',
-        type: 'heading_2',
-        heading_2: {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: 'Deliverables',
-              },
-            },
-          ],
-        },
-      });
-
-      deliverables.forEach((deliverable) => {
-        blocks.push({
-          object: 'block',
-          type: 'bulleted_list_item',
-          bulleted_list_item: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: `${deliverable.title} - ${deliverable.description || ''} (${deliverable.estimate_hours}h)`,
-                },
-              },
-            ],
-          },
-        });
-      });
-    }
-
-    // Add tasks section
-    if (tasks && tasks.length > 0) {
-      blocks.push({
-        object: 'block',
-        type: 'heading_2',
-        heading_2: {
-          rich_text: [
-            {
-              type: 'text',
-              text: {
-                content: 'Tasks',
-              },
-            },
-          ],
-        },
-      });
-
-      tasks.forEach((task) => {
-        const statusIcon = task.status === 'completed' ? '✅' : '⬜';
-        blocks.push({
-          object: 'block',
-          type: 'to_do',
-          to_do: {
-            rich_text: [
-              {
-                type: 'text',
-                text: {
-                  content: `${statusIcon} ${task.title} (${task.estimate}h)`,
-                },
-              },
-            ],
-            checked: task.status === 'completed',
-          },
-        });
-      });
-    }
-
-    return blocks;
   }
 
   async getAuthUrl(): Promise<string> {
@@ -423,12 +308,146 @@ export class NotionExporter extends ExportConnector {
     return `https://api.notion.com/v1/oauth/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(_code: string): Promise<void> {
-    // This would typically exchange the code for an access token
-    // For now, we assume the API key is set manually
+  async handleAuthCallback(code: string): Promise<void> {
+    // eslint-disable-line @typescript-eslint/no-unused-vars
+    // This would typically exchange's code for an access token
+    // For now, we assume's API key is set manually
     throw new Error(
       'OAuth callback handling requires server-side implementation'
     );
+  }
+
+  private buildNotionBlocks(
+    idea: any,
+    deliverables: any[],
+    tasks: any[]
+  ): any[] {
+    const blocks: any[] = [];
+
+    // Project description
+    blocks.push({
+      object: 'block',
+      type: 'paragraph',
+      paragraph: {
+        rich_text: [
+          {
+            type: 'text',
+            text: {
+              content: idea.raw_text || 'No description available',
+            },
+          },
+        ],
+      },
+    });
+
+    // Deliverables section
+    if (deliverables.length > 0) {
+      blocks.push({
+        object: 'block',
+        type: 'heading_2',
+        heading_2: {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: '📋 Deliverables',
+              },
+            },
+          ],
+        },
+      });
+
+      deliverables.forEach((deliverable) => {
+        blocks.push({
+          object: 'block',
+          type: 'bulleted_list_item',
+          bulleted_list_item: {
+            rich_text: [
+              {
+                type: 'text',
+                text: {
+                  content: `${deliverable.title} — ${deliverable.description || 'No description'} — ${deliverable.estimate_hours || 0}h`,
+                },
+              },
+            ],
+          },
+        });
+      });
+    }
+
+    // Tasks section
+    if (tasks.length > 0) {
+      blocks.push({
+        object: 'block',
+        type: 'heading_2',
+        heading_2: {
+          rich_text: [
+            {
+              type: 'text',
+              text: {
+                content: '✅ Tasks',
+              },
+            },
+          ],
+        },
+      });
+
+      // Group tasks by deliverable
+      const tasksByDeliverable = tasks.reduce(
+        (acc: any, task: any) => {
+          const deliverableId = task.deliverable_id || 'uncategorized';
+          if (!acc[deliverableId]) acc[deliverableId] = [];
+          acc[deliverableId].push(task);
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
+
+      Object.entries(tasksByDeliverable).forEach(
+        ([deliverableId, deliverableTasks]: [string, unknown]) => {
+          const deliverable = deliverables.find((d) => d.id === deliverableId);
+          const tasks = deliverableTasks as any[];
+
+          if (deliverable) {
+            blocks.push({
+              object: 'block',
+              type: 'heading_3',
+              heading_3: {
+                rich_text: [
+                  {
+                    type: 'text',
+                    text: {
+                      content: deliverable.title,
+                    },
+                  },
+                ],
+              },
+            });
+          }
+
+          tasks.forEach((task: any) => {
+            const isCompleted = task.status === 'completed';
+            blocks.push({
+              object: 'block',
+              type: 'to_do',
+              to_do: {
+                rich_text: [
+                  {
+                    type: 'text',
+                    text: {
+                      content: `${task.title} — ${task.assignee || 'Unassigned'} — ${task.estimate || 0}h`,
+                    },
+                  },
+                ],
+                checked: isCompleted,
+              },
+            });
+          });
+        }
+      );
+    }
+
+    return blocks;
   }
 }
 
@@ -440,7 +459,7 @@ export class TrelloExporter extends ExportConnector {
 
   async export(
     data: any,
-    _options?: Record<string, any>
+    options?: Record<string, any>
   ): Promise<ExportResult> {
     const { idea, deliverables = [], tasks = [] } = data;
     const apiKey = process.env.TRELLO_API_KEY;
@@ -513,11 +532,11 @@ export class TrelloExporter extends ExportConnector {
         url: boardUrl,
         id: boardId,
       };
-    } catch (_error) {
-      console.error('Unknown export error:', _error);
+    } catch (error) {
+      console.error('Trello export error:', error);
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -534,7 +553,7 @@ export class TrelloExporter extends ExportConnector {
         `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
       );
       return response.ok;
-    } catch (_error) {
+    } catch (error) {
       return false;
     }
   }
@@ -558,8 +577,8 @@ export class TrelloExporter extends ExportConnector {
     return `https://trello.com/1/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(_code: string): Promise<void> {
-    // Trello uses token-based auth, so this would handle the token from callback
+  async handleAuthCallback(code: string): Promise<void> {
+    // Trello uses token-based auth, so this would handle the token from the callback
     throw new Error(
       'Trello token handling requires server-side implementation'
     );
@@ -570,31 +589,18 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    try {
-      const response = await fetch(
-        `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to create Trello board: ${response.statusText}`
-        );
+    const response = await fetch(
+      `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
+      {
+        method: 'POST',
       }
+    );
 
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to create Trello board: ${response.statusText}`);
     }
+
+    return response.json();
   }
 
   private async createList(
@@ -603,29 +609,18 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    try {
-      const response = await fetch(
-        `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to create Trello list: ${response.statusText}`);
+    const response = await fetch(
+      `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
+      {
+        method: 'POST',
       }
+    );
 
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to create Trello list: ${response.statusText}`);
     }
+
+    return response.json();
   }
 
   private async createCard(
@@ -634,70 +629,61 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const cardData = {
+      name: task.title,
+      desc: task.description || '',
+      key: apiKey,
+      token: token,
+    };
 
-    try {
-      const cardData = {
-        name: task.title,
-        desc: task.description || '',
-        key: apiKey,
-        token: token,
-      };
-
-      if (task.due_date) {
-        (cardData as any).due = task.due_date;
-      }
-
-      const params = new URLSearchParams(cardData as any);
-      const response = await fetch(
-        `${this.API_BASE}/cards?${params.toString()}`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to create Trello card: ${response.statusText}`);
-      }
-
-      const card = await response.json();
-
-      if (task.priority) {
-        await this.addCardLabel(
-          card.id,
-          this.getPriorityLabel(task.priority),
-          apiKey,
-          token
-        );
-      }
-
-      if (task.assignee) {
-        await this.addCardComment(
-          card.id,
-          `Assigned to: ${task.assignee}`,
-          apiKey,
-          token
-        );
-      }
-
-      if (task.estimate) {
-        await this.addCardComment(
-          card.id,
-          `Estimate: ${task.estimate}h`,
-          apiKey,
-          token
-        );
-      }
-
-      return card;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    // Add due date if available
+    if (task.due_date) {
+      (cardData as any).due = task.due_date;
     }
+
+    const params = new URLSearchParams(cardData as any);
+    const response = await fetch(
+      `${this.API_BASE}/cards?${params.toString()}`,
+      {
+        method: 'POST',
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to create Trello card: ${response.statusText}`);
+    }
+
+    const card = await response.json();
+
+    // Add labels for priority and assignee
+    if (task.priority) {
+      await this.addCardLabel(
+        card.id,
+        this.getPriorityLabel(task.priority),
+        apiKey,
+        token
+      );
+    }
+
+    if (task.assignee) {
+      await this.addCardComment(
+        card.id,
+        `Assigned to: ${task.assignee}`,
+        apiKey,
+        token
+      );
+    }
+
+    if (task.estimate) {
+      await this.addCardComment(
+        card.id,
+        `Estimate: ${task.estimate}h`,
+        apiKey,
+        token
+      );
+    }
+
+    return card;
   }
 
   private async addCardLabel(
@@ -772,8 +758,8 @@ export class GoogleTasksExporter extends ExportConnector {
   readonly name = 'Google Tasks';
 
   async export(
-    _data: any,
-    _options?: Record<string, any>
+    data: any,
+    options?: Record<string, any>
   ): Promise<ExportResult> {
     // This connector requires server-side execution
     return {
@@ -806,7 +792,7 @@ export class GoogleTasksExporter extends ExportConnector {
     return `https://accounts.google.com/oauth/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(_code: string): Promise<void> {
+  async handleAuthCallback(code: string): Promise<void> {
     throw new Error(
       'Google OAuth callback handling requires server-side implementation'
     );
@@ -821,7 +807,7 @@ export class GitHubProjectsExporter extends ExportConnector {
 
   async export(
     data: any,
-    _options?: Record<string, any>
+    options?: Record<string, any>
   ): Promise<ExportResult> {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
@@ -935,11 +921,11 @@ export class GitHubProjectsExporter extends ExportConnector {
         url: repository.html_url,
         id: repository.id.toString(),
       };
-    } catch (_error) {
-      console.error('Unknown export error:', _error);
+    } catch (error) {
+      console.error('GitHub Projects export error:', error);
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
@@ -958,7 +944,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       });
 
       return response.ok;
-    } catch (_error) {
+    } catch (error) {
       return false;
     }
   }
@@ -979,7 +965,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     return `https://github.com/login/oauth/authorize?${params.toString()}`;
   }
 
-  async handleAuthCallback(_code: string): Promise<void> {
+  async handleAuthCallback(code: string): Promise<void> {
     // This would exchange the code for an access token
     throw new Error(
       'GitHub OAuth callback handling requires server-side implementation'
@@ -987,31 +973,20 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private async getAuthenticatedUser(token: string): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const response = await fetch(`${this.API_BASE}/user`, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
 
-    try {
-      const response = await fetch(`${this.API_BASE}/user`, {
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to get authenticated user: ${response.statusText}`
-        );
-      }
-
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(
+        `Failed to get authenticated user: ${response.statusText}`
+      );
     }
+
+    return response.json();
   }
 
   private async createOrUpdateRepository(
@@ -1020,64 +995,44 @@ export class GitHubProjectsExporter extends ExportConnector {
     idea: any,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000);
+    // Try to create the repository first
+    const createResponse = await fetch(`${this.API_BASE}/user/repos`, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: repoName,
+        description: idea.raw_text || `Project: ${idea.title}`,
+        private: false,
+        auto_init: true,
+      }),
+    });
 
-    try {
-      const createResponse = await fetch(`${this.API_BASE}/user/repos`, {
-        method: 'POST',
+    if (createResponse.ok) {
+      return createResponse.json();
+    }
+
+    // If creation fails (e.g., repo already exists), try to get the existing repo
+    const getResponse = await fetch(
+      `${this.API_BASE}/repos/${owner}/${repoName}`,
+      {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
         },
-        signal: controller.signal,
-        body: JSON.stringify({
-          name: repoName,
-          description: idea.raw_text || `Project: ${idea.title}`,
-          private: false,
-          auto_init: true,
-        }),
-      });
-
-      clearTimeout(timeoutId);
-
-      if (createResponse.ok) {
-        return createResponse.json();
       }
+    );
 
-      const getController = new AbortController();
-      const getTimeoutId = setTimeout(() => getController.abort(), 10000);
-
-      try {
-        const getResponse = await fetch(
-          `${this.API_BASE}/repos/${owner}/${repoName}`,
-          {
-            headers: {
-              Authorization: `token ${token}`,
-              Accept: 'application/vnd.github.v3+json',
-            },
-            signal: getController.signal,
-          }
-        );
-
-        clearTimeout(getTimeoutId);
-
-        if (!getResponse.ok) {
-          throw new Error(
-            `Failed to create or get repository: ${getResponse.statusText}`
-          );
-        }
-
-        return getResponse.json();
-      } catch (error) {
-        clearTimeout(getTimeoutId);
-        throw error;
-      }
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!getResponse.ok) {
+      throw new Error(
+        `Failed to create or get repository: ${getResponse.statusText}`
+      );
     }
+
+    return getResponse.json();
   }
 
   private async createProject(
@@ -1372,7 +1327,7 @@ export class ExportManager {
       if (connector) {
         try {
           results[type] = await connector.validateConfig();
-        } catch (_error) {
+        } catch (error) {
           results[type] = false;
         }
       }
@@ -1384,6 +1339,48 @@ export class ExportManager {
 
 // Export singleton instance
 export const exportManager = new ExportManager();
+
+// Convenience service for export operations with simplified API
+export class ExportService {
+  private manager: ExportManager;
+
+  constructor() {
+    this.manager = new ExportManager();
+  }
+
+  async exportToMarkdown(blueprint: any): Promise<any> {
+    const result = await this.manager.export({
+      type: 'markdown',
+      data: blueprint,
+    });
+    return {
+      ...result,
+      content: typeof result.url === 'string' ? result.url : '',
+    };
+  }
+
+  async exportToNotion(blueprint: any): Promise<any> {
+    const result = await this.manager.export({
+      type: 'notion',
+      data: blueprint,
+    });
+    return {
+      ...result,
+      notionPageId: result.id,
+    };
+  }
+
+  async exportToTrello(blueprint: any): Promise<any> {
+    const result = await this.manager.export({
+      type: 'trello',
+      data: blueprint,
+    });
+    return {
+      ...result,
+      boardId: result.id,
+    };
+  }
+}
 
 // JSON schema for programmatic integrations
 export const IdeaFlowExportSchema = {
@@ -1463,59 +1460,6 @@ export const IdeaFlowExportSchema = {
   },
   required: ['idea'],
 };
-
-// ExportService: unified interface for all export operations
-export class ExportService {
-  private markdownExporter: MarkdownExporter;
-  private jsonExporter: JSONExporter;
-  private notionExporter: NotionExporter;
-  private trelloExporter: TrelloExporter;
-  private googleTasksExporter: GoogleTasksExporter;
-  private githubProjectsExporter: GitHubProjectsExporter;
-
-  constructor() {
-    this.markdownExporter = new MarkdownExporter();
-    this.jsonExporter = new JSONExporter();
-    this.notionExporter = new NotionExporter();
-    this.trelloExporter = new TrelloExporter();
-    this.googleTasksExporter = new GoogleTasksExporter();
-    this.githubProjectsExporter = new GitHubProjectsExporter();
-  }
-
-  async exportToMarkdown(
-    data: any
-  ): Promise<ExportResult & { content?: string; url?: string }> {
-    return await this.markdownExporter.export(data);
-  }
-
-  async exportToJSON(data: any): Promise<ExportResult> {
-    return await this.jsonExporter.export(data);
-  }
-
-  async exportToNotion(
-    data: any
-  ): Promise<ExportResult & { notionPageId?: string }> {
-    return (await this.notionExporter.export(data)) as ExportResult & {
-      notionPageId?: string;
-    };
-  }
-
-  async exportToTrello(
-    data: any
-  ): Promise<ExportResult & { boardId?: string }> {
-    return (await this.trelloExporter.export(data)) as ExportResult & {
-      boardId?: string;
-    };
-  }
-
-  async exportToGoogleTasks(data: any): Promise<ExportResult> {
-    return await this.googleTasksExporter.export(data);
-  }
-
-  async exportToGitHubProjects(data: any): Promise<ExportResult> {
-    return await this.githubProjectsExporter.export(data);
-  }
-}
 
 // Rate limiting utility
 export class RateLimiter {
@@ -1652,9 +1596,8 @@ export const exportUtils = {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await operation();
-      } catch (_error) {
-        lastError =
-          _error instanceof Error ? _error : new Error('Unknown error');
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error');
 
         if (attempt === maxRetries) {
           throw lastError;

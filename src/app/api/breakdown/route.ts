@@ -1,141 +1,88 @@
 import { NextRequest } from 'next/server';
 import { breakdownEngine } from '@/lib/agents/breakdown-engine';
-import {
-  validateIdea,
-  validateIdeaId,
-  validateUserResponses,
-  validateRequestSize,
-} from '@/lib/validation';
-import {
-  checkRateLimit,
-  rateLimitConfigs,
-  rateLimitResponse,
-} from '@/lib/rate-limit';
-import {
-  toErrorResponse,
-  generateRequestId,
-  ValidationError,
-  ErrorCode,
-  AppError,
-} from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
-
   try {
-    const rateLimitResult = checkRateLimit(
-      request.headers.get('x-forwarded-for') || 'unknown',
-      rateLimitConfigs.moderate
-    );
-
-    if (!rateLimitResult.allowed) {
-      return rateLimitResponse(rateLimitResult.resetTime);
-    }
-
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      throw new ValidationError(sizeValidation.errors);
-    }
-
     const { ideaId, refinedIdea, userResponses, options } =
       await request.json();
 
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
+    if (!ideaId || !refinedIdea) {
+      return new Response(
+        JSON.stringify({ error: 'ideaId and refinedIdea are required' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
-    const ideaValidation = validateIdea(refinedIdea);
-    if (!ideaValidation.valid) {
-      throw new ValidationError(ideaValidation.errors);
-    }
-
-    const responsesValidation = validateUserResponses(userResponses);
-    if (!responsesValidation.valid) {
-      throw new ValidationError(responsesValidation.errors);
-    }
-
+    // Initialize breakdown engine
     await breakdownEngine.initialize();
 
+    // Start the breakdown process
     const session = await breakdownEngine.startBreakdown(
-      ideaId.trim(),
-      refinedIdea.trim(),
+      ideaId,
+      refinedIdea,
       userResponses || {},
       options || {}
     );
 
+    return new Response(JSON.stringify({ session }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error in breakdown API:', error);
     return new Response(
       JSON.stringify({
-        success: true,
-        session,
-        requestId,
+        error: 'Failed to start breakdown process',
+        details: error instanceof Error ? error.message : 'Unknown error',
       }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Request-ID': requestId,
-        },
-      }
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-  } catch (error) {
-    return toErrorResponse(error, requestId);
   }
 }
 
 export async function GET(request: NextRequest) {
-  const requestId = generateRequestId();
-
   try {
-    const rateLimitResult = checkRateLimit(
-      request.headers.get('x-forwarded-for') || 'unknown',
-      rateLimitConfigs.lenient
-    );
-
-    if (!rateLimitResult.allowed) {
-      return rateLimitResponse(rateLimitResult.resetTime);
-    }
-
     const { searchParams } = new URL(request.url);
     const ideaId = searchParams.get('ideaId');
 
     if (!ideaId) {
-      throw new ValidationError([
-        { field: 'ideaId', message: 'ideaId parameter is required' },
-      ]);
+      return new Response(
+        JSON.stringify({ error: 'ideaId parameter is required' }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
     }
 
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
-    }
-
-    const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
+    // Get existing breakdown session
+    const session = await breakdownEngine.getBreakdownSession(ideaId);
 
     if (!session) {
-      const error = new AppError(
-        'No breakdown session found for this idea',
-        ErrorCode.NOT_FOUND,
-        404
+      return new Response(
+        JSON.stringify({ error: 'No breakdown session found for this idea' }),
+        {
+          status: 404,
+          headers: { 'Content-Type': 'application/json' },
+        }
       );
-      return toErrorResponse(error, requestId);
     }
 
+    return new Response(JSON.stringify({ session }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    console.error('Error getting breakdown session:', error);
     return new Response(
       JSON.stringify({
-        success: true,
-        session,
-        requestId,
+        error: 'Failed to retrieve breakdown session',
+        details: error instanceof Error ? error.message : 'Unknown error',
       }),
-      {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Request-ID': requestId,
-        },
-      }
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
-  } catch (error) {
-    return toErrorResponse(error, requestId);
   }
 }

@@ -2,7 +2,6 @@ import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
 export interface AIModelConfig {
   provider: 'openai' | 'anthropic';
@@ -71,37 +70,33 @@ class AIService {
     const startTime = Date.now();
 
     try {
-      const response = await this.executeWithResilience(async () => {
-        if (config.provider === 'openai') {
-          const completion = await this.openai!.chat.completions.create({
-            model: config.model,
-            messages,
-            max_tokens: config.maxTokens,
-            temperature: config.temperature,
-          });
+      let response: string;
 
-          const content = completion.choices[0]?.message?.content || '';
+      if (config.provider === 'openai') {
+        const completion = await this.openai!.chat.completions.create({
+          model: config.model,
+          messages,
+          max_tokens: config.maxTokens,
+          temperature: config.temperature,
+        });
 
-          // Track costs
-          const usage = completion.usage;
-          if (usage) {
-            await this.trackCost(usage.total_tokens, config.model);
-          }
+        response = completion.choices[0]?.message?.content || '';
 
-          return content;
-        } else {
-          throw new Error(`Provider ${config.provider} not yet implemented`);
+        // Track costs
+        const usage = completion.usage;
+        if (usage) {
+          await this.trackCost(usage.total_tokens, config.model);
         }
-      }, config);
-
-      const duration = Date.now() - startTime;
+      } else {
+        throw new Error(`Provider ${config.provider} not yet implemented`);
+      }
 
       // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
-          duration,
+          duration: Date.now() - startTime,
           messageCount: messages.length,
         });
       }
@@ -113,31 +108,12 @@ class AIService {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,
           model: config.model,
-          duration: Date.now() - startTime,
           error: error instanceof Error ? error.message : 'Unknown error',
         });
       }
 
       throw error;
     }
-  }
-
-  private async executeWithResilience<T>(
-    operation: () => Promise<T>,
-    config: AIModelConfig
-  ): Promise<T> {
-    const { resilienceManager, defaultResilienceConfigs } =
-      await import('@/lib/resilience');
-
-    const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
-
-    return resilienceManager.execute(
-      operation,
-      defaultResilienceConfigs[
-        serviceKey as keyof typeof defaultResilienceConfigs
-      ] || defaultResilienceConfigs.openai,
-      `ai-${config.provider}-${config.model}`
-    );
   }
 
   // Context windowing strategy

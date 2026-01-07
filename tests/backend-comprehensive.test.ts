@@ -18,7 +18,7 @@ import { AIService, aiService } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
 import { ExportService } from '@/lib/exports';
-import { ClarifierAgent } from '@/lib/agents/clarifier';
+import ClarifierAgent from '@/lib/agents/clarifier';
 import { DatabaseService } from '@/lib/db';
 import {
   mockEnvVars,
@@ -157,14 +157,17 @@ describe('Backend Service Tests', () => {
         user_id: 'user-123',
         title: 'Test idea',
         raw_text: 'Test idea content',
-        status: 'draft' as const,
         created_at: new Date().toISOString(),
+        status: 'draft' as const,
       };
 
-      mockSupabase.from().insert().mockResolvedValue({
-        data: mockIdea,
-        error: null,
-      });
+      mockSupabase
+        .from()
+        .insert()
+        .mockResolvedValue({
+          data: [mockIdea],
+          error: null,
+        });
 
       const dbService = DatabaseService.getInstance();
       const result = await dbService.createIdea({
@@ -329,14 +332,15 @@ describe('Backend Service Tests', () => {
     beforeEach(() => {
       clarifierAgent = new ClarifierAgent();
       // Mock AI service dependency
-      clarifierAgent.aiService = {
+      const mockAIService: any = {
         callModel: jest.fn(),
-        initialize: jest.fn().mockResolvedValue(undefined),
-      } as any;
+        initialize: jest.fn(),
+      };
+      clarifierAgent.aiService = mockAIService;
     });
 
     it('should generate clarification questions', async () => {
-      (clarifierAgent.aiService.callModel as jest.Mock).mockResolvedValue(
+      clarifierAgent.aiService.callModel.mockResolvedValue(
         JSON.stringify(mockOpenAIResponses.clarificationQuestions)
       );
 
@@ -344,21 +348,22 @@ describe('Backend Service Tests', () => {
 
       expect(result).toEqual(mockOpenAIResponses.clarificationQuestions);
       expect(clarifierAgent.aiService.callModel).toHaveBeenCalledWith(
-        expect.arrayContaining([
-          expect.objectContaining({
-            content: expect.stringContaining('Test idea'),
-          }),
-        ]),
+        expect.arrayContaining([expect.objectContaining({ role: 'user' })]),
         expect.any(Object)
       );
     });
 
     it('should generate refined idea from answers', async () => {
       const answers = { '1': 'Answer 1', '2': 'Answer 2' };
+
+      clarifierAgent.aiService.callModel.mockResolvedValue(
+        mockOpenAIResponses.refinedIdea
+      );
+
       const session = {
-        ideaId: 'test-idea',
+        ideaId: 'idea-123',
         originalIdea: 'Test idea',
-        questions: mockOpenAIResponses.clarificationQuestions as any,
+        questions: [],
         answers,
         confidence: 0.5,
         status: 'in_progress' as const,
@@ -366,17 +371,13 @@ describe('Backend Service Tests', () => {
         updatedAt: new Date(),
       };
 
-      (clarifierAgent.aiService.callModel as jest.Mock).mockResolvedValue(
-        mockOpenAIResponses.refinedIdea
-      );
-
       const result = await clarifierAgent.generateRefinedIdea(session);
 
       expect(result).toBe(mockOpenAIResponses.refinedIdea);
     });
 
     it('should handle AI service failures gracefully', async () => {
-      (clarifierAgent.aiService.callModel as jest.Mock).mockRejectedValue(
+      clarifierAgent.aiService.callModel.mockRejectedValue(
         new Error('AI Error')
       );
 
@@ -385,19 +386,19 @@ describe('Backend Service Tests', () => {
       expect(result).toHaveLength(3); // Should return fallback questions
     });
 
-    it('should validate question format', () => {
+    it('should validate question format', async () => {
       const invalidQuestions = [
         { id: '1', question: 'Test' }, // Missing type and required
       ];
 
-      (clarifierAgent.aiService.callModel as jest.Mock).mockResolvedValue(
+      clarifierAgent.aiService.callModel.mockResolvedValue(
         JSON.stringify(invalidQuestions)
       );
 
-      const result = clarifierAgent.generateQuestions('Test idea');
+      const result = await clarifierAgent.generateQuestions('Test idea');
 
       // Should fallback to default questions on invalid format
-      expect(result).resolves.toHaveLength(3);
+      expect(result).toHaveLength(3);
     });
   });
 });

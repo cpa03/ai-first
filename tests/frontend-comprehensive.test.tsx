@@ -189,7 +189,7 @@ describe('Frontend Component Tests', () => {
     });
 
     it('handles question answering flow', async () => {
-      (global.fetch as jest.Mock)
+      (global.fetch as any)
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({

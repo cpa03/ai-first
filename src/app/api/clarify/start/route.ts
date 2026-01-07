@@ -1,93 +1,67 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import {
-  validateIdea,
-  validateIdeaId,
-  validateRequestSize,
-} from '@/lib/validation';
-import {
-  toErrorResponse,
-  generateRequestId,
-  ValidationError,
-  AppError,
-  ErrorCode,
-} from '@/lib/errors';
 
 export async function POST(request: NextRequest) {
-  const requestId = generateRequestId();
-
   try {
-    const sizeValidation = validateRequestSize(request);
-    if (!sizeValidation.valid) {
-      throw new ValidationError(sizeValidation.errors);
-    }
-
     const { ideaId, ideaText } = await request.json();
 
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
+    if (!ideaId || !ideaText) {
+      return NextResponse.json(
+        { error: 'ideaId and ideaText are required' },
+        { status: 400 }
+      );
     }
 
-    const ideaValidation = validateIdea(ideaText);
-    if (!ideaValidation.valid) {
-      throw new ValidationError(ideaValidation.errors);
-    }
-
+    // Initialize clarifier agent
     await clarifierAgent.initialize();
 
-    const session = await clarifierAgent.startClarification(
-      ideaId.trim(),
-      ideaText.trim()
-    );
+    // Start clarification session
+    const session = await clarifierAgent.startClarification(ideaId, ideaText);
 
-    return NextResponse.json(
-      { success: true, session, requestId },
-      {
-        headers: { 'X-Request-ID': requestId },
-      }
-    );
+    return NextResponse.json({ success: true, session });
   } catch (error) {
-    return toErrorResponse(error, requestId);
+    console.error('Error starting clarification:', error);
+    return NextResponse.json(
+      {
+        error: 'Failed to start clarification',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }
 
 export async function GET(request: NextRequest) {
-  const requestId = generateRequestId();
-
   try {
     const { searchParams } = new URL(request.url);
     const ideaId = searchParams.get('ideaId');
 
     if (!ideaId) {
-      throw new ValidationError([
-        { field: 'ideaId', message: 'ideaId is required' },
-      ]);
+      return NextResponse.json(
+        { error: 'ideaId is required' },
+        { status: 400 }
+      );
     }
 
-    const idValidation = validateIdeaId(ideaId);
-    if (!idValidation.valid) {
-      throw new ValidationError(idValidation.errors);
-    }
-
-    const session = await clarifierAgent.getSession(ideaId.trim());
+    // Get clarification session
+    const session = await clarifierAgent.getSession(ideaId);
 
     if (!session) {
-      const error = new AppError(
-        'Clarification session not found',
-        ErrorCode.NOT_FOUND,
-        404
+      return NextResponse.json(
+        { error: 'Clarification session not found' },
+        { status: 404 }
       );
-      return toErrorResponse(error, requestId);
     }
 
-    return NextResponse.json(
-      { success: true, session, requestId },
-      {
-        headers: { 'X-Request-ID': requestId },
-      }
-    );
+    return NextResponse.json({ success: true, session });
   } catch (error) {
-    return toErrorResponse(error, requestId);
+    console.error('Error getting clarification session:', error);
+    return NextResponse.json(
+      {
+        error: 'Failed to get clarification session',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      { status: 500 }
+    );
   }
 }

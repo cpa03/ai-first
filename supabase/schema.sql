@@ -217,26 +217,3 @@ CREATE POLICY "Only service role can update agent logs" ON agent_logs
 
 CREATE POLICY "Only service role can delete agent logs" ON agent_logs
     FOR DELETE USING (auth.role() = 'service_role');
-
--- Performance indexes for frequently queried columns
-CREATE INDEX idx_ideas_user_id ON ideas(user_id);
-CREATE INDEX idx_ideas_status ON ideas(status);
-CREATE INDEX idx_ideas_user_status ON ideas(user_id, status);
-CREATE INDEX idx_ideas_created_at ON ideas(created_at DESC);
-
-CREATE INDEX idx_deliverables_idea_id ON deliverables(idea_id);
-CREATE INDEX idx_deliverables_priority ON deliverables(priority DESC);
-CREATE INDEX idx_deliverables_idea_priority ON deliverables(idea_id, priority DESC);
-
-CREATE INDEX idx_tasks_deliverable_id ON tasks(deliverable_id);
-CREATE INDEX idx_tasks_status ON tasks(status);
-CREATE INDEX idx_tasks_deliverable_status ON tasks(deliverable_id, status);
-CREATE INDEX idx_tasks_created_at ON tasks(created_at ASC);
-
-CREATE INDEX idx_vectors_idea_id ON vectors(idea_id);
-CREATE INDEX idx_vectors_type ON vectors(reference_type);
-CREATE INDEX idx_vectors_idea_type ON vectors(idea_id, reference_type);
-
-CREATE INDEX idx_agent_logs_timestamp ON agent_logs(timestamp DESC);
-CREATE INDEX idx_agent_logs_agent ON agent_logs(agent);
-CREATE INDEX idx_agent_logs_agent_timestamp ON agent_logs(agent, timestamp DESC);
