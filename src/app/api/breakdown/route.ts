@@ -4,16 +4,8 @@ import {
   validateIdeaId,
   validateUserResponses,
 } from '@/lib/validation';
-import {
-  ValidationError,
-  ErrorCode,
-  createErrorWithSuggestions,
-} from '@/lib/errors';
-import {
-  withApiHandler,
-  standardSuccessResponse,
-  ApiContext,
-} from '@/lib/api-handler';
+import { ValidationError, ErrorCode, AppError } from '@/lib/errors';
+import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -43,7 +35,15 @@ async function handlePost(context: ApiContext) {
     options || {}
   );
 
-  return standardSuccessResponse({ session }, context.requestId);
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    context.rateLimit
+  );
 }
 
 async function handleGet(context: ApiContext) {
@@ -64,14 +64,22 @@ async function handleGet(context: ApiContext) {
   const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
 
   if (!session) {
-    throw createErrorWithSuggestions(
-      ErrorCode.NOT_FOUND,
+    throw new AppError(
       'No breakdown session found for this idea',
+      ErrorCode.NOT_FOUND,
       404
     );
   }
 
-  return standardSuccessResponse({ session }, context.requestId);
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    context.rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });

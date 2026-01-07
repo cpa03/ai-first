@@ -1,16 +1,12 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdeaId } from '@/lib/validation';
 import { ValidationError } from '@/lib/errors';
-import {
-  withApiHandler,
-  standardSuccessResponse,
-  ApiContext,
-} from '@/lib/api-handler';
+import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 const MAX_ANSWER_LENGTH = 5000;
 
 async function handlePost(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const { ideaId, questionId, answer } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);
@@ -53,7 +49,15 @@ async function handlePost(context: ApiContext) {
     trimmedAnswer
   );
 
-  return standardSuccessResponse({ session }, context.requestId);
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost);

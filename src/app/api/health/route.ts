@@ -1,12 +1,10 @@
-import {
-  standardSuccessResponse,
-  ApiContext,
-  withApiHandler,
-} from '@/lib/api-handler';
+import { successResponse, ApiContext, withApiHandler } from '@/lib/api-handler';
 
-async function handleGet(_context: ApiContext) {
+async function handleGet(context: ApiContext) {
+  const { rateLimit } = context;
   const envStatus: {
     status: string;
+    timestamp: string;
     environment: string;
     checks: Record<string, { present: boolean; required: boolean }>;
     error?: string;
@@ -19,6 +17,7 @@ async function handleGet(_context: ApiContext) {
     };
   } = {
     status: 'healthy',
+    timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     checks: {},
   };
@@ -75,7 +74,7 @@ async function handleGet(_context: ApiContext) {
     environment: envStatus.environment,
   };
 
-  return standardSuccessResponse(envStatus, _context.requestId);
+  return successResponse(envStatus, 200, rateLimit);
 }
 
 export const GET = withApiHandler(handleGet, { validateSize: false });

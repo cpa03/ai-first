@@ -22,8 +22,20 @@ Authorization: Bearer <your-supabase-token>
 All API responses include these headers:
 
 - `X-Request-ID`: Unique identifier for the request (useful for debugging)
+- `X-RateLimit-Limit`: Total requests allowed per rate limit window
+- `X-RateLimit-Remaining`: Number of requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
 - `X-Error-Code`: Error code if the request failed
 - `X-Retryable`: Whether the error is retryable (`true`/`false`)
+
+**Example Headers:**
+
+```http
+X-Request-ID: req_1234567890_abc123
+X-RateLimit-Limit: 50
+X-RateLimit-Remaining: 47
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
 
 ## Error Response Format
 
@@ -238,39 +250,34 @@ Comprehensive health check including database, AI services, export connectors, a
 
 ```json
 {
-  "success": true,
-  "data": {
-    "status": "healthy",
-    "timestamp": "2024-01-07T12:00:00Z",
-    "version": "0.1.0",
-    "uptime": 3600,
-    "checks": {
-      "database": {
-        "status": "up",
-        "latency": 45,
-        "lastChecked": "2024-01-07T12:00:00Z"
-      },
-      "ai": {
-        "status": "up",
-        "latency": 234,
-        "lastChecked": "2024-01-07T12:00:00Z"
-      },
-      "exports": {
-        "status": "degraded",
-        "error": "2/5 connectors",
-        "lastChecked": "2024-01-07T12:00:00Z"
-      },
-      "circuitBreakers": [
-        {
-          "service": "openai",
-          "state": "closed",
-          "failures": 0
-        }
-      ]
-    }
-  },
-  "requestId": "req_1234567890_abc123",
-  "timestamp": "2024-01-07T12:00:00Z"
+  "status": "healthy",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "version": "0.1.0",
+  "uptime": 3600,
+  "checks": {
+    "database": {
+      "status": "up",
+      "latency": 45,
+      "lastChecked": "2024-01-07T12:00:00Z"
+    },
+    "ai": {
+      "status": "up",
+      "latency": 234,
+      "lastChecked": "2024-01-07T12:00:00Z"
+    },
+    "exports": {
+      "status": "degraded",
+      "error": "2/5 connectors",
+      "lastChecked": "2024-01-07T12:00:00Z"
+    },
+    "circuitBreakers": [
+      {
+        "service": "openai",
+        "state": "closed",
+        "failures": 0
+      }
+    ]
+  }
 }
 ```
 
@@ -278,8 +285,6 @@ Comprehensive health check including database, AI services, export connectors, a
 
 - `200`: System is healthy
 - `503`: System is unhealthy or degraded
-
-**Note:** The `status` field in the response data indicates overall system health (`healthy`, `degraded`, or `unhealthy`). The HTTP status code also reflects this (200 for healthy, 503 for degraded/unhealthy).
 
 **Circuit Breaker States:**
 
@@ -314,62 +319,6 @@ Check database health specifically.
 ## Clarification API
 
 The Clarification API helps refine raw ideas by asking targeted questions.
-
-### POST /api/clarify
-
-Clarify an idea by generating targeted questions. Returns questions to ask the user and an optional generated ideaId.
-
-**Request Body:**
-
-```json
-{
-  "idea": "I want to build a mobile app for tracking fitness goals",
-  "ideaId": "optional-existing-idea-id"
-}
-```
-
-**Fields:**
-
-- `idea` (required): The raw idea text to clarify (10-10000 characters)
-- `ideaId` (optional): Existing idea ID to use (if not provided, one is generated automatically)
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "questions": [
-      {
-        "id": "q1",
-        "question": "What platform(s) should this app support?",
-        "type": "choice",
-        "options": ["iOS only", "Android only", "Both"]
-      },
-      {
-        "id": "q2",
-        "question": "What's your primary goal with this app?",
-        "type": "text"
-      }
-    ],
-    "ideaId": "idea_1704635200000_xyz123",
-    "status": "clarifying",
-    "confidence": 0.85
-  },
-  "requestId": "req_1234567890_abc123"
-}
-```
-
-**Rate Limit:** Moderate (30 requests per minute)
-
-**Status Codes:**
-
-- `200`: Clarification started, questions generated
-- `400`: Validation error (missing/invalid fields, idea text out of range)
-- `429`: Rate limit exceeded
-- `500`: Internal error
-
----
 
 ### POST /api/clarify/start
 
@@ -554,23 +503,11 @@ Start a new breakdown process for a clarified idea.
   },
   "options": {
     "complexity": "medium",
-    "teamSize": 4,
-    "timelineWeeks": 12,
-    "constraints": ["Must use TypeScript", "Mobile-first design"]
+    "includeTimeline": true,
+    "includeDependencies": true
   }
 }
 ```
-
-**Fields:**
-
-- `ideaId` (required): The idea ID from clarification session
-- `refinedIdea` (required): The refined idea text to break down (10-10000 characters)
-- `userResponses` (optional): Object containing user-provided responses about the project
-- `options` (optional): Breakdown configuration options
-  - `complexity` (optional): Complexity level ('simple', 'medium', or 'complex'). Default: AI-determined
-  - `teamSize` (optional): Number of team members available
-  - `timelineWeeks` (optional): Desired timeline in weeks
-  - `constraints` (optional): Array of project constraints
 
 **Response:**
 
@@ -674,25 +611,46 @@ GET /api/breakdown?ideaId=550e8400-e29b-41d4-a716-446655440000
 
 ## Rate Limiting
 
-All API endpoints are rate-limited to prevent abuse. Rate limit headers are included in responses:
-
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-X-RateLimit-Reset: 1704614400
-```
+All API endpoints are rate-limited to prevent abuse. Rate limit headers are included in **all responses** (both successful and errors):
 
 **Rate Limit Tiers:**
+
+The API supports two types of rate limiting:
+
+### Endpoint-based Rate Limiting
+
+Each endpoint can be configured with specific rate limits:
 
 - `strict`: 10 requests per minute
 - `moderate`: 30 requests per minute
 - `lenient`: 60 requests per minute
 
+### User Role-based Rate Limiting (Future)
+
+The system supports tiered rate limiting based on user roles (when authentication is implemented):
+
+- `anonymous`: 30 requests per minute
+- `authenticated`: 60 requests per minute
+- `premium`: 120 requests per minute
+- `enterprise`: 300 requests per minute
+
+**Headers on All Responses:**
+
+```http
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 57
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
+
+- `X-RateLimit-Limit`: Your rate limit for this endpoint
+- `X-RateLimit-Remaining`: Requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
+
 When rate limit is exceeded:
 
 ```json
 {
-  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "error": "Too many requests",
   "code": "RATE_LIMIT_EXCEEDED",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
@@ -700,92 +658,9 @@ When rate limit is exceeded:
 }
 ```
 
-**HTTP Headers:**
+**Additional Headers on Rate Limit Errors:**
 
 - `Retry-After`: Seconds until retry is allowed
-- `X-RateLimit-Limit`: Your rate limit
-- `X-RateLimit-Remaining`: Remaining requests
-- `X-RateLimit-Reset`: Unix timestamp when limit resets
-
----
-
-## Admin Endpoints
-
-### GET /api/admin/rate-limit
-
-Retrieve current rate limiting statistics and configuration. This endpoint is useful for monitoring rate limit usage and diagnosing rate limiting issues.
-
-**Rate Limit:** strict (10 requests per minute)
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "timestamp": "2024-01-08T12:00:00Z",
-    "totalRequests": 1234,
-    "blockedRequests": 45,
-    "rateLimitConfigs": {
-      "strict": { "windowMs": 60000, "maxRequests": 10 },
-      "moderate": { "windowMs": 60000, "maxRequests": 30 },
-      "lenient": { "windowMs": 60000, "maxRequests": 60 }
-    },
-    "tieredRateLimits": {
-      "anonymous": { "windowMs": 60000, "maxRequests": 30 },
-      "authenticated": { "windowMs": 60000, "maxRequests": 60 },
-      "premium": { "windowMs": 60000, "maxRequests": 120 },
-      "enterprise": { "windowMs": 60000, "maxRequests": 300 }
-    }
-  },
-  "requestId": "req_1234567890_abc123",
-  "timestamp": "2024-01-08T12:00:00Z"
-}
-```
-
-**Response Fields:**
-
-- `timestamp`: Current timestamp
-- `totalRequests`: Total number of requests processed
-- `blockedRequests`: Number of requests blocked by rate limiting
-- `rateLimitConfigs`: Configuration for each rate limit tier
-- `tieredRateLimits`: Configuration for each user tier
-
-**Rate Limit Configurations:**
-
-- `windowMs`: Time window in milliseconds (default: 60 seconds)
-- `maxRequests`: Maximum requests allowed within the window
-
-**Status Codes:**
-
-- `200`: Statistics retrieved successfully
-- `429`: Rate limit exceeded for this endpoint
-- `500`: Internal error
-
-**Use Cases:**
-
-- Monitor rate limit usage in production
-- Diagnose rate limiting issues
-- Verify rate limit configuration
-- Build admin dashboards for rate limit monitoring
-
-**Example Usage:**
-
-```bash
-# Get rate limit statistics
-curl http://localhost:3000/api/admin/rate-limit
-
-# Response
-{
-  "success": true,
-  "data": {
-    "timestamp": "2024-01-08T12:00:00Z",
-    "totalRequests": 1234,
-    "blockedRequests": 45,
-    ...
-  }
-}
-```
 
 ---
 

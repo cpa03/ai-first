@@ -1,18 +1,10 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdea, validateIdeaId } from '@/lib/validation';
-import {
-  ValidationError,
-  ErrorCode,
-  createErrorWithSuggestions,
-} from '@/lib/errors';
-import {
-  withApiHandler,
-  standardSuccessResponse,
-  ApiContext,
-} from '@/lib/api-handler';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const { ideaId, ideaText } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);
@@ -32,16 +24,25 @@ async function handlePost(context: ApiContext) {
     ideaText.trim()
   );
 
-  return standardSuccessResponse({ session }, context.requestId);
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 async function handleGet(context: ApiContext) {
+  const { rateLimit } = context;
   const { searchParams } = new URL(context.request.url);
   const ideaId = searchParams.get('ideaId');
 
   if (!ideaId) {
     throw new ValidationError([
-      { field: 'ideaId', message: 'ideaId parameter is required' },
+      { field: 'ideaId', message: 'ideaId is required' },
     ]);
   }
 
@@ -53,14 +54,22 @@ async function handleGet(context: ApiContext) {
   const session = await clarifierAgent.getSession(ideaId.trim());
 
   if (!session) {
-    throw createErrorWithSuggestions(
-      ErrorCode.NOT_FOUND,
+    throw new AppError(
       'Clarification session not found',
+      ErrorCode.NOT_FOUND,
       404
     );
   }
 
-  return standardSuccessResponse({ session }, context.requestId);
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost);
