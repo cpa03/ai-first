@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateRequestId, toErrorResponse, AppError } from '@/lib/errors';
 import {
-  validateRequestSize,
-  ValidationResult,
+  generateRequestId,
+  toErrorResponse,
+  AppError,
+  ErrorCode,
   ErrorDetail,
-} from '@/lib/validation';
+} from '@/lib/errors';
+import { validateRequestSize } from '@/lib/validation';
 import {
   checkRateLimit,
   rateLimitConfigs,
@@ -21,14 +23,12 @@ export interface ApiContext {
   request: NextRequest;
 }
 
-export type ApiHandler<T = any> = (
-  context: ApiContext
-) => Promise<NextResponse>;
+export type ApiHandler = (context: ApiContext) => Promise<Response>;
 
-export function withApiHandler<T>(
-  handler: ApiHandler<T>,
+export function withApiHandler(
+  handler: ApiHandler,
   options: ApiHandlerOptions = {}
-): ApiHandler {
+): (request: NextRequest) => Promise<Response> {
   return async (request: NextRequest) => {
     const requestId = generateRequestId();
     const context: ApiContext = { requestId, request };
@@ -50,7 +50,7 @@ export function withApiHandler<T>(
         if (!sizeValidation.valid) {
           throw new AppError(
             'Request size exceeds limit',
-            'PAYLOAD_TOO_LARGE',
+            ErrorCode.VALIDATION_ERROR,
             413,
             sizeValidation.errors
           );

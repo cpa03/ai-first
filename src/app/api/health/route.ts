@@ -1,6 +1,6 @@
 import { successResponse, ApiContext, withApiHandler } from '@/lib/api-handler';
 
-async function handleGet(context: ApiContext) {
+async function handleGet(_context: ApiContext) {
   const envStatus: {
     status: string;
     timestamp: string;

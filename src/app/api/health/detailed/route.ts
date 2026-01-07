@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { resilienceManager } from '@/lib/resilience';
