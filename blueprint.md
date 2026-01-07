@@ -601,7 +601,156 @@ Use detailed health endpoint at `/api/health/detailed` to monitor:
 
 ---
 
-## 25. Closing & governance
+## 26. Prompt Template Architecture
+
+### Purpose
+
+To separate prompt templates from code, enabling maintainability, version control, A/B testing, and easy modification of AI prompts without touching agent code.
+
+### Architecture
+
+All AI agents MUST use the prompt template architecture in `src/lib/prompts/`:
+
+#### Directory Structure
+
+```
+src/lib/prompts/
+  index.ts                          # PromptService implementation
+  clarifier/
+    generate-questions.txt           # Template for generating clarifying questions
+    refine-idea.txt                 # Template for generating refined idea
+  breakdown/
+    analyze-idea.txt                # Template for idea analysis
+    decompose-tasks.txt             # Template for task decomposition
+```
+
+#### PromptService API
+
+**`loadTemplate(templatePath: string)`**: Loads template from file with caching
+
+```typescript
+const template = await promptService.loadTemplate(
+  'clarifier/generate-questions.txt'
+);
+```
+
+**`interpolateTemplate(template: string, variables: Record<string, any>)`**: Substitutes `{{variable}}` placeholders
+
+```typescript
+const interpolated = promptService.interpolateTemplate(template, {
+  ideaText: 'Build a mobile app for fitness tracking',
+});
+```
+
+**`loadAndInterpolate(templatePath: string, variables: Record<string, any>)`**: Convenience method for both operations
+
+```typescript
+const prompt = await promptService.loadAndInterpolate(
+  'clarifier/generate-questions.txt',
+  { ideaText }
+);
+```
+
+**`clearCache()`**: Clears template cache (useful for testing or dynamic templates)
+
+**`getCachedTemplates()`**: Returns list of cached template paths
+
+### Template Syntax
+
+Templates use simple `{{variable}}` placeholder syntax:
+
+```
+User's Idea: "{{ideaText}}"
+
+Generate 3-5 specific questions about:
+- The scope and boundaries of the idea
+- The target audience or users
+- Key features and functionality
+```
+
+Variables are replaced with their string values when interpolated.
+
+### Usage Pattern
+
+**Before** (inline prompts, hard to maintain):
+
+```typescript
+const prompt = `You are a clarifier agent. Analyze the user's idea:
+"${ideaText}"
+
+Generate 3-5 questions about the idea's scope...`;
+```
+
+**After** (clean, maintainable, version-controlled):
+
+```typescript
+const prompt = await promptService.loadAndInterpolate(
+  'clarifier/generate-questions.txt',
+  { ideaText }
+);
+```
+
+### Benefits
+
+1. **Maintainability**: Prompts are separate text files, easy to edit
+2. **Version Control**: Prompts tracked independently from code
+3. **A/B Testing**: Easy to test multiple prompt variations
+4. **Separation of Concerns**: Business logic separated from prompt templates
+5. **Reusability**: Templates can be shared across agents
+6. **Caching**: Improved performance with template caching
+7. **Type Safety**: Type-safe template loading
+
+### Creating New Prompt Templates
+
+1. Create `.txt` file in appropriate subdirectory:
+
+   ```bash
+   touch src/lib/prompts/your-agent/new-feature.txt
+   ```
+
+2. Write template with `{{variable}}` placeholders:
+
+   ```text
+   Process the following data: "{{data}}"
+
+   Your task is to:
+   1. Analyze the data
+   2. Extract key insights
+   3. Return results in JSON format
+   ```
+
+3. Use template in agent code:
+   ```typescript
+   const prompt = await promptService.loadAndInterpolate(
+     'your-agent/new-feature.txt',
+     { data: JSON.stringify(input) }
+   );
+   ```
+
+### Current Prompt Templates
+
+- **Clarifier Agent**:
+  - `clarifier/generate-questions.txt` - Generate clarifying questions for user ideas
+  - `clarifier/refine-idea.txt` - Generate refined idea descriptions
+
+- **Breakdown Engine**:
+  - `breakdown/analyze-idea.txt` - Analyze idea and extract components
+  - `breakdown/decompose-tasks.txt` - Break down deliverables into actionable tasks
+
+### Future Enhancements
+
+Potential improvements to prompt template architecture:
+
+- Support for conditional logic in templates (`{{#if condition}}...{{/if}}`)
+- Template inheritance and composition
+- Template validation to ensure all required variables are provided
+- Versioned prompts for A/B testing and rollback
+- Template analytics (which prompts perform best)
+- Multi-language prompt support
+
+---
+
+## 27. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 

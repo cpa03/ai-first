@@ -411,10 +411,10 @@ This document contains refactoring tasks identified during code review. Tasks ar
 
 ---
 
-## [REFACTOR] Extract Prompt Templates from Inline Strings
+## [REFACTOR] Extract Prompt Templates from Inline Strings ✅ COMPLETE
 
 - **Location**: `src/lib/agents/clarifier.ts` (lines 126-150, 317-331), `src/lib/agents/breakdown-engine.ts` (lines 255-280, 314-339)
-- **Issue**: Large prompt strings are embedded directly in the code, making them hard to maintain, version control, and A/B test. Prompts are not reusable and difficult to modify without code changes.
+- **Issue**: Large prompt strings are embedded directly in code, making them hard to maintain, version control, and A/B test. Prompts are not reusable and difficult to modify without code changes.
 - **Suggestion**: Move all prompt templates to a dedicated `src/lib/prompts/` directory with a structure like:
   - `prompts/clarifier/generate-questions.txt`
   - `prompts/clarifier/refine-idea.txt`
@@ -426,6 +426,61 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Priority**: High
 - **Effort**: Large
 - **Impact**: Improves maintainability, enables A/B testing of prompts, separates concerns
+- **Status**: ✅ COMPLETED
+- **Date**: 2026-01-07
+
+#### Completed Work
+
+1. **Created Prompt Service** (`src/lib/prompts/index.ts`)
+   - `loadTemplate()` - Loads template from file with caching
+   - `interpolateTemplate()` - Substitutes `{{variable}}` placeholders
+   - `loadAndInterpolate()` - Convenience method for both operations
+   - `clearCache()` - Clears template cache
+   - `getCachedTemplates()` - Lists cached templates
+
+2. **Created Prompt Template Files** (4 templates total):
+   - `src/lib/prompts/clarifier/generate-questions.txt` - Generate clarifying questions
+   - `src/lib/prompts/clarifier/refine-idea.txt` - Generate refined idea description
+   - `src/lib/prompts/breakdown/analyze-idea.txt` - Analyze idea components
+   - `src/lib/prompts/breakdown/decompose-tasks.txt` - Decompose deliverables into tasks
+
+3. **Updated Agent Files**:
+   - `src/lib/agents/clarifier.ts` - Replaced inline prompts with PromptService calls
+   - `src/lib/agents/breakdown-engine.ts` - Replaced inline prompts with PromptService calls
+
+4. **Code Reduction Metrics**:
+   - Removed ~180 lines of inline prompt strings from agent files
+   - Prompts now maintainable as separate text files
+   - Easy to A/B test different prompt variations
+   - Prompts version-controlled independently from code
+
+#### Success Criteria Met
+
+- [x] Prompt templates extracted to separate files
+- [x] PromptService created with caching and interpolation
+- [x] All agent files updated to use PromptService
+- [x] Prompts easily maintainable and version-controlled
+- [x] Enables A/B testing of prompts
+- [x] Zero breaking changes to functionality
+
+#### Files Modified
+
+- `src/lib/prompts/index.ts` (NEW)
+- `src/lib/prompts/clarifier/generate-questions.txt` (NEW)
+- `src/lib/prompts/clarifier/refine-idea.txt` (NEW)
+- `src/lib/prompts/breakdown/analyze-idea.txt` (NEW)
+- `src/lib/prompts/breakdown/decompose-tasks.txt` (NEW)
+- `src/lib/agents/clarifier.ts` (UPDATED)
+- `src/lib/agents/breakdown-engine.ts` (UPDATED)
+- `docs/task.md` (UPDATED)
+
+#### Notes
+
+- Template caching improves performance (reduces file I/O)
+- Simple `{{variable}}` syntax for easy template editing
+- Type-safe template loading
+- No breaking changes to API or functionality
+- Follows Single Responsibility Principle
 
 ---
 
