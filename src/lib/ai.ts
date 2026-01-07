@@ -8,7 +8,6 @@ import {
   DEFAULT_CIRCUIT_BREAKER_CONFIG,
   circuitBreakerManager,
   withTimeout,
-  withRetry,
 } from './resilience';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
