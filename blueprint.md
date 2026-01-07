@@ -567,7 +567,170 @@ Critical data architecture fix to resolve schema drift between base `schema.sql`
 
 ---
 
-## 26. Integration Hardening (2025-01-07)
+## 27. Rate Limiting Enhancement (2026-01-07)
+
+### Rate Limit Headers on All Responses
+
+**Purpose**: Make the API self-documenting by including rate limit information in all responses (success and error), allowing clients to monitor and manage their rate limit usage.
+
+#### Implementation
+
+**Rate Limit Information in Response Headers:**
+
+All API responses now include these headers:
+
+- `X-RateLimit-Limit`: Total requests allowed in current time window
+- `X-RateLimit-Remaining`: Number of requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
+
+**Example Headers:**
+
+```http
+HTTP/1.1 200 OK
+X-Request-ID: req_1234567890_abc123
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 57
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
+
+**Rate Limit Types:**
+
+**1. Endpoint-based Rate Limiting:**
+
+Each endpoint can be configured with specific rate limits:
+
+- `strict`: 10 requests per minute
+- `moderate`: 30 requests per minute
+- `lenient`: 60 requests per minute
+
+Configuration example:
+
+```typescript
+export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
+```
+
+**2. User Role-based Rate Limiting (Future):**
+
+Structure implemented for tiered rate limiting based on user roles (ready for authentication):
+
+- `anonymous`: 30 requests per minute
+- `authenticated`: 60 requests per minute
+- `premium`: 120 requests per minute
+- `enterprise`: 300 requests per minute
+
+Configuration structure:
+
+```typescript
+export const tieredRateLimits: Record<UserRole, RateLimitConfig> = {
+  anonymous: { windowMs: 60 * 1000, maxRequests: 30 },
+  authenticated: { windowMs: 60 * 1000, maxRequests: 60 },
+  premium: { windowMs: 60 * 1000, maxRequests: 120 },
+  enterprise: { windowMs: 60 * 1000, maxRequests: 300 },
+};
+```
+
+#### Code Changes
+
+**API Handler Enhancement** (`src/lib/api-handler.ts`):
+
+```typescript
+export interface RateLimitInfo {
+  limit: number;
+  remaining: number;
+  reset: number;
+}
+
+export interface ApiContext {
+  requestId: string;
+  request: NextRequest;
+  rateLimit: RateLimitInfo; // Added
+}
+
+export function successResponse<T>(
+  data: T,
+  status: number = 200,
+  rateLimit?: RateLimitInfo // Added
+): NextResponse {
+  const response = NextResponse.json(data, { status });
+
+  if (rateLimit) {
+    response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining));
+    response.headers.set(
+      'X-RateLimit-Reset',
+      String(new Date(rateLimit.reset).toISOString())
+    );
+  }
+
+  return response;
+}
+```
+
+**API Route Usage** (`src/app/api/breakdown/route.ts`):
+
+```typescript
+async function handlePost(context: ApiContext) {
+  const { request, rateLimit } = context;
+
+  // ... handler logic ...
+
+  return successResponse(
+    { success: true, session, requestId: context.requestId },
+    200,
+    rateLimit // Pass rate limit info to include headers
+  );
+}
+```
+
+#### Benefits
+
+1. **Self-Documenting API**: Clients can discover rate limit information from any response
+2. **Better User Experience**: Clients can implement proper throttling and retry logic
+3. **Monitoring-Friendly**: Rate limit usage visible in all API calls
+4. **Future-Ready**: Tiered rate limiting structure ready for authentication
+5. **Zero Breaking Changes**: All existing functionality preserved
+
+#### Client-Side Implementation
+
+Clients should read rate limit headers and implement proper throttling:
+
+```typescript
+async function apiCall(url: string, data: any) {
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  const remaining = parseInt(
+    response.headers.get('X-RateLimit-Remaining') || '0'
+  );
+  const reset = new Date(response.headers.get('X-RateLimit-Reset') || '');
+
+  // Implement client-side throttling
+  if (remaining < 5) {
+    const waitTime = reset.getTime() - Date.now();
+    if (waitTime > 0) {
+      console.log(`Approaching rate limit. Waiting ${waitTime}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
+    }
+  }
+
+  return await response.json();
+}
+```
+
+#### Monitoring Recommendations
+
+1. **Track Rate Limit Usage**: Monitor `X-RateLimit-Remaining` header
+2. **Implement Backoff**: Reduce request frequency when approaching limit
+3. **Alert on Exhaustion**: Notify users when rate limit is exceeded
+4. **Monitor by Endpoint**: Different endpoints have different rate limits
+5. **User Role Tracking**: (Future) Track rate limits by user role/plan
+
+---
+
+## 28. Integration Hardening (2025-01-07)
 
 ### Resilience Patterns Implementation
 
@@ -751,7 +914,7 @@ All retryable errors include `retryable: true` in response.
 
 ---
 
-## 27. Closing & governance
+## 29. Closing & governance
 
 This blueprint is intentionally strict and agent-oriented. Agents must never deviate from the `agent-policy.md` rules. You — as human overseer — will approve PRs flagged `requires-human`.
 

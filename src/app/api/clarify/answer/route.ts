@@ -6,7 +6,7 @@ import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 const MAX_ANSWER_LENGTH = 5000;
 
 async function handlePost(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const { ideaId, questionId, answer } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);
@@ -49,11 +49,15 @@ async function handlePost(context: ApiContext) {
     trimmedAnswer
   );
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost);

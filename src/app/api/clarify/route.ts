@@ -31,13 +31,17 @@ async function handlePost(context: ApiContext) {
     validatedIdea
   );
 
-  return successResponse({
-    questions: session.questions,
-    ideaId: session.ideaId,
-    status: session.status,
-    confidence: session.confidence,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      questions: session.questions,
+      ideaId: session.ideaId,
+      status: session.status,
+      confidence: session.confidence,
+      requestId: context.requestId,
+    },
+    200,
+    context.rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });

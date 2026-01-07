@@ -18,9 +18,16 @@ export interface ApiHandlerOptions {
   validateSize?: boolean;
 }
 
+export interface RateLimitInfo {
+  limit: number;
+  remaining: number;
+  reset: number;
+}
+
 export interface ApiContext {
   requestId: string;
   request: NextRequest;
+  rateLimit: RateLimitInfo;
 }
 
 export type ApiHandler = (context: ApiContext) => Promise<Response>;
@@ -31,18 +38,21 @@ export function withApiHandler(
 ): (request: NextRequest) => Promise<Response> {
   return async (request: NextRequest) => {
     const requestId = generateRequestId();
-    const context: ApiContext = { requestId, request };
+    const rateLimitConfig = options.rateLimit
+      ? rateLimitConfigs[options.rateLimit]
+      : rateLimitConfigs.lenient;
 
     try {
       const rateLimitResult = checkRateLimit(
         request.headers.get('x-forwarded-for') || 'unknown',
-        options.rateLimit
-          ? rateLimitConfigs[options.rateLimit]
-          : rateLimitConfigs.lenient
+        rateLimitConfig
       );
 
       if (!rateLimitResult.allowed) {
-        return rateLimitResponse(rateLimitResult.resetTime);
+        return rateLimitResponse(
+          rateLimitResult.resetTime,
+          rateLimitConfig.maxRequests
+        );
       }
 
       if (options.validateSize !== false) {
@@ -56,6 +66,16 @@ export function withApiHandler(
           );
         }
       }
+
+      const context: ApiContext = {
+        requestId,
+        request,
+        rateLimit: {
+          limit: rateLimitConfig.maxRequests,
+          remaining: rateLimitResult.remaining,
+          reset: rateLimitResult.resetTime,
+        },
+      };
 
       const response = await handler(context);
 
@@ -72,26 +92,62 @@ export function withApiHandler(
 
 export function successResponse<T>(
   data: T,
-  status: number = 200
+  status: number = 200,
+  rateLimit?: RateLimitInfo
 ): NextResponse {
-  return NextResponse.json(data, { status });
+  const response = NextResponse.json(data, { status });
+
+  if (rateLimit) {
+    response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining));
+    response.headers.set(
+      'X-RateLimit-Reset',
+      String(new Date(rateLimit.reset).toISOString())
+    );
+  }
+
+  return response;
 }
 
 export function notFoundResponse(
-  message: string = 'Resource not found'
+  message: string = 'Resource not found',
+  rateLimit?: RateLimitInfo
 ): NextResponse {
-  return NextResponse.json(
+  const response = NextResponse.json(
     { error: message, code: 'NOT_FOUND' },
     { status: 404 }
   );
+
+  if (rateLimit) {
+    response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining));
+    response.headers.set(
+      'X-RateLimit-Reset',
+      String(new Date(rateLimit.reset).toISOString())
+    );
+  }
+
+  return response;
 }
 
 export function badRequestResponse(
   message: string,
-  details?: ErrorDetail[]
+  details?: ErrorDetail[],
+  rateLimit?: RateLimitInfo
 ): NextResponse {
-  return NextResponse.json(
+  const response = NextResponse.json(
     { error: message, code: 'BAD_REQUEST', details },
     { status: 400 }
   );
+
+  if (rateLimit) {
+    response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining));
+    response.headers.set(
+      'X-RateLimit-Reset',
+      String(new Date(rateLimit.reset).toISOString())
+    );
+  }
+
+  return response;
 }

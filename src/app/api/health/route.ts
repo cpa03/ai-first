@@ -1,6 +1,7 @@
 import { successResponse, ApiContext, withApiHandler } from '@/lib/api-handler';
 
-async function handleGet(_context: ApiContext) {
+async function handleGet(context: ApiContext) {
+  const { rateLimit } = context;
   const envStatus: {
     status: string;
     timestamp: string;
@@ -73,7 +74,7 @@ async function handleGet(_context: ApiContext) {
     environment: envStatus.environment,
   };
 
-  return successResponse(envStatus);
+  return successResponse(envStatus, 200, rateLimit);
 }
 
 export const GET = withApiHandler(handleGet, { validateSize: false });

@@ -4,7 +4,7 @@ import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const { ideaId, ideaText } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);
@@ -24,14 +24,19 @@ async function handlePost(context: ApiContext) {
     ideaText.trim()
   );
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 async function handleGet(context: ApiContext) {
+  const { rateLimit } = context;
   const { searchParams } = new URL(context.request.url);
   const ideaId = searchParams.get('ideaId');
 
@@ -56,11 +61,15 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  return successResponse({
-    success: true,
-    session,
-    requestId: context.requestId,
-  });
+  return successResponse(
+    {
+      success: true,
+      session,
+      requestId: context.requestId,
+    },
+    200,
+    rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost);

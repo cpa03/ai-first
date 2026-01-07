@@ -22,8 +22,20 @@ Authorization: Bearer <your-supabase-token>
 All API responses include these headers:
 
 - `X-Request-ID`: Unique identifier for the request (useful for debugging)
+- `X-RateLimit-Limit`: Total requests allowed per rate limit window
+- `X-RateLimit-Remaining`: Number of requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
 - `X-Error-Code`: Error code if the request failed
 - `X-Retryable`: Whether the error is retryable (`true`/`false`)
+
+**Example Headers:**
+
+```http
+X-Request-ID: req_1234567890_abc123
+X-RateLimit-Limit: 50
+X-RateLimit-Remaining: 47
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
 
 ## Error Response Format
 
@@ -599,25 +611,46 @@ GET /api/breakdown?ideaId=550e8400-e29b-41d4-a716-446655440000
 
 ## Rate Limiting
 
-All API endpoints are rate-limited to prevent abuse. Rate limit headers are included in responses:
-
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 95
-X-RateLimit-Reset: 1704614400
-```
+All API endpoints are rate-limited to prevent abuse. Rate limit headers are included in **all responses** (both successful and errors):
 
 **Rate Limit Tiers:**
 
+The API supports two types of rate limiting:
+
+### Endpoint-based Rate Limiting
+
+Each endpoint can be configured with specific rate limits:
+
 - `strict`: 10 requests per minute
-- `moderate`: 50 requests per minute
-- `lenient`: 100 requests per minute
+- `moderate`: 30 requests per minute
+- `lenient`: 60 requests per minute
+
+### User Role-based Rate Limiting (Future)
+
+The system supports tiered rate limiting based on user roles (when authentication is implemented):
+
+- `anonymous`: 30 requests per minute
+- `authenticated`: 60 requests per minute
+- `premium`: 120 requests per minute
+- `enterprise`: 300 requests per minute
+
+**Headers on All Responses:**
+
+```http
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 57
+X-RateLimit-Reset: 2024-01-07T12:05:00Z
+```
+
+- `X-RateLimit-Limit`: Your rate limit for this endpoint
+- `X-RateLimit-Remaining`: Requests remaining in current window
+- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
 
 When rate limit is exceeded:
 
 ```json
 {
-  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "error": "Too many requests",
   "code": "RATE_LIMIT_EXCEEDED",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
@@ -625,12 +658,9 @@ When rate limit is exceeded:
 }
 ```
 
-**HTTP Headers:**
+**Additional Headers on Rate Limit Errors:**
 
 - `Retry-After`: Seconds until retry is allowed
-- `X-RateLimit-Limit`: Your rate limit
-- `X-RateLimit-Remaining`: Remaining requests
-- `X-RateLimit-Reset`: Unix timestamp when limit resets
 
 ---
 
