@@ -1,7 +1,7 @@
 # IdeaFlow — Turn Ideas into Actionable Plans
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://github.com/your-username/ai-first/workflows/CI/badge.svg)](https://github.com/your-username/ai-first/actions)
+[![Build Status](https://github.com/cpa03/ai-first/workflows/CI/badge.svg)](https://github.com/cpa03/ai-first/actions)
 [![Deployed to Vercel](https://img.shields.io/badge/Deployed-Vercel-black)](https://vercel.com/)
 
 **IdeaFlow** — turn raw ideas into production-ready plans (blueprint, roadmap, prioritized tasks, templates) — serverless web app + AI agents that fully manage repository automation.
@@ -193,8 +193,12 @@ All automated work follows this pattern:
 
 - [Blueprint](./blueprint.md) - Complete project architecture
 - [Architecture](./docs/architecture.md) - Technical deep-dive
+- [API Reference](./docs/api.md) - Complete API documentation with examples
+- [Error Codes](./docs/error-codes.md) - Error code reference
+- [Health Monitoring](./docs/health-monitoring.md) - Health check guide
 - [Agent Guidelines](./docs/agent-guidelines.md) - Agent behavior rules
 - [Deployment](./docs/deploy.md) - Production deployment guide
+- [Integration Hardening](./docs/integration-hardening.md) - Resilience patterns
 - [Templates](./docs/templates/) - User-facing templates
 
 ## 🗺️ Roadmap

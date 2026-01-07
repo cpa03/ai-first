@@ -14,30 +14,30 @@
 
 **Mission:** Provide a trustworthy, auditable, agent-driven workspace that:
 
-* asks the right clarifying questions,
-* decomposes ideas automatically to deliverables & tasks,
-* generates timelines and exports tasks to common tools,
-* tracks progress and keeps the developer/owner in loop.
+- asks the right clarifying questions,
+- decomposes ideas automatically to deliverables & tasks,
+- generates timelines and exports tasks to common tools,
+- tracks progress and keeps the developer/owner in loop.
 
 ---
 
 ## 2. High-level Architecture (recommended)
 
-* **Frontend:** Next.js (React) — serverless-friendly, Vercel-ready (free tier).
-* **Hosting / Edge:** Vercel (primary). Cloudflare Pages/Workers optional for specific edge features — choose later.
-* **Database & Backend:** Supabase (Postgres + Auth + Storage + Vector). Use Supabase-hosted DB + edge functions as needed.
-* **Vector/Embedding store:** Supabase Vector (pgvector) or Supabase + external vector store depending on scale.
-* **AI models:** initially use hosted LLM APIs (OpenAI / Anthropic / capable providers) or open-source model via hosted inference — abstract behind a `services/ai` module. Store prompts & agent memory in vector DB.
-* **CI / Automation:** GitHub Actions running OpenCode CLI agents (specialized agents per workflow). Agents will commit, PR, open issues, run tests, deploy.
-* **Exports / Integrations:** Notion, Trello, Google Tasks, GitHub Projects (via APIs). Implement incremental connectors.
-* **Secrets & config:** GitHub Actions secrets + Supabase env. Use `.env.example` and `secrets.template.yml` to instruct agent.
+- **Frontend:** Next.js (React) — serverless-friendly, Vercel-ready (free tier).
+- **Hosting / Edge:** Vercel (primary). Cloudflare Pages/Workers optional for specific edge features — choose later.
+- **Database & Backend:** Supabase (Postgres + Auth + Storage + Vector). Use Supabase-hosted DB + edge functions as needed.
+- **Vector/Embedding store:** Supabase Vector (pgvector) or Supabase + external vector store depending on scale.
+- **AI models:** initially use hosted LLM APIs (OpenAI / Anthropic / capable providers) or open-source model via hosted inference — abstract behind a `services/ai` module. Store prompts & agent memory in vector DB.
+- **CI / Automation:** GitHub Actions running OpenCode CLI agents (specialized agents per workflow). Agents will commit, PR, open issues, run tests, deploy.
+- **Exports / Integrations:** Notion, Trello, Google Tasks, GitHub Projects (via APIs). Implement incremental connectors.
+- **Secrets & config:** GitHub Actions secrets + Supabase env. Use `.env.example` and `secrets.template.yml` to instruct agent.
 
 ---
 
 ## 3. Target Users
 
-* Public (makers, founders, entrepreneurs, project owners).
-* Users who want fast, pragmatic plans (landing pages, events, apps, businesses, hobbies, campaigns).
+- Public (makers, founders, entrepreneurs, project owners).
+- Users who want fast, pragmatic plans (landing pages, events, apps, businesses, hobbies, campaigns).
 
 ---
 
@@ -58,10 +58,10 @@ Because we plan full vision, define phases. Start with Phase 0/1 foundation (thi
 
 ### Suggested Phases
 
-* **Phase 0 (Foundation)** — this repo + GitHub Actions skeleton agents + Next.js skeleton + Supabase schema + simple Clarification Agent (Q&A flow) + blueprint export (Markdown).
-* **Phase 1 (MVP)** — Add Automatic Breakdown, basic Timeline Generator, Task list UI, Supabase vectors for prompts.
-* **Phase 2 (Integrations)** — Notion/Trello exports, PR/Issue automation, multi-agent orchestration.
-* **Phase 3 (Polish & Scale)** — Advanced timeline (Gantt UI), team features, analytics, paid plans.
+- **Phase 0 (Foundation)** — this repo + GitHub Actions skeleton agents + Next.js skeleton + Supabase schema + simple Clarification Agent (Q&A flow) + blueprint export (Markdown).
+- **Phase 1 (MVP)** — Add Automatic Breakdown, basic Timeline Generator, Task list UI, Supabase vectors for prompts.
+- **Phase 2 (Integrations)** — Notion/Trello exports, PR/Issue automation, multi-agent orchestration.
+- **Phase 3 (Polish & Scale)** — Advanced timeline (Gantt UI), team features, analytics, paid plans.
 
 ---
 
@@ -120,14 +120,14 @@ Repository must be strict and machine-actionable. Use below layout:
 
 ## 7. Files to create now (starter)
 
-* `blueprint.md` (this file)
-* `README.md` (short badge + quick start)
-* `docs/agent-guidelines.md` (strict rules for agent behavior)
-* `src/app` minimal Next.js scaffold
-* `.github/workflows/ai-agent-orchestrator.yml` (skeleton)
-* `supabase/schema.sql` (minimal tables)
-* `ai/prompts/` (starter prompts)
-* `docs/templates/*.md` (user-downloadable templates)
+- `blueprint.md` (this file)
+- `README.md` (short badge + quick start)
+- `docs/agent-guidelines.md` (strict rules for agent behavior)
+- `src/app` minimal Next.js scaffold
+- `.github/workflows/ai-agent-orchestrator.yml` (skeleton)
+- `supabase/schema.sql` (minimal tables)
+- `ai/prompts/` (starter prompts)
+- `docs/templates/*.md` (user-downloadable templates)
 
 ---
 
@@ -135,13 +135,13 @@ Repository must be strict and machine-actionable. Use below layout:
 
 Tables:
 
-* `users` (via Supabase Auth)
-* `ideas` (id, user_id, title, raw_text, created_at, status)
-* `idea_sessions` (idea_id, state, last_agent, metadata JSON)
-* `deliverables` (idea_id, title, description, priority, estimate_hours)
-* `tasks` (deliverable_id, title, description, assignee, status, estimate)
-* `vectors` (embedding vectors / references) — Supabase Vector integration
-* `agent_logs` (agent, action, payload, timestamp)
+- `users` (via Supabase Auth)
+- `ideas` (id, user_id, title, raw_text, created_at, status)
+- `idea_sessions` (idea_id, state, last_agent, metadata JSON)
+- `deliverables` (idea_id, title, description, priority, estimate_hours)
+- `tasks` (deliverable_id, title, description, assignee, status, estimate)
+- `vectors` (embedding vectors / references) — Supabase Vector integration
+- `agent_logs` (agent, action, payload, timestamp)
 
 Add audit fields and role-based access.
 
@@ -149,10 +149,10 @@ Add audit fields and role-based access.
 
 ## 9. AI data design (prompts, memory, safety)
 
-* **Prompts repository**: maintain canonical prompts in `ai/prompts/` as versioned files (yaml + examples). Agents must reference these prompts by ID, not raw string in code.
-* **Context windowing**: implement strategy in `lib/ai.ts`: short-term context (session), long-term memory (vector store).
-* **Embeddings**: when generating or summarizing user inputs / outputs, store embeddings in `vectors` with metadata.
-* **Red-teaming & Safety**: agent must never leak user secrets; obfuscate PII in logs. See `docs/agent-guidelines.md`.
+- **Prompts repository**: maintain canonical prompts in `ai/prompts/` as versioned files (yaml + examples). Agents must reference these prompts by ID, not raw string in code.
+- **Context windowing**: implement strategy in `lib/ai.ts`: short-term context (session), long-term memory (vector store).
+- **Embeddings**: when generating or summarizing user inputs / outputs, store embeddings in `vectors` with metadata.
+- **Red-teaming & Safety**: agent must never leak user secrets; obfuscate PII in logs. See `docs/agent-guidelines.md`.
 
 ---
 
@@ -172,9 +172,9 @@ Agents will operate via predefined workflows. Rules (must be enforced by agent o
 
 **Workflows to include (skeleton)**
 
-* `ai-agent-orchestrator.yml`: listens to `/ai/` tasks comments, scheduled runs, and PR events to trigger agents.
-* `deploy.yml`: build & deploy to Vercel / Cloudflare.
-* `ci.yml`: runs lint, tests, and basic security checks.
+- `ai-agent-orchestrator.yml`: listens to `/ai/` tasks comments, scheduled runs, and PR events to trigger agents.
+- `deploy.yml`: build & deploy to Vercel / Cloudflare.
+- `ci.yml`: runs lint, tests, and basic security checks.
 
 ---
 
@@ -188,24 +188,30 @@ Place templates in `/docs/templates/`. Example skeletons:
 # Project Blueprint — {{title}}
 
 ## Summary
+
 {{one-liner}}
 
 ## Goals
+
 - Goal 1
 - Goal 2
 
 ## Target audience
+
 ...
 
 ## Deliverables
+
 1. Deliverable A — description — ETA
 2. ...
 
 ## Roadmap (high level)
+
 - Phase 0: ...
 - Phase 1: ...
 
 ## Tasks
+
 - [ ] Task A — owner — estimate
 - [ ] Task B — owner — estimate
 ```
@@ -215,9 +221,9 @@ Place templates in `/docs/templates/`. Example skeletons:
 ```md
 # Roadmap for {{title}}
 
-| Phase | Start | End | Key deliverables |
-|-------|-------|-----|------------------|
-| Phase 0 | 2025-01-01 | 2025-01-14 | ...
+| Phase   | Start      | End        | Key deliverables |
+| ------- | ---------- | ---------- | ---------------- |
+| Phase 0 | 2025-01-01 | 2025-01-14 | ...              |
 ```
 
 (Agents should fill templates programmatically.)
@@ -226,34 +232,34 @@ Place templates in `/docs/templates/`. Example skeletons:
 
 ## 12. Export formats & priorities
 
-* **Primary export:** Markdown (downloadable for users). (`.md` files must be well-structured and include frontmatter)
-* **Secondary:** JSON schema for programmatic integration (for Notion/Trello exporters).
-* **Later:** direct API sync to Notion/Trello/Google Tasks.
+- **Primary export:** Markdown (downloadable for users). (`.md` files must be well-structured and include frontmatter)
+- **Secondary:** JSON schema for programmatic integration (for Notion/Trello exporters).
+- **Later:** direct API sync to Notion/Trello/Google Tasks.
 
 ---
 
 ## 13. UX considerations (for devs/agents)
 
-* Keep flows conversational for Clarification Agent; prefer question sets, not monolithic forms.
-* Preserve original idea text; never overwrite.
-* Provide "confidence" scores for automated breakdowns and ask for human confirmation when confidence < threshold.
+- Keep flows conversational for Clarification Agent; prefer question sets, not monolithic forms.
+- Preserve original idea text; never overwrite.
+- Provide "confidence" scores for automated breakdowns and ask for human confirmation when confidence < threshold.
 
 ---
 
 ## 14. Security & Privacy
 
-* Use Supabase Auth (OAuth + email) for user accounts.
-* Encrypt sensitive fields at rest if needed.
-* Agents must redact PII before storing logs.
-* Provide a `data-retention.md` policy in `docs/`.
+- Use Supabase Auth (OAuth + email) for user accounts.
+- Encrypt sensitive fields at rest if needed.
+- Agents must redact PII before storing logs.
+- Provide a `data-retention.md` policy in `docs/`.
 
 ---
 
 ## 15. Free-tier considerations & cost guardrails
 
-* Use Vercel Free tier + Supabase Free tier. Avoid heavy model calls in background; require explicit user action for compute-heavy ops.
-* Agents must implement batching & caching for embeddings.
-* Provide `config/cost_limits.yml` for max tokens / API spend per user or per run.
+- Use Vercel Free tier + Supabase Free tier. Avoid heavy model calls in background; require explicit user action for compute-heavy ops.
+- Agents must implement batching & caching for embeddings.
+- Provide `config/cost_limits.yml` for max tokens / API spend per user or per run.
 
 ---
 
@@ -267,26 +273,26 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 
 ## 17. Coding Conventions & Style
 
-* TypeScript (strict) for backend and frontend.
-* ESLint + Prettier with shared config.
-* Tailwind CSS for styling (optional).
-* Tests: Jest / React Testing Library for UI, simple integration tests for API routes.
+- TypeScript (strict) for backend and frontend.
+- ESLint + Prettier with shared config.
+- Tailwind CSS for styling (optional).
+- Tests: Jest / React Testing Library for UI, simple integration tests for API routes.
 
 ---
 
 ## 18. Agent-Facing Guidance (short checklist agents must follow)
 
-* Read `agent-policy.md` before any action.
-* Use `ai/prompts/` canonical prompts.
-* Create feature branch `agent/<agent>-YYYYMMDD-HHMM`.
-* Open PR with `AGENT=<agent>` in PR title and fill machine fields:
+- Read `agent-policy.md` before any action.
+- Use `ai/prompts/` canonical prompts.
+- Create feature branch `agent/<agent>-YYYYMMDD-HHMM`.
+- Open PR with `AGENT=<agent>` in PR title and fill machine fields:
+  - `agent_name:`
+  - `task_id:`
+  - `confidence_score:`
+  - `human_review_required: true/false`
 
-  * `agent_name:`
-  * `task_id:`
-  * `confidence_score:`
-  * `human_review_required: true/false`
-* Attach changelog JSON to PR body.
-* Run `ci.yml` automatically.
+- Attach changelog JSON to PR body.
+- Run `ci.yml` automatically.
 
 ---
 
@@ -294,22 +300,22 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 
 **Milestone 0 — Repo & Docs** (this week)
 
-* [ ] Add this `blueprint.md` to repo root.
-* [ ] Create `.github/workflows/ai-agent-orchestrator.yml` skeleton.
-* [ ] Create `README.md` quickstart.
-* [ ] Initialize Next.js app scaffold in `/src`.
-* [ ] Create Supabase `schema.sql` minimal and push to `supabase/`.
+- [ ] Add this `blueprint.md` to repo root.
+- [ ] Create `.github/workflows/ai-agent-orchestrator.yml` skeleton.
+- [ ] Create `README.md` quickstart.
+- [ ] Initialize Next.js app scaffold in `/src`.
+- [ ] Create Supabase `schema.sql` minimal and push to `supabase/`.
 
 **Milestone 1 — Clarifier MVP**
 
-* [ ] Implement Clarification Agent (simple Q&A & store answers).
-* [ ] Generate downloadable blueprint markdown from clarified idea.
-* [ ] Create basic UI: Idea input → Clarification flow → Download.
+- [ ] Implement Clarification Agent (simple Q&A & store answers).
+- [ ] Generate downloadable blueprint markdown from clarified idea.
+- [ ] Create basic UI: Idea input → Clarification flow → Download.
 
 **Milestone 2 — Decomposition**
 
-* [ ] Automatic Breakdown engine (rule-based + LLM-assisted).
-* [ ] Task & deliverable model implemented.
+- [ ] Automatic Breakdown engine (rule-based + LLM-assisted).
+- [ ] Task & deliverable model implemented.
 
 (Agents will open issues/PRs for each item.)
 
@@ -317,26 +323,61 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 
 ## 20. Examples (use cases)
 
-* Landing page
-* Sell event tickets
-* Build an app
-* Start a business
-* Run an event
-* Hobby project
-* Marketing campaign
+- Landing page
+- Sell event tickets
+- Build an app
+- Start a business
+- Run an event
+- Hobby project
+- Marketing campaign
 
 Each case should map to reusable prompts & templates.
 
 ---
 
-## 21. Developer & Contributor docs to add next
+## 21. Developer & Contributor docs
 
-* `docs/architecture.md` (detail infra)
-* `docs/agent-guidelines.md` (full agent policy)
-* `docs/deploy.md` (Vercel + Supabase setup steps on free tier)
-* `docs/templates/` (all user templates)
-* `CONTRIBUTING.md`
-* `CODE_OF_CONDUCT.md`
+The following documentation has been completed:
+
+### API Documentation
+
+- `docs/api.md` - Complete API reference with all endpoints, request/response examples, error handling
+
+### Architecture & Design
+
+- `blueprint.md` - Project blueprint and architecture (this file)
+- `docs/architecture.md` - Technical architecture including resilience framework, error handling, health monitoring, rate limiting, validation
+- `docs/breakdown-engine-architecture.md` - Automatic Breakdown Engine detailed architecture
+
+### Error Handling & Monitoring
+
+- `docs/error-codes.md` - Comprehensive error code reference with troubleshooting
+- `docs/health-monitoring.md` - Health monitoring guide for /api/health endpoints
+
+### Security & Integration
+
+- `docs/integration-hardening.md` - Integration resilience patterns implementation
+- `docs/security-headers.md` - Security headers implementation guide
+
+### Agent Guidelines
+
+- `docs/agent-guidelines.md` - Complete agent behavior rules including resilience, error handling, monitoring
+
+### Environment Setup
+
+- `docs/environment-setup.md` - Complete environment configuration setup guide
+- `docs/deploy.md` - Vercel + Supabase setup steps on free tier
+
+### User Templates
+
+- `docs/templates/blueprint_template.md` - User blueprint template
+- `docs/templates/roadmap_template.md` - User roadmap template
+- `docs/templates/tasks_template.md` - User tasks template
+
+### Additional Planning
+
+- `docs/phase-1-implementation-plan.md` - Phase 1 detailed implementation plan
+- `README.md` - Quick start guide with badges updated to actual repository
 
 ---
 
@@ -344,9 +385,9 @@ Each case should map to reusable prompts & templates.
 
 I will generate a ready-to-commit `blueprint.md` (this file) and a `README.md` starter with badges and a short quickstart. After you confirm, I can:
 
-* create `docs/agent-guidelines.md` (strict agent policies),
-* produce `.github/workflows/ai-agent-orchestrator.yml` skeleton,
-* create `supabase/schema.sql` minimal.
+- create `docs/agent-guidelines.md` (strict agent policies),
+- produce `.github/workflows/ai-agent-orchestrator.yml` skeleton,
+- create `supabase/schema.sql` minimal.
   (You asked to proceed gradually; say which of the three you want next or I can start with `README.md` + `agent-guidelines.md`.)
 
 ---
@@ -361,10 +402,10 @@ description: >
   Ask the minimum necessary clarifying questions to convert a raw idea into a blueprint. Prioritize questions that block decomposition: goal, audience, budget, timeline, success metrics.
 questions:
   - "What's the core goal of this idea in one sentence?"
-  - "Who is the target audience?"
-  - "What is the budget range (USD) or resources available?"
-  - "What timeline do you expect (weeks/months)?"
-  - "What would success look like in measurable terms?"
+  - 'Who is the target audience?'
+  - 'What is the budget range (USD) or resources available?'
+  - 'What timeline do you expect (weeks/months)?'
+  - 'What would success look like in measurable terms?'
 ```
 
 ---
