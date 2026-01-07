@@ -1,10 +1,6 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
-import { Cache } from './cache';
-import { createLogger } from './logger';
-
-const logger = createLogger('AIService');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
@@ -30,23 +26,20 @@ export interface ContextWindow {
   maxTokens: number;
 }
 
+interface CacheEntry {
+  response: string;
+  timestamp: number;
+}
+
 class AIService {
   private openai: OpenAI | null = null;
   private supabase: any = null;
   private costTrackers: CostTracker[] = [];
-  private todayCostCache: Cache<number>;
-  private responseCache: Cache<string>;
+  private cache: Map<string, CacheEntry> = new Map();
+  private readonly CACHE_TTL = 300000;
+  private readonly MAX_CACHE_SIZE = 100;
 
   constructor() {
-    this.todayCostCache = new Cache<number>({
-      ttl: 60 * 1000,
-      maxSize: 1,
-    });
-
-    this.responseCache = new Cache<string>({
-      ttl: 5 * 60 * 1000,
-      maxSize: 100,
-    });
     if (
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
       process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -78,16 +71,62 @@ class AIService {
     });
   }
 
+  private generateCacheKey(
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+    config: AIModelConfig
+  ): string {
+    const messagesString = JSON.stringify(messages);
+    const configString = `${config.provider}-${config.model}-${config.maxTokens}-${config.temperature}`;
+    return `${configString}-${Buffer.from(messagesString).toString('base64')}`;
+  }
+
+  private getFromCache(key: string): string | null {
+    const entry = this.cache.get(key);
+    if (!entry) return null;
+
+    const now = Date.now();
+    if (now - entry.timestamp > this.CACHE_TTL) {
+      this.cache.delete(key);
+      return null;
+    }
+
+    return entry.response;
+  }
+
+  private setInCache(key: string, response: string): void {
+    if (this.cache.size >= this.MAX_CACHE_SIZE) {
+      const firstKey = this.cache.keys().next().value;
+      if (firstKey) {
+        this.cache.delete(firstKey);
+      }
+    }
+
+    this.cache.set(key, {
+      response,
+      timestamp: Date.now(),
+    });
+  }
+
+  private cleanExpiredCache(): void {
+    const now = Date.now();
+    const keysToDelete: string[] = [];
+    this.cache.forEach((entry, key) => {
+      if (now - entry.timestamp > this.CACHE_TTL) {
+        keysToDelete.push(key);
+      }
+    });
+    keysToDelete.forEach((key) => this.cache.delete(key));
+  }
+
   // Make a model call with context windowing
   async callModel(
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
   ): Promise<string> {
     const startTime = Date.now();
-
     const cacheKey = this.generateCacheKey(messages, config);
 
-    const cachedResponse = this.responseCache.get(cacheKey);
+    const cachedResponse = this.getFromCache(cacheKey);
     if (cachedResponse) {
       return cachedResponse;
     }
@@ -102,7 +141,15 @@ class AIService {
             temperature: config.temperature,
           });
 
-          const content = completion.choices[0]?.message?.content || '';
+      if (config.provider === 'openai') {
+        await this.enforceRateLimit();
+
+        const completion = await this.openai!.chat.completions.create({
+          model: config.model,
+          messages,
+          max_tokens: config.maxTokens,
+          temperature: config.temperature,
+        });
 
           // Track costs
           const usage = completion.usage;
@@ -110,29 +157,28 @@ class AIService {
             await this.trackCost(usage.total_tokens, config.model);
           }
 
-          return content;
-        } else {
-          throw new Error(`Provider ${config.provider} not yet implemented`);
+        this.setInCache(cacheKey, response);
+
+        const usage = completion.usage;
+        if (usage) {
+          await this.trackCost(usage.total_tokens, config.model);
         }
       }, config);
 
       const duration = Date.now() - startTime;
 
-      // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
           duration,
           messageCount: messages.length,
+          cached: false,
         });
       }
 
-      this.responseCache.set(cacheKey, response);
-
       return response;
     } catch (error) {
-      // Log error
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,
@@ -144,16 +190,6 @@ class AIService {
 
       throw error;
     }
-  }
-
-  private generateCacheKey(
-    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
-    config: AIModelConfig
-  ): string {
-    const content = messages.map((m) => `${m.role}:${m.content}`).join('|');
-    const key = `${config.provider}:${config.model}:${config.temperature}:${config.maxTokens}:${content}`;
-    const hash = btoa(key).substring(0, 64);
-    return hash;
   }
 
   private async executeWithResilience<T>(
@@ -189,54 +225,44 @@ class AIService {
       throw new Error('Supabase client not initialized');
     }
 
-    const cacheKey = `context:${ideaId}`;
+    // Retrieve existing context from vector store
+    const { data: existingContext } = await this.supabase
+      .from('vectors')
+      .select('vector_data')
+      .eq('idea_id', ideaId)
+      .eq('reference_type', 'context')
+      .single();
 
-    const cachedContext = this.responseCache.get(cacheKey);
     let context: Array<{
       role: 'system' | 'user' | 'assistant';
       content: string;
     }> = [];
 
-    if (cachedContext) {
-      try {
-        context = JSON.parse(cachedContext);
-      } catch (error) {
-        logger.error('Failed to parse cached context:', error);
-      }
-    } else {
-      const { data: existingContext } = await this.supabase
-        .from('vectors')
-        .select('vector_data')
-        .eq('idea_id', ideaId)
-        .eq('reference_type', 'context')
-        .single();
-
-      if (existingContext?.vector_data) {
-        context = (existingContext.vector_data.messages || []).map(
-          (m: any) => ({
-            role: m.role as 'system' | 'user' | 'assistant',
-            content: m.content,
-          })
-        );
-      }
+    if (existingContext?.vector_data) {
+      context = (existingContext.vector_data.messages || []).map((m: any) => ({
+        role: m.role as 'system' | 'user' | 'assistant',
+        content: m.content,
+      }));
     }
 
+    // Add new messages
     context = [...context, ...newMessages];
 
+    // Implement simple truncation strategy (can be enhanced with summarization)
     while (this.estimateTokens(context) > maxTokens && context.length > 2) {
+      // Remove oldest non-system message
       const systemMessages = context.filter((m) => m.role === 'system');
       const nonSystemMessages = context.filter((m) => m.role !== 'system');
-      nonSystemMessages.shift();
+      nonSystemMessages.shift(); // Remove oldest
       context = [...systemMessages, ...nonSystemMessages];
     }
 
+    // Store updated context
     await this.supabase.from('vectors').upsert({
       idea_id: ideaId,
       reference_type: 'context',
-      vector_data: { messages: context } as unknown as Record<string, unknown>,
-    });
-
-    this.responseCache.set(cacheKey, JSON.stringify(context));
+      vector_data: { messages: context },
+    } as any);
 
     return context;
   }
@@ -267,8 +293,7 @@ class AIService {
 
     this.costTrackers.push(tracker);
 
-    this.todayCostCache.clear();
-
+    // Check cost limits
     const dailyLimit = parseFloat(process.env.COST_LIMIT_DAILY || '10.0');
     const todayCost = this.getTodayCost();
 
@@ -300,19 +325,9 @@ class AIService {
 
   private getTodayCost(): number {
     const today = new Date().toDateString();
-    const cacheKey = `today:${today}`;
-
-    const cachedCost = this.todayCostCache.get(cacheKey);
-    if (cachedCost !== null) {
-      return cachedCost;
-    }
-
-    const cost = this.costTrackers
+    return this.costTrackers
       .filter((tracker) => tracker.timestamp.toDateString() === today)
       .reduce((sum, tracker) => sum + tracker.cost, 0);
-
-    this.todayCostCache.set(cacheKey, cost);
-    return cost;
   }
 
   // Rate limiting
@@ -349,31 +364,13 @@ class AIService {
     }
   }
 
+  clearCache(): void {
+    this.cache.clear();
+  }
+
   // Get cost tracking data
   getCostTracking(): CostTracker[] {
     return [...this.costTrackers];
-  }
-
-  getCacheStats(): {
-    costCache: ReturnType<Cache<number>['getStats']>;
-    responseCache: ReturnType<Cache<string>['getStats']>;
-    costCacheSize: number;
-    responseCacheSize: number;
-  } {
-    return {
-      costCache: this.todayCostCache.getStats(),
-      responseCache: this.responseCache.getStats(),
-      costCacheSize: this.todayCostCache.size,
-      responseCacheSize: this.responseCache.size,
-    };
-  }
-
-  clearCostCache(): void {
-    this.todayCostCache.clear();
-  }
-
-  clearResponseCache(): void {
-    this.responseCache.clear();
   }
 
   // Health check
@@ -385,7 +382,7 @@ class AIService {
         await this.openai.models.list();
         providers.push('openai');
       } catch (error) {
-        logger.error('OpenAI health check failed:', error);
+        console.error('OpenAI health check failed:', error);
       }
     }
 
