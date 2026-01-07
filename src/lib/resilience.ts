@@ -261,7 +261,15 @@ export class CircuitBreakerManager {
       nextAttemptTime?: string;
     }
   > {
-    const statuses: Record<string, any> = {};
+    const statuses: Record<
+      string,
+      {
+        state: CircuitBreakerState;
+        failures: number;
+        lastFailureTime: number;
+        nextAttemptTime: number;
+      }
+    > = {};
     this.circuitBreakers.forEach((cb, name) => {
       statuses[name] = cb.getStatus();
     });

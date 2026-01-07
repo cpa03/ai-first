@@ -11,6 +11,72 @@ import {
   withTimeout,
   RetryConfig,
 } from './resilience';
+import type { Database } from '@/types/database';
+
+// Type aliases for database entities
+type Idea = Database['public']['Tables']['ideas']['Row'];
+type Deliverable = Database['public']['Tables']['deliverables']['Row'];
+type Task = Database['public']['Tables']['tasks']['Row'];
+
+// Export data types
+export interface ExportData {
+  idea: Idea;
+  deliverables: Deliverable[];
+  tasks: Task[];
+  metadata?: {
+    goals?: string[];
+    targetAudience?: string;
+    [key: string]: unknown;
+  };
+  roadmap?: Array<{
+    phase: string;
+    start: string;
+    end: string;
+    deliverables: string[];
+  }>;
+}
+
+export interface ExportOptions {
+  includeMetadata?: boolean;
+  format?:
+    | 'markdown'
+    | 'json'
+    | 'notion'
+    | 'trello'
+    | 'google-tasks'
+    | 'github-projects';
+  customFields?: Record<string, unknown>;
+  goals?: unknown[];
+  targetAudience?: string;
+  parentPageId?: string;
+  roadmap?: Array<{
+    phase: string;
+    start: string;
+    end: string;
+    deliverables: string[];
+  }>;
+}
+
+// Notion block type
+export interface NotionBlock {
+  object: 'block';
+  type: string;
+  [key: string]: unknown;
+}
+
+// Notion client type (simplified)
+type NotionClient = {
+  users: {
+    me: () => Promise<unknown>;
+  };
+  pages: {
+    create: (data: {
+      parent?: unknown;
+      properties?: unknown;
+      children?: unknown;
+    }) => Promise<{ id: string }>;
+  };
+};
 
 export interface ExportFormat {
   type:
@@ -20,8 +86,8 @@ export interface ExportFormat {
     | 'trello'
     | 'google-tasks'
     | 'github-projects';
-  data: any;
-  metadata?: Record<string, any>;
+  data: ExportData;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ExportResult {
@@ -50,8 +116,8 @@ export abstract class ExportConnector {
   abstract readonly name: string;
 
   abstract export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: ExportOptions
   ): Promise<ExportResult>;
   abstract validateConfig(): Promise<boolean>;
   abstract getAuthUrl?(): Promise<string>;
@@ -64,8 +130,8 @@ export class JSONExporter extends ExportConnector {
   readonly name = 'JSON';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: ExportOptions
   ): Promise<ExportResult> {
     try {
       const jsonData = this.generateJSON(data, options);
@@ -94,7 +160,7 @@ export class JSONExporter extends ExportConnector {
     throw new Error('JSON export does not require authentication');
   }
 
-  private generateJSON(data: any, options?: Record<string, any>): string {
+  private generateJSON(data: ExportData, options?: ExportOptions): string {
     const exportData = {
       ...data,
       metadata: {
@@ -114,8 +180,8 @@ export class MarkdownExporter extends ExportConnector {
   readonly name = 'Markdown';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: ExportOptions
   ): Promise<ExportResult> {
     try {
       const markdown = this.generateMarkdown(data, options);
@@ -144,7 +210,7 @@ export class MarkdownExporter extends ExportConnector {
     throw new Error('Markdown export does not require authentication');
   }
 
-  private generateMarkdown(data: any, options?: Record<string, any>): string {
+  private generateMarkdown(data: ExportData, options?: ExportOptions): string {
     const { idea, deliverables, tasks } = data;
 
     let markdown = `# Project Blueprint — ${idea.title}\n\n`;
@@ -155,7 +221,7 @@ export class MarkdownExporter extends ExportConnector {
     // Goals section
     if (options?.goals) {
       markdown += `## Goals\n`;
-      options.goals.forEach((goal: string) => {
+      options.goals.forEach((goal: unknown) => {
         markdown += `- ${goal}\n`;
       });
       markdown += `\n`;
@@ -169,7 +235,7 @@ export class MarkdownExporter extends ExportConnector {
     // Deliverables
     if (deliverables && deliverables.length > 0) {
       markdown += `## Deliverables\n`;
-      deliverables.forEach((deliverable: any, index: number) => {
+      deliverables.forEach((deliverable: Deliverable, index: number) => {
         markdown += `${index + 1}. **${deliverable.title}** — ${deliverable.description || 'No description'} — ${deliverable.estimate_hours}h estimated\n`;
       });
       markdown += `\n`;
@@ -178,7 +244,7 @@ export class MarkdownExporter extends ExportConnector {
     // Tasks
     if (tasks && tasks.length > 0) {
       markdown += `## Tasks\n`;
-      tasks.forEach((task: any) => {
+      tasks.forEach((task: Task) => {
         const status = task.status === 'completed' ? 'x' : ' ';
         markdown += `- [${status}] ${task.title} — ${task.assignee || 'Unassigned'} — ${task.estimate}h\n`;
       });
@@ -190,9 +256,16 @@ export class MarkdownExporter extends ExportConnector {
       markdown += `## Roadmap\n`;
       markdown += `| Phase | Start | End | Key deliverables |\n`;
       markdown += `|-------|-------|-----|------------------|\n`;
-      options.roadmap.forEach((phase: any) => {
-        markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
-      });
+      options.roadmap.forEach(
+        (phase: {
+          phase: string;
+          start: string;
+          end: string;
+          deliverables: string[];
+        }) => {
+          markdown += `| ${phase.phase} | ${phase.start} | ${phase.end} | ${phase.deliverables.join(', ')} |\n`;
+        }
+      );
     }
 
     return markdown;
@@ -203,7 +276,7 @@ export class MarkdownExporter extends ExportConnector {
 export class NotionExporter extends ExportConnector {
   readonly type = 'notion';
   readonly name = 'Notion';
-  private client: any = null;
+  private client: NotionClient | null = null;
 
   constructor() {
     super();
@@ -211,8 +284,8 @@ export class NotionExporter extends ExportConnector {
   }
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: ExportOptions
   ): Promise<ExportResult> {
     const apiKey = process.env.NOTION_API_KEY;
     if (!apiKey) {
@@ -229,7 +302,7 @@ export class NotionExporter extends ExportConnector {
         this.client = new Client({
           auth: apiKey,
           timeoutMs: 30000,
-        });
+        }) as unknown as NotionClient;
       }
 
       if (!data || !data.idea) {
@@ -268,12 +341,12 @@ export class NotionExporter extends ExportConnector {
       };
 
       if (!pageData.parent.page_id && !process.env.NOTION_PARENT_PAGE_ID) {
-        delete (pageData as any).parent;
+        delete (pageData as { parent?: unknown }).parent;
       }
 
       const response = (await this.executeWithTimeout(() =>
-        this.client.pages.create(pageData)
-      )) as any;
+        (this.client as NotionClient).pages.create(pageData)
+      )) as { url?: string; id: string };
 
       return {
         success: true,
@@ -300,9 +373,9 @@ export class NotionExporter extends ExportConnector {
       const result = await operation();
       clearTimeout(timeoutId);
       return result;
-    } catch (error) {
+    } catch (_error) {
       clearTimeout(timeoutId);
-      throw error;
+      throw _error;
     }
   }
 
@@ -321,17 +394,17 @@ export class NotionExporter extends ExportConnector {
       };
 
       return await withTimeout(testConnection, DEFAULT_TIMEOUTS.notion / 2);
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
 
   private buildNotionBlocks(
-    idea: any,
-    deliverables: any[],
-    tasks: any[]
-  ): any[] {
-    const blocks: any[] = [];
+    idea: Idea,
+    deliverables: Deliverable[],
+    tasks: Task[]
+  ): NotionBlock[] {
+    const blocks: NotionBlock[] = [];
 
     // Add description
     blocks.push({
@@ -456,16 +529,10 @@ export class TrelloExporter extends ExportConnector {
   readonly name = 'Trello';
   private readonly API_BASE = 'https://api.trello.com/1';
 
-  constructor() {
-    super();
-    circuitBreakerManager.getOrCreate('trello', DEFAULT_CIRCUIT_BREAKER_CONFIG);
-  }
-
   async export(
-    data: any,
-    _options?: Record<string, any>
+    data: ExportData,
+    _options?: ExportOptions
   ): Promise<ExportResult> {
-    const { idea, deliverables = [], tasks = [] } = data;
     const apiKey = process.env.TRELLO_API_KEY;
     const token = process.env.TRELLO_TOKEN;
 
@@ -477,6 +544,7 @@ export class TrelloExporter extends ExportConnector {
     }
 
     try {
+      const { idea, deliverables = [], tasks = [] } = data;
       // Create a new board
       const boardData = await this.createBoard(idea.title, apiKey, token);
       const boardId = boardData.id;
@@ -570,7 +638,7 @@ export class TrelloExporter extends ExportConnector {
           }),
         DEFAULT_TIMEOUTS.trello / 2
       );
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -605,7 +673,7 @@ export class TrelloExporter extends ExportConnector {
     name: string,
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: string; url: string }> {
     const circuitBreaker = circuitBreakerManager.get('trello')!;
     const retryConfig: RetryConfig = {
       ...DEFAULT_RETRIES,
@@ -641,7 +709,7 @@ export class TrelloExporter extends ExportConnector {
     name: string,
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: string }> {
     const circuitBreaker = circuitBreakerManager.get('trello')!;
     const retryConfig: RetryConfig = {
       ...DEFAULT_RETRIES,
@@ -672,10 +740,17 @@ export class TrelloExporter extends ExportConnector {
 
   private async createCard(
     listId: string,
-    task: any,
+    task:
+      | Task
+      | {
+          title: string;
+          description: string;
+          assignee: string | null;
+          estimate: number;
+        },
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: string; url: string }> {
     const circuitBreaker = circuitBreakerManager.get('trello')!;
     const retryConfig: RetryConfig = {
       ...DEFAULT_RETRIES,
@@ -691,7 +766,7 @@ export class TrelloExporter extends ExportConnector {
     };
 
     const makeRequest = async () => {
-      const params = new URLSearchParams(cardData as any);
+      const params = new URLSearchParams(cardData as Record<string, string>);
       const response = await fetch(
         `${this.API_BASE}/cards?${params.toString()}`,
         {
@@ -713,7 +788,11 @@ export class TrelloExporter extends ExportConnector {
     })();
 
     // Add labels for priority
-    if (task.priority) {
+    if (
+      'priority' in task &&
+      typeof task.priority === 'number' &&
+      task.priority
+    ) {
       try {
         await this.addCardLabel(
           card.id,
@@ -811,7 +890,7 @@ export class TrelloExporter extends ExportConnector {
   }
 
   private getTaskListId(
-    task: any,
+    task: Task,
     deliverableLists: Record<string, string>,
     todoListId: string,
     inProgressListId: string,
@@ -846,8 +925,8 @@ export class GoogleTasksExporter extends ExportConnector {
   readonly name = 'Google Tasks';
 
   async export(
-    _data: any,
-    _options?: Record<string, any>
+    _data: ExportData,
+    _options?: ExportOptions
   ): Promise<ExportResult> {
     // This connector requires server-side execution
     return {
@@ -899,8 +978,8 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   async export(
-    data: any,
-    _options?: Record<string, any>
+    data: ExportData,
+    _options?: ExportOptions
   ): Promise<ExportResult> {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
@@ -935,17 +1014,17 @@ export class GitHubProjectsExporter extends ExportConnector {
 
       // Create columns for different statuses
       const todoColumn = await this.createProjectColumn(
-        project.id,
+        project.id.toString(),
         'To Do',
         token
       );
       const inProgressColumn = await this.createProjectColumn(
-        project.id,
+        project.id.toString(),
         'In Progress',
         token
       );
       const doneColumn = await this.createProjectColumn(
-        project.id,
+        project.id.toString(),
         'Done',
         token
       );
@@ -954,7 +1033,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       const deliverableColumns: Record<string, string> = {};
       for (const deliverable of deliverables) {
         const column = await this.createProjectColumn(
-          project.id,
+          project.id.toString(),
           deliverable.title,
           token
         );
@@ -962,7 +1041,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       }
 
       // Create issues for tasks
-      const createdIssues: any[] = [];
+      const createdIssues: { id: string; url: string }[] = [];
       for (const task of tasks) {
         const issue = await this.createIssue(
           user.login,
@@ -994,6 +1073,10 @@ export class GitHubProjectsExporter extends ExportConnector {
             assignee: null,
             estimate: 0,
             status: 'todo',
+            deliverable_id: null,
+            id: 'overview',
+            created_at: new Date().toISOString(),
+            user_id: idea.user_id || 'unknown',
           },
           token
         );
@@ -1003,7 +1086,11 @@ export class GitHubProjectsExporter extends ExportConnector {
       await this.createReadme(
         user.login,
         repository.name,
-        idea,
+        {
+          ...idea,
+          created_at: idea.created_at || new Date().toISOString(),
+          user_id: idea.user_id || 'unknown',
+        } as Idea,
         deliverables,
         tasks,
         token
@@ -1050,7 +1137,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           }),
         DEFAULT_TIMEOUTS.github / 2
       );
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -1078,7 +1165,9 @@ export class GitHubProjectsExporter extends ExportConnector {
     );
   }
 
-  private async getAuthenticatedUser(token: string): Promise<any> {
+  private async getAuthenticatedUser(
+    token: string
+  ): Promise<{ login: string }> {
     const circuitBreaker = circuitBreakerManager.get('github')!;
     const retryConfig: RetryConfig = {
       ...DEFAULT_RETRIES,
@@ -1112,9 +1201,9 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createOrUpdateRepository(
     owner: string,
     repoName: string,
-    idea: any,
+    idea: Idea,
     token: string
-  ): Promise<any> {
+  ): Promise<{ name: string; id: number; html_url: string }> {
     const circuitBreaker = circuitBreakerManager.get('github')!;
     const retryConfig: RetryConfig = {
       ...DEFAULT_RETRIES,
@@ -1183,7 +1272,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     repo: string,
     projectName: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: number }> {
     const response = await fetch(
       `${this.API_BASE}/repos/${owner}/${repo}/projects`,
       {
@@ -1213,7 +1302,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     projectId: string,
     columnName: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: string }> {
     const response = await fetch(
       `${this.API_BASE}/projects/${projectId}/columns`,
       {
@@ -1241,10 +1330,27 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createIssue(
     owner: string,
     repo: string,
-    task: any,
+    task:
+      | Task
+      | {
+          title: string;
+          description: string;
+          assignee: string | null;
+          estimate: number;
+          status: 'todo' | 'completed';
+          deliverable_id: string | null;
+          id: string;
+          created_at: string;
+          user_id: string;
+        },
     token: string
-  ): Promise<any> {
-    const issueData: any = {
+  ): Promise<{ id: string; url: string }> {
+    const issueData: {
+      title: string;
+      body?: string;
+      assignees?: string[];
+      labels?: string[];
+    } = {
       title: task.title,
       body: task.description || '',
     };
@@ -1320,9 +1426,9 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createReadme(
     owner: string,
     repo: string,
-    idea: any,
-    deliverables: any[],
-    tasks: any[],
+    idea: Idea,
+    deliverables: Deliverable[],
+    tasks: Task[],
     token: string
   ): Promise<void> {
     let readme = `# ${idea.title}\n\n`;
@@ -1369,7 +1475,7 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private getTaskColumnId(
-    task: any,
+    task: Task,
     deliverableColumns: Record<string, string>,
     todoColumnId: string,
     inProgressColumnId: string,
@@ -1581,17 +1687,17 @@ export class ExportService {
   }
 
   async exportToMarkdown(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { content?: string; url?: string }> {
     return await this.markdownExporter.export(data);
   }
 
-  async exportToJSON(data: any): Promise<ExportResult> {
+  async exportToJSON(data: ExportData): Promise<ExportResult> {
     return await this.jsonExporter.export(data);
   }
 
   async exportToNotion(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { notionPageId?: string }> {
     return (await this.notionExporter.export(data)) as ExportResult & {
       notionPageId?: string;
@@ -1599,18 +1705,18 @@ export class ExportService {
   }
 
   async exportToTrello(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { boardId?: string }> {
     return (await this.trelloExporter.export(data)) as ExportResult & {
       boardId?: string;
     };
   }
 
-  async exportToGoogleTasks(data: any): Promise<ExportResult> {
+  async exportToGoogleTasks(data: ExportData): Promise<ExportResult> {
     return await this.googleTasksExporter.export(data);
   }
 
-  async exportToGitHubProjects(data: any): Promise<ExportResult> {
+  async exportToGitHubProjects(data: ExportData): Promise<ExportResult> {
     return await this.githubProjectsExporter.export(data);
   }
 }
@@ -1682,7 +1788,11 @@ export class SyncStatusTracker {
 // Export utilities
 export const exportUtils = {
   // Convert IdeaFlow data to standard format
-  normalizeData(idea: any, deliverables: any[] = [], tasks: any[] = []): any {
+  normalizeData(
+    idea: Idea,
+    deliverables: Deliverable[] = [],
+    tasks: Task[] = []
+  ): ExportData {
     return {
       idea: {
         id: idea.id,
@@ -1715,7 +1825,10 @@ export const exportUtils = {
   },
 
   // Validate export data against schema
-  validateExportData(data: any): { valid: boolean; errors: string[] } {
+  validateExportData(data: ExportData): {
+    valid: boolean;
+    errors: string[];
+  } {
     const errors: string[] = [];
 
     if (!data.idea) {

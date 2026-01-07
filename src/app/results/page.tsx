@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
 import { exportManager, exportUtils } from '@/lib/exports';
@@ -72,7 +72,10 @@ export default function ResultsPage() {
 
     try {
       // Prepare data for export
-      const exportData = exportUtils.normalizeData(idea);
+      const exportData = exportUtils.normalizeData({
+        ...idea,
+        deleted_at: idea.deleted_at ?? null,
+      });
 
       if (
         session &&
@@ -80,7 +83,8 @@ export default function ResultsPage() {
         typeof session.state.answers === 'object'
       ) {
         const answers = session.state.answers as Record<string, unknown>;
-        exportData.metadata.goals = (answers.main_goal as string) || '';
+        exportData.metadata = exportData.metadata || {};
+        exportData.metadata.goals = [(answers.main_goal as string) || ''];
         exportData.metadata.target_audience =
           (answers.target_audience as string) || '';
       }
