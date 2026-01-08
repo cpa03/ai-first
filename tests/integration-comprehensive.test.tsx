@@ -9,7 +9,7 @@ import {
   mockUserJourney,
   createMockFetch,
   waitForAsync,
-} from './utils/testHelpers';
+} from './utils/_testHelpers';
 
 // Mock all API calls
 global.fetch = jest.fn() as jest.Mock;

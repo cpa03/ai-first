@@ -19,7 +19,7 @@ import {
   mockOpenAIResponses,
   createMockFetch,
   waitForAsync,
-} from './utils/testHelpers';
+} from './utils/_testHelpers';
 
 // Mock external dependencies
 jest.mock('@/lib/db');
