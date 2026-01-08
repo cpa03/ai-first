@@ -8,6 +8,119 @@ This document tracks documentation work completed by the Technical Writer agent.
 
 ## Completed Tasks
 
+### Task 10: Critical Project Structure Documentation Fix ✅ COMPLETE
+
+**Priority**: CRITICAL
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Fix misleading project structure documentation in README.md
+- Fix incorrect directory references in docs/architecture.md
+- Ensure documentation accurately reflects actual codebase
+- Provide accurate project structure for new developers
+
+#### Completed Work
+
+1. **Updated README.md Project Structure Section**
+   - Removed outdated and incomplete project structure
+   - Added comprehensive, accurate project structure matching actual codebase
+   - Corrected blueprint.md location (was shown at root, actually at docs/blueprint.md)
+   - Added all major directories and files:
+     - Complete docs/ directory listing (13 documentation files)
+     - Complete src/app/ structure (pages and API routes)
+     - Complete src/components/ listing (9 major components)
+     - Complete src/lib/ structure (all utility modules and subdirectories)
+     - Correct ai/ directory structure (agent-configs only, no prompts/)
+     - Added config/ and scripts/ directories
+     - Updated supabase/ structure (removed non-existent seeds/)
+     - Added tests/ directory structure
+
+2. **Fixed docs/architecture.md Directory References**
+   - Corrected `ai/prompts/` reference to `src/lib/prompts/`
+   - Added comprehensive src/lib/ structure showing all subdirectories:
+     - config/ directory for constants
+     - prompts/ directory with clarifier/ and breakdown/ subdirectories
+     - agents/ directory with agent implementations
+   - Removed incorrect `ai/prompts/` reference
+
+3. **Root Cause Analysis**
+
+**Issue 1: README.md Project Structure**
+
+The README showed incomplete and misleading project structure:
+
+- Showed `/blueprint.md` at root level (actually at `docs/blueprint.md`)
+- Listed only 4 directories in src/lib/ (actually 15+ files/directories)
+- Listed `/ai/prompts/` which doesn't exist (actual: `ai/agent-configs/`)
+- Missing critical directories: config/, scripts/, tests/, types/
+- Missing many files: middleware.ts, config files, test structure
+- Showed `supabase/seeds/` which doesn't exist
+
+**Issue 2: Architecture.md Directory References**
+
+Referenced non-existent `ai/prompts/` directory structure.
+
+**Actual Structure:**
+
+- Prompts are in `src/lib/prompts/` (not `ai/prompts/`)
+- Agent configs are in `ai/agent-configs/` (clarifier.yml, breakdown-engine.yml)
+- Prompts are organized by agent: `src/lib/prompts/{agent}/{role}.txt`
+
+#### Impact
+
+**Documentation Accuracy**: Fixed
+
+- README now shows complete, accurate project structure
+- Architecture.md references correct directory locations
+- New developers can now navigate codebase correctly
+
+**Developer Experience**: Improved
+
+- Eliminates confusion about file locations
+- Prevents time wasted searching for non-existent directories
+- Clear understanding of project organization
+
+**Single Source of Truth**: Restored
+
+- Documentation now matches actual implementation
+- Eliminates misleading information
+- Aligns with "Single Source of Truth" principle
+
+#### Success Criteria Met
+
+- [x] README.md project structure accurate and complete
+- [x] Blueprint.md location corrected
+- [x] All actual directories and files documented
+- [x] Non-existent references removed
+- [x] docs/architecture.md directory references corrected
+- [x] Documentation follows existing structure
+- [x] No breaking changes to documentation
+- [x] Lint passes (0 errors)
+- [x] Type-check passes
+
+#### Files Modified
+
+- `README.md` (UPDATED - comprehensive project structure section)
+- `docs/architecture.md` (UPDATED - corrected directory references)
+
+#### Notes
+
+- The project structure in README.md now comprehensively shows:
+  - 13 documentation files in docs/
+  - 9 major React components
+  - 15+ utility modules in src/lib/
+  - 4 prompt directories (clarifier system/user, breakdown system/user)
+  - Complete API route structure (health, clarify, breakdown, admin)
+  - Test structure (api/, utils/, fixtures/)
+  - Configuration directories (config/, ai/agent-configs/)
+
+- PromptService loads prompts from `src/lib/prompts/{agent}/{template}-{role}.txt`
+- Agent configs in `ai/agent-configs/{agent}.yml` define model settings and functions
+
+---
+
 ### Task 9: Admin API Endpoint Documentation ✅ COMPLETE
 
 **Priority**: MEDIUM
