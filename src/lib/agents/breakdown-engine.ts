@@ -14,6 +14,11 @@ import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('BreakdownEngine');
 
+const HOURS_PER_WEEK = 40;
+const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+const PHASE_PLANNING_RATIO = 0.2;
+const PHASE_DEVELOPMENT_RATIO = 0.8;
+
 export interface BreakdownConfig {
   name: string;
   description: string;
@@ -428,10 +433,10 @@ class BreakdownEngine {
   ): Promise<Timeline> {
     const startDate = new Date();
     const totalWeeks = Math.ceil(
-      tasks.totalEstimatedHours / (40 * (options.teamSize || 1))
+      tasks.totalEstimatedHours / (HOURS_PER_WEEK * (options.teamSize || 1))
     );
     const endDate = new Date(
-      startDate.getTime() + totalWeeks * 7 * 24 * 60 * 60 * 1000
+      startDate.getTime() + totalWeeks * MILLISECONDS_PER_WEEK
     );
 
     // Generate milestones based on deliverables
@@ -442,11 +447,7 @@ class BreakdownEngine {
         startDate.getTime() +
           (index + 1) *
             (totalWeeks / analysis.deliverables.length) *
-            7 *
-            24 *
-            60 *
-            60 *
-            1000
+            MILLISECONDS_PER_WEEK
       ),
       dependencies: [] as string[],
     }));
@@ -457,25 +458,28 @@ class BreakdownEngine {
         name: 'Planning & Design',
         startDate,
         endDate: new Date(
-          startDate.getTime() + totalWeeks * 0.2 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_PLANNING_RATIO * MILLISECONDS_PER_WEEK
         ),
         tasks: tasks.tasks
-          .slice(0, Math.ceil(tasks.tasks.length * 0.2))
+          .slice(0, Math.ceil(tasks.tasks.length * PHASE_PLANNING_RATIO))
           .map((t) => t.id),
         deliverables: analysis.deliverables.slice(0, 1).map((d) => d.title),
       },
       {
         name: 'Development',
         startDate: new Date(
-          startDate.getTime() + totalWeeks * 0.2 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_PLANNING_RATIO * MILLISECONDS_PER_WEEK
         ),
         endDate: new Date(
-          startDate.getTime() + totalWeeks * 0.8 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_DEVELOPMENT_RATIO * MILLISECONDS_PER_WEEK
         ),
         tasks: tasks.tasks
           .slice(
-            Math.ceil(tasks.tasks.length * 0.2),
-            Math.ceil(tasks.tasks.length * 0.8)
+            Math.ceil(tasks.tasks.length * PHASE_PLANNING_RATIO),
+            Math.ceil(tasks.tasks.length * PHASE_DEVELOPMENT_RATIO)
           )
           .map((t) => t.id),
         deliverables: analysis.deliverables.slice(1, -1).map((d) => d.title),
@@ -483,11 +487,12 @@ class BreakdownEngine {
       {
         name: 'Testing & Deployment',
         startDate: new Date(
-          startDate.getTime() + totalWeeks * 0.8 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_DEVELOPMENT_RATIO * MILLISECONDS_PER_WEEK
         ),
         endDate,
         tasks: tasks.tasks
-          .slice(Math.ceil(tasks.tasks.length * 0.8))
+          .slice(Math.ceil(tasks.tasks.length * PHASE_DEVELOPMENT_RATIO))
           .map((t) => t.id),
         deliverables: analysis.deliverables.slice(-1).map((d) => d.title),
       },
