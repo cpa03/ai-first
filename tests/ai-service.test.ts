@@ -111,7 +111,8 @@ describe('AIService', () => {
 
     it('should create daily cost cache with 60s TTL', () => {
       expect(aiService.getCacheStats()).toBeDefined();
-      expect(aiService.getCacheStats().size).toBe(0);
+      expect(aiService.getCacheStats().costCacheSize).toBe(0);
+      expect(aiService.getCacheStats().responseCacheSize).toBe(0);
     });
   });
 
@@ -438,14 +439,36 @@ describe('AIService', () => {
       const stats = aiService.getCacheStats();
 
       expect(stats).toBeDefined();
-      expect(stats.size).toBe(0);
+      expect(stats.costCacheSize).toBe(0);
+      expect(stats.responseCacheSize).toBe(0);
     });
 
     it('should clear cost cache', () => {
       aiService.clearCostCache();
 
       const stats = aiService.getCacheStats();
-      expect(stats.size).toBe(0);
+      expect(stats.costCacheSize).toBe(0);
+    });
+
+    it('should clear cost cache', () => {
+      aiService.clearCostCache();
+
+      const stats = aiService.getCacheStats();
+      expect(stats.costCacheSize).toBe(0);
+    });
+
+    it('should clear response cache', () => {
+      aiService.clearResponseCache();
+
+      const stats = aiService.getCacheStats();
+      expect(stats.responseCacheSize).toBe(0);
+    });
+
+    it('should clear cost cache', () => {
+      aiService.clearCostCache();
+
+      const stats = aiService.getCacheStats();
+      expect(stats.costCacheSize).toBe(0);
     });
   });
 
