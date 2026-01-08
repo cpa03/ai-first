@@ -349,11 +349,11 @@ describe('AIService', () => {
         });
 
       await aiService.callModel(
-        [{ role: 'user' as const, content: 'Test' }],
+        [{ role: 'user' as const, content: 'Test 1' }],
         config
       );
       await aiService.callModel(
-        [{ role: 'user' as const, content: 'Test' }],
+        [{ role: 'user' as const, content: 'Test 2' }],
         config
       );
 

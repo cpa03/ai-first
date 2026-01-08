@@ -199,7 +199,7 @@ export class RetryManager {
       } catch (error) {
         lastError = error as Error;
 
-        if (!retryFn(lastError, attempt) || attempt > maxRetries) {
+        if (attempt > maxRetries || !retryFn(lastError, attempt)) {
           const exhaustedError = new RetryExhaustedError(
             `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
             lastError,
