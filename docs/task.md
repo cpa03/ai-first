@@ -4578,10 +4578,10 @@ Then call this method once from `onError()`.
 
 ---
 
-### Task 2: Replace console.error with Proper Logging
+### Task 2: Replace console.error with Proper Logging ✅ COMPLETE
 
 **Priority**: HIGH
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 **Date**: 2026-01-08
 
 #### Objectives
@@ -4592,44 +4592,127 @@ Then call this method once from `onError()`.
 
 #### Issue
 
-The codebase has 5 instances of `console.error()` for error handling:
+The codebase had multiple instances of `console.error()` for error handling. While some catch blocks already existed without logging, only one `console.error` remained:
 
-- `src/app/clarify/page.tsx:38` - Error storing clarification answers
-- `src/app/results/page.tsx:35, 46` - Error fetching results, Export error
-- `src/components/ErrorBoundary.tsx:17` - ErrorBoundary caught error
-- `src/components/IdeaInput.tsx:65` - Error saving idea
-- `src/components/ClarificationFlow.tsx:153` - Error fetching questions
+- `src/components/ErrorBoundary.tsx:28` - ErrorBoundary caught error
+- Multiple catch blocks without any logging (clarify/page, results/page, IdeaInput, ClarificationFlow)
 
 Using `console.error()` is not suitable for production because:
 
 - No error context tracking (request IDs, user IDs)
 - No error aggregation or alerting
 - Difficult to filter and analyze in production
-- Inconsistent with centralized error handling system already in place
+- Inconsistent with centralized error handling system
 
-#### Suggestion
+#### Completed Work
 
-Create a `Logger` utility class with:
+1. **Enhanced Logger Utility** (`src/lib/logger.ts`)
+   - Added `LogContext` interface for structured logging context
+   - Added `*WithContext` methods (debugWithContext, infoWithContext, warnWithContext, errorWithContext)
+   - Context supports: requestId, userId, component, action, metadata
+   - Automatic context formatting in log messages: `[context] message [req:xxx user:yyy comp:zzz action:aaa]`
+   - Metadata automatically appended to log args for detailed error tracking
 
-- Error level logging with context (request ID, user ID, component name)
-- Structured logging with metadata
-- Integration with error tracking service (optional for future)
-- Different log levels (error, warn, info, debug)
+2. **Updated ErrorBoundary** (`src/components/ErrorBoundary.tsx`)
+   - Replaced `console.error()` with `logger.errorWithContext()`
+   - Added structured error context: component name, error message, stack trace, componentStack
+   - Production-ready error logging with full context
 
-Replace all `console.error()` calls with logger.error() calls.
+3. **Added Error Logging to ClarifyPage** (`src/app/clarify/page.tsx`)
+   - Added error logging to `handleClarificationComplete` catch block
+   - Context includes: component, action, ideaId, error message
+   - Enables tracking of clarification save failures in production
 
-#### Effort
+4. **Added Error Logging to ResultsPage** (`src/app/results/page.tsx`)
+   - Added error logging to `fetchResults` catch block
+   - Context includes: component, action, ideaId, error message
+   - Added error logging to `handleExport` catch block
+   - Context includes: component, action, ideaId, format, error message
+   - Comprehensive tracking of result fetching and export failures
 
-**MEDIUM** - ~2 hours to create Logger utility and update 5 locations
+5. **Added Error Logging to IdeaInput** (`src/components/IdeaInput.tsx`)
+   - Fixed duplicate code issue (duplicate constants and functions)
+   - Added error logging to `handleSubmit` catch block
+   - Context includes: component, action, ideaLength, error message
+   - Enables tracking of idea save failures
+   - Changed from setError to setValidationError for proper error display
 
-#### Files to Modify
+6. **Added Error Logging to ClarificationFlow** (`src/components/ClarificationFlow.tsx`)
+   - Added error logging to `fetchQuestions` catch block
+   - Context includes: component, action, ideaId, ideaLength, error message
+   - Enables tracking of question fetching failures in production
 
-- `src/lib/logger.ts` (NEW - Logger utility)
-- `src/app/clarify/page.tsx` (line 38)
-- `src/app/results/page.tsx` (lines 35, 46)
-- `src/components/ErrorBoundary.tsx` (line 17)
-- `src/components/IdeaInput.tsx` (line 65)
-- `src/components/ClarificationFlow.tsx` (line 153)
+#### Impact
+
+**Observability**: Improved
+
+- All error paths now have structured logging
+- Request ID tracking possible (for future integration)
+- Component-level error isolation
+- Action-level error tracking
+- Metadata support for detailed debugging
+
+**Production Readiness**: Improved
+
+- Errors are now logged with full context
+- Easier to filter and analyze production logs
+- Consistent error logging pattern across application
+- Ready for integration with error tracking services (Sentry, LogRocket, etc.)
+
+**Developer Experience**: Improved
+
+- Single source of truth for error logging (Logger utility)
+- Clear pattern: `logger.errorWithContext(message, { component, action, metadata })`
+- Type-safe context interface
+- Easy to add new logging locations
+
+#### Success Criteria Met
+
+- [x] All `console.error()` calls replaced with structured logging (verified: 0 remaining outside logger.ts)
+- [x] All catch blocks now have error logging (6 locations)
+- [x] Structured logging with context implemented
+- [x] Logger utility supports requestId, userId, component, action, metadata
+- [x] Zero breaking changes (error display to users unchanged)
+- [x] Code follows SOLID principles (Single Responsibility in Logger)
+- [x] Consistent error logging pattern across all components
+
+#### Files Modified
+
+- `src/lib/logger.ts` (ENHANCED - added LogContext interface and \*WithContext methods)
+- `src/components/ErrorBoundary.tsx` (UPDATED - replaced console.error with logger.errorWithContext)
+- `src/app/clarify/page.tsx` (UPDATED - added error logging with context)
+- `src/app/results/page.tsx` (UPDATED - added error logging with context to 2 catch blocks)
+- `src/components/IdeaInput.tsx` (FIXED - removed duplicate code, added error logging with context)
+- `src/components/ClarificationFlow.tsx` (UPDATED - added error logging with context)
+
+#### Usage Examples
+
+**Error Logging with Context**:
+
+```typescript
+logger.errorWithContext('Failed to save idea', {
+  component: 'IdeaInput',
+  action: 'handleSubmit',
+  metadata: {
+    ideaLength: idea.length,
+    error: err instanceof Error ? err.message : 'Unknown error',
+  },
+});
+```
+
+**Produces console output**:
+
+```
+[IdeaInput] Failed to save idea [comp:IdeaInput action:handleSubmit] { ideaLength: 150, error: '...' }
+```
+
+#### Future Enhancements
+
+1. **Request ID Integration** - Pass requestId through API calls and include in logs
+2. **User ID Tracking** - Include userId in all error logs when authenticated
+3. **Error Tracking Service** - Integrate with Sentry, LogRocket, or similar
+4. **Log Aggregation** - Send logs to centralized logging service (e.g., Datadog, ELK)
+5. **Error Rate Monitoring** - Track error rates per component/action and alert on anomalies
 
 ---
 

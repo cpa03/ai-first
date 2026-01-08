@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -53,6 +54,7 @@ export default function ClarificationFlow({
   ideaId,
   onComplete,
 }: ClarificationFlowProps) {
+  const logger = createLogger('ClarificationFlow');
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentAnswer, setCurrentAnswer] = useState('');
@@ -176,6 +178,15 @@ export default function ClarificationFlow({
 
         setQuestions(formattedQuestions);
       } catch (err) {
+        logger.errorWithContext('Failed to fetch clarifying questions', {
+          component: 'ClarificationFlow',
+          action: 'fetchQuestions',
+          metadata: {
+            ideaId,
+            ideaLength: idea.length,
+            error: err instanceof Error ? err.message : 'Unknown error',
+          },
+        });
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );
