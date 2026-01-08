@@ -569,6 +569,132 @@ found 0 vulnerabilities
 
 ## QA Testing Tasks
 
+### Task 8: Critical Path Testing - AIService ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Create comprehensive unit tests for AIService (critical infrastructure module)
+- Test AIService initialization and configuration loading
+- Test AIService callModel method with various scenarios
+- Test AIService context window management
+- Test AIService cost tracking and limits
+- Test AIService error handling and resilience
+- Ensure all tests follow AAA pattern and best practices
+
+#### Completed Work
+
+1. **Created Comprehensive AIService Test Suite** (`tests/ai-service.test.ts`)
+   - 34 comprehensive tests covering:
+     - constructor: Initialization of OpenAI client and cache (3 tests)
+     - initialize: Configuration loading and validation (2 tests)
+     - callModel: OpenAI completion calls, cost tracking, error handling (7 tests)
+     - manageContextWindow: Context retrieval, addition, truncation, error handling (5 tests)
+     - cost tracking: Cost calculation, tracking across calls, model-specific pricing (5 tests)
+     - cache management: Stats and clearing (2 tests)
+     - healthCheck: Provider availability and error handling (4 tests)
+     - edge cases and error handling: Empty messages, API errors, large contexts (6 tests)
+   - All tests follow AAA pattern (Arrange, Act, Assert)
+   - Tests cover both happy path and sad path scenarios
+   - Edge cases tested (empty inputs, null responses, boundary conditions)
+
+2. **Test Coverage Summary**
+   - AIService constructor and initialization: 3 tests
+   - Configuration and API key validation: 2 tests
+   - OpenAI completion calls: 7 tests
+   - Context window management: 5 tests
+   - Cost tracking and limits: 5 tests
+   - Cache management: 2 tests
+   - Health checks: 4 tests
+   - Edge cases and error handling: 6 tests
+   - Total: 34 comprehensive tests
+   - All 34 tests pass successfully (100% pass rate)
+
+3. **Mock Infrastructure**
+   - Properly mocked OpenAI library
+   - Properly mocked Supabase client
+   - Properly mocked resilience framework
+   - Clean mock setup and teardown in beforeEach/afterEach
+
+#### Key Test Scenarios
+
+**Initialization Testing**:
+
+- OpenAI client initialization with API key
+- Error when OpenAI API key not configured
+- Daily cost cache creation with 60s TTL
+
+**Model Call Testing**:
+
+- Correct parameters passed to OpenAI completion API
+- Empty string handling when completion has no content
+- Error for unimplemented providers (anthropic)
+- Cost tracking when usage data available
+- No cost tracking when usage data missing
+- Error when cost limit is exceeded
+- Resilience wrapper usage for all OpenAI calls
+
+**Context Management Testing**:
+
+- Retrieval of existing context from database
+- Adding new messages to existing context
+- Truncation when exceeding max tokens
+- Preservation of system messages during truncation
+- Error handling when Supabase not initialized
+
+**Cost Tracking Testing**:
+
+- Empty tracking when no calls made
+- Cost tracking across multiple calls
+- Timestamp inclusion in cost trackers
+- Model-specific cost calculations (gpt-3.5-turbo, gpt-4, unknown models)
+
+**Health Check Testing**:
+
+- Healthy status when OpenAI available
+- Unhealthy status when no providers available
+- Graceful error handling on health check failures
+- Listing only available providers
+
+**Edge Case Testing**:
+
+- Empty messages arrays
+- OpenAI API errors
+- Context with only system messages
+- Very large contexts requiring multiple truncations
+- Zero maxTokens limit in context management
+
+#### Success Criteria Met
+
+- [x] AIService fully tested with 34 comprehensive tests
+- [x] All methods covered (constructor, initialize, callModel, manageContextWindow, getCostTracking, getCacheStats, clearCostCache, healthCheck)
+- [x] All critical paths covered (initialization, model calls, context management, cost tracking, health checks)
+- [x] Edge cases tested (null, empty, boundary conditions, error paths)
+- [x] Error paths tested (missing API keys, unimplemented providers, cost limits, missing clients)
+- [x] Tests readable and maintainable (AAA pattern, descriptive names)
+- [x] Lint passes (0 errors, 0 warnings)
+- [x] Type-check passes (0 errors)
+- [x] All 34 tests pass (100% pass rate)
+- [x] Zero regressions in existing tests
+
+#### Files Modified
+
+- `tests/ai-service.test.ts` (NEW - 34 comprehensive tests, 558 lines)
+
+#### Notes
+
+- AIService is a critical infrastructure module used by all AI operations
+- Previously only tested through integration tests in backend-comprehensive.test.ts
+- Now has comprehensive unit tests covering all methods and edge cases
+- Tests are fully isolated with proper mocking of external dependencies (OpenAI, Supabase, resilience)
+- Test patterns established can be reused for other modules
+- No external services required (fully isolated tests)
+
+---
+
 ### Task 7: Flaky Test Fix - Circuit Breaker Retry Coordination ✅ COMPLETE
 
 **Priority**: HIGH
