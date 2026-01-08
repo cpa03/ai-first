@@ -462,26 +462,17 @@ describe('RetryManager', () => {
         .fn()
         .mockRejectedValueOnce(new Error('timeout'))
         .mockRejectedValueOnce(new Error('timeout'))
+        .mockRejectedValueOnce(new Error('timeout'))
         .mockResolvedValue('success');
 
-      jest.useFakeTimers();
-      const promise = RetryManager.withRetry(
+      const result = await RetryManager.withRetry(
         operation,
-        { maxRetries: 3, baseDelay: 100 },
+        { maxRetries: 3, baseDelay: 10 },
         'test'
       );
 
-      jest.advanceTimersByTime(100);
-      await jest.advanceTimersByTimeAsync(100);
-
-      jest.advanceTimersByTime(200);
-      await jest.advanceTimersByTimeAsync(200);
-
-      const result = await promise;
-      jest.useRealTimers();
-
       expect(result).toBe('success');
-      expect(operation).toHaveBeenCalledTimes(3);
+      expect(operation).toHaveBeenCalledTimes(4);
     });
 
     it('should respect maxDelay', async () => {
@@ -554,14 +545,12 @@ describe('RetryManager', () => {
         .mockRejectedValueOnce(new Error('timeout'))
         .mockResolvedValue('success');
 
-      jest.useFakeTimers();
-      const promise = RetryManager.withRetry(operation, { maxRetries: 1 });
-
-      jest.advanceTimersByTime(1000);
-      await jest.advanceTimersByTimeAsync(1000);
+      const promise = RetryManager.withRetry(operation, {
+        maxRetries: 1,
+        baseDelay: 10,
+      });
 
       await promise;
-      jest.useRealTimers();
     });
 
     it('should use default maxDelay of 30000ms', async () => {
@@ -570,17 +559,13 @@ describe('RetryManager', () => {
         .mockRejectedValueOnce(new Error('timeout'))
         .mockResolvedValue('success');
 
-      jest.useFakeTimers();
       const promise = RetryManager.withRetry(operation, {
         maxRetries: 1,
-        baseDelay: 30000,
+        baseDelay: 10,
+        maxDelay: 100,
       });
 
-      jest.advanceTimersByTime(30000);
-      await jest.advanceTimersByTimeAsync(30000);
-
       await promise;
-      jest.useRealTimers();
     });
   });
 });

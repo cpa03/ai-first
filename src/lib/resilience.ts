@@ -169,7 +169,9 @@ export class RetryManager {
       const message = error.message.toLowerCase();
 
       return (
-        retryableStatuses.some((status) => message.includes(String(status))) ||
+        retryableStatuses.some((status) =>
+          message.includes(String(status).toLowerCase())
+        ) ||
         message.includes('timeout') ||
         message.includes('rate limit') ||
         message.includes('too many requests') ||
@@ -197,7 +199,7 @@ export class RetryManager {
       } catch (error) {
         lastError = error as Error;
 
-        if (attempt > maxRetries || !retryFn(lastError, attempt)) {
+        if (!retryFn(lastError, attempt) || attempt > maxRetries) {
           const exhaustedError = new RetryExhaustedError(
             `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
             lastError,
