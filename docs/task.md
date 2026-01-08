@@ -238,6 +238,26 @@ npm run build
 - Address API response structure incompatibility across test suite
 - Restore CI/CD pipeline to green state
 
+#### Additional Fixes (2026-01-08)
+
+**Fix 1: Resilience Retry Logic Bug** (`src/lib/resilience.ts`)
+
+- Issue: `retryFn` was being called on all failed attempts including final exhausted attempt
+- Fix: Changed condition order to check `attempt > maxRetries` BEFORE calling `retryFn`
+- Result: Resilience tests now passing (65/65, 100%)
+
+**Fix 2: AI Service Cost Tracking Test** (`tests/ai-service.test.ts`)
+
+- Issue: Second call to `callModel` was being cached (identical messages), so cost not tracked
+- Fix: Updated test to use different messages ("Test 1" and "Test 2") to avoid caching
+- Result: AI service tests now passing (37/37, 100%)
+
+**Fix 3: BlueprintDisplay Loading Test** (`tests/BlueprintDisplay.test.tsx`)
+
+- Issue: `getByText` failing because LoadingAnnouncer creates screen-reader-only duplicate text
+- Fix: Changed from `getByText` to `getAllByText` and check length > 0
+- Result: BlueprintDisplay tests now passing (4/4, 100%)
+
 #### Root Cause Analysis
 
 **Issue 1: Resilience Framework Test Failures**
@@ -309,14 +329,16 @@ But test mocks return unwrapped structure:
 | Lint                    | PASS   | PASS  | ✅ Stable    |
 | Type-check              | PASS   | PASS  | ✅ Stable    |
 | Total Tests             | 825    | 825   | ✅ No change |
-| Passed                  | 707    | 755   | ✅ +48       |
-| Failed                  | 79     | 70    | ✅ -9        |
-| Pass Rate               | 85.7%  | 91.5% | ✅ +5.8%     |
-| Critical Suites Failing | 2      | 1     | ✅ Improved  |
+| Passed                  | 707    | 760   | ✅ +53       |
+| Failed                  | 79     | 65    | ✅ -14       |
+| Pass Rate               | 85.7%  | 92.1% | ✅ +6.4%     |
+| Critical Suites Failing | 2      | 0     | ✅ Improved  |
 
 **Critical Test Suite Status**:
 
 - ✅ Resilience: 65/65 passing (100%)
+- ✅ AI Service: 37/37 passing (100%)
+- ✅ BlueprintDisplay: 4/4 passing (100%)
 - ⚠️ ClarificationFlow: 10/17 passing (59%)
 - ❌ E2E Tests: Failing (API response mismatch)
 - ❌ Integration Tests: Failing (API response mismatch)
@@ -326,15 +348,16 @@ But test mocks return unwrapped structure:
 
 **Priority 1 - API Response Test Updates** (3-4 hours):
 
-1. Update remaining ClarificationFlow test mocks (7 tests)
+1. Update remaining ClarificationFlow test mocks (7 tests) - need to handle LoadingAnnouncer duplicate text
 2. Fix E2E test mocks for all API endpoints
 3. Update integration test mocks
-4. Update component tests (BlueprintDisplay, IdeaInput)
+4. Update component tests (IdeaInput and other components with LoadingAnnouncer)
 
 **Priority 2 - Test Framework Issues** (1 hour):
 
-1. Remove empty test suite from `tests/test.d.ts`
-2. Fix `tests/utils/testHelpers.ts` if needed
+1. Remove empty test suite from `tests/utils/_testHelpers.ts` (already identified)
+2. Remove empty test suite from `tests/_test-env.d.ts` (already identified)
+3. Fix `tests/utils/testHelpers.ts` if needed
 
 #### Success Criteria
 
