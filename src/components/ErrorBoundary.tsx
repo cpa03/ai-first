@@ -3,6 +3,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import Alert from './Alert';
 import Button from './Button';
+import { createLogger } from '@/lib/logger';
 
 interface Props {
   children: ReactNode;
@@ -15,6 +16,8 @@ interface State {
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
+  private logger = createLogger('ErrorBoundary');
+
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
@@ -25,7 +28,14 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
+    this.logger.errorWithContext('ErrorBoundary caught an error', {
+      component: 'ErrorBoundary',
+      metadata: {
+        error: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+      },
+    });
     this.setState({ error, errorInfo });
   }
 
