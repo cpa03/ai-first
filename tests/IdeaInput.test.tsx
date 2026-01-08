@@ -1,6 +1,13 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import IdeaInput from '@/components/IdeaInput';
+import { dbService } from '@/lib/db';
+
+jest.mock('@/lib/db', () => ({
+  dbService: {
+    createIdea: jest.fn().mockResolvedValue({ id: 'test-idea-123' }),
+  },
+}));
 
 describe('IdeaInput', () => {
   it('renders textarea and submit button', () => {
@@ -22,13 +29,18 @@ describe('IdeaInput', () => {
       name: /start clarifying/i,
     });
 
-    fireEvent.change(textarea, { target: { value: 'Test idea' } });
+    fireEvent.change(textarea, {
+      target: { value: 'Test idea with more details' },
+    });
     fireEvent.click(submitButton);
 
     await waitFor(
       () => {
         expect(mockOnSubmit).toHaveBeenCalledTimes(1);
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea');
+        expect(mockOnSubmit).toHaveBeenCalledWith(
+          'Test idea with more details',
+          'test-idea-123'
+        );
       },
       { timeout: 3000 }
     );
@@ -53,7 +65,9 @@ describe('IdeaInput', () => {
       name: /start clarifying/i,
     });
 
-    fireEvent.change(textarea, { target: { value: 'Test idea' } });
+    fireEvent.change(textarea, {
+      target: { value: 'Test idea with more details' },
+    });
     expect(submitButton).not.toBeDisabled();
   });
 });

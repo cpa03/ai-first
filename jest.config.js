@@ -36,6 +36,10 @@ const customJestConfig = {
     '<rootDir>/tests/fixtures/',
     '<rootDir>/tests/api/',
   ],
+  testMatch: [
+    '<rootDir>/tests/**/*.{js,jsx,ts,tsx}',
+    '<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}',
+  ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
