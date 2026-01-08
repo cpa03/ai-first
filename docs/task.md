@@ -3244,7 +3244,7 @@ npm run type-check
 
 ---
 
-## [REFACTOR] Centralize Type Validation Utilities
+## [REFACTOR] Centralize Type Validation Utilities ✅ COMPLETED
 
 - **Location**: `src/lib/agents/breakdown-engine.ts` (validation functions scattered), `src/lib/agents/clarifier.ts` (lines 51-64)
 - **Issue**: Type guard and validation functions are scattered across agent files:
@@ -3269,6 +3269,90 @@ npm run type-check
 - **Priority**: Medium
 - **Effort**: Small
 - **Impact**: Improves type safety, makes validation logic reusable, easier to test, single source of truth for validation
+- **Status**: ✅ COMPLETED (2026-01-08)
+- **Date**: 2026-01-08
+
+#### Completed Work
+
+1. **Added Utility Type Guards** (`src/lib/validation.ts`)
+   - `isNumber(value: unknown): value is number` - Checks if value is number and not NaN
+   - `isBoolean(value: unknown): value is boolean` - Checks if value is boolean
+   - Enhanced basic type guard utilities with additional helpers
+
+2. **Added Agent-Specific Type Guards** (`src/lib/validation.ts`)
+   - `isClarifierQuestion(data: unknown)` - Type guard for ClarifierQuestion interface
+     - Validates id, question, type, options, required fields
+     - Uses type checking against allowed values
+   - `isTask(data: unknown)` - Type guard for Task interface
+     - Validates id, title, description, estimatedHours, complexity fields
+     - Handles complexity property correctly
+   - `isIdeaAnalysis(data: unknown)` - Type guard for IdeaAnalysis interface
+     - Validates objectives, deliverables, complexity, scope, riskFactors, successCriteria
+     - Comprehensive validation of nested structures
+   - All type guards use existing utilities: `isObject()`, `isString()`, `hasProperty()`, `isArrayOf()`, `isNumber()`, `isBoolean()`
+
+3. **Updated Agent Files**
+   - `src/lib/agents/clarifier.ts`: Updated to import `isClarifierQuestion` from `@/lib/validation`
+     - Removed local `isClarifierQuestion()` function (14 lines)
+     - Maintained `ClarifierQuestion` interface export for test compatibility
+   - `src/lib/agents/breakdown-engine.ts`: Updated to import `isTask` and `isIdeaAnalysis` from `@/lib/validation`
+     - Removed local `isTask()` function (17 lines)
+     - Removed local `isIdeaAnalysis()` function (28 lines)
+     - Maintained interface exports for test compatibility
+
+#### Success Criteria Met
+
+- [x] Type guards centralized in `src/lib/validation.ts`
+- [x] Agent-specific type guards created for frequently used interfaces
+- [x] Utility type guards added (`isNumber`, `isBoolean`)
+- [x] Agent files updated to import centralized type guards
+- [x] Local type guard functions removed from agent files
+- [x] All lint checks pass (0 errors, 0 warnings)
+- [x] All type-checks pass (0 errors)
+- [x] Build passes successfully
+- [x] Zero breaking changes to existing functionality
+- [x] Test file compatibility maintained (interfaces still exported)
+- [x] Type safety improved with centralized validation
+
+#### Files Modified
+
+- `src/lib/validation.ts` (UPDATED - added `isNumber`, `isBoolean`, `isClarifierQuestion`, `isTask`, `isIdeaAnalysis` type guards, +109 lines)
+- `src/lib/agents/clarifier.ts` (UPDATED - import `isClarifierQuestion` from validation, -14 lines)
+- `src/lib/agents/breakdown-engine.ts` (UPDATED - import `isTask`, `isIdeaAnalysis` from validation, -45 lines)
+- `docs/task.md` (UPDATED - marked task as complete)
+
+#### Impact
+
+**Type Safety**: Improved
+
+- Centralized validation functions provide single source of truth
+- Type guards ensure runtime type checking across codebase
+- Easier to maintain and extend validation logic
+
+**Code Quality**: Improved
+
+- Removed 59 lines of duplicated validation code from agent files
+- Reduced code duplication significantly
+- Improved testability of validation logic
+
+**Maintainability**: Improved
+
+- Type guards are now reusable across codebase
+- Easier to test validation logic in isolation
+- Clear separation of concerns between agent logic and validation
+
+**Developer Experience**: Improved
+
+- Single place to look for type validation functions
+- Consistent validation patterns across codebase
+- Easier to add new type guards in the future
+
+#### Notes
+
+- Type guards use `as any` type assertion for type checking where necessary (eslint-disable comment added)
+- All interfaces remain exported from agent files for backward compatibility with test files
+- Tests continue to work without modification as they import interfaces directly
+- Refactoring follows DRY principle and Single Responsibility Principle
 
 ---
 

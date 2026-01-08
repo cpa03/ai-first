@@ -5,9 +5,7 @@ import { promptService } from '@/lib/prompt-service';
 import {
   safeJsonParse,
   isArrayOf,
-  isObject,
-  isString,
-  hasProperty,
+  isClarifierQuestion,
 } from '@/lib/validation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -46,21 +44,6 @@ export interface ClarifierConfig {
       properties: Record<string, any>;
     };
   }>;
-}
-
-function isClarifierQuestion(data: unknown): data is ClarifierQuestion {
-  if (!isObject(data)) return false;
-  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
-  if (!hasProperty(data, 'question') || !isString(data.question)) return false;
-  if (!hasProperty(data, 'type') || !isString(data.type)) return false;
-  if (!['open', 'multiple_choice', 'yes_no'].includes(data.type)) return false;
-  if (hasProperty(data, 'options') && !isArrayOf(data.options, isString)) {
-    return false;
-  }
-  if (!hasProperty(data, 'required') || typeof data.required !== 'boolean') {
-    return false;
-  }
-  return true;
 }
 
 export class ClarifierAgent {
