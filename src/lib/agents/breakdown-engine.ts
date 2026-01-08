@@ -5,9 +5,8 @@ import { promptService } from '@/lib/prompt-service';
 import {
   safeJsonParse,
   isArrayOf,
-  isObject,
-  isString,
-  hasProperty,
+  isTask,
+  isIdeaAnalysis,
 } from '@/lib/validation';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -118,56 +117,6 @@ export interface BreakdownSession {
   processingTime: number;
   createdAt: Date;
   updatedAt: Date;
-}
-
-function isIdeaAnalysis(data: unknown): data is IdeaAnalysis {
-  if (!isObject(data)) return false;
-  if (
-    !hasProperty(data, 'objectives') ||
-    !isArrayOf(data.objectives, isObject)
-  ) {
-    return false;
-  }
-  if (
-    !hasProperty(data, 'deliverables') ||
-    !isArrayOf(data.deliverables, isObject)
-  ) {
-    return false;
-  }
-  if (!hasProperty(data, 'complexity') || !isObject(data.complexity))
-    return false;
-  if (!hasProperty(data, 'scope') || !isObject(data.scope)) return false;
-  if (
-    !hasProperty(data, 'riskFactors') ||
-    !isArrayOf(data.riskFactors, isObject)
-  ) {
-    return false;
-  }
-  if (
-    !hasProperty(data, 'successCriteria') ||
-    !isArrayOf(data.successCriteria, isString)
-  ) {
-    return false;
-  }
-  return true;
-}
-
-function isTask(data: unknown): data is TaskDecomposition['tasks'][0] {
-  if (!isObject(data)) return false;
-  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
-  if (!hasProperty(data, 'title') || !isString(data.title)) return false;
-  if (!hasProperty(data, 'description') || !isString(data.description))
-    return false;
-  if (
-    !hasProperty(data, 'estimatedHours') ||
-    typeof data.estimatedHours !== 'number'
-  ) {
-    return false;
-  }
-  if (!hasProperty(data, 'complexity') || typeof data.complexity !== 'number') {
-    return false;
-  }
-  return true;
 }
 
 class BreakdownEngine {
