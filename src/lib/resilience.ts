@@ -100,18 +100,7 @@ export class CircuitBreaker {
     this.state.lastFailureTime = _now;
 
     if (this.state.failures >= this.options.failureThreshold) {
-      this.state.state = 'open';
-      this.state.nextAttemptTime = _now + this.options.resetTimeout;
-    }
-    this.state.failures = this.recentFailures.length;
-    this.state.lastFailureTime = _now;
-
-    if (this.state.failures >= this.options.failureThreshold) {
-      logger.debug(
-        `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
-      );
-      this.state.state = 'open';
-      this.state.nextAttemptTime = _now + this.options.resetTimeout;
+      this.openCircuit(_now);
     }
 
     if (this.cachedState) {
@@ -120,6 +109,14 @@ export class CircuitBreaker {
       this.cachedState.lastFailureTime = this.state.lastFailureTime;
       this.cachedState.nextAttemptTime = this.state.nextAttemptTime;
     }
+  }
+
+  private openCircuit(now: number): void {
+    this.state.state = 'open';
+    this.state.nextAttemptTime = now + this.options.resetTimeout;
+    logger.debug(
+      `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+    );
   }
 
   getState(): CircuitBreakerState {
