@@ -69,8 +69,9 @@ export class NotionExporter extends ExportConnector {
         delete (pageData as any).parent;
       }
 
-      const response = (await this.executeWithTimeout(() =>
-        this.client.pages.create(pageData)
+      const response = (await this.executeWithResilience(
+        () => this.client.pages.create(pageData),
+        'create-page'
       )) as any;
 
       return {
@@ -95,7 +96,10 @@ export class NotionExporter extends ExportConnector {
       const { Client } = await import('@notionhq/client');
       const client = new Client({ auth: apiKey });
 
-      await client.users.me({});
+      await this.executeWithResilience(
+        () => client.users.me({}),
+        'validate-config'
+      );
       return true;
     } catch (_error) {
       return false;

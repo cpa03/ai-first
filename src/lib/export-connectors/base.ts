@@ -1,4 +1,9 @@
 import { TIMEOUT_CONFIG } from '../config/constants';
+import {
+  resilienceManager,
+  defaultResilienceConfigs,
+  ResilienceConfig,
+} from '../resilience';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -46,10 +51,51 @@ export abstract class ExportConnector {
   abstract getAuthUrl?(): Promise<string>;
   abstract handleAuthCallback?(code: string): Promise<void>;
 
+  protected getResilienceConfig(): ResilienceConfig {
+    const type = this.type;
+    if (type === 'notion') {
+      return defaultResilienceConfigs.notion;
+    }
+    if (type === 'trello') {
+      return defaultResilienceConfigs.trello;
+    }
+    if (type === 'github-projects') {
+      return defaultResilienceConfigs.github;
+    }
+    if (type === 'google-tasks') {
+      return defaultResilienceConfigs.github;
+    }
+    return {
+      retry: {
+        maxRetries: 3,
+        baseDelay: 1000,
+        maxDelay: 10000,
+      },
+      timeout: {
+        timeoutMs: TIMEOUT_CONFIG.DEFAULT,
+      },
+    };
+  }
+
+  protected async executeWithResilience<T>(
+    operation: () => Promise<T>,
+    context?: string
+  ): Promise<T> {
+    const config = this.getResilienceConfig();
+    return resilienceManager.execute(
+      operation,
+      config,
+      `${this.type}-${context || 'operation'}`
+    );
+  }
+
   protected async executeWithTimeout<T>(
     operation: () => Promise<T>,
     timeoutMs: number = TIMEOUT_CONFIG.DEFAULT
   ): Promise<T> {
+    console.warn(
+      `[DEPRECATED] executeWithTimeout is deprecated. Use executeWithResilience instead.`
+    );
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 

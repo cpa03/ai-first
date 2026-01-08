@@ -1,5 +1,4 @@
 import { ExportConnector, ExportResult } from './base';
-import { TIMEOUT_CONFIG } from '../config/constants';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -94,8 +93,9 @@ export class TrelloExporter extends ExportConnector {
 
       if (!apiKey || !token) return false;
 
-      const response = await fetch(
-        `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
+      const response = await this.executeWithResilience(
+        () => fetch(`${this.API_BASE}/members/me?key=${apiKey}&token=${token}`),
+        'validate-config'
       );
       return response.ok;
     } catch (_error) {
@@ -133,34 +133,22 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      TIMEOUT_CONFIG.TRELLO.CREATE_BOARD
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(
+          `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
+          {
+            method: 'POST',
+          }
+        ),
+      'create-board'
     );
 
-    try {
-      const response = await fetch(
-        `${this.API_BASE}/boards/?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to create Trello board: ${response.statusText}`
-        );
-      }
-
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to create Trello board: ${response.statusText}`);
     }
+
+    return response.json();
   }
 
   private async createList(
@@ -169,32 +157,22 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      TIMEOUT_CONFIG.TRELLO.CREATE_LIST
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(
+          `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
+          {
+            method: 'POST',
+          }
+        ),
+      'create-list'
     );
 
-    try {
-      const response = await fetch(
-        `${this.API_BASE}/boards/${boardId}/lists?name=${encodeURIComponent(name)}&key=${apiKey}&token=${token}`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to create Trello list: ${response.statusText}`);
-      }
-
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to create Trello list: ${response.statusText}`);
     }
+
+    return response.json();
   }
 
   private async createCard(
@@ -203,73 +181,60 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      TIMEOUT_CONFIG.TRELLO.CREATE_CARD
+    const cardData = {
+      name: task.title,
+      desc: task.description || '',
+      key: apiKey,
+      token: token,
+    };
+
+    if (task.due_date) {
+      (cardData as any).due = task.due_date;
+    }
+
+    const params = new URLSearchParams(cardData as any);
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/cards?${params.toString()}`, {
+          method: 'POST',
+        }),
+      'create-card'
     );
 
-    try {
-      const cardData = {
-        name: task.title,
-        desc: task.description || '',
-        key: apiKey,
-        token: token,
-      };
-
-      if (task.due_date) {
-        (cardData as any).due = task.due_date;
-      }
-
-      const params = new URLSearchParams(cardData as any);
-      const response = await fetch(
-        `${this.API_BASE}/cards?${params.toString()}`,
-        {
-          method: 'POST',
-          signal: controller.signal,
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Failed to create Trello card: ${response.statusText}`);
-      }
-
-      const card = await response.json();
-
-      if (task.priority) {
-        await this.addCardLabel(
-          card.id,
-          this.getPriorityLabel(task.priority),
-          apiKey,
-          token
-        );
-      }
-
-      if (task.assignee) {
-        await this.addCardComment(
-          card.id,
-          `Assigned to: ${task.assignee}`,
-          apiKey,
-          token
-        );
-      }
-
-      if (task.estimate) {
-        await this.addCardComment(
-          card.id,
-          `Estimate: ${task.estimate}h`,
-          apiKey,
-          token
-        );
-      }
-
-      return card;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to create Trello card: ${response.statusText}`);
     }
+
+    const card = await response.json();
+
+    if (task.priority) {
+      await this.addCardLabel(
+        card.id,
+        this.getPriorityLabel(task.priority),
+        apiKey,
+        token
+      );
+    }
+
+    if (task.assignee) {
+      await this.addCardComment(
+        card.id,
+        `Assigned to: ${task.assignee}`,
+        apiKey,
+        token
+      );
+    }
+
+    if (task.estimate) {
+      await this.addCardComment(
+        card.id,
+        `Estimate: ${task.estimate}h`,
+        apiKey,
+        token
+      );
+    }
+
+    return card;
   }
 
   private async addCardLabel(
@@ -278,11 +243,15 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<void> {
-    const response = await fetch(
-      `${this.API_BASE}/cards/${cardId}/labels?color=${label}&key=${apiKey}&token=${token}`,
-      {
-        method: 'POST',
-      }
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(
+          `${this.API_BASE}/cards/${cardId}/labels?color=${label}&key=${apiKey}&token=${token}`,
+          {
+            method: 'POST',
+          }
+        ),
+      'add-card-label'
     );
 
     if (!response.ok) {
@@ -296,11 +265,15 @@ export class TrelloExporter extends ExportConnector {
     apiKey: string,
     token: string
   ): Promise<void> {
-    const response = await fetch(
-      `${this.API_BASE}/cards/${cardId}/actions/comments?text=${encodeURIComponent(comment)}&key=${apiKey}&token=${token}`,
-      {
-        method: 'POST',
-      }
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(
+          `${this.API_BASE}/cards/${cardId}/actions/comments?text=${encodeURIComponent(comment)}&key=${apiKey}&token=${token}`,
+          {
+            method: 'POST',
+          }
+        ),
+      'add-card-comment'
     );
 
     if (!response.ok) {

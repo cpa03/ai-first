@@ -1,5 +1,4 @@
 import { ExportConnector, ExportResult } from './base';
-import { TIMEOUT_CONFIG } from '../config/constants';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -129,12 +128,16 @@ export class GitHubProjectsExporter extends ExportConnector {
       const token = process.env.GITHUB_TOKEN;
       if (!token) return false;
 
-      const response = await fetch(`${this.API_BASE}/user`, {
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-      });
+      const response = await this.executeWithResilience(
+        () =>
+          fetch(`${this.API_BASE}/user`, {
+            headers: {
+              Authorization: `token ${token}`,
+              Accept: 'application/vnd.github.v3+json',
+            },
+          }),
+        'validate-config'
+      );
 
       return response.ok;
     } catch (_error) {
@@ -165,34 +168,24 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private async getAuthenticatedUser(token: string): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      TIMEOUT_CONFIG.GITHUB.GET_USER
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/user`, {
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+          },
+        }),
+      'get-authenticated-user'
     );
 
-    try {
-      const response = await fetch(`${this.API_BASE}/user`, {
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-        },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(
-          `Failed to get authenticated user: ${response.statusText}`
-        );
-      }
-
-      return response.json();
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (!response.ok) {
+      throw new Error(
+        `Failed to get authenticated user: ${response.statusText}`
+      );
     }
+
+    return response.json();
   }
 
   private async createOrUpdateRepository(
@@ -201,70 +194,47 @@ export class GitHubProjectsExporter extends ExportConnector {
     idea: any,
     token: string
   ): Promise<any> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(
-      () => controller.abort(),
-      TIMEOUT_CONFIG.GITHUB.CREATE_REPO
+    const createResponse = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/user/repos`, {
+          method: 'POST',
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: repoName,
+            description: idea.raw_text || `Project: ${idea.title}`,
+            private: false,
+            auto_init: true,
+          }),
+        }),
+      'create-repository'
     );
 
-    try {
-      const createResponse = await fetch(`${this.API_BASE}/user/repos`, {
-        method: 'POST',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        signal: controller.signal,
-        body: JSON.stringify({
-          name: repoName,
-          description: idea.raw_text || `Project: ${idea.title}`,
-          private: false,
-          auto_init: true,
-        }),
-      });
-
-      clearTimeout(timeoutId);
-
-      if (createResponse.ok) {
-        return createResponse.json();
-      }
-
-      const getController = new AbortController();
-      const getTimeoutId = setTimeout(
-        () => getController.abort(),
-        TIMEOUT_CONFIG.GITHUB.GET_USER
-      );
-
-      try {
-        const getResponse = await fetch(
-          `${this.API_BASE}/repos/${owner}/${repoName}`,
-          {
-            headers: {
-              Authorization: `token ${token}`,
-              Accept: 'application/vnd.github.v3+json',
-            },
-            signal: getController.signal,
-          }
-        );
-
-        clearTimeout(getTimeoutId);
-
-        if (!getResponse.ok) {
-          throw new Error(
-            `Failed to create or get repository: ${getResponse.statusText}`
-          );
-        }
-
-        return getResponse.json();
-      } catch (error) {
-        clearTimeout(getTimeoutId);
-        throw error;
-      }
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
+    if (createResponse.ok) {
+      return createResponse.json();
     }
+
+    const getResponse = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/repos/${owner}/${repoName}`, {
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+          },
+        }),
+      'get-repository'
+    );
+
+    if (!getResponse.ok) {
+      throw new Error(
+        `Failed to create or get repository: ${getResponse.statusText}`
+      );
+    }
+
+    return getResponse.json();
   }
 
   private async createProject(
@@ -273,20 +243,21 @@ export class GitHubProjectsExporter extends ExportConnector {
     projectName: string,
     token: string
   ): Promise<any> {
-    const response = await fetch(
-      `${this.API_BASE}/repos/${owner}/${repo}/projects`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.inertia-preview+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: projectName,
-          body: `Project board for ${projectName}`,
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/repos/${owner}/${repo}/projects`, {
+          method: 'POST',
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.inertia-preview+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: projectName,
+            body: `Project board for ${projectName}`,
+          }),
         }),
-      }
+      'create-project'
     );
 
     if (!response.ok) {
@@ -303,19 +274,20 @@ export class GitHubProjectsExporter extends ExportConnector {
     columnName: string,
     token: string
   ): Promise<any> {
-    const response = await fetch(
-      `${this.API_BASE}/projects/${projectId}/columns`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.inertia-preview+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: columnName,
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/projects/${projectId}/columns`, {
+          method: 'POST',
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.inertia-preview+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: columnName,
+          }),
         }),
-      }
+      'create-project-column'
     );
 
     if (!response.ok) {
@@ -357,17 +329,18 @@ export class GitHubProjectsExporter extends ExportConnector {
       issueData.labels = labels;
     }
 
-    const response = await fetch(
-      `${this.API_BASE}/repos/${owner}/${repo}/issues`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(issueData),
-      }
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/repos/${owner}/${repo}/issues`, {
+          method: 'POST',
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(issueData),
+        }),
+      'create-issue'
     );
 
     if (!response.ok) {
@@ -382,20 +355,21 @@ export class GitHubProjectsExporter extends ExportConnector {
     issueId: string,
     token: string
   ): Promise<void> {
-    const response = await fetch(
-      `${this.API_BASE}/projects/columns/${columnId}/cards`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.inertia-preview+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          content_id: issueId,
-          content_type: 'Issue',
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/projects/columns/${columnId}/cards`, {
+          method: 'POST',
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.inertia-preview+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content_id: issueId,
+            content_type: 'Issue',
+          }),
         }),
-      }
+      'add-issue-to-project-card'
     );
 
     if (!response.ok) {
@@ -435,20 +409,21 @@ export class GitHubProjectsExporter extends ExportConnector {
 
     readme += `---\n\n*This repository was automatically generated by IdeaFlow*`;
 
-    const response = await fetch(
-      `${this.API_BASE}/repos/${owner}/${repo}/contents/README.md`,
-      {
-        method: 'PUT',
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: 'Add project README',
-          content: Buffer.from(readme).toString('base64'),
+    const response = await this.executeWithResilience(
+      () =>
+        fetch(`${this.API_BASE}/repos/${owner}/${repo}/contents/README.md`, {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${token}`,
+            Accept: 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: 'Add project README',
+            content: Buffer.from(readme).toString('base64'),
+          }),
         }),
-      }
+      'create-readme'
     );
 
     if (!response.ok) {
