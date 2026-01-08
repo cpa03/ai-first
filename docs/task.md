@@ -2412,7 +2412,7 @@ npm run type-check
 
 ## Overall UI/UX Improvements Summary
 
-### Components Created (7 total)
+### Components Created (8 total)
 
 1. Alert.tsx - Reusable alert component with variants
 2. LoadingSpinner.tsx - Configurable loading spinner
@@ -2421,6 +2421,7 @@ npm run type-check
 5. LoadingOverlay.tsx - Full-screen loading overlay
 6. Skeleton.tsx - Skeleton placeholder component
 7. ProgressStepper.tsx - Multi-step progress indicator
+8. ErrorBoundary.tsx - React error boundary with recovery options
 
 ### Components Enhanced (4 total)
 
@@ -2432,11 +2433,13 @@ npm run type-check
 ### Code Quality Improvements
 
 - Reduced code duplication by ~150+ lines
-- Created 7 reusable, type-safe components
+- Created 8 reusable, type-safe components
 - Improved accessibility to WCAG 2.1 AA standards
 - Optimized for mobile, tablet, and desktop
-- Added smooth animations and transitions
+- Added smooth animations and transitions (with reduced-motion support)
 - Enhanced form validation with real-time feedback
+- Added performance optimizations (useCallback, useMemo)
+- Added error boundary for graceful error handling
 
 ### Success Criteria Met
 
@@ -2445,6 +2448,84 @@ npm run type-check
 - [x] Consistent with design system
 - [x] Responsive all breakpoints
 - [x] Zero regressions
+
+---
+
+## UI/UX Engineer Tasks
+
+### Task 7: Performance & Accessibility Enhancements ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Add React performance optimizations to reduce unnecessary re-renders
+- Add prefers-reduced-motion support for accessibility
+- Improve loading states with visual feedback
+- Add error boundary for better error handling
+- Ensure WCAG 2.1 AA compliance
+
+#### Completed Work
+
+1. **Performance Optimizations** (`src/components/ClarificationFlow.tsx`)
+   - Added `useCallback` for `handleNext` - Memoizes navigation logic to prevent recreation
+   - Added `useCallback` for `handlePrevious` - Memoizes navigation logic to prevent recreation
+   - Added `useMemo` for `currentQuestion` - Memoizes computed question reference
+   - Added `useMemo` for `progress` - Memoizes progress calculation
+   - Added `useMemo` for `steps` - Memoizes steps array
+   - Fixed React Hooks order to ensure hooks are called unconditionally
+
+2. **Reduced Motion Support** (`src/styles/globals.css`)
+   - Added `@media (prefers-reduced-motion: reduce)` query
+   - Disabled animations and transitions for users who prefer reduced motion
+   - Respects user accessibility preferences
+   - Improves experience for users with vestibular disorders
+
+3. **Loading State Enhancement** (`src/components/ClarificationFlow.tsx`)
+   - Added LoadingSpinner component to loading state
+   - Centered spinner with status text "Generating questions..."
+   - Better visual feedback during async operations
+   - Improved perceived performance
+
+4. **Error Boundary Component** (`src/components/ErrorBoundary.tsx`)
+   - Created new ErrorBoundary component for error handling
+   - Catches React errors and displays friendly UI
+   - Provides "Try Again" and "Go to Home" actions
+   - Shows error details in collapsible `<details>` element
+   - Integrated into root layout to wrap entire application
+
+5. **Accessibility Improvements**
+   - Skip-to-main-content link preserved in ErrorBoundary
+   - Error messages are accessible via screen readers
+   - Loading states provide context to assistive technology
+   - All animations respect reduced-motion preferences
+
+#### Success Criteria Met
+
+- [x] Performance optimizations added (useCallback, useMemo)
+- [x] Reduced motion support implemented
+- [x] Loading states enhanced with visual feedback
+- [x] Error boundary created and integrated
+- [x] Lint passes (0 errors)
+- [x] Type-check passes (0 errors)
+- [x] Build passes successfully
+- [x] Zero breaking changes
+
+#### Files Modified
+
+- `src/components/ClarificationFlow.tsx` (UPDATED - performance optimizations, loading state)
+- `src/components/ErrorBoundary.tsx` (NEW - error boundary component)
+- `src/styles/globals.css` (UPDATED - reduced motion support)
+- `src/app/layout.tsx` (UPDATED - integrated ErrorBoundary)
+
+#### Notes
+
+- React Hooks order fixed to avoid conditional hook calls
+- Error boundary provides graceful degradation for unexpected errors
+- Reduced motion support improves accessibility for motion-sensitive users
+- Loading spinner provides better UX during async operations
 
 ---
 
