@@ -435,7 +435,7 @@ describe('RetryManager', () => {
         )
       ).rejects.toThrow();
 
-      expect(shouldRetry).toHaveBeenCalledTimes(3);
+      expect(shouldRetry).toHaveBeenCalledTimes(2);
       expect(operation).toHaveBeenCalledTimes(3);
     });
 

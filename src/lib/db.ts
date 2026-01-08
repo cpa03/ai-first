@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
+import { createLogger } from './logger';
+
+const logger = createLogger('DatabaseService');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
@@ -96,7 +99,7 @@ export class DatabaseService {
     this.admin = supabaseAdmin;
 
     if (!this.client || !this.admin) {
-      console.warn(
+      logger.warn(
         'Supabase clients not initialized. Check environment variables.'
       );
     }

@@ -176,7 +176,6 @@ export default function ClarificationFlow({
 
         setQuestions(formattedQuestions);
       } catch (err) {
-        console.error('Error fetching questions:', err);
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );

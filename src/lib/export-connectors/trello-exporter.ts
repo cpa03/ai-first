@@ -1,5 +1,9 @@
 import { ExportConnector, ExportResult } from './base';
 
+import { createLogger } from '../logger';
+
+const logger = createLogger('TrelloExporter');
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class TrelloExporter extends ExportConnector {
@@ -78,7 +82,7 @@ export class TrelloExporter extends ExportConnector {
         id: boardId,
       };
     } catch (_error) {
-      console.error('Unknown export error:', _error);
+      logger.error('Unknown export error:', _error);
       return {
         success: false,
         error: _error instanceof Error ? _error.message : 'Unknown error',
@@ -255,7 +259,7 @@ export class TrelloExporter extends ExportConnector {
     );
 
     if (!response.ok) {
-      console.warn(`Failed to add label to card: ${response.statusText}`);
+      logger.warn(`Failed to add label to card: ${response.statusText}`);
     }
   }
 
@@ -277,7 +281,7 @@ export class TrelloExporter extends ExportConnector {
     );
 
     if (!response.ok) {
-      console.warn(`Failed to add comment to card: ${response.statusText}`);
+      logger.warn(`Failed to add comment to card: ${response.statusText}`);
     }
   }
 

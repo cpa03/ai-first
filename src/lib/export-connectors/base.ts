@@ -4,6 +4,9 @@ import {
   defaultResilienceConfigs,
   ResilienceConfig,
 } from '../resilience';
+import { createLogger } from '../logger';
+
+const logger = createLogger('ExportConnector');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -93,7 +96,7 @@ export abstract class ExportConnector {
     operation: () => Promise<T>,
     timeoutMs: number = TIMEOUT_CONFIG.DEFAULT
   ): Promise<T> {
-    console.warn(
+    logger.warn(
       `[DEPRECATED] executeWithTimeout is deprecated. Use executeWithResilience instead.`
     );
     const controller = new AbortController();

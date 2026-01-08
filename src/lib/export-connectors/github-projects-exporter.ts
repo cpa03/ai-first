@@ -1,5 +1,9 @@
 import { ExportConnector, ExportResult } from './base';
 
+import { createLogger } from '../logger';
+
+const logger = createLogger('GitHubProjectsExporter');
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class GitHubProjectsExporter extends ExportConnector {
@@ -115,7 +119,7 @@ export class GitHubProjectsExporter extends ExportConnector {
         id: repository.id.toString(),
       };
     } catch (_error) {
-      console.error('Unknown export error:', _error);
+      logger.error('Unknown export error:', _error);
       return {
         success: false,
         error: _error instanceof Error ? _error.message : 'Unknown error',
@@ -373,7 +377,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     );
 
     if (!response.ok) {
-      console.warn(
+      logger.warn(
         `Failed to add issue to project card: ${response.statusText}`
       );
     }
@@ -427,7 +431,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     );
 
     if (!response.ok) {
-      console.warn(`Failed to create README: ${response.statusText}`);
+      logger.warn(`Failed to create README: ${response.statusText}`);
     }
   }
 
