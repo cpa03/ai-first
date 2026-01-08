@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
 import InputWithValidation from '@/components/InputWithValidation';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface Question {
   id: string;
@@ -49,6 +50,57 @@ export default function ClarificationFlow({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const currentQuestion = useMemo(
+    () => questions[currentStep],
+    [questions, currentStep]
+  );
+  const progress = useMemo(
+    () => ((currentStep + 1) / questions.length) * 100,
+    [currentStep, questions.length]
+  );
+  const steps = useMemo(
+    () =>
+      questions.map((q, index) => ({
+        id: q.id,
+        label: `Question ${index + 1}`,
+        completed: index < currentStep,
+        current: index === currentStep,
+      })),
+    [questions, currentStep]
+  );
+
+  const handleNext = useCallback(() => {
+    if (!currentAnswer.trim()) return;
+
+    const newAnswers = {
+      ...answers,
+      [currentQuestion.id]: currentAnswer.trim(),
+    };
+    setAnswers(newAnswers);
+
+    if (currentStep < questions.length - 1) {
+      setCurrentStep(currentStep + 1);
+      setCurrentAnswer('');
+    } else {
+      onComplete(newAnswers);
+    }
+  }, [
+    currentAnswer,
+    answers,
+    currentQuestion.id,
+    currentStep,
+    questions.length,
+    onComplete,
+  ]);
+
+  const handlePrevious = useCallback(() => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      const previousQuestionId = questions[currentStep - 1].id;
+      setCurrentAnswer(answers[previousQuestionId] || '');
+    }
+  }, [currentStep, questions, answers]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -102,6 +154,10 @@ export default function ClarificationFlow({
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto fade-in">
+        <div className="flex flex-col items-center justify-center py-12">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-600 text-sm">Generating questions...</p>
+        </div>
         {error && (
           <div className="mb-6 slide-up">
             <Alert type="error" title="Error">
@@ -115,40 +171,6 @@ export default function ClarificationFlow({
       </div>
     );
   }
-
-  const currentQuestion = questions[currentStep];
-  const progress = ((currentStep + 1) / questions.length) * 100;
-  const steps = questions.map((q, index) => ({
-    id: q.id,
-    label: `Question ${index + 1}`,
-    completed: index < currentStep,
-    current: index === currentStep,
-  }));
-
-  const handleNext = () => {
-    if (!currentAnswer.trim()) return;
-
-    const newAnswers = {
-      ...answers,
-      [currentQuestion.id]: currentAnswer.trim(),
-    };
-    setAnswers(newAnswers);
-
-    if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
-      setCurrentAnswer('');
-    } else {
-      onComplete(newAnswers);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-      const previousQuestionId = questions[currentStep - 1].id;
-      setCurrentAnswer(answers[previousQuestionId] || '');
-    }
-  };
 
   if (questions.length === 0) {
     return (
