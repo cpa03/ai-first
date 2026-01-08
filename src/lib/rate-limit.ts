@@ -191,3 +191,7 @@ export function addRateLimitHeaders(
   );
   return response;
 }
+
+export function clearRateLimitStore(): void {
+  rateLimitStore.clear();
+}
