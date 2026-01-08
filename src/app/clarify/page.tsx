@@ -2,15 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { dbService, Idea, IdeaSession } from '@/lib/db';
+import { dbService } from '@/lib/db';
 import ClarificationFlow from '@/components/ClarificationFlow';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { createLogger } from '@/lib/logger';
-import Button from '@/components/Button';
-import { useRouter } from 'next/navigation';
-import { dbService } from '@/lib/db';
 
 export default function ClarifyPage() {
   const router = useRouter();

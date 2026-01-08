@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
@@ -10,7 +10,7 @@ import { createLogger } from '@/lib/logger';
 
 export default function ResultsPage() {
   const router = useRouter();
-  const logger = createLogger('ResultsPage');
+  const logger = useMemo(() => createLogger('ResultsPage'), []);
   const [idea, setIdea] = useState<Idea | null>(null);
   const [session, setSession] = useState<IdeaSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -20,18 +20,18 @@ export default function ResultsPage() {
 
   useEffect(() => {
     const fetchResults = async () => {
+      let ideaId: string | null = null;
+
       try {
         setLoading(true);
 
-        // Get ideaId from query params
         const urlParams = new URLSearchParams(window.location.search);
-        const ideaId = urlParams.get('ideaId');
+        ideaId = urlParams.get('ideaId');
 
         if (!ideaId) {
           throw new Error('Idea ID is required');
         }
 
-        // Fetch the idea and session
         const ideaData = await dbService.getIdea(ideaId);
         if (!ideaData) {
           throw new Error('Idea not found');
@@ -59,7 +59,7 @@ export default function ResultsPage() {
     };
 
     fetchResults();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!idea) return;
