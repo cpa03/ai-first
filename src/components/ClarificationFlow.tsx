@@ -54,7 +54,7 @@ export default function ClarificationFlow({
   ideaId,
   onComplete,
 }: ClarificationFlowProps) {
-  const logger = createLogger('ClarificationFlow');
+  const logger = useMemo(() => createLogger('ClarificationFlow'), []);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentAnswer, setCurrentAnswer] = useState('');
@@ -198,7 +198,7 @@ export default function ClarificationFlow({
     };
 
     fetchQuestions();
-  }, [idea, ideaId]);
+  }, [idea, ideaId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
