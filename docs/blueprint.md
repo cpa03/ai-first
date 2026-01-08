@@ -1136,6 +1136,68 @@ Before deploying integration changes:
 - [ ] Monitoring alerts configured
 - [ ] On-call team notified of deployment
 
+## API Client Utilities
+
+### Response Unwrapping
+
+All API routes use `standardSuccessResponse()` which wraps data in a consistent structure. Components should use the `api-client` utilities to safely unwrap responses.
+
+### Strict Unwrapping
+
+```typescript
+import { unwrapApiResponse } from '@/lib/api-client';
+
+const response = await fetch('/api/clarify');
+const data: ApiResponse<ClarificationData> = await response.json();
+const clarificationData = unwrapApiResponse(data);
+```
+
+**Use cases:**
+
+- When you expect data to always be present
+- When you want to fail fast on invalid responses
+- API calls where success is required
+
+### Safe Unwrapping with Default
+
+```typescript
+import { unwrapApiResponseSafe } from '@/lib/api-client';
+
+const response = await fetch('/api/clarify');
+const data: ApiResponse<ClarificationData> | null = await response.json();
+const clarificationData = unwrapApiResponseSafe(data, defaultData);
+```
+
+**Use cases:**
+
+- Optional API calls that may not return data
+- When you want graceful fallback behavior
+- Feature flags or optional endpoints
+
+### Benefits
+
+- **Type Safety**: Generic typing ensures compile-time type checking
+- **Error Handling**: Clear error messages for invalid responses
+- **Consistency**: Single source of truth for response unwrapping
+- **Maintainability**: Changes to API response structure only need one update
+
+### Examples
+
+#### Before (Manual Unwrapping)
+
+```typescript
+const data = await response.json();
+const questions = data.data.questions; // Error-prone, tight coupling
+```
+
+#### After (Using Utilities)
+
+```typescript
+const data = await response.json();
+const unwrappedData = unwrapApiResponse<ApiResponse<ClarificationData>>(data);
+const questions = unwrappedData.questions; // Type-safe, clear intent
+```
+
 ## References
 
 - [API Reference](./api.md)

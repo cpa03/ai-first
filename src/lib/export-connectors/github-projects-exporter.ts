@@ -231,7 +231,10 @@ export class GitHubProjectsExporter extends ExportConnector {
       }
 
       const getController = new AbortController();
-      const getTimeoutId = setTimeout(() => getController.abort(), 10000);
+      const getTimeoutId = setTimeout(
+        () => getController.abort(),
+        TIMEOUT_CONFIG.GITHUB.GET_USER
+      );
 
       try {
         const getResponse = await fetch(
