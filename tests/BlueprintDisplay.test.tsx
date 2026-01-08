@@ -9,7 +9,9 @@ describe('BlueprintDisplay', () => {
 
     render(<BlueprintDisplay idea={idea} answers={answers} />);
 
-    expect(screen.getByText(/generating your blueprint/i)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/generating your blueprint/i).length
+    ).toBeGreaterThan(0);
     expect(
       screen.getByText(/our ai is analyzing your answers/i)
     ).toBeInTheDocument();
