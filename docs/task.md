@@ -572,6 +572,20 @@ npm run build
 - Fix: Changed from `getByText` to `getAllByText` and check length > 0
 - Result: BlueprintDisplay tests now passing (4/4, 100%)
 
+**Fix 4: Jest Configuration - Empty Test Suites** (`jest.config.js`)
+
+- Issue: `tests/utils/_testHelpers.ts` and `tests/_test-env.d.ts` were being picked up by Jest as test suites
+- Fix: Added these files to `testPathIgnorePatterns` to exclude them from test discovery
+- Result: 2 empty test suites removed (32 total → 30 total)
+
+**Fix 5: ClarificationFlow Test Mocks** (`tests/ClarificationFlow.test.tsx`)
+
+- Issue: 5 failing tests using incorrect mock data structure and API response format
+- Fix 1: Updated mockQuestions from string arrays to proper question objects with id, question, type, required fields
+- Fix 2: Updated all API response mocks to use proper structure with success, data, requestId, timestamp
+- Fix 3: Updated test expectations to use question id as key instead of question_0
+- Result: ClarificationFlow tests now passing (17/17, 100%)
+
 #### Root Cause Analysis
 
 **Issue 1: Resilience Framework Test Failures**
@@ -642,10 +656,11 @@ But test mocks return unwrapped structure:
 | Build                   | PASS   | PASS  | ✅ Stable    |
 | Lint                    | PASS   | PASS  | ✅ Stable    |
 | Type-check              | PASS   | PASS  | ✅ Stable    |
-| Total Tests             | 825    | 825   | ✅ No change |
-| Passed                  | 707    | 760   | ✅ +53       |
-| Failed                  | 79     | 65    | ✅ -14       |
-| Pass Rate               | 85.7%  | 92.1% | ✅ +6.4%     |
+| Total Tests             | 840    | 840   | ✅ No change |
+| Passed                  | 776    | 781   | ✅ +5        |
+| Failed                  | 64     | 59    | ✅ -5        |
+| Pass Rate               | 92.4%  | 93.0% | ✅ +0.6%     |
+| Test Suites             | 32     | 30    | ✅ -2        |
 | Critical Suites Failing | 2      | 0     | ✅ Improved  |
 
 **Critical Test Suite Status**:
@@ -653,25 +668,27 @@ But test mocks return unwrapped structure:
 - ✅ Resilience: 65/65 passing (100%)
 - ✅ AI Service: 37/37 passing (100%)
 - ✅ BlueprintDisplay: 4/4 passing (100%)
-- ⚠️ ClarificationFlow: 10/17 passing (59%)
-- ❌ E2E Tests: Failing (API response mismatch)
+- ✅ ClarificationFlow: 17/17 passing (100%)
+- ⚠️ E2E Tests: Failing (API response mismatch) - 9/11 tests failing
 - ❌ Integration Tests: Failing (API response mismatch)
 - ❌ Backend Tests: Failing (API response mismatch)
 
 #### Remaining Work
 
-**Priority 1 - API Response Test Updates** (3-4 hours):
+**Priority 1 - API Response Test Updates** (2-3 hours):
 
-1. Update remaining ClarificationFlow test mocks (7 tests) - need to handle LoadingAnnouncer duplicate text
-2. Fix E2E test mocks for all API endpoints
-3. Update integration test mocks
-4. Update component tests (IdeaInput and other components with LoadingAnnouncer)
+1. Fix E2E test mocks for all API endpoints (9 tests failing)
+2. Update integration test mocks (comprehensive tests failing)
+3. Update backend test mocks (comprehensive tests failing)
+4. Update frontend comprehensive test mocks
+5. Update integration-simple test mocks
+6. Update clarifier test mocks
 
-**Priority 2 - Test Framework Issues** (1 hour):
+**Priority 2 - Test Framework Issues** (0 hours - COMPLETED):
 
-1. Remove empty test suite from `tests/utils/_testHelpers.ts` (already identified)
-2. Remove empty test suite from `tests/_test-env.d.ts` (already identified)
-3. Fix `tests/utils/testHelpers.ts` if needed
+1. ✅ Remove empty test suite from `tests/utils/_testHelpers.ts` (completed)
+2. ✅ Remove empty test suite from `tests/_test-env.d.ts` (completed)
+3. ✅ Fix `tests/utils/testHelpers.ts` if needed (no issues found)
 
 #### Success Criteria
 
@@ -687,7 +704,8 @@ But test mocks return unwrapped structure:
 
 - `src/lib/resilience.ts` (FIXED - case sensitivity in retry logic)
 - `tests/resilience.test.ts` (FIXED - test expectations and deterministic mocks)
-- `tests/ClarificationFlow.test.tsx` (IN PROGRESS - API response structure)
+- `tests/ClarificationFlow.test.tsx` (FIXED - API response structure and question object format)
+- `jest.config.js` (FIXED - exclude empty test suites from discovery)
 - `docs/task.md` (UPDATED - this documentation)
 
 #### Deployment Notes

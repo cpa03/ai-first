@@ -278,17 +278,29 @@ describe('ClarificationFlow', () => {
   });
 
   it('completes flow after last question', async () => {
-    const mockQuestions = ['What is your target audience?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -298,22 +310,34 @@ describe('ClarificationFlow', () => {
     fireEvent.click(completeButton);
 
     expect(mockOnComplete).toHaveBeenCalledWith({
-      question_0: 'Developers',
+      1: 'Developers',
     });
   });
 
   it('disables next button when answer is empty', async () => {
-    const mockQuestions = ['What is your target audience?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const nextButton = screen.getByText('Complete');
@@ -326,17 +350,29 @@ describe('ClarificationFlow', () => {
   });
 
   it('disables previous button on first question', async () => {
-    const mockQuestions = ['What is your target audience?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const previousButton = screen.getByText('← Previous');
@@ -428,17 +464,29 @@ describe('ClarificationFlow', () => {
   });
 
   it('trims whitespace from answers', async () => {
-    const mockQuestions = ['What is your target audience?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -448,22 +496,34 @@ describe('ClarificationFlow', () => {
     fireEvent.click(completeButton);
 
     expect(mockOnComplete).toHaveBeenCalledWith({
-      question_0: 'Developers',
+      1: 'Developers',
     });
   });
 
   it('prevents navigation with empty answer', async () => {
-    const mockQuestions = ['What is your target audience?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const nextButton = screen.getByText('Complete');
