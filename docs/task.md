@@ -2427,6 +2427,118 @@ npm run type-check
 
 ---
 
+### Task 3: Extract Magic Numbers in BreakdownEngine ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Extract magic numbers in BreakdownEngine timeline generation
+- Replace hardcoded time calculations with named constants
+- Improve code readability and maintainability
+- Follow "No Magic Numbers" best practice
+
+#### Completed Work
+
+1. **Extracted Time Constants** (`src/lib/agents/breakdown-engine.ts`)
+   - Added `HOURS_PER_WEEK = 40` constant for standard work week
+   - Added `MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000` constant
+   - Added `PHASE_PLANNING_RATIO = 0.2` constant (20% planning phase)
+   - Added `PHASE_DEVELOPMENT_RATIO = 0.8` constant (80% development phase)
+
+2. **Updated Timeline Generation** (`generateTimeline` method)
+   - Replaced `7 * 24 * 60 * 60 * 1000` with `MILLISECONDS_PER_WEEK` (5 occurrences)
+   - Replaced `40` with `HOURS_PER_WEEK` in weekly calculation
+   - Replaced `0.2` with `PHASE_PLANNING_RATIO` (4 occurrences)
+   - Replaced `0.8` with `PHASE_DEVELOPMENT_RATIO` (2 occurrences)
+
+#### Impact
+
+**Readability**: Improved
+
+- Magic numbers replaced with descriptive constant names
+- Code intent is now clear without comments
+- Timeline calculation logic is easier to understand
+
+**Maintainability**: Improved
+
+- Changes to timeline duration require updating one constant
+- Phase ratio adjustments are centralized
+- Time calculations use single source of truth
+
+**Code Quality**: Improved
+
+- Follows "No Magic Numbers" principle
+- Constants defined at module level for easy discovery
+- Self-documenting code with meaningful constant names
+
+#### Success Criteria Met
+
+- [x] All magic numbers extracted to named constants
+- [x] Timeline calculation behavior preserved
+- [x] All 26 breakdown-engine tests passing (100%)
+- [x] Lint passes (0 errors, 0 warnings)
+- [x] Type-check passes (0 errors)
+- [x] Zero breaking changes
+- [x] Code readability improved
+
+#### Files Modified
+
+- `src/lib/agents/breakdown-engine.ts` (REFACTORED - extracted 4 constants)
+
+#### Constants Added
+
+```typescript
+const HOURS_PER_WEEK = 40;
+const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+const PHASE_PLANNING_RATIO = 0.2;
+const PHASE_DEVELOPMENT_RATIO = 0.8;
+```
+
+#### Before/After Example
+
+**Before** (magic numbers):
+
+```typescript
+const endDate = new Date(
+  startDate.getTime() + totalWeeks * 7 * 24 * 60 * 60 * 1000
+);
+```
+
+**After** (named constants):
+
+```typescript
+const endDate = new Date(
+  startDate.getTime() + totalWeeks * MILLISECONDS_PER_WEEK
+);
+```
+
+#### Testing Verification
+
+```bash
+# Test Suite: PASS ✅
+npm test -- tests/breakdown-engine.test.ts
+Tests: 26 passed, 26 total (100% pass rate)
+
+# Lint: PASS ✅
+npm run lint
+✔ No ESLint warnings or errors
+
+# Type-check: PASS ✅
+npm run type-check
+✔ No TypeScript errors
+```
+
+#### Notes
+
+- Constants defined at module level (not class level) for better visibility
+- Phase ratios (0.2, 0.8) are different from confidence weights in `calculateOverallConfidence`
+- Magic numbers in `calculateOverallConfidence` remain as they represent different concepts
+
+---
+
 ## Integration Engineer Tasks
 
 ## Task Tracking
