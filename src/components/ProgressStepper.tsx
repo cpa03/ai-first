@@ -30,7 +30,7 @@ export default function ProgressStepper({
                 <div
                   key={step.id}
                   className={`
-                    w-2.5 h-2.5 rounded-full transition-colors duration-300
+                    w-3 h-3 rounded-full transition-all duration-300
                     ${
                       step.completed || step.current
                         ? 'bg-primary-600'
@@ -38,7 +38,7 @@ export default function ProgressStepper({
                     }
                   `}
                   aria-current={step.current ? 'step' : undefined}
-                  aria-label={`Question ${index + 1}`}
+                  aria-label={`Question ${index + 1} ${step.current ? '(current)' : step.completed ? '(completed)' : ''}`}
                 />
               );
             })}
@@ -64,8 +64,8 @@ export default function ProgressStepper({
                   className={`
                     flex items-center justify-center
                     w-10 h-10 rounded-full border-2
-                    font-medium text-sm
-                    transition-colors duration-300
+                    font-medium text-sm min-w-[40px] min-h-[40px]
+                    transition-all duration-300
                     ${
                       step.completed
                         ? 'border-primary-600 bg-primary-600 text-white'
@@ -74,6 +74,7 @@ export default function ProgressStepper({
                           : 'border-gray-300 text-gray-500'
                     }
                   `}
+                  aria-hidden="true"
                 >
                   {step.completed ? (
                     <svg
@@ -102,9 +103,10 @@ export default function ProgressStepper({
                         ? 'text-primary-600'
                         : step.completed
                           ? 'text-gray-900'
-                          : 'text-gray-500'
+                          : 'text-gray-600'
                     }
                   `}
+                  aria-hidden="true"
                 >
                   {step.label}
                 </span>
@@ -114,6 +116,7 @@ export default function ProgressStepper({
                   className={`
                     flex-1 h-0.5 mx-4
                     ${step.completed ? 'bg-primary-600' : 'bg-gray-300'}
+                    transition-colors duration-300
                   `}
                   aria-hidden="true"
                 />

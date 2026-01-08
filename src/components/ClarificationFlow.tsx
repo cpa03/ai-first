@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
 import InputWithValidation from '@/components/InputWithValidation';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 
 interface Question {
   id: string;
@@ -91,6 +92,17 @@ export default function ClarificationFlow({
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
       setCurrentAnswer('');
+      // Focus the first input after navigation
+      setTimeout(() => {
+        const input = document.querySelector(
+          currentQuestion?.type === 'textarea'
+            ? 'textarea'
+            : currentQuestion?.type === 'select'
+              ? 'select'
+              : 'input'
+        ) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+        input?.focus();
+      }, 100);
     } else {
       onComplete(newAnswers);
     }
@@ -101,6 +113,7 @@ export default function ClarificationFlow({
     currentStep,
     questions.length,
     onComplete,
+    currentQuestion?.type,
   ]);
 
   const handlePrevious = useCallback(() => {
@@ -108,8 +121,19 @@ export default function ClarificationFlow({
       setCurrentStep(currentStep - 1);
       const previousQuestionId = questions[currentStep - 1].id;
       setCurrentAnswer(answers[previousQuestionId] || '');
+      // Focus the first input after navigation
+      setTimeout(() => {
+        const input = document.querySelector(
+          currentQuestion?.type === 'textarea'
+            ? 'textarea'
+            : currentQuestion?.type === 'select'
+              ? 'select'
+              : 'input'
+        ) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+        input?.focus();
+      }, 100);
     }
-  }, [currentStep, questions, answers]);
+  }, [currentStep, questions, answers, currentQuestion?.type]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -169,8 +193,9 @@ export default function ClarificationFlow({
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto fade-in">
+        <LoadingAnnouncer message="Generating questions..." />
         <div className="flex flex-col items-center justify-center py-12">
-          <LoadingSpinner size="lg" />
+          <LoadingSpinner size="lg" ariaLabel="Generating questions" />
           <p className="mt-4 text-gray-600 text-sm">Generating questions...</p>
         </div>
         {error && (
@@ -229,7 +254,12 @@ export default function ClarificationFlow({
           <span className="text-sm font-medium text-gray-700">
             Question {currentStep + 1} of {questions.length}
           </span>
-          <span className="text-sm text-gray-500">{Math.round(progress)}%</span>
+          <span
+            className="text-sm text-gray-500"
+            aria-label={`Progress: ${Math.round(progress)} percent`}
+          >
+            {Math.round(progress)}%
+          </span>
         </div>
         <ProgressStepper steps={steps} currentStep={currentStep} />
       </div>
@@ -297,7 +327,7 @@ export default function ClarificationFlow({
                   id="answer-select"
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors bg-white"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500 transition-all duration-200 bg-white min-h-[44px]"
                   required
                   autoFocus
                 >

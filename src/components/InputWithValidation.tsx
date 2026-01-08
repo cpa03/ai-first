@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState } from 'react';
+import { forwardRef, useState, useEffect } from 'react';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
   HTMLInputElement | HTMLTextAreaElement
@@ -35,6 +35,7 @@ const InputWithValidation = forwardRef<
     ref
   ) => {
     const [touched, setTouched] = useState(false);
+    const [errorAnnounced, setErrorAnnounced] = useState(false);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
     const isValid = !error && touched;
@@ -51,21 +52,33 @@ const InputWithValidation = forwardRef<
     };
 
     const baseInputClasses = `
-      w-full px-3 py-2 border rounded-md shadow-sm
-      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500
-      transition-colors
-      ${isInvalid ? 'border-red-300 focus:border-red-500 focus:ring-red-500' : 'border-gray-300'}
+      w-full px-4 py-3 border rounded-md shadow-sm
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500
+      transition-all duration-200
+      ${isInvalid ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' : 'border-gray-300'}
       ${className}
     `;
+
+    useEffect(() => {
+      if (isInvalid && !errorAnnounced) {
+        setErrorAnnounced(true);
+      } else if (!isInvalid) {
+        setErrorAnnounced(false);
+      }
+    }, [isInvalid, errorAnnounced]);
 
     return (
       <div className="space-y-2">
         <label
           htmlFor={props.id}
-          className="block text-sm font-medium text-gray-700"
+          className="block text-sm font-medium text-gray-700 cursor-pointer"
         >
           {label}
-          {props.required && <span className="text-red-500 ml-1">*</span>}
+          {props.required && (
+            <span className="text-red-500 ml-1" aria-hidden="true">
+              *
+            </span>
+          )}
         </label>
 
         {multiline ? (
@@ -75,7 +88,7 @@ const InputWithValidation = forwardRef<
             value={value}
             onChange={handleChange}
             onBlur={handleBlur}
-            className={`${baseInputClasses} resize-y`}
+            className={`${baseInputClasses} resize-y min-h-[100px]`}
             aria-invalid={isInvalid}
             aria-describedby={
               error
@@ -119,6 +132,7 @@ const InputWithValidation = forwardRef<
                 id={`${props.id}-error`}
                 className="text-sm text-red-600"
                 role="alert"
+                aria-live={errorAnnounced ? 'polite' : 'off'}
               >
                 {error}
               </p>
