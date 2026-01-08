@@ -2804,3 +2804,259 @@ The application has no critical security issues that require immediate action.
 **No Critical or High Priority Issues Found** - The application is ready for production deployment from a security standpoint.
 
 ---
+
+## Code Review & Refactoring Tasks
+
+### Task 1: Remove Duplicate Code in CircuitBreaker.onError
+
+**Priority**: MEDIUM
+**Status**: PENDING
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Remove duplicate code in `CircuitBreaker.onError()` method
+- Consolidate circuit breaker opening logic
+- Improve code maintainability
+
+#### Issue
+
+The `CircuitBreaker.onError()` method in `src/lib/resilience.ts` (lines 91-119) has duplicate code for opening the circuit breaker:
+
+1. Lines 98-101: Updates failures, lastFailureTime, and opens circuit
+2. Lines 102-111: Repeats same logic with additional console.log
+
+This duplication creates maintenance burden and risk of inconsistency.
+
+#### Suggestion
+
+Extract circuit breaker opening logic into a private method `openCircuit()` that:
+
+- Updates failure count
+- Sets lastFailureTime
+- Changes state to 'open'
+- Sets nextAttemptTime
+- Logs the event
+
+Then call this method once from `onError()`.
+
+#### Effort
+
+**SMALL** - ~15 minutes to refactor and test
+
+#### Files to Modify
+
+- `src/lib/resilience.ts` (lines 91-119)
+
+---
+
+### Task 2: Replace console.error with Proper Logging
+
+**Priority**: HIGH
+**Status**: PENDING
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Replace all `console.error()` calls with proper error logging
+- Use centralized error handling for consistent error reporting
+- Improve observability in production
+
+#### Issue
+
+The codebase has 5 instances of `console.error()` for error handling:
+
+- `src/app/clarify/page.tsx:38` - Error storing clarification answers
+- `src/app/results/page.tsx:35, 46` - Error fetching results, Export error
+- `src/components/ErrorBoundary.tsx:17` - ErrorBoundary caught error
+- `src/components/IdeaInput.tsx:65` - Error saving idea
+- `src/components/ClarificationFlow.tsx:153` - Error fetching questions
+
+Using `console.error()` is not suitable for production because:
+
+- No error context tracking (request IDs, user IDs)
+- No error aggregation or alerting
+- Difficult to filter and analyze in production
+- Inconsistent with centralized error handling system already in place
+
+#### Suggestion
+
+Create a `Logger` utility class with:
+
+- Error level logging with context (request ID, user ID, component name)
+- Structured logging with metadata
+- Integration with error tracking service (optional for future)
+- Different log levels (error, warn, info, debug)
+
+Replace all `console.error()` calls with logger.error() calls.
+
+#### Effort
+
+**MEDIUM** - ~2 hours to create Logger utility and update 5 locations
+
+#### Files to Modify
+
+- `src/lib/logger.ts` (NEW - Logger utility)
+- `src/app/clarify/page.tsx` (line 38)
+- `src/app/results/page.tsx` (lines 35, 46)
+- `src/components/ErrorBoundary.tsx` (line 17)
+- `src/components/IdeaInput.tsx` (line 65)
+- `src/components/ClarificationFlow.tsx` (line 153)
+
+---
+
+### Task 3: Extract Blueprint Template from Component
+
+**Priority**: MEDIUM
+**Status**: PENDING
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Extract hardcoded blueprint template from `BlueprintDisplay.tsx`
+- Move template to separate file for better maintainability
+- Make template easier to update and version
+
+#### Issue
+
+The `BlueprintDisplay.tsx` component (lines 25-87) contains a 62-line hardcoded blueprint template string embedded directly in the component:
+
+```typescript
+const generatedBlueprint = `# Project Blueprint
+...
+`;
+```
+
+Problems:
+
+- Template mixed with component logic
+- Hard to update template without changing component code
+- Template not reusable or testable in isolation
+- Component file is unnecessarily long (234 lines)
+
+#### Suggestion
+
+Create `src/templates/blueprint-template.ts` with:
+
+- `generateBlueprintTemplate()` function taking idea and answers as parameters
+- Template string moved to this file
+- Function returns formatted blueprint markdown
+
+Update `BlueprintDisplay.tsx` to import and use this function.
+
+#### Effort
+
+**SMALL** - ~30 minutes to extract and test
+
+#### Files to Modify
+
+- `src/templates/blueprint-template.ts` (NEW)
+- `src/components/BlueprintDisplay.tsx` (lines 21-87)
+
+---
+
+### Task 4: Refactor DatabaseService into Smaller Modules
+
+**Priority**: MEDIUM
+**Status**: PENDING
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Split `DatabaseService` into smaller, focused modules
+- Apply Single Responsibility Principle
+- Improve code organization and testability
+
+#### Issue
+
+The `DatabaseService` class in `src/lib/db.ts` (515 lines) is too large and handles too many responsibilities:
+
+- Ideas CRUD operations
+- Deliverables CRUD operations
+- Tasks CRUD operations
+- Vector operations
+- Agent logging
+- Health checks
+- Statistics
+
+This violates Single Responsibility Principle and makes:
+
+- Testing difficult (need to mock many methods)
+- Code harder to navigate and understand
+- Changes risky due to large surface area
+
+#### Suggestion
+
+Create separate repository classes for each entity:
+
+- `IdeaRepository` - Ideas CRUD
+- `DeliverableRepository` - Deliverables CRUD
+- `TaskRepository` - Tasks CRUD
+- `VectorRepository` - Vector operations
+- `AgentLogRepository` - Agent logging
+- `HealthCheckRepository` - Health checks and stats
+
+Keep `DatabaseService` as facade that delegates to repositories.
+
+#### Effort
+
+**LARGE** - ~4-6 hours to refactor with proper tests
+
+#### Files to Modify
+
+- `src/lib/db.ts` (refactor into multiple files)
+- `src/lib/repositories/` (NEW directory)
+- `src/lib/repositories/idea-repository.ts` (NEW)
+- `src/lib/repositories/deliverable-repository.ts` (NEW)
+- `src/lib/repositories/task-repository.ts` (NEW)
+- `src/lib/repositories/vector-repository.ts` (NEW)
+- `src/lib/repositories/agent-log-repository.ts` (NEW)
+
+---
+
+### Task 5: Simplify CircuitBreaker State Management
+
+**Priority**: LOW
+**Status**: PENDING
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Simplify CircuitBreaker state synchronization between `state` and `cachedState`
+- Reduce complexity and potential for inconsistency
+- Improve code clarity
+
+#### Issue
+
+The `CircuitBreaker` class in `src/lib/resilience.ts` manages two state objects:
+
+- `state`: The actual circuit breaker state
+- `cachedState`: Cached copy for thread-safe access
+
+This dual-state approach creates complexity:
+
+- State must be synced in multiple places (`onSuccess`, `onError`)
+- Risk of inconsistency if sync fails
+- Code is harder to reason about
+- Lines 82-88, 113-118, 122-126 handle syncing
+
+#### Suggestion
+
+Simplify to single state management:
+
+- Remove `cachedState` property
+- Make state updates atomic using mutex or queue if needed
+- Or use immutable state with setState() pattern
+- Document thread-safety guarantees
+
+Alternative: Use a state machine pattern for clearer state transitions.
+
+#### Effort
+
+**MEDIUM** - ~2-3 hours to refactor and test thoroughly
+
+#### Files to Modify
+
+- `src/lib/resilience.ts` (CircuitBreaker class)
+
+---
