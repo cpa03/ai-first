@@ -8,8 +8,11 @@ import {
   isTask,
   isIdeaAnalysis,
 } from '@/lib/validation';
+import { createLogger } from '@/lib/logger';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+const logger = createLogger('BreakdownEngine');
 
 export interface BreakdownConfig {
   name: string;
@@ -263,7 +266,7 @@ class BreakdownEngine {
       // Validate and enhance analysis
       return this.validateAnalysis(analysis);
     } catch (error) {
-      console.error('Failed to analyze idea:', error);
+      logger.error('Failed to analyze idea:', error);
       throw new Error('Idea analysis failed');
     }
   }
@@ -317,7 +320,7 @@ class BreakdownEngine {
           totalHours += task.estimatedHours;
         });
       } catch (error) {
-        console.error(
+        logger.error(
           `Failed to decompose deliverable: ${deliverable.title}`,
           error
         );
@@ -590,7 +593,7 @@ class BreakdownEngine {
       // Update idea status
       await dbService.updateIdea(session.ideaId, { status: 'breakdown' });
     } catch (error) {
-      console.error('Failed to persist breakdown results:', error);
+      logger.error('Failed to persist breakdown results:', error);
       throw error;
     }
   }
@@ -606,7 +609,7 @@ class BreakdownEngine {
 
       return session;
     } catch (error) {
-      console.error('Failed to get breakdown session:', error);
+      logger.error('Failed to get breakdown session:', error);
       return null;
     }
   }
