@@ -4535,10 +4535,10 @@ The application has no critical security issues that require immediate action.
 
 ## Code Review & Refactoring Tasks
 
-### Task 1: Remove Duplicate Code in CircuitBreaker.onError
+### Task 1: Remove Duplicate Code in CircuitBreaker.onError ✅ COMPLETE
 
 **Priority**: MEDIUM
-**Status**: PENDING
+**Status**: ✅ COMPLETED
 **Date**: 2026-01-08
 
 #### Objectives
@@ -4549,32 +4549,112 @@ The application has no critical security issues that require immediate action.
 
 #### Issue
 
-The `CircuitBreaker.onError()` method in `src/lib/resilience.ts` (lines 91-119) has duplicate code for opening the circuit breaker:
+The `CircuitBreaker.onError()` method in `src/lib/resilience.ts` had duplicate code for opening the circuit breaker:
 
 1. Lines 98-101: Updates failures, lastFailureTime, and opens circuit
-2. Lines 102-111: Repeats same logic with additional console.log
+2. Lines 102-111: Repeats same logic with additional logger.debug call
 
-This duplication creates maintenance burden and risk of inconsistency.
+This duplication created maintenance burden and risk of inconsistency.
 
-#### Suggestion
+#### Completed Work
 
-Extract circuit breaker opening logic into a private method `openCircuit()` that:
+1. **Extracted Circuit Opening Logic** (`src/lib/resilience.ts`)
+   - Created private `openCircuit()` method (lines 114-120)
+   - Method consolidates all circuit opening logic:
+     - Sets state to 'open'
+     - Calculates nextAttemptTime
+     - Logs circuit opening event with debug message
+   - Removed duplicate code from `onError()` method
+   - `onError()` now calls `openCircuit()` once when threshold is reached
 
-- Updates failure count
-- Sets lastFailureTime
-- Changes state to 'open'
-- Sets nextAttemptTime
-- Logs the event
+2. **Code Reduction**
+   - Removed ~18 lines of duplicate code
+   - Single source of truth for circuit opening logic
+   - More maintainable and easier to understand
 
-Then call this method once from `onError()`.
+#### Impact
 
-#### Effort
+**Code Quality**: Improved
 
-**SMALL** - ~15 minutes to refactor and test
+- No more duplication in circuit breaker error handling
+- Single responsibility: `openCircuit()` handles circuit opening
+- Easier to modify circuit opening behavior
+- Reduced risk of inconsistency
 
-#### Files to Modify
+**Maintainability**: Improved
 
-- `src/lib/resilience.ts` (lines 91-119)
+- Changes to circuit opening logic only need to be made in one place
+- Clear separation of concerns
+- Better testability (can test `openCircuit()` independently)
+
+**Success Criteria Met**
+
+- [x] Duplicate code removed from onError() method
+- [x] Circuit opening logic extracted to private method
+- [x] Single source of truth for circuit opening
+- [x] Code follows DRY principle
+- [x] No behavioral changes (circuit opening logic preserved)
+- [x] Type safety maintained
+
+#### Files Modified
+
+- `src/lib/resilience.ts` (REFACTORED - extracted openCircuit() method, removed duplicate code)
+
+#### Before/After
+
+**Before (Duplicate Code)**:
+
+```typescript
+private onError(error: Error, _now: number, attemptCount: number = 1): void {
+  for (let i = 0; i < attemptCount; i++) {
+    this.recentFailures.push(_now);
+  }
+  this.state.failures = this.recentFailures.length;
+  this.state.lastFailureTime = _now;
+
+  if (this.state.failures >= this.options.failureThreshold) {
+    this.state.state = 'open';
+    this.state.nextAttemptTime = _now + this.options.resetTimeout;
+  }
+  this.state.failures = this.recentFailures.length;  // DUPLICATE
+  this.state.lastFailureTime = _now;          // DUPLICATE
+
+  if (this.state.failures >= this.options.failureThreshold) {  // DUPLICATE
+    logger.debug(
+      `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+    );
+    this.state.state = 'open';              // DUPLICATE
+    this.state.nextAttemptTime = _now + this.options.resetTimeout;  // DUPLICATE
+  }
+  // ...
+}
+```
+
+**After (Extracted Method)**:
+
+```typescript
+private onError(error: Error, _now: number, attemptCount: number = 1): void {
+  for (let i = 0; i < attemptCount; i++) {
+    this.recentFailures.push(_now);
+  }
+  this.state.failures = this.recentFailures.length;
+  this.state.lastFailureTime = _now;
+
+  if (this.state.failures >= this.options.failureThreshold) {
+    this.openCircuit(_now);
+  }
+
+  // ...
+}
+
+private openCircuit(now: number): void {
+  this.state.state = 'open';
+  this.state.nextAttemptTime = now + this.options.resetTimeout;
+  logger.debug(
+    `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+  );
+}
+```
 
 ---
 
