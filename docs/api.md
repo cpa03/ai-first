@@ -535,6 +535,86 @@ When rate limit is exceeded:
 
 ---
 
+## Admin Endpoints
+
+### GET /api/admin/rate-limit
+
+Retrieve current rate limiting statistics and configuration. This endpoint is useful for monitoring rate limit usage and diagnosing rate limiting issues.
+
+**Rate Limit:** strict (10 requests per minute)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "timestamp": "2024-01-08T12:00:00Z",
+    "totalRequests": 1234,
+    "blockedRequests": 45,
+    "rateLimitConfigs": {
+      "strict": { "windowMs": 60000, "maxRequests": 10 },
+      "moderate": { "windowMs": 60000, "maxRequests": 30 },
+      "lenient": { "windowMs": 60000, "maxRequests": 60 }
+    },
+    "tieredRateLimits": {
+      "anonymous": { "windowMs": 60000, "maxRequests": 30 },
+      "authenticated": { "windowMs": 60000, "maxRequests": 60 },
+      "premium": { "windowMs": 60000, "maxRequests": 120 },
+      "enterprise": { "windowMs": 60000, "maxRequests": 300 }
+    }
+  },
+  "requestId": "req_1234567890_abc123",
+  "timestamp": "2024-01-08T12:00:00Z"
+}
+```
+
+**Response Fields:**
+
+- `timestamp`: Current timestamp
+- `totalRequests`: Total number of requests processed
+- `blockedRequests`: Number of requests blocked by rate limiting
+- `rateLimitConfigs`: Configuration for each rate limit tier
+- `tieredRateLimits`: Configuration for each user tier
+
+**Rate Limit Configurations:**
+
+- `windowMs`: Time window in milliseconds (default: 60 seconds)
+- `maxRequests`: Maximum requests allowed within the window
+
+**Status Codes:**
+
+- `200`: Statistics retrieved successfully
+- `429`: Rate limit exceeded for this endpoint
+- `500`: Internal error
+
+**Use Cases:**
+
+- Monitor rate limit usage in production
+- Diagnose rate limiting issues
+- Verify rate limit configuration
+- Build admin dashboards for rate limit monitoring
+
+**Example Usage:**
+
+```bash
+# Get rate limit statistics
+curl http://localhost:3000/api/admin/rate-limit
+
+# Response
+{
+  "success": true,
+  "data": {
+    "timestamp": "2024-01-08T12:00:00Z",
+    "totalRequests": 1234,
+    "blockedRequests": 45,
+    ...
+  }
+}
+```
+
+---
+
 ## Request Size Limits
 
 - Maximum request body size: 1MB
