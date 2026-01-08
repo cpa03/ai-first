@@ -1471,6 +1471,153 @@ const unwrappedData = unwrapApiResponse<ApiResponse<ClarificationData>>(data);
 const questions = unwrappedData.questions; // Type-safe, clear intent
 ```
 
+## Export Connector Resilience
+
+### Overview
+
+All export connectors (Notion, Trello, GitHub, Google Tasks) are now fully integrated with the resilience framework. This ensures that external API calls are protected with retries, timeouts, and circuit breakers.
+
+### Base Class Enhancement
+
+The `ExportConnector` base class now provides `executeWithResilience()` method that automatically applies appropriate resilience configuration based on the connector type:
+
+```typescript
+export abstract class ExportConnector {
+  protected async executeWithResilience<T>(
+    operation: () => Promise<T>,
+    context?: string
+  ): Promise<T> {
+    const config = this.getResilienceConfig();
+    return resilienceManager.execute(
+      operation,
+      config,
+      `${this.type}-${context || 'operation'}`
+    );
+  }
+
+  protected getResilienceConfig(): ResilienceConfig {
+    const type = this.type;
+    if (type === 'notion') {
+      return defaultResilienceConfigs.notion;
+    }
+    if (type === 'trello') {
+      return defaultResilienceConfigs.trello;
+    }
+    if (type === 'github-projects') {
+      return defaultResilienceConfigs.github;
+    }
+    // Default fallback
+  }
+}
+```
+
+### Per-Service Configuration
+
+Each export connector uses the appropriate resilience configuration:
+
+- **Notion**: 30s timeout, 3 retries, 5-failure threshold, 30s reset
+- **Trello**: 15s timeout, 3 retries, 3-failure threshold, 20s reset
+- **GitHub**: 30s timeout, 3 retries, 5-failure threshold, 30s reset
+- **Google Tasks**: 30s timeout, 3 retries, 5-failure threshold, 30s reset
+
+### Before (Manual Timeout Management)
+
+```typescript
+private async createBoard(name: string, apiKey: string, token: string): Promise<any> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response.json();
+  } catch (error) {
+    clearTimeout(timeoutId);
+    throw error;
+  }
+}
+```
+
+### After (Using Resilience Framework)
+
+```typescript
+private async createBoard(name: string, apiKey: string, token: string): Promise<any> {
+  const response = await this.executeWithResilience(
+    () => fetch(url, { method: 'POST' }),
+    'create-board'
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to create Trello board: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+```
+
+### Benefits
+
+**1. Automatic Retries**:
+
+- Transient failures are automatically retried with exponential backoff
+- Reduces impact of temporary network issues
+- Improves success rate for flaky external services
+
+**2. Circuit Breaker Protection**:
+
+- Prevents cascading failures when external services are down
+- Stops making requests to failing services after threshold
+- Allows service to recover before resuming requests
+
+**3. Consistent Timeout Management**:
+
+- All external calls have appropriate timeouts
+- Prevents hanging requests from affecting user experience
+- Timeout values are centralized and configurable
+
+**4. Centralized Error Handling**:
+
+- All external API errors go through resilience framework
+- Consistent error messages across all connectors
+- Easier to debug and monitor integration issues
+
+**5. Monitoring Ready**:
+
+- Circuit breaker states are exposed in health endpoint
+- Easy to track which services are failing
+- Supports operational dashboards
+
+### Implementation Status
+
+- ✅ **ExportConnector base class**: Enhanced with `executeWithResilience()` method
+- ✅ **NotionExporter**: All API calls wrapped in resilience framework
+- ✅ **TrelloExporter**: All API calls wrapped in resilience framework
+- ✅ **GitHubProjectsExporter**: All API calls wrapped in resilience framework
+- ✅ **GoogleTasksExporter**: No external API calls (uses server-side endpoint)
+
+### Testing
+
+All export connectors pass comprehensive test suite:
+
+```bash
+npm run test -- tests/exports.test.ts
+# 42 tests passed
+```
+
+### Migration Notes
+
+For developers working on export connectors:
+
+1. **Use `executeWithResilience()`** for all external API calls
+2. **Provide meaningful context** strings for debugging
+3. **Remove manual timeout management** (AbortController, setTimeout)
+4. **Keep error handling** for business logic (e.g., `!response.ok`)
+
+The old `executeWithTimeout()` method is deprecated but remains for backward compatibility.
+
 ## References
 
 - [API Reference](./api.md)
@@ -1481,5 +1628,5 @@ const questions = unwrappedData.questions; // Type-safe, clear intent
 
 ---
 
-**Last Updated**: 2024-01-08
+**Last Updated**: 2026-01-08
 **Maintained By**: Integration Engineer
