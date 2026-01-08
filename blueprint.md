@@ -1383,7 +1383,8 @@ All error responses follow this format:
   ],
   timestamp: "<iso_8601_timestamp>",
   requestId?: "<request_id>",
-  retryable?: boolean
+  retryable?: boolean,
+  suggestions?: ["<suggestion_1>", "<suggestion_2>"]
 }
 ```
 
@@ -1395,6 +1396,108 @@ All error responses follow this format:
 - `timestamp`: ISO 8601 timestamp
 - `requestId`: Unique identifier for the request
 - `retryable`: Boolean indicating if request should be retried
+- `suggestions`: Optional array of actionable recovery suggestions (2026-01-08)
+
+### Error Response Enhancements (2026-01-08)
+
+**Purpose**: Improve developer and user experience by providing actionable recovery guidance in error responses.
+
+#### Enhanced Error Features
+
+**1. Error Suggestions Field**
+
+All error responses now include a `suggestions` array with actionable recovery steps:
+
+```json
+{
+  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": true,
+  "suggestions": [
+    "Wait 60 seconds before making another request",
+    "Implement client-side rate limiting to avoid this error",
+    "Reduce your request frequency",
+    "Contact support for higher rate limits if needed"
+  ]
+}
+```
+
+**2. Contextual Suggestions by Error Type**
+
+Each error code has predefined, relevant recovery suggestions:
+
+| Error Code             | Example Suggestions                                               |
+| ---------------------- | ----------------------------------------------------------------- |
+| VALIDATION_ERROR       | Check required fields, ensure format correctness, verify limits   |
+| RATE_LIMIT_EXCEEDED    | Wait specified time, implement client-side limiting, upgrade plan |
+| EXTERNAL_SERVICE_ERROR | System auto-retries, check credentials, monitor service status    |
+| TIMEOUT_ERROR          | Simplify request, check service latency, auto-retry               |
+| AUTHENTICATION_ERROR   | Provide valid token, check token expiration, verify credentials   |
+| AUTHORIZATION_ERROR    | Verify permissions, contact owner, check data ownership           |
+| NOT_FOUND              | Verify ID, check session expiry, confirm endpoint                 |
+| CONFLICT               | Check for duplicates, resolve conflicts, retry with updated data  |
+| SERVICE_UNAVAILABLE    | Wait and retry, check system status, monitor recovery             |
+| CIRCUIT_BREAKER_OPEN   | Wait for reset time, monitor status, auto-recovery test           |
+| RETRY_EXHAUSTED        | Check service status, verify credentials, contact support         |
+
+**3. Helper Functions**
+
+**`createErrorWithSuggestions(code, message, statusCode?, details?, retryable?)`**
+
+Creates an AppError with standard suggestions for the error code:
+
+```typescript
+import { createErrorWithSuggestions, ErrorCode } from '@/lib/errors';
+
+throw createErrorWithSuggestions(
+  ErrorCode.NOT_FOUND,
+  'Clarification session not found',
+  404
+);
+```
+
+**4. Error Suggestion Mapping**
+
+All error codes have predefined suggestions in `ERROR_SUGGESTIONS` constant:
+
+```typescript
+export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
+  VALIDATION_ERROR: [
+    'Check that all required fields are present in your request',
+    'Ensure field values match the expected format',
+    'Verify that string lengths are within allowed limits',
+    // ...
+  ],
+  // ... all other error codes
+};
+```
+
+**Benefits:**
+
+- Better UX: Users know exactly what to do when errors occur
+- Reduced Support: Clear guidance reduces questions and confusion
+- Self-Documenting: Error responses include recovery steps automatically
+- Backward Compatible: `suggestions` field is optional, no breaking changes
+- Consistent: All error codes have standardized, helpful suggestions
+
+**Client-Side Usage:**
+
+```typescript
+const response = await fetch('/api/clarify/start', {
+  /* ... */
+});
+const result = await response.json();
+
+if (!response.ok) {
+  // Display suggestions to user
+  if (result.suggestions && result.suggestions.length > 0) {
+    console.log('Suggestions for recovering from error:');
+    result.suggestions.forEach((s, i) => console.log(`${i + 1}. ${s}`));
+  }
+}
+```
 
 ### HTTP Status Codes
 
@@ -1512,6 +1615,175 @@ All validation error messages follow consistent patterns:
 
 - Response: `{ success: true, data: { ...healthCheck, service: 'database', environment: string }, requestId: string, timestamp: string }`
 - Purpose: Database health check
+
+---
+
+## 33. Error Response Enhancement (2026-01-08)
+
+### Overview
+
+Enhanced error response system to provide actionable recovery guidance, improving developer and user experience when errors occur.
+
+### Completed Enhancements
+
+**1. Error Response Interface Enhancement**
+
+Added `suggestions` field to all error responses:
+
+```typescript
+interface ErrorResponse {
+  error: string;
+  code: string;
+  details?: ErrorDetail[];
+  timestamp: string;
+  requestId?: string;
+  retryable?: boolean;
+  suggestions?: string[]; // NEW: Actionable recovery suggestions
+}
+```
+
+**2. Contextual Error Suggestions**
+
+All error classes now include relevant recovery suggestions:
+
+| Error Code             | Suggestions Focus                                      |
+| ---------------------- | ------------------------------------------------------ |
+| VALIDATION_ERROR       | Required fields, format correctness, value limits      |
+| RATE_LIMIT_EXCEEDED    | Wait time, client-side limiting, upgrade options       |
+| EXTERNAL_SERVICE_ERROR | Auto-retry, credentials, service status                |
+| TIMEOUT_ERROR          | Request simplification, latency checks                 |
+| AUTHENTICATION_ERROR   | Token validation, expiration, credentials              |
+| AUTHORIZATION_ERROR    | Permissions verification, ownership check              |
+| NOT_FOUND              | ID verification, session expiry, endpoint confirmation |
+| CONFLICT               | Duplicate detection, conflict resolution               |
+| SERVICE_UNAVAILABLE    | Wait and retry, status monitoring                      |
+| CIRCUIT_BREAKER_OPEN   | Wait time, status monitoring, auto-recovery            |
+| RETRY_EXHAUSTED        | Service status, credentials, support contact           |
+
+**3. Error Suggestion Infrastructure**
+
+Created `ERROR_SUGGESTIONS` mapping and `createErrorWithSuggestions()` helper:
+
+```typescript
+export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
+  VALIDATION_ERROR: [
+    'Check that all required fields are present in your request',
+    'Ensure field values match the expected format',
+    // ...
+  ],
+  // ... all error codes
+};
+
+export function createErrorWithSuggestions(
+  code: ErrorCode,
+  message: string,
+  statusCode?: number,
+  details?: ErrorDetail[],
+  retryable?: boolean
+): AppError {
+  return new AppError(
+    message,
+    code,
+    statusCode,
+    details,
+    retryable,
+    ERROR_SUGGESTIONS[code] // Automatic suggestions
+  );
+}
+```
+
+**4. API Route Updates**
+
+Updated API routes to use enhanced error system:
+
+```typescript
+// Before
+throw new AppError('Clarification session not found', ErrorCode.NOT_FOUND, 404);
+
+// After
+throw createErrorWithSuggestions(
+  ErrorCode.NOT_FOUND,
+  'Clarification session not found',
+  404
+);
+```
+
+### Benefits
+
+- Better Developer Experience: Clear, actionable guidance for error recovery
+- Improved User Experience: Users understand what to do when errors occur
+- Self-Documenting API: Error responses include recovery steps automatically
+- Backward Compatible: Optional `suggestions` field, no breaking changes
+- Reduced Support Burden: Clear guidance reduces questions and confusion
+- Consistent: All error codes have standardized, helpful suggestions
+
+### Example Enhanced Error Response
+
+```json
+{
+  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": true,
+  "suggestions": [
+    "Wait 60 seconds before making another request",
+    "Implement client-side rate limiting to avoid this error",
+    "Reduce your request frequency",
+    "Contact support for higher rate limits if needed"
+  ]
+}
+```
+
+### Client-Side Implementation
+
+Display error suggestions to users:
+
+```typescript
+const response = await fetch('/api/clarify/start', {
+  /* ... */
+});
+const result = await response.json();
+
+if (!response.ok && result.suggestions) {
+  console.error('Error:', result.error);
+  console.log('Suggestions for recovery:');
+  result.suggestions.forEach((suggestion, index) => {
+    console.log(`${index + 1}. ${suggestion}`);
+  });
+}
+```
+
+### Files Modified
+
+- `src/lib/errors.ts` - Added suggestions field, ERROR_SUGGESTIONS mapping, createErrorWithSuggestions helper
+- `src/app/api/clarify/start/route.ts` - Updated to use createErrorWithSuggestions
+- `src/app/api/breakdown/route.ts` - Updated to use createErrorWithSuggestions
+- `docs/error-codes.md` - Added suggestions examples to all error codes
+- `docs/task.md` - Marked Task 3 as complete
+
+### Success Criteria
+
+- [x] ErrorResponse interface enhanced with suggestions field
+- [x] AppError base class supports suggestions parameter
+- [x] All error classes updated with contextual suggestions
+- [x] Error suggestion mappings created for common scenarios
+- [x] Helper function for creating errors with suggestions
+- [x] API routes updated to use enhanced errors
+- [x] Error codes documentation updated with examples
+- [x] Lint passes (0 errors, 0 warnings)
+- [x] Type-check passes (0 errors)
+- [x] Build passes successfully
+- [x] Zero breaking changes (optional suggestions field)
+- [x] All error codes have actionable recovery suggestions
+
+### Future Enhancements
+
+- [ ] Add error localization support for international users
+- [ ] Allow custom error suggestions via configuration
+- [ ] Add severity levels to error suggestions (critical, warning, info)
+- [ ] Integrate error suggestions into UI error components
+- [ ] Add error suggestion analytics tracking
 
 **GET /api/health/detailed**
 

@@ -4,7 +4,11 @@ import {
   validateIdeaId,
   validateUserResponses,
 } from '@/lib/validation';
-import { ValidationError, ErrorCode, AppError } from '@/lib/errors';
+import {
+  ValidationError,
+  ErrorCode,
+  createErrorWithSuggestions,
+} from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
@@ -60,9 +64,9 @@ async function handleGet(context: ApiContext) {
   const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
 
   if (!session) {
-    throw new AppError(
-      'No breakdown session found for this idea',
+    throw createErrorWithSuggestions(
       ErrorCode.NOT_FOUND,
+      'No breakdown session found for this idea',
       404
     );
   }
