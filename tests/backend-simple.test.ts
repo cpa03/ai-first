@@ -9,7 +9,7 @@ import {
   mockAPIResponses,
   waitForAsync,
   createMockFetch,
-} from './utils/testHelpers';
+} from './utils/_testHelpers';
 
 // Mock environment variables
 Object.assign(process.env, mockEnvVars);
