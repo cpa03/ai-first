@@ -13,9 +13,23 @@ All errors follow this structure:
   "details": [{ "field": "fieldName", "message": "Specific validation error" }],
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
-  "retryable": true
+  "retryable": true,
+  "suggestions": [
+    "Actionable recovery suggestion 1",
+    "Actionable recovery suggestion 2"
+  ]
 }
 ```
+
+### Error Response Fields
+
+- `error` (string): Human-readable error message describing what went wrong
+- `code` (string): Error code for programmatic handling
+- `details` (array, optional): Array of specific validation errors with field and message
+- `timestamp` (string): ISO 8601 timestamp of when the error occurred
+- `requestId` (string, optional): Unique request identifier for tracing and debugging
+- `retryable` (boolean): Whether the error can be safely retried
+- `suggestions` (array, optional): Array of actionable suggestions for recovering from the error
 
 ## Response Headers
 
@@ -65,11 +79,17 @@ Request validation failed. The request body or query parameters don't meet requi
   ],
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
-  "retryable": false
+  "retryable": false,
+  "suggestions": [
+    "Check that all required fields are present in your request",
+    "Ensure field values match the expected format",
+    "Verify that string lengths are within the allowed limits",
+    "Check that UUIDs are properly formatted"
+  ]
 }
 ```
 
-**Resolution:** Fix the validation errors in your request and retry.
+**Resolution:** Fix the validation errors in your request and retry. See the `suggestions` field for specific guidance.
 
 ---
 
@@ -95,7 +115,13 @@ Request rate limit exceeded. Too many requests in a short period.
   "details": [{ "message": "Limit: 50, Remaining: 0" }],
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
-  "retryable": true
+  "retryable": true,
+  "suggestions": [
+    "Wait 60 seconds before making another request",
+    "Implement client-side rate limiting to avoid this error",
+    "Reduce your request frequency",
+    "Contact support for higher rate limits if needed"
+  ]
 }
 ```
 
@@ -118,6 +144,30 @@ X-RateLimit-Reset: 1704614400
 **Retryable:** No
 
 Unexpected internal server error. Something went wrong on the server.
+
+**Common Causes:**
+
+- Unhandled exceptions
+- Database connection issues
+- Configuration errors
+- Unexpected runtime errors
+
+**Example Response:**
+
+```json
+{
+  "error": "An unexpected error occurred",
+  "code": "INTERNAL_ERROR",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": false,
+  "suggestions": [
+    "An unexpected error occurred on the server",
+    "Check /api/health/detailed for system status",
+    "Contact support with requestId for assistance"
+  ]
+}
+```
 
 **Common Causes:**
 
@@ -164,7 +214,13 @@ External service (OpenAI, Notion, etc.) returned an error.
   "code": "EXTERNAL_SERVICE_ERROR",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
-  "retryable": true
+  "retryable": true,
+  "suggestions": [
+    "An external service (AI provider, database, etc.) returned an error",
+    "The system will automatically retry this operation",
+    "Check your API credentials for external services",
+    "Monitor /api/health/detailed for service status"
+  ]
 }
 ```
 
@@ -194,7 +250,13 @@ Operation exceeded time limit and was aborted.
   "code": "TIMEOUT_ERROR",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
-  "retryable": true
+  "retryable": true,
+  "suggestions": [
+    "The operation exceeded the time limit and was terminated",
+    "Try again with a simpler or smaller request",
+    "The system will automatically retry this operation",
+    "Check if external services are experiencing high latency"
+  ]
 }
 ```
 
@@ -208,6 +270,31 @@ Operation exceeded time limit and was aborted.
 **Retryable:** No
 
 Authentication failed or missing.
+
+**Common Causes:**
+
+- Missing authorization header
+- Invalid auth token
+- Expired auth token
+- Invalid API key
+
+**Example Response:**
+
+```json
+{
+  "error": "Authentication required",
+  "code": "AUTHENTICATION_ERROR",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": false,
+  "suggestions": [
+    "Authentication is required to access this resource",
+    "Provide a valid authorization token in Authorization header",
+    "Check that your token has not expired",
+    "Verify you have valid API credentials"
+  ]
+}
+```
 
 **Common Causes:**
 
@@ -253,6 +340,30 @@ Insufficient permissions to access resource.
   "code": "AUTHORIZATION_ERROR",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
+  "retryable": false,
+  "suggestions": [
+    "You do not have permission to access this resource",
+    "Verify you have appropriate role or permissions",
+    "Contact resource owner for access",
+    "Check that you are accessing your own data"
+  ]
+}
+```
+
+**Common Causes:**
+
+- User doesn't have access to idea
+- Insufficient role/permissions
+- Attempting to access another user's data
+
+**Example Response:**
+
+```json
+{
+  "error": "You don't have permission to access this resource",
+  "code": "AUTHORIZATION_ERROR",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
   "retryable": false
 }
 ```
@@ -267,6 +378,31 @@ Insufficient permissions to access resource.
 **Retryable:** No
 
 Requested resource not found.
+
+**Common Causes:**
+
+- Invalid idea ID
+- Clarification session expired
+- Breakdown session doesn't exist
+- Invalid route
+
+**Example Response:**
+
+```json
+{
+  "error": "Clarification session not found",
+  "code": "NOT_FOUND",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": false,
+  "suggestions": [
+    "The requested resource was not found",
+    "Verify that the resource ID is correct",
+    "Check if session has expired",
+    "Ensure you are using the correct endpoint"
+  ]
+}
+```
 
 **Common Causes:**
 
@@ -312,6 +448,30 @@ Resource conflict or duplicate creation attempt.
   "code": "CONFLICT",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
+  "retryable": false,
+  "suggestions": [
+    "A conflict occurred with current state of the resource",
+    "Check if a session already exists for this idea",
+    "Resolve any concurrent modification conflicts",
+    "Retry operation with updated data"
+  ]
+}
+```
+
+**Common Causes:**
+
+- Attempting to create duplicate session
+- Concurrent modification conflicts
+- Unique constraint violation
+
+**Example Response:**
+
+```json
+{
+  "error": "Clarification session already exists for this idea",
+  "code": "CONFLICT",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
   "retryable": false
 }
 ```
@@ -326,6 +486,31 @@ Resource conflict or duplicate creation attempt.
 **Retryable:** Yes
 
 Service temporarily unavailable for maintenance or high load.
+
+**Common Causes:**
+
+- Scheduled maintenance
+- High system load
+- Database maintenance
+- AI service outage
+
+**Example Response:**
+
+```json
+{
+  "error": "Service temporarily unavailable",
+  "code": "SERVICE_UNAVAILABLE",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": true,
+  "suggestions": [
+    "The service is temporarily unavailable",
+    "Wait and retry with exponential backoff",
+    "Check /api/health/detailed for system status and ETA",
+    "Monitor for service recovery announcements"
+  ]
+}
+```
 
 **Common Causes:**
 
@@ -371,6 +556,30 @@ Circuit breaker is open due to repeated failures of external service.
   "code": "CIRCUIT_BREAKER_OPEN",
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
+  "retryable": true,
+  "suggestions": [
+    "The circuit breaker is open due to repeated failures",
+    "Wait until reset time specified in error message",
+    "The system will automatically test service recovery",
+    "Use /api/health/detailed to monitor circuit breaker status"
+  ]
+}
+```
+
+**Common Causes:**
+
+- External service degraded
+- Too many consecutive failures
+- Service outage
+
+**Example Response:**
+
+```json
+{
+  "error": "Circuit breaker open for openai. Retry after 2024-01-07T12:01:00Z",
+  "code": "CIRCUIT_BREAKER_OPEN",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
   "retryable": true
 }
 ```
@@ -385,6 +594,30 @@ Circuit breaker is open due to repeated failures of external service.
 **Retryable:** No
 
 All retry attempts for an operation failed.
+
+**Common Causes:**
+
+- Persistent service failure
+- Network issues
+- Invalid request causing consistent failures
+
+**Example Response:**
+
+```json
+{
+  "error": "Failed after 3 attempts",
+  "code": "RETRY_EXHAUSTED",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": false,
+  "suggestions": [
+    "The operation failed after 3 retry attempts",
+    "Check /api/health/detailed for service status",
+    "Verify your API credentials and quotas for external services",
+    "Contact support with requestId if this persists"
+  ]
+}
+```
 
 **Common Causes:**
 
@@ -424,6 +657,14 @@ async function makeRequest(url: string, data: any) {
     const result = await response.json();
 
     if (!response.ok) {
+      // Display error suggestions to user
+      if (result.suggestions && result.suggestions.length > 0) {
+        console.log('Suggestions for recovering from error:');
+        result.suggestions.forEach((suggestion, index) => {
+          console.log(`${index + 1}. ${suggestion}`);
+        });
+      }
+
       // Handle error based on code
       if (result.code === 'RATE_LIMIT_EXCEEDED') {
         const retryAfter = response.headers.get('Retry-After');

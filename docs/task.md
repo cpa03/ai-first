@@ -1114,17 +1114,140 @@ npm test -- tests/errors.test.ts
 
 ---
 
-## Task 3: Error Response Enhancement
+## Task 3: Error Response Enhancement ✅ COMPLETE
 
 **Priority**: MEDIUM
-**Status**: ⏸️ NOT STARTED
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
 
 #### Objectives
 
 - Enhance error messages for better UX
-- Add error localization support
-- Create error code documentation for developers
-- Implement error recovery suggestions
+- Add error recovery suggestions to error responses
+- Improve error handling documentation
+- Provide actionable guidance for error recovery
+
+#### Completed Work
+
+1. **Enhanced Error Response Interface** (`src/lib/errors.ts`)
+   - Added `suggestions` field to `ErrorResponse` interface
+   - Enhanced `AppError` base class to support optional `suggestions` parameter
+   - All error responses now include actionable recovery suggestions
+
+2. **Updated Error Classes with Contextual Suggestions**
+   - `ValidationError`: Suggestions for fixing validation issues (required fields, format, limits)
+   - `RateLimitError`: Suggestions for rate limit recovery (wait time, client-side limiting, upgrade plan)
+   - `ExternalServiceError`: Suggestions for external service issues (retry, credentials, service status)
+   - `TimeoutError`: Suggestions for timeout recovery (simplify request, check latency)
+   - `CircuitBreakerError`: Suggestions for circuit breaker scenarios (wait time, monitoring)
+   - `RetryExhaustedError`: Suggestions for retry exhaustion (service status, credentials, support)
+
+3. **Created Error Suggestion Mappings** (`src/lib/errors.ts`)
+   - `ERROR_SUGGESTIONS` constant with predefined suggestions for each error code
+   - `createErrorWithSuggestions()` helper function for creating errors with standard suggestions
+   - Consistent and helpful recovery guidance for all error scenarios
+
+4. **Updated API Routes**
+   - `/api/clarify/start`: Uses `createErrorWithSuggestions()` for NOT_FOUND errors
+   - `/api/breakdown`: Uses `createErrorWithSuggestions()` for NOT_FOUND errors
+   - All routes now provide helpful suggestions in error responses
+
+5. **Comprehensive Documentation Updates** (`docs/error-codes.md`)
+   - Updated error response format to include `suggestions` field
+   - Added detailed examples with suggestions for all error codes
+   - Updated client-side error handling examples to display suggestions
+   - Complete reference for all 12 error codes with recovery guidance
+
+#### Example Enhanced Error Response
+
+**Before:**
+
+```json
+{
+  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": true
+}
+```
+
+**After:**
+
+```json
+{
+  "error": "Rate limit exceeded. Retry after 60 seconds",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "timestamp": "2024-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": true,
+  "suggestions": [
+    "Wait 60 seconds before making another request",
+    "Implement client-side rate limiting to avoid this error",
+    "Reduce your request frequency",
+    "Contact support for higher rate limits if needed"
+  ]
+}
+```
+
+#### Benefits
+
+1. **Better Developer Experience**: Clear, actionable guidance for error recovery
+2. **Improved UX**: Users understand what to do when errors occur
+3. **Self-Documenting**: Error responses include next steps automatically
+4. **Backward Compatible**: `suggestions` field is optional, no breaking changes
+5. **Consistent**: All error codes have standardized, helpful suggestions
+6. **Reduced Support**: Fewer questions about error recovery due to clear guidance
+
+#### Client-Side Usage Example
+
+```typescript
+const response = await fetch('/api/clarify/start', {
+  /* ... */
+});
+const result = await response.json();
+
+if (!response.ok) {
+  // Display suggestions to user
+  if (result.suggestions && result.suggestions.length > 0) {
+    console.log('Suggestions for recovering:');
+    result.suggestions.forEach((suggestion, index) => {
+      console.log(`${index + 1}. ${suggestion}`);
+    });
+  }
+}
+```
+
+#### Success Criteria Met
+
+- [x] ErrorResponse interface enhanced with suggestions field
+- [x] AppError base class supports suggestions parameter
+- [x] All error classes updated with contextual suggestions
+- [x] Error suggestion mappings created for common scenarios
+- [x] Helper function for creating errors with suggestions
+- [x] API routes updated to use enhanced errors
+- [x] Error codes documentation updated with examples
+- [x] Client-side handling examples updated
+- [x] Lint passes (0 errors, 0 warnings)
+- [x] Type-check passes (0 errors)
+- [x] Build passes successfully
+- [x] Zero breaking changes (optional suggestions field)
+- [x] All error codes have actionable recovery suggestions
+
+#### Files Modified
+
+- `src/lib/errors.ts` (UPDATED - added suggestions field, ERROR_SUGGESTIONS, createErrorWithSuggestions)
+- `src/app/api/clarify/start/route.ts` (UPDATED - uses createErrorWithSuggestions)
+- `src/app/api/breakdown/route.ts` (UPDATED - uses createErrorWithSuggestions)
+- `docs/error-codes.md` (UPDATED - added suggestions examples to all error codes)
+
+#### Notes
+
+- Error suggestions are optional and backward compatible
+- All existing error handling code continues to work without modification
+- New error responses automatically include helpful recovery guidance
+- Developers can display suggestions to users for improved UX
+- Future enhancement: Add error localization support for international users
 
 ---
 
