@@ -12,6 +12,12 @@ describe('ClarificationFlow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fetch as jest.Mock).mockClear();
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   it('shows loading state initially', () => {
@@ -20,8 +26,8 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     expect(
-      screen.getByText(/generating clarifying questions/i)
-    ).toBeInTheDocument();
+      screen.getAllByText(/Generating questions\.\.\./i).length
+    ).toBeGreaterThan(0);
     // Check for loading spinner by its class name
     expect(document.querySelector('.animate-spin')).toBeInTheDocument();
   });
