@@ -368,13 +368,29 @@ export class ClarifierAgent {
     userId: string
   ): Promise<Array<{ idea: any; session: ClarificationSession }>> {
     try {
-      // Get user's ideas
       const ideas = await dbService.getUserIdeas(userId);
 
-      const results = [];
+      if (ideas.length === 0) {
+        return [];
+      }
 
+      const ideaIds = ideas.map((idea: any) => idea.id);
+      const vectors = await dbService.getVectors(
+        ideaIds[0],
+        'clarification_session'
+      );
+
+      const sessionMap = new Map<string, ClarificationSession>();
+      for (const vector of vectors) {
+        const sessionData = vector.vector_data as ClarificationSession;
+        sessionData.createdAt = new Date(sessionData.createdAt);
+        sessionData.updatedAt = new Date(sessionData.updatedAt);
+        sessionMap.set(vector.idea_id, sessionData);
+      }
+
+      const results = [];
       for (const idea of ideas) {
-        const session = await this.getSession(idea.id);
+        const session = sessionMap.get(idea.id);
         if (session) {
           results.push({ idea, session });
         }
