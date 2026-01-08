@@ -7,6 +7,9 @@ import {
   isArrayOf,
   isClarifierQuestion,
 } from '@/lib/validation';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('ClarifierAgent');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -148,7 +151,7 @@ export class ClarifierAgent {
         required: q.required !== false, // Default to true
       })) as ClarifierQuestion[];
     } catch (error) {
-      console.error('Failed to generate questions:', error);
+      logger.error('Failed to generate questions', error);
 
       // Fallback questions
       return [
@@ -306,7 +309,7 @@ export class ClarifierAgent {
       const response = await aiService.callModel(messages, this.aiConfig);
       return response.trim();
     } catch (error) {
-      console.error('Failed to generate refined idea:', error);
+      logger.error('Failed to generate refined idea', error);
 
       // Fallback: combine original idea with answers
       return `${session.originalIdea}\n\nAdditional Details:\n${answersText}`;
@@ -342,7 +345,7 @@ export class ClarifierAgent {
 
       return sessionData;
     } catch (error) {
-      console.error('Failed to get clarification session:', error);
+      logger.error('Failed to get clarification session', error);
       return null;
     }
   }
@@ -381,7 +384,7 @@ export class ClarifierAgent {
 
       return results;
     } catch (error) {
-      console.error('Failed to get clarification history:', error);
+      logger.error('Failed to get clarification history', error);
       return [];
     }
   }
