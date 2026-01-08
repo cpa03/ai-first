@@ -62,7 +62,7 @@ describe('End-to-End Tests', () => {
         // Create idea
         { data: { id: 'idea-123', content: mockUserJourney.ideaInput } },
         // Get questions
-        { data: mockUserJourney.questions },
+        { data: { questions: mockUserJourney.questions } },
         // Submit answers
         { data: { id: 'refined-123', content: mockUserJourney.refinedIdea } },
         // Get blueprint
@@ -354,7 +354,9 @@ describe('End-to-End Tests', () => {
 
   describe('Accessibility E2E', () => {
     it('should be fully accessible via keyboard navigation', async () => {
-      global.fetch = createMockFetch({ data: mockUserJourney.questions });
+      global.fetch = createMockFetch({
+        data: { questions: mockUserJourney.questions },
+      });
 
       const ClarificationFlow =
         require('@/components/ClarificationFlow').default;
@@ -390,7 +392,9 @@ describe('End-to-End Tests', () => {
     });
 
     it('should support screen readers', async () => {
-      global.fetch = createMockFetch({ data: mockUserJourney.blueprint });
+      global.fetch = createMockFetch({
+        data: { blueprint: mockUserJourney.blueprint },
+      });
 
       const BlueprintDisplay = require('@/components/BlueprintDisplay').default;
       render(
