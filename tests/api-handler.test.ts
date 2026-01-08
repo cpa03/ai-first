@@ -19,6 +19,7 @@ jest.mock('@/lib/rate-limit', () => ({
   rateLimitResponse: jest.fn(
     (resetTime) => new Response('Too many requests', { status: 429 })
   ),
+  addRateLimitHeaders: jest.fn((response, info) => response),
 }));
 
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit';
@@ -221,7 +222,11 @@ describe('withApiHandler', () => {
 
       expect(response.status).toBe(429);
       expect(mockHandler).not.toHaveBeenCalled();
-      expect(mockRateLimitResponse).toHaveBeenCalledWith(resetTime);
+      expect(mockRateLimitResponse).toHaveBeenCalledWith({
+        limit: 60,
+        remaining: 0,
+        reset: resetTime,
+      });
     });
 
     it('should not call handler when rate limit exceeded', async () => {

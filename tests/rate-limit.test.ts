@@ -7,6 +7,7 @@ import {
   rateLimitResponse,
   getRateLimitStats,
   RateLimitInfo,
+  clearRateLimitStore,
 } from '@/lib/rate-limit';
 
 describe('checkRateLimit', () => {
@@ -546,6 +547,7 @@ describe('rateLimitResponse', () => {
 describe('getRateLimitStats', () => {
   beforeEach(() => {
     jest.useFakeTimers();
+    clearRateLimitStore();
   });
 
   afterEach(() => {
