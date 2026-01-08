@@ -83,34 +83,39 @@ Comprehensive health check including database, AI services, export connectors, a
 
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "version": "0.1.0",
-  "uptime": 3600,
-  "checks": {
-    "database": {
-      "status": "up",
-      "latency": 45,
-      "lastChecked": "2024-01-07T12:00:00Z"
-    },
-    "ai": {
-      "status": "up",
-      "latency": 234,
-      "lastChecked": "2024-01-07T12:00:00Z"
-    },
-    "exports": {
-      "status": "degraded",
-      "error": "2/5 connectors",
-      "lastChecked": "2024-01-07T12:00:00Z"
-    },
-    "circuitBreakers": [
-      {
-        "service": "openai",
-        "state": "closed",
-        "failures": 0
-      }
-    ]
-  }
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2024-01-07T12:00:00Z",
+    "version": "0.1.0",
+    "uptime": 3600,
+    "checks": {
+      "database": {
+        "status": "up",
+        "latency": 45,
+        "lastChecked": "2024-01-07T12:00:00Z"
+      },
+      "ai": {
+        "status": "up",
+        "latency": 234,
+        "lastChecked": "2024-01-07T12:00:00Z"
+      },
+      "exports": {
+        "status": "degraded",
+        "error": "2/5 connectors",
+        "lastChecked": "2024-01-07T12:00:00Z"
+      },
+      "circuitBreakers": [
+        {
+          "service": "openai",
+          "state": "closed",
+          "failures": 0
+        }
+      ]
+    }
+  },
+  "requestId": "req_1234567890_abc123",
+  "timestamp": "2024-01-07T12:00:00Z"
 }
 ```
 
@@ -118,6 +123,8 @@ Comprehensive health check including database, AI services, export connectors, a
 
 - `200`: System is healthy
 - `503`: System is unhealthy or degraded
+
+**Note:** The `status` field in the response data indicates overall system health (`healthy`, `degraded`, or `unhealthy`). The HTTP status code also reflects this (200 for healthy, 503 for degraded/unhealthy).
 
 **Circuit Breaker States:**
 

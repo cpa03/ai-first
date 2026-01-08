@@ -693,6 +693,61 @@ export async function getHealthStatus(): Promise<{
 }
 ```
 
+### Health Endpoint Response Standardization
+
+All health endpoints MUST use `standardSuccessResponse()` for consistency with other API endpoints.
+
+**Pattern:**
+
+```typescript
+import {
+  withApiHandler,
+  standardSuccessResponse,
+  ApiContext,
+} from '@/lib/api-handler';
+
+async function handleGet(context: ApiContext) {
+  const healthData = {
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+  };
+
+  const statusCode = healthData.status === 'healthy' ? 200 : 503;
+
+  return standardSuccessResponse(healthData, context.requestId, statusCode);
+}
+
+export const GET = withApiHandler(handleGet, { validateSize: false });
+```
+
+**Important:**
+
+- Always use `standardSuccessResponse()` for health endpoints
+- HTTP status code reflects health status (200 for healthy, 503 for degraded/unhealthy)
+- Response body includes health status in `data` field
+- Do NOT set `success` field conditionally based on health status
+- The endpoint succeeded if it returned a response at all (success: true)
+
+**Anti-Pattern:**
+
+❌ **Don't Do This:**
+
+```typescript
+const response = NextResponse.json({
+  success: overallStatus === 'healthy', // WRONG: success should always be true
+  data: healthStatus,
+  // ...
+});
+```
+
+✅ **Do This Instead:**
+
+```typescript
+const statusCode = overallStatus === 'healthy' ? 200 : 503;
+return standardSuccessResponse(healthStatus, context.requestId, statusCode);
+```
+
 ## API Standardization
 
 ### Standard Success Response
