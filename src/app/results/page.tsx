@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
-import { exportManager, exportUtils } from '@/lib/exports';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
 
 export default function ResultsPage() {
@@ -57,8 +56,26 @@ export default function ResultsPage() {
     setExportLoading(true);
 
     try {
+      const lazyExporters = await import('@/lib/export-connectors/lazy');
+
       // Prepare data for export
-      const exportData = exportUtils.normalizeData(idea);
+      const exportData = {
+        idea: {
+          id: idea.id,
+          title: idea.title,
+          raw_text: idea.raw_text,
+          status: idea.status,
+          created_at: idea.created_at,
+        },
+        deliverables: [],
+        tasks: [],
+        metadata: {
+          exported_at: new Date().toISOString(),
+          version: '1.0.0',
+          goals: '',
+          target_audience: '',
+        },
+      };
 
       if (
         session &&
@@ -71,11 +88,19 @@ export default function ResultsPage() {
           (answers.target_audience as string) || '';
       }
 
-      // Export the data
-      const result = await exportManager.export({
-        type: format,
-        data: exportData,
-      });
+      // Export data using lazy loading
+      let result: {
+        success: boolean;
+        url?: string;
+        error?: string;
+        content?: string;
+      };
+
+      if (format === 'markdown') {
+        result = await lazyExporters.lazyExportToMarkdown(exportData);
+      } else {
+        result = await lazyExporters.lazyExportToJSON(exportData);
+      }
 
       if (result.success && result.url) {
         setExportUrl(result.url);
