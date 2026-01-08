@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import MobileNav from '@/components/MobileNav';
 
 export const metadata: Metadata = {
   title: 'IdeaFlow - AI-Powered Project Planning & Task Management Tool',
@@ -84,37 +85,18 @@ export default function RootLayout({
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                   <div className="flex items-center">
-                    <h1 className="text-xl font-semibold text-gray-900">
-                      IdeaFlow
-                    </h1>
-                  </div>
-                  <nav
-                    aria-label="Main navigation"
-                    className="flex space-x-4 sm:space-x-8"
-                  >
                     <a
                       href="/"
-                      className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
+                      className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors"
                     >
-                      Home
+                      IdeaFlow
                     </a>
-                    <a
-                      href="/clarify"
-                      className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
-                    >
-                      Clarify
-                    </a>
-                    <a
-                      href="/results"
-                      className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
-                    >
-                      Results
-                    </a>
-                  </nav>
+                  </div>
+                  <MobileNav />
                 </div>
               </div>
             </header>
-            <main id="main-content" className="flex-1">
+            <main id="main-content" className="flex-1" role="main">
               {children}
             </main>
             <footer className="bg-white border-t border-gray-200">
