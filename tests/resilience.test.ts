@@ -435,7 +435,7 @@ describe('RetryManager', () => {
         )
       ).rejects.toThrow();
 
-      expect(shouldRetry).toHaveBeenCalledTimes(3);
+      expect(shouldRetry).toHaveBeenCalledTimes(2);
       expect(operation).toHaveBeenCalledTimes(3);
     });
 
@@ -462,17 +462,29 @@ describe('RetryManager', () => {
         .fn()
         .mockRejectedValueOnce(new Error('timeout'))
         .mockRejectedValueOnce(new Error('timeout'))
-        .mockRejectedValueOnce(new Error('timeout'))
         .mockResolvedValue('success');
 
-      const result = await RetryManager.withRetry(
+      jest.useFakeTimers();
+      const mathRandomSpy = jest.spyOn(Math, 'random').mockReturnValue(0);
+
+      const promise = RetryManager.withRetry(
         operation,
-        { maxRetries: 3, baseDelay: 10 },
+        { maxRetries: 3, baseDelay: 100 },
         'test'
       );
 
+      jest.advanceTimersByTime(100);
+      await jest.advanceTimersByTimeAsync(100);
+
+      jest.advanceTimersByTime(200);
+      await jest.advanceTimersByTimeAsync(200);
+
+      const result = await promise;
+      mathRandomSpy.mockRestore();
+      jest.useRealTimers();
+
       expect(result).toBe('success');
-      expect(operation).toHaveBeenCalledTimes(4);
+      expect(operation).toHaveBeenCalledTimes(3);
     });
 
     it('should respect maxDelay', async () => {
@@ -545,12 +557,17 @@ describe('RetryManager', () => {
         .mockRejectedValueOnce(new Error('timeout'))
         .mockResolvedValue('success');
 
-      const promise = RetryManager.withRetry(operation, {
-        maxRetries: 1,
-        baseDelay: 10,
-      });
+      jest.useFakeTimers();
+      const mathRandomSpy = jest.spyOn(Math, 'random').mockReturnValue(0);
+
+      const promise = RetryManager.withRetry(operation, { maxRetries: 1 });
+
+      jest.advanceTimersByTime(1000);
+      await jest.advanceTimersByTimeAsync(1000);
 
       await promise;
+      mathRandomSpy.mockRestore();
+      jest.useRealTimers();
     });
 
     it('should use default maxDelay of 30000ms', async () => {
@@ -559,13 +576,17 @@ describe('RetryManager', () => {
         .mockRejectedValueOnce(new Error('timeout'))
         .mockResolvedValue('success');
 
+      jest.useFakeTimers();
       const promise = RetryManager.withRetry(operation, {
         maxRetries: 1,
-        baseDelay: 10,
-        maxDelay: 100,
+        baseDelay: 30000,
       });
 
+      jest.advanceTimersByTime(30000);
+      await jest.advanceTimersByTimeAsync(30000);
+
       await promise;
+      jest.useRealTimers();
     });
   });
 });

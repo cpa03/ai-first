@@ -1618,6 +1618,371 @@ For developers working on export connectors:
 
 The old `executeWithTimeout()` method is deprecated but remains for backward compatibility.
 
+## DevOps Procedures
+
+### CI/CD Health Monitoring
+
+**Daily CI Health Checks**:
+
+1. **Build Status Verification**
+
+   ```bash
+   npm run build
+   # Expect: ✓ Compiled successfully
+   # All pages generated
+   ```
+
+2. **Lint Verification**
+
+   ```bash
+   npm run lint
+   # Expect: ✔ No ESLint warnings or errors
+   ```
+
+3. **Type-Check Verification**
+
+   ```bash
+   npm run type-check
+   # Expect: 0 errors
+   ```
+
+4. **Test Suite Verification**
+   ```bash
+   npm test
+   # Expect: All test suites passing
+   # 0 failures
+   ```
+
+### CI Failure Response Protocol
+
+**P0 - CRITICAL (Blocking PR)**:
+
+1. **Immediate Assessment** (< 5 min)
+   - Identify failing test suites
+   - Determine root cause (code change vs. flaky test)
+   - Check if recent deployment introduced issue
+
+2. **Triage** (< 15 min)
+   - If code change issue: Fix immediately, push to branch
+   - If flaky test: Add to flaky test tracker, quarantine if needed
+   - If environmental issue: Check CI environment, report to team
+
+3. **Resolution** (< 1 hour for critical)
+   - Fix code issues
+   - Update test mocks if API structure changed
+   - Add timeout/skip for genuinely flaky tests
+
+4. **Verification**
+
+   ```bash
+   # Run specific test suite
+   npm test -- tests/resilience.test.ts
+
+   # Run all tests with verbose output
+   npm test --verbose
+
+   # Run with coverage
+   npm test -- --coverage
+   ```
+
+**P1 - HIGH (Blocking Feature)**:
+
+1. **Assessment** (< 30 min)
+   - Identify impact scope
+   - Determine if feature blocker or cosmetic issue
+
+2. **Resolution** (< 4 hours)
+   - Fix according to priority
+   - Ensure no regressions in passing tests
+
+3. **Documentation**
+   - Update task.md with fix details
+   - Document any API changes in blueprint.md
+
+**P2/P3 - STANDARD (Non-blocking)**:
+
+1. **Assessment** (< 1 hour)
+   - Evaluate impact on user experience
+   - Determine if needs immediate attention or can wait
+
+2. **Planning**
+   - Add to sprint backlog
+   - Estimate effort
+   - Assign owner
+
+### Common CI Failure Patterns
+
+**Pattern 1: API Response Structure Changes**
+
+**Symptoms**:
+
+- Multiple test suites failing with "Cannot read properties of undefined"
+- Error accessing `data.X` instead of `data.data.X`
+
+**Resolution**:
+
+1. Update component to unwrap `standardSuccessResponse`:
+
+   ```typescript
+   const response = await fetch(url);
+   const data = await response.json();
+   const unwrapped = data.data; // Unwrap standardSuccessResponse
+   ```
+
+2. Update test mocks to match new structure:
+   ```typescript
+   jest.mockResolvedValue({
+     ok: true,
+     json: async () => ({
+       success: true,
+       data: { questions: [...] },
+       requestId: 'test-req-1',
+       timestamp: new Date().toISOString(),
+     }),
+   });
+   ```
+
+**Pattern 2: Flaky Tests with Randomness**
+
+**Symptoms**:
+
+- Tests pass locally but fail in CI
+- Timeout errors with no clear cause
+- Inconsistent pass/fail behavior
+
+**Resolution**:
+
+1. Mock randomness for deterministic behavior:
+
+   ```typescript
+   jest.spyOn(Math, 'random').mockReturnValue(0);
+   // Test code...
+   mockRandom.mockRestore();
+   ```
+
+2. Use fake timers:
+
+   ```typescript
+   jest.useFakeTimers();
+   // Test code...
+   jest.useRealTimers();
+   ```
+
+3. Increase test timeout:
+   ```typescript
+   it('slow operation test', async () => {
+     // test code...
+   }, 10000); // 10 second timeout
+   ```
+
+**Pattern 3: Case Sensitivity Issues**
+
+**Symptoms**:
+
+- String comparisons failing unexpectedly
+- Error detection not working (e.g., retry logic)
+
+**Resolution**:
+
+1. Normalize strings for comparison:
+
+   ```typescript
+   const retryableStatuses = ['econnreset', 'econnrefused', 'etimedout'];
+   const message = error.message.toLowerCase();
+   return retryableStatuses.some((status) =>
+     message.includes(String(status).toLowerCase())
+   );
+   ```
+
+2. Use consistent casing throughout codebase
+
+### Rollback Procedures
+
+**Scenario 1: Production Issue Detected**
+
+1. **Immediate Assessment** (< 5 min)
+   - Check health endpoint: `GET /api/health/detailed`
+   - Review error logs with request IDs
+   - Determine impact scope
+
+2. **Rollback Decision**
+   - If breaking changes: Immediate rollback
+   - If performance issue: Rollback if severe
+   - If non-critical bug: Consider fix-forward
+
+3. **Rollback Execution**
+
+   ```bash
+   # Check recent deployments
+   git log --oneline -10
+
+   # Revert to last known good commit
+   git revert <commit-hash>
+
+   # Push rollback
+   git push origin main
+   ```
+
+4. **Post-Rollback Verification**
+   - Check health endpoint again
+   - Monitor error logs
+   - Verify user-facing functionality
+
+5. **Post-Mortem**
+   - Document root cause
+   - Create incident report
+   - Update monitoring/alerting
+
+**Scenario 2: Test Regression Introduced**
+
+1. **Identify Regression**
+
+   ```bash
+   # Compare with previous commit
+   git diff HEAD~1 HEAD
+
+   # Run specific failing tests
+   npm test -- tests/specific-suite.test.ts
+   ```
+
+2. **Isolate Change**
+   - Identify commit that introduced failure
+   - Bisect if needed: `git bisect`
+
+3. **Fix or Revert**
+   - If fix is complex: Revert commit
+   - If fix is simple: Fix immediately
+   - Always run full test suite after fix
+
+### Deployment Safety Checklist
+
+**Before Deploying**:
+
+- [ ] All tests passing locally (100%)
+- [ ] Lint passes (0 errors, 0 warnings)
+- [ ] Type-check passes (0 errors)
+- [ ] Build passes successfully
+- [ ] No TODO/FIXME/HACK comments in changed code
+- [ ] Documentation updated (blueprint.md, task.md)
+- [ ] Rollback plan documented
+- [ ] On-call team notified
+- [ ] Database migrations tested on staging
+- [ ] Health endpoint verified
+- [ ] Circuit breaker states reset to 'closed'
+
+**After Deploying**:
+
+- [ ] Health endpoint checked (all services up)
+- [ ] Error rates monitored (no spikes)
+- [ ] Circuit breaker states verified (all closed)
+- [ ] Sample user flows tested manually
+- [ ] Rollback window noted (usually 30 min)
+- [ ] Success criteria met
+
+### Monitoring and Alerting
+
+**Health Endpoint Monitoring**:
+
+```bash
+# Check basic health
+curl https://api.example.com/api/health
+
+# Check detailed health
+curl https://api.example.com/api/health/detailed
+
+# Check specific service
+curl https://api.example.com/api/health/database
+```
+
+**Expected Healthy Response**:
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-08T12:00:00Z",
+  "version": "0.1.0",
+  "checks": {
+    "database": { "status": "up", "latency": 45 },
+    "ai": { "status": "up", "latency": 234 },
+    "circuitBreakers": []
+  }
+}
+```
+
+**Alert Thresholds**:
+
+- Database latency > 500ms: Alert
+- AI service latency > 5000ms: Alert
+- Error rate > 1%: Alert
+- Any circuit breaker open: Alert
+- Health check fails: Critical alert
+
+**Circuit Breaker Monitoring**:
+
+```bash
+# Check all circuit breaker states
+curl https://api.example.com/api/health/detailed | jq '.checks.circuitBreakers'
+
+# Expected output: [] (no open breakers)
+```
+
+**If Circuit Breaker Open**:
+
+1. Check service status manually
+2. Review error logs with request IDs
+3. Verify service is actually down (not just slow)
+4. If false positive: Reset circuit breaker
+5. If actual outage: Enable fallback, notify team
+
+### Git Branch Management
+
+**Feature Branch Workflow**:
+
+```bash
+# Create feature branch
+git checkout -b feature/my-feature
+
+# Make changes, commit
+git add .
+git commit -m "feat: add my feature"
+
+# Push to remote
+git push origin feature/my-feature
+
+# Create PR to main
+# (via GitHub interface)
+```
+
+**Bug Fix Workflow**:
+
+```bash
+# Create bugfix branch
+git checkout -b fix/bug-description
+
+# Fix bug, commit
+git add .
+git commit -m "fix: resolve issue with X"
+
+# Push and create PR
+git push origin fix/bug-description
+```
+
+**Hotfix Workflow** (production):
+
+```bash
+# Create hotfix from main
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-issue
+
+# Minimal fix, commit
+git add .
+git commit -m "hotfix: critical issue fix"
+
+# Push and create PR (fast-track review)
+git push origin hotfix/critical-issue
+```
+
 ## References
 
 - [API Reference](./api.md)

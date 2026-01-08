@@ -28,19 +28,34 @@ describe('ClarificationFlow', () => {
 
   it('displays questions after successful fetch', async () => {
     const mockQuestions = [
-      'What is your target audience?',
-      'What is the main goal you want to achieve?',
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+      {
+        id: '2',
+        question: 'What is main goal you want to achieve?',
+        type: 'open' as const,
+        required: true,
+      },
     ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     expect(screen.getByText(/question 1 of 2/i)).toBeInTheDocument();
@@ -50,7 +65,12 @@ describe('ClarificationFlow', () => {
   it('uses fallback questions when API returns no questions', async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: [] }),
+      json: async () => ({
+        success: true,
+        data: { questions: [] },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
@@ -82,17 +102,29 @@ describe('ClarificationFlow', () => {
   });
 
   it('handles textarea input correctly', async () => {
-    const mockQuestions = ['What is your target audience?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -102,20 +134,32 @@ describe('ClarificationFlow', () => {
   });
 
   it('handles text input correctly', async () => {
-    const mockQuestions = ['What is your project name?'];
+    const mockQuestions = [
+      {
+        id: '1',
+        question: 'What is your project name?',
+        type: 'yes_no' as const,
+        required: true,
+      },
+    ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
-    // Simulate text input type by modifying the question structure
+    // Simulate text input type by modifying question structure
     const input = screen.getByPlaceholderText(/enter your answer here/i);
     fireEvent.change(input, { target: { value: 'My Project' } });
 
@@ -174,19 +218,34 @@ describe('ClarificationFlow', () => {
 
   it('navigates between questions correctly', async () => {
     const mockQuestions = [
-      'What is your target audience?',
-      'What is the main goal?',
+      {
+        id: '1',
+        question: 'What is your target audience?',
+        type: 'open' as const,
+        required: true,
+      },
+      {
+        id: '2',
+        question: 'What is the main goal?',
+        type: 'open' as const,
+        required: true,
+      },
     ];
 
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: mockQuestions }),
+      json: async () => ({
+        success: true,
+        data: { questions: mockQuestions },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -196,7 +255,7 @@ describe('ClarificationFlow', () => {
     fireEvent.click(nextButton);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[1])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[1].question)).toBeInTheDocument();
     });
 
     expect(screen.getByText(/question 2 of 2/i)).toBeInTheDocument();
@@ -206,7 +265,7 @@ describe('ClarificationFlow', () => {
     fireEvent.click(previousButton);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0])).toBeInTheDocument();
+      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
     });
 
     expect(textarea).toHaveValue('Developers'); // Should restore previous answer
