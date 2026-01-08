@@ -253,7 +253,7 @@ describe('Backend Service Tests', () => {
   });
 
   describe('ExportService', () => {
-    let exportService: ExportService;
+    let exportService: InstanceType<typeof ExportService>;
 
     beforeEach(() => {
       exportService = new ExportService();
