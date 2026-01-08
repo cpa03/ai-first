@@ -110,14 +110,14 @@ describe('checkRateLimit', () => {
       const config = rateLimitConfigs.moderate;
 
       checkRateLimit(identifier, config);
-      const initialResetTime = checkRateLimit(identifier, config).resetTime;
+      const initialResetTime = checkRateLimit(identifier, config).info.reset;
 
       for (let i = 2; i <= config.maxRequests; i++) {
         checkRateLimit(identifier, config);
       }
 
       const exceededResult = checkRateLimit(identifier, config);
-      expect(exceededResult.resetTime).toBe(initialResetTime);
+      expect(exceededResult.info.reset).toBe(initialResetTime);
     });
 
     it('should continue to deny until window expires', () => {
@@ -156,7 +156,7 @@ describe('checkRateLimit', () => {
       const resultAfterExpiry = checkRateLimit(identifier, config);
 
       expect(resultAfterExpiry.allowed).toBe(true);
-      expect(resultAfterExpiry.remaining).toBe(config.maxRequests - 1);
+      expect(resultAfterExpiry.info.remaining).toBe(config.maxRequests - 1);
     });
 
     it('should set new reset time after window expires', () => {
@@ -168,7 +168,7 @@ describe('checkRateLimit', () => {
 
       const result2 = checkRateLimit(identifier, config);
 
-      expect(result2.resetTime).toBeGreaterThan(result1.resetTime);
+      expect(result2.info.reset).toBeGreaterThan(result1.info.reset);
     });
 
     it('should handle requests crossing window boundary', () => {

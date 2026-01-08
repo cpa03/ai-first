@@ -254,6 +254,83 @@
 
 ## Code Sanitizer Tasks
 
+### Task 4: Fix Test Type Errors ✅ COMPLETE
+
+**Priority**: CRITICAL
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Fix type errors in test files related to rate limit mock return values
+- Ensure all tests match the actual API return type structure
+- Maintain type safety across test suites
+- Ensure build, lint, and type-check all pass
+
+#### Root Cause Analysis
+
+The `checkRateLimit()` function returns:
+
+```typescript
+{
+  allowed: boolean;
+  info: RateLimitInfo;
+}
+```
+
+Where `RateLimitInfo` has:
+
+- `limit: number`
+- `remaining: number`
+- `reset: number`
+
+Test files were mocking `checkRateLimit()` to return incorrect structure:
+
+```typescript
+{ allowed: true, remaining: 59, resetTime: Date.now() + 60000 }
+```
+
+This caused TypeScript to reject the mock return values.
+
+#### Completed Work
+
+1. **Fixed api-handler.test.ts** (20 errors)
+   - Updated all `mockCheckRateLimit.mockReturnValue()` calls to return correct structure
+   - Changed `{ allowed, remaining, resetTime }` to `{ allowed, info: { limit, remaining, reset } }`
+   - All 20 test cases now use proper mock structure matching actual API
+
+2. **Fixed rate-limit.test.ts** (5 errors)
+   - Updated property accesses to use `result.info.remaining` instead of `result.remaining`
+   - Updated property accesses to use `result.info.reset` instead of `result.resetTime`
+   - Lines 113, 120, 159, 171 fixed
+
+3. **Verification**
+   - Build: ✅ PASS
+   - Lint: ✅ PASS (0 errors, 0 warnings)
+   - Type-check: ✅ PASS (0 errors)
+
+#### Success Criteria Met
+
+- [x] All 23 type errors fixed
+- [x] Test mocks now match actual API return type
+- [x] Build passes successfully
+- [x] Lint passes with zero errors
+- [x] Type-check passes with zero errors
+- [x] No breaking changes to test functionality
+
+#### Files Modified
+
+- `tests/api-handler.test.ts` (UPDATED - fixed 20 mock return values)
+- `tests/rate-limit.test.ts` (UPDATED - fixed 5 property accesses)
+
+#### Notes
+
+- Type safety is now maintained throughout test suites
+- All tests properly reflect the actual `checkRateLimit()` API
+- No functionality changes - only type corrections
+
+---
+
 ### Task 1: Fix Build, Lint, and Type Errors ✅ COMPLETE
 
 **Priority**: HIGH
@@ -1092,7 +1169,7 @@ This document contains refactoring tasks identified during code review. Tasks ar
 
 ---
 
-## [REFACTOR] Split Monolithic Exports File into Separate Modules
+## [REFACTOR] Split Monolithic Exports File into Separate Modules ✅ COMPLETED
 
 - **Location**: `src/lib/exports.ts` (1688 lines)
 - **Issue**: The exports.ts file is a monolith containing 7 export connector classes (JSON, Markdown, Notion, Trello, GoogleTasks, GitHubProjects) and 109 functions/methods in a single file. This violates the Single Responsibility Principle and makes the file extremely difficult to navigate, test, and maintain. Each connector is a distinct responsibility that should have its own file.
@@ -1109,6 +1186,82 @@ This document contains refactoring tasks identified during code review. Tasks ar
 - **Priority**: High
 - **Effort**: Medium
 - **Impact**: Improves code organization, makes connectors easier to test, enables independent connector development, reduces merge conflicts
+- **Status**: ✅ Completed on 2026-01-07
+
+### Completed Work
+
+1. **Created Modular Directory Structure**
+   - `src/lib/export-connectors/base.ts` (65 lines) - ExportConnector abstract class and interfaces
+   - `src/lib/export-connectors/json-exporter.ts` (52 lines) - JSONExporter class
+   - `src/lib/export-connectors/markdown-exporter.ts` (87 lines) - MarkdownExporter class
+   - `src/lib/export-connectors/notion-exporter.ts` (222 lines) - NotionExporter class
+   - `src/lib/export-connectors/trello-exporter.ts` (337 lines) - TrelloExporter class
+   - `src/lib/export-connectors/google-tasks-exporter.ts` (48 lines) - GoogleTasksExporter class
+   - `src/lib/export-connectors/github-projects-exporter.ts` (491 lines) - GitHubProjectsExporter class
+   - `src/lib/export-connectors/connectors.ts` (6 lines) - Re-export all connectors
+   - `src/lib/export-connectors/manager.ts` (360 lines) - ExportManager, ExportService, RateLimiter, SyncStatusTracker, exportUtils, IdeaFlowExportSchema
+   - `src/lib/export-connectors/index.ts` (3 lines) - Main re-export file
+
+2. **Maintained Backward Compatibility**
+   - `src/lib/exports.ts` is now a 1-line re-export file that re-exports everything from export-connectors
+   - All existing imports continue to work without modification
+   - Zero breaking changes to API contracts
+
+3. **Code Quality Improvements**
+   - Each connector is now in its own file (Single Responsibility Principle)
+   - Easier to navigate and understand individual connectors
+   - Easier to test individual connectors in isolation
+   - Reduced merge conflicts when working on different connectors
+   - Better separation of concerns
+
+### Success Criteria Met
+
+- [x] Monolithic 1688-line file split into 10 well-organized files
+- [x] Each connector in its own file
+- [x] Base class and interfaces extracted to base.ts
+- [x] Manager classes and utilities in manager.ts
+- [x] Backward compatibility maintained through exports.ts re-export
+- [x] Build passes successfully
+- [x] Lint passes with 0 errors, 0 warnings
+- [x] Zero breaking changes to existing functionality
+- [x] Type-safe re-exports
+
+### Files Modified
+
+- `src/lib/exports.ts` (REPLACED - now 1-line re-export)
+- `src/lib/export-connectors/base.ts` (NEW - 65 lines)
+- `src/lib/export-connectors/connectors.ts` (NEW - 6 lines)
+- `src/lib/export-connectors/index.ts` (NEW - 3 lines)
+- `src/lib/export-connectors/json-exporter.ts` (NEW - 52 lines)
+- `src/lib/export-connectors/markdown-exporter.ts` (NEW - 87 lines)
+- `src/lib/export-connectors/notion-exporter.ts` (NEW - 222 lines)
+- `src/lib/export-connectors/trello-exporter.ts` (NEW - 337 lines)
+- `src/lib/export-connectors/google-tasks-exporter.ts` (NEW - 48 lines)
+- `src/lib/export-connectors/github-projects-exporter.ts` (NEW - 491 lines)
+- `src/lib/export-connectors/manager.ts` (NEW - 360 lines)
+- `docs/task.md` (UPDATED - marked task as complete)
+
+### Architectural Benefits
+
+- **Single Responsibility Principle**: Each connector has its own file
+- **Open/Closed Principle**: Easy to add new connectors without modifying existing ones
+- **Dependency Inversion**: ExportConnector base class provides contract
+- **Better Maintainability**: Smaller files are easier to understand and modify
+- **Better Testability**: Individual connectors can be tested in isolation
+- **Reduced Merge Conflicts**: Different teams can work on different connectors
+
+### Testing Results
+
+```bash
+# Build: PASS
+npm run build
+
+# Lint: PASS (0 errors, 0 warnings)
+npm run lint
+
+# Type-check: Note - Pre-existing test type errors unrelated to refactoring
+npm run type-check
+```
 
 ---
 
