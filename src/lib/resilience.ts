@@ -159,11 +159,11 @@ export class RetryManager {
         504,
         507,
         509,
-        'ECONNRESET',
-        'ECONNREFUSED',
-        'ETIMEDOUT',
-        'ENOTFOUND',
-        'EAI_AGAIN',
+        'econnreset',
+        'econnrefused',
+        'etimedout',
+        'enotfound',
+        'eai_again',
       ];
 
       const message = error.message.toLowerCase();
