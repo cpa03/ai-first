@@ -42,8 +42,6 @@ export class CircuitBreaker {
   async execute<T>(operation: () => Promise<T>, context?: string): Promise<T> {
     const now = Date.now();
 
-    this.cleanupOldFailures(now);
-
     if (this.state.state === 'open') {
       if (now < (this.state.nextAttemptTime || 0)) {
         throw new Error(
@@ -53,14 +51,18 @@ export class CircuitBreaker {
       this.state.state = 'half-open';
     }
 
+    this.cleanupOldFailures(now);
+
     try {
       const result = await operation();
       this.onSuccess(now);
       return result;
     } catch (error) {
-      const retryCount =
-        (error as Error & { attemptCount?: number }).attemptCount || 1;
-      this.onError(error as Error, now, retryCount);
+      const errorMessage = (error as Error).message;
+      const attemptCount =
+        (error as Error & { attemptCount?: number }).attemptCount ||
+        (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
+      this.onError(error as Error, now, attemptCount);
       throw error;
     }
   }
@@ -97,6 +99,16 @@ export class CircuitBreaker {
       this.state.state = 'open';
       this.state.nextAttemptTime = _now + this.options.resetTimeout;
     }
+    this.state.failures = this.recentFailures.length;
+    this.state.lastFailureTime = _now;
+
+    if (this.state.failures >= this.options.failureThreshold) {
+      console.log(
+        `[DEBUG] Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+      );
+      this.state.state = 'open';
+      this.state.nextAttemptTime = _now + this.options.resetTimeout;
+    }
 
     if (this.cachedState) {
       this.cachedState.failures = this.state.failures;
@@ -127,7 +139,8 @@ export class RetryManager {
   static async withRetry<T>(
     operation: () => Promise<T>,
     options: RetryOptions = {},
-    context?: string
+    context?: string,
+    circuitBreaker?: CircuitBreaker
   ): Promise<T> {
     const {
       maxRetries = 3,
@@ -170,6 +183,16 @@ export class RetryManager {
 
     for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
       try {
+        if (circuitBreaker && attempt > 1) {
+          const state = circuitBreaker.getState();
+          if (state.state === 'open') {
+            const stateStr = state.state;
+            const nextAttempt = state.nextAttemptTime;
+            throw new Error(
+              `Circuit breaker is ${stateStr.toUpperCase()} for ${context || 'operation'}. Not accepting requests until ${new Date(nextAttempt!).toISOString()}`
+            );
+          }
+        }
         return await operation();
       } catch (error) {
         lastError = error as Error;
@@ -257,7 +280,8 @@ export class ResilienceManager {
         return RetryManager.withRetry(
           operationWithTimeout,
           config.retry,
-          context
+          context,
+          circuitBreaker
         );
       }
 
