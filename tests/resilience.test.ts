@@ -811,14 +811,14 @@ describe('ResilienceManager', () => {
     });
 
     it('should apply circuit breaker around retry and timeout', async () => {
-      const operation = jest.fn().mockRejectedValue(new Error('failure'));
+      const operation = jest.fn().mockRejectedValue(new Error('timeout'));
 
       const config = {
         retry: { maxRetries: 1 },
         timeout: { timeoutMs: 50 },
         circuitBreaker: {
-          failureThreshold: 2,
-          resetTimeout: 1000,
+          failureThreshold: 3,
+          resetTimeout: 5000,
           monitoringPeriod: 60000,
         },
       };
