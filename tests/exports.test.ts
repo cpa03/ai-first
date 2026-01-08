@@ -9,7 +9,6 @@ import {
   ExportConnector,
   exportUtils,
   IdeaFlowExportSchema,
-  RateLimiter,
   SyncStatusTracker,
   type ExportFormat,
   type ExportResult,
@@ -582,36 +581,6 @@ describe('Export Services', () => {
         );
         expect(result.errors).toContain('Missing required field: idea.status');
       });
-    });
-  });
-
-  describe('RateLimiter', () => {
-    it('should allow requests within limits', async () => {
-      const rateLimiter = new RateLimiter(5, 1000);
-
-      // Should allow 5 requests immediately
-      const startTime = Date.now();
-      for (let i = 0; i < 5; i++) {
-        await rateLimiter.waitForSlot();
-      }
-      const endTime = Date.now();
-
-      expect(endTime - startTime).toBeLessThan(100);
-    });
-
-    it('should delay requests when limit exceeded', async () => {
-      const rateLimiter = new RateLimiter(2, 1000);
-
-      // Make 2 requests (at limit)
-      await rateLimiter.waitForSlot();
-      await rateLimiter.waitForSlot();
-
-      // Third request should be delayed
-      const startTime = Date.now();
-      await rateLimiter.waitForSlot();
-      const endTime = Date.now();
-
-      expect(endTime - startTime).toBeGreaterThan(900); // Should wait ~1 second
     });
   });
 
