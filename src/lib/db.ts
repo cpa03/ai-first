@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
+import { createLogger } from './logger';
+
+const logger = createLogger('DatabaseService');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
@@ -96,7 +99,7 @@ export class DatabaseService {
     this.admin = supabaseAdmin;
 
     if (!this.client || !this.admin) {
-      console.warn(
+      logger.warn(
         'Supabase clients not initialized. Check environment variables.'
       );
     }
@@ -115,12 +118,12 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('ideas')
-      .insert(idea as any)
+      .insert(idea)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+    return data as Idea;
   }
 
   async getIdea(id: string): Promise<Idea | null> {
@@ -154,7 +157,7 @@ export class DatabaseService {
 
     const { data, error } = await this.admin
       .from('ideas')
-      .update(updates as any)
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
@@ -182,7 +185,7 @@ export class DatabaseService {
       .upsert({
         ...session,
         updated_at: new Date().toISOString(),
-      } as any)
+      })
       .select()
       .single();
 
@@ -211,7 +214,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('deliverables')
-      .insert(deliverable as any)
+      .insert(deliverable)
       .select()
       .single();
 
@@ -240,7 +243,7 @@ export class DatabaseService {
 
     const { data, error } = await this.admin
       .from('deliverables')
-      .update(updates as any)
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
@@ -266,7 +269,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('tasks')
-      .insert(task as any)
+      .insert(task)
       .select()
       .single();
 
@@ -292,7 +295,7 @@ export class DatabaseService {
 
     const { data, error } = await this.admin
       .from('tasks')
-      .update(updates as any)
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
@@ -317,7 +320,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('vectors')
-      .insert(vector as any)
+      .insert(vector)
       .select()
       .single();
 
@@ -354,7 +357,7 @@ export class DatabaseService {
   async logAgentAction(
     agent: string,
     action: string,
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): Promise<void> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
@@ -363,13 +366,13 @@ export class DatabaseService {
       action,
       payload,
       timestamp: new Date().toISOString(),
-    } as any);
+    });
 
     if (error) throw error;
   }
 
   // Clarification session operations
-  async createClarificationSession(ideaId: string): Promise<any> {
+  async createClarificationSession(ideaId: string): Promise<unknown> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const { data, error } = await this.client
@@ -377,7 +380,7 @@ export class DatabaseService {
       .insert({
         idea_id: ideaId,
         status: 'active',
-      } as any)
+      })
       .select()
       .single();
 
@@ -388,7 +391,7 @@ export class DatabaseService {
   async saveAnswers(
     sessionId: string,
     answers: Record<string, string>
-  ): Promise<any> {
+  ): Promise<unknown> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const entries = Object.entries(answers).map(([questionId, answer]) => ({
@@ -399,7 +402,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('clarification_answers')
-      .insert(entries as any)
+      .insert(entries)
       .select();
 
     if (error) throw error;
@@ -454,27 +457,23 @@ export class DatabaseService {
     let totalTasks = 0;
 
     if (ideaIds.length > 0) {
-      const [{ count: deliverablesCount }, { count: tasksCount }] =
-        await Promise.all([
+      const [{ count: deliverablesCount }, deliverablesIds] = await Promise.all(
+        [
           this.client
             .from('deliverables')
             .select('*', { count: 'exact', head: true })
             .in('idea_id', ideaIds),
-          this.client
-            .from('tasks')
-            .select('*', { count: 'exact', head: true })
-            .in(
-              'deliverable_id',
-              (
-                await this.client
-                  .from('deliverables')
-                  .select('id')
-                  .in('idea_id', ideaIds)
-              ).data?.map((d) => d.id) || []
-            ),
-        ]);
+          this.client.from('deliverables').select('id').in('idea_id', ideaIds),
+        ]
+      );
 
       totalDeliverables = deliverablesCount || 0;
+
+      const { count: tasksCount } = await this.client
+        .from('tasks')
+        .select('*', { count: 'exact', head: true })
+        .in('deliverable_id', deliverablesIds.data?.map((d) => d.id) || []);
+
       totalTasks = tasksCount || 0;
     }
 

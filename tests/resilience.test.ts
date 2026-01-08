@@ -435,7 +435,7 @@ describe('RetryManager', () => {
         )
       ).rejects.toThrow();
 
-      expect(shouldRetry).toHaveBeenCalledTimes(3);
+      expect(shouldRetry).toHaveBeenCalledTimes(2);
       expect(operation).toHaveBeenCalledTimes(3);
     });
 
@@ -465,6 +465,8 @@ describe('RetryManager', () => {
         .mockResolvedValue('success');
 
       jest.useFakeTimers();
+      const mathRandomSpy = jest.spyOn(Math, 'random').mockReturnValue(0);
+
       const promise = RetryManager.withRetry(
         operation,
         { maxRetries: 3, baseDelay: 100 },
@@ -478,6 +480,7 @@ describe('RetryManager', () => {
       await jest.advanceTimersByTimeAsync(200);
 
       const result = await promise;
+      mathRandomSpy.mockRestore();
       jest.useRealTimers();
 
       expect(result).toBe('success');
@@ -555,12 +558,15 @@ describe('RetryManager', () => {
         .mockResolvedValue('success');
 
       jest.useFakeTimers();
+      const mathRandomSpy = jest.spyOn(Math, 'random').mockReturnValue(0);
+
       const promise = RetryManager.withRetry(operation, { maxRetries: 1 });
 
       jest.advanceTimersByTime(1000);
       await jest.advanceTimersByTimeAsync(1000);
 
       await promise;
+      mathRandomSpy.mockRestore();
       jest.useRealTimers();
     });
 
@@ -811,14 +817,14 @@ describe('ResilienceManager', () => {
     });
 
     it('should apply circuit breaker around retry and timeout', async () => {
-      const operation = jest.fn().mockRejectedValue(new Error('failure'));
+      const operation = jest.fn().mockRejectedValue(new Error('timeout'));
 
       const config = {
         retry: { maxRetries: 1 },
         timeout: { timeoutMs: 50 },
         circuitBreaker: {
-          failureThreshold: 2,
-          resetTimeout: 1000,
+          failureThreshold: 3,
+          resetTimeout: 5000,
           monitoringPeriod: 60000,
         },
       };

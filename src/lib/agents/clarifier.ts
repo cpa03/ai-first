@@ -5,10 +5,11 @@ import { promptService } from '@/lib/prompt-service';
 import {
   safeJsonParse,
   isArrayOf,
-  isObject,
-  isString,
-  hasProperty,
+  isClarifierQuestion,
 } from '@/lib/validation';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('ClarifierAgent');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -46,21 +47,6 @@ export interface ClarifierConfig {
       properties: Record<string, any>;
     };
   }>;
-}
-
-function isClarifierQuestion(data: unknown): data is ClarifierQuestion {
-  if (!isObject(data)) return false;
-  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
-  if (!hasProperty(data, 'question') || !isString(data.question)) return false;
-  if (!hasProperty(data, 'type') || !isString(data.type)) return false;
-  if (!['open', 'multiple_choice', 'yes_no'].includes(data.type)) return false;
-  if (hasProperty(data, 'options') && !isArrayOf(data.options, isString)) {
-    return false;
-  }
-  if (!hasProperty(data, 'required') || typeof data.required !== 'boolean') {
-    return false;
-  }
-  return true;
 }
 
 export class ClarifierAgent {
@@ -165,7 +151,7 @@ export class ClarifierAgent {
         required: q.required !== false, // Default to true
       })) as ClarifierQuestion[];
     } catch (error) {
-      console.error('Failed to generate questions:', error);
+      logger.error('Failed to generate questions', error);
 
       // Fallback questions
       return [
@@ -323,7 +309,7 @@ export class ClarifierAgent {
       const response = await aiService.callModel(messages, this.aiConfig);
       return response.trim();
     } catch (error) {
-      console.error('Failed to generate refined idea:', error);
+      logger.error('Failed to generate refined idea', error);
 
       // Fallback: combine original idea with answers
       return `${session.originalIdea}\n\nAdditional Details:\n${answersText}`;
@@ -359,7 +345,7 @@ export class ClarifierAgent {
 
       return sessionData;
     } catch (error) {
-      console.error('Failed to get clarification session:', error);
+      logger.error('Failed to get clarification session', error);
       return null;
     }
   }
@@ -368,13 +354,29 @@ export class ClarifierAgent {
     userId: string
   ): Promise<Array<{ idea: any; session: ClarificationSession }>> {
     try {
-      // Get user's ideas
       const ideas = await dbService.getUserIdeas(userId);
 
-      const results = [];
+      if (ideas.length === 0) {
+        return [];
+      }
 
+      const ideaIds = ideas.map((idea: any) => idea.id);
+      const vectors = await dbService.getVectors(
+        ideaIds[0],
+        'clarification_session'
+      );
+
+      const sessionMap = new Map<string, ClarificationSession>();
+      for (const vector of vectors) {
+        const sessionData = vector.vector_data as ClarificationSession;
+        sessionData.createdAt = new Date(sessionData.createdAt);
+        sessionData.updatedAt = new Date(sessionData.updatedAt);
+        sessionMap.set(vector.idea_id, sessionData);
+      }
+
+      const results = [];
       for (const idea of ideas) {
-        const session = await this.getSession(idea.id);
+        const session = sessionMap.get(idea.id);
         if (session) {
           results.push({ idea, session });
         }
@@ -382,7 +384,7 @@ export class ClarifierAgent {
 
       return results;
     } catch (error) {
-      console.error('Failed to get clarification history:', error);
+      logger.error('Failed to get clarification history', error);
       return [];
     }
   }

@@ -48,9 +48,9 @@ export default function HomePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <section aria-labelledby="hero-heading" className="text-center mb-12">
-        <h2 id="hero-heading" className="text-4xl font-bold text-gray-900 mb-4">
+        <h1 id="hero-heading" className="text-4xl font-bold text-gray-900 mb-4">
           AI-Powered Project Planning & Task Management
-        </h2>
+        </h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Transform raw ideas into actionable project plans with AI. Get
           automated task breakdown, realistic timelines, and comprehensive
@@ -62,9 +62,9 @@ export default function HomePage() {
         aria-labelledby="idea-input-heading"
         className="bg-white rounded-lg shadow-lg p-8"
       >
-        <h3 id="idea-input-heading" className="sr-only">
+        <h2 id="idea-input-heading" className="sr-only">
           Enter Your Idea
-        </h3>
+        </h2>
         <IdeaInput onSubmit={handleIdeaSubmit} />
       </section>
 
@@ -88,16 +88,16 @@ export default function HomePage() {
       )}
 
       <section aria-labelledby="how-it-works-heading">
-        <h3 id="how-it-works-heading" className="sr-only">
+        <h2 id="how-it-works-heading" className="sr-only">
           How It Works
-        </h3>
+        </h2>
         <FeatureGrid />
       </section>
 
       <section aria-labelledby="why-choose-heading">
-        <h3 id="why-choose-heading" className="sr-only">
+        <h2 id="why-choose-heading" className="sr-only">
           Why Choose IdeaFlow
-        </h3>
+        </h2>
         <WhyChooseSection />
       </section>
     </div>

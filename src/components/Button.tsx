@@ -13,16 +13,16 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variantClasses = {
   primary:
     'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-  secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
+  secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
   outline:
-    'border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
+    'border border-gray-700 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
   ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
 };
 
 const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg',
+  sm: 'px-3 py-1.5 text-sm min-h-[36px]',
+  md: 'px-4 py-2 text-base min-h-[44px]',
+  lg: 'px-6 py-3 text-lg min-h-[48px]',
 };
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -48,8 +48,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ${sizeClasses[size]}
           ${fullWidth ? 'w-full' : ''}
           ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-          rounded-md font-medium transition-colors
-          focus:outline-none focus:ring-2 focus:ring-offset-2
+          rounded-md font-medium transition-all duration-200
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500
+          hover:scale-[1.02] active:scale-[0.98]
           ${className}
         `}
         aria-busy={loading}

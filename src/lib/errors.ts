@@ -11,6 +11,7 @@ export interface ErrorResponse {
   timestamp: string;
   requestId?: string;
   retryable?: boolean;
+  suggestions?: string[];
 }
 
 export enum ErrorCode {
@@ -34,7 +35,8 @@ export class AppError extends Error {
     public readonly code: ErrorCode,
     public readonly statusCode: number = 500,
     public readonly details?: ErrorDetail[],
-    public readonly retryable: boolean = false
+    public readonly retryable: boolean = false,
+    public readonly suggestions?: string[]
   ) {
     super(message);
     this.name = 'AppError';
@@ -48,17 +50,25 @@ export class AppError extends Error {
       details: this.details,
       timestamp: new Date().toISOString(),
       retryable: this.retryable,
+      suggestions: this.suggestions,
     };
   }
 }
 
 export class ValidationError extends AppError {
   constructor(details: ErrorDetail[]) {
+    const suggestions = [
+      'Check that all required fields are present in your request',
+      'Ensure field values match the expected format',
+      'Verify that string lengths are within allowed limits',
+    ];
     super(
       'Request validation failed',
       ErrorCode.VALIDATION_ERROR,
       400,
-      details
+      details,
+      false,
+      suggestions
     );
     this.name = 'ValidationError';
   }
@@ -70,12 +80,18 @@ export class RateLimitError extends AppError {
     public readonly limit: number,
     public readonly remaining: number
   ) {
+    const suggestions = [
+      `Wait ${retryAfter} seconds before making another request`,
+      'Implement client-side rate limiting to avoid this error',
+      'Reduce request frequency or upgrade your plan for higher limits',
+    ];
     super(
       `Rate limit exceeded. Retry after ${retryAfter} seconds`,
       ErrorCode.RATE_LIMIT_EXCEEDED,
       429,
       undefined,
-      true
+      true,
+      suggestions
     );
     this.name = 'RateLimitError';
     this.retryAfter = retryAfter;
@@ -94,6 +110,7 @@ export class RateLimitError extends AppError {
       ],
       timestamp: new Date().toISOString(),
       retryable: true,
+      suggestions: this.suggestions,
     };
   }
 }
@@ -104,12 +121,19 @@ export class ExternalServiceError extends AppError {
     service: string,
     public readonly originalError?: Error
   ) {
+    const suggestions = [
+      'The system will automatically retry this operation',
+      'Check your API credentials for the external service',
+      `Verify ${service} service status for outages or maintenance`,
+      'Consider reducing the complexity of your request',
+    ];
     super(
       `External service error: ${service} - ${message}`,
       ErrorCode.EXTERNAL_SERVICE_ERROR,
       502,
       undefined,
-      true
+      true,
+      suggestions
     );
     this.name = 'ExternalServiceError';
     this.service = service;
@@ -123,19 +147,32 @@ export class TimeoutError extends AppError {
     message: string,
     public readonly timeoutMs: number
   ) {
-    super(message, ErrorCode.TIMEOUT_ERROR, 504, undefined, true);
+    const suggestions = [
+      'The operation took too long to complete and was terminated',
+      'Try again with a simpler or smaller request',
+      'The system will automatically retry this operation',
+      'Check if external services are experiencing high latency',
+    ];
+    super(message, ErrorCode.TIMEOUT_ERROR, 504, undefined, true, suggestions);
     this.name = 'TimeoutError';
   }
 }
 
 export class CircuitBreakerError extends AppError {
   constructor(service: string, resetTime: Date) {
+    const suggestions = [
+      `Wait until ${resetTime.toISOString()} before retrying`,
+      `The ${service} service is currently experiencing issues`,
+      'System will automatically test service recovery',
+      'Use /api/health/detailed to monitor service status',
+    ];
     super(
       `Circuit breaker open for ${service}. Retry after ${resetTime.toISOString()}`,
       ErrorCode.CIRCUIT_BREAKER_OPEN,
       503,
       undefined,
-      true
+      true,
+      suggestions
     );
     this.name = 'CircuitBreakerError';
     this.service = service;
@@ -151,6 +188,7 @@ export class CircuitBreakerError extends AppError {
       code: this.code,
       timestamp: new Date().toISOString(),
       retryable: true,
+      suggestions: this.suggestions,
     };
   }
 }
@@ -162,12 +200,19 @@ export class RetryExhaustedError extends AppError {
     attempts: number,
     public readonly originalError?: Error
   ) {
+    const suggestions = [
+      `The operation failed after ${attempts} retry attempts`,
+      'Check /api/health/detailed for service status',
+      `Verify your ${service} API credentials and quotas`,
+      'Contact support with the requestId if this persists',
+    ];
     super(
       `${message} after ${attempts} attempts`,
       ErrorCode.RETRY_EXHAUSTED,
       502,
       undefined,
-      true
+      true,
+      suggestions
     );
     this.name = 'RetryExhaustedError';
     this.service = service;
@@ -230,6 +275,97 @@ export function toErrorResponse(error: unknown, requestId?: string): Response {
 
 export function generateRequestId(): string {
   return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+}
+
+export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
+  VALIDATION_ERROR: [
+    'Check that all required fields are present in your request',
+    'Ensure field values match the expected format',
+    'Verify that string lengths are within the allowed limits',
+    'Check that UUIDs are properly formatted',
+  ],
+  RATE_LIMIT_EXCEEDED: [
+    'Wait for the specified number of seconds before retrying',
+    'Implement client-side rate limiting to avoid this error',
+    'Reduce your request frequency',
+    'Contact support for higher rate limits if needed',
+  ],
+  INTERNAL_ERROR: [
+    'An unexpected error occurred on the server',
+    'Check /api/health/detailed for system status',
+    'Contact support with the requestId for assistance',
+  ],
+  EXTERNAL_SERVICE_ERROR: [
+    'An external service (AI provider, database, etc.) returned an error',
+    'The system will automatically retry this operation',
+    'Check your API credentials for external services',
+    'Monitor /api/health/detailed for service status',
+  ],
+  TIMEOUT_ERROR: [
+    'The operation exceeded the time limit and was terminated',
+    'Try again with a simpler or smaller request',
+    'The system will automatically retry this operation',
+    'Check if external services are experiencing high latency',
+  ],
+  AUTHENTICATION_ERROR: [
+    'Authentication is required to access this resource',
+    'Provide a valid authorization token in the Authorization header',
+    'Check that your token has not expired',
+    'Verify you have valid API credentials',
+  ],
+  AUTHORIZATION_ERROR: [
+    'You do not have permission to access this resource',
+    'Verify you have the appropriate role or permissions',
+    'Contact the resource owner for access',
+    'Check that you are accessing your own data',
+  ],
+  NOT_FOUND: [
+    'The requested resource was not found',
+    'Verify that the resource ID is correct',
+    'Check if the session has expired',
+    'Ensure you are using the correct endpoint',
+  ],
+  CONFLICT: [
+    'A conflict occurred with the current state of the resource',
+    'Check if a session already exists for this idea',
+    'Resolve any concurrent modification conflicts',
+    'Retry the operation with updated data',
+  ],
+  SERVICE_UNAVAILABLE: [
+    'The service is temporarily unavailable',
+    'Wait and retry with exponential backoff',
+    'Check /api/health/detailed for system status and ETA',
+    'Monitor for service recovery announcements',
+  ],
+  CIRCUIT_BREAKER_OPEN: [
+    'The circuit breaker is open due to repeated failures',
+    'Wait until the reset time specified in the error message',
+    'The system will automatically test service recovery',
+    'Use /api/health/detailed to monitor circuit breaker status',
+  ],
+  RETRY_EXHAUSTED: [
+    'All retry attempts for the operation failed',
+    'Check /api/health/detailed for service status',
+    'Verify your API credentials and quotas for external services',
+    'Contact support with the requestId if this persists',
+  ],
+};
+
+export function createErrorWithSuggestions(
+  code: ErrorCode,
+  message: string,
+  statusCode: number = 500,
+  details?: ErrorDetail[],
+  retryable: boolean = false
+): AppError {
+  return new AppError(
+    message,
+    code,
+    statusCode,
+    details,
+    retryable,
+    ERROR_SUGGESTIONS[code]
+  );
 }
 
 export function isRetryableError(error: unknown): boolean {

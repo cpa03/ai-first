@@ -2,9 +2,10 @@
 
 import { useState } from 'react';
 import { dbService, Idea } from '@/lib/db';
-import Alert from '@/components/Alert';
-import Button from '@/components/Button';
-import InputWithValidation from '@/components/InputWithValidation';
+import { createLogger } from '@/lib/logger';
+import Alert from './Alert';
+import Button from './Button';
+import InputWithValidation from './InputWithValidation';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
@@ -13,24 +14,22 @@ interface IdeaInputProps {
 const MIN_IDEA_LENGTH = 10;
 const MAX_IDEA_LENGTH = 500;
 
+const validateIdea = (idea: string): string | null => {
+  if (idea.trim().length < MIN_IDEA_LENGTH) {
+    return `Idea must be at least ${MIN_IDEA_LENGTH} characters.`;
+  }
+  if (idea.length > MAX_IDEA_LENGTH) {
+    return `Idea must be at most ${MAX_IDEA_LENGTH} characters.`;
+  }
+  return null;
+};
+
 export default function IdeaInput({ onSubmit }: IdeaInputProps) {
+  const logger = createLogger('IdeaInput');
   const [idea, setIdea] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [validationError, setValidationError] = useState<string>('');
-
-  const validateIdea = (value: string): string => {
-    if (!value.trim()) {
-      return '';
-    }
-    if (value.trim().length < MIN_IDEA_LENGTH) {
-      return `Please provide at least ${MIN_IDEA_LENGTH} characters for your idea.`;
-    }
-    if (value.length > MAX_IDEA_LENGTH) {
-      return `Your idea must be ${MAX_IDEA_LENGTH} characters or less.`;
-    }
-    return '';
-  };
 
   const handleIdeaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
@@ -62,7 +61,14 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
 
       onSubmit(idea.trim(), savedIdea.id);
     } catch (err) {
-      console.error('Error saving idea:', err);
+      logger.errorWithContext('Failed to save idea', {
+        component: 'IdeaInput',
+        action: 'handleSubmit',
+        metadata: {
+          ideaLength: idea.length,
+          error: err instanceof Error ? err.message : 'Unknown error',
+        },
+      });
       setError('Failed to save your idea. Please try again.');
     } finally {
       setIsSubmitting(false);
@@ -78,12 +84,12 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         value={idea}
         onChange={handleIdeaChange}
         placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-        helpText="Be as specific or as general as you'd like. We'll help you clarify the details."
+        helpText="Be as specific or as general as you'd like. We'll help you clarify details."
         multiline={true}
         minLength={MIN_IDEA_LENGTH}
         maxLength={MAX_IDEA_LENGTH}
         showCharCount={true}
-        error={validationError}
+        error={validationError || undefined}
         required={true}
         disabled={isSubmitting}
         className="min-h-[120px]"

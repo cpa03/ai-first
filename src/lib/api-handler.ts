@@ -11,6 +11,8 @@ import {
   checkRateLimit,
   rateLimitConfigs,
   rateLimitResponse,
+  addRateLimitHeaders,
+  RateLimitInfo,
 } from '@/lib/rate-limit';
 
 export interface ApiHandlerOptions {
@@ -21,6 +23,7 @@ export interface ApiHandlerOptions {
 export interface ApiContext {
   requestId: string;
   request: NextRequest;
+  rateLimit: RateLimitInfo;
 }
 
 export type ApiHandler = (context: ApiContext) => Promise<Response>;
@@ -31,7 +34,6 @@ export function withApiHandler(
 ): (request: NextRequest) => Promise<Response> {
   return async (request: NextRequest) => {
     const requestId = generateRequestId();
-    const context: ApiContext = { requestId, request };
 
     try {
       const rateLimitResult = checkRateLimit(
@@ -42,8 +44,14 @@ export function withApiHandler(
       );
 
       if (!rateLimitResult.allowed) {
-        return rateLimitResponse(rateLimitResult.resetTime);
+        return rateLimitResponse(rateLimitResult.info);
       }
+
+      const context: ApiContext = {
+        requestId,
+        request,
+        rateLimit: rateLimitResult.info,
+      };
 
       if (options.validateSize !== false) {
         const sizeValidation = validateRequestSize(request);
@@ -63,9 +71,16 @@ export function withApiHandler(
         response.headers.set('X-Request-ID', requestId);
       }
 
-      return response;
+      return addRateLimitHeaders(response, rateLimitResult.info);
     } catch (error) {
-      return toErrorResponse(error, requestId);
+      const errorResponse = toErrorResponse(error, requestId);
+      const rateLimitResult = checkRateLimit(
+        request.headers.get('x-forwarded-for') || 'unknown',
+        options.rateLimit
+          ? rateLimitConfigs[options.rateLimit]
+          : rateLimitConfigs.lenient
+      );
+      return addRateLimitHeaders(errorResponse, rateLimitResult.info);
     }
   };
 }
@@ -87,7 +102,8 @@ export function successResponse<T>(
 export function standardSuccessResponse<T>(
   data: T,
   requestId: string,
-  status: number = 200
+  status: number = 200,
+  rateLimit?: RateLimitInfo
 ): NextResponse {
   const response: ApiResponse<T> = {
     success: true,
@@ -96,7 +112,21 @@ export function standardSuccessResponse<T>(
     timestamp: new Date().toISOString(),
   };
 
-  return NextResponse.json(response, { status });
+  const nextResponse = NextResponse.json(response, { status });
+
+  if (rateLimit) {
+    nextResponse.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    nextResponse.headers.set(
+      'X-RateLimit-Remaining',
+      String(rateLimit.remaining)
+    );
+    nextResponse.headers.set(
+      'X-RateLimit-Reset',
+      String(new Date(rateLimit.reset).toISOString())
+    );
+  }
+
+  return nextResponse;
 }
 
 export function notFoundResponse(

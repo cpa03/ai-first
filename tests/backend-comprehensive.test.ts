@@ -27,7 +27,7 @@ import {
   mockAPIResponses,
   waitForAsync,
   createMockFetch,
-} from './utils/testHelpers';
+} from './utils/_testHelpers';
 
 // Mock environment variables
 Object.assign(process.env, mockEnvVars);
@@ -253,7 +253,7 @@ describe('Backend Service Tests', () => {
   });
 
   describe('ExportService', () => {
-    let exportService: ExportService;
+    let exportService: InstanceType<typeof ExportService>;
 
     beforeEach(() => {
       exportService = new ExportService();

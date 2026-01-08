@@ -1,5 +1,7 @@
 import '../styles/globals.css';
 import type { Metadata } from 'next';
+import ErrorBoundary from '@/components/ErrorBoundary';
+import MobileNav from '@/components/MobileNav';
 
 export const metadata: Metadata = {
   title: 'IdeaFlow - AI-Powered Project Planning & Task Management Tool',
@@ -71,58 +73,41 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-gray-50">
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
-        >
-          Skip to main content
-        </a>
-        <div className="min-h-screen flex flex-col">
-          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center h-16">
-                <div className="flex items-center">
-                  <h1 className="text-xl font-semibold text-gray-900">
-                    IdeaFlow
-                  </h1>
+        <ErrorBoundary>
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
+          >
+            Skip to main content
+          </a>
+          <div className="min-h-screen flex flex-col">
+            <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex justify-between items-center h-16">
+                  <div className="flex items-center">
+                    <a
+                      href="/"
+                      className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors"
+                    >
+                      IdeaFlow
+                    </a>
+                  </div>
+                  <MobileNav />
                 </div>
-                <nav
-                  aria-label="Main navigation"
-                  className="flex space-x-4 sm:space-x-8"
-                >
-                  <a
-                    href="/"
-                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
-                  >
-                    Home
-                  </a>
-                  <a
-                    href="/clarify"
-                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
-                  >
-                    Clarify
-                  </a>
-                  <a
-                    href="/results"
-                    className="text-gray-700 hover:text-primary-600 px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md"
-                  >
-                    Results
-                  </a>
-                </nav>
               </div>
-            </div>
-          </header>
-          <main id="main-content" className="flex-1">
-            {children}
-          </main>
-          <footer className="bg-white border-t border-gray-200">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-              <p className="text-center text-sm text-gray-500">
-                © 2025 IdeaFlow. Turn ideas into action.
-              </p>
-            </div>
-          </footer>
-        </div>
+            </header>
+            <main id="main-content" className="flex-1" role="main">
+              {children}
+            </main>
+            <footer className="bg-white border-t border-gray-200">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <p className="text-center text-sm text-gray-500">
+                  © 2025 IdeaFlow. Turn ideas into action.
+                </p>
+              </div>
+            </footer>
+          </div>
+        </ErrorBoundary>
       </body>
     </html>
   );

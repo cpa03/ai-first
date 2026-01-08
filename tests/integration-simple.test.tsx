@@ -5,7 +5,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMockFetch } from './utils/testHelpers';
+import { createMockFetch } from './utils/_testHelpers';
 
 describe('Integration Tests - Basic', () => {
   let user: any;

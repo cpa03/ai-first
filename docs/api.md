@@ -83,34 +83,39 @@ Comprehensive health check including database, AI services, export connectors, a
 
 ```json
 {
-  "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "version": "0.1.0",
-  "uptime": 3600,
-  "checks": {
-    "database": {
-      "status": "up",
-      "latency": 45,
-      "lastChecked": "2024-01-07T12:00:00Z"
-    },
-    "ai": {
-      "status": "up",
-      "latency": 234,
-      "lastChecked": "2024-01-07T12:00:00Z"
-    },
-    "exports": {
-      "status": "degraded",
-      "error": "2/5 connectors",
-      "lastChecked": "2024-01-07T12:00:00Z"
-    },
-    "circuitBreakers": [
-      {
-        "service": "openai",
-        "state": "closed",
-        "failures": 0
-      }
-    ]
-  }
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2024-01-07T12:00:00Z",
+    "version": "0.1.0",
+    "uptime": 3600,
+    "checks": {
+      "database": {
+        "status": "up",
+        "latency": 45,
+        "lastChecked": "2024-01-07T12:00:00Z"
+      },
+      "ai": {
+        "status": "up",
+        "latency": 234,
+        "lastChecked": "2024-01-07T12:00:00Z"
+      },
+      "exports": {
+        "status": "degraded",
+        "error": "2/5 connectors",
+        "lastChecked": "2024-01-07T12:00:00Z"
+      },
+      "circuitBreakers": [
+        {
+          "service": "openai",
+          "state": "closed",
+          "failures": 0
+        }
+      ]
+    }
+  },
+  "requestId": "req_1234567890_abc123",
+  "timestamp": "2024-01-07T12:00:00Z"
 }
 ```
 
@@ -118,6 +123,8 @@ Comprehensive health check including database, AI services, export connectors, a
 
 - `200`: System is healthy
 - `503`: System is unhealthy or degraded
+
+**Note:** The `status` field in the response data indicates overall system health (`healthy`, `degraded`, or `unhealthy`). The HTTP status code also reflects this (200 for healthy, 503 for degraded/unhealthy).
 
 **Circuit Breaker States:**
 
@@ -532,6 +539,86 @@ When rate limit is exceeded:
 - `X-RateLimit-Limit`: Your rate limit
 - `X-RateLimit-Remaining`: Remaining requests
 - `X-RateLimit-Reset`: Unix timestamp when limit resets
+
+---
+
+## Admin Endpoints
+
+### GET /api/admin/rate-limit
+
+Retrieve current rate limiting statistics and configuration. This endpoint is useful for monitoring rate limit usage and diagnosing rate limiting issues.
+
+**Rate Limit:** strict (10 requests per minute)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "timestamp": "2024-01-08T12:00:00Z",
+    "totalRequests": 1234,
+    "blockedRequests": 45,
+    "rateLimitConfigs": {
+      "strict": { "windowMs": 60000, "maxRequests": 10 },
+      "moderate": { "windowMs": 60000, "maxRequests": 30 },
+      "lenient": { "windowMs": 60000, "maxRequests": 60 }
+    },
+    "tieredRateLimits": {
+      "anonymous": { "windowMs": 60000, "maxRequests": 30 },
+      "authenticated": { "windowMs": 60000, "maxRequests": 60 },
+      "premium": { "windowMs": 60000, "maxRequests": 120 },
+      "enterprise": { "windowMs": 60000, "maxRequests": 300 }
+    }
+  },
+  "requestId": "req_1234567890_abc123",
+  "timestamp": "2024-01-08T12:00:00Z"
+}
+```
+
+**Response Fields:**
+
+- `timestamp`: Current timestamp
+- `totalRequests`: Total number of requests processed
+- `blockedRequests`: Number of requests blocked by rate limiting
+- `rateLimitConfigs`: Configuration for each rate limit tier
+- `tieredRateLimits`: Configuration for each user tier
+
+**Rate Limit Configurations:**
+
+- `windowMs`: Time window in milliseconds (default: 60 seconds)
+- `maxRequests`: Maximum requests allowed within the window
+
+**Status Codes:**
+
+- `200`: Statistics retrieved successfully
+- `429`: Rate limit exceeded for this endpoint
+- `500`: Internal error
+
+**Use Cases:**
+
+- Monitor rate limit usage in production
+- Diagnose rate limiting issues
+- Verify rate limit configuration
+- Build admin dashboards for rate limit monitoring
+
+**Example Usage:**
+
+```bash
+# Get rate limit statistics
+curl http://localhost:3000/api/admin/rate-limit
+
+# Response
+{
+  "success": true,
+  "data": {
+    "timestamp": "2024-01-08T12:00:00Z",
+    "totalRequests": 1234,
+    "blockedRequests": 45,
+    ...
+  }
+}
+```
 
 ---
 

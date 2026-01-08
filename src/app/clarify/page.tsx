@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import ClarificationFlow from '@/components/ClarificationFlow';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Alert from '@/components/Alert';
-import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { dbService } from '@/lib/db';
+import ClarificationFlow from '@/components/ClarificationFlow';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import Button from '@/components/Button';
+import Alert from '@/components/Alert';
+import { createLogger } from '@/lib/logger';
 
 export default function ClarifyPage() {
   const router = useRouter();
@@ -15,6 +16,7 @@ export default function ClarifyPage() {
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const logger = createLogger('ClarifyPage');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -44,10 +46,17 @@ export default function ClarifyPage() {
 
       setAnswers(completedAnswers);
 
-      // In a real app, this would navigate to the results page
+      // In a real app, this would navigate to results page
       // For now, we'll just show the completion message
     } catch (err) {
-      console.error('Error storing clarification answers:', err);
+      logger.errorWithContext('Failed to save clarification answers', {
+        component: 'ClarifyPage',
+        action: 'handleClarificationComplete',
+        metadata: {
+          ideaId,
+          error: err instanceof Error ? err.message : 'Unknown error',
+        },
+      });
       setError('Failed to save your answers. Please try again.');
     }
   };

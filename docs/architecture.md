@@ -24,7 +24,18 @@ src/
 │   ├── errors.ts      # Error handling
 │   ├── validation.ts  # Input validation
 │   ├── rate-limit.ts  # Rate limiting
-│   └── pii-redaction.ts # PII protection
+│   ├── pii-redaction.ts # PII protection
+│   ├── api-handler.ts  # API request handler
+│   ├── api-client.ts   # API client utilities
+│   ├── cache.ts        # Caching layer
+│   ├── config/         # Configuration
+│   │   └── constants.ts # Constants and config
+│   ├── prompts/        # AI prompt templates
+│   │   ├── clarifier/  # Clarification agent prompts
+│   │   └── breakdown/  # Breakdown agent prompts
+│   └── agents/         # AI agent implementations
+│       ├── clarifier.ts  # Clarification agent
+│       └── breakdown-engine.ts # Breakdown engine
 └── styles/              # Global styles
 supabase/
 ├── schema.sql           # Database schema
@@ -32,7 +43,8 @@ supabase/
 └── seeds/               # Seed data
 ai/
 ├── agent-configs/       # Agent configuration files
-└── prompts/             # AI prompt templates
+│   ├── clarifier.yml
+│   └── breakdown-engine.yml
 docs/                    # Documentation
 config/                  # Configuration files
 tests/                   # Test files

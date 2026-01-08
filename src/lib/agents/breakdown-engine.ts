@@ -5,12 +5,19 @@ import { promptService } from '@/lib/prompt-service';
 import {
   safeJsonParse,
   isArrayOf,
-  isObject,
-  isString,
-  hasProperty,
+  isTask,
+  isIdeaAnalysis,
 } from '@/lib/validation';
+import { createLogger } from '@/lib/logger';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+const logger = createLogger('BreakdownEngine');
+
+const HOURS_PER_WEEK = 40;
+const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+const PHASE_PLANNING_RATIO = 0.2;
+const PHASE_DEVELOPMENT_RATIO = 0.8;
 
 export interface BreakdownConfig {
   name: string;
@@ -118,56 +125,6 @@ export interface BreakdownSession {
   processingTime: number;
   createdAt: Date;
   updatedAt: Date;
-}
-
-function isIdeaAnalysis(data: unknown): data is IdeaAnalysis {
-  if (!isObject(data)) return false;
-  if (
-    !hasProperty(data, 'objectives') ||
-    !isArrayOf(data.objectives, isObject)
-  ) {
-    return false;
-  }
-  if (
-    !hasProperty(data, 'deliverables') ||
-    !isArrayOf(data.deliverables, isObject)
-  ) {
-    return false;
-  }
-  if (!hasProperty(data, 'complexity') || !isObject(data.complexity))
-    return false;
-  if (!hasProperty(data, 'scope') || !isObject(data.scope)) return false;
-  if (
-    !hasProperty(data, 'riskFactors') ||
-    !isArrayOf(data.riskFactors, isObject)
-  ) {
-    return false;
-  }
-  if (
-    !hasProperty(data, 'successCriteria') ||
-    !isArrayOf(data.successCriteria, isString)
-  ) {
-    return false;
-  }
-  return true;
-}
-
-function isTask(data: unknown): data is TaskDecomposition['tasks'][0] {
-  if (!isObject(data)) return false;
-  if (!hasProperty(data, 'id') || !isString(data.id)) return false;
-  if (!hasProperty(data, 'title') || !isString(data.title)) return false;
-  if (!hasProperty(data, 'description') || !isString(data.description))
-    return false;
-  if (
-    !hasProperty(data, 'estimatedHours') ||
-    typeof data.estimatedHours !== 'number'
-  ) {
-    return false;
-  }
-  if (!hasProperty(data, 'complexity') || typeof data.complexity !== 'number') {
-    return false;
-  }
-  return true;
 }
 
 class BreakdownEngine {
@@ -314,7 +271,7 @@ class BreakdownEngine {
       // Validate and enhance analysis
       return this.validateAnalysis(analysis);
     } catch (error) {
-      console.error('Failed to analyze idea:', error);
+      logger.error('Failed to analyze idea:', error);
       throw new Error('Idea analysis failed');
     }
   }
@@ -368,7 +325,7 @@ class BreakdownEngine {
           totalHours += task.estimatedHours;
         });
       } catch (error) {
-        console.error(
+        logger.error(
           `Failed to decompose deliverable: ${deliverable.title}`,
           error
         );
@@ -476,10 +433,10 @@ class BreakdownEngine {
   ): Promise<Timeline> {
     const startDate = new Date();
     const totalWeeks = Math.ceil(
-      tasks.totalEstimatedHours / (40 * (options.teamSize || 1))
+      tasks.totalEstimatedHours / (HOURS_PER_WEEK * (options.teamSize || 1))
     );
     const endDate = new Date(
-      startDate.getTime() + totalWeeks * 7 * 24 * 60 * 60 * 1000
+      startDate.getTime() + totalWeeks * MILLISECONDS_PER_WEEK
     );
 
     // Generate milestones based on deliverables
@@ -490,11 +447,7 @@ class BreakdownEngine {
         startDate.getTime() +
           (index + 1) *
             (totalWeeks / analysis.deliverables.length) *
-            7 *
-            24 *
-            60 *
-            60 *
-            1000
+            MILLISECONDS_PER_WEEK
       ),
       dependencies: [] as string[],
     }));
@@ -505,25 +458,28 @@ class BreakdownEngine {
         name: 'Planning & Design',
         startDate,
         endDate: new Date(
-          startDate.getTime() + totalWeeks * 0.2 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_PLANNING_RATIO * MILLISECONDS_PER_WEEK
         ),
         tasks: tasks.tasks
-          .slice(0, Math.ceil(tasks.tasks.length * 0.2))
+          .slice(0, Math.ceil(tasks.tasks.length * PHASE_PLANNING_RATIO))
           .map((t) => t.id),
         deliverables: analysis.deliverables.slice(0, 1).map((d) => d.title),
       },
       {
         name: 'Development',
         startDate: new Date(
-          startDate.getTime() + totalWeeks * 0.2 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_PLANNING_RATIO * MILLISECONDS_PER_WEEK
         ),
         endDate: new Date(
-          startDate.getTime() + totalWeeks * 0.8 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_DEVELOPMENT_RATIO * MILLISECONDS_PER_WEEK
         ),
         tasks: tasks.tasks
           .slice(
-            Math.ceil(tasks.tasks.length * 0.2),
-            Math.ceil(tasks.tasks.length * 0.8)
+            Math.ceil(tasks.tasks.length * PHASE_PLANNING_RATIO),
+            Math.ceil(tasks.tasks.length * PHASE_DEVELOPMENT_RATIO)
           )
           .map((t) => t.id),
         deliverables: analysis.deliverables.slice(1, -1).map((d) => d.title),
@@ -531,11 +487,12 @@ class BreakdownEngine {
       {
         name: 'Testing & Deployment',
         startDate: new Date(
-          startDate.getTime() + totalWeeks * 0.8 * 7 * 24 * 60 * 60 * 1000
+          startDate.getTime() +
+            totalWeeks * PHASE_DEVELOPMENT_RATIO * MILLISECONDS_PER_WEEK
         ),
         endDate,
         tasks: tasks.tasks
-          .slice(Math.ceil(tasks.tasks.length * 0.8))
+          .slice(Math.ceil(tasks.tasks.length * PHASE_DEVELOPMENT_RATIO))
           .map((t) => t.id),
         deliverables: analysis.deliverables.slice(-1).map((d) => d.title),
       },
@@ -641,7 +598,7 @@ class BreakdownEngine {
       // Update idea status
       await dbService.updateIdea(session.ideaId, { status: 'breakdown' });
     } catch (error) {
-      console.error('Failed to persist breakdown results:', error);
+      logger.error('Failed to persist breakdown results:', error);
       throw error;
     }
   }
@@ -657,7 +614,7 @@ class BreakdownEngine {
 
       return session;
     } catch (error) {
-      console.error('Failed to get breakdown session:', error);
+      logger.error('Failed to get breakdown session:', error);
       return null;
     }
   }

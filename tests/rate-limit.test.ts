@@ -5,6 +5,9 @@ import {
   createRateLimitMiddleware,
   cleanupExpiredEntries,
   rateLimitResponse,
+  getRateLimitStats,
+  RateLimitInfo,
+  clearRateLimitStore,
 } from '@/lib/rate-limit';
 
 describe('checkRateLimit', () => {
@@ -22,16 +25,18 @@ describe('checkRateLimit', () => {
       const result = checkRateLimit('test-user', rateLimitConfigs.lenient);
 
       expect(result.allowed).toBe(true);
-      expect(result.remaining).toBe(rateLimitConfigs.lenient.maxRequests - 1);
-      expect(result.resetTime).toBeGreaterThan(Date.now());
+      expect(result.info.remaining).toBe(
+        rateLimitConfigs.lenient.maxRequests - 1
+      );
+      expect(result.info.reset).toBeGreaterThan(Date.now());
     });
 
     it('should set reset time based on windowMs', () => {
       const result = checkRateLimit('test-user', rateLimitConfigs.strict);
 
       const expectedResetTime =
-        result.resetTime - rateLimitConfigs.strict.windowMs;
-      expect(result.resetTime - expectedResetTime).toBe(
+        result.info.reset - rateLimitConfigs.strict.windowMs;
+      expect(result.info.reset - expectedResetTime).toBe(
         rateLimitConfigs.strict.windowMs
       );
     });
@@ -40,8 +45,12 @@ describe('checkRateLimit', () => {
       const result1 = checkRateLimit('user-1', rateLimitConfigs.moderate);
       const result2 = checkRateLimit('user-2', rateLimitConfigs.moderate);
 
-      expect(result1.remaining).toBe(rateLimitConfigs.moderate.maxRequests - 1);
-      expect(result2.remaining).toBe(rateLimitConfigs.moderate.maxRequests - 1);
+      expect(result1.info.remaining).toBe(
+        rateLimitConfigs.moderate.maxRequests - 1
+      );
+      expect(result2.info.remaining).toBe(
+        rateLimitConfigs.moderate.maxRequests - 1
+      );
     });
   });
 
@@ -53,7 +62,9 @@ describe('checkRateLimit', () => {
       const result2 = checkRateLimit(identifier, rateLimitConfigs.lenient);
 
       expect(result2.allowed).toBe(true);
-      expect(result2.remaining).toBe(rateLimitConfigs.lenient.maxRequests - 2);
+      expect(result2.info.remaining).toBe(
+        rateLimitConfigs.lenient.maxRequests - 2
+      );
     });
 
     it('should keep same reset time for requests within window', () => {
@@ -62,7 +73,7 @@ describe('checkRateLimit', () => {
       const result1 = checkRateLimit(identifier, rateLimitConfigs.moderate);
       const result2 = checkRateLimit(identifier, rateLimitConfigs.moderate);
 
-      expect(result1.resetTime).toBe(result2.resetTime);
+      expect(result1.info.reset).toBe(result2.info.reset);
     });
 
     it('should return correct remaining count', () => {
@@ -74,9 +85,9 @@ describe('checkRateLimit', () => {
         results.push(checkRateLimit(identifier, rateLimitConfigs.lenient));
       }
 
-      expect(results[0].remaining).toBe(maxRequests - 1);
-      expect(results[results.length - 2].remaining).toBe(1);
-      expect(results[results.length - 1].remaining).toBe(0);
+      expect(results[0].info.remaining).toBe(maxRequests - 1);
+      expect(results[results.length - 2].info.remaining).toBe(1);
+      expect(results[results.length - 1].info.remaining).toBe(0);
     });
   });
 
@@ -92,7 +103,7 @@ describe('checkRateLimit', () => {
       const result = checkRateLimit(identifier, config);
 
       expect(result.allowed).toBe(false);
-      expect(result.remaining).toBe(0);
+      expect(result.info.remaining).toBe(0);
     });
 
     it('should return same reset time when limit exceeded', () => {
@@ -100,14 +111,14 @@ describe('checkRateLimit', () => {
       const config = rateLimitConfigs.moderate;
 
       checkRateLimit(identifier, config);
-      const initialResetTime = checkRateLimit(identifier, config).resetTime;
+      const initialResetTime = checkRateLimit(identifier, config).info.reset;
 
       for (let i = 2; i <= config.maxRequests; i++) {
         checkRateLimit(identifier, config);
       }
 
       const exceededResult = checkRateLimit(identifier, config);
-      expect(exceededResult.resetTime).toBe(initialResetTime);
+      expect(exceededResult.info.reset).toBe(initialResetTime);
     });
 
     it('should continue to deny until window expires', () => {
@@ -146,7 +157,7 @@ describe('checkRateLimit', () => {
       const resultAfterExpiry = checkRateLimit(identifier, config);
 
       expect(resultAfterExpiry.allowed).toBe(true);
-      expect(resultAfterExpiry.remaining).toBe(config.maxRequests - 1);
+      expect(resultAfterExpiry.info.remaining).toBe(config.maxRequests - 1);
     });
 
     it('should set new reset time after window expires', () => {
@@ -158,7 +169,7 @@ describe('checkRateLimit', () => {
 
       const result2 = checkRateLimit(identifier, config);
 
-      expect(result2.resetTime).toBeGreaterThan(result1.resetTime);
+      expect(result2.info.reset).toBeGreaterThan(result1.info.reset);
     });
 
     it('should handle requests crossing window boundary', () => {
@@ -363,7 +374,9 @@ describe('createRateLimitMiddleware', () => {
     const result = middleware(request);
 
     expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(rateLimitConfigs.moderate.maxRequests - 1);
+    expect(result.info.remaining).toBe(
+      rateLimitConfigs.moderate.maxRequests - 1
+    );
   });
 
   it('should work with different config', () => {
@@ -375,7 +388,7 @@ describe('createRateLimitMiddleware', () => {
     const result = middleware(request);
 
     expect(result.allowed).toBe(true);
-    expect(result.remaining).toBe(rateLimitConfigs.strict.maxRequests - 1);
+    expect(result.info.remaining).toBe(rateLimitConfigs.strict.maxRequests - 1);
   });
 });
 
@@ -413,21 +426,33 @@ describe('cleanupExpiredEntries', () => {
 describe('rateLimitResponse', () => {
   it('should return 429 status', () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
 
     expect(response.status).toBe(429);
   });
 
   it('should set correct content type', () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
 
     expect(response.headers.get('content-type')).toBe('application/json');
   });
 
   it('should include error message in body', async () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
     const body = await response.json();
 
     expect(body.error).toBe('Too many requests');
@@ -435,7 +460,11 @@ describe('rateLimitResponse', () => {
 
   it('should include retryAfter in body', async () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
     const body = await response.json();
 
     expect(body.retryAfter).toBeGreaterThanOrEqual(59);
@@ -444,7 +473,11 @@ describe('rateLimitResponse', () => {
 
   it('should set Retry-After header', () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
 
     const retryAfter = parseInt(response.headers.get('Retry-After') || '0');
     expect(retryAfter).toBeGreaterThanOrEqual(59);
@@ -453,21 +486,33 @@ describe('rateLimitResponse', () => {
 
   it('should set X-RateLimit-Limit header', () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
 
     expect(response.headers.get('X-RateLimit-Limit')).toBe('60');
   });
 
   it('should set X-RateLimit-Remaining header', () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
 
     expect(response.headers.get('X-RateLimit-Remaining')).toBe('0');
   });
 
   it('should set X-RateLimit-Reset header', () => {
     const resetTime = Date.now() + 60000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
 
     const resetHeader = response.headers.get('X-RateLimit-Reset');
     expect(resetHeader).toBeTruthy();
@@ -476,7 +521,11 @@ describe('rateLimitResponse', () => {
 
   it('should handle reset time in the past', async () => {
     const resetTime = Date.now() - 1000;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
     const body = await response.json();
 
     expect(body.retryAfter).toBeLessThanOrEqual(0);
@@ -484,9 +533,80 @@ describe('rateLimitResponse', () => {
 
   it('should handle zero reset time', async () => {
     const resetTime = 0;
-    const response = rateLimitResponse(resetTime);
+    const response = rateLimitResponse({
+      limit: 60,
+      remaining: 0,
+      reset: resetTime,
+    });
     const body = await response.json();
 
     expect(body.retryAfter).toBeDefined();
+  });
+});
+
+describe('getRateLimitStats', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+    clearRateLimitStore();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('should return stats with correct structure', () => {
+    const stats = getRateLimitStats();
+
+    expect(stats).toHaveProperty('totalEntries');
+    expect(stats).toHaveProperty('entriesByRole');
+    expect(stats).toHaveProperty('expiredEntries');
+    expect(stats).toHaveProperty('topUsers');
+  });
+
+  it('should return zero entries when no requests made', () => {
+    const stats = getRateLimitStats();
+
+    expect(stats.totalEntries).toBe(0);
+    expect(stats.expiredEntries).toBe(0);
+    expect(stats.topUsers).toHaveLength(0);
+  });
+
+  it('should count entries correctly', () => {
+    checkRateLimit('user-1', rateLimitConfigs.lenient);
+    checkRateLimit('user-2', rateLimitConfigs.moderate);
+    checkRateLimit('user-3', rateLimitConfigs.strict);
+
+    const stats = getRateLimitStats();
+
+    expect(stats.totalEntries).toBe(3);
+  });
+
+  it('should identify top users by request count', () => {
+    const identifier = 'top-user';
+    const config = rateLimitConfigs.lenient;
+
+    for (let i = 0; i < 10; i++) {
+      checkRateLimit(identifier, config);
+    }
+
+    const stats = getRateLimitStats();
+    const topUser = stats.topUsers[0];
+
+    expect(topUser.identifier).toBe(identifier);
+    expect(topUser.count).toBe(10);
+  });
+});
+
+describe('RateLimitInfo interface', () => {
+  it('should accept valid RateLimitInfo object', () => {
+    const info: RateLimitInfo = {
+      limit: 60,
+      remaining: 55,
+      reset: Date.now() + 60000,
+    };
+
+    expect(info.limit).toBe(60);
+    expect(info.remaining).toBe(55);
+    expect(info.reset).toBeGreaterThan(Date.now());
   });
 });
