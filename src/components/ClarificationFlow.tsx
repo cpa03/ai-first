@@ -14,6 +14,14 @@ interface Question {
   options?: string[];
 }
 
+interface APIQuestion {
+  id: string;
+  question: string;
+  type: 'open' | 'multiple_choice' | 'yes_no';
+  options?: string[];
+  required: boolean;
+}
+
 interface ClarificationFlowProps {
   idea: string;
   ideaId?: string;
@@ -72,6 +80,7 @@ export default function ClarificationFlow({
 
   const handleNext = useCallback(() => {
     if (!currentAnswer.trim()) return;
+    if (!currentQuestion?.id) return;
 
     const newAnswers = {
       ...answers,
@@ -88,7 +97,7 @@ export default function ClarificationFlow({
   }, [
     currentAnswer,
     answers,
-    currentQuestion.id,
+    currentQuestion?.id,
     currentStep,
     questions.length,
     onComplete,
@@ -123,11 +132,17 @@ export default function ClarificationFlow({
 
         const data = await response.json();
 
-        const formattedQuestions: Question[] = data.questions.map(
-          (q: string, index: number) => ({
-            id: `question_${index}`,
-            question: q,
-            type: 'textarea',
+        const formattedQuestions: Question[] = data.data.questions.map(
+          (q: APIQuestion, index: number) => ({
+            id: q.id || `question_${index}`,
+            question: q.question,
+            type:
+              q.type === 'open'
+                ? 'textarea'
+                : q.type === 'multiple_choice'
+                  ? 'select'
+                  : 'text',
+            options: q.options,
           })
         );
 
@@ -181,6 +196,17 @@ export default function ClarificationFlow({
             Please go back and try with a more detailed idea.
           </p>
         </Alert>
+      </div>
+    );
+  }
+
+  if (!currentQuestion) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="flex flex-col items-center justify-center py-12">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-600 text-sm">Loading question...</p>
+        </div>
       </div>
     );
   }
