@@ -61,8 +61,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
       const savedIdea = await dbService.createIdea(newIdea);
 
       onSubmit(idea.trim(), savedIdea.id);
-    } catch (err) {
-      console.error('Error saving idea:', err);
+    } catch (_err) {
       setError('Failed to save your idea. Please try again.');
     } finally {
       setIsSubmitting(false);

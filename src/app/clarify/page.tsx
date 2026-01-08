@@ -46,8 +46,7 @@ export default function ClarifyPage() {
 
       // In a real app, this would navigate to the results page
       // For now, we'll just show the completion message
-    } catch (err) {
-      console.error('Error storing clarification answers:', err);
+    } catch (_err) {
       setError('Failed to save your answers. Please try again.');
     }
   };

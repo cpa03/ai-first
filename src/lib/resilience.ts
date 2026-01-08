@@ -1,3 +1,7 @@
+import { createLogger } from './logger';
+
+const logger = createLogger('Resilience');
+
 export interface RetryOptions {
   maxRetries?: number;
   baseDelay?: number;
@@ -103,8 +107,8 @@ export class CircuitBreaker {
     this.state.lastFailureTime = _now;
 
     if (this.state.failures >= this.options.failureThreshold) {
-      console.log(
-        `[DEBUG] Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+      logger.debug(
+        `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
       );
       this.state.state = 'open';
       this.state.nextAttemptTime = _now + this.options.resetTimeout;

@@ -2,6 +2,9 @@ import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
+import { createLogger } from './logger';
+
+const logger = createLogger('AIService');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
@@ -198,7 +201,7 @@ class AIService {
       try {
         context = JSON.parse(cachedContext);
       } catch (error) {
-        console.error('Failed to parse cached context:', error);
+        logger.error('Failed to parse cached context:', error);
       }
     } else {
       const { data: existingContext } = await this.supabase
@@ -382,7 +385,7 @@ class AIService {
         await this.openai.models.list();
         providers.push('openai');
       } catch (error) {
-        console.error('OpenAI health check failed:', error);
+        logger.error('OpenAI health check failed:', error);
       }
     }
 

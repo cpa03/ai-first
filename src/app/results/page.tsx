@@ -38,7 +38,6 @@ export default function ResultsPage() {
         setIdea(ideaData);
         setSession(sessionData);
       } catch (err) {
-        console.error('Error fetching results:', err);
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );
@@ -118,7 +117,6 @@ export default function ResultsPage() {
         throw new Error(result.error || 'Export failed');
       }
     } catch (err) {
-      console.error('Export error:', err);
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setExportLoading(false);

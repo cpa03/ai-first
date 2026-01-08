@@ -1,5 +1,8 @@
 import { ExportConnector, ExportResult } from './base';
 import { TIMEOUT_CONFIG } from '../config/constants';
+import { createLogger } from '../logger';
+
+const logger = createLogger('NotionExporter');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -80,7 +83,7 @@ export class NotionExporter extends ExportConnector {
         id: response.id,
       };
     } catch (_error) {
-      console.error('Unknown export error:', _error);
+      logger.error('Unknown export error:', _error);
       return {
         success: false,
         error: _error instanceof Error ? _error.message : 'Unknown error',
