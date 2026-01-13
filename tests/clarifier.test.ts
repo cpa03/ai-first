@@ -146,8 +146,6 @@ describe('ClarifierAgent', () => {
       mockDbService.storeVector.mockResolvedValue({} as any);
       mockDbService.logAgentAction.mockResolvedValue(undefined);
 
-      jest.spyOn(clarifierAgent, 'getSession').mockResolvedValue(mockSession);
-
       const updatedSession = await clarifierAgent.submitAnswer(
         'idea-123',
         'q_1',
@@ -160,7 +158,7 @@ describe('ClarifierAgent', () => {
     });
 
     it('should throw error if session not found', async () => {
-      jest.spyOn(clarifierAgent, 'getSession').mockResolvedValue(null);
+      mockDbService.getVectors.mockResolvedValue([]);
 
       await expect(
         clarifierAgent.submitAnswer('idea-123', 'q_1', 'Test answer')
@@ -191,7 +189,11 @@ describe('ClarifierAgent', () => {
       const { aiService } = require('@/lib/ai');
       aiService.callModel.mockResolvedValue('Refined idea description');
 
-      jest.spyOn(clarifierAgent, 'getSession').mockResolvedValue(mockSession);
+      mockDbService.getVectors.mockResolvedValue([
+        {
+          vector_data: mockSession,
+        } as any,
+      ]);
       mockDbService.storeVector.mockResolvedValue({} as any);
       mockDbService.updateIdea.mockResolvedValue({} as any);
       mockDbService.logAgentAction.mockResolvedValue(undefined);
@@ -225,7 +227,11 @@ describe('ClarifierAgent', () => {
         updatedAt: new Date(),
       };
 
-      jest.spyOn(clarifierAgent, 'getSession').mockResolvedValue(mockSession);
+      mockDbService.getVectors.mockResolvedValue([
+        {
+          vector_data: mockSession,
+        } as any,
+      ]);
 
       await expect(
         clarifierAgent.completeClarification('idea-123')

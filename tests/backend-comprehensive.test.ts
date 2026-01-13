@@ -32,6 +32,9 @@ import {
 // Mock environment variables
 Object.assign(process.env, mockEnvVars);
 
+// Mock window to be undefined (server-side)
+delete (global as any).window;
+
 // Get mocked constructors
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
@@ -161,7 +164,7 @@ describe('Backend Service Tests', () => {
         created_at: new Date().toISOString(),
       };
 
-      mockSupabase.from().insert().mockResolvedValue({
+      mockSupabase.mockInsert.mockResolvedValue({
         data: mockIdea,
         error: null,
       });
@@ -180,7 +183,7 @@ describe('Backend Service Tests', () => {
 
     it('should handle database errors', async () => {
       const mockError = { message: 'Database error' };
-      mockSupabase.from().insert().mockResolvedValue({
+      mockSupabase.mockInsert.mockResolvedValue({
         data: null,
         error: mockError,
       });
@@ -203,7 +206,7 @@ describe('Backend Service Tests', () => {
         content: 'Test idea',
       };
 
-      mockSupabase.from().select().eq().single().mockResolvedValue({
+      mockSupabase.mockSingle.mockResolvedValue({
         data: mockIdea,
         error: null,
       });
@@ -221,13 +224,10 @@ describe('Backend Service Tests', () => {
         status: 'active',
       };
 
-      mockSupabase
-        .from()
-        .insert()
-        .mockResolvedValue({
-          data: [mockSession],
-          error: null,
-        });
+      mockSupabase.mockInsert.mockResolvedValue({
+        data: [mockSession],
+        error: null,
+      });
 
       const dbService = DatabaseService.getInstance();
       const result = await dbService.createClarificationSession('idea-id');
@@ -241,7 +241,7 @@ describe('Backend Service Tests', () => {
         error: null,
       };
 
-      mockSupabase.from().insert().mockResolvedValue(mockAnswers);
+      mockSupabase.mockInsert.mockResolvedValue(mockAnswers);
 
       const dbService = DatabaseService.getInstance();
       const result = await dbService.saveAnswers('session-id', {
@@ -253,7 +253,7 @@ describe('Backend Service Tests', () => {
   });
 
   describe('ExportService', () => {
-    let exportService: InstanceType<typeof ExportService>;
+    let exportService: any;
 
     beforeEach(() => {
       exportService = new ExportService();
@@ -302,9 +302,17 @@ describe('Backend Service Tests', () => {
     });
 
     it('should fail Notion export without API key', async () => {
+      // Save original environment variable
+      const originalKey = process.env.NOTION_API_KEY;
       delete process.env.NOTION_API_KEY;
 
       const exportService = new ExportService();
+
+      // Restore environment variable after service is created
+      if (originalKey) {
+        process.env.NOTION_API_KEY = originalKey;
+      }
+
       const result = await exportService.exportToNotion({
         idea: {
           id: 'test-idea',
@@ -364,11 +372,21 @@ describe('Backend Service Tests', () => {
   });
 
   describe('ClarifierAgent', () => {
-    let clarifierAgent: ClarifierAgent;
+    let clarifierAgent: InstanceType<typeof ClarifierAgent>;
 
-    beforeEach(() => {
+    beforeEach(async () => {
       clarifierAgent = new ClarifierAgent();
+
       // Mock AI service dependency
+      clarifierAgent.aiService = {
+        callModel: jest.fn(),
+        initialize: jest.fn().mockResolvedValue(undefined),
+      } as any;
+
+      // Initialize the agent to set up modules
+      await clarifierAgent.initialize();
+
+      // Re-mock AI service after initialize
       clarifierAgent.aiService = {
         callModel: jest.fn(),
         initialize: jest.fn().mockResolvedValue(undefined),

@@ -17,46 +17,66 @@ export const mockEnvVars = {
 };
 
 // Mock Supabase client
-export const createMockSupabaseClient = () => ({
-  from: jest.fn(() => ({
-    insert: jest.fn().mockResolvedValue({
-      data: [{ id: 'test-id', created_at: new Date().toISOString() }],
-      error: null,
-    }),
-    select: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        single: jest.fn().mockResolvedValue({
-          data: { id: 'test-id', content: 'test-content' },
-          error: null,
-        }),
-        data: [{ id: 'test-id', content: 'test-content' }],
-        error: null,
-      })),
-      order: jest.fn(() => ({
-        data: [],
-        error: null,
-      })),
+export const createMockSupabaseClient = () => {
+  const mockInsert = jest.fn().mockResolvedValue({
+    data: [{ id: 'test-id', created_at: new Date().toISOString() }],
+    error: null,
+  });
+  const mockSingle = jest.fn().mockResolvedValue({
+    data: { id: 'test-id', content: 'test-content' },
+    error: null,
+  });
+  const mockEq = jest.fn(() => ({
+    single: mockSingle,
+  }));
+  const mockSelect = jest.fn(() => ({
+    eq: mockEq,
+    data: [{ id: 'test-id', content: 'test-content' }],
+    error: null,
+  }));
+  const mockOrder = jest.fn(() => ({
+    data: [],
+    error: null,
+  }));
+  const mockUpdateEq = jest.fn().mockResolvedValue({
+    data: { id: 'test-id', updated: true },
+    error: null,
+  });
+  const mockUpdate = jest.fn(() => ({
+    eq: mockUpdateEq,
+  }));
+  const mockDeleteEq = jest.fn().mockResolvedValue({
+    data: null,
+    error: null,
+  });
+  const mockDelete = jest.fn(() => ({
+    eq: mockDeleteEq,
+  }));
+
+  return {
+    from: jest.fn(() => ({
+      insert: mockInsert,
+      select: mockSelect,
+      update: mockUpdate,
+      delete: mockDelete,
     })),
-    update: jest.fn(() => ({
-      eq: jest.fn().mockResolvedValue({
-        data: { id: 'test-id', updated: true },
+    mockInsert,
+    mockSelect,
+    mockEq,
+    mockSingle,
+    mockUpdateEq,
+    mockOrder,
+    mockUpdate,
+    mockDeleteEq,
+    mockDelete,
+    auth: {
+      getUser: jest.fn().mockResolvedValue({
+        data: { user: { id: 'test-user-id' } },
         error: null,
       }),
-    })),
-    delete: jest.fn(() => ({
-      eq: jest.fn().mockResolvedValue({
-        data: null,
-        error: null,
-      }),
-    })),
-  })),
-  auth: {
-    getUser: jest.fn().mockResolvedValue({
-      data: { user: { id: 'test-user-id' } },
-      error: null,
-    }),
-  },
-});
+    },
+  };
+};
 
 // Mock OpenAI responses
 export const mockOpenAIResponses = {
