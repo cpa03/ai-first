@@ -1,37 +1,19 @@
-import { aiService, AIModelConfig } from '@/lib/ai';
+import { AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
-import { promptService } from '@/lib/prompt-service';
-import {
-  safeJsonParse,
-  isArrayOf,
-  isClarifierQuestion,
-} from '@/lib/validation';
 import { createLogger } from '@/lib/logger';
+import {
+  QuestionGenerator,
+  IdeaRefiner,
+  SessionManager,
+  ConfidenceCalculator,
+} from './clarifier-engine';
+import type {
+  ClarificationSession,
+  ClarifierQuestion,
+} from './clarifier-engine';
 
 const logger = createLogger('ClarifierAgent');
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export interface ClarifierQuestion {
-  id: string;
-  question: string;
-  type: 'open' | 'multiple_choice' | 'yes_no';
-  options?: string[];
-  required: boolean;
-}
-
-export interface ClarificationSession {
-  ideaId: string;
-  originalIdea: string;
-  questions: ClarifierQuestion[];
-  answers: Record<string, string>;
-  confidence: number;
-  refinedIdea?: string;
-  status: 'pending' | 'in_progress' | 'completed';
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 export interface ClarifierConfig extends AgentConfig {
   functions: Array<{
@@ -47,7 +29,10 @@ export interface ClarifierConfig extends AgentConfig {
 export class ClarifierAgent {
   private config: ClarifierConfig | null = null;
   private aiConfig: AIModelConfig | null = null;
-  public aiService = aiService;
+  private questionGenerator: QuestionGenerator | null = null;
+  private ideaRefiner: IdeaRefiner | null = null;
+  private sessionManager: SessionManager | null = null;
+  private confidenceCalculator: ConfidenceCalculator | null = null;
 
   constructor() {
     this.config =
@@ -60,7 +45,12 @@ export class ClarifierAgent {
       throw new Error('AI configuration not loaded');
     }
 
-    await aiService.initialize(this.aiConfig);
+    await this.questionGenerator?.aiService.initialize(this.aiConfig);
+
+    this.questionGenerator = new QuestionGenerator(this.aiConfig);
+    this.ideaRefiner = new IdeaRefiner(this.aiConfig);
+    this.sessionManager = new SessionManager();
+    this.confidenceCalculator = new ConfidenceCalculator();
   }
 
   async startClarification(
@@ -68,29 +58,25 @@ export class ClarifierAgent {
     ideaText: string
   ): Promise<ClarificationSession> {
     try {
-      // Log agent action
       await dbService.logAgentAction('clarifier', 'start-clarification', {
         ideaId,
         ideaText: ideaText.substring(0, 100) + '...',
       });
 
-      // Generate clarifying questions using AI
-      const questions = await this.generateQuestions(ideaText);
+      const questions = await this.questionGenerator!.generate(ideaText);
 
-      // Create clarification session
       const session: ClarificationSession = {
         ideaId,
         originalIdea: ideaText,
         questions,
         answers: {},
-        confidence: 0.5, // Initial confidence
+        confidence: 0.5,
         status: 'pending',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      // Store session in database
-      await this.storeSession(session);
+      await this.sessionManager!.store(session);
 
       return session;
     } catch (error) {
@@ -102,106 +88,28 @@ export class ClarifierAgent {
     }
   }
 
-  async generateQuestions(ideaText: string): Promise<ClarifierQuestion[]> {
-    if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
-    }
-
-    const prompt = promptService.getUserPrompt(
-      'clarifier',
-      'generate-questions',
-      {
-        idea: ideaText,
-      }
-    );
-
-    try {
-      const messages = [
-        {
-          role: 'system' as const,
-          content: promptService.getSystemPrompt(
-            'clarifier',
-            'generate-questions'
-          ),
-        },
-        { role: 'user' as const, content: prompt },
-      ];
-
-      const response = await aiService.callModel(messages, this.aiConfig);
-
-      // Parse JSON response with validation
-      const questionsData = safeJsonParse<ClarifierQuestion[]>(
-        response,
-        [],
-        (data): data is ClarifierQuestion[] =>
-          isArrayOf(data, isClarifierQuestion)
-      );
-
-      // Validate and format questions
-      return questionsData.map((q, index: number) => ({
-        id: q.id || `q_${index + 1}`,
-        question: q.question || `Question ${index + 1}`,
-        type: q.type || 'open',
-        options: q.options || [],
-        required: q.required !== false, // Default to true
-      })) as ClarifierQuestion[];
-    } catch (error) {
-      logger.error('Failed to generate questions', error);
-
-      // Fallback questions
-      return [
-        {
-          id: 'q_1',
-          question:
-            'What is the main problem you are trying to solve with this idea?',
-          type: 'open' as const,
-          required: true,
-        },
-        {
-          id: 'q_2',
-          question: 'Who is the target audience for this solution?',
-          type: 'open' as const,
-          required: true,
-        },
-        {
-          id: 'q_3',
-          question: 'What are the key features or functionality you envision?',
-          type: 'open' as const,
-          required: true,
-        },
-      ];
-    }
-  }
-
   async submitAnswer(
     ideaId: string,
     questionId: string,
     answer: string
   ): Promise<ClarificationSession> {
     try {
-      // Get current session
-      const session = await this.getSession(ideaId);
+      const session = await this.sessionManager!.get(ideaId);
       if (!session) {
         throw new Error('Clarification session not found');
       }
 
-      // Update answer
       session.answers[questionId] = answer;
       session.status = 'in_progress';
       session.updatedAt = new Date();
 
-      // Calculate confidence based on answered questions
-      const answeredQuestions = Object.keys(session.answers).length;
-      const totalQuestions = session.questions.length;
-      session.confidence = Math.min(
-        0.9,
-        0.3 + (answeredQuestions / totalQuestions) * 0.6
+      session.confidence = this.confidenceCalculator!.calculateFromAnswers(
+        session.answers,
+        session.questions.length
       );
 
-      // Store updated session
-      await this.storeSession(session);
+      await this.sessionManager!.store(session);
 
-      // Log agent action
       await dbService.logAgentAction('clarifier', 'answer-submitted', {
         ideaId,
         questionId,
@@ -223,12 +131,11 @@ export class ClarifierAgent {
     ideaId: string
   ): Promise<ClarificationSession & { refinedIdea: string }> {
     try {
-      const session = await this.getSession(ideaId);
+      const session = await this.sessionManager!.get(ideaId);
       if (!session) {
         throw new Error('Clarification session not found');
       }
 
-      // Check if all required questions are answered
       const unansweredRequired = session.questions.filter(
         (q) => q.required && !session.answers[q.id]
       );
@@ -239,22 +146,17 @@ export class ClarifierAgent {
         );
       }
 
-      // Generate refined idea based on answers
-      const refinedIdea = await this.generateRefinedIdea(session);
+      const refinedIdea = await this.ideaRefiner!.refine(session);
 
-      // Update session
       session.refinedIdea = refinedIdea;
       session.status = 'completed';
       session.confidence = 0.9;
       session.updatedAt = new Date();
 
-      // Store updated session
-      await this.storeSession(session);
+      await this.sessionManager!.store(session);
 
-      // Update idea status in database
       await dbService.updateIdea(ideaId, { status: 'clarified' });
 
-      // Log agent action
       await dbService.logAgentAction('clarifier', 'clarification-completed', {
         ideaId,
         questionsAnswered: Object.keys(session.answers).length,
@@ -275,125 +177,40 @@ export class ClarifierAgent {
     }
   }
 
-  async generateRefinedIdea(session: ClarificationSession): Promise<string> {
-    if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
-    }
-
-    const answersText = Object.entries(session.answers)
-      .map(([questionId, answer]) => {
-        const question = session.questions.find((q) => q.id === questionId);
-        return `Q: ${question?.question || 'Unknown question'}\nA: ${answer}`;
-      })
-      .join('\n\n');
-
-    const prompt = promptService.getUserPrompt('clarifier', 'refine-idea', {
-      originalIdea: session.originalIdea,
-      answers: answersText,
-    });
-
-    try {
-      const messages = [
-        {
-          role: 'system' as const,
-          content: promptService.getSystemPrompt('clarifier', 'refine-idea'),
-        },
-        { role: 'user' as const, content: prompt },
-      ];
-
-      const response = await aiService.callModel(messages, this.aiConfig);
-      return response.trim();
-    } catch (error) {
-      logger.error('Failed to generate refined idea', error);
-
-      // Fallback: combine original idea with answers
-      return `${session.originalIdea}\n\nAdditional Details:\n${answersText}`;
-    }
-  }
-
-  private async storeSession(session: ClarificationSession): Promise<void> {
-    // Store session data in vectors table for flexibility
-    await dbService.storeVector({
-      idea_id: session.ideaId,
-      vector_data: session as unknown as Record<string, unknown>,
-      reference_type: 'clarification_session',
-      reference_id: session.ideaId,
-    });
-  }
-
   async getSession(ideaId: string): Promise<ClarificationSession | null> {
-    try {
-      const vectors = await dbService.getVectors(
-        ideaId,
-        'clarification_session'
-      );
-
-      if (vectors.length === 0) {
-        return null;
-      }
-
-      const sessionData = vectors[0]
-        .vector_data as unknown as ClarificationSession;
-
-      // Convert date strings back to Date objects
-      sessionData.createdAt = new Date(sessionData.createdAt);
-      sessionData.updatedAt = new Date(sessionData.updatedAt);
-
-      return sessionData;
-    } catch (error) {
-      logger.error('Failed to get clarification session', error);
-      return null;
-    }
+    return this.sessionManager!.get(ideaId);
   }
 
   async getClarificationHistory(
     userId: string
   ): Promise<Array<{ idea: any; session: ClarificationSession }>> {
-    try {
-      const ideas = await dbService.getUserIdeas(userId);
-
-      if (ideas.length === 0) {
-        return [];
-      }
-
-      const ideaIds = ideas.map((idea: any) => idea.id);
-      const vectors = await dbService.getVectors(
-        ideaIds[0],
-        'clarification_session'
-      );
-
-      const sessionMap = new Map<string, ClarificationSession>();
-      for (const vector of vectors) {
-        const sessionData =
-          vector.vector_data as unknown as ClarificationSession;
-        sessionData.createdAt = new Date(sessionData.createdAt);
-        sessionData.updatedAt = new Date(sessionData.updatedAt);
-        sessionMap.set(vector.idea_id, sessionData);
-      }
-
-      const results = [];
-      for (const idea of ideas) {
-        const session = sessionMap.get(idea.id);
-        if (session) {
-          results.push({ idea, session });
-        }
-      }
-
-      return results;
-    } catch (error) {
-      logger.error('Failed to get clarification history', error);
-      return [];
-    }
+    return this.sessionManager!.getHistory(userId);
   }
 
-  // Health check method
   async healthCheck(): Promise<{ status: string; config: boolean }> {
     return {
       status: 'healthy',
       config: !!this.config,
     };
   }
+
+  get aiService() {
+    if (!this.questionGenerator) {
+      throw new Error(
+        'QuestionGenerator not initialized. Call initialize() first.'
+      );
+    }
+    return this.questionGenerator.aiService;
+  }
+
+  async generateQuestions(ideaText: string): Promise<ClarifierQuestion[]> {
+    return this.questionGenerator!.generate(ideaText);
+  }
+
+  async generateRefinedIdea(session: ClarificationSession): Promise<string> {
+    return this.ideaRefiner!.refine(session);
+  }
 }
 
-// Export singleton instance
+export { ClarifierQuestion, ClarificationSession };
 export const clarifierAgent = new ClarifierAgent();

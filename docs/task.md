@@ -640,6 +640,179 @@ The class (625 lines) handled multiple concerns:
 
 ---
 
+### Task 2: ClarifierAgent Module Extraction - God Class Refactoring ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-13
+
+#### Objectives
+
+- Extract tightly coupled logic from ClarifierAgent (399 lines) into focused modules
+- Apply Single Responsibility Principle (SRP) to improve maintainability
+- Create atomic, replaceable components for each clarification phase
+- Improve testability and modularity
+- Maintain backward compatibility
+
+#### Root Cause Analysis
+
+**Issue**: `ClarifierAgent` violates Single Responsibility Principle
+
+The class (399 lines) handled multiple concerns:
+
+1. Question generation via AI
+2. Session management (store/retrieve/persist)
+3. Answer handling and validation
+4. Confidence calculation
+5. Idea refinement via AI
+6. Configuration management
+
+**Problem**:
+
+- Difficult to test individual components
+- Changes to one concern risk affecting others
+- Hard to reuse logic in other contexts
+- Violates SOLID principles
+
+#### Completed Work
+
+1. **Extracted QuestionGenerator Module** (`src/lib/agents/clarifier-engine/QuestionGenerator.ts`)
+   - Extracted `generateQuestions()` method
+   - Generates clarifying questions via AI
+   - Provides fallback questions on error
+   - 99 lines, focused responsibility
+
+2. **Extracted IdeaRefiner Module** (`src/lib/agents/clarifier-engine/IdeaRefiner.ts`)
+   - Extracted `generateRefinedIdea()` method
+   - Generates refined idea based on answers via AI
+   - Handles fallback logic
+   - 72 lines, focused responsibility
+
+3. **Extracted SessionManager Module** (`src/lib/agents/clarifier-engine/SessionManager.ts`)
+   - Extracted `storeSession()`, `getSession()`, and `getClarificationHistory()` methods
+   - Manages clarification session persistence
+   - Handles database operations for sessions
+   - 96 lines, focused responsibility
+
+4. **Extracted ConfidenceCalculator Module** (`src/lib/agents/clarifier-engine/ConfidenceCalculator.ts`)
+   - Extracted confidence calculation logic from `submitAnswer()`
+   - Computes confidence based on answered questions
+   - 17 lines, focused responsibility
+
+5. **Refactored ClarifierAgent** (`src/lib/agents/clarifier.ts`)
+   - Now acts as orchestrator coordinating extracted modules
+   - Reduced from 399 lines to 216 lines (46% reduction)
+   - Maintains same public interface (backward compatible)
+   - Initialize method creates and wires all module instances
+   - Added backward compatibility methods (generateQuestions, generateRefinedIdea, aiService getter)
+
+6. **Created Module Index** (`src/lib/agents/clarifier-engine/index.ts`)
+   - Centralized exports for easy importing
+   - Exports all modules and their config types
+
+#### Architectural Improvements
+
+**Before**: Monolithic ClarifierAgent (399 lines)
+
+- Multiple responsibilities in single class
+- Difficult to test in isolation
+- Tight coupling between concerns
+
+**After**: Orchestrator Pattern (216 lines + 4 focused modules)
+
+- Each module has single responsibility
+- Easy to test and mock individual modules
+- Modules can be reused independently
+- Changes to one concern isolated from others
+
+#### SOLID Principles Applied
+
+**Single Responsibility Principle (SRP)**:
+
+- Each module handles one specific aspect of clarification process
+- ClarifierAgent only orchestrates workflow
+
+**Open/Closed Principle (OCP)**:
+
+- Easy to add new question generation strategies without modifying existing code
+- New idea refinement algorithms can be added
+
+**Liskov Substitution Principle (LSP)**:
+
+- Module interfaces allow swapping implementations
+- ConfidenceCalculator can be replaced with alternative algorithms
+
+**Interface Segregation Principle (ISP)**:
+
+- Each module has minimal, focused interface
+- No unnecessary dependencies
+
+**Dependency Inversion Principle (DIP)**:
+
+- ClarifierAgent depends on abstractions (module interfaces)
+- Modules can be swapped without changing orchestrator
+
+#### Success Criteria Met
+
+- [x] ClarifierAgent reduced from 399 to 216 lines (46% reduction)
+- [x] 4 focused modules extracted (QuestionGenerator, IdeaRefiner, SessionManager, ConfidenceCalculator)
+- [x] Each module has single responsibility (SRP)
+- [x] Backward compatibility maintained (same public API)
+- [x] Zero breaking changes to existing code
+- [x] Modules are independently testable
+- [x] Clear separation of concerns
+- [x] Type-check passes (0 errors in clarifier files)
+
+#### Files Created
+
+- `src/lib/agents/clarifier-engine/QuestionGenerator.ts` (NEW - 99 lines)
+- `src/lib/agents/clarifier-engine/IdeaRefiner.ts` (NEW - 72 lines)
+- `src/lib/agents/clarifier-engine/SessionManager.ts` (NEW - 96 lines)
+- `src/lib/agents/clarifier-engine/ConfidenceCalculator.ts` (NEW - 17 lines)
+- `src/lib/agents/clarifier-engine/index.ts` (NEW - 6 lines)
+
+#### Files Modified
+
+- `src/lib/agents/clarifier.ts` (REFACTORED - 399 → 216 lines, 46% reduction)
+- `docs/task.md` (UPDATED - this documentation)
+
+#### Impact
+
+**Code Quality**: Significantly Improved
+
+- Reduced cyclomatic complexity
+- Each module < 100 lines (easy to understand)
+- Clear ownership and boundaries
+
+**Maintainability**: Significantly Improved
+
+- Changes to one concern don't affect others
+- Easy to locate and fix bugs
+- Better code organization
+
+**Testability**: Significantly Improved
+
+- Each module can be unit tested independently
+- Easy to mock specific modules
+- Faster test execution
+
+**Developer Experience**: Improved
+
+- Clearer code structure
+- Easier to onboard new developers
+- Better documentation through self-documenting module names
+
+#### Notes
+
+- Extracted modules follow Clean Architecture principles
+- Dependencies flow from orchestrator to modules
+- Modules have no circular dependencies
+- All modules use dependency injection for testability
+- Backward compatibility methods added for smoother transition
+- Public API unchanged ensures zero breaking changes
+
+---
+
 # Integration Engineer Tasks
 
 ### Task 1: API Response Standardization - Health Endpoints ✅ COMPLETE
