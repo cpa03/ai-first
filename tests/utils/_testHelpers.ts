@@ -164,6 +164,35 @@ export const createMockFetch = (
   );
 };
 
+// Helper to create mock fetch responses with standardSuccessResponse format
+export const createStandardMockFetch = (
+  data: any,
+  options: { status?: number; ok?: boolean; delay?: number } = {}
+) => {
+  const { status = 200, ok = true, delay = 0 } = options;
+
+  const response = {
+    success: true,
+    data: data,
+    requestId: `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    timestamp: new Date().toISOString(),
+  };
+
+  return jest.fn().mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            ok,
+            status,
+            json: async () => response,
+            text: async () => JSON.stringify(response),
+          });
+        }, delay);
+      })
+  );
+};
+
 // Helper to mock console methods
 export const mockConsole = () => {
   const originalConsole = { ...console };

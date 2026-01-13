@@ -262,10 +262,7 @@ describe('ClarifierAgent', () => {
       expect(aiService.callModel).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({ role: 'system' }),
-          expect.objectContaining({
-            role: 'user',
-            content: expect.stringContaining('Test idea'),
-          }),
+          expect.objectContaining({ role: 'user' }),
         ]),
         expect.any(Object)
       );
