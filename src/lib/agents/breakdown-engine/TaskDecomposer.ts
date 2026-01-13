@@ -53,7 +53,7 @@ export class TaskDecomposer {
             isArrayOf(data, isTask)
         );
 
-        deliverableTasks.forEach((task: any) => {
+        deliverableTasks.forEach((task: TaskDecomposition['tasks'][0]) => {
           task.deliverableId = deliverable.title;
           tasks.push(task);
           totalHours += task.estimatedHours;

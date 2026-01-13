@@ -9,11 +9,11 @@ import {
   TimelineGenerator,
   SessionManager,
   ConfidenceCalculator,
-} from './breakdown-engine';
+} from './breakdown-engine/index';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const logger = createLogger('BreakdownEngine');
+const _logger = createLogger('BreakdownEngine');
 
 export interface BreakdownConfig extends AgentConfig {
   estimation_model: string;

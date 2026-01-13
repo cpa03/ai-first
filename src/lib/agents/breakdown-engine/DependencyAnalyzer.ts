@@ -1,7 +1,7 @@
 import { createLogger } from '@/lib/logger';
 import { TaskDecomposition, DependencyGraph } from '../breakdown-engine';
 
-const logger = createLogger('DependencyAnalyzer');
+const _logger = createLogger('DependencyAnalyzer');
 
 export class DependencyAnalyzer {
   analyzeDependencies(taskDecomposition: TaskDecomposition): DependencyGraph {

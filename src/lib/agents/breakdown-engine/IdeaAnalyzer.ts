@@ -56,29 +56,58 @@ export class IdeaAnalyzer {
     }
   }
 
-  private validateAnalysis(analysis: any): IdeaAnalysis {
-    if (!analysis.objectives || !Array.isArray(analysis.objectives)) {
-      analysis.objectives = [];
-    }
-    if (!analysis.deliverables || !Array.isArray(analysis.deliverables)) {
-      analysis.deliverables = [];
-    }
-    if (!analysis.complexity) {
-      analysis.complexity = { score: 5, factors: [], level: 'medium' };
-    }
-    if (!analysis.scope) {
-      analysis.scope = { size: 'medium', estimatedWeeks: 8, teamSize: 2 };
-    }
-    if (!analysis.riskFactors || !Array.isArray(analysis.riskFactors)) {
-      analysis.riskFactors = [];
-    }
-    if (!analysis.successCriteria || !Array.isArray(analysis.successCriteria)) {
-      analysis.successCriteria = [];
-    }
-    if (typeof analysis.overallConfidence !== 'number') {
-      analysis.overallConfidence = 0.7;
+  private validateAnalysis(
+    analysis: Partial<IdeaAnalysis> | unknown
+  ): IdeaAnalysis {
+    if (!analysis || typeof analysis !== 'object') {
+      return this.getFallbackAnalysis();
     }
 
-    return analysis as IdeaAnalysis;
+    const typedAnalysis = analysis as Partial<IdeaAnalysis>;
+
+    if (!typedAnalysis.objectives || !Array.isArray(typedAnalysis.objectives)) {
+      typedAnalysis.objectives = [];
+    }
+    if (
+      !typedAnalysis.deliverables ||
+      !Array.isArray(typedAnalysis.deliverables)
+    ) {
+      typedAnalysis.deliverables = [];
+    }
+    if (!typedAnalysis.complexity) {
+      typedAnalysis.complexity = { score: 5, factors: [], level: 'medium' };
+    }
+    if (!typedAnalysis.scope) {
+      typedAnalysis.scope = { size: 'medium', estimatedWeeks: 8, teamSize: 2 };
+    }
+    if (
+      !typedAnalysis.riskFactors ||
+      !Array.isArray(typedAnalysis.riskFactors)
+    ) {
+      typedAnalysis.riskFactors = [];
+    }
+    if (
+      !typedAnalysis.successCriteria ||
+      !Array.isArray(typedAnalysis.successCriteria)
+    ) {
+      typedAnalysis.successCriteria = [];
+    }
+    if (typeof typedAnalysis.overallConfidence !== 'number') {
+      typedAnalysis.overallConfidence = 0.7;
+    }
+
+    return typedAnalysis as IdeaAnalysis;
+  }
+
+  private getFallbackAnalysis(): IdeaAnalysis {
+    return {
+      objectives: [],
+      deliverables: [],
+      complexity: { score: 5, factors: [], level: 'medium' },
+      scope: { size: 'medium', estimatedWeeks: 8, teamSize: 2 },
+      riskFactors: [],
+      successCriteria: [],
+      overallConfidence: 0.7,
+    };
   }
 }

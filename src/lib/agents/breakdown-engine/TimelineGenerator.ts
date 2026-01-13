@@ -6,7 +6,7 @@ import {
   Timeline,
 } from '../breakdown-engine';
 
-const logger = createLogger('TimelineGenerator');
+const _logger = createLogger('TimelineGenerator');
 
 const HOURS_PER_WEEK = 40;
 const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
