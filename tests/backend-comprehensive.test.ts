@@ -118,7 +118,7 @@ describe('Backend Service Tests', () => {
           maxTokens: 1000,
           temperature: 0.7,
         })
-      ).rejects.toThrow('API Error');
+      ).rejects.toThrow('failed after');
     });
 
     it('should retry on failure', async () => {
@@ -260,13 +260,19 @@ describe('Backend Service Tests', () => {
     });
 
     it('should export to markdown successfully', async () => {
-      const mockBlueprint = {
-        title: 'Test Project',
-        description: 'Test Description',
-        phases: [],
+      const mockData = {
+        idea: {
+          id: 'test-idea',
+          title: 'Test Project',
+          raw_text: 'Test Description',
+          status: 'draft' as const,
+          created_at: new Date().toISOString(),
+        },
+        deliverables: [],
+        tasks: [],
       };
 
-      const result = await exportService.exportToMarkdown(mockBlueprint);
+      const result = await exportService.exportToMarkdown(mockData);
 
       expect(result.success).toBe(true);
       expect(result.content).toContain('# Test Project');
@@ -274,12 +280,22 @@ describe('Backend Service Tests', () => {
     });
 
     it('should handle Notion export with API key', async () => {
-      const mockBlueprint = { title: 'Test', phases: [] };
+      const mockData = {
+        idea: {
+          id: 'test-idea',
+          title: 'Test',
+          raw_text: 'Test Description',
+          status: 'draft' as const,
+          created_at: new Date().toISOString(),
+        },
+        deliverables: [],
+        tasks: [],
+      };
 
       // Mock Notion API
       global.fetch = createMockFetch({ id: 'notion-page-id' });
 
-      const result = await exportService.exportToNotion(mockBlueprint);
+      const result = await exportService.exportToNotion(mockData);
 
       expect(result.success).toBe(true);
       expect(result.notionPageId).toBe('notion-page-id');
@@ -290,8 +306,15 @@ describe('Backend Service Tests', () => {
 
       const exportService = new ExportService();
       const result = await exportService.exportToNotion({
-        title: 'Test',
-        phases: [],
+        idea: {
+          id: 'test-idea',
+          title: 'Test',
+          raw_text: 'Test',
+          status: 'draft' as const,
+          created_at: new Date().toISOString(),
+        },
+        deliverables: [],
+        tasks: [],
       });
 
       expect(result.success).toBe(false);
@@ -299,11 +322,21 @@ describe('Backend Service Tests', () => {
     });
 
     it('should handle Trello export with credentials', async () => {
-      const mockBlueprint = { title: 'Test', phases: [] };
+      const mockData = {
+        idea: {
+          id: 'test-idea',
+          title: 'Test',
+          raw_text: 'Test',
+          status: 'draft' as const,
+          created_at: new Date().toISOString(),
+        },
+        deliverables: [],
+        tasks: [],
+      };
 
       global.fetch = createMockFetch({ id: 'trello-board-id' });
 
-      const result = await exportService.exportToTrello(mockBlueprint);
+      const result = await exportService.exportToTrello(mockData);
 
       expect(result.success).toBe(true);
       expect(result.boardId).toBe('trello-board-id');
@@ -314,8 +347,15 @@ describe('Backend Service Tests', () => {
 
       const exportService = new ExportService();
       const result = await exportService.exportToTrello({
-        title: 'Test',
-        phases: [],
+        idea: {
+          id: 'test-idea',
+          title: 'Test',
+          raw_text: 'Test',
+          status: 'draft' as const,
+          created_at: new Date().toISOString(),
+        },
+        deliverables: [],
+        tasks: [],
       });
 
       expect(result.success).toBe(false);

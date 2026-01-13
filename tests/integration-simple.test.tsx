@@ -168,7 +168,7 @@ describe('Integration Tests - Basic', () => {
         </DataProvider>
       );
 
-      expect(screen.getByText(/initial/)).toBeInTheDocument();
+      expect(screen.getAllByText(/initial/)).toHaveLength(2);
 
       const provider = screen.getByTestId('data-provider');
       await user.click(provider);

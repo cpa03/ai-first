@@ -4,7 +4,7 @@ process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 
-import { aiService } from '../src/lib/ai';
+import { aiService, AIService } from '../src/lib/ai';
 import { dbService } from '../src/lib/db';
 import { exportManager } from '../src/lib/exports';
 
@@ -23,6 +23,13 @@ describe('Backend Services', () => {
     });
 
     it('should handle initialization errors gracefully', async () => {
+      // Save current env var
+      const originalKey = process.env.OPENAI_API_KEY;
+
+      // Remove API key to test error handling
+      delete process.env.OPENAI_API_KEY;
+
+      const testService = new AIService();
       const config = {
         provider: 'openai' as const,
         model: 'gpt-3.5-turbo',
@@ -31,9 +38,12 @@ describe('Backend Services', () => {
       };
 
       // Should handle missing API key gracefully
-      await expect(aiService.initialize(config)).rejects.toThrow(
+      await expect(testService.initialize(config)).rejects.toThrow(
         'OpenAI API key not configured'
       );
+
+      // Restore env var
+      process.env.OPENAI_API_KEY = originalKey;
     });
   });
 
@@ -85,16 +95,18 @@ describe('Backend Services', () => {
           id: 'test-idea',
           title: 'Test Project',
           raw_text: 'This is a test project description',
-          status: 'draft',
+          status: 'draft' as const,
           created_at: new Date().toISOString(),
         },
         deliverables: [
           {
             id: 'test-deliverable',
+            idea_id: 'test-idea',
             title: 'Test Deliverable',
             description: 'Test description',
             priority: 1,
             estimate_hours: 8,
+            created_at: new Date().toISOString(),
           },
         ],
         tasks: [
@@ -104,8 +116,9 @@ describe('Backend Services', () => {
             title: 'Test Task',
             description: 'Test task description',
             assignee: 'Test User',
-            status: 'todo',
+            status: 'todo' as const,
             estimate: 2,
+            created_at: new Date().toISOString(),
           },
         ],
       };
