@@ -1,6 +1,6 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import { configurationService } from '@/lib/config-service';
+import { configurationService, AgentConfig } from '@/lib/config-service';
 import { promptService } from '@/lib/prompt-service';
 import {
   safeJsonParse,
@@ -33,18 +33,13 @@ export interface ClarificationSession {
   updatedAt: Date;
 }
 
-export interface ClarifierConfig {
-  name: string;
-  description: string;
-  model: string;
-  temperature: number;
-  max_tokens: number;
+export interface ClarifierConfig extends AgentConfig {
   functions: Array<{
     name: string;
     description: string;
     parameters: {
       type: object;
-      properties: Record<string, any>;
+      properties: Record<string, unknown>;
     };
   }>;
 }

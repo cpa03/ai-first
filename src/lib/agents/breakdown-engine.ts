@@ -1,6 +1,6 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import { configurationService } from '@/lib/config-service';
+import { configurationService, AgentConfig } from '@/lib/config-service';
 import { promptService } from '@/lib/prompt-service';
 import {
   safeJsonParse,
@@ -19,12 +19,7 @@ const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
 const PHASE_PLANNING_RATIO = 0.2;
 const PHASE_DEVELOPMENT_RATIO = 0.8;
 
-export interface BreakdownConfig {
-  name: string;
-  description: string;
-  model: string;
-  temperature: number;
-  max_tokens: number;
+export interface BreakdownConfig extends AgentConfig {
   estimation_model: string;
   dependency_threshold: number;
 }

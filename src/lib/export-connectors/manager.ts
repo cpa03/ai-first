@@ -1,4 +1,9 @@
-import { ExportConnector, ExportResult, ExportFormat } from './base';
+import {
+  ExportConnector,
+  ExportResult,
+  ExportFormat,
+  ExportData,
+} from './base';
 import {
   JSONExporter,
   MarkdownExporter,
@@ -7,6 +12,7 @@ import {
   GoogleTasksExporter,
   GitHubProjectsExporter,
 } from './connectors';
+import { Deliverable, Task, Idea } from '../db';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -61,17 +67,17 @@ export class ExportManager {
   }
 
   async exportToMarkdown(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { content?: string; url?: string }> {
     return await this.export({ type: 'markdown', data });
   }
 
-  async exportToJSON(data: any): Promise<ExportResult> {
+  async exportToJSON(data: ExportData): Promise<ExportResult> {
     return await this.export({ type: 'json', data });
   }
 
   async exportToNotion(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { notionPageId?: string }> {
     return (await this.export({ type: 'notion', data })) as ExportResult & {
       notionPageId?: string;
@@ -79,18 +85,18 @@ export class ExportManager {
   }
 
   async exportToTrello(
-    data: any
+    data: ExportData
   ): Promise<ExportResult & { boardId?: string }> {
     return (await this.export({ type: 'trello', data })) as ExportResult & {
       boardId?: string;
     };
   }
 
-  async exportToGoogleTasks(data: any): Promise<ExportResult> {
+  async exportToGoogleTasks(data: ExportData): Promise<ExportResult> {
     return await this.export({ type: 'google-tasks', data });
   }
 
-  async exportToGitHubProjects(data: any): Promise<ExportResult> {
+  async exportToGitHubProjects(data: ExportData): Promise<ExportResult> {
     return await this.export({ type: 'github-projects', data });
   }
 
@@ -195,30 +201,38 @@ export const IdeaFlowExportSchema = {
 };
 
 export const exportUtils = {
-  normalizeData(idea: any, deliverables: any[] = [], tasks: any[] = []): any {
+  normalizeData(
+    idea: Partial<ExportData['idea']> &
+      Pick<ExportData['idea'], 'id' | 'title' | 'raw_text'>,
+    deliverables: Partial<Deliverable>[] = [],
+    tasks: Partial<Task>[] = []
+  ): ExportData {
     return {
       idea: {
         id: idea.id,
         title: idea.title,
         raw_text: idea.raw_text,
-        status: idea.status,
-        created_at: idea.created_at,
+        created_at: idea.created_at || new Date().toISOString(),
+        status: (idea.status || 'draft') as Idea['status'],
       },
       deliverables: deliverables.map((d) => ({
-        id: d.id,
-        title: d.title,
+        id: d.id || '',
+        idea_id: d.idea_id || idea.id,
+        title: d.title || '',
         description: d.description,
-        priority: d.priority,
-        estimate_hours: d.estimate_hours,
+        priority: d.priority || 50,
+        estimate_hours: d.estimate_hours || 0,
+        created_at: d.created_at || new Date().toISOString(),
       })),
       tasks: tasks.map((t) => ({
-        id: t.id,
-        deliverable_id: t.deliverable_id,
-        title: t.title,
+        id: t.id || '',
+        deliverable_id: t.deliverable_id || '',
+        title: t.title || '',
         description: t.description,
         assignee: t.assignee,
-        status: t.status,
-        estimate: t.estimate,
+        status: (t.status || 'todo') as Task['status'],
+        estimate: t.estimate || 0,
+        created_at: t.created_at || new Date().toISOString(),
       })),
       metadata: {
         exported_at: new Date().toISOString(),
@@ -227,7 +241,7 @@ export const exportUtils = {
     };
   },
 
-  validateExportData(data: any): { valid: boolean; errors: string[] } {
+  validateExportData(data: ExportData): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
     if (!data.idea) {

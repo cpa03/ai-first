@@ -1,14 +1,12 @@
-import { ExportConnector, ExportResult } from './base';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ExportConnector, ExportResult, ExportData } from './base';
 
 export class JSONExporter extends ExportConnector {
   readonly type = 'json';
   readonly name = 'JSON';
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult> {
     try {
       const jsonData = this.generateJSON(data, options);
@@ -37,7 +35,10 @@ export class JSONExporter extends ExportConnector {
     throw new Error('JSON export does not require authentication');
   }
 
-  private generateJSON(data: any, options?: Record<string, any>): string {
+  private generateJSON(
+    data: ExportData,
+    options?: Record<string, unknown>
+  ): string {
     const exportData = {
       ...data,
       metadata: {

@@ -5,10 +5,27 @@ import {
   ResilienceConfig,
 } from '../resilience';
 import { createLogger } from '../logger';
+import { Idea, Deliverable, Task } from '../db';
 
 const logger = createLogger('ExportConnector');
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+export interface ExportData {
+  idea: Omit<Idea, 'user_id'>;
+  deliverables?: Deliverable[];
+  tasks?: Task[];
+  goals?: string[];
+  target_audience?: string;
+  roadmap?: Array<{
+    phase: string;
+    start: string;
+    end: string;
+    deliverables: string[];
+  }>;
+  metadata?: {
+    exported_at: string;
+    version: string;
+  };
+}
 
 export interface ExportFormat {
   type:
@@ -18,8 +35,8 @@ export interface ExportFormat {
     | 'trello'
     | 'google-tasks'
     | 'github-projects';
-  data: any;
-  metadata?: Record<string, any>;
+  data: ExportData;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ExportResult {
@@ -47,8 +64,8 @@ export abstract class ExportConnector {
   abstract readonly name: string;
 
   abstract export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult>;
   abstract validateConfig(): Promise<boolean>;
   abstract getAuthUrl?(): Promise<string>;

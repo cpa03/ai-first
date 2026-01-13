@@ -12,7 +12,7 @@ interface AgentConfig {
   model: string;
   temperature: number;
   max_tokens: number;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 class ConfigurationService {
