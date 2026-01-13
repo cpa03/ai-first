@@ -3,8 +3,6 @@ import { NextResponse } from 'next/server';
 export function middleware() {
   const response = NextResponse.next();
 
-  const isDevelopment = process.env.NODE_ENV !== 'production';
-
   const cspDirectives = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' https://vercel.live",
