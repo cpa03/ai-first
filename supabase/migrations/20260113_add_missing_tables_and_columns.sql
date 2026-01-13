@@ -1,92 +1,48 @@
--- Supabase schema for IdeaFlow project
+-- Migration: Schema Synchronization - Add Missing Tables and Columns
+-- Purpose: Align database schema with TypeScript types in src/types/database.ts
+-- Safe: Non-destructive, adds new columns and tables only
+-- Reversible: Down migration drops new columns and tables
 
--- Enable UUID extension
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- =====================================================
+-- PHASE 1: Add Missing Columns to Existing Tables
+-- =====================================================
 
--- Users table (using Supabase Auth)
--- Note: Supabase Auth provides the users table automatically
+-- Add missing columns to deliverables table
+ALTER TABLE deliverables ADD COLUMN IF NOT EXISTS milestone_id UUID;
+ALTER TABLE deliverables ADD COLUMN IF NOT EXISTS completion_percentage INTEGER DEFAULT 0;
+ALTER TABLE deliverables ADD COLUMN IF NOT EXISTS business_value NUMERIC(10, 2) DEFAULT 0;
+ALTER TABLE deliverables ADD COLUMN IF NOT EXISTS risk_factors TEXT[];
+ALTER TABLE deliverables ADD COLUMN IF NOT EXISTS acceptance_criteria JSONB;
+ALTER TABLE deliverables ADD COLUMN IF NOT EXISTS deliverable_type TEXT
+  CHECK (deliverable_type IN ('feature', 'documentation', 'testing', 'deployment', 'research'));
 
--- Ideas table
-CREATE TABLE ideas (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    user_id UUID REFERENCES auth.users(id),
-    title TEXT NOT NULL,
-    raw_text TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'clarified', 'breakdown', 'completed'))
-);
+-- Add foreign key for milestone_id in deliverables (will be added after milestones table is created)
+-- ALTER TABLE deliverables ADD CONSTRAINT fk_deliverables_milestone
+--   FOREIGN KEY (milestone_id) REFERENCES milestones(id) ON DELETE SET NULL;
 
--- Idea sessions table
-CREATE TABLE idea_sessions (
-    idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
-    state JSONB,
-    last_agent TEXT,
-    metadata JSONB,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    PRIMARY KEY (idea_id)
-);
+-- Add missing columns to tasks table
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS start_date TIMESTAMP WITH TIME ZONE;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS end_date TIMESTAMP WITH TIME ZONE;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS actual_hours NUMERIC(10, 2);
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS completion_percentage INTEGER DEFAULT 0;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS priority_score INTEGER DEFAULT 0;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS complexity_score INTEGER DEFAULT 0;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS risk_level TEXT
+  CHECK (risk_level IN ('low', 'medium', 'high'));
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS tags TEXT[];
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS custom_fields JSONB;
+ALTER TABLE tasks ADD COLUMN IF NOT EXISTS milestone_id UUID;
 
--- Deliverables table
-CREATE TABLE deliverables (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT,
-    priority INTEGER DEFAULT 0,
-    estimate_hours INTEGER DEFAULT 0,
-    milestone_id UUID,
-    completion_percentage INTEGER DEFAULT 0,
-    business_value NUMERIC(10, 2) DEFAULT 0,
-    risk_factors TEXT[],
-    acceptance_criteria JSONB,
-    deliverable_type TEXT DEFAULT 'feature'
-      CHECK (deliverable_type IN ('feature', 'documentation', 'testing', 'deployment', 'research')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- Add foreign key for milestone_id in tasks (will be added after milestones table is created)
+-- ALTER TABLE tasks ADD CONSTRAINT fk_tasks_milestone
+--   FOREIGN KEY (milestone_id) REFERENCES milestones(id) ON DELETE SET NULL;
 
--- Tasks table
-CREATE TABLE tasks (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    deliverable_id UUID REFERENCES deliverables(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT,
-    assignee TEXT,
-    status TEXT DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'completed')),
-    estimate INTEGER DEFAULT 0,
-    start_date TIMESTAMP WITH TIME ZONE,
-    end_date TIMESTAMP WITH TIME ZONE,
-    actual_hours NUMERIC(10, 2),
-    completion_percentage INTEGER DEFAULT 0,
-    priority_score INTEGER DEFAULT 0,
-    complexity_score INTEGER DEFAULT 0,
-    risk_level TEXT DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high')),
-    tags TEXT[],
-    custom_fields JSONB,
-    milestone_id UUID,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Vectors table (for embedding vectors/references)
-CREATE TABLE vectors (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
-    vector_data JSONB,
-    reference_type TEXT,
-    reference_id TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- Agent logs table
-CREATE TABLE agent_logs (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    agent TEXT NOT NULL,
-    action TEXT NOT NULL,
-    payload JSONB,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
+-- =====================================================
+-- PHASE 2: Create Missing Tables
+-- =====================================================
 
 -- Milestones table
-CREATE TABLE milestones (
+CREATE TABLE IF NOT EXISTS milestones (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
     title TEXT NOT NULL,
@@ -100,7 +56,7 @@ CREATE TABLE milestones (
 );
 
 -- Breakdown sessions table
-CREATE TABLE breakdown_sessions (
+CREATE TABLE IF NOT EXISTS breakdown_sessions (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
     session_data JSONB NOT NULL,
@@ -114,7 +70,7 @@ CREATE TABLE breakdown_sessions (
 );
 
 -- Timelines table
-CREATE TABLE timelines (
+CREATE TABLE IF NOT EXISTS timelines (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
     start_date TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -129,7 +85,7 @@ CREATE TABLE timelines (
 );
 
 -- Task dependencies table
-CREATE TABLE task_dependencies (
+CREATE TABLE IF NOT EXISTS task_dependencies (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     predecessor_task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
     successor_task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
@@ -137,11 +93,13 @@ CREATE TABLE task_dependencies (
       CHECK (dependency_type IN ('finish_to_start', 'start_to_start', 'finish_to_finish', 'start_to_finish')),
     lag_days INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    -- Prevent duplicate dependencies between same tasks
     UNIQUE (predecessor_task_id, successor_task_id)
 );
 
 -- Task assignments table
-CREATE TABLE task_assignments (
+CREATE TABLE IF NOT EXISTS task_assignments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL,
@@ -150,11 +108,13 @@ CREATE TABLE task_assignments (
     allocation_percentage INTEGER DEFAULT 100 CHECK (allocation_percentage > 0 AND allocation_percentage <= 100),
     assigned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     assigned_by TEXT,
+
+    -- Prevent duplicate assignments for same task/user/role
     UNIQUE (task_id, user_id, role)
 );
 
 -- Time tracking table
-CREATE TABLE time_tracking (
+CREATE TABLE IF NOT EXISTS time_tracking (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL,
@@ -166,7 +126,7 @@ CREATE TABLE time_tracking (
 );
 
 -- Task comments table
-CREATE TABLE task_comments (
+CREATE TABLE IF NOT EXISTS task_comments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
     user_id TEXT NOT NULL,
@@ -177,7 +137,7 @@ CREATE TABLE task_comments (
 );
 
 -- Risk assessments table
-CREATE TABLE risk_assessments (
+CREATE TABLE IF NOT EXISTS risk_assessments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
     task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
@@ -194,13 +154,70 @@ CREATE TABLE risk_assessments (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Enable Row Level Security (RLS)
-ALTER TABLE ideas ENABLE ROW LEVEL SECURITY;
-ALTER TABLE idea_sessions ENABLE ROW LEVEL SECURITY;
-ALTER TABLE deliverables ENABLE ROW LEVEL SECURITY;
-ALTER TABLE tasks ENABLE ROW LEVEL SECURITY;
-ALTER TABLE vectors ENABLE ROW LEVEL SECURITY;
-ALTER TABLE agent_logs ENABLE ROW LEVEL SECURITY;
+-- =====================================================
+-- PHASE 3: Add Foreign Keys (Now that all tables exist)
+-- =====================================================
+
+-- Add milestone foreign key to deliverables
+ALTER TABLE deliverables DROP CONSTRAINT IF EXISTS fk_deliverables_milestone;
+ALTER TABLE deliverables ADD CONSTRAINT fk_deliverables_milestone
+  FOREIGN KEY (milestone_id) REFERENCES milestones(id) ON DELETE SET NULL;
+
+-- Add milestone foreign key to tasks
+ALTER TABLE tasks DROP CONSTRAINT IF EXISTS fk_tasks_milestone;
+ALTER TABLE tasks ADD CONSTRAINT fk_tasks_milestone
+  FOREIGN KEY (milestone_id) REFERENCES milestones(id) ON DELETE SET NULL;
+
+-- =====================================================
+-- PHASE 4: Add Performance Indexes
+-- =====================================================
+
+-- Milestone indexes
+CREATE INDEX IF NOT EXISTS idx_milestones_idea_id ON milestones(idea_id);
+CREATE INDEX IF NOT EXISTS idx_milestones_status ON milestones(status);
+CREATE INDEX IF NOT EXISTS idx_milestones_target_date ON milestones(target_date);
+CREATE INDEX IF NOT EXISTS idx_milestones_idea_status ON milestones(idea_id, status);
+
+-- Breakdown sessions indexes
+CREATE INDEX IF NOT EXISTS idx_breakdown_sessions_idea_id ON breakdown_sessions(idea_id);
+CREATE INDEX IF NOT EXISTS idx_breakdown_sessions_status ON breakdown_sessions(status);
+CREATE INDEX IF NOT EXISTS idx_breakdown_sessions_idea_status ON breakdown_sessions(idea_id, status);
+
+-- Timeline indexes
+CREATE INDEX IF NOT EXISTS idx_timelines_idea_id ON timelines(idea_id);
+CREATE INDEX IF NOT EXISTS idx_timelines_dates ON timelines(start_date, end_date);
+
+-- Task dependencies indexes
+CREATE INDEX IF NOT EXISTS idx_task_dependencies_predecessor ON task_dependencies(predecessor_task_id);
+CREATE INDEX IF NOT EXISTS idx_task_dependencies_successor ON task_dependencies(successor_task_id);
+
+-- Task assignments indexes
+CREATE INDEX IF NOT EXISTS idx_task_assignments_task_id ON task_assignments(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_assignments_user_id ON task_assignments(user_id);
+CREATE INDEX IF NOT EXISTS idx_task_assignments_task_user ON task_assignments(task_id, user_id);
+
+-- Time tracking indexes
+CREATE INDEX IF NOT EXISTS idx_time_tracking_task_id ON time_tracking(task_id);
+CREATE INDEX IF NOT EXISTS idx_time_tracking_user_id ON time_tracking(user_id);
+CREATE INDEX IF NOT EXISTS idx_time_tracking_date_logged ON time_tracking(date_logged DESC);
+CREATE INDEX IF NOT EXISTS idx_time_tracking_task_date ON time_tracking(task_id, date_logged DESC);
+
+-- Task comments indexes
+CREATE INDEX IF NOT EXISTS idx_task_comments_task_id ON task_comments(task_id);
+CREATE INDEX IF NOT EXISTS idx_task_comments_parent_id ON task_comments(parent_comment_id);
+CREATE INDEX IF NOT EXISTS idx_task_comments_created_at ON task_comments(created_at DESC);
+
+-- Risk assessments indexes
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_idea_id ON risk_assessments(idea_id);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_task_id ON risk_assessments(task_id);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_status ON risk_assessments(status);
+CREATE INDEX IF NOT EXISTS idx_risk_assessments_idea_task ON risk_assessments(idea_id, task_id);
+
+-- =====================================================
+-- PHASE 5: Enable Row Level Security (RLS)
+-- =====================================================
+
+-- Enable RLS on new tables
 ALTER TABLE milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE breakdown_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE timelines ENABLE ROW LEVEL SECURITY;
@@ -209,221 +226,6 @@ ALTER TABLE task_assignments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE time_tracking ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE risk_assessments ENABLE ROW LEVEL SECURITY;
-
--- Create policies for RLS
-CREATE POLICY "Users can view their own ideas" ON ideas
-    FOR SELECT USING (auth.uid() = user_id OR auth.role() = 'service_role');
-
-CREATE POLICY "Users can create their own ideas" ON ideas
-    FOR INSERT WITH CHECK (auth.uid() = user_id OR auth.role() = 'service_role');
-
-CREATE POLICY "Users can update their own ideas" ON ideas
-    FOR UPDATE USING (auth.uid() = user_id OR auth.role() = 'service_role');
-
-CREATE POLICY "Users can delete their own ideas" ON ideas
-    FOR DELETE USING (auth.uid() = user_id OR auth.role() = 'service_role');
-
--- Idea sessions policies
-CREATE POLICY "Users can view their own idea sessions" ON idea_sessions
-    FOR SELECT USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can create their own idea sessions" ON idea_sessions
-    FOR INSERT WITH CHECK (
-        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can update their own idea sessions" ON idea_sessions
-    FOR UPDATE USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can delete their own idea sessions" ON idea_sessions
-    FOR DELETE USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = idea_sessions.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
--- Deliverables policies
-CREATE POLICY "Users can view their own deliverables" ON deliverables
-    FOR SELECT USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can create their own deliverables" ON deliverables
-    FOR INSERT WITH CHECK (
-        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can update their own deliverables" ON deliverables
-    FOR UPDATE USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can delete their own deliverables" ON deliverables
-    FOR DELETE USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = deliverables.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
--- Tasks policies
-CREATE POLICY "Users can view their own tasks" ON tasks
-    FOR SELECT USING (
-        EXISTS (
-            SELECT 1 FROM deliverables d
-            JOIN ideas i ON d.idea_id = i.id
-            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
-        )
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can create their own tasks" ON tasks
-    FOR INSERT WITH CHECK (
-        EXISTS (
-            SELECT 1 FROM deliverables d
-            JOIN ideas i ON d.idea_id = i.id
-            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
-        )
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can update their own tasks" ON tasks
-    FOR UPDATE USING (
-        EXISTS (
-            SELECT 1 FROM deliverables d
-            JOIN ideas i ON d.idea_id = i.id
-            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
-        )
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can delete their own tasks" ON tasks
-    FOR DELETE USING (
-        EXISTS (
-            SELECT 1 FROM deliverables d
-            JOIN ideas i ON d.idea_id = i.id
-            WHERE d.id = tasks.deliverable_id AND i.user_id = auth.uid()
-        )
-        OR auth.role() = 'service_role'
-    );
-
--- Vectors policies
-CREATE POLICY "Users can view their own vectors" ON vectors
-    FOR SELECT USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can create their own vectors" ON vectors
-    FOR INSERT WITH CHECK (
-        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can update their own vectors" ON vectors
-    FOR UPDATE USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
-CREATE POLICY "Users can delete their own vectors" ON vectors
-    FOR DELETE USING (
-        EXISTS (SELECT 1 FROM ideas WHERE id = vectors.idea_id AND user_id = auth.uid())
-        OR auth.role() = 'service_role'
-    );
-
--- Agent logs policies (restricted to service role only for security)
-CREATE POLICY "Only service role can view agent logs" ON agent_logs
-    FOR SELECT USING (auth.role() = 'service_role');
-
-CREATE POLICY "Only service role can create agent logs" ON agent_logs
-    FOR INSERT WITH CHECK (auth.role() = 'service_role');
-
-CREATE POLICY "Only service role can update agent logs" ON agent_logs
-    FOR UPDATE USING (auth.role() = 'service_role');
-
-CREATE POLICY "Only service role can delete agent logs" ON agent_logs
-    FOR DELETE USING (auth.role() = 'service_role');
-
--- Foreign key constraints
-ALTER TABLE deliverables ADD CONSTRAINT fk_deliverables_milestone
-    FOREIGN KEY (milestone_id) REFERENCES milestones(id) ON DELETE SET NULL;
-
-ALTER TABLE tasks ADD CONSTRAINT fk_tasks_milestone
-    FOREIGN KEY (milestone_id) REFERENCES milestones(id) ON DELETE SET NULL;
-
--- Performance indexes for frequently queried columns
-CREATE INDEX idx_ideas_user_id ON ideas(user_id);
-CREATE INDEX idx_ideas_status ON ideas(status);
-CREATE INDEX idx_ideas_user_status ON ideas(user_id, status);
-CREATE INDEX idx_ideas_created_at ON ideas(created_at DESC);
-
-CREATE INDEX idx_deliverables_idea_id ON deliverables(idea_id);
-CREATE INDEX idx_deliverables_priority ON deliverables(priority DESC);
-CREATE INDEX idx_deliverables_idea_priority ON deliverables(idea_id, priority DESC);
-
-CREATE INDEX idx_tasks_deliverable_id ON tasks(deliverable_id);
-CREATE INDEX idx_tasks_status ON tasks(status);
-CREATE INDEX idx_tasks_deliverable_status ON tasks(deliverable_id, status);
-CREATE INDEX idx_tasks_created_at ON tasks(created_at ASC);
-
-CREATE INDEX idx_vectors_idea_id ON vectors(idea_id);
-CREATE INDEX idx_vectors_type ON vectors(reference_type);
-CREATE INDEX idx_vectors_idea_type ON vectors(idea_id, reference_type);
-
-CREATE INDEX idx_agent_logs_timestamp ON agent_logs(timestamp DESC);
-CREATE INDEX idx_agent_logs_agent ON agent_logs(agent);
-CREATE INDEX idx_agent_logs_agent_timestamp ON agent_logs(agent, timestamp DESC);
-
--- Milestone indexes
-CREATE INDEX idx_milestones_idea_id ON milestones(idea_id);
-CREATE INDEX idx_milestones_status ON milestones(status);
-CREATE INDEX idx_milestones_target_date ON milestones(target_date);
-CREATE INDEX idx_milestones_idea_status ON milestones(idea_id, status);
-
--- Breakdown sessions indexes
-CREATE INDEX idx_breakdown_sessions_idea_id ON breakdown_sessions(idea_id);
-CREATE INDEX idx_breakdown_sessions_status ON breakdown_sessions(status);
-CREATE INDEX idx_breakdown_sessions_idea_status ON breakdown_sessions(idea_id, status);
-
--- Timeline indexes
-CREATE INDEX idx_timelines_idea_id ON timelines(idea_id);
-CREATE INDEX idx_timelines_dates ON timelines(start_date, end_date);
-
--- Task dependencies indexes
-CREATE INDEX idx_task_dependencies_predecessor ON task_dependencies(predecessor_task_id);
-CREATE INDEX idx_task_dependencies_successor ON task_dependencies(successor_task_id);
-
--- Task assignments indexes
-CREATE INDEX idx_task_assignments_task_id ON task_assignments(task_id);
-CREATE INDEX idx_task_assignments_user_id ON task_assignments(user_id);
-CREATE INDEX idx_task_assignments_task_user ON task_assignments(task_id, user_id);
-
--- Time tracking indexes
-CREATE INDEX idx_time_tracking_task_id ON time_tracking(task_id);
-CREATE INDEX idx_time_tracking_user_id ON time_tracking(user_id);
-CREATE INDEX idx_time_tracking_date_logged ON time_tracking(date_logged DESC);
-CREATE INDEX idx_time_tracking_task_date ON time_tracking(task_id, date_logged DESC);
-
--- Task comments indexes
-CREATE INDEX idx_task_comments_task_id ON task_comments(task_id);
-CREATE INDEX idx_task_comments_parent_id ON task_comments(parent_comment_id);
-CREATE INDEX idx_task_comments_created_at ON task_comments(created_at DESC);
-
--- Risk assessments indexes
-CREATE INDEX idx_risk_assessments_idea_id ON risk_assessments(idea_id);
-CREATE INDEX idx_risk_assessments_task_id ON risk_assessments(task_id);
-CREATE INDEX idx_risk_assessments_status ON risk_assessments(status);
-CREATE INDEX idx_risk_assessments_idea_task ON risk_assessments(idea_id, task_id);
-
--- RLS policies for new tables
 
 -- Milestone policies
 CREATE POLICY "Users can view their own milestones" ON milestones
