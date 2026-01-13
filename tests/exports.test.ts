@@ -536,8 +536,11 @@ describe('Export Services', () => {
 
         expect(result.deliverables).toHaveLength(1);
         expect(result.tasks).toHaveLength(1);
-        expect(result.deliverables[0]).toEqual(deliverables[0]);
-        expect(result.tasks[0]).toEqual(tasks[0]);
+        expect(result.deliverables[0]).toMatchObject(deliverables[0]);
+        expect(result.tasks[0]).toMatchObject(tasks[0]);
+        expect(result.deliverables[0]).toHaveProperty('created_at');
+        expect(result.deliverables[0]).toHaveProperty('idea_id', '1');
+        expect(result.tasks[0]).toHaveProperty('created_at');
       });
     });
 
