@@ -94,9 +94,9 @@ describe('middleware - unit tests for internal logic', () => {
       const matcher = '/((?!api|_next/static|_next/image|favicon.ico).*)';
 
       expect(matcher).toContain('?!api');
-      expect(matcher).toContain('!_next/static');
-      expect(matcher).toContain('!_next/image');
-      expect(matcher).toContain('!favicon.ico');
+      expect(matcher).toContain('_next/static');
+      expect(matcher).toContain('_next/image');
+      expect(matcher).toContain('favicon.ico');
     });
   });
 });
