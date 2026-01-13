@@ -1,4 +1,7 @@
 import { SupabaseClient } from '@supabase/supabase-js';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('BaseRepository');
 
 export abstract class BaseRepository {
   protected client: SupabaseClient | null;
@@ -22,7 +25,7 @@ export abstract class BaseRepository {
   }
 
   protected handleError(error: unknown, operation: string): never {
-    this.logger.error(`Error in ${operation}`, { error });
+    logger.error(`Error in ${operation}`, { error });
     throw error;
   }
 }

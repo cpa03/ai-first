@@ -8,7 +8,7 @@ export class ConfidenceCalculator {
   }
 
   calculateFromAnswers(
-    answers: Record<string, any>,
+    answers: Record<string, string>,
     totalQuestions: number
   ): number {
     const answeredCount = Object.keys(answers).length;

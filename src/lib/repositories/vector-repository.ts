@@ -52,6 +52,29 @@ export class VectorRepository extends BaseRepository {
     return data || [];
   }
 
+  async getVectorsBatch(
+    ideaIds: string[],
+    referenceType?: string
+  ): Promise<Vector[]> {
+    this.checkClient();
+
+    let query = this.client!.from('vectors').select('*').in('idea_id', ideaIds);
+
+    if (referenceType) {
+      query = query.eq('reference_type', referenceType);
+    }
+
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
+
+    if (error) {
+      this.handleError(error, 'getVectorsBatch');
+    }
+
+    return data || [];
+  }
+
   async deleteVector(id: string): Promise<void> {
     this.checkClient();
 

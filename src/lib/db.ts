@@ -154,6 +154,13 @@ export class DatabaseService {
     return this.vectorRepo.getVectors(ideaId, referenceType);
   }
 
+  async getVectorsBatch(
+    ideaIds: string[],
+    referenceType?: string
+  ): Promise<Vector[]> {
+    return this.vectorRepo.getVectorsBatch(ideaIds, referenceType);
+  }
+
   async deleteVector(id: string): Promise<void> {
     return this.vectorRepo.deleteVector(id);
   }

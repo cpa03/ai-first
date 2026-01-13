@@ -1,7 +1,6 @@
 import { AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
-import { createLogger } from '@/lib/logger';
 import {
   QuestionGenerator,
   IdeaRefiner,
@@ -12,8 +11,7 @@ import type {
   ClarificationSession,
   ClarifierQuestion,
 } from './clarifier-engine';
-
-const logger = createLogger('ClarifierAgent');
+import type { Idea } from '@/lib/repositories';
 
 export interface ClarifierConfig extends AgentConfig {
   functions: Array<{
@@ -183,7 +181,7 @@ export class ClarifierAgent {
 
   async getClarificationHistory(
     userId: string
-  ): Promise<Array<{ idea: any; session: ClarificationSession }>> {
+  ): Promise<Array<{ idea: Idea; session: ClarificationSession }>> {
     return this.sessionManager!.getHistory(userId);
   }
 
@@ -201,6 +199,12 @@ export class ClarifierAgent {
       );
     }
     return this.questionGenerator.aiService;
+  }
+
+  set aiService(value) {
+    if (this.questionGenerator) {
+      this.questionGenerator.aiService = value;
+    }
   }
 
   async generateQuestions(ideaText: string): Promise<ClarifierQuestion[]> {

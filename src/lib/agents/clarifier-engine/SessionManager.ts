@@ -1,12 +1,14 @@
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
+import type { ClarifierQuestion } from './QuestionGenerator';
+import type { Idea } from '@/lib/repositories';
 
 const logger = createLogger('ClarifierSessionManager');
 
 export interface ClarificationSession {
   ideaId: string;
   originalIdea: string;
-  questions: any[];
+  questions: ClarifierQuestion[];
   answers: Record<string, string>;
   confidence: number;
   refinedIdea?: string;
@@ -56,7 +58,7 @@ export class SessionManager {
 
   async getHistory(
     userId: string
-  ): Promise<Array<{ idea: any; session: ClarificationSession }>> {
+  ): Promise<Array<{ idea: Idea; session: ClarificationSession }>> {
     try {
       const ideas = await dbService.getUserIdeas(userId);
 
@@ -64,9 +66,9 @@ export class SessionManager {
         return [];
       }
 
-      const ideaIds = ideas.map((idea: any) => idea.id);
-      const vectors = await dbService.getVectors(
-        ideaIds[0],
+      const ideaIds = ideas.map((idea: Idea) => idea.id);
+      const vectors = await dbService.getVectorsBatch(
+        ideaIds,
         'clarification_session'
       );
 

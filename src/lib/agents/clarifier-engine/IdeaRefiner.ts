@@ -1,13 +1,14 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { promptService } from '@/lib/prompt-service';
 import { createLogger } from '@/lib/logger';
+import type { ClarifierQuestion } from './QuestionGenerator';
 
 const logger = createLogger('IdeaRefiner');
 
 export interface ClarificationSession {
   ideaId: string;
   originalIdea: string;
-  questions: any[];
+  questions: ClarifierQuestion[];
   answers: Record<string, string>;
   confidence: number;
   refinedIdea?: string;
