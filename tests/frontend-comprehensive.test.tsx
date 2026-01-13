@@ -465,9 +465,12 @@ describe('Frontend Component Tests', () => {
     });
 
     it('provides copy to clipboard functionality', async () => {
-      Object.assign(navigator, {
-        clipboard: {
-          writeText: jest.fn().mockResolvedValue(undefined),
+      // Mock clipboard API using spyOn
+      const mockWriteText = jest.fn().mockResolvedValue(undefined);
+      Object.defineProperty(navigator, 'clipboard', {
+        writable: true,
+        value: {
+          writeText: mockWriteText,
         },
       });
 
@@ -481,7 +484,7 @@ describe('Frontend Component Tests', () => {
       const copyButton = screen.getByRole('button', { name: /copy/i });
       await user.click(copyButton);
 
-      expect(navigator.clipboard.writeText).toHaveBeenCalled();
+      expect(mockWriteText).toHaveBeenCalled();
       expect(screen.getByText(/copied to clipboard/i)).toBeInTheDocument();
     });
   });
