@@ -1989,7 +1989,186 @@ curl https://api.example.com/api/health/detailed | jq '.checks.circuitBreakers'
 4. If false positive: Reset circuit breaker
 5. If actual outage: Enable fallback, notify team
 
-### Git Branch Management
+### God Class Refactoring
+
+### Identifying God Classes
+
+God classes violate the Single Responsibility Principle and are characterized by:
+
+- **Large file size** (> 400 lines)
+- **Multiple responsibilities** (mixing different concerns)
+- **High complexity** (many methods, deep nesting)
+- **Difficult to test** (hard to isolate behaviors)
+- **High coupling** (changes in one area affect others)
+
+### Anti-Patterns
+
+❌ **Don't Do This**:
+
+```typescript
+// God class - 600+ lines, multiple concerns
+class BreakdownEngine {
+  // Idea analysis responsibility
+  private async analyzeIdea(...) { ... }
+
+  // Task decomposition responsibility
+  private async decomposeTasks(...) { ... }
+
+  // Dependency analysis responsibility
+  private async analyzeDependencies(...) { ... }
+
+  // Timeline generation responsibility
+  private async generateTimeline(...) { ... }
+
+  // Session management responsibility
+  private async storeSession(...) { ... }
+
+  // Database persistence responsibility
+  private async persistResults(...) { ... }
+
+  // Validation responsibility
+  private validateAnalysis(...) { ... }
+
+  // Calculation responsibility
+  private calculateOverallConfidence(...) { ... }
+}
+```
+
+### Module Extraction Pattern
+
+Extract god classes into focused, single-responsibility modules:
+
+1. **Identify Responsibilities**
+   - List all distinct concerns in the class
+   - Group related methods together
+   - Identify cohesive units
+
+2. **Create Module Interfaces**
+   - Define contracts for each module
+   - Keep interfaces minimal (Interface Segregation Principle)
+   - Use dependency injection for testability
+
+3. **Extract Modules**
+   - Create separate file for each responsibility
+   - Move related methods to new module
+   - Keep modules < 100 lines when possible
+
+4. **Create Orchestrator**
+   - Original class becomes coordinator
+   - Wires module instances together
+   - Manages workflow and lifecycle
+
+5. **Update Tests**
+   - Create unit tests for each module
+   - Update integration tests for orchestrator
+   - Maintain backward compatibility
+
+### Example: BreakdownEngine Refactoring
+
+**Before** (God Class - 625 lines):
+
+```typescript
+class BreakdownEngine {
+  async startBreakdown(ideaId, refinedIdea, userResponses, options) {
+    const session = { ... };
+
+    // Step 1: Analyze idea
+    session.analysis = await this.analyzeIdea(...);
+
+    // Step 2: Decompose tasks
+    session.tasks = await this.decomposeTasks(...);
+
+    // Step 3: Analyze dependencies
+    session.dependencies = await this.analyzeDependencies(...);
+
+    // Step 4: Generate timeline
+    session.timeline = await this.generateTimeline(...);
+
+    // Store results
+    await this.persistResults(session);
+  }
+
+  // 7 private methods (140+ lines each)
+}
+```
+
+**After** (Orchestrator + 6 Modules - 220 lines):
+
+```typescript
+// Main orchestrator
+class BreakdownEngine {
+  private ideaAnalyzer: IdeaAnalyzer;
+  private taskDecomposer: TaskDecomposer;
+  private dependencyAnalyzer: DependencyAnalyzer;
+  private timelineGenerator: TimelineGenerator;
+  private sessionManager: SessionManager;
+  private confidenceCalculator: ConfidenceCalculator;
+
+  async initialize() {
+    this.ideaAnalyzer = new IdeaAnalyzer({ aiConfig });
+    this.taskDecomposer = new TaskDecomposer({ aiConfig });
+    this.dependencyAnalyzer = new DependencyAnalyzer();
+    this.timelineGenerator = new TimelineGenerator();
+    this.sessionManager = new SessionManager();
+    this.confidenceCalculator = new ConfidenceCalculator();
+  }
+
+  async startBreakdown(ideaId, refinedIdea, userResponses, options) {
+    const session = { ... };
+
+    // Coordinate modules
+    session.analysis = await this.ideaAnalyzer.analyzeIdea(...);
+    session.tasks = await this.taskDecomposer.decomposeTasks(...);
+    session.dependencies = await this.dependencyAnalyzer.analyzeDependencies(...);
+    session.timeline = await this.timelineGenerator.generateTimeline(...);
+
+    await this.sessionManager.persistResults(session);
+    session.confidence = this.confidenceCalculator.calculateOverallConfidence(session);
+
+    return session;
+  }
+}
+
+// Focused modules (< 100 lines each)
+class IdeaAnalyzer {
+  async analyzeIdea(refinedIdea, userResponses, options) {
+    // AI-based idea analysis
+    // Validation
+  }
+}
+
+class TaskDecomposer {
+  async decomposeTasks(analysis) {
+    // Break down deliverables into tasks
+  }
+}
+
+// ... other modules
+```
+
+### Benefits
+
+**Modularity**: Each module is independently testable and replaceable
+
+**Maintainability**: Changes to one concern don't affect others
+
+**Reusability**: Modules can be used in other contexts
+
+**Testability**: Easy to mock and test individual components
+
+**Code Clarity**: Smaller files are easier to understand
+
+### Success Criteria
+
+- [ ] Original class reduced by > 50% in size
+- [ ] Each module < 100 lines (ideal) or < 150 lines (acceptable)
+- [ ] Each module has single responsibility
+- [ ] Modules are independently testable
+- [ ] No circular dependencies
+- [ ] Backward compatibility maintained
+- [ ] Zero breaking changes to public API
+
+## Git Branch Management
 
 **Feature Branch Workflow**:
 
