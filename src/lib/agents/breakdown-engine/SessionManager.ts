@@ -8,7 +8,7 @@ export class SessionManager {
   async storeSession(session: BreakdownSession): Promise<void> {
     await dbService.storeVector({
       idea_id: session.ideaId,
-      vector_data: session,
+      vector_data: session as unknown as Record<string, unknown>,
       reference_type: 'breakdown_session',
       reference_id: session.id,
     });
@@ -19,7 +19,7 @@ export class SessionManager {
       const vectors = await dbService.getVectors(ideaId, 'breakdown_session');
       if (vectors.length === 0) return null;
 
-      const session = vectors[0].vector_data as BreakdownSession;
+      const session = vectors[0].vector_data as unknown as BreakdownSession;
       session.createdAt = new Date(session.createdAt);
       session.updatedAt = new Date(session.updatedAt);
 

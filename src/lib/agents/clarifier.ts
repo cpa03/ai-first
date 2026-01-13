@@ -315,7 +315,7 @@ export class ClarifierAgent {
     // Store session data in vectors table for flexibility
     await dbService.storeVector({
       idea_id: session.ideaId,
-      vector_data: session,
+      vector_data: session as unknown as Record<string, unknown>,
       reference_type: 'clarification_session',
       reference_id: session.ideaId,
     });
@@ -332,7 +332,8 @@ export class ClarifierAgent {
         return null;
       }
 
-      const sessionData = vectors[0].vector_data as ClarificationSession;
+      const sessionData = vectors[0]
+        .vector_data as unknown as ClarificationSession;
 
       // Convert date strings back to Date objects
       sessionData.createdAt = new Date(sessionData.createdAt);
@@ -363,7 +364,8 @@ export class ClarifierAgent {
 
       const sessionMap = new Map<string, ClarificationSession>();
       for (const vector of vectors) {
-        const sessionData = vector.vector_data as ClarificationSession;
+        const sessionData =
+          vector.vector_data as unknown as ClarificationSession;
         sessionData.createdAt = new Date(sessionData.createdAt);
         sessionData.updatedAt = new Date(sessionData.updatedAt);
         sessionMap.set(vector.idea_id, sessionData);

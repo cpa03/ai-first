@@ -233,8 +233,8 @@ class AIService {
     await this.supabase.from('vectors').upsert({
       idea_id: ideaId,
       reference_type: 'context',
-      vector_data: { messages: context },
-    } as any);
+      vector_data: { messages: context } as unknown as Record<string, unknown>,
+    });
 
     this.responseCache.set(cacheKey, JSON.stringify(context));
 
