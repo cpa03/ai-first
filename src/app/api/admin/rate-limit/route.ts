@@ -4,8 +4,11 @@ import {
   standardSuccessResponse,
 } from '@/lib/api-handler';
 import { getRateLimitStats } from '@/lib/rate-limit';
+import { requireAdminAuth } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
+  requireAdminAuth(context.request);
+
   const stats = getRateLimitStats();
 
   const data = {
