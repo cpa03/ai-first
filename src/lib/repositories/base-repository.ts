@@ -22,7 +22,7 @@ export abstract class BaseRepository {
   }
 
   protected handleError(error: unknown, operation: string): never {
-    console.error(`Error in ${operation}`, { error });
+    this.logger.error(`Error in ${operation}`, { error });
     throw error;
   }
 }
