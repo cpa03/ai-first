@@ -156,6 +156,7 @@ export default function BlueprintDisplay({
                 variant="secondary"
                 fullWidth={false}
                 aria-label="Start over with a new idea"
+                disabled
               >
                 Start Over
               </Button>
@@ -163,6 +164,7 @@ export default function BlueprintDisplay({
                 variant="primary"
                 fullWidth={false}
                 aria-label="Export blueprint to project management tools"
+                disabled
               >
                 Export to Tools
               </Button>

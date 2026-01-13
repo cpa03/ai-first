@@ -147,9 +147,17 @@ export default function ResultsPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div
+          className="bg-white rounded-lg shadow-lg p-8 text-center"
+          role="status"
+          aria-live="polite"
+          aria-busy="true"
+        >
           <div className="flex justify-center mb-4">
-            <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+            <div
+              className="w-8 h-8 border-2 border-gray-300 border-t-primary-600 rounded-full animate-spin"
+              aria-hidden="true"
+            ></div>
           </div>
           <p className="text-gray-600">Generating your project blueprint...</p>
         </div>

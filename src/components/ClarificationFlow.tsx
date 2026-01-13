@@ -330,14 +330,26 @@ export default function ClarificationFlow({
                 <label
                   htmlFor="answer-select"
                   className="block text-sm font-medium text-gray-700"
+                  id="answer-select-label"
                 >
-                  Your answer <span className="text-red-500 ml-1">*</span>
+                  Your answer{' '}
+                  <span className="text-red-500 ml-1" aria-hidden="true">
+                    *
+                  </span>
                 </label>
                 <select
                   id="answer-select"
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500 transition-all duration-200 bg-white min-h-[44px]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:ring-offset-2 transition-all duration-200 bg-white min-h-[44px]"
+                  aria-labelledby="answer-select-label"
+                  aria-required="true"
+                  aria-invalid={
+                    !!(
+                      currentAnswer.trim() === '' &&
+                      currentStep === questions.length - 1
+                    )
+                  }
                   required
                   autoFocus
                 >
