@@ -131,10 +131,12 @@ describe('Integration Tests', () => {
         deliverables: [
           {
             id: 'del-1',
+            idea_id: 'integration-test',
             title: 'Test Deliverable',
             description: 'Test deliverable description',
             priority: 1,
             estimate_hours: 8,
+            created_at: new Date().toISOString(),
           },
         ],
         tasks: [
@@ -146,6 +148,7 @@ describe('Integration Tests', () => {
             assignee: 'Test User',
             status: 'todo' as const,
             estimate: 2,
+            created_at: new Date().toISOString(),
           },
         ],
       };
@@ -167,7 +170,7 @@ describe('Integration Tests', () => {
     });
 
     it('should handle export errors gracefully', async () => {
-      const invalidData = null;
+      const invalidData = null as any;
 
       const result = await exportManager.export({
         type: 'markdown',
@@ -234,7 +237,15 @@ describe('Integration Tests', () => {
       // Test with non-existent connector
       const result = await exportManager.export({
         type: 'non-existent' as any,
-        data: {},
+        data: {
+          idea: {
+            id: 'test',
+            title: 'Test',
+            raw_text: 'Test',
+            status: 'draft' as const,
+            created_at: new Date().toISOString(),
+          },
+        } as any,
       });
 
       expect(result.success).toBe(false);
@@ -246,7 +257,7 @@ describe('Integration Tests', () => {
         idea: null, // Invalid
         deliverables: 'not-an-array', // Invalid
         tasks: { also: 'invalid' }, // Invalid
-      };
+      } as any;
 
       const result = await exportManager.export({
         type: 'markdown',
@@ -292,10 +303,12 @@ describe('Integration Tests', () => {
         },
         deliverables: Array.from({ length: 100 }, (_, i) => ({
           id: `del-${i}`,
+          idea_id: 'large-test',
           title: `Deliverable ${i}`,
           description: `Description for deliverable ${i}`,
           priority: (i % 5) + 1,
           estimate_hours: (i % 8) + 1,
+          created_at: new Date().toISOString(),
         })),
         tasks: Array.from({ length: 500 }, (_, i) => ({
           id: `task-${i}`,
@@ -308,6 +321,7 @@ describe('Integration Tests', () => {
             | 'in_progress'
             | 'completed',
           estimate: (i % 4) + 1,
+          created_at: new Date().toISOString(),
         })),
       };
 

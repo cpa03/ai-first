@@ -148,7 +148,7 @@ describe('PII Redaction Utility', () => {
   describe('redactPIIInObject', () => {
     it('should redact PII in string values', () => {
       const input = { email: 'test@example.com', name: 'John Doe' };
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as Record<string, unknown>;
 
       expect(output.email).toBe('[REDACTED_EMAIL]');
       expect(output.name).toBe('John Doe');
@@ -166,7 +166,13 @@ describe('PII Redaction Utility', () => {
         },
       };
 
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as {
+        user: {
+          contact: unknown;
+          phone: unknown;
+          details: { ssn: unknown; address: unknown };
+        };
+      };
 
       expect(output.user.contact).toBe('[REDACTED_EMAIL]');
       expect(output.user.phone).toBe('[REDACTED_PHONE]');
@@ -176,7 +182,7 @@ describe('PII Redaction Utility', () => {
 
     it('should redact PII in arrays', () => {
       const input = ['test@example.com', 'safe text', '123-456-7890'];
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as unknown[];
 
       expect(output).toEqual([
         '[REDACTED_EMAIL]',
@@ -185,13 +191,16 @@ describe('PII Redaction Utility', () => {
       ]);
     });
 
-    it('should handle arrays of objects', () => {
+    it('should redact PII in object arrays', () => {
       const input = [
         { id: 1, email: 'user1@example.com' },
         { id: 2, email: 'user2@example.com' },
       ];
 
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as Array<{
+        id: number;
+        email: unknown;
+      }>;
 
       expect(output[0].email).toBe('[REDACTED_EMAIL]');
       expect(output[1].email).toBe('[REDACTED_EMAIL]');
@@ -209,7 +218,7 @@ describe('PII Redaction Utility', () => {
         email: 'test@example.com',
       };
 
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as Record<string, unknown>;
 
       expect(output.id).toBe('123');
       expect(output.CREATED_AT).toBe('2024-01-01');
@@ -228,7 +237,7 @@ describe('PII Redaction Utility', () => {
         booleanValue: true,
       };
 
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as Record<string, unknown>;
 
       expect(output.email).toBe('[REDACTED_EMAIL]');
       expect(output.nullValue).toBeNull();
@@ -251,7 +260,15 @@ describe('PII Redaction Utility', () => {
         },
       };
 
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as {
+        level1: {
+          level2: {
+            level3: {
+              level4: { email: unknown; safe: unknown };
+            };
+          };
+        };
+      };
 
       expect(output.level1.level2.level3.level4.email).toBe('[REDACTED_EMAIL]');
       expect(output.level1.level2.level3.level4.safe).toBe('data');
@@ -269,7 +286,10 @@ describe('PII Redaction Utility', () => {
         },
       };
 
-      const output = redactPIIInObject(input);
+      const output = redactPIIInObject(input) as {
+        contacts: Array<{ type: string; value: unknown }>;
+        metadata: { api_key: unknown; timestamp: unknown };
+      };
 
       expect(output.contacts[0].value).toBe('[REDACTED_EMAIL]');
       expect(output.contacts[1].value).toBe('[REDACTED_PHONE]');
@@ -288,9 +308,10 @@ describe('PII Redaction Utility', () => {
 
       expect(log.agent).toBe('clarifier');
       expect(log.action).toBe('start-clarification');
-      expect(log.payload).toHaveProperty('ideaId');
-      expect(log.payload.email).toBe('[REDACTED_EMAIL]');
-      expect(log.payload.apiKey).toBe('very_long_api_key_string_here');
+      const payload = log.payload as Record<string, unknown>;
+      expect(payload).toHaveProperty('ideaId');
+      expect(payload.email).toBe('[REDACTED_EMAIL]');
+      expect(payload.apiKey).toBe('very_long_api_key_string_here');
       expect(log.timestamp).toBeDefined();
     });
 
@@ -306,9 +327,13 @@ describe('PII Redaction Utility', () => {
         },
       });
 
-      expect(log.payload.messages[0].content).toContain('[REDACTED_EMAIL]');
-      expect(log.payload.metadata.ssn).toBe('[REDACTED_SSN]');
-      expect(log.payload.metadata.safeField).toBe('data');
+      const payload = log.payload as {
+        messages: Array<{ content: unknown }>;
+        metadata: { ssn: unknown; safeField: unknown };
+      };
+      expect(payload.messages[0].content).toContain('[REDACTED_EMAIL]');
+      expect(payload.metadata.ssn).toBe('[REDACTED_SSN]');
+      expect(payload.metadata.safeField).toBe('data');
     });
 
     it('should handle empty payload', () => {
@@ -316,7 +341,8 @@ describe('PII Redaction Utility', () => {
 
       expect(log.agent).toBe('test-agent');
       expect(log.action).toBe('test-action');
-      expect(log.payload).toEqual({});
+      const payload = log.payload as Record<string, unknown>;
+      expect(payload).toEqual({});
       expect(log.timestamp).toBeDefined();
     });
 
@@ -327,9 +353,10 @@ describe('PII Redaction Utility', () => {
         undefinedValue: undefined,
       });
 
-      expect(log.payload.email).toBe('[REDACTED_EMAIL]');
-      expect(log.payload.nullValue).toBeNull();
-      expect(log.payload.undefinedValue).toBeUndefined();
+      const payload = log.payload as Record<string, unknown>;
+      expect(payload.email).toBe('[REDACTED_EMAIL]');
+      expect(payload.nullValue).toBeNull();
+      expect(payload.undefinedValue).toBeUndefined();
     });
   });
 
@@ -485,7 +512,9 @@ describe('PII Redaction Utility', () => {
       };
 
       const startTime = Date.now();
-      const output = redactPIIInObject(largeObj);
+      const output = redactPIIInObject(largeObj) as {
+        data: Array<{ email: unknown }>;
+      };
       const endTime = Date.now();
 
       expect(output.data[0].email).toBe('[REDACTED_EMAIL]');
