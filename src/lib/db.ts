@@ -35,9 +35,9 @@ export interface Idea {
   user_id: string;
   title: string;
   raw_text: string;
-  created_at: string;
   status: 'draft' | 'clarified' | 'breakdown' | 'completed';
-  deleted_at?: string | null;
+  deleted_at: string | null;
+  created_at: string;
 }
 
 export interface IdeaSession {
@@ -114,7 +114,7 @@ export class DatabaseService {
   }
 
   // Ideas CRUD operations
-  async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
+  async createIdea(idea: Omit<Idea, 'id'>): Promise<Idea> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const { data, error } = await this.client

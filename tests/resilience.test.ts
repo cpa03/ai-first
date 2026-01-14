@@ -8,8 +8,9 @@ import {
   DEFAULT_TIMEOUTS,
   DEFAULT_CIRCUIT_BREAKER_CONFIG,
   CircuitBreakerState,
-  CircuitBreakerConfig,
+  ServiceResilienceConfig,
   RetryConfig,
+  defaultResilienceConfigs,
 } from '@/lib/resilience';
 
 describe('CircuitBreaker', () => {

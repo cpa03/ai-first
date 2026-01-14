@@ -3,9 +3,21 @@ import {
   resilienceManager,
   defaultResilienceConfigs,
   ResilienceConfig,
+  type ServiceResilienceConfig,
 } from '../resilience';
 import { createLogger } from '../logger';
 import { Idea, Deliverable, Task } from '../db';
+
+function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
+  return {
+    timeoutMs: config.timeout.timeoutMs,
+    maxRetries: config.retry.maxRetries,
+    baseDelayMs: config.retry.baseDelayMs,
+    maxDelayMs: config.retry.maxDelayMs,
+    failureThreshold: config.circuitBreaker.failureThreshold,
+    resetTimeoutMs: config.circuitBreaker.resetTimeoutMs,
+  };
+}
 
 const logger = createLogger('ExportConnector');
 
@@ -74,16 +86,16 @@ export abstract class ExportConnector {
   protected getResilienceConfig(): ResilienceConfig {
     const type = this.type;
     if (type === 'notion') {
-      return defaultResilienceConfigs.notion;
+      return toResilienceConfig(defaultResilienceConfigs.notion);
     }
     if (type === 'trello') {
-      return defaultResilienceConfigs.trello;
+      return toResilienceConfig(defaultResilienceConfigs.trello);
     }
     if (type === 'github-projects') {
-      return defaultResilienceConfigs.github;
+      return toResilienceConfig(defaultResilienceConfigs.github);
     }
     if (type === 'google-tasks') {
-      return defaultResilienceConfigs.github;
+      return toResilienceConfig(defaultResilienceConfigs.github);
     }
     return {
       maxRetries: 3,

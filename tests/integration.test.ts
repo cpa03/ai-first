@@ -127,6 +127,8 @@ describe('Integration Tests', () => {
           raw_text: 'A comprehensive integration test project',
           status: 'clarified' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: [
           {
@@ -137,6 +139,7 @@ describe('Integration Tests', () => {
             priority: 1,
             estimate_hours: 8,
             created_at: new Date().toISOString(),
+            deleted_at: null,
           },
         ],
         tasks: [
@@ -149,6 +152,17 @@ describe('Integration Tests', () => {
             status: 'todo' as const,
             estimate: 2,
             created_at: new Date().toISOString(),
+            milestone_id: null,
+            actual_hours: null,
+            completion_percentage: 0,
+            priority_score: 1,
+            complexity_score: 1,
+            risk_level: 'low',
+            tags: null,
+            custom_fields: null,
+            deleted_at: null,
+            start_date: null,
+            end_date: null,
           },
         ],
       };
@@ -300,6 +314,8 @@ describe('Integration Tests', () => {
           raw_text: 'A'.repeat(10000), // Large text
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: Array.from({ length: 100 }, (_, i) => ({
           id: `del-${i}`,
@@ -309,6 +325,7 @@ describe('Integration Tests', () => {
           priority: (i % 5) + 1,
           estimate_hours: (i % 8) + 1,
           created_at: new Date().toISOString(),
+          deleted_at: null,
         })),
         tasks: Array.from({ length: 500 }, (_, i) => ({
           id: `task-${i}`,
@@ -322,6 +339,17 @@ describe('Integration Tests', () => {
             | 'completed',
           estimate: (i % 4) + 1,
           created_at: new Date().toISOString(),
+          milestone_id: null,
+          actual_hours: null,
+          completion_percentage: 0,
+          priority_score: 1,
+          complexity_score: 1,
+          risk_level: 'low',
+          tags: null,
+          custom_fields: null,
+          deleted_at: null,
+          start_date: null,
+          end_date: null,
         })),
       };
 

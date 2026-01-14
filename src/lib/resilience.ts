@@ -154,6 +154,14 @@ export class CircuitBreaker {
     this.circuitState.nextAttemptTime = 0;
   }
 
+  getFailures(): number {
+    return this.circuitState.failures;
+  }
+
+  getNextAttemptTime(): number {
+    return this.circuitState.nextAttemptTime || 0;
+  }
+
   getStatus(): {
     state: CircuitBreakerState;
     failures: number;
@@ -440,28 +448,34 @@ export const DEFAULT_CIRCUIT_BREAKER_CONFIG: CircuitBreakerOptions = {
   monitoringPeriodMs: 10000,
 };
 
-export const defaultResilienceConfigs: Record<string, CircuitBreakerOptions> = {
-  openai: {
-    failureThreshold: 5,
-    resetTimeoutMs: 60000,
-    monitoringPeriodMs: 10000,
-  },
-  github: {
-    failureThreshold: 5,
-    resetTimeoutMs: 30000,
-    monitoringPeriodMs: 10000,
-  },
-  notion: {
-    failureThreshold: 5,
-    resetTimeoutMs: 30000,
-    monitoringPeriodMs: 10000,
-  },
-  trello: {
-    failureThreshold: 3,
-    resetTimeoutMs: 20000,
-    monitoringPeriodMs: 10000,
-  },
-};
+export const defaultResilienceConfigs: Record<string, ServiceResilienceConfig> =
+  {
+    openai: {
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+      timeout: { timeoutMs: 60000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
+    },
+    github: {
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
+      timeout: { timeoutMs: 30000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 30000 },
+    },
+    notion: {
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
+      timeout: { timeoutMs: 30000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 30000 },
+    },
+    trello: {
+      retry: { maxRetries: 3, baseDelayMs: 500, maxDelayMs: 3000 },
+      timeout: { timeoutMs: 15000 },
+      circuitBreaker: { failureThreshold: 3, resetTimeoutMs: 20000 },
+    },
+    supabase: {
+      retry: { maxRetries: 2, baseDelayMs: 1000, maxDelayMs: 10000 },
+      timeout: { timeoutMs: 10000 },
+      circuitBreaker: { failureThreshold: 10, resetTimeoutMs: 60000 },
+    },
+  };
 
 export interface ResilienceConfig {
   timeoutMs?: number;
@@ -480,6 +494,21 @@ export const DEFAULT_RESILIENCE_CONFIG: ResilienceConfig = {
   failureThreshold: 5,
   resetTimeoutMs: 60000,
 };
+
+export interface ServiceResilienceConfig {
+  retry: {
+    maxRetries: number;
+    baseDelayMs: number;
+    maxDelayMs: number;
+  };
+  timeout: {
+    timeoutMs: number;
+  };
+  circuitBreaker: {
+    failureThreshold: number;
+    resetTimeoutMs: number;
+  };
+}
 
 export const resilienceManager = {
   async execute<T>(

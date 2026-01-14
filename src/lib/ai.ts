@@ -7,7 +7,21 @@ import {
   DEFAULT_TIMEOUTS,
   withTimeout,
   circuitBreakerManager,
+  defaultResilienceConfigs,
+  type ServiceResilienceConfig,
+  type ResilienceConfig,
 } from './resilience';
+
+function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
+  return {
+    timeoutMs: config.timeout.timeoutMs,
+    maxRetries: config.retry.maxRetries,
+    baseDelayMs: config.retry.baseDelayMs,
+    maxDelayMs: config.retry.maxDelayMs,
+    failureThreshold: config.circuitBreaker.failureThreshold,
+    resetTimeoutMs: config.circuitBreaker.resetTimeoutMs,
+  };
+}
 
 const logger = createLogger('AIService');
 
@@ -167,9 +181,11 @@ class AIService {
 
     return resilienceManager.execute(
       operation,
-      defaultResilienceConfigs[
-        serviceKey as keyof typeof defaultResilienceConfigs
-      ] || defaultResilienceConfigs.openai,
+      toResilienceConfig(
+        defaultResilienceConfigs[
+          serviceKey as keyof typeof defaultResilienceConfigs
+        ] || defaultResilienceConfigs.openai
+      ),
       `ai-${config.provider}-${config.model}`
     );
   }
