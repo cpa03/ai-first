@@ -72,7 +72,6 @@ class AIService {
     });
   }
 
-  // Make a model call with context windowing
   async callModel(
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
@@ -84,37 +83,19 @@ class AIService {
       DEFAULT_CIRCUIT_BREAKER_CONFIG
     );
 
-    const makeCall = async (): Promise<string> => {
-      if (config.provider === 'openai') {
-        const completion = await this.openai!.chat.completions.create({
-          model: config.model,
-          messages,
-          max_tokens: config.maxTokens,
-          temperature: config.temperature,
-        });
+          const response = completion.choices[0]?.message?.content || '';
 
-        const response = completion.choices[0]?.message?.content || '';
+          const usage = completion.usage;
+          if (usage) {
+            await this.trackCost(usage.total_tokens, config.model);
+          }
 
-        // Track costs
-        const usage = completion.usage;
-        if (usage) {
-          await this.trackCost(usage.total_tokens, config.model);
+          return response;
+        } else {
+          throw new Error(`Provider ${config.provider} not yet implemented`);
         }
+      }, config);
 
-        return response;
-      } else {
-        throw new Error(`Provider ${config.provider} not yet implemented`);
-      }
-    };
-
-    try {
-      const response = await createResilientWrapper(makeCall, {
-        circuitBreaker,
-        timeoutMs: DEFAULT_TIMEOUTS.openai,
-        retryConfig: DEFAULT_RETRIES,
-      })();
-
-      // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
@@ -126,7 +107,6 @@ class AIService {
 
       return response;
     } catch (error) {
-      // Log error
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,

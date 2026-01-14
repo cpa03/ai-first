@@ -143,35 +143,6 @@ export async function withRetry<T>(
     maxDelayMs: 30000,
     backoffMultiplier: 2,
   }
-): Promise<T> {
-  let lastError: Error | undefined;
-
-  for (let attempt = 1; attempt <= config.maxRetries; attempt++) {
-    try {
-      return await operation();
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-
-      const shouldRetry = isRetryableError(lastError, config.retryableErrors);
-
-      if (!shouldRetry || attempt === config.maxRetries) {
-        throw lastError;
-      }
-
-      const delay = Math.min(
-        config.initialDelayMs * Math.pow(config.backoffMultiplier, attempt - 1),
-        config.maxDelayMs
-      );
-
-      console.warn(
-        `Retry attempt ${attempt}/${config.maxRetries} after ${delay}ms. Error: ${lastError.message}`
-      );
-
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  }
-
-  throw lastError!;
 }
 
 function isRetryableError(
