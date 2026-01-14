@@ -1,4 +1,4 @@
-import { AIModelConfig } from '@/lib/ai';
+import { AIModelConfig, aiService } from '@/lib/ai';
 import { promptService } from '@/lib/prompt-service';
 import { safeJsonParse, isArrayOf, isTask } from '@/lib/validation';
 import { createLogger } from '@/lib/logger';
@@ -8,14 +8,17 @@ const logger = createLogger('TaskDecomposer');
 
 export interface TaskDecomposerConfig {
   aiConfig: AIModelConfig;
+  aiService?: typeof aiService;
 }
 
 export class TaskDecomposer {
-  constructor(private config: TaskDecomposerConfig) {}
+  private readonly injectedAiService: typeof aiService;
+
+  constructor(private config: TaskDecomposerConfig) {
+    this.injectedAiService = config.aiService || aiService;
+  }
 
   async decomposeTasks(analysis: IdeaAnalysis): Promise<TaskDecomposition> {
-    const { aiService } = await import('@/lib/ai');
-
     const decompositionPromises = analysis.deliverables.map(
       async (deliverable) => {
         const prompt = promptService.getUserPrompt(
@@ -41,7 +44,7 @@ export class TaskDecomposer {
             { role: 'user' as const, content: prompt },
           ];
 
-          const response = await aiService.callModel(
+          const response = await this.injectedAiService.callModel(
             messages,
             this.config.aiConfig
           );

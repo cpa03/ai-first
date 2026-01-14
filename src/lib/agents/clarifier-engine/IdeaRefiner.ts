@@ -21,8 +21,14 @@ export class IdeaRefiner {
   private aiConfig: AIModelConfig | null = null;
   public aiService = aiService;
 
-  constructor(aiConfig: AIModelConfig | null) {
+  constructor(
+    aiConfig: AIModelConfig | null,
+    injectedAiService?: typeof aiService
+  ) {
     this.aiConfig = aiConfig;
+    if (injectedAiService) {
+      this.aiService = injectedAiService;
+    }
   }
 
   async refine(session: ClarificationSession): Promise<string> {
@@ -46,7 +52,7 @@ export class IdeaRefiner {
         { role: 'user' as const, content: prompt },
       ];
 
-      const response = await aiService.callModel(messages, this.aiConfig);
+      const response = await this.aiService.callModel(messages, this.aiConfig);
       return response.trim();
     } catch (error) {
       logger.error('Failed to generate refined idea', error);

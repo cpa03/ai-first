@@ -21,8 +21,14 @@ export class QuestionGenerator {
   private aiConfig: AIModelConfig | null = null;
   public aiService = aiService;
 
-  constructor(aiConfig: AIModelConfig | null) {
+  constructor(
+    aiConfig: AIModelConfig | null,
+    injectedAiService?: typeof aiService
+  ) {
     this.aiConfig = aiConfig;
+    if (injectedAiService) {
+      this.aiService = injectedAiService;
+    }
   }
 
   async generate(ideaText: string): Promise<ClarifierQuestion[]> {
@@ -50,7 +56,7 @@ export class QuestionGenerator {
         { role: 'user' as const, content: prompt },
       ];
 
-      const response = await aiService.callModel(messages, this.aiConfig);
+      const response = await this.aiService.callModel(messages, this.aiConfig);
 
       const questionsData = safeJsonParse<ClarifierQuestion[]>(
         response,
@@ -80,18 +86,21 @@ export class QuestionGenerator {
         question:
           'What is main problem you are trying to solve with this idea?',
         type: 'open',
+        options: [],
         required: true,
       },
       {
         id: 'q_2',
         question: 'Who is target audience for this solution?',
         type: 'open',
+        options: [],
         required: true,
       },
       {
         id: 'q_3',
         question: 'What are key features or functionality you envision?',
         type: 'open',
+        options: [],
         required: true,
       },
     ];

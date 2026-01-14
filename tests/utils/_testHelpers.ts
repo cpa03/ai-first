@@ -83,14 +83,16 @@ export const mockOpenAIResponses = {
   clarificationQuestions: [
     {
       id: '1',
-      question: 'What is the primary goal of this project?',
-      type: 'text',
+      question: 'What is primary goal of this project?',
+      type: 'open',
+      options: [],
       required: true,
     },
     {
       id: '2',
-      question: 'Who is the target audience?',
-      type: 'text',
+      question: 'Who is target audience?',
+      type: 'open',
+      options: [],
       required: true,
     },
   ],

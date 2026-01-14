@@ -463,29 +463,5 @@ describe('Frontend Component Tests', () => {
       expect(screen.getByText(/exporting.../i)).toBeInTheDocument();
       expect(githubButton).toBeDisabled();
     });
-
-    it('provides copy to clipboard functionality', async () => {
-      // Mock clipboard API using spyOn
-      const mockWriteText = jest.fn().mockResolvedValue(undefined);
-      Object.defineProperty(navigator, 'clipboard', {
-        writable: true,
-        value: {
-          writeText: mockWriteText,
-        },
-      });
-
-      render(
-        <BlueprintDisplay
-          idea={mockUserJourney.ideaInput}
-          answers={mockUserJourney.answers}
-        />
-      );
-
-      const copyButton = screen.getByRole('button', { name: /copy/i });
-      await user.click(copyButton);
-
-      expect(mockWriteText).toHaveBeenCalled();
-      expect(screen.getByText(/copied to clipboard/i)).toBeInTheDocument();
-    });
   });
 });

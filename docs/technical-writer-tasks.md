@@ -8,6 +8,189 @@ This document tracks documentation work completed by the Technical Writer agent.
 
 ## Completed Tasks
 
+### Task 11: Critical API Documentation Fix ✅ COMPLETE
+
+**Priority**: CRITICAL
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-14
+
+#### Objectives
+
+- Fix misleading API documentation rate limit tier values
+- Fix incorrect breakdown API options documentation
+- Ensure documentation matches actual implementation
+- Prevent developer confusion and errors
+
+#### Root Cause Analysis
+
+**Issue 1: Incorrect Rate Limit Tier Values**
+
+Documentation at lines 519-522 showed incorrect rate limit values:
+
+```markdown
+- `strict`: 10 requests per minute (CORRECT)
+- `moderate`: 50 requests per minute (WRONG - should be 30)
+- `lenient`: 100 requests per minute (WRONG - should be 60)
+```
+
+**Actual Implementation** (src/lib/rate-limit.ts lines 85-89):
+
+```typescript
+export const rateLimitConfigs = {
+  strict: { windowMs: 60 * 1000, maxRequests: 10 },
+  moderate: { windowMs: 60 * 1000, maxRequests: 30 },
+  lenient: { windowMs: 60 * 1000, maxRequests: 60 },
+} as const;
+```
+
+Note: Line 208 in docs correctly showed "Moderate (30 requests per minute)" but contradicted lines 519-522.
+
+**Issue 2: Incorrect Breakdown API Options**
+
+Documentation at lines 401-404 showed non-existent option fields:
+
+```json
+"options": {
+  "complexity": "medium",
+  "includeTimeline": true,      // DOESN'T EXIST
+  "includeDependencies": true  // DOESN'T EXIST
+}
+```
+
+**Actual Implementation** (src/lib/agents/breakdown-engine.ts lines 162-167):
+
+```typescript
+options: {
+  complexity?: 'simple' | 'medium' | 'complex';
+  teamSize?: number;
+  timelineWeeks?: number;
+  constraints?: string[];
+} = {}
+```
+
+**Problem**:
+
+- Developers sending `includeTimeline` or `includeDependencies` would be ignored
+- API doesn't warn about unknown fields
+- No documentation for actual fields: `teamSize`, `timelineWeeks`, `constraints`
+- Confusing what options are actually supported
+
+#### Completed Work
+
+1. **Fixed Rate Limit Tier Values** (docs/api.md)
+   - Updated line 521: Changed moderate from 50 to 30 requests/minute
+   - Updated line 522: Changed lenient from 100 to 60 requests/minute
+   - Values now match src/lib/rate-limit.ts implementation
+   - Consistent with actual rate limit configuration
+
+2. **Fixed Breakdown API Options** (docs/api.md)
+   - Replaced non-existent `includeTimeline` with `teamSize`
+   - Replaced non-existent `includeDependencies` with `timelineWeeks`
+   - Added missing `constraints` field documentation
+   - Added comprehensive field descriptions explaining each option
+   - Provided working examples showing correct option usage
+
+3. **Added Field Descriptions** (docs/api.md)
+   - Documented all `options` object fields with types and descriptions
+   - Added default value notes where applicable
+   - Clarified which fields are optional
+   - Provided practical examples for each option
+
+#### Documentation Changes
+
+**Before:**
+
+```markdown
+## Rate Limit Tiers
+
+- `strict`: 10 requests per minute
+- `moderate`: 50 requests per minute
+- `lenient`: 100 requests per minute
+```
+
+```json
+"options": {
+  "complexity": "medium",
+  "includeTimeline": true,
+  "includeDependencies": true
+}
+```
+
+**After:**
+
+```markdown
+## Rate Limit Tiers
+
+- `strict`: 10 requests per minute
+- `moderate`: 30 requests per minute
+- `lenient`: 60 requests per minute
+```
+
+```json
+"options": {
+  "complexity": "medium",
+  "teamSize": 4,
+  "timelineWeeks": 12,
+  "constraints": ["Must use TypeScript", "Mobile-first design"]
+}
+```
+
+With added field descriptions:
+
+- `complexity` (optional): Complexity level ('simple', 'medium', or 'complex'). Default: AI-determined
+- `teamSize` (optional): Number of team members available
+- `timelineWeeks` (optional): Desired timeline in weeks
+- `constraints` (optional): Array of project constraints
+
+#### Impact
+
+**Developer Experience**: Significantly Improved
+
+- Rate limit values now match actual API behavior
+- No confusion about which values to expect
+- Correct option fields prevent API errors
+- Complete field descriptions enable proper usage
+
+**API Integration**: Enhanced
+
+- Developers can send correct options without trial and error
+- Unknown fields (includeTimeline, includeDependencies) removed
+- All valid options documented with types
+- Working examples provided for immediate use
+
+**Single Source of Truth**: Restored
+
+- Documentation matches src/lib/rate-limit.ts implementation
+- Documentation matches src/lib/agents/breakdown-engine.ts interface
+- No misleading values remain in docs/api.md
+- Consistent throughout all documentation
+
+#### Success Criteria Met
+
+- [x] Rate limit tier values corrected (moderate: 30, lenient: 60)
+- [x] Breakdown API options corrected to match implementation
+- [x] Non-existent fields removed (includeTimeline, includeDependencies)
+- [x] Missing fields added (teamSize, timelineWeeks, constraints)
+- [x] Field descriptions added for all options
+- [x] Working examples provided
+- [x] Lint passes (0 errors, 0 warnings)
+- [x] Type-check passes (0 errors)
+- [x] Documentation matches actual implementation
+- [x] Zero breaking changes to documentation structure
+
+#### Files Modified
+
+- `docs/api.md` (UPDATED - rate limit tiers corrected, breakdown options fixed)
+
+#### Notes
+
+- The admin endpoint response example was already correct (showed moderate: 30, lenient: 60)
+- Only the text description section was incorrect (lines 519-522)
+- Breakdown API options were completely out of sync with implementation
+- Field descriptions added to prevent future confusion about option usage
+
+---
+
 ### Task 10: Critical Project Structure Documentation Fix ✅ COMPLETE
 
 **Priority**: CRITICAL
@@ -863,6 +1046,6 @@ Potential improvements for future iterations:
 
 ---
 
-**Last Updated**: 2026-01-07
+**Last Updated**: 2026-01-14
 **Agent**: Technical Writer
-**Documentation Version**: 0.3.0
+**Documentation Version**: 0.4.0

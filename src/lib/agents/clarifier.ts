@@ -1,4 +1,4 @@
-import { AIModelConfig } from '@/lib/ai';
+import { AIModelConfig, aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
 import {
@@ -31,6 +31,7 @@ export class ClarifierAgent {
   private ideaRefiner: IdeaRefiner | null = null;
   private sessionManager: SessionManager | null = null;
   private confidenceCalculator: ConfidenceCalculator | null = null;
+  private injectedAiService: typeof aiService | null = null;
 
   constructor() {
     this.config =
@@ -43,10 +44,13 @@ export class ClarifierAgent {
       throw new Error('AI configuration not loaded');
     }
 
-    await this.questionGenerator?.aiService.initialize(this.aiConfig);
+    const aiServiceToUse = this.injectedAiService || aiService;
 
-    this.questionGenerator = new QuestionGenerator(this.aiConfig);
-    this.ideaRefiner = new IdeaRefiner(this.aiConfig);
+    this.questionGenerator = new QuestionGenerator(
+      this.aiConfig,
+      aiServiceToUse
+    );
+    this.ideaRefiner = new IdeaRefiner(this.aiConfig, aiServiceToUse);
     this.sessionManager = new SessionManager();
     this.confidenceCalculator = new ConfidenceCalculator();
   }
@@ -193,17 +197,18 @@ export class ClarifierAgent {
   }
 
   get aiService() {
-    if (!this.questionGenerator) {
-      throw new Error(
-        'QuestionGenerator not initialized. Call initialize() first.'
-      );
-    }
-    return this.questionGenerator.aiService;
+    return (
+      this.injectedAiService || this.questionGenerator?.aiService || aiService
+    );
   }
 
   set aiService(value) {
+    this.injectedAiService = value;
     if (this.questionGenerator) {
       this.questionGenerator.aiService = value;
+    }
+    if (this.ideaRefiner) {
+      this.ideaRefiner.aiService = value;
     }
   }
 

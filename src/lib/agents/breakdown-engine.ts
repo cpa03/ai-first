@@ -141,8 +141,14 @@ class BreakdownEngine {
     }
     await aiService.initialize(this.aiConfig);
 
-    this.ideaAnalyzer = new IdeaAnalyzer({ aiConfig: this.aiConfig });
-    this.taskDecomposer = new TaskDecomposer({ aiConfig: this.aiConfig });
+    this.ideaAnalyzer = new IdeaAnalyzer({
+      aiConfig: this.aiConfig,
+      aiService,
+    });
+    this.taskDecomposer = new TaskDecomposer({
+      aiConfig: this.aiConfig,
+      aiService,
+    });
     this.dependencyAnalyzer = new DependencyAnalyzer();
     this.timelineGenerator = new TimelineGenerator();
     this.sessionManager = new SessionManager();

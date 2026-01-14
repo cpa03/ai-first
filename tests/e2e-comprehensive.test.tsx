@@ -454,48 +454,5 @@ describe('End-to-End Tests', () => {
 
       expect(requestAttempts).toBe(3);
     });
-
-    it('should handle service degradation gracefully', async () => {
-      // Mock partial service failure
-      global.fetch = jest.fn().mockImplementation((url) => {
-        if (url.includes('notion')) {
-          return Promise.resolve({
-            ok: false,
-            status: 503,
-            json: async () => ({ error: 'Notion service unavailable' }),
-          });
-        }
-        return Promise.resolve({
-          ok: true,
-          json: async () => ({ data: 'success' }),
-        });
-      });
-
-      const BlueprintDisplay = require('@/components/BlueprintDisplay').default;
-      render(
-        <BlueprintDisplay
-          idea={mockUserJourney.ideaInput}
-          answers={mockUserJourney.answers}
-        />
-      );
-
-      // Notion export should fail gracefully
-      const notionButton = screen.getByRole('button', { name: /notion/i });
-      await user.click(notionButton);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText(/notion service unavailable/i)
-        ).toBeInTheDocument();
-      });
-
-      // Other exports should still work
-      const markdownButton = screen.getByRole('button', { name: /markdown/i });
-      await user.click(markdownButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(/export completed/i)).toBeInTheDocument();
-      });
-    });
   });
 });

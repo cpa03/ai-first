@@ -1,4 +1,4 @@
-import { AIModelConfig } from '@/lib/ai';
+import { AIModelConfig, aiService } from '@/lib/ai';
 import { promptService } from '@/lib/prompt-service';
 import { safeJsonParse, isIdeaAnalysis } from '@/lib/validation';
 import { createLogger } from '@/lib/logger';
@@ -8,10 +8,15 @@ const logger = createLogger('IdeaAnalyzer');
 
 export interface IdeaAnalyzerConfig {
   aiConfig: AIModelConfig;
+  aiService?: typeof aiService;
 }
 
 export class IdeaAnalyzer {
-  constructor(private config: IdeaAnalyzerConfig) {}
+  private readonly injectedAiService: typeof aiService;
+
+  constructor(private config: IdeaAnalyzerConfig) {
+    this.injectedAiService = config.aiService || aiService;
+  }
 
   async analyzeIdea(
     refinedIdea: string,
@@ -38,8 +43,7 @@ export class IdeaAnalyzer {
         { role: 'user' as const, content: prompt },
       ];
 
-      const { aiService } = await import('@/lib/ai');
-      const response = await aiService.callModel(
+      const response = await this.injectedAiService.callModel(
         messages,
         this.config.aiConfig
       );

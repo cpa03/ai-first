@@ -399,11 +399,23 @@ Start a new breakdown process for a clarified idea.
   },
   "options": {
     "complexity": "medium",
-    "includeTimeline": true,
-    "includeDependencies": true
+    "teamSize": 4,
+    "timelineWeeks": 12,
+    "constraints": ["Must use TypeScript", "Mobile-first design"]
   }
 }
 ```
+
+**Fields:**
+
+- `ideaId` (required): The idea ID from clarification session
+- `refinedIdea` (required): The refined idea text to break down (10-10000 characters)
+- `userResponses` (optional): Object containing user-provided responses about the project
+- `options` (optional): Breakdown configuration options
+  - `complexity` (optional): Complexity level ('simple', 'medium', or 'complex'). Default: AI-determined
+  - `teamSize` (optional): Number of team members available
+  - `timelineWeeks` (optional): Desired timeline in weeks
+  - `constraints` (optional): Array of project constraints
 
 **Response:**
 
@@ -518,8 +530,8 @@ X-RateLimit-Reset: 1704614400
 **Rate Limit Tiers:**
 
 - `strict`: 10 requests per minute
-- `moderate`: 50 requests per minute
-- `lenient`: 100 requests per minute
+- `moderate`: 30 requests per minute
+- `lenient`: 60 requests per minute
 
 When rate limit is exceeded:
 
