@@ -3,11 +3,7 @@ import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
-import {
-  DEFAULT_TIMEOUTS,
-  circuitBreakerManager,
-  TimeoutManager,
-} from './resilience';
+import { DEFAULT_TIMEOUTS, withTimeout, resilienceManager } from './resilience';
 
 const logger = createLogger('AIService');
 
@@ -160,7 +156,18 @@ class AIService {
     operation: () => Promise<T>,
     config: AIModelConfig
   ): Promise<T> {
-    return operation();
+    const { resilienceManager, defaultResilienceConfigs } =
+      await import('@/lib/resilience');
+
+    const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
+
+    return resilienceManager.execute(
+      operation,
+      defaultResilienceConfigs[
+        serviceKey as keyof typeof defaultResilienceConfigs
+      ] || defaultResilienceConfigs.openai,
+      `ai-${config.provider}-${config.model}`
+    );
   }
 
   // Context windowing strategy
@@ -359,9 +366,10 @@ class AIService {
 
     if (this.openai) {
       try {
-        await TimeoutManager.withTimeout(() => this.openai!.models.list(), {
-          timeoutMs: DEFAULT_TIMEOUTS.openai / 2,
-        });
+        await withTimeout(
+          () => this.openai!.models.list(),
+          DEFAULT_TIMEOUTS.openai / 2
+        );
         providers.push('openai');
       } catch (error) {
         logger.error('OpenAI health check failed:', error);

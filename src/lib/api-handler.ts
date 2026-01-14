@@ -18,12 +18,6 @@ export interface ApiHandlerOptions {
   validateSize?: boolean;
 }
 
-export interface RateLimitInfo {
-  limit: number;
-  remaining: number;
-  reset: number;
-}
-
 export interface ApiContext {
   requestId: string;
   request: NextRequest;
@@ -46,6 +40,7 @@ export function withApiHandler(
       const rateLimitConfig = options.rateLimit
         ? rateLimitConfigs[options.rateLimit]
         : rateLimitConfigs.lenient;
+
       const rateLimitResult = checkRateLimit(
         request.headers.get('x-forwarded-for') || 'unknown',
         rateLimitConfig

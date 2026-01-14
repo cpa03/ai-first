@@ -9,7 +9,7 @@ import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { createLogger } from '@/lib/logger';
 
-const ClarificationFlow = dynamic(
+const DynamicClarificationFlow = dynamic(
   () => import('@/components/ClarificationFlow').then((mod) => mod.default),
   {
     loading: () => (
@@ -180,7 +180,7 @@ export default function ClarifyPage() {
         </div>
       </div>
 
-      <ClarificationFlow
+      <DynamicClarificationFlow
         idea={idea}
         ideaId={ideaId}
         onComplete={handleClarificationComplete}
