@@ -17,6 +17,70 @@ process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 
+import type { ExportData } from '@/lib/exports';
+
+function createMockExportData(overrides = {}): ExportData {
+  return {
+    idea: {
+      id: 'test-idea',
+      title: 'Test Project',
+      raw_text: 'This is a test project description',
+      status: 'draft' as const,
+      created_at: new Date().toISOString(),
+      user_id: 'test-user',
+      deleted_at: null,
+    },
+    deliverables: [],
+    tasks: [],
+    ...overrides,
+  };
+}
+
+function createMockDeliverable(overrides = {}) {
+  return {
+    id: 'test-deliverable',
+    idea_id: 'test-idea',
+    title: 'Test Deliverable',
+    description: 'Test description',
+    priority: 1,
+    estimate_hours: 8,
+    milestone_id: null,
+    completion_percentage: 0,
+    business_value: 100,
+    risk_factors: null,
+    acceptance_criteria: null,
+    deliverable_type: 'feature' as const,
+    created_at: new Date().toISOString(),
+    deleted_at: null,
+    ...overrides,
+  };
+}
+
+function createMockTask(overrides = {}) {
+  return {
+    id: 'test-task',
+    deliverable_id: 'test-deliverable',
+    title: 'Test Task',
+    description: 'Test task description',
+    assignee: 'Test User',
+    status: 'todo' as const,
+    estimate: 2,
+    created_at: new Date().toISOString(),
+    milestone_id: null,
+    actual_hours: null,
+    completion_percentage: 0,
+    priority_score: 1,
+    complexity_score: 1,
+    risk_level: 'low' as const,
+    tags: null,
+    custom_fields: null,
+    deleted_at: null,
+    start_date: null,
+    end_date: null,
+    ...overrides,
+  };
+}
+
 describe('Integration Tests', () => {
   describe('AI Service Integration', () => {
     it('should initialize and perform health check', async () => {
@@ -120,7 +184,7 @@ describe('Integration Tests', () => {
     });
 
     it('should handle complete export pipeline', async () => {
-      const testData = {
+      const testData = createMockExportData({
         idea: {
           id: 'integration-test',
           title: 'Integration Test Project',
@@ -131,19 +195,18 @@ describe('Integration Tests', () => {
           deleted_at: null,
         },
         deliverables: [
-          {
+          createMockDeliverable({
             id: 'del-1',
             idea_id: 'integration-test',
             title: 'Test Deliverable',
             description: 'Test deliverable description',
             priority: 1,
             estimate_hours: 8,
-            created_at: new Date().toISOString(),
             deleted_at: null,
-          },
+          }),
         ],
         tasks: [
-          {
+          createMockTask({
             id: 'task-1',
             deliverable_id: 'del-1',
             title: 'Test Task',
@@ -151,21 +214,9 @@ describe('Integration Tests', () => {
             assignee: 'Test User',
             status: 'todo' as const,
             estimate: 2,
-            created_at: new Date().toISOString(),
-            milestone_id: null,
-            actual_hours: null,
-            completion_percentage: 0,
-            priority_score: 1,
-            complexity_score: 1,
-            risk_level: 'low',
-            tags: null,
-            custom_fields: null,
-            deleted_at: null,
-            start_date: null,
-            end_date: null,
-          },
+          }),
         ],
-      };
+      });
 
       // Test markdown export (should work)
       const markdownResult = await exportManager.export({
@@ -307,7 +358,7 @@ describe('Integration Tests', () => {
     });
 
     it('should handle large data sets', async () => {
-      const largeData = {
+      const largeData = createMockExportData({
         idea: {
           id: 'large-test',
           title: 'Large Test Project',
@@ -317,41 +368,32 @@ describe('Integration Tests', () => {
           user_id: 'test-user',
           deleted_at: null,
         },
-        deliverables: Array.from({ length: 100 }, (_, i) => ({
-          id: `del-${i}`,
-          idea_id: 'large-test',
-          title: `Deliverable ${i}`,
-          description: `Description for deliverable ${i}`,
-          priority: (i % 5) + 1,
-          estimate_hours: (i % 8) + 1,
-          created_at: new Date().toISOString(),
-          deleted_at: null,
-        })),
-        tasks: Array.from({ length: 500 }, (_, i) => ({
-          id: `task-${i}`,
-          deliverable_id: `del-${Math.floor(i / 5)}`,
-          title: `Task ${i}`,
-          description: `Description for task ${i}`,
-          assignee: `User ${i % 10}`,
-          status: ['todo', 'in_progress', 'completed'][i % 3] as
-            | 'todo'
-            | 'in_progress'
-            | 'completed',
-          estimate: (i % 4) + 1,
-          created_at: new Date().toISOString(),
-          milestone_id: null,
-          actual_hours: null,
-          completion_percentage: 0,
-          priority_score: 1,
-          complexity_score: 1,
-          risk_level: 'low',
-          tags: null,
-          custom_fields: null,
-          deleted_at: null,
-          start_date: null,
-          end_date: null,
-        })),
-      };
+        deliverables: Array.from({ length: 100 }, (_, i) =>
+          createMockDeliverable({
+            id: `del-${i}`,
+            idea_id: 'large-test',
+            title: `Deliverable ${i}`,
+            description: `Description for deliverable ${i}`,
+            priority: (i % 5) + 1,
+            estimate_hours: (i % 8) + 1,
+            deleted_at: null,
+          })
+        ),
+        tasks: Array.from({ length: 500 }, (_, i) =>
+          createMockTask({
+            id: `task-${i}`,
+            deliverable_id: `del-${Math.floor(i / 5)}`,
+            title: `Task ${i}`,
+            description: `Description for task ${i}`,
+            assignee: `User ${i % 10}`,
+            status: ['todo', 'in_progress', 'completed'][i % 3] as
+              | 'todo'
+              | 'in_progress'
+              | 'completed',
+            estimate: (i % 4) + 1,
+          })
+        ),
+      });
 
       const startTime = Date.now();
       const result = await exportManager.export({

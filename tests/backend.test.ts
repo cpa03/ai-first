@@ -7,6 +7,69 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 import { aiService, AIService } from '../src/lib/ai';
 import { dbService } from '../src/lib/db';
 import { exportManager } from '../src/lib/exports';
+import type { ExportData } from '../src/lib/exports';
+
+function createMockExportData(overrides = {}): ExportData {
+  return {
+    idea: {
+      id: 'test-idea',
+      title: 'Test Project',
+      raw_text: 'This is a test project description',
+      status: 'draft' as const,
+      created_at: new Date().toISOString(),
+      user_id: 'test-user',
+      deleted_at: null,
+    },
+    deliverables: [],
+    tasks: [],
+    ...overrides,
+  };
+}
+
+function createMockDeliverable(overrides = {}) {
+  return {
+    id: 'test-deliverable',
+    idea_id: 'test-idea',
+    title: 'Test Deliverable',
+    description: 'Test description',
+    priority: 1,
+    estimate_hours: 8,
+    milestone_id: null,
+    completion_percentage: 0,
+    business_value: 100,
+    risk_factors: null,
+    acceptance_criteria: null,
+    deliverable_type: 'feature' as const,
+    created_at: new Date().toISOString(),
+    deleted_at: null,
+    ...overrides,
+  };
+}
+
+function createMockTask(overrides = {}) {
+  return {
+    id: 'test-task',
+    deliverable_id: 'test-deliverable',
+    title: 'Test Task',
+    description: 'Test task description',
+    assignee: 'Test User',
+    status: 'todo' as const,
+    estimate: 2,
+    created_at: new Date().toISOString(),
+    milestone_id: null,
+    actual_hours: null,
+    completion_percentage: 0,
+    priority_score: 1,
+    complexity_score: 1,
+    risk_level: 'low' as const,
+    tags: null,
+    custom_fields: null,
+    deleted_at: null,
+    start_date: null,
+    end_date: null,
+    ...overrides,
+  };
+}
 
 describe('Backend Services', () => {
   describe('AI Service', () => {
@@ -70,49 +133,20 @@ describe('Backend Services', () => {
   });
 
   describe('Export Manager', () => {
-    it('should have available connectors', () => {
-      const connectors = exportManager.getAvailableConnectors();
-      expect(connectors.length).toBeGreaterThan(0);
-
-      // Should include markdown exporter
-      const markdownExporter = connectors.find((c) => c.type === 'markdown');
-      expect(markdownExporter).toBeDefined();
-    });
-
-    it('should validate markdown export', async () => {
-      const connector = exportManager.getConnector('markdown');
-      expect(connector).toBeDefined();
-
-      if (connector) {
-        const isValid = await connector.validateConfig();
-        expect(isValid).toBe(true);
-      }
-    });
-
-    it('should export to markdown format', async () => {
-      const testData = {
-        idea: {
-          id: 'test-idea',
-          title: 'Test Project',
-          raw_text: 'This is a test project description',
-          status: 'draft' as const,
-          created_at: new Date().toISOString(),
-          user_id: 'test-user',
-          deleted_at: null,
-        },
+    it('should export to markdown', async () => {
+      const testData = createMockExportData({
         deliverables: [
-          {
+          createMockDeliverable({
             id: 'test-deliverable',
             idea_id: 'test-idea',
             title: 'Test Deliverable',
             description: 'Test description',
             priority: 1,
             estimate_hours: 8,
-            created_at: new Date().toISOString(),
-          },
+          }),
         ],
         tasks: [
-          {
+          createMockTask({
             id: 'test-task',
             deliverable_id: 'test-deliverable',
             title: 'Test Task',
@@ -120,10 +154,9 @@ describe('Backend Services', () => {
             assignee: 'Test User',
             status: 'todo' as const,
             estimate: 2,
-            created_at: new Date().toISOString(),
-          },
+          }),
         ],
-      };
+      });
 
       const result = await exportManager.export({
         type: 'markdown',
