@@ -1793,12 +1793,21 @@ export const exportUtils = {
     deliverables: Deliverable[] = [],
     tasks: Task[] = []
   ): ExportData {
+    const now = new Date().toISOString();
+
     return {
       idea,
-      deliverables,
-      tasks,
+      deliverables: deliverables.map((d) => ({
+        ...d,
+        created_at: d.created_at || now,
+        idea_id: d.idea_id || idea.id,
+      })),
+      tasks: tasks.map((t) => ({
+        ...t,
+        created_at: t.created_at || now,
+      })),
       metadata: {
-        exported_at: new Date().toISOString(),
+        exported_at: now,
         version: '1.0.0',
       },
     };

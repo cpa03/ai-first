@@ -11,6 +11,7 @@ import {
   checkRateLimit,
   rateLimitConfigs,
   rateLimitResponse,
+  RateLimitInfo,
 } from '@/lib/rate-limit';
 
 export interface ApiHandlerOptions {
@@ -37,21 +38,20 @@ export function withApiHandler(
       : rateLimitConfigs.lenient;
 
     try {
-      const rateLimitConfig = options.rateLimit
-        ? rateLimitConfigs[options.rateLimit]
-        : rateLimitConfigs.lenient;
-
       const rateLimitResult = checkRateLimit(
         request.headers.get('x-forwarded-for') || 'unknown',
         rateLimitConfig
       );
 
       if (!rateLimitResult.allowed) {
-        return rateLimitResponse(
-          rateLimitResult.resetTime,
-          rateLimitConfig.maxRequests
-        );
+        return rateLimitResponse(rateLimitResult.info);
       }
+
+      const context: ApiContext = {
+        requestId,
+        request,
+        rateLimit: rateLimitResult.info,
+      };
 
       if (options.validateSize !== false) {
         const sizeValidation = validateRequestSize(request);
@@ -70,6 +70,19 @@ export function withApiHandler(
       if (!response.headers.has('X-Request-ID')) {
         response.headers.set('X-Request-ID', requestId);
       }
+
+      response.headers.set(
+        'X-RateLimit-Limit',
+        String(context.rateLimit.limit)
+      );
+      response.headers.set(
+        'X-RateLimit-Remaining',
+        String(context.rateLimit.remaining)
+      );
+      response.headers.set(
+        'X-RateLimit-Reset',
+        String(new Date(context.rateLimit.reset).toISOString())
+      );
 
       return response;
     } catch (error) {
