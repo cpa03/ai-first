@@ -6,7 +6,7 @@ import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 const MAX_ANSWER_LENGTH = 5000;
 
 async function handlePost(context: ApiContext) {
-  const { request, rateLimit } = context;
+  const { request, rateLimit: _rateLimit } = context;
   const { ideaId, questionId, answer } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);

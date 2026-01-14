@@ -4,7 +4,7 @@ import { ValidationError } from '@/lib/errors';
 import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
-  const { request, rateLimit } = context;
+  const { request, rateLimit: _rateLimit } = context;
   const { ideaId } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);

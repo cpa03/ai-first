@@ -9,6 +9,7 @@ export interface Deliverable {
   priority: number;
   estimate_hours: number;
   created_at: string;
+  deleted_at?: string;
 }
 
 export class DeliverableRepository extends BaseRepository {

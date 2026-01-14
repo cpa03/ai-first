@@ -4,7 +4,7 @@ import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
-  const { request, rateLimit } = context;
+  const { request, rateLimit: _rateLimit } = context;
   const { ideaId, ideaText } = await request.json();
 
   const idValidation = validateIdeaId(ideaId);
@@ -36,7 +36,7 @@ async function handlePost(context: ApiContext) {
 }
 
 async function handleGet(context: ApiContext) {
-  const { rateLimit } = context;
+  const { rateLimit: _rateLimit } = context;
   const { searchParams } = new URL(context.request.url);
   const ideaId = searchParams.get('ideaId');
 

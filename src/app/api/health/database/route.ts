@@ -2,7 +2,7 @@ import { dbService } from '@/lib/db';
 import { successResponse, ApiContext, withApiHandler } from '@/lib/api-handler';
 
 async function handleGet(context: ApiContext) {
-  const { rateLimit } = context;
+  const { rateLimit: _rateLimit } = context;
   const healthCheck = await dbService.healthCheck();
 
   const response = {

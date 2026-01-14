@@ -43,6 +43,9 @@ export function withApiHandler(
       : rateLimitConfigs.lenient;
 
     try {
+      const rateLimitConfig = options.rateLimit
+        ? rateLimitConfigs[options.rateLimit]
+        : rateLimitConfigs.lenient;
       const rateLimitResult = checkRateLimit(
         request.headers.get('x-forwarded-for') || 'unknown',
         rateLimitConfig
@@ -66,16 +69,6 @@ export function withApiHandler(
           );
         }
       }
-
-      const context: ApiContext = {
-        requestId,
-        request,
-        rateLimit: {
-          limit: rateLimitConfig.maxRequests,
-          remaining: rateLimitResult.remaining,
-          reset: rateLimitResult.resetTime,
-        },
-      };
 
       const response = await handler(context);
 

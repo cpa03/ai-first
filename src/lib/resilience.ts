@@ -1,4 +1,20 @@
-export interface CircuitBreakerConfig {
+import { createLogger } from './logger';
+
+const logger = createLogger('Resilience');
+
+export interface RetryOptions {
+  maxRetries?: number;
+  baseDelay?: number;
+  maxDelay?: number;
+  shouldRetry?: (error: Error, attempt: number) => boolean;
+}
+
+export interface TimeoutOptions {
+  timeoutMs: number;
+  onTimeout?: () => void;
+}
+
+export interface CircuitBreakerOptions {
   failureThreshold: number;
   resetTimeoutMs: number;
   monitoringPeriodMs: number;
@@ -19,10 +35,12 @@ export enum CircuitBreakerState {
 }
 
 export class CircuitBreaker {
-  private failures: number = 0;
-  private lastFailureTime: number = 0;
-  private state: CircuitBreakerState = CircuitBreakerState.CLOSED;
-  private nextAttemptTime: number = 0;
+  private state: CircuitBreakerState = {
+    state: 'closed',
+    failures: 0,
+  };
+  private cachedState?: CircuitBreakerState;
+  private recentFailures: number[] = [];
 
   constructor(
     private readonly name: string,
@@ -46,49 +64,75 @@ export class CircuitBreaker {
       }
     }
 
+    this.cleanupOldFailures(now);
+
     try {
       const result = await operation();
-      this.onSuccess();
+      this.onSuccess(now);
       return result;
     } catch (error) {
-      this.onFailure();
+      const errorMessage = (error as Error).message;
+      const attemptCount =
+        (error as Error & { attemptCount?: number }).attemptCount ||
+        (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
+      this.onError(error as Error, now, attemptCount);
       throw error;
     }
   }
 
-  private onSuccess(): void {
-    this.failures = 0;
-    if (this.state === CircuitBreakerState.HALF_OPEN) {
-      this.state = CircuitBreakerState.CLOSED;
+  private cleanupOldFailures(now: number): void {
+    const monitoringPeriod = this.options.monitoringPeriod;
+    this.recentFailures = this.recentFailures.filter(
+      (timestamp) => now - timestamp <= monitoringPeriod
+    );
+    this.state.failures = this.recentFailures.length;
+  }
+
+  private onSuccess(_now: number): void {
+    this.recentFailures = [];
+    this.state.failures = 0;
+    this.state.state = 'closed';
+
+    if (this.cachedState) {
+      this.cachedState.failures = 0;
+      this.cachedState.state = 'closed';
+      delete this.cachedState.lastFailureTime;
+      delete this.cachedState.nextAttemptTime;
     }
   }
 
-  private onFailure(): void {
-    this.failures++;
-    this.lastFailureTime = Date.now();
-
-    if (
-      this.failures >= this.config.failureThreshold &&
-      this.state !== CircuitBreakerState.OPEN
-    ) {
-      this.state = CircuitBreakerState.OPEN;
-      this.nextAttemptTime = Date.now() + this.config.resetTimeoutMs;
-      console.error(
-        `Circuit breaker ${this.name} opened after ${this.failures} failures`
-      );
+  private onError(error: Error, _now: number, attemptCount: number = 1): void {
+    for (let i = 0; i < attemptCount; i++) {
+      this.recentFailures.push(_now);
     }
+    this.state.failures = this.recentFailures.length;
+    this.state.lastFailureTime = _now;
+
+    if (this.state.failures >= this.options.failureThreshold) {
+      this.openCircuit(_now);
+    }
+
+    if (this.cachedState) {
+      this.cachedState.failures = this.state.failures;
+      this.cachedState.state = this.state.state;
+      this.cachedState.lastFailureTime = this.state.lastFailureTime;
+      this.cachedState.nextAttemptTime = this.state.nextAttemptTime;
+    }
+  }
+
+  private openCircuit(now: number): void {
+    this.state.state = 'open';
+    this.state.nextAttemptTime = now + this.options.resetTimeout;
+    logger.debug(
+      `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+    );
   }
 
   getState(): CircuitBreakerState {
-    return this.state;
-  }
-
-  getFailures(): number {
-    return this.failures;
-  }
-
-  getNextAttemptTime(): number {
-    return this.nextAttemptTime;
+    if (!this.cachedState) {
+      this.cachedState = { ...this.state };
+    }
+    return this.cachedState;
   }
 
   reset(): void {
@@ -111,41 +155,127 @@ export class CircuitBreaker {
           ? new Date(this.nextAttemptTime).toISOString()
           : undefined,
     };
+    this.recentFailures = [];
+    this.cachedState = undefined;
   }
 }
 
-export function withTimeout<T>(
-  operation: () => Promise<T>,
-  timeoutMs: number,
-  errorMessage?: string
-): Promise<T> {
-  return Promise.race([
-    operation(),
-    new Promise<T>((_, reject) =>
-      setTimeout(
-        () =>
-          reject(
-            new Error(
-              errorMessage || `Operation timed out after ${timeoutMs}ms`
-            )
-          ),
-        timeoutMs
-      )
-    ),
-  ]);
-}
+export class RetryManager {
+  static async withRetry<T>(
+    operation: () => Promise<T>,
+    options: RetryOptions = {},
+    context?: string,
+    circuitBreaker?: CircuitBreaker
+  ): Promise<T> {
+    const {
+      maxRetries = 3,
+      baseDelay = 1000,
+      maxDelay = 30000,
+      shouldRetry,
+    } = options;
 
-export async function withRetry<T>(
-  operation: () => Promise<T>,
-  config: RetryConfig = {
-    maxRetries: 3,
-    initialDelayMs: 1000,
-    maxDelayMs: 30000,
-    backoffMultiplier: 2,
+    const defaultShouldRetry = (error: Error, _attempt: number): boolean => {
+      const retryableStatuses = [
+        408,
+        429,
+        500,
+        502,
+        503,
+        504,
+        507,
+        509,
+        'econnreset',
+        'econnrefused',
+        'etimedout',
+        'enotfound',
+        'eai_again',
+      ];
+
+      const message = error.message.toLowerCase();
+
+      return (
+        retryableStatuses.some((status) =>
+          message.includes(String(status).toLowerCase())
+        ) ||
+        message.includes('timeout') ||
+        message.includes('rate limit') ||
+        message.includes('too many requests') ||
+        message.includes('temporary failure')
+      );
+    };
+
+    const retryFn = shouldRetry || defaultShouldRetry;
+
+    let lastError: Error | undefined;
+
+    for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
+      try {
+        if (circuitBreaker && attempt > 1) {
+          const state = circuitBreaker.getState();
+          if (state.state === 'open') {
+            const stateStr = state.state;
+            const nextAttempt = state.nextAttemptTime;
+            throw new Error(
+              `Circuit breaker is ${stateStr.toUpperCase()} for ${context || 'operation'}. Not accepting requests until ${new Date(nextAttempt!).toISOString()}`
+            );
+          }
+        }
+        return await operation();
+      } catch (error) {
+        lastError = error as Error;
+
+        if (attempt > maxRetries || !retryFn(lastError, attempt)) {
+          const exhaustedError = new RetryExhaustedError(
+            `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
+            lastError,
+            attempt
+          );
+          (exhaustedError as Error & { attemptCount?: number }).attemptCount =
+            attempt;
+          throw exhaustedError;
+        }
+
+        const delay = Math.min(
+          baseDelay * Math.pow(2, attempt - 1) + Math.random() * 1000,
+          maxDelay
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+    }
+
+    throw lastError;
   }
 }
 
-function isRetryableError(
+export class TimeoutManager {
+  static async withTimeout<T>(
+    operation: () => Promise<T>,
+    options: TimeoutOptions
+  ): Promise<T> {
+    const { timeoutMs, onTimeout } = options;
+
+    if (timeoutMs <= 0) {
+      return Promise.reject(new TimeoutError('Timeout must be greater than 0'));
+    }
+
+    return Promise.race([
+      operation(),
+      new Promise<never>((_, reject) => {
+        const timeoutId = setTimeout(() => {
+          onTimeout?.();
+          reject(new TimeoutError(`Operation timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+
+        if (typeof (timeoutId as NodeJS.Timeout).unref === 'function') {
+          (timeoutId as NodeJS.Timeout).unref();
+        }
+      }),
+    ]);
+  }
+}
+
+function _isRetryableError(
   error: Error,
   customRetryableErrors?: string[]
 ): boolean {
@@ -180,11 +310,20 @@ export function createResilientWrapper<T>(
   return async () => {
     const { circuitBreaker, timeoutMs, retryConfig } = options;
 
-    const wrappedOperation = async () => {
-      if (timeoutMs && retryConfig) {
-        return await withRetry(
-          () => withTimeout(operation, timeoutMs),
-          retryConfig
+    const _executeWithResilience = async (): Promise<T> => {
+      const operationWithTimeout = async (): Promise<T> => {
+        if (config.timeout) {
+          return TimeoutManager.withTimeout(operation, config.timeout);
+        }
+        return operation();
+      };
+
+      if (config.retry) {
+        return RetryManager.withRetry(
+          operationWithTimeout,
+          config.retry,
+          context,
+          circuitBreaker
         );
       }
 

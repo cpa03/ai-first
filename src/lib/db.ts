@@ -170,11 +170,12 @@ export class DatabaseService {
   }
 
   async softDeleteIdea(id: string): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
+    if (!supabaseAdmin)
+      throw new Error('Supabase admin client not initialized');
 
-    const { error } = await this.admin
+    const { error } = await supabaseAdmin
       .from('ideas')
-      .update({ deleted_at: new Date().toISOString() } as any)
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) throw error;
@@ -253,9 +254,9 @@ export class DatabaseService {
   async getIdeaDeliverablesWithTasks(
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
+    if (!supabaseClient) throw new Error('Supabase client not initialized');
 
-    const { data, error } = await this.client
+    const { data, error } = await supabaseClient
       .from('deliverables')
       .select('*, tasks(*)')
       .eq('idea_id', ideaId)
@@ -264,7 +265,7 @@ export class DatabaseService {
 
     if (error) throw error;
 
-    const deliverables = (data as any[]) || [];
+    const deliverables = (data || []) as (Deliverable & { tasks: Task[] })[];
 
     return deliverables.map((d) => ({
       ...d,
@@ -290,11 +291,12 @@ export class DatabaseService {
   }
 
   async softDeleteDeliverable(id: string): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
+    if (!supabaseAdmin)
+      throw new Error('Supabase admin client not initialized');
 
-    const { error } = await this.admin
+    const { error } = await supabaseAdmin
       .from('deliverables')
-      .update({ deleted_at: new Date().toISOString() } as any)
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) throw error;
@@ -354,11 +356,12 @@ export class DatabaseService {
   }
 
   async softDeleteTask(id: string): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
+    if (!supabaseAdmin)
+      throw new Error('Supabase admin client not initialized');
 
-    const { error } = await this.admin
+    const { error } = await supabaseAdmin
       .from('tasks')
-      .update({ deleted_at: new Date().toISOString() } as any)
+      .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) throw error;

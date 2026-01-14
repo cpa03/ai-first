@@ -41,6 +41,19 @@ jest.mock('@/lib/resilience', () => ({
       circuitBreakerResetMs: 60000,
     },
   },
+  DEFAULT_TIMEOUTS: {
+    openai: 60000,
+    notion: 30000,
+    trello: 30000,
+    github: 30000,
+    database: 10000,
+  },
+  circuitBreakerManager: {
+    getAllStatuses: jest.fn(() => ({})),
+  },
+  TimeoutManager: {
+    withTimeout: jest.fn((operation, options) => operation()),
+  },
 }));
 
 const mockCreateClient = createClient as jest.MockedFunction<
