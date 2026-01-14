@@ -54,6 +54,7 @@ jest.mock('@/lib/resilience', () => ({
   TimeoutManager: {
     withTimeout: jest.fn((operation, options) => operation()),
   },
+  withTimeout: jest.fn((operation, options) => operation()),
 }));
 
 const mockCreateClient = createClient as jest.MockedFunction<
@@ -112,6 +113,7 @@ describe('AIService', () => {
     it('should initialize OpenAI client when API key is provided', () => {
       expect(OpenAI).toHaveBeenCalledWith({
         apiKey: 'test-key',
+        timeout: 60000,
       });
     });
 
