@@ -1,7 +1,6 @@
-import { dbService } from '@/lib/db';
+import { dbService, type Idea } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import type { ClarifierQuestion } from './QuestionGenerator';
-import type { Idea } from '@/lib/repositories';
 
 const logger = createLogger('ClarifierSessionManager');
 
@@ -66,19 +65,21 @@ export class SessionManager {
         return [];
       }
 
-      const ideaIds = ideas.map((idea: Idea) => idea.id);
-      const vectors = await dbService.getVectorsBatch(
-        ideaIds,
-        'clarification_session'
-      );
-
       const sessionMap = new Map<string, ClarificationSession>();
-      for (const vector of vectors) {
-        const sessionData =
-          vector.vector_data as unknown as ClarificationSession;
-        sessionData.createdAt = new Date(sessionData.createdAt);
-        sessionData.updatedAt = new Date(sessionData.updatedAt);
-        sessionMap.set(vector.idea_id, sessionData);
+
+      for (const idea of ideas) {
+        const vectors = await dbService.getVectors(
+          idea.id,
+          'clarification_session'
+        );
+
+        for (const vector of vectors) {
+          const sessionData =
+            vector.vector_data as unknown as ClarificationSession;
+          sessionData.createdAt = new Date(sessionData.createdAt);
+          sessionData.updatedAt = new Date(sessionData.updatedAt);
+          sessionMap.set(vector.idea_id, sessionData);
+        }
       }
 
       const results = [];

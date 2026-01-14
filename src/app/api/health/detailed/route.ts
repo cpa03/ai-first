@@ -59,7 +59,14 @@ async function handleGet(context: ApiContext) {
   };
 
   const circuitBreakers = (
-    Object.entries(circuitBreakerStatuses) as [string, any][]
+    Object.entries(circuitBreakerStatuses) as [
+      string,
+      {
+        state: 'closed' | 'open' | 'half-open';
+        failures: number;
+        nextAttemptTime?: string;
+      },
+    ][]
   ).map(([service, status]) => ({
     service,
     state: status.state,
@@ -103,8 +110,8 @@ async function handleGet(context: ApiContext) {
   try {
     const exportStart = Date.now();
     const exportStatuses = await exportManager.validateAllConnectors();
-    const healthyExports = (Object.values(exportStatuses) as any[]).filter(
-      (v: any) => v
+    const healthyExports = Object.values(exportStatuses).filter(
+      (v) => v
     ).length;
     const totalExports = Object.keys(exportStatuses).length;
     checks.exports = {
@@ -148,10 +155,10 @@ async function handleGet(context: ApiContext) {
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
-  return standardSuccessResponse(overallStatus, context.requestId, statusCode);
+  return standardSuccessResponse(response, context.requestId, statusCode);
 }
 
-async function checkDatabaseHealth(): Promise<HealthCheckResult> {
+async function _checkDatabaseHealth(): Promise<HealthCheckResult> {
   const startTime = Date.now();
 
   try {
@@ -183,7 +190,7 @@ async function checkDatabaseHealth(): Promise<HealthCheckResult> {
   }
 }
 
-async function checkAIHealth(): Promise<HealthCheckResult> {
+async function _checkAIHealth(): Promise<HealthCheckResult> {
   const startTime = Date.now();
 
   try {
@@ -215,14 +222,14 @@ async function checkAIHealth(): Promise<HealthCheckResult> {
   }
 }
 
-async function checkExportsHealth(): Promise<HealthCheckResult> {
+async function _checkExportsHealth(): Promise<HealthCheckResult> {
   const startTime = Date.now();
 
   try {
     const validationResults = await exportManager.validateAllConnectors();
-    const healthyConnectors = (
-      Object.values(validationResults) as any[]
-    ).filter((valid: any) => valid).length;
+    const healthyConnectors = Object.values(validationResults).filter(
+      (valid) => valid
+    ).length;
     const totalConnectors = Object.keys(validationResults).length;
 
     const latency = Date.now() - startTime;
@@ -263,7 +270,7 @@ async function checkExportsHealth(): Promise<HealthCheckResult> {
   }
 }
 
-function determineOverallStatus(
+function _determineOverallStatus(
   db: HealthCheckResult,
   ai: HealthCheckResult,
   exports: HealthCheckResult,

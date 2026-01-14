@@ -14,6 +14,12 @@ import {
   RateLimitInfo,
 } from '@/lib/rate-limit';
 
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: string;
+}
+
 export interface ApiHandlerOptions {
   rateLimit?: keyof typeof rateLimitConfigs;
   validateSize?: boolean;
@@ -140,6 +146,28 @@ export function badRequestResponse(
     { error: message, code: 'BAD_REQUEST', details },
     { status: 400 }
   );
+
+  if (rateLimit) {
+    response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining));
+    response.headers.set(
+      'X-RateLimit-Reset',
+      String(new Date(rateLimit.reset).toISOString())
+    );
+  }
+
+  return response;
+}
+
+export function standardSuccessResponse<T>(
+  data: T,
+  requestId: string,
+  status: number = 200,
+  rateLimit?: RateLimitInfo
+): NextResponse {
+  const response = NextResponse.json(data, { status });
+
+  response.headers.set('X-Request-ID', requestId);
 
   if (rateLimit) {
     response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));

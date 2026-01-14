@@ -21,7 +21,7 @@ async function handlePost(context: ApiContext) {
       requestId: context.requestId,
     },
     200,
-    rateLimit
+    _rateLimit
   );
 }
 

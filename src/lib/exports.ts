@@ -393,7 +393,9 @@ export class NotionExporter extends ExportConnector {
         return true;
       };
 
-      return await withTimeout(testConnection, DEFAULT_TIMEOUTS.notion / 2);
+      return await withTimeout(testConnection, {
+        timeoutMs: DEFAULT_TIMEOUTS.notion / 2,
+      });
     } catch (_error) {
       return false;
     }
@@ -632,11 +634,10 @@ export class TrelloExporter extends ExportConnector {
         () =>
           withRetry(testConnection, {
             maxRetries: 2,
-            initialDelayMs: 500,
-            maxDelayMs: 2000,
-            backoffMultiplier: 2,
+            baseDelay: 500,
+            maxDelay: 2000,
           }),
-        DEFAULT_TIMEOUTS.trello / 2
+        { timeoutMs: DEFAULT_TIMEOUTS.trello / 2 }
       );
     } catch (_error) {
       return false;
@@ -856,9 +857,8 @@ export class TrelloExporter extends ExportConnector {
 
     await withRetry(makeRequest, {
       maxRetries: 2,
-      initialDelayMs: 500,
-      maxDelayMs: 5000,
-      backoffMultiplier: 2,
+      baseDelay: 500,
+      maxDelay: 5000,
     });
   }
 
@@ -883,9 +883,8 @@ export class TrelloExporter extends ExportConnector {
 
     await withRetry(makeRequest, {
       maxRetries: 2,
-      initialDelayMs: 500,
-      maxDelayMs: 5000,
-      backoffMultiplier: 2,
+      baseDelay: 500,
+      maxDelay: 5000,
     });
   }
 
@@ -1131,11 +1130,10 @@ export class GitHubProjectsExporter extends ExportConnector {
         () =>
           withRetry(testConnection, {
             maxRetries: 2,
-            initialDelayMs: 500,
-            maxDelayMs: 2000,
-            backoffMultiplier: 2,
+            baseDelay: 500,
+            maxDelay: 2000,
           }),
-        DEFAULT_TIMEOUTS.github / 2
+        { timeoutMs: DEFAULT_TIMEOUTS.github / 2 }
       );
     } catch (_error) {
       return false;

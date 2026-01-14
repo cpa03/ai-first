@@ -4,7 +4,7 @@ export interface RateLimitInfo {
   reset: number;
 }
 
-interface RateLimitEntry {
+interface _RateLimitEntry {
   count: number;
   resetTime: number;
 }

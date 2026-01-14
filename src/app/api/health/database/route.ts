@@ -13,7 +13,7 @@ async function handleGet(context: ApiContext) {
     requestId: context.requestId,
   };
 
-  return successResponse(response, 200, rateLimit);
+  return successResponse(response, 200, _rateLimit);
 }
 
 export const GET = withApiHandler(handleGet, { validateSize: false });

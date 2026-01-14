@@ -86,14 +86,12 @@ export abstract class ExportConnector {
       return defaultResilienceConfigs.github;
     }
     return {
-      retry: {
-        maxRetries: 3,
-        baseDelay: 1000,
-        maxDelay: 10000,
-      },
-      timeout: {
-        timeoutMs: TIMEOUT_CONFIG.DEFAULT,
-      },
+      maxRetries: 3,
+      baseDelayMs: 1000,
+      maxDelayMs: 10000,
+      timeoutMs: TIMEOUT_CONFIG.DEFAULT,
+      failureThreshold: 5,
+      resetTimeoutMs: 60000,
     };
   }
 
