@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { dbService, Idea, IdeaSession } from '@/lib/db';
-import { exportManager, exportUtils } from '@/lib/exports';
+import { exportManager, exportUtils } from '@/lib/export-connectors';
 import dynamic from 'next/dynamic';
 
 const BlueprintDisplay = dynamic(
@@ -83,10 +83,8 @@ export default function ResultsPage() {
         typeof session.state.answers === 'object'
       ) {
         const answers = session.state.answers as Record<string, unknown>;
-        exportData.metadata = exportData.metadata || {};
-        exportData.metadata.goals = [(answers.main_goal as string) || ''];
-        exportData.metadata.target_audience =
-          (answers.target_audience as string) || '';
+        exportData.goals = [(answers.main_goal as string) || ''];
+        exportData.target_audience = (answers.target_audience as string) || '';
       }
 
       // Export the data

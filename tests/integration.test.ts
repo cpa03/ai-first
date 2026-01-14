@@ -9,15 +9,13 @@ jest.mock('@/lib/ai', () => ({
 
 import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import { exportManager } from '@/lib/exports';
+import { exportManager, type ExportData } from '@/lib/export-connectors';
 
 // Mock environment variables for testing
 process.env.OPENAI_API_KEY = 'test-key';
 process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
-
-import type { ExportData } from '@/lib/exports';
 
 function createMockExportData(overrides = {}): ExportData {
   return {
@@ -27,7 +25,6 @@ function createMockExportData(overrides = {}): ExportData {
       raw_text: 'This is a test project description',
       status: 'draft' as const,
       created_at: new Date().toISOString(),
-      user_id: 'test-user',
       deleted_at: null,
     },
     deliverables: [],
@@ -132,7 +129,6 @@ describe('Integration Tests', () => {
 
     it('should handle idea CRUD operations', async () => {
       const ideaData = {
-        user_id: 'test-user',
         title: 'Integration Test Idea',
         raw_text: 'This is an integration test idea',
         status: 'draft' as const,
@@ -191,7 +187,6 @@ describe('Integration Tests', () => {
           raw_text: 'A comprehensive integration test project',
           status: 'clarified' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [
@@ -365,7 +360,6 @@ describe('Integration Tests', () => {
           raw_text: 'A'.repeat(10000), // Large text
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: Array.from({ length: 100 }, (_, i) =>

@@ -1,7 +1,7 @@
 import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { circuitBreakerManager } from '@/lib/resilience';
-import { exportManager } from '@/lib/exports';
+import { exportManager } from '@/lib/export-connectors';
 import {
   ApiContext,
   withApiHandler,

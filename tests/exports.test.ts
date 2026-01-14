@@ -13,7 +13,7 @@ import {
   type ExportFormat,
   type ExportResult,
   type ExportData,
-} from '@/lib/exports';
+} from '@/lib/export-connectors';
 
 function createMockIdea(overrides = {}): ExportData {
   return {
@@ -23,7 +23,6 @@ function createMockIdea(overrides = {}): ExportData {
       raw_text: 'This is a test project description',
       status: 'draft' as const,
       created_at: new Date().toISOString(),
-      user_id: 'test-user',
       deleted_at: null,
       ...overrides,
     },
@@ -155,7 +154,6 @@ describe('Export Services', () => {
           raw_text: 'This is a test project description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [
@@ -204,7 +202,6 @@ describe('Export Services', () => {
           raw_text: 'Test description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [
@@ -502,7 +499,6 @@ describe('Export Services', () => {
             raw_text: 'Description',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
         }),
@@ -522,7 +518,6 @@ describe('Export Services', () => {
             raw_text: 'Test',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
         }) as any,
@@ -543,7 +538,6 @@ describe('Export Services', () => {
             raw_text: 'Test',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
         }),
@@ -572,7 +566,6 @@ describe('Export Services', () => {
           raw_text: 'Test description',
           status: 'draft' as const,
           created_at: '2024-01-01T00:00:00Z',
-          user_id: 'test-user',
           deleted_at: null,
         };
 
@@ -594,7 +587,6 @@ describe('Export Services', () => {
           raw_text: 'Desc',
           status: 'draft' as const,
           created_at: '2024-01-01T00:00:00Z',
-          user_id: 'test-user',
           deleted_at: null,
         };
         const deliverables = [
@@ -639,7 +631,6 @@ describe('Export Services', () => {
             raw_text: 'Description',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
         });
@@ -665,7 +656,6 @@ describe('Export Services', () => {
             raw_text: '' as any,
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
         });

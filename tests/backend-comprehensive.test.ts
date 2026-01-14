@@ -17,7 +17,7 @@ jest.mock('openai', () => {
 import { AIService, aiService } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
-import { ExportService } from '@/lib/exports';
+import { ExportService } from '@/lib/export-connectors';
 import { ClarifierAgent } from '@/lib/agents/clarifier';
 import { DatabaseService } from '@/lib/db';
 import {
@@ -322,7 +322,6 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [],
@@ -341,7 +340,6 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [],
@@ -367,7 +365,6 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [],

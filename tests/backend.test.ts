@@ -6,8 +6,7 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 
 import { aiService, AIService } from '../src/lib/ai';
 import { dbService } from '../src/lib/db';
-import { exportManager } from '../src/lib/exports';
-import type { ExportData } from '../src/lib/exports';
+import { exportManager, type ExportData } from '../src/lib/export-connectors';
 
 function createMockExportData(overrides = {}): ExportData {
   return {
@@ -17,7 +16,6 @@ function createMockExportData(overrides = {}): ExportData {
       raw_text: 'This is a test project description',
       status: 'draft' as const,
       created_at: new Date().toISOString(),
-      user_id: 'test-user',
       deleted_at: null,
     },
     deliverables: [],
@@ -119,7 +117,6 @@ describe('Backend Services', () => {
 
     it('should validate idea data structure', () => {
       const ideaData = {
-        user_id: 'test-user',
         title: 'Test Idea',
         raw_text: 'This is a test idea',
         status: 'draft' as const,
