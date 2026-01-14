@@ -1,27 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
-import { createLogger } from './logger';
-import {
-  IdeaRepository,
-  type Idea,
-  type IdeaSession,
-  DeliverableRepository,
-  type Deliverable,
-  TaskRepository,
-  type Task,
-  VectorRepository,
-  type Vector,
-  AgentLogRepository,
-  type AgentLog,
-  AnalyticsRepository,
-} from './repositories';
 
-const logger = createLogger('DatabaseService');
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Supabase client configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+// Client for browser-side operations (with RLS)
 export const supabaseClient =
   supabaseUrl && supabaseAnonKey
     ? createClient(supabaseUrl, supabaseAnonKey, {
@@ -32,6 +18,7 @@ export const supabaseClient =
       })
     : null;
 
+// Admin client for server-side operations (bypasses RLS)
 export const supabaseAdmin =
   supabaseUrl && supabaseServiceKey
     ? createClient(supabaseUrl, supabaseServiceKey, {
@@ -42,29 +29,99 @@ export const supabaseAdmin =
       })
     : null;
 
+// Database types and utilities
+export interface Idea {
+  id: string;
+  user_id: string;
+  title: string;
+  raw_text: string;
+  status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  deleted_at: string | null;
+  created_at: string;
+}
+
+export interface IdeaSession {
+  idea_id: string;
+  state: Record<string, unknown>;
+  last_agent: string;
+  metadata: Record<string, unknown>;
+  updated_at: string;
+}
+
+export interface Deliverable {
+  id: string;
+  idea_id: string;
+  title: string;
+  description?: string;
+  priority: number;
+  estimate_hours: number;
+  milestone_id: string | null;
+  completion_percentage: number;
+  business_value: number;
+  risk_factors: string[] | null;
+  acceptance_criteria: Record<string, unknown> | null;
+  deliverable_type:
+    | 'feature'
+    | 'documentation'
+    | 'testing'
+    | 'deployment'
+    | 'research';
+  created_at: string;
+  deleted_at?: string | null;
+}
+
+export interface Task {
+  id: string;
+  deliverable_id: string;
+  title: string;
+  description?: string;
+  assignee?: string;
+  status: 'todo' | 'in_progress' | 'completed';
+  estimate: number;
+  start_date: string | null;
+  end_date: string | null;
+  actual_hours: number | null;
+  completion_percentage: number;
+  priority_score: number;
+  complexity_score: number;
+  risk_level: 'low' | 'medium' | 'high';
+  tags: string[] | null;
+  custom_fields: Record<string, unknown> | null;
+  milestone_id: string | null;
+  created_at: string;
+  deleted_at?: string | null;
+}
+
+export interface Vector {
+  id: string;
+  idea_id: string;
+  vector_data?: Record<string, any>;
+  reference_type: string;
+  reference_id?: string;
+  created_at: string;
+  embedding?: number[];
+}
+
+export interface AgentLog {
+  id: string;
+  agent: string;
+  action: string;
+  payload: Record<string, any>;
+  timestamp: string;
+}
+
+// Database service class
 export class DatabaseService {
+  private client = supabaseClient;
+  private admin = supabaseAdmin;
   private static instance: DatabaseService;
 
-  private ideaRepo: IdeaRepository;
-  private deliverableRepo: DeliverableRepository;
-  private taskRepo: TaskRepository;
-  private vectorRepo: VectorRepository;
-  private agentLogRepo: AgentLogRepository;
-  private analyticsRepo: AnalyticsRepository;
-
   private constructor() {
-    this.ideaRepo = new IdeaRepository(supabaseClient, supabaseAdmin);
-    this.deliverableRepo = new DeliverableRepository(
-      supabaseClient,
-      supabaseAdmin
-    );
-    this.taskRepo = new TaskRepository(supabaseClient, supabaseAdmin);
-    this.vectorRepo = new VectorRepository(supabaseClient, supabaseAdmin);
-    this.agentLogRepo = new AgentLogRepository(supabaseClient, supabaseAdmin);
-    this.analyticsRepo = new AnalyticsRepository(supabaseClient, supabaseAdmin);
+    this.client = supabaseClient;
+    this.admin = supabaseAdmin;
 
-    if (!supabaseClient || !supabaseAdmin) {
-      logger.warn(
+    if (!this.client || !this.admin) {
+      console.warn(
         'Supabase clients not initialized. Check environment variables.'
       );
     }
@@ -77,137 +134,507 @@ export class DatabaseService {
     return DatabaseService.instance;
   }
 
+  // Ideas CRUD operations
   async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
-    return this.ideaRepo.createIdea(idea);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('ideas')
+      .insert(idea as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getIdea(id: string): Promise<Idea | null> {
-    return this.ideaRepo.getIdea(id);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('ideas')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (error) return null;
+    return data;
   }
 
   async getUserIdeas(userId: string): Promise<Idea[]> {
-    return this.ideaRepo.getUserIdeas(userId);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('ideas')
+      .select('*')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
   }
 
   async updateIdea(id: string, updates: Partial<Idea>): Promise<Idea> {
-    return this.ideaRepo.updateIdea(id, updates);
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { data, error } = await this.admin
+      .from('ideas')
+      .update(updates as any)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Idea;
+  }
+
+  async softDeleteIdea(id: string): Promise<void> {
+    if (!supabaseAdmin)
+      throw new Error('Supabase admin client not initialized');
+
+    const { error } = await supabaseAdmin
+      .from('ideas')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   async deleteIdea(id: string): Promise<void> {
-    return this.ideaRepo.deleteIdea(id);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { error } = await this.client.from('ideas').delete().eq('id', id);
+
+    if (error) throw error;
   }
 
+  // Idea sessions operations
   async upsertIdeaSession(
     session: Omit<IdeaSession, 'updated_at'>
   ): Promise<IdeaSession> {
-    return this.ideaRepo.upsertIdeaSession(session);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('idea_sessions')
+      .upsert({
+        ...session,
+        updated_at: new Date().toISOString(),
+      } as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getIdeaSession(ideaId: string): Promise<IdeaSession | null> {
-    return this.ideaRepo.getIdeaSession(ideaId);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('idea_sessions')
+      .select('*')
+      .eq('idea_id', ideaId)
+      .single();
+
+    if (error) return null;
+    return data;
   }
 
+  // Deliverables operations
   async createDeliverable(
     deliverable: Omit<Deliverable, 'id' | 'created_at'>
   ): Promise<Deliverable> {
-    return this.deliverableRepo.createDeliverable(deliverable);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('deliverables')
+      .insert(deliverable as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getIdeaDeliverables(ideaId: string): Promise<Deliverable[]> {
-    return this.deliverableRepo.getIdeaDeliverables(ideaId);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('deliverables')
+      .select('*')
+      .eq('idea_id', ideaId)
+      .is('deleted_at', null)
+      .order('priority', { ascending: false });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  async getIdeaDeliverablesWithTasks(
+    ideaId: string
+  ): Promise<(Deliverable & { tasks: Task[] })[]> {
+    if (!supabaseClient) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await supabaseClient
+      .from('deliverables')
+      .select('*, tasks(*)')
+      .eq('idea_id', ideaId)
+      .is('deleted_at', null)
+      .order('priority', { ascending: false });
+
+    if (error) throw error;
+
+    const deliverables = (data || []) as (Deliverable & { tasks: Task[] })[];
+
+    return deliverables.map((d) => ({
+      ...d,
+      tasks: (d.tasks || []).filter((t: Task) => !t.deleted_at),
+    }));
   }
 
   async updateDeliverable(
     id: string,
     updates: Partial<Deliverable>
   ): Promise<Deliverable> {
-    return this.deliverableRepo.updateDeliverable(id, updates);
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { data, error } = await this.admin
+      .from('deliverables')
+      .update(updates as any)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Deliverable;
+  }
+
+  async softDeleteDeliverable(id: string): Promise<void> {
+    if (!supabaseAdmin)
+      throw new Error('Supabase admin client not initialized');
+
+    const { error } = await supabaseAdmin
+      .from('deliverables')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   async deleteDeliverable(id: string): Promise<void> {
-    return this.deliverableRepo.deleteDeliverable(id);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { error } = await this.client
+      .from('deliverables')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
+  // Tasks operations
   async createTask(task: Omit<Task, 'id' | 'created_at'>): Promise<Task> {
-    return this.taskRepo.createTask(task);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .insert(task as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getDeliverableTasks(deliverableId: string): Promise<Task[]> {
-    return this.taskRepo.getDeliverableTasks(deliverableId);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('deliverable_id', deliverableId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
   }
 
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
-    return this.taskRepo.updateTask(id, updates);
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { data, error } = await this.admin
+      .from('tasks')
+      .update(updates as any)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data as Task;
+  }
+
+  async softDeleteTask(id: string): Promise<void> {
+    if (!supabaseAdmin)
+      throw new Error('Supabase admin client not initialized');
+
+    const { error } = await supabaseAdmin
+      .from('tasks')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) throw error;
   }
 
   async deleteTask(id: string): Promise<void> {
-    return this.taskRepo.deleteTask(id);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { error } = await this.client.from('tasks').delete().eq('id', id);
+
+    if (error) throw error;
   }
 
+  // Vector operations for embeddings and context
   async storeVector(
     vector: Omit<Vector, 'id' | 'created_at'>
   ): Promise<Vector> {
-    return this.vectorRepo.storeVector(vector);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('vectors')
+      .insert(vector as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getVectors(ideaId: string, referenceType?: string): Promise<Vector[]> {
-    return this.vectorRepo.getVectors(ideaId, referenceType);
-  }
+    if (!this.client) throw new Error('Supabase client not initialized');
 
-  async getVectorsBatch(
-    ideaIds: string[],
-    referenceType?: string
-  ): Promise<Vector[]> {
-    return this.vectorRepo.getVectorsBatch(ideaIds, referenceType);
+    let query = this.client.from('vectors').select('*').eq('idea_id', ideaId);
+
+    if (referenceType) {
+      query = query.eq('reference_type', referenceType);
+    }
+
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
+
+    if (error) throw error;
+    return data || [];
   }
 
   async deleteVector(id: string): Promise<void> {
-    return this.vectorRepo.deleteVector(id);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { error } = await this.client.from('vectors').delete().eq('id', id);
+
+    if (error) throw error;
   }
 
+  async storeEmbedding(
+    ideaId: string,
+    referenceType: string,
+    embedding: number[],
+    referenceId?: string,
+    vectorData?: Record<string, any>
+  ): Promise<Vector> {
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { data, error } = await this.admin
+      .from('vectors')
+      .insert({
+        idea_id: ideaId,
+        embedding: `[${embedding.join(',')}]`,
+        reference_type: referenceType,
+        reference_id: referenceId,
+        vector_data: vectorData,
+      } as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async searchSimilarVectors(
+    ideaId: string,
+    queryEmbedding: number[],
+    limit: number = 10
+  ): Promise<Vector[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const embeddingString = `[${queryEmbedding.join(',')}]`;
+
+    const { data, error } = await this.client.rpc('match_vectors', {
+      query_embedding: embeddingString,
+      match_threshold: 0.78,
+      match_count: limit,
+      idea_id_filter: ideaId,
+    });
+
+    if (error) throw error;
+    return data || [];
+  }
+
+  // Agent logging
   async logAgentAction(
     agent: string,
     action: string,
-    payload: Record<string, unknown>
+    payload: Record<string, any>
   ): Promise<void> {
-    return this.agentLogRepo.logAgentAction(agent, action, payload);
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
+
+    const { error } = await this.admin.from('agent_logs').insert({
+      agent,
+      action,
+      payload,
+      timestamp: new Date().toISOString(),
+    } as any);
+
+    if (error) throw error;
   }
 
-  async createClarificationSession(ideaId: string): Promise<unknown> {
-    return this.ideaRepo.createClarificationSession(ideaId);
+  // Clarification session operations
+  async createClarificationSession(ideaId: string): Promise<any> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('clarification_sessions')
+      .insert({
+        idea_id: ideaId,
+        status: 'active',
+      } as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async saveAnswers(
     sessionId: string,
     answers: Record<string, string>
-  ): Promise<unknown> {
-    return this.ideaRepo.saveAnswers(sessionId, answers);
+  ): Promise<any> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const entries = Object.entries(answers).map(([questionId, answer]) => ({
+      session_id: sessionId,
+      question_id: questionId,
+      answer,
+    }));
+
+    const { data, error } = await this.client
+      .from('clarification_answers')
+      .insert(entries as any)
+      .select();
+
+    if (error) throw error;
+    return data;
   }
 
   async getAgentLogs(agent?: string, limit: number = 100): Promise<AgentLog[]> {
-    return this.agentLogRepo.getAgentLogs(agent, limit);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    let query = this.client
+      .from('agent_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(limit);
+
+    if (agent) {
+      query = query.eq('agent', agent);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return data || [];
   }
 
+  // Analytics and reporting
   async getIdeaStats(userId: string): Promise<{
     totalIdeas: number;
     ideasByStatus: Record<string, number>;
     totalDeliverables: number;
     totalTasks: number;
   }> {
-    return this.analyticsRepo.getIdeaStats(userId);
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data: ideas } = await this.client
+      .from('ideas')
+      .select('status, id')
+      .eq('user_id', userId)
+      .is('deleted_at', null);
+
+    const ideasByStatus =
+      (ideas as any[])?.reduce(
+        (acc, idea) => {
+          acc[idea.status] = (acc[idea.status] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>
+      ) || {};
+
+    const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
+
+    const { count: totalDeliverables } = await this.client
+      .from('deliverables')
+      .select('*', { count: 'exact', head: true })
+      .in('idea_id', ideaIds)
+      .is('deleted_at', null);
+
+    const { data: deliverables } = await this.client
+      .from('deliverables')
+      .select('id')
+      .in('idea_id', ideaIds)
+      .is('deleted_at', null);
+
+    const deliverableIds = deliverables?.map((d) => d.id) || [];
+
+    const { count: totalTasks } = await this.client
+      .from('tasks')
+      .select('*', { count: 'exact', head: true })
+      .in('deliverable_id', deliverableIds)
+      .is('deleted_at', null);
+
+    return {
+      totalIdeas: ideas?.length || 0,
+      ideasByStatus,
+      totalDeliverables: totalDeliverables || 0,
+      totalTasks: totalTasks || 0,
+    };
   }
 
+  // Health check
   async healthCheck(): Promise<{ status: string; timestamp: string }> {
-    return this.analyticsRepo.healthCheck();
+    try {
+      if (!this.client) throw new Error('Supabase client not initialized');
+
+      const { error } = await this.client.from('ideas').select('id').limit(1);
+
+      if (error) throw error;
+
+      return {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+      };
+    } catch {
+      return {
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 }
 
+// Export singleton instance
 export const dbService = DatabaseService.getInstance();
 
+// Export types for external use
 export type { Database };
-
-export type { Idea, IdeaSession } from './repositories/idea-repository';
-export type { Deliverable } from './repositories/deliverable-repository';
-export type { Task } from './repositories/task-repository';
-export type { Vector } from './repositories/vector-repository';
-export type { AgentLog } from './repositories/agent-log-repository';

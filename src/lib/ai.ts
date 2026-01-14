@@ -3,6 +3,24 @@ import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
+import {
+  DEFAULT_TIMEOUTS,
+  withTimeout,
+  circuitBreakerManager,
+  type ServiceResilienceConfig,
+  type ResilienceConfig,
+} from './resilience';
+
+function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
+  return {
+    timeoutMs: config.timeout.timeoutMs,
+    maxRetries: config.retry.maxRetries,
+    baseDelayMs: config.retry.baseDelayMs,
+    maxDelayMs: config.retry.maxDelayMs,
+    failureThreshold: config.circuitBreaker.failureThreshold,
+    resetTimeoutMs: config.circuitBreaker.resetTimeoutMs,
+  };
+}
 
 const logger = createLogger('AIService');
 
@@ -60,6 +78,7 @@ class AIService {
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
+        timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
   }
@@ -78,7 +97,6 @@ class AIService {
     });
   }
 
-  // Make a model call with context windowing
   async callModel(
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
@@ -102,28 +120,24 @@ class AIService {
             temperature: config.temperature,
           });
 
-          const content = completion.choices[0]?.message?.content || '';
+          const response = completion.choices[0]?.message?.content || '';
 
-          // Track costs
           const usage = completion.usage;
           if (usage) {
             await this.trackCost(usage.total_tokens, config.model);
           }
 
-          return content;
+          return response;
         } else {
           throw new Error(`Provider ${config.provider} not yet implemented`);
         }
       }, config);
 
-      const duration = Date.now() - startTime;
-
-      // Log successful call
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
-          duration,
+          duration: Date.now() - startTime,
           messageCount: messages.length,
         });
       }
@@ -132,7 +146,6 @@ class AIService {
 
       return response;
     } catch (error) {
-      // Log error
       if (this.supabase) {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,
@@ -167,9 +180,11 @@ class AIService {
 
     return resilienceManager.execute(
       operation,
-      defaultResilienceConfigs[
-        serviceKey as keyof typeof defaultResilienceConfigs
-      ] || defaultResilienceConfigs.openai,
+      toResilienceConfig(
+        defaultResilienceConfigs[
+          serviceKey as keyof typeof defaultResilienceConfigs
+        ] || defaultResilienceConfigs.openai
+      ),
       `ai-${config.provider}-${config.model}`
     );
   }
@@ -315,22 +330,6 @@ class AIService {
     return cost;
   }
 
-  // Rate limiting
-  private lastCallTime = 0;
-  private readonly minCallInterval = 1000; // 1 second between calls
-
-  private async enforceRateLimit(): Promise<void> {
-    const now = Date.now();
-    const timeSinceLastCall = now - this.lastCallTime;
-
-    if (timeSinceLastCall < this.minCallInterval) {
-      const delay = this.minCallInterval - timeSinceLastCall;
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-
-    this.lastCallTime = Date.now();
-  }
-
   // Agent action logging
   private async logAgentAction(
     agent: string,
@@ -377,21 +376,30 @@ class AIService {
   }
 
   // Health check
-  async healthCheck(): Promise<{ status: string; providers: string[] }> {
+  async healthCheck(): Promise<{
+    status: string;
+    providers: string[];
+    circuitBreakers: Record<string, any>;
+  }> {
     const providers: string[] = [];
 
     if (this.openai) {
       try {
-        await this.openai.models.list();
+        await withTimeout(() => this.openai!.models.list(), {
+          timeoutMs: DEFAULT_TIMEOUTS.openai / 2,
+        });
         providers.push('openai');
       } catch (error) {
         logger.error('OpenAI health check failed:', error);
       }
     }
 
+    const circuitBreakers = circuitBreakerManager.getAllStatuses();
+
     return {
       status: providers.length > 0 ? 'healthy' : 'unhealthy',
       providers,
+      circuitBreakers,
     };
   }
 }

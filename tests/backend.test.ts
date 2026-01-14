@@ -97,6 +97,8 @@ describe('Backend Services', () => {
           raw_text: 'This is a test project description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: [
           {

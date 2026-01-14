@@ -40,6 +40,8 @@ describe('Export Services', () => {
           raw_text: 'This is a test project description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
       };
 
@@ -58,6 +60,8 @@ describe('Export Services', () => {
           raw_text: 'Description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
       };
 
@@ -106,6 +110,8 @@ describe('Export Services', () => {
           raw_text: 'This is a test project description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: [
           {
@@ -116,6 +122,7 @@ describe('Export Services', () => {
             priority: 1,
             estimate_hours: 8,
             created_at: new Date().toISOString(),
+            deleted_at: null,
           },
         ],
         tasks: [
@@ -128,6 +135,17 @@ describe('Export Services', () => {
             status: 'todo' as const,
             estimate: 2,
             created_at: new Date().toISOString(),
+            milestone_id: null,
+            actual_hours: null,
+            completion_percentage: 0,
+            priority_score: 1,
+            complexity_score: 1,
+            risk_level: 'low',
+            tags: null,
+            custom_fields: null,
+            deleted_at: null,
+            start_date: null,
+            end_date: null,
           },
         ],
       };
@@ -453,6 +471,8 @@ describe('Export Services', () => {
             raw_text: 'Description',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
+            user_id: 'test-user',
+            deleted_at: null,
           },
         },
       };
@@ -490,6 +510,8 @@ describe('Export Services', () => {
             raw_text: 'Test',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
+            user_id: 'test-user',
+            deleted_at: null,
           },
         },
       };
@@ -517,6 +539,8 @@ describe('Export Services', () => {
           raw_text: 'Test description',
           status: 'draft' as const,
           created_at: '2024-01-01T00:00:00Z',
+          user_id: 'test-user',
+          deleted_at: null,
         };
 
         const result = exportUtils.normalizeData(idea);
@@ -536,6 +560,8 @@ describe('Export Services', () => {
           title: 'Test',
           raw_text: 'Desc',
           status: 'draft' as const,
+          user_id: 'test-user',
+          deleted_at: null,
         };
         const deliverables = [
           {
@@ -579,6 +605,8 @@ describe('Export Services', () => {
             raw_text: 'Description',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
+            user_id: 'test-user',
+            deleted_at: null,
           },
         };
 

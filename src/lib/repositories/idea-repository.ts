@@ -8,6 +8,7 @@ export interface Idea {
   raw_text: string;
   created_at: string;
   status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  deleted_at?: string;
 }
 
 export interface IdeaSession {

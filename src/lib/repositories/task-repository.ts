@@ -10,6 +10,7 @@ export interface Task {
   status: 'todo' | 'in_progress' | 'completed';
   estimate: number;
   created_at: string;
+  deleted_at?: string;
 }
 
 export class TaskRepository extends BaseRepository {

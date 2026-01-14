@@ -4,7 +4,8 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 
-async function handleGet(_context: ApiContext) {
+async function handleGet(context: ApiContext) {
+  const { rateLimit: _rateLimit } = context;
   const envStatus: {
     status: string;
     environment: string;
@@ -75,7 +76,7 @@ async function handleGet(_context: ApiContext) {
     environment: envStatus.environment,
   };
 
-  return standardSuccessResponse(envStatus, _context.requestId);
+  return standardSuccessResponse(envStatus, context.requestId);
 }
 
 export const GET = withApiHandler(handleGet, { validateSize: false });

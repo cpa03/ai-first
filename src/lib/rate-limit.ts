@@ -1,29 +1,22 @@
-interface RateLimitEntry {
-  count: number;
-  resetTime: number;
-  identifier: string;
-  role?: string;
-}
-
-interface RateLimitConfig {
-  windowMs: number;
-  maxRequests: number;
-}
-
 export interface RateLimitInfo {
   limit: number;
   remaining: number;
   reset: number;
 }
 
-export enum UserRole {
-  ANONYMOUS = 'anonymous',
-  AUTHENTICATED = 'authenticated',
-  PREMIUM = 'premium',
-  ENTERPRISE = 'enterprise',
+interface _RateLimitEntry {
+  count: number;
+  resetTime: number;
 }
 
-const rateLimitStore = new Map<string, RateLimitEntry>();
+export interface RateLimitConfig {
+  limit: number;
+  windowMs: number;
+}
+
+export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
+
+const rateLimitStore = new Map<string, number[]>();
 
 export function getClientIdentifier(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -35,64 +28,49 @@ export function getClientIdentifier(request: Request): string {
 
 export function checkRateLimit(
   identifier: string,
-  config: RateLimitConfig,
-  role?: UserRole
+  config: RateLimitConfig
 ): { allowed: boolean; info: RateLimitInfo } {
   const now = Date.now();
-  const entry = rateLimitStore.get(identifier);
-  const maxRequests = config.maxRequests;
+  const windowStart = now - config.windowMs;
 
-  if (!entry || now > entry.resetTime) {
-    rateLimitStore.set(identifier, {
-      count: 1,
-      resetTime: now + config.windowMs,
-      identifier,
-      role,
-    });
+  const requests = rateLimitStore.get(identifier) || [];
+  const recentRequests = requests.filter((r) => r >= windowStart);
 
-    return {
-      allowed: true,
-      info: {
-        limit: maxRequests,
-        remaining: maxRequests - 1,
-        reset: now + config.windowMs,
-      },
-    };
-  }
-
-  if (entry.count >= maxRequests) {
+  if (recentRequests.length >= config.limit) {
     return {
       allowed: false,
       info: {
-        limit: maxRequests,
+        limit: config.limit,
         remaining: 0,
-        reset: entry.resetTime,
+        reset: Math.max(...recentRequests) + config.windowMs,
       },
     };
   }
 
-  entry.count++;
+  recentRequests.push(now);
+  rateLimitStore.set(identifier, recentRequests);
+
   return {
     allowed: true,
     info: {
-      limit: maxRequests,
-      remaining: maxRequests - entry.count,
-      reset: entry.resetTime,
+      limit: config.limit,
+      remaining: config.limit - recentRequests.length,
+      reset: now + config.windowMs,
     },
   };
 }
 
 export const rateLimitConfigs = {
-  strict: { windowMs: 60 * 1000, maxRequests: 10 },
-  moderate: { windowMs: 60 * 1000, maxRequests: 30 },
-  lenient: { windowMs: 60 * 1000, maxRequests: 60 },
+  strict: { limit: 10, windowMs: 60 * 1000 },
+  moderate: { limit: 30, windowMs: 60 * 1000 },
+  lenient: { limit: 60, windowMs: 60 * 1000 },
 } as const;
 
 export const tieredRateLimits: Record<UserRole, RateLimitConfig> = {
-  [UserRole.ANONYMOUS]: { windowMs: 60 * 1000, maxRequests: 30 },
-  [UserRole.AUTHENTICATED]: { windowMs: 60 * 1000, maxRequests: 60 },
-  [UserRole.PREMIUM]: { windowMs: 60 * 1000, maxRequests: 120 },
-  [UserRole.ENTERPRISE]: { windowMs: 60 * 1000, maxRequests: 300 },
+  anonymous: { limit: 30, windowMs: 60 * 1000 },
+  authenticated: { limit: 60, windowMs: 60 * 1000 },
+  premium: { limit: 120, windowMs: 60 * 1000 },
+  enterprise: { limit: 300, windowMs: 60 * 1000 },
 };
 
 export function createRateLimitMiddleware(config: RateLimitConfig) {
@@ -104,92 +82,65 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
 
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetTime) {
+  for (const [key, requests] of rateLimitStore.entries()) {
+    const recentRequests = requests.filter((r) => r >= now - 60 * 1000);
+    if (recentRequests.length === 0) {
       rateLimitStore.delete(key);
+    } else {
+      rateLimitStore.set(key, recentRequests);
     }
   }
 }
 
 setInterval(cleanupExpiredEntries, 60 * 1000);
 
-export interface RateLimitStats {
-  totalEntries: number;
-  entriesByRole: Record<string, number>;
-  expiredEntries: number;
-  topUsers: Array<{ identifier: string; count: number; role?: string }>;
-}
-
-export function getRateLimitStats(): RateLimitStats {
-  const now = Date.now();
-  const entriesByRole: Record<string, number> = {};
-  let expiredEntries = 0;
-  const userCounts: Array<{
-    identifier: string;
-    count: number;
-    role?: string;
-  }> = [];
-
-  for (const [key, entry] of rateLimitStore.entries()) {
-    if (now > entry.resetTime) {
-      expiredEntries++;
-    } else {
-      userCounts.push({
-        identifier: key,
-        count: entry.count,
-        role: entry.role,
-      });
-
-      if (entry.role) {
-        entriesByRole[entry.role] = (entriesByRole[entry.role] || 0) + 1;
-      } else {
-        entriesByRole['anonymous'] = (entriesByRole['anonymous'] || 0) + 1;
-      }
-    }
-  }
-
-  userCounts.sort((a, b) => b.count - a.count);
-
-  return {
-    totalEntries: rateLimitStore.size,
-    entriesByRole,
-    expiredEntries,
-    topUsers: userCounts.slice(0, 10),
-  };
-}
-
-export function rateLimitResponse(info: RateLimitInfo): Response {
-  const retryAfter = Math.ceil((info.reset - Date.now()) / 1000);
-
+export function rateLimitResponse(rateLimitInfo: RateLimitInfo): Response {
+  const resetTime = Math.max(rateLimitInfo.reset, Date.now());
   return new Response(
     JSON.stringify({
       error: 'Too many requests',
-      retryAfter,
+      retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
     }),
     {
       status: 429,
       headers: {
         'Content-Type': 'application/json',
-        'Retry-After': String(retryAfter),
-        'X-RateLimit-Limit': String(info.limit),
-        'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': String(new Date(info.reset).toISOString()),
+        'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
+        'X-RateLimit-Limit': String(rateLimitInfo.limit),
+        'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
+        'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
       },
     }
   );
 }
 
-export function addRateLimitHeaders(
-  response: Response,
-  info: RateLimitInfo
-): Response {
-  response.headers.set('X-RateLimit-Limit', String(info.limit));
-  response.headers.set('X-RateLimit-Remaining', String(info.remaining));
-  response.headers.set(
-    'X-RateLimit-Reset',
-    String(new Date(info.reset).toISOString())
-  );
-  return response;
+export function getRateLimitStats() {
+  const now = Date.now();
+  const stats = {
+    totalEntries: 0,
+    expiredEntries: 0,
+    entriesByRole: {} as Record<string, number>,
+    topUsers: [] as Array<{ identifier: string; count: number }>,
+  };
+
+  for (const [identifier, requests] of rateLimitStore.entries()) {
+    const recentRequests = requests.filter((r) => r >= now - 60 * 1000);
+    stats.totalEntries += recentRequests.length;
+
+    if (recentRequests.length === 0) {
+      stats.expiredEntries++;
+    }
+
+    stats.topUsers.push({
+      identifier,
+      count: recentRequests.length,
+    });
+  }
+
+  stats.topUsers.sort((a, b) => b.count - a.count);
+  stats.topUsers = stats.topUsers.slice(0, 10);
+
+  return stats;
 }
 
 export function clearRateLimitStore(): void {

@@ -175,6 +175,7 @@ describe('Backend Service Tests', () => {
         title: 'Test idea',
         raw_text: 'Test idea content',
         status: 'draft',
+        deleted_at: null,
       });
 
       expect(result).toEqual(mockIdea);
@@ -196,6 +197,7 @@ describe('Backend Service Tests', () => {
           title: 'Test idea',
           raw_text: 'Test idea content',
           status: 'draft',
+          deleted_at: null,
         })
       ).rejects.toThrow('Database error');
     });
@@ -320,6 +322,8 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: [],
         tasks: [],
@@ -337,6 +341,8 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: [],
         tasks: [],
@@ -361,6 +367,8 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          user_id: 'test-user',
+          deleted_at: null,
         },
         deliverables: [],
         tasks: [],

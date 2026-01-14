@@ -1,5 +1,5 @@
 import { AIModelConfig, aiService } from '@/lib/ai';
-import { dbService } from '@/lib/db';
+import { dbService, type Idea } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
 import {
   QuestionGenerator,
@@ -11,7 +11,6 @@ import type {
   ClarificationSession,
   ClarifierQuestion,
 } from './clarifier-engine';
-import type { Idea } from '@/lib/repositories';
 
 export interface ClarifierConfig extends AgentConfig {
   functions: Array<{

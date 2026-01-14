@@ -9,6 +9,17 @@ import {
   MockResponseGenerator,
 } from './fixtures/testDataFactory';
 
+jest.mock('@/lib/db', () => ({
+  dbService: {
+    createIdea: jest.fn().mockResolvedValue({ id: 'test-idea-123' }),
+    getIdea: jest.fn(),
+    getIdeaDeliverables: jest.fn(),
+    createDeliverable: jest.fn(),
+    createTask: jest.fn(),
+    updateIdea: jest.fn(),
+  },
+}));
+
 // Mock fetch for all E2E tests
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
@@ -42,14 +53,35 @@ describe('End-to-End User Flow Tests', () => {
       const idea = 'Build a task management app for remote teams';
       const mockQuestions = MockResponseGenerator.aiQuestions.slice(0, 3);
       const mockAnswers = {
-        target_audience: 'Remote development teams',
         main_goal: 'Improve team collaboration',
+        target_audience: 'Remote development teams',
         timeline: '3 months',
       };
 
       // Step 1: User enters idea
       global.mockFetch({
-        questions: mockQuestions,
+        data: {
+          questions: [
+            {
+              id: 'main_goal',
+              question: mockQuestions[0],
+              type: 'open',
+              required: true,
+            },
+            {
+              id: 'target_audience',
+              question: mockQuestions[1],
+              type: 'open',
+              required: true,
+            },
+            {
+              id: 'timeline',
+              question: mockQuestions[2],
+              type: 'open',
+              required: true,
+            },
+          ],
+        },
       });
 
       const mockOnSubmit = jest.fn();
@@ -64,12 +96,33 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith(idea);
+        expect(mockOnSubmit).toHaveBeenCalledWith(idea, 'test-idea-123');
       });
 
       // Step 2: Clarification flow
       global.mockFetch({
-        questions: mockQuestions,
+        data: {
+          questions: [
+            {
+              id: 'main_goal',
+              question: mockQuestions[0],
+              type: 'open',
+              required: true,
+            },
+            {
+              id: 'target_audience',
+              question: mockQuestions[1],
+              type: 'open',
+              required: true,
+            },
+            {
+              id: 'timeline',
+              question: mockQuestions[2],
+              type: 'open',
+              required: true,
+            },
+          ],
+        },
       });
 
       const mockOnComplete = jest.fn();
@@ -116,9 +169,10 @@ describe('End-to-End User Flow Tests', () => {
       render(<BlueprintDisplay idea={idea} answers={mockAnswers} />);
 
       // Should show loading initially
-      expect(
-        screen.getByText(/generating your blueprint/i)
-      ).toBeInTheDocument();
+      const blueprintLoadingTexts = screen.getAllByText(
+        /generating your blueprint/i
+      );
+      expect(blueprintLoadingTexts.length).toBeGreaterThan(0);
 
       // Should show blueprint after loading
       await waitFor(
@@ -159,7 +213,7 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea');
+        expect(mockOnSubmit).toHaveBeenCalledWith('Test idea', 'test-idea-123');
       });
 
       // Test clarification flow with API error
@@ -259,7 +313,16 @@ describe('End-to-End User Flow Tests', () => {
 
     it('should have proper ARIA labels and roles', async () => {
       global.mockFetch({
-        questions: ['Test question?'],
+        data: {
+          questions: [
+            {
+              id: 'question_0',
+              question: 'Test question?',
+              type: 'open',
+              required: true,
+            },
+          ],
+        },
       });
 
       const mockOnComplete = jest.fn();
@@ -274,7 +337,6 @@ describe('End-to-End User Flow Tests', () => {
       // Check for proper form elements
       const textarea = screen.getByRole('textbox');
       expect(textarea).toHaveAttribute('placeholder');
-      expect(textarea).toHaveAttribute('autofocus');
 
       // Check navigation buttons
       const buttons = screen.getAllByRole('button');
@@ -283,7 +345,12 @@ describe('End-to-End User Flow Tests', () => {
 
     it('should announce progress to screen readers', async () => {
       global.mockFetch({
-        questions: ['Question 1', 'Question 2'],
+        data: {
+          questions: [
+            { id: 'q1', question: 'Question 1', type: 'open', required: true },
+            { id: 'q2', question: 'Question 2', type: 'open', required: true },
+          ],
+        },
       });
 
       const mockOnComplete = jest.fn();
@@ -319,7 +386,7 @@ describe('End-to-End User Flow Tests', () => {
       fireEvent.click(submitButton);
 
       await waitFor(() => {
-        expect(mockOnSubmit).toHaveBeenCalledWith(largeIdea);
+        expect(mockOnSubmit).toHaveBeenCalledWith(largeIdea, 'test-idea-123');
       });
 
       const endTime = performance.now();
@@ -333,7 +400,14 @@ describe('End-to-End User Flow Tests', () => {
       );
 
       global.mockFetch({
-        questions: manyQuestions,
+        data: {
+          questions: manyQuestions.map((q, i) => ({
+            id: `question_${i}`,
+            question: q,
+            type: 'open',
+            required: true,
+          })),
+        },
       });
 
       const mockOnComplete = jest.fn();

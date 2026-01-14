@@ -26,7 +26,7 @@ describe('checkRateLimit', () => {
 
       expect(result.allowed).toBe(true);
       expect(result.info.remaining).toBe(
-        rateLimitConfigs.lenient.maxRequests - 1
+        rateLimitConfigs.lenient.limit - 1
       );
       expect(result.info.reset).toBeGreaterThan(Date.now());
     });
@@ -46,10 +46,10 @@ describe('checkRateLimit', () => {
       const result2 = checkRateLimit('user-2', rateLimitConfigs.moderate);
 
       expect(result1.info.remaining).toBe(
-        rateLimitConfigs.moderate.maxRequests - 1
+        rateLimitConfigs.moderate.limit - 1
       );
       expect(result2.info.remaining).toBe(
-        rateLimitConfigs.moderate.maxRequests - 1
+        rateLimitConfigs.moderate.limit - 1
       );
     });
   });
@@ -63,7 +63,7 @@ describe('checkRateLimit', () => {
 
       expect(result2.allowed).toBe(true);
       expect(result2.info.remaining).toBe(
-        rateLimitConfigs.lenient.maxRequests - 2
+        rateLimitConfigs.lenient.limit - 2
       );
     });
 
@@ -78,7 +78,7 @@ describe('checkRateLimit', () => {
 
     it('should return correct remaining count', () => {
       const identifier = 'test-user-4';
-      const maxRequests = rateLimitConfigs.lenient.maxRequests;
+      const maxRequests = rateLimitConfigs.lenient.limit;
 
       const results = [];
       for (let i = 0; i < maxRequests; i++) {
@@ -96,7 +96,7 @@ describe('checkRateLimit', () => {
       const identifier = 'test-user-5';
       const config = rateLimitConfigs.strict;
 
-      for (let i = 0; i < config.maxRequests; i++) {
+      for (let i = 0; i < config.limit; i++) {
         checkRateLimit(identifier, config);
       }
 
@@ -113,7 +113,7 @@ describe('checkRateLimit', () => {
       checkRateLimit(identifier, config);
       const initialResetTime = checkRateLimit(identifier, config).info.reset;
 
-      for (let i = 2; i <= config.maxRequests; i++) {
+      for (let i = 2; i <= config.limit; i++) {
         checkRateLimit(identifier, config);
       }
 
@@ -125,7 +125,7 @@ describe('checkRateLimit', () => {
       const identifier = 'test-user-7';
       const config = rateLimitConfigs.strict;
 
-      for (let i = 0; i < config.maxRequests; i++) {
+      for (let i = 0; i < config.limit; i++) {
         checkRateLimit(identifier, config);
       }
 
@@ -145,7 +145,7 @@ describe('checkRateLimit', () => {
       const identifier = 'test-user-8';
       const config = rateLimitConfigs.lenient;
 
-      for (let i = 0; i < config.maxRequests; i++) {
+      for (let i = 0; i < config.limit; i++) {
         checkRateLimit(identifier, config);
       }
 
@@ -157,7 +157,7 @@ describe('checkRateLimit', () => {
       const resultAfterExpiry = checkRateLimit(identifier, config);
 
       expect(resultAfterExpiry.allowed).toBe(true);
-      expect(resultAfterExpiry.info.remaining).toBe(config.maxRequests - 1);
+      expect(resultAfterExpiry.info.remaining).toBe(config.limit - 1);
     });
 
     it('should set new reset time after window expires', () => {
@@ -180,7 +180,7 @@ describe('checkRateLimit', () => {
       checkRateLimit(identifier, config);
       jest.advanceTimersByTime(halfWindow);
 
-      for (let i = 1; i < config.maxRequests; i++) {
+      for (let i = 1; i < config.limit; i++) {
         checkRateLimit(identifier, config);
       }
 
@@ -198,7 +198,7 @@ describe('checkRateLimit', () => {
     it('should work with strict config', () => {
       const identifier = 'test-user-11';
 
-      for (let i = 0; i < rateLimitConfigs.strict.maxRequests; i++) {
+      for (let i = 0; i < rateLimitConfigs.strict.limit; i++) {
         const result = checkRateLimit(identifier, rateLimitConfigs.strict);
         expect(result.allowed).toBe(true);
       }
@@ -210,7 +210,7 @@ describe('checkRateLimit', () => {
     it('should work with moderate config', () => {
       const identifier = 'test-user-12';
 
-      for (let i = 0; i < rateLimitConfigs.moderate.maxRequests; i++) {
+      for (let i = 0; i < rateLimitConfigs.moderate.limit; i++) {
         const result = checkRateLimit(identifier, rateLimitConfigs.moderate);
         expect(result.allowed).toBe(true);
       }
@@ -222,7 +222,7 @@ describe('checkRateLimit', () => {
     it('should work with lenient config', () => {
       const identifier = 'test-user-13';
 
-      for (let i = 0; i < rateLimitConfigs.lenient.maxRequests; i++) {
+      for (let i = 0; i < rateLimitConfigs.lenient.limit; i++) {
         const result = checkRateLimit(identifier, rateLimitConfigs.lenient);
         expect(result.allowed).toBe(true);
       }
@@ -250,7 +250,7 @@ describe('checkRateLimit', () => {
       const config = rateLimitConfigs.strict;
 
       const results = [];
-      for (let i = 0; i < config.maxRequests; i++) {
+      for (let i = 0; i < config.limit; i++) {
         const result = checkRateLimit(identifier, config);
         results.push(result);
       }
@@ -264,7 +264,7 @@ describe('checkRateLimit', () => {
       const config = rateLimitConfigs.moderate;
 
       const results1 = [];
-      for (let i = 0; i < config.maxRequests; i++) {
+      for (let i = 0; i < config.limit; i++) {
         results1.push(checkRateLimit('user-1', config));
       }
 
@@ -334,19 +334,19 @@ describe('rateLimitConfigs', () => {
   it('should have strict config', () => {
     expect(rateLimitConfigs.strict).toBeDefined();
     expect(rateLimitConfigs.strict.windowMs).toBe(60 * 1000);
-    expect(rateLimitConfigs.strict.maxRequests).toBe(10);
+    expect(rateLimitConfigs.strict.limit).toBe(10);
   });
 
   it('should have moderate config', () => {
     expect(rateLimitConfigs.moderate).toBeDefined();
     expect(rateLimitConfigs.moderate.windowMs).toBe(60 * 1000);
-    expect(rateLimitConfigs.moderate.maxRequests).toBe(30);
+    expect(rateLimitConfigs.moderate.limit).toBe(30);
   });
 
   it('should have lenient config', () => {
     expect(rateLimitConfigs.lenient).toBeDefined();
     expect(rateLimitConfigs.lenient.windowMs).toBe(60 * 1000);
-    expect(rateLimitConfigs.lenient.maxRequests).toBe(60);
+    expect(rateLimitConfigs.lenient.limit).toBe(60);
   });
 });
 
@@ -375,7 +375,7 @@ describe('createRateLimitMiddleware', () => {
 
     expect(result.allowed).toBe(true);
     expect(result.info.remaining).toBe(
-      rateLimitConfigs.moderate.maxRequests - 1
+      rateLimitConfigs.moderate.limit - 1
     );
   });
 
@@ -388,7 +388,7 @@ describe('createRateLimitMiddleware', () => {
     const result = middleware(request);
 
     expect(result.allowed).toBe(true);
-    expect(result.info.remaining).toBe(rateLimitConfigs.strict.maxRequests - 1);
+    expect(result.info.remaining).toBe(rateLimitConfigs.strict.limit - 1);
   });
 });
 

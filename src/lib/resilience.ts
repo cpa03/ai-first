@@ -1,4 +1,5 @@
 import { createLogger } from './logger';
+import { TimeoutError, RetryExhaustedError } from './errors';
 
 const logger = createLogger('Resilience');
 
@@ -16,45 +17,62 @@ export interface TimeoutOptions {
 
 export interface CircuitBreakerOptions {
   failureThreshold: number;
-  resetTimeout: number;
-  monitoringPeriod: number;
+  resetTimeoutMs: number;
+  monitoringPeriodMs: number;
 }
 
-export interface CircuitBreakerState {
+export interface RetryConfig {
+  maxRetries: number;
+  initialDelayMs: number;
+  maxDelayMs: number;
+  backoffMultiplier: number;
+  retryableErrors?: string[];
+}
+
+export enum CircuitBreakerState {
+  CLOSED = 'closed',
+  OPEN = 'open',
+  HALF_OPEN = 'half-open',
+}
+
+type CircuitBreakerInternalState = {
   state: 'closed' | 'open' | 'half-open';
   failures: number;
   lastFailureTime?: number;
   nextAttemptTime?: number;
-}
-
-export interface ResilienceConfig {
-  retry?: RetryOptions;
-  timeout?: TimeoutOptions;
-  circuitBreaker?: CircuitBreakerOptions;
-}
+};
 
 export class CircuitBreaker {
-  private state: CircuitBreakerState = {
+  private circuitState: CircuitBreakerInternalState = {
     state: 'closed',
     failures: 0,
   };
-  private cachedState?: CircuitBreakerState;
+  private cachedState?: CircuitBreakerInternalState;
   private recentFailures: number[] = [];
 
-  constructor(private options: CircuitBreakerOptions) {}
+  constructor(
+    private readonly name: string,
+    private readonly config: CircuitBreakerOptions = {
+      failureThreshold: 5,
+      resetTimeoutMs: 60000,
+      monitoringPeriodMs: 10000,
+    }
+  ) {}
 
-  async execute<T>(operation: () => Promise<T>, context?: string): Promise<T> {
-    const now = Date.now();
-
-    if (this.state.state === 'open') {
-      if (now < (this.state.nextAttemptTime || 0)) {
+  async execute<T>(operation: () => Promise<T>): Promise<T> {
+    if (this.circuitState.state === 'open') {
+      if (Date.now() >= (this.circuitState.nextAttemptTime || 0)) {
+        this.circuitState.state = 'half-open';
+      } else {
         throw new Error(
-          `Circuit breaker is OPEN for ${context || 'operation'}. Not accepting requests until ${new Date(this.state.nextAttemptTime!).toISOString()}`
+          `Circuit breaker ${this.name} is OPEN. Retry after ${new Date(
+            this.circuitState.nextAttemptTime || 0
+          ).toISOString()}`
         );
       }
-      this.state.state = 'half-open';
     }
 
+    const now = Date.now();
     this.cleanupOldFailures(now);
 
     try {
@@ -72,17 +90,17 @@ export class CircuitBreaker {
   }
 
   private cleanupOldFailures(now: number): void {
-    const monitoringPeriod = this.options.monitoringPeriod;
+    const monitoringPeriod = this.config.monitoringPeriodMs;
     this.recentFailures = this.recentFailures.filter(
       (timestamp) => now - timestamp <= monitoringPeriod
     );
-    this.state.failures = this.recentFailures.length;
+    this.circuitState.failures = this.recentFailures.length;
   }
 
   private onSuccess(_now: number): void {
     this.recentFailures = [];
-    this.state.failures = 0;
-    this.state.state = 'closed';
+    this.circuitState.failures = 0;
+    this.circuitState.state = 'closed';
 
     if (this.cachedState) {
       this.cachedState.failures = 0;
@@ -96,43 +114,77 @@ export class CircuitBreaker {
     for (let i = 0; i < attemptCount; i++) {
       this.recentFailures.push(_now);
     }
-    this.state.failures = this.recentFailures.length;
-    this.state.lastFailureTime = _now;
+    this.circuitState.failures = this.recentFailures.length;
+    this.circuitState.lastFailureTime = _now;
 
-    if (this.state.failures >= this.options.failureThreshold) {
+    if (this.circuitState.failures >= this.config.failureThreshold) {
       this.openCircuit(_now);
     }
 
     if (this.cachedState) {
-      this.cachedState.failures = this.state.failures;
-      this.cachedState.state = this.state.state;
-      this.cachedState.lastFailureTime = this.state.lastFailureTime;
-      this.cachedState.nextAttemptTime = this.state.nextAttemptTime;
+      this.cachedState.failures = this.circuitState.failures;
+      this.cachedState.state = this.circuitState.state;
+      this.cachedState.lastFailureTime = this.circuitState.lastFailureTime;
+      this.cachedState.nextAttemptTime = this.circuitState.nextAttemptTime;
     }
   }
 
   private openCircuit(now: number): void {
-    this.state.state = 'open';
-    this.state.nextAttemptTime = now + this.options.resetTimeout;
+    this.circuitState.state = 'open';
+    this.circuitState.nextAttemptTime = now + this.config.resetTimeoutMs;
     logger.debug(
-      `Opening circuit breaker. Failures: ${this.state.failures}, Threshold: ${this.options.failureThreshold}`
+      `Opening circuit breaker. Failures: ${this.circuitState.failures}, Threshold: ${this.config.failureThreshold}`
     );
   }
 
   getState(): CircuitBreakerState {
     if (!this.cachedState) {
-      this.cachedState = { ...this.state };
+      this.cachedState = { ...this.circuitState };
     }
-    return this.cachedState;
+    const stateValue = this.cachedState.state;
+    if (stateValue === 'closed') return CircuitBreakerState.CLOSED;
+    if (stateValue === 'open') return CircuitBreakerState.OPEN;
+    return CircuitBreakerState.HALF_OPEN;
   }
 
   reset(): void {
-    this.state = {
-      state: 'closed',
-      failures: 0,
+    this.circuitState.failures = 0;
+    this.circuitState.state = 'closed';
+    this.circuitState.lastFailureTime = 0;
+    this.circuitState.nextAttemptTime = 0;
+  }
+
+  getFailures(): number {
+    return this.circuitState.failures;
+  }
+
+  getNextAttemptTime(): number {
+    return this.circuitState.nextAttemptTime || 0;
+  }
+
+  getStatus(): {
+    state: CircuitBreakerState;
+    failures: number;
+    nextAttemptTime?: string;
+  } {
+    let state: CircuitBreakerState;
+    const stateValue = this.circuitState.state;
+    if (stateValue === 'closed') {
+      state = CircuitBreakerState.CLOSED;
+    } else if (stateValue === 'open') {
+      state = CircuitBreakerState.OPEN;
+    } else {
+      state = CircuitBreakerState.HALF_OPEN;
+    }
+
+    return {
+      state,
+      failures: this.circuitState.failures,
+      nextAttemptTime:
+        stateValue === 'open'
+          ? new Date(this.circuitState.nextAttemptTime || 0).toISOString()
+          : undefined,
     };
-    this.recentFailures = [];
-    this.cachedState = undefined;
   }
 }
 
@@ -187,12 +239,11 @@ export class RetryManager {
     for (let attempt = 1; attempt <= maxRetries + 1; attempt++) {
       try {
         if (circuitBreaker && attempt > 1) {
-          const state = circuitBreaker.getState();
-          if (state.state === 'open') {
-            const stateStr = state.state;
-            const nextAttempt = state.nextAttemptTime;
+          const status = circuitBreaker.getStatus();
+          if (status.state === CircuitBreakerState.OPEN) {
+            const nextAttempt = status.nextAttemptTime;
             throw new Error(
-              `Circuit breaker is ${stateStr.toUpperCase()} for ${context || 'operation'}. Not accepting requests until ${new Date(nextAttempt!).toISOString()}`
+              `Circuit breaker is OPEN for ${context || 'operation'}. Not accepting requests until ${nextAttempt || 'unknown'}`
             );
           }
         }
@@ -203,8 +254,9 @@ export class RetryManager {
         if (attempt > maxRetries || !retryFn(lastError, attempt)) {
           const exhaustedError = new RetryExhaustedError(
             `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
-            lastError,
-            attempt
+            context || 'unknown',
+            attempt,
+            lastError
           );
           (exhaustedError as Error & { attemptCount?: number }).attemptCount =
             attempt;
@@ -232,7 +284,9 @@ export class TimeoutManager {
     const { timeoutMs, onTimeout } = options;
 
     if (timeoutMs <= 0) {
-      return Promise.reject(new TimeoutError('Timeout must be greater than 0'));
+      return Promise.reject(
+        new TimeoutError('Timeout must be greater than 0', 0)
+      );
     }
 
     return Promise.race([
@@ -240,7 +294,12 @@ export class TimeoutManager {
       new Promise<never>((_, reject) => {
         const timeoutId = setTimeout(() => {
           onTimeout?.();
-          reject(new TimeoutError(`Operation timed out after ${timeoutMs}ms`));
+          reject(
+            new TimeoutError(
+              `Operation timed out after ${timeoutMs}ms`,
+              timeoutMs
+            )
+          );
         }, timeoutMs);
 
         if (typeof (timeoutId as NodeJS.Timeout).unref === 'function') {
@@ -251,167 +310,249 @@ export class TimeoutManager {
   }
 }
 
-export class ResilienceManager {
-  private circuitBreakers = new Map<string, CircuitBreaker>();
+function _isRetryableError(
+  error: Error,
+  customRetryableErrors?: string[]
+): boolean {
+  const retryablePatterns = [
+    'ECONNRESET',
+    'ECONNREFUSED',
+    'ETIMEDOUT',
+    'ENOTFOUND',
+    'EAI_AGAIN',
+    'timeout',
+    '529',
+    '502',
+    '503',
+    '504',
+    '429',
+    'RATE_LIMIT',
+    'QUOTA_EXCEEDED',
+    ...(customRetryableErrors || []),
+  ];
 
-  async execute<T>(
-    operation: () => Promise<T>,
-    config: ResilienceConfig,
-    context: string = 'operation'
-  ): Promise<T> {
-    let circuitBreaker: CircuitBreaker | undefined;
+  return retryablePatterns.some((pattern) => error.message.includes(pattern));
+}
 
-    if (config.circuitBreaker) {
-      if (!this.circuitBreakers.has(context)) {
-        this.circuitBreakers.set(
-          context,
-          new CircuitBreaker(config.circuitBreaker)
-        );
+export function createResilientWrapper<T>(
+  operation: () => Promise<T>,
+  options: {
+    circuitBreaker?: CircuitBreaker;
+    timeoutMs?: number;
+    retryConfig?: RetryConfig;
+  } = {}
+): () => Promise<T> {
+  return async () => {
+    const { circuitBreaker, timeoutMs, retryConfig } = options;
+
+    const operationWithTimeout = async (): Promise<T> => {
+      if (timeoutMs) {
+        return TimeoutManager.withTimeout(operation, { timeoutMs });
       }
-      circuitBreaker = this.circuitBreakers.get(context)!;
-    }
-
-    const executeWithResilience = async (): Promise<T> => {
-      const operationWithTimeout = async (): Promise<T> => {
-        if (config.timeout) {
-          return TimeoutManager.withTimeout(operation, config.timeout);
-        }
-        return operation();
-      };
-
-      if (config.retry) {
-        return RetryManager.withRetry(
-          operationWithTimeout,
-          config.retry,
-          context,
-          circuitBreaker
-        );
-      }
-
-      return operationWithTimeout();
+      return operation();
     };
 
-    if (circuitBreaker) {
-      return circuitBreaker.execute(executeWithResilience, context);
+    if (retryConfig) {
+      return RetryManager.withRetry(
+        operationWithTimeout,
+        retryConfig,
+        undefined,
+        circuitBreaker
+      );
     }
 
-    return executeWithResilience();
+    if (circuitBreaker) {
+      return await circuitBreaker.execute(operationWithTimeout);
+    }
+
+    return await operationWithTimeout();
+  };
+}
+
+export class CircuitBreakerManager {
+  private static instance: CircuitBreakerManager;
+  private circuitBreakers: Map<string, CircuitBreaker> = new Map();
+
+  static getInstance(): CircuitBreakerManager {
+    if (!CircuitBreakerManager.instance) {
+      CircuitBreakerManager.instance = new CircuitBreakerManager();
+    }
+    return CircuitBreakerManager.instance;
   }
 
-  getCircuitBreakerStates(): Record<string, CircuitBreakerState> {
-    const states: Record<string, CircuitBreakerState> = {};
-    this.circuitBreakers.forEach((cb, key) => {
-      states[key] = cb.getState();
+  getOrCreate(name: string, config?: CircuitBreakerOptions): CircuitBreaker {
+    if (!this.circuitBreakers.has(name)) {
+      this.circuitBreakers.set(name, new CircuitBreaker(name, config));
+    }
+    return this.circuitBreakers.get(name)!;
+  }
+
+  get(name: string): CircuitBreaker | undefined {
+    return this.circuitBreakers.get(name);
+  }
+
+  getAllStatuses(): Record<
+    string,
+    {
+      state: CircuitBreakerState;
+      failures: number;
+      nextAttemptTime?: string;
+    }
+  > {
+    const statuses: Record<
+      string,
+      {
+        state: CircuitBreakerState;
+        failures: number;
+        nextAttemptTime?: string;
+      }
+    > = {};
+    this.circuitBreakers.forEach((cb, name) => {
+      statuses[name] = cb.getStatus();
     });
-    return states;
+    return statuses;
   }
 
-  resetCircuitBreaker(context: string): void {
-    const cb = this.circuitBreakers.get(context);
+  reset(name: string): void {
+    const cb = this.circuitBreakers.get(name);
     if (cb) {
       cb.reset();
     }
   }
 
-  resetAllCircuitBreakers(): void {
+  resetAll(): void {
     this.circuitBreakers.forEach((cb) => cb.reset());
   }
 }
 
-export class RetryExhaustedError extends Error {
-  constructor(
-    message: string,
-    public readonly originalError: Error,
-    public readonly attempts: number
-  ) {
-    super(message);
-    this.name = 'RetryExhaustedError';
-  }
+export const circuitBreakerManager = CircuitBreakerManager.getInstance();
+
+export const DEFAULT_RETRIES: RetryConfig = {
+  maxRetries: 3,
+  initialDelayMs: 1000,
+  maxDelayMs: 30000,
+  backoffMultiplier: 2,
+};
+
+export const DEFAULT_TIMEOUTS: Record<string, number> = {
+  openai: 60000,
+  notion: 30000,
+  trello: 30000,
+  github: 30000,
+  database: 10000,
+};
+
+export const DEFAULT_CIRCUIT_BREAKER_CONFIG: CircuitBreakerOptions = {
+  failureThreshold: 5,
+  resetTimeoutMs: 60000,
+  monitoringPeriodMs: 10000,
+};
+
+export const defaultResilienceConfigs: Record<string, ServiceResilienceConfig> =
+  {
+    openai: {
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+      timeout: { timeoutMs: 60000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
+    },
+    github: {
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
+      timeout: { timeoutMs: 30000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 30000 },
+    },
+    notion: {
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
+      timeout: { timeoutMs: 30000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 30000 },
+    },
+    trello: {
+      retry: { maxRetries: 3, baseDelayMs: 500, maxDelayMs: 3000 },
+      timeout: { timeoutMs: 15000 },
+      circuitBreaker: { failureThreshold: 3, resetTimeoutMs: 20000 },
+    },
+    supabase: {
+      retry: { maxRetries: 2, baseDelayMs: 1000, maxDelayMs: 10000 },
+      timeout: { timeoutMs: 10000 },
+      circuitBreaker: { failureThreshold: 10, resetTimeoutMs: 60000 },
+    },
+  };
+
+export interface ResilienceConfig {
+  timeoutMs?: number;
+  maxRetries?: number;
+  baseDelayMs?: number;
+  maxDelayMs?: number;
+  failureThreshold?: number;
+  resetTimeoutMs?: number;
 }
 
-export class TimeoutError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = 'TimeoutError';
-  }
+export const DEFAULT_RESILIENCE_CONFIG: ResilienceConfig = {
+  timeoutMs: 30000,
+  maxRetries: 3,
+  baseDelayMs: 1000,
+  maxDelayMs: 10000,
+  failureThreshold: 5,
+  resetTimeoutMs: 60000,
+};
+
+export interface ServiceResilienceConfig {
+  retry: {
+    maxRetries: number;
+    baseDelayMs: number;
+    maxDelayMs: number;
+  };
+  timeout: {
+    timeoutMs: number;
+  };
+  circuitBreaker: {
+    failureThreshold: number;
+    resetTimeoutMs: number;
+  };
 }
 
-export const defaultResilienceConfigs = {
-  openai: {
-    retry: {
-      maxRetries: 3,
-      baseDelay: 1000,
-      maxDelay: 10000,
-    },
-    timeout: {
-      timeoutMs: 60000,
-    },
-    circuitBreaker: {
-      failureThreshold: 5,
-      resetTimeout: 60000,
-      monitoringPeriod: 60000,
-    },
-  },
-  notion: {
-    retry: {
-      maxRetries: 3,
-      baseDelay: 1000,
-      maxDelay: 10000,
-    },
-    timeout: {
-      timeoutMs: 30000,
-    },
-    circuitBreaker: {
-      failureThreshold: 5,
-      resetTimeout: 30000,
-      monitoringPeriod: 30000,
-    },
-  },
-  trello: {
-    retry: {
-      maxRetries: 3,
-      baseDelay: 1000,
-      maxDelay: 5000,
-    },
-    timeout: {
-      timeoutMs: 15000,
-    },
-    circuitBreaker: {
-      failureThreshold: 3,
-      resetTimeout: 20000,
-      monitoringPeriod: 20000,
-    },
-  },
-  github: {
-    retry: {
-      maxRetries: 3,
-      baseDelay: 1000,
-      maxDelay: 10000,
-    },
-    timeout: {
-      timeoutMs: 30000,
-    },
-    circuitBreaker: {
-      failureThreshold: 5,
-      resetTimeout: 30000,
-      monitoringPeriod: 30000,
-    },
-  },
-  supabase: {
-    retry: {
-      maxRetries: 2,
-      baseDelay: 500,
-      maxDelay: 5000,
-    },
-    timeout: {
-      timeoutMs: 10000,
-    },
-    circuitBreaker: {
-      failureThreshold: 10,
-      resetTimeout: 60000,
-      monitoringPeriod: 60000,
-    },
-  },
-} as const;
+export const resilienceManager = {
+  async execute<T>(
+    operation: () => Promise<T>,
+    config: ResilienceConfig = {},
+    context?: string
+  ): Promise<T> {
+    const circuitBreaker = config.failureThreshold
+      ? circuitBreakerManager.getOrCreate(context || 'default', {
+          failureThreshold: config.failureThreshold,
+          resetTimeoutMs: config.resetTimeoutMs || 60000,
+          monitoringPeriodMs: 10000,
+        })
+      : undefined;
 
-export const resilienceManager = new ResilienceManager();
+    const wrapper = createResilientWrapper(operation, {
+      timeoutMs: config.timeoutMs,
+      retryConfig: config.maxRetries
+        ? {
+            maxRetries: config.maxRetries,
+            initialDelayMs: config.baseDelayMs || 1000,
+            maxDelayMs: config.maxDelayMs || 30000,
+            backoffMultiplier: 2,
+          }
+        : undefined,
+      circuitBreaker,
+    });
+
+    return wrapper();
+  },
+
+  getCircuitBreaker(name: string): CircuitBreaker | undefined {
+    return circuitBreakerManager.get(name);
+  },
+
+  getCircuitBreakerStates(): Record<string, unknown> {
+    return circuitBreakerManager.getAllStatuses();
+  },
+
+  resetCircuitBreaker(name: string): void {
+    circuitBreakerManager.reset(name);
+  },
+};
+
+export const withRetry = RetryManager.withRetry;
+
+export const withTimeout = TimeoutManager.withTimeout;

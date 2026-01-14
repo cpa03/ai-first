@@ -1,6 +1,6 @@
 import { aiService } from '@/lib/ai';
 import { dbService } from '@/lib/db';
-import { resilienceManager } from '@/lib/resilience';
+import { circuitBreakerManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/exports';
 import {
   ApiContext,
@@ -8,78 +8,157 @@ import {
   standardSuccessResponse,
 } from '@/lib/api-handler';
 
-interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+interface HealthCheckResult {
+  service: string;
+  status: string;
+  latency?: number;
+  lastChecked: string;
+  error?: string;
+}
+
+interface HealthResponse {
+  status: string;
   timestamp: string;
   version: string;
   uptime: number;
   checks: {
-    database: ServiceHealth;
-    ai: ServiceHealth;
-    exports: ServiceHealth;
-    circuitBreakers: CircuitBreakerHealth[];
+    database: HealthCheckResult;
+    ai: HealthCheckResult;
+    exports: HealthCheckResult;
   };
-}
-
-interface ServiceHealth {
-  status: 'up' | 'down' | 'degraded';
-  latency?: number;
-  error?: string;
-  lastChecked: string;
-}
-
-interface CircuitBreakerHealth {
-  service: string;
-  state: string;
-  failures: number;
-  nextAttemptTime?: string;
+  circuitBreakers: Array<{
+    service: string;
+    state: string;
+    failures: number;
+  }>;
 }
 
 async function handleGet(context: ApiContext) {
-  const checks = await Promise.all([
-    checkDatabaseHealth(),
-    checkAIHealth(),
-    checkExportsHealth(),
-  ]);
+  const circuitBreakerStatuses = circuitBreakerManager.getAllStatuses();
 
-  const circuitBreakerStates = resilienceManager.getCircuitBreakerStates();
-  const circuitBreakers = Object.entries(circuitBreakerStates).map(
-    ([service, state]) => ({
-      service,
-      state: state.state,
-      failures: state.failures,
-      nextAttemptTime: state.nextAttemptTime
-        ? new Date(state.nextAttemptTime).toISOString()
-        : undefined,
-    })
-  );
+  const checks: {
+    database: HealthCheckResult;
+    ai: HealthCheckResult;
+    exports: HealthCheckResult;
+  } = {
+    database: {
+      service: 'database',
+      status: 'unknown',
+      lastChecked: new Date().toISOString(),
+    },
+    ai: {
+      service: 'ai',
+      status: 'unknown',
+      lastChecked: new Date().toISOString(),
+    },
+    exports: {
+      service: 'exports',
+      status: 'unknown',
+      lastChecked: new Date().toISOString(),
+    },
+  };
 
-  const overallStatus = determineOverallStatus(
-    checks[0],
-    checks[1],
-    checks[2],
-    circuitBreakers
-  );
+  const circuitBreakers = (
+    Object.entries(circuitBreakerStatuses) as [
+      string,
+      {
+        state: 'closed' | 'open' | 'half-open';
+        failures: number;
+        nextAttemptTime?: string;
+      },
+    ][]
+  ).map(([service, status]) => ({
+    service,
+    state: status.state,
+    failures: status.failures,
+  }));
 
-  const healthStatus: HealthStatus = {
+  try {
+    const dbStart = Date.now();
+    const dbHealth = await dbService.healthCheck();
+    checks.database = {
+      ...checks.database,
+      status: dbHealth.status,
+      latency: Date.now() - dbStart,
+      lastChecked: dbHealth.timestamp,
+    };
+  } catch (error) {
+    checks.database = {
+      ...checks.database,
+      status: 'unhealthy',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+
+  try {
+    const aiStart = Date.now();
+    const aiHealth = await aiService.healthCheck();
+    checks.ai = {
+      ...checks.ai,
+      status: aiHealth.status,
+      latency: Date.now() - aiStart,
+      lastChecked: new Date().toISOString(),
+    };
+  } catch (error) {
+    checks.ai = {
+      ...checks.ai,
+      status: 'unhealthy',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+
+  try {
+    const exportStart = Date.now();
+    const exportStatuses = await exportManager.validateAllConnectors();
+    const healthyExports = Object.values(exportStatuses).filter(
+      (v) => v
+    ).length;
+    const totalExports = Object.keys(exportStatuses).length;
+    checks.exports = {
+      ...checks.exports,
+      status:
+        healthyExports === totalExports
+          ? 'up'
+          : healthyExports > 0
+            ? 'degraded'
+            : 'down',
+      latency: Date.now() - exportStart,
+      lastChecked: new Date().toISOString(),
+      error:
+        healthyExports < totalExports
+          ? `${totalExports - healthyExports}/${totalExports} connectors unavailable`
+          : undefined,
+    };
+  } catch (error) {
+    checks.exports = {
+      ...checks.exports,
+      status: 'unhealthy',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+
+  const overallStatus =
+    checks.database.status === 'healthy' && checks.ai.status === 'healthy'
+      ? checks.exports.status === 'up'
+        ? 'healthy'
+        : 'degraded'
+      : 'unhealthy';
+
+  const response: HealthResponse = {
     status: overallStatus,
     timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || '0.1.0',
+    version: '0.1.0',
     uptime: process.uptime(),
-    checks: {
-      database: checks[0],
-      ai: checks[1],
-      exports: checks[2],
-      circuitBreakers,
-    },
+    checks,
+    circuitBreakers,
   };
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
-  return standardSuccessResponse(healthStatus, context.requestId, statusCode);
+  return standardSuccessResponse(response, context.requestId, statusCode);
 }
 
-async function checkDatabaseHealth(): Promise<ServiceHealth> {
+async function _checkDatabaseHealth(): Promise<HealthCheckResult> {
   const startTime = Date.now();
 
   try {
@@ -88,6 +167,7 @@ async function checkDatabaseHealth(): Promise<ServiceHealth> {
 
     if (result.status === 'healthy') {
       return {
+        service: 'database',
         status: latency < 500 ? 'up' : 'degraded',
         latency,
         lastChecked: new Date().toISOString(),
@@ -95,20 +175,22 @@ async function checkDatabaseHealth(): Promise<ServiceHealth> {
     }
 
     return {
+      service: 'database',
       status: 'down',
       error: 'Database health check failed',
       lastChecked: new Date().toISOString(),
     };
-  } catch (error) {
+  } catch (err) {
     return {
       status: 'down',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: err instanceof Error ? err.message : 'Unknown error',
       lastChecked: new Date().toISOString(),
+      service: 'database',
     };
   }
 }
 
-async function checkAIHealth(): Promise<ServiceHealth> {
+async function _checkAIHealth(): Promise<HealthCheckResult> {
   const startTime = Date.now();
 
   try {
@@ -117,6 +199,7 @@ async function checkAIHealth(): Promise<ServiceHealth> {
 
     if (result.status === 'healthy' && result.providers.length > 0) {
       return {
+        service: 'ai',
         status: latency < 2000 ? 'up' : 'degraded',
         latency,
         lastChecked: new Date().toISOString(),
@@ -124,12 +207,14 @@ async function checkAIHealth(): Promise<ServiceHealth> {
     }
 
     return {
+      service: 'ai',
       status: 'down',
-      error: 'AI service unhealthy or no providers available',
+      error: 'AI service check failed',
       lastChecked: new Date().toISOString(),
     };
   } catch (error) {
     return {
+      service: 'ai',
       status: 'down',
       error: error instanceof Error ? error.message : 'Unknown error',
       lastChecked: new Date().toISOString(),
@@ -137,7 +222,7 @@ async function checkAIHealth(): Promise<ServiceHealth> {
   }
 }
 
-async function checkExportsHealth(): Promise<ServiceHealth> {
+async function _checkExportsHealth(): Promise<HealthCheckResult> {
   const startTime = Date.now();
 
   try {
@@ -151,6 +236,7 @@ async function checkExportsHealth(): Promise<ServiceHealth> {
 
     if (healthyConnectors === 0) {
       return {
+        service: 'exports',
         status: 'down',
         error: 'No export connectors configured',
         latency,
@@ -160,6 +246,7 @@ async function checkExportsHealth(): Promise<ServiceHealth> {
 
     if (healthyConnectors < totalConnectors) {
       return {
+        service: 'exports',
         status: 'degraded',
         latency,
         error: `${healthyConnectors}/${totalConnectors} connectors available`,
@@ -168,12 +255,14 @@ async function checkExportsHealth(): Promise<ServiceHealth> {
     }
 
     return {
+      service: 'exports',
       status: 'up',
       latency,
       lastChecked: new Date().toISOString(),
     };
   } catch (error) {
     return {
+      service: 'exports',
       status: 'down',
       error: error instanceof Error ? error.message : 'Unknown error',
       lastChecked: new Date().toISOString(),
@@ -181,11 +270,15 @@ async function checkExportsHealth(): Promise<ServiceHealth> {
   }
 }
 
-function determineOverallStatus(
-  db: ServiceHealth,
-  ai: ServiceHealth,
-  exports: ServiceHealth,
-  circuitBreakers: CircuitBreakerHealth[]
+function _determineOverallStatus(
+  db: HealthCheckResult,
+  ai: HealthCheckResult,
+  exports: HealthCheckResult,
+  circuitBreakers: Array<{
+    service: string;
+    state: string;
+    failures: number;
+  }>
 ): 'healthy' | 'degraded' | 'unhealthy' {
   const criticalServices = [db, ai];
 
