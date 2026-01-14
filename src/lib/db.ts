@@ -455,6 +455,39 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getVectorsByIdeaIds(
+    ideaIds: string[],
+    referenceType?: string
+  ): Promise<Map<string, Vector[]>> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+    if (ideaIds.length === 0) return new Map();
+
+    let query = this.client.from('vectors').select('*').in('idea_id', ideaIds);
+
+    if (referenceType) {
+      query = query.eq('reference_type', referenceType);
+    }
+
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
+
+    if (error) throw error;
+
+    const vectors = data || [];
+    const resultMap = new Map<string, Vector[]>();
+
+    for (const vector of vectors) {
+      const ideaId = vector.idea_id;
+      if (!resultMap.has(ideaId)) {
+        resultMap.set(ideaId, []);
+      }
+      resultMap.get(ideaId)!.push(vector);
+    }
+
+    return resultMap;
+  }
+
   async deleteVector(id: string): Promise<void> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
