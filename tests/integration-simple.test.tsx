@@ -5,7 +5,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { createMockFetch } from './utils/testHelpers';
+import { createMockFetch } from './utils/_testHelpers';
 
 describe('Integration Tests - Basic', () => {
   let user: any;
@@ -168,7 +168,7 @@ describe('Integration Tests - Basic', () => {
         </DataProvider>
       );
 
-      expect(screen.getByText(/initial/)).toBeInTheDocument();
+      expect(screen.getAllByText(/initial/)).toHaveLength(2);
 
       const provider = screen.getByTestId('data-provider');
       await user.click(provider);

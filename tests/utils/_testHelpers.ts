@@ -17,60 +17,82 @@ export const mockEnvVars = {
 };
 
 // Mock Supabase client
-export const createMockSupabaseClient = () => ({
-  from: jest.fn(() => ({
-    insert: jest.fn().mockResolvedValue({
-      data: [{ id: 'test-id', created_at: new Date().toISOString() }],
-      error: null,
-    }),
-    select: jest.fn(() => ({
-      eq: jest.fn(() => ({
-        single: jest.fn().mockResolvedValue({
-          data: { id: 'test-id', content: 'test-content' },
-          error: null,
-        }),
-        data: [{ id: 'test-id', content: 'test-content' }],
-        error: null,
-      })),
-      order: jest.fn(() => ({
-        data: [],
-        error: null,
-      })),
+export const createMockSupabaseClient = () => {
+  const mockInsert = jest.fn().mockResolvedValue({
+    data: [{ id: 'test-id', created_at: new Date().toISOString() }],
+    error: null,
+  });
+  const mockSingle = jest.fn().mockResolvedValue({
+    data: { id: 'test-id', content: 'test-content' },
+    error: null,
+  });
+  const mockEq = jest.fn(() => ({
+    single: mockSingle,
+  }));
+  const mockSelect = jest.fn(() => ({
+    eq: mockEq,
+    data: [{ id: 'test-id', content: 'test-content' }],
+    error: null,
+  }));
+  const mockOrder = jest.fn(() => ({
+    data: [],
+    error: null,
+  }));
+  const mockUpdateEq = jest.fn().mockResolvedValue({
+    data: { id: 'test-id', updated: true },
+    error: null,
+  });
+  const mockUpdate = jest.fn(() => ({
+    eq: mockUpdateEq,
+  }));
+  const mockDeleteEq = jest.fn().mockResolvedValue({
+    data: null,
+    error: null,
+  });
+  const mockDelete = jest.fn(() => ({
+    eq: mockDeleteEq,
+  }));
+
+  return {
+    from: jest.fn(() => ({
+      insert: mockInsert,
+      select: mockSelect,
+      update: mockUpdate,
+      delete: mockDelete,
     })),
-    update: jest.fn(() => ({
-      eq: jest.fn().mockResolvedValue({
-        data: { id: 'test-id', updated: true },
+    mockInsert,
+    mockSelect,
+    mockEq,
+    mockSingle,
+    mockUpdateEq,
+    mockOrder,
+    mockUpdate,
+    mockDeleteEq,
+    mockDelete,
+    auth: {
+      getUser: jest.fn().mockResolvedValue({
+        data: { user: { id: 'test-user-id' } },
         error: null,
       }),
-    })),
-    delete: jest.fn(() => ({
-      eq: jest.fn().mockResolvedValue({
-        data: null,
-        error: null,
-      }),
-    })),
-  })),
-  auth: {
-    getUser: jest.fn().mockResolvedValue({
-      data: { user: { id: 'test-user-id' } },
-      error: null,
-    }),
-  },
-});
+    },
+  };
+};
 
 // Mock OpenAI responses
 export const mockOpenAIResponses = {
   clarificationQuestions: [
     {
       id: '1',
-      question: 'What is the primary goal of this project?',
-      type: 'text',
+      question: 'What is primary goal of this project?',
+      type: 'open',
+      options: [],
       required: true,
     },
     {
       id: '2',
-      question: 'Who is the target audience?',
-      type: 'text',
+      question: 'Who is target audience?',
+      type: 'open',
+      options: [],
       required: true,
     },
   ],
@@ -148,6 +170,35 @@ export const createMockFetch = (
   options: { status?: number; ok?: boolean; delay?: number } = {}
 ) => {
   const { status = 200, ok = true, delay = 0 } = options;
+
+  return jest.fn().mockImplementation(
+    () =>
+      new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            ok,
+            status,
+            json: async () => response,
+            text: async () => JSON.stringify(response),
+          });
+        }, delay);
+      })
+  );
+};
+
+// Helper to create mock fetch responses with standardSuccessResponse format
+export const createStandardMockFetch = (
+  data: any,
+  options: { status?: number; ok?: boolean; delay?: number } = {}
+) => {
+  const { status = 200, ok = true, delay = 0 } = options;
+
+  const response = {
+    success: true,
+    data: data,
+    requestId: `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    timestamp: new Date().toISOString(),
+  };
 
   return jest.fn().mockImplementation(
     () =>

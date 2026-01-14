@@ -150,8 +150,9 @@ describe('ConfigurationService', () => {
       const config = service.loadAgentConfig('clarifier');
 
       expect(config).toHaveProperty('functions');
-      expect(Array.isArray(config.functions)).toBe(true);
-      expect(config.functions.length).toBeGreaterThan(0);
+      const functions = config.functions as unknown[];
+      expect(Array.isArray(functions)).toBe(true);
+      expect(functions.length).toBeGreaterThan(0);
     });
 
     it('should support generic type parameter', () => {

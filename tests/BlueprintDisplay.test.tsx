@@ -1,15 +1,27 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
 
 describe('BlueprintDisplay', () => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+  });
+
   it('shows loading state initially', () => {
     const idea = 'Test idea';
     const answers = { target_audience: 'Developers' };
 
     render(<BlueprintDisplay idea={idea} answers={answers} />);
 
-    expect(screen.getByText(/generating your blueprint/i)).toBeInTheDocument();
+    expect(
+      screen.getAllByText(/generating your blueprint/i).length
+    ).toBeGreaterThan(0);
     expect(
       screen.getByText(/our ai is analyzing your answers/i)
     ).toBeInTheDocument();

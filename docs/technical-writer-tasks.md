@@ -8,6 +8,403 @@ This document tracks documentation work completed by the Technical Writer agent.
 
 ## Completed Tasks
 
+### Task 11: Critical API Documentation Fix ✅ COMPLETE
+
+**Priority**: CRITICAL
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-14
+
+#### Objectives
+
+- Fix misleading API documentation rate limit tier values
+- Fix incorrect breakdown API options documentation
+- Ensure documentation matches actual implementation
+- Prevent developer confusion and errors
+
+#### Root Cause Analysis
+
+**Issue 1: Incorrect Rate Limit Tier Values**
+
+Documentation at lines 519-522 showed incorrect rate limit values:
+
+```markdown
+- `strict`: 10 requests per minute (CORRECT)
+- `moderate`: 50 requests per minute (WRONG - should be 30)
+- `lenient`: 100 requests per minute (WRONG - should be 60)
+```
+
+**Actual Implementation** (src/lib/rate-limit.ts lines 85-89):
+
+```typescript
+export const rateLimitConfigs = {
+  strict: { windowMs: 60 * 1000, maxRequests: 10 },
+  moderate: { windowMs: 60 * 1000, maxRequests: 30 },
+  lenient: { windowMs: 60 * 1000, maxRequests: 60 },
+} as const;
+```
+
+Note: Line 208 in docs correctly showed "Moderate (30 requests per minute)" but contradicted lines 519-522.
+
+**Issue 2: Incorrect Breakdown API Options**
+
+Documentation at lines 401-404 showed non-existent option fields:
+
+```json
+"options": {
+  "complexity": "medium",
+  "includeTimeline": true,      // DOESN'T EXIST
+  "includeDependencies": true  // DOESN'T EXIST
+}
+```
+
+**Actual Implementation** (src/lib/agents/breakdown-engine.ts lines 162-167):
+
+```typescript
+options: {
+  complexity?: 'simple' | 'medium' | 'complex';
+  teamSize?: number;
+  timelineWeeks?: number;
+  constraints?: string[];
+} = {}
+```
+
+**Problem**:
+
+- Developers sending `includeTimeline` or `includeDependencies` would be ignored
+- API doesn't warn about unknown fields
+- No documentation for actual fields: `teamSize`, `timelineWeeks`, `constraints`
+- Confusing what options are actually supported
+
+#### Completed Work
+
+1. **Fixed Rate Limit Tier Values** (docs/api.md)
+   - Updated line 521: Changed moderate from 50 to 30 requests/minute
+   - Updated line 522: Changed lenient from 100 to 60 requests/minute
+   - Values now match src/lib/rate-limit.ts implementation
+   - Consistent with actual rate limit configuration
+
+2. **Fixed Breakdown API Options** (docs/api.md)
+   - Replaced non-existent `includeTimeline` with `teamSize`
+   - Replaced non-existent `includeDependencies` with `timelineWeeks`
+   - Added missing `constraints` field documentation
+   - Added comprehensive field descriptions explaining each option
+   - Provided working examples showing correct option usage
+
+3. **Added Field Descriptions** (docs/api.md)
+   - Documented all `options` object fields with types and descriptions
+   - Added default value notes where applicable
+   - Clarified which fields are optional
+   - Provided practical examples for each option
+
+#### Documentation Changes
+
+**Before:**
+
+```markdown
+## Rate Limit Tiers
+
+- `strict`: 10 requests per minute
+- `moderate`: 50 requests per minute
+- `lenient`: 100 requests per minute
+```
+
+```json
+"options": {
+  "complexity": "medium",
+  "includeTimeline": true,
+  "includeDependencies": true
+}
+```
+
+**After:**
+
+```markdown
+## Rate Limit Tiers
+
+- `strict`: 10 requests per minute
+- `moderate`: 30 requests per minute
+- `lenient`: 60 requests per minute
+```
+
+```json
+"options": {
+  "complexity": "medium",
+  "teamSize": 4,
+  "timelineWeeks": 12,
+  "constraints": ["Must use TypeScript", "Mobile-first design"]
+}
+```
+
+With added field descriptions:
+
+- `complexity` (optional): Complexity level ('simple', 'medium', or 'complex'). Default: AI-determined
+- `teamSize` (optional): Number of team members available
+- `timelineWeeks` (optional): Desired timeline in weeks
+- `constraints` (optional): Array of project constraints
+
+#### Impact
+
+**Developer Experience**: Significantly Improved
+
+- Rate limit values now match actual API behavior
+- No confusion about which values to expect
+- Correct option fields prevent API errors
+- Complete field descriptions enable proper usage
+
+**API Integration**: Enhanced
+
+- Developers can send correct options without trial and error
+- Unknown fields (includeTimeline, includeDependencies) removed
+- All valid options documented with types
+- Working examples provided for immediate use
+
+**Single Source of Truth**: Restored
+
+- Documentation matches src/lib/rate-limit.ts implementation
+- Documentation matches src/lib/agents/breakdown-engine.ts interface
+- No misleading values remain in docs/api.md
+- Consistent throughout all documentation
+
+#### Success Criteria Met
+
+- [x] Rate limit tier values corrected (moderate: 30, lenient: 60)
+- [x] Breakdown API options corrected to match implementation
+- [x] Non-existent fields removed (includeTimeline, includeDependencies)
+- [x] Missing fields added (teamSize, timelineWeeks, constraints)
+- [x] Field descriptions added for all options
+- [x] Working examples provided
+- [x] Lint passes (0 errors, 0 warnings)
+- [x] Type-check passes (0 errors)
+- [x] Documentation matches actual implementation
+- [x] Zero breaking changes to documentation structure
+
+#### Files Modified
+
+- `docs/api.md` (UPDATED - rate limit tiers corrected, breakdown options fixed)
+
+#### Notes
+
+- The admin endpoint response example was already correct (showed moderate: 30, lenient: 60)
+- Only the text description section was incorrect (lines 519-522)
+- Breakdown API options were completely out of sync with implementation
+- Field descriptions added to prevent future confusion about option usage
+
+---
+
+### Task 10: Critical Project Structure Documentation Fix ✅ COMPLETE
+
+**Priority**: CRITICAL
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Fix misleading project structure documentation in README.md
+- Fix incorrect directory references in docs/architecture.md
+- Ensure documentation accurately reflects actual codebase
+- Provide accurate project structure for new developers
+
+#### Completed Work
+
+1. **Updated README.md Project Structure Section**
+   - Removed outdated and incomplete project structure
+   - Added comprehensive, accurate project structure matching actual codebase
+   - Corrected blueprint.md location (was shown at root, actually at docs/blueprint.md)
+   - Added all major directories and files:
+     - Complete docs/ directory listing (13 documentation files)
+     - Complete src/app/ structure (pages and API routes)
+     - Complete src/components/ listing (9 major components)
+     - Complete src/lib/ structure (all utility modules and subdirectories)
+     - Correct ai/ directory structure (agent-configs only, no prompts/)
+     - Added config/ and scripts/ directories
+     - Updated supabase/ structure (removed non-existent seeds/)
+     - Added tests/ directory structure
+
+2. **Fixed docs/architecture.md Directory References**
+   - Corrected `ai/prompts/` reference to `src/lib/prompts/`
+   - Added comprehensive src/lib/ structure showing all subdirectories:
+     - config/ directory for constants
+     - prompts/ directory with clarifier/ and breakdown/ subdirectories
+     - agents/ directory with agent implementations
+   - Removed incorrect `ai/prompts/` reference
+
+3. **Root Cause Analysis**
+
+**Issue 1: README.md Project Structure**
+
+The README showed incomplete and misleading project structure:
+
+- Showed `/blueprint.md` at root level (actually at `docs/blueprint.md`)
+- Listed only 4 directories in src/lib/ (actually 15+ files/directories)
+- Listed `/ai/prompts/` which doesn't exist (actual: `ai/agent-configs/`)
+- Missing critical directories: config/, scripts/, tests/, types/
+- Missing many files: middleware.ts, config files, test structure
+- Showed `supabase/seeds/` which doesn't exist
+
+**Issue 2: Architecture.md Directory References**
+
+Referenced non-existent `ai/prompts/` directory structure.
+
+**Actual Structure:**
+
+- Prompts are in `src/lib/prompts/` (not `ai/prompts/`)
+- Agent configs are in `ai/agent-configs/` (clarifier.yml, breakdown-engine.yml)
+- Prompts are organized by agent: `src/lib/prompts/{agent}/{role}.txt`
+
+#### Impact
+
+**Documentation Accuracy**: Fixed
+
+- README now shows complete, accurate project structure
+- Architecture.md references correct directory locations
+- New developers can now navigate codebase correctly
+
+**Developer Experience**: Improved
+
+- Eliminates confusion about file locations
+- Prevents time wasted searching for non-existent directories
+- Clear understanding of project organization
+
+**Single Source of Truth**: Restored
+
+- Documentation now matches actual implementation
+- Eliminates misleading information
+- Aligns with "Single Source of Truth" principle
+
+#### Success Criteria Met
+
+- [x] README.md project structure accurate and complete
+- [x] Blueprint.md location corrected
+- [x] All actual directories and files documented
+- [x] Non-existent references removed
+- [x] docs/architecture.md directory references corrected
+- [x] Documentation follows existing structure
+- [x] No breaking changes to documentation
+- [x] Lint passes (0 errors)
+- [x] Type-check passes
+
+#### Files Modified
+
+- `README.md` (UPDATED - comprehensive project structure section)
+- `docs/architecture.md` (UPDATED - corrected directory references)
+
+#### Notes
+
+- The project structure in README.md now comprehensively shows:
+  - 13 documentation files in docs/
+  - 9 major React components
+  - 15+ utility modules in src/lib/
+  - 4 prompt directories (clarifier system/user, breakdown system/user)
+  - Complete API route structure (health, clarify, breakdown, admin)
+  - Test structure (api/, utils/, fixtures/)
+  - Configuration directories (config/, ai/agent-configs/)
+
+- PromptService loads prompts from `src/lib/prompts/{agent}/{template}-{role}.txt`
+- Agent configs in `ai/agent-configs/{agent}.yml` define model settings and functions
+
+---
+
+### Task 9: Admin API Endpoint Documentation ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-08
+
+#### Objectives
+
+- Document missing admin endpoint GET /api/admin/rate-limit
+- Provide comprehensive endpoint documentation with examples
+- Ensure all API endpoints are documented
+
+#### Completed Work
+
+1. **Documented Admin Rate Limit Endpoint** (`docs/api.md`)
+   - Added "Admin Endpoints" section after Rate Limiting section
+   - Documented GET /api/admin/rate-limit endpoint
+   - Included request/response examples
+   - Documented all response fields and their meanings
+   - Added rate limit configuration details
+   - Provided use cases and examples
+   - Included cURL usage example
+
+2. **Endpoint Coverage**
+   - Documented total requests counter
+   - Documented blocked requests counter
+   - Documented rate limit tier configurations (strict, moderate, lenient)
+   - Documented user tier configurations (anonymous, authenticated, premium, enterprise)
+   - Documented window duration and max requests for each tier
+
+3. **Usage Guidance**
+   - Provided monitoring use cases
+   - Provided diagnostic use cases
+   - Provided verification use cases
+   - Included example for building admin dashboards
+
+#### Documentation Details
+
+**Added Section**: Admin Endpoints
+
+**Endpoint**: GET /api/admin/rate-limit
+
+**Documentation Includes**:
+
+- Endpoint description and purpose
+- Rate limit for endpoint itself (strict: 10 req/min)
+- Complete response example with all fields
+- Detailed field descriptions
+- Rate limit configuration details
+- Use cases section
+- cURL usage example
+- Status codes
+
+#### Success Criteria Met
+
+- [x] Admin endpoint documented
+- [x] Request/response examples provided
+- [x] All response fields documented
+- [x] Rate limit configurations explained
+- [x] Usage examples included
+- [x] Use cases documented
+- [x] Documentation follows existing API doc structure
+- [x] All API endpoints now documented
+
+#### Files Modified
+
+- `docs/api.md` (UPDATED - added Admin Endpoints section, 80+ lines of documentation)
+
+#### Impact
+
+**Documentation Completeness**: All API endpoints are now documented
+
+Previously documented endpoints:
+
+- Health endpoints (3)
+- Clarification endpoints (4)
+- Breakdown endpoints (2)
+- Total: 9 endpoints
+
+Now documented endpoints:
+
+- Health endpoints (3)
+- Clarification endpoints (4)
+- Breakdown endpoints (2)
+- Admin endpoints (1)
+- Total: 10 endpoints
+
+**Developer Experience**: Improved
+
+- Developers can now monitor rate limiting through documented endpoint
+- Clear understanding of rate limit tiers and configurations
+- Easier to diagnose rate limiting issues
+
+**Ops Monitoring**: Enhanced
+
+- Admin dashboards can be built using documented endpoint
+- Production monitoring of rate limit usage
+- Easy verification of rate limit configuration
+
+---
+
 ### Task 8: Critical Documentation Fixes ✅ COMPLETE
 
 **Priority**: HIGH
@@ -649,6 +1046,6 @@ Potential improvements for future iterations:
 
 ---
 
-**Last Updated**: 2026-01-07
+**Last Updated**: 2026-01-14
 **Agent**: Technical Writer
-**Documentation Version**: 0.3.0
+**Documentation Version**: 0.4.0

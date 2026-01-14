@@ -1,6 +1,10 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdea, validateIdeaId } from '@/lib/validation';
-import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import {
+  ValidationError,
+  ErrorCode,
+  createErrorWithSuggestions,
+} from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
@@ -49,9 +53,9 @@ async function handleGet(context: ApiContext) {
   const session = await clarifierAgent.getSession(ideaId.trim());
 
   if (!session) {
-    throw new AppError(
-      'Clarification session not found',
+    throw createErrorWithSuggestions(
       ErrorCode.NOT_FOUND,
+      'Clarification session not found',
       404
     );
   }

@@ -24,7 +24,7 @@
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+    @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
   }
 
   .input {
@@ -64,6 +64,20 @@
     @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white;
   }
 
+  :focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: 2px solid #2563eb;
+    outline-offset: 2px;
+  }
+
   .fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
@@ -74,6 +88,23 @@
 
   .scale-in {
     animation: scaleIn 0.3s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .fade-in,
+    .slide-up,
+    .scale-in {
+      animation: none;
+    }
   }
 }
 

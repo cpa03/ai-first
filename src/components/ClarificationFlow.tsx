@@ -1,16 +1,27 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
 import InputWithValidation from '@/components/InputWithValidation';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 
 interface Question {
   id: string;
   question: string;
   type: 'text' | 'textarea' | 'select';
   options?: string[];
+}
+
+interface APIQuestion {
+  id: string;
+  question: string;
+  type: 'open' | 'multiple_choice' | 'yes_no';
+  options?: string[];
+  required: boolean;
 }
 
 interface ClarificationFlowProps {
@@ -43,12 +54,88 @@ export default function ClarificationFlow({
   ideaId,
   onComplete,
 }: ClarificationFlowProps) {
+  const logger = useMemo(() => createLogger('ClarificationFlow'), []);
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const currentQuestion = useMemo(
+    () => questions[currentStep],
+    [questions, currentStep]
+  );
+  const progress = useMemo(
+    () => ((currentStep + 1) / questions.length) * 100,
+    [currentStep, questions.length]
+  );
+  const steps = useMemo(
+    () =>
+      questions.map((q, index) => ({
+        id: q.id,
+        label: `Question ${index + 1}`,
+        completed: index < currentStep,
+        current: index === currentStep,
+      })),
+    [questions, currentStep]
+  );
+
+  const handleNext = useCallback(() => {
+    if (!currentAnswer.trim()) return;
+    if (!currentQuestion?.id) return;
+
+    const newAnswers = {
+      ...answers,
+      [currentQuestion.id]: currentAnswer.trim(),
+    };
+    setAnswers(newAnswers);
+
+    if (currentStep < questions.length - 1) {
+      setCurrentStep(currentStep + 1);
+      setCurrentAnswer('');
+      // Focus the first input after navigation
+      setTimeout(() => {
+        const input = document.querySelector(
+          currentQuestion?.type === 'textarea'
+            ? 'textarea'
+            : currentQuestion?.type === 'select'
+              ? 'select'
+              : 'input'
+        ) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+        input?.focus();
+      }, 100);
+    } else {
+      onComplete(newAnswers);
+    }
+  }, [
+    currentAnswer,
+    answers,
+    currentQuestion?.id,
+    currentStep,
+    questions.length,
+    onComplete,
+    currentQuestion?.type,
+  ]);
+
+  const handlePrevious = useCallback(() => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+      const previousQuestionId = questions[currentStep - 1].id;
+      setCurrentAnswer(answers[previousQuestionId] || '');
+      // Focus the first input after navigation
+      setTimeout(() => {
+        const input = document.querySelector(
+          currentQuestion?.type === 'textarea'
+            ? 'textarea'
+            : currentQuestion?.type === 'select'
+              ? 'select'
+              : 'input'
+        ) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
+        input?.focus();
+      }, 100);
+    }
+  }, [currentStep, questions, answers, currentQuestion?.type]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -71,11 +158,17 @@ export default function ClarificationFlow({
 
         const data = await response.json();
 
-        const formattedQuestions: Question[] = data.questions.map(
-          (q: string, index: number) => ({
-            id: `question_${index}`,
-            question: q,
-            type: 'textarea',
+        const formattedQuestions: Question[] = data.data.questions.map(
+          (q: APIQuestion, index: number) => ({
+            id: q.id || `question_${index}`,
+            question: q.question,
+            type:
+              q.type === 'open'
+                ? 'textarea'
+                : q.type === 'multiple_choice'
+                  ? 'select'
+                  : 'text',
+            options: q.options,
           })
         );
 
@@ -85,7 +178,15 @@ export default function ClarificationFlow({
 
         setQuestions(formattedQuestions);
       } catch (err) {
-        console.error('Error fetching questions:', err);
+        logger.errorWithContext('Failed to fetch clarifying questions', {
+          component: 'ClarificationFlow',
+          action: 'fetchQuestions',
+          metadata: {
+            ideaId,
+            ideaLength: idea.length,
+            error: err instanceof Error ? err.message : 'Unknown error',
+          },
+        });
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );
@@ -97,11 +198,16 @@ export default function ClarificationFlow({
     };
 
     fetchQuestions();
-  }, [idea, ideaId]);
+  }, [idea, ideaId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto fade-in">
+        <LoadingAnnouncer message="Generating questions..." />
+        <div className="flex flex-col items-center justify-center py-12">
+          <LoadingSpinner size="lg" ariaLabel="Generating questions" />
+          <p className="mt-4 text-gray-600 text-sm">Generating questions...</p>
+        </div>
         {error && (
           <div className="mb-6 slide-up">
             <Alert type="error" title="Error">
@@ -116,40 +222,6 @@ export default function ClarificationFlow({
     );
   }
 
-  const currentQuestion = questions[currentStep];
-  const progress = ((currentStep + 1) / questions.length) * 100;
-  const steps = questions.map((q, index) => ({
-    id: q.id,
-    label: `Question ${index + 1}`,
-    completed: index < currentStep,
-    current: index === currentStep,
-  }));
-
-  const handleNext = () => {
-    if (!currentAnswer.trim()) return;
-
-    const newAnswers = {
-      ...answers,
-      [currentQuestion.id]: currentAnswer.trim(),
-    };
-    setAnswers(newAnswers);
-
-    if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
-      setCurrentAnswer('');
-    } else {
-      onComplete(newAnswers);
-    }
-  };
-
-  const handlePrevious = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-      const previousQuestionId = questions[currentStep - 1].id;
-      setCurrentAnswer(answers[previousQuestionId] || '');
-    }
-  };
-
   if (questions.length === 0) {
     return (
       <div className="max-w-2xl mx-auto">
@@ -159,6 +231,17 @@ export default function ClarificationFlow({
             Please go back and try with a more detailed idea.
           </p>
         </Alert>
+      </div>
+    );
+  }
+
+  if (!currentQuestion) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="flex flex-col items-center justify-center py-12">
+          <LoadingSpinner size="lg" />
+          <p className="mt-4 text-gray-600 text-sm">Loading question...</p>
+        </div>
       </div>
     );
   }
@@ -181,7 +264,12 @@ export default function ClarificationFlow({
           <span className="text-sm font-medium text-gray-700">
             Question {currentStep + 1} of {questions.length}
           </span>
-          <span className="text-sm text-gray-500">{Math.round(progress)}%</span>
+          <span
+            className="text-sm text-gray-500"
+            aria-label={`Progress: ${Math.round(progress)} percent`}
+          >
+            {Math.round(progress)}%
+          </span>
         </div>
         <ProgressStepper steps={steps} currentStep={currentStep} />
       </div>
@@ -242,14 +330,26 @@ export default function ClarificationFlow({
                 <label
                   htmlFor="answer-select"
                   className="block text-sm font-medium text-gray-700"
+                  id="answer-select-label"
                 >
-                  Your answer <span className="text-red-500 ml-1">*</span>
+                  Your answer{' '}
+                  <span className="text-red-500 ml-1" aria-hidden="true">
+                    *
+                  </span>
                 </label>
                 <select
                   id="answer-select"
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors bg-white"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:ring-offset-2 transition-all duration-200 bg-white min-h-[44px]"
+                  aria-labelledby="answer-select-label"
+                  aria-required="true"
+                  aria-invalid={
+                    !!(
+                      currentAnswer.trim() === '' &&
+                      currentStep === questions.length - 1
+                    )
+                  }
                   required
                   autoFocus
                 >

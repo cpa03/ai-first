@@ -58,27 +58,76 @@
 ## 📁 Project Structure
 
 ```
-/README.md                 ← This file
-/blueprint.md             ← Project blueprint and architecture
-/docs/
-  /architecture.md        ← Technical architecture details
-  /agent-guidelines.md    ← Agent behavior rules
-  /deploy.md             ← Deployment instructions
-  /templates/            ← User-downloadable templates
+/README.md                    ← This file
+/blueprint.md                  ← Project blueprint and architecture
+/docs/                        ← Documentation
+  /architecture.md           ← Technical architecture details
+  /agent-guidelines.md       ← Agent behavior rules
+  /api.md                   ← Complete API reference
+  /error-codes.md           ← Error code reference
+  /health-monitoring.md      ← Health monitoring guide
+  /deploy.md                ← Deployment instructions
+  /troubleshooting.md       ← Troubleshooting guide
+  /integration-hardening.md  ← Resilience patterns
+  /templates/               ← User-downloadable templates
 /src/
-  /app/                  ← Next.js app (app router)
-  /components/           ← React components
-  /lib/                  ← Core utilities
-    ai.ts               ← AI model abstraction
-    db.ts               ← Database utilities
-    exports.ts          ← Export connectors
+  /app/                    ← Next.js app (app router)
+    /clarify/              ← Clarification flow pages
+    /results/              ← Results display pages
+    /api/                  ← API routes
+      /health/             ← Health check endpoints
+      /clarify/            ← Clarification API
+      /breakdown/          ← Breakdown API
+      /admin/              ← Admin endpoints
+  /components/             ← React components
+    /Button.tsx            ← Reusable button component
+    /InputWithValidation.tsx ← Form input with validation
+    /Alert.tsx             ← Alert component
+    /ProgressStepper.tsx    ← Progress indicator
+    /ClarificationFlow.tsx  ← Clarification workflow UI
+    /BlueprintDisplay.tsx   ← Blueprint display UI
+    /LoadingAnnouncer.tsx   ← Screen reader announcements
+    /MobileNav.tsx         ← Responsive navigation
+  /lib/                    ← Core utilities
+    /ai.ts                ← AI service abstraction
+    /db.ts                ← Database service
+    /exports.ts           ← Export connectors
+    /resilience.ts        ← Resilience framework
+    /errors.ts           ← Error handling
+    /validation.ts       ← Input validation
+    /rate-limit.ts       ← Rate limiting
+    /api-handler.ts      ← API request handler
+    /api-client.ts       ← API client utilities
+    /cache.ts            ← Caching layer
+    /pii-redaction.ts    ← PII protection
+    /config/             ← Configuration
+      /constants.ts       ← Constants and config
+    /prompts/            ← AI prompt templates
+      /clarifier/         ← Clarification agent prompts
+      /breakdown/         ← Breakdown agent prompts
+    /agents/             ← AI agent implementations
+      /clarifier.ts       ← Clarification agent
+      /breakdown-engine.ts ← Breakdown engine
+  /types/                   ← TypeScript type definitions
+  /styles/                  ← Global styles
+  /middleware.ts            ← Next.js middleware
 /supabase/
-  schema.sql            ← Database schema
-  migrations/           ← Database migrations
+  schema.sql                 ← Database schema
+  migrations/                ← Database migration files
 /ai/
-  agent-configs/        ← Agent configuration files
-  prompts/             ← AI prompt templates
-/.github/workflows/     ← GitHub Actions automation
+  /agent-configs/           ← Agent configuration files
+    clarifier.yml           ← Clarifier agent config
+    breakdown-engine.yml     ← Breakdown engine config
+/config/
+  /agent-policy.md          ← Agent behavior rules
+  /.env.example             ← Environment variable template
+/scripts/
+  /validate-env.sh          ← Environment validation script
+/tests/                     ← Test files
+  /api/                    ← API tests
+  /utils/                   ← Test utilities
+  /fixtures/                ← Test data and mocks
+/.github/workflows/          ← GitHub Actions automation
 ```
 
 ## 🤖 How the Agent System Works

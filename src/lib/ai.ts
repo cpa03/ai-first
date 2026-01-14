@@ -2,6 +2,9 @@ import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
+import { createLogger } from './logger';
+
+const logger = createLogger('AIService');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
@@ -32,11 +35,17 @@ class AIService {
   private supabase: any = null;
   private costTrackers: CostTracker[] = [];
   private todayCostCache: Cache<number>;
+  private responseCache: Cache<string>;
 
   constructor() {
     this.todayCostCache = new Cache<number>({
       ttl: 60 * 1000,
       maxSize: 1,
+    });
+
+    this.responseCache = new Cache<string>({
+      ttl: 5 * 60 * 1000,
+      maxSize: 100,
     });
     if (
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -76,6 +85,13 @@ class AIService {
   ): Promise<string> {
     const startTime = Date.now();
 
+    const cacheKey = this.generateCacheKey(messages, config);
+
+    const cachedResponse = this.responseCache.get(cacheKey);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+
     try {
       const response = await this.executeWithResilience(async () => {
         if (config.provider === 'openai') {
@@ -112,6 +128,8 @@ class AIService {
         });
       }
 
+      this.responseCache.set(cacheKey, response);
+
       return response;
     } catch (error) {
       // Log error
@@ -126,6 +144,16 @@ class AIService {
 
       throw error;
     }
+  }
+
+  private generateCacheKey(
+    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
+    config: AIModelConfig
+  ): string {
+    const content = messages.map((m) => `${m.role}:${m.content}`).join('|');
+    const key = `${config.provider}:${config.model}:${config.temperature}:${config.maxTokens}:${content}`;
+    const hash = btoa(key).substring(0, 64);
+    return hash;
   }
 
   private async executeWithResilience<T>(
@@ -161,44 +189,54 @@ class AIService {
       throw new Error('Supabase client not initialized');
     }
 
-    // Retrieve existing context from vector store
-    const { data: existingContext } = await this.supabase
-      .from('vectors')
-      .select('vector_data')
-      .eq('idea_id', ideaId)
-      .eq('reference_type', 'context')
-      .single();
+    const cacheKey = `context:${ideaId}`;
 
+    const cachedContext = this.responseCache.get(cacheKey);
     let context: Array<{
       role: 'system' | 'user' | 'assistant';
       content: string;
     }> = [];
 
-    if (existingContext?.vector_data) {
-      context = (existingContext.vector_data.messages || []).map((m: any) => ({
-        role: m.role as 'system' | 'user' | 'assistant',
-        content: m.content,
-      }));
+    if (cachedContext) {
+      try {
+        context = JSON.parse(cachedContext);
+      } catch (error) {
+        logger.error('Failed to parse cached context:', error);
+      }
+    } else {
+      const { data: existingContext } = await this.supabase
+        .from('vectors')
+        .select('vector_data')
+        .eq('idea_id', ideaId)
+        .eq('reference_type', 'context')
+        .single();
+
+      if (existingContext?.vector_data) {
+        context = (existingContext.vector_data.messages || []).map(
+          (m: any) => ({
+            role: m.role as 'system' | 'user' | 'assistant',
+            content: m.content,
+          })
+        );
+      }
     }
 
-    // Add new messages
     context = [...context, ...newMessages];
 
-    // Implement simple truncation strategy (can be enhanced with summarization)
     while (this.estimateTokens(context) > maxTokens && context.length > 2) {
-      // Remove oldest non-system message
       const systemMessages = context.filter((m) => m.role === 'system');
       const nonSystemMessages = context.filter((m) => m.role !== 'system');
-      nonSystemMessages.shift(); // Remove oldest
+      nonSystemMessages.shift();
       context = [...systemMessages, ...nonSystemMessages];
     }
 
-    // Store updated context
     await this.supabase.from('vectors').upsert({
       idea_id: ideaId,
       reference_type: 'context',
-      vector_data: { messages: context },
-    } as any);
+      vector_data: { messages: context } as unknown as Record<string, unknown>,
+    });
+
+    this.responseCache.set(cacheKey, JSON.stringify(context));
 
     return context;
   }
@@ -316,12 +354,26 @@ class AIService {
     return [...this.costTrackers];
   }
 
-  getCacheStats(): ReturnType<Cache<number>['getStats']> {
-    return this.todayCostCache.getStats();
+  getCacheStats(): {
+    costCache: ReturnType<Cache<number>['getStats']>;
+    responseCache: ReturnType<Cache<string>['getStats']>;
+    costCacheSize: number;
+    responseCacheSize: number;
+  } {
+    return {
+      costCache: this.todayCostCache.getStats(),
+      responseCache: this.responseCache.getStats(),
+      costCacheSize: this.todayCostCache.size,
+      responseCacheSize: this.responseCache.size,
+    };
   }
 
   clearCostCache(): void {
     this.todayCostCache.clear();
+  }
+
+  clearResponseCache(): void {
+    this.responseCache.clear();
   }
 
   // Health check
@@ -333,7 +385,7 @@ class AIService {
         await this.openai.models.list();
         providers.push('openai');
       } catch (error) {
-        console.error('OpenAI health check failed:', error);
+        logger.error('OpenAI health check failed:', error);
       }
     }
 

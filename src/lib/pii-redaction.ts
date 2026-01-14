@@ -81,7 +81,7 @@ export function redactPII(text: string): string {
 /**
  * Redact PII from an object recursively
  */
-export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
+export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
   if (typeof obj === 'string') {
     return redactPII(obj);
   }
@@ -97,7 +97,7 @@ export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
     }
     seen.add(obj);
 
-    const redacted: any = {};
+    const redacted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
       // Skip redaction for known safe fields
       const safeFields = [
@@ -130,7 +130,11 @@ export function redactPIIInObject(obj: any, seen = new WeakSet()): any {
 /**
  * Sanitize agent log payload before storing
  */
-export function sanitizeAgentLog(agent: string, action: string, payload: any) {
+export function sanitizeAgentLog(
+  agent: string,
+  action: string,
+  payload: unknown
+) {
   return {
     agent,
     action,

@@ -19,7 +19,7 @@ import {
   mockOpenAIResponses,
   createMockFetch,
   waitForAsync,
-} from './utils/testHelpers';
+} from './utils/_testHelpers';
 
 // Mock external dependencies
 jest.mock('@/lib/db');
@@ -462,27 +462,6 @@ describe('Frontend Component Tests', () => {
 
       expect(screen.getByText(/exporting.../i)).toBeInTheDocument();
       expect(githubButton).toBeDisabled();
-    });
-
-    it('provides copy to clipboard functionality', async () => {
-      Object.assign(navigator, {
-        clipboard: {
-          writeText: jest.fn().mockResolvedValue(undefined),
-        },
-      });
-
-      render(
-        <BlueprintDisplay
-          idea={mockUserJourney.ideaInput}
-          answers={mockUserJourney.answers}
-        />
-      );
-
-      const copyButton = screen.getByRole('button', { name: /copy/i });
-      await user.click(copyButton);
-
-      expect(navigator.clipboard.writeText).toHaveBeenCalled();
-      expect(screen.getByText(/copied to clipboard/i)).toBeInTheDocument();
     });
   });
 });

@@ -1,13 +1,36 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export function middleware() {
+export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
-  const isDevelopment = process.env.NODE_ENV !== 'production';
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(',').map((o) => o.trim())
+    : ['http://localhost:3000'];
+
+  const origin = request.headers.get('origin');
+
+  if (origin && allowedOrigins.includes(origin)) {
+    response.headers.set('Access-Control-Allow-Origin', origin);
+    response.headers.set(
+      'Access-Control-Allow-Methods',
+      'GET, POST, PUT, DELETE, OPTIONS'
+    );
+    response.headers.set(
+      'Access-Control-Allow-Headers',
+      'Content-Type, Authorization'
+    );
+    response.headers.set('Access-Control-Allow-Credentials', 'true');
+  }
+
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, {
+      status: 204,
+      headers: response.headers,
+    });
+  }
 
   const cspHeader = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://vercel.live",
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
@@ -17,12 +40,8 @@ export function middleware() {
     "frame-ancestors 'none'",
     'upgrade-insecure-requests',
     "connect-src 'self' https://*.supabase.co",
-    isDevelopment
-      ? "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://vercel.live"
-      : "script-src 'self' 'unsafe-inline' https://vercel.live",
-  ]
-    .filter((directive, index, array) => array.indexOf(directive) === index)
-    .join('; ');
+    "script-src 'self' https://vercel.live",
+  ].join('; ');
 
   response.headers.set('Content-Security-Policy', cspHeader);
   response.headers.set('X-Frame-Options', 'DENY');
