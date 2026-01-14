@@ -271,8 +271,7 @@ export class CircuitBreakerManager {
       {
         state: CircuitBreakerState;
         failures: number;
-        lastFailureTime: number;
-        nextAttemptTime: number;
+        nextAttemptTime?: string;
       }
     > = {};
     this.circuitBreakers.forEach((cb, name) => {

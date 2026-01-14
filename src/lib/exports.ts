@@ -1361,8 +1361,8 @@ export class GitHubProjectsExporter extends ExportConnector {
 
     // Add labels for priority and status
     const labels: string[] = [];
-    if (task.priority) {
-      labels.push(this.getPriorityLabel(task.priority));
+    if ('priority_score' in task && task.priority_score) {
+      labels.push(this.getPriorityLabel(task.priority_score));
     }
     if (task.estimate) {
       labels.push(`estimate: ${task.estimate}h`);
@@ -1794,29 +1794,9 @@ export const exportUtils = {
     tasks: Task[] = []
   ): ExportData {
     return {
-      idea: {
-        id: idea.id,
-        title: idea.title,
-        raw_text: idea.raw_text,
-        status: idea.status,
-        created_at: idea.created_at,
-      },
-      deliverables: deliverables.map((d) => ({
-        id: d.id,
-        title: d.title,
-        description: d.description,
-        priority: d.priority,
-        estimate_hours: d.estimate_hours,
-      })),
-      tasks: tasks.map((t) => ({
-        id: t.id,
-        deliverable_id: t.deliverable_id,
-        title: t.title,
-        description: t.description,
-        assignee: t.assignee,
-        status: t.status,
-        estimate: t.estimate,
-      })),
+      idea,
+      deliverables,
+      tasks,
       metadata: {
         exported_at: new Date().toISOString(),
         version: '1.0.0',
