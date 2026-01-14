@@ -55,6 +55,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''),
         raw_text: idea,
         status: 'draft',
+        deleted_at: null,
       };
 
       const savedIdea = await dbService.createIdea(newIdea);

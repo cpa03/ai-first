@@ -175,6 +175,7 @@ describe('Backend Service Tests', () => {
         title: 'Test idea',
         raw_text: 'Test idea content',
         status: 'draft',
+        deleted_at: null,
       });
 
       expect(result).toEqual(mockIdea);
@@ -196,6 +197,7 @@ describe('Backend Service Tests', () => {
           title: 'Test idea',
           raw_text: 'Test idea content',
           status: 'draft',
+          deleted_at: null,
         })
       ).rejects.toThrow('Database error');
     });

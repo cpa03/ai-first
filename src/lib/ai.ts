@@ -7,7 +7,6 @@ import {
   DEFAULT_TIMEOUTS,
   withTimeout,
   circuitBreakerManager,
-  defaultResilienceConfigs,
   type ServiceResilienceConfig,
   type ResilienceConfig,
 } from './resilience';

@@ -41,6 +41,13 @@ export class SessionManager {
           description: deliverable.description,
           priority: deliverable.priority,
           estimate_hours: deliverable.estimatedHours,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 50,
+          risk_factors: [],
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          deleted_at: null,
         });
       }
 
@@ -56,6 +63,17 @@ export class SessionManager {
             description: task.description,
             estimate: task.estimatedHours,
             status: 'todo',
+            start_date: null,
+            end_date: null,
+            actual_hours: null,
+            completion_percentage: 0,
+            priority_score: 50,
+            complexity_score: 50,
+            risk_level: 'low',
+            tags: [],
+            custom_fields: null,
+            milestone_id: null,
+            deleted_at: null,
           });
         }
       }

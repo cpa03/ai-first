@@ -55,6 +55,17 @@ export interface Deliverable {
   description?: string;
   priority: number;
   estimate_hours: number;
+  milestone_id: string | null;
+  completion_percentage: number;
+  business_value: number;
+  risk_factors: string[] | null;
+  acceptance_criteria: Record<string, unknown> | null;
+  deliverable_type:
+    | 'feature'
+    | 'documentation'
+    | 'testing'
+    | 'deployment'
+    | 'research';
   created_at: string;
   deleted_at?: string | null;
 }
@@ -67,6 +78,16 @@ export interface Task {
   assignee?: string;
   status: 'todo' | 'in_progress' | 'completed';
   estimate: number;
+  start_date: string | null;
+  end_date: string | null;
+  actual_hours: number | null;
+  completion_percentage: number;
+  priority_score: number;
+  complexity_score: number;
+  risk_level: 'low' | 'medium' | 'high';
+  tags: string[] | null;
+  custom_fields: Record<string, unknown> | null;
+  milestone_id: string | null;
   created_at: string;
   deleted_at?: string | null;
 }
@@ -114,7 +135,7 @@ export class DatabaseService {
   }
 
   // Ideas CRUD operations
-  async createIdea(idea: Omit<Idea, 'id'>): Promise<Idea> {
+  async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const { data, error } = await this.client
