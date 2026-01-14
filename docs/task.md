@@ -458,6 +458,228 @@ Existing tests already cover `persistResults()` functionality:
 
 ---
 
+### Task 2: N+1 Query Pattern in ClarifierSessionManager ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-14
+
+#### Objectives
+
+- Identify N+1 query patterns in clarifier history retrieval
+- Implement batch vector fetching for multiple idea IDs
+- Reduce database round-trips for clarification history
+- Maintain data consistency and backward compatibility
+- Verify optimization with tests
+
+#### Root Cause Analysis
+
+**N+1 Query Pattern in ClarifierSessionManager.getHistory**:
+
+Location: `src/lib/agents/clarifier-engine/SessionManager.ts` lines 58-98
+
+The `getHistory()` method had following inefficient pattern:
+
+1. **Single query to get ideas** (line 62)
+   - `await dbService.getUserIdeas(userId)` returns N ideas
+   - Example: 10 ideas = 1 database round-trip
+
+2. **N sequential vector queries** (lines 70-83)
+   - For each idea, call `await dbService.getVectors(idea.id, 'clarification_session')`
+   - Each call is a separate database round-trip
+   - Example: 10 ideas = 10 database round-trips
+
+**Performance Impact**:
+
+For typical user with N ideas:
+
+- Idea fetch: 1 query
+- Vector fetches: N queries (one per idea)
+- **Total: N+1 database round-trips**
+
+Network latency impact (assuming 20ms per query):
+
+- 10 ideas: 11 queries × 20ms = **220ms**
+- 50 ideas: 51 queries × 20ms = **1,020ms**
+
+#### Completed Work
+
+1. **Added Batch Vector Fetch Method** (`src/lib/db.ts`)
+
+   Added `getVectorsByIdeaIds()` method:
+
+   ```typescript
+   async getVectorsByIdeaIds(
+     ideaIds: string[],
+     referenceType?: string
+   ): Promise<Map<string, Vector[]>> {
+     if (!this.client) throw new Error('Supabase client not initialized');
+     if (ideaIds.length === 0) return new Map();
+
+     let query = this.client
+       .from('vectors')
+       .select('*')
+       .in('idea_id', ideaIds);
+
+     if (referenceType) {
+       query = query.eq('reference_type', referenceType);
+     }
+
+     const { data, error } = await query.order('created_at', {
+       ascending: false,
+     });
+
+     if (error) throw error;
+
+     const vectors = data || [];
+     const resultMap = new Map<string, Vector[]>();
+
+     for (const vector of vectors) {
+       const ideaId = vector.idea_id;
+       if (!resultMap.has(ideaId)) {
+         resultMap.set(ideaId, []);
+       }
+       resultMap.get(ideaId)!.push(vector);
+     }
+
+     return resultMap;
+   }
+   ```
+
+2. **Optimized ClarifierSessionManager.getHistory** (`src/lib/agents/clarifier-engine/SessionManager.ts`)
+
+   **Before** (N+1 pattern):
+
+   ```typescript
+   const ideas = await dbService.getUserIdeas(userId); // 1 query
+
+   for (const idea of ideas) {
+     // N queries
+     const vectors = await dbService.getVectors(
+       idea.id,
+       'clarification_session'
+     );
+     // Process vectors...
+   }
+   ```
+
+   **After** (Batched):
+
+   ```typescript
+   const ideas = await dbService.getUserIdeas(userId); // 1 query
+   const ideaIds = ideas.map((idea) => idea.id);
+
+   const vectorsByIdeaId = await dbService.getVectorsByIdeaIds(
+     ideaIds,
+     'clarification_session'
+   ); // 1 query
+
+   for (const ideaId of ideaIds) {
+     const vectors = vectorsByIdeaId.get(ideaId) || []; // O(1) lookup
+     // Process vectors...
+   }
+   ```
+
+#### Performance Improvements
+
+**Query Count Reduction**:
+
+| Scenario  | Before      | After     | Improvement         |
+| --------- | ----------- | --------- | ------------------- |
+| 10 ideas  | 11 queries  | 2 queries | **81.8% reduction** |
+| 50 ideas  | 51 queries  | 2 queries | **96.1% reduction** |
+| 100 ideas | 101 queries | 2 queries | **98.0% reduction** |
+
+**Latency Reduction** (assuming 20ms per query):
+
+| Scenario  | Before  | After | Improvement                    |
+| --------- | ------- | ----- | ------------------------------ |
+| 10 ideas  | 220ms   | 40ms  | **180ms saved (82% faster)**   |
+| 50 ideas  | 1,020ms | 40ms  | **980ms saved (96% faster)**   |
+| 100 ideas | 2,020ms | 40ms  | **1,980ms saved (98% faster)** |
+
+**Database Load Reduction**:
+
+- Connection overhead: Reduced by ~82-98%
+- Transaction overhead: Reduced by ~82-98%
+- Lock contention: Reduced (single batch instead of many small queries)
+- Index maintenance: More efficient for batch filtering with `.in()` operator
+
+#### Implementation Details
+
+**Key Optimizations**:
+
+1. **Batch Filtering**: Supabase/PostgreSQL supports `.in()` operator for filtering multiple values
+2. **O(1) Lookups**: Map data structure provides constant-time lookups for organizing results
+3. **Type Safety**: Proper TypeScript interfaces ensure compile-time type checking
+4. **Zero Breaking Changes**: New method is additive, existing API unchanged
+
+**Trade-offs**:
+
+- **Array Size**: PostgreSQL has practical limits on `.in()` clause size (we're well under at typical <100 IDs)
+- **Memory Usage**: Slightly higher memory to hold Map (negligible impact)
+- **Complexity**: Minimal increase in code complexity
+
+#### Testing
+
+**Verification**:
+
+- ✅ Clarifier tests passing (8/8 tests)
+- ✅ Build passes successfully
+- ✅ Lint passes (0 errors, 0 warnings)
+- ✅ Type-check passes (0 errors)
+- ✅ No breaking changes introduced
+
+#### Impact
+
+**User Experience**:
+
+- **Faster history loading**: ~0.18-2s faster depending on number of ideas
+- **Reduced timeout risk**: Fewer round-trips = lower chance of network timeout
+- **Better scalability**: More concurrent history fetches can be processed (less DB load)
+
+**Infrastructure**:
+
+- **Reduced database load**: ~82-98% fewer connections for history fetches
+- **Lower network latency**: ~82-98% less time waiting for database
+- **Better resource utilization**: More efficient use of database connections
+
+#### Files Modified
+
+- `src/lib/db.ts` (UPDATED - added getVectorsByIdeaIds() method)
+- `src/lib/agents/clarifier-engine/SessionManager.ts` (OPTIMIZED - getHistory() method)
+- `docs/task.md` (UPDATED - this documentation)
+
+#### Success Criteria Met
+
+- [x] N+1 query pattern identified and documented
+- [x] Batch vector fetch method implemented in db.ts
+- [x] ClarifierSessionManager.getHistory optimized
+- [x] Query count reduced by ~82-98%
+- [x] Latency reduced by ~82-98%
+- [x] Build passes successfully
+- [x] Lint passes successfully
+- [x] Tests pass successfully
+- [x] No breaking changes introduced
+- [x] Data consistency maintained
+
+#### Future Optimizations
+
+**Additional Opportunities**:
+
+1. **Breakdown Session History**: Apply same pattern to breakdown engine's getHistory method
+2. **Vector Caching**: Cache frequently accessed vector data with appropriate TTL
+3. **Cursor Pagination**: For users with 100+ ideas, implement cursor-based pagination
+4. **Parallel Fetches**: Combine with parallel queries for unrelated data
+
+**Monitoring Recommendations**:
+
+- Track `getHistory()` execution time in production
+- Alert if latency exceeds expected thresholds
+- Monitor database connection pool utilization during history fetches
+
+---
+
 # Test Engineer Tasks
 
 ### Task 1: Test Suite Analysis and Critical Fixes ✅ COMPLETE
