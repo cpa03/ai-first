@@ -42,7 +42,7 @@ function createMockDeliverable(overrides = {}) {
     milestone_id: null,
     completion_percentage: 0,
     business_value: 100,
-    risk_factors: null,
+    risk_factors: [],
     acceptance_criteria: null,
     deliverable_type: 'feature' as const,
     created_at: new Date().toISOString(),
@@ -653,7 +653,7 @@ describe('Export Services', () => {
           idea: {
             id: 'test',
             title: 'Test',
-            raw_text: '' as any,
+            raw_text: '',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
             deleted_at: null,

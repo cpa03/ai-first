@@ -117,6 +117,7 @@ describe('Backend Services', () => {
 
     it('should validate idea data structure', () => {
       const ideaData = {
+        user_id: 'test-user',
         title: 'Test Idea',
         raw_text: 'This is a test idea',
         status: 'draft' as const,

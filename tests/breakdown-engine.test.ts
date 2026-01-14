@@ -33,8 +33,10 @@ jest.mock('@/lib/db', () => ({
     storeVector: jest.fn(),
     getVectors: jest.fn(),
     createDeliverable: jest.fn(),
+    createDeliverables: jest.fn(),
     getIdeaDeliverables: jest.fn(),
     createTask: jest.fn(),
+    createTasks: jest.fn(),
     updateIdea: jest.fn(),
   },
 }));
@@ -142,11 +144,10 @@ describe('BreakdownEngine', () => {
         .mockResolvedValueOnce(JSON.stringify(mockTasks.tasks));
 
       dbService.storeVector.mockResolvedValue({} as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'User Interface' } as any,
       ]);
-      dbService.createTask.mockResolvedValue({ id: 'task-1' } as any);
+      dbService.createTasks.mockResolvedValue([{ id: 'task-1' } as any]);
       dbService.updateIdea.mockResolvedValue({} as any);
       dbService.logAgentAction.mockResolvedValue(undefined);
 
@@ -170,8 +171,8 @@ describe('BreakdownEngine', () => {
       expect(session.timeline).toBeDefined();
       expect(session.confidence).toBeGreaterThan(0);
       expect(session.processingTime).toBeGreaterThan(0);
-      expect(dbService.createDeliverable).toHaveBeenCalled();
-      expect(dbService.createTask).toHaveBeenCalled();
+      expect(dbService.createDeliverables).toHaveBeenCalled();
+      expect(dbService.createTasks).toHaveBeenCalled();
       expect(dbService.updateIdea).toHaveBeenCalledWith('idea-123', {
         status: 'breakdown',
       });
@@ -226,11 +227,10 @@ describe('BreakdownEngine', () => {
         .mockRejectedValueOnce(new Error('Task decomposition failed'));
 
       dbService.storeVector.mockResolvedValue({} as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'Test Deliverable' } as any,
       ]);
-      dbService.createTask.mockResolvedValue({ id: 'task-1' } as any);
+      dbService.createTasks.mockResolvedValue([{ id: 'task-1' } as any]);
       dbService.updateIdea.mockResolvedValue({} as any);
       dbService.logAgentAction.mockResolvedValue(undefined);
 
@@ -339,11 +339,10 @@ describe('BreakdownEngine', () => {
 
       aiService.callModel.mockResolvedValue(JSON.stringify(mockAnalysis));
       dbService.storeVector.mockResolvedValue({} as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'Task' } as any,
       ]);
-      dbService.createTask.mockResolvedValue({ id: 'task-1' } as any);
+      dbService.createTasks.mockResolvedValue([{ id: 'task-1' } as any]);
       dbService.updateIdea.mockResolvedValue({} as any);
       dbService.logAgentAction.mockResolvedValue(undefined);
 
@@ -384,8 +383,7 @@ describe('BreakdownEngine', () => {
         .mockResolvedValueOnce(JSON.stringify([]));
 
       dbService.storeVector.mockResolvedValue({} as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'Task' } as any,
       ]);
       dbService.updateIdea.mockResolvedValue({} as any);
@@ -439,11 +437,10 @@ describe('BreakdownEngine', () => {
         );
 
       dbService.storeVector.mockResolvedValue({} as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'Deliverable 0' } as any,
       ]);
-      dbService.createTask.mockResolvedValue({ id: 'task-1' } as any);
+      dbService.createTasks.mockResolvedValue([{ id: 'task-1' } as any]);
       dbService.updateIdea.mockResolvedValue({} as any);
       dbService.logAgentAction.mockResolvedValue(undefined);
 
@@ -483,11 +480,10 @@ describe('BreakdownEngine', () => {
 
       aiService.callModel.mockResolvedValue(JSON.stringify(mockAnalysis));
       dbService.storeVector.mockResolvedValue({} as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'Task' } as any,
       ]);
-      dbService.createTask.mockResolvedValue({ id: 'task-1' } as any);
+      dbService.createTasks.mockResolvedValue([{ id: 'task-1' } as any]);
       dbService.updateIdea.mockResolvedValue({} as any);
       dbService.logAgentAction.mockResolvedValue(undefined);
 

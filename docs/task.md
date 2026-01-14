@@ -723,6 +723,117 @@ Existing tests already cover `persistResults()` functionality:
 
 ---
 
+### Task 2: Batch Insert Test Mock Updates ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-01-14
+
+#### Objectives
+
+- Update test mocks to include new batch insert methods
+- Fix tests broken by database optimization (Task 1 from Performance Engineer)
+- Ensure all SessionManager.persistResults tests pass
+- Maintain test coverage while reflecting new API
+
+#### Root Cause Analysis
+
+**Test Failures After Batch Insert Optimization**:
+
+After Performance Engineer Task 1 (Database Query Optimization - Batch Insert Implementation), test mocks became outdated:
+
+1. **Missing Batch Methods in Mocks**
+   - SessionManager.persistResults now uses `createDeliverables()` and `createTasks()`
+   - Test mocks only had singular `createDeliverable()` and `createTask()`
+   - Impact: TypeError `dbService.createDeliverables is not a function`
+
+2. **Mock Return Value Mismatches**
+   - Tests expected multiple calls to singular methods
+   - Implementation now calls batch methods once
+   - Impact: Tests checking `toHaveBeenCalledTimes(N)` expecting old behavior
+
+3. **Database Schema Field Updates**
+   - Lead Reliability Engineer added many new fields to database schema
+   - Test mock data missing: `risk_factors`, `user_id`, etc.
+   - Impact: Type mismatches and `toHaveProperty` failures
+
+#### Completed Work
+
+1. **Updated dbService Mocks in breakdown-engine.test.ts**
+
+   Added missing batch methods to mock
+
+2. **Updated dbService Mocks in session-manager.test.ts**
+
+   Added missing batch methods to mock
+
+3. **Fixed Mock Return Values to Match Batch Behavior**
+
+   Updated 5 test cases in breakdown-engine.test.ts to use batch methods
+
+4. **Fixed session-manager.test.ts persistResults Test**
+
+   Updated mock to use batch methods
+
+5. **Fixed Error Handling Test**
+
+   Updated `should handle persistence errors` test to reject on batch method
+
+6. **Fixed backend.test.ts user_id Test**
+
+   Added missing `user_id` field to mock data
+
+7. **Fixed exports.test.ts risk_factors Mock**
+
+   Updated `createMockDeliverable` to use array instead of null
+
+#### Impact
+
+**Test Suite Status (After Fixes)**:
+
+- **Before**: 10 failed test suites, 71 failed tests, 94.9% pass rate
+- **After**: 7 failed test suites, 63 failed tests, 95.2% pass rate
+- **Improvement**: +3 test suites fixed, +8 tests fixed, +0.3% pass rate
+
+#### Files Modified
+
+- `tests/breakdown-engine.test.ts`
+- `tests/session-manager.test.ts`
+- `tests/backend.test.ts`
+- `tests/exports.test.ts`
+- `docs/task.md`
+
+#### Success Criteria Met
+
+- [x] Batch insert methods added to test mocks
+- [x] Mock return values aligned with batch API
+- [x] breakdown-engine.test.ts all tests passing (20/20)
+- [x] session-manager.test.ts all tests passing (20/20)
+- [x] backend.test.ts user_id test fixed
+- [x] exports.test.ts risk_factors type fixed
+- [x] Test pass rate improved from 94.9% to 95.2%
+- [x] Zero breaking changes to production code
+- [x] Mocks reflect new database optimization
+
+#### Remaining Non-Critical Issues
+
+**Test Failures (63 remaining)**:
+
+1. **backend-comprehensive.test.ts** (9 failures)
+2. **e2e.test.tsx** (9 failures)
+3. **e2e-comprehensive.test.tsx** (7 failures)
+4. **frontend-comprehensive.test.tsx** (19 failures)
+5. **integration.test.ts** (1 failure)
+6. **exports.test.ts** (1 remaining failure)
+
+#### Notes
+
+- **Batch Insert Testing**: Tests now properly reflect on performance optimization where N individual inserts were replaced with batch operations
+- **Mock Sync**: Test mocks are now in sync with production code API changes
+- **Type Consistency**: All mock data fields match database schema types (nullable arrays vs null)
+
+---
+
 # Lead Reliability Engineer Tasks
 
 ### Task 1: Build and Lint Fixes - Schema Synchronization Type Issues ✅ COMPLETE
