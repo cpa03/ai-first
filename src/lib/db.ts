@@ -258,6 +258,20 @@ export class DatabaseService {
     return data;
   }
 
+  async createDeliverables(
+    deliverables: Omit<Deliverable, 'id' | 'created_at'>[]
+  ): Promise<Deliverable[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('deliverables')
+      .insert(deliverables as any)
+      .select();
+
+    if (error) throw error;
+    return data || [];
+  }
+
   async getIdeaDeliverables(ideaId: string): Promise<Deliverable[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -346,6 +360,18 @@ export class DatabaseService {
 
     if (error) throw error;
     return data;
+  }
+
+  async createTasks(tasks: Omit<Task, 'id' | 'created_at'>[]): Promise<Task[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .insert(tasks as any)
+      .select();
+
+    if (error) throw error;
+    return data || [];
   }
 
   async getDeliverableTasks(deliverableId: string): Promise<Task[]> {
