@@ -21,7 +21,8 @@ export class AnalyticsRepository extends BaseRepository {
 
     const { data: ideas } = await this.client!.from('ideas')
       .select('id, status')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .is('deleted_at', null);
 
     const ideasByStatus =
       (ideas as IdeaRecord[] | null)?.reduce(
@@ -42,8 +43,12 @@ export class AnalyticsRepository extends BaseRepository {
         [
           this.client!.from('deliverables')
             .select('*', { count: 'exact', head: true })
-            .in('idea_id', ideaIds),
-          this.client!.from('deliverables').select('id').in('idea_id', ideaIds),
+            .in('idea_id', ideaIds)
+            .is('deleted_at', null),
+          this.client!.from('deliverables')
+            .select('id')
+            .in('idea_id', ideaIds)
+            .is('deleted_at', null),
         ]
       );
 
@@ -51,7 +56,8 @@ export class AnalyticsRepository extends BaseRepository {
 
       const { count: tasksCount } = await this.client!.from('tasks')
         .select('*', { count: 'exact', head: true })
-        .in('deliverable_id', deliverablesIds.data?.map((d) => d.id) || []);
+        .in('deliverable_id', deliverablesIds.data?.map((d) => d.id) || [])
+        .is('deleted_at', null);
 
       totalTasks = tasksCount || 0;
     }

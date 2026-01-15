@@ -12,6 +12,20 @@ export abstract class BaseRepository {
     this.admin = admin;
   }
 
+  protected requireClient(): SupabaseClient {
+    if (!this.client) {
+      throw new Error('Supabase client not initialized');
+    }
+    return this.client;
+  }
+
+  protected requireAdmin(): SupabaseClient {
+    if (!this.admin) {
+      throw new Error('Supabase admin client not initialized');
+    }
+    return this.admin;
+  }
+
   protected checkClient(): void {
     if (!this.client) {
       throw new Error('Supabase client not initialized');

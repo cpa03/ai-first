@@ -1,17 +1,6 @@
 import { BaseRepository } from './base-repository';
 import { SupabaseClient } from '@supabase/supabase-js';
-
-export interface Task {
-  id: string;
-  deliverable_id: string;
-  title: string;
-  description?: string;
-  assignee?: string;
-  status: 'todo' | 'in_progress' | 'completed';
-  estimate: number;
-  created_at: string;
-  deleted_at?: string;
-}
+import type { Task } from './deliverable-repository';
 
 export class TaskRepository extends BaseRepository {
   constructor(client: SupabaseClient | null, admin: SupabaseClient | null) {
@@ -39,10 +28,25 @@ export class TaskRepository extends BaseRepository {
     const { data, error } = await this.client!.from('tasks')
       .select('*')
       .eq('deliverable_id', deliverableId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: true });
 
     if (error) {
       this.handleError(error, 'getDeliverableTasks');
+    }
+
+    return data || [];
+  }
+
+  async createTasks(tasks: Omit<Task, 'id' | 'created_at'>[]): Promise<Task[]> {
+    this.checkClient();
+
+    const { data, error } = await this.client!.from('tasks')
+      .insert(tasks)
+      .select();
+
+    if (error) {
+      this.handleError(error, 'createTasks');
     }
 
     return data || [];
@@ -71,6 +75,19 @@ export class TaskRepository extends BaseRepository {
 
     if (error) {
       this.handleError(error, 'deleteTask');
+    }
+  }
+
+  async softDeleteTask(id: string): Promise<void> {
+    this.requireAdmin();
+
+    const { error } = await this.requireAdmin()
+      .from('tasks')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) {
+      throw error;
     }
   }
 }
