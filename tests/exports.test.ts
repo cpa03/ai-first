@@ -15,7 +15,7 @@ import {
   type ExportData,
 } from '@/lib/export-connectors';
 
-function createMockIdea(overrides = {}): ExportData {
+function createMockIdea(overrides: Partial<ExportData> = {}): ExportData {
   return {
     idea: {
       id: 'test-idea',
@@ -24,10 +24,13 @@ function createMockIdea(overrides = {}): ExportData {
       status: 'draft' as const,
       created_at: new Date().toISOString(),
       deleted_at: null,
-      ...overrides,
+      ...(overrides.idea || {}),
     },
-    deliverables: [],
-    tasks: [],
+    deliverables: overrides.deliverables || [],
+    tasks: overrides.tasks || [],
+    goals: overrides.goals,
+    target_audience: overrides.target_audience,
+    roadmap: overrides.roadmap,
   };
 }
 
@@ -116,7 +119,7 @@ describe('Export Services', () => {
 
       expect(json.metadata).toHaveProperty('exported_at');
       expect(json.metadata).toHaveProperty('version', '1.0.0');
-      expect(json.metadata).toHaveProperty('customField', 'test');
+      expect(json.metadata.customFields).toHaveProperty('customField', 'test');
     });
 
     it('should throw error for auth methods', async () => {
@@ -370,7 +373,9 @@ describe('Export Services', () => {
     it('should fail export without client API route', async () => {
       const result = await exporter.export(createMockIdea());
       expect(result.success).toBe(false);
-      expect(result.error).toContain('Client-side export not supported');
+      expect(result.error).toContain(
+        'Google Tasks export requires server-side API route'
+      );
     });
 
     it('should validate config based on environment variable', async () => {
@@ -592,6 +597,7 @@ describe('Export Services', () => {
         const deliverables = [
           createMockDeliverable({
             id: 'd1',
+            idea_id: '1',
             title: 'Deliverable 1',
             description: 'Desc',
             priority: 1,
@@ -607,6 +613,7 @@ describe('Export Services', () => {
             assignee: 'User',
             status: 'todo' as const,
             estimate: 2,
+            tags: [],
           }),
         ];
 
