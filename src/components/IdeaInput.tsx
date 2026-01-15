@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { dbService, Idea } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import Alert from './Alert';
 import Button from './Button';
@@ -50,17 +49,23 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     setError(null);
 
     try {
-      const newIdea: Omit<Idea, 'id' | 'created_at'> = {
-        user_id: 'default_user',
-        title: idea.substring(0, 50) + (idea.length > 50 ? '...' : ''),
-        raw_text: idea,
-        status: 'draft',
-        deleted_at: null,
-      };
+      const response = await fetch('/api/ideas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idea }),
+      });
 
-      const savedIdea = await dbService.createIdea(newIdea);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save idea');
+      }
 
-      onSubmit(idea.trim(), savedIdea.id);
+      const data = await response.json();
+      const ideaId = data.data.id;
+
+      onSubmit(idea.trim(), ideaId);
     } catch (err) {
       logger.errorWithContext('Failed to save idea', {
         component: 'IdeaInput',
