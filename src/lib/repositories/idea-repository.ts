@@ -45,6 +45,7 @@ export class IdeaRepository extends BaseRepository {
     const { data, error } = await this.client!.from('ideas')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (error) return null;
@@ -89,6 +90,19 @@ export class IdeaRepository extends BaseRepository {
 
     if (error) {
       this.handleError(error, 'deleteIdea');
+    }
+  }
+
+  async softDeleteIdea(id: string): Promise<void> {
+    this.requireAdmin();
+
+    const { error } = await this.requireAdmin()
+      .from('ideas')
+      .update({ deleted_at: new Date().toISOString() })
+      .eq('id', id);
+
+    if (error) {
+      throw error;
     }
   }
 

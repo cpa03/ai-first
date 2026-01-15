@@ -258,6 +258,20 @@ export class DatabaseService {
     return data;
   }
 
+  async createDeliverables(
+    deliverables: Omit<Deliverable, 'id' | 'created_at'>[]
+  ): Promise<Deliverable[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('deliverables')
+      .insert(deliverables as any)
+      .select();
+
+    if (error) throw error;
+    return data || [];
+  }
+
   async getIdeaDeliverables(ideaId: string): Promise<Deliverable[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -348,6 +362,18 @@ export class DatabaseService {
     return data;
   }
 
+  async createTasks(tasks: Omit<Task, 'id' | 'created_at'>[]): Promise<Task[]> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .insert(tasks as any)
+      .select();
+
+    if (error) throw error;
+    return data || [];
+  }
+
   async getDeliverableTasks(deliverableId: string): Promise<Task[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -427,6 +453,39 @@ export class DatabaseService {
 
     if (error) throw error;
     return data || [];
+  }
+
+  async getVectorsByIdeaIds(
+    ideaIds: string[],
+    referenceType?: string
+  ): Promise<Map<string, Vector[]>> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+    if (ideaIds.length === 0) return new Map();
+
+    let query = this.client.from('vectors').select('*').in('idea_id', ideaIds);
+
+    if (referenceType) {
+      query = query.eq('reference_type', referenceType);
+    }
+
+    const { data, error } = await query.order('created_at', {
+      ascending: false,
+    });
+
+    if (error) throw error;
+
+    const vectors = data || [];
+    const resultMap = new Map<string, Vector[]>();
+
+    for (const vector of vectors) {
+      const ideaId = vector.idea_id;
+      if (!resultMap.has(ideaId)) {
+        resultMap.set(ideaId, []);
+      }
+      resultMap.get(ideaId)!.push(vector);
+    }
+
+    return resultMap;
   }
 
   async deleteVector(id: string): Promise<void> {

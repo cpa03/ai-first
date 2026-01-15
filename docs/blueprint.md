@@ -2229,3 +2229,171 @@ git push origin hotfix/critical-issue
 
 **Last Updated**: 2026-01-08
 **Maintained By**: Integration Engineer
+
+## Clean Architecture Pattern
+
+### Layer Separation Principles
+
+Clean Architecture enforces strict layering with dependencies flowing inward:
+
+```
+┌─────────────────────────────────────┐
+│         Presentation Layer          │  (Components, Pages)
+│         - React Components        │
+│         - User Interaction       │
+└─────────────────────────────────────┘
+                ↓ HTTP/JSON
+┌─────────────────────────────────────┐
+│           API Layer               │  (API Routes, Handlers)
+│           - Request Validation    │
+│           - Business Logic        │
+│           - Rate Limiting        │
+│           - Error Handling      │
+└─────────────────────────────────────┘
+                ↓ Method Calls
+┌─────────────────────────────────────┐
+│         Service Layer             │  (Services, Agents)
+│         - Domain Logic           │
+│         - Business Rules         │
+│         - Orchestration          │
+└─────────────────────────────────────┘
+                ↓ Repository Pattern
+┌─────────────────────────────────────┐
+│         Data Layer                │  (Repositories, Database)
+│         - Data Access           │
+│         - Persistence           │
+│         - Schema Management     │
+└─────────────────────────────────────┘
+```
+
+### Dependency Flow Rule
+
+**Dependencies must flow INWARD**:
+
+- ✅ **CORRECT**: Component → API → Service → Repository → Database
+  - High-level modules (UI) depend on lower-level modules (API)
+  - Dependencies flow inward
+  - Changes in database layer don't affect UI
+
+- ❌ **INCORRECT**: Component → Database (skipping API)
+  - Bypassing API layer
+  - Tight coupling between UI and database
+  - Cannot add validation/rate limiting at API layer
+
+### Implementation Pattern
+
+**API Route Layer** (`src/app/api/*/route.ts`):
+
+```typescript
+import { withApiHandler, standardSuccessResponse, ApiContext } from '@/lib/api-handler';
+import { validateIdea } from '@/lib/validation';
+import { dbService } from '@/lib/db';
+
+async function handlePost(context: ApiContext) {
+  const { request } = context;
+  const { idea } = await request.json();
+
+  // 1. Validate input
+  const validation = validateIdea(idea);
+  if (!validation.valid) {
+    throw new ValidationError(validation.errors);
+  }
+
+  // 2. Call service/repository layer
+  const result = await dbService.createIdea(/* ... */);
+
+  // 3. Return standardized response
+  return standardSuccessResponse(result, context.requestId, 201);
+}
+
+export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
+```
+
+**Component Layer** (`src/components/*.tsx`):
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+
+// ❌ WRONG: Direct database access
+import { dbService } from '@/lib/db';
+
+export default function MyComponent() {
+  const handleSubmit = async () => {
+    const result = await dbService.createIdea(/* ... */);  // VIOLATION
+  };
+}
+
+// ✅ CORRECT: HTTP API call
+export default function MyComponent() {
+  const handleSubmit = async () => {
+    const response = await fetch('/api/ideas', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idea }),
+    });
+
+    if (!response.ok) throw new Error('Failed');
+
+    const data = await response.json();
+    return data.data;  // Unwrap standardSuccessResponse
+  };
+}
+```
+
+### Benefits of Clean Architecture
+
+**1. Separation of Concerns**:
+- Each layer has one responsibility
+- Easy to understand and modify
+- Changes in one layer don't affect others
+
+**2. Testability**:
+- UI can mock HTTP responses
+- API can mock service layer
+- Service can mock repository layer
+- Isolated unit tests for each layer
+
+**3. Security**:
+- API layer enforces validation and rate limiting
+- Database access controlled at service layer
+- Client cannot bypass business logic
+
+**4. Maintainability**:
+- Add features at appropriate layer
+- Swap implementations without breaking contracts
+- Clear boundaries between modules
+
+**5. Scalability**:
+- Each layer can be scaled independently
+- API layer can be load-balanced separately
+- Database can be sharded without affecting UI
+
+### Implementation Status
+
+✅ **Complete**:
+- All API routes follow `withApiHandler` pattern
+- IdeaInput component uses `/api/ideas` endpoint
+- Health endpoints use proper API layer
+- Export connectors follow layered architecture
+
+✅ **Fixed** (Task 3):
+- Removed dead code from health detailed route (149 lines)
+- Created `/api/ideas` endpoint for idea creation
+- Updated IdeaInput component to use API instead of direct dbService
+- Applied Clean Architecture principles throughout
+
+### Examples in Codebase
+
+1. **Idea Creation Flow**:
+   - Component: `src/components/IdeaInput.tsx` → `/api/ideas` endpoint
+   - API Route: `src/app/api/ideas/route.ts` → `dbService.createIdea()`
+
+2. **Clarification Flow**:
+   - Component: `src/app/clarify/page.tsx` → `/api/clarify` endpoint
+   - API Route: `src/app/api/clarify/route.ts` → `clarifierAgent.startClarification()`
+
+3. **Health Check Flow**:
+   - Component: None (internal API)
+   - API Routes: `/api/health/*` endpoints → Service health checks

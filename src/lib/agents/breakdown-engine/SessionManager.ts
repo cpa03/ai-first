@@ -34,8 +34,8 @@ export class SessionManager {
     if (!session.analysis || !session.tasks) return;
 
     try {
-      for (const deliverable of session.analysis.deliverables) {
-        await dbService.createDeliverable({
+      const deliverablesData = session.analysis.deliverables.map(
+        (deliverable) => ({
           idea_id: session.ideaId,
           title: deliverable.title,
           description: deliverable.description,
@@ -46,36 +46,45 @@ export class SessionManager {
           business_value: 50,
           risk_factors: [],
           acceptance_criteria: null,
-          deliverable_type: 'feature',
+          deliverable_type: 'feature' as const,
           deleted_at: null,
-        });
-      }
+        })
+      );
 
-      const deliverables = await dbService.getIdeaDeliverables(session.ideaId);
-      const deliverableMap = new Map(deliverables.map((d) => [d.title, d.id]));
+      const insertedDeliverables =
+        await dbService.createDeliverables(deliverablesData);
+      const deliverableMap = new Map(
+        insertedDeliverables.map((d) => [d.title, d.id])
+      );
 
-      for (const task of session.tasks.tasks) {
-        const deliverableId = deliverableMap.get(task.deliverableId);
-        if (deliverableId) {
-          await dbService.createTask({
+      const tasksData = session.tasks.tasks
+        .map((task) => {
+          const deliverableId = deliverableMap.get(task.deliverableId);
+          if (!deliverableId) return null;
+
+          return {
             deliverable_id: deliverableId,
             title: task.title,
             description: task.description,
             estimate: task.estimatedHours,
-            status: 'todo',
+            status: 'todo' as const,
             start_date: null,
             end_date: null,
             actual_hours: null,
             completion_percentage: 0,
             priority_score: 50,
             complexity_score: 50,
-            risk_level: 'low',
+            risk_level: 'low' as const,
             tags: [],
             custom_fields: null,
             milestone_id: null,
             deleted_at: null,
-          });
-        }
+          };
+        })
+        .filter((t): t is NonNullable<typeof t> => t !== null);
+
+      if (tasksData.length > 0) {
+        await dbService.createTasks(tasksData);
       }
 
       await dbService.updateIdea(session.ideaId, { status: 'breakdown' });

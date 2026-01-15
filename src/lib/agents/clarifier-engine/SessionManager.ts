@@ -66,13 +66,15 @@ export class SessionManager {
       }
 
       const sessionMap = new Map<string, ClarificationSession>();
+      const ideaIds = ideas.map((idea) => idea.id);
 
-      for (const idea of ideas) {
-        const vectors = await dbService.getVectors(
-          idea.id,
-          'clarification_session'
-        );
+      const vectorsByIdeaId = await dbService.getVectorsByIdeaIds(
+        ideaIds,
+        'clarification_session'
+      );
 
+      for (const ideaId of ideaIds) {
+        const vectors = vectorsByIdeaId.get(ideaId) || [];
         for (const vector of vectors) {
           const sessionData =
             vector.vector_data as unknown as ClarificationSession;

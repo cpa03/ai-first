@@ -12,7 +12,72 @@ import {
   SyncStatusTracker,
   type ExportFormat,
   type ExportResult,
-} from '@/lib/exports';
+  type ExportData,
+} from '@/lib/export-connectors';
+
+function createMockIdea(overrides: Partial<ExportData> = {}): ExportData {
+  return {
+    idea: {
+      id: 'test-idea',
+      title: 'Test Project',
+      raw_text: 'This is a test project description',
+      status: 'draft' as const,
+      created_at: new Date().toISOString(),
+      deleted_at: null,
+      ...(overrides.idea || {}),
+    },
+    deliverables: overrides.deliverables || [],
+    tasks: overrides.tasks || [],
+    goals: overrides.goals,
+    target_audience: overrides.target_audience,
+    roadmap: overrides.roadmap,
+  };
+}
+
+function createMockDeliverable(overrides = {}) {
+  return {
+    id: 'test-deliverable',
+    idea_id: 'test-idea',
+    title: 'Test Deliverable',
+    description: 'Test description',
+    priority: 1,
+    estimate_hours: 8,
+    milestone_id: null,
+    completion_percentage: 0,
+    business_value: 100,
+    risk_factors: [],
+    acceptance_criteria: null,
+    deliverable_type: 'feature' as const,
+    created_at: new Date().toISOString(),
+    deleted_at: null,
+    ...overrides,
+  };
+}
+
+function createMockTask(overrides = {}) {
+  return {
+    id: 'test-task',
+    deliverable_id: 'test-deliverable',
+    title: 'Test Task',
+    description: 'Test task description',
+    assignee: 'Test User',
+    status: 'todo' as const,
+    estimate: 2,
+    created_at: new Date().toISOString(),
+    milestone_id: null,
+    actual_hours: null,
+    completion_percentage: 0,
+    priority_score: 1,
+    complexity_score: 1,
+    risk_level: 'low' as const,
+    tags: null,
+    custom_fields: null,
+    deleted_at: null,
+    start_date: null,
+    end_date: null,
+    ...overrides,
+  };
+}
 
 describe('Export Services', () => {
   describe('JSONExporter', () => {
@@ -33,17 +98,7 @@ describe('Export Services', () => {
     });
 
     it('should export to JSON format', async () => {
-      const testData = {
-        idea: {
-          id: 'test-idea',
-          title: 'Test Project',
-          raw_text: 'This is a test project description',
-          status: 'draft' as const,
-          created_at: new Date().toISOString(),
-          user_id: 'test-user',
-          deleted_at: null,
-        },
-      };
+      const testData = createMockIdea();
 
       const result = await exporter.export(testData);
 
@@ -53,26 +108,18 @@ describe('Export Services', () => {
     });
 
     it('should include metadata in JSON export', async () => {
-      const testData = {
-        idea: {
-          id: 'test-idea',
-          title: 'Test Project',
-          raw_text: 'Description',
-          status: 'draft' as const,
-          created_at: new Date().toISOString(),
-          user_id: 'test-user',
-          deleted_at: null,
-        },
-      };
+      const testData = createMockIdea();
 
-      const result = await exporter.export(testData, { customField: 'test' });
+      const result = await exporter.export(testData, {
+        customFields: { customField: 'test' },
+      });
 
       expect(result.success).toBe(true);
       const json = JSON.parse(decodeURIComponent(result.url!.split(',')[1]));
 
       expect(json.metadata).toHaveProperty('exported_at');
       expect(json.metadata).toHaveProperty('version', '1.0.0');
-      expect(json.metadata).toHaveProperty('customField', 'test');
+      expect(json.metadata.customFields).toHaveProperty('customField', 'test');
     });
 
     it('should throw error for auth methods', async () => {
@@ -103,30 +150,27 @@ describe('Export Services', () => {
     });
 
     it('should export to markdown format', async () => {
-      const testData = {
+      const testData = createMockIdea({
         idea: {
           id: 'test-idea',
           title: 'Test Project',
           raw_text: 'This is a test project description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
-          user_id: 'test-user',
           deleted_at: null,
         },
         deliverables: [
-          {
+          createMockDeliverable({
             id: 'test-deliverable',
             idea_id: 'test-idea',
             title: 'Test Deliverable',
             description: 'Test description',
             priority: 1,
             estimate_hours: 8,
-            created_at: new Date().toISOString(),
-            deleted_at: null,
-          },
+          }),
         ],
         tasks: [
-          {
+          createMockTask({
             id: 'test-task',
             deliverable_id: 'test-deliverable',
             title: 'Test Task',
@@ -134,21 +178,9 @@ describe('Export Services', () => {
             assignee: 'Test User',
             status: 'todo' as const,
             estimate: 2,
-            created_at: new Date().toISOString(),
-            milestone_id: null,
-            actual_hours: null,
-            completion_percentage: 0,
-            priority_score: 1,
-            complexity_score: 1,
-            risk_level: 'low',
-            tags: null,
-            custom_fields: null,
-            deleted_at: null,
-            start_date: null,
-            end_date: null,
-          },
+          }),
         ],
-      };
+      });
 
       const result = await exporter.export(testData);
 
@@ -166,37 +198,36 @@ describe('Export Services', () => {
     });
 
     it('should generate markdown with all sections', async () => {
-      const testData = {
+      const testData = createMockIdea({
         idea: {
           id: 'test-idea-2',
           title: 'Test Project',
           raw_text: 'Test description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          deleted_at: null,
         },
         deliverables: [
-          {
+          createMockDeliverable({
             id: 'test-deliverable-2',
             idea_id: 'test-idea-2',
             title: 'Deliverable 1',
             description: 'Description 1',
             estimate_hours: 5,
             priority: 1,
-            created_at: new Date().toISOString(),
-          },
+          }),
         ],
         tasks: [
-          {
+          createMockTask({
             id: 'test-task-2',
             deliverable_id: 'test-deliverable-2',
             title: 'Task 1',
             assignee: 'User 1',
             status: 'completed' as const,
             estimate: 3,
-            created_at: new Date().toISOString(),
-          },
+          }),
         ],
-      };
+      });
 
       const result = await exporter.export(testData, {
         goals: ['Goal 1', 'Goal 2'],
@@ -253,7 +284,7 @@ describe('Export Services', () => {
       const originalEnv = process.env.NOTION_API_KEY;
       delete process.env.NOTION_API_KEY;
 
-      const result = await exporter.export({});
+      const result = await exporter.export(createMockIdea());
       expect(result.success).toBe(false);
       expect(result.error).toContain('API key');
 
@@ -301,7 +332,7 @@ describe('Export Services', () => {
       delete process.env.TRELLO_API_KEY;
       delete process.env.TRELLO_TOKEN;
 
-      const result = await exporter.export({});
+      const result = await exporter.export(createMockIdea());
       expect(result.success).toBe(false);
       expect(result.error).toContain('API key and token are required');
 
@@ -340,9 +371,11 @@ describe('Export Services', () => {
     });
 
     it('should fail export without client API route', async () => {
-      const result = await exporter.export({});
+      const result = await exporter.export(createMockIdea());
       expect(result.success).toBe(false);
-      expect(result.error).toContain('requires server-side API route');
+      expect(result.error).toContain(
+        'Google Tasks export requires server-side API route'
+      );
     });
 
     it('should validate config based on environment variable', async () => {
@@ -379,7 +412,7 @@ describe('Export Services', () => {
       const originalToken = process.env.GITHUB_TOKEN;
       delete process.env.GITHUB_TOKEN;
 
-      const result = await exporter.export({});
+      const result = await exporter.export(createMockIdea());
       expect(result.success).toBe(false);
       expect(result.error).toContain('GitHub token is required');
 
@@ -464,17 +497,16 @@ describe('Export Services', () => {
     it('should export successfully with valid connector', async () => {
       const format: ExportFormat = {
         type: 'markdown',
-        data: {
+        data: createMockIdea({
           idea: {
             id: 'test',
             title: 'Test',
             raw_text: 'Description',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
-        },
+        }),
       };
 
       const result = await manager.export(format);
@@ -484,15 +516,16 @@ describe('Export Services', () => {
     it('should fail export with unknown connector', async () => {
       const format = {
         type: 'unknown' as any,
-        data: {
+        data: createMockIdea({
           idea: {
             id: 'test',
             title: 'Test',
             raw_text: 'Test',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
+            deleted_at: null,
           },
-        } as any,
+        }) as any,
       };
 
       const result = await manager.export(format);
@@ -503,17 +536,16 @@ describe('Export Services', () => {
     it('should fail export with invalid connector type', async () => {
       const format: ExportFormat = {
         type: 'notion', // Not available on client-side
-        data: {
+        data: createMockIdea({
           idea: {
             id: 'test',
             title: 'Test',
             raw_text: 'Test',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
-        },
+        }),
       };
 
       const result = await manager.export(format);
@@ -539,7 +571,6 @@ describe('Export Services', () => {
           raw_text: 'Test description',
           status: 'draft' as const,
           created_at: '2024-01-01T00:00:00Z',
-          user_id: 'test-user',
           deleted_at: null,
         };
 
@@ -560,20 +591,21 @@ describe('Export Services', () => {
           title: 'Test',
           raw_text: 'Desc',
           status: 'draft' as const,
-          user_id: 'test-user',
+          created_at: '2024-01-01T00:00:00Z',
           deleted_at: null,
         };
         const deliverables = [
-          {
+          createMockDeliverable({
             id: 'd1',
+            idea_id: '1',
             title: 'Deliverable 1',
             description: 'Desc',
             priority: 1,
             estimate_hours: 5,
-          },
+          }),
         ];
         const tasks = [
-          {
+          createMockTask({
             id: 't1',
             deliverable_id: 'd1',
             title: 'Task 1',
@@ -581,7 +613,8 @@ describe('Export Services', () => {
             assignee: 'User',
             status: 'todo' as const,
             estimate: 2,
-          },
+            tags: [],
+          }),
         ];
 
         const result = exportUtils.normalizeData(idea, deliverables, tasks);
@@ -598,17 +631,16 @@ describe('Export Services', () => {
 
     describe('validateExportData', () => {
       it('should validate correct data', () => {
-        const validData = {
+        const validData = createMockIdea({
           idea: {
             id: 'test',
             title: 'Test',
             raw_text: 'Description',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
-            user_id: 'test-user',
             deleted_at: null,
           },
-        };
+        });
 
         const result = exportUtils.validateExportData(validData);
         expect(result.valid).toBe(true);
@@ -624,15 +656,16 @@ describe('Export Services', () => {
       });
 
       it('should detect missing required fields', () => {
-        const invalidData = {
+        const invalidData = createMockIdea({
           idea: {
             id: 'test',
             title: 'Test',
-            raw_text: '' as any,
+            raw_text: '',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
+            deleted_at: null,
           },
-        };
+        });
 
         const result = exportUtils.validateExportData(invalidData);
         expect(result.valid).toBe(false);

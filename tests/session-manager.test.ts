@@ -12,8 +12,10 @@ jest.mock('@/lib/db', () => ({
     storeVector: jest.fn(),
     getVectors: jest.fn(),
     createDeliverable: jest.fn(),
+    createDeliverables: jest.fn(),
     getIdeaDeliverables: jest.fn(),
     createTask: jest.fn(),
+    createTasks: jest.fn(),
     updateIdea: jest.fn(),
   },
 }));
@@ -191,20 +193,20 @@ describe('SessionManager', () => {
         updatedAt: new Date(),
       };
 
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-1' } as any);
-      dbService.createDeliverable.mockResolvedValue({ id: 'del-2' } as any);
-      dbService.getIdeaDeliverables.mockResolvedValue([
+      dbService.createDeliverables.mockResolvedValue([
         { id: 'del-1', title: 'Deliverable 1' } as any,
         { id: 'del-2', title: 'Deliverable 2' } as any,
       ]);
-      dbService.createTask.mockResolvedValue({ id: 'task-1' } as any);
-      dbService.createTask.mockResolvedValue({ id: 'task-2' } as any);
+      dbService.createTasks.mockResolvedValue([
+        { id: 'task-1' } as any,
+        { id: 'task-2' } as any,
+      ]);
       dbService.updateIdea.mockResolvedValue(undefined);
 
       await manager.persistResults(session);
 
-      expect(dbService.createDeliverable).toHaveBeenCalledTimes(2);
-      expect(dbService.createTask).toHaveBeenCalledTimes(2);
+      expect(dbService.createDeliverables).toHaveBeenCalledTimes(1);
+      expect(dbService.createTasks).toHaveBeenCalledTimes(1);
       expect(dbService.updateIdea).toHaveBeenCalledWith('idea-123', {
         status: 'breakdown',
       });
@@ -271,7 +273,7 @@ describe('SessionManager', () => {
         updatedAt: new Date(),
       };
 
-      dbService.createDeliverable.mockRejectedValue(
+      dbService.createDeliverables.mockRejectedValue(
         new Error('Database error')
       );
 

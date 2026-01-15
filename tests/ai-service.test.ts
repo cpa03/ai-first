@@ -25,20 +25,14 @@ jest.mock('@/lib/resilience', () => ({
   },
   defaultResilienceConfigs: {
     openai: {
-      timeoutMs: 60000,
-      maxRetries: 3,
-      baseDelayMs: 1000,
-      maxDelayMs: 10000,
-      circuitBreakerThreshold: 5,
-      circuitBreakerResetMs: 60000,
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+      timeout: { timeoutMs: 60000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
     },
     default: {
-      timeoutMs: 30000,
-      maxRetries: 3,
-      baseDelayMs: 1000,
-      maxDelayMs: 10000,
-      circuitBreakerThreshold: 5,
-      circuitBreakerResetMs: 60000,
+      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+      timeout: { timeoutMs: 30000 },
+      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
     },
   },
   DEFAULT_TIMEOUTS: {
