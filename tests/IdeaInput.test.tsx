@@ -1,15 +1,14 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import IdeaInput from '@/components/IdeaInput';
-import { dbService } from '@/lib/db';
 
-jest.mock('@/lib/db', () => ({
-  dbService: {
-    createIdea: jest.fn().mockResolvedValue({ id: 'test-idea-123' }),
-  },
-}));
+global.fetch = jest.fn();
 
 describe('IdeaInput', () => {
+  beforeEach(() => {
+    (global.fetch as jest.Mock).mockClear();
+  });
+
   it('renders textarea and submit button', () => {
     const mockOnSubmit = jest.fn();
     render(<IdeaInput onSubmit={mockOnSubmit} />);
@@ -27,6 +26,21 @@ describe('IdeaInput', () => {
     const textarea = screen.getByLabelText(/what's your idea/i);
     const submitButton = screen.getByRole('button', {
       name: /start clarifying/i,
+    });
+
+    (global.fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          id: 'test-idea-123',
+          title: 'Test idea with more details',
+          status: 'draft',
+          createdAt: new Date().toISOString(),
+        },
+        requestId: 'test-req-123',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     fireEvent.change(textarea, {
