@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 interface Step {
   id: string;
   label: string;
@@ -12,7 +14,7 @@ interface ProgressStepperProps {
   currentStep: number;
 }
 
-export default function ProgressStepper({
+const ProgressStepperComponent = function ProgressStepper({
   steps,
   currentStep,
 }: ProgressStepperProps) {
@@ -127,4 +129,6 @@ export default function ProgressStepper({
       </ol>
     </nav>
   );
-}
+};
+
+export default React.memo(ProgressStepperComponent);
