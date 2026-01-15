@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
   title?: string;
@@ -66,7 +68,7 @@ const alertStyles = {
   },
 };
 
-export default function Alert({
+const AlertComponent = function Alert({
   type,
   title,
   children,
@@ -98,4 +100,6 @@ export default function Alert({
       </div>
     </div>
   );
-}
+};
+
+export default React.memo(AlertComponent);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
@@ -12,7 +12,7 @@ interface BlueprintDisplayProps {
   answers: Record<string, string>;
 }
 
-export default function BlueprintDisplay({
+const BlueprintDisplayComponent = function BlueprintDisplay({
   idea,
   answers,
 }: BlueprintDisplayProps) {
@@ -174,4 +174,6 @@ export default function BlueprintDisplay({
       </section>
     </div>
   );
-}
+};
+
+export default React.memo(BlueprintDisplayComponent);
