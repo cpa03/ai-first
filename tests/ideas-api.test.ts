@@ -47,15 +47,15 @@ describe('/api/ideas POST', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.success).toBe(true);
-      expect(data.data).toEqual({
+      expect(data).toEqual({
         id: 'idea-123',
         title: 'Build a task management app',
         status: 'draft',
         createdAt: '2024-01-15T10:00:00.000Z',
       });
-      expect(data.requestId).toMatch(/^req_\d+_[a-z0-9]+$/);
-      expect(data.timestamp).toBeTruthy();
+      expect(response.headers.get('X-Request-ID')).toMatch(
+        /^req_\d+_[a-z0-9]+$/
+      );
       expect(mockCreateIdea).toHaveBeenCalledTimes(1);
     });
 
@@ -112,8 +112,8 @@ describe('/api/ideas POST', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.data.title).toHaveLength(53);
-      expect(data.data.title).toBe(longIdea.substring(0, 50) + '...');
+      expect(data.title).toHaveLength(53);
+      expect(data.title).toBe(longIdea.substring(0, 50) + '...');
     });
 
     it('should not truncate title when idea is exactly 50 characters', async () => {
@@ -142,8 +142,8 @@ describe('/api/ideas POST', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.data.title).toBe(exactLengthIdea);
-      expect(data.data.title).not.toContain('...');
+      expect(data.title).toBe(exactLengthIdea);
+      expect(data.title).not.toContain('...');
     });
   });
 
