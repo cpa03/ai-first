@@ -132,6 +132,7 @@ describe('Integration Tests', () => {
         title: 'Integration Test Idea',
         raw_text: 'This is an integration test idea',
         status: 'draft' as const,
+        user_id: 'test-user-id',
       };
 
       // Test validation (actual DB operations would require real connection)
