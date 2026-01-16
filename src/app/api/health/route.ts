@@ -79,4 +79,7 @@ async function handleGet(context: ApiContext) {
   return standardSuccessResponse(envStatus, context.requestId);
 }
 
-export const GET = withApiHandler(handleGet, { validateSize: false });
+export const GET = withApiHandler(handleGet, {
+  validateSize: false,
+  rateLimit: 'strict',
+});

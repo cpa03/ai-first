@@ -1,7 +1,11 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdeaId } from '@/lib/validation';
 import { ValidationError } from '@/lib/errors';
-import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
+import {
+  withApiHandler,
+  standardSuccessResponse,
+  ApiContext,
+} from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;
@@ -14,15 +18,7 @@ async function handlePost(context: ApiContext) {
 
   const result = await clarifierAgent.completeClarification(ideaId.trim());
 
-  return successResponse(
-    {
-      success: true,
-      ...result,
-      requestId: context.requestId,
-    },
-    200,
-    _rateLimit
-  );
+  return standardSuccessResponse(result, context.requestId, 200, _rateLimit);
 }
 
-export const POST = withApiHandler(handlePost);
+export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });

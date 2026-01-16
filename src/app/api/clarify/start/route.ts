@@ -1,7 +1,11 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdea, validateIdeaId } from '@/lib/validation';
 import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
-import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
+import {
+  withApiHandler,
+  standardSuccessResponse,
+  ApiContext,
+} from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;
@@ -24,12 +28,9 @@ async function handlePost(context: ApiContext) {
     ideaText.trim()
   );
 
-  return successResponse(
-    {
-      success: true,
-      session,
-      requestId: context.requestId,
-    },
+  return standardSuccessResponse(
+    { session },
+    context.requestId,
     200,
     _rateLimit
   );
@@ -61,16 +62,13 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  return successResponse(
-    {
-      success: true,
-      session,
-      requestId: context.requestId,
-    },
+  return standardSuccessResponse(
+    { session },
+    context.requestId,
     200,
     _rateLimit
   );
 }
 
-export const POST = withApiHandler(handlePost);
-export const GET = withApiHandler(handleGet);
+export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
+export const GET = withApiHandler(handleGet, { rateLimit: 'moderate' });

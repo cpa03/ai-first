@@ -5,7 +5,11 @@ import {
   validateUserResponses,
 } from '@/lib/validation';
 import { ValidationError, ErrorCode, AppError } from '@/lib/errors';
-import { withApiHandler, successResponse, ApiContext } from '@/lib/api-handler';
+import {
+  withApiHandler,
+  standardSuccessResponse,
+  ApiContext,
+} from '@/lib/api-handler';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -35,12 +39,9 @@ async function handlePost(context: ApiContext) {
     options || {}
   );
 
-  return successResponse(
-    {
-      success: true,
-      session,
-      requestId: context.requestId,
-    },
+  return standardSuccessResponse(
+    { session },
+    context.requestId,
     200,
     context.rateLimit
   );
@@ -71,12 +72,9 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  return successResponse(
-    {
-      success: true,
-      session,
-      requestId: context.requestId,
-    },
+  return standardSuccessResponse(
+    { session },
+    context.requestId,
     200,
     context.rateLimit
   );
