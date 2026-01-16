@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -62,6 +62,10 @@ export default function ClarificationFlow({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const textInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const selectRef = useRef<HTMLSelectElement>(null);
+
   const currentQuestion = useMemo(
     () => questions[currentStep],
     [questions, currentStep]
@@ -94,17 +98,17 @@ export default function ClarificationFlow({
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
       setCurrentAnswer('');
-      // Focus the first input after navigation
-      setTimeout(() => {
-        const input = document.querySelector(
-          currentQuestion?.type === 'textarea'
-            ? 'textarea'
-            : currentQuestion?.type === 'select'
-              ? 'select'
-              : 'input'
-        ) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
-        input?.focus();
-      }, 100);
+      // Focus next question input after step change
+      requestAnimationFrame(() => {
+        const nextQuestion = questions[currentStep + 1];
+        if (nextQuestion?.type === 'textarea') {
+          textareaRef.current?.focus();
+        } else if (nextQuestion?.type === 'select') {
+          selectRef.current?.focus();
+        } else {
+          textInputRef.current?.focus();
+        }
+      });
     } else {
       onComplete(newAnswers);
     }
@@ -113,29 +117,27 @@ export default function ClarificationFlow({
     answers,
     currentQuestion?.id,
     currentStep,
-    questions.length,
+    questions,
     onComplete,
-    currentQuestion?.type,
   ]);
 
   const handlePrevious = useCallback(() => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      const previousQuestionId = questions[currentStep - 1].id;
-      setCurrentAnswer(answers[previousQuestionId] || '');
-      // Focus the first input after navigation
-      setTimeout(() => {
-        const input = document.querySelector(
-          currentQuestion?.type === 'textarea'
-            ? 'textarea'
-            : currentQuestion?.type === 'select'
-              ? 'select'
-              : 'input'
-        ) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | null;
-        input?.focus();
-      }, 100);
+      const previousQuestion = questions[currentStep - 1];
+      setCurrentAnswer(answers[previousQuestion.id] || '');
+      // Focus previous question input after step change
+      requestAnimationFrame(() => {
+        if (previousQuestion?.type === 'textarea') {
+          textareaRef.current?.focus();
+        } else if (previousQuestion?.type === 'select') {
+          selectRef.current?.focus();
+        } else {
+          textInputRef.current?.focus();
+        }
+      });
     }
-  }, [currentStep, questions, answers, currentQuestion?.type]);
+  }, [currentStep, questions, answers]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -265,7 +267,7 @@ export default function ClarificationFlow({
             Question {currentStep + 1} of {questions.length}
           </span>
           <span
-            className="text-sm text-gray-500"
+            className="text-sm text-gray-700 font-medium"
             aria-label={`Progress: ${Math.round(progress)} percent`}
           >
             {Math.round(progress)}%
@@ -276,6 +278,7 @@ export default function ClarificationFlow({
 
       <section
         aria-labelledby="question-heading"
+        aria-describedby="question-description"
         className="bg-white rounded-lg shadow-lg p-6 sm:p-8 scale-in"
       >
         <form
@@ -283,6 +286,7 @@ export default function ClarificationFlow({
             e.preventDefault();
             handleNext();
           }}
+          aria-label={`Question ${currentStep + 1} of ${questions.length}`}
         >
           <h2
             id="question-heading"
@@ -290,6 +294,11 @@ export default function ClarificationFlow({
           >
             {currentQuestion.question}
           </h2>
+          <p id="question-description" className="sr-only">
+            Answer the following question and then click Next to continue or
+            Previous to go back. Question {currentStep + 1} of{' '}
+            {questions.length}.
+          </p>
 
           <div className="space-y-4">
             {currentQuestion.type === 'textarea' && (
@@ -307,6 +316,7 @@ export default function ClarificationFlow({
                 required={true}
                 autoFocus={true}
                 className="min-h-[100px]"
+                ref={textareaRef}
               />
             )}
 
@@ -322,6 +332,7 @@ export default function ClarificationFlow({
                 showCharCount={true}
                 required={true}
                 autoFocus={true}
+                ref={textInputRef}
               />
             )}
 
@@ -339,9 +350,10 @@ export default function ClarificationFlow({
                 </label>
                 <select
                   id="answer-select"
+                  ref={selectRef}
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:ring-offset-2 transition-all duration-200 bg-white min-h-[44px]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.2)] transition-all duration-200 bg-white min-h-[44px]"
                   aria-labelledby="answer-select-label"
                   aria-required="true"
                   aria-invalid={

@@ -45,7 +45,7 @@ const ProgressStepperComponent = function ProgressStepper({
               );
             })}
           </div>
-          <span className="text-xs text-gray-600 font-medium">
+          <span className="text-xs text-gray-700 font-medium">
             {currentStep + 1} / {steps.length}
           </span>
         </div>
@@ -105,7 +105,7 @@ const ProgressStepperComponent = function ProgressStepper({
                         ? 'text-primary-600'
                         : step.completed
                           ? 'text-gray-900'
-                          : 'text-gray-600'
+                          : 'text-gray-700'
                     }
                   `}
                   aria-hidden="true"
