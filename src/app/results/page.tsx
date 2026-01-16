@@ -2,9 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { dbService, Idea, IdeaSession } from '@/lib/db';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import dynamic from 'next/dynamic';
+
+interface Idea {
+  id: string;
+  user_id: string;
+  title: string;
+  raw_text: string;
+  status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  deleted_at: string | null;
+  created_at: string;
+}
+
+interface IdeaSession {
+  idea_id: string;
+  state: Record<string, unknown>;
+  last_agent: string;
+  metadata: Record<string, unknown>;
+  updated_at: string;
+}
 
 const BlueprintDisplay = dynamic(
   () => import('@/components/BlueprintDisplay').then((mod) => mod.default),
@@ -34,7 +51,6 @@ export default function ResultsPage() {
       try {
         setLoading(true);
 
-        // Get ideaId from query params
         const urlParams = new URLSearchParams(window.location.search);
         const ideaId = urlParams.get('ideaId');
 
@@ -42,16 +58,28 @@ export default function ResultsPage() {
           throw new Error('Idea ID is required');
         }
 
-        // Fetch the idea and session
-        const ideaData = await dbService.getIdea(ideaId);
-        if (!ideaData) {
+        const [ideaResponse, sessionResponse] = await Promise.all([
+          fetch(`/api/ideas/${ideaId}`),
+          fetch(`/api/ideas/${ideaId}/session`),
+        ]);
+
+        if (!ideaResponse.ok) {
+          const errorData = await ideaResponse.json();
+          throw new Error(errorData.error || 'Failed to fetch idea');
+        }
+
+        const ideaData = await ideaResponse.json();
+
+        if (!ideaData.success || !ideaData.data) {
           throw new Error('Idea not found');
         }
 
-        const sessionData = await dbService.getIdeaSession(ideaId);
+        const sessionData = sessionResponse.ok
+          ? await sessionResponse.json()
+          : null;
 
-        setIdea(ideaData);
-        setSession(sessionData);
+        setIdea(ideaData.data);
+        setSession(sessionData?.data || null);
       } catch (err) {
         console.error('Error fetching results:', err);
         setError(
