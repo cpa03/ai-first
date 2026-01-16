@@ -53,9 +53,14 @@ const InputWithValidation = forwardRef<
 
     const baseInputClasses = `
       w-full px-4 py-3 border rounded-md shadow-sm
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:border-primary-500
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white
+      focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.2)]
       transition-all duration-200
-      ${isInvalid ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500' : 'border-gray-300'}
+      ${
+        isInvalid
+          ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]'
+          : 'border-gray-300 focus-visible:border-primary-500 focus-visible:ring-primary-500'
+      }
       ${className}
     `;
 
@@ -83,7 +88,7 @@ const InputWithValidation = forwardRef<
 
         {multiline ? (
           <textarea
-            ref={ref as React.RefObject<HTMLTextAreaElement>}
+            ref={ref as React.Ref<HTMLTextAreaElement>}
             id={props.id}
             value={value}
             onChange={handleChange}
@@ -101,7 +106,7 @@ const InputWithValidation = forwardRef<
           />
         ) : (
           <input
-            ref={ref as React.RefObject<HTMLInputElement>}
+            ref={ref as React.Ref<HTMLInputElement>}
             id={props.id}
             value={value}
             onChange={handleChange}
@@ -128,14 +133,11 @@ const InputWithValidation = forwardRef<
               </p>
             )}
             {isInvalid && (
-              <p
-                id={`${props.id}-error`}
-                className="text-sm text-red-600"
-                role="alert"
-                aria-live={errorAnnounced ? 'polite' : 'off'}
-              >
-                {error}
-              </p>
+              <div role="alert" aria-live="assertive">
+                <p id={`${props.id}-error`} className="text-sm text-red-600">
+                  {error}
+                </p>
+              </div>
             )}
           </div>
 

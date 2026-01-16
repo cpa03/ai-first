@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
+import Button from '@/components/Button';
 import dynamic from 'next/dynamic';
 
 interface Idea {
@@ -200,9 +201,13 @@ export default function ResultsPage() {
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Project Blueprint</h1>
-        <button onClick={() => router.back()} className="btn btn-secondary">
+        <Button
+          variant="secondary"
+          onClick={() => router.back()}
+          aria-label="Return to previous page"
+        >
           ← Back
-        </button>
+        </Button>
       </div>
 
       <BlueprintDisplay
@@ -226,25 +231,31 @@ export default function ResultsPage() {
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
+          <Button
+            variant="primary"
             onClick={() => handleExport('markdown')}
             disabled={exportLoading}
-            className="btn btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Download project blueprint as Markdown file"
           >
             {exportLoading ? 'Exporting...' : 'Download Markdown'}
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="secondary"
             onClick={() => handleExport('json')}
             disabled={exportLoading}
-            className="btn btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Export project blueprint as JSON data"
           >
             {exportLoading ? 'Exporting...' : 'Export JSON'}
-          </button>
+          </Button>
 
-          <button className="btn btn-outline" disabled>
+          <Button
+            variant="outline"
+            disabled={true}
+            aria-label="Export to Notion - coming soon"
+          >
             Export to Notion
-          </button>
+          </Button>
         </div>
 
         {exportUrl && (
