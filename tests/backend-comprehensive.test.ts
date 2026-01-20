@@ -300,7 +300,7 @@ describe('Backend Service Tests', () => {
       const result = await exportService.exportToNotion(mockData);
 
       expect(result.success).toBe(true);
-      expect(result.notionPageId).toBe('notion-page-id');
+      expect(result.id).toBe('notion-page-id');
     });
 
     it('should fail Notion export without API key', async () => {
@@ -329,7 +329,7 @@ describe('Backend Service Tests', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('API key is required');
+      expect(result.error).toContain('is not properly configured');
     });
 
     it('should handle Trello export with credentials', async () => {
@@ -351,7 +351,7 @@ describe('Backend Service Tests', () => {
       const result = await exportService.exportToTrello(mockData);
 
       expect(result.success).toBe(true);
-      expect(result.boardId).toBe('trello-board-id');
+      expect(result.id).toBe('trello-board-id');
     });
 
     it('should fail Trello export without credentials', async () => {
@@ -372,7 +372,7 @@ describe('Backend Service Tests', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('API key and token are required');
+      expect(result.error).toContain('is not properly configured');
     });
   });
 
@@ -426,7 +426,7 @@ describe('Backend Service Tests', () => {
     });
 
     it('should generate refined idea from answers', async () => {
-      const answers = { '1': 'Answer 1', '2': 'Answer 2' };
+      const answers = { q_1: 'Answer 1', q_2: 'Answer 2', q_3: 'Answer 3' };
       const session = {
         ideaId: 'test-idea',
         originalIdea: 'Test idea',

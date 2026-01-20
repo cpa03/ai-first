@@ -147,13 +147,15 @@ const localStorageMock = {
 Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
 // Mock sessionStorage
-const sessionStorageMock = {
+global.sessionStorageMock = {
   getItem: jest.fn(),
   setItem: jest.fn(),
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+Object.defineProperty(window, 'sessionStorage', {
+  value: global.sessionStorageMock,
+});
 
 // Mock window.open
 global.open = jest.fn();
