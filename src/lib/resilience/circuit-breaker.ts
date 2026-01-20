@@ -15,7 +15,6 @@ export class CircuitBreaker {
     state: 'closed',
     failures: 0,
   };
-  private cachedState?: CircuitBreakerInternalState;
   private recentFailures: number[] = [];
 
   constructor(
@@ -69,13 +68,6 @@ export class CircuitBreaker {
     this.recentFailures = [];
     this.circuitState.failures = 0;
     this.circuitState.state = 'closed';
-
-    if (this.cachedState) {
-      this.cachedState.failures = 0;
-      this.cachedState.state = 'closed';
-      delete this.cachedState.lastFailureTime;
-      delete this.cachedState.nextAttemptTime;
-    }
   }
 
   private onError(error: Error, _now: number, attemptCount: number = 1): void {
@@ -88,13 +80,6 @@ export class CircuitBreaker {
     if (this.circuitState.failures >= this.config.failureThreshold) {
       this.openCircuit(_now);
     }
-
-    if (this.cachedState) {
-      this.cachedState.failures = this.circuitState.failures;
-      this.cachedState.state = this.circuitState.state;
-      this.cachedState.lastFailureTime = this.circuitState.lastFailureTime;
-      this.cachedState.nextAttemptTime = this.circuitState.nextAttemptTime;
-    }
   }
 
   private openCircuit(now: number): void {
@@ -106,10 +91,7 @@ export class CircuitBreaker {
   }
 
   getState(): CircuitBreakerState {
-    if (!this.cachedState) {
-      this.cachedState = { ...this.circuitState };
-    }
-    const stateValue = this.cachedState.state;
+    const stateValue = this.circuitState.state;
     if (stateValue === 'closed') return CircuitBreakerState.CLOSED;
     if (stateValue === 'open') return CircuitBreakerState.OPEN;
     return CircuitBreakerState.HALF_OPEN;
