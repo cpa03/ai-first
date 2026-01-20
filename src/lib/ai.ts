@@ -1,6 +1,6 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
 import {
@@ -50,7 +50,7 @@ export interface ContextWindow {
 
 class AIService {
   private openai: OpenAI | null = null;
-  private supabase: any = null;
+  private supabase: SupabaseClient | null = null;
   private costTrackers: CostTracker[] = [];
   private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
@@ -228,7 +228,7 @@ class AIService {
 
       if (existingContext?.vector_data) {
         context = (existingContext.vector_data.messages || []).map(
-          (m: any) => ({
+          (m: { role: string; content: string }) => ({
             role: m.role as 'system' | 'user' | 'assistant',
             content: m.content,
           })
@@ -334,7 +334,7 @@ class AIService {
   private async logAgentAction(
     agent: string,
     action: string,
-    payload: any
+    payload: Record<string, unknown>
   ): Promise<void> {
     if (this.supabase) {
       await this.supabase.from('agent_logs').insert({
@@ -379,7 +379,14 @@ class AIService {
   async healthCheck(): Promise<{
     status: string;
     providers: string[];
-    circuitBreakers: Record<string, any>;
+    circuitBreakers: Record<
+      string,
+      {
+        state: 'closed' | 'open' | 'half-open';
+        failures: number;
+        nextAttemptTime?: string;
+      }
+    >;
   }> {
     const providers: string[] = [];
 
