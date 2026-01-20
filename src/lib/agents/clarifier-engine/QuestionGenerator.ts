@@ -65,13 +65,22 @@ export class QuestionGenerator {
           isArrayOf(data, isClarifierQuestion)
       );
 
-      return questionsData.map((q, index: number) => ({
+      const mappedQuestions = questionsData.map((q, index: number) => ({
         id: q.id || `q_${index + 1}`,
         question: q.question || `Question ${index + 1}`,
         type: q.type || 'open',
         options: q.options || [],
         required: q.required !== false,
       })) as ClarifierQuestion[];
+
+      if (mappedQuestions.length < 3 || mappedQuestions.length > 5) {
+        logger.warn(
+          `Invalid question count: ${mappedQuestions.length}, using fallback`
+        );
+        return this.getFallbackQuestions();
+      }
+
+      return mappedQuestions;
     } catch (error) {
       logger.error('Failed to generate questions', error);
 
