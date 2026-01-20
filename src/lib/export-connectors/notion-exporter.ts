@@ -1,19 +1,18 @@
-import { ExportConnector, ExportResult } from './base';
+import { ExportConnector, ExportResult, ExportData } from './base';
 import { TIMEOUT_CONFIG } from '../config/constants';
 import { createLogger } from '../logger';
+import type { Client as NotionClient } from '@notionhq/client';
 
 const logger = createLogger('NotionExporter');
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class NotionExporter extends ExportConnector {
   readonly type = 'notion';
   readonly name = 'Notion';
-  private client: any = null;
+  private client: NotionClient | null = null;
 
   async export(
-    data: any,
-    options?: Record<string, any>
+    data: ExportData,
+    options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const apiKey = process.env.NOTION_API_KEY;
     if (!apiKey) {
@@ -39,11 +38,20 @@ export class NotionExporter extends ExportConnector {
 
       const { idea, deliverables = [], tasks = [] } = data;
 
-      const pageData = {
-        parent: {
+      const parentPageId =
+        (options?.parentPageId as string | undefined) ||
+        (process.env.NOTION_PARENT_PAGE_ID as string | undefined);
+
+      const pageData: Record<string, unknown> = {};
+
+      if (parentPageId) {
+        pageData.parent = {
           type: 'page_id',
-          page_id: options?.parentPageId || process.env.NOTION_PARENT_PAGE_ID,
-        },
+          page_id: parentPageId,
+        };
+      }
+
+      Object.assign(pageData, {
         properties: {
           title: {
             title: [
@@ -66,16 +74,17 @@ export class NotionExporter extends ExportConnector {
           },
         },
         children: this.buildNotionBlocks(idea, deliverables, tasks),
-      };
-
-      if (!pageData.parent.page_id && !process.env.NOTION_PARENT_PAGE_ID) {
-        delete (pageData as any).parent;
-      }
+      });
 
       const response = (await this.executeWithResilience(
-        () => this.client.pages.create(pageData),
+        () =>
+          (this.client as NonNullable<typeof this.client>).pages.create(
+            pageData as Parameters<
+              NonNullable<typeof this.client>['pages']['create']
+            >[0]
+          ),
         'create-page'
-      )) as any;
+      )) as { url: string; id: string };
 
       return {
         success: true,
@@ -110,11 +119,11 @@ export class NotionExporter extends ExportConnector {
   }
 
   private buildNotionBlocks(
-    idea: any,
-    deliverables: any[],
-    tasks: any[]
-  ): any[] {
-    const blocks: any[] = [];
+    idea: ExportData['idea'],
+    deliverables: ExportData['deliverables'] = [],
+    tasks: ExportData['tasks'] = []
+  ): Record<string, unknown>[] {
+    const blocks: Record<string, unknown>[] = [];
 
     blocks.push({
       object: 'block',

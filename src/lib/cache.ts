@@ -15,12 +15,14 @@ export class Cache<T = unknown> {
   private ttl?: number;
   private maxSize?: number;
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
+  private misses: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
     this.ttl = options.ttl;
     this.maxSize = options.maxSize;
     this.onEvict = options.onEvict;
+    this.misses = 0;
   }
 
   set(key: string, value: T): void {
@@ -43,11 +45,13 @@ export class Cache<T = unknown> {
     const entry = this.cache.get(key);
 
     if (!entry) {
+      this.misses++;
       return null;
     }
 
     if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
       this.cache.delete(key);
+      this.misses++;
       return null;
     }
 
@@ -65,6 +69,14 @@ export class Cache<T = unknown> {
 
   clear(): void {
     this.cache.clear();
+    this.misses = 0;
+  }
+
+  resetStats(): void {
+    this.misses = 0;
+    for (const entry of this.cache.values()) {
+      entry.hits = 0;
+    }
   }
 
   private evictExpiredEntries(): void {
@@ -126,11 +138,14 @@ export class Cache<T = unknown> {
       totalHits += entry.hits;
     }
 
+    const totalRequests = totalHits + this.misses;
+    const hitRate = totalRequests > 0 ? totalHits / totalRequests : 0;
+
     return {
       size: this.cache.size,
       hits: totalHits,
-      misses: 0,
-      hitRate: 0,
+      misses: this.misses,
+      hitRate,
     };
   }
 

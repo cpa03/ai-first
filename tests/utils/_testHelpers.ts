@@ -82,15 +82,22 @@ export const createMockSupabaseClient = () => {
 export const mockOpenAIResponses = {
   clarificationQuestions: [
     {
-      id: '1',
-      question: 'What is primary goal of this project?',
+      id: 'q_1',
+      question: 'What is main problem you are trying to solve with this idea?',
       type: 'open',
       options: [],
       required: true,
     },
     {
-      id: '2',
-      question: 'Who is target audience?',
+      id: 'q_2',
+      question: 'Who is target audience for this solution?',
+      type: 'open',
+      options: [],
+      required: true,
+    },
+    {
+      id: 'q_3',
+      question: 'What are key features or functionality you envision?',
       type: 'open',
       options: [],
       required: true,
@@ -152,8 +159,9 @@ export const mockUserJourney = {
   ideaInput: 'I want to build a habit tracking app',
   questions: mockOpenAIResponses.clarificationQuestions,
   answers: {
-    '1': 'To help people build better habits',
-    '2': 'People looking to improve their daily routines',
+    q_1: 'To help people build better habits',
+    q_2: 'People looking to improve their daily routines',
+    q_3: 'Track daily tasks and milestones',
   },
   refinedIdea: mockOpenAIResponses.refinedIdea,
   blueprint: mockOpenAIResponses.breakdownBlueprint,

@@ -1,6 +1,6 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
 import {
@@ -50,7 +50,7 @@ export interface ContextWindow {
 
 class AIService {
   private openai: OpenAI | null = null;
-  private supabase: any = null;
+  private supabase: SupabaseClient | null = null;
   private costTrackers: CostTracker[] = [];
   private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
@@ -103,7 +103,7 @@ class AIService {
   ): Promise<string> {
     const startTime = Date.now();
 
-    const cacheKey = this.generateCacheKey(messages, config);
+    const cacheKey = await this.generateCacheKey(messages, config);
 
     const cachedResponse = this.responseCache.get(cacheKey);
     if (cachedResponse) {
@@ -159,14 +159,31 @@ class AIService {
     }
   }
 
-  private generateCacheKey(
+  private async generateCacheKey(
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
-  ): string {
+  ): Promise<string> {
     const content = messages.map((m) => `${m.role}:${m.content}`).join('|');
     const key = `${config.provider}:${config.model}:${config.temperature}:${config.maxTokens}:${content}`;
-    const hash = btoa(key).substring(0, 64);
-    return hash;
+
+    if (
+      typeof TextEncoder === 'undefined' ||
+      typeof crypto === 'undefined' ||
+      !crypto.subtle
+    ) {
+      const hash = btoa(key).substring(0, 64);
+      return hash;
+    }
+
+    const encoder = new TextEncoder();
+    const data = encoder.encode(key);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+
+    return hashHex.substring(0, 64);
   }
 
   private async executeWithResilience<T>(
@@ -228,7 +245,7 @@ class AIService {
 
       if (existingContext?.vector_data) {
         context = (existingContext.vector_data.messages || []).map(
-          (m: any) => ({
+          (m: { role: string; content: string }) => ({
             role: m.role as 'system' | 'user' | 'assistant',
             content: m.content,
           })
@@ -252,6 +269,9 @@ class AIService {
     });
 
     this.responseCache.set(cacheKey, JSON.stringify(context));
+
+    const ideaUpdateCacheKey = `idea:${ideaId}:updated`;
+    this.responseCache.set(ideaUpdateCacheKey, Date.now().toString());
 
     return context;
   }
@@ -334,7 +354,7 @@ class AIService {
   private async logAgentAction(
     agent: string,
     action: string,
-    payload: any
+    payload: Record<string, unknown>
   ): Promise<void> {
     if (this.supabase) {
       await this.supabase.from('agent_logs').insert({
@@ -375,11 +395,26 @@ class AIService {
     this.responseCache.clear();
   }
 
+  invalidateIdeaCache(ideaId: string): void {
+    const contextCacheKey = `context:${ideaId}`;
+    const ideaUpdateCacheKey = `idea:${ideaId}:updated`;
+
+    this.responseCache.delete(contextCacheKey);
+    this.responseCache.delete(ideaUpdateCacheKey);
+  }
+
   // Health check
   async healthCheck(): Promise<{
     status: string;
     providers: string[];
-    circuitBreakers: Record<string, any>;
+    circuitBreakers: Record<
+      string,
+      {
+        state: 'closed' | 'open' | 'half-open';
+        failures: number;
+        nextAttemptTime?: string;
+      }
+    >;
   }> {
     const providers: string[] = [];
 

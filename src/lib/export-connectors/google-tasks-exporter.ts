@@ -1,14 +1,12 @@
-import { ExportConnector, ExportResult } from './base';
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import { ExportConnector, ExportResult, ExportData } from './base';
 
 export class GoogleTasksExporter extends ExportConnector {
   readonly type = 'google-tasks';
   readonly name = 'Google Tasks';
 
   async export(
-    _data: any,
-    _options?: Record<string, any>
+    _data: ExportData,
+    _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     return {
       success: false,

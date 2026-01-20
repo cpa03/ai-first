@@ -1,10 +1,9 @@
-import { ExportConnector, ExportResult } from './base';
+import { ExportConnector, ExportResult, ExportData } from './base';
+import { Task } from '../db';
 
 import { createLogger } from '../logger';
 
 const logger = createLogger('TrelloExporter');
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class TrelloExporter extends ExportConnector {
   readonly type = 'trello';
@@ -12,8 +11,8 @@ export class TrelloExporter extends ExportConnector {
   private readonly API_BASE = 'https://api.trello.com/1';
 
   async export(
-    data: any,
-    _options?: Record<string, any>
+    data: ExportData,
+    _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const { idea, deliverables = [], tasks = [] } = data;
     const apiKey = process.env.TRELLO_API_KEY;
@@ -66,10 +65,24 @@ export class TrelloExporter extends ExportConnector {
         await this.createCard(
           todoList.id,
           {
+            id: '',
+            deliverable_id: '',
             title: '📋 Project Overview',
             description: idea.raw_text,
-            assignee: null,
+            status: 'todo',
+            assignee: undefined,
             estimate: 0,
+            start_date: null,
+            end_date: null,
+            actual_hours: null,
+            completion_percentage: 0,
+            priority_score: 50,
+            complexity_score: 50,
+            risk_level: 'low',
+            tags: null,
+            custom_fields: null,
+            milestone_id: null,
+            created_at: new Date().toISOString(),
           },
           apiKey,
           token
@@ -136,7 +149,7 @@ export class TrelloExporter extends ExportConnector {
     name: string,
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: string; url: string }> {
     const response = await this.executeWithResilience(
       () =>
         fetch(
@@ -160,7 +173,7 @@ export class TrelloExporter extends ExportConnector {
     name: string,
     apiKey: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: string }> {
     const response = await this.executeWithResilience(
       () =>
         fetch(
@@ -181,22 +194,22 @@ export class TrelloExporter extends ExportConnector {
 
   private async createCard(
     listId: string,
-    task: any,
+    task: Task,
     apiKey: string,
     token: string
-  ): Promise<any> {
-    const cardData = {
+  ): Promise<{ id: string }> {
+    const cardData: Record<string, unknown> = {
       name: task.title,
       desc: task.description || '',
       key: apiKey,
       token: token,
     };
 
-    if (task.due_date) {
-      (cardData as any).due = task.due_date;
+    if (task.estimate) {
+      cardData.due = task.estimate;
     }
 
-    const params = new URLSearchParams(cardData as any);
+    const params = new URLSearchParams(cardData as Record<string, string>);
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/cards?${params.toString()}`, {
@@ -211,10 +224,10 @@ export class TrelloExporter extends ExportConnector {
 
     const card = await response.json();
 
-    if (task.priority) {
+    if (task.priority_score) {
       await this.addCardLabel(
         card.id,
-        this.getPriorityLabel(task.priority),
+        this.getPriorityLabel(task.priority_score),
         apiKey,
         token
       );
@@ -286,7 +299,7 @@ export class TrelloExporter extends ExportConnector {
   }
 
   private getTaskListId(
-    task: any,
+    task: Task,
     deliverableLists: Record<string, string>,
     todoListId: string,
     inProgressListId: string,

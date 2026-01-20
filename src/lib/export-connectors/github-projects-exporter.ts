@@ -1,10 +1,9 @@
-import { ExportConnector, ExportResult } from './base';
+import { ExportConnector, ExportResult, ExportData } from './base';
+import { Task, Deliverable, Idea } from '../db';
 
 import { createLogger } from '../logger';
 
 const logger = createLogger('GitHubProjectsExporter');
-
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export class GitHubProjectsExporter extends ExportConnector {
   readonly type = 'github-projects';
@@ -12,8 +11,8 @@ export class GitHubProjectsExporter extends ExportConnector {
   private readonly API_BASE = 'https://api.github.com';
 
   async export(
-    data: any,
-    _options?: Record<string, any>
+    data: ExportData,
+    _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const token = process.env.GITHUB_TOKEN;
     if (!token) {
@@ -59,7 +58,7 @@ export class GitHubProjectsExporter extends ExportConnector {
         token
       );
 
-      const deliverableColumns: Record<string, string> = {};
+      const deliverableColumns: Record<string, number> = {};
       for (const deliverable of deliverables) {
         const column = await this.createProjectColumn(
           project.id,
@@ -69,7 +68,7 @@ export class GitHubProjectsExporter extends ExportConnector {
         deliverableColumns[deliverable.id] = column.id;
       }
 
-      const createdIssues: any[] = [];
+      const createdIssues: { id: number }[] = [];
       for (const task of tasks) {
         const issue = await this.createIssue(
           user.login,
@@ -86,7 +85,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           inProgressColumn.id,
           doneColumn.id
         );
-        await this.addIssueToProjectCard(columnId, issue.id, token);
+        await this.addIssueToProjectCard(columnId, String(issue.id), token);
       }
 
       if (idea.raw_text) {
@@ -94,11 +93,24 @@ export class GitHubProjectsExporter extends ExportConnector {
           user.login,
           repository.name,
           {
+            id: '',
+            deliverable_id: '',
             title: '📋 Project Overview',
             description: idea.raw_text,
-            assignee: null,
-            estimate: 0,
             status: 'todo',
+            assignee: undefined,
+            estimate: 0,
+            start_date: null,
+            end_date: null,
+            actual_hours: null,
+            completion_percentage: 0,
+            priority_score: 50,
+            complexity_score: 50,
+            risk_level: 'low',
+            tags: null,
+            custom_fields: null,
+            milestone_id: null,
+            created_at: new Date().toISOString(),
           },
           token
         );
@@ -171,7 +183,9 @@ export class GitHubProjectsExporter extends ExportConnector {
     );
   }
 
-  private async getAuthenticatedUser(token: string): Promise<any> {
+  private async getAuthenticatedUser(
+    token: string
+  ): Promise<{ login: string }> {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/user`, {
@@ -195,9 +209,9 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createOrUpdateRepository(
     owner: string,
     repoName: string,
-    idea: any,
+    idea: Omit<Idea, 'user_id' | 'deleted_at'>,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: number; name: string; html_url: string }> {
     const createResponse = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/user/repos`, {
@@ -246,7 +260,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     repo: string,
     projectName: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: number }> {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/repos/${owner}/${repo}/projects`, {
@@ -274,10 +288,10 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private async createProjectColumn(
-    projectId: string,
+    projectId: number,
     columnName: string,
     token: string
-  ): Promise<any> {
+  ): Promise<{ id: number }> {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/projects/${projectId}/columns`, {
@@ -306,10 +320,10 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createIssue(
     owner: string,
     repo: string,
-    task: any,
+    task: Task,
     token: string
-  ): Promise<any> {
-    const issueData: any = {
+  ): Promise<{ id: number }> {
+    const issueData: Record<string, unknown> = {
       title: task.title,
       body: task.description || '',
     };
@@ -319,8 +333,8 @@ export class GitHubProjectsExporter extends ExportConnector {
     }
 
     const labels: string[] = [];
-    if (task.priority) {
-      labels.push(this.getPriorityLabel(task.priority));
+    if (task.priority_score) {
+      labels.push(this.getPriorityLabel(task.priority_score));
     }
     if (task.estimate) {
       labels.push(`estimate: ${task.estimate}h`);
@@ -355,13 +369,13 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private async addIssueToProjectCard(
-    columnId: string,
+    columnId: number,
     issueId: string,
     token: string
   ): Promise<void> {
     const response = await this.executeWithResilience(
       () =>
-        fetch(`${this.API_BASE}/projects/columns/${columnId}/cards`, {
+        fetch(`${this.API_BASE}/projects/columns/${String(columnId)}/cards`, {
           method: 'POST',
           headers: {
             Authorization: `token ${token}`,
@@ -386,9 +400,9 @@ export class GitHubProjectsExporter extends ExportConnector {
   private async createReadme(
     owner: string,
     repo: string,
-    idea: any,
-    deliverables: any[],
-    tasks: any[],
+    idea: Omit<Idea, 'user_id' | 'deleted_at'>,
+    deliverables: Deliverable[],
+    tasks: Task[],
     token: string
   ): Promise<void> {
     let readme = `# ${idea.title}\n\n`;
@@ -436,12 +450,12 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   private getTaskColumnId(
-    task: any,
-    deliverableColumns: Record<string, string>,
-    todoColumnId: string,
-    inProgressColumnId: string,
-    doneColumnId: string
-  ): string {
+    task: Task,
+    deliverableColumns: Record<string, number>,
+    todoColumnId: number,
+    inProgressColumnId: number,
+    doneColumnId: number
+  ): number {
     if (task.deliverable_id && deliverableColumns[task.deliverable_id]) {
       return deliverableColumns[task.deliverable_id];
     }

@@ -544,7 +544,7 @@ describe('Resilience Edge Cases', () => {
         });
 
         await expect(withTimeout(operation, { timeoutMs: 10 })).rejects.toThrow(
-          'timeout'
+          /timeout/
         );
 
         expect(operation).toHaveBeenCalledTimes(1);
@@ -602,7 +602,7 @@ describe('Resilience Edge Cases', () => {
         });
 
         await expect(withTimeout(operation, { timeoutMs: 10 })).rejects.toThrow(
-          'timeout'
+          /timeout/
         );
 
         expect(operation).toHaveBeenCalledTimes(1);

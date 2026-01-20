@@ -27,6 +27,26 @@ CREATE TABLE idea_sessions (
     PRIMARY KEY (idea_id)
 );
 
+-- Clarification sessions table
+CREATE TABLE clarification_sessions (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    idea_id UUID NOT NULL REFERENCES ideas(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'active'
+      CHECK (status IN ('active', 'completed', 'cancelled')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Clarification answers table
+CREATE TABLE clarification_answers (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    session_id UUID NOT NULL REFERENCES clarification_sessions(id) ON DELETE CASCADE,
+    question_id TEXT NOT NULL,
+    answer TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Deliverables table
 CREATE TABLE deliverables (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -358,7 +378,63 @@ CREATE POLICY "Only service role can update agent logs" ON agent_logs
 CREATE POLICY "Only service role can delete agent logs" ON agent_logs
     FOR DELETE USING (auth.role() = 'service_role');
 
+-- Clarification sessions policies
+CREATE POLICY "Users can view clarification sessions for their ideas" ON clarification_sessions
+    FOR SELECT USING (
+        idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid() AND deleted_at IS NULL)
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create clarification sessions for their ideas" ON clarification_sessions
+    FOR INSERT WITH CHECK (
+        idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update their clarification sessions" ON clarification_sessions
+    FOR UPDATE USING (
+        idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
+-- Clarification answers policies
+CREATE POLICY "Users can view clarification answers for their sessions" ON clarification_answers
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM clarification_sessions cs
+            JOIN ideas i ON cs.idea_id = i.id
+            WHERE cs.id = clarification_answers.session_id
+            AND i.user_id = auth.uid()
+            AND i.deleted_at IS NULL
+        )
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create clarification answers for their sessions" ON clarification_answers
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM clarification_sessions cs
+            JOIN ideas i ON cs.idea_id = i.id
+            WHERE cs.id = clarification_answers.session_id
+            AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update their clarification answers" ON clarification_answers
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM clarification_sessions cs
+            JOIN ideas i ON cs.idea_id = i.id
+            WHERE cs.id = clarification_answers.session_id
+            AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
 -- Enable Row Level Security for new tables
+ALTER TABLE clarification_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE clarification_answers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_dependencies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE milestones ENABLE ROW LEVEL SECURITY;
 ALTER TABLE task_assignments ENABLE ROW LEVEL SECURITY;
@@ -529,6 +605,31 @@ CREATE INDEX idx_risk_assessments_idea_id ON risk_assessments(idea_id);
 CREATE INDEX idx_risk_assessments_task_id ON risk_assessments(task_id);
 
 -- ============================================================================
+-- Performance Indexes for Analytics
+-- ============================================================================
+
+-- Composite index for analytics: user_id + deleted_at + status
+CREATE INDEX idx_ideas_user_deleted_status ON ideas(user_id, deleted_at, status);
+
+-- Composite index for deliverables analytics: idea_id + deleted_at
+CREATE INDEX idx_deliverables_idea_deleted ON deliverables(idea_id, deleted_at);
+
+-- Composite index for tasks analytics: deliverable_id + deleted_at
+CREATE INDEX idx_tasks_deliverable_deleted ON tasks(deliverable_id, deleted_at);
+
+-- Index for tasks start_date + end_date combined queries
+CREATE INDEX idx_tasks_start_end_dates ON tasks(start_date, end_date) WHERE deleted_at IS NULL;
+
+-- Index for tasks status + completion_percentage
+CREATE INDEX idx_tasks_status_completion ON tasks(status, completion_percentage) WHERE deleted_at IS NULL;
+
+-- Index for clarification_sessions: idea_id + status
+CREATE INDEX idx_clarification_sessions_idea_status ON clarification_sessions(idea_id, status);
+
+-- Index for clarification_answers: session_id
+CREATE INDEX idx_clarification_answers_session ON clarification_answers(session_id);
+
+-- ============================================================================
 -- Triggers
 -- ============================================================================
 
@@ -558,6 +659,14 @@ CREATE TRIGGER update_timelines_updated_at BEFORE UPDATE ON timelines
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 CREATE TRIGGER update_risk_assessments_updated_at BEFORE UPDATE ON risk_assessments
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Apply updated_at trigger to clarification_sessions
+CREATE TRIGGER update_clarification_sessions_updated_at BEFORE UPDATE ON clarification_sessions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Apply updated_at trigger to clarification_answers
+CREATE TRIGGER update_clarification_answers_updated_at BEFORE UPDATE ON clarification_answers
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
