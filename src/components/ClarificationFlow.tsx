@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -38,7 +38,7 @@ const FALLBACK_QUESTIONS: Question[] = [
   },
   {
     id: 'main_goal',
-    question: 'What is the main goal you want to achieve?',
+    question: 'What is main goal you want to achieve?',
     type: 'textarea',
   },
   {
@@ -49,7 +49,7 @@ const FALLBACK_QUESTIONS: Question[] = [
   },
 ];
 
-export default function ClarificationFlow({
+function ClarificationFlow({
   idea,
   ideaId,
   onComplete,
@@ -404,3 +404,5 @@ export default function ClarificationFlow({
     </div>
   );
 }
+
+export default memo(ClarificationFlow);

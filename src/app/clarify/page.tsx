@@ -4,10 +4,19 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Button from '@/components/Button';
-import Alert from '@/components/Alert';
 import { createLogger } from '@/lib/logger';
+
+const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
+  loading: () => <div className="animate-pulse">Loading...</div>,
+});
+
+const Button = dynamic(() => import('@/components/Button'), {
+  loading: () => <button className="btn btn-primary">Loading...</button>,
+});
+
+const Alert = dynamic(() => import('@/components/Alert'), {
+  loading: () => <div className="bg-gray-100 p-4">Loading...</div>,
+});
 
 const DynamicClarificationFlow = dynamic(
   () => import('@/components/ClarificationFlow').then((mod) => mod.default),
