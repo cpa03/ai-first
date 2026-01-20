@@ -1,0 +1,157 @@
+import { createLogger } from '../logger';
+import { CircuitBreakerOptions, CircuitBreakerState } from './types';
+
+type CircuitBreakerInternalState = {
+  state: 'closed' | 'open' | 'half-open';
+  failures: number;
+  lastFailureTime?: number;
+  nextAttemptTime?: number;
+};
+
+const logger = createLogger('CircuitBreaker');
+
+export class CircuitBreaker {
+  private circuitState: CircuitBreakerInternalState = {
+    state: 'closed',
+    failures: 0,
+  };
+  private cachedState?: CircuitBreakerInternalState;
+  private recentFailures: number[] = [];
+
+  constructor(
+    private readonly name: string,
+    private readonly config: CircuitBreakerOptions = {
+      failureThreshold: 5,
+      resetTimeoutMs: 60000,
+      monitoringPeriodMs: 10000,
+    }
+  ) {}
+
+  async execute<T>(operation: () => Promise<T>): Promise<T> {
+    if (this.circuitState.state === 'open') {
+      if (Date.now() >= (this.circuitState.nextAttemptTime || 0)) {
+        this.circuitState.state = 'half-open';
+      } else {
+        throw new Error(
+          `Circuit breaker ${this.name} is OPEN. Retry after ${new Date(
+            this.circuitState.nextAttemptTime || 0
+          ).toISOString()}`
+        );
+      }
+    }
+
+    const now = Date.now();
+    this.cleanupOldFailures(now);
+
+    try {
+      const result = await operation();
+      this.onSuccess(now);
+      return result;
+    } catch (error) {
+      const errorMessage = (error as Error).message;
+      const attemptCount =
+        (error as Error & { attemptCount?: number }).attemptCount ||
+        (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
+      this.onError(error as Error, now, attemptCount);
+      throw error;
+    }
+  }
+
+  private cleanupOldFailures(now: number): void {
+    const monitoringPeriod = this.config.monitoringPeriodMs;
+    this.recentFailures = this.recentFailures.filter(
+      (timestamp) => now - timestamp <= monitoringPeriod
+    );
+    this.circuitState.failures = this.recentFailures.length;
+  }
+
+  private onSuccess(_now: number): void {
+    this.recentFailures = [];
+    this.circuitState.failures = 0;
+    this.circuitState.state = 'closed';
+
+    if (this.cachedState) {
+      this.cachedState.failures = 0;
+      this.cachedState.state = 'closed';
+      delete this.cachedState.lastFailureTime;
+      delete this.cachedState.nextAttemptTime;
+    }
+  }
+
+  private onError(error: Error, _now: number, attemptCount: number = 1): void {
+    for (let i = 0; i < attemptCount; i++) {
+      this.recentFailures.push(_now);
+    }
+    this.circuitState.failures = this.recentFailures.length;
+    this.circuitState.lastFailureTime = _now;
+
+    if (this.circuitState.failures >= this.config.failureThreshold) {
+      this.openCircuit(_now);
+    }
+
+    if (this.cachedState) {
+      this.cachedState.failures = this.circuitState.failures;
+      this.cachedState.state = this.circuitState.state;
+      this.cachedState.lastFailureTime = this.circuitState.lastFailureTime;
+      this.cachedState.nextAttemptTime = this.circuitState.nextAttemptTime;
+    }
+  }
+
+  private openCircuit(now: number): void {
+    this.circuitState.state = 'open';
+    this.circuitState.nextAttemptTime = now + this.config.resetTimeoutMs;
+    logger.debug(
+      `Opening circuit breaker. Failures: ${this.circuitState.failures}, Threshold: ${this.config.failureThreshold}`
+    );
+  }
+
+  getState(): CircuitBreakerState {
+    if (!this.cachedState) {
+      this.cachedState = { ...this.circuitState };
+    }
+    const stateValue = this.cachedState.state;
+    if (stateValue === 'closed') return CircuitBreakerState.CLOSED;
+    if (stateValue === 'open') return CircuitBreakerState.OPEN;
+    return CircuitBreakerState.HALF_OPEN;
+  }
+
+  reset(): void {
+    this.circuitState.failures = 0;
+    this.circuitState.state = 'closed';
+    this.circuitState.lastFailureTime = 0;
+    this.circuitState.nextAttemptTime = 0;
+  }
+
+  getFailures(): number {
+    return this.circuitState.failures;
+  }
+
+  getNextAttemptTime(): number {
+    return this.circuitState.nextAttemptTime || 0;
+  }
+
+  getStatus(): {
+    state: CircuitBreakerState;
+    failures: number;
+    nextAttemptTime?: string;
+  } {
+    let state: CircuitBreakerState;
+    const stateValue = this.circuitState.state;
+    if (stateValue === 'closed') {
+      state = CircuitBreakerState.CLOSED;
+    } else if (stateValue === 'open') {
+      state = CircuitBreakerState.OPEN;
+    } else {
+      state = CircuitBreakerState.HALF_OPEN;
+    }
+
+    return {
+      state,
+      failures: this.circuitState.failures,
+      nextAttemptTime:
+        stateValue === 'open'
+          ? new Date(this.circuitState.nextAttemptTime || 0).toISOString()
+          : undefined,
+    };
+  }
+}
