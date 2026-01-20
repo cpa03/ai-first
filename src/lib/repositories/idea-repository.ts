@@ -58,6 +58,7 @@ export class IdeaRepository extends BaseRepository {
     const { data, error } = await this.client!.from('ideas')
       .select('*')
       .eq('user_id', userId)
+      .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
     if (error) {
