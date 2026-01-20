@@ -17,34 +17,14 @@ export class RetryManager {
       shouldRetry,
     } = options;
 
-    const defaultShouldRetry = (error: Error, _attempt: number): boolean => {
-      const retryableStatuses = [
-        408,
-        429,
-        500,
-        502,
-        503,
-        504,
-        507,
-        509,
-        'econnreset',
-        'econnrefused',
-        'etimedout',
-        'enotfound',
-        'eai_again',
-      ];
+    const defaultShouldRetry = (_error: Error, _attempt: number): boolean => {
+      const message = _error.message.toLowerCase();
 
-      const message = error.message.toLowerCase();
+      if (message.includes('circuit breaker is open')) {
+        return false;
+      }
 
-      return (
-        retryableStatuses.some((status) =>
-          message.includes(String(status).toLowerCase())
-        ) ||
-        message.includes('timeout') ||
-        message.includes('rate limit') ||
-        message.includes('too many requests') ||
-        message.includes('temporary failure')
-      );
+      return true;
     };
 
     const retryFn = shouldRetry || defaultShouldRetry;
