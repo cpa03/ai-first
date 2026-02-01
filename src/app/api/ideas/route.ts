@@ -7,6 +7,30 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 
+async function handleGet(context: ApiContext) {
+  const { request } = context;
+  const url = new URL(request.url);
+  const status = url.searchParams.get('status');
+
+  const userId = 'default_user';
+
+  let ideas = await dbService.getUserIdeas(userId);
+
+  if (status) {
+    ideas = ideas.filter((idea) => idea.status === status);
+  }
+
+  const response = ideas.map((idea) => ({
+    id: idea.id,
+    title: idea.title,
+    status: idea.status,
+    createdAt: idea.created_at,
+    updatedAt: idea.created_at,
+  }));
+
+  return standardSuccessResponse(response, context.requestId);
+}
+
 async function handlePost(context: ApiContext) {
   const { request } = context;
   const { idea } = await request.json();
@@ -41,4 +65,5 @@ async function handlePost(context: ApiContext) {
   );
 }
 
+export const GET = withApiHandler(handleGet, { rateLimit: 'moderate' });
 export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });

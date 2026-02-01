@@ -92,6 +92,23 @@ export default function RootLayout({
                       IdeaFlow
                     </a>
                   </div>
+                  <nav
+                    className="hidden sm:flex items-center space-x-4"
+                    aria-label="Main navigation"
+                  >
+                    <a
+                      href="/dashboard"
+                      className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      Dashboard
+                    </a>
+                    <a
+                      href="/"
+                      className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      New Idea
+                    </a>
+                  </nav>
                   <MobileNav />
                 </div>
               </div>
