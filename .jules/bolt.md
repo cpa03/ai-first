@@ -1,3 +1,3 @@
-## 2026-02-03 - Leverage Map insertion order for O(k) cache eviction
-**Learning:** In JavaScript, the `Map` object preserves insertion order. When implementing a cache with TTL, we can ensure that entries are in chronological order by always deleting and re-inserting a key whenever it is updated. This allows the expiration logic to stop at the first non-expired entry, transforming the complexity from O(n) to O(k), where k is the number of expired items.
-**Action:** Always move updated items to the end of the Map in Cache implementations to enable early-break expiration and simplified LRU logic.
+## 2026-02-03 - Optimize AI Context Management and Fix Infinite Loop
+**Learning:** The previous context windowing logic used an $O(n^2)$ approach by recalculating token estimates inside a `while` loop that removed messages one by one. Furthermore, it had an edge case where a context with only system messages and exceeding the token limit would result in an infinite loop, as `nonSystemMessages.shift()` would return `undefined` and not change the context length.
+**Action:** Pre-calculate the total characters and use a single-pass subtraction logic to achieve $O(n)$ complexity. Also, add explicit checks on `nonSystemMessages.length` to prevent infinite loops when only system messages remain.
