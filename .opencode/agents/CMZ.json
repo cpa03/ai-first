@@ -82,17 +82,29 @@
     "security_analysis"
   ],
   "skills": [
+    "skill-builder",
+    "claude-codepro-backend",
     "systematic-debugging",
+    "moai-adk-tool",
+    "context-engineering-memory",
+    "claude-code-debugging",
+    "git-commit-message",
     "test-driven-development",
     "writing-plans",
     "executing-plans",
     "brainstorming",
     "requesting-code-review",
-    "git-master",
-    "context-engineering-memory"
+    "git-master"
   ],
   "hooks": {
-    "enabled": ["pre_tool_use", "post_tool_use", "user_prompt_submit", "stop"]
+    "enabled": [
+      "pre_tool_use",
+      "post_tool_use",
+      "user_prompt_submit",
+      "stop",
+      "pre_model_use",
+      "post_model_use"
+    ]
   },
   "delegation_rules": {
     "visual_engineering": {
