@@ -264,7 +264,7 @@ class AIService {
 
       while (
         Math.ceil(totalChars / 4) > maxTokens &&
-        nonSystemMessages.length > 1
+        nonSystemMessages.length > 0
       ) {
         const removed = nonSystemMessages.shift();
         if (removed) {
