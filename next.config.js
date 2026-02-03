@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -16,7 +13,12 @@ const nextConfig = {
     ];
   },
   images: {
-    domains: ['ideaflow.ai'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'ideaflow.ai',
+      },
+    ],
   },
 };
 
