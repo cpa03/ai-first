@@ -67,7 +67,7 @@ const InputWithValidation = forwardRef<
     useEffect(() => {
       if (isInvalid && !errorAnnounced) {
         setErrorAnnounced(true);
-      } else if (!isInvalid) {
+      } else if (!isInvalid && errorAnnounced) {
         setErrorAnnounced(false);
       }
     }, [isInvalid, errorAnnounced]);
@@ -151,6 +151,7 @@ const InputWithValidation = forwardRef<
                     : 'text-gray-500'
               }`}
               aria-live="polite"
+              aria-atomic="true"
             >
               {charCount}
               {maxLength && ` / ${maxLength}`}
