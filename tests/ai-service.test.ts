@@ -595,5 +595,22 @@ describe('AIService', () => {
 
       expect(context).toBeDefined();
     });
+
+    it('should handle context with only system messages exceeding limit without infinite loop', async () => {
+      const messages = [
+        { role: 'system' as const, content: 'a'.repeat(5000) },
+        { role: 'system' as const, content: 'b'.repeat(5000) },
+        { role: 'system' as const, content: 'c'.repeat(5000) },
+      ];
+
+      // Should not loop infinitely and should return context as is (since no non-system messages to remove)
+      const context = await aiService.manageContextWindow(
+        'idea-123',
+        messages,
+        1000
+      );
+
+      expect(context).toHaveLength(3);
+    });
   });
 });

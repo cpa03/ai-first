@@ -255,10 +255,23 @@ class AIService {
 
     context = [...context, ...newMessages];
 
-    while (this.estimateTokens(context) > maxTokens && context.length > 2) {
+    // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
+    let totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
+
+    // If context exceeds token limit, remove oldest non-system messages
+    if (Math.ceil(totalChars / 4) > maxTokens) {
       const systemMessages = context.filter((m) => m.role === 'system');
       const nonSystemMessages = context.filter((m) => m.role !== 'system');
-      nonSystemMessages.shift();
+
+      while (
+        Math.ceil(totalChars / 4) > maxTokens &&
+        nonSystemMessages.length > 1
+      ) {
+        const removed = nonSystemMessages.shift();
+        if (removed) {
+          totalChars -= removed.content.length;
+        }
+      }
       context = [...systemMessages, ...nonSystemMessages];
     }
 
