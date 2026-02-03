@@ -1,4 +1,3 @@
-import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
@@ -168,8 +167,8 @@ class AIService {
 
     if (
       typeof TextEncoder === 'undefined' ||
-      typeof crypto === 'undefined' ||
-      !crypto.subtle
+      typeof globalThis.crypto === 'undefined' ||
+      !globalThis.crypto.subtle
     ) {
       const hash = btoa(key).substring(0, 64);
       return hash;
@@ -177,7 +176,7 @@ class AIService {
 
     const encoder = new TextEncoder();
     const data = encoder.encode(key);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
       .map((b) => b.toString(16).padStart(2, '0'))
@@ -191,7 +190,7 @@ class AIService {
     config: AIModelConfig
   ): Promise<T> {
     const { resilienceManager, defaultResilienceConfigs } =
-      await import('@/lib/resilience');
+      await import('./resilience');
 
     const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
 
@@ -255,10 +254,23 @@ class AIService {
 
     context = [...context, ...newMessages];
 
-    while (this.estimateTokens(context) > maxTokens && context.length > 2) {
+    // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
+    let totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
+
+    // If context exceeds token limit, remove oldest non-system messages
+    if (Math.ceil(totalChars / 4) > maxTokens) {
       const systemMessages = context.filter((m) => m.role === 'system');
       const nonSystemMessages = context.filter((m) => m.role !== 'system');
-      nonSystemMessages.shift();
+
+      while (
+        Math.ceil(totalChars / 4) > maxTokens &&
+        nonSystemMessages.length > 1
+      ) {
+        const removed = nonSystemMessages.shift();
+        if (removed) {
+          totalChars -= removed.content.length;
+        }
+      }
       context = [...systemMessages, ...nonSystemMessages];
     }
 
@@ -274,17 +286,6 @@ class AIService {
     this.responseCache.set(ideaUpdateCacheKey, Date.now().toString());
 
     return context;
-  }
-
-  // Estimate token count (rough approximation)
-  private estimateTokens(
-    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
-  ): number {
-    const totalChars = messages.reduce(
-      (sum, msg) => sum + msg.content.length,
-      0
-    );
-    return Math.ceil(totalChars / 4); // Rough estimate: 1 token ≈ 4 chars
   }
 
   // Cost tracking and guardrails
