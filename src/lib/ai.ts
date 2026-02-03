@@ -24,7 +24,6 @@ function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
 
 const logger = createLogger('AIService');
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
 export interface AIModelConfig {
   provider: 'openai' | 'anthropic';

@@ -367,16 +367,6 @@ describe('Resilience Edge Cases', () => {
         expect(operation).toHaveBeenCalledTimes(2);
       });
 
-        await expect(
-          withRetry(operation, {
-            maxRetries: 5,
-            shouldRetry: (error) => error.message.includes('retryable'),
-          })
-        ).rejects.toThrow('non-retryable error');
-
-        expect(operation).toHaveBeenCalledTimes(2);
-      });
-
       it('should handle shouldRetry throwing error', async () => {
         const operation = jest.fn().mockRejectedValue(new Error('fail'));
 
@@ -397,58 +387,6 @@ describe('Resilience Edge Cases', () => {
           .fn()
           .mockRejectedValueOnce(new Error('fail'))
           .mockResolvedValueOnce('success');
-
-        await expect(
-          withRetry(operation, {
-            maxRetries: 3,
-            shouldRetry: () => 'truthy' as unknown as boolean,
-          })
-        ).resolves.toBe('success');
-
-        expect(operation).toHaveBeenCalledTimes(2);
-      });
-
-        console.log('Initial callCount:', callCount);
-        const result = withRetry(operation, {
-          maxRetries: 5,
-          shouldRetry: (error) => error.message.includes('retryable'),
-        });
-        console.log('Final callCount:', callCount, 'Result:', result);
-
-        await expect(result).rejects.toThrow('non-retryable error');
-        expect(operation).toHaveBeenCalledTimes(2);
-      });
-
-        await expect(
-          withRetry(operation, {
-            maxRetries: 5,
-            shouldRetry: (error: Error) => error.message.includes('retryable'),
-          })
-        ).rejects.toThrow('non-retryable error');
-
-        expect(operation).toHaveBeenCalledTimes(2);
-      });
-
-      it('should handle shouldRetry throwing error', async () => {
-        const operation = jest.fn().mockRejectedValue(new Error('fail'));
-
-        await expect(
-          withRetry(operation, {
-            maxRetries: 3,
-            shouldRetry: () => {
-              throw new Error('shouldRetry error');
-            },
-          })
-        ).rejects.toThrow('shouldRetry error');
-
-        expect(operation).toHaveBeenCalledTimes(1);
-      });
-
-      it('should handle shouldRetry returning non-boolean', async () => {
-        const operation = jest
-          .fn()
-          .mockRejectedValueOnce(new Error('fail'))
-          .mockResolvedValue('success');
 
         await expect(
           withRetry(operation, {
