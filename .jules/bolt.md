@@ -1,3 +1,3 @@
-## 2025-05-14 - Leverage Map insertion order for O(k) cache eviction
+## 2026-02-03 - Leverage Map insertion order for O(k) cache eviction
 **Learning:** In JavaScript, the `Map` object preserves insertion order. When implementing a cache with TTL, we can ensure that entries are in chronological order by always deleting and re-inserting a key whenever it is updated. This allows the expiration logic to stop at the first non-expired entry, transforming the complexity from O(n) to O(k), where k is the number of expired items.
 **Action:** Always move updated items to the end of the Map in Cache implementations to enable early-break expiration and simplified LRU logic.

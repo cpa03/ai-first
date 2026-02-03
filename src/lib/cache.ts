@@ -108,20 +108,15 @@ export class Cache<T = unknown> {
 
   private evictLRU(): void {
     let lruKey: string | null = null;
-    let oldestTimestamp = Infinity;
     let lowestHits = Infinity;
 
     for (const [key, entry] of this.cache.entries()) {
-      if (
-        entry.hits < lowestHits ||
-        (entry.hits === lowestHits && entry.timestamp < oldestTimestamp)
-      ) {
-        oldestTimestamp = entry.timestamp;
+      if (entry.hits < lowestHits) {
         lowestHits = entry.hits;
         lruKey = key;
 
         // Optimization: if we found an entry with 0 hits, it's a minimum and
-        // since Map is in chronological order, it's also the oldest with 0 hits.
+        // since Map is in chronological order, the first one found is the oldest.
         if (lowestHits === 0) break;
       }
     }
