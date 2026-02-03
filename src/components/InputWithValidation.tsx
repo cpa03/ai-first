@@ -146,9 +146,11 @@ const InputWithValidation = forwardRef<
               className={`text-sm ${
                 maxLength && charCount > maxLength
                   ? 'text-red-600'
-                  : isValid && touched
-                    ? 'text-green-600'
-                    : 'text-gray-500'
+                  : maxLength && charCount >= maxLength * 0.8
+                    ? 'text-amber-600'
+                    : isValid && touched
+                      ? 'text-green-600'
+                      : 'text-gray-500'
               }`}
               aria-live="polite"
               aria-atomic="true"
