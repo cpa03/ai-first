@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface NavLink {
   href: string;
@@ -31,6 +32,17 @@ export default function MobileNav() {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  useEffect(() => {
+    if (isOpen && isMobile) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen, isMobile]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -71,14 +83,14 @@ export default function MobileNav() {
     return (
       <nav aria-label="Main navigation" className="flex space-x-4 sm:space-x-8">
         {navLinks.map((link) => (
-          <a
+          <Link
             key={link.href}
             href={link.href}
             className="text-gray-800 hover:text-primary-600 px-4 py-3 text-sm sm:text-base font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md min-h-[44px] inline-flex items-center hover:bg-gray-50"
             aria-label={link.ariaLabel}
           >
             {link.label}
-          </a>
+          </Link>
         ))}
       </nav>
     );
@@ -91,6 +103,7 @@ export default function MobileNav() {
         onClick={() => setIsOpen(!isOpen)}
         className="text-gray-700 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md p-2 min-h-[44px] min-w-[44px] transition-all duration-200"
         aria-expanded={isOpen}
+        aria-haspopup="true"
         aria-controls="mobile-menu"
         aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
       >
