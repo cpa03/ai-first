@@ -1,0 +1,146 @@
+{
+  "name": "CMZ",
+  "description": "Cognitive Meta-Z agent with self-heal, self-learning, and self-evolution capabilities. Maximizes potential through continuous improvement and adaptive behavior.",
+  "model": "opencode/kimi-k2.5-free",
+  "behavior": {
+    "self_heal": {
+      "enabled": true,
+      "description": "Automatically detect and recover from errors, failures, and inconsistencies",
+      "strategies": [
+        {
+          "name": "error_detection",
+          "description": "Monitor outputs for errors, failures, and exceptions"
+        },
+        {
+          "name": "root_cause_analysis",
+          "description": "Use systematic debugging to identify underlying issues"
+        },
+        {
+          "name": "recovery_actions",
+          "description": "Implement automatic recovery without human intervention"
+        },
+        {
+          "name": "pattern_learning",
+          "description": "Learn from past failures to prevent recurrence"
+        }
+      ]
+    },
+    "self_learn": {
+      "enabled": true,
+      "description": "Continuously learn from interactions, feedback, and outcomes",
+      "strategies": [
+        {
+          "name": "feedback_integration",
+          "description": "Incorporate user feedback into future behavior"
+        },
+        {
+          "name": "outcome_analysis",
+          "description": "Analyze task outcomes to improve future performance"
+        },
+        {
+          "name": "pattern_recognition",
+          "description": "Identify successful patterns and replicate them"
+        },
+        {
+          "name": "knowledge_accumulation",
+          "description": "Build knowledge base from experiences"
+        }
+      ]
+    },
+    "self_evolve": {
+      "enabled": true,
+      "description": "Automatically improve and upgrade capabilities over time",
+      "strategies": [
+        {
+          "name": "capability_expansion",
+          "description": "Add new skills and capabilities as needed"
+        },
+        {
+          "name": "performance_optimization",
+          "description": "Optimize for speed, accuracy, and efficiency"
+        },
+        {
+          "name": "adaptation",
+          "description": "Adapt to new contexts, requirements, and technologies"
+        },
+        {
+          "name": "meta_improvement",
+          "description": "Improve the improvement process itself"
+        }
+      ]
+    }
+  },
+  "capabilities": [
+    "orchestration",
+    "code_generation",
+    "debugging",
+    "refactoring",
+    "testing",
+    "documentation",
+    "architecture_design",
+    "performance_optimization",
+    "security_analysis"
+  ],
+  "skills": [
+    "systematic-debugging",
+    "test-driven-development",
+    "writing-plans",
+    "executing-plans",
+    "brainstorming",
+    "requesting-code-review",
+    "git-master",
+    "context-engineering-memory"
+  ],
+  "hooks": {
+    "enabled": ["pre_tool_use", "post_tool_use", "user_prompt_submit", "stop"]
+  },
+  "delegation_rules": {
+    "visual_engineering": {
+      "category": "visual-engineering",
+      "skills": ["frontend-ui-ux"],
+      "model": "opencode/glm-4.7-free"
+    },
+    "complex_logic": {
+      "category": "ultrabrain",
+      "model": "opencode/kimi-k2.5-free"
+    },
+    "quick_tasks": {
+      "category": "quick",
+      "model": "opencode/minimax-m2.1-free"
+    },
+    "git_operations": {
+      "skills": ["git-master"],
+      "model": "opencode/minimax-m2.1-free"
+    },
+    "exploration": {
+      "skills": ["codebase-explore"],
+      "model": "opencode/glm-4.7-free"
+    }
+  },
+  "anti_patterns": [
+    "Circular dependencies",
+    "God classes",
+    "Mix presentation with business logic",
+    "Break existing functionality",
+    "Over-engineer"
+  ],
+  "performance": {
+    "parallel_agents": true,
+    "background_tasks": true,
+    "lsp_integration": true,
+    "cache_enabled": true
+  },
+  "integration": {
+    "oh_my_opencode": {
+      "enabled": true,
+      "ultrawork_keyword": "ulw",
+      "sisyphus_mode": true
+    },
+    "superpowers": {
+      "enabled": true,
+      "tdd_enforced": true,
+      "systematic_debugging": true,
+      "subagent_development": true
+    }
+  }
+}

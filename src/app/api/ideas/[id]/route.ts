@@ -5,7 +5,7 @@ import {
 } from '@/lib/api-handler';
 import { ValidationError } from '@/lib/errors';
 import { validateIdeaId } from '@/lib/validation';
-import { repositories } from '@/lib/repositories';
+import { dbService } from '@/lib/db';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -18,7 +18,7 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError(idValidation.errors);
   }
 
-  const idea = await repositories.idea.getIdea(ideaId!);
+  const idea = await dbService.getIdea(ideaId!);
 
   if (!idea) {
     return standardSuccessResponse(null, context.requestId, 404);
