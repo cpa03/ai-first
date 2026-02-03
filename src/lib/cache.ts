@@ -28,7 +28,11 @@ export class Cache<T = unknown> {
   set(key: string, value: T): void {
     this.evictExpiredEntries();
 
-    if (this.maxSize && this.cache.size >= this.maxSize) {
+    if (
+      this.maxSize &&
+      this.cache.size >= this.maxSize &&
+      !this.cache.has(key)
+    ) {
       this.evictLRU();
     }
 
@@ -38,6 +42,8 @@ export class Cache<T = unknown> {
       hits: 0,
     };
 
+    // Move to end of Map to maintain chronological order for O(k) eviction
+    this.cache.delete(key);
     this.cache.set(key, entry);
   }
 
@@ -85,20 +91,18 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const expiredKeys: string[] = [];
 
+    // Since we maintain insertion order in set(), entries are in chronological order.
+    // We can stop at the first non-expired entry, making this O(k) instead of O(n).
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
-        expiredKeys.push(key);
+        if (this.onEvict) {
+          this.onEvict(key, entry);
+        }
+        this.cache.delete(key);
+      } else {
+        break;
       }
-    }
-
-    for (const key of expiredKeys) {
-      const entry = this.cache.get(key);
-      if (entry && this.onEvict) {
-        this.onEvict(key, entry);
-      }
-      this.cache.delete(key);
     }
   }
 
@@ -115,6 +119,10 @@ export class Cache<T = unknown> {
         oldestTimestamp = entry.timestamp;
         lowestHits = entry.hits;
         lruKey = key;
+
+        // Optimization: if we found an entry with 0 hits, it's a minimum and
+        // since Map is in chronological order, it's also the oldest with 0 hits.
+        if (lowestHits === 0) break;
       }
     }
 
