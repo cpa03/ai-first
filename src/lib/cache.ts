@@ -28,7 +28,12 @@ export class Cache<T = unknown> {
   set(key: string, value: T): void {
     this.evictExpiredEntries();
 
-    if (this.maxSize && this.cache.size >= this.maxSize) {
+    // If key doesn't exist and we're at capacity, evict LRU
+    if (
+      this.maxSize &&
+      this.cache.size >= this.maxSize &&
+      !this.cache.has(key)
+    ) {
       this.evictLRU();
     }
 
@@ -38,6 +43,9 @@ export class Cache<T = unknown> {
       hits: 0,
     };
 
+    // To maintain chronological order in the Map (for O(k) TTL eviction),
+    // we must delete before setting to move the key to the end of insertion order.
+    this.cache.delete(key);
     this.cache.set(key, entry);
   }
 
@@ -85,20 +93,20 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const expiredKeys: string[] = [];
 
+    // Since we maintain chronological order in the Map (via delete/set),
+    // we can stop as soon as we find an entry that hasn't expired.
+    // This reduces complexity from O(n) to O(k).
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
-        expiredKeys.push(key);
+        if (this.onEvict) {
+          this.onEvict(key, entry);
+        }
+        this.cache.delete(key);
+      } else {
+        // Entries are sorted by timestamp; if this one isn't expired, none after it are.
+        break;
       }
-    }
-
-    for (const key of expiredKeys) {
-      const entry = this.cache.get(key);
-      if (entry && this.onEvict) {
-        this.onEvict(key, entry);
-      }
-      this.cache.delete(key);
     }
   }
 

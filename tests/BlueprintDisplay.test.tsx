@@ -1,5 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import BlueprintDisplay from '@/components/BlueprintDisplay';
 
@@ -86,5 +85,46 @@ describe('BlueprintDisplay', () => {
     const downloadButton = screen.getByText(/download markdown/i);
     expect(downloadButton).toBeInTheDocument();
     expect(downloadButton.closest('button')).toBeEnabled();
+  });
+
+  it('has copy button after loading and handles copying', async () => {
+    const idea = 'Test idea';
+    const answers = { target_audience: 'Developers' };
+
+    // Mock clipboard
+    const mockWriteText = jest.fn().mockImplementation(() => Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', {
+      value: {
+        writeText: mockWriteText,
+      },
+      writable: true,
+      configurable: true,
+    });
+
+    // Mock showToast
+    const mockShowToast = jest.fn();
+    (window as any).showToast = mockShowToast;
+
+    render(<BlueprintDisplay idea={idea} answers={answers} />);
+
+    await waitFor(
+      () => {
+        expect(screen.getByText(/copy to clipboard/i)).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
+
+    const copyButton = screen.getByText(/copy to clipboard/i);
+    copyButton.click();
+
+    await waitFor(() => {
+      expect(mockWriteText).toHaveBeenCalled();
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: 'success',
+          message: 'Blueprint copied to clipboard!',
+        })
+      );
+    });
   });
 });

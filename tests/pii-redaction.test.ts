@@ -299,7 +299,7 @@ describe('PII Redaction Utility', () => {
   });
 
   describe('sanitizeAgentLog', () => {
-    it('should sanitize agent log payload', () => {
+    it('should sanitize agent log payload and redact apiKey', () => {
       const log = sanitizeAgentLog('clarifier', 'start-clarification', {
         ideaId: 'idea-123',
         email: 'user@example.com',
@@ -311,7 +311,7 @@ describe('PII Redaction Utility', () => {
       const payload = log.payload as Record<string, unknown>;
       expect(payload).toHaveProperty('ideaId');
       expect(payload.email).toBe('[REDACTED_EMAIL]');
-      expect(payload.apiKey).toBe('very_long_api_key_string_here');
+      expect(payload.apiKey).toBe('[REDACTED_API_KEY]');
       expect(log.timestamp).toBeDefined();
     });
 
@@ -485,6 +485,25 @@ describe('PII Redaction Utility', () => {
 
       const matches = output.match(/\[REDACTED_EMAIL\]/g);
       expect(matches).toHaveLength(2);
+    });
+
+    it('should redact common API key formats without labels', () => {
+      const openaiKey = 'sk-abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLM';
+      const output = redactPII(`Key is ${openaiKey}`);
+      expect(output).toBe('Key is [REDACTED_API_KEY]');
+    });
+
+    it('should redact sensitive fields with camelCase names', () => {
+      const input = {
+        userPassword: 'secret-password-123',
+        apiToken: 'some-token-value',
+        bearerAuth: 'bearer-token-xyz',
+      };
+      const output = redactPIIInObject(input) as Record<string, unknown>;
+
+      expect(output.userPassword).toBe('[REDACTED_USER_PASSWORD]');
+      expect(output.apiToken).toBe('[REDACTED_API_TOKEN]');
+      expect(output.bearerAuth).toBe('[REDACTED_BEARER_AUTH]');
     });
 
     it('should handle objects with circular references (gracefully)', () => {

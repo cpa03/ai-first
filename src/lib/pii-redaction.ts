@@ -5,8 +5,6 @@
  * to ensure user privacy and security compliance.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 interface PIIPatterns {
   email: RegExp;
   phone: RegExp;
@@ -26,7 +24,7 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   creditCard: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g,
   ipAddress: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
   apiKey:
-    /(?:api[_-]?key|apikey|secret|token)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?/gi,
+    /(?:api[_-]?key|apikey|secret|token|credential|auth|authorization)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
 };
@@ -78,6 +76,30 @@ export function redactPII(text: string): string {
   return redacted;
 }
 
+const SENSITIVE_FIELD_PATTERNS = [
+  /api[_-]?key/i,
+  /apikey/i,
+  /secret/i,
+  /token/i,
+  /password/i,
+  /passphrase/i,
+  /credential/i,
+  /auth/i,
+  /authorization/i,
+  /access[_-]?key/i,
+  /bearer/i,
+  /session[_-]?id/i,
+];
+
+const SAFE_FIELDS = [
+  'id',
+  'created_at',
+  'updated_at',
+  'status',
+  'priority',
+  'estimate_hours',
+];
+
 /**
  * Redact PII from an object recursively
  */
@@ -99,23 +121,17 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
 
     const redacted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
-      // Skip redaction for known safe fields
-      const safeFields = [
-        'id',
-        'created_at',
-        'updated_at',
-        'status',
-        'priority',
-        'estimate_hours',
-      ];
       // Always redact sensitive field values regardless of content
-      const sensitiveFields = ['api_key', 'secret', 'token', 'password'];
-      if (safeFields.includes(key.toLowerCase())) {
+      const isSensitive = SENSITIVE_FIELD_PATTERNS.some((pattern) =>
+        pattern.test(key)
+      );
+
+      if (SAFE_FIELDS.includes(key.toLowerCase())) {
         redacted[key] = value;
-      } else if (sensitiveFields.includes(key.toLowerCase())) {
+      } else if (isSensitive) {
         // Convert field name to uppercase with underscores for redaction label
-        const fieldName = key.toLowerCase();
-        const fieldNameUpper = fieldName.toUpperCase();
+        const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+        const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
         redacted[key] = `[REDACTED_${fieldNameUpper}]`;
       } else {
         redacted[key] = redactPIIInObject(value, seen);

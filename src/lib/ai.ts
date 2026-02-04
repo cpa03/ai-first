@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
+import { redactPIIInObject } from './pii-redaction';
 import {
   DEFAULT_TIMEOUTS,
   withTimeout,
@@ -24,7 +25,6 @@ function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
 
 const logger = createLogger('AIService');
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
 export interface AIModelConfig {
   provider: 'openai' | 'anthropic';
@@ -265,7 +265,7 @@ class AIService {
 
       while (
         Math.ceil(totalChars / 4) > maxTokens &&
-        nonSystemMessages.length > 1
+        nonSystemMessages.length > 0
       ) {
         const removed = nonSystemMessages.shift();
         if (removed) {
@@ -370,11 +370,14 @@ class AIService {
     payload: Record<string, unknown>
   ): Promise<void> {
     if (this.supabase) {
+      // Redact sensitive information before logging to database
+      const sanitizedPayload = redactPIIInObject(payload);
+
       await this.supabase.from('agent_logs').insert({
         agent,
         action,
         payload: {
-          ...payload,
+          ...(sanitizedPayload as Record<string, unknown>),
           timestamp: new Date().toISOString(),
         },
       });

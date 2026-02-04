@@ -12,6 +12,11 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { href: '/', label: 'Home', ariaLabel: 'Navigate to home page' },
+  {
+    href: '/dashboard',
+    label: 'Dashboard',
+    ariaLabel: 'Navigate to dashboard',
+  },
   { href: '/clarify', label: 'Clarify', ariaLabel: 'Navigate to clarify page' },
   { href: '/results', label: 'Results', ariaLabel: 'Navigate to results page' },
 ];
@@ -21,6 +26,8 @@ export default function MobileNav() {
   const [isMobile, setIsMobile] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const firstMenuItemRef = useRef<HTMLButtonElement>(null);
+  const lastMenuItemRef = useRef<HTMLButtonElement>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -36,6 +43,7 @@ export default function MobileNav() {
   useEffect(() => {
     if (isOpen && isMobile) {
       document.body.style.overflow = 'hidden';
+      firstMenuItemRef.current?.focus();
     } else {
       document.body.style.overflow = 'unset';
     }
@@ -55,6 +63,7 @@ export default function MobileNav() {
         !buttonRef.current.contains(event.target as Node)
       ) {
         setIsOpen(false);
+        buttonRef.current?.focus();
       }
     };
 
@@ -65,18 +74,41 @@ export default function MobileNav() {
       }
     };
 
+    const handleTab = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+
+      if (!firstMenuItemRef.current || !lastMenuItemRef.current) return;
+
+      if (
+        event.shiftKey &&
+        document.activeElement === firstMenuItemRef.current
+      ) {
+        event.preventDefault();
+        lastMenuItemRef.current?.focus();
+      } else if (
+        !event.shiftKey &&
+        document.activeElement === lastMenuItemRef.current
+      ) {
+        event.preventDefault();
+        firstMenuItemRef.current?.focus();
+      }
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
     document.addEventListener('keydown', handleEscape);
+    document.addEventListener('keydown', handleTab);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleTab);
     };
   }, [isOpen]);
 
   const handleNavClick = (href: string) => {
     router.push(href);
     setIsOpen(false);
+    buttonRef.current?.focus();
   };
 
   if (!isMobile) {
@@ -140,9 +172,16 @@ export default function MobileNav() {
           role="menu"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 space-y-2">
-            {navLinks.map((link) => (
+            {navLinks.map((link, index) => (
               <button
                 key={link.href}
+                ref={
+                  index === 0
+                    ? firstMenuItemRef
+                    : index === navLinks.length - 1
+                      ? lastMenuItemRef
+                      : undefined
+                }
                 onClick={() => handleNavClick(link.href)}
                 className="w-full text-left px-4 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[48px] flex items-center"
                 role="menuitem"

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
+import { redactPIIInObject } from './pii-redaction';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
@@ -38,6 +39,7 @@ export interface Idea {
   status: 'draft' | 'clarified' | 'breakdown' | 'completed';
   deleted_at: string | null;
   created_at: string;
+  updated_at?: string;
 }
 
 export interface IdeaSession {
@@ -549,10 +551,13 @@ export class DatabaseService {
   ): Promise<void> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
+    // Redact sensitive information before logging to database
+    const sanitizedPayload = redactPIIInObject(payload);
+
     const { error } = await this.admin.from('agent_logs').insert({
       agent,
       action,
-      payload,
+      payload: sanitizedPayload,
       timestamp: new Date().toISOString(),
     } as any);
 
@@ -642,19 +647,21 @@ export class DatabaseService {
 
     const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
 
-    const { count: totalDeliverables } = await this.client
-      .from('deliverables')
-      .select('*', { count: 'exact', head: true })
-      .in('idea_id', ideaIds)
-      .is('deleted_at', null);
+    const [deliverablesResponse, deliverableCountResponse] = await Promise.all([
+      this.client
+        .from('deliverables')
+        .select('id')
+        .in('idea_id', ideaIds)
+        .is('deleted_at', null),
+      this.client
+        .from('deliverables')
+        .select('*', { count: 'exact', head: true })
+        .in('idea_id', ideaIds)
+        .is('deleted_at', null),
+    ]);
 
-    const { data: deliverables } = await this.client
-      .from('deliverables')
-      .select('id')
-      .in('idea_id', ideaIds)
-      .is('deleted_at', null);
-
-    const deliverableIds = deliverables?.map((d) => d.id) || [];
+    const deliverableIds = deliverablesResponse.data?.map((d) => d.id) || [];
+    const { count: totalDeliverables } = deliverableCountResponse;
 
     const { count: totalTasks } = await this.client
       .from('tasks')
