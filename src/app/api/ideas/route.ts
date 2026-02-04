@@ -7,6 +7,54 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 
+async function handleGet(context: ApiContext) {
+  const { request } = context;
+  const url = new URL(request.url);
+
+  const status = url.searchParams.get('status');
+  const limit = parseInt(url.searchParams.get('limit') || '50', 10);
+  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+
+  const userId = 'default_user';
+
+  let ideas = await dbService.getUserIdeas(userId);
+
+  if (status && status !== 'all') {
+    ideas = ideas.filter((idea) => idea.status === status);
+  }
+
+  ideas = ideas.filter((idea) => !idea.deleted_at);
+
+  ideas.sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+
+  const total = ideas.length;
+  const paginatedIdeas = ideas.slice(offset, offset + limit);
+
+  const formattedIdeas = paginatedIdeas.map((idea) => ({
+    id: idea.id,
+    title: idea.title,
+    status: idea.status,
+    createdAt: idea.created_at,
+    updatedAt: idea.updated_at,
+  }));
+
+  return standardSuccessResponse(
+    {
+      ideas: formattedIdeas,
+      pagination: {
+        total,
+        limit,
+        offset,
+        hasMore: offset + limit < total,
+      },
+    },
+    context.requestId
+  );
+}
+
 async function handlePost(context: ApiContext) {
   const { request } = context;
   const { idea } = await request.json();
@@ -41,4 +89,5 @@ async function handlePost(context: ApiContext) {
   );
 }
 
+export const GET = withApiHandler(handleGet, { rateLimit: 'lenient' });
 export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });
