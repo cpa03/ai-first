@@ -1,6 +1,7 @@
 import { AIModelConfig, aiService } from '@/lib/ai';
 import { promptService } from '@/lib/prompt-service';
-import { safeJsonParse, isArrayOf, isTask } from '@/lib/validation';
+import { safeJsonParse } from '@/lib/validation';
+import { isArrayOf, isTask } from '@/lib/type-guards';
 import { createLogger } from '@/lib/logger';
 import { IdeaAnalysis, TaskDecomposition } from '../breakdown-engine';
 
