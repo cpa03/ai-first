@@ -1,0 +1,91 @@
+{
+  "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/dev/config.schema.json",
+  "version": "3.0.0",
+  "enabled": true,
+  "model": "opencode/kimi-k2.5-free",
+  "agents": {
+    "sisyphus": {
+      "enabled": true,
+      "model": "opencode/kimi-k2.5-free",
+      "ultrawork_keyword": "ulw",
+      "background_tasks": true,
+      "parallel_agents": true,
+      "todo_enforcement": true
+    },
+    "hephaestus": {
+      "enabled": true,
+      "model": "opencode/glm-4.7-free",
+      "autonomous_mode": true,
+      "deep_exploration": true
+    },
+    "oracle": {
+      "enabled": true,
+      "model": "opencode/kimi-k2.5-free",
+      "category": "ultrabrain"
+    },
+    "librarian": {
+      "enabled": true,
+      "model": "opencode/glm-4.7-free",
+      "category": "quick"
+    },
+    "explore": {
+      "enabled": true,
+      "model": "opencode/glm-4.7-free",
+      "category": "quick"
+    },
+    "frontend_ui_ux": {
+      "enabled": true,
+      "model": "opencode/glm-4.7-free",
+      "category": "visual-engineering",
+      "skills": ["frontend-ui-ux"]
+    }
+  },
+  "mcp": {
+    "websearch": {
+      "enabled": true,
+      "provider": "exa"
+    },
+    "context7": {
+      "enabled": true
+    },
+    "github": {
+      "enabled": true
+    }
+  },
+  "lsp": {
+    "enabled": true,
+    "refactoring": true,
+    "diagnostics": true
+  },
+  "skills": {
+    "paths": [".opencode/skills"]
+  },
+  "hooks": {
+    "enabled": [
+      "pre_tool_use",
+      "post_tool_use",
+      "user_prompt_submit",
+      "stop",
+      "pre_model_use",
+      "post_model_use"
+    ]
+  },
+  "performance": {
+    "cache_enabled": true,
+    "parallel_agents": true,
+    "background_tasks": true,
+    "lsp_integration": true
+  },
+  "integration": {
+    "superpowers": {
+      "enabled": true,
+      "tdd_enforced": true,
+      "systematic_debugging": true,
+      "subagent_development": true
+    },
+    "ultrarag": {
+      "enabled": true,
+      "mcp_servers": true
+    }
+  }
+}
