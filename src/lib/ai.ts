@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
+import { redactPIIInObject } from './pii-redaction';
 import {
   DEFAULT_TIMEOUTS,
   withTimeout,
@@ -369,11 +370,14 @@ class AIService {
     payload: Record<string, unknown>
   ): Promise<void> {
     if (this.supabase) {
+      // Redact sensitive information before logging to database
+      const sanitizedPayload = redactPIIInObject(payload);
+
       await this.supabase.from('agent_logs').insert({
         agent,
         action,
         payload: {
-          ...payload,
+          ...(sanitizedPayload as Record<string, unknown>),
           timestamp: new Date().toISOString(),
         },
       });

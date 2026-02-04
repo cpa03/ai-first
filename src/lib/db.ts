@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
+import { redactPIIInObject } from './pii-redaction';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
@@ -550,10 +551,13 @@ export class DatabaseService {
   ): Promise<void> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
+    // Redact sensitive information before logging to database
+    const sanitizedPayload = redactPIIInObject(payload);
+
     const { error } = await this.admin.from('agent_logs').insert({
       agent,
       action,
-      payload,
+      payload: sanitizedPayload,
       timestamp: new Date().toISOString(),
     } as any);
 
