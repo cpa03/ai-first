@@ -2,6 +2,22 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import MobileNav from '@/components/MobileNav';
+import Link from 'next/link';
+import { Inter, JetBrains_Mono } from 'next/font/google';
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
+});
+
+const jetBrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+  weight: ['400', '500'],
+});
 
 export const metadata: Metadata = {
   title: 'IdeaFlow - AI-Powered Project Planning & Task Management Tool',
@@ -71,8 +87,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-gray-50">
+    <html lang="en" className={`${inter.variable} ${jetBrainsMono.variable}`}>
+      <body className="min-h-screen bg-gray-50 font-sans">
         <ErrorBoundary>
           <a
             href="#main-content"
@@ -85,12 +101,12 @@ export default function RootLayout({
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                   <div className="flex items-center">
-                    <a
+                    <Link
                       href="/"
-                      className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors"
+                      className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
                     >
                       IdeaFlow
-                    </a>
+                    </Link>
                   </div>
                   <MobileNav />
                 </div>

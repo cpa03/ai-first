@@ -24,7 +24,6 @@ function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
 
 const logger = createLogger('AIService');
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Model configuration
 export interface AIModelConfig {
   provider: 'openai' | 'anthropic';
@@ -265,7 +264,7 @@ class AIService {
 
       while (
         Math.ceil(totalChars / 4) > maxTokens &&
-        nonSystemMessages.length > 1
+        nonSystemMessages.length > 0
       ) {
         const removed = nonSystemMessages.shift();
         if (removed) {
