@@ -12,6 +12,11 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { href: '/', label: 'Home', ariaLabel: 'Navigate to home page' },
+  {
+    href: '/dashboard',
+    label: 'Dashboard',
+    ariaLabel: 'Navigate to dashboard',
+  },
   { href: '/clarify', label: 'Clarify', ariaLabel: 'Navigate to clarify page' },
   { href: '/results', label: 'Results', ariaLabel: 'Navigate to results page' },
 ];
