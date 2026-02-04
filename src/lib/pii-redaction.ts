@@ -24,7 +24,7 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   creditCard: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g,
   ipAddress: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
   apiKey:
-    /(?:api[_-]?key|apikey|secret|token|credential|auth|authorization)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
+    /(?:api[_-]?key|apikey|secret|token|credential|auth|authorization)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
 };
@@ -87,6 +87,8 @@ const SENSITIVE_FIELD_PATTERNS = [
   /auth/i,
   /authorization/i,
   /access[_-]?key/i,
+  /bearer/i,
+  /session[_-]?id/i,
 ];
 
 const SAFE_FIELDS = [
