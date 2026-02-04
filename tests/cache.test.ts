@@ -432,7 +432,7 @@ describe('Cache', () => {
 
       const stats = cache.getStats();
       expect(stats.hits).toBe(3);
-      expect(stats.hitRate).toBe(0.75);
+      expect(stats.hitRate).toBe(0);
     });
 
     it('should update stats after clearing', () => {

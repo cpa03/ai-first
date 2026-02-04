@@ -95,14 +95,3 @@ export const RETRY_CONFIG = {
    */
   ENABLE_JITTER: true,
 } as const;
-
-/**
- * UI configuration
- */
-export const UI_CONFIG = {
-  /**
-   * Character count warning threshold (0.0 - 1.0)
-   * Shows warning color when character count reaches this percentage of max
-   */
-  CHAR_COUNT_WARNING_THRESHOLD: 0.8,
-} as const;

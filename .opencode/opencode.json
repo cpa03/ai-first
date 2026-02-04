@@ -1,24 +1,95 @@
 {
-  "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/kimi-k2.5-free",
+  "$schema": "https://opencode.ai/schema.json",
+  "version": "1.0.0",
+  "project": {
+    "name": "AI First Application",
+    "description": "AI-powered idea validation and business planning platform"
+  },
+  "models": {
+    "default": "opencode/kimi-k2.5-free",
+    "alternatives": {
+      "fast": "opencode/glm-4.7-free",
+      "powerful": "opencode/kimi-k2.5-free",
+      "efficient": "opencode/minimax-m2.1-free"
+    },
+    "by_task": {
+      "visual": "opencode/glm-4.7-free",
+      "logic": "opencode/kimi-k2.5-free",
+      "quick": "opencode/minimax-m2.1-free"
+    }
+  },
   "agents": {
-    "paths": [".opencode/agents"]
+    "CMZ": {
+      "file": ".opencode/agents/CMZ.json",
+      "enabled": true,
+      "default": true
+    }
   },
   "skills": {
-    "paths": [".opencode/skills"]
+    "directory": ".opencode/skills",
+    "auto_load": true,
+    "enabled": [
+      "skill-builder",
+      "claude-codepro-backend",
+      "systematic-debugging",
+      "moai-adk-tool",
+      "context-engineering-memory",
+      "claude-code-debugging",
+      "git-commit-message"
+    ]
+  },
+  "hooks": {
+    "enabled": [
+      "pre_tool_use",
+      "post_tool_use",
+      "user_prompt_submit",
+      "stop",
+      "pre_model_use",
+      "post_model_use"
+    ]
   },
   "mcp": {
-    "websearch": { "enabled": true },
-    "context7": { "enabled": true },
-    "github": { "enabled": true }
+    "enabled": ["websearch", "context7", "github"]
   },
-  "lsp": false,
-  "cmz": {
+  "lsp": {
     "enabled": true,
-    "ultrawork_keyword": "ulw",
-    "sisyphus_mode": true,
-    "self_heal": true,
-    "self_learn": true,
-    "self_evolve": true
+    "auto_start": true
+  },
+  "features": {
+    "parallel_agents": true,
+    "background_tasks": true,
+    "todo_enforcer": true,
+    "comment_checker": true,
+    "think_mode": true,
+    "ultrawork": {
+      "enabled": true,
+      "keyword": "ulw"
+    }
+  },
+  "integrations": {
+    "oh_my_opencode": {
+      "enabled": true,
+      "version": "3.2.1"
+    },
+    "superpowers": {
+      "enabled": true,
+      "tdd_enforced": true,
+      "systematic_debugging": true
+    }
+  },
+  "workflows": {
+    "iterate": {
+      "phases": [
+        "PHASE 0: Git Branch Management",
+        "PHASE 1: BugLover - Bug Finding",
+        "PHASE 2: Palette - UX Improvements",
+        "PHASE 3: Flexy - Modularization",
+        "PHASE 4: TestGuard - Test Optimization",
+        "PHASE 5: StorX - Feature Consolidation",
+        "PHASE 6: CodeKeep - Code Review",
+        "PHASE 7: BroCula - Browser Optimization",
+        "PHASE 8: Git Branch Management (End)"
+      ]
+    }
   }
 }

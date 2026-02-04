@@ -59,19 +59,13 @@ describe('ClarifierAgent', () => {
           type: 'open',
           required: true,
         },
-        {
-          id: 'q_3',
-          question: 'What are the key features you envision?',
-          type: 'open',
-          required: true,
-        },
       ];
 
       aiService.callModel.mockResolvedValue(JSON.stringify(mockQuestions));
 
       const questions = await clarifierAgent.generateQuestions('Test idea');
 
-      expect(questions).toHaveLength(3);
+      expect(questions).toHaveLength(2);
       expect(questions[0].question).toBe(
         'What is the main problem you are trying to solve?'
       );
@@ -100,19 +94,7 @@ describe('ClarifierAgent', () => {
         JSON.stringify([
           {
             id: 'q_1',
-            question: 'What is the problem you are trying to solve?',
-            type: 'open',
-            required: true,
-          },
-          {
-            id: 'q_2',
-            question: 'Who is your target audience?',
-            type: 'open',
-            required: true,
-          },
-          {
-            id: 'q_3',
-            question: 'What are the key features?',
+            question: 'Test question',
             type: 'open',
             required: true,
           },
@@ -129,7 +111,7 @@ describe('ClarifierAgent', () => {
 
       expect(session.ideaId).toBe('idea-123');
       expect(session.originalIdea).toBe('Test idea');
-      expect(session.questions).toHaveLength(3);
+      expect(session.questions).toHaveLength(1);
       expect(session.status).toBe('pending');
       expect(session.confidence).toBe(0.5);
     });

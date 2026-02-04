@@ -15,10 +15,9 @@ import {
 } from '@/lib/rate-limit';
 
 export interface ApiResponse<T = unknown> {
-  success: true;
-  data: T;
-  requestId: string;
-  timestamp: string;
+  success: boolean;
+  data?: T;
+  error?: string;
 }
 
 export interface ApiHandlerOptions {
@@ -160,34 +159,24 @@ export function badRequestResponse(
   return response;
 }
 
-export function standardSuccessResponse<T = unknown>(
+export function standardSuccessResponse<T>(
   data: T,
   requestId: string,
   status: number = 200,
   rateLimit?: RateLimitInfo
 ): NextResponse {
-  const response: ApiResponse<T> = {
-    success: true,
-    data,
-    requestId,
-    timestamp: new Date().toISOString(),
-  };
+  const response = NextResponse.json(data, { status });
 
-  const nextResponse = NextResponse.json(response, { status });
-
-  nextResponse.headers.set('X-Request-ID', requestId);
+  response.headers.set('X-Request-ID', requestId);
 
   if (rateLimit) {
-    nextResponse.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
-    nextResponse.headers.set(
-      'X-RateLimit-Remaining',
-      String(rateLimit.remaining)
-    );
-    nextResponse.headers.set(
+    response.headers.set('X-RateLimit-Limit', String(rateLimit.limit));
+    response.headers.set('X-RateLimit-Remaining', String(rateLimit.remaining));
+    response.headers.set(
       'X-RateLimit-Reset',
       String(new Date(rateLimit.reset).toISOString())
     );
   }
 
-  return nextResponse;
+  return response;
 }

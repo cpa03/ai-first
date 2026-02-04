@@ -40,6 +40,12 @@ describe('Integration Tests - User Workflows', () => {
 
   describe('Complete User Journey', () => {
     it('should handle full workflow from idea to export', async () => {
+      // Mock dbService to return idea with ID
+      mockDbService.createIdea.mockResolvedValue({
+        id: 'idea-123',
+        content: mockUserJourney.ideaInput,
+      });
+
       // Helper to create standardSuccessResponse format
       const createSuccessResponse = (data: any) => ({
         success: true,
@@ -50,17 +56,6 @@ describe('Integration Tests - User Workflows', () => {
 
       // Mock API responses for each step
       (global.fetch as jest.Mock)
-        // Step 1: Create idea via /api/ideas
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () =>
-            createSuccessResponse({
-              id: 'idea-123',
-              title: 'Test Idea',
-              status: 'clarifying',
-              createdAt: new Date().toISOString(),
-            }),
-        })
         // Step 2: Get clarification questions
         .mockResolvedValueOnce({
           ok: true,

@@ -82,78 +82,39 @@
     "security_analysis"
   ],
   "skills": [
-    "skill-builder",
-    "claude-codepro-backend",
     "systematic-debugging",
-    "moai-adk-tool",
-    "context-engineering-memory",
-    "claude-code-debugging",
-    "git-commit-message",
     "test-driven-development",
     "writing-plans",
     "executing-plans",
     "brainstorming",
     "requesting-code-review",
-    "git-master"
+    "git-master",
+    "context-engineering-memory"
   ],
   "hooks": {
-    "enabled": [
-      "pre_tool_use",
-      "post_tool_use",
-      "user_prompt_submit",
-      "stop",
-      "pre_model_use",
-      "post_model_use"
-    ]
+    "enabled": ["pre_tool_use", "post_tool_use", "user_prompt_submit", "stop"]
   },
-  "permission": [
-    {
-      "permission": "external_directory",
-      "pattern": "/tmp/*",
-      "action": "allow"
-    }
-  ],
   "delegation_rules": {
     "visual_engineering": {
       "category": "visual-engineering",
       "skills": ["frontend-ui-ux"],
-      "model": "opencode/glm-4.7-free",
-      "description": "UI/UX and frontend development tasks"
+      "model": "opencode/glm-4.7-free"
     },
     "complex_logic": {
       "category": "ultrabrain",
-      "model": "opencode/kimi-k2.5-free",
-      "description": "Complex reasoning and deep analysis tasks"
+      "model": "opencode/kimi-k2.5-free"
     },
     "quick_tasks": {
       "category": "quick",
-      "model": "opencode/minimax-m2.1-free",
-      "description": "Fast, simple tasks requiring minimal reasoning"
+      "model": "opencode/minimax-m2.1-free"
     },
     "git_operations": {
       "skills": ["git-master"],
-      "model": "opencode/minimax-m2.1-free",
-      "description": "Git operations and version control"
+      "model": "opencode/minimax-m2.1-free"
     },
     "exploration": {
       "skills": ["codebase-explore"],
-      "model": "opencode/glm-4.7-free",
-      "description": "Codebase exploration and discovery"
-    },
-    "debugging": {
-      "skills": ["systematic-debugging", "claude-code-debugging"],
-      "model": "opencode/kimi-k2.5-free",
-      "description": "Systematic debugging and error resolution"
-    },
-    "architecture": {
-      "category": "ultrabrain",
-      "model": "opencode/kimi-k2.5-free",
-      "description": "Architecture design and system planning"
-    },
-    "documentation": {
-      "category": "quick",
-      "model": "opencode/minimax-m2.1-free",
-      "description": "Documentation generation and updates"
+      "model": "opencode/glm-4.7-free"
     }
   },
   "anti_patterns": [
@@ -173,25 +134,13 @@
     "oh_my_opencode": {
       "enabled": true,
       "ultrawork_keyword": "ulw",
-      "sisyphus_mode": true,
-      "background_tasks": true,
-      "parallel_agents": true,
-      "todo_enforcement": true
+      "sisyphus_mode": true
     },
     "superpowers": {
       "enabled": true,
       "tdd_enforced": true,
       "systematic_debugging": true,
-      "subagent_development": true,
-      "pattern_matching": true
+      "subagent_development": true
     }
-  },
-  "meta": {
-    "version": "2.0.0",
-    "created": "2026-02-03",
-    "updated": "2026-02-03",
-    "frameworks": ["oh-my-opencode", "superpowers", "cmz-core"],
-    "repository": "https://github.com/ai-first/ai-first",
-    "author": "CMZ Agent System"
   }
 }

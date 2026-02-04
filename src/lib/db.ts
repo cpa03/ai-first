@@ -642,21 +642,19 @@ export class DatabaseService {
 
     const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
 
-    const [deliverablesResponse, deliverableCountResponse] = await Promise.all([
-      this.client
-        .from('deliverables')
-        .select('id')
-        .in('idea_id', ideaIds)
-        .is('deleted_at', null),
-      this.client
-        .from('deliverables')
-        .select('*', { count: 'exact', head: true })
-        .in('idea_id', ideaIds)
-        .is('deleted_at', null),
-    ]);
+    const { count: totalDeliverables } = await this.client
+      .from('deliverables')
+      .select('*', { count: 'exact', head: true })
+      .in('idea_id', ideaIds)
+      .is('deleted_at', null);
 
-    const deliverableIds = deliverablesResponse.data?.map((d) => d.id) || [];
-    const { count: totalDeliverables } = deliverableCountResponse;
+    const { data: deliverables } = await this.client
+      .from('deliverables')
+      .select('id')
+      .in('idea_id', ideaIds)
+      .is('deleted_at', null);
+
+    const deliverableIds = deliverables?.map((d) => d.id) || [];
 
     const { count: totalTasks } = await this.client
       .from('tasks')

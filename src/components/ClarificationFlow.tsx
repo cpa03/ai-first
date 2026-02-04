@@ -98,6 +98,17 @@ function ClarificationFlow({
     if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
       setCurrentAnswer('');
+      // Focus next question input after step change
+      requestAnimationFrame(() => {
+        const nextQuestion = questions[currentStep + 1];
+        if (nextQuestion?.type === 'textarea') {
+          textareaRef.current?.focus();
+        } else if (nextQuestion?.type === 'select') {
+          selectRef.current?.focus();
+        } else {
+          textInputRef.current?.focus();
+        }
+      });
     } else {
       onComplete(newAnswers);
     }
@@ -115,26 +126,18 @@ function ClarificationFlow({
       setCurrentStep(currentStep - 1);
       const previousQuestion = questions[currentStep - 1];
       setCurrentAnswer(answers[previousQuestion.id] || '');
-    }
-  }, [currentStep, questions, answers]);
-
-  useEffect(() => {
-    if (!currentQuestion || questions.length === 0) return;
-
-    const focusInput = () => {
-      setTimeout(() => {
-        if (currentQuestion.type === 'textarea') {
+      // Focus previous question input after step change
+      requestAnimationFrame(() => {
+        if (previousQuestion?.type === 'textarea') {
           textareaRef.current?.focus();
-        } else if (currentQuestion.type === 'select') {
+        } else if (previousQuestion?.type === 'select') {
           selectRef.current?.focus();
         } else {
           textInputRef.current?.focus();
         }
-      }, 50);
-    };
-
-    focusInput();
-  }, [currentStep, questions, currentQuestion]);
+      });
+    }
+  }, [currentStep, questions, answers]);
 
   useEffect(() => {
     const fetchQuestions = async () => {

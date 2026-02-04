@@ -18,8 +18,8 @@ export {
   DEFAULT_RESILIENCE_CONFIG,
 } from './config';
 
-import { RetryManager as RM } from './retry-manager';
-import { TimeoutManager as TM } from './timeout-manager';
+import { RetryManager } from './retry-manager';
+import { TimeoutManager } from './timeout-manager';
 
-export const withRetry = RM.withRetry;
-export const withTimeout = TM.withTimeout;
+export const withRetry = RetryManager.withRetry;
+export const withTimeout = TimeoutManager.withTimeout;

@@ -20,7 +20,7 @@ export class RetryManager {
     const defaultShouldRetry = (_error: Error, _attempt: number): boolean => {
       const message = _error.message.toLowerCase();
 
-      if (message.includes('circuit breaker') && message.includes('is open')) {
+      if (message.includes('circuit breaker is open')) {
         return false;
       }
 
@@ -44,16 +44,14 @@ export class RetryManager {
         }
         return await operation();
       } catch (error) {
-        const normalizedError =
-          error instanceof Error ? error : new Error(String(error));
-        lastError = normalizedError;
+        lastError = error as Error;
 
-        if (attempt > maxRetries || !retryFn(normalizedError, attempt)) {
+        if (attempt > maxRetries || !retryFn(lastError, attempt)) {
           const exhaustedError = new RetryExhaustedError(
             `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
             context || 'unknown',
             attempt,
-            normalizedError
+            lastError
           );
           (exhaustedError as Error & { attemptCount?: number }).attemptCount =
             attempt;

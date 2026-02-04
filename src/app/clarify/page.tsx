@@ -5,7 +5,10 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import LoadingSpinner from '@/components/LoadingSpinner';
+
+const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
+  loading: () => <div className="animate-pulse">Loading...</div>,
+});
 
 const Button = dynamic(() => import('@/components/Button'), {
   loading: () => <button className="btn btn-primary">Loading...</button>,
@@ -21,11 +24,9 @@ const DynamicClarificationFlow = dynamic(
     loading: () => (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-          <LoadingSpinner
-            size="md"
-            className="mb-4"
-            ariaLabel="Loading clarification flow"
-          />
+          <div className="flex justify-center mb-4">
+            <div className="w-8 h-8 border-t-2 border-blue-500 border-solid rounded-full animate-spin"></div>
+          </div>
           <p className="text-gray-600">Loading clarification flow...</p>
         </div>
       </div>

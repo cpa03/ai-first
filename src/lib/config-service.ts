@@ -4,6 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import { Cache } from './cache';
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface AgentConfig {
   name: string;
   description: string;

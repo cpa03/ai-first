@@ -1,4 +1,4 @@
-name = "ai-first"
+name = "ideaflow"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
@@ -6,10 +6,10 @@ compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".next"
 
 [env.production]
-name = "ai-first"
+name = "ideaflow-prod"
 
 [env.staging] 
-name = "ai-first-staging"
+name = "ideaflow-staging"
 
 # Environment variables (these will be set via Cloudflare dashboard or wrangler secrets)
 [vars]

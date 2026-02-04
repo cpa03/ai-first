@@ -1316,78 +1316,6 @@ async getClarificationHistory(userId: string) {
 - Query count: O(n) sequential → O(1) batch
 - Performance: 5-10x faster for users with 10+ ideas
 
-### Parallel Queries with Promise.all()
-
-Use Promise.all() to execute independent queries in parallel instead of sequentially:
-
-```typescript
-// BEFORE: Sequential queries (4 roundtrips)
-async getIdeaStats(userId: string) {
-  const { data: ideas } = await this.client
-    .from('ideas')
-    .select('status, id')
-    .eq('user_id', userId);
-
-  const ideaIds = ideas?.map((i) => i.id) || [];
-
-  const { count: totalDeliverables } = await this.client
-    .from('deliverables')
-    .select('*', { count: 'exact', head: true })
-    .in('idea_id', ideaIds);
-
-  const { data: deliverables } = await this.client
-    .from('deliverables')
-    .select('id')
-    .in('idea_id', ideaIds);
-
-  const deliverableIds = deliverables?.map((d) => d.id) || [];
-
-  const { count: totalTasks } = await this.client
-    .from('tasks')
-    .select('*', { count: 'exact', head: true })
-    .in('deliverable_id', deliverableIds);
-
-  return { totalIdeas: ideas?.length || 0, totalDeliverables, totalTasks };
-}
-
-// AFTER: Parallel queries (3 roundtrips, 2 in parallel)
-async getIdeaStats(userId: string) {
-  const { data: ideas } = await this.client
-    .from('ideas')
-    .select('status, id')
-    .eq('user_id', userId);
-
-  const ideaIds = ideas?.map((i) => i.id) || [];
-
-  const [deliverablesResponse, deliverableCountResponse] = await Promise.all([
-    this.client
-      .from('deliverables')
-      .select('id')
-      .in('idea_id', ideaIds),
-    this.client
-      .from('deliverables')
-      .select('*', { count: 'exact', head: true })
-      .in('idea_id', ideaIds),
-  ]);
-
-  const deliverableIds = deliverablesResponse.data?.map((d) => d.id) || [];
-  const { count: totalDeliverables } = deliverableCountResponse;
-
-  const { count: totalTasks } = await this.client
-    .from('tasks')
-    .select('*', { count: 'exact', head: true })
-    .in('deliverable_id', deliverableIds);
-
-  return { totalIdeas: ideas?.length || 0, totalDeliverables, totalTasks };
-}
-```
-
-**Benefits**:
-
-- Database roundtrips: 4 sequential → 3 (with 2 parallel)
-- Performance: 25-33% reduction in query latency
-- Better utilization of available bandwidth
-
 ### Cache Configuration
 
 ```typescript
@@ -2357,11 +2285,7 @@ Clean Architecture enforces strict layering with dependencies flowing inward:
 **API Route Layer** (`src/app/api/*/route.ts`):
 
 ```typescript
-import {
-  withApiHandler,
-  standardSuccessResponse,
-  ApiContext,
-} from '@/lib/api-handler';
+import { withApiHandler, standardSuccessResponse, ApiContext } from '@/lib/api-handler';
 import { validateIdea } from '@/lib/validation';
 import { dbService } from '@/lib/db';
 
@@ -2397,7 +2321,7 @@ import { dbService } from '@/lib/db';
 
 export default function MyComponent() {
   const handleSubmit = async () => {
-    const result = await dbService.createIdea(/* ... */); // VIOLATION
+    const result = await dbService.createIdea(/* ... */);  // VIOLATION
   };
 }
 
@@ -2413,7 +2337,7 @@ export default function MyComponent() {
     if (!response.ok) throw new Error('Failed');
 
     const data = await response.json();
-    return data.data; // Unwrap standardSuccessResponse
+    return data.data;  // Unwrap standardSuccessResponse
   };
 }
 ```
@@ -2421,32 +2345,27 @@ export default function MyComponent() {
 ### Benefits of Clean Architecture
 
 **1. Separation of Concerns**:
-
 - Each layer has one responsibility
 - Easy to understand and modify
 - Changes in one layer don't affect others
 
 **2. Testability**:
-
 - UI can mock HTTP responses
 - API can mock service layer
 - Service can mock repository layer
 - Isolated unit tests for each layer
 
 **3. Security**:
-
 - API layer enforces validation and rate limiting
 - Database access controlled at service layer
 - Client cannot bypass business logic
 
 **4. Maintainability**:
-
 - Add features at appropriate layer
 - Swap implementations without breaking contracts
 - Clear boundaries between modules
 
 **5. Scalability**:
-
 - Each layer can be scaled independently
 - API layer can be load-balanced separately
 - Database can be sharded without affecting UI
@@ -2454,14 +2373,12 @@ export default function MyComponent() {
 ### Implementation Status
 
 ✅ **Complete**:
-
 - All API routes follow `withApiHandler` pattern
 - IdeaInput component uses `/api/ideas` endpoint
 - Health endpoints use proper API layer
 - Export connectors follow layered architecture
 
 ✅ **Fixed** (Task 3):
-
 - Removed dead code from health detailed route (149 lines)
 - Created `/api/ideas` endpoint for idea creation
 - Updated IdeaInput component to use API instead of direct dbService

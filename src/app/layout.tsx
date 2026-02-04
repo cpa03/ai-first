@@ -3,21 +3,6 @@ import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import MobileNav from '@/components/MobileNav';
 import Link from 'next/link';
-import { Inter, JetBrains_Mono } from 'next/font/google';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  weight: ['300', '400', '500', '600', '700'],
-});
-
-const jetBrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-  weight: ['400', '500'],
-});
 
 export const metadata: Metadata = {
   title: 'IdeaFlow - AI-Powered Project Planning & Task Management Tool',
@@ -87,8 +72,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetBrainsMono.variable}`}>
-      <body className="min-h-screen bg-gray-50 font-sans">
+    <html lang="en">
+      <body className="min-h-screen bg-gray-50">
         <ErrorBoundary>
           <a
             href="#main-content"

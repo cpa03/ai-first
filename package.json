@@ -1,5 +1,5 @@
 {
-  "name": "ai-first",
+  "name": "ideaflow",
   "version": "0.1.1",
   "private": true,
   "scripts": {
@@ -30,7 +30,7 @@
     "clsx": "^2.1.1",
     "googleapis": "^169.0.0",
     "js-yaml": "^4.1.1",
-    "next": "^16.1.6",
+    "next": "14.2.35",
     "openai": "^4.20.1",
     "react": "^18",
     "react-dom": "^18",
