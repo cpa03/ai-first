@@ -142,23 +142,52 @@ const InputWithValidation = forwardRef<
             )}
           </div>
 
-          {showCharCount && (
-            <span
-              className={`text-sm ${
-                maxLength && charCount > maxLength
-                  ? 'text-red-600'
-                  : maxLength &&
-                      charCount >=
+          {showCharCount && maxLength && (
+            <div className="flex flex-col items-end gap-1">
+              {/* Visual progress bar for better UX */}
+              <div
+                className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden"
+                role="progressbar"
+                aria-valuenow={charCount}
+                aria-valuemax={maxLength}
+                aria-label={`Character count: ${charCount} of ${maxLength}`}
+              >
+                <div
+                  className={`h-full transition-all duration-300 ease-out rounded-full ${
+                    charCount > maxLength
+                      ? 'bg-red-500'
+                      : charCount >=
+                          maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
+                        ? 'bg-amber-500'
+                        : charCount >= maxLength * 0.5
+                          ? 'bg-blue-500'
+                          : 'bg-green-500'
+                  }`}
+                  style={{
+                    width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
+                  }}
+                />
+              </div>
+              <span
+                className={`text-sm ${
+                  charCount > maxLength
+                    ? 'text-red-600'
+                    : charCount >=
                         maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                    ? 'text-amber-600'
-                    : isValid && touched
-                      ? 'text-green-600'
-                      : 'text-gray-500'
-              }`}
-              aria-live="polite"
-            >
-              {charCount}
-              {maxLength && ` / ${maxLength}`}
+                      ? 'text-amber-600'
+                      : isValid && touched
+                        ? 'text-green-600'
+                        : 'text-gray-500'
+                }`}
+                aria-live="polite"
+              >
+                {charCount}/{maxLength}
+              </span>
+            </div>
+          )}
+          {showCharCount && !maxLength && (
+            <span className="text-sm text-gray-500" aria-live="polite">
+              {charCount} characters
             </span>
           )}
         </div>

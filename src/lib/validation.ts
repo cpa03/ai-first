@@ -14,6 +14,12 @@ export const MAX_TITLE_LENGTH = 500;
 export const MAX_IDEA_ID_LENGTH = 100;
 const MAX_USER_RESPONSE_SIZE = 5000;
 
+// Answer validation constants for clarification flow
+export const MIN_ANSWER_LENGTH = 5;
+export const MAX_ANSWER_LENGTH = 500;
+export const MIN_SHORT_ANSWER_LENGTH = 2;
+export const MAX_SHORT_ANSWER_LENGTH = 100;
+
 export function validateIdea(idea: unknown): ValidationResult {
   const errors: ValidationError[] = [];
 

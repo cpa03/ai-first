@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { createLogger } from '@/lib/logger';
+import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -9,9 +10,6 @@ import InputWithValidation from './InputWithValidation';
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
 }
-
-const MIN_IDEA_LENGTH = 10;
-const MAX_IDEA_LENGTH = 500;
 
 const validateIdea = (idea: string): string | null => {
   if (idea.trim().length < MIN_IDEA_LENGTH) {
