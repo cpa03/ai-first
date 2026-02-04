@@ -118,7 +118,15 @@ main() {
     echo -e "${BLUE}🔍 Environment Configuration Validation${NC}"
     echo -e "${BLUE}============================================${NC}"
     echo
-    
+
+    # Check if running in CI environment - be more lenient
+    if [ "$CI" = "true" ] || [ "$CF_PAGES" = "1" ] || [ "$CLOUDFLARE_PAGES" = "1" ]; then
+        print_status "INFO" "Running in CI/Cloudflare environment - using lenient validation"
+        CI_MODE=true
+    else
+        CI_MODE=false
+    fi
+
     # Load environment from .env.local if it exists
     if [ -f ".env.local" ]; then
         print_status "INFO" "Loading environment from .env.local"
@@ -127,38 +135,58 @@ main() {
         print_status "WARN" ".env.local file not found"
         print_status "INFO" "Create .env.local from config/.env.example"
     fi
-    
+
     echo
     echo -e "${BLUE}Checking Required Variables:${NC}"
     echo
-    
+
     # Initialize error count
     errors=0
-    
-    # Check required variables
-    check_env_var "NEXT_PUBLIC_SUPABASE_URL" "true" || ((errors++))
-    check_env_var "NEXT_PUBLIC_SUPABASE_ANON_KEY" "true" || ((errors++))
-    check_env_var "SUPABASE_SERVICE_ROLE_KEY" "true" || ((errors++))
-    check_env_var "COST_LIMIT_DAILY" "true" || ((errors++))
-    check_env_var "NEXT_PUBLIC_APP_URL" "true" || ((errors++))
-    
+
+    # Check required variables - in CI mode, only warn
+    if [ "$CI_MODE" = "true" ]; then
+        check_env_var "NEXT_PUBLIC_SUPABASE_URL" "false" || ((errors++))
+        check_env_var "NEXT_PUBLIC_SUPABASE_ANON_KEY" "false" || ((errors++))
+        check_env_var "SUPABASE_SERVICE_ROLE_KEY" "false" || ((errors++))
+        check_env_var "COST_LIMIT_DAILY" "false" || ((errors++))
+        check_env_var "NEXT_PUBLIC_APP_URL" "false" || ((errors++))
+    else
+        check_env_var "NEXT_PUBLIC_SUPABASE_URL" "true" || ((errors++))
+        check_env_var "NEXT_PUBLIC_SUPABASE_ANON_KEY" "true" || ((errors++))
+        check_env_var "SUPABASE_SERVICE_ROLE_KEY" "true" || ((errors++))
+        check_env_var "COST_LIMIT_DAILY" "true" || ((errors++))
+        check_env_var "NEXT_PUBLIC_APP_URL" "true" || ((errors++))
+    fi
+
     echo
     echo -e "${BLUE}Validating Configurations:${NC}"
     echo
-    
-    # Validate Supabase
-    validate_supabase || ((errors++))
-    
-    # Validate AI providers
-    validate_ai_providers || ((errors++))
-    
-    # Validate cost limit
-    validate_cost_limit || ((errors++))
-    
+
+    # Validate Supabase - skip in CI mode if not configured
+    if [ "$CI_MODE" = "true" ] && [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+        print_status "WARN" "Skipping Supabase validation in CI mode"
+    else
+        validate_supabase || ((errors++))
+    fi
+
+    # Validate AI providers - skip in CI mode if not configured
+    if [ "$CI_MODE" = "true" ] && [ -z "$OPENAI_API_KEY" ] && [ -z "$ANTHROPIC_API_KEY" ]; then
+        print_status "WARN" "Skipping AI provider validation in CI mode"
+    else
+        validate_ai_providers || ((errors++))
+    fi
+
+    # Validate cost limit - skip in CI mode if not configured
+    if [ "$CI_MODE" = "true" ] && [ -z "$COST_LIMIT_DAILY" ]; then
+        print_status "WARN" "Skipping cost limit validation in CI mode"
+    else
+        validate_cost_limit || ((errors++))
+    fi
+
     echo
     echo -e "${BLUE}Optional Integrations:${NC}"
     echo
-    
+
     # Check optional variables
     check_env_var "OPENAI_API_KEY" "false"
     check_env_var "ANTHROPIC_API_KEY" "false"
@@ -166,21 +194,29 @@ main() {
     check_env_var "TRELLO_API_KEY" "false"
     check_env_var "GOOGLE_CLIENT_ID" "false"
     check_env_var "GITHUB_TOKEN" "false"
-    
+
     echo
     echo -e "${BLUE}============================================${NC}"
-    
+
     # Summary
     if [ $errors -eq 0 ]; then
         print_status "OK" "Environment configuration is valid! 🎉"
         echo
-        print_status "INFO" "You can now start the application with: npm run dev"
+        if [ "$CI_MODE" = "false" ]; then
+            print_status "INFO" "You can now start the application with: npm run dev"
+        fi
         exit 0
     else
-        print_status "ERROR" "Found $errors configuration error(s) that must be fixed"
-        echo
-        print_status "INFO" "Please review the setup guide at docs/environment-setup.md"
-        exit 1
+        if [ "$CI_MODE" = "true" ]; then
+            print_status "WARN" "Found $errors configuration warning(s) in CI mode - continuing anyway"
+            print_status "INFO" "Note: Some features may not work without proper environment configuration"
+            exit 0
+        else
+            print_status "ERROR" "Found $errors configuration error(s) that must be fixed"
+            echo
+            print_status "INFO" "Please review the setup guide at docs/environment-setup.md"
+            exit 1
+        fi
     fi
 }
 

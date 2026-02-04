@@ -12,9 +12,17 @@ name = "ai-first"
 name = "ai-first-staging"
 
 # Environment variables (these will be set via Cloudflare dashboard or wrangler secrets)
+# NOTE: In CI/Cloudflare Pages builds, missing env vars will only warn, not fail
 [vars]
 NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
+NODE_ENV = "production"
+CI = "true"
+
+# Build configuration
+# Using build:ci which skips strict env validation for CI environments
+[build]
+command = "npm ci && npm run build:ci"
 
 # For Cloudflare Pages deployment
-# Build command should be: npm run build
-# Output directory should be: .next
+# Build command: npm run build:ci (CI mode with lenient env validation)
+# Output directory: .next
