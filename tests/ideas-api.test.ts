@@ -47,15 +47,16 @@ describe('/api/ideas POST', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data).toEqual({
+      expect(data.success).toBe(true);
+      expect(data.data).toEqual({
         id: 'idea-123',
         title: 'Build a task management app',
         status: 'draft',
         createdAt: '2024-01-15T10:00:00.000Z',
       });
-      expect(response.headers.get('X-Request-ID')).toMatch(
-        /^req_\d+_[a-z0-9]+$/
-      );
+      expect(data.requestId).toMatch(/^req_\d+_[a-z0-9]+$/);
+      expect(data.timestamp).toBeTruthy();
+      expect(response.headers.get('X-Request-ID')).toBeTruthy();
       expect(mockCreateIdea).toHaveBeenCalledTimes(1);
     });
 
@@ -112,8 +113,8 @@ describe('/api/ideas POST', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.title).toHaveLength(53);
-      expect(data.title).toBe(longIdea.substring(0, 50) + '...');
+      expect(data.data.title).toHaveLength(53);
+      expect(data.data.title).toBe(longIdea.substring(0, 50) + '...');
     });
 
     it('should not truncate title when idea is exactly 50 characters', async () => {
@@ -142,8 +143,8 @@ describe('/api/ideas POST', () => {
       const data = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.title).toBe(exactLengthIdea);
-      expect(data.title).not.toContain('...');
+      expect(data.data.title).toBe(exactLengthIdea);
+      expect(data.data.title).not.toContain('...');
     });
   });
 
@@ -303,13 +304,13 @@ describe('/api/ideas POST', () => {
   });
 
   describe('Response Structure', () => {
-    it.skip('should include all required response fields', async () => {
+    it('should include all required response fields', async () => {
       const mockIdea = {
         id: 'idea-struct',
-        title: 'Test idea',
+        title: 'Test idea for response structure',
         status: 'draft' as const,
         created_at: '2024-01-15T12:00:00.000Z',
-        raw_text: 'Test idea',
+        raw_text: 'Test idea for response structure',
         user_id: 'default_user',
         deleted_at: null,
       };
@@ -318,7 +319,7 @@ describe('/api/ideas POST', () => {
 
       const request = {
         headers: { get: jest.fn(() => undefined) },
-        json: async () => ({ idea: 'Test idea' }),
+        json: async () => ({ idea: 'Test idea for response structure' }),
       };
 
       const response = await POST(request as any);

@@ -1,6 +1,9 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode/kimi-k2.5-free",
+  "agents": {
+    "paths": [".opencode/agents"]
+  },
   "skills": {
     "paths": [".opencode/skills"]
   },
@@ -9,5 +12,13 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": false
+  "lsp": false,
+  "cmz": {
+    "enabled": true,
+    "ultrawork_keyword": "ulw",
+    "sisyphus_mode": true,
+    "self_heal": true,
+    "self_learn": true,
+    "self_evolve": true
+  }
 }

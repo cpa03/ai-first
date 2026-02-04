@@ -1,6 +1,7 @@
 'use client';
 
 import { forwardRef, useState, useEffect } from 'react';
+import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
   HTMLInputElement | HTMLTextAreaElement
@@ -67,7 +68,7 @@ const InputWithValidation = forwardRef<
     useEffect(() => {
       if (isInvalid && !errorAnnounced) {
         setErrorAnnounced(true);
-      } else if (!isInvalid) {
+      } else if (!isInvalid && errorAnnounced) {
         setErrorAnnounced(false);
       }
     }, [isInvalid, errorAnnounced]);
@@ -146,11 +147,16 @@ const InputWithValidation = forwardRef<
               className={`text-sm ${
                 maxLength && charCount > maxLength
                   ? 'text-red-600'
-                  : isValid && touched
-                    ? 'text-green-600'
-                    : 'text-gray-500'
+                  : maxLength &&
+                      charCount >=
+                        maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
+                    ? 'text-amber-600'
+                    : isValid && touched
+                      ? 'text-green-600'
+                      : 'text-gray-500'
               }`}
               aria-live="polite"
+              aria-atomic="true"
             >
               {charCount}
               {maxLength && ` / ${maxLength}`}

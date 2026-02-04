@@ -14,8 +14,6 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export class ExportManager {
   private connectors: Map<string, ExportConnector> = new Map();
 

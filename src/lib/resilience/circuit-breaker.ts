@@ -47,12 +47,14 @@ export class CircuitBreaker {
       this.onSuccess(now);
       return result;
     } catch (error) {
-      const errorMessage = (error as Error).message;
+      const normalizedError =
+        error instanceof Error ? error : new Error(String(error));
+      const errorMessage = normalizedError.message;
       const attemptCount =
-        (error as Error & { attemptCount?: number }).attemptCount ||
+        (normalizedError as Error & { attemptCount?: number }).attemptCount ||
         (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
-      this.onError(error as Error, now, attemptCount);
-      throw error;
+      this.onError(normalizedError, now, attemptCount);
+      throw normalizedError;
     }
   }
 
