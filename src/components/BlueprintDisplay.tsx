@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
+import { ToastOptions } from '@/components/ToastContainer';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -43,6 +44,24 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(blueprint);
+      const win = window as unknown as Window & {
+        showToast?: (options: ToastOptions) => void;
+      };
+      if (typeof window !== 'undefined' && win.showToast) {
+        win.showToast({
+          type: 'success',
+          message: 'Blueprint copied to clipboard!',
+          duration: 3000,
+        });
+      }
+    } catch (err) {
+      console.error('Failed to copy blueprint:', err);
+    }
   };
 
   if (isGenerating) {
@@ -122,14 +141,24 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             >
               Your Project Blueprint
             </h2>
-            <Button
-              onClick={handleDownload}
-              variant="primary"
-              fullWidth={false}
-              aria-label="Download blueprint as Markdown file"
-            >
-              Download Markdown
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <Button
+                onClick={handleCopy}
+                variant="outline"
+                fullWidth={false}
+                aria-label="Copy blueprint to clipboard"
+              >
+                Copy to Clipboard
+              </Button>
+              <Button
+                onClick={handleDownload}
+                variant="primary"
+                fullWidth={false}
+                aria-label="Download blueprint as Markdown file"
+              >
+                Download Markdown
+              </Button>
+            </div>
           </div>
         </header>
 
