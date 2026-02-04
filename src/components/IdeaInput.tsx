@@ -34,6 +34,20 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     setValidationError(validateIdea(newValue));
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Submit on Cmd/Ctrl + Enter
+    if (
+      (e.metaKey || e.ctrlKey) &&
+      e.key === 'Enter' &&
+      !isSubmitting &&
+      idea.trim() &&
+      !validationError
+    ) {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -87,8 +101,9 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         label="What's your idea?"
         value={idea}
         onChange={handleIdeaChange}
+        onKeyDown={handleKeyDown}
         placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-        helpText="Be as specific or as general as you'd like. We'll help you clarify details."
+        helpText="Be as specific or as general as you'd like. We'll help you clarify details. Press Cmd/Ctrl + Enter to submit."
         multiline={true}
         minLength={MIN_IDEA_LENGTH}
         maxLength={MAX_IDEA_LENGTH}
