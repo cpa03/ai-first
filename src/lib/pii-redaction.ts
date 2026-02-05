@@ -127,7 +127,18 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
         name: obj.name,
         message: obj.message,
         stack: obj.stack,
-        ...(obj as any),
+        ...Object.getOwnPropertyNames(obj).reduce(
+          (acc, key) => {
+            try {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              acc[key] = (obj as Record<string, unknown>)[key];
+            } catch {
+              // Skip properties that can't be accessed
+            }
+            return acc;
+          },
+          {} as Record<string, unknown>
+        ),
       };
       return redactPIIInObject(errorData, seen);
     }
