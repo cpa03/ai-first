@@ -131,7 +131,7 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
           (acc, key) => {
             try {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              acc[key] = (obj as Record<string, unknown>)[key];
+              acc[key] = (obj as unknown as Record<string, unknown>)[key];
             } catch {
               // Skip properties that can't be accessed
             }

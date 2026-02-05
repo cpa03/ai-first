@@ -11,3 +11,9 @@
 **Learning:** The `ToastContainer` component exposes a global `window.showToast` function. This is extremely useful for providing immediate feedback (like "Copied to clipboard") from utility functions or deep components without passing down state. However, it requires careful TypeScript casting to avoid `any` or linting errors.
 
 **Action:** When using `window.showToast`, cast window as `Window & { showToast?: (options: ToastOptions) => void }` and always check for existence before calling.
+
+## 2025-05-15 - [Mobile Menu Stacking & Semantics]
+
+**Learning:** Mobile navigation menus should use semantic `<ul>` and `<li>` structures to ensure proper screen reader announcement of the item count. To avoid visual overlap with sticky headers or page content, use `fixed` positioning with a high z-index (e.g., `z-[100]`) and an opaque background. When using animations like `fade-in`, ensure a solid background is maintained throughout the transition to prevent unreadable text overlap.
+
+**Action:** Always wrap navigation links in a list, use `fixed` for full-width mobile overlays, and verify opacity with a short delay in automated screenshots to account for animations.
