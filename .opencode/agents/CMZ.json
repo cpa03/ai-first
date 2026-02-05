@@ -84,17 +84,24 @@
   "skills": [
     "skill-builder",
     "claude-codepro-backend",
+    "codepro-backend-standards",
     "systematic-debugging",
+    "superpowers-debugging",
+    "debugging-strategies",
     "moai-adk-tool",
+    "adk-moai-tool",
     "context-engineering-memory",
+    "context-memory-systems",
     "claude-code-debugging",
     "git-commit-message",
+    "ai-agents-git-commit",
     "test-driven-development",
     "writing-plans",
     "executing-plans",
     "brainstorming",
     "requesting-code-review",
-    "git-master"
+    "git-master",
+    "proffesor-testing-qe"
   ],
   "hooks": {
     "enabled": [
@@ -187,11 +194,18 @@
     }
   },
   "meta": {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "created": "2026-02-03",
-    "updated": "2026-02-03",
-    "frameworks": ["oh-my-opencode", "superpowers", "cmz-core"],
+    "updated": "2026-02-04",
+    "frameworks": [
+      "oh-my-opencode",
+      "superpowers",
+      "cmz-core",
+      "ultrarag",
+      "ai-agents-public"
+    ],
     "repository": "https://github.com/ai-first/ai-first",
-    "author": "CMZ Agent System"
+    "author": "CMZ Agent System",
+    "optimization_notes": "Enhanced with 6 additional skills from skillhub. Optimized for GitHub Actions iterate.yml workflow with improved merge conflict handling and error recovery."
   }
 }
