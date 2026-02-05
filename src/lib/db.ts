@@ -697,6 +697,16 @@ export class DatabaseService {
       };
     }
   }
+
+  // Test helper methods
+  static resetInstance(): void {
+    DatabaseService.instance = undefined as any;
+  }
+
+  setTestClient(mockClient: any): void {
+    this.client = mockClient;
+    this.admin = mockClient;
+  }
 }
 
 // Export singleton instance

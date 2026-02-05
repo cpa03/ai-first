@@ -8,12 +8,13 @@ export class MarkdownExporter extends ExportConnector {
   async export(
     data: ExportData,
     options?: Record<string, unknown>
-  ): Promise<ExportResult> {
+  ): Promise<ExportResult & { content?: string }> {
     try {
       const markdown = this.generateMarkdown(data, options);
 
       return {
         success: true,
+        content: markdown,
         url: `data:text/markdown;charset=utf-8,${encodeURIComponent(markdown)}`,
       };
     } catch (_error) {
