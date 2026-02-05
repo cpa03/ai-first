@@ -122,6 +122,12 @@ export const UI_CONFIG = {
    * How long to show "Copied!" feedback
    */
   COPY_FEEDBACK_DURATION: 2000,
+
+  /**
+   * Toast progress update interval (in milliseconds)
+   * How often to update the progress bar for smooth animation
+   */
+  TOAST_PROGRESS_INTERVAL: 50,
 } as const;
 
 /**
