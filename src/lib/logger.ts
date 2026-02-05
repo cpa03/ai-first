@@ -38,16 +38,15 @@ export class Logger {
   }
 
   private formatArgs(args: unknown[], context?: LogContext): unknown[] {
-    const safeArgs = args || [];
     if (context?.metadata) {
-      return [...safeArgs, context.metadata];
+      return [...args, context.metadata];
     }
-    return safeArgs;
+    return args;
   }
 
   debug(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.DEBUG) {
-      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
       console.debug(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
@@ -58,8 +57,8 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.DEBUG) {
-      const allArgs = this.formatArgs(args || [], context);
-      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
+      const allArgs = this.formatArgs(args, context);
+      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
       console.debug(
         `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
         ...sanitizedArgs
@@ -69,7 +68,7 @@ export class Logger {
 
   info(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.INFO) {
-      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
       console.info(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
@@ -80,8 +79,8 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.INFO) {
-      const allArgs = this.formatArgs(args || [], context);
-      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
+      const allArgs = this.formatArgs(args, context);
+      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
       console.info(
         `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
         ...sanitizedArgs
@@ -91,7 +90,7 @@ export class Logger {
 
   warn(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.WARN) {
-      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
       console.warn(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
@@ -102,8 +101,8 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.WARN) {
-      const allArgs = this.formatArgs(args || [], context);
-      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
+      const allArgs = this.formatArgs(args, context);
+      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
       console.warn(
         `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
         ...sanitizedArgs
@@ -113,7 +112,7 @@ export class Logger {
 
   error(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.ERROR) {
-      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
       console.error(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
@@ -124,8 +123,8 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.ERROR) {
-      const allArgs = this.formatArgs(args || [], context);
-      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
+      const allArgs = this.formatArgs(args, context);
+      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
       console.error(
         `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
         ...sanitizedArgs
