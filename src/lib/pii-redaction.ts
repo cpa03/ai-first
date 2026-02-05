@@ -59,6 +59,7 @@ const COMBINED_PII_REGEX = new RegExp(
  * Redact PII from a string using predefined patterns in a single pass
  */
 export function redactPII(text: string): string {
+  if (typeof text !== 'string') return text;
   if (!text) return text;
 
   return text.replace(COMBINED_PII_REGEX, (match, ...args) => {
@@ -93,7 +94,7 @@ export function redactPII(text: string): string {
  * Combined regex for sensitive field detection to avoid iterating through an array
  */
 const SENSITIVE_FIELD_REGEX =
-  /api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|session[_-]?id/i;
+  /api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address/i;
 
 const SAFE_FIELDS_SET = new Set([
   'id',
@@ -112,16 +113,39 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
     return redactPII(obj);
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map((item) => redactPIIInObject(item, seen));
-  }
-
   if (obj !== null && typeof obj === 'object') {
     // Handle circular references
     if (seen.has(obj)) {
       return '[Circular Reference]';
     }
     seen.add(obj);
+
+    if (obj instanceof Error) {
+      // For Error objects, we convert to a POJO including non-enumerable props
+      // then recursively redact to ensure all custom properties are protected
+      const errorData = {
+        name: obj.name,
+        message: obj.message,
+        stack: obj.stack,
+        ...Object.getOwnPropertyNames(obj).reduce(
+          (acc, key) => {
+            try {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              acc[key] = (obj as Record<string, unknown>)[key];
+            } catch {
+              // Skip properties that can't be accessed
+            }
+            return acc;
+          },
+          {} as Record<string, unknown>
+        ),
+      };
+      return redactPIIInObject(errorData, seen);
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map((item) => redactPIIInObject(item, seen));
+    }
 
     const redacted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {

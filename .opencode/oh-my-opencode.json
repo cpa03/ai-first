@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "enabled": true,
   "model": "opencode/kimi-k2.5-free",
-  "agents": {
+  "build": {
     "sisyphus": {
       "enabled": true,
       "model": "opencode/kimi-k2.5-free",
