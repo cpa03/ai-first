@@ -30,75 +30,79 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
 };
 
 /**
- * Redact PII from a string using predefined patterns
+ * Combined regex for single-pass PII redaction.
+ * Using named capture groups to identify which pattern matched.
+ *
+ * Priority is handled by:
+ * 1. Order in the alternative group (|)
+ * 2. Including common prefixes in higher-priority patterns (like JWT) to ensure they
+ *    start matching at the same position as lower-priority patterns (like API Key).
+ */
+const API_KEY_PREFIXES =
+  '(?:api[_-]?key|apikey|secret|token|credential|auth|authorization)[\\s:=]+[\'"]?';
+
+const COMBINED_PII_REGEX = new RegExp(
+  [
+    `(?<jwt>(?:${API_KEY_PREFIXES})?${PII_REGEX_PATTERNS.jwt.source})`,
+    `(?<urlWithCredentials>${PII_REGEX_PATTERNS.urlWithCredentials.source})`,
+    `(?<email>${PII_REGEX_PATTERNS.email.source})`,
+    `(?<phone>${PII_REGEX_PATTERNS.phone.source})`,
+    `(?<ssn>${PII_REGEX_PATTERNS.ssn.source})`,
+    `(?<creditCard>${PII_REGEX_PATTERNS.creditCard.source})`,
+    `(?<ipAddress>${PII_REGEX_PATTERNS.ipAddress.source})`,
+    `(?<apiKey>${PII_REGEX_PATTERNS.apiKey.source})`,
+  ].join('|'),
+  'gi'
+);
+
+/**
+ * Redact PII from a string using predefined patterns in a single pass
  */
 export function redactPII(text: string): string {
-  let redacted = text;
+  if (!text) return text;
 
-  // Redact JWT tokens first (before API keys, since "token:" prefix might match JWTs)
-  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, '[REDACTED_TOKEN]');
+  return text.replace(COMBINED_PII_REGEX, (match, ...args) => {
+    // In String.replace(regex, replacer), the last argument is the groups object if named groups are used
+    const groups = args[args.length - 1] as Record<string, string | undefined>;
 
-  // Redact URLs with credentials (before emails to prevent email regex from matching password part)
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.urlWithCredentials,
-    '[REDACTED_URL]'
-  );
+    if (groups.jwt) return '[REDACTED_TOKEN]';
+    if (groups.urlWithCredentials) return '[REDACTED_URL]';
+    if (groups.email) return '[REDACTED_EMAIL]';
+    if (groups.phone) return '[REDACTED_PHONE]';
+    if (groups.ssn) return '[REDACTED_SSN]';
+    if (groups.creditCard) return '[REDACTED_CARD]';
+    if (groups.ipAddress) {
+      const parts = match.split('.');
+      const isPrivate =
+        parts[0] === '10' ||
+        (parts[0] === '172' &&
+          parseInt(parts[1]) >= 16 &&
+          parseInt(parts[1]) <= 31) ||
+        (parts[0] === '192' && parts[1] === '168') ||
+        parts[0] === '127';
 
-  // Redact email addresses
-  redacted = redacted.replace(PII_REGEX_PATTERNS.email, '[REDACTED_EMAIL]');
+      return isPrivate ? match : '[REDACTED_IP]';
+    }
+    if (groups.apiKey) return '[REDACTED_API_KEY]';
 
-  // Redact phone numbers
-  redacted = redacted.replace(PII_REGEX_PATTERNS.phone, '[REDACTED_PHONE]');
-
-  // Redact Social Security Numbers
-  redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, '[REDACTED_SSN]');
-
-  // Redact credit card numbers
-  redacted = redacted.replace(PII_REGEX_PATTERNS.creditCard, '[REDACTED_CARD]');
-
-  // Redact IP addresses (except for private/internal IPs)
-  redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
-    const parts = match.split('.');
-    const isPrivate =
-      parts[0] === '10' ||
-      (parts[0] === '172' &&
-        parseInt(parts[1]) >= 16 &&
-        parseInt(parts[1]) <= 31) ||
-      (parts[0] === '192' && parts[1] === '168') ||
-      parts[0] === '127';
-
-    return isPrivate ? match : '[REDACTED_IP]';
+    return match;
   });
-
-  // Redact API keys and secrets
-  redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, '[REDACTED_API_KEY]');
-
-  return redacted;
 }
 
-const SENSITIVE_FIELD_PATTERNS = [
-  /api[_-]?key/i,
-  /apikey/i,
-  /secret/i,
-  /token/i,
-  /password/i,
-  /passphrase/i,
-  /credential/i,
-  /auth/i,
-  /authorization/i,
-  /access[_-]?key/i,
-  /bearer/i,
-  /session[_-]?id/i,
-];
+/**
+ * Combined regex for sensitive field detection to avoid iterating through an array
+ */
+const SENSITIVE_FIELD_REGEX =
+  /api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|session[_-]?id/i;
 
-const SAFE_FIELDS = [
+const SAFE_FIELDS_SET = new Set([
   'id',
   'created_at',
   'updated_at',
   'status',
   'priority',
   'estimate_hours',
-];
+]);
 
 /**
  * Redact PII from an object recursively
@@ -121,12 +125,10 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
 
     const redacted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
-      // Always redact sensitive field values regardless of content
-      const isSensitive = SENSITIVE_FIELD_PATTERNS.some((pattern) =>
-        pattern.test(key)
-      );
+      // Optimized sensitive field check
+      const isSensitive = SENSITIVE_FIELD_REGEX.test(key);
 
-      if (SAFE_FIELDS.includes(key.toLowerCase())) {
+      if (SAFE_FIELDS_SET.has(key.toLowerCase())) {
         redacted[key] = value;
       } else if (isSensitive) {
         // Convert field name to uppercase with underscores for redaction label
