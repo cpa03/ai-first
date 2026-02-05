@@ -1,3 +1,5 @@
+import { redactPII } from './pii-redaction';
+
 export interface ErrorDetail {
   field?: string;
   message: string;
@@ -232,7 +234,7 @@ export function toErrorResponse(error: unknown, requestId?: string): Response {
     statusCode = appError.statusCode;
   } else if (error instanceof Error) {
     appError = new AppError(
-      error.message,
+      redactPII(error.message),
       ErrorCode.INTERNAL_ERROR,
       500,
       undefined,

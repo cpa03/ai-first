@@ -397,7 +397,10 @@ describe('Logger Module', () => {
       logger.warn('Warning occurred', error);
       expect(console.warn).toHaveBeenCalledWith(
         '[TestLogger] Warning occurred',
-        error
+        expect.objectContaining({
+          message: 'Test error',
+          name: 'Error'
+        })
       );
     });
   });
@@ -450,7 +453,7 @@ describe('Logger Module', () => {
 
     it('should not log error message when level is higher than ERROR', () => {
       const logger = new Logger('TestLogger');
-      setLogLevel((LogLevel.ERROR + 1) as any);
+      setLogLevel((LogLevel.ERROR + 1) as unknown as LogLevel);
       logger.error('Error message');
       expect(console.error).not.toHaveBeenCalled();
     });
@@ -462,7 +465,10 @@ describe('Logger Module', () => {
       logger.error('Failed operation', error);
       expect(console.error).toHaveBeenCalledWith(
         '[TestLogger] Failed operation',
-        error
+        expect.objectContaining({
+          message: 'Something went wrong',
+          name: 'Error'
+        })
       );
     });
 
@@ -474,8 +480,8 @@ describe('Logger Module', () => {
       logger.error('Multiple errors', error1, error2);
       expect(console.error).toHaveBeenCalledWith(
         '[TestLogger] Multiple errors',
-        error1,
-        error2
+        expect.objectContaining({ message: 'Error 1' }),
+        expect.objectContaining({ message: 'Error 2' })
       );
     });
   });
@@ -516,8 +522,8 @@ describe('Logger Module', () => {
       logger.errorWithContext('Request failed', context, error);
       expect(console.error).toHaveBeenCalledWith(
         '[TestLogger] Request failed [req:req_123]',
-        error,
-        { endpoint: '/api/users', error: error.message }
+        expect.objectContaining({ message: 'API error' }),
+        { endpoint: '/api/users', error: 'API error' }
       );
     });
   });
@@ -619,7 +625,7 @@ describe('Logger Module', () => {
     it('should handle circular references in metadata', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
-      const circular: any = { name: 'test' };
+      const circular: Record<string, unknown> = { name: 'test' };
       circular.self = circular;
       const context: LogContext = { metadata: circular };
 
@@ -637,7 +643,7 @@ describe('Logger Module', () => {
     it('should handle numbers as messages', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
-      logger.info(123 as any);
+      logger.info(123 as unknown as string);
       expect(console.info).toHaveBeenCalledWith('[Test] 123');
     });
 
