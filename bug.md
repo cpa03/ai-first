@@ -2,16 +2,17 @@
 
 ## Active Bugs (Found by BugLover)
 
-### [x] Bug 1: Integration Tests - IdeaInput Component Mocking Issues (PARTIALLY FIXED)
+### [/] Bug 1: Integration Tests - Partially Fixed
 
 **File:** `tests/integration-comprehensive.test.tsx`
 **Issue:** Tests fail because IdeaInput now calls `/api/ideas` endpoint instead of `dbService.createIdea` directly (layer separation fix), but tests still mock `dbService`.
-**Impact:** Fixed main workflow test. 2 remaining test failures:
+**Fix Applied:**
 
-- Error recovery test (uses old dbService mock)
-- Frontend-Backend Integration test (mock conflict)
-  **Fix Applied:** Updated "should handle full workflow from idea to export" test to mock `/api/ideas` endpoint
-  **Remaining:** Fix 2 other tests in this file
+- Updated "should handle full workflow from idea to export" test to mock `/api/ideas` endpoint
+- Updated "should handle error recovery throughout workflow" test to use fetch mocks
+- Updated "should integrate component states with API operations" test to use proper API mocking
+  **Status:** Mixed results - needs further refinement
+  **Remaining:** 3 tests still failing due to complex mock interactions
 
 ### [ ] Bug 2: Backend Comprehensive Tests - Singleton Mocking Complexity
 
@@ -59,11 +60,16 @@
 **Issue:** Edge case tests for resilience framework failing
 **Fix Required:** Review resilience edge case handling and update tests
 
-### [ ] Bug 9: ClarificationFlow Component Tests
+### [x] Bug 9: ClarificationFlow Component Tests - FIXED
 
 **File:** `tests/ClarificationFlow.test.tsx`
-**Issue:** Clarification flow component tests failing
-**Fix Required:** Update component tests to match current implementation
+**Issue:** Clarification flow component tests failing due to API response format inconsistencies and ambiguous text selectors
+**Fix Applied:**
+
+- Fixed API response mocks to use correct format with `data.data.questions` wrapper
+- Updated text selectors from `getByText` to `getByRole('heading')` to avoid ambiguity
+- Fixed progress indicator assertions to use `getAllByText` for text appearing in multiple elements
+  **Status:** All 17 tests passing
 
 ## Bug Statistics
 

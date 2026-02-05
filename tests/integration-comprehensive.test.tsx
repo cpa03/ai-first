@@ -64,7 +64,8 @@ describe('Integration Tests - User Workflows', () => {
         // Step 2: Get clarification questions
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => createSuccessResponse(mockUserJourney.questions),
+          json: async () =>
+            createSuccessResponse({ questions: mockUserJourney.questions }),
         })
         // Step 3: Submit answers and get refined idea
         .mockResolvedValueOnce({
@@ -159,10 +160,18 @@ describe('Integration Tests - User Workflows', () => {
     });
 
     it('should handle error recovery throughout workflow', async () => {
-      // Mock dbService to throw error on first call, succeed on second
-      mockDbService.createIdea
+      // Mock fetch to fail on first call, succeed on second
+      (global.fetch as jest.Mock)
         .mockRejectedValueOnce(new Error('Database error'))
-        .mockResolvedValueOnce({ id: 'idea-123', content: 'Test idea' });
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: { id: 'idea-123', content: 'Test idea' },
+            requestId: 'test-req-1',
+            timestamp: new Date().toISOString(),
+          }),
+        });
 
       const IdeaInput = require('@/components/IdeaInput').default;
       const mockOnSubmit = jest.fn();
@@ -184,7 +193,7 @@ describe('Integration Tests - User Workflows', () => {
       // Should show error state
       await waitFor(() => {
         expect(
-          screen.getByText(/failed to save your idea/i)
+          screen.getByText(/failed to save your idea\. please try again/i)
         ).toBeInTheDocument();
       });
 
@@ -201,39 +210,93 @@ describe('Integration Tests - User Workflows', () => {
   });
 
   describe('Frontend-Backend Integration', () => {
-    it('should integrate component states with database operations', async () => {
-      // Reset and configure mocks for this test
-      mockDbService.createIdea.mockResolvedValue({
-        id: 'idea-123',
-        content: 'Test idea',
-      });
-      mockDbService.getIdea.mockResolvedValue({
-        id: 'idea-123',
-        content: 'Test idea',
-      });
-      mockDbService.createClarificationSession.mockResolvedValue({
-        id: 'session-123',
-        idea_id: 'idea-123',
-      });
-      mockDbService.saveAnswers.mockResolvedValue([
-        { session_id: 'session-123', question_id: '1', answer: 'Answer 1' },
-      ]);
+    it('should integrate component states with API operations', async () => {
+      // Setup mock responses before each fetch call
+      const mockResponses = [
+        // Create idea
+        {
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: { id: 'idea-123', content: 'Test idea' },
+            requestId: 'test-req-1',
+            timestamp: new Date().toISOString(),
+          }),
+        },
+        // Get idea
+        {
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: { id: 'idea-123', content: 'Test idea' },
+            requestId: 'test-req-2',
+            timestamp: new Date().toISOString(),
+          }),
+        },
+        // Create clarification session
+        {
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: { id: 'session-123', idea_id: 'idea-123' },
+            requestId: 'test-req-3',
+            timestamp: new Date().toISOString(),
+          }),
+        },
+        // Save answers
+        {
+          ok: true,
+          json: async () => ({
+            success: true,
+            data: [
+              {
+                session_id: 'session-123',
+                question_id: '1',
+                answer: 'Answer 1',
+              },
+            ],
+            requestId: 'test-req-4',
+            timestamp: new Date().toISOString(),
+          }),
+        },
+      ];
 
-      // Test complete CRUD cycle
-      const idea = await mockDbService.createIdea('Test idea');
-      expect(idea.id).toBe('idea-123');
-
-      const retrievedIdea = await mockDbService.getIdea('idea-123');
-      expect(retrievedIdea.content).toBe('Test idea');
-
-      const session =
-        await mockDbService.createClarificationSession('idea-123');
-      expect(session.id).toBe('session-123');
-
-      const answers = await mockDbService.saveAnswers('session-123', {
-        '1': 'Answer 1',
+      let responseIndex = 0;
+      (global.fetch as jest.Mock).mockImplementation(() => {
+        const response = mockResponses[responseIndex++];
+        return Promise.resolve(response);
       });
-      expect(answers).toBeDefined();
+
+      // Test complete API CRUD cycle
+      const createResponse = await fetch('/api/ideas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: 'Test idea' }),
+      });
+      const createData = await createResponse.json();
+      expect(createData.data.id).toBe('idea-123');
+
+      const getResponse = await fetch('/api/ideas/idea-123');
+      const getData = await getResponse.json();
+      expect(getData.data.content).toBe('Test idea');
+
+      const sessionResponse = await fetch('/api/ideas/idea-123/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const sessionData = await sessionResponse.json();
+      expect(sessionData.data.id).toBe('session-123');
+
+      const answersResponse = await fetch('/api/clarify/answer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sessionId: 'session-123',
+          answers: { '1': 'Answer 1' },
+        }),
+      });
+      const answersData = await answersResponse.json();
+      expect(answersData.data).toBeDefined();
     });
 
     it('should handle concurrent requests properly', async () => {

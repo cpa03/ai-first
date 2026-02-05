@@ -123,3 +123,39 @@ export const UI_CONFIG = {
    */
   COPY_FEEDBACK_DURATION: 2000,
 } as const;
+
+/**
+ * Animation timing configuration
+ * All duration values are in milliseconds
+ */
+export const ANIMATION_CONFIG = {
+  /**
+   * Fast transition duration (for micro-interactions)
+   */
+  FAST: 200,
+
+  /**
+   * Standard transition duration (for most UI transitions)
+   */
+  STANDARD: 300,
+
+  /**
+   * Slow transition duration (for emphasis animations)
+   */
+  SLOW: 500,
+
+  /**
+   * Toast exit animation duration
+   */
+  TOAST_EXIT: 300,
+
+  /**
+   * Input focus delay (for smooth focus transitions)
+   */
+  INPUT_FOCUS_DELAY: 50,
+
+  /**
+   * Error boundary reload delay
+   */
+  ERROR_RELOAD_DELAY: 3000,
+} as const;

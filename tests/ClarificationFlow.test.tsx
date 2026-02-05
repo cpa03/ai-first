@@ -61,10 +61,13 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/question 1 of 2/i)).toBeInTheDocument();
+    // Use getAllByText since "Question 1 of 2" appears in multiple places (progress bar and heading)
+    expect(screen.getAllByText(/question 1 of 2/i).length).toBeGreaterThan(0);
     expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
@@ -83,11 +86,12 @@ describe('ClarificationFlow', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/who is your target audience/i)
+        screen.getByRole('heading', { name: /who is your target audience/i })
       ).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/question 1 of 3/i)).toBeInTheDocument();
+    // Use getAllByText since "Question 1 of 3" appears in multiple places (progress bar and heading)
+    expect(screen.getAllByText(/question 1 of 3/i).length).toBeGreaterThan(0);
   });
 
   it('uses fallback questions when API fails', async () => {
@@ -97,7 +101,7 @@ describe('ClarificationFlow', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/who is your target audience/i)
+        screen.getByRole('heading', { name: /who is your target audience/i })
       ).toBeInTheDocument();
     });
 
@@ -130,7 +134,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -162,7 +168,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     // Simulate text input type by modifying question structure
@@ -176,14 +184,19 @@ describe('ClarificationFlow', () => {
     // Use fallback questions that include a select
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: [] }),
+      json: async () => ({
+        success: true,
+        data: { questions: [] },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
       expect(
-        screen.getByText(/who is your target audience/i)
+        screen.getByRole('heading', { name: /who is your target audience/i })
       ).toBeInTheDocument();
     });
 
@@ -198,7 +211,9 @@ describe('ClarificationFlow', () => {
     // Answer second question
     await waitFor(() => {
       expect(
-        screen.getByText(/what is the main goal you want to achieve/i)
+        screen.getByRole('heading', {
+          name: /what is main goal you want to achieve/i,
+        })
       ).toBeInTheDocument();
     });
     const secondTextarea = screen.getByPlaceholderText(
@@ -212,7 +227,9 @@ describe('ClarificationFlow', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/what is your desired timeline for this project/i)
+        screen.getByRole('heading', {
+          name: /what is your desired timeline for this project/i,
+        })
       ).toBeInTheDocument();
     });
 
@@ -251,7 +268,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -261,17 +280,22 @@ describe('ClarificationFlow', () => {
     fireEvent.click(nextButton);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[1].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[1].question })
+      ).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/question 2 of 2/i)).toBeInTheDocument();
+    // Use getAllByText since "Question 2 of 2" appears in multiple places (progress bar and heading)
+    expect(screen.getAllByText(/question 2 of 2/i).length).toBeGreaterThan(0);
     expect(screen.getByText('100%')).toBeInTheDocument();
 
     const previousButton = screen.getByText('← Previous');
     fireEvent.click(previousButton);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     expect(textarea).toHaveValue('Developers'); // Should restore previous answer
@@ -300,7 +324,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -337,7 +363,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const nextButton = screen.getByText('Complete');
@@ -372,7 +400,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const previousButton = screen.getByText('← Previous');
@@ -399,7 +429,12 @@ describe('ClarificationFlow', () => {
   it('shows no questions state when no questions available', async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: [] }),
+      json: async () => ({
+        success: true,
+        data: { questions: [] },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     // Mock the fallback to also return empty
@@ -412,7 +447,7 @@ describe('ClarificationFlow', () => {
     // but we can at least verify the error handling
     await waitFor(() => {
       expect(
-        screen.getByText(/who is your target audience/i)
+        screen.getByRole('heading', { name: /who is your target audience/i })
       ).toBeInTheDocument();
     });
 
@@ -422,7 +457,21 @@ describe('ClarificationFlow', () => {
   it('calls API with correct parameters', async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: async () => ({ questions: ['Test question'] }),
+      json: async () => ({
+        success: true,
+        data: {
+          questions: [
+            {
+              id: '1',
+              question: 'Test question',
+              type: 'open',
+              required: true,
+            },
+          ],
+        },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
     });
 
     const ideaId = 'test-idea-123';
@@ -486,7 +535,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
@@ -523,7 +574,9 @@ describe('ClarificationFlow', () => {
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     await waitFor(() => {
-      expect(screen.getByText(mockQuestions[0].question)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { name: mockQuestions[0].question })
+      ).toBeInTheDocument();
     });
 
     const nextButton = screen.getByText('Complete');
