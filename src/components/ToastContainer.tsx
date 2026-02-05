@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface Toast {
   id: string;
@@ -82,7 +83,7 @@ function Toast({ toast, onClose }: ToastProps) {
   const [isLeaving, setIsLeaving] = useState(false);
 
   useEffect(() => {
-    const duration = toast.duration || 5000;
+    const duration = toast.duration || UI_CONFIG.TOAST_DURATION;
     const timer = setTimeout(() => {
       setIsLeaving(true);
       setTimeout(() => onClose(toast.id), 300);

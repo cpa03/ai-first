@@ -105,4 +105,21 @@ export const UI_CONFIG = {
    * Shows warning color when character count reaches this percentage of max
    */
   CHAR_COUNT_WARNING_THRESHOLD: 0.8,
+
+  /**
+   * Blueprint generation simulated delay (in milliseconds)
+   * Used to show loading state while "generating" blueprint
+   */
+  BLUEPRINT_GENERATION_DELAY: 2000,
+
+  /**
+   * Toast notification duration (in milliseconds)
+   */
+  TOAST_DURATION: 3000,
+
+  /**
+   * Copy feedback duration (in milliseconds)
+   * How long to show "Copied!" feedback
+   */
+  COPY_FEEDBACK_DURATION: 2000,
 } as const;

@@ -40,7 +40,9 @@ export function isClarifierQuestion(data: unknown): data is {
   if (!hasProperty(data, 'question') || !isString(data.question)) return false;
   if (!hasProperty(data, 'type') || !isString(data.type)) return false;
   const typeValues = ['open', 'multiple_choice', 'yes_no'];
-  if (!typeValues.includes((data as any).type)) return false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!typeValues.includes((data as Record<string, unknown>).type as string))
+    return false;
   if (hasProperty(data, 'options') && !isArrayOf(data.options, isString)) {
     return false;
   }

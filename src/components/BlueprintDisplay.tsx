@@ -7,6 +7,7 @@ import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
+import { UI_CONFIG } from '@/lib/config/constants';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -23,7 +24,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   // Simulate blueprint generation
   useEffect(() => {
     const generateBlueprint = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
+      );
 
       const generatedBlueprint = generateBlueprintTemplate(idea, answers);
 
@@ -56,7 +59,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         win.showToast({
           type: 'success',
           message: 'Blueprint copied to clipboard!',
-          duration: 3000,
+          duration: UI_CONFIG.TOAST_DURATION,
         });
       }
     } catch (err) {
