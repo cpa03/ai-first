@@ -180,13 +180,7 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
   );
 }
 
-import {
-  isArrayOf,
-  isBoolean,
-  isNumber,
-  isObject,
-  isString,
-} from './type-guards';
+import { isString } from './type-guards';
 
 export function safeJsonParse<T = unknown>(
   jsonString: unknown,
