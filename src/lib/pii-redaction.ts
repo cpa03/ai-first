@@ -113,28 +113,28 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
     return redactPII(obj);
   }
 
-  if (obj instanceof Error) {
-    // For Error objects, we convert to a POJO including non-enumerable props
-    // then recursively redact to ensure all custom properties are protected
-    const errorData = {
-      name: obj.name,
-      message: obj.message,
-      stack: obj.stack,
-      ...(obj as unknown as Record<string, unknown>),
-    };
-    return redactPIIInObject(errorData, seen);
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map((item) => redactPIIInObject(item, seen));
-  }
-
   if (obj !== null && typeof obj === 'object') {
     // Handle circular references
     if (seen.has(obj)) {
       return '[Circular Reference]';
     }
     seen.add(obj);
+
+    if (obj instanceof Error) {
+      // For Error objects, we convert to a POJO including non-enumerable props
+      // then recursively redact to ensure all custom properties are protected
+      const errorData = {
+        name: obj.name,
+        message: obj.message,
+        stack: obj.stack,
+        ...(obj as any),
+      };
+      return redactPIIInObject(errorData, seen);
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map((item) => redactPIIInObject(item, seen));
+    }
 
     const redacted: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
