@@ -1,21 +1,4 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "opencode/kimi-k2.5-free",
-  "skills": {
-    "paths": [
-      ".opencode/skills"
-    ]
-  },
-  "mcp": {
-    "websearch": {
-      "enabled": true
-    },
-    "context7": {
-      "enabled": true
-    },
-    "github": {
-      "enabled": true
-    }
-  },
-  "lsp": false
+  "model": "opencode/kimi-k2.5-free"
 }
