@@ -6,6 +6,7 @@ import { exportManager, exportUtils } from '@/lib/export-connectors';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import dynamic from 'next/dynamic';
+import TaskManagement from '@/components/TaskManagement';
 
 interface Idea {
   id: string;
@@ -228,6 +229,11 @@ export default function ResultsPage() {
             : {}
         }
       />
+
+      {/* Task Management */}
+      <div className="mt-8">
+        <TaskManagement ideaId={idea.id} />
+      </div>
 
       {/* Export Options */}
       <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
