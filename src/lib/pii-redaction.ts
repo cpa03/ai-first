@@ -120,7 +120,7 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
       name: obj.name,
       message: obj.message,
       stack: obj.stack,
-      ...(obj as any),
+      ...(obj as unknown as Record<string, unknown>),
     };
     return redactPIIInObject(errorData, seen);
   }
