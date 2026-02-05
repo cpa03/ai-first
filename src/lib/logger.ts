@@ -1,3 +1,5 @@
+import { redactPII, redactPIIInObject } from './pii-redaction';
+
 export enum LogLevel {
   DEBUG = 0,
   INFO = 1,
@@ -36,15 +38,17 @@ export class Logger {
   }
 
   private formatArgs(args: unknown[], context?: LogContext): unknown[] {
+    const safeArgs = args || [];
     if (context?.metadata) {
-      return [...args, context.metadata];
+      return [...safeArgs, context.metadata];
     }
-    return args;
+    return safeArgs;
   }
 
   debug(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.DEBUG) {
-      console.debug(`[${this.context}] ${message}`, ...args);
+      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      console.debug(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
 
@@ -54,16 +58,19 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.DEBUG) {
+      const allArgs = this.formatArgs(args || [], context);
+      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
       console.debug(
-        `[${this.context}] ${this.formatMessage(message, context)}`,
-        ...this.formatArgs(args, context)
+        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
+        ...sanitizedArgs
       );
     }
   }
 
   info(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.INFO) {
-      console.info(`[${this.context}] ${message}`, ...args);
+      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      console.info(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
 
@@ -73,16 +80,19 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.INFO) {
+      const allArgs = this.formatArgs(args || [], context);
+      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
       console.info(
-        `[${this.context}] ${this.formatMessage(message, context)}`,
-        ...this.formatArgs(args, context)
+        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
+        ...sanitizedArgs
       );
     }
   }
 
   warn(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.WARN) {
-      console.warn(`[${this.context}] ${message}`, ...args);
+      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      console.warn(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
 
@@ -92,16 +102,19 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.WARN) {
+      const allArgs = this.formatArgs(args || [], context);
+      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
       console.warn(
-        `[${this.context}] ${this.formatMessage(message, context)}`,
-        ...this.formatArgs(args, context)
+        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
+        ...sanitizedArgs
       );
     }
   }
 
   error(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.ERROR) {
-      console.error(`[${this.context}] ${message}`, ...args);
+      const sanitizedArgs = (args || []).map((a) => redactPIIInObject(a));
+      console.error(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
   }
 
@@ -111,9 +124,11 @@ export class Logger {
     ...args: unknown[]
   ): void {
     if (currentLogLevel <= LogLevel.ERROR) {
+      const allArgs = this.formatArgs(args || [], context);
+      const sanitizedArgs = (allArgs || []).map((a) => redactPIIInObject(a));
       console.error(
-        `[${this.context}] ${this.formatMessage(message, context)}`,
-        ...this.formatArgs(args, context)
+        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
+        ...sanitizedArgs
       );
     }
   }

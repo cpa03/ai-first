@@ -397,7 +397,10 @@ describe('Logger Module', () => {
       logger.warn('Warning occurred', error);
       expect(console.warn).toHaveBeenCalledWith(
         '[TestLogger] Warning occurred',
-        error
+        expect.objectContaining({
+          message: 'Test error',
+          name: 'Error'
+        })
       );
     });
   });
@@ -462,7 +465,10 @@ describe('Logger Module', () => {
       logger.error('Failed operation', error);
       expect(console.error).toHaveBeenCalledWith(
         '[TestLogger] Failed operation',
-        error
+        expect.objectContaining({
+          message: 'Something went wrong',
+          name: 'Error'
+        })
       );
     });
 
@@ -474,8 +480,8 @@ describe('Logger Module', () => {
       logger.error('Multiple errors', error1, error2);
       expect(console.error).toHaveBeenCalledWith(
         '[TestLogger] Multiple errors',
-        error1,
-        error2
+        expect.objectContaining({ message: 'Error 1' }),
+        expect.objectContaining({ message: 'Error 2' })
       );
     });
   });
@@ -516,8 +522,8 @@ describe('Logger Module', () => {
       logger.errorWithContext('Request failed', context, error);
       expect(console.error).toHaveBeenCalledWith(
         '[TestLogger] Request failed [req:req_123]',
-        error,
-        { endpoint: '/api/users', error: error.message }
+        expect.objectContaining({ message: 'API error' }),
+        { endpoint: '/api/users', error: 'API error' }
       );
     });
   });
