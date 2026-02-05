@@ -18,54 +18,66 @@ export const mockEnvVars = {
 
 // Mock Supabase client
 export const createMockSupabaseClient = () => {
-  const mockInsert = jest.fn().mockResolvedValue({
-    data: [{ id: 'test-id', created_at: new Date().toISOString() }],
-    error: null,
-  });
+  // Create mock functions that can be configured in tests
   const mockSingle = jest.fn().mockResolvedValue({
     data: { id: 'test-id', content: 'test-content' },
     error: null,
   });
-  const mockEq = jest.fn(() => ({
+
+  const mockSelectChain = jest.fn().mockReturnValue({
     single: mockSingle,
-  }));
-  const mockSelect = jest.fn(() => ({
+  });
+
+  const mockIs = jest.fn().mockReturnValue({
+    single: mockSingle,
+  });
+
+  const mockEq = jest.fn().mockReturnValue({
+    is: mockIs,
+    single: mockSingle,
+  });
+
+  const mockSelect = jest.fn().mockReturnValue({
     eq: mockEq,
-    data: [{ id: 'test-id', content: 'test-content' }],
-    error: null,
-  }));
-  const mockOrder = jest.fn(() => ({
-    data: [],
-    error: null,
-  }));
+    single: mockSingle,
+  });
+
+  const mockInsert = jest.fn().mockReturnValue({
+    select: mockSelectChain,
+  });
+
   const mockUpdateEq = jest.fn().mockResolvedValue({
     data: { id: 'test-id', updated: true },
     error: null,
   });
-  const mockUpdate = jest.fn(() => ({
+
+  const mockUpdate = jest.fn().mockReturnValue({
     eq: mockUpdateEq,
-  }));
+  });
+
   const mockDeleteEq = jest.fn().mockResolvedValue({
     data: null,
     error: null,
   });
-  const mockDelete = jest.fn(() => ({
+
+  const mockDelete = jest.fn().mockReturnValue({
     eq: mockDeleteEq,
-  }));
+  });
 
   return {
-    from: jest.fn(() => ({
+    from: jest.fn().mockReturnValue({
       insert: mockInsert,
       select: mockSelect,
       update: mockUpdate,
       delete: mockDelete,
-    })),
+    }),
+    // Expose mock functions for test configuration
     mockInsert,
     mockSelect,
     mockEq,
+    mockIs,
     mockSingle,
     mockUpdateEq,
-    mockOrder,
     mockUpdate,
     mockDeleteEq,
     mockDelete,

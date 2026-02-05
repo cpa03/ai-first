@@ -136,6 +136,17 @@ export class DatabaseService {
     return DatabaseService.instance;
   }
 
+  // Reset instance for testing purposes
+  static resetInstance(): void {
+    DatabaseService.instance = new DatabaseService();
+  }
+
+  // Set client for testing purposes
+  setMockClient(mockClient: typeof supabaseClient): void {
+    this.client = mockClient;
+    this.admin = mockClient;
+  }
+
   // Ideas CRUD operations
   async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
     if (!this.client) throw new Error('Supabase client not initialized');

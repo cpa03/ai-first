@@ -56,6 +56,7 @@ export interface ExportResult {
   url?: string;
   id?: string;
   error?: string;
+  content?: string;
 }
 
 export interface SyncStatus {
