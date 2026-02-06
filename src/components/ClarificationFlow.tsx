@@ -156,7 +156,7 @@ function ClarificationFlow({
         }
 
         const data = await response.json();
-        const questionsData = data?.data?.questions || data?.questions || [];
+        const questionsData = Array.isArray(data?.data?.questions) ? data.data.questions : Array.isArray(data?.questions) ? data.questions : [];
 
         const formattedQuestions: Question[] = questionsData.map(
           (q: APIQuestion, index: number) => ({
