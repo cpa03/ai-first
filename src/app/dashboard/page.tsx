@@ -41,6 +41,13 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    idea: Idea | null;
+  }>({
+    isOpen: false,
+    idea: null,
+  });
 
   const fetchIdeas = useCallback(async () => {
     try {
@@ -81,10 +88,18 @@ export default function DashboardPage() {
     fetchIdeas();
   }, [fetchIdeas]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this idea?')) {
-      return;
-    }
+  const openDeleteModal = (idea: Idea) => {
+    setDeleteModal({ isOpen: true, idea });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, idea: null });
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.idea) return;
+
+    const id = deleteModal.idea.id;
 
     try {
       setDeletingId(id);
@@ -104,6 +119,7 @@ export default function DashboardPage() {
       }
 
       setIdeas(ideas.filter((idea) => idea.id !== id));
+      closeDeleteModal();
     } catch (err) {
       console.error('Error deleting idea:', err);
       alert(err instanceof Error ? err.message : 'Failed to delete idea');
@@ -272,7 +288,7 @@ export default function DashboardPage() {
                           View
                         </Link>
                         <button
-                          onClick={() => handleDelete(idea.id)}
+                          onClick={() => openDeleteModal(idea)}
                           disabled={deletingId === idea.id}
                           className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-50"
                           aria-label={`Delete ${idea.title}`}
@@ -285,6 +301,69 @@ export default function DashboardPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && deleteModal.idea && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeDeleteModal();
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 transform transition-all">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <h3
+                id="delete-modal-title"
+                className="text-lg font-semibold text-gray-900"
+              >
+                Delete Idea
+              </h3>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete &quot;{deleteModal.idea.title}
+              &quot;? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3 justify-end">
+              <Button
+                variant="outline"
+                onClick={closeDeleteModal}
+                disabled={!!deletingId}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleDelete}
+                loading={!!deletingId}
+                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              >
+                Delete Idea
+              </Button>
+            </div>
           </div>
         </div>
       )}
