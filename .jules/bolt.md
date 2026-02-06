@@ -9,3 +9,7 @@
 ## 2026-02-05 - Optimize PII Redaction with Single-Pass Regex and Named Capture Groups
 **Learning:** Sequential `.replace()` calls on a string result in multiple full scans (one per pattern). By combining multiple patterns into a single regex with named capture groups, we can achieve single-pass redaction, which significantly improves performance (approx. 50% speedup in this codebase). Additionally, combining an array of regex tests into a single alternation regex and using `Set` for lookups provides further algorithmic wins in recursive object processing.
 **Action:** Prefer single-pass regex with named capture groups for multiple string replacements, and use `Set` for constant-time lookups instead of array searches.
+
+## 2026-02-06 - Optimize Cost Tracking to O(1) and Fix Double-Counting Bug
+**Learning:** Incremental state tracking (accumulators) is far superior to repeated array filtering/reducing for unbounded datasets like cost logs or hit counters. Additionally, performing limit checks after state updates requires careful attention to whether the check should include the "old" or "new" state to avoid double-counting.
+**Action:** Use private properties to maintain running totals for frequently accessed stats, especially when the source data grows linearly over time.
