@@ -5,6 +5,13 @@
     "name": "CMZ",
     "config": ".opencode/agents/CMZ.json"
   },
+  "permission": [
+    {
+      "permission": "external_directory",
+      "pattern": "/tmp/*",
+      "action": "allow"
+    }
+  ],
   "skills": {
     "paths": [".opencode/skills"]
   },

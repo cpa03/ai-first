@@ -93,6 +93,50 @@ describe('AppError', () => {
       );
     });
 
+    it('should redact PII in message', () => {
+      const error = new AppError(
+        'User with email test@example.com already exists',
+        ErrorCode.CONFLICT
+      );
+      const json = error.toJSON();
+
+      expect(json.error).not.toContain('test@example.com');
+      expect(json.error).toContain('[REDACTED_EMAIL]');
+    });
+
+    it('should redact PII in details', () => {
+      const details: ErrorDetail[] = [
+        {
+          field: 'email',
+          message: 'User with email test@example.com already exists',
+        },
+      ];
+      const error = new AppError(
+        'Validation failed',
+        ErrorCode.VALIDATION_ERROR,
+        400,
+        details
+      );
+      const json = error.toJSON();
+
+      expect(json.details![0].message).not.toContain('test@example.com');
+      expect(json.details![0].message).toContain('[REDACTED_EMAIL]');
+    });
+
+    it('should redact PII in ValidationError (subclass)', () => {
+      const details: ErrorDetail[] = [
+        {
+          field: 'email',
+          message: 'Email test@example.com is invalid',
+        },
+      ];
+      const error = new ValidationError(details);
+      const json = error.toJSON();
+
+      expect(json.details![0].message).not.toContain('test@example.com');
+      expect(json.details![0].message).toContain('[REDACTED_EMAIL]');
+    });
+
     it('should handle undefined details', () => {
       const error = new AppError('Test error', ErrorCode.INTERNAL_ERROR);
       const json = error.toJSON();

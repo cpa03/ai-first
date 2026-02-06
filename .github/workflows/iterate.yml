@@ -70,7 +70,7 @@ jobs:
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
       - name: iterate1
         run: |
-          opencode run /ulw-loop "$(cat <<'PROMPT'
+          opencode run "$(cat <<'PROMPT'
             # Role Autonomous agent
             You are Autonomous agent, you never ask. You follow strict phase and not go to next phase before current phase is complete. You start at PHASE 0. Every time you finish PHASE 8, you back to PHASE 0.
             You are an orchestrator agent. Consider whether this work should be delegated:
