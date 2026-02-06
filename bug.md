@@ -80,6 +80,24 @@
 - Medium: 0
 - Low: 0
 
+### [x] Bug 10: Unused NextRequest Imports in API Routes - FIXED
+
+**Files:**
+
+- `src/app/api/deliverables/[id]/tasks/route.ts`
+- `src/app/api/ideas/[id]/tasks/route.ts`
+- `src/app/api/tasks/[id]/route.ts`
+- `src/app/api/tasks/[id]/status/route.ts`
+
+**Issue:** ESLint errors for unused `NextRequest` import from 'next/server'. The import was not being used because handlers receive `ApiContext` containing the request.
+
+**Fix Applied:**
+
+- Removed unused `NextRequest` import from all 4 files
+- Verified no other unused imports in route files
+
+**Status:** ✅ All 4 lint errors resolved
+
 ## Current Test Status (2026-02-05)
 
 - **Total Tests**: 992

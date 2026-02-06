@@ -8,7 +8,11 @@ import { createLogger } from '@/lib/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Button = dynamic(() => import('@/components/Button'), {
-  loading: () => <button className="btn btn-primary">Loading...</button>,
+  loading: () => (
+    <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
+      Loading...
+    </div>
+  ),
 });
 
 const Alert = dynamic(() => import('@/components/Alert'), {

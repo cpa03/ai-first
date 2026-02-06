@@ -141,9 +141,11 @@ export default function DashboardPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
           <p className="text-red-800">{error}</p>
-          <button onClick={fetchIdeas} className="mt-4 btn btn-primary">
-            Try Again
-          </button>
+          <div className="mt-4">
+            <Button onClick={fetchIdeas} variant="primary">
+              Try Again
+            </Button>
+          </div>
         </div>
       </div>
     );

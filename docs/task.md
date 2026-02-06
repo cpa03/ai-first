@@ -1,5 +1,103 @@
 # UI/UX Engineer Tasks
 
+### Task 2: Dashboard Error State Button Consistency ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-06
+
+#### Issue Found
+
+The error state in the dashboard page (`src/app/dashboard/page.tsx`) was using Bootstrap-style classes (`btn btn-primary`) that don't exist in the Tailwind CSS configuration, resulting in an unstyled button.
+
+**Before:**
+
+```tsx
+<button onClick={fetchIdeas} className="mt-4 btn btn-primary">
+  Try Again
+</button>
+```
+
+**After:**
+
+```tsx
+<div className="mt-4">
+  <Button onClick={fetchIdeas} variant="primary">
+    Try Again
+  </Button>
+</div>
+```
+
+#### Impact
+
+- Consistent styling with the rest of the application
+- Proper accessibility attributes from the Button component
+- Visual feedback (hover, focus states) now works correctly
+- Maintains design system consistency
+
+#### Files Modified
+
+- `src/app/dashboard/page.tsx` - Replaced native button with Button component
+
+#### Success Criteria Met
+
+- [x] Button now uses consistent design system
+- [x] Type-check passes (0 errors)
+- [x] Lint passes (0 errors)
+- [x] Build passes successfully
+
+---
+
+# Flexy Tasks (Modularity & Hardcoded Elimination)
+
+### Task 1: Remove Hardcoded Bootstrap Classes ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-06
+
+#### Issues Found
+
+Multiple pages were using Bootstrap-style CSS classes (`btn btn-primary`) that don't exist in the Tailwind CSS configuration:
+
+1. **src/app/results/page.tsx** - Error state and "No Idea Found" state buttons
+2. **src/app/clarify/page.tsx** - Dynamic Button import loading state
+
+#### Changes Made
+
+**results/page.tsx:**
+
+- Replaced native `<button className="btn btn-primary">` with proper `<Button variant="primary">` component
+- Fixed 2 occurrences in error states
+
+**clarify/page.tsx:**
+
+- Replaced loading placeholder button with styled div
+- Removed non-existent Bootstrap classes
+
+#### Impact
+
+- Consistent styling across all error states
+- Proper accessibility from Button component
+- No visual regressions
+- Code follows design system standards
+
+#### Files Modified
+
+- `src/app/results/page.tsx` - 2 button fixes
+- `src/app/clarify/page.tsx` - 1 loading state fix
+- `src/app/dashboard/page.tsx` - 1 button fix (from Phase 2)
+
+#### Success Criteria Met
+
+- [x] All Bootstrap classes eliminated
+- [x] Consistent Button component usage
+- [x] Type-check passes (0 errors)
+- [x] Lint passes (0 errors)
+- [x] Build passes successfully
+
+---
+
 ### Task 1: Accessibility & UX Improvements u2705 COMPLETE
 
 **Priority**: HIGH
@@ -15202,14 +15300,14 @@ src/lib/validation.ts (208 lines, 208 - 130 = 78 lines removed)
 
 #### Code Metrics
 
-| Metric                      | Before     | After      | Improvement       |
-| --------------------------- | ---------- | ---------- | ----------------- |
-| validation.ts lines         | 338        | 208        | **23% reduction** |
-| type-guards.ts lines       | 0          | 130        | **New module**   |
-| Type guard functions        | Mixed in   | Separated  | **SRP achieved** |
-| Validation functions        | Mixed in   | Separated  | **SRP achieved** |
-| Import options              | 1 module   | 2 modules  | **Better ISP**   |
-| Total codebase lines        | 11637      | 11767      | +130 (new file) |
+| Metric               | Before   | After     | Improvement       |
+| -------------------- | -------- | --------- | ----------------- |
+| validation.ts lines  | 338      | 208       | **23% reduction** |
+| type-guards.ts lines | 0        | 130       | **New module**    |
+| Type guard functions | Mixed in | Separated | **SRP achieved**  |
+| Validation functions | Mixed in | Separated | **SRP achieved**  |
+| Import options       | 1 module | 2 modules | **Better ISP**    |
+| Total codebase lines | 11637    | 11767     | +130 (new file)   |
 
 #### Backward Compatibility
 
