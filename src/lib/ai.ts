@@ -52,13 +52,15 @@ class AIService {
   private openai: OpenAI | null = null;
   private supabase: SupabaseClient | null = null;
   private costTrackers: CostTracker[] = [];
-  // PERFORMANCE: Track daily cost incrementally to avoid O(n) array scanning
-  // as the cost tracking history grows over time.
-  private cumulativeTodayCost: number = 0;
-  private lastTrackedDate: string = '';
+  private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
 
   constructor() {
+    this.todayCostCache = new Cache<number>({
+      ttl: 60 * 1000,
+      maxSize: 10,
+    });
+
     this.responseCache = new Cache<string>({
       ttl: 5 * 60 * 1000,
       maxSize: 100,
@@ -313,22 +315,17 @@ class AIService {
 
     this.costTrackers.push(tracker);
 
-    // PERFORMANCE: Incrementally update today's cost instead of recalculating
-    // from the full history. This keeps cost tracking O(1).
-    const today = new Date().toISOString().split('T')[0];
-    if (this.lastTrackedDate === today) {
-      this.cumulativeTodayCost += cost;
-    } else {
-      this.lastTrackedDate = today;
-      this.cumulativeTodayCost = cost;
-    }
+    // PERFORMANCE: Update cache instead of clearing it to avoid O(n) scan in getTodayCost.
+    const today = new Date().toDateString();
+    const currentTodayCost = this.todayCostCache.get(today) || 0;
+    const newTodayCost = currentTodayCost + cost;
+    this.todayCostCache.set(today, newTodayCost);
 
     const dailyLimit = parseFloat(process.env.COST_LIMIT_DAILY || '10.0');
-    const todayCost = this.cumulativeTodayCost;
 
-    if (todayCost > dailyLimit) {
+    if (newTodayCost > dailyLimit) {
       throw new Error(
-        `Cost limit exceeded. Today's cost: $${todayCost}, Limit: $${dailyLimit}`
+        `Cost limit exceeded. Today's cost: $${newTodayCost}, Limit: $${dailyLimit}`
       );
     }
 
@@ -353,18 +350,19 @@ class AIService {
   }
 
   private getTodayCost(): number {
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toDateString();
+    const cachedCost = this.todayCostCache.get(today);
 
-    // PERFORMANCE: Use cached cumulative cost if date hasn't changed.
-    // Only scan history if we've crossed into a new day or stats were reset.
-    if (this.lastTrackedDate !== today) {
-      this.lastTrackedDate = today;
-      this.cumulativeTodayCost = this.costTrackers
-        .filter((tracker) => tracker.timestamp.toISOString().split('T')[0] === today)
-        .reduce((sum, tracker) => sum + tracker.cost, 0);
+    if (cachedCost !== null) {
+      return cachedCost;
     }
 
-    return this.cumulativeTodayCost;
+    const cost = this.costTrackers
+      .filter((tracker) => tracker.timestamp.toDateString() === today)
+      .reduce((sum, tracker) => sum + tracker.cost, 0);
+
+    this.todayCostCache.set(today, cost);
+    return cost;
   }
 
   // Agent action logging
@@ -400,16 +398,15 @@ class AIService {
     responseCacheSize: number;
   } {
     return {
-      costCache: { size: 0, hits: 0, misses: 0, hitRate: 0 },
+      costCache: this.todayCostCache.getStats(),
       responseCache: this.responseCache.getStats(),
-      costCacheSize: 0,
+      costCacheSize: this.todayCostCache.size,
       responseCacheSize: this.responseCache.size,
     };
   }
 
   clearCostCache(): void {
-    this.cumulativeTodayCost = 0;
-    this.lastTrackedDate = '';
+    this.todayCostCache.clear();
   }
 
   clearResponseCache(): void {
