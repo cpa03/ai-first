@@ -91,6 +91,7 @@ export interface Task {
   custom_fields: Record<string, unknown> | null;
   milestone_id: string | null;
   created_at: string;
+  updated_at?: string;
   deleted_at?: string | null;
 }
 
@@ -374,6 +375,20 @@ export class DatabaseService {
 
     if (error) throw error;
     return data || [];
+  }
+
+  async getTask(id: string): Promise<Task | null> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (error) return null;
+    return data;
   }
 
   async getDeliverableTasks(deliverableId: string): Promise<Task[]> {
