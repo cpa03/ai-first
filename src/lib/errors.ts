@@ -1,4 +1,4 @@
-import { redactPII } from './pii-redaction';
+import { redactPII, redactPIIInObject } from './pii-redaction';
 
 export interface ErrorDetail {
   field?: string;
@@ -47,9 +47,11 @@ export class AppError extends Error {
 
   toJSON(): ErrorResponse {
     return {
-      error: this.message,
+      error: redactPII(this.message),
       code: this.code,
-      details: this.details,
+      details: this.details
+        ? (redactPIIInObject(this.details) as ErrorDetail[])
+        : undefined,
       timestamp: new Date().toISOString(),
       retryable: this.retryable,
       suggestions: this.suggestions,
@@ -87,11 +89,16 @@ export class RateLimitError extends AppError {
       'Implement client-side rate limiting to avoid this error',
       'Reduce request frequency or upgrade your plan for higher limits',
     ];
+    const details: ErrorDetail[] = [
+      {
+        message: `Limit: ${limit}, Remaining: ${remaining}`,
+      },
+    ];
     super(
       `Rate limit exceeded. Retry after ${retryAfter} seconds`,
       ErrorCode.RATE_LIMIT_EXCEEDED,
       429,
-      undefined,
+      details,
       true,
       suggestions
     );
@@ -100,21 +107,6 @@ export class RateLimitError extends AppError {
   }
 
   retryAfter: number;
-
-  toJSON(): ErrorResponse {
-    return {
-      error: this.message,
-      code: this.code,
-      details: [
-        {
-          message: `Limit: ${this.limit}, Remaining: ${this.remaining}`,
-        },
-      ],
-      timestamp: new Date().toISOString(),
-      retryable: true,
-      suggestions: this.suggestions,
-    };
-  }
 }
 
 export class ExternalServiceError extends AppError {
@@ -183,16 +175,6 @@ export class CircuitBreakerError extends AppError {
 
   service: string;
   resetTime: Date;
-
-  toJSON(): ErrorResponse {
-    return {
-      error: this.message,
-      code: this.code,
-      timestamp: new Date().toISOString(),
-      retryable: true,
-      suggestions: this.suggestions,
-    };
-  }
 }
 
 export class RetryExhaustedError extends AppError {
