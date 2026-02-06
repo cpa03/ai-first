@@ -17,3 +17,9 @@
 **Learning:** Mobile navigation menus should use semantic `<ul>` and `<li>` structures to ensure proper screen reader announcement of the item count. To avoid visual overlap with sticky headers or page content, use `fixed` positioning with a high z-index (e.g., `z-[100]`) and an opaque background. When using animations like `fade-in`, ensure a solid background is maintained throughout the transition to prevent unreadable text overlap.
 
 **Action:** Always wrap navigation links in a list, use `fixed` for full-width mobile overlays, and verify opacity with a short delay in automated screenshots to account for animations.
+
+## 2026-02-05 - [Semantic Stepper Accessibility]
+
+**Learning:** Progress indicators should use semantic `<ol>` and `<li>` structures even when they are just visual dots. This allows screen readers to announce the current position and total steps correctly. Providing explicit `aria-label` descriptions like "Current", "Completed", or "Upcoming" for each step significantly improves the experience for non-visual users.
+
+**Action:** Always use ordered lists for multi-step progress indicators and ensure each step has a clear, state-aware ARIA label.
