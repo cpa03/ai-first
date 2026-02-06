@@ -5,6 +5,9 @@ compatibility_flags = ["nodejs_compat"]
 # Cloudflare Pages configuration for Next.js
 pages_build_output_dir = ".next"
 
+# Build command with environment validation
+build_command = "npm run build:cloudflare"
+
 [env.production]
 name = "ai-first"
 

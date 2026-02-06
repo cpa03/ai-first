@@ -19,6 +19,8 @@
     "test:e2e": "jest --testPathPattern='tests/e2e-comprehensive'",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "env:check": "bash scripts/validate-env.sh",
+    "env:check:cloudflare": "bash scripts/validate-cloudflare-env.sh",
+    "build:cloudflare": "bash scripts/validate-cloudflare-env.sh && next build",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset"
   },

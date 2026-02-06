@@ -1,0 +1,83 @@
+name: Cloudflare Environment Validation
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  validate-cloudflare-env:
+    name: Validate Cloudflare Environment
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Validate Environment Variables
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          COST_LIMIT_DAILY: ${{ secrets.COST_LIMIT_DAILY }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+        run: |
+          bash scripts/validate-cloudflare-env.sh
+        continue-on-error: true
+
+      - name: Check Validation Result
+        if: failure()
+        run: |
+          echo "::error::Cloudflare environment validation failed. Please ensure all required secrets are configured in GitHub."
+          echo "Required secrets:"
+          echo "  - NEXT_PUBLIC_SUPABASE_URL"
+          echo "  - NEXT_PUBLIC_SUPABASE_ANON_KEY"
+          echo "  - SUPABASE_SERVICE_ROLE_KEY"
+          echo "  - OPENAI_API_KEY or ANTHROPIC_API_KEY"
+          echo "  - COST_LIMIT_DAILY"
+          echo "  - NEXT_PUBLIC_APP_URL"
+          exit 1
+
+  check-wrangler-config:
+    name: Check Wrangler Configuration
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate wrangler.toml
+        run: |
+          if [ ! -f "wrangler.toml" ]; then
+            echo "::error::wrangler.toml not found"
+            exit 1
+          fi
+
+          echo "✓ wrangler.toml exists"
+
+          # Check for required fields
+          if grep -q "name = " wrangler.toml; then
+            echo "✓ Worker name is configured"
+          else
+            echo "::error::Worker name not configured in wrangler.toml"
+            exit 1
+          fi
+
+          if grep -q "compatibility_date" wrangler.toml; then
+            echo "✓ Compatibility date is configured"
+          else
+            echo "::error::Compatibility date not configured in wrangler.toml"
+            exit 1
+          fi
+
+          echo "✓ wrangler.toml is valid"
