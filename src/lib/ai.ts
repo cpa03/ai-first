@@ -58,7 +58,7 @@ class AIService {
   constructor() {
     this.todayCostCache = new Cache<number>({
       ttl: 60 * 1000,
-      maxSize: 10,
+      maxSize: 1,
     });
 
     this.responseCache = new Cache<string>({
@@ -306,6 +306,11 @@ class AIService {
     const costPerToken = this.getCostPerToken(model);
     const cost = tokens * costPerToken;
 
+    // PERFORMANCE: Get current today's cost. This is O(1) if cached, O(n) if not.
+    // We call it before pushing the new tracker to ensure it only includes previous costs.
+    const previousTodayCost = this.getTodayCost();
+    const totalTodayCost = previousTodayCost + cost;
+
     const tracker: CostTracker = {
       tokensUsed: tokens,
       cost,
@@ -315,17 +320,17 @@ class AIService {
 
     this.costTrackers.push(tracker);
 
-    // PERFORMANCE: Update cache instead of clearing it to avoid O(n) scan in getTodayCost.
+    // PERFORMANCE: Update cache with the new total instead of clearing it.
+    // This keeps subsequent calls to getTodayCost() as O(1).
     const today = new Date().toDateString();
-    const currentTodayCost = this.todayCostCache.get(today) || 0;
-    const newTodayCost = currentTodayCost + cost;
-    this.todayCostCache.set(today, newTodayCost);
+    const cacheKey = `today:${today}`;
+    this.todayCostCache.set(cacheKey, totalTodayCost);
 
     const dailyLimit = parseFloat(process.env.COST_LIMIT_DAILY || '10.0');
 
-    if (newTodayCost > dailyLimit) {
+    if (totalTodayCost > dailyLimit) {
       throw new Error(
-        `Cost limit exceeded. Today's cost: $${newTodayCost}, Limit: $${dailyLimit}`
+        `Cost limit exceeded. Today's cost: $${totalTodayCost}, Limit: $${dailyLimit}`
       );
     }
 
@@ -351,8 +356,9 @@ class AIService {
 
   private getTodayCost(): number {
     const today = new Date().toDateString();
-    const cachedCost = this.todayCostCache.get(today);
+    const cacheKey = `today:${today}`;
 
+    const cachedCost = this.todayCostCache.get(cacheKey);
     if (cachedCost !== null) {
       return cachedCost;
     }
@@ -361,7 +367,7 @@ class AIService {
       .filter((tracker) => tracker.timestamp.toDateString() === today)
       .reduce((sum, tracker) => sum + tracker.cost, 0);
 
-    this.todayCostCache.set(today, cost);
+    this.todayCostCache.set(cacheKey, cost);
     return cost;
   }
 

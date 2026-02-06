@@ -11,5 +11,5 @@
 **Action:** Prefer single-pass regex with named capture groups for multiple string replacements, and use `Set` for constant-time lookups instead of array searches.
 
 ## 2026-02-06 - Optimize Cost Tracking via Cache Accumulation
-**Learning:** Incremental updates to state (accumulators) are superior to repeated $O(n)$ scans. In environments where existing class structures (like a `Cache` instance) must be preserved for compatibility, updating the structure's content directly instead of clearing and forced recalculation achieves the same $O(1)$ common-case performance while satisfying architectural constraints.
+**Learning:** Incremental updates to state (accumulators) are superior to repeated $O(n)$ scans. By updating a cached total instead of clearing and forced recalculation, we achieve $O(1)$ common-case performance. Additionally, calling the calculation before state updates prevents double-counting bugs in threshold checks.
 **Action:** Use accumulators for stats tracking and prioritize updating existing data structures over full recalculations.
