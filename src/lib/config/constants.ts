@@ -131,6 +131,46 @@ export const UI_CONFIG = {
 } as const;
 
 /**
+ * API validation configuration
+ */
+export const VALIDATION_CONFIG = {
+  /**
+   * Maximum length for clarification answers (in characters)
+   */
+  MAX_ANSWER_LENGTH: 5000,
+
+  /**
+   * Default pagination limit for list endpoints
+   */
+  DEFAULT_PAGINATION_LIMIT: 50,
+
+  /**
+   * Maximum pagination limit for list endpoints
+   */
+  MAX_PAGINATION_LIMIT: 100,
+
+  /**
+   * Minimum length for idea text (in characters)
+   */
+  MIN_IDEA_LENGTH: 10,
+
+  /**
+   * Maximum length for idea text (in characters)
+   */
+  MAX_IDEA_LENGTH: 10000,
+
+  /**
+   * Maximum length for idea ID (in characters)
+   */
+  MAX_IDEA_ID_LENGTH: 100,
+
+  /**
+   * Maximum request body size (in bytes)
+   */
+  MAX_REQUEST_BODY_SIZE: 1048576, // 1MB
+} as const;
+
+/**
  * Animation timing configuration
  * All duration values are in milliseconds
  */

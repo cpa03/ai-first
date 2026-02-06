@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -135,6 +135,64 @@ export default function DashboardPage() {
       day: 'numeric',
     });
   };
+
+  // Refs for focus management
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Handle focus when modal opens/closes
+  useEffect(() => {
+    if (deleteModal.isOpen) {
+      // Store the previously focused element
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      // Move focus to the cancel button when modal opens
+      setTimeout(() => {
+        cancelButtonRef.current?.focus();
+      }, 0);
+    } else if (previousFocusRef.current) {
+      // Return focus to the trigger element when modal closes
+      previousFocusRef.current.focus();
+    }
+  }, [deleteModal.isOpen]);
+
+  // Handle keyboard events for focus trap and escape
+  useEffect(() => {
+    if (!deleteModal.isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeDeleteModal();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [deleteModal.isOpen]);
 
   if (loading) {
     return (
@@ -308,6 +366,7 @@ export default function DashboardPage() {
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && deleteModal.idea && (
         <div
+          ref={modalRef}
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
           role="dialog"
           aria-modal="true"
@@ -349,6 +408,7 @@ export default function DashboardPage() {
 
             <div className="flex gap-3 justify-end">
               <Button
+                ref={cancelButtonRef}
                 variant="outline"
                 onClick={closeDeleteModal}
                 disabled={!!deletingId}

@@ -6,8 +6,7 @@ import {
   standardSuccessResponse,
   ApiContext,
 } from '@/lib/api-handler';
-
-const MAX_ANSWER_LENGTH = 5000;
+import { VALIDATION_CONFIG } from '@/lib/config/constants';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;
@@ -38,11 +37,11 @@ async function handlePost(context: ApiContext) {
   }
 
   const trimmedAnswer = answer.trim();
-  if (trimmedAnswer.length > MAX_ANSWER_LENGTH) {
+  if (trimmedAnswer.length > VALIDATION_CONFIG.MAX_ANSWER_LENGTH) {
     throw new ValidationError([
       {
         field: 'answer',
-        message: `answer must not exceed ${MAX_ANSWER_LENGTH} characters`,
+        message: `answer must not exceed ${VALIDATION_CONFIG.MAX_ANSWER_LENGTH} characters`,
       },
     ]);
   }
