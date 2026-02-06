@@ -113,13 +113,12 @@
       "post_model_use"
     ]
   },
-  "permission": [
-    {
-      "permission": "external_directory",
+  "permissions": {
+    "external_directory": {
       "pattern": "/tmp/*",
       "action": "allow"
     }
-  ],
+  },
   "delegation_rules": {
     "visual_engineering": {
       "category": "visual-engineering",
