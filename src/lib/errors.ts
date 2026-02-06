@@ -1,4 +1,4 @@
-import { redactPII } from './pii-redaction';
+import { redactPII, redactPIIInObject } from './pii-redaction';
 
 export interface ErrorDetail {
   field?: string;
@@ -47,9 +47,11 @@ export class AppError extends Error {
 
   toJSON(): ErrorResponse {
     return {
-      error: this.message,
+      error: redactPII(this.message),
       code: this.code,
-      details: this.details,
+      details: this.details
+        ? (redactPIIInObject(this.details) as ErrorDetail[])
+        : undefined,
       timestamp: new Date().toISOString(),
       retryable: this.retryable,
       suggestions: this.suggestions,
@@ -103,13 +105,13 @@ export class RateLimitError extends AppError {
 
   toJSON(): ErrorResponse {
     return {
-      error: this.message,
+      error: redactPII(this.message),
       code: this.code,
-      details: [
+      details: redactPIIInObject([
         {
           message: `Limit: ${this.limit}, Remaining: ${this.remaining}`,
         },
-      ],
+      ]) as ErrorDetail[],
       timestamp: new Date().toISOString(),
       retryable: true,
       suggestions: this.suggestions,
@@ -186,7 +188,7 @@ export class CircuitBreakerError extends AppError {
 
   toJSON(): ErrorResponse {
     return {
-      error: this.message,
+      error: redactPII(this.message),
       code: this.code,
       timestamp: new Date().toISOString(),
       retryable: true,
