@@ -315,7 +315,7 @@ class AIService {
 
     // PERFORMANCE: Incrementally update today's cost instead of recalculating
     // from the full history. This keeps cost tracking O(1).
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split('T')[0];
     if (this.lastTrackedDate === today) {
       this.cumulativeTodayCost += cost;
     } else {
@@ -353,14 +353,14 @@ class AIService {
   }
 
   private getTodayCost(): number {
-    const today = new Date().toDateString();
+    const today = new Date().toISOString().split('T')[0];
 
     // PERFORMANCE: Use cached cumulative cost if date hasn't changed.
     // Only scan history if we've crossed into a new day or stats were reset.
     if (this.lastTrackedDate !== today) {
       this.lastTrackedDate = today;
       this.cumulativeTodayCost = this.costTrackers
-        .filter((tracker) => tracker.timestamp.toDateString() === today)
+        .filter((tracker) => tracker.timestamp.toISOString().split('T')[0] === today)
         .reduce((sum, tracker) => sum + tracker.cost, 0);
     }
 
@@ -398,14 +398,12 @@ class AIService {
     responseCache: ReturnType<Cache<string>['getStats']>;
     costCacheSize: number;
     responseCacheSize: number;
-    cumulativeTodayCost: number;
   } {
     return {
       costCache: { size: 0, hits: 0, misses: 0, hitRate: 0 },
       responseCache: this.responseCache.getStats(),
       costCacheSize: 0,
       responseCacheSize: this.responseCache.size,
-      cumulativeTodayCost: this.cumulativeTodayCost,
     };
   }
 
