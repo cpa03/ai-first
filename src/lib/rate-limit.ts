@@ -94,24 +94,37 @@ export function cleanupExpiredEntries(): void {
 
 setInterval(cleanupExpiredEntries, 60 * 1000);
 
-export function rateLimitResponse(rateLimitInfo: RateLimitInfo): Response {
+export function rateLimitResponse(
+  rateLimitInfo: RateLimitInfo,
+  requestId?: string
+): Response {
   const resetTime = Math.max(rateLimitInfo.reset, Date.now());
-  return new Response(
-    JSON.stringify({
-      error: 'Too many requests',
-      retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
-    }),
-    {
-      status: 429,
-      headers: {
-        'Content-Type': 'application/json',
-        'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
-        'X-RateLimit-Limit': String(rateLimitInfo.limit),
-        'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
-        'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
-      },
-    }
-  );
+  const responseBody = {
+    error: 'Too many requests',
+    code: 'RATE_LIMIT_EXCEEDED',
+    retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
+    timestamp: new Date().toISOString(),
+    requestId:
+      requestId ||
+      `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    retryable: true,
+  };
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
+    'X-RateLimit-Limit': String(rateLimitInfo.limit),
+    'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
+    'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
+    'X-Request-ID': responseBody.requestId,
+    'X-Error-Code': 'RATE_LIMIT_EXCEEDED',
+    'X-Retryable': 'true',
+  };
+
+  return new Response(JSON.stringify(responseBody), {
+    status: 429,
+    headers,
+  });
 }
 
 export function getRateLimitStats() {

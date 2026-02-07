@@ -222,11 +222,14 @@ describe('withApiHandler', () => {
 
       expect(response.status).toBe(429);
       expect(mockHandler).not.toHaveBeenCalled();
-      expect(mockRateLimitResponse).toHaveBeenCalledWith({
-        limit: 60,
-        remaining: 0,
-        reset: resetTime,
-      });
+      expect(mockRateLimitResponse).toHaveBeenCalledWith(
+        {
+          limit: 60,
+          remaining: 0,
+          reset: resetTime,
+        },
+        expect.stringMatching(/^req_\d+_[a-z0-9]{9}$/)
+      );
     });
 
     it('should not call handler when rate limit exceeded', async () => {
