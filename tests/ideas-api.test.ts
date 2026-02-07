@@ -9,6 +9,15 @@ jest.mock('@/lib/db', () => ({
   },
 }));
 
+jest.mock('@/lib/auth', () => ({
+  requireAuth: jest
+    .fn()
+    .mockResolvedValue({ id: 'test-user-id', email: 'test@example.com' }),
+  verifyAuth: jest
+    .fn()
+    .mockResolvedValue({ id: 'test-user-id', email: 'test@example.com' }),
+}));
+
 import { POST } from '@/app/api/ideas/route';
 import { dbService } from '@/lib/db';
 
