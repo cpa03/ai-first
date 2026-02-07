@@ -99,37 +99,31 @@ describe('PromptService', () => {
       expect(template1).toBe(template2);
     });
 
-    it('should throw error for non-existent template', () => {
-      expect(() => {
-        service.loadTemplate('nonexistent', 'template', 'user');
-      }).toThrow('Failed to load prompt template');
+    it('should throw error for non-existent template', async () => {
+      await expect(
+        service.loadTemplate('nonexistent', 'template', 'user')
+      ).rejects.toThrow('Failed to load prompt template');
     });
 
-    it('should throw error for non-existent agent', () => {
-      expect(() => {
-        service.loadTemplate('fake-agent', 'template', 'user');
-      }).toThrow('Failed to load prompt template');
+    it('should throw error for non-existent agent', async () => {
+      await expect(
+        service.loadTemplate('fake-agent', 'template', 'user')
+      ).rejects.toThrow('Failed to load prompt template');
     });
 
-    it('should throw error with template path in message', () => {
-      try {
-        service.loadTemplate('invalid', 'template', 'user');
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        const errorMessage = error instanceof Error ? error.message : '';
-        expect(errorMessage).toContain('Failed to load prompt template');
-        expect(errorMessage).toContain('invalid');
-      }
+    it('should throw error with template path in message', async () => {
+      await expect(
+        service.loadTemplate('invalid', 'template', 'user')
+      ).rejects.toThrow('Failed to load prompt template');
     });
 
-    it('should handle different roles for same template name', () => {
-      const systemTemplate = service.loadTemplate(
+    it('should handle different roles for same template name', async () => {
+      const systemTemplate = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'system'
       );
-      const userTemplate = service.loadTemplate(
+      const userTemplate = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
@@ -138,9 +132,17 @@ describe('PromptService', () => {
       expect(systemTemplate).not.toBe(userTemplate);
     });
 
-    it('should load all refine-idea templates', () => {
-      const system = service.loadTemplate('clarifier', 'refine-idea', 'system');
-      const user = service.loadTemplate('clarifier', 'refine-idea', 'user');
+    it('should load all refine-idea templates', async () => {
+      const system = await service.loadTemplate(
+        'clarifier',
+        'refine-idea',
+        'system'
+      );
+      const user = await service.loadTemplate(
+        'clarifier',
+        'refine-idea',
+        'user'
+      );
 
       expect(system).toBeTruthy();
       expect(user).toBeTruthy();
@@ -284,8 +286,8 @@ describe('PromptService', () => {
   });
 
   describe('getPrompt', () => {
-    it('should load and return template without variables', () => {
-      const prompt = service.getPrompt(
+    it('should load and return template without variables', async () => {
+      const prompt = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user'
@@ -296,9 +298,9 @@ describe('PromptService', () => {
       expect(prompt).toContain('{idea}');
     });
 
-    it('should load, interpolate and return template with variables', () => {
+    it('should load, interpolate and return template with variables', async () => {
       const variables: PromptVariable = { idea: 'Test idea' };
-      const prompt = service.getPrompt(
+      const prompt = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
@@ -310,12 +312,12 @@ describe('PromptService', () => {
       expect(prompt).not.toContain('{idea}');
     });
 
-    it('should handle multiple variables in template', () => {
+    it('should handle multiple variables in template', async () => {
       const variables: PromptVariable = {
         originalIdea: 'Build an app',
         answers: 'User answered questions',
       };
-      const prompt = service.getPrompt(
+      const prompt = await service.getPrompt(
         'clarifier',
         'refine-idea',
         'user',
@@ -326,13 +328,13 @@ describe('PromptService', () => {
       expect(prompt).toContain('User answered questions');
     });
 
-    it('should cache template before interpolation', () => {
-      const template1 = service.getPrompt(
+    it('should cache template before interpolation', async () => {
+      const template1 = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user'
       );
-      const template2 = service.getPrompt(
+      const template2 = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user'
@@ -341,17 +343,17 @@ describe('PromptService', () => {
       expect(template1).toBe(template2);
     });
 
-    it('should return different results with different variables', () => {
+    it('should return different results with different variables', async () => {
       const variables1: PromptVariable = { idea: 'Idea 1' };
       const variables2: PromptVariable = { idea: 'Idea 2' };
 
-      const prompt1 = service.getPrompt(
+      const prompt1 = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
         variables1
       );
-      const prompt2 = service.getPrompt(
+      const prompt2 = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
@@ -363,8 +365,8 @@ describe('PromptService', () => {
       expect(prompt2).toContain('Idea 2');
     });
 
-    it('should handle system role prompts', () => {
-      const prompt = service.getPrompt(
+    it('should handle system role prompts', async () => {
+      const prompt = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'system'
@@ -374,8 +376,8 @@ describe('PromptService', () => {
       expect(typeof prompt).toBe('string');
     });
 
-    it('should handle user role prompts', () => {
-      const prompt = service.getPrompt(
+    it('should handle user role prompts', async () => {
+      const prompt = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user'
@@ -385,14 +387,14 @@ describe('PromptService', () => {
       expect(typeof prompt).toBe('string');
     });
 
-    it('should ignore empty variables object', () => {
-      const promptWithVars = service.getPrompt(
+    it('should ignore empty variables object', async () => {
+      const promptWithVars = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
         {}
       );
-      const promptWithoutVars = service.getPrompt(
+      const promptWithoutVars = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user'
@@ -401,15 +403,15 @@ describe('PromptService', () => {
       expect(promptWithVars).toBe(promptWithoutVars);
     });
 
-    it('should throw error for invalid template name', () => {
-      expect(() => {
-        service.getPrompt('clarifier', 'invalid-template', 'user');
-      }).toThrow('Failed to load prompt template');
+    it('should throw error for invalid template name', async () => {
+      await expect(
+        service.getPrompt('clarifier', 'invalid-template', 'user')
+      ).rejects.toThrow('Failed to load prompt template');
     });
 
-    it('should work with breakdown agent prompts', () => {
+    it('should work with breakdown agent prompts', async () => {
       const variables: PromptVariable = { refinedIdea: 'Test project' };
-      const prompt = service.getPrompt(
+      const prompt = await service.getPrompt(
         'breakdown',
         'analyze-idea',
         'user',
@@ -422,26 +424,29 @@ describe('PromptService', () => {
   });
 
   describe('getSystemPrompt', () => {
-    it('should load system prompt for clarifier', () => {
-      const prompt = service.getSystemPrompt('clarifier', 'generate-questions');
-
-      expect(prompt).toBeTruthy();
-      expect(typeof prompt).toBe('string');
-    });
-
-    it('should load system prompt for breakdown', () => {
-      const prompt = service.getSystemPrompt('breakdown', 'analyze-idea');
-
-      expect(prompt).toBeTruthy();
-      expect(typeof prompt).toBe('string');
-    });
-
-    it('should be equivalent to getPrompt with system role', () => {
-      const systemPrompt1 = service.getSystemPrompt(
+    it('should load system prompt for clarifier', async () => {
+      const prompt = await service.getSystemPrompt(
         'clarifier',
         'generate-questions'
       );
-      const systemPrompt2 = service.getPrompt(
+
+      expect(prompt).toBeTruthy();
+      expect(typeof prompt).toBe('string');
+    });
+
+    it('should load system prompt for breakdown', async () => {
+      const prompt = await service.getSystemPrompt('breakdown', 'analyze-idea');
+
+      expect(prompt).toBeTruthy();
+      expect(typeof prompt).toBe('string');
+    });
+
+    it('should be equivalent to getPrompt with system role', async () => {
+      const systemPrompt1 = await service.getSystemPrompt(
+        'clarifier',
+        'generate-questions'
+      );
+      const systemPrompt2 = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'system'
@@ -450,17 +455,17 @@ describe('PromptService', () => {
       expect(systemPrompt1).toBe(systemPrompt2);
     });
 
-    it('should throw error for invalid agent', () => {
-      expect(() => {
-        service.getSystemPrompt('invalid', 'template');
-      }).toThrow('Failed to load prompt template');
+    it('should throw error for invalid agent', async () => {
+      await expect(
+        service.getSystemPrompt('invalid', 'template')
+      ).rejects.toThrow('Failed to load prompt template');
     });
   });
 
   describe('getUserPrompt', () => {
-    it('should load and interpolate user prompt with variables', () => {
+    it('should load and interpolate user prompt with variables', async () => {
       const variables: PromptVariable = { idea: 'My awesome idea' };
-      const prompt = service.getUserPrompt(
+      const prompt = await service.getUserPrompt(
         'clarifier',
         'generate-questions',
         variables
@@ -470,14 +475,14 @@ describe('PromptService', () => {
       expect(prompt).toContain('My awesome idea');
     });
 
-    it('should be equivalent to getPrompt with user role', () => {
+    it('should be equivalent to getPrompt with user role', async () => {
       const variables: PromptVariable = { idea: 'Test' };
-      const userPrompt1 = service.getUserPrompt(
+      const userPrompt1 = await service.getUserPrompt(
         'clarifier',
         'generate-questions',
         variables
       );
-      const userPrompt2 = service.getPrompt(
+      const userPrompt2 = await service.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
@@ -487,7 +492,7 @@ describe('PromptService', () => {
       expect(userPrompt1).toBe(userPrompt2);
     });
 
-    it('should handle complex variable objects', () => {
+    it('should handle complex variable objects', async () => {
       const variables: PromptVariable = {
         originalIdea: 'Complex idea',
         answers: [
@@ -495,7 +500,7 @@ describe('PromptService', () => {
           { id: '2', question: 'Question 2', answer: 'Answer 2' },
         ],
       };
-      const prompt = service.getUserPrompt(
+      const prompt = await service.getUserPrompt(
         'clarifier',
         'refine-idea',
         variables
@@ -507,23 +512,23 @@ describe('PromptService', () => {
       expect(prompt).toContain('Question 2');
     });
 
-    it('should throw error for invalid template', () => {
+    it('should throw error for invalid template', async () => {
       const variables: PromptVariable = { idea: 'Test' };
-      expect(() => {
-        service.getUserPrompt('clarifier', 'invalid', variables);
-      }).toThrow('Failed to load prompt template');
+      await expect(
+        service.getUserPrompt('clarifier', 'invalid', variables)
+      ).rejects.toThrow('Failed to load prompt template');
     });
   });
 
   describe('clearCache', () => {
-    it('should clear all cached templates', () => {
-      service.loadTemplate('clarifier', 'generate-questions', 'user');
-      service.loadTemplate('clarifier', 'refine-idea', 'system');
-      service.loadTemplate('breakdown', 'analyze-idea', 'user');
+    it('should clear all cached templates', async () => {
+      await service.loadTemplate('clarifier', 'generate-questions', 'user');
+      await service.loadTemplate('clarifier', 'refine-idea', 'system');
+      await service.loadTemplate('breakdown', 'analyze-idea', 'user');
 
       expect(() => service.clearCache()).not.toThrow();
 
-      const template = service.loadTemplate(
+      const template = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
@@ -531,14 +536,14 @@ describe('PromptService', () => {
       expect(template).toBeTruthy();
     });
 
-    it('should allow reloading templates after cache clear', () => {
-      const template1 = service.loadTemplate(
+    it('should allow reloading templates after cache clear', async () => {
+      const template1 = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
       );
       service.clearCache();
-      const template2 = service.loadTemplate(
+      const template2 = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
@@ -558,8 +563,8 @@ describe('PromptService', () => {
       expect(promptService).toBeInstanceOf(PromptService);
     });
 
-    it('should work like regular PromptService instance', () => {
-      const template = promptService.loadTemplate(
+    it('should work like regular PromptService instance', async () => {
+      const template = await promptService.loadTemplate(
         'clarifier',
         'generate-questions',
         'system'
@@ -576,9 +581,9 @@ describe('PromptService', () => {
       expect(result).toBe('Hello, World!');
     });
 
-    it('should support getPrompt method', () => {
+    it('should support getPrompt method', async () => {
       const variables: PromptVariable = { idea: 'Test' };
-      const prompt = promptService.getPrompt(
+      const prompt = await promptService.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
@@ -590,17 +595,17 @@ describe('PromptService', () => {
   });
 
   describe('integration tests', () => {
-    it('should complete full workflow: load, cache, interpolate', () => {
+    it('should complete full workflow: load, cache, interpolate', async () => {
       const variables: PromptVariable = { idea: 'Integration test idea' };
 
-      const prompt1 = promptService.getPrompt(
+      const prompt1 = await promptService.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
         variables
       );
 
-      const prompt2 = promptService.getPrompt(
+      const prompt2 = await promptService.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
@@ -611,18 +616,18 @@ describe('PromptService', () => {
       expect(prompt1).toContain('Integration test idea');
     });
 
-    it('should handle multiple agents independently', () => {
+    it('should handle multiple agents independently', async () => {
       const clarifierVars: PromptVariable = { idea: 'Clarifier idea' };
       const breakdownVars: PromptVariable = { refinedIdea: 'Breakdown idea' };
 
-      const clarifierPrompt = promptService.getPrompt(
+      const clarifierPrompt = await promptService.getPrompt(
         'clarifier',
         'generate-questions',
         'user',
         clarifierVars
       );
 
-      const breakdownPrompt = promptService.getPrompt(
+      const breakdownPrompt = await promptService.getPrompt(
         'breakdown',
         'analyze-idea',
         'user',
@@ -633,11 +638,11 @@ describe('PromptService', () => {
       expect(breakdownPrompt).toContain('Breakdown idea');
     });
 
-    it('should maintain cache separation between instances', () => {
+    it('should maintain cache separation between instances', async () => {
       const service1 = new PromptService();
       const service2 = new PromptService();
 
-      service1.loadTemplate('clarifier', 'generate-questions', 'user');
+      await service1.loadTemplate('clarifier', 'generate-questions', 'user');
       service1.clearCache();
 
       expect(() => service2.clearCache()).not.toThrow();

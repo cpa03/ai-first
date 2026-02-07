@@ -23,8 +23,8 @@ describe('ConfigurationService', () => {
   });
 
   describe('loadAgentConfig', () => {
-    it('should load valid clarifier configuration', () => {
-      const config = service.loadAgentConfig('clarifier');
+    it('should load valid clarifier configuration', async () => {
+      const config = await service.loadAgentConfig('clarifier');
 
       expect(config).toBeTruthy();
       expect(config.name).toBe('clarifier');
@@ -33,8 +33,8 @@ describe('ConfigurationService', () => {
       expect(config.max_tokens).toBe(2000);
     });
 
-    it('should load valid breakdown-engine configuration', () => {
-      const config = service.loadAgentConfig('breakdown-engine');
+    it('should load valid breakdown-engine configuration', async () => {
+      const config = await service.loadAgentConfig('breakdown-engine');
 
       expect(config).toBeTruthy();
       expect(config.name).toBe('Breakdown Engine');
@@ -43,24 +43,24 @@ describe('ConfigurationService', () => {
       expect(config.max_tokens).toBe(4000);
     });
 
-    it('should cache loaded configuration', () => {
-      const config1 = service.loadAgentConfig('clarifier');
-      const config2 = service.loadAgentConfig('clarifier');
+    it('should cache loaded configuration', async () => {
+      const config1 = await service.loadAgentConfig('clarifier');
+      const config2 = await service.loadAgentConfig('clarifier');
 
       expect(config1).toBe(config2);
     });
 
-    it('should load from cache on subsequent calls', () => {
-      const firstLoad = service.loadAgentConfig('breakdown-engine');
-      const secondLoad = service.loadAgentConfig('breakdown-engine');
+    it('should load from cache on subsequent calls', async () => {
+      const firstLoad = await service.loadAgentConfig('breakdown-engine');
+      const secondLoad = await service.loadAgentConfig('breakdown-engine');
 
       expect(firstLoad).toBe(secondLoad);
       expect(service.getCacheSize()).toBe(1);
     });
 
-    it('should load multiple different configurations', () => {
-      const clarifierConfig = service.loadAgentConfig('clarifier');
-      const breakdownConfig = service.loadAgentConfig('breakdown-engine');
+    it('should load multiple different configurations', async () => {
+      const clarifierConfig = await service.loadAgentConfig('clarifier');
+      const breakdownConfig = await service.loadAgentConfig('breakdown-engine');
 
       expect(clarifierConfig.name).toBe('clarifier');
       expect(breakdownConfig.name).toBe('Breakdown Engine');
@@ -68,24 +68,19 @@ describe('ConfigurationService', () => {
       expect(service.getCacheSize()).toBe(2);
     });
 
-    it('should throw error for non-existent configuration', () => {
-      expect(() => {
-        service.loadAgentConfig('nonexistent-agent');
-      }).toThrow('Failed to load nonexistent-agent config');
+    it('should throw error for non-existent configuration', async () => {
+      await expect(
+        service.loadAgentConfig('nonexistent-agent')
+      ).rejects.toThrow('Failed to load nonexistent-agent config');
     });
 
-    it('should include agent name in error message', () => {
-      try {
-        service.loadAgentConfig('fake-agent');
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        const errorMessage = error instanceof Error ? error.message : '';
-        expect(errorMessage).toContain('fake-agent');
-      }
+    it('should include agent name in error message', async () => {
+      await expect(service.loadAgentConfig('fake-agent')).rejects.toThrow(
+        /fake-agent/
+      );
     });
 
-    it('should throw error for invalid YAML syntax', () => {
+    it('should throw error for invalid YAML syntax', async () => {
       const invalidConfigPath = path.join(
         process.cwd(),
         testConfigDir,
@@ -94,12 +89,9 @@ describe('ConfigurationService', () => {
       fs.writeFileSync(invalidConfigPath, 'invalid: yaml: content: [unclosed');
 
       try {
-        service.loadAgentConfig('invalid');
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        const errorMessage = error instanceof Error ? error.message : '';
-        expect(errorMessage).toContain('Failed to load invalid config');
+        await expect(service.loadAgentConfig('invalid')).rejects.toThrow(
+          /Failed to load invalid config/
+        );
       } finally {
         if (fs.existsSync(invalidConfigPath)) {
           fs.unlinkSync(invalidConfigPath);
@@ -107,7 +99,7 @@ describe('ConfigurationService', () => {
       }
     });
 
-    it('should throw error for missing required fields', () => {
+    it('should throw error for missing required fields', async () => {
       const incompleteConfigPath = path.join(
         process.cwd(),
         testConfigDir,
@@ -116,12 +108,9 @@ describe('ConfigurationService', () => {
       fs.writeFileSync(incompleteConfigPath, 'description: Test config');
 
       try {
-        service.loadAgentConfig('incomplete');
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        const errorMessage = error instanceof Error ? error.message : '';
-        expect(errorMessage).toContain('Invalid configuration structure');
+        await expect(service.loadAgentConfig('incomplete')).rejects.toThrow(
+          /Invalid configuration structure/
+        );
       } finally {
         if (fs.existsSync(incompleteConfigPath)) {
           fs.unlinkSync(incompleteConfigPath);
@@ -129,8 +118,8 @@ describe('ConfigurationService', () => {
       }
     });
 
-    it('should load config with extended properties', () => {
-      const config = service.loadAgentConfig('breakdown-engine');
+    it('should load config with extended properties', async () => {
+      const config = await service.loadAgentConfig('breakdown-engine');
 
       expect(config).toHaveProperty('estimation_model');
       expect(config).toHaveProperty('dependency_threshold');
@@ -138,16 +127,16 @@ describe('ConfigurationService', () => {
       expect(config.dependency_threshold).toBe(0.7);
     });
 
-    it('should load config with nested objects', () => {
-      const config = service.loadAgentConfig('breakdown-engine');
+    it('should load config with nested objects', async () => {
+      const config = await service.loadAgentConfig('breakdown-engine');
 
       expect(config).toHaveProperty('prompts');
       expect(config.prompts).toHaveProperty('idea_analysis');
       expect(config.prompts).toHaveProperty('task_decomposition');
     });
 
-    it('should load config with arrays', () => {
-      const config = service.loadAgentConfig('clarifier');
+    it('should load config with arrays', async () => {
+      const config = await service.loadAgentConfig('clarifier');
 
       expect(config).toHaveProperty('functions');
       const functions = config.functions as unknown[];
@@ -155,14 +144,14 @@ describe('ConfigurationService', () => {
       expect(functions.length).toBeGreaterThan(0);
     });
 
-    it('should support generic type parameter', () => {
+    it('should support generic type parameter', async () => {
       interface ExtendedConfig extends AgentConfig {
         estimation_model: string;
         dependency_threshold: number;
       }
 
       const config =
-        service.loadAgentConfig<ExtendedConfig>('breakdown-engine');
+        await service.loadAgentConfig<ExtendedConfig>('breakdown-engine');
 
       expect(config).toBeTruthy();
       expect(config.estimation_model).toBe('gpt-3.5-turbo');
@@ -171,8 +160,8 @@ describe('ConfigurationService', () => {
   });
 
   describe('loadAIModelConfig', () => {
-    it('should convert clarifier config to AIModelConfig', () => {
-      const aiConfig = service.loadAIModelConfig('clarifier');
+    it('should convert clarifier config to AIModelConfig', async () => {
+      const aiConfig = await service.loadAIModelConfig('clarifier');
 
       expect(aiConfig).toBeTruthy();
       expect(aiConfig.provider).toBe('openai');
@@ -181,8 +170,8 @@ describe('ConfigurationService', () => {
       expect(aiConfig.temperature).toBe(0.7);
     });
 
-    it('should convert breakdown-engine config to AIModelConfig', () => {
-      const aiConfig = service.loadAIModelConfig('breakdown-engine');
+    it('should convert breakdown-engine config to AIModelConfig', async () => {
+      const aiConfig = await service.loadAIModelConfig('breakdown-engine');
 
       expect(aiConfig).toBeTruthy();
       expect(aiConfig.provider).toBe('openai');
@@ -191,23 +180,24 @@ describe('ConfigurationService', () => {
       expect(aiConfig.temperature).toBe(0.3);
     });
 
-    it('should map max_tokens to maxTokens', () => {
-      const aiConfig = service.loadAIModelConfig('clarifier');
+    it('should map max_tokens to maxTokens', async () => {
+      const aiConfig = await service.loadAIModelConfig('clarifier');
 
       expect(aiConfig.maxTokens).toBe(2000);
     });
 
-    it('should map temperature correctly', () => {
-      const clarifierConfig = service.loadAIModelConfig('clarifier');
-      const breakdownConfig = service.loadAIModelConfig('breakdown-engine');
+    it('should map temperature correctly', async () => {
+      const clarifierConfig = await service.loadAIModelConfig('clarifier');
+      const breakdownConfig =
+        await service.loadAIModelConfig('breakdown-engine');
 
       expect(clarifierConfig.temperature).toBe(0.7);
       expect(breakdownConfig.temperature).toBe(0.3);
     });
 
-    it('should always set provider to openai', () => {
-      const aiConfig1 = service.loadAIModelConfig('clarifier');
-      const aiConfig2 = service.loadAIModelConfig('breakdown-engine');
+    it('should always set provider to openai', async () => {
+      const aiConfig1 = await service.loadAIModelConfig('clarifier');
+      const aiConfig2 = await service.loadAIModelConfig('breakdown-engine');
 
       expect(aiConfig1.provider).toBe('openai');
       expect(aiConfig2.provider).toBe('openai');
@@ -215,72 +205,72 @@ describe('ConfigurationService', () => {
   });
 
   describe('reloadAgentConfig', () => {
-    it('should reload configuration from disk', () => {
-      const config1 = service.loadAgentConfig('clarifier');
-      service.reloadAgentConfig('clarifier');
-      const config2 = service.loadAgentConfig('clarifier');
+    it('should reload configuration from disk', async () => {
+      const config1 = await service.loadAgentConfig('clarifier');
+      await service.reloadAgentConfig('clarifier');
+      const config2 = await service.loadAgentConfig('clarifier');
 
       expect(config1).toEqual(config2);
     });
 
-    it('should update cache after reload', () => {
-      service.loadAgentConfig('breakdown-engine');
+    it('should update cache after reload', async () => {
+      await service.loadAgentConfig('breakdown-engine');
       const cacheSizeBefore = service.getCacheSize();
 
-      service.reloadAgentConfig('breakdown-engine');
+      await service.reloadAgentConfig('breakdown-engine');
       const cacheSizeAfter = service.getCacheSize();
 
       expect(cacheSizeBefore).toBe(cacheSizeAfter);
     });
 
-    it('should throw error when reloading non-existent config', () => {
-      expect(() => {
-        service.reloadAgentConfig('nonexistent');
-      }).toThrow('Failed to load nonexistent config');
+    it('should throw error when reloading non-existent config', async () => {
+      await expect(service.reloadAgentConfig('nonexistent')).rejects.toThrow(
+        'Failed to load nonexistent config'
+      );
     });
 
-    it('should reload and update cached value', () => {
-      const config1 = service.loadAgentConfig('clarifier');
+    it('should reload and update cached value', async () => {
+      const config1 = await service.loadAgentConfig('clarifier');
 
-      service.reloadAgentConfig('clarifier');
-      const config2 = service.loadAgentConfig('clarifier');
+      await service.reloadAgentConfig('clarifier');
+      const config2 = await service.loadAgentConfig('clarifier');
 
       expect(config1).toEqual(config2);
     });
   });
 
   describe('configExists', () => {
-    it('should return true for existing clarifier config', () => {
-      const exists = service.configExists('clarifier');
+    it('should return true for existing clarifier config', async () => {
+      const exists = await service.configExists('clarifier');
       expect(exists).toBe(true);
     });
 
-    it('should return true for existing breakdown-engine config', () => {
-      const exists = service.configExists('breakdown-engine');
+    it('should return true for existing breakdown-engine config', async () => {
+      const exists = await service.configExists('breakdown-engine');
       expect(exists).toBe(true);
     });
 
-    it('should return false for non-existent config', () => {
-      const exists = service.configExists('nonexistent');
+    it('should return false for non-existent config', async () => {
+      const exists = await service.configExists('nonexistent');
       expect(exists).toBe(false);
     });
 
-    it('should return false for empty string', () => {
-      const exists = service.configExists('');
+    it('should return false for empty string', async () => {
+      const exists = await service.configExists('');
       expect(exists).toBe(false);
     });
 
-    it('should work without loading config first', () => {
-      const exists1 = service.configExists('clarifier');
-      const exists2 = service.configExists('nonexistent');
+    it('should work without loading config first', async () => {
+      const exists1 = await service.configExists('clarifier');
+      const exists2 = await service.configExists('nonexistent');
 
       expect(exists1).toBe(true);
       expect(exists2).toBe(false);
     });
 
-    it('should check existence without affecting cache', () => {
+    it('should check existence without affecting cache', async () => {
       const cacheSizeBefore = service.getCacheSize();
-      service.configExists('clarifier');
+      await service.configExists('clarifier');
       const cacheSizeAfter = service.getCacheSize();
 
       expect(cacheSizeBefore).toBe(cacheSizeAfter);
@@ -289,59 +279,59 @@ describe('ConfigurationService', () => {
 
   describe('cache management', () => {
     describe('setCacheEnabled', () => {
-      it('should disable caching when set to false', () => {
+      it('should disable caching when set to false', async () => {
         service.setCacheEnabled(false);
-        const config1 = service.loadAgentConfig('clarifier');
-        const config2 = service.loadAgentConfig('clarifier');
+        const config1 = await service.loadAgentConfig('clarifier');
+        const config2 = await service.loadAgentConfig('clarifier');
 
         expect(config1).not.toBe(config2);
       });
 
-      it('should clear cache when disabled', () => {
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
+      it('should clear cache when disabled', async () => {
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
         expect(service.getCacheSize()).toBeGreaterThan(0);
 
         service.setCacheEnabled(false);
         expect(service.getCacheSize()).toBe(0);
       });
 
-      it('should re-enable caching when set to true', () => {
+      it('should re-enable caching when set to true', async () => {
         service.setCacheEnabled(false);
         service.setCacheEnabled(true);
 
-        const config1 = service.loadAgentConfig('clarifier');
-        const config2 = service.loadAgentConfig('clarifier');
+        const config1 = await service.loadAgentConfig('clarifier');
+        const config2 = await service.loadAgentConfig('clarifier');
 
         expect(config1).toBe(config2);
       });
 
-      it('should not clear cache when disabling then enabling', () => {
-        service.loadAgentConfig('clarifier');
+      it('should not clear cache when disabling then enabling', async () => {
+        await service.loadAgentConfig('clarifier');
         service.setCacheEnabled(false);
         service.setCacheEnabled(true);
 
-        const config1 = service.loadAgentConfig('clarifier');
-        const config2 = service.loadAgentConfig('clarifier');
+        const config1 = await service.loadAgentConfig('clarifier');
+        const config2 = await service.loadAgentConfig('clarifier');
 
         expect(config1).toBe(config2);
       });
     });
 
     describe('clearCache', () => {
-      it('should clear all cached configurations', () => {
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
+      it('should clear all cached configurations', async () => {
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
         expect(service.getCacheSize()).toBe(2);
 
         service.clearCache();
         expect(service.getCacheSize()).toBe(0);
       });
 
-      it('should allow reloading after cache clear', () => {
-        const config1 = service.loadAgentConfig('clarifier');
+      it('should allow reloading after cache clear', async () => {
+        const config1 = await service.loadAgentConfig('clarifier');
         service.clearCache();
-        const config2 = service.loadAgentConfig('clarifier');
+        const config2 = await service.loadAgentConfig('clarifier');
 
         expect(config1).toEqual(config2);
         expect(config1).not.toBe(config2);
@@ -352,11 +342,11 @@ describe('ConfigurationService', () => {
         expect(() => service.clearCache()).not.toThrow();
       });
 
-      it('should clear all entries regardless of count', () => {
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
+      it('should clear all entries regardless of count', async () => {
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
 
         expect(service.getCacheSize()).toBeGreaterThan(0);
 
@@ -370,37 +360,37 @@ describe('ConfigurationService', () => {
         expect(service.getCacheSize()).toBe(0);
       });
 
-      it('should return 1 after loading one config', () => {
-        service.loadAgentConfig('clarifier');
+      it('should return 1 after loading one config', async () => {
+        await service.loadAgentConfig('clarifier');
         expect(service.getCacheSize()).toBe(1);
       });
 
-      it('should return 2 after loading two different configs', () => {
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
+      it('should return 2 after loading two different configs', async () => {
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
         expect(service.getCacheSize()).toBe(2);
       });
 
-      it('should not increase when loading same config', () => {
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('clarifier');
+      it('should not increase when loading same config', async () => {
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('clarifier');
         expect(service.getCacheSize()).toBe(1);
       });
 
-      it('should decrease after cache clear', () => {
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
+      it('should decrease after cache clear', async () => {
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
         expect(service.getCacheSize()).toBe(2);
 
         service.clearCache();
         expect(service.getCacheSize()).toBe(0);
       });
 
-      it('should work correctly with cache disabled', () => {
+      it('should work correctly with cache disabled', async () => {
         service.setCacheEnabled(false);
-        service.loadAgentConfig('clarifier');
-        service.loadAgentConfig('breakdown-engine');
+        await service.loadAgentConfig('clarifier');
+        await service.loadAgentConfig('breakdown-engine');
 
         expect(service.getCacheSize()).toBe(0);
       });
@@ -408,28 +398,28 @@ describe('ConfigurationService', () => {
   });
 
   describe('configuration path handling', () => {
-    it('should use default config directory', () => {
+    it('should use default config directory', async () => {
       const defaultService = new ConfigurationService();
-      const config = defaultService.loadAgentConfig('clarifier');
+      const config = await defaultService.loadAgentConfig('clarifier');
 
       expect(config).toBeTruthy();
       expect(config.name).toBe('clarifier');
     });
 
-    it('should accept custom config directory', () => {
+    it('should accept custom config directory', async () => {
       const customService = new ConfigurationService(testConfigDir);
-      const config = customService.loadAgentConfig('clarifier');
+      const config = await customService.loadAgentConfig('clarifier');
 
       expect(config).toBeTruthy();
       expect(config.name).toBe('clarifier');
     });
 
-    it('should throw error for invalid config directory', () => {
+    it('should throw error for invalid config directory', async () => {
       const invalidService = new ConfigurationService('invalid/directory/path');
 
-      expect(() => {
-        invalidService.loadAgentConfig('clarifier');
-      }).toThrow();
+      await expect(
+        invalidService.loadAgentConfig('clarifier')
+      ).rejects.toThrow();
     });
   });
 
@@ -438,27 +428,28 @@ describe('ConfigurationService', () => {
       expect(configurationService).toBeInstanceOf(ConfigurationService);
     });
 
-    it('should work like regular ConfigurationService instance', () => {
-      const config = configurationService.loadAgentConfig('clarifier');
+    it('should work like regular ConfigurationService instance', async () => {
+      const config = await configurationService.loadAgentConfig('clarifier');
 
       expect(config).toBeTruthy();
       expect(config.name).toBe('clarifier');
     });
 
-    it('should support cache management', () => {
+    it('should support cache management', async () => {
       configurationService.clearCache();
-      configurationService.loadAgentConfig('breakdown-engine');
+      await configurationService.loadAgentConfig('breakdown-engine');
 
       expect(configurationService.getCacheSize()).toBe(1);
     });
 
-    it('should support configExists', () => {
-      const exists = configurationService.configExists('clarifier');
+    it('should support configExists', async () => {
+      const exists = await configurationService.configExists('clarifier');
       expect(exists).toBe(true);
     });
 
-    it('should support loadAIModelConfig', () => {
-      const aiConfig = configurationService.loadAIModelConfig('clarifier');
+    it('should support loadAIModelConfig', async () => {
+      const aiConfig =
+        await configurationService.loadAIModelConfig('clarifier');
 
       expect(aiConfig).toBeTruthy();
       expect(aiConfig.model).toBe('gpt-4');
@@ -466,14 +457,14 @@ describe('ConfigurationService', () => {
   });
 
   describe('integration tests', () => {
-    it('should complete full workflow: load, cache, reload, clear', () => {
-      const config1 = configurationService.loadAgentConfig('clarifier');
-      const config2 = configurationService.loadAgentConfig('clarifier');
+    it('should complete full workflow: load, cache, reload, clear', async () => {
+      const config1 = await configurationService.loadAgentConfig('clarifier');
+      const config2 = await configurationService.loadAgentConfig('clarifier');
 
       expect(config1).toBe(config2);
 
-      configurationService.reloadAgentConfig('clarifier');
-      const config3 = configurationService.loadAgentConfig('clarifier');
+      await configurationService.reloadAgentConfig('clarifier');
+      const config3 = await configurationService.loadAgentConfig('clarifier');
 
       expect(config3).toEqual(config1);
 
@@ -481,29 +472,30 @@ describe('ConfigurationService', () => {
       expect(configurationService.getCacheSize()).toBe(0);
     });
 
-    it('should handle multiple agents independently', () => {
-      const clarifierConfig = configurationService.loadAgentConfig('clarifier');
+    it('should handle multiple agents independently', async () => {
+      const clarifierConfig =
+        await configurationService.loadAgentConfig('clarifier');
       const breakdownConfig =
-        configurationService.loadAgentConfig('breakdown-engine');
+        await configurationService.loadAgentConfig('breakdown-engine');
 
       expect(clarifierConfig.name).toBe('clarifier');
       expect(breakdownConfig.name).toBe('Breakdown Engine');
       expect(configurationService.getCacheSize()).toBe(2);
     });
 
-    it('should work with cache disabled throughout', () => {
+    it('should work with cache disabled throughout', async () => {
       configurationService.setCacheEnabled(false);
 
-      const config1 = configurationService.loadAgentConfig('clarifier');
-      const config2 = configurationService.loadAgentConfig('clarifier');
+      const config1 = await configurationService.loadAgentConfig('clarifier');
+      const config2 = await configurationService.loadAgentConfig('clarifier');
 
       expect(config1).toEqual(config2);
       expect(config1).not.toBe(config2);
       expect(configurationService.getCacheSize()).toBe(0);
     });
 
-    it('should maintain state between cache enable/disable cycles', () => {
-      configurationService.loadAgentConfig('clarifier');
+    it('should maintain state between cache enable/disable cycles', async () => {
+      await configurationService.loadAgentConfig('clarifier');
       const cacheSizeBefore = configurationService.getCacheSize();
 
       configurationService.setCacheEnabled(false);

@@ -94,44 +94,66 @@ const InputWithValidation = forwardRef<
           )}
         </label>
 
-        {multiline ? (
-          <textarea
-            ref={ref as React.Ref<HTMLTextAreaElement>}
-            id={props.id}
-            value={value}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={`${baseInputClasses} resize-y min-h-[100px]`}
-            aria-invalid={isInvalid}
-            aria-describedby={
-              error
-                ? `${props.id}-error`
-                : helpText
-                  ? `${props.id}-help`
-                  : undefined
-            }
-            {...props}
-          />
-        ) : (
-          <input
-            ref={ref as React.Ref<HTMLInputElement>}
-            id={props.id}
-            value={value}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className={baseInputClasses}
-            type={props.type || 'text'}
-            aria-invalid={isInvalid}
-            aria-describedby={
-              error
-                ? `${props.id}-error`
-                : helpText
-                  ? `${props.id}-help`
-                  : undefined
-            }
-            {...props}
-          />
-        )}
+        <div className="relative">
+          {multiline ? (
+            <textarea
+              ref={ref as React.Ref<HTMLTextAreaElement>}
+              id={props.id}
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={`${baseInputClasses} resize-y min-h-[100px]`}
+              aria-invalid={isInvalid}
+              aria-describedby={
+                error
+                  ? `${props.id}-error`
+                  : helpText
+                    ? `${props.id}-help`
+                    : undefined
+              }
+              {...props}
+            />
+          ) : (
+            <input
+              ref={ref as React.Ref<HTMLInputElement>}
+              id={props.id}
+              value={value}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              className={baseInputClasses}
+              type={props.type || 'text'}
+              aria-invalid={isInvalid}
+              aria-describedby={
+                error
+                  ? `${props.id}-error`
+                  : helpText
+                    ? `${props.id}-help`
+                    : undefined
+              }
+              {...props}
+            />
+          )}
+
+          {/* Success indicator */}
+          {isValid && charCount > 0 && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <svg
+                className="w-5 h-5 text-green-500 animate-in fade-in duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+          )}
+        </div>
 
         <div className="flex justify-between items-start">
           <div>

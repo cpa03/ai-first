@@ -3,7 +3,11 @@ import {
   ApiContext,
   standardSuccessResponse,
 } from '@/lib/api-handler';
-import { getRateLimitStats } from '@/lib/rate-limit';
+import {
+  getRateLimitStats,
+  rateLimitConfigs,
+  tieredRateLimits,
+} from '@/lib/rate-limit';
 import { requireAdminAuth } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
@@ -11,20 +15,28 @@ async function handleGet(context: ApiContext) {
 
   const stats = getRateLimitStats();
 
+  // Transform rate limit configs to API response format
+  const formattedConfigs = Object.entries(rateLimitConfigs).reduce(
+    (acc, [key, config]) => ({
+      ...acc,
+      [key]: { windowMs: config.windowMs, maxRequests: config.limit },
+    }),
+    {}
+  );
+
+  const formattedTieredLimits = Object.entries(tieredRateLimits).reduce(
+    (acc, [key, config]) => ({
+      ...acc,
+      [key]: { windowMs: config.windowMs, maxRequests: config.limit },
+    }),
+    {}
+  );
+
   const data = {
     timestamp: new Date().toISOString(),
     ...stats,
-    rateLimitConfigs: {
-      strict: { windowMs: 60 * 1000, maxRequests: 10 },
-      moderate: { windowMs: 60 * 1000, maxRequests: 30 },
-      lenient: { windowMs: 60 * 1000, maxRequests: 60 },
-    },
-    tieredRateLimits: {
-      anonymous: { windowMs: 60 * 1000, maxRequests: 30 },
-      authenticated: { windowMs: 60 * 1000, maxRequests: 60 },
-      premium: { windowMs: 60 * 1000, maxRequests: 120 },
-      enterprise: { windowMs: 60 * 1000, maxRequests: 300 },
-    },
+    rateLimitConfigs: formattedConfigs,
+    tieredRateLimits: formattedTieredLimits,
   };
 
   return standardSuccessResponse(
