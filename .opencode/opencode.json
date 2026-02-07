@@ -1,14 +1,9 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode/kimi-k2.5-free",
-  "agent": "CMZ",
-  "permission": [
-    {
-      "permission": "external_directory",
-      "pattern": "/tmp/*",
-      "action": "allow"
-    }
-  ],
+  "default_agent": "CMZ",
+  "permission": "allow",
+  "agent": {},
   "skills": {
     "paths": [".opencode/skills"]
   },
