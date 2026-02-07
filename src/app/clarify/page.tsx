@@ -79,21 +79,6 @@ function ClarifyPageContent() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
-          <LoadingSpinner
-            size="md"
-            className="mb-4"
-            ariaLabel="Loading clarification flow"
-          />
-          <p className="text-gray-600">Loading clarification flow...</p>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

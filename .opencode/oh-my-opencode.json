@@ -38,6 +38,12 @@
       "model": "opencode/glm-4.7-free",
       "category": "visual-engineering",
       "skills": ["frontend-ui-ux"]
+    },
+    "minimax_agent": {
+      "enabled": true,
+      "model": "opencode/minimax-m2.1-free",
+      "category": "general",
+      "description": "Agent using Minimax M2.1 model for balanced performance"
     }
   },
   "mcp": {
