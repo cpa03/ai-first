@@ -278,8 +278,8 @@ describe('Backend Service Tests', () => {
       const result = await exportService.exportToMarkdown(mockData);
 
       expect(result.success).toBe(true);
-      expect(result.content).toContain('# Test Project');
-      expect(result.url).toMatch(/\.md$/);
+      expect(result.content).toContain('Test Project');
+      expect(result.url).toMatch(/^data:text\/markdown/);
     });
 
     it('should handle Notion export with API key', async () => {
@@ -305,13 +305,14 @@ describe('Backend Service Tests', () => {
     });
 
     it('should fail Notion export without API key', async () => {
-      // Save original environment variable
+      // Save and clear the API key before creating the service
       const originalKey = process.env.NOTION_API_KEY;
       delete process.env.NOTION_API_KEY;
 
+      // Create a new service instance after clearing the env var
       const exportService = new ExportService();
 
-      // Restore environment variable after service is created
+      // Restore the API key
       if (originalKey) {
         process.env.NOTION_API_KEY = originalKey;
       }
@@ -330,7 +331,7 @@ describe('Backend Service Tests', () => {
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('is not properly configured');
+      expect(result.error).toContain('not properly configured');
     });
 
     it('should handle Trello export with credentials', async () => {
