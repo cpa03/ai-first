@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { createLogger } from '@/lib/logger';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -33,6 +34,8 @@ const statusLabels: Record<string, string> = {
   breakdown: 'In Progress',
   completed: 'Completed',
 };
+
+const logger = createLogger('DashboardPage');
 
 export default function DashboardPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
@@ -75,7 +78,7 @@ export default function DashboardPage() {
       setIdeas(data.data.ideas);
       setPagination(data.data.pagination);
     } catch (err) {
-      console.error('Error fetching ideas:', err);
+      logger.error('Error fetching ideas:', err);
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred'
       );
@@ -121,7 +124,7 @@ export default function DashboardPage() {
       setIdeas(ideas.filter((idea) => idea.id !== id));
       closeDeleteModal();
     } catch (err) {
-      console.error('Error deleting idea:', err);
+      logger.error('Error deleting idea:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete idea');
     } finally {
       setDeletingId(null);
