@@ -319,3 +319,272 @@ Route (app)
 ├ ○ /robots.txt                 (Static)
 └ ○ /sitemap.xml                (Static)
 ```
+
+---
+
+## Component Usage Examples
+
+### Button Component
+
+```typescript
+import Button from '@/components/Button';
+
+// Primary button (default)
+<Button>Submit</Button>
+
+// Secondary variant
+<Button variant="secondary">Cancel</Button>
+
+// Outline variant
+<Button variant="outline">Learn More</Button>
+
+// Loading state
+<Button loading>Saving...</Button>
+
+// Full width
+<Button fullWidth>Continue</Button>
+```
+
+### InputWithValidation Component
+
+```typescript
+import InputWithValidation from '@/components/InputWithValidation';
+
+<InputWithValidation
+  id="idea-input"
+  name="idea"
+  label="What's your idea?"
+  value={idea}
+  onChange={handleChange}
+  placeholder="Describe your idea..."
+  helpText="Be specific for better results"
+  multiline={true}
+  minLength={10}
+  maxLength={1000}
+  showCharCount={true}
+  error={validationError}
+/>
+```
+
+### Dynamic Imports with Loading States
+
+```typescript
+import dynamic from 'next/dynamic';
+
+const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
+  loading: () => (
+    <div className="mt-16 grid md:grid-cols-3 gap-8 animate-pulse">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="bg-gray-100 h-32 rounded-lg"></div>
+      ))}
+    </div>
+  ),
+});
+```
+
+## Styling Guidelines
+
+### Tailwind Best Practices
+
+1. **Mobile-First Responsive Design:**
+
+   ```tsx
+   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+   ```
+
+2. **Consistent Spacing Scale:**
+
+   ```tsx
+   <div className="p-4 sm:p-6 lg:p-8 space-y-4">
+   ```
+
+3. **Focus States for Accessibility:**
+
+   ```tsx
+   <button className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2">
+   ```
+
+4. **Motion Preference Support:**
+
+   ```tsx
+   <div className="motion-reduce:transition-none motion-safe:hover:scale-105">
+   ```
+
+### Color System
+
+- **Primary:** Blue scale (primary-50 to primary-900)
+- **Semantic:**
+  - Success: Green
+  - Error: Red
+  - Warning: Yellow
+  - Info: Blue
+
+## Accessibility Implementation
+
+### ARIA Labels and Roles
+
+```tsx
+// Alert with proper role
+<div role="alert" aria-live="polite">
+  <Alert type="error">{errorMessage}</Alert>
+</div>
+
+// Button with loading state
+<button aria-busy={loading} disabled={loading}>
+  {loading ? 'Loading...' : 'Submit'}
+</button>
+
+// Form with describedby
+<label htmlFor="email">Email</label>
+<input
+  id="email"
+  aria-describedby="email-help email-error"
+  aria-invalid={!!error}
+/>
+<span id="email-help">We'll never share your email</span>
+{error && <span id="email-error" role="alert">{error}</span>}
+```
+
+### Skip Link Pattern
+
+```tsx
+<a
+  href="#main-content"
+  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
+>
+  Skip to main content
+</a>
+```
+
+## Error Handling Patterns
+
+### API Error Handling
+
+```typescript
+try {
+  const response = await fetch('/api/ideas', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new APIError(errorData.error, response.status);
+  }
+
+  return await response.json();
+} catch (error) {
+  logger.error('API call failed:', error);
+  setError('Something went wrong. Please try again.');
+}
+```
+
+### Error Boundary Usage
+
+```tsx
+<ErrorBoundary>
+  <ClarificationFlow />
+</ErrorBoundary>
+```
+
+## Testing Guidelines
+
+### Component Test Template
+
+```typescript
+import { render, screen, fireEvent } from '@testing-library/react';
+import Component from '@/components/Component';
+
+describe('Component', () => {
+  it('renders correctly', () => {
+    render(<Component />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+
+  it('handles user interaction', () => {
+    const handleClick = jest.fn();
+    render(<Component onClick={handleClick} />);
+    fireEvent.click(screen.getByRole('button'));
+    expect(handleClick).toHaveBeenCalled();
+  });
+
+  it('is accessible', async () => {
+    const { container } = render(<Component />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
+```
+
+## SEO Configuration
+
+### Static Metadata
+
+```tsx
+// app/layout.tsx
+export const metadata: Metadata = {
+  title: 'IdeaFlow - AI-Powered Project Planning',
+  description: 'Transform raw ideas into actionable project plans with AI.',
+  keywords: ['AI project planning', 'task management'],
+  openGraph: {
+    title: 'IdeaFlow',
+    description: 'AI-Powered Project Planning',
+    images: ['/og-image.jpg'],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    images: ['/og-image.jpg'],
+  },
+};
+```
+
+### Dynamic Metadata
+
+```tsx
+// app/ideas/[id]/page.tsx
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const idea = await getIdea(params.id);
+  return {
+    title: `${idea.title} | IdeaFlow`,
+    description: idea.description,
+  };
+}
+```
+
+## Best Practices Checklist
+
+### Before Submitting Code
+
+- [ ] Component follows accessibility guidelines
+- [ ] All props are typed with TypeScript
+- [ ] Responsive design tested (mobile, tablet, desktop)
+- [ ] Keyboard navigation works
+- [ ] Screen reader announcements tested
+- [ ] No console errors or warnings
+- [ ] Loading states implemented
+- [ ] Error states handled
+- [ ] Works with `prefers-reduced-motion`
+- [ ] Unit tests written and passing
+
+### Code Review Focus Areas
+
+1. **Accessibility:** ARIA labels, focus states, keyboard navigation
+2. **Performance:** Unnecessary re-renders, large bundles
+3. **Maintainability:** Component structure, prop naming
+4. **Consistency:** Follow existing patterns
+5. **Testing:** Adequate coverage, edge cases
+
+## Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [React Documentation](https://react.dev)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [WCAG 2.1 Guidelines](https://www.w3.org/WAI/WCAG21/quickref/)
+- [A11y Project](https://www.a11yproject.com/)
+- [WebAIM](https://webaim.org/)
+
+---
+
+**Last Updated:** 2026-02-07
+**Maintained by:** Frontend Engineer Agent
