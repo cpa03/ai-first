@@ -1,11 +1,13 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
 import { validateIdeaId } from '@/lib/validation';
-import { ValidationError } from '@/lib/errors';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
   ApiContext,
 } from '@/lib/api-handler';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { dbService } from '@/lib/db';
 import { VALIDATION_CONFIG } from '@/lib/config/constants';
 
 async function handlePost(context: ApiContext) {
@@ -45,6 +47,17 @@ async function handlePost(context: ApiContext) {
       },
     ]);
   }
+
+  // Authenticate user
+  const user = await requireAuth(request);
+
+  // Verify idea exists and user owns it
+  const idea = await dbService.getIdea(ideaId.trim());
+  if (!idea) {
+    throw new AppError('Idea not found', ErrorCode.NOT_FOUND, 404);
+  }
+
+  verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
   const session = await clarifierAgent.submitAnswer(
     ideaId.trim(),

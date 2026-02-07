@@ -3,9 +3,10 @@ import {
   ApiContext,
   standardSuccessResponse,
 } from '@/lib/api-handler';
-import { ValidationError } from '@/lib/errors';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import { validateIdeaId } from '@/lib/validation';
 import { dbService } from '@/lib/db';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -17,6 +18,17 @@ async function handleGet(context: ApiContext) {
   if (!idValidation.valid) {
     throw new ValidationError(idValidation.errors);
   }
+
+  // Authenticate user
+  const user = await requireAuth(request);
+
+  // Verify idea exists and user owns it
+  const idea = await dbService.getIdea(ideaId!);
+  if (!idea) {
+    throw new AppError('Idea not found', ErrorCode.NOT_FOUND, 404);
+  }
+
+  verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
   const session = await dbService.getIdeaSession(ideaId!);
 
