@@ -122,7 +122,7 @@ export default function DashboardPage() {
       closeDeleteModal();
     } catch (err) {
       console.error('Error deleting idea:', err);
-      alert(err instanceof Error ? err.message : 'Failed to delete idea');
+      setError(err instanceof Error ? err.message : 'Failed to delete idea');
     } finally {
       setDeletingId(null);
     }
@@ -249,7 +249,7 @@ export default function DashboardPage() {
           id="status-filter"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           aria-label="Filter ideas by status"
         >
           <option value="all">All Statuses</option>
