@@ -6,6 +6,7 @@ import {
   standardSuccessResponse,
   ApiContext,
 } from '@/lib/api-handler';
+import { requireAuth } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -15,7 +16,9 @@ async function handleGet(context: ApiContext) {
   const limit = parseInt(url.searchParams.get('limit') || '50', 10);
   const offset = parseInt(url.searchParams.get('offset') || '0', 10);
 
-  const userId = 'default_user';
+  // Authenticate user
+  const user = await requireAuth(request);
+  const userId = user.id;
 
   let ideas = await dbService.getUserIdeas(userId);
 
@@ -59,6 +62,10 @@ async function handlePost(context: ApiContext) {
   const { request } = context;
   const { idea } = await request.json();
 
+  // Authenticate user
+  const user = await requireAuth(request);
+  const userId = user.id;
+
   const ideaValidation = validateIdea(idea);
   if (!ideaValidation.valid) {
     throw new ValidationError(ideaValidation.errors);
@@ -67,7 +74,7 @@ async function handlePost(context: ApiContext) {
   const validatedIdea = idea.trim();
 
   const newIdea = {
-    user_id: 'default_user',
+    user_id: userId,
     title:
       validatedIdea.substring(0, 50) + (validatedIdea.length > 50 ? '...' : ''),
     raw_text: validatedIdea,
