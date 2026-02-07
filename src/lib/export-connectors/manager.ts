@@ -14,19 +14,31 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 
+export interface ExportManagerOptions {
+  enableExternalConnectors?: boolean;
+}
+
 export class ExportManager {
   private connectors: Map<string, ExportConnector> = new Map();
 
-  constructor() {
+  constructor(options: ExportManagerOptions = {}) {
     this.registerConnector(new JSONExporter());
     this.registerConnector(new MarkdownExporter());
 
-    if (typeof window === 'undefined') {
+    // Enable external connectors by default in server environment
+    // or when explicitly enabled via options (for testing)
+    const enableExternal =
+      options.enableExternalConnectors !== undefined
+        ? options.enableExternalConnectors
+        : typeof window === 'undefined';
+
+    if (enableExternal) {
       this.registerConnector(new NotionExporter());
       this.registerConnector(new TrelloExporter());
       this.registerConnector(new GoogleTasksExporter());
       this.registerConnector(new GitHubProjectsExporter());
-    } else {
+    } else if (typeof window !== 'undefined') {
+      // In browser environment, only register Google Tasks
       this.registerConnector(new GoogleTasksExporter());
     }
   }
