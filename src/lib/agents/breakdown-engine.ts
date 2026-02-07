@@ -127,13 +127,18 @@ class BreakdownEngine {
   private sessionManager?: SessionManager;
   private confidenceCalculator?: ConfidenceCalculator;
 
-  constructor() {
-    this.config =
-      configurationService.loadAgentConfig<BreakdownConfig>('breakdown-engine');
-    this.aiConfig = configurationService.loadAIModelConfig('breakdown-engine');
-  }
-
   async initialize(): Promise<void> {
+    this.config =
+      await configurationService.loadAgentConfig<BreakdownConfig>(
+        'breakdown-engine'
+      );
+    this.aiConfig =
+      await configurationService.loadAIModelConfig('breakdown-engine');
+
+    if (!this.aiConfig) {
+      throw new Error('AI configuration not loaded');
+    }
+    await aiService.initialize(this.aiConfig);
     if (!this.aiConfig) {
       throw new Error('AI configuration not loaded');
     }

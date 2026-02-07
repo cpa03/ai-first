@@ -36,7 +36,7 @@ export class QuestionGenerator {
       throw new Error('AI configuration not loaded');
     }
 
-    const prompt = promptService.getUserPrompt(
+    const prompt = await promptService.getUserPrompt(
       'clarifier',
       'generate-questions',
       {
@@ -45,13 +45,14 @@ export class QuestionGenerator {
     );
 
     try {
+      const systemPrompt = await promptService.getSystemPrompt(
+        'clarifier',
+        'generate-questions'
+      );
       const messages = [
         {
           role: 'system' as const,
-          content: promptService.getSystemPrompt(
-            'clarifier',
-            'generate-questions'
-          ),
+          content: systemPrompt,
         },
         { role: 'user' as const, content: prompt },
       ];

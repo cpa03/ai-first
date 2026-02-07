@@ -29,17 +29,25 @@ export class IdeaAnalyzer {
       constraints?: string[];
     }
   ): Promise<IdeaAnalysis> {
-    const prompt = promptService.getUserPrompt('breakdown', 'analyze-idea', {
-      refinedIdea,
-      userResponses: JSON.stringify(userResponses, null, 2),
-      options: JSON.stringify(options, null, 2),
-    });
+    const prompt = await promptService.getUserPrompt(
+      'breakdown',
+      'analyze-idea',
+      {
+        refinedIdea,
+        userResponses: JSON.stringify(userResponses, null, 2),
+        options: JSON.stringify(options, null, 2),
+      }
+    );
 
     try {
+      const systemPrompt = await promptService.getSystemPrompt(
+        'breakdown',
+        'analyze-idea'
+      );
       const messages = [
         {
           role: 'system' as const,
-          content: promptService.getSystemPrompt('breakdown', 'analyze-idea'),
+          content: systemPrompt,
         },
         { role: 'user' as const, content: prompt },
       ];

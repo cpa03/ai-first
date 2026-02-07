@@ -27,8 +27,8 @@ describe('PromptService', () => {
   });
 
   describe('loadTemplate', () => {
-    it('should load valid system template', () => {
-      const template = service.loadTemplate(
+    it('should load valid system template', async () => {
+      const template = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'system'
@@ -39,8 +39,8 @@ describe('PromptService', () => {
       expect(template.length).toBeGreaterThan(0);
     });
 
-    it('should load valid user template', () => {
-      const template = service.loadTemplate(
+    it('should load valid user template', async () => {
+      const template = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
@@ -52,13 +52,13 @@ describe('PromptService', () => {
       expect(template).toContain('{idea}');
     });
 
-    it('should load templates from breakdown agent', () => {
-      const systemTemplate = service.loadTemplate(
+    it('should load templates from breakdown agent', async () => {
+      const systemTemplate = await service.loadTemplate(
         'breakdown',
         'analyze-idea',
         'system'
       );
-      const userTemplate = service.loadTemplate(
+      const userTemplate = await service.loadTemplate(
         'breakdown',
         'analyze-idea',
         'user'
@@ -69,13 +69,13 @@ describe('PromptService', () => {
       expect(userTemplate).toContain('{refinedIdea}');
     });
 
-    it('should cache loaded templates', () => {
-      const firstLoad = service.loadTemplate(
+    it('should cache loaded templates', async () => {
+      const firstLoad = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
       );
-      const secondLoad = service.loadTemplate(
+      const secondLoad = await service.loadTemplate(
         'clarifier',
         'generate-questions',
         'user'
@@ -84,13 +84,13 @@ describe('PromptService', () => {
       expect(firstLoad).toBe(secondLoad);
     });
 
-    it('should load from cache on subsequent calls', () => {
-      const template1 = service.loadTemplate(
+    it('should load from cache on subsequent calls', async () => {
+      const template1 = await service.loadTemplate(
         'clarifier',
         'refine-idea',
         'system'
       );
-      const template2 = service.loadTemplate(
+      const template2 = await service.loadTemplate(
         'clarifier',
         'refine-idea',
         'system'
