@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
   title?: string;
   children: React.ReactNode;
   className?: string;
+  onClose?: () => void;
 }
 
 const alertStyles = {
@@ -73,8 +74,17 @@ const AlertComponent = function Alert({
   title,
   children,
   className = '',
+  onClose,
 }: AlertProps) {
+  const [isVisible, setIsVisible] = useState(true);
   const styles = alertStyles[type];
+
+  const handleClose = () => {
+    setIsVisible(false);
+    onClose?.();
+  };
+
+  if (!isVisible) return null;
 
   return (
     <div
@@ -90,7 +100,7 @@ const AlertComponent = function Alert({
       >
         {styles.icon}
       </svg>
-      <div>
+      <div className="flex-1 min-w-0">
         {title && (
           <h3 className={`text-lg font-semibold ${styles.titleColor} mb-2`}>
             {title}
@@ -98,6 +108,29 @@ const AlertComponent = function Alert({
         )}
         <div className={styles.textColor}>{children}</div>
       </div>
+      {onClose && (
+        <button
+          onClick={handleClose}
+          className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
+          aria-label="Dismiss alert"
+          type="button"
+        >
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      )}
     </div>
   );
 };

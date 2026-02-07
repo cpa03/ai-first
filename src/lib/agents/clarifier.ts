@@ -32,13 +32,11 @@ export class ClarifierAgent {
   private confidenceCalculator: ConfidenceCalculator | null = null;
   private injectedAiService: typeof aiService | null = null;
 
-  constructor() {
-    this.config =
-      configurationService.loadAgentConfig<ClarifierConfig>('clarifier');
-    this.aiConfig = configurationService.loadAIModelConfig('clarifier');
-  }
-
   async initialize(): Promise<void> {
+    this.config =
+      await configurationService.loadAgentConfig<ClarifierConfig>('clarifier');
+    this.aiConfig = await configurationService.loadAIModelConfig('clarifier');
+
     if (!this.aiConfig) {
       throw new Error('AI configuration not loaded');
     }

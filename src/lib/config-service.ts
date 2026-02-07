@@ -1,6 +1,6 @@
 import { AIModelConfig } from './ai';
 import yaml from 'js-yaml';
-import fs from 'fs';
+import { readFile, access } from 'fs/promises';
 import path from 'path';
 import { Cache } from './cache';
 
@@ -41,11 +41,11 @@ class ConfigurationService {
     return path.join(process.cwd(), this.configDir, `${agentName}.yml`);
   }
 
-  private loadFromDisk(agentName: string): AgentConfig {
+  private async loadFromDisk(agentName: string): Promise<AgentConfig> {
     const configPath = this.getConfigPath(agentName);
 
     try {
-      const configContent = fs.readFileSync(configPath, 'utf8');
+      const configContent = await readFile(configPath, 'utf8');
       const config = yaml.load(configContent) as AgentConfig;
 
       if (!config || !config.name || !config.model) {
@@ -59,7 +59,9 @@ class ConfigurationService {
     }
   }
 
-  loadAgentConfig<T extends AgentConfig = AgentConfig>(agentName: string): T {
+  async loadAgentConfig<T extends AgentConfig = AgentConfig>(
+    agentName: string
+  ): Promise<T> {
     if (this.cacheEnabled) {
       const cached = this.cache.get(agentName);
       if (cached) {
@@ -67,7 +69,7 @@ class ConfigurationService {
       }
     }
 
-    const config = this.loadFromDisk(agentName);
+    const config = await this.loadFromDisk(agentName);
 
     if (this.cacheEnabled) {
       this.cache.set(agentName, config);
@@ -76,8 +78,8 @@ class ConfigurationService {
     return config as T;
   }
 
-  loadAIModelConfig(agentName: string): AIModelConfig {
-    const agentConfig = this.loadAgentConfig(agentName);
+  async loadAIModelConfig(agentName: string): Promise<AIModelConfig> {
+    const agentConfig = await this.loadAgentConfig(agentName);
 
     return {
       provider: 'openai',
@@ -87,16 +89,21 @@ class ConfigurationService {
     };
   }
 
-  reloadAgentConfig(agentName: string): void {
-    const config = this.loadFromDisk(agentName);
+  async reloadAgentConfig(agentName: string): Promise<void> {
+    const config = await this.loadFromDisk(agentName);
     if (this.cacheEnabled) {
       this.cache.set(agentName, config);
     }
   }
 
-  configExists(agentName: string): boolean {
+  async configExists(agentName: string): Promise<boolean> {
     const configPath = this.getConfigPath(agentName);
-    return fs.existsSync(configPath);
+    try {
+      await access(configPath);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   getCacheSize(): number {

@@ -22,7 +22,7 @@ export class TaskDecomposer {
   async decomposeTasks(analysis: IdeaAnalysis): Promise<TaskDecomposition> {
     const decompositionPromises = analysis.deliverables.map(
       async (deliverable) => {
-        const prompt = promptService.getUserPrompt(
+        const prompt = await promptService.getUserPrompt(
           'breakdown',
           'decompose-tasks',
           {
@@ -34,13 +34,14 @@ export class TaskDecomposer {
         );
 
         try {
+          const systemPrompt = await promptService.getSystemPrompt(
+            'breakdown',
+            'decompose-tasks'
+          );
           const messages = [
             {
               role: 'system' as const,
-              content: promptService.getSystemPrompt(
-                'breakdown',
-                'decompose-tasks'
-              ),
+              content: systemPrompt,
             },
             { role: 'user' as const, content: prompt },
           ];

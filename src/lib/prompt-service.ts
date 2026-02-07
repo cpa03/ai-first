@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { readFile } from 'fs/promises';
 import path from 'path';
 import { Cache } from './cache';
 
@@ -31,11 +31,11 @@ export class PromptService {
     );
   }
 
-  loadTemplate(
+  async loadTemplate(
     agent: string,
     templateName: string,
     role: 'system' | 'user'
-  ): string {
+  ): Promise<string> {
     const cacheKey = `${agent}:${templateName}:${role}`;
 
     const cached = this.promptsCache.get(cacheKey);
@@ -46,7 +46,7 @@ export class PromptService {
     const templatePath = this.getTemplatePath(agent, templateName, role);
 
     try {
-      const content = fs.readFileSync(templatePath, 'utf-8');
+      const content = await readFile(templatePath, 'utf-8');
       this.promptsCache.set(cacheKey, content);
       return content;
     } catch (error) {
@@ -74,13 +74,13 @@ export class PromptService {
     return result;
   }
 
-  getPrompt(
+  async getPrompt(
     agent: string,
     templateName: string,
     role: 'system' | 'user',
     variables?: PromptVariable
-  ): string {
-    const template = this.loadTemplate(agent, templateName, role);
+  ): Promise<string> {
+    const template = await this.loadTemplate(agent, templateName, role);
 
     if (variables && Object.keys(variables).length > 0) {
       return this.interpolate(template, variables);
@@ -89,15 +89,15 @@ export class PromptService {
     return template;
   }
 
-  getSystemPrompt(agent: string, templateName: string): string {
+  async getSystemPrompt(agent: string, templateName: string): Promise<string> {
     return this.getPrompt(agent, templateName, 'system');
   }
 
-  getUserPrompt(
+  async getUserPrompt(
     agent: string,
     templateName: string,
     variables: PromptVariable
-  ): string {
+  ): Promise<string> {
     return this.getPrompt(agent, templateName, 'user', variables);
   }
 

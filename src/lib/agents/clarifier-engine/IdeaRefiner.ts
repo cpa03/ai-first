@@ -38,16 +38,24 @@ export class IdeaRefiner {
 
     const answersText = this.formatAnswers(session);
 
-    const prompt = promptService.getUserPrompt('clarifier', 'refine-idea', {
-      originalIdea: session.originalIdea,
-      answers: answersText,
-    });
+    const prompt = await promptService.getUserPrompt(
+      'clarifier',
+      'refine-idea',
+      {
+        originalIdea: session.originalIdea,
+        answers: answersText,
+      }
+    );
 
     try {
+      const systemPrompt = await promptService.getSystemPrompt(
+        'clarifier',
+        'refine-idea'
+      );
       const messages = [
         {
           role: 'system' as const,
-          content: promptService.getSystemPrompt('clarifier', 'refine-idea'),
+          content: systemPrompt,
         },
         { role: 'user' as const, content: prompt },
       ];
