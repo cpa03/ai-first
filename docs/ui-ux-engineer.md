@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # UI-UX Engineer Documentation
 
 ## Project Overview
@@ -1329,8 +1328,8 @@ font-mono text-sm
 - **React Testing Library:** https://testing-library.com/docs/react-testing-library/intro/
 - **WCAG Guidelines:** https://www.w3.org/WAI/WCAG21/quickref/
 - **Project Blueprint:** `/home/runner/work/ai-first/ai-first/blueprint.md`
-- **Architecture Docs:** `/home/runner/work/ai-first/ai-first/docs/architecture.md`
-=======
+- # **Architecture Docs:** `/home/runner/work/ai-first/ai-first/docs/architecture.md`
+
 # UI-UX Engineer
 
 This document outlines the role, responsibilities, and guidelines for the UI-UX Engineer agent working on the IdeaFlow codebase.
@@ -1584,4 +1583,3 @@ Before submitting changes, verify:
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [React Accessibility](https://reactjs.org/docs/accessibility.html)
 - [MDN ARIA Documentation](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA)
->>>>>>> origin/main
