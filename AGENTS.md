@@ -47,7 +47,7 @@ CMZ automatically delegates based on task type:
 
 ## Skills Library
 
-33 specialized skills available in `.opencode/skills/`:
+35 specialized skills available in `.opencode/skills/`:
 
 ### Process Skills
 
@@ -69,8 +69,30 @@ CMZ automatically delegates based on task type:
 - `git-master` - Git operations
 - `planning` - Task planning
 - `skill-creator` - Create new skills
+- `skill-builder` - Build skills with templates
 - `github-workflow-automation` - CI/CD workflows
 - `codepro-backend-standards` - Backend standards
+
+### GitHub Skills
+
+- `github-issue-triage` - Triage GitHub issues with streaming analysis
+- `github-pr-triage` - Triage GitHub PRs with streaming analysis
+- `git-commit-message` - Auto-generate conventional commit messages
+
+### Context & Memory Skills
+
+- `context-memory-systems` - Agent memory and knowledge graphs
+- `context-engineering-memory` - Context engineering for memory
+
+### Testing & Debugging Skills
+
+- `proffesor-testing-qe` - Quality engineering and testing
+- `claude-code-debugging` - Claude Code debugging strategies
+- `debugging-strategies` - Systematic debugging approaches
+
+### Tools & Integration Skills
+
+- `moai-adk-tool` / `adk-moai-tool` - OpenCode ADK tool references
 
 ## Usage
 

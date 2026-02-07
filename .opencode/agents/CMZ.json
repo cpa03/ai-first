@@ -1,211 +1,91 @@
 {
-  "name": "CMZ",
-  "description": "Cognitive Meta-Z agent with self-heal, self-learning, and self-evolution capabilities. Maximizes potential through continuous improvement and adaptive behavior.",
-  "model": "opencode/kimi-k2.5-free",
-  "behavior": {
-    "self_heal": {
-      "enabled": true,
-      "description": "Automatically detect and recover from errors, failures, and inconsistencies",
-      "strategies": [
-        {
-          "name": "error_detection",
-          "description": "Monitor outputs for errors, failures, and exceptions"
-        },
-        {
-          "name": "root_cause_analysis",
-          "description": "Use systematic debugging to identify underlying issues"
-        },
-        {
-          "name": "recovery_actions",
-          "description": "Implement automatic recovery without human intervention"
-        },
-        {
-          "name": "pattern_learning",
-          "description": "Learn from past failures to prevent recurrence"
-        }
-      ]
+  "agents": {
+    "sisyphus": {
+      "name": "Sisyphus",
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Main orchestrator with relentless execution",
+      "capabilities": ["orchestration", "task_management", "background_tasks"],
+      "triggers": ["ultrawork", "ulw"]
     },
-    "self_learn": {
-      "enabled": true,
-      "description": "Continuously learn from interactions, feedback, and outcomes",
-      "strategies": [
-        {
-          "name": "feedback_integration",
-          "description": "Incorporate user feedback into future behavior"
-        },
-        {
-          "name": "outcome_analysis",
-          "description": "Analyze task outcomes to improve future performance"
-        },
-        {
-          "name": "pattern_recognition",
-          "description": "Identify successful patterns and replicate them"
-        },
-        {
-          "name": "knowledge_accumulation",
-          "description": "Build knowledge base from experiences"
-        }
-      ]
+    "hephaestus": {
+      "name": "Hephaestus",
+      "model": "opencode/glm-4.7-free",
+      "description": "Autonomous deep worker, goal-oriented",
+      "capabilities": ["deep_exploration", "autonomous_execution"]
     },
-    "self_evolve": {
-      "enabled": true,
-      "description": "Automatically improve and upgrade capabilities over time",
-      "strategies": [
-        {
-          "name": "capability_expansion",
-          "description": "Add new skills and capabilities as needed"
-        },
-        {
-          "name": "performance_optimization",
-          "description": "Optimize for speed, accuracy, and efficiency"
-        },
-        {
-          "name": "adaptation",
-          "description": "Adapt to new contexts, requirements, and technologies"
-        },
-        {
-          "name": "meta_improvement",
-          "description": "Improve the improvement process itself"
-        }
-      ]
-    }
-  },
-  "capabilities": [
-    "orchestration",
-    "code_generation",
-    "debugging",
-    "refactoring",
-    "testing",
-    "documentation",
-    "architecture_design",
-    "performance_optimization",
-    "security_analysis"
-  ],
-  "skills": [
-    "skill-builder",
-    "claude-codepro-backend",
-    "codepro-backend-standards",
-    "systematic-debugging",
-    "superpowers-debugging",
-    "debugging-strategies",
-    "moai-adk-tool",
-    "adk-moai-tool",
-    "context-engineering-memory",
-    "context-memory-systems",
-    "claude-code-debugging",
-    "git-commit-message",
-    "ai-agents-git-commit",
-    "test-driven-development",
-    "writing-plans",
-    "executing-plans",
-    "brainstorming",
-    "requesting-code-review",
-    "git-master",
-    "proffesor-testing-qe"
-  ],
-  "hooks": {
-    "enabled": [
-      "pre_tool_use",
-      "post_tool_use",
-      "user_prompt_submit",
-      "stop",
-      "pre_model_use",
-      "post_model_use"
-    ]
-  },
-  "permission": [
-    {
-      "permission": "external_directory",
-      "pattern": "/tmp/*",
-      "action": "allow"
-    }
-  ],
-  "delegation_rules": {
-    "visual_engineering": {
+    "oracle": {
+      "name": "Oracle",
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Architecture, debugging, complex reasoning",
+      "category": "ultrabrain",
+      "capabilities": ["architecture", "debugging", "reasoning"]
+    },
+    "librarian": {
+      "name": "Librarian",
+      "model": "opencode/glm-4.7-free",
+      "description": "Documentation, codebase exploration",
+      "category": "quick",
+      "capabilities": ["documentation", "exploration"]
+    },
+    "explore": {
+      "name": "Explore",
+      "model": "opencode/glm-4.7-free",
+      "description": "Fast codebase search",
+      "category": "quick",
+      "capabilities": ["search", "exploration"]
+    },
+    "frontend_ui_ux": {
+      "name": "Frontend UI/UX",
+      "model": "opencode/glm-4.7-free",
+      "description": "Frontend development and design",
       "category": "visual-engineering",
       "skills": ["frontend-ui-ux"],
-      "model": "opencode/glm-4.7-free",
-      "description": "UI/UX and frontend development tasks"
+      "capabilities": ["frontend", "ui", "ux"]
     },
-    "complex_logic": {
-      "category": "ultrabrain",
-      "model": "opencode/kimi-k2.5-free",
-      "description": "Complex reasoning and deep analysis tasks"
-    },
-    "quick_tasks": {
-      "category": "quick",
+    "minimax_agent": {
+      "name": "Minimax Agent",
       "model": "opencode/minimax-m2.1-free",
-      "description": "Fast, simple tasks requiring minimal reasoning"
-    },
-    "git_operations": {
-      "skills": ["git-master"],
-      "model": "opencode/minimax-m2.1-free",
-      "description": "Git operations and version control"
-    },
-    "exploration": {
-      "skills": ["codebase-explore"],
-      "model": "opencode/glm-4.7-free",
-      "description": "Codebase exploration and discovery"
-    },
-    "debugging": {
-      "skills": ["systematic-debugging", "claude-code-debugging"],
-      "model": "opencode/kimi-k2.5-free",
-      "description": "Systematic debugging and error resolution"
-    },
-    "architecture": {
-      "category": "ultrabrain",
-      "model": "opencode/kimi-k2.5-free",
-      "description": "Architecture design and system planning"
-    },
-    "documentation": {
-      "category": "quick",
-      "model": "opencode/minimax-m2.1-free",
-      "description": "Documentation generation and updates"
+      "description": "Balanced performance for quick tasks",
+      "capabilities": ["general"]
     }
   },
-  "anti_patterns": [
-    "Circular dependencies",
-    "God classes",
-    "Mix presentation with business logic",
-    "Break existing functionality",
-    "Over-engineer"
-  ],
-  "performance": {
-    "parallel_agents": true,
-    "background_tasks": true,
-    "lsp_integration": true,
-    "cache_enabled": true
-  },
-  "integration": {
+  "integrations": {
     "oh_my_opencode": {
       "enabled": true,
-      "ultrawork_keyword": "ulw",
-      "sisyphus_mode": true,
-      "background_tasks": true,
-      "parallel_agents": true,
-      "todo_enforcement": true
+      "version": "3.0.0",
+      "features": ["background_tasks", "parallel_agents", "skill_system"]
     },
     "superpowers": {
       "enabled": true,
-      "tdd_enforced": true,
-      "systematic_debugging": true,
-      "subagent_development": true,
-      "pattern_matching": true
+      "skills": [
+        "brainstorming",
+        "writing-plans",
+        "executing-plans",
+        "systematic-debugging",
+        "test-driven-development",
+        "using-git-worktrees",
+        "subagent-driven-development",
+        "verification-before-completion",
+        "requesting-code-review",
+        "receiving-code-review",
+        "finishing-a-development-branch",
+        "dispatching-parallel-agents"
+      ]
     }
   },
-  "meta": {
-    "version": "2.1.0",
-    "created": "2026-02-03",
-    "updated": "2026-02-04",
-    "frameworks": [
-      "oh-my-opencode",
-      "superpowers",
-      "cmz-core",
-      "ultrarag",
-      "ai-agents-public"
-    ],
-    "repository": "https://github.com/ai-first/ai-first",
-    "author": "CMZ Agent System",
-    "optimization_notes": "Enhanced with 6 additional skills from skillhub. Optimized for GitHub Actions iterate.yml workflow with improved merge conflict handling and error recovery."
+  "skills": {
+    "total_available": 35,
+    "categories": {
+      "process": ["superpowers-brainstorming", "superpowers-writing-plans", "superpowers-executing-plans", "superpowers-tdd", "systematic-debugging"],
+      "development": ["superpowers-subagent-dev", "superpowers-git-worktrees", "superpowers-verification", "superpowers-finishing-branch"],
+      "collaboration": ["superpowers-requesting-review", "superpowers-receiving-review", "superpowers-parallel-agents"],
+      "domain": ["github-workflow-automation", "planning", "git-master", "skill-creator", "skill-builder"],
+      "context": ["context-memory-systems", "context-engineering-memory"],
+      "github": ["github-issue-triage", "github-pr-triage", "git-commit-message"],
+      "backend": ["codepro-backend-standards", "claude-codepro-backend"],
+      "debugging": ["claude-code-debugging", "debugging-strategies"],
+      "testing": ["proffesor-testing-qe"],
+      "tools": ["moai-adk-tool", "adk-moai-tool", "ai-agents-git-commit"]
+    }
   }
 }
