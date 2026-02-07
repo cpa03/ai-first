@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
@@ -36,27 +36,14 @@ const DynamicClarificationFlow = dynamic(
 function ClarifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [idea, setIdea] = useState<string>('');
-  const [ideaId, setIdeaId] = useState<string>('');
+  const ideaFromUrl = searchParams.get('idea');
+  const ideaIdFromUrl = searchParams.get('ideaId');
+  const idea = ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '';
+  const ideaId = ideaIdFromUrl || '';
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
-  const [loading, setLoading] = useState(true);
+  const loading = false;
   const [error, setError] = useState<string | null>(null);
   const logger = createLogger('ClarifyPage');
-
-  useEffect(() => {
-    const ideaFromUrl = searchParams.get('idea');
-    const ideaIdFromUrl = searchParams.get('ideaId');
-
-    if (ideaFromUrl) {
-      setIdea(decodeURIComponent(ideaFromUrl));
-    }
-
-    if (ideaIdFromUrl) {
-      setIdeaId(ideaIdFromUrl);
-    }
-
-    setLoading(false);
-  }, [searchParams]);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>

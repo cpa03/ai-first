@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef, useState } from 'react';
 import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -36,7 +36,6 @@ const InputWithValidation = forwardRef<
     ref
   ) => {
     const [touched, setTouched] = useState(false);
-    const [errorAnnounced, setErrorAnnounced] = useState(false);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
     const isValid = !error && touched;
@@ -64,14 +63,6 @@ const InputWithValidation = forwardRef<
       }
       ${className}
     `;
-
-    useEffect(() => {
-      if (isInvalid && !errorAnnounced) {
-        setErrorAnnounced(true);
-      } else if (!isInvalid && errorAnnounced) {
-        setErrorAnnounced(false);
-      }
-    }, [isInvalid, errorAnnounced]);
 
     return (
       <div className="space-y-2">
