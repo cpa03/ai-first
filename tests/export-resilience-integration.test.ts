@@ -17,15 +17,29 @@ jest.mock('@/lib/resilience');
 describe('Export Connectors Integration with Resilience Framework', () => {
   let exportManager: ExportManager;
   let mockResilienceExecute: jest.Mock;
+  let originalWindow: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    // Temporarily remove window to simulate server-side environment
+    originalWindow = (global as any).window;
+    delete (global as any).window;
     exportManager = new ExportManager();
+    // Restore window for other tests
+    (global as any).window = originalWindow;
+
     mockResilienceExecute = (
       resilienceManager.execute as jest.Mock
     ).mockImplementation(async (operation) => {
       return operation();
     });
+  });
+
+  afterEach(() => {
+    // Ensure window is restored
+    if (originalWindow && !(global as any).window) {
+      (global as any).window = originalWindow;
+    }
   });
 
   const createMockExportData = (

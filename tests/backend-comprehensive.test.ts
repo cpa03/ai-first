@@ -2,6 +2,10 @@
  * Comprehensive Backend Service Tests
  */
 
+// Set environment variables BEFORE any imports that use them
+import { mockEnvVars } from './utils/_testHelpers';
+Object.assign(process.env, mockEnvVars);
+
 // Mock OpenAI shims first
 import 'openai/shims/node';
 
@@ -21,16 +25,12 @@ import { ExportService } from '@/lib/export-connectors';
 import { ClarifierAgent } from '@/lib/agents/clarifier';
 import { DatabaseService } from '@/lib/db';
 import {
-  mockEnvVars,
   createMockSupabaseClient,
   mockOpenAIResponses,
   mockAPIResponses,
   waitForAsync,
   createMockFetch,
 } from './utils/_testHelpers';
-
-// Mock environment variables
-Object.assign(process.env, mockEnvVars);
 
 // Mock window to be undefined (server-side)
 delete (global as any).window;
@@ -47,6 +47,7 @@ describe('Backend Service Tests', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
     mockSupabase = createMockSupabaseClient();
     mockOpenAI = {
       chat: {
@@ -56,7 +57,7 @@ describe('Backend Service Tests', () => {
       },
     };
 
-    // Mock createClient function
+    // Mock createClient function - must return valid mock for DatabaseService
     mockCreateClient.mockReturnValue(mockSupabase);
 
     // Mock OpenAI constructor
