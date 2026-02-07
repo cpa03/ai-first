@@ -26,8 +26,6 @@ interface TasksResponse {
     totalTasks: number;
     completedTasks: number;
     overallProgress: number;
-    totalEstimatedHours: number;
-    completedEstimatedHours: number;
   };
 }
 
@@ -48,26 +46,6 @@ const statusConfig: Record<
     color: 'text-green-600',
     bgColor: 'bg-green-100',
   },
-};
-
-// Helper to calculate summary hours from deliverables with safety checks
-const calculateSummaryHours = (deliverables: DeliverableWithTasks[] = []) => {
-  if (!Array.isArray(deliverables)) return { total: 0, completed: 0 };
-
-  const total = deliverables.reduce(
-    (sum, d) => sum + (Array.isArray(d.tasks) ? d.tasks.reduce((ts, t) => ts + (t.estimate || 0), 0) : 0),
-    0
-  );
-  const completed = deliverables.reduce(
-    (sum, d) =>
-      sum +
-      (Array.isArray(d.tasks) ? d.tasks.reduce(
-        (ts, t) => ts + (t.status === 'completed' ? (t.estimate || 0) : 0),
-        0
-      ) : 0),
-    0
-  );
-  return { total, completed };
 };
 
 export default function TaskManagement({ ideaId }: TaskManagementProps) {
@@ -100,23 +78,13 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           throw new Error('Invalid response from server');
         }
 
-        const rawData = result.data;
-        const { total, completed } = calculateSummaryHours(rawData?.deliverables);
-
-        setData({
-          ...rawData,
-          summary: {
-            ...rawData.summary,
-            totalEstimatedHours: rawData.summary?.totalEstimatedHours || total,
-            completedEstimatedHours: rawData.summary?.completedEstimatedHours || completed,
-          },
-        });
+        setData(result.data);
 
         // Expand all deliverables by default
-        if (rawData?.deliverables) {
+        if (result.data.deliverables) {
           setExpandedDeliverables(
             new Set(
-              rawData.deliverables.map((d: DeliverableWithTasks) => d.id)
+              result.data.deliverables.map((d: DeliverableWithTasks) => d.id)
             )
           );
         }
@@ -212,7 +180,6 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           );
           const overallProgress =
             totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
-          const { total, completed } = calculateSummaryHours(updatedDeliverables);
 
           return {
             ...prevData,
@@ -222,8 +189,6 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
               totalTasks,
               completedTasks,
               overallProgress: Math.round(overallProgress),
-              totalEstimatedHours: total,
-              completedEstimatedHours: completed,
             },
           };
         });
@@ -336,11 +301,6 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
             </div>
             <div className="text-sm text-gray-600">
               {summary.completedTasks} of {summary.totalTasks} tasks completed
-            </div>
-            <div className="text-xs text-gray-500 mt-1">
-              {summary.totalEstimatedHours}h total effort •{' '}
-              {summary.totalEstimatedHours - summary.completedEstimatedHours}h
-              remaining
             </div>
           </div>
         </div>
