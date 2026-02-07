@@ -173,6 +173,41 @@ export function sanitizeString(
   return sanitized;
 }
 
+/**
+ * Sanitizes HTML content by removing script tags and escaping HTML entities
+ * to prevent XSS attacks. This is a basic sanitization suitable for
+ * simple text fields like titles.
+ */
+export function sanitizeHtml(input: string): string {
+  if (!input || typeof input !== 'string') {
+    return '';
+  }
+
+  // Remove script tags and their contents
+  let sanitized = input.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+
+  // Remove event handlers (onload, onclick, etc.)
+  sanitized = sanitized.replace(/\s*on\w+\s*=\s*"[^"]*"/gi, '');
+  sanitized = sanitized.replace(/\s*on\w+\s*=\s*'[^']*'/gi, '');
+
+  // Escape HTML entities to prevent script injection
+  const htmlEscapes: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;',
+    '/': '&#x2F;',
+  };
+
+  sanitized = sanitized.replace(
+    /[&<>"'/]/g,
+    (char) => htmlEscapes[char] || char
+  );
+
+  return sanitized.trim();
+}
+
 export function buildErrorResponse(errors: ValidationError[]): Response {
   return new Response(
     JSON.stringify({

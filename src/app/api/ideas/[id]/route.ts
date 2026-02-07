@@ -4,7 +4,7 @@ import {
   standardSuccessResponse,
 } from '@/lib/api-handler';
 import { ValidationError } from '@/lib/errors';
-import { validateIdeaId } from '@/lib/validation';
+import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
@@ -68,7 +68,7 @@ async function handlePut(context: ApiContext) {
   };
 
   if (title !== undefined) {
-    updates.title = title.substring(0, 100);
+    updates.title = sanitizeHtml(title).substring(0, 100);
   }
 
   if (status !== undefined) {
