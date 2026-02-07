@@ -12,6 +12,7 @@ import {
   rateLimitConfigs,
   rateLimitResponse,
   RateLimitInfo,
+  getClientIdentifier,
 } from '@/lib/rate-limit';
 
 export interface ApiResponse<T = unknown> {
@@ -47,7 +48,7 @@ export function withApiHandler(
 
     try {
       const rateLimitResult = checkRateLimit(
-        request.headers.get('x-forwarded-for') || 'unknown',
+        getClientIdentifier(request),
         rateLimitConfig
       );
 
