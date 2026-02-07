@@ -109,7 +109,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         onChange={handleIdeaChange}
         onKeyDown={handleKeyDown}
         placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-        helpText="Be as specific or as general as you'd like. We'll help you clarify details. Press Cmd/Ctrl + Enter to submit."
+        helpText={`Be as specific or as general as you'd like. We'll help you clarify details. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
         multiline={true}
         minLength={MIN_IDEA_LENGTH}
         maxLength={MAX_IDEA_LENGTH}
