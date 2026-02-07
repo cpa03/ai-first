@@ -2,10 +2,12 @@ import {
   withApiHandler,
   standardSuccessResponse,
   badRequestResponse,
+  notFoundResponse,
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
 // Valid task statuses
 const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
@@ -45,6 +47,19 @@ async function handlePatch(context: ApiContext) {
   }
 
   try {
+    // Authenticate user
+    const user = await requireAuth(request);
+
+    // Get task with ownership information
+    const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
+
+    if (!taskWithOwnership) {
+      return notFoundResponse('Task not found');
+    }
+
+    // Verify ownership
+    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+
     // Calculate completion percentage based on status
     const completionPercentage =
       body.status === 'completed'

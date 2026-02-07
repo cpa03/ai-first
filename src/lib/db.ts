@@ -376,6 +376,34 @@ export class DatabaseService {
     }));
   }
 
+  async getDeliverableWithIdea(
+    id: string
+  ): Promise<(Deliverable & { idea: Idea }) | null> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data: deliverable, error: deliverableError } = await this.client
+      .from('deliverables')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (deliverableError || !deliverable) return null;
+
+    const typedDeliverable = deliverable as Deliverable;
+
+    const { data: idea, error: ideaError } = await this.client
+      .from('ideas')
+      .select('*')
+      .eq('id', typedDeliverable.idea_id)
+      .is('deleted_at', null)
+      .single();
+
+    if (ideaError || !idea) return null;
+
+    return { ...typedDeliverable, idea: idea as Idea };
+  }
+
   async updateDeliverable(
     id: string,
     updates: Partial<Deliverable>
@@ -500,6 +528,45 @@ export class DatabaseService {
     const { error } = await this.client.from('tasks').delete().eq('id', id);
 
     if (error) throw error;
+  }
+
+  async getTaskWithOwnership(
+    id: string
+  ): Promise<(Task & { deliverable: Deliverable; idea: Idea }) | null> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data: task, error: taskError } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (taskError || !task) return null;
+
+    const typedTask = task as Task;
+
+    const { data: deliverable, error: deliverableError } = await this.client
+      .from('deliverables')
+      .select('*')
+      .eq('id', typedTask.deliverable_id)
+      .is('deleted_at', null)
+      .single();
+
+    if (deliverableError || !deliverable) return null;
+
+    const typedDeliverable = deliverable as Deliverable;
+
+    const { data: idea, error: ideaError } = await this.client
+      .from('ideas')
+      .select('*')
+      .eq('id', typedDeliverable.idea_id)
+      .is('deleted_at', null)
+      .single();
+
+    if (ideaError || !idea) return null;
+
+    return { ...typedTask, deliverable: typedDeliverable, idea: idea as Idea };
   }
 
   // Vector operations for embeddings and context

@@ -6,6 +6,7 @@ import {
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -18,6 +19,17 @@ async function handleGet(context: ApiContext) {
   }
 
   try {
+    // Authenticate user
+    const user = await requireAuth(request);
+
+    // Verify idea exists and user owns it
+    const idea = await dbService.getIdea(ideaId);
+    if (!idea) {
+      return notFoundResponse('Idea not found');
+    }
+
+    verifyResourceOwnership(user.id, idea.user_id, 'idea');
+
     const deliverablesWithTasks =
       await dbService.getIdeaDeliverablesWithTasks(ideaId);
 

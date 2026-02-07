@@ -2,10 +2,12 @@ import {
   withApiHandler,
   standardSuccessResponse,
   badRequestResponse,
+  notFoundResponse,
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
 // Valid task statuses
 const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
@@ -72,6 +74,19 @@ async function handlePost(context: ApiContext) {
   }
 
   try {
+    // Authenticate user
+    const user = await requireAuth(request);
+
+    // Get deliverable with idea to verify ownership
+    const deliverableWithIdea = await dbService.getDeliverableWithIdea(deliverableId);
+
+    if (!deliverableWithIdea) {
+      return notFoundResponse('Deliverable not found');
+    }
+
+    // Verify ownership
+    verifyResourceOwnership(user.id, deliverableWithIdea.idea.user_id, 'deliverable');
+
     const newTask = await dbService.createTask({
       deliverable_id: deliverableId,
       title: body.title.trim(),
