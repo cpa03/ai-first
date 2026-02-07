@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
 import { redactPIIInObject } from './pii-redaction';
+import { createLogger } from './logger';
+
+const logger = createLogger('DatabaseService');
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
@@ -127,7 +130,7 @@ export class DatabaseService {
     this._admin = supabaseAdmin;
 
     if (!this._client || !this._admin) {
-      console.warn(
+      logger.warn(
         'Supabase clients not initialized. Check environment variables.'
       );
     }
