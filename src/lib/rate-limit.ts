@@ -17,6 +17,7 @@ export interface RateLimitConfig {
 export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, number[]>();
+const MAX_STORE_SIZE = 10000; // Prevent unbounded memory growth
 
 export function getClientIdentifier(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -32,6 +33,11 @@ export function checkRateLimit(
 ): { allowed: boolean; info: RateLimitInfo } {
   const now = Date.now();
   const windowStart = now - config.windowMs;
+
+  // Memory leak prevention: Clear oldest entries if store is too large
+  if (rateLimitStore.size >= MAX_STORE_SIZE) {
+    cleanupOldestEntries(Math.floor(MAX_STORE_SIZE * 0.2)); // Remove 20% oldest
+  }
 
   const requests = rateLimitStore.get(identifier) || [];
   const recentRequests = requests.filter((r) => r >= windowStart);
@@ -58,6 +64,20 @@ export function checkRateLimit(
       reset: now + config.windowMs,
     },
   };
+}
+
+// Helper function to remove oldest entries when store reaches capacity
+function cleanupOldestEntries(count: number): void {
+  const entries = Array.from(rateLimitStore.entries());
+  entries.sort((a, b) => {
+    const aOldest = a[1].length > 0 ? Math.min(...a[1]) : Infinity;
+    const bOldest = b[1].length > 0 ? Math.min(...b[1]) : Infinity;
+    return aOldest - bOldest;
+  });
+
+  for (let i = 0; i < Math.min(count, entries.length); i++) {
+    rateLimitStore.delete(entries[i][0]);
+  }
 }
 
 export const rateLimitConfigs = {
