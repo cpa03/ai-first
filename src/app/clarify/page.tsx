@@ -200,24 +200,7 @@ function ClarifyPageContent() {
   );
 }
 
-// Main page component with Suspense boundary
+// Main page component
 export default function ClarifyPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <LoadingSpinner
-              size="md"
-              className="mb-4"
-              ariaLabel="Loading clarification flow"
-            />
-            <p className="text-gray-600">Loading clarification flow...</p>
-          </div>
-        </div>
-      }
-    >
-      <ClarifyPageContent />
-    </Suspense>
-  );
+  return <ClarifyPageContent />;
 }
