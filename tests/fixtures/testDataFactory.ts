@@ -331,7 +331,7 @@ export const TestUtils = {
     return new Promise((resolve) => setTimeout(resolve, ms));
   },
 
-  createMockFetch(response: any, ok: boolean = true, status: number = 200) {
+  createMockFetch(response: unknown, ok: boolean = true, status: number = 200) {
     return jest.fn().mockResolvedValue({
       ok,
       status,

@@ -71,7 +71,7 @@ jobs:
           echo "🏗️ Starting Architect Intelligence Cycle"
           while [ $retry_count -lt $max_retries ]; do
             echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, sementara dan tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr." \
+            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, sementara dan tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. ketika build/lint, walaupun 1 error atau warning adalah kegagalan besar." \
               --agent RepoKeeper \
               --model opencode/kimi-k2.5-free \
               --share false; then
@@ -146,7 +146,7 @@ jobs:
           
           if opencode run /ulw-loop \
             "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, strict format "[bug/error title]", strict label: [${{ matrix.role }}] and priority [P0-P4]. Skip your work if open issues >10." \
-            --model opencode/kimi-k2.5-free \
+            --model opencode/big-pickle \
             --share false; then
             echo "✅ Specialist work completed successfully for ${{ matrix.role }}"
           else
@@ -187,7 +187,7 @@ jobs:
         run: |
           opencode run /ulw-loop \
             "You are **IsMan**, github issues manager work on this repository. **Isman** love to consolidate tiny issues to meaningfull issue, he hate duplicate issues. **IsMan** Goal: concolidate tiny issues to meaningull issues, explain on comment why he concolidate and whats files affected." \
-            --model opencode/kimi-k2.5-free \
+            --model opencode/big-pickle \
             --share false
   # ------------------------------------------------------------------
   # STAGE 4: THE GATEKEEPER (Integrator)
@@ -221,6 +221,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           opencode run /ulw-loop \
-            "Check all open issues, check github logs. Select based priority, for each issue: fix - verify- ensure build/lint success without errors/warnings - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning." \
-            --model opencode/kimi-k2.5-free \
+            "Check all open issues, check github logs. Select based priority, for each issue: fix - verify- ensure build/lint success without errors/warnings - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning. if any error/warning while build/lint, its big failure." \
+            --model opencode/big-pickle \
             --share false
