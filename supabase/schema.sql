@@ -47,6 +47,19 @@ CREATE TABLE clarification_answers (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Milestones Table (must be created before deliverables and tasks)
+CREATE TABLE milestones (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
+    title TEXT NOT NULL,
+    description TEXT,
+    target_date DATE,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'delayed', 'cancelled')),
+    priority INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- Deliverables table
 CREATE TABLE deliverables (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -57,7 +70,7 @@ CREATE TABLE deliverables (
     estimate_hours INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE,
-    milestone_id UUID REFERENCES milestones(id),
+    milestone_id UUID REFERENCES milestones(id) ON DELETE SET NULL,
     completion_percentage INTEGER DEFAULT 0 CHECK (completion_percentage >= 0 AND completion_percentage <= 100),
     business_value DECIMAL(5,2) DEFAULT 0 CHECK (business_value >= 0),
     risk_factors TEXT[],
@@ -85,7 +98,7 @@ CREATE TABLE tasks (
     risk_level TEXT DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high')),
     tags TEXT[],
     custom_fields JSONB,
-    milestone_id UUID REFERENCES milestones(id)
+    milestone_id UUID REFERENCES milestones(id) ON DELETE SET NULL
 );
 
 -- Enable pgvector extension for vector similarity search
@@ -121,19 +134,6 @@ CREATE TABLE task_dependencies (
     lag_days INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(predecessor_task_id, successor_task_id)
-);
-
--- Milestones Table
-CREATE TABLE milestones (
-    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-    idea_id UUID REFERENCES ideas(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT,
-    target_date DATE,
-    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'delayed', 'cancelled')),
-    priority INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Task Assignments Table
