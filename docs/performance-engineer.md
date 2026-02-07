@@ -208,6 +208,11 @@ npm install eslint-plugin-react-hooks@latest --save-dev
 1. **Fixed**: Removed synchronous `setState` calls within `useEffect` in clarify page
 2. **Fixed**: Added missing `eslint-plugin-react-hooks` dependency
 3. **Fixed**: Removed unused variables causing lint errors
+4. **Fixed**: Infinite re-render bug in `useCache` hook (2026-02-07)
+   - **Problem**: `fetcher` function in dependency array caused re-renders when not memoized by caller
+   - **Solution**: Used `useRef` pattern to store fetcher without triggering re-renders
+   - **Impact**: Prevents infinite loops and improves hook stability
+   - **Code**: See `src/lib/use-cache.ts` for implementation details
 
 ## Resources
 
