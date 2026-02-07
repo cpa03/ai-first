@@ -9,7 +9,7 @@ import {
 import { VALIDATION_CONFIG } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const url = new URL(request.url);
 
   const status = url.searchParams.get('status');
@@ -56,7 +56,9 @@ async function handleGet(context: ApiContext) {
         hasMore: offset + limit < total,
       },
     },
-    context.requestId
+    context.requestId,
+    200,
+    rateLimit
   );
 }
 

@@ -51,7 +51,7 @@ export function withApiHandler(
       );
 
       if (!rateLimitResult.allowed) {
-        return rateLimitResponse(rateLimitResult.info);
+        return rateLimitResponse(rateLimitResult.info, requestId);
       }
 
       const context: ApiContext = {
