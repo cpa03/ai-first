@@ -5,8 +5,13 @@ import {
 } from '@/lib/api-handler';
 import { ValidationError } from '@/lib/errors';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
-import { dbService } from '@/lib/db';
+import { dbService, Idea } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+
+// Type guard for valid idea status values
+function isValidStatus(status: string): status is Idea['status'] {
+  return ['draft', 'clarified', 'breakdown', 'completed'].includes(status);
+}
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -71,9 +76,8 @@ async function handlePut(context: ApiContext) {
     updates.title = sanitizeHtml(title).substring(0, 100);
   }
 
-  if (status !== undefined) {
-    const validStatuses = ['draft', 'clarified', 'breakdown', 'completed'];
-    if (validStatuses.includes(status)) {
+  if (status !== undefined && typeof status === 'string') {
+    if (isValidStatus(status)) {
       updates.status = status;
     }
   }
