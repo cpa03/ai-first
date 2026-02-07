@@ -231,12 +231,11 @@ export class DatabaseService {
   }
 
   async softDeleteIdea(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('ideas')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -329,9 +328,9 @@ export class DatabaseService {
   async getIdeaDeliverablesWithTasks(
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
-    if (!supabaseClient) throw new Error('Supabase client not initialized');
+    if (!this.client) throw new Error('Supabase client not initialized');
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await this.client
       .from('deliverables')
       .select('*, tasks(*)')
       .eq('idea_id', ideaId)
@@ -366,12 +365,11 @@ export class DatabaseService {
   }
 
   async softDeleteDeliverable(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('deliverables')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -443,12 +441,11 @@ export class DatabaseService {
   }
 
   async softDeleteTask(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('tasks')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
