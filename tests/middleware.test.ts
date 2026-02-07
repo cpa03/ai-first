@@ -91,9 +91,10 @@ describe('middleware - unit tests for internal logic', () => {
 
   describe('Middleware configuration', () => {
     it('should have correct matcher pattern', () => {
-      const matcher = '/((?!api|_next/static|_next/image|favicon.ico).*)';
+      const matcher = '/((?!_next/static|_next/image|favicon.ico).*)';
 
-      expect(matcher).toContain('?!api');
+      // Matcher should include API routes for security headers
+      expect(matcher).not.toContain('?!api');
       expect(matcher).toContain('_next/static');
       expect(matcher).toContain('_next/image');
       expect(matcher).toContain('favicon.ico');
