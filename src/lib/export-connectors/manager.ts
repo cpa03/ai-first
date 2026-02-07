@@ -25,22 +25,12 @@ export class ExportManager {
     this.registerConnector(new JSONExporter());
     this.registerConnector(new MarkdownExporter());
 
-    // Enable external connectors by default in server environment
-    // or when explicitly enabled via options (for testing)
-    const enableExternal =
-      options.enableExternalConnectors !== undefined
-        ? options.enableExternalConnectors
-        : typeof window === 'undefined';
-
-    if (enableExternal) {
-      this.registerConnector(new NotionExporter());
-      this.registerConnector(new TrelloExporter());
-      this.registerConnector(new GoogleTasksExporter());
-      this.registerConnector(new GitHubProjectsExporter());
-    } else if (typeof window !== 'undefined') {
-      // In browser environment, only register Google Tasks
-      this.registerConnector(new GoogleTasksExporter());
-    }
+    // Server-side connectors (always register, but they check env vars)
+    // In browser, these will fail validation gracefully
+    this.registerConnector(new NotionExporter());
+    this.registerConnector(new TrelloExporter());
+    this.registerConnector(new GoogleTasksExporter());
+    this.registerConnector(new GitHubProjectsExporter());
   }
 
   registerConnector(connector: ExportConnector): void {
