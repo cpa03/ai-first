@@ -1,9 +1,12 @@
 import { AppError, ErrorCode } from '@/lib/errors';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('Auth');
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 
 if (!ADMIN_API_KEY && process.env.NODE_ENV !== 'development') {
-  console.warn(
+  logger.warn(
     'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
   );
 }

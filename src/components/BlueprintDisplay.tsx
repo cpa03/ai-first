@@ -8,6 +8,9 @@ import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
 import { UI_CONFIG } from '@/lib/config/constants';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('BlueprintDisplay');
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -64,7 +67,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         });
       }
     } catch (err) {
-      console.error('Failed to copy blueprint:', err);
+      logger.error('Failed to copy blueprint', err);
       // Show error feedback to user
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
