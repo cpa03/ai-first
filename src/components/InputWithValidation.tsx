@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -36,6 +36,7 @@ const InputWithValidation = forwardRef<
     ref
   ) => {
     const [touched, setTouched] = useState(false);
+    const [errorAnnounced, setErrorAnnounced] = useState(false);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
     const isValid = !error && touched;
@@ -63,6 +64,21 @@ const InputWithValidation = forwardRef<
       }
       ${className}
     `;
+
+    // Using ref to track error announcement state changes without triggering cascading renders
+    const errorAnnouncedRef = React.useRef(errorAnnounced);
+
+    useEffect(() => {
+      errorAnnouncedRef.current = errorAnnounced;
+    }, [errorAnnounced]);
+
+    useEffect(() => {
+      if (isInvalid && !errorAnnouncedRef.current) {
+        queueMicrotask(() => setErrorAnnounced(true));
+      } else if (!isInvalid && errorAnnouncedRef.current) {
+        queueMicrotask(() => setErrorAnnounced(false));
+      }
+    }, [isInvalid]);
 
     return (
       <div className="space-y-2">
@@ -134,24 +150,46 @@ const InputWithValidation = forwardRef<
           </div>
 
           {showCharCount && (
-            <span
-              className={`text-sm ${
-                maxLength && charCount > maxLength
-                  ? 'text-red-600'
-                  : maxLength &&
-                      charCount >=
-                        maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                    ? 'text-amber-600'
-                    : isValid && touched
-                      ? 'text-green-600'
-                      : 'text-gray-500'
-              }`}
-              aria-live="polite"
-              aria-atomic="true"
-            >
-              {charCount}
-              {maxLength && ` / ${maxLength}`}
-            </span>
+            <div className="flex items-center gap-2">
+              {maxLength && (
+                <div
+                  className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden"
+                  aria-hidden="true"
+                >
+                  <div
+                    className={`h-full transition-all duration-300 rounded-full ${
+                      charCount > maxLength
+                        ? 'bg-red-500'
+                        : charCount >=
+                            maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
+                          ? 'bg-amber-500'
+                          : 'bg-green-500'
+                    }`}
+                    style={{
+                      width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
+                    }}
+                  />
+                </div>
+              )}
+              <span
+                className={`text-sm ${
+                  maxLength && charCount > maxLength
+                    ? 'text-red-600'
+                    : maxLength &&
+                        charCount >=
+                          maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
+                      ? 'text-amber-600'
+                      : isValid && touched
+                        ? 'text-green-600'
+                        : 'text-gray-500'
+                }`}
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {charCount}
+                {maxLength && ` / ${maxLength}`}
+              </span>
+            </div>
           )}
         </div>
       </div>

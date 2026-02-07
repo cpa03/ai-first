@@ -2,6 +2,7 @@ import { TIMEOUT_CONFIG } from '../config/constants';
 import {
   resilienceManager,
   defaultResilienceConfigs,
+  DEFAULT_RESILIENCE_CONFIG,
   ResilienceConfig,
   type ServiceResilienceConfig,
 } from '../resilience';
@@ -55,6 +56,7 @@ export interface ExportResult {
   success: boolean;
   url?: string;
   id?: string;
+  content?: string;
   error?: string;
 }
 
@@ -94,17 +96,8 @@ export abstract class ExportConnector {
     if (type === 'github-projects') {
       return toResilienceConfig(defaultResilienceConfigs.github);
     }
-    if (type === 'google-tasks') {
-      return toResilienceConfig(defaultResilienceConfigs.github);
-    }
-    return {
-      maxRetries: 3,
-      baseDelayMs: 1000,
-      maxDelayMs: 10000,
-      timeoutMs: TIMEOUT_CONFIG.DEFAULT,
-      failureThreshold: 5,
-      resetTimeoutMs: 60000,
-    };
+    // Google Tasks and other connectors use default resilience config
+    return DEFAULT_RESILIENCE_CONFIG;
   }
 
   protected async executeWithResilience<T>(

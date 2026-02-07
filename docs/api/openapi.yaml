@@ -586,12 +586,25 @@ components:
           type: object
           description: Additional options for breakdown
           properties:
-            includeTimeline:
-              type: boolean
-              default: true
-            includeEstimates:
-              type: boolean
-              default: true
+            complexity:
+              type: string
+              enum: ['simple', 'medium', 'complex']
+              description: Complexity level for the breakdown
+              example: 'medium'
+            teamSize:
+              type: number
+              description: Number of team members available for the project
+              example: 4
+            timelineWeeks:
+              type: number
+              description: Desired timeline in weeks
+              example: 12
+            constraints:
+              type: array
+              description: Array of project constraints or requirements
+              items:
+                type: string
+              example: ['Must use TypeScript', 'Mobile-first design']
 
     StartBreakdownResponse:
       type: object

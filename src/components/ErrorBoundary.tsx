@@ -4,6 +4,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import Alert from './Alert';
 import Button from './Button';
 import { createLogger } from '@/lib/logger';
+import { UI_CONFIG } from '@/lib/config/constants';
 
 interface Props {
   children: ReactNode;
@@ -86,6 +87,25 @@ export default class ErrorBoundary extends Component<Props, State> {
                       {this.state.errorInfo.componentStack}
                     </>
                   )}
+                </div>
+                <div className="mt-4 flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || 'No stack trace available'}`;
+                      navigator.clipboard.writeText(errorText);
+                      const btn = document.activeElement as HTMLButtonElement;
+                      const originalText = btn?.textContent || '';
+                      if (btn) btn.textContent = 'Copied!';
+                      setTimeout(() => {
+                        if (btn) btn.textContent = originalText;
+                      }, UI_CONFIG.COPY_FEEDBACK_DURATION);
+                    }}
+                    aria-label="Copy error details to clipboard for bug reporting"
+                  >
+                    Copy Error Details
+                  </Button>
                 </div>
               </details>
             )}

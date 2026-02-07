@@ -9,6 +9,55 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      clarification_sessions: {
+        Row: {
+          created_at: string;
+          id: string;
+          idea_id: string;
+          status: 'active' | 'completed' | 'cancelled';
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          idea_id: string;
+          status?: 'active' | 'completed' | 'cancelled';
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          idea_id?: string;
+          status?: 'active' | 'completed' | 'cancelled';
+          updated_at?: string;
+        };
+      };
+      clarification_answers: {
+        Row: {
+          answer: string;
+          created_at: string;
+          id: string;
+          question_id: string;
+          session_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          answer: string;
+          created_at?: string;
+          id?: string;
+          question_id: string;
+          session_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          answer?: string;
+          created_at?: string;
+          id?: string;
+          question_id?: string;
+          session_id?: string;
+          updated_at?: string;
+        };
+      };
       agent_logs: {
         Row: {
           action: string;
@@ -352,6 +401,7 @@ export interface Database {
         Row: {
           comment: string;
           created_at: string;
+          deleted_at: string | null;
           id: string;
           parent_comment_id: string | null;
           task_id: string;
@@ -361,6 +411,7 @@ export interface Database {
         Insert: {
           comment: string;
           created_at?: string;
+          deleted_at?: string | null;
           id?: string;
           parent_comment_id?: string | null;
           task_id: string;
@@ -370,6 +421,7 @@ export interface Database {
         Update: {
           comment?: string;
           created_at?: string;
+          deleted_at?: string | null;
           id?: string;
           parent_comment_id?: string | null;
           task_id?: string;

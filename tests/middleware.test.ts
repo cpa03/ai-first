@@ -82,8 +82,9 @@ describe('middleware - unit tests for internal logic', () => {
     });
 
     it('should have correct HSTS for production', () => {
-      const hsts = 'max-age=31536000; includeSubDomains; preload';
-      expect(hsts).toContain('max-age=31536000');
+      const { SECURITY_CONFIG } = require('@/lib/config/constants');
+      const hsts = `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}; includeSubDomains; preload`;
+      expect(hsts).toContain(`max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}`);
       expect(hsts).toContain('includeSubDomains');
       expect(hsts).toContain('preload');
     });
@@ -91,9 +92,10 @@ describe('middleware - unit tests for internal logic', () => {
 
   describe('Middleware configuration', () => {
     it('should have correct matcher pattern', () => {
-      const matcher = '/((?!api|_next/static|_next/image|favicon.ico).*)';
+      const matcher = '/((?!_next/static|_next/image|favicon.ico).*)';
 
-      expect(matcher).toContain('?!api');
+      // Matcher should include API routes for security headers
+      expect(matcher).not.toContain('?!api');
       expect(matcher).toContain('_next/static');
       expect(matcher).toContain('_next/image');
       expect(matcher).toContain('favicon.ico');

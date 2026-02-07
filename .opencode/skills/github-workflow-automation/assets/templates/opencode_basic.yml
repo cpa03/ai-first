@@ -1,0 +1,153 @@
+name: "OpenCode Task"
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: 'Prompt for OpenCode agent'
+        required: true
+        type: string
+      model:
+        description: 'Model to use'
+        required: false
+        type: choice
+        options:
+          - opencode/kimi-k2.5-free
+          - opencode/kimi-k2.5
+        default: opencode/kimi-k2.5
+      agent-timeout:
+        description: 'Agent timeout in minutes'
+        required: false
+        type: choice
+        options:
+          - 30
+          - 60
+          - 120
+          - 180
+        default: 60
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  opencode-task:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: ${{ inputs.agent-timeout }}
+    env:
+      OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+    steps:
+
+      # Checkout Repository
+      - name: Checkout with Full History
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      # Configure Git
+      - name: Configure Git User
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      # Branch Management
+      - name: Manage agent-workspace Branch
+        id: branch
+        continue-on-error: true
+        run: |
+          git fetch --all
+          if git branch -r | grep "origin/agent-workspace"; then
+            echo "Branch exists, checking out..."
+            git checkout agent-workspace
+            git pull origin agent-workspace
+          else
+            echo "Branch does not exist, creating..."
+            git checkout -b agent-workspace
+          fi
+          echo "agent-workspace ready"
+
+      # Merge main into agent-workspace
+      - name: Merge Main Branch
+        id: merge
+        continue-on-error: true
+        run: |
+          git checkout agent-workspace
+          git merge origin/main
+
+      # Handle Merge Conflicts
+      - name: Handle Conflicts
+        if: steps.merge.outcome == 'failure'
+        run: |
+          echo "Merge conflict detected in agent-workspace"
+          git merge --abort
+          exit 1
+
+      # Install OpenCode CLI
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+
+      # Verify Installation
+      - name: Verify OpenCode CLI
+        run: |
+          opencode --version || true
+
+      # Wait in Queue
+      - name: Wait in Turnstyle Queue
+        uses: softprops/turnstyle@v2
+        with:
+          poll-interval-seconds: 30
+          cancel-concurrent-workflows: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Run OpenCode Agent
+      - name: Run OpenCode Agent
+        id: agent
+        continue-on-error: true
+        run: |
+          PROMPT='${{ inputs.prompt }}'
+          opencode run "$PROMPT" --model ${{ inputs.model || inputs.model }}
+
+      # Check Agent Result
+      - name: Check Agent Execution
+        if: steps.agent.outcome == 'failure'
+        run: |
+          echo "Agent execution failed"
+          exit 1
+
+      # Git Status
+      - name: Check Git Status
+        id: changes
+        continue-on-error: true
+        run: |
+          CHANGES=$(git status --porcelain)
+          if [ -z "$CHANGES" ]; then
+            echo "No changes detected"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "Changes detected:"
+            echo "$CHANGES"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      # Commit Changes
+      - name: Commit Agent Changes
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git add .
+          git commit -m "Agent: ${{ inputs.prompt }}"
+
+      # Push Changes
+      - name: Push to agent-workspace
+        if: steps.changes.outputs.has_changes == 'true'
+        run: |
+          git push origin agent-workspace
+
+      - name: "Summary: No Changes"
+        if: steps.changes.outputs.has_changes != 'true'
+        run: |
+          echo "::notice::Agent completed successfully with no changes to commit"

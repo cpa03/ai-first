@@ -1,0 +1,227 @@
+name: parallel
+
+on:
+  push:
+    branches:
+      - main # Architect runs on main changes
+  schedule:
+    - cron: "0 */4 * * *" # Routine check every 4 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ------------------------------------------------------------------
+  # STAGE 1: THE BRAIN (Architect & Manager)
+  # ------------------------------------------------------------------
+  architect:
+    name: "Architect: Strategy & Triage"
+    runs-on: ubuntu-24.04-arm
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.opencode
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+          restore-keys: |
+            opencode-${{ runner.os }}-v1
+            opencode-${{ runner.os }}-
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Install Node.js
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: arsitek
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Architect Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, sementara dan tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
+              --share false; then
+              echo "✅ Architect work completed successfully"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "❌ Architect execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "❌ All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+            
+  # ------------------------------------------------------------------
+  # STAGE 2: THE MUSCLE (Specialist Executors)
+  # ------------------------------------------------------------------
+  specialists:
+    name: "Specialist: ${{ matrix.role }}"
+    continue-on-error: true
+    needs: architect
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      fail-fast: false
+      matrix:
+        role:
+          - frontend-engineer
+          - backend-engineer
+          - api-specialist
+          - code-reviewer
+          - security-engineer
+          - quality-assurance
+          - performance-engineer
+          - database-architect
+          - devops-engineer
+          - ui-ux-engineer
+          - technical-writer
+          - reliability-engineer
+          - integration-engineer
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ matrix.role }}"
+          git config --global user.email "${{ matrix.role }}@bank-sampah.sulhi.workers.dev"
+      - name: Setup Node & OpenCode
+        continue-on-error: true
+        uses: actions/setup-node@v5
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Execute Work (Active or Proactive)
+        timeout-minutes: 30
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Specialist runs unconditionally:
+          # 1. Finds Issue -> Fixes it
+          # 2. No Issue -> Proactive Scan -> findings.md
+          echo "Starting specialist work for ${{ matrix.role }}"
+          
+          if opencode run /ulw-loop \
+            "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, strict format "[bug/error title]", strict label: [${{ matrix.role }}] and priority [P0-P4]. Skip your work if open issues >10." \
+            --model opencode/kimi-k2.5-free \
+            --share false; then
+            echo "✅ Specialist work completed successfully for ${{ matrix.role }}"
+          else
+            echo "❌ Specialist work failed or timed out for ${{ matrix.role }}"
+            echo "This may be expected if no issues were found or work took longer than timeout"
+            exit 0  # Don't fail the workflow, just log the issue
+          fi
+
+  # ------------------------------------------------------------------
+  # STAGE 3: ISSUE MANAGER
+  # ------------------------------------------------------------------
+  IsMan:
+    name: "IsMan"
+    needs: specialists
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "IsMan"
+          git config --global user.email "IsMan@bank-sampah.sulhi.workers.dev"
+      - name: Setup Node & OpenCode
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Process Pull Requests
+        timeout-minutes: 60
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          opencode run /ulw-loop \
+            "You are **IsMan**, github issues manager work on this repository. **Isman** love to consolidate tiny issues to meaningfull issue, he hate duplicate issues. **IsMan** always review and comment in open issues to explain why he do this and that, what file affected." \
+            --model opencode/kimi-k2.5-free \
+            --share false
+
+  # ------------------------------------------------------------------
+  # STAGE 4: THE GATEKEEPER (Integrator)
+  # ------------------------------------------------------------------
+  integrator:
+    name: "Fixer"
+    needs: IsMan
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Fixer"
+          git config --global user.email "fixer@bank-sampah.sulhi.workers.dev"
+      - name: Setup Node & OpenCode
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Process Pull Requests
+        timeout-minutes: 60
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          opencode run /ulw-loop \
+            "Check all open issues, check github logs. Plan to fix many non conflicting issues based priority by delegate to specialist agent with specialist skill: fix - verify- ensure build/lint success - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning." \
+            --model opencode/kimi-k2.5-free \
+            --share false

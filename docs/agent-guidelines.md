@@ -372,8 +372,8 @@ if (!rateLimitResult.allowed) {
 ### Rate Limit Tiers
 
 - `strict`: 10 requests/minute - For expensive operations
-- `moderate`: 50 requests/minute - For standard operations
-- `lenient`: 100 requests/minute - For cheap operations
+- `moderate`: 30 requests/minute - For standard operations
+- `lenient`: 60 requests/minute - For cheap operations
 
 ### Rate Limit Enforcement
 

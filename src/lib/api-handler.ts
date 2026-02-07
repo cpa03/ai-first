@@ -12,6 +12,7 @@ import {
   rateLimitConfigs,
   rateLimitResponse,
   RateLimitInfo,
+  getClientIdentifier,
 } from '@/lib/rate-limit';
 
 export interface ApiResponse<T = unknown> {
@@ -40,18 +41,19 @@ export function withApiHandler(
 ): (request: NextRequest) => Promise<Response> {
   return async (request: NextRequest) => {
     const requestId = generateRequestId();
+    const requestStartTime = Date.now();
     const rateLimitConfig = options.rateLimit
       ? rateLimitConfigs[options.rateLimit]
       : rateLimitConfigs.lenient;
 
     try {
       const rateLimitResult = checkRateLimit(
-        request.headers.get('x-forwarded-for') || 'unknown',
+        getClientIdentifier(request),
         rateLimitConfig
       );
 
       if (!rateLimitResult.allowed) {
-        return rateLimitResponse(rateLimitResult.info);
+        return rateLimitResponse(rateLimitResult.info, requestId);
       }
 
       const context: ApiContext = {
@@ -91,8 +93,23 @@ export function withApiHandler(
         String(new Date(context.rateLimit.reset).toISOString())
       );
 
+      // Log successful request metrics
+      const duration = Date.now() - requestStartTime;
+      response.headers.set('X-Response-Time', `${duration}ms`);
+
       return response;
     } catch (error) {
+      // Log error details for monitoring
+      const duration = Date.now() - requestStartTime;
+      console.error(
+        `[API Error] Request ${requestId} failed after ${duration}ms:`,
+        {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          path: request.url,
+          method: request.method,
+        }
+      );
+
       return toErrorResponse(error, requestId);
     }
   };

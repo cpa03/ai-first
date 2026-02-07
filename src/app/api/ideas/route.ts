@@ -7,13 +7,18 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { requireAuth } from '@/lib/auth';
+import { VALIDATION_CONFIG } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
-  const { request } = context;
+  const { request, rateLimit } = context;
   const url = new URL(request.url);
 
   const status = url.searchParams.get('status');
-  const limit = parseInt(url.searchParams.get('limit') || '50', 10);
+  const limit = parseInt(
+    url.searchParams.get('limit') ||
+      String(VALIDATION_CONFIG.DEFAULT_PAGINATION_LIMIT),
+    10
+  );
   const offset = parseInt(url.searchParams.get('offset') || '0', 10);
 
   // Authenticate user
@@ -54,7 +59,9 @@ async function handleGet(context: ApiContext) {
         hasMore: offset + limit < total,
       },
     },
-    context.requestId
+    context.requestId,
+    200,
+    rateLimit
   );
 }
 

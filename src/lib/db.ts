@@ -114,19 +114,31 @@ export interface AgentLog {
 
 // Database service class
 export class DatabaseService {
-  private client = supabaseClient;
-  private admin = supabaseAdmin;
+  private _client: ReturnType<typeof createClient<Database>> | null = null;
+  private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
+  private connectionRetries = 0;
+  private maxConnectionRetries = 3;
+  private connectionHealthy = false;
+  private lastHealthCheck: Date | null = null;
 
   private constructor() {
-    this.client = supabaseClient;
-    this.admin = supabaseAdmin;
+    this._client = supabaseClient;
+    this._admin = supabaseAdmin;
 
-    if (!this.client || !this.admin) {
+    if (!this._client || !this._admin) {
       console.warn(
         'Supabase clients not initialized. Check environment variables.'
       );
     }
+  }
+
+  private get client() {
+    return this._client;
+  }
+
+  private get admin() {
+    return this._admin;
   }
 
   static getInstance(): DatabaseService {
@@ -136,13 +148,65 @@ export class DatabaseService {
     return DatabaseService.instance;
   }
 
+  // For testing purposes only - reinitialize clients with current environment
+  reinitializeClients(): void {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (url && anonKey) {
+      this._client = createClient<Database>(url, anonKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+        },
+      });
+    }
+
+    if (url && serviceKey) {
+      this._admin = createClient<Database>(url, serviceKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      });
+    }
+  }
+
+  // For testing purposes only - reset the singleton instance
+  static resetInstance(): void {
+    DatabaseService.instance = undefined as unknown as DatabaseService;
+  }
+
+  // Connection health monitoring
+  async checkConnection(): Promise<boolean> {
+    try {
+      if (!this.client) return false;
+
+      const { error } = await this.client.from('ideas').select('id').limit(1);
+      this.connectionHealthy = !error;
+      this.lastHealthCheck = new Date();
+      return this.connectionHealthy;
+    } catch {
+      this.connectionHealthy = false;
+      return false;
+    }
+  }
+
+  isConnectionHealthy(): boolean {
+    // Check if last health check is within 30 seconds
+    if (!this.lastHealthCheck) return false;
+    const thirtySecondsAgo = new Date(Date.now() - 30000);
+    return this.connectionHealthy && this.lastHealthCheck > thirtySecondsAgo;
+  }
+
   // Ideas CRUD operations
   async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const { data, error } = await this.client
       .from('ideas')
-      .insert(idea as any)
+      .insert(idea as never)
       .select()
       .single();
 
@@ -183,7 +247,7 @@ export class DatabaseService {
 
     const { data, error } = await this.admin
       .from('ideas')
-      .update(updates as any)
+      .update(updates as never)
       .eq('id', id)
       .select()
       .single();
@@ -193,12 +257,11 @@ export class DatabaseService {
   }
 
   async softDeleteIdea(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('ideas')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -223,7 +286,7 @@ export class DatabaseService {
       .upsert({
         ...session,
         updated_at: new Date().toISOString(),
-      } as any)
+      } as never)
       .select()
       .single();
 
@@ -252,7 +315,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('deliverables')
-      .insert(deliverable as any)
+      .insert(deliverable as never)
       .select()
       .single();
 
@@ -267,7 +330,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('deliverables')
-      .insert(deliverables as any)
+      .insert(deliverables as never)
       .select();
 
     if (error) throw error;
@@ -291,9 +354,9 @@ export class DatabaseService {
   async getIdeaDeliverablesWithTasks(
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
-    if (!supabaseClient) throw new Error('Supabase client not initialized');
+    if (!this.client) throw new Error('Supabase client not initialized');
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await this.client
       .from('deliverables')
       .select('*, tasks(*)')
       .eq('idea_id', ideaId)
@@ -318,7 +381,7 @@ export class DatabaseService {
 
     const { data, error } = await this.admin
       .from('deliverables')
-      .update(updates as any)
+      .update(updates as never)
       .eq('id', id)
       .select()
       .single();
@@ -328,12 +391,11 @@ export class DatabaseService {
   }
 
   async softDeleteDeliverable(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('deliverables')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -356,7 +418,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('tasks')
-      .insert(task as any)
+      .insert(task as never)
       .select()
       .single();
 
@@ -369,7 +431,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('tasks')
-      .insert(tasks as any)
+      .insert(tasks as never)
       .select();
 
     if (error) throw error;
@@ -390,12 +452,26 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getTask(id: string): Promise<Task | null> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (error) return null;
+    return data;
+  }
+
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
     const { data, error } = await this.admin
       .from('tasks')
-      .update(updates as any)
+      .update(updates as never)
       .eq('id', id)
       .select()
       .single();
@@ -405,12 +481,11 @@ export class DatabaseService {
   }
 
   async softDeleteTask(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('tasks')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -432,7 +507,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('vectors')
-      .insert(vector as any)
+      .insert(vector as never)
       .select()
       .single();
 
@@ -476,7 +551,7 @@ export class DatabaseService {
 
     if (error) throw error;
 
-    const vectors = data || [];
+    const vectors = (data || []) as Vector[];
     const resultMap = new Map<string, Vector[]>();
 
     for (const vector of vectors) {
@@ -515,7 +590,7 @@ export class DatabaseService {
         reference_type: referenceType,
         reference_id: referenceId,
         vector_data: vectorData,
-      } as any)
+      } as never)
       .select()
       .single();
 
@@ -537,7 +612,7 @@ export class DatabaseService {
       match_threshold: 0.78,
       match_count: limit,
       idea_id_filter: ideaId,
-    });
+    } as never);
 
     if (error) throw error;
     return data || [];
@@ -559,7 +634,7 @@ export class DatabaseService {
       action,
       payload: sanitizedPayload,
       timestamp: new Date().toISOString(),
-    } as any);
+    } as never);
 
     if (error) throw error;
   }
@@ -573,7 +648,7 @@ export class DatabaseService {
       .insert({
         idea_id: ideaId,
         status: 'active',
-      } as any)
+      } as never)
       .select()
       .single();
 
@@ -595,7 +670,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client
       .from('clarification_answers')
-      .insert(entries as any)
+      .insert(entries as never)
       .select();
 
     if (error) throw error;
@@ -660,7 +735,10 @@ export class DatabaseService {
         .is('deleted_at', null),
     ]);
 
-    const deliverableIds = deliverablesResponse.data?.map((d) => d.id) || [];
+    const deliverableIds =
+      (deliverablesResponse.data as Array<{ id: string }> | null)?.map(
+        (d) => d.id
+      ) || [];
     const { count: totalDeliverables } = deliverableCountResponse;
 
     const { count: totalTasks } = await this.client
