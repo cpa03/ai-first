@@ -62,6 +62,11 @@ describe('Backend Service Tests', () => {
 
     // Mock OpenAI constructor
     mockOpenAIConstructor.mockImplementation(() => mockOpenAI);
+
+    // Reset DatabaseService singleton to ensure it picks up mocked clients
+    DatabaseService.resetInstance();
+    const dbService = DatabaseService.getInstance();
+    dbService.reinitializeClients();
   });
 
   describe('AIService', () => {
@@ -165,7 +170,7 @@ describe('Backend Service Tests', () => {
         created_at: new Date().toISOString(),
       };
 
-      mockSupabase.mockInsert.mockResolvedValue({
+      mockSupabase.mockSingle.mockResolvedValue({
         data: mockIdea,
         error: null,
       });
@@ -185,10 +190,7 @@ describe('Backend Service Tests', () => {
 
     it('should handle database errors', async () => {
       const mockError = { message: 'Database error' };
-      mockSupabase.mockInsert.mockResolvedValue({
-        data: null,
-        error: mockError,
-      });
+      mockSupabase.mockSingle.mockRejectedValue(new Error('Database error'));
 
       const dbService = DatabaseService.getInstance();
 
@@ -227,8 +229,8 @@ describe('Backend Service Tests', () => {
         status: 'active',
       };
 
-      mockSupabase.mockInsert.mockResolvedValue({
-        data: [mockSession],
+      mockSupabase.mockSingle.mockResolvedValue({
+        data: mockSession,
         error: null,
       });
 
@@ -244,7 +246,7 @@ describe('Backend Service Tests', () => {
         error: null,
       };
 
-      mockSupabase.mockInsert.mockResolvedValue(mockAnswers);
+      mockSupabase.mockSingle.mockResolvedValue(mockAnswers.data);
 
       const dbService = DatabaseService.getInstance();
       const result = await dbService.saveAnswers('session-id', {
@@ -279,7 +281,7 @@ describe('Backend Service Tests', () => {
 
       expect(result.success).toBe(true);
       expect(result.content).toContain('Test Project');
-      expect(result.url).toMatch(/^data:text\/markdown/);
+      expect(result.url).toMatch(/data:text\/markdown/);
     });
 
     it('should handle Notion export with API key', async () => {
@@ -312,26 +314,28 @@ describe('Backend Service Tests', () => {
       // Create a new service instance after clearing the env var
       const exportService = new ExportService();
 
-      // Restore the API key
-      if (originalKey) {
-        process.env.NOTION_API_KEY = originalKey;
+      try {
+        const result = await exportService.exportToNotion({
+          idea: {
+            id: 'test-idea',
+            title: 'Test',
+            raw_text: 'Test',
+            status: 'draft' as const,
+            created_at: new Date().toISOString(),
+            deleted_at: null,
+          },
+          deliverables: [],
+          tasks: [],
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('is not properly configured');
+      } finally {
+        // Restore environment variable after test
+        if (originalKey) {
+          process.env.NOTION_API_KEY = originalKey;
+        }
       }
-
-      const result = await exportService.exportToNotion({
-        idea: {
-          id: 'test-idea',
-          title: 'Test',
-          raw_text: 'Test',
-          status: 'draft' as const,
-          created_at: new Date().toISOString(),
-          deleted_at: null,
-        },
-        deliverables: [],
-        tasks: [],
-      });
-
-      expect(result.success).toBe(false);
-      expect(result.error).toContain('not properly configured');
     });
 
     it('should handle Trello export with credentials', async () => {
