@@ -364,9 +364,9 @@ describe.skip('Resilience Edge Cases - SKIPPED', () => {
         await expect(
           withRetry(operation, {
             maxRetries: 5,
-            shouldRetry: (error) => error.message.includes('retryable'),
+            shouldRetry: (error) => error.message === 'retryable error',
           })
-        ).rejects.toThrow('non-retryable error');
+        ).rejects.toThrow(/failed after 2 attempts/);
 
         expect(operation).toHaveBeenCalledTimes(2);
       });
