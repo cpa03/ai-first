@@ -20,11 +20,22 @@ const rateLimitStore = new Map<string, number[]>();
 const MAX_STORE_SIZE = 10000; // Prevent unbounded memory growth
 
 export function getClientIdentifier(request: Request): string {
+  // First, try x-real-ip which is set by trusted proxies (Vercel, etc.)
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp.trim();
+  }
+
+  // Fall back to x-forwarded-for, but use the LAST IP in the chain
+  // (closest to the server) to prevent client spoofing
   const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded
-    ? forwarded.split(',')[0]
-    : request.headers.get('x-real-ip') || 'unknown';
-  return ip;
+  if (forwarded) {
+    const ips = forwarded.split(',').map((ip) => ip.trim());
+    // Use the last IP which is added by the closest proxy
+    return ips[ips.length - 1] || 'unknown';
+  }
+
+  return 'unknown';
 }
 
 export function checkRateLimit(

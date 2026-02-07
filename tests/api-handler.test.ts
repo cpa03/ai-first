@@ -20,6 +20,16 @@ jest.mock('@/lib/rate-limit', () => ({
     (resetTime) => new Response('Too many requests', { status: 429 })
   ),
   addRateLimitHeaders: jest.fn((response, info) => response),
+  getClientIdentifier: jest.fn((request: Request) => {
+    const forwarded = request.headers.get('x-forwarded-for');
+    const realIp = request.headers.get('x-real-ip');
+    if (realIp) return realIp;
+    if (forwarded) {
+      const ips = forwarded.split(',').map((ip) => ip.trim());
+      return ips[ips.length - 1] || 'unknown';
+    }
+    return 'unknown';
+  }),
 }));
 
 import { checkRateLimit, rateLimitResponse } from '@/lib/rate-limit';
