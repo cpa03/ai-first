@@ -155,20 +155,15 @@ async function handleGet(context: ApiContext) {
   }
 
   try {
-    // Get task details - we need to fetch from deliverables and filter
-    // Since we don't have a direct getTask method, we'll need to work around this
-    const { data, error } = await dbService['client']!.from('tasks')
-      .select('*')
-      .eq('id', taskId)
-      .is('deleted_at', null)
-      .single();
+    // Get task details through the service layer
+    const task = await dbService.getTask(taskId);
 
-    if (error || !data) {
+    if (!task) {
       return notFoundResponse('Task not found');
     }
 
     return standardSuccessResponse(
-      { task: data },
+      { task },
       context.requestId,
       200,
       context.rateLimit
