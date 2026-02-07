@@ -183,7 +183,7 @@ export const waitForAsync = (ms = 100) =>
 
 // Helper to create mock fetch responses
 export const createMockFetch = (
-  response: any,
+  response: unknown,
   options: { status?: number; ok?: boolean; delay?: number } = {}
 ) => {
   const { status = 200, ok = true, delay = 0 } = options;
@@ -205,7 +205,7 @@ export const createMockFetch = (
 
 // Helper to create mock fetch responses with standardSuccessResponse format
 export const createStandardMockFetch = (
-  data: any,
+  data: unknown,
   options: { status?: number; ok?: boolean; delay?: number } = {}
 ) => {
   const { status = 200, ok = true, delay = 0 } = options;
