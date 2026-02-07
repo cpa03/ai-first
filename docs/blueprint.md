@@ -302,8 +302,8 @@ Role-based rate limiting:
 ```typescript
 export const rateLimitConfigs = {
   strict: { limit: 10, windowMs: 60000 }, // 10/min
-  moderate: { limit: 50, windowMs: 60000 }, // 50/min
-  lenient: { limit: 100, windowMs: 60000 }, // 100/min
+  moderate: { limit: 30, windowMs: 60000 }, // 30/min
+  lenient: { limit: 60, windowMs: 60000 }, // 60/min
 };
 ```
 
