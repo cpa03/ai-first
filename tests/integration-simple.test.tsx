@@ -116,7 +116,7 @@ describe('Integration Tests - Basic', () => {
 
     it('should handle multi-step workflows', async () => {
       const steps = ['Step 1', 'Step 2', 'Step 3'];
-      let currentStep = 0;
+      const currentStep = 0;
 
       const MultiStepComponent = () => {
         const [step, setStep] = React.useState(0);

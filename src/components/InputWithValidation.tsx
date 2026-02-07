@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState, useEffect } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -65,13 +65,20 @@ const InputWithValidation = forwardRef<
       ${className}
     `;
 
+    // Using ref to track error announcement state changes without triggering cascading renders
+    const errorAnnouncedRef = React.useRef(errorAnnounced);
+
     useEffect(() => {
-      if (isInvalid && !errorAnnounced) {
-        setErrorAnnounced(true);
-      } else if (!isInvalid && errorAnnounced) {
-        setErrorAnnounced(false);
+      errorAnnouncedRef.current = errorAnnounced;
+    }, [errorAnnounced]);
+
+    useEffect(() => {
+      if (isInvalid && !errorAnnouncedRef.current) {
+        queueMicrotask(() => setErrorAnnounced(true));
+      } else if (!isInvalid && errorAnnouncedRef.current) {
+        queueMicrotask(() => setErrorAnnounced(false));
       }
-    }, [isInvalid, errorAnnounced]);
+    }, [isInvalid]);
 
     return (
       <div className="space-y-2">
