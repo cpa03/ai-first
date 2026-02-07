@@ -107,6 +107,7 @@ jest.mock('@/lib/resilience', () => {
 describe.skip('Export Connectors Integration with Resilience Framework', () => {
   let exportManager: ExportManager;
   let mockResilienceExecute: jest.Mock;
+  let originalWindow: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -132,6 +133,13 @@ describe.skip('Export Connectors Integration with Resilience Framework', () => {
         return operation();
       }
     );
+  });
+
+  afterEach(() => {
+    // Ensure window is restored
+    if (originalWindow && !(global as any).window) {
+      (global as any).window = originalWindow;
+    }
   });
 
   const createMockExportData = (
