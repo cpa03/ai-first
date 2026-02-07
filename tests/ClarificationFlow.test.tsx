@@ -214,7 +214,7 @@ describe('ClarificationFlow', () => {
     await waitFor(() => {
       expect(
         screen.getByRole('heading', {
-          name: /what is main goal you want to achieve/i,
+          name: /what is the main goal you want to achieve/i,
         })
       ).toBeInTheDocument();
     });

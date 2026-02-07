@@ -65,7 +65,7 @@ describe('Backend Service Tests', () => {
 
     // Reset DatabaseService singleton to ensure it picks up mocked clients
     DatabaseService.resetInstance();
-    const dbService = DatabaseService.getInstance();
+    dbService = DatabaseService.getInstance();
     dbService.reinitializeClients();
   });
 
@@ -245,18 +245,41 @@ describe('Backend Service Tests', () => {
     });
 
     it('should save answers to session', async () => {
-      const mockAnswers = {
-        data: { id: 'answer-id', session_id: 'session-id' },
-        error: null,
-      };
+      const mockAnswers = [
+        {
+          id: 'answer-id',
+          session_id: 'session-id',
+          question_id: '1',
+          answer: 'answer1',
+        },
+      ];
 
-      mockSupabase.mockSingle.mockResolvedValue(mockAnswers.data);
+      // Setup mock chain for insert().select()
+      const mockInsertSelect = jest.fn().mockResolvedValue({
+        data: mockAnswers,
+        error: null,
+      });
+
+      // Replace the mockInsert to return our custom select mock
+      mockSupabase.from = jest.fn().mockReturnValue({
+        insert: jest.fn().mockReturnValue({
+          select: mockInsertSelect,
+        }),
+        select: mockSupabase.mockSelect,
+        update: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: null, error: null }),
+        }),
+        delete: jest.fn().mockReturnValue({
+          eq: jest.fn().mockResolvedValue({ data: null, error: null }),
+        }),
+      });
 
       const result = await dbService.saveAnswers('session-id', {
         '1': 'answer1',
       });
 
       expect(result).toBeDefined();
+      expect(result).toEqual(mockAnswers);
     });
   });
 

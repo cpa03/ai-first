@@ -50,11 +50,12 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   };
 
   const handleCopy = async () => {
+    const win = window as unknown as Window & {
+      showToast?: (options: ToastOptions) => void;
+    };
+
     try {
       await navigator.clipboard.writeText(blueprint);
-      const win = window as unknown as Window & {
-        showToast?: (options: ToastOptions) => void;
-      };
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'success',
@@ -64,6 +65,14 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
       }
     } catch (err) {
       console.error('Failed to copy blueprint:', err);
+      // Show error feedback to user
+      if (typeof window !== 'undefined' && win.showToast) {
+        win.showToast({
+          type: 'error',
+          message: 'Failed to copy. Please try selecting and copying manually.',
+          duration: UI_CONFIG.TOAST_DURATION,
+        });
+      }
     }
   };
 

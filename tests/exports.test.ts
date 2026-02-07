@@ -441,14 +441,17 @@ describe('Export Services', () => {
       manager = new ExportManager();
     });
 
-    it('should register client-side connectors', () => {
+    it('should register all connectors', () => {
       const connectors = manager.getAvailableConnectors();
-      expect(connectors).toHaveLength(3); // Only client-side connectors
+      expect(connectors).toHaveLength(6); // All connectors registered
 
       const types = connectors.map((c) => c.type);
       expect(types).toContain('json');
       expect(types).toContain('markdown');
-      expect(types).toContain('google-tasks'); // Placeholder version
+      expect(types).toContain('google-tasks');
+      expect(types).toContain('notion');
+      expect(types).toContain('trello');
+      expect(types).toContain('github-projects');
     });
 
     it('should get connector by type', () => {
@@ -550,7 +553,9 @@ describe('Export Services', () => {
 
       const result = await manager.export(format);
       expect(result.success).toBe(false);
-      expect(result.error).toContain("Export connector 'notion' not found");
+      expect(result.error).toContain(
+        "Export connector 'notion' is not properly configured"
+      );
     });
 
     it('should validate all client-side connectors', async () => {

@@ -33,9 +33,6 @@ export const createMockSupabaseClient = () => {
     eq: mockEq,
     single: mockSingle,
   });
-  const mockInsertSelect = jest.fn().mockReturnValue({
-    single: mockSingle,
-  });
   const mockOrder = jest.fn(() => ({
     data: [],
     error: null,
