@@ -14,10 +14,14 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 
+export interface ExportManagerOptions {
+  enableExternalConnectors?: boolean;
+}
+
 export class ExportManager {
   private connectors: Map<string, ExportConnector> = new Map();
 
-  constructor() {
+  constructor(options: ExportManagerOptions = {}) {
     this.registerConnector(new JSONExporter());
     this.registerConnector(new MarkdownExporter());
 
