@@ -23,9 +23,9 @@
     "db:reset": "supabase db reset"
   },
   "dependencies": {
-    "@notionhq/client": "^5.4.0",
+    "@notionhq/client": "^5.9.0",
     "@octokit/graphql": "^9.0.3",
-    "@supabase/supabase-js": "^2.39.0",
+    "@supabase/supabase-js": "^2.95.3",
     "@types/js-yaml": "^4.0.9",
     "clsx": "^2.1.1",
     "googleapis": "^169.0.0",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.8",
-    "@testing-library/react": "^16.0.0",
+    "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^20",
@@ -46,14 +46,14 @@
     "@types/react-dom": "^18",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
-    "autoprefixer": "^10.4.22",
+    "autoprefixer": "^10.4.24",
     "eslint": "^8.57.1",
     "eslint-config-next": "14.2.35",
     "eslint-plugin-react-hooks": "^7.0.1",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "^8",
-    "prettier": "^3.3.3",
+    "prettier": "^3.8.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
   },
