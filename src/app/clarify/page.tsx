@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useMemo, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
@@ -33,30 +33,27 @@ const DynamicClarificationFlow = dynamic(
   }
 );
 
-export default function ClarifyPage() {
+// Inner component that uses useSearchParams - must be wrapped in Suspense
+function ClarifyPageContent() {
   const router = useRouter();
-  const [idea, setIdea] = useState<string>('');
-  const [ideaId, setIdeaId] = useState<string>('');
+  const searchParams = useSearchParams();
+  const logger = useMemo(() => createLogger('ClarifyPage'), []);
+
+  // Use useMemo to derive state from URL params synchronously
+  // This avoids calling setState within useEffect (React 19 rule)
+  const { initialIdea, initialIdeaId } = useMemo(() => {
+    const ideaFromUrl = searchParams.get('idea');
+    const ideaIdFromUrl = searchParams.get('ideaId');
+    return {
+      initialIdea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
+      initialIdeaId: ideaIdFromUrl || '',
+    };
+  }, [searchParams]);
+
+  const [idea] = useState<string>(initialIdea);
+  const [ideaId] = useState<string>(initialIdeaId);
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const logger = createLogger('ClarifyPage');
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const ideaFromUrl = urlParams.get('idea');
-    const ideaIdFromUrl = urlParams.get('ideaId');
-
-    if (ideaFromUrl) {
-      setIdea(decodeURIComponent(ideaFromUrl));
-    }
-
-    if (ideaIdFromUrl) {
-      setIdeaId(ideaIdFromUrl);
-    }
-
-    setLoading(false);
-  }, []);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
@@ -84,21 +81,6 @@ export default function ClarifyPage() {
       setError('Failed to save your answers. Please try again.');
     }
   };
-
-  if (loading) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
-          <LoadingSpinner
-            size="md"
-            className="mb-4"
-            ariaLabel="Loading clarification flow"
-          />
-          <p className="text-gray-600">Loading clarification flow...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
@@ -194,5 +176,30 @@ export default function ClarifyPage() {
         onComplete={handleClarificationComplete}
       />
     </div>
+  );
+}
+
+// Loading fallback for Suspense
+function ClarifyPageLoading() {
+  return (
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+        <LoadingSpinner
+          size="md"
+          className="mb-4"
+          ariaLabel="Loading clarification flow"
+        />
+        <p className="text-gray-600">Loading clarification flow...</p>
+      </div>
+    </div>
+  );
+}
+
+// Main export with Suspense wrapper
+export default function ClarifyPage() {
+  return (
+    <Suspense fallback={<ClarifyPageLoading />}>
+      <ClarifyPageContent />
+    </Suspense>
   );
 }
