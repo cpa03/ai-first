@@ -26,6 +26,8 @@ interface TasksResponse {
     totalTasks: number;
     completedTasks: number;
     overallProgress: number;
+    totalEstimatedHours: number;
+    completedEstimatedHours: number;
   };
 }
 
@@ -46,6 +48,24 @@ const statusConfig: Record<
     color: 'text-green-600',
     bgColor: 'bg-green-100',
   },
+};
+
+// Helper to calculate summary hours from deliverables
+const calculateSummaryHours = (deliverables: DeliverableWithTasks[]) => {
+  const total = deliverables.reduce(
+    (sum, d) => sum + d.tasks.reduce((ts, t) => ts + (t.estimate || 0), 0),
+    0
+  );
+  const completed = deliverables.reduce(
+    (sum, d) =>
+      sum +
+      d.tasks.reduce(
+        (ts, t) => ts + (t.status === 'completed' ? (t.estimate || 0) : 0),
+        0
+      ),
+    0
+  );
+  return { total, completed };
 };
 
 export default function TaskManagement({ ideaId }: TaskManagementProps) {
@@ -78,7 +98,17 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           throw new Error('Invalid response from server');
         }
 
-        setData(result.data);
+        const rawData = result.data;
+        const { total, completed } = calculateSummaryHours(rawData.deliverables);
+
+        setData({
+          ...rawData,
+          summary: {
+            ...rawData.summary,
+            totalEstimatedHours: total,
+            completedEstimatedHours: completed,
+          },
+        });
 
         // Expand all deliverables by default
         if (result.data.deliverables) {
@@ -180,6 +210,7 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           );
           const overallProgress =
             totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+          const { total, completed } = calculateSummaryHours(updatedDeliverables);
 
           return {
             ...prevData,
@@ -189,6 +220,8 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
               totalTasks,
               completedTasks,
               overallProgress: Math.round(overallProgress),
+              totalEstimatedHours: total,
+              completedEstimatedHours: completed,
             },
           };
         });
@@ -302,6 +335,11 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
             <div className="text-sm text-gray-600">
               {summary.completedTasks} of {summary.totalTasks} tasks completed
             </div>
+            <div className="text-xs text-gray-500 mt-1">
+              {summary.totalEstimatedHours}h total effort •{' '}
+              {summary.totalEstimatedHours - summary.completedEstimatedHours}h
+              remaining
+            </div>
           </div>
         </div>
 
@@ -347,6 +385,7 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
               {/* Deliverable Header */}
               <button
                 onClick={() => toggleDeliverable(deliverable.id)}
+                aria-expanded={isExpanded}
                 className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity"
               >
                 <div className="flex-1">
