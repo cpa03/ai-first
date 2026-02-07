@@ -55,6 +55,7 @@ export interface ExportResult {
   success: boolean;
   url?: string;
   id?: string;
+  content?: string;
   error?: string;
 }
 
