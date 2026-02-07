@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
+import { createLogger } from '@/lib/logger';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import dynamic from 'next/dynamic';
+import TaskManagement from '@/components/TaskManagement';
 
 interface Idea {
   id: string;
@@ -40,6 +42,8 @@ const BlueprintDisplay = dynamic(
     ),
   }
 );
+
+const logger = createLogger('ResultsPage');
 
 export default function ResultsPage() {
   const router = useRouter();
@@ -85,7 +89,7 @@ export default function ResultsPage() {
         setIdea(ideaData.data);
         setSession(sessionData?.data || null);
       } catch (err) {
-        console.error('Error fetching results:', err);
+        logger.error('Error fetching results:', err);
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );
@@ -141,7 +145,7 @@ export default function ResultsPage() {
         throw new Error(result.error || 'Export failed');
       }
     } catch (err) {
-      console.error('Export error:', err);
+      logger.error('Export error:', err);
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setExportLoading(false);
@@ -169,12 +173,11 @@ export default function ResultsPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
           <p className="text-red-800">{error}</p>
-          <button
-            onClick={() => router.back()}
-            className="mt-4 btn btn-primary"
-          >
-            Go Back
-          </button>
+          <div className="mt-4">
+            <Button onClick={() => router.back()} variant="primary">
+              Go Back
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -190,12 +193,11 @@ export default function ResultsPage() {
           <p className="text-yellow-800">
             The idea you're looking for doesn't exist.
           </p>
-          <button
-            onClick={() => router.push('/')}
-            className="mt-4 btn btn-primary"
-          >
-            Go Home
-          </button>
+          <div className="mt-4">
+            <Button onClick={() => router.push('/')} variant="primary">
+              Go Home
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -228,6 +230,11 @@ export default function ResultsPage() {
             : {}
         }
       />
+
+      {/* Task Management */}
+      <div className="mt-8">
+        <TaskManagement ideaId={idea.id} />
+      </div>
 
       {/* Export Options */}
       <div className="bg-white rounded-lg shadow-lg p-8 mt-8">

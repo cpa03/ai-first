@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
+import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -9,9 +10,6 @@ import InputWithValidation from './InputWithValidation';
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
 }
-
-const MIN_IDEA_LENGTH = 10;
-const MAX_IDEA_LENGTH = 500;
 
 const validateIdea = (idea: string): string | null => {
   if (idea.trim().length < MIN_IDEA_LENGTH) {
@@ -29,11 +27,31 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isMac, setIsMac] = useState(false);
+
+  // Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(navigator.platform.includes('Mac'));
+  }, []);
 
   const handleIdeaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setIdea(newValue);
     setValidationError(validateIdea(newValue));
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Submit on Cmd/Ctrl + Enter
+    if (
+      (e.metaKey || e.ctrlKey) &&
+      e.key === 'Enter' &&
+      !isSubmitting &&
+      idea.trim() &&
+      !validationError
+    ) {
+      e.preventDefault();
+      handleSubmit(e as unknown as React.FormEvent);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,8 +107,9 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         label="What's your idea?"
         value={idea}
         onChange={handleIdeaChange}
+        onKeyDown={handleKeyDown}
         placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-        helpText="Be as specific or as general as you'd like. We'll help you clarify details."
+        helpText={`Be as specific or as general as you'd like. We'll help you clarify details. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
         multiline={true}
         minLength={MIN_IDEA_LENGTH}
         maxLength={MAX_IDEA_LENGTH}
@@ -109,7 +128,19 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <div
+          className="flex items-center gap-2 text-sm text-gray-500"
+          aria-label="Keyboard shortcut: Command Enter to submit"
+        >
+          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-700">
+            {isMac ? '⌘' : 'Ctrl'}
+          </kbd>
+          <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-700">
+            Enter
+          </kbd>
+          <span className="hidden sm:inline text-gray-400">to submit</span>
+        </div>
         <Button
           type="submit"
           variant="primary"

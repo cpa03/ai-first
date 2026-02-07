@@ -168,7 +168,8 @@ CREATE TABLE task_comments (
     comment TEXT NOT NULL,
     parent_comment_id UUID REFERENCES task_comments(id),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    deleted_at TIMESTAMP WITH TIME ZONE
 );
 
 -- Breakdown Sessions Table
@@ -477,9 +478,45 @@ CREATE POLICY "Users can create milestones for their ideas" ON milestones
 CREATE POLICY "Users can update milestones for their ideas" ON milestones
     FOR UPDATE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
+CREATE POLICY "Users can delete milestones for their ideas" ON milestones
+    FOR DELETE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
+
 -- RLS Policies for task_assignments
 CREATE POLICY "Users can view task assignments for their ideas" ON task_assignments
     FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE t.id = task_assignments.task_id
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can create task assignments for their ideas" ON task_assignments
+    FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE t.id = task_assignments.task_id
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update task assignments for their ideas" ON task_assignments
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE t.id = task_assignments.task_id
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete task assignments for their ideas" ON task_assignments
+    FOR DELETE USING (
         EXISTS (
             SELECT 1 FROM tasks t
             JOIN deliverables d ON t.deliverable_id = d.id
@@ -495,6 +532,12 @@ CREATE POLICY "Users can view their own time tracking" ON time_tracking
 
 CREATE POLICY "Users can create their own time tracking" ON time_tracking
     FOR INSERT WITH CHECK (user_id = auth.uid() OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can update their own time tracking" ON time_tracking
+    FOR UPDATE USING (user_id = auth.uid() OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can delete their own time tracking" ON time_tracking
+    FOR DELETE USING (user_id = auth.uid() OR auth.role() = 'service_role');
 
 -- RLS Policies for task_comments
 CREATE POLICY "Users can view comments for their ideas" ON task_comments
@@ -519,6 +562,28 @@ CREATE POLICY "Users can create comments for their ideas" ON task_comments
         ) OR auth.role() = 'service_role'
     );
 
+CREATE POLICY "Users can update comments for their ideas" ON task_comments
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE t.id = task_comments.task_id
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete comments for their ideas" ON task_comments
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE t.id = task_comments.task_id
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
 -- RLS Policies for breakdown_sessions
 CREATE POLICY "Users can view breakdown sessions for their ideas" ON breakdown_sessions
     FOR SELECT USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
@@ -526,12 +591,24 @@ CREATE POLICY "Users can view breakdown sessions for their ideas" ON breakdown_s
 CREATE POLICY "Users can create breakdown sessions for their ideas" ON breakdown_sessions
     FOR INSERT WITH CHECK (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
+CREATE POLICY "Users can update breakdown sessions for their ideas" ON breakdown_sessions
+    FOR UPDATE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can delete breakdown sessions for their ideas" ON breakdown_sessions
+    FOR DELETE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
+
 -- RLS Policies for timelines
 CREATE POLICY "Users can view timelines for their ideas" ON timelines
     FOR SELECT USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 CREATE POLICY "Users can create timelines for their ideas" ON timelines
     FOR INSERT WITH CHECK (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can update timelines for their ideas" ON timelines
+    FOR UPDATE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
+
+CREATE POLICY "Users can delete timelines for their ideas" ON timelines
+    FOR DELETE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 -- RLS Policies for risk_assessments
 CREATE POLICY "Users can view risk assessments for their ideas" ON risk_assessments
@@ -542,6 +619,18 @@ CREATE POLICY "Users can view risk assessments for their ideas" ON risk_assessme
 
 CREATE POLICY "Users can create risk assessments for their ideas" ON risk_assessments
     FOR INSERT WITH CHECK (
+        idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR
+        auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update risk assessments for their ideas" ON risk_assessments
+    FOR UPDATE USING (
+        idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR
+        auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete risk assessments for their ideas" ON risk_assessments
+    FOR DELETE USING (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR
         auth.role() = 'service_role'
     );
@@ -596,6 +685,7 @@ CREATE INDEX idx_time_tracking_task_id ON time_tracking(task_id);
 CREATE INDEX idx_time_tracking_date ON time_tracking(date_logged);
 
 CREATE INDEX idx_task_comments_task_id ON task_comments(task_id);
+CREATE INDEX idx_task_comments_deleted_at ON task_comments(deleted_at);
 
 CREATE INDEX idx_breakdown_sessions_idea_id ON breakdown_sessions(idea_id);
 
@@ -667,6 +757,10 @@ CREATE TRIGGER update_clarification_sessions_updated_at BEFORE UPDATE ON clarifi
 
 -- Apply updated_at trigger to clarification_answers
 CREATE TRIGGER update_clarification_answers_updated_at BEFORE UPDATE ON clarification_answers
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger for deliverables table (missing in original schema)
+CREATE TRIGGER update_deliverables_updated_at BEFORE UPDATE ON deliverables
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================

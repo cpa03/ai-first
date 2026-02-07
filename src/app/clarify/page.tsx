@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
@@ -8,7 +8,11 @@ import { createLogger } from '@/lib/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Button = dynamic(() => import('@/components/Button'), {
-  loading: () => <button className="btn btn-primary">Loading...</button>,
+  loading: () => (
+    <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
+      Loading...
+    </div>
+  ),
 });
 
 const Alert = dynamic(() => import('@/components/Alert'), {
@@ -33,26 +37,29 @@ const DynamicClarificationFlow = dynamic(
   }
 );
 
-function getInitialStateFromUrl() {
-  if (typeof window === 'undefined') {
-    return { idea: '', ideaId: '' };
-  }
-  const urlParams = new URLSearchParams(window.location.search);
-  return {
-    idea: urlParams.get('idea')
-      ? decodeURIComponent(urlParams.get('idea')!)
-      : '',
-    ideaId: urlParams.get('ideaId') || '',
-  };
-}
-
-export default function ClarifyPage() {
+// Inner component that uses useSearchParams
+function ClarifyPageContent() {
   const router = useRouter();
-  const [idea] = useState<string>(() => getInitialStateFromUrl().idea);
-  const [ideaId] = useState<string>(() => getInitialStateFromUrl().ideaId);
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const logger = createLogger('ClarifyPage');
+
+  // Use useMemo to read URL parameters on initial render without causing cascading renders
+  const { idea, ideaId, hasLoaded } = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return { idea: '', ideaId: '', hasLoaded: false };
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const ideaFromUrl = urlParams.get('idea');
+    const ideaIdFromUrl = urlParams.get('ideaId');
+
+    return {
+      idea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
+      ideaId: ideaIdFromUrl || '',
+      hasLoaded: true,
+    };
+  }, []);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
@@ -80,6 +87,21 @@ export default function ClarifyPage() {
       setError('Failed to save your answers. Please try again.');
     }
   };
+
+  if (!hasLoaded) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+          <LoadingSpinner
+            size="md"
+            className="mb-4"
+            ariaLabel="Loading clarification flow"
+          />
+          <p className="text-gray-600">Loading clarification flow...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -176,4 +198,9 @@ export default function ClarifyPage() {
       />
     </div>
   );
+}
+
+// Main page component
+export default function ClarifyPage() {
+  return <ClarifyPageContent />;
 }
