@@ -479,7 +479,7 @@ class AIService {
   }> {
     const providers: string[] = [];
 
-    if (this.openai) {
+    if (this.openai?.models) {
       try {
         await withTimeout(() => this.openai!.models.list(), {
           timeoutMs: DEFAULT_TIMEOUTS.openai / 2,

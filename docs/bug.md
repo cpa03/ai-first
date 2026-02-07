@@ -10,6 +10,32 @@ _None - all bugs fixed!_
 
 ## Fixed Bugs
 
+### [x] Bug 3: AIService health check crashes when OpenAI models property is undefined
+
+**File:** `src/lib/ai.ts:484`  
+**Severity:** MEDIUM  
+**Status:** ✅ FIXED
+
+**Description:**  
+The health check method calls `this.openai!.models.list()` without verifying that the `models` property exists on the OpenAI client. In test environments or when the OpenAI client is partially initialized/mocked, this causes a TypeError: "Cannot read properties of undefined (reading 'list')".
+
+**Root Cause:**
+
+- Line 482 checked `if (this.openai)` but didn't verify `this.openai.models` exists
+- Test mocks may not include the `models` property
+- The non-null assertion `!` bypasses TypeScript's null checking
+
+**Fix:**  
+Changed the condition from `if (this.openai)` to `if (this.openai?.models)` to properly check for the existence of the `models` property before calling `.list()`. This prevents the TypeError when the OpenAI client is mocked or partially initialized.
+
+---
+
+## Fixed Bugs
+
+---
+
+## Fixed Bugs
+
 ### [x] Bug 1: RetryExhaustedError duplicates "after X attempts" message
 
 **File:** `src/lib/resilience/retry-manager.ts:75`  

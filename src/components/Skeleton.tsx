@@ -7,7 +7,8 @@ export default function Skeleton({
   className?: string;
   variant?: 'rect' | 'circle' | 'text';
 }) {
-  const baseClasses = 'animate-pulse bg-gray-200';
+  const baseClasses =
+    'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]';
 
   const variantClasses = {
     rect: '',
