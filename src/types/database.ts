@@ -9,6 +9,55 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
+      clarification_sessions: {
+        Row: {
+          created_at: string;
+          id: string;
+          idea_id: string;
+          status: 'active' | 'completed' | 'cancelled';
+          updated_at: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          idea_id: string;
+          status?: 'active' | 'completed' | 'cancelled';
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          idea_id?: string;
+          status?: 'active' | 'completed' | 'cancelled';
+          updated_at?: string;
+        };
+      };
+      clarification_answers: {
+        Row: {
+          answer: string;
+          created_at: string;
+          id: string;
+          question_id: string;
+          session_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          answer: string;
+          created_at?: string;
+          id?: string;
+          question_id: string;
+          session_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          answer?: string;
+          created_at?: string;
+          id?: string;
+          question_id?: string;
+          session_id?: string;
+          updated_at?: string;
+        };
+      };
       agent_logs: {
         Row: {
           action: string;

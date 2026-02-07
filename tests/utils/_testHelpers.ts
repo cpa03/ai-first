@@ -24,17 +24,18 @@ export const createMockSupabaseClient = () => {
   });
   const mockIs = jest.fn(() => ({
     single: mockSingle,
-    order: mockOrder,
   }));
   const mockEq = jest.fn(() => ({
     single: mockSingle,
     is: mockIs,
   }));
-  const mockSelect = jest.fn(() => ({
+  const mockSelect = jest.fn().mockReturnValue({
     eq: mockEq,
-    data: [{ id: 'test-id', content: 'test-content' }],
-    error: null,
-  }));
+    single: mockSingle,
+  });
+  const mockInsertSelect = jest.fn().mockReturnValue({
+    single: mockSingle,
+  });
   const mockOrder = jest.fn(() => ({
     data: [],
     error: null,

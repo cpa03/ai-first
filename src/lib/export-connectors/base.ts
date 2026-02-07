@@ -55,6 +55,7 @@ export interface ExportResult {
   success: boolean;
   url?: string;
   id?: string;
+  content?: string;
   error?: string;
 }
 
@@ -95,7 +96,15 @@ export abstract class ExportConnector {
       return toResilienceConfig(defaultResilienceConfigs.github);
     }
     if (type === 'google-tasks') {
-      return toResilienceConfig(defaultResilienceConfigs.github);
+      // Google Tasks uses default resilience config
+      return {
+        maxRetries: 3,
+        baseDelayMs: 1000,
+        maxDelayMs: 10000,
+        timeoutMs: TIMEOUT_CONFIG.DEFAULT,
+        failureThreshold: 5,
+        resetTimeoutMs: 60000,
+      };
     }
     return {
       maxRetries: 3,

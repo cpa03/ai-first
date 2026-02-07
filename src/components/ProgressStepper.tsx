@@ -26,10 +26,10 @@ const ProgressStepperComponent = function ProgressStepper({
     >
       <div className="sm:hidden">
         <div className="flex items-center justify-between px-2">
-          <div className="flex items-center space-x-2">
+          <ol className="flex items-center space-x-2">
             {steps.map((step, index) => {
               return (
-                <div
+                <li
                   key={step.id}
                   className={`
                     w-3 h-3 rounded-full transition-all duration-300
@@ -40,12 +40,12 @@ const ProgressStepperComponent = function ProgressStepper({
                     }
                   `}
                   aria-current={step.current ? 'step' : undefined}
-                  aria-label={`Question ${index + 1} ${step.current ? '(current)' : step.completed ? '(completed)' : ''}`}
+                  aria-label={`Question ${index + 1}: ${step.current ? 'Current' : step.completed ? 'Completed' : 'Upcoming'}`}
                 />
               );
             })}
-          </div>
-          <span className="text-xs text-gray-700 font-medium">
+          </ol>
+          <span className="text-xs text-gray-700 font-medium" aria-hidden="true">
             {currentStep + 1} / {steps.length}
           </span>
         </div>
@@ -60,8 +60,9 @@ const ProgressStepperComponent = function ProgressStepper({
               key={step.id}
               className={`flex-1 ${!isLast ? 'flex items-center' : ''}`}
               aria-current={step.current ? 'step' : undefined}
+              aria-label={`${step.label}: ${step.current ? 'Current' : step.completed ? 'Completed' : 'Upcoming'}`}
             >
-              <div className="flex items-center w-full">
+              <div className="flex items-center w-full" aria-hidden="true">
                 <div
                   className={`
                     flex items-center justify-center
@@ -76,7 +77,6 @@ const ProgressStepperComponent = function ProgressStepper({
                           : 'border-gray-300 text-gray-500'
                     }
                   `}
-                  aria-hidden="true"
                 >
                   {step.completed ? (
                     <svg
@@ -85,7 +85,8 @@ const ProgressStepperComponent = function ProgressStepper({
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                       strokeWidth={2}
-                      aria-hidden="true"
+                      aria-label="Completed"
+                      role="img"
                     >
                       <path
                         strokeLinecap="round"
@@ -108,7 +109,6 @@ const ProgressStepperComponent = function ProgressStepper({
                           : 'text-gray-700'
                     }
                   `}
-                  aria-hidden="true"
                 >
                   {step.label}
                 </span>

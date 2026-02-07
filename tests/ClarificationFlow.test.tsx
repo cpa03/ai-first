@@ -66,8 +66,9 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    // Use getAllByText since "Question 1 of 2" appears in multiple places (progress bar and heading)
-    expect(screen.getAllByText(/question 1 of 2/i).length).toBeGreaterThan(0);
+    expect(
+      screen.getByText(/question 1 of 2/i, { selector: 'span' })
+    ).toBeInTheDocument();
     expect(screen.getByText('50%')).toBeInTheDocument();
   });
 
@@ -90,8 +91,9 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    // Use getAllByText since "Question 1 of 3" appears in multiple places (progress bar and heading)
-    expect(screen.getAllByText(/question 1 of 3/i).length).toBeGreaterThan(0);
+    expect(
+      screen.getByText(/question 1 of 3/i, { selector: 'span' })
+    ).toBeInTheDocument();
   });
 
   it('uses fallback questions when API fails', async () => {
@@ -285,8 +287,9 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    // Use getAllByText since "Question 2 of 2" appears in multiple places (progress bar and heading)
-    expect(screen.getAllByText(/question 2 of 2/i).length).toBeGreaterThan(0);
+    expect(
+      screen.getByText(/question 2 of 2/i, { selector: 'span' })
+    ).toBeInTheDocument();
     expect(screen.getByText('100%')).toBeInTheDocument();
 
     const previousButton = screen.getByText('← Previous');

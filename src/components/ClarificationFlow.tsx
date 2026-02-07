@@ -44,7 +44,7 @@ const FALLBACK_QUESTIONS: Question[] = [
   },
   {
     id: 'main_goal',
-    question: 'What is main goal you want to achieve?',
+    question: 'What is the main goal you want to achieve?',
     type: 'textarea',
   },
   {
@@ -162,8 +162,9 @@ function ClarificationFlow({
         }
 
         const data = await response.json();
+        const questionsData = Array.isArray(data?.data?.questions) ? data.data.questions : Array.isArray(data?.questions) ? data.questions : [];
 
-        const formattedQuestions: Question[] = data.data.questions.map(
+        const formattedQuestions: Question[] = questionsData.map(
           (q: APIQuestion, index: number) => ({
             id: q.id || `question_${index}`,
             question: q.question,

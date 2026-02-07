@@ -306,6 +306,11 @@ class AIService {
     const costPerToken = this.getCostPerToken(model);
     const cost = tokens * costPerToken;
 
+    // PERFORMANCE: Get current today's cost. This is O(1) if cached, O(n) if not.
+    // We call it before pushing the new tracker to ensure it only includes previous costs.
+    const previousTodayCost = this.getTodayCost();
+    const totalTodayCost = previousTodayCost + cost;
+
     const tracker: CostTracker = {
       tokensUsed: tokens,
       cost,
@@ -315,14 +320,17 @@ class AIService {
 
     this.costTrackers.push(tracker);
 
-    this.todayCostCache.clear();
+    // PERFORMANCE: Update cache with the new total instead of clearing it.
+    // This keeps subsequent calls to getTodayCost() as O(1).
+    const today = new Date().toDateString();
+    const cacheKey = `today:${today}`;
+    this.todayCostCache.set(cacheKey, totalTodayCost);
 
     const dailyLimit = parseFloat(process.env.COST_LIMIT_DAILY || '10.0');
-    const todayCost = this.getTodayCost();
 
-    if (todayCost + cost > dailyLimit) {
+    if (totalTodayCost > dailyLimit) {
       throw new Error(
-        `Cost limit exceeded. Today's cost: $${todayCost}, Limit: $${dailyLimit}`
+        `Cost limit exceeded. Today's cost: $${totalTodayCost}, Limit: $${dailyLimit}`
       );
     }
 
