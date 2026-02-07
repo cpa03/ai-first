@@ -33,12 +33,6 @@ export const createMockSupabaseClient = () => {
     eq: mockEq,
     single: mockSingle,
   });
-  const mockInsertSelect = jest.fn().mockReturnValue({
-    single: mockSingle,
-  });
-  const mockInsert = jest.fn().mockReturnValue({
-    select: mockInsertSelect,
-  });
   const mockOrder = jest.fn(() => ({
     data: [],
     error: null,
@@ -57,6 +51,16 @@ export const createMockSupabaseClient = () => {
   const mockDelete = jest.fn(() => ({
     eq: mockDeleteEq,
   }));
+
+  // Mock select result for insert().select() chain that also supports .single()
+  const mockSelectAfterInsert = jest.fn().mockReturnValue({
+    single: mockSingle,
+  });
+
+  // Mock insert that supports chaining with .select() and .select().single()
+  const mockInsert = jest.fn().mockReturnValue({
+    select: mockSelectAfterInsert,
+  });
 
   return {
     from: jest.fn(() => ({

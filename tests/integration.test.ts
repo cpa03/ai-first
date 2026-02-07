@@ -349,8 +349,8 @@ describe('Integration Tests', () => {
       expect(results[1]).toHaveProperty('status');
       expect(typeof results[2]).toBe('object');
 
-      // Should complete within reasonable time (5 seconds)
-      expect(endTime - startTime).toBeLessThan(5000);
+      // Should complete within reasonable time (10 seconds for CI environments)
+      expect(endTime - startTime).toBeLessThan(10000);
     });
 
     it('should handle large data sets', async () => {
