@@ -4,12 +4,14 @@ import {
   validateIdeaId,
   validateUserResponses,
 } from '@/lib/validation';
-import { ValidationError, ErrorCode, AppError } from '@/lib/errors';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
   withApiHandler,
   standardSuccessResponse,
   ApiContext,
 } from '@/lib/api-handler';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { dbService } from '@/lib/db';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -30,6 +32,17 @@ async function handlePost(context: ApiContext) {
     throw new ValidationError(responsesValidation.errors);
   }
 
+  // Authenticate user
+  const user = await requireAuth(request);
+
+  // Verify idea exists and user owns it
+  const idea = await dbService.getIdea(ideaId.trim());
+  if (!idea) {
+    throw new AppError('Idea not found', ErrorCode.NOT_FOUND, 404);
+  }
+
+  verifyResourceOwnership(user.id, idea.user_id, 'idea');
+
   await breakdownEngine.initialize();
 
   const session = await breakdownEngine.startBreakdown(
@@ -48,7 +61,8 @@ async function handlePost(context: ApiContext) {
 }
 
 async function handleGet(context: ApiContext) {
-  const { searchParams } = new URL(context.request.url);
+  const { request } = context;
+  const { searchParams } = new URL(request.url);
   const ideaId = searchParams.get('ideaId');
 
   if (!ideaId) {
@@ -61,6 +75,17 @@ async function handleGet(context: ApiContext) {
   if (!idValidation.valid) {
     throw new ValidationError(idValidation.errors);
   }
+
+  // Authenticate user
+  const user = await requireAuth(request);
+
+  // Verify idea exists and user owns it
+  const idea = await dbService.getIdea(ideaId.trim());
+  if (!idea) {
+    throw new AppError('Idea not found', ErrorCode.NOT_FOUND, 404);
+  }
+
+  verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
   const session = await breakdownEngine.getBreakdownSession(ideaId.trim());
 

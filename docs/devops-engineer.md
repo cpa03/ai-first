@@ -149,6 +149,32 @@ This guide provides comprehensive information for DevOps engineers working on th
 3. **Retry Logic**: 3 attempts with 30-second intervals
 4. **Error Handling**: `continue-on-error: true` for non-critical steps
 
+### Build Verification
+
+**Required Checks Before Deployment:**
+
+```bash
+# 1. Install dependencies
+npm ci
+
+# 2. Run linting (should have 0 errors, max 50 warnings)
+npm run lint
+
+# 3. Run TypeScript type checking
+npm run type-check
+
+# 4. Build the application
+npm run build
+```
+
+**Current Build Status:**
+
+- Lint: ✓ Passing (0 errors, 3 warnings in test files)
+- Type Check: ✓ Passing
+- Build: ✓ Passing
+
+**Note:** Test file warnings about `any` types are acceptable and do not affect production builds.
+
 ---
 
 ## Deployment Strategies
@@ -442,6 +468,50 @@ async headers() {
 
 ---
 
+## Known Issues & Fixes
+
+### 2025-02-07: ESLint Dependencies Missing
+
+**Issue:** Lint command failed with missing ESLint plugin errors:
+
+```
+ESLint couldn't find the plugin "eslint-plugin-react-hooks"
+```
+
+**Root Cause:** The `.eslintrc.json` configuration referenced plugins that were not in `package.json` devDependencies.
+
+**Solution:**
+
+```bash
+npm install --save-dev eslint-plugin-react-hooks @typescript-eslint/eslint-plugin @typescript-eslint/parser
+```
+
+**Files Modified:**
+
+- `package.json` - Added missing ESLint dependencies
+
+### 2025-02-07: React Hooks Violations
+
+**Issue:** ESLint errors in `/src/app/clarify/page.tsx`:
+
+- Calling `setState` directly within `useEffect`
+- Unused `loading` state causing dead code
+
+**Root Cause:** React best practices violation - setting state synchronously in effects can cause cascading renders.
+
+**Solution:**
+
+- Moved URL parameter parsing to a helper function
+- Used lazy initialization for state to avoid useEffect
+- Removed unused `loading` state and related dead code
+
+**Files Modified:**
+
+- `src/app/clarify/page.tsx` - Refactored state initialization
+- `src/lib/export-connectors/manager.ts` - Prefixed unused parameter with underscore
+
+---
+
 ## Troubleshooting
 
 ### Build Failures
@@ -623,6 +693,10 @@ echo "new-key" | wrangler secret put SUPABASE_SERVICE_ROLE_KEY --env production
 ### Pre-Deployment
 
 - [ ] All CI checks passing
+- [ ] Lint check: `npm run lint` (0 errors, max 50 warnings)
+- [ ] Type check: `npm run type-check` (0 errors)
+- [ ] Build check: `npm run build` (successful)
+- [ ] All dependencies installed: `npm ci` (0 vulnerabilities)
 - [ ] Environment variables configured
 - [ ] Database migrations tested
 - [ ] Security headers verified

@@ -132,7 +132,7 @@ describe('Backend Service Tests', () => {
 
     it('should retry on failure', async () => {
       mockOpenAI.chat.completions.create
-        .mockRejectedValueOnce(new Error('Temporary failure'))
+        .mockRejectedValueOnce(new Error('ETIMEDOUT: Connection timed out'))
         .mockResolvedValueOnce({
           choices: [{ message: { content: 'Success after retry' } }],
         });

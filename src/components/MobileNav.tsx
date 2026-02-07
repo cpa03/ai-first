@@ -165,33 +165,41 @@ export default function MobileNav() {
       </button>
 
       {isOpen && (
-        <div
-          ref={menuRef}
-          id="mobile-menu"
-          className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[100] fade-in"
-        >
-          <ul className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4 bg-white">
-            {navLinks.map((link, index) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  ref={
-                    index === 0
-                      ? firstMenuItemRef
-                      : index === navLinks.length - 1
-                        ? lastMenuItemRef
-                        : undefined
-                  }
-                  onClick={closeMenu}
-                  className="w-full text-left px-6 py-4 text-lg font-semibold text-gray-800 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 min-h-[56px] flex items-center"
-                  aria-label={link.ariaLabel}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <>
+          {/* Backdrop overlay */}
+          <div
+            className="fixed inset-0 top-16 bg-black bg-opacity-50 z-[99] fade-in"
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
+          <div
+            ref={menuRef}
+            id="mobile-menu"
+            className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[100] fade-in"
+          >
+            <ul className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4 bg-white">
+              {navLinks.map((link, index) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    ref={
+                      index === 0
+                        ? firstMenuItemRef
+                        : index === navLinks.length - 1
+                          ? lastMenuItemRef
+                          : undefined
+                    }
+                    onClick={closeMenu}
+                    className="w-full text-left px-6 py-4 text-lg font-semibold text-gray-800 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 min-h-[56px] flex items-center"
+                    aria-label={link.ariaLabel}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </>
       )}
     </nav>
   );

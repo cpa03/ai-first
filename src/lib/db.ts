@@ -120,6 +120,10 @@ export class DatabaseService {
   private _client: ReturnType<typeof createClient<Database>> | null = null;
   private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
+  private connectionRetries = 0;
+  private maxConnectionRetries = 3;
+  private connectionHealthy = false;
+  private lastHealthCheck: Date | null = null;
 
   private constructor() {
     this._client = supabaseClient;
@@ -175,6 +179,28 @@ export class DatabaseService {
   // For testing purposes only - reset the singleton instance
   static resetInstance(): void {
     DatabaseService.instance = undefined as unknown as DatabaseService;
+  }
+
+  // Connection health monitoring
+  async checkConnection(): Promise<boolean> {
+    try {
+      if (!this.client) return false;
+
+      const { error } = await this.client.from('ideas').select('id').limit(1);
+      this.connectionHealthy = !error;
+      this.lastHealthCheck = new Date();
+      return this.connectionHealthy;
+    } catch {
+      this.connectionHealthy = false;
+      return false;
+    }
+  }
+
+  isConnectionHealthy(): boolean {
+    // Check if last health check is within 30 seconds
+    if (!this.lastHealthCheck) return false;
+    const thirtySecondsAgo = new Date(Date.now() - 30000);
+    return this.connectionHealthy && this.lastHealthCheck > thirtySecondsAgo;
   }
 
   // Ideas CRUD operations
@@ -234,12 +260,11 @@ export class DatabaseService {
   }
 
   async softDeleteIdea(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('ideas')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -332,9 +357,9 @@ export class DatabaseService {
   async getIdeaDeliverablesWithTasks(
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
-    if (!supabaseClient) throw new Error('Supabase client not initialized');
+    if (!this.client) throw new Error('Supabase client not initialized');
 
-    const { data, error } = await supabaseClient
+    const { data, error } = await this.client
       .from('deliverables')
       .select('*, tasks(*)')
       .eq('idea_id', ideaId)
@@ -369,12 +394,11 @@ export class DatabaseService {
   }
 
   async softDeleteDeliverable(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('deliverables')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
@@ -431,6 +455,20 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getTask(id: string): Promise<Task | null> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (error) return null;
+    return data;
+  }
+
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
@@ -446,12 +484,11 @@ export class DatabaseService {
   }
 
   async softDeleteTask(id: string): Promise<void> {
-    if (!supabaseAdmin)
-      throw new Error('Supabase admin client not initialized');
+    if (!this.admin) throw new Error('Supabase admin client not initialized');
 
-    const { error } = await supabaseAdmin
+    const { error } = await this.admin
       .from('tasks')
-      .update({ deleted_at: new Date().toISOString() })
+      .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
     if (error) throw error;
