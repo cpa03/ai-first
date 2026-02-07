@@ -50,19 +50,21 @@ const statusConfig: Record<
   },
 };
 
-// Helper to calculate summary hours from deliverables
-const calculateSummaryHours = (deliverables: DeliverableWithTasks[]) => {
+// Helper to calculate summary hours from deliverables with safety checks
+const calculateSummaryHours = (deliverables: DeliverableWithTasks[] = []) => {
+  if (!Array.isArray(deliverables)) return { total: 0, completed: 0 };
+
   const total = deliverables.reduce(
-    (sum, d) => sum + d.tasks.reduce((ts, t) => ts + (t.estimate || 0), 0),
+    (sum, d) => sum + (Array.isArray(d.tasks) ? d.tasks.reduce((ts, t) => ts + (t.estimate || 0), 0) : 0),
     0
   );
   const completed = deliverables.reduce(
     (sum, d) =>
       sum +
-      d.tasks.reduce(
+      (Array.isArray(d.tasks) ? d.tasks.reduce(
         (ts, t) => ts + (t.status === 'completed' ? (t.estimate || 0) : 0),
         0
-      ),
+      ) : 0),
     0
   );
   return { total, completed };
@@ -99,22 +101,22 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
         }
 
         const rawData = result.data;
-        const { total, completed } = calculateSummaryHours(rawData.deliverables);
+        const { total, completed } = calculateSummaryHours(rawData?.deliverables);
 
         setData({
           ...rawData,
           summary: {
             ...rawData.summary,
-            totalEstimatedHours: total,
-            completedEstimatedHours: completed,
+            totalEstimatedHours: rawData.summary?.totalEstimatedHours || total,
+            completedEstimatedHours: rawData.summary?.completedEstimatedHours || completed,
           },
         });
 
         // Expand all deliverables by default
-        if (result.data.deliverables) {
+        if (rawData?.deliverables) {
           setExpandedDeliverables(
             new Set(
-              result.data.deliverables.map((d: DeliverableWithTasks) => d.id)
+              rawData.deliverables.map((d: DeliverableWithTasks) => d.id)
             )
           );
         }
