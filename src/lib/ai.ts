@@ -129,7 +129,18 @@ class AIService {
 
           return response;
         } else {
-          throw new Error(`Provider ${config.provider} not yet implemented`);
+          const { AppError, ErrorCode } = await import('./errors');
+          throw new AppError(
+            `Provider ${config.provider} not yet implemented`,
+            ErrorCode.EXTERNAL_SERVICE_ERROR,
+            501,
+            undefined,
+            false,
+            [
+              'Use "openai" as the provider',
+              'Check documentation for supported providers',
+            ]
+          );
         }
       }, config);
 
@@ -195,15 +206,30 @@ class AIService {
 
     const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
 
-    return resilienceManager.execute(
-      operation,
-      toResilienceConfig(
-        defaultResilienceConfigs[
-          serviceKey as keyof typeof defaultResilienceConfigs
-        ] || defaultResilienceConfigs.openai
-      ),
-      `ai-${config.provider}-${config.model}`
-    );
+    try {
+      return await resilienceManager.execute(
+        operation,
+        toResilienceConfig(
+          defaultResilienceConfigs[
+            serviceKey as keyof typeof defaultResilienceConfigs
+          ] || defaultResilienceConfigs.openai
+        ),
+        `ai-${config.provider}-${config.model}`
+      );
+    } catch (error) {
+      // Wrap non-AppError errors for consistency
+      if (!(error instanceof Error)) {
+        const { AppError, ErrorCode } = await import('./errors');
+        throw new AppError(
+          String(error),
+          ErrorCode.EXTERNAL_SERVICE_ERROR,
+          502,
+          undefined,
+          true
+        );
+      }
+      throw error;
+    }
   }
 
   // Context windowing strategy
@@ -218,7 +244,18 @@ class AIService {
     Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
   > {
     if (!this.supabase) {
-      throw new Error('Supabase client not initialized');
+      const { AppError, ErrorCode } = await import('./errors');
+      throw new AppError(
+        'Supabase client not initialized',
+        ErrorCode.SERVICE_UNAVAILABLE,
+        503,
+        undefined,
+        false,
+        [
+          'Check that Supabase environment variables are configured',
+          'Verify SUPABASE_SERVICE_ROLE_KEY is set',
+        ]
+      );
     }
 
     const cacheKey = `context:${ideaId}`;

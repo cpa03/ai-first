@@ -7,7 +7,6 @@ import {
   buildErrorResponse,
   MAX_IDEA_LENGTH,
   MIN_IDEA_LENGTH,
-  MAX_TITLE_LENGTH,
   MAX_IDEA_ID_LENGTH,
 } from '@/lib/validation';
 
@@ -64,7 +63,9 @@ describe('validateIdea', () => {
 
   describe('invalid ideas', () => {
     it('should reject null or undefined', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result1 = validateIdea(null as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result2 = validateIdea(undefined as any);
 
       expect(result1.valid).toBe(false);
@@ -77,8 +78,11 @@ describe('validateIdea', () => {
     });
 
     it('should reject non-string types', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result1 = validateIdea(123 as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result2 = validateIdea({ idea: 'test' } as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result3 = validateIdea(['idea'] as any);
 
       expect(result1.valid).toBe(false);
@@ -237,7 +241,9 @@ describe('validateIdeaId', () => {
 
   describe('invalid idea IDs', () => {
     it('should reject null or undefined', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result1 = validateIdeaId(null as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result2 = validateIdeaId(undefined as any);
 
       expect(result1.valid).toBe(false);
@@ -249,7 +255,9 @@ describe('validateIdeaId', () => {
     });
 
     it('should reject non-string types', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result1 = validateIdeaId(123 as any);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const result2 = validateIdeaId({ id: 'test' } as any);
 
       expect(result1.valid).toBe(false);
@@ -434,6 +442,7 @@ describe('validateUserResponses', () => {
 
   describe('invalid responses', () => {
     it('should reject array', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const responses = ['answer1', 'answer2'] as any;
       const result = validateUserResponses(responses);
 
@@ -443,6 +452,7 @@ describe('validateUserResponses', () => {
     });
 
     it('should reject string', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const responses = 'not an object' as any;
       const result = validateUserResponses(responses);
 
@@ -451,6 +461,7 @@ describe('validateUserResponses', () => {
     });
 
     it('should reject number', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const responses = 123 as any;
       const result = validateUserResponses(responses);
 
@@ -459,6 +470,7 @@ describe('validateUserResponses', () => {
     });
 
     it('should reject boolean', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const responses = true as any;
       const result = validateUserResponses(responses);
 
@@ -489,6 +501,7 @@ describe('validateUserResponses', () => {
 
     it('should accept numeric keys (converted to strings)', () => {
       const responses = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         123: 'Answer' as any,
       };
       const result = validateUserResponses(responses);
@@ -499,6 +512,7 @@ describe('validateUserResponses', () => {
 
     it('should reject non-string, non-null, non-undefined values', () => {
       const responses = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         '1': 123 as any,
       };
       const result = validateUserResponses(responses);
@@ -510,6 +524,7 @@ describe('validateUserResponses', () => {
 
     it('should reject array values', () => {
       const responses = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         '1': ['answer'] as any,
       };
       const result = validateUserResponses(responses);
@@ -520,6 +535,7 @@ describe('validateUserResponses', () => {
 
     it('should reject object values', () => {
       const responses = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         '1': { answer: 'test' } as any,
       };
       const result = validateUserResponses(responses);
@@ -543,7 +559,9 @@ describe('validateUserResponses', () => {
     it('should collect multiple validation errors', () => {
       const responses = {
         ['a'.repeat(101)]: 'b'.repeat(1001),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         123: 'c' as any,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         '2': 456 as any,
       };
       const result = validateUserResponses(responses);
@@ -572,6 +590,7 @@ describe('validateRequestSize', () => {
   beforeEach(() => {
     mockRequest = {
       headers: new Headers(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any;
   });
 

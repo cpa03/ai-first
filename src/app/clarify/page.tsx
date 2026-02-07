@@ -8,7 +8,11 @@ import { createLogger } from '@/lib/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Button = dynamic(() => import('@/components/Button'), {
-  loading: () => <button className="btn btn-primary">Loading...</button>,
+  loading: () => (
+    <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
+      Loading...
+    </div>
+  ),
 });
 
 const Alert = dynamic(() => import('@/components/Alert'), {
@@ -33,28 +37,29 @@ const DynamicClarificationFlow = dynamic(
   }
 );
 
-// Helper to get URL params only once during initialization
-function getUrlParams() {
-  if (typeof window === 'undefined') {
-    return { idea: '', ideaId: '' };
-  }
-  const urlParams = new URLSearchParams(window.location.search);
-  const ideaFromUrl = urlParams.get('idea');
-  const ideaIdFromUrl = urlParams.get('ideaId');
-  return {
-    idea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
-    ideaId: ideaIdFromUrl || '',
-  };
-}
-
-export default function ClarifyPage() {
+// Inner component that uses useSearchParams
+function ClarifyPageContent() {
   const router = useRouter();
-  const urlParams = useMemo(() => getUrlParams(), []);
-  const [idea] = useState<string>(urlParams.idea);
-  const [ideaId] = useState<string>(urlParams.ideaId);
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const logger = createLogger('ClarifyPage');
+
+  // Use useMemo to read URL parameters on initial render without causing cascading renders
+  const { idea, ideaId, hasLoaded } = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return { idea: '', ideaId: '', hasLoaded: false };
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const ideaFromUrl = urlParams.get('idea');
+    const ideaIdFromUrl = urlParams.get('ideaId');
+
+    return {
+      idea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
+      ideaId: ideaIdFromUrl || '',
+      hasLoaded: true,
+    };
+  }, []);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
@@ -82,6 +87,21 @@ export default function ClarifyPage() {
       setError('Failed to save your answers. Please try again.');
     }
   };
+
+  if (!hasLoaded) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+          <LoadingSpinner
+            size="md"
+            className="mb-4"
+            ariaLabel="Loading clarification flow"
+          />
+          <p className="text-gray-600">Loading clarification flow...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (
@@ -178,4 +198,9 @@ export default function ClarifyPage() {
       />
     </div>
   );
+}
+
+// Main page component
+export default function ClarifyPage() {
+  return <ClarifyPageContent />;
 }

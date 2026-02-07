@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
+import { createLogger } from '@/lib/logger';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -34,6 +35,8 @@ const statusLabels: Record<string, string> = {
   completed: 'Completed',
 };
 
+const logger = createLogger('DashboardPage');
+
 export default function DashboardPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -41,6 +44,13 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    idea: Idea | null;
+  }>({
+    isOpen: false,
+    idea: null,
+  });
 
   const fetchIdeas = useCallback(async () => {
     try {
@@ -68,7 +78,7 @@ export default function DashboardPage() {
       setIdeas(data.data.ideas);
       setPagination(data.data.pagination);
     } catch (err) {
-      console.error('Error fetching ideas:', err);
+      logger.error('Error fetching ideas:', err);
       setError(
         err instanceof Error ? err.message : 'An unknown error occurred'
       );
@@ -81,10 +91,18 @@ export default function DashboardPage() {
     fetchIdeas();
   }, [fetchIdeas]);
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this idea?')) {
-      return;
-    }
+  const openDeleteModal = (idea: Idea) => {
+    setDeleteModal({ isOpen: true, idea });
+  };
+
+  const closeDeleteModal = () => {
+    setDeleteModal({ isOpen: false, idea: null });
+  };
+
+  const handleDelete = async () => {
+    if (!deleteModal.idea) return;
+
+    const id = deleteModal.idea.id;
 
     try {
       setDeletingId(id);
@@ -104,9 +122,10 @@ export default function DashboardPage() {
       }
 
       setIdeas(ideas.filter((idea) => idea.id !== id));
+      closeDeleteModal();
     } catch (err) {
-      console.error('Error deleting idea:', err);
-      alert(err instanceof Error ? err.message : 'Failed to delete idea');
+      logger.error('Error deleting idea:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete idea');
     } finally {
       setDeletingId(null);
     }
@@ -119,6 +138,64 @@ export default function DashboardPage() {
       day: 'numeric',
     });
   };
+
+  // Refs for focus management
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Handle focus when modal opens/closes
+  useEffect(() => {
+    if (deleteModal.isOpen) {
+      // Store the previously focused element
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      // Move focus to the cancel button when modal opens
+      setTimeout(() => {
+        cancelButtonRef.current?.focus();
+      }, 0);
+    } else if (previousFocusRef.current) {
+      // Return focus to the trigger element when modal closes
+      previousFocusRef.current.focus();
+    }
+  }, [deleteModal.isOpen]);
+
+  // Handle keyboard events for focus trap and escape
+  useEffect(() => {
+    if (!deleteModal.isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeDeleteModal();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [deleteModal.isOpen]);
 
   if (loading) {
     return (
@@ -141,9 +218,11 @@ export default function DashboardPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
           <p className="text-red-800">{error}</p>
-          <button onClick={fetchIdeas} className="mt-4 btn btn-primary">
-            Try Again
-          </button>
+          <div className="mt-4">
+            <Button onClick={fetchIdeas} variant="primary">
+              Try Again
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -173,7 +252,7 @@ export default function DashboardPage() {
           id="status-filter"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           aria-label="Filter ideas by status"
         >
           <option value="all">All Statuses</option>
@@ -187,7 +266,22 @@ export default function DashboardPage() {
       {/* Ideas List */}
       {ideas.length === 0 ? (
         <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-          <div className="text-6xl mb-4">💡</div>
+          <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-primary-50 rounded-full">
+            <svg
+              className="w-10 h-10 text-primary-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              />
+            </svg>
+          </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             No ideas yet
           </h2>
@@ -270,11 +364,34 @@ export default function DashboardPage() {
                           View
                         </Link>
                         <button
-                          onClick={() => handleDelete(idea.id)}
+                          onClick={() => openDeleteModal(idea)}
                           disabled={deletingId === idea.id}
-                          className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-50"
+                          className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-50 inline-flex items-center gap-1"
                           aria-label={`Delete ${idea.title}`}
                         >
+                          {deletingId === idea.id && (
+                            <svg
+                              className="animate-spin h-3 w-3"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              />
+                            </svg>
+                          )}
                           {deletingId === idea.id ? 'Deleting...' : 'Delete'}
                         </button>
                       </div>
@@ -283,6 +400,71 @@ export default function DashboardPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && deleteModal.idea && (
+        <div
+          ref={modalRef}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-modal-title"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeDeleteModal();
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 transform transition-all">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <h3
+                id="delete-modal-title"
+                className="text-lg font-semibold text-gray-900"
+              >
+                Delete Idea
+              </h3>
+            </div>
+
+            <p className="text-gray-600 mb-6">
+              Are you sure you want to delete &quot;{deleteModal.idea.title}
+              &quot;? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3 justify-end">
+              <Button
+                ref={cancelButtonRef}
+                variant="outline"
+                onClick={closeDeleteModal}
+                disabled={!!deletingId}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleDelete}
+                loading={!!deletingId}
+                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              >
+                Delete Idea
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -17,13 +17,25 @@ export interface RateLimitConfig {
 export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, number[]>();
+const MAX_STORE_SIZE = 10000; // Prevent unbounded memory growth
 
 export function getClientIdentifier(request: Request): string {
+  // First, try x-real-ip which is set by trusted proxies (Vercel, etc.)
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp.trim();
+  }
+
+  // Fall back to x-forwarded-for, but use the LAST IP in the chain
+  // (closest to the server) to prevent client spoofing
   const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded
-    ? forwarded.split(',')[0]
-    : request.headers.get('x-real-ip') || 'unknown';
-  return ip;
+  if (forwarded) {
+    const ips = forwarded.split(',').map((ip) => ip.trim());
+    // Use the last IP which is added by the closest proxy
+    return ips[ips.length - 1] || 'unknown';
+  }
+
+  return 'unknown';
 }
 
 export function checkRateLimit(
@@ -32,6 +44,11 @@ export function checkRateLimit(
 ): { allowed: boolean; info: RateLimitInfo } {
   const now = Date.now();
   const windowStart = now - config.windowMs;
+
+  // Memory leak prevention: Clear oldest entries if store is too large
+  if (rateLimitStore.size >= MAX_STORE_SIZE) {
+    cleanupOldestEntries(Math.floor(MAX_STORE_SIZE * 0.2)); // Remove 20% oldest
+  }
 
   const requests = rateLimitStore.get(identifier) || [];
   const recentRequests = requests.filter((r) => r >= windowStart);
@@ -60,6 +77,20 @@ export function checkRateLimit(
   };
 }
 
+// Helper function to remove oldest entries when store reaches capacity
+function cleanupOldestEntries(count: number): void {
+  const entries = Array.from(rateLimitStore.entries());
+  entries.sort((a, b) => {
+    const aOldest = a[1].length > 0 ? Math.min(...a[1]) : Infinity;
+    const bOldest = b[1].length > 0 ? Math.min(...b[1]) : Infinity;
+    return aOldest - bOldest;
+  });
+
+  for (let i = 0; i < Math.min(count, entries.length); i++) {
+    rateLimitStore.delete(entries[i][0]);
+  }
+}
+
 export const rateLimitConfigs = {
   strict: { limit: 10, windowMs: 60 * 1000 },
   moderate: { limit: 30, windowMs: 60 * 1000 },
@@ -80,10 +111,14 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
   };
 }
 
+import { RATE_LIMIT_CLEANUP_CONFIG } from './config/constants';
+
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
   for (const [key, requests] of rateLimitStore.entries()) {
-    const recentRequests = requests.filter((r) => r >= now - 60 * 1000);
+    const recentRequests = requests.filter(
+      (r) => r >= now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS
+    );
     if (recentRequests.length === 0) {
       rateLimitStore.delete(key);
     } else {
@@ -92,26 +127,42 @@ export function cleanupExpiredEntries(): void {
   }
 }
 
-setInterval(cleanupExpiredEntries, 60 * 1000);
+setInterval(
+  cleanupExpiredEntries,
+  RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_INTERVAL_MS
+);
 
-export function rateLimitResponse(rateLimitInfo: RateLimitInfo): Response {
+export function rateLimitResponse(
+  rateLimitInfo: RateLimitInfo,
+  requestId?: string
+): Response {
   const resetTime = Math.max(rateLimitInfo.reset, Date.now());
-  return new Response(
-    JSON.stringify({
-      error: 'Too many requests',
-      retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
-    }),
-    {
-      status: 429,
-      headers: {
-        'Content-Type': 'application/json',
-        'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
-        'X-RateLimit-Limit': String(rateLimitInfo.limit),
-        'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
-        'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
-      },
-    }
-  );
+  const responseBody = {
+    error: 'Too many requests',
+    code: 'RATE_LIMIT_EXCEEDED',
+    retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
+    timestamp: new Date().toISOString(),
+    requestId:
+      requestId ||
+      `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+    retryable: true,
+  };
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
+    'X-RateLimit-Limit': String(rateLimitInfo.limit),
+    'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
+    'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
+    'X-Request-ID': responseBody.requestId,
+    'X-Error-Code': 'RATE_LIMIT_EXCEEDED',
+    'X-Retryable': 'true',
+  };
+
+  return new Response(JSON.stringify(responseBody), {
+    status: 429,
+    headers,
+  });
 }
 
 export function getRateLimitStats() {

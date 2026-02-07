@@ -72,15 +72,15 @@ export class CircuitBreaker {
     this.circuitState.state = 'closed';
   }
 
-  private onError(error: Error, _now: number, attemptCount: number = 1): void {
+  private onError(error: Error, now: number, attemptCount: number = 1): void {
     for (let i = 0; i < attemptCount; i++) {
-      this.recentFailures.push(_now);
+      this.recentFailures.push(now);
     }
     this.circuitState.failures = this.recentFailures.length;
-    this.circuitState.lastFailureTime = _now;
+    this.circuitState.lastFailureTime = now;
 
     if (this.circuitState.failures >= this.config.failureThreshold) {
-      this.openCircuit(_now);
+      this.openCircuit(now);
     }
   }
 

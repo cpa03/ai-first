@@ -348,6 +348,7 @@ curl -X POST http://localhost:3000/api/clarify/start \
 2. **Export Manager**: Removed window check to always register all connectors
 3. **Database Service**: Added test helpers (`reinitializeClients`, `resetInstance`)
 4. **TypeScript**: Fixed Supabase type errors with proper type assertions
+5. **Database Service Consistency**: Fixed `softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`, and `getIdeaDeliverablesWithTasks` methods to use instance properties (`this.admin`, `this.client`) instead of global variables (`supabaseAdmin`, `supabaseClient`) for consistency and better testability
 
 ### Known Issues
 

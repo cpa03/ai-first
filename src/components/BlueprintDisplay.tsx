@@ -7,6 +7,7 @@ import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
+import { UI_CONFIG } from '@/lib/config/constants';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -23,7 +24,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   // Simulate blueprint generation
   useEffect(() => {
     const generateBlueprint = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
+      );
 
       const generatedBlueprint = generateBlueprintTemplate(idea, answers);
 
@@ -41,26 +44,40 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     a.href = url;
     a.download = 'project-blueprint.md';
     document.body.appendChild(a);
+
+    // Use setTimeout to ensure download starts before cleanup
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const handleCopy = async () => {
+    const win = window as unknown as Window & {
+      showToast?: (options: ToastOptions) => void;
+    };
+
     try {
       await navigator.clipboard.writeText(blueprint);
-      const win = window as unknown as Window & {
-        showToast?: (options: ToastOptions) => void;
-      };
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'success',
           message: 'Blueprint copied to clipboard!',
-          duration: 3000,
+          duration: UI_CONFIG.TOAST_DURATION,
         });
       }
     } catch (err) {
       console.error('Failed to copy blueprint:', err);
+      // Show error feedback to user
+      if (typeof window !== 'undefined' && win.showToast) {
+        win.showToast({
+          type: 'error',
+          message: 'Failed to copy. Please try selecting and copying manually.',
+          duration: UI_CONFIG.TOAST_DURATION,
+        });
+      }
     }
   };
 

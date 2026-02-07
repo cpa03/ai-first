@@ -25,9 +25,7 @@ describe('checkRateLimit', () => {
       const result = checkRateLimit('test-user', rateLimitConfigs.lenient);
 
       expect(result.allowed).toBe(true);
-      expect(result.info.remaining).toBe(
-        rateLimitConfigs.lenient.limit - 1
-      );
+      expect(result.info.remaining).toBe(rateLimitConfigs.lenient.limit - 1);
       expect(result.info.reset).toBeGreaterThan(Date.now());
     });
 
@@ -45,12 +43,8 @@ describe('checkRateLimit', () => {
       const result1 = checkRateLimit('user-1', rateLimitConfigs.moderate);
       const result2 = checkRateLimit('user-2', rateLimitConfigs.moderate);
 
-      expect(result1.info.remaining).toBe(
-        rateLimitConfigs.moderate.limit - 1
-      );
-      expect(result2.info.remaining).toBe(
-        rateLimitConfigs.moderate.limit - 1
-      );
+      expect(result1.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
+      expect(result2.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
     });
   });
 
@@ -62,9 +56,7 @@ describe('checkRateLimit', () => {
       const result2 = checkRateLimit(identifier, rateLimitConfigs.lenient);
 
       expect(result2.allowed).toBe(true);
-      expect(result2.info.remaining).toBe(
-        rateLimitConfigs.lenient.limit - 2
-      );
+      expect(result2.info.remaining).toBe(rateLimitConfigs.lenient.limit - 2);
     });
 
     it('should keep same reset time for requests within window', () => {
@@ -288,14 +280,16 @@ describe('getClientIdentifier', () => {
     expect(identifier).toBe('192.168.1.1');
   });
 
-  it('should use first IP from x-forwarded-for when multiple present', () => {
+  it('should use last IP from x-forwarded-for when multiple present (security)', () => {
+    // Use last IP in chain (closest to server) to prevent client spoofing
     const request = new Request('http://localhost', {
       headers: { 'x-forwarded-for': '10.0.0.1, 10.0.0.2, 10.0.0.3' },
     });
 
     const identifier = getClientIdentifier(request);
 
-    expect(identifier).toBe('10.0.0.1');
+    // Last IP is from the trusted proxy, not spoofable by client
+    expect(identifier).toBe('10.0.0.3');
   });
 
   it('should fall back to x-real-ip header', () => {
@@ -316,7 +310,8 @@ describe('getClientIdentifier', () => {
     expect(identifier).toBe('unknown');
   });
 
-  it('should prefer x-forwarded-for over x-real-ip', () => {
+  it('should prefer x-real-ip over x-forwarded-for (security)', () => {
+    // x-real-ip is set by trusted proxies (Vercel, etc.) and cannot be spoofed by clients
     const request = new Request('http://localhost', {
       headers: {
         'x-forwarded-for': '10.0.0.1',
@@ -326,7 +321,8 @@ describe('getClientIdentifier', () => {
 
     const identifier = getClientIdentifier(request);
 
-    expect(identifier).toBe('10.0.0.1');
+    // x-real-ip takes precedence as it's set by the edge/proxy
+    expect(identifier).toBe('172.16.0.1');
   });
 });
 
@@ -374,9 +370,7 @@ describe('createRateLimitMiddleware', () => {
     const result = middleware(request);
 
     expect(result.allowed).toBe(true);
-    expect(result.info.remaining).toBe(
-      rateLimitConfigs.moderate.limit - 1
-    );
+    expect(result.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
   });
 
   it('should work with different config', () => {

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { SECURITY_CONFIG } from '@/lib/config/constants';
 
 export function middleware() {
   const response = NextResponse.next();
@@ -24,7 +25,6 @@ export function middleware() {
   response.headers.set('Content-Security-Policy', cspHeader);
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   response.headers.set(
@@ -33,9 +33,14 @@ export function middleware() {
   );
 
   if (process.env.NODE_ENV === 'production') {
+    const hstsDirectives = [
+      `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}`,
+      ...(SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? ['includeSubDomains'] : []),
+      ...(SECURITY_CONFIG.HSTS_PRELOAD ? ['preload'] : []),
+    ];
     response.headers.set(
       'Strict-Transport-Security',
-      'max-age=31536000; includeSubDomains; preload'
+      hstsDirectives.join('; ')
     );
   }
 
@@ -43,5 +48,5 @@ export function middleware() {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
 };

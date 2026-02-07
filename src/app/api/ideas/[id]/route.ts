@@ -6,6 +6,7 @@ import {
 import { ValidationError } from '@/lib/errors';
 import { validateIdeaId } from '@/lib/validation';
 import { dbService } from '@/lib/db';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -18,11 +19,17 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError(idValidation.errors);
   }
 
+  // Authenticate user
+  const user = await requireAuth(request);
+
   const idea = await dbService.getIdea(ideaId!);
 
   if (!idea) {
     return standardSuccessResponse(null, context.requestId, 404);
   }
+
+  // Verify ownership
+  verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
   return standardSuccessResponse(idea, context.requestId);
 }
@@ -38,6 +45,9 @@ async function handlePut(context: ApiContext) {
     throw new ValidationError(idValidation.errors);
   }
 
+  // Authenticate user
+  const user = await requireAuth(request);
+
   const body = await request.json();
   const { title, status } = body;
 
@@ -45,6 +55,9 @@ async function handlePut(context: ApiContext) {
   if (!existingIdea) {
     return standardSuccessResponse(null, context.requestId, 404);
   }
+
+  // Verify ownership
+  verifyResourceOwnership(user.id, existingIdea.user_id, 'idea');
 
   const updates: {
     title?: string;
@@ -90,10 +103,16 @@ async function handleDelete(context: ApiContext) {
     throw new ValidationError(idValidation.errors);
   }
 
+  // Authenticate user
+  const user = await requireAuth(request);
+
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
     return standardSuccessResponse(null, context.requestId, 404);
   }
+
+  // Verify ownership
+  verifyResourceOwnership(user.id, existingIdea.user_id, 'idea');
 
   await dbService.softDeleteIdea(ideaId!);
 

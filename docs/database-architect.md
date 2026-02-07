@@ -313,6 +313,7 @@ interface ClarificationAnswer {
 | parent_comment_id | UUID        | REFERENCES task_comments(id)                | Parent comment for threading |
 | created_at        | TIMESTAMPTZ | DEFAULT NOW()                               | Creation timestamp           |
 | updated_at        | TIMESTAMPTZ | DEFAULT NOW()                               | Last update timestamp        |
+| deleted_at        | TIMESTAMPTZ | NULLABLE                                    | Soft delete timestamp        |
 
 ### 11. vectors
 
@@ -458,6 +459,11 @@ interface ClarificationAnswer {
 - `idx_clarification_sessions_idea_status` - (idea_id, status)
 - `idx_clarification_answers_session` - (session_id)
 
+#### task_comments
+
+- `idx_task_comments_task_id` - task_id
+- `idx_task_comments_deleted_at` - deleted_at
+
 ## Row Level Security (RLS)
 
 ### RLS Policies by Table
@@ -486,6 +492,55 @@ interface ClarificationAnswer {
 #### agent_logs
 
 - **ALL:** Restricted to service_role only
+
+#### milestones
+
+- **SELECT:** Users can view milestones for their ideas
+- **INSERT:** Users can create milestones for their ideas
+- **UPDATE:** Users can update milestones for their ideas
+- **DELETE:** Users can delete milestones for their ideas
+
+#### task_assignments
+
+- **SELECT:** Users can view task assignments for their tasks
+- **INSERT:** Users can create task assignments for their tasks
+- **UPDATE:** Users can update task assignments for their tasks
+- **DELETE:** Users can delete task assignments for their tasks
+
+#### time_tracking
+
+- **SELECT:** Users can view their own time tracking entries
+- **INSERT:** Users can create their own time tracking entries
+- **UPDATE:** Users can update their own time tracking entries
+- **DELETE:** Users can delete their own time tracking entries
+
+#### task_comments
+
+- **SELECT:** Users can view comments for their ideas
+- **INSERT:** Users can create comments for their ideas
+- **UPDATE:** Users can update comments for their ideas
+- **DELETE:** Users can delete comments for their ideas
+
+#### breakdown_sessions
+
+- **SELECT:** Users can view breakdown sessions for their ideas
+- **INSERT:** Users can create breakdown sessions for their ideas
+- **UPDATE:** Users can update breakdown sessions for their ideas
+- **DELETE:** Users can delete breakdown sessions for their ideas
+
+#### timelines
+
+- **SELECT:** Users can view timelines for their ideas
+- **INSERT:** Users can create timelines for their ideas
+- **UPDATE:** Users can update timelines for their ideas
+- **DELETE:** Users can delete timelines for their ideas
+
+#### risk_assessments
+
+- **SELECT:** Users can view risk assessments for their ideas
+- **INSERT:** Users can create risk assessments for their ideas
+- **UPDATE:** Users can update risk assessments for their ideas
+- **DELETE:** Users can delete risk assessments for their ideas
 
 ### RLS Pattern
 
@@ -519,6 +574,7 @@ Automatically updates the `updated_at` timestamp on row updates.
 - risk_assessments
 - clarification_sessions
 - clarification_answers
+- deliverables
 
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -937,6 +993,46 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Alert on status = 'unhealthy'
 - Track circuit breaker open events
 - Monitor retry success rates
+
+## Changelog
+
+### 2026-02-07 - Database Schema Fixes
+
+#### Bug Fixes
+
+1. **Added missing `updated_at` trigger on `deliverables` table**
+   - The table had an `updated_at` column but was missing the trigger to automatically update it
+   - Added: `CREATE TRIGGER update_deliverables_updated_at...`
+
+2. **Added missing `deleted_at` column to `task_comments` table**
+   - Documentation referenced soft deletes for task_comments but the column was missing from schema
+   - Added `deleted_at` column and corresponding index
+
+3. **Added missing RLS DELETE policy for `milestones` table**
+   - Missing DELETE policy prevented users from deleting their own milestones
+   - Added: `CREATE POLICY "Users can delete milestones for their ideas"...`
+
+4. **Added missing RLS policies for `task_assignments` table**
+   - Added INSERT, UPDATE, and DELETE policies to complement the existing SELECT policy
+
+5. **Added missing RLS policies for `time_tracking` table**
+   - Added UPDATE and DELETE policies to complement the existing SELECT and INSERT policies
+
+6. **Added missing RLS policies for `task_comments` table**
+   - Added UPDATE and DELETE policies to complement the existing SELECT and INSERT policies
+
+7. **Added missing RLS policies for `breakdown_sessions` table**
+   - Added UPDATE and DELETE policies to complement the existing SELECT and INSERT policies
+
+8. **Added missing RLS policies for `timelines` table**
+   - Added UPDATE and DELETE policies to complement the existing SELECT and INSERT policies
+
+9. **Added missing RLS policies for `risk_assessments` table**
+   - Added UPDATE and DELETE policies to complement the existing SELECT and INSERT policies
+
+#### TypeScript Types Update
+
+- Updated `src/types/database.ts` to include `deleted_at` field in `task_comments` type definitions
 
 ## Conclusion
 
