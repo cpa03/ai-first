@@ -137,7 +137,7 @@ function Toast({ toast, onClose }: ToastProps) {
       <button
         onClick={() => {
           setIsLeaving(true);
-          setTimeout(() => onClose(toast.id), 300);
+          setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
         }}
         className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
         aria-label="Close notification"

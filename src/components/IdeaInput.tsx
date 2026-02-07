@@ -122,7 +122,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
 
       {error && (
         <div className="slide-up">
-          <Alert type="error">
+          <Alert type="error" onClose={() => setError(null)}>
             <p className="text-sm">{error}</p>
           </Alert>
         </div>
