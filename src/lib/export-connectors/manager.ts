@@ -21,7 +21,7 @@ export interface ExportManagerOptions {
 export class ExportManager {
   private connectors: Map<string, ExportConnector> = new Map();
 
-  constructor(options: ExportManagerOptions = {}) {
+  constructor(_options: ExportManagerOptions = {}) {
     this.registerConnector(new JSONExporter());
     this.registerConnector(new MarkdownExporter());
 
