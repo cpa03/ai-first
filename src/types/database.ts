@@ -401,6 +401,7 @@ export interface Database {
         Row: {
           comment: string;
           created_at: string;
+          deleted_at: string | null;
           id: string;
           parent_comment_id: string | null;
           task_id: string;
@@ -410,6 +411,7 @@ export interface Database {
         Insert: {
           comment: string;
           created_at?: string;
+          deleted_at?: string | null;
           id?: string;
           parent_comment_id?: string | null;
           task_id: string;
@@ -419,6 +421,7 @@ export interface Database {
         Update: {
           comment?: string;
           created_at?: string;
+          deleted_at?: string | null;
           id?: string;
           parent_comment_id?: string | null;
           task_id?: string;
