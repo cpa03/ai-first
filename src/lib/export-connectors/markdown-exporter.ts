@@ -15,6 +15,7 @@ export class MarkdownExporter extends ExportConnector {
       return {
         success: true,
         url: `data:text/markdown;charset=utf-8,${encodeURIComponent(markdown)}`,
+        content: markdown,
       };
     } catch (_error) {
       return {
