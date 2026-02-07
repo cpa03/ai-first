@@ -1,5 +1,6 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { supabaseAdmin } from '@/lib/db';
+import { timingSafeEqual } from 'crypto';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 
@@ -28,15 +29,27 @@ export function isAdminAuthenticated(request: Request): boolean {
     return false;
   }
 
+  const bufferKey = Buffer.from(ADMIN_API_KEY, 'utf8');
+
   if (authHeader) {
     const [scheme, credentials] = authHeader.split(' ');
-    if (scheme.toLowerCase() === 'bearer') {
-      return credentials === ADMIN_API_KEY;
+    if (scheme.toLowerCase() === 'bearer' && credentials) {
+      const bufferCredentials = Buffer.from(credentials, 'utf8');
+      // Ensure buffers are same length to prevent early returns
+      if (bufferKey.length !== bufferCredentials.length) {
+        return false;
+      }
+      return timingSafeEqual(bufferKey, bufferCredentials);
     }
   }
 
   if (apiKey) {
-    return apiKey === ADMIN_API_KEY;
+    const bufferApiKey = Buffer.from(apiKey, 'utf8');
+    // Ensure buffers are same length to prevent early returns
+    if (bufferKey.length !== bufferApiKey.length) {
+      return false;
+    }
+    return timingSafeEqual(bufferKey, bufferApiKey);
   }
 
   return false;
