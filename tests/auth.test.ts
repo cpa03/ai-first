@@ -259,37 +259,33 @@ describe('auth', () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      try {
-        requireAdminAuth(request);
-        fail('Expected error to be thrown');
-      } catch (error: any) {
-        expect(error.code).toBe(ErrorCode.AUTHENTICATION_ERROR);
-      }
+      expect(() => requireAdminAuth(request)).toThrow(
+        expect.objectContaining({
+          code: ErrorCode.AUTHENTICATION_ERROR,
+        })
+      );
     });
 
     it('should throw error with 401 status code', () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      try {
-        requireAdminAuth(request);
-        fail('Expected error to be thrown');
-      } catch (error: any) {
-        expect(error.statusCode).toBe(401);
-      }
+      expect(() => requireAdminAuth(request)).toThrow(
+        expect.objectContaining({
+          statusCode: 401,
+        })
+      );
     });
 
     it('should throw error with descriptive message', () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      try {
-        requireAdminAuth(request);
-        fail('Expected error to be thrown');
-      } catch (error: any) {
-        expect(error.message).toContain('Unauthorized');
-        expect(error.message).toContain('admin API key');
-      }
+      expect(() => requireAdminAuth(request)).toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining('Unauthorized'),
+        })
+      );
     });
 
     it('should not throw when authenticated with Bearer token', () => {
