@@ -224,8 +224,8 @@ Protects the system from abuse and ensures fair usage:
 ### Rate Limit Tiers
 
 - **strict**: 10 requests/minute
-- **moderate**: 50 requests/minute
-- **lenient**: 100 requests/minute
+- **moderate**: 30 requests/minute
+- **lenient**: 60 requests/minute
 
 ### Implementation
 
