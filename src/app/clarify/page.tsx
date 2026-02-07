@@ -1,14 +1,18 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 const Button = dynamic(() => import('@/components/Button'), {
-  loading: () => <button className="btn btn-primary">Loading...</button>,
+  loading: () => (
+    <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
+      Loading...
+    </div>
+  ),
 });
 
 const Alert = dynamic(() => import('@/components/Alert'), {
@@ -33,17 +37,29 @@ const DynamicClarificationFlow = dynamic(
   }
 );
 
+// Inner component that uses useSearchParams
 function ClarifyPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const ideaFromUrl = searchParams.get('idea');
-  const ideaIdFromUrl = searchParams.get('ideaId');
-  const idea = ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '';
-  const ideaId = ideaIdFromUrl || '';
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
-  const loading = false;
   const [error, setError] = useState<string | null>(null);
   const logger = createLogger('ClarifyPage');
+
+  // Use useMemo to read URL parameters on initial render without causing cascading renders
+  const { idea, ideaId, hasLoaded } = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return { idea: '', ideaId: '', hasLoaded: false };
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const ideaFromUrl = urlParams.get('idea');
+    const ideaIdFromUrl = urlParams.get('ideaId');
+
+    return {
+      idea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
+      ideaId: ideaIdFromUrl || '',
+      hasLoaded: true,
+    };
+  }, []);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
@@ -72,7 +88,7 @@ function ClarifyPageContent() {
     }
   };
 
-  if (loading) {
+  if (!hasLoaded) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
@@ -184,23 +200,7 @@ function ClarifyPageContent() {
   );
 }
 
+// Main page component
 export default function ClarifyPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <LoadingSpinner
-              size="md"
-              className="mb-4"
-              ariaLabel="Loading clarification flow"
-            />
-            <p className="text-gray-600">Loading...</p>
-          </div>
-        </div>
-      }
-    >
-      <ClarifyPageContent />
-    </Suspense>
-  );
+  return <ClarifyPageContent />;
 }

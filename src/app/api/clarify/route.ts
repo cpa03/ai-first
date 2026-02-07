@@ -6,6 +6,8 @@ import {
   standardSuccessResponse,
   ApiContext,
 } from '@/lib/api-handler';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { dbService } from '@/lib/db';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -26,7 +28,18 @@ async function handlePost(context: ApiContext) {
       throw new ValidationError(idValidation.errors);
     }
     finalIdeaId = finalIdeaId.trim();
+
+    // Authenticate user
+    const user = await requireAuth(request);
+
+    // Verify idea exists and user owns it
+    const ideaRecord = await dbService.getIdea(finalIdeaId);
+    if (ideaRecord) {
+      verifyResourceOwnership(user.id, ideaRecord.user_id, 'idea');
+    }
   } else {
+    // Still require authentication even for new ideas
+    await requireAuth(request);
     finalIdeaId = `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 

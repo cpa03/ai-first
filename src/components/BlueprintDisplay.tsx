@@ -7,6 +7,10 @@ import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
+import { UI_CONFIG } from '@/lib/config/constants';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('BlueprintDisplay');
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -22,23 +26,18 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
   // Simulate blueprint generation
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
     const generateBlueprint = async () => {
-      timeoutId = setTimeout(() => {
-        const generatedBlueprint = generateBlueprintTemplate(idea, answers);
-        setBlueprint(generatedBlueprint);
-        setIsGenerating(false);
-      }, 2000);
+      await new Promise((resolve) =>
+        setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
+      );
+
+      const generatedBlueprint = generateBlueprintTemplate(idea, answers);
+
+      setBlueprint(generatedBlueprint);
+      setIsGenerating(false);
     };
 
     generateBlueprint();
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
   }, [idea, answers]);
 
   const handleDownload = () => {
@@ -48,26 +47,40 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     a.href = url;
     a.download = 'project-blueprint.md';
     document.body.appendChild(a);
+
+    // Use setTimeout to ensure download starts before cleanup
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const handleCopy = async () => {
+    const win = window as unknown as Window & {
+      showToast?: (options: ToastOptions) => void;
+    };
+
     try {
       await navigator.clipboard.writeText(blueprint);
-      const win = window as unknown as Window & {
-        showToast?: (options: ToastOptions) => void;
-      };
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'success',
           message: 'Blueprint copied to clipboard!',
-          duration: 3000,
+          duration: UI_CONFIG.TOAST_DURATION,
         });
       }
     } catch (err) {
-      console.error('Failed to copy blueprint:', err);
+      logger.error('Failed to copy blueprint', err);
+      // Show error feedback to user
+      if (typeof window !== 'undefined' && win.showToast) {
+        win.showToast({
+          type: 'error',
+          message: 'Failed to copy. Please try selecting and copying manually.',
+          duration: UI_CONFIG.TOAST_DURATION,
+        });
+      }
     }
   };
 

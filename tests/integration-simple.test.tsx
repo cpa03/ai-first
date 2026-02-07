@@ -231,11 +231,13 @@ describe('Integration Tests - Basic', () => {
 
   describe('Error Boundaries', () => {
     it('should handle component errors gracefully', () => {
-      const ErrorBoundary = class extends React.Component<
+      class ErrorBoundary extends React.Component<
         { children: React.ReactNode },
         { hasError: boolean }
       > {
-        constructor(props: any) {
+        static displayName = 'ErrorBoundary';
+
+        constructor(props: { children: React.ReactNode }) {
           super(props);
           this.state = { hasError: false };
         }
@@ -250,7 +252,7 @@ describe('Integration Tests - Basic', () => {
           }
           return this.props.children;
         }
-      };
+      }
 
       const ThrowingComponent = () => {
         throw new Error('Component error');

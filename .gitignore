@@ -87,3 +87,10 @@ jspm_packages/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python

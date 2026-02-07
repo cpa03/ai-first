@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface CacheEntry<T> {
   data: T;
@@ -28,10 +28,15 @@ export function useCache<T>(
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Use ref to avoid dependency on fetcher function identity
+  // This prevents infinite re-renders when fetcher is not memoized by caller
+  const fetcherRef = useRef(fetcher);
+  fetcherRef.current = fetcher;
+
   const revalidate = useCallback(async () => {
     try {
       setLoading(true);
-      const result = await fetcher();
+      const result = await fetcherRef.current();
 
       const cacheEntry: CacheEntry<T> = {
         data: result,
@@ -46,7 +51,7 @@ export function useCache<T>(
     } finally {
       setLoading(false);
     }
-  }, [key, fetcher]);
+  }, [key]);
 
   useEffect(() => {
     const fetchWithCache = async () => {
@@ -84,7 +89,7 @@ export function useCache<T>(
     };
 
     fetchWithCache();
-  }, [key, revalidate, staleWhileRevalidate, ttl, fetcher]);
+  }, [key, revalidate, staleWhileRevalidate, ttl]);
 
   return { data, error, loading, revalidate };
 }

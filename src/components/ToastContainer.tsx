@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { UI_CONFIG, ANIMATION_CONFIG } from '@/lib/config/constants';
 
 export interface Toast {
   id: string;
@@ -80,22 +81,30 @@ const toastColors = {
 
 function Toast({ toast, onClose }: ToastProps) {
   const [isLeaving, setIsLeaving] = useState(false);
+  const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const duration = toast.duration || 5000;
-    let leaveTimeoutId: NodeJS.Timeout;
+    const duration = toast.duration || UI_CONFIG.TOAST_DURATION;
+    const updateInterval = UI_CONFIG.TOAST_PROGRESS_INTERVAL;
+    const totalSteps = duration / updateInterval;
+    let currentStep = 0;
 
-    const timer = setTimeout(() => {
-      setIsLeaving(true);
-      leaveTimeoutId = setTimeout(() => onClose(toast.id), 300);
-    }, duration);
+    const progressTimer = setInterval(() => {
+      currentStep++;
+      const remainingProgress = Math.max(
+        0,
+        100 - (currentStep / totalSteps) * 100
+      );
+      setProgress(remainingProgress);
 
-    return () => {
-      clearTimeout(timer);
-      if (leaveTimeoutId) {
-        clearTimeout(leaveTimeoutId);
+      if (currentStep >= totalSteps) {
+        clearInterval(progressTimer);
+        setIsLeaving(true);
+        setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
       }
-    };
+    }, updateInterval);
+
+    return () => clearInterval(progressTimer);
   }, [toast.id, toast.duration, onClose]);
 
   const styles = toastColors[toast.type];
@@ -128,8 +137,7 @@ function Toast({ toast, onClose }: ToastProps) {
       <button
         onClick={() => {
           setIsLeaving(true);
-          const leaveTimeoutId = setTimeout(() => onClose(toast.id), 300);
-          return () => clearTimeout(leaveTimeoutId);
+          setTimeout(() => onClose(toast.id), 300);
         }}
         className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
         aria-label="Close notification"
@@ -149,6 +157,12 @@ function Toast({ toast, onClose }: ToastProps) {
           />
         </svg>
       </button>
+      {/* Progress bar showing time remaining */}
+      <div
+        className="absolute bottom-0 left-0 h-1 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
+        style={{ width: `${progress}%` }}
+        aria-hidden="true"
+      />
     </div>
   );
 }

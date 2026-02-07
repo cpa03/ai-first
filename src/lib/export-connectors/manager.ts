@@ -14,21 +14,23 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 
+export interface ExportManagerOptions {
+  enableExternalConnectors?: boolean;
+}
+
 export class ExportManager {
   private connectors: Map<string, ExportConnector> = new Map();
 
-  constructor() {
+  constructor(_options: ExportManagerOptions = {}) {
     this.registerConnector(new JSONExporter());
     this.registerConnector(new MarkdownExporter());
 
-    if (typeof window === 'undefined') {
-      this.registerConnector(new NotionExporter());
-      this.registerConnector(new TrelloExporter());
-      this.registerConnector(new GoogleTasksExporter());
-      this.registerConnector(new GitHubProjectsExporter());
-    } else {
-      this.registerConnector(new GoogleTasksExporter());
-    }
+    // Server-side connectors (always register, but they check env vars)
+    // In browser, these will fail validation gracefully
+    this.registerConnector(new NotionExporter());
+    this.registerConnector(new TrelloExporter());
+    this.registerConnector(new GoogleTasksExporter());
+    this.registerConnector(new GitHubProjectsExporter());
   }
 
   registerConnector(connector: ExportConnector): void {

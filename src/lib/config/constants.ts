@@ -105,4 +105,154 @@ export const UI_CONFIG = {
    * Shows warning color when character count reaches this percentage of max
    */
   CHAR_COUNT_WARNING_THRESHOLD: 0.8,
+
+  /**
+   * Blueprint generation simulated delay (in milliseconds)
+   * Used to show loading state while "generating" blueprint
+   */
+  BLUEPRINT_GENERATION_DELAY: 2000,
+
+  /**
+   * Toast notification duration (in milliseconds)
+   */
+  TOAST_DURATION: 3000,
+
+  /**
+   * Copy feedback duration (in milliseconds)
+   * How long to show "Copied!" feedback
+   */
+  COPY_FEEDBACK_DURATION: 2000,
+
+  /**
+   * Toast progress update interval (in milliseconds)
+   * How often to update the progress bar for smooth animation
+   */
+  TOAST_PROGRESS_INTERVAL: 50,
+} as const;
+
+/**
+ * API validation configuration
+ */
+export const VALIDATION_CONFIG = {
+  /**
+   * Maximum length for clarification answers (in characters)
+   */
+  MAX_ANSWER_LENGTH: 5000,
+
+  /**
+   * Default pagination limit for list endpoints
+   */
+  DEFAULT_PAGINATION_LIMIT: 50,
+
+  /**
+   * Maximum pagination limit for list endpoints
+   */
+  MAX_PAGINATION_LIMIT: 100,
+
+  /**
+   * Minimum length for idea text (in characters)
+   */
+  MIN_IDEA_LENGTH: 10,
+
+  /**
+   * Maximum length for idea text (in characters)
+   */
+  MAX_IDEA_LENGTH: 10000,
+
+  /**
+   * Maximum length for idea ID (in characters)
+   */
+  MAX_IDEA_ID_LENGTH: 100,
+
+  /**
+   * Maximum request body size (in bytes)
+   */
+  MAX_REQUEST_BODY_SIZE: 1048576, // 1MB
+} as const;
+
+/**
+ * Animation timing configuration
+ * All duration values are in milliseconds
+ */
+export const ANIMATION_CONFIG = {
+  /**
+   * Fast transition duration (for micro-interactions)
+   */
+  FAST: 200,
+
+  /**
+   * Standard transition duration (for most UI transitions)
+   */
+  STANDARD: 300,
+
+  /**
+   * Slow transition duration (for emphasis animations)
+   */
+  SLOW: 500,
+
+  /**
+   * Toast exit animation duration
+   */
+  TOAST_EXIT: 300,
+
+  /**
+   * Input focus delay (for smooth focus transitions)
+   */
+  INPUT_FOCUS_DELAY: 50,
+
+  /**
+   * Error boundary reload delay
+   */
+  ERROR_RELOAD_DELAY: 3000,
+} as const;
+
+/**
+ * Rate limit cleanup configuration
+ */
+export const RATE_LIMIT_CLEANUP_CONFIG = {
+  /**
+   * Interval for running cleanup of expired rate limit entries (in milliseconds)
+   * Default: 1 minute
+   */
+  CLEANUP_INTERVAL_MS: 60000,
+
+  /**
+   * Window of time to keep rate limit entries for cleanup (in milliseconds)
+   * Entries older than this will be removed
+   * Default: 1 minute
+   */
+  CLEANUP_WINDOW_MS: 60000,
+} as const;
+
+/**
+ * Security headers configuration
+ */
+export const SECURITY_CONFIG = {
+  /**
+   * HSTS max-age in seconds (1 year = 31536000 seconds)
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+   */
+  HSTS_MAX_AGE: 31536000,
+
+  /**
+   * HSTS includeSubDomains directive
+   */
+  HSTS_INCLUDE_SUBDOMAINS: true,
+
+  /**
+   * HSTS preload directive
+   */
+  HSTS_PRELOAD: true,
+} as const;
+
+/**
+ * Retry delay polling configuration
+ */
+export const RETRY_DELAY_CONFIG = {
+  /**
+   * Polling interval for checking if retry delay should be aborted (in milliseconds)
+   * Lower values provide more responsive cancellation but use more CPU
+   * Default: 100ms
+   */
+  POLLING_INTERVAL_MS: 100,
 } as const;

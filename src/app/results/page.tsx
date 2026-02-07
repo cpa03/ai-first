@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
+import { createLogger } from '@/lib/logger';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import dynamic from 'next/dynamic';
+import TaskManagement from '@/components/TaskManagement';
 
 interface Idea {
   id: string;
@@ -41,9 +43,10 @@ const BlueprintDisplay = dynamic(
   }
 );
 
-function ResultsPageContent() {
+const logger = createLogger('ResultsPage');
+
+export default function ResultsPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [idea, setIdea] = useState<Idea | null>(null);
   const [session, setSession] = useState<IdeaSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +59,8 @@ function ResultsPageContent() {
       try {
         setLoading(true);
 
-        const ideaId = searchParams.get('ideaId');
+        const urlParams = new URLSearchParams(window.location.search);
+        const ideaId = urlParams.get('ideaId');
 
         if (!ideaId) {
           throw new Error('Idea ID is required');
@@ -85,7 +89,7 @@ function ResultsPageContent() {
         setIdea(ideaData.data);
         setSession(sessionData?.data || null);
       } catch (err) {
-        console.error('Error fetching results:', err);
+        logger.error('Error fetching results:', err);
         setError(
           err instanceof Error ? err.message : 'An unknown error occurred'
         );
@@ -95,7 +99,7 @@ function ResultsPageContent() {
     };
 
     fetchResults();
-  }, [searchParams]);
+  }, []);
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!idea) return;
@@ -141,7 +145,7 @@ function ResultsPageContent() {
         throw new Error(result.error || 'Export failed');
       }
     } catch (err) {
-      console.error('Export error:', err);
+      logger.error('Export error:', err);
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setExportLoading(false);
@@ -169,12 +173,11 @@ function ResultsPageContent() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
           <p className="text-red-800">{error}</p>
-          <button
-            onClick={() => router.back()}
-            className="mt-4 btn btn-primary"
-          >
-            Go Back
-          </button>
+          <div className="mt-4">
+            <Button onClick={() => router.back()} variant="primary">
+              Go Back
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -190,12 +193,11 @@ function ResultsPageContent() {
           <p className="text-yellow-800">
             The idea you're looking for doesn't exist.
           </p>
-          <button
-            onClick={() => router.push('/')}
-            className="mt-4 btn btn-primary"
-          >
-            Go Home
-          </button>
+          <div className="mt-4">
+            <Button onClick={() => router.push('/')} variant="primary">
+              Go Home
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -228,6 +230,11 @@ function ResultsPageContent() {
             : {}
         }
       />
+
+      {/* Task Management */}
+      <div className="mt-8">
+        <TaskManagement ideaId={idea.id} />
+      </div>
 
       {/* Export Options */}
       <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
@@ -276,26 +283,5 @@ function ResultsPageContent() {
         )}
       </div>
     </div>
-  );
-}
-
-export default function ResultsPage() {
-  return (
-    <Suspense
-      fallback={
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-            <LoadingSpinner
-              size="md"
-              className="mb-4"
-              ariaLabel="Generating your project blueprint"
-            />
-            <p className="text-gray-600">Loading...</p>
-          </div>
-        </div>
-      }
-    >
-      <ResultsPageContent />
-    </Suspense>
   );
 }

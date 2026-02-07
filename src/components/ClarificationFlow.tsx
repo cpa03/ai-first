@@ -2,6 +2,12 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
+import {
+  MIN_ANSWER_LENGTH,
+  MAX_ANSWER_LENGTH,
+  MIN_SHORT_ANSWER_LENGTH,
+  MAX_SHORT_ANSWER_LENGTH,
+} from '@/lib/validation';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -121,10 +127,8 @@ function ClarificationFlow({
   useEffect(() => {
     if (!currentQuestion || questions.length === 0) return;
 
-    let timeoutId: NodeJS.Timeout;
-
     const focusInput = () => {
-      timeoutId = setTimeout(() => {
+      setTimeout(() => {
         if (currentQuestion.type === 'textarea') {
           textareaRef.current?.focus();
         } else if (currentQuestion.type === 'select') {
@@ -136,12 +140,6 @@ function ClarificationFlow({
     };
 
     focusInput();
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
   }, [currentStep, questions, currentQuestion]);
 
   useEffect(() => {
@@ -164,11 +162,9 @@ function ClarificationFlow({
         }
 
         const data = await response.json();
-        const questionsData = Array.isArray(data?.data?.questions)
-          ? data.data.questions
-          : Array.isArray(data?.questions)
-            ? data.questions
-            : [];
+        // Validate and extract questions with runtime type checking
+        const rawQuestions = data?.data?.questions ?? data?.questions;
+        const questionsData = Array.isArray(rawQuestions) ? rawQuestions : [];
 
         const formattedQuestions: Question[] = questionsData.map(
           (q: APIQuestion, index: number) => ({
@@ -210,7 +206,7 @@ function ClarificationFlow({
     };
 
     fetchQuestions();
-  }, [idea, ideaId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [idea, ideaId, logger]);
 
   if (loading) {
     return (
@@ -314,13 +310,14 @@ function ClarificationFlow({
             {currentQuestion.type === 'textarea' && (
               <InputWithValidation
                 id="answer-textarea"
-                label="Your answer"
+                name="answer"
+                label={currentQuestion.question}
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 placeholder="Enter your answer here..."
                 multiline={true}
-                minLength={5}
-                maxLength={500}
+                minLength={MIN_ANSWER_LENGTH}
+                maxLength={MAX_ANSWER_LENGTH}
                 showCharCount={true}
                 helpText="Provide a detailed answer to help us understand your needs better."
                 required={true}
@@ -337,8 +334,8 @@ function ClarificationFlow({
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 placeholder="Enter your answer here..."
-                minLength={2}
-                maxLength={100}
+                minLength={MIN_SHORT_ANSWER_LENGTH}
+                maxLength={MAX_SHORT_ANSWER_LENGTH}
                 showCharCount={true}
                 required={true}
                 autoFocus={true}
