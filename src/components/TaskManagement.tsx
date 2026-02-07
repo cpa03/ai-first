@@ -431,6 +431,7 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
                                   ? 'Mark as incomplete'
                                   : 'Mark as complete'
                               }
+                              aria-pressed={task.status === 'completed'}
                             >
                               {task.status === 'completed' && (
                                 <svg

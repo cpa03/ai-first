@@ -42,7 +42,6 @@ function ClarifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
-  const [loading, _setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const logger = createLogger('ClarifyPage');
 
