@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { SECURITY_CONFIG } from '@/lib/config/constants';
 
 export function middleware() {
   const response = NextResponse.next();
@@ -32,9 +33,14 @@ export function middleware() {
   );
 
   if (process.env.NODE_ENV === 'production') {
+    const hstsDirectives = [
+      `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}`,
+      ...(SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? ['includeSubDomains'] : []),
+      ...(SECURITY_CONFIG.HSTS_PRELOAD ? ['preload'] : []),
+    ];
     response.headers.set(
       'Strict-Transport-Security',
-      'max-age=31536000; includeSubDomains; preload'
+      hstsDirectives.join('; ')
     );
   }
 

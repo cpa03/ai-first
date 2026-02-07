@@ -225,6 +225,27 @@ export const RATE_LIMIT_CLEANUP_CONFIG = {
 } as const;
 
 /**
+ * Security headers configuration
+ */
+export const SECURITY_CONFIG = {
+  /**
+   * HSTS max-age in seconds (1 year = 31536000 seconds)
+   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+   */
+  HSTS_MAX_AGE: 31536000,
+
+  /**
+   * HSTS includeSubDomains directive
+   */
+  HSTS_INCLUDE_SUBDOMAINS: true,
+
+  /**
+   * HSTS preload directive
+   */
+  HSTS_PRELOAD: true,
+} as const;
+
+/**
  * Retry delay polling configuration
  */
 export const RETRY_DELAY_CONFIG = {
