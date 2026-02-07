@@ -117,6 +117,10 @@ export class DatabaseService {
   private _client: ReturnType<typeof createClient<Database>> | null = null;
   private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
+  private connectionRetries = 0;
+  private maxConnectionRetries = 3;
+  private connectionHealthy = false;
+  private lastHealthCheck: Date | null = null;
 
   private constructor() {
     this._client = supabaseClient;
@@ -172,6 +176,28 @@ export class DatabaseService {
   // For testing purposes only - reset the singleton instance
   static resetInstance(): void {
     DatabaseService.instance = undefined as unknown as DatabaseService;
+  }
+
+  // Connection health monitoring
+  async checkConnection(): Promise<boolean> {
+    try {
+      if (!this.client) return false;
+
+      const { error } = await this.client.from('ideas').select('id').limit(1);
+      this.connectionHealthy = !error;
+      this.lastHealthCheck = new Date();
+      return this.connectionHealthy;
+    } catch {
+      this.connectionHealthy = false;
+      return false;
+    }
+  }
+
+  isConnectionHealthy(): boolean {
+    // Check if last health check is within 30 seconds
+    if (!this.lastHealthCheck) return false;
+    const thirtySecondsAgo = new Date(Date.now() - 30000);
+    return this.connectionHealthy && this.lastHealthCheck > thirtySecondsAgo;
   }
 
   // Ideas CRUD operations
