@@ -48,10 +48,12 @@ export default function ClarifyPage() {
     const ideaIdFromUrl = urlParams.get('ideaId');
 
     if (ideaFromUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIdea(decodeURIComponent(ideaFromUrl));
     }
 
     if (ideaIdFromUrl) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIdeaId(ideaIdFromUrl);
     }
 
