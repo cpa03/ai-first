@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
@@ -33,30 +33,26 @@ const DynamicClarificationFlow = dynamic(
   }
 );
 
+function getInitialStateFromUrl() {
+  if (typeof window === 'undefined') {
+    return { idea: '', ideaId: '' };
+  }
+  const urlParams = new URLSearchParams(window.location.search);
+  return {
+    idea: urlParams.get('idea')
+      ? decodeURIComponent(urlParams.get('idea')!)
+      : '',
+    ideaId: urlParams.get('ideaId') || '',
+  };
+}
+
 export default function ClarifyPage() {
   const router = useRouter();
-  const [idea, setIdea] = useState<string>('');
-  const [ideaId, setIdeaId] = useState<string>('');
+  const [idea] = useState<string>(() => getInitialStateFromUrl().idea);
+  const [ideaId] = useState<string>(() => getInitialStateFromUrl().ideaId);
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const logger = createLogger('ClarifyPage');
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const ideaFromUrl = urlParams.get('idea');
-    const ideaIdFromUrl = urlParams.get('ideaId');
-
-    if (ideaFromUrl) {
-      setIdea(decodeURIComponent(ideaFromUrl));
-    }
-
-    if (ideaIdFromUrl) {
-      setIdeaId(ideaIdFromUrl);
-    }
-
-    setLoading(false);
-  }, []);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
@@ -84,21 +80,6 @@ export default function ClarifyPage() {
       setError('Failed to save your answers. Please try again.');
     }
   };
-
-  if (loading) {
-    return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
-          <LoadingSpinner
-            size="md"
-            className="mb-4"
-            ariaLabel="Loading clarification flow"
-          />
-          <p className="text-gray-600">Loading clarification flow...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
