@@ -6,3 +6,10 @@
 **Learning:** Relying on exact string matches for sensitive field names is brittle in TypeScript/JavaScript where camelCase (`apiKey`) and snake_case (`api_key`) are both common. Security utilities must be defensive and handle common naming variations. Furthermore, sanitization must be applied at the lowest possible layer (e.g., the database service) to ensure all logs are protected regardless of the caller.
 
 **Prevention:** Use case-insensitive fuzzy matching for sensitive field names and ensure all logging pipelines pass through a sanitization layer. Regularly update regex patterns to match common credential formats (e.g., OpenAI, Stripe).
+
+## 2025-05-16 - Missing Security Headers for API Routes
+**Vulnerability:** Security headers such as `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, and Content Security Policy (CSP) were explicitly excluded from all `/api` routes in the middleware configuration. This left the API vulnerable to MIME-sniffing and potentially other cross-origin attacks if accessed via a browser.
+
+**Learning:** Security headers are just as important for APIs as they are for frontend pages. While some headers like CSP are primarily browser-focused, they still provide a layer of defense-in-depth for API responses, especially when those responses might be rendered or handled by a browser.
+
+**Prevention:** Ensure security middleware covers all application routes, including API endpoints. Avoid using middleware matchers that exclude large portions of the application's attack surface.
