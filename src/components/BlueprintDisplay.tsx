@@ -41,9 +41,14 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     a.href = url;
     a.download = 'project-blueprint.md';
     document.body.appendChild(a);
+
+    // Use setTimeout to ensure download starts before cleanup
+    setTimeout(() => {
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 100);
+
     a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
 
   const handleCopy = async () => {

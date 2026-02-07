@@ -156,7 +156,9 @@ function ClarificationFlow({
         }
 
         const data = await response.json();
-        const questionsData = Array.isArray(data?.data?.questions) ? data.data.questions : Array.isArray(data?.questions) ? data.questions : [];
+        // Validate and extract questions with runtime type checking
+        const rawQuestions = data?.data?.questions ?? data?.questions;
+        const questionsData = Array.isArray(rawQuestions) ? rawQuestions : [];
 
         const formattedQuestions: Question[] = questionsData.map(
           (q: APIQuestion, index: number) => ({
@@ -198,7 +200,7 @@ function ClarificationFlow({
     };
 
     fetchQuestions();
-  }, [idea, ideaId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [idea, ideaId, logger]);
 
   if (loading) {
     return (

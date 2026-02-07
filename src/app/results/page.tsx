@@ -169,12 +169,13 @@ export default function ResultsPage() {
         <div className="bg-red-50 border border-red-200 rounded-lg p-6">
           <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
           <p className="text-red-800">{error}</p>
-          <button
+          <Button
             onClick={() => router.back()}
-            className="mt-4 btn btn-primary"
+            variant="primary"
+            className="mt-4"
           >
             Go Back
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -190,12 +191,13 @@ export default function ResultsPage() {
           <p className="text-yellow-800">
             The idea you're looking for doesn't exist.
           </p>
-          <button
+          <Button
             onClick={() => router.push('/')}
-            className="mt-4 btn btn-primary"
+            variant="primary"
+            className="mt-4"
           >
             Go Home
-          </button>
+          </Button>
         </div>
       </div>
     );
