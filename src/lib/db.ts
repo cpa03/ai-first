@@ -452,6 +452,20 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getTask(id: string): Promise<Task | null> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const { data, error } = await this.client
+      .from('tasks')
+      .select('*')
+      .eq('id', id)
+      .is('deleted_at', null)
+      .single();
+
+    if (error) return null;
+    return data;
+  }
+
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
