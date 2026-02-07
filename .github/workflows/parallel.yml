@@ -157,7 +157,7 @@ jobs:
   # ------------------------------------------------------------------
   # STAGE 3: ISSUE MANAGER
   # ------------------------------------------------------------------
-  integrator:
+  IsMan:
     name: "IsMan"
     needs: specialists
     runs-on: ubuntu-24.04-arm
