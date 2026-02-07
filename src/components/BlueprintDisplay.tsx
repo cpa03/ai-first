@@ -22,16 +22,23 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
   // Simulate blueprint generation
   useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
     const generateBlueprint = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      const generatedBlueprint = generateBlueprintTemplate(idea, answers);
-
-      setBlueprint(generatedBlueprint);
-      setIsGenerating(false);
+      timeoutId = setTimeout(() => {
+        const generatedBlueprint = generateBlueprintTemplate(idea, answers);
+        setBlueprint(generatedBlueprint);
+        setIsGenerating(false);
+      }, 2000);
     };
 
     generateBlueprint();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [idea, answers]);
 
   const handleDownload = () => {

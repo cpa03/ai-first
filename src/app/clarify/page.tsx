@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
@@ -33,8 +33,9 @@ const DynamicClarificationFlow = dynamic(
   }
 );
 
-export default function ClarifyPage() {
+function ClarifyPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [idea, setIdea] = useState<string>('');
   const [ideaId, setIdeaId] = useState<string>('');
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
@@ -43,9 +44,8 @@ export default function ClarifyPage() {
   const logger = createLogger('ClarifyPage');
 
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const ideaFromUrl = urlParams.get('idea');
-    const ideaIdFromUrl = urlParams.get('ideaId');
+    const ideaFromUrl = searchParams.get('idea');
+    const ideaIdFromUrl = searchParams.get('ideaId');
 
     if (ideaFromUrl) {
       setIdea(decodeURIComponent(ideaFromUrl));
@@ -56,7 +56,7 @@ export default function ClarifyPage() {
     }
 
     setLoading(false);
-  }, []);
+  }, [searchParams]);
 
   const handleClarificationComplete = async (
     completedAnswers: Record<string, string>
@@ -194,5 +194,26 @@ export default function ClarifyPage() {
         onComplete={handleClarificationComplete}
       />
     </div>
+  );
+}
+
+export default function ClarifyPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <LoadingSpinner
+              size="md"
+              className="mb-4"
+              ariaLabel="Loading clarification flow"
+            />
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <ClarifyPageContent />
+    </Suspense>
   );
 }

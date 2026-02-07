@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -41,8 +41,9 @@ const BlueprintDisplay = dynamic(
   }
 );
 
-export default function ResultsPage() {
+function ResultsPageContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [idea, setIdea] = useState<Idea | null>(null);
   const [session, setSession] = useState<IdeaSession | null>(null);
   const [loading, setLoading] = useState(true);
@@ -55,8 +56,7 @@ export default function ResultsPage() {
       try {
         setLoading(true);
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const ideaId = urlParams.get('ideaId');
+        const ideaId = searchParams.get('ideaId');
 
         if (!ideaId) {
           throw new Error('Idea ID is required');
@@ -95,7 +95,7 @@ export default function ResultsPage() {
     };
 
     fetchResults();
-  }, []);
+  }, [searchParams]);
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!idea) return;
@@ -276,5 +276,26 @@ export default function ResultsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ResultsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+            <LoadingSpinner
+              size="md"
+              className="mb-4"
+              ariaLabel="Generating your project blueprint"
+            />
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </div>
+      }
+    >
+      <ResultsPageContent />
+    </Suspense>
   );
 }

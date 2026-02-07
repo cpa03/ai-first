@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import Link from 'next/link';
 import Alert from './Alert';
 import Button from './Button';
 import { createLogger } from '@/lib/logger';
@@ -61,13 +62,14 @@ export default class ErrorBoundary extends Component<Props, State> {
                 >
                   Try Again
                 </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => (window.location.href = '/')}
-                  className="w-full sm:w-auto ml-0 sm:ml-2"
-                >
-                  Go to Home
-                </Button>
+                <Link href="/" passHref>
+                  <Button
+                    variant="secondary"
+                    className="w-full sm:w-auto ml-0 sm:ml-2"
+                  >
+                    Go to Home
+                  </Button>
+                </Link>
               </div>
             </Alert>
 

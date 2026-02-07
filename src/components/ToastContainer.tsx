@@ -83,12 +83,19 @@ function Toast({ toast, onClose }: ToastProps) {
 
   useEffect(() => {
     const duration = toast.duration || 5000;
+    let leaveTimeoutId: NodeJS.Timeout;
+
     const timer = setTimeout(() => {
       setIsLeaving(true);
-      setTimeout(() => onClose(toast.id), 300);
+      leaveTimeoutId = setTimeout(() => onClose(toast.id), 300);
     }, duration);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (leaveTimeoutId) {
+        clearTimeout(leaveTimeoutId);
+      }
+    };
   }, [toast.id, toast.duration, onClose]);
 
   const styles = toastColors[toast.type];
@@ -121,7 +128,8 @@ function Toast({ toast, onClose }: ToastProps) {
       <button
         onClick={() => {
           setIsLeaving(true);
-          setTimeout(() => onClose(toast.id), 300);
+          const leaveTimeoutId = setTimeout(() => onClose(toast.id), 300);
+          return () => clearTimeout(leaveTimeoutId);
         }}
         className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
         aria-label="Close notification"

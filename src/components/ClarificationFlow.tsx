@@ -121,8 +121,10 @@ function ClarificationFlow({
   useEffect(() => {
     if (!currentQuestion || questions.length === 0) return;
 
+    let timeoutId: NodeJS.Timeout;
+
     const focusInput = () => {
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         if (currentQuestion.type === 'textarea') {
           textareaRef.current?.focus();
         } else if (currentQuestion.type === 'select') {
@@ -134,6 +136,12 @@ function ClarificationFlow({
     };
 
     focusInput();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, [currentStep, questions, currentQuestion]);
 
   useEffect(() => {
@@ -156,7 +164,11 @@ function ClarificationFlow({
         }
 
         const data = await response.json();
-        const questionsData = Array.isArray(data?.data?.questions) ? data.data.questions : Array.isArray(data?.questions) ? data.questions : [];
+        const questionsData = Array.isArray(data?.data?.questions)
+          ? data.data.questions
+          : Array.isArray(data?.questions)
+            ? data.questions
+            : [];
 
         const formattedQuestions: Question[] = questionsData.map(
           (q: APIQuestion, index: number) => ({
