@@ -275,7 +275,7 @@ export const MockResponseGenerator = {
     'What is your budget range?',
   ],
 
-  generateClarifyingQuestions(ideaText: string) {
+  generateClarifyingQuestions(_ideaText: string) {
     return {
       questions: this.aiQuestions.slice(0, 3 + Math.floor(Math.random() * 3)),
     };
