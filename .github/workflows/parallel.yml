@@ -68,15 +68,12 @@ jobs:
         run: |
           max_retries=2
           retry_count=0
-
           echo "🏗️ Starting Architect Intelligence Cycle"
-
           while [ $retry_count -lt $max_retries ]; do
             echo "Attempt $((retry_count + 1)) of $max_retries"
-
-            if opencode run /ulw-loop "analisa semua dokumen di folder /docs, analisa log github, temukan bugs dan errors, catat di docs/bugs.md" \
-              --agent arsitek \
-              --model opencode/glm-4.7-free \
+            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, sementara dan tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
               --share false; then
               echo "✅ Architect work completed successfully"
               break
@@ -117,16 +114,15 @@ jobs:
           - reliability-engineer
           - integration-engineer
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure Git
         run: |
           git config --global user.name "${{ matrix.role }}"
-          git config --global user.email "${{ matrix.role }}@bank-sampah.sulhi.workers.dev/"
-
+          git config --global user.email "${{ matrix.role }}@bank-sampah.sulhi.workers.dev"
       - name: Setup Node & OpenCode
         continue-on-error: true
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: "20"
       - name: Install Dependencies
@@ -148,7 +144,7 @@ jobs:
           echo "Starting specialist work for ${{ matrix.role }}"
           
           if opencode run /ulw-loop \
-            "You are ${{ matrix.role }} specialist. read documentation on /docs folder, especially docs/${{ matrix.role }}.md. your goal is to find and fix bugs/errors based your specialization. ensure build/lint success. create/update docs/${{ matrix.role }}.md. create/update pr from branch ${{ matrix.role }}, ensure up to date with main before create pr." \
+            "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, format "[${{ matrix.role }}] [bug/error]" with priority label [P0-P4]." \
             --model opencode/kimi-k2.5-free \
             --share false; then
             echo "✅ Specialist work completed successfully for ${{ matrix.role }}"
@@ -159,20 +155,19 @@ jobs:
           fi
 
   # ------------------------------------------------------------------
-  # STAGE 3: THE GATEKEEPER (Integrator)
+  # STAGE 3: ISSUE MANAGER
   # ------------------------------------------------------------------
   integrator:
-    name: "Integrator: PR Merge & Validate"
+    name: "IsMan"
     needs: specialists
     runs-on: ubuntu-24.04-arm
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Configure Git
         run: |
-          git config --global user.name "Integrator Bot"
-          git config --global user.email "integrator@bot.local"
-
+          git config --global user.name "IsMan"
+          git config --global user.email "IsMan@bank-sampah.sulhi.workers.dev"
       - name: Setup Node & OpenCode
         uses: actions/setup-node@v4
         with:
@@ -185,12 +180,48 @@ jobs:
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
       - name: Process Pull Requests
-        timeout-minutes: 40
+        timeout-minutes: 60
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          opencode run --agent integrator \
-            "Check all open PRs, prioritize latest pr. For each: Attempt merge main -> Build/Test -> If green, Merge PR. If red, comment." \
+          opencode run /ulw-loop \
+            "You are **IsMan**, github issues manager work on this repository. **Isman** love to consolidate tiny issues to meaningfull issue, he hate duplicate issues. **IsMan** always review and comment in open issues to explain why he do this and that, what file affected." \
+            --model opencode/kimi-k2.5-free \
+            --share false
+
+  # ------------------------------------------------------------------
+  # STAGE 4: THE GATEKEEPER (Integrator)
+  # ------------------------------------------------------------------
+  integrator:
+    name: "Fixer"
+    needs: specialists
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "Fixer"
+          git config --global user.email "fixer@bank-sampah.sulhi.workers.dev"
+      - name: Setup Node & OpenCode
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Process Pull Requests
+        timeout-minutes: 60
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          opencode run /ulw-loop \
+            "Check all open issues, check github logs. Plan to fix many non conflicting issues based priority by delegate to specialist agent with specialist skill: fix - verify- ensure build/lint success - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning." \
             --model opencode/kimi-k2.5-free \
             --share false
