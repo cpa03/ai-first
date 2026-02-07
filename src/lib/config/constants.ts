@@ -205,3 +205,33 @@ export const ANIMATION_CONFIG = {
    */
   ERROR_RELOAD_DELAY: 3000,
 } as const;
+
+/**
+ * Rate limit cleanup configuration
+ */
+export const RATE_LIMIT_CLEANUP_CONFIG = {
+  /**
+   * Interval for running cleanup of expired rate limit entries (in milliseconds)
+   * Default: 1 minute
+   */
+  CLEANUP_INTERVAL_MS: 60000,
+
+  /**
+   * Window of time to keep rate limit entries for cleanup (in milliseconds)
+   * Entries older than this will be removed
+   * Default: 1 minute
+   */
+  CLEANUP_WINDOW_MS: 60000,
+} as const;
+
+/**
+ * Retry delay polling configuration
+ */
+export const RETRY_DELAY_CONFIG = {
+  /**
+   * Polling interval for checking if retry delay should be aborted (in milliseconds)
+   * Lower values provide more responsive cancellation but use more CPU
+   * Default: 100ms
+   */
+  POLLING_INTERVAL_MS: 100,
+} as const;

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
 import Alert from './Alert';
@@ -27,6 +27,12 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isMac, setIsMac] = useState(false);
+
+  // Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(navigator.platform.includes('Mac'));
+  }, []);
 
   const handleIdeaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
@@ -122,7 +128,19 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         </div>
       )}
 
-      <div className="flex justify-end">
+      <div className="flex justify-between items-center">
+        <div
+          className="flex items-center gap-2 text-sm text-gray-500"
+          aria-label="Keyboard shortcut: Command Enter to submit"
+        >
+          <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-700">
+            {isMac ? '⌘' : 'Ctrl'}
+          </kbd>
+          <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-700">
+            Enter
+          </kbd>
+          <span className="hidden sm:inline text-gray-400">to submit</span>
+        </div>
         <Button
           type="submit"
           variant="primary"

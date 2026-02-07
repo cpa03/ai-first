@@ -111,10 +111,14 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
   };
 }
 
+import { RATE_LIMIT_CLEANUP_CONFIG } from './config/constants';
+
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
   for (const [key, requests] of rateLimitStore.entries()) {
-    const recentRequests = requests.filter((r) => r >= now - 60 * 1000);
+    const recentRequests = requests.filter(
+      (r) => r >= now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS
+    );
     if (recentRequests.length === 0) {
       rateLimitStore.delete(key);
     } else {
@@ -123,7 +127,10 @@ export function cleanupExpiredEntries(): void {
   }
 }
 
-setInterval(cleanupExpiredEntries, 60 * 1000);
+setInterval(
+  cleanupExpiredEntries,
+  RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_INTERVAL_MS
+);
 
 export function rateLimitResponse(
   rateLimitInfo: RateLimitInfo,
