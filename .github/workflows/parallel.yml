@@ -103,7 +103,7 @@ jobs:
           - frontend-engineer
           - backend-engineer
           - api-specialist
-          - code-reviewer
+          - DX-engineer
           - security-engineer
           - quality-assurance
           - performance-engineer
@@ -113,6 +113,10 @@ jobs:
           - technical-writer
           - reliability-engineer
           - integration-engineer
+          - product-manager
+          - user-story-engineer
+          - modularity-engineer
+          - hardcoded-eliminator
     steps:
       - uses: actions/checkout@v5
 
@@ -125,9 +129,6 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
-        run: npm ci
       - name: Install OpenCode CLI
         run: |
           curl -fsSL https://opencode.ai/install | bash
@@ -153,7 +154,6 @@ jobs:
             echo "This may be expected if no issues were found or work took longer than timeout"
             exit 0  # Don't fail the workflow, just log the issue
           fi
-
   # ------------------------------------------------------------------
   # STAGE 3: ISSUE MANAGER
   # ------------------------------------------------------------------
@@ -189,7 +189,6 @@ jobs:
             "You are **IsMan**, github issues manager work on this repository. **Isman** love to consolidate tiny issues to meaningfull issue, he hate duplicate issues. **IsMan** always review and comment in open issues to explain why he do this and that, what file affected." \
             --model opencode/kimi-k2.5-free \
             --share false
-
   # ------------------------------------------------------------------
   # STAGE 4: THE GATEKEEPER (Integrator)
   # ------------------------------------------------------------------
@@ -222,6 +221,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           opencode run /ulw-loop \
-            "Check all open issues, check github logs. Plan to fix many non conflicting issues based priority by delegate to specialist agent with specialist skill: fix - verify- ensure build/lint success - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning." \
+            "Check all open issues, check github logs. Select based priority, for each issue: fix - verify- ensure build/lint success without errors/warnings - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning." \
             --model opencode/kimi-k2.5-free \
             --share false
