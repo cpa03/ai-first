@@ -81,55 +81,6 @@ export interface Database {
           timestamp?: string;
         };
       };
-      clarification_sessions: {
-        Row: {
-          id: string;
-          idea_id: string;
-          status: 'active' | 'completed' | 'cancelled';
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          idea_id: string;
-          status?: 'active' | 'completed' | 'cancelled';
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          idea_id?: string;
-          status?: 'active' | 'completed' | 'cancelled';
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
-      clarification_answers: {
-        Row: {
-          id: string;
-          session_id: string;
-          question_id: string;
-          answer: string;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id?: string;
-          session_id: string;
-          question_id: string;
-          answer: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: {
-          id?: string;
-          session_id?: string;
-          question_id?: string;
-          answer?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-      };
       deliverables: {
         Row: {
           created_at: string;
