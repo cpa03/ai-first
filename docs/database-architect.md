@@ -4,6 +4,13 @@
 
 This document provides comprehensive documentation for the IdeaFlow database architecture, built on Supabase (PostgreSQL) with Row Level Security (RLS) policies, comprehensive indexing, and vector similarity search capabilities.
 
+## Database Technology Stack
+
+- **Platform**: Supabase (PostgreSQL)
+- **ORM/Client**: @supabase/supabase-js
+- **Vector Extension**: pgvector (for embeddings)
+- **Authentication**: Supabase Auth (built-in)
+
 ## Table of Contents
 
 1. [Database Schema](#database-schema)
@@ -17,6 +24,8 @@ This document provides comprehensive documentation for the IdeaFlow database arc
 9. [Best Practices](#best-practices)
 10. [Common Issues and Solutions](#common-issues-and-solutions)
 11. [Migration Guidelines](#migration-guidelines)
+12. [Database Service Layer](#database-service-layer)
+13. [Database Health Checks](#database-health-checks)
 
 ## Database Schema
 
@@ -119,6 +128,21 @@ agent_logs (system table)
 | created_at | TIMESTAMPTZ | DEFAULT NOW()                           | Creation timestamp                                  |
 | deleted_at | TIMESTAMPTZ | NULLABLE                                | Soft delete timestamp                               |
 
+**TypeScript Interface:**
+
+```typescript
+interface Idea {
+  id: string;
+  user_id: string;
+  title: string;
+  raw_text: string;
+  status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  deleted_at: string | null;
+  created_at: string;
+  updated_at?: string;
+}
+```
+
 ### 2. clarification_sessions
 
 **Purpose:** Track AI clarification sessions for ideas
@@ -130,6 +154,18 @@ agent_logs (system table)
 | status     | TEXT        | NOT NULL, DEFAULT 'active', CHECK                | Session status        |
 | created_at | TIMESTAMPTZ | DEFAULT NOW()                                    | Creation timestamp    |
 | updated_at | TIMESTAMPTZ | DEFAULT NOW()                                    | Last update timestamp |
+
+**TypeScript Interface:**
+
+```typescript
+interface ClarificationSession {
+  id: string;
+  idea_id: string;
+  status: 'active' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+```
 
 ### 3. clarification_answers
 
@@ -143,6 +179,19 @@ agent_logs (system table)
 | answer      | TEXT        | NOT NULL                                                          | User's answer         |
 | created_at  | TIMESTAMPTZ | DEFAULT NOW()                                                     | Creation timestamp    |
 | updated_at  | TIMESTAMPTZ | DEFAULT NOW()                                                     | Last update timestamp |
+
+**TypeScript Interface:**
+
+```typescript
+interface ClarificationAnswer {
+  id: string;
+  session_id: string;
+  question_id: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+}
+```
 
 ### 4. milestones
 
@@ -347,6 +396,19 @@ agent_logs (system table)
 
 **Security:** Restricted to service_role only (no user access).
 
+### 16. idea_sessions
+
+**Purpose:** Tracks the current state of AI processing for ideas
+
+| Column      | Type        | Constraints                            | Description               |
+| ----------- | ----------- | -------------------------------------- | ------------------------- |
+| idea_id     | UUID        | REFERENCES ideas(id) ON DELETE CASCADE | Associated idea           |
+| state       | JSONB       | NULLABLE                               | Session state             |
+| last_agent  | TEXT        | NULLABLE                               | Last agent that processed |
+| metadata    | JSONB       | NULLABLE                               | Additional metadata       |
+| updated_at  | TIMESTAMPTZ | DEFAULT NOW()                          | Last update timestamp     |
+| PRIMARY KEY |             | (idea_id)                              |                           |
+
 ## Indexes
 
 ### Core Indexes
@@ -393,6 +455,8 @@ agent_logs (system table)
 - `idx_tasks_deliverable_deleted` - (deliverable_id, deleted_at)
 - `idx_tasks_start_end_dates` - (start_date, end_date) WHERE deleted_at IS NULL
 - `idx_tasks_status_completion` - (status, completion_percentage) WHERE deleted_at IS NULL
+- `idx_clarification_sessions_idea_status` - (idea_id, status)
+- `idx_clarification_answers_session` - (session_id)
 
 ## Row Level Security (RLS)
 
@@ -630,6 +694,49 @@ CREATE INDEX idx_table_column ON table_name(column);
 CREATE INDEX idx_table_composite ON table_name(col1, col2);
 ```
 
+### Issue 5: Missing TypeScript Types
+
+**Problem:** `clarification_sessions` and `clarification_answers` tables exist in schema but not in TypeScript types.
+
+**Solution:** Add to `src/types/database.ts`:
+
+```typescript
+clarification_sessions: {
+  Row: { id: string; idea_id: string; status: 'active' | 'completed' | 'cancelled'; created_at: string; updated_at: string; };
+  Insert: { ... };
+  Update: { ... };
+};
+clarification_answers: {
+  Row: { id: string; session_id: string; question_id: string; answer: string; created_at: string; updated_at: string; };
+  Insert: { ... };
+  Update: { ... };
+};
+```
+
+### Issue 6: Type Mismatches
+
+**Problem:** Database types don't match TypeScript interfaces.
+
+**Solution:** Always regenerate types after schema changes:
+
+```bash
+# Generate types from Supabase
+supabase gen types typescript --project-id <project-id> --schema public > src/types/database.ts
+```
+
+### Issue 7: RLS Policy Errors
+
+**Problem:** Users can't access their data despite correct RLS policies.
+
+**Solution:** Verify policies check both `auth.uid()` and soft deletes:
+
+```sql
+CREATE POLICY "Users can view their own ideas" ON ideas
+    FOR SELECT USING (
+        auth.uid() = user_id AND deleted_at IS NULL
+    );
+```
+
 ## Migration Guidelines
 
 ### Creating Migrations
@@ -716,6 +823,71 @@ const deliverables = await dbService.getIdeaDeliverablesWithTasks(ideaId);
 await dbService.softDeleteIdea(ideaId);
 ```
 
+### Client Initialization
+
+```typescript
+// Browser client (respects RLS)
+export const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: { persistSession: true, autoRefreshToken: true },
+});
+
+// Admin client (bypasses RLS for server operations)
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
+  auth: { persistSession: false, autoRefreshToken: false },
+});
+```
+
+## Database Health Checks
+
+### Automated Health Check
+
+```typescript
+async healthCheck(): Promise<{ status: string; timestamp: string }> {
+  try {
+    const { error } = await this.client.from('ideas').select('id').limit(1);
+    if (error) throw error;
+    return { status: 'healthy', timestamp: new Date().toISOString() };
+  } catch {
+    return { status: 'unhealthy', timestamp: new Date().toISOString() };
+  }
+}
+```
+
+### Manual Verification Commands
+
+```sql
+-- Check table sizes
+SELECT schemaname, tablename, pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename))
+FROM pg_tables WHERE schemaname = 'public' ORDER BY pg_total_relation_size(schemaname||'.'||tablename) DESC;
+
+-- Check index usage
+SELECT schemaname, tablename, indexname, idx_scan, idx_tup_read, idx_tup_fetch
+FROM pg_stat_user_indexes WHERE schemaname = 'public' ORDER BY idx_scan DESC;
+
+-- Check slow queries
+SELECT query, calls, mean_time, total_time FROM pg_stat_statements ORDER BY mean_time DESC LIMIT 10;
+```
+
+### Migration Files
+
+Located in `/supabase/migrations/`:
+
+| Migration                                         | Description                  |
+| ------------------------------------------------- | ---------------------------- |
+| 001_breakdown_engine_extensions.sql               | Adds breakdown engine tables |
+| 002_data_integrity_constraints.sql                | Adds CHECK constraints       |
+| 002_schema_optimization.sql                       | Performance optimizations    |
+| 003_vectors_pgvector_support.sql                  | Vector extension setup       |
+| 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns   |
+| 20260120_add_clarification_tables_and_indexes.sql | Clarification tables         |
+
+### Migration Best Practices
+
+1. **Always include down migrations** for rollback capability
+2. **Use IF EXISTS/IF NOT EXISTS** to make migrations idempotent
+3. **Document purpose and safety** in migration headers
+4. **Test migrations** on a copy of production data
+
 ## Performance Optimization
 
 ### Query Optimization
@@ -759,13 +931,12 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Connection pool utilization
 - Error rates
 
-### Health Checks
+### Recommended Monitoring
 
-```typescript
-// Database health check
-const health = await dbService.healthCheck();
-// Returns: { status: 'healthy' | 'unhealthy', timestamp: string }
-```
+- Poll `/api/health/detailed` every 30s
+- Alert on status = 'unhealthy'
+- Track circuit breaker open events
+- Monitor retry success rates
 
 ## Conclusion
 
