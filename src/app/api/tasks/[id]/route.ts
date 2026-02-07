@@ -7,6 +7,7 @@ import {
 } from '@/lib/api-handler';
 import { dbService, Task } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
+import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 
 // Valid task statuses
 const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
@@ -71,6 +72,19 @@ async function handlePut(context: ApiContext) {
   }
 
   try {
+    // Authenticate user
+    const user = await requireAuth(request);
+
+    // Get task with ownership information
+    const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
+
+    if (!taskWithOwnership) {
+      return notFoundResponse('Task not found');
+    }
+
+    // Verify ownership
+    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+
     // Update the task
     const updates: Partial<Task> = {};
 
@@ -98,10 +112,6 @@ async function handlePut(context: ApiContext) {
 
     const updatedTask = await dbService.updateTask(taskId, updates);
 
-    if (!updatedTask) {
-      return notFoundResponse('Task not found');
-    }
-
     return standardSuccessResponse(
       { task: updatedTask },
       context.requestId,
@@ -127,6 +137,19 @@ async function handleDelete(context: ApiContext) {
   }
 
   try {
+    // Authenticate user
+    const user = await requireAuth(request);
+
+    // Get task with ownership information
+    const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
+
+    if (!taskWithOwnership) {
+      return notFoundResponse('Task not found');
+    }
+
+    // Verify ownership
+    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+
     // Soft delete the task
     await dbService.softDeleteTask(taskId);
 
@@ -155,15 +178,21 @@ async function handleGet(context: ApiContext) {
   }
 
   try {
-    // Get task details through the service layer
-    const task = await dbService.getTask(taskId);
+    // Authenticate user
+    const user = await requireAuth(request);
 
-    if (!task) {
+    // Get task with ownership information
+    const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
+
+    if (!taskWithOwnership) {
       return notFoundResponse('Task not found');
     }
 
+    // Verify ownership
+    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+
     return standardSuccessResponse(
-      { task },
+      { task: taskWithOwnership },
       context.requestId,
       200,
       context.rateLimit
