@@ -347,6 +347,7 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
               {/* Deliverable Header */}
               <button
                 onClick={() => toggleDeliverable(deliverable.id)}
+                aria-expanded={isExpanded}
                 className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity"
               >
                 <div className="flex-1">
