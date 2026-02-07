@@ -1,0 +1,142 @@
+name: oh-my-opencode-multi-agent
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: Task description
+        required: true
+        default: Build new feature
+
+permissions:
+  contents: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  multi-agent:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    env:
+      OPENCODE_API_KEY: ${{ secrets.OPENCODE_API_KEY }}
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - name: Setup Agent Workspace Branch
+        run: |
+          git fetch --all
+          git checkout agent-workspace || git checkout -b agent-workspace
+
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+
+      - name: Install Oh My OpenCode
+        run: |
+          # Install via bun
+          bun install -g oh-my-opencode
+
+      - name: Setup OpenCode Configuration
+        run: |
+          mkdir -p ~/.config/opencode
+
+          # Configure OpenCode with Oh My OpenCode plugin
+          cat > ~/.config/opencode/opencode.json <<'EOF'
+          {
+            "plugins": ["oh-my-opencode"]
+          }
+          EOF
+
+          # Configure Oh My OpenCode settings
+          cat > ~/.config/opencode/oh-my-opencode.json <<'EOF'
+          {
+            // Multi-agent configuration for GitHub Actions
+            "agents": {
+              "sisyphus": {
+                "model": "opencode/kimi-k2.5-free",
+                "temperature": 1.0
+              },
+              "hephaestus": {
+                "model": "opencode/kimi-k2.5-free",
+                "temperature": 1.0
+              },
+              "oracle": {
+                "model": "opencode/kimi-k2.5-free"
+              },
+              "librarian": {
+                "model": "opencode/kimi-k2.5-free"
+              },
+              "explore": {
+                "model": "opencode/kimi-k2.5-free"
+              }
+            },
+            "background_tasks": {
+              "concurrency": {
+                "anthropic": 2
+              }
+            },
+            "categories": {
+              "visual": ["frontend", "ui", "components"],
+              "business-logic": ["backend", "api", "services"]
+            }
+          }
+          EOF
+
+      - name: Wait in Queue
+        uses: softprops/turnstyle@v2
+        with:
+          poll-interval-seconds: 30
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Multi-Agent Task with ultrawork
+        run: |
+          opencode run "$(cat <<'PROMPT'
+            ultrawork
+
+            Task: ${{ inputs.task }}
+
+            Instructions:
+            1. Analyze the codebase structure
+            2. Gather relevant documentation
+            3. Implement the required changes
+            4. Write tests for new functionality
+            5. Deploy and verify
+
+            Use all available agents:
+            - Explore for codebase navigation
+            - Librarian for documentation research
+            - Hephaestus for deep implementation
+            - Oracle for design and debugging
+            - Frontend Engineer for UI components (if needed)
+
+            Commit all changes with atomic commits.
+            PROMPT
+          )" --model opencode/kimi-k2.5-free
+
+      - name: Pull Request
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          gh pr create \
+            --title "Automated: ${{ inputs.task }}" \
+            --body "Multi-agent task completed via Oh My OpenCode" \
+            --base main \
+            --head agent-workspace
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
