@@ -4,6 +4,7 @@ import {
   ErrorCode,
   isRetryableError,
 } from '../errors';
+import { RETRY_DELAY_CONFIG } from '../config/constants';
 import { RetryOptions } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerState } from './types';
@@ -72,7 +73,7 @@ export class RetryManager {
 
         if (attempt > maxRetries || !retryFn(normalizedError, attempt)) {
           const exhaustedError = new RetryExhaustedError(
-            `Operation${context ? ` '${context}'` : ''} failed after ${attempt} attempts`,
+            `Operation${context ? ` '${context}'` : ''} failed`,
             context || 'unknown',
             attempt,
             normalizedError
@@ -98,7 +99,7 @@ export class RetryManager {
               if (controller.signal.aborted) {
                 reject(new Error('Retry delay aborted'));
               } else {
-                setTimeout(resolve, 100);
+                setTimeout(resolve, RETRY_DELAY_CONFIG.POLLING_INTERVAL_MS);
               }
             };
             checkAbort();
