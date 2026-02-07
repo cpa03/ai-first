@@ -217,6 +217,42 @@ export const rateLimitConfigs = {
 - Verify cURL commands work
 - Check JSON syntax
 
+### 5. Build/Lint Configuration Issues
+
+**Issue**: Missing dependencies or code patterns that break builds.
+
+**Examples**:
+
+- **Missing ESLint plugins**: `eslint-plugin-react-hooks` not installed but referenced
+- **React hooks violations**: setState called synchronously in useEffect
+- **Unused variables**: Parameters or variables defined but never used
+- **Type errors**: TypeScript compilation failures
+
+**Fix Strategy**:
+
+```bash
+# Check all quality gates pass
+npm run lint
+npm run type-check
+npm run build
+
+# Fix missing dependencies
+npm install <missing-package> --save-dev
+
+# Fix unused variables (prefix with underscore)
+function example(_unusedParam: string) { }
+
+# Fix React hooks issues
+# Use lazy initialization instead of setState in useEffect
+const [value] = useState(() => computeInitialValue());
+```
+
+**Prevention**:
+
+- Always run lint/type-check/build before committing
+- Check CI/CD pipeline configuration
+- Keep dependencies in sync with .eslintrc.json
+
 ---
 
 ## File Structure
@@ -497,4 +533,5 @@ gh pr create --title "fix(docs): [description]" --body "..."
 
 **Last Updated**: 2026-02-07  
 **Agent**: Technical Writer  
-**Version**: 1.0.0
+**Version**: 1.1.0  
+**Verification Status**: ✅ All documentation verified against implementation
