@@ -144,7 +144,7 @@ jobs:
           echo "Starting specialist work for ${{ matrix.role }}"
           
           if opencode run /ulw-loop \
-            "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, format "[${{ matrix.role }}] [bug/error]" with priority label [P0-P4]." \
+            "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, strict format "[bug/error title]", strict label: [${{ matrix.role }}] and priority [P0-P4]. Skip your work if open issues >10." \
             --model opencode/kimi-k2.5-free \
             --share false; then
             echo "✅ Specialist work completed successfully for ${{ matrix.role }}"
@@ -195,7 +195,7 @@ jobs:
   # ------------------------------------------------------------------
   integrator:
     name: "Fixer"
-    needs: specialists
+    needs: IsMan
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v5
