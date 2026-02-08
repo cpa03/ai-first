@@ -184,7 +184,9 @@ export function getRateLimitStats() {
     }
 
     stats.topUsers.push({
-      identifier: redactPII(identifier),
+      identifier: identifier.includes('.')
+        ? identifier.split('.').slice(0, 2).join('.') + '.x.x'
+        : redactPII(identifier),
       count: recentRequests.length,
     });
   }

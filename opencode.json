@@ -1,19 +1,12 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode/kimi-k2.5-free",
-  "agent": {
-    "CMZ": {
-      "enabled": true,
-      "orchestration": true
-    }
-  },
-  "permission": {
-    "external_directory": {
-      "/tmp/*": "allow",
-      "/var/tmp/*": "allow"
-    },
-    "allow": ["**/*"]
-  },
+  "agent": "CMZ",
+  "permission": [
+    { "type": "external_directory", "path": "/tmp/*", "access": "allow" },
+    { "type": "external_directory", "path": "/var/tmp/*", "access": "allow" },
+    { "type": "file", "path": "**/*", "access": "allow" }
+  ],
   "skills": {
     "paths": [".opencode/skills"]
   },
@@ -22,5 +15,5 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": true
+  "lsp": { "enabled": true }
 }
