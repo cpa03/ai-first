@@ -6,15 +6,7 @@
       "mode": "primary"
     }
   },
-  "permission": {
-    "external_directory": {
-      "/tmp/*": "allow",
-      "/var/tmp/*": "allow"
-    },
-    "bash": "allow",
-    "read": "allow",
-    "edit": "allow"
-  },
+  "permission": "allow",
   "skills": {
     "paths": [".opencode/skills"]
   },
