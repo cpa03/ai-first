@@ -13,3 +13,10 @@
 **Learning:** Security headers are just as important for APIs as they are for frontend pages. While some headers like CSP are primarily browser-focused, they still provide a layer of defense-in-depth for API responses, especially when those responses might be rendered or handled by a browser.
 
 **Prevention:** Ensure security middleware covers all application routes, including API endpoints. Avoid using middleware matchers that exclude large portions of the application's attack surface.
+
+## 2025-05-17 - Credential Leakage in API Logs and Incomplete Redaction
+**Vulnerability:** Admin credentials (like `admin_key`) passed in URLs were being logged in plaintext because `withApiHandler` used direct `console.error` calls and the PII redaction regex lacked coverage for admin-specific keys. Additionally, raw IP addresses were exposed in rate-limiting statistics.
+
+**Learning:** PII redaction utilities must be continuously updated to match the application's specific sensitive field names (e.g., `admin_key`). Furthermore, relying on global redaction is insufficient if logging points bypass the sanitization layer by using raw console methods instead of the project's Logger.
+
+**Prevention:** Use a centralized Logger that enforces redaction on all inputs. Expand sensitive field lists to include application-specific secrets. Mask or redact PII even in admin-facing statistics to maintain a posture of least privilege.

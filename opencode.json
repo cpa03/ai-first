@@ -3,17 +3,10 @@
   "model": "opencode/kimi-k2.5-free",
   "agent": {
     "CMZ": {
-      "enabled": true,
-      "orchestration": true
+      "mode": "primary"
     }
   },
-  "permission": {
-    "external_directory": {
-      "/tmp/*": "allow",
-      "/var/tmp/*": "allow"
-    },
-    "allow": ["**/*"]
-  },
+  "permission": "allow",
   "skills": {
     "paths": [".opencode/skills"]
   },
@@ -22,5 +15,5 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": true
+  "lsp": false
 }

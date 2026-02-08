@@ -90,6 +90,8 @@ describe('PII Redaction Utility', () => {
         'api_key=abc123xyz789verylongkey',
         'secret: sk_live_1234567890abcdef',
         'token=pk_test_12345678901234567890abcdef',
+        'admin_key=test-admin-key-1234567890abcdef',
+        'adminkey: test-admin-key-1234567890abcdef',
       ];
 
       inputs.forEach((input) => {
@@ -498,12 +500,14 @@ describe('PII Redaction Utility', () => {
         userPassword: 'secret-password-123',
         apiToken: 'some-token-value',
         bearerAuth: 'bearer-token-xyz',
+        adminKey: 'admin-key-value',
       };
       const output = redactPIIInObject(input) as Record<string, unknown>;
 
       expect(output.userPassword).toBe('[REDACTED_USER_PASSWORD]');
       expect(output.apiToken).toBe('[REDACTED_API_TOKEN]');
       expect(output.bearerAuth).toBe('[REDACTED_BEARER_AUTH]');
+      expect(output.adminKey).toBe('[REDACTED_ADMIN_KEY]');
     });
 
     it('should handle objects with circular references (gracefully)', () => {

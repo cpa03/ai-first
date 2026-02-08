@@ -14,6 +14,9 @@ import {
   RateLimitInfo,
   getClientIdentifier,
 } from '@/lib/rate-limit';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('ApiHandler');
 
 export interface ApiResponse<T = unknown> {
   success: true;
@@ -99,16 +102,14 @@ export function withApiHandler(
 
       return response;
     } catch (error) {
-      // Log error details for monitoring
+      // Log error details for monitoring with automatic PII redaction
       const duration = Date.now() - requestStartTime;
-      console.error(
-        `[API Error] Request ${requestId} failed after ${duration}ms:`,
-        {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          path: request.url,
-          method: request.method,
-        }
-      );
+      logger.error(`Request ${requestId} failed after ${duration}ms:`, {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        path: request.url,
+        method: request.method,
+        requestId,
+      });
 
       return toErrorResponse(error, requestId);
     }
