@@ -112,6 +112,7 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
 }
 
 import { RATE_LIMIT_CLEANUP_CONFIG } from './config/constants';
+import { redactPII } from './pii-redaction';
 
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
@@ -183,7 +184,7 @@ export function getRateLimitStats() {
     }
 
     stats.topUsers.push({
-      identifier,
+      identifier: redactPII(identifier),
       count: recentRequests.length,
     });
   }
