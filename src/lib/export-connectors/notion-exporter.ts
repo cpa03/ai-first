@@ -1,5 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
-import { TIMEOUT_CONFIG } from '../config/constants';
+import { TIMEOUT_CONFIG, NOTION_CONFIG } from '../config';
 import { createLogger } from '../logger';
 import type { Client as NotionClient } from '@notionhq/client';
 
@@ -57,7 +57,7 @@ export class NotionExporter extends ExportConnector {
             title: [
               {
                 text: {
-                  content: `Project: ${idea.title}`,
+                  content: NOTION_CONFIG.DEFAULTS.PAGE_TITLE_TEMPLATE.replace('{title}', idea.title),
                 },
               },
             ],
@@ -224,10 +224,10 @@ export class NotionExporter extends ExportConnector {
       response_type: 'code',
       owner: 'user',
       redirect_uri: redirectUri,
-      scope: 'read,write',
+      scope: NOTION_CONFIG.DEFAULTS.SCOPE,
     });
 
-    return `https://api.notion.com/v1/oauth/authorize?${params.toString()}`;
+    return `${NOTION_CONFIG.API.AUTH_URL}?${params.toString()}`;
   }
 
   async handleAuthCallback(_code: string): Promise<void> {
