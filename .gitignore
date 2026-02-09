@@ -22,7 +22,7 @@ dist/
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
+# next-env.d.ts should be committed - see Next.js docs
 
 # IDE
 .vscode/
