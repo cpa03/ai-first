@@ -270,59 +270,218 @@ describe('checkRateLimit', () => {
 });
 
 describe('getClientIdentifier', () => {
-  it('should extract IP from x-forwarded-for header', () => {
-    const request = new Request('http://localhost', {
-      headers: { 'x-forwarded-for': '192.168.1.1' },
-    });
+  const originalEnv = process.env;
 
-    const identifier = getClientIdentifier(request);
-
-    expect(identifier).toBe('192.168.1.1');
+  beforeEach(() => {
+    process.env = { ...originalEnv };
+    delete process.env.VERCEL;
+    delete process.env.CF_WORKER;
+    delete process.env.CLOUDFLARE;
   });
 
-  it('should use last IP from x-forwarded-for when multiple present (security)', () => {
-    // Use last IP in chain (closest to server) to prevent client spoofing
-    const request = new Request('http://localhost', {
-      headers: { 'x-forwarded-for': '10.0.0.1, 10.0.0.2, 10.0.0.3' },
-    });
-
-    const identifier = getClientIdentifier(request);
-
-    // Last IP is from the trusted proxy, not spoofable by client
-    expect(identifier).toBe('10.0.0.3');
+  afterEach(() => {
+    process.env = originalEnv;
   });
 
-  it('should fall back to x-real-ip header', () => {
-    const request = new Request('http://localhost', {
-      headers: { 'x-real-ip': '172.16.0.1' },
+  describe('Vercel platform', () => {
+    beforeEach(() => {
+      process.env.VERCEL = '1';
     });
 
-    const identifier = getClientIdentifier(request);
+    it('should extract IP from x-vercel-forwarded-for header', () => {
+      const request = new Request('http://localhost', {
+        headers: { 'x-vercel-forwarded-for': '192.168.1.1' },
+      });
 
-    expect(identifier).toBe('172.16.0.1');
-  });
+      const identifier = getClientIdentifier(request);
 
-  it('should return unknown when no headers present', () => {
-    const request = new Request('http://localhost');
-
-    const identifier = getClientIdentifier(request);
-
-    expect(identifier).toBe('unknown');
-  });
-
-  it('should prefer x-real-ip over x-forwarded-for (security)', () => {
-    // x-real-ip is set by trusted proxies (Vercel, etc.) and cannot be spoofed by clients
-    const request = new Request('http://localhost', {
-      headers: {
-        'x-forwarded-for': '10.0.0.1',
-        'x-real-ip': '172.16.0.1',
-      },
+      expect(identifier).toBe('192.168.1.1');
     });
 
-    const identifier = getClientIdentifier(request);
+    it('should use first IP from x-vercel-forwarded-for when multiple present', () => {
+      const request = new Request('http://localhost', {
+        headers: { 'x-vercel-forwarded-for': '10.0.0.1, 10.0.0.2, 10.0.0.3' },
+      });
 
-    // x-real-ip takes precedence as it's set by the edge/proxy
-    expect(identifier).toBe('172.16.0.1');
+      const identifier = getClientIdentifier(request);
+
+      expect(identifier).toBe('10.0.0.1');
+    });
+
+    it('should ignore spoofed x-real-ip on Vercel', () => {
+      const request = new Request('http://localhost', {
+        headers: {
+          'x-real-ip': '172.16.0.1',
+          'user-agent': 'test-agent',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should not use spoofed x-real-ip, should use fingerprint fallback
+      expect(identifier).not.toBe('172.16.0.1');
+      expect(identifier).toMatch(/^fp:/);
+    });
+  });
+
+  describe('Cloudflare platform', () => {
+    beforeEach(() => {
+      process.env.CLOUDFLARE = '1';
+    });
+
+    it('should extract IP from cf-connecting-ip header', () => {
+      const request = new Request('http://localhost', {
+        headers: { 'cf-connecting-ip': '192.168.1.1' },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      expect(identifier).toBe('192.168.1.1');
+    });
+
+    it('should ignore spoofed headers on Cloudflare', () => {
+      const request = new Request('http://localhost', {
+        headers: {
+          'x-real-ip': '172.16.0.1',
+          'user-agent': 'test-agent',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should not use spoofed x-real-ip, should use fingerprint fallback
+      expect(identifier).not.toBe('172.16.0.1');
+      expect(identifier).toMatch(/^fp:/);
+    });
+  });
+
+  describe('Unknown platform (fallback)', () => {
+    it('should use request fingerprint when no platform headers present', () => {
+      const request = new Request('http://localhost', {
+        headers: {
+          'user-agent': 'test-agent',
+          'accept-language': 'en-US',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should generate a fingerprint instead of returning 'unknown'
+      expect(identifier).toMatch(/^fp:/);
+    });
+
+    it('should generate consistent fingerprints for same request characteristics', () => {
+      const request1 = new Request('http://localhost', {
+        headers: {
+          'user-agent': 'test-agent',
+          'accept-language': 'en-US',
+          'accept-encoding': 'gzip',
+        },
+      });
+
+      const request2 = new Request('http://localhost', {
+        headers: {
+          'user-agent': 'test-agent',
+          'accept-language': 'en-US',
+          'accept-encoding': 'gzip',
+        },
+      });
+
+      const identifier1 = getClientIdentifier(request1);
+      const identifier2 = getClientIdentifier(request2);
+
+      expect(identifier1).toBe(identifier2);
+    });
+
+    it('should generate different fingerprints for different request characteristics', () => {
+      const request1 = new Request('http://localhost', {
+        headers: {
+          'user-agent': 'test-agent-1',
+          'accept-language': 'en-US',
+        },
+      });
+
+      const request2 = new Request('http://localhost', {
+        headers: {
+          'user-agent': 'test-agent-2',
+          'accept-language': 'en-US',
+        },
+      });
+
+      const identifier1 = getClientIdentifier(request1);
+      const identifier2 = getClientIdentifier(request2);
+
+      expect(identifier1).not.toBe(identifier2);
+    });
+
+    it('should ignore spoofed x-forwarded-for on unknown platforms', () => {
+      const request = new Request('http://localhost', {
+        headers: {
+          'x-forwarded-for': '10.0.0.1',
+          'user-agent': 'test-agent',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should not use spoofed x-forwarded-for
+      expect(identifier).not.toBe('10.0.0.1');
+      expect(identifier).toMatch(/^fp:/);
+    });
+
+    it('should ignore spoofed x-real-ip on unknown platforms', () => {
+      const request = new Request('http://localhost', {
+        headers: {
+          'x-real-ip': '172.16.0.1',
+          'user-agent': 'test-agent',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should not use spoofed x-real-ip
+      expect(identifier).not.toBe('172.16.0.1');
+      expect(identifier).toMatch(/^fp:/);
+    });
+  });
+
+  describe('Security - IP spoofing prevention', () => {
+    it('should not be vulnerable to X-Real-IP spoofing attacks', () => {
+      delete process.env.VERCEL;
+      delete process.env.CLOUDFLARE;
+
+      const request = new Request('http://localhost', {
+        headers: {
+          'x-real-ip': '1.1.1.1', // Spoofed header
+          'user-agent': 'attacker',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should not use the spoofed IP
+      expect(identifier).not.toBe('1.1.1.1');
+      expect(identifier).toMatch(/^fp:/);
+    });
+
+    it('should not be vulnerable to X-Forwarded-For spoofing attacks', () => {
+      delete process.env.VERCEL;
+      delete process.env.CLOUDFLARE;
+
+      const request = new Request('http://localhost', {
+        headers: {
+          'x-forwarded-for': '1.1.1.1, 2.2.2.2', // Spoofed header
+          'user-agent': 'attacker',
+        },
+      });
+
+      const identifier = getClientIdentifier(request);
+
+      // Should not use the spoofed IP
+      expect(identifier).not.toBe('1.1.1.1');
+      expect(identifier).not.toBe('2.2.2.2');
+      expect(identifier).toMatch(/^fp:/);
+    });
   });
 });
 
@@ -362,27 +521,31 @@ describe('createRateLimitMiddleware', () => {
   });
 
   it('should call checkRateLimit with client identifier', () => {
+    process.env.VERCEL = '1';
     const middleware = createRateLimitMiddleware(rateLimitConfigs.moderate);
     const request = new Request('http://localhost', {
-      headers: { 'x-forwarded-for': '192.168.1.1' },
+      headers: { 'x-vercel-forwarded-for': '192.168.1.1' },
     });
 
     const result = middleware(request);
 
     expect(result.allowed).toBe(true);
     expect(result.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
+    delete process.env.VERCEL;
   });
 
   it('should work with different config', () => {
+    process.env.CLOUDFLARE = '1';
     const middleware = createRateLimitMiddleware(rateLimitConfigs.strict);
     const request = new Request('http://localhost', {
-      headers: { 'x-real-ip': '10.0.0.1' },
+      headers: { 'cf-connecting-ip': '10.0.0.1' },
     });
 
     const result = middleware(request);
 
     expect(result.allowed).toBe(true);
     expect(result.info.remaining).toBe(rateLimitConfigs.strict.limit - 1);
+    delete process.env.CLOUDFLARE;
   });
 });
 

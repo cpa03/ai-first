@@ -23,3 +23,9 @@
 **Learning:** Progress indicators should use semantic `<ol>` and `<li>` structures even when they are just visual dots. This allows screen readers to announce the current position and total steps correctly. Providing explicit `aria-label` descriptions like "Current", "Completed", or "Upcoming" for each step significantly improves the experience for non-visual users.
 
 **Action:** Always use ordered lists for multi-step progress indicators and ensure each step has a clear, state-aware ARIA label.
+
+## 2026-02-08 - [Aggregate Effort Visibility]
+
+**Learning:** When tracking progress for complex projects with multiple deliverables and tasks, providing aggregate effort (hours/points) alongside simple counts (X of Y tasks) gives users a much more accurate sense of remaining work. This is especially true when tasks vary significantly in complexity.
+
+**Action:** Always include aggregate estimates (total vs. completed) in project summaries and deliverable headers. Pre-calculate these values during data mapping to keep the UI performant.
