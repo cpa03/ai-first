@@ -18,6 +18,7 @@ export class Cache<T = unknown> {
   private maxSize?: number;
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
+  private totalHits: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
@@ -26,17 +27,16 @@ export class Cache<T = unknown> {
     this.maxSize = options.maxSize ?? CACHE_CONFIG.DEFAULT_MAX_SIZE;
     this.onEvict = options.onEvict;
     this.misses = 0;
+    this.totalHits = 0;
   }
 
   set(key: string, value: T): void {
     this.evictExpiredEntries();
 
+    const existingEntry = this.cache.get(key);
+
     // If key doesn't exist and we're at capacity, evict LRU
-    if (
-      this.maxSize &&
-      this.cache.size >= this.maxSize &&
-      !this.cache.has(key)
-    ) {
+    if (this.maxSize && this.cache.size >= this.maxSize && !existingEntry) {
       this.evictLRU();
     }
 
@@ -48,7 +48,11 @@ export class Cache<T = unknown> {
 
     // To maintain chronological order in the Map (for O(k) TTL eviction),
     // we must delete before setting to move the key to the end of insertion order.
-    this.cache.delete(key);
+    if (existingEntry) {
+      this.totalHits -= existingEntry.hits;
+      this.cache.delete(key);
+    }
+
     this.cache.set(key, entry);
   }
 
@@ -61,6 +65,7 @@ export class Cache<T = unknown> {
     }
 
     if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+      this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
       return null;
@@ -71,6 +76,7 @@ export class Cache<T = unknown> {
     this.cache.set(key, entry);
 
     entry.hits++;
+    this.totalHits++;
     return entry.value;
   }
 
@@ -79,16 +85,23 @@ export class Cache<T = unknown> {
   }
 
   delete(key: string): boolean {
-    return this.cache.delete(key);
+    const entry = this.cache.get(key);
+    if (entry) {
+      this.totalHits -= entry.hits;
+      return this.cache.delete(key);
+    }
+    return false;
   }
 
   clear(): void {
     this.cache.clear();
     this.misses = 0;
+    this.totalHits = 0;
   }
 
   resetStats(): void {
     this.misses = 0;
+    this.totalHits = 0;
     for (const entry of this.cache.values()) {
       entry.hits = 0;
     }
@@ -109,6 +122,7 @@ export class Cache<T = unknown> {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
+        this.totalHits -= entry.hits;
         this.cache.delete(key);
       } else {
         // Entries are sorted by timestamp; if this one isn't expired, none after it are.
@@ -119,25 +133,31 @@ export class Cache<T = unknown> {
 
   private evictLRU(): void {
     let lruKey: string | null = null;
-    let oldestTimestamp = Infinity;
+    let lruEntry: CacheEntry<T> | null = null;
     let lowestHits = Infinity;
 
+    // Optimization: Stop searching if we find an entry with 0 hits.
+    // Since Map preserves insertion order and we move entries to the end on access,
+    // the first entry with 0 hits is the oldest cold entry.
     for (const [key, entry] of this.cache.entries()) {
-      if (
-        entry.hits < lowestHits ||
-        (entry.hits === lowestHits && entry.timestamp < oldestTimestamp)
-      ) {
-        oldestTimestamp = entry.timestamp;
+      if (entry.hits === 0) {
+        lruKey = key;
+        lruEntry = entry;
+        break;
+      }
+
+      if (entry.hits < lowestHits) {
         lowestHits = entry.hits;
         lruKey = key;
+        lruEntry = entry;
       }
     }
 
-    if (lruKey) {
-      const entry = this.cache.get(lruKey);
-      if (entry && this.onEvict) {
-        this.onEvict(lruKey, entry);
+    if (lruKey && lruEntry) {
+      if (this.onEvict) {
+        this.onEvict(lruKey, lruEntry);
       }
+      this.totalHits -= lruEntry.hits;
       this.cache.delete(lruKey);
     }
   }
@@ -148,17 +168,12 @@ export class Cache<T = unknown> {
     misses: number;
     hitRate: number;
   } {
-    let totalHits = 0;
-    for (const entry of this.cache.values()) {
-      totalHits += entry.hits;
-    }
-
-    const totalRequests = totalHits + this.misses;
-    const hitRate = totalRequests > 0 ? totalHits / totalRequests : 0;
+    const totalRequests = this.totalHits + this.misses;
+    const hitRate = totalRequests > 0 ? this.totalHits / totalRequests : 0;
 
     return {
       size: this.cache.size,
-      hits: totalHits,
+      hits: this.totalHits,
       misses: this.misses,
       hitRate,
     };
