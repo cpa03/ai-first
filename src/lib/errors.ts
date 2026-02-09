@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { ERROR_CONFIG } from './config/constants';
 
 export interface ErrorDetail {
   field?: string;
@@ -278,7 +279,9 @@ export function toErrorResponse(error: unknown, requestId?: string): Response {
 }
 
 export function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}_${Math.random()
+    .toString(ERROR_CONFIG.REQUEST_ID.RADIX)
+    .substring(2, 2 + ERROR_CONFIG.REQUEST_ID.RANDOM_LENGTH)}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

@@ -17,7 +17,6 @@ export interface RateLimitConfig {
 export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, number[]>();
-const MAX_STORE_SIZE = 10000; // Prevent unbounded memory growth
 
 export function getClientIdentifier(request: Request): string {
   // First, try x-real-ip which is set by trusted proxies (Vercel, etc.)
@@ -46,8 +45,13 @@ export function checkRateLimit(
   const windowStart = now - config.windowMs;
 
   // Memory leak prevention: Clear oldest entries if store is too large
-  if (rateLimitStore.size >= MAX_STORE_SIZE) {
-    cleanupOldestEntries(Math.floor(MAX_STORE_SIZE * 0.2)); // Remove 20% oldest
+  if (rateLimitStore.size >= RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE) {
+    cleanupOldestEntries(
+      Math.floor(
+        RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE *
+          RATE_LIMIT_STORE_CONFIG.CLEANUP_PERCENTAGE
+      )
+    );
   }
 
   const requests = rateLimitStore.get(identifier) || [];
@@ -92,16 +96,22 @@ function cleanupOldestEntries(count: number): void {
 }
 
 export const rateLimitConfigs = {
-  strict: { limit: 10, windowMs: 60 * 1000 },
-  moderate: { limit: 30, windowMs: 60 * 1000 },
-  lenient: { limit: 60, windowMs: 60 * 1000 },
+  strict: { limit: 10, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
+  moderate: { limit: 30, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
+  lenient: { limit: 60, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
 } as const;
 
 export const tieredRateLimits: Record<UserRole, RateLimitConfig> = {
-  anonymous: { limit: 30, windowMs: 60 * 1000 },
-  authenticated: { limit: 60, windowMs: 60 * 1000 },
-  premium: { limit: 120, windowMs: 60 * 1000 },
-  enterprise: { limit: 300, windowMs: 60 * 1000 },
+  anonymous: { limit: 30, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
+  authenticated: {
+    limit: 60,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
+  premium: { limit: 120, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
+  enterprise: {
+    limit: 300,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
 };
 
 export function createRateLimitMiddleware(config: RateLimitConfig) {
@@ -111,7 +121,11 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
   };
 }
 
-import { RATE_LIMIT_CLEANUP_CONFIG } from './config/constants';
+import {
+  RATE_LIMIT_CLEANUP_CONFIG,
+  RATE_LIMIT_STORE_CONFIG,
+  ERROR_CONFIG,
+} from './config/constants';
 
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
@@ -139,12 +153,14 @@ export function rateLimitResponse(
   const resetTime = Math.max(rateLimitInfo.reset, Date.now());
   const responseBody = {
     error: 'Too many requests',
-    code: 'RATE_LIMIT_EXCEEDED',
+    code: ERROR_CONFIG.RATE_LIMIT.ERROR_CODE,
     retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
     timestamp: new Date().toISOString(),
     requestId:
       requestId ||
-      `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}_${Math.random()
+        .toString(ERROR_CONFIG.REQUEST_ID.RADIX)
+        .substring(2, 2 + ERROR_CONFIG.REQUEST_ID.RANDOM_LENGTH)}`,
     retryable: true,
   };
 
@@ -155,12 +171,12 @@ export function rateLimitResponse(
     'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
     'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
     'X-Request-ID': responseBody.requestId,
-    'X-Error-Code': 'RATE_LIMIT_EXCEEDED',
+    'X-Error-Code': ERROR_CONFIG.RATE_LIMIT.ERROR_CODE,
     'X-Retryable': 'true',
   };
 
   return new Response(JSON.stringify(responseBody), {
-    status: 429,
+    status: ERROR_CONFIG.RATE_LIMIT.STATUS_CODE,
     headers,
   });
 }
