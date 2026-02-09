@@ -1,6 +1,7 @@
 import { createLogger } from '../logger';
 import { CircuitBreakerOptions, CircuitBreakerState } from './types';
 import { CircuitBreakerError } from '../errors';
+import { DEFAULT_CIRCUIT_BREAKER_CONFIG } from './config';
 
 type CircuitBreakerInternalState = {
   state: 'closed' | 'open' | 'half-open';
@@ -20,11 +21,7 @@ export class CircuitBreaker {
 
   constructor(
     private readonly name: string,
-    private readonly config: CircuitBreakerOptions = {
-      failureThreshold: 5,
-      resetTimeoutMs: 60000,
-      monitoringPeriodMs: 10000,
-    }
+    private readonly config: CircuitBreakerOptions = DEFAULT_CIRCUIT_BREAKER_CONFIG
   ) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {

@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
 import { redactPIIInObject } from './pii-redaction';
 import { createLogger } from './logger';
-import { AGENT_CONFIG } from './config/constants';
+import { AGENT_CONFIG, VALIDATION_LIMITS } from './config/constants';
 
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
@@ -752,7 +752,10 @@ export class DatabaseService {
     return data;
   }
 
-  async getAgentLogs(agent?: string, limit: number = 100): Promise<AgentLog[]> {
+  async getAgentLogs(
+    agent?: string,
+    limit: number = VALIDATION_LIMITS.PAGINATION.AGENT_LOGS_DEFAULT
+  ): Promise<AgentLog[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     let query = this.client

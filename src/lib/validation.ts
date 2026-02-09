@@ -1,4 +1,7 @@
-import { VALIDATION_LIMITS_CONFIG } from './config/constants';
+import {
+  VALIDATION_LIMITS_CONFIG,
+  VALIDATION_LIMITS,
+} from './config/constants';
 import { isString } from './type-guards';
 
 export interface ValidationError {
@@ -11,16 +14,19 @@ export interface ValidationResult {
   errors: ValidationError[];
 }
 
-export const MAX_IDEA_LENGTH = 10000;
-export const MIN_IDEA_LENGTH = 10;
-export const MAX_TITLE_LENGTH = 500;
-export const MAX_IDEA_ID_LENGTH = 100;
+// Export constants from VALIDATION_LIMITS for backward compatibility
+export const MAX_IDEA_LENGTH = VALIDATION_LIMITS.IDEA.MAX_LENGTH;
+export const MIN_IDEA_LENGTH = VALIDATION_LIMITS.IDEA.MIN_LENGTH;
+export const MAX_TITLE_LENGTH = VALIDATION_LIMITS.TITLE.MAX_LENGTH;
+export const MAX_IDEA_ID_LENGTH = VALIDATION_LIMITS.IDEA.MAX_ID_LENGTH;
 
 // Answer validation constants for clarification flow
-export const MIN_ANSWER_LENGTH = 5;
-export const MAX_ANSWER_LENGTH = 500;
-export const MIN_SHORT_ANSWER_LENGTH = 2;
-export const MAX_SHORT_ANSWER_LENGTH = 100;
+export const MIN_ANSWER_LENGTH = VALIDATION_LIMITS.ANSWER.MIN_LENGTH;
+export const MAX_ANSWER_LENGTH = VALIDATION_LIMITS.ANSWER.MAX_LENGTH;
+export const MIN_SHORT_ANSWER_LENGTH =
+  VALIDATION_LIMITS.ANSWER.MIN_SHORT_LENGTH;
+export const MAX_SHORT_ANSWER_LENGTH =
+  VALIDATION_LIMITS.ANSWER.MAX_SHORT_LENGTH;
 
 export * from './type-guards';
 
@@ -170,7 +176,7 @@ export function validateRequestSize(
 
 export function sanitizeString(
   input: string,
-  maxLength: number = MAX_IDEA_LENGTH
+  maxLength: number = VALIDATION_LIMITS.IDEA.MAX_LENGTH
 ): string {
   let sanitized = input.trim();
 
