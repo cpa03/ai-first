@@ -1,5 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task } from '../db';
+import { TRELLO_CONFIG } from '../config';
 
 import { createLogger } from '../logger';
 
@@ -8,7 +9,7 @@ const logger = createLogger('TrelloExporter');
 export class TrelloExporter extends ExportConnector {
   readonly type = 'trello';
   readonly name = 'Trello';
-  private readonly API_BASE = 'https://api.trello.com/1';
+  private readonly API_BASE = TRELLO_CONFIG.API.BASE_URL;
 
   async export(
     data: ExportData,
@@ -30,14 +31,15 @@ export class TrelloExporter extends ExportConnector {
       const boardId = boardData.id;
       const boardUrl = boardData.url;
 
-      const todoList = await this.createList(boardId, 'To Do', apiKey, token);
+      const [todoName, inProgressName, doneName] = TRELLO_CONFIG.DEFAULTS.LIST_NAMES;
+      const todoList = await this.createList(boardId, todoName, apiKey, token);
       const inProgressList = await this.createList(
         boardId,
-        'In Progress',
+        inProgressName,
         apiKey,
         token
       );
-      const doneList = await this.createList(boardId, 'Done', apiKey, token);
+      const doneList = await this.createList(boardId, doneName, apiKey, token);
 
       const deliverableLists: Record<string, string> = {};
       for (const deliverable of deliverables) {
@@ -67,7 +69,7 @@ export class TrelloExporter extends ExportConnector {
           {
             id: '',
             deliverable_id: '',
-            title: '📋 Project Overview',
+            title: TRELLO_CONFIG.DEFAULTS.PROJECT_CARD_TITLE,
             description: idea.raw_text,
             status: 'todo',
             assignee: undefined,
@@ -122,7 +124,7 @@ export class TrelloExporter extends ExportConnector {
 
   async getAuthUrl(): Promise<string> {
     const apiKey = process.env.TRELLO_API_KEY;
-    const appName = 'IdeaFlow';
+    const appName = TRELLO_CONFIG.APP.NAME;
     const redirectUri =
       process.env.TRELLO_REDIRECT_URI ||
       `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/trello/callback`;
@@ -130,13 +132,13 @@ export class TrelloExporter extends ExportConnector {
     const params = new URLSearchParams({
       key: apiKey || '',
       name: appName,
-      expiration: 'never',
-      scope: 'read,write',
-      response_type: 'token',
+      expiration: TRELLO_CONFIG.APP.EXPIRATION,
+      scope: TRELLO_CONFIG.APP.SCOPE,
+      response_type: TRELLO_CONFIG.APP.RESPONSE_TYPE,
       return_url: redirectUri,
     });
 
-    return `https://trello.com/1/authorize?${params.toString()}`;
+    return `${TRELLO_CONFIG.API.AUTH_URL}?${params.toString()}`;
   }
 
   async handleAuthCallback(_code: string): Promise<void> {
@@ -320,8 +322,8 @@ export class TrelloExporter extends ExportConnector {
   }
 
   private getPriorityLabel(priority: number): string {
-    if (priority >= 4) return 'red';
-    if (priority >= 2) return 'orange';
+    if (priority >= TRELLO_CONFIG.PRIORITY.HIGH_THRESHOLD) return 'red';
+    if (priority >= TRELLO_CONFIG.PRIORITY.MEDIUM_THRESHOLD) return 'orange';
     return 'green';
   }
 }
