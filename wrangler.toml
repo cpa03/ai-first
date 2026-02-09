@@ -5,16 +5,21 @@ compatibility_flags = ["nodejs_compat"]
 # Cloudflare Pages configuration for Next.js
 pages_build_output_dir = ".next"
 
-# Environment-specific configurations
 [env.production]
-name = "ai-first-production"
+name = "ai-first"
 
 [env.staging] 
 name = "ai-first-staging"
 
-# Environment variables (set via Cloudflare dashboard)
+# Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
+# DO NOT hardcode sensitive values here - use environment-specific sections below
+
 [env.production.vars]
 # Set via Cloudflare dashboard: NEXT_PUBLIC_APP_URL
 
 [env.staging.vars]
 # Set via Cloudflare dashboard: NEXT_PUBLIC_APP_URL
+
+# For Cloudflare Pages deployment
+# Build command should be: npm run build
+# Output directory should be: .next
