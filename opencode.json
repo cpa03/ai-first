@@ -3,18 +3,16 @@
   "model": "opencode/kimi-k2.5-free",
   "plugin": ["oh-my-opencode", "opencode-supermemory"],
   "agent": {
-    "CMZ": {
-      "enabled": true
-    }
+    "CMZ": {}
   },
   "permission": {
     "external_directory": {
       "/tmp/*": "allow",
       "/var/tmp/*": "allow"
     },
+    "bash": "allow",
     "read": "allow",
     "edit": "allow",
-    "bash": "allow",
     "grep": "allow",
     "glob": "allow",
     "list": "allow"
