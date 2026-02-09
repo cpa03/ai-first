@@ -596,4 +596,13 @@ describe('ClarificationFlow', () => {
     // Should not call onComplete since answer is empty
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
+
+  it('submits on Ctrl+Enter', async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => ({ data: { questions: [{ id: '1', question: 'Q?', type: 'open' }] } }) });
+    render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
+    const t = await screen.findByPlaceholderText(/enter your answer/i);
+    fireEvent.change(t, { target: { value: 'A' } });
+    fireEvent.keyDown(t, { key: 'Enter', ctrlKey: true });
+    expect(mockOnComplete).toHaveBeenCalledWith({ 1: 'A' });
+  });
 });
