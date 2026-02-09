@@ -23,11 +23,7 @@ export {
 } from './export-connectors';
 
 // Timeline and Task Configuration
-export {
-  TIMELINE_CONFIG,
-  TASK_CONFIG,
-  IDEA_CONFIG,
-} from './timeline';
+export { TIMELINE_CONFIG, TASK_CONFIG, IDEA_CONFIG } from './timeline';
 
 // UI Configuration
 export {
@@ -49,25 +45,24 @@ export {
 } from './validation';
 
 // Agent Configuration
-export {
-  CLARIFIER_CONFIG,
-  AGENT_PROMPTS,
-  AI_CONFIG,
-} from './agents';
+export { CLARIFIER_CONFIG, AGENT_PROMPTS, AI_CONFIG } from './agents';
+
+// Cache Configuration
+export { CACHE_CONFIG } from './cache';
+
+// Component Configuration
+export { COMPONENT_CONFIG } from './components';
+
+// Cleanup Configuration
+export { CLEANUP_CONFIG } from './cleanup';
 
 // Legacy constants (backward compatibility)
 export * from './constants';
 
 // Type exports
 export type { AppConfig } from './app';
-export type {
-  ExportConnectorConfig,
-} from './export-connectors';
-export type {
-  TimelineConfig,
-  TaskConfig,
-  IdeaConfig,
-} from './timeline';
+export type { ExportConnectorConfig } from './export-connectors';
+export type { TimelineConfig, TaskConfig, IdeaConfig } from './timeline';
 export type { UiConfig, ToastConfig } from './ui';
 export type { SeoConfig, FontConfig } from './seo';
 export type {
@@ -75,8 +70,7 @@ export type {
   SanitizationConfig,
   ErrorSuggestionsConfig,
 } from './validation';
-export type {
-  ClarifierConfig,
-  AgentPrompts,
-  AiConfig,
-} from './agents';
+export type { ClarifierConfig, AgentPrompts, AiConfig } from './agents';
+export type { CacheConfig } from './cache';
+export type { ComponentConfig } from './components';
+export type { CleanupConfig } from './cleanup';

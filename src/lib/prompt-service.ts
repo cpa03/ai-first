@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { Cache } from './cache';
+import { CACHE_CONFIG } from './config';
 
 export interface PromptVariable {
   [key: string]: string | number | object;
@@ -11,8 +12,8 @@ export class PromptService {
 
   constructor() {
     this.promptsCache = new Cache<string>({
-      ttl: 10 * 60 * 1000,
-      maxSize: 200,
+      ttl: CACHE_CONFIG.SERVICES.PROMPT.TTL_MS,
+      maxSize: CACHE_CONFIG.SERVICES.PROMPT.MAX_SIZE,
     });
   }
 

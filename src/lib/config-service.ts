@@ -3,6 +3,7 @@ import yaml from 'js-yaml';
 import { readFile, access } from 'fs/promises';
 import path from 'path';
 import { Cache } from './cache';
+import { CACHE_CONFIG } from './config';
 
 interface AgentConfig {
   name: string;
@@ -21,8 +22,8 @@ class ConfigurationService {
   constructor(configDir: string = 'ai/agent-configs') {
     this.configDir = configDir;
     this.cache = new Cache<AgentConfig>({
-      ttl: 5 * 60 * 1000,
-      maxSize: 100,
+      ttl: CACHE_CONFIG.SERVICES.CONFIG.TTL_MS,
+      maxSize: CACHE_CONFIG.SERVICES.CONFIG.MAX_SIZE,
     });
   }
 
