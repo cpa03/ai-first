@@ -41,6 +41,20 @@ export {
 // SEO Configuration
 export { SEO_CONFIG, FONT_CONFIG } from './seo';
 
+// Validation Configuration
+export {
+  VALIDATION_CONFIG,
+  SANITIZATION_CONFIG,
+  ERROR_SUGGESTIONS_CONFIG,
+} from './validation';
+
+// Agent Configuration
+export {
+  CLARIFIER_CONFIG,
+  AGENT_PROMPTS,
+  AI_CONFIG,
+} from './agents';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
@@ -56,3 +70,13 @@ export type {
 } from './timeline';
 export type { UiConfig, ToastConfig } from './ui';
 export type { SeoConfig, FontConfig } from './seo';
+export type {
+  ValidationConfig,
+  SanitizationConfig,
+  ErrorSuggestionsConfig,
+} from './validation';
+export type {
+  ClarifierConfig,
+  AgentPrompts,
+  AiConfig,
+} from './agents';

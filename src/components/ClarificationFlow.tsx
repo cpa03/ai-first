@@ -8,7 +8,7 @@ import {
   MIN_SHORT_ANSWER_LENGTH,
   MAX_SHORT_ANSWER_LENGTH,
 } from '@/lib/validation';
-import { UI_CONFIG, LABELS } from '@/lib/config';
+import { UI_CONFIG, LABELS, CLARIFIER_CONFIG } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -37,24 +37,19 @@ interface ClarificationFlowProps {
   onComplete: (answers: Record<string, string>) => void;
 }
 
-const FALLBACK_QUESTIONS: Question[] = [
-  {
-    id: 'target_audience',
-    question: 'Who is your target audience?',
-    type: 'textarea',
-  },
-  {
-    id: 'main_goal',
-    question: 'What is the main goal you want to achieve?',
-    type: 'textarea',
-  },
-  {
-    id: 'timeline',
-    question: 'What is your desired timeline for this project?',
-    type: 'select',
-    options: ['1-2 weeks', '1 month', '3 months', '6 months', '1 year'],
-  },
-];
+const FALLBACK_QUESTIONS: Question[] = CLARIFIER_CONFIG.FALLBACK_QUESTIONS.map(
+  (q): Question => ({
+    id: q.id,
+    question: q.question,
+    type:
+      q.type === 'multiple_choice'
+        ? 'select'
+        : q.type === 'open'
+          ? 'textarea'
+          : 'text',
+    ...('options' in q && q.options && { options: [...q.options] }),
+  })
+);
 
 function ClarificationFlow({
   idea,
