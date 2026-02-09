@@ -5,6 +5,7 @@
   "default_agent": "CMZ",
   "agent": {
     "CMZ": {
+      "enabled": true,
       "mode": "primary",
       "description": "Primary orchestrating agent"
     }
