@@ -10,7 +10,7 @@ export interface CacheOptions {
   onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
 }
 
-const DEFAULT_MAX_CACHE_SIZE = 1000; // Default maximum cache size to prevent memory leaks
+import { CACHE_CONFIG } from './config/constants';
 
 export class Cache<T = unknown> {
   private cache: Map<string, CacheEntry<T>>;
@@ -23,7 +23,7 @@ export class Cache<T = unknown> {
     this.cache = new Map();
     this.ttl = options.ttl;
     // Apply default maxSize if not specified to prevent unbounded memory growth
-    this.maxSize = options.maxSize ?? DEFAULT_MAX_CACHE_SIZE;
+    this.maxSize = options.maxSize ?? CACHE_CONFIG.DEFAULT_MAX_SIZE;
     this.onEvict = options.onEvict;
     this.misses = 0;
   }
