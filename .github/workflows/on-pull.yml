@@ -53,17 +53,6 @@ jobs:
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
 
-      - name: Branch Management
-        run: |
-          git fetch --all
-          if git branch -r | grep "origin/agent-workspace"; then
-            git checkout agent-workspace
-            git pull origin agent-workspace
-          else
-            git checkout -b agent-workspace
-          fi
-          git merge origin/develop --no-edit || echo "Merge conflict or already up to date"
-
       - name: Install Dependencies
         continue-on-error: true
         run: npm ci
@@ -165,12 +154,13 @@ jobs:
              - Fetch latest DEFAULT_BRANCH
              - Rebase or merge DEFAULT_BRANCH INTO PR branch
              - Resolve conflicts ONLY if trivial and deterministic
-               - If not trivial → comment with explanation and STOP on that PR
+               - If not trivial → comment with explanation and CLOSE that PR
              - Run build and test suite
              - Fix:
                - Lint errors
                - Formatting issues
                - Minor test failures
+               - CI, vulnerabilities and deprecated
              - Commit fixes directly to PR branch
           
           3. Merge Conditions:
@@ -227,7 +217,7 @@ jobs:
           - Create PR from THIS SINGLE branch
           - PR must reference the issue
           - Ensure CI passes
-          - Merge PR if all checks are green (dont wait for 'on pull' check, its you)
+          - switch to PR HANDLER MODE
                     
           ========================
           PHASE 1 — DEEP CODE & DOC ANALYSIS
@@ -344,23 +334,19 @@ jobs:
 
             ## PHASE 1
             Step:
-            1. Check if 'opencode.json' and '.opencode/oh-my-opencode.json' exist, create if not exist. (analyze https://github.com/code-yeongyu/oh-my-opencode.git before creating).
+            1. Install and configure oh-my-opencode by following the instructions here: https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/refs/heads/master/docs/guide/installation.md.
                 - configure all agents using models: opencode/glm-4.7-free, opencode/kimi-k2.5-free or opencode/minimax-m2.1-free
-            2. Check and integrate the following repositories as supplements to current project. Ensure no conflict or redundant. if already implemented, skip it. Think harder, plan carefully, must be in harmony.:
-                - https://github.com/code-yeongyu/oh-my-opencode.git
-                - https://github.com/obra/superpowers.git
-                - https://github.com/asgeirtj/system_prompts_leaks.git
-                - https://github.com/sulhi-sabil/agent-skill/
-            3. Setup agent skill for opencode cli (.opencode/skill on workspace. copy to project configuration folder if skill installed at global configuration folder), skip if already implemented.
-            4. Remove temporary and unused file/folder. 
-            5. Review and **self reflection**. fix/optimize your work if needed
+            2. Install opencode-supermemory by following https://raw.githubusercontent.com/supermemoryai/opencode-supermemory/main/README.md
+            3. Remove temporary and unused file/folder. 
+            4. Review and **self reflection**. 
+            5. fix/optimize your work if needed
             6. Verify if all configuration working and optimized. your task fail if not verified
 
             ## PHASE 2
             Step:
             1.  **Push**:
-            - Commit changes.
-            - Push to `agent-workspace`: `git push origin agent-workspace`. Create if no exist.
+            - Commit changes. Pull from 'main'.
+            - Push to `agent-workspace`: `git push origin agent-workspace`. Create if no exist. Remember to pull from default branch before push, to minimaze conflict.
             2.  **PR**:
             - Create or update Pull Request from `agent-workspace` to `main`.
             - Wait and monitor check if check fail fix until all check pass

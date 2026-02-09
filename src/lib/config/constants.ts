@@ -256,3 +256,236 @@ export const RETRY_DELAY_CONFIG = {
    */
   POLLING_INTERVAL_MS: 100,
 } as const;
+
+/**
+ * AI Service configuration
+ */
+export const AI_CONFIG = {
+  /**
+   * Default max tokens for AI model calls
+   */
+  DEFAULT_MAX_TOKENS: 4000,
+
+  /**
+   * Cache TTL for today's cost tracking (in milliseconds)
+   * Default: 1 minute
+   */
+  COST_CACHE_TTL_MS: 60 * 1000,
+
+  /**
+   * Cache TTL for AI responses (in milliseconds)
+   * Default: 5 minutes
+   */
+  RESPONSE_CACHE_TTL_MS: 5 * 60 * 1000,
+
+  /**
+   * Maximum size for response cache
+   */
+  RESPONSE_CACHE_MAX_SIZE: 100,
+
+  /**
+   * Cost cache max size
+   */
+  COST_CACHE_MAX_SIZE: 1,
+
+  /**
+   * Token estimation ratio (characters per token)
+   * Rough estimate: 1 token ≈ 4 characters
+   */
+  CHARS_PER_TOKEN: 4,
+
+  /**
+   * SHA-256 hash substring length for cache keys
+   */
+  CACHE_KEY_HASH_LENGTH: 64,
+
+  /**
+   * Default daily cost limit in USD
+   */
+  DEFAULT_DAILY_COST_LIMIT: 10.0,
+
+  /**
+   * Model pricing per token (in USD)
+   */
+  PRICING: {
+    'gpt-3.5-turbo': 0.000002,
+    'gpt-4': 0.00003,
+    'gpt-4-turbo': 0.00001,
+  } as const,
+
+  /**
+   * Default pricing fallback
+   */
+  DEFAULT_PRICING_PER_TOKEN: 0.00001,
+} as const;
+
+/**
+ * Rate limiting store configuration
+ */
+export const RATE_LIMIT_STORE_CONFIG = {
+  /**
+   * Maximum number of entries in the rate limit store
+   * Prevents unbounded memory growth
+   */
+  MAX_STORE_SIZE: 10000,
+
+  /**
+   * Percentage of entries to clean up when store reaches capacity
+   */
+  CLEANUP_PERCENTAGE: 0.2,
+
+  /**
+   * Default rate limit window (in milliseconds)
+   */
+  DEFAULT_WINDOW_MS: 60 * 1000,
+} as const;
+
+/**
+ * Cache configuration defaults
+ */
+export const CACHE_CONFIG = {
+  /**
+   * Default maximum cache size to prevent memory leaks
+   */
+  DEFAULT_MAX_SIZE: 1000,
+} as const;
+
+/**
+ * Content Security Policy configuration
+ */
+export const CSP_CONFIG = {
+  /**
+   * Default CSP directives
+   */
+  DIRECTIVES: {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'unsafe-inline'", 'https://vercel.live'],
+    'style-src': ["'self'", "'unsafe-inline'"],
+    'img-src': ["'self'", 'data:', 'https:', 'blob:'],
+    'font-src': ["'self'", 'data:'],
+    'object-src': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"],
+    'frame-ancestors': ["'none'"],
+    'upgrade-insecure-requests': [],
+    'connect-src': ["'self'", 'https://*.supabase.co'],
+    'worker-src': ["'self'"],
+    'manifest-src': ["'self'"],
+  } as const,
+
+  /**
+   * Permissions Policy directives
+   */
+  PERMISSIONS_POLICY: [
+    'camera=()',
+    'microphone=()',
+    'geolocation=()',
+    'browsing-topics=()',
+    'payment=()',
+    'usb=()',
+    'magnetometer=()',
+    'gyroscope=()',
+    'accelerometer=()',
+  ] as const,
+} as const;
+
+/**
+ * PII Redaction configuration
+ */
+export const PII_REDACTION_CONFIG = {
+  /**
+   * Redaction labels for different PII types
+   */
+  REDACTION_LABELS: {
+    JWT: '[REDACTED_TOKEN]',
+    URL_WITH_CREDENTIALS: '[REDACTED_URL]',
+    EMAIL: '[REDACTED_EMAIL]',
+    PHONE: '[REDACTED_PHONE]',
+    SSN: '[REDACTED_SSN]',
+    CREDIT_CARD: '[REDACTED_CARD]',
+    IP_ADDRESS: '[REDACTED_IP]',
+    API_KEY: '[REDACTED_API_KEY]',
+  } as const,
+
+  /**
+   * Private IP address ranges
+   */
+  PRIVATE_IP_RANGES: {
+    LOOPBACK: ['127'],
+    PRIVATE_CLASS_A: ['10'],
+    PRIVATE_CLASS_B: ['172'],
+    PRIVATE_CLASS_C: ['192', '168'],
+  } as const,
+
+  /**
+   * API key prefixes for regex patterns
+   */
+  API_KEY_PREFIXES: [
+    'api[_-]?key',
+    'apikey',
+    'secret',
+    'token',
+    'credential',
+    'auth',
+    'authorization',
+  ] as const,
+
+  /**
+   * Safe fields that should not be redacted
+   */
+  SAFE_FIELDS: [
+    'id',
+    'created_at',
+    'updated_at',
+    'status',
+    'priority',
+    'estimate_hours',
+  ] as const,
+} as const;
+
+/**
+ * Validation limits configuration
+ */
+export const VALIDATION_LIMITS_CONFIG = {
+  /**
+   * Maximum length for user responses in validation
+   */
+  MAX_USER_RESPONSE_SIZE: 5000,
+
+  /**
+   * Maximum key length for user response keys
+   */
+  MAX_RESPONSE_KEY_LENGTH: 100,
+
+  /**
+   * Maximum value length for user response values
+   */
+  MAX_RESPONSE_VALUE_LENGTH: 1000,
+
+  /**
+   * Default max request size in bytes (1MB)
+   */
+  DEFAULT_MAX_REQUEST_SIZE_BYTES: 1024 * 1024,
+} as const;
+
+/**
+ * Error message configuration
+ */
+export const ERROR_CONFIG = {
+  /**
+   * Request ID generation configuration
+   */
+  REQUEST_ID: {
+    PREFIX: 'req_',
+    RANDOM_LENGTH: 9,
+    RADIX: 36,
+  } as const,
+
+  /**
+   * Rate limit response configuration
+   */
+  RATE_LIMIT: {
+    ERROR_CODE: 'RATE_LIMIT_EXCEEDED',
+    STATUS_CODE: 429,
+  } as const,
+} as const;

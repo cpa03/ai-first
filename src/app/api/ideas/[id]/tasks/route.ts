@@ -40,11 +40,21 @@ async function handleGet(context: ApiContext) {
     // Calculate overall progress
     let totalTasks = 0;
     let completedTasks = 0;
+    let totalHours = 0;
+    let completedHours = 0;
 
     const deliverables = deliverablesWithTasks.map((deliverable) => {
       const tasks = deliverable.tasks || [];
       totalTasks += tasks.length;
       completedTasks += tasks.filter((t) => t.status === 'completed').length;
+
+      tasks.forEach((t) => {
+        const est = Number(t.estimate) || 0;
+        totalHours += est;
+        if (t.status === 'completed') {
+          completedHours += est;
+        }
+      });
 
       const deliverableCompleted = tasks.filter(
         (t) => t.status === 'completed'
@@ -71,6 +81,8 @@ async function handleGet(context: ApiContext) {
           totalDeliverables: deliverables.length,
           totalTasks,
           completedTasks,
+          totalHours: Math.round(totalHours * 10) / 10,
+          completedHours: Math.round(completedHours * 10) / 10,
           overallProgress: Math.round(overallProgress),
         },
       },

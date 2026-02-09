@@ -117,6 +117,7 @@ jobs:
           - user-story-engineer
           - modularity-engineer
           - hardcoded-eliminator
+          - cloudflare-expert
     steps:
       - uses: actions/checkout@v5
 
@@ -145,7 +146,7 @@ jobs:
           echo "Starting specialist work for ${{ matrix.role }}"
           
           if opencode run /ulw-loop \
-            "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, strict format "[bug/error title]", strict label: [${{ matrix.role }}] and priority [P0-P4]. Skip your work if open issues >10." \
+            "You are ${{ matrix.role }} specialist. read documentations (*.md), check all open pr and open issues. your goal not to code but only find/verify all bugs/errors based your specialization and make github issues from findings, ensure no duplicate or out date issues. create/update github issues base your findings, strict format "[bug/error title]", strict label: [${{ matrix.role }}] and priority [P0-P4]. Skip your work if open issues with label ${{ matrix.role }} >5." \
             --model opencode/big-pickle \
             --share false; then
             echo "✅ Specialist work completed successfully for ${{ matrix.role }}"

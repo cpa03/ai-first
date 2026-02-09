@@ -11,6 +11,7 @@ import {
   type ServiceResilienceConfig,
   type ResilienceConfig,
 } from './resilience';
+import { AI_CONFIG } from './config/constants';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -57,13 +58,13 @@ class AIService {
 
   constructor() {
     this.todayCostCache = new Cache<number>({
-      ttl: 60 * 1000,
-      maxSize: 1,
+      ttl: AI_CONFIG.COST_CACHE_TTL_MS,
+      maxSize: AI_CONFIG.COST_CACHE_MAX_SIZE,
     });
 
     this.responseCache = new Cache<string>({
-      ttl: 5 * 60 * 1000,
-      maxSize: 100,
+      ttl: AI_CONFIG.RESPONSE_CACHE_TTL_MS,
+      maxSize: AI_CONFIG.RESPONSE_CACHE_MAX_SIZE,
     });
     if (
       process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -239,7 +240,7 @@ class AIService {
       role: 'system' | 'user' | 'assistant';
       content: string;
     }>,
-    maxTokens: number = 4000
+    maxTokens: number = AI_CONFIG.DEFAULT_MAX_TOKENS
   ): Promise<
     Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
   > {
@@ -334,7 +335,7 @@ class AIService {
       (sum, msg) => sum + msg.content.length,
       0
     );
-    return Math.ceil(totalChars / 4); // Rough estimate: 1 token ≈ 4 chars
+    return Math.ceil(totalChars / AI_CONFIG.CHARS_PER_TOKEN);
   }
 
   // Cost tracking and guardrails
@@ -363,7 +364,9 @@ class AIService {
     const cacheKey = `today:${today}`;
     this.todayCostCache.set(cacheKey, totalTodayCost);
 
-    const dailyLimit = parseFloat(process.env.COST_LIMIT_DAILY || '10.0');
+    const dailyLimit = parseFloat(
+      process.env.COST_LIMIT_DAILY || String(AI_CONFIG.DEFAULT_DAILY_COST_LIMIT)
+    );
 
     if (totalTodayCost > dailyLimit) {
       throw new Error(
@@ -382,13 +385,10 @@ class AIService {
   }
 
   private getCostPerToken(model: string): number {
-    // Simplified pricing (should be updated with actual rates)
-    const pricing: Record<string, number> = {
-      'gpt-3.5-turbo': 0.000002,
-      'gpt-4': 0.00003,
-      'gpt-4-turbo': 0.00001,
-    };
-    return pricing[model] || 0.00001;
+    return (
+      AI_CONFIG.PRICING[model as keyof typeof AI_CONFIG.PRICING] ??
+      AI_CONFIG.DEFAULT_PRICING_PER_TOKEN
+    );
   }
 
   private getTodayCost(): number {

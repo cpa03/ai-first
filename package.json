@@ -64,6 +64,7 @@
     "typescript": "^5"
   },
   "overrides": {
-    "glob": "^10.5.0"
+    "glob": "^10.5.0",
+    "test-exclude": "^7.0.1"
   }
 }
