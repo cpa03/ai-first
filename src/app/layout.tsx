@@ -4,7 +4,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import MobileNav from '@/components/MobileNav';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
-import { SEO_CONFIG, FONT_CONFIG, APP_CONFIG } from '@/lib/config';
+import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
 
 const inter = Inter({
   subsets: ['latin'],
