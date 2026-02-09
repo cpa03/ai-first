@@ -6,7 +6,8 @@
   "agent": {
     "CMZ": {
       "mode": "primary",
-      "description": "Primary orchestrating agent"
+      "description": "Primary orchestrating agent",
+      "orchestration": true
     }
   },
   "permission": {
@@ -25,5 +26,5 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": false
+  "lsp": true
 }
