@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
 import Alert from './Alert';
@@ -10,6 +10,9 @@ import InputWithValidation from './InputWithValidation';
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
 }
+
+const DRAFT_STORAGE_KEY = 'ideaflow_draft_idea';
+const AUTOSAVE_DEBOUNCE_MS = 1000;
 
 const validateIdea = (idea: string): string | null => {
   if (idea.trim().length < MIN_IDEA_LENGTH) {
@@ -28,16 +31,75 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMac, setIsMac] = useState(false);
+  const [draftRestored, setDraftRestored] = useState(false);
+  const autosaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
     setIsMac(navigator.platform.includes('Mac'));
   }, []);
 
+  // Restore draft from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedDraft = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (savedDraft) {
+        setIdea(savedDraft);
+        setDraftRestored(true);
+        // Hide the indicator after 3 seconds
+        const hideTimeout = setTimeout(() => setDraftRestored(false), 3000);
+        return () => clearTimeout(hideTimeout);
+      }
+    } catch (err) {
+      logger.error('Failed to restore draft from localStorage', {
+        error: err instanceof Error ? err.message : 'Unknown error',
+      });
+    }
+  }, [logger]);
+
+  // Autosave to localStorage (debounced)
+  const saveDraft = useCallback(
+    (value: string) => {
+      if (autosaveTimeoutRef.current) {
+        clearTimeout(autosaveTimeoutRef.current);
+      }
+
+      autosaveTimeoutRef.current = setTimeout(() => {
+        try {
+          if (value.trim()) {
+            localStorage.setItem(DRAFT_STORAGE_KEY, value);
+          } else {
+            localStorage.removeItem(DRAFT_STORAGE_KEY);
+          }
+        } catch (err) {
+          // Silently fail if localStorage is not available (e.g., private browsing, quota exceeded)
+          logger.warn('Failed to save draft to localStorage', {
+            error: err instanceof Error ? err.message : 'Unknown error',
+          });
+        }
+      }, AUTOSAVE_DEBOUNCE_MS);
+    },
+    [logger]
+  );
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (autosaveTimeoutRef.current) {
+        clearTimeout(autosaveTimeoutRef.current);
+      }
+    };
+  }, []);
+
   const handleIdeaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     setIdea(newValue);
     setValidationError(validateIdea(newValue));
+    saveDraft(newValue);
+    // Hide draft restored indicator when user starts typing
+    if (draftRestored) {
+      setDraftRestored(false);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -83,6 +145,16 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
       const data = await response.json();
       const ideaId = data.data.id;
 
+      // Clear the draft on successful submission
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch (err) {
+        // Silently fail if localStorage is not available
+        logger.warn('Failed to clear draft from localStorage', {
+          error: err instanceof Error ? err.message : 'Unknown error',
+        });
+      }
+
       onSubmit(idea.trim(), ideaId);
     } catch (err) {
       logger.errorWithContext('Failed to save idea', {
@@ -119,6 +191,16 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         disabled={isSubmitting}
         className="min-h-[120px]"
       />
+
+      {draftRestored && (
+        <div className="slide-up">
+          <Alert type="info" onClose={() => setDraftRestored(false)}>
+            <p className="text-sm">
+              Draft restored from your previous session.
+            </p>
+          </Alert>
+        </div>
+      )}
 
       {error && (
         <div className="slide-up">

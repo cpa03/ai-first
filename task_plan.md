@@ -1,55 +1,49 @@
-# Task Plan: OpenCode CLI Automation Setup
+# Task Plan: Pallete Micro-UX Improvement
 
 ## Goal
 
-Set up comprehensive OpenCode CLI automation with agent skills, configuration, and integration from multiple repositories.
+Find and implement ONE micro-UX improvement that makes the interface more intuitive, accessible, or pleasant to use in the AI-First project planning application.
 
-## Current State Analysis
+## Phases
 
-- Workspace: /home/runner/work/ai-first/ai-first
-- Has existing `.opencode/` directory with some skills
-- Has `opencode.json` (396 bytes)
-- Has `.github/` directory
-- Project appears to be a Next.js application
+- [x] Phase 1: Explore UI components and identify UX improvement opportunity
+- [x] Phase 2: Implement the micro-UX improvement
+- [ ] Phase 3: Verify build and lint pass (fatal if errors/warnings)
+- [ ] Phase 4: Create/update PR with main branch sync
 
-## Phase 1: Configuration Setup
+## UX Improvement Implemented
 
-- [x] 1.1 Analyze oh-my-opencode repository structure
-- [x] 1.2 Fetch and analyze other repositories
-  - [x] https://github.com/obra/superpowers.git - Already integrated (superpowers-\* skills exist)
-  - [x] https://github.com/asgeirtj/system_prompts_leaks.git - Informational only
-  - [x] https://github.com/sulhi-sabil/agent-skill/ - Already integrated (github-workflow-automation skill exists)
-- [x] 1.3 Create/Update opencode.json with model configurations - EXISTING (using free-tier models)
-- [x] 1.4 Create/Update .opencode/oh-my-opencode.json - EXISTING (comprehensive configuration)
-- [x] 1.5 Integrate useful components from repositories - ALREADY INTEGRATED
-- [x] 1.6 Setup agent skills - EXISTING (33 skills installed)
-- [x] 1.7 Create missing AGENTS.md file - EXISTING (comprehensive documentation)
-- [x] 1.8 Cleanup unused files - COMPLETED (removed tsconfig.tsbuildinfo)
-- [x] 1.9 Self-review and optimization - COMPLETED (all configurations verified)
-- [x] 1.10 Verification - PASSED (all components working)
+**Autosave Feature for IdeaInput Component**
 
-## Phase 2: Git Operations
+Problem: Users might lose their typed idea if they accidentally refresh the page or navigate away.
 
-- [x] 2.1 Commit changes - COMPLETED (removed tsconfig.tsbuildinfo)
-- [x] 2.2 Push to agent-workspace branch - COMPLETED
-- [x] 2.3 Create PR to main - COMPLETED (PR #399: https://github.com/cpa03/ai-first/pull/399)
-- [x] 2.4 Monitor checks - COMPLETED (Vercel rate limit noted)
-- [x] 2.5 Merge on success - COMPLETED (Merged to main: e4741cb)
+Solution: Implemented automatic local storage persistence that:
 
-## Key Configuration Requirements
+1. Saves the idea text to localStorage as the user types (debounced at 1 second)
+2. Restores the saved draft when the component mounts
+3. Clears the saved draft on successful submission
+4. Shows a subtle info Alert when a draft is restored
+5. Handles edge cases gracefully (storage quota exceeded, private browsing mode)
 
-- Models: opencode/glm-4.7-free, opencode/kimi-k2.5-free, opencode/minimax-m2.1-free
-- Agents: Sisyphus (main), Oracle, Librarian, Explore, Hephaestus
-- Skills: 35 skills installed in .opencode/skills/
-- No conflicts or redundancy with existing setup
+This adds a "delight" factor by protecting user work without them having to think about it.
 
-## Decisions Made
+## Changes Made
 
-- Keep existing `.opencode/skills/` if already present
-- Merge configurations rather than overwrite
-- Use free-tier models as specified
-- tsconfig.tsbuildinfo removed (temporary build file)
+**File: `src/components/IdeaInput.tsx`**
+
+Added:
+
+- Constants for storage key and debounce timing
+- State management for `draftRestored` indicator
+- `useRef` for managing autosave timeout
+- `useEffect` to restore draft from localStorage on component mount
+- `useCallback` for debounced autosave function
+- `useEffect` cleanup to prevent memory leaks
+- Updated `handleIdeaChange` to trigger autosave
+- Updated `handleSubmit` to clear draft on success
+- Added visual indicator (Alert component) when draft is restored
+- Error handling for localStorage operations (silent failures)
 
 ## Status
 
-**COMPLETED** - All phases finished successfully. PR #399 merged to main.
+**Currently in Phase 3** - Running lint and type-check
