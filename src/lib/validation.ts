@@ -1,4 +1,5 @@
 import { VALIDATION_LIMITS_CONFIG } from './config/constants';
+import { isString } from './type-guards';
 
 export interface ValidationError {
   field: string;
@@ -227,8 +228,6 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
     }
   );
 }
-
-import { isString } from './type-guards';
 
 export function safeJsonParse<T = unknown>(
   jsonString: unknown,
