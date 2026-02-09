@@ -1,0 +1,3 @@
+## 2026-02-09 - [Micro-UX Constraints and Automated Files]
+**Learning:** The 'Palette' persona has a strict 50-line change limit. It is crucial to focus on a single impactful UX improvement rather than multiple small ones to stay within this boundary. Additionally, Next.js development and package management tools (like pnpm) can automatically modify files like 'next-env.d.ts' or create 'pnpm-lock.yaml', which should be reverted before submission to avoid CI failures and forbidden file modifications.
+**Action:** Focus on one clear UX win per PR. Always run 'git status' and 'git restore' on auto-generated files like 'next-env.d.ts' before committing.

@@ -213,7 +213,7 @@ describe('ClarificationFlow', () => {
     fireEvent.change(textarea, { target: { value: 'Developers' } });
 
     // Navigate to second question
-    const nextButton = screen.getByText('Next →');
+    const nextButton = screen.getByText('Next ->');
     fireEvent.click(nextButton);
 
     // Answer second question
@@ -230,7 +230,7 @@ describe('ClarificationFlow', () => {
     fireEvent.change(secondTextarea, { target: { value: 'Build a MVP' } });
 
     // Navigate to timeline question (3rd question)
-    const secondNextButton = screen.getByText('Next →');
+    const secondNextButton = screen.getByText('Next ->');
     fireEvent.click(secondNextButton);
 
     await waitFor(() => {
@@ -284,7 +284,7 @@ describe('ClarificationFlow', () => {
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
     fireEvent.change(textarea, { target: { value: 'Developers' } });
 
-    const nextButton = screen.getByText('Next →');
+    const nextButton = screen.getByText('Next ->');
     fireEvent.click(nextButton);
 
     await waitFor(() => {
@@ -595,5 +595,14 @@ describe('ClarificationFlow', () => {
 
     // Should not call onComplete since answer is empty
     expect(mockOnComplete).not.toHaveBeenCalled();
+  });
+
+  it('submits on Ctrl+Enter', async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => ({ data: { questions: [{ id: '1', question: 'Q?', type: 'open' }] } }) });
+    render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
+    const t = await screen.findByPlaceholderText(/enter your answer/i);
+    fireEvent.change(t, { target: { value: 'A' } });
+    fireEvent.keyDown(t, { key: 'Enter', ctrlKey: true });
+    expect(mockOnComplete).toHaveBeenCalledWith({ 1: 'A' });
   });
 });

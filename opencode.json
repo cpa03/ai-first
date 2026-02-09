@@ -5,31 +5,22 @@
   "default_agent": "CMZ",
   "agent": {
     "CMZ": {
-      "enabled": true,
       "mode": "primary",
-      "description": "Primary orchestrating agent",
-      "orchestration": true
+      "description": "Primary orchestrating agent"
     }
   },
   "permission": {
-    "external_directory": {
-      "/tmp/*": "allow",
-      "/var/tmp/*": "allow"
-    },
-    "allow": ["**/*"]
+    "external_directory": "allow",
+    "glob": "allow"
   },
   "skills": {
     "paths": [".opencode/skills"]
   },
   "mcp": {
-    "playwright": {
-      "type": "local",
-      "command": ["npx", "@playwright/mcp@latest"],
-      "enabled": true
-    },
+    "playwright": { "enabled": true },
     "websearch": { "enabled": true },
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": true
+  "lsp": false
 }
