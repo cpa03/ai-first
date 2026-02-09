@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface AutoSaveIndicatorProps {
   value: string;
@@ -12,7 +13,7 @@ type SaveState = 'idle' | 'typing' | 'saving' | 'saved';
 
 export default function AutoSaveIndicator({
   value,
-  delay = 1000,
+  delay = COMPONENT_CONFIG.AUTO_SAVE.DELAY_MS,
   className = '',
 }: AutoSaveIndicatorProps) {
   const [saveState, setSaveState] = useState<SaveState>('idle');
@@ -48,7 +49,8 @@ export default function AutoSaveIndicator({
       }
 
       // Start progress animation
-      const progressStep = 100 / (delay / 50);
+      const progressStep =
+        100 / (delay / COMPONENT_CONFIG.AUTO_SAVE.PROGRESS_INTERVAL_MS);
       progressIntervalRef.current = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
@@ -59,7 +61,7 @@ export default function AutoSaveIndicator({
           }
           return prev + progressStep;
         });
-      }, 50);
+      }, COMPONENT_CONFIG.AUTO_SAVE.PROGRESS_INTERVAL_MS);
 
       timeoutRef.current = setTimeout(() => {
         queueMicrotask(() => {
@@ -73,7 +75,7 @@ export default function AutoSaveIndicator({
             setLastSaved(new Date());
             setProgress(100);
           });
-        }, 300);
+        }, COMPONENT_CONFIG.AUTO_SAVE.SAVE_DURATION_MS);
       }, delay);
     }
 
@@ -97,7 +99,7 @@ export default function AutoSaveIndicator({
         queueMicrotask(() => {
           setShowIndicator(false);
         });
-      }, 3000);
+      }, COMPONENT_CONFIG.AUTO_SAVE.HIDE_DELAY_MS);
     }
 
     return () => {
