@@ -13,3 +13,8 @@
 **Learning:** Security headers are just as important for APIs as they are for frontend pages. While some headers like CSP are primarily browser-focused, they still provide a layer of defense-in-depth for API responses, especially when those responses might be rendered or handled by a browser.
 
 **Prevention:** Ensure security middleware covers all application routes, including API endpoints. Avoid using middleware matchers that exclude large portions of the application's attack surface.
+
+## 2026-02-09 - Missing Redaction for Admin Keys
+**Vulnerability:** The PII redaction utility was missing patterns for administrative keys (e.g., `admin_key`, `admin-key`, `adminkey`), allowing these secrets to be logged in plain text in both string logs and object payloads.
+**Learning:** Security-sensitive prefixes must be consistently applied across both string-based (`redactPII`) and object-based (`redactPIIInObject`) redaction logic. When adding new patterns, care must be taken with regex character classes; for example, `[_- ]` can cause "Range out of order" errors in some environments if the hyphen is not at the start or end.
+**Prevention:** Regularly audit the list of sensitive prefixes and ensure they cover common administrative credential names. Use shared constants where possible, but verify that regex literals are correctly updated to match.

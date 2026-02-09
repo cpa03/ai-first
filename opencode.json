@@ -2,9 +2,12 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "opencode/kimi-k2.5-free",
   "plugin": ["oh-my-opencode", "opencode-supermemory"],
+  "default_agent": "CMZ",
   "agent": {
     "CMZ": {
-      "enabled": true
+      "enabled": true,
+      "mode": "primary",
+      "description": "Primary orchestrating agent"
     }
   },
   "permission": "allow",
@@ -20,5 +23,6 @@
     "websearch": { "enabled": true },
     "context7": { "enabled": true },
     "github": { "enabled": true }
-  }
+  },
+  "lsp": false
 }
