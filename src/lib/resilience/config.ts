@@ -4,62 +4,64 @@ import {
   ServiceResilienceConfig,
   ResilienceConfig,
 } from './types';
+import { RESILIENCE_CONFIG } from '../config/constants';
 
 export const DEFAULT_RETRIES: RetryConfig = {
-  maxRetries: 3,
-  initialDelayMs: 1000,
-  maxDelayMs: 30000,
-  backoffMultiplier: 2,
+  maxRetries: RESILIENCE_CONFIG.RETRY.DEFAULT_MAX_RETRIES,
+  initialDelayMs: RESILIENCE_CONFIG.RETRY.DEFAULT_BASE_DELAY_MS,
+  maxDelayMs: RESILIENCE_CONFIG.RETRY.DEFAULT_MAX_DELAY_MS,
+  backoffMultiplier: RESILIENCE_CONFIG.RETRY.DEFAULT_BACKOFF_MULTIPLIER,
 };
 
 export const DEFAULT_TIMEOUTS: Record<string, number> = {
-  openai: 60000,
-  notion: 30000,
-  trello: 30000,
-  github: 30000,
-  database: 10000,
+  openai: RESILIENCE_CONFIG.TIMEOUTS.OPENAI,
+  notion: RESILIENCE_CONFIG.TIMEOUTS.NOTION,
+  trello: RESILIENCE_CONFIG.TIMEOUTS.TRELLO,
+  github: RESILIENCE_CONFIG.TIMEOUTS.GITHUB,
+  database: RESILIENCE_CONFIG.TIMEOUTS.DATABASE,
 };
 
 export const DEFAULT_CIRCUIT_BREAKER_CONFIG: CircuitBreakerOptions = {
-  failureThreshold: 5,
-  resetTimeoutMs: 60000,
-  monitoringPeriodMs: 10000,
+  failureThreshold: RESILIENCE_CONFIG.CIRCUIT_BREAKER.DEFAULT_FAILURE_THRESHOLD,
+  resetTimeoutMs: RESILIENCE_CONFIG.CIRCUIT_BREAKER.DEFAULT_RESET_TIMEOUT_MS,
+  monitoringPeriodMs:
+    RESILIENCE_CONFIG.CIRCUIT_BREAKER.DEFAULT_MONITORING_PERIOD_MS,
 };
 
 export const defaultResilienceConfigs: Record<string, ServiceResilienceConfig> =
   {
     openai: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
-      timeout: { timeoutMs: 60000 },
-      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 60000 },
+      retry: RESILIENCE_CONFIG.SERVICE_RETRY.OPENAI,
+      timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.OPENAI },
+      circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.OPENAI,
     },
     github: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
-      timeout: { timeoutMs: 30000 },
-      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 30000 },
+      retry: RESILIENCE_CONFIG.SERVICE_RETRY.GITHUB,
+      timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.GITHUB },
+      circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.GITHUB,
     },
     notion: {
-      retry: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
-      timeout: { timeoutMs: 30000 },
-      circuitBreaker: { failureThreshold: 5, resetTimeoutMs: 30000 },
+      retry: RESILIENCE_CONFIG.SERVICE_RETRY.NOTION,
+      timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.NOTION },
+      circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.NOTION,
     },
     trello: {
-      retry: { maxRetries: 3, baseDelayMs: 500, maxDelayMs: 3000 },
-      timeout: { timeoutMs: 15000 },
-      circuitBreaker: { failureThreshold: 3, resetTimeoutMs: 20000 },
+      retry: RESILIENCE_CONFIG.SERVICE_RETRY.TRELLO,
+      timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.TRELLO },
+      circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.TRELLO,
     },
     supabase: {
-      retry: { maxRetries: 2, baseDelayMs: 1000, maxDelayMs: 10000 },
-      timeout: { timeoutMs: 10000 },
-      circuitBreaker: { failureThreshold: 10, resetTimeoutMs: 60000 },
+      retry: RESILIENCE_CONFIG.SERVICE_RETRY.SUPABASE,
+      timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.SUPABASE },
+      circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.SUPABASE,
     },
   };
 
 export const DEFAULT_RESILIENCE_CONFIG: ResilienceConfig = {
-  timeoutMs: 30000,
-  maxRetries: 3,
-  baseDelayMs: 1000,
-  maxDelayMs: 10000,
-  failureThreshold: 5,
-  resetTimeoutMs: 60000,
+  timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.DEFAULT,
+  maxRetries: RESILIENCE_CONFIG.RETRY.DEFAULT_MAX_RETRIES,
+  baseDelayMs: RESILIENCE_CONFIG.RETRY.DEFAULT_BASE_DELAY_MS,
+  maxDelayMs: RESILIENCE_CONFIG.RETRY.DEFAULT_MAX_DELAY_MS,
+  failureThreshold: RESILIENCE_CONFIG.CIRCUIT_BREAKER.DEFAULT_FAILURE_THRESHOLD,
+  resetTimeoutMs: RESILIENCE_CONFIG.CIRCUIT_BREAKER.DEFAULT_RESET_TIMEOUT_MS,
 };
