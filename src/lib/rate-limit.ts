@@ -164,6 +164,7 @@ import {
   RATE_LIMIT_CLEANUP_CONFIG,
   RATE_LIMIT_STORE_CONFIG,
   ERROR_CONFIG,
+  RATE_LIMIT_STATS_CONFIG,
 } from './config/constants';
 
 export function cleanupExpiredEntries(): void {
@@ -264,7 +265,9 @@ export function getRateLimitStats() {
   };
 
   for (const [identifier, requests] of rateLimitStore.entries()) {
-    const recentRequests = requests.filter((r) => r >= now - 60 * 1000);
+    const recentRequests = requests.filter(
+      (r) => r >= now - RATE_LIMIT_STATS_CONFIG.DEFAULT_STATS_WINDOW_MS
+    );
     stats.totalEntries += recentRequests.length;
 
     if (recentRequests.length === 0) {
@@ -278,7 +281,10 @@ export function getRateLimitStats() {
   }
 
   stats.topUsers.sort((a, b) => b.count - a.count);
-  stats.topUsers = stats.topUsers.slice(0, 10);
+  stats.topUsers = stats.topUsers.slice(
+    0,
+    RATE_LIMIT_STATS_CONFIG.TOP_USERS_LIMIT
+  );
 
   return stats;
 }
