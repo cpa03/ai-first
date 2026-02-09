@@ -489,3 +489,71 @@ export const ERROR_CONFIG = {
     STATUS_CODE: 429,
   } as const,
 } as const;
+
+/**
+ * Agent configuration for breakdown engine and clarifier
+ */
+export const AGENT_CONFIG = {
+  /**
+   * Confidence calculation weights for breakdown engine
+   * Used in ConfidenceCalculator
+   */
+  BREAKDOWN_CONFIDENCE_WEIGHTS: {
+    ANALYSIS: 0.3,
+    TASKS: 0.3,
+    DEPENDENCIES: 0.2,
+    TIMELINE: 0.2,
+  } as const,
+
+  /**
+   * Fallback confidence values for missing components
+   * Used when components don't provide their own confidence
+   */
+  BREAKDOWN_FALLBACK_CONFIDENCE: {
+    DEPENDENCIES: 0.8,
+    TIMELINE: 0.7,
+  } as const,
+
+  /**
+   * Idea analysis fallback values
+   * Used in IdeaAnalyzer when analysis fails or is incomplete
+   */
+  IDEA_ANALYSIS_FALLBACK: {
+    COMPLEXITY_SCORE: 5,
+    COMPLEXITY_LEVEL: 'medium' as const,
+    SCOPE_SIZE: 'medium' as const,
+    ESTIMATED_WEEKS: 8,
+    TEAM_SIZE: 2,
+    OVERALL_CONFIDENCE: 0.7,
+  } as const,
+
+  /**
+   * Question generator configuration for clarifier
+   */
+  QUESTION_GENERATOR: {
+    MIN_QUESTIONS: 3,
+    MAX_QUESTIONS: 5,
+    DEFAULT_QUESTION_TYPE: 'open' as const,
+    REQUIRED_DEFAULT: true,
+  } as const,
+
+  /**
+   * Clarifier confidence calculator configuration
+   */
+  CLARIFIER_CONFIDENCE: {
+    BASE_CONFIDENCE: 0.3,
+    CONFIDENCE_INCREMENT_PER_ANSWER: 0.6,
+    MAX_CONFIDENCE: 0.9,
+    DEFAULT_CONFIDENCE: 0.5,
+  } as const,
+
+  /**
+   * Database connection configuration
+   */
+  DATABASE: {
+    MAX_CONNECTION_RETRIES: 3,
+    HEALTH_CHECK_STALE_THRESHOLD_MS: 30000,
+    DEFAULT_SEARCH_LIMIT: 10,
+    VECTOR_SIMILARITY_THRESHOLD: 0.78,
+  } as const,
+} as const;
