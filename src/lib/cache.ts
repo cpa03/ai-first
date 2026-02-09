@@ -133,6 +133,7 @@ export class Cache<T = unknown> {
 
   private evictLRU(): void {
     let lruKey: string | null = null;
+    let lruEntry: CacheEntry<T> | null = null;
     let lowestHits = Infinity;
 
     // Optimization: Stop searching if we find an entry with 0 hits.
@@ -141,24 +142,23 @@ export class Cache<T = unknown> {
     for (const [key, entry] of this.cache.entries()) {
       if (entry.hits === 0) {
         lruKey = key;
+        lruEntry = entry;
         break;
       }
 
       if (entry.hits < lowestHits) {
         lowestHits = entry.hits;
         lruKey = key;
+        lruEntry = entry;
       }
     }
 
-    if (lruKey) {
-      const entry = this.cache.get(lruKey);
-      if (entry) {
-        if (this.onEvict) {
-          this.onEvict(lruKey, entry);
-        }
-        this.totalHits -= entry.hits;
-        this.cache.delete(lruKey);
+    if (lruKey && lruEntry) {
+      if (this.onEvict) {
+        this.onEvict(lruKey, lruEntry);
       }
+      this.totalHits -= lruEntry.hits;
+      this.cache.delete(lruKey);
     }
   }
 
