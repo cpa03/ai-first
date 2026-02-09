@@ -3,21 +3,12 @@
   "model": "opencode/kimi-k2.5-free",
   "plugin": ["oh-my-opencode", "opencode-supermemory"],
   "default_agent": "CMZ",
-  "agent": {
-    "CMZ": {
-      "enabled": true,
-      "mode": "primary",
-      "description": "Primary orchestrating agent",
-      "orchestration": true
-    }
-  },
-  "permission": {
-    "external_directory": {
-      "/tmp/*": "allow",
-      "/var/tmp/*": "allow"
-    },
-    "allow": ["**/*"]
-  },
+  "agent": "CMZ",
+  "permission": [
+    { "type": "external_directory", "path": "/tmp/*", "access": "allow" },
+    { "type": "external_directory", "path": "/var/tmp/*", "access": "allow" },
+    { "type": "glob", "path": "**/*", "access": "allow" }
+  ],
   "skills": {
     "paths": [".opencode/skills"]
   },
@@ -31,5 +22,5 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": true
+  "lsp": { "enabled": true }
 }
