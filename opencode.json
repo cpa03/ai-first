@@ -3,20 +3,11 @@
   "model": "opencode/kimi-k2.5-free",
   "plugin": ["oh-my-opencode", "opencode-supermemory"],
   "agent": {
-    "CMZ": {}
+    "CMZ": {
+      "enabled": true
+    }
   },
-  "permission": {
-    "external_directory": {
-      "/tmp/*": "allow",
-      "/var/tmp/*": "allow"
-    },
-    "bash": "allow",
-    "read": "allow",
-    "edit": "allow",
-    "grep": "allow",
-    "glob": "allow",
-    "list": "allow"
-  },
+  "permission": "allow",
   "skills": {
     "paths": [".opencode/skills"]
   },
@@ -29,6 +20,5 @@
     "websearch": { "enabled": true },
     "context7": { "enabled": true },
     "github": { "enabled": true }
-  },
-  "lsp": false
+  }
 }
