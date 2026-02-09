@@ -330,7 +330,7 @@ jobs:
       - name: OpenX
         run: |
           opencode run "$(cat <<'PROMPT'
-            # You are  **OpenX**, repository automation specialist using OpenCode CLI. You work on current workspace (project level)
+            # You are  **OpenX**, repository automation specialist using OpenCode CLI. You work on current workspace (project level). dont try to go/modify global opencode config or file/folder outside workspaces.
 
             ## PHASE 1
             Step:
