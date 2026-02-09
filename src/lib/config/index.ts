@@ -29,6 +29,15 @@ export {
   IDEA_CONFIG,
 } from './timeline';
 
+// UI Configuration
+export {
+  UI_CONFIG,
+  LABELS,
+  PLACEHOLDERS,
+  BUTTON_LABELS,
+  TOAST_CONFIG,
+} from './ui';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
@@ -42,3 +51,4 @@ export type {
   TaskConfig,
   IdeaConfig,
 } from './timeline';
+export type { UiConfig, ToastConfig } from './ui';

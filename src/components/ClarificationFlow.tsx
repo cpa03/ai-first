@@ -8,6 +8,7 @@ import {
   MIN_SHORT_ANSWER_LENGTH,
   MAX_SHORT_ANSWER_LENGTH,
 } from '@/lib/validation';
+import { UI_CONFIG, LABELS } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -84,7 +85,7 @@ function ClarificationFlow({
     () =>
       questions.map((q, index) => ({
         id: q.id,
-        label: `Question ${index + 1}`,
+        label: LABELS.QUESTION(index),
         completed: index < currentStep,
         current: index === currentStep,
       })),
@@ -136,7 +137,7 @@ function ClarificationFlow({
         } else {
           textInputRef.current?.focus();
         }
-      }, 50);
+      }, UI_CONFIG.FOCUS.DELAY_MS);
     };
 
     focusInput();
