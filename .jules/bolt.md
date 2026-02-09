@@ -13,3 +13,7 @@
 ## 2026-02-06 - Optimize Cost Tracking via Cache Accumulation
 **Learning:** Incremental updates to state (accumulators) are superior to repeated $O(n)$ scans. By updating a cached total instead of clearing and forced recalculation, we achieve $O(1)$ common-case performance. Additionally, calling the calculation before state updates prevents double-counting bugs in threshold checks.
 **Action:** Use accumulators for stats tracking and prioritize updating existing data structures over full recalculations.
+
+## 2026-02-07 - Optimize Cache Stats and Eviction via Hybrid Tracking
+**Learning:** General-purpose utilities like `Cache` often harbor $O(n)$ bottlenecks in non-critical paths like statistics reporting. By tracking metrics (like `totalHits`) incrementally during every operation, we convert $O(n)$ reports into $O(1)$ lookups. Furthermore, leveraging `Map`'s insertion-order property allows for an $O(1)$ fast-path in LRU eviction for the oldest "cold" entries (0 hits), and avoids redundant Map lookups by checking for existing entries before performing state-altering operations.
+**Action:** Prefer incremental tracking for shared state metrics and exploit data-structure-specific properties (like Map order) for algorithmic early-exits.
