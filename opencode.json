@@ -7,10 +7,17 @@
     "CMZ": {
       "enabled": true,
       "mode": "primary",
-      "description": "Primary orchestrating agent"
+      "description": "Primary orchestrating agent",
+      "orchestration": true
     }
   },
-  "permission": "allow",
+  "permission": {
+    "external_directory": {
+      "/tmp/*": "allow",
+      "/var/tmp/*": "allow"
+    },
+    "allow": ["**/*"]
+  },
   "skills": {
     "paths": [".opencode/skills"]
   },
@@ -24,5 +31,5 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": false
+  "lsp": true
 }
