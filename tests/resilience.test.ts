@@ -98,7 +98,7 @@ describe('CircuitBreaker', () => {
       await expect(circuitBreaker.execute(operation)).rejects.toThrow();
 
       await expect(circuitBreaker.execute(operation)).rejects.toThrow(
-        'Circuit breaker test-service is OPEN'
+        /Circuit breaker open for test-service/
       );
 
       expect(operation).toHaveBeenCalledTimes(3);

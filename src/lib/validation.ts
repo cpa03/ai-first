@@ -1,7 +1,5 @@
-import {
-  VALIDATION_LIMITS_CONFIG,
-  VALIDATION_CONFIG,
-} from './config/constants';
+import { VALIDATION_LIMITS_CONFIG } from './config/constants';
+import { isString } from './type-guards';
 
 export interface ValidationError {
   field: string;
@@ -13,18 +11,16 @@ export interface ValidationResult {
   errors: ValidationError[];
 }
 
-// Re-export validation constants from centralized config
-export const MAX_IDEA_LENGTH = VALIDATION_CONFIG.MAX_IDEA_LENGTH;
-export const MIN_IDEA_LENGTH = VALIDATION_CONFIG.MIN_IDEA_LENGTH;
-export const MAX_TITLE_LENGTH = 500; // Not in constants, keeping here
-export const MAX_IDEA_ID_LENGTH = VALIDATION_CONFIG.MAX_IDEA_ID_LENGTH;
+export const MAX_IDEA_LENGTH = 10000;
+export const MIN_IDEA_LENGTH = 10;
+export const MAX_TITLE_LENGTH = 500;
+export const MAX_IDEA_ID_LENGTH = 100;
 
 // Answer validation constants for clarification flow
-// Using values from VALIDATION_CONFIG
-export const MIN_ANSWER_LENGTH = 5; // Not in constants, keeping here
-export const MAX_ANSWER_LENGTH = VALIDATION_CONFIG.MAX_ANSWER_LENGTH;
-export const MIN_SHORT_ANSWER_LENGTH = 2; // Not in constants, keeping here
-export const MAX_SHORT_ANSWER_LENGTH = 100; // Not in constants, keeping here
+export const MIN_ANSWER_LENGTH = 5;
+export const MAX_ANSWER_LENGTH = 500;
+export const MIN_SHORT_ANSWER_LENGTH = 2;
+export const MAX_SHORT_ANSWER_LENGTH = 100;
 
 export * from './type-guards';
 
@@ -232,8 +228,6 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
     }
   );
 }
-
-import { isString } from './type-guards';
 
 export function safeJsonParse<T = unknown>(
   jsonString: unknown,

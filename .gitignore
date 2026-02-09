@@ -22,7 +22,7 @@ dist/
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
+# next-env.d.ts should be committed - see Next.js docs
 
 # IDE
 .vscode/
@@ -34,6 +34,7 @@ Thumbs.db
 
 # Logs
 *.log
+task_plan.md
 
 # Runtime data
 pids
