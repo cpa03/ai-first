@@ -421,13 +421,15 @@ export const PII_REDACTION_CONFIG = {
    * API key prefixes for regex patterns
    */
   API_KEY_PREFIXES: [
-    'api[_-]?key',
+    'api[-_]?key',
     'apikey',
     'secret',
     'token',
     'credential',
     'auth',
     'authorization',
+    'admin[-_ ]?key',
+    'adminkey',
   ] as const,
 
   /**

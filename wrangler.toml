@@ -1,5 +1,5 @@
 name = "ai-first"
-compatibility_date = "2024-01-01"
+compatibility_date = "2024-11-18"
 compatibility_flags = ["nodejs_compat"]
 
 # Cloudflare Pages configuration for Next.js
@@ -26,10 +26,6 @@ name = "ai-first-staging"
 
 [env.staging.vars]
 # Set via Cloudflare dashboard: NEXT_PUBLIC_APP_URL
-
-# Build optimization settings
-[build.upload]
-format = "service-worker"
 
 # Route configuration for Next.js
 [[routes]]

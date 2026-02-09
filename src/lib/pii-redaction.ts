@@ -26,8 +26,8 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   creditCard: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g,
   ipAddress: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
   apiKey:
-    /(?:api[_-]?key|apikey|secret|token|credential|auth|authorization)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9]{32,64}|AKIA[0-9A-Z]{16}/gi,
-  jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
+    /(?:api[-_]?key|apikey|secret|token|credential|auth|authorization|admin[-_ ]?key|adminkey)[\s:=]+['"]?([a-zA-Z0-9-_]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9]{32,64}|AKIA[0-9A-Z]{16}/gi,
+  jwt: /eyJ[a-zA-Z0-9-_]*\.eyJ[a-zA-Z0-9-_]*\.[a-zA-Z0-9-_]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
 };
 
@@ -99,7 +99,7 @@ export function redactPII(text: string): string {
  * Combined regex for sensitive field detection to avoid iterating through an array
  */
 const SENSITIVE_FIELD_REGEX =
-  /api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address/i;
+  /api[-_]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_]?key|bearer|session[-_]?id|cookie|set-cookie|xsrf-token|csrf-token|private[-_]?key|secret[-_]?key|connection[-_]?string|email|phone|ssn|credit[-_]?card|ip[-_]?address|admin[-_ ]?key|adminkey/i;
 
 const SAFE_FIELDS_SET = new Set<string>(PII_REDACTION_CONFIG.SAFE_FIELDS);
 

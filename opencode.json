@@ -4,8 +4,8 @@
   "plugin": ["oh-my-opencode", "opencode-supermemory"],
   "agent": {
     "CMZ": {
-      "enabled": true,
-      "orchestration": true
+      "mode": "primary",
+      "description": "Primary orchestrating agent"
     }
   },
   "permission": {
@@ -13,7 +13,9 @@
       "/tmp/*": "allow",
       "/var/tmp/*": "allow"
     },
-    "allow": ["**/*"]
+    "bash": "allow",
+    "read": "allow",
+    "edit": "allow"
   },
   "skills": {
     "paths": [".opencode/skills"]
@@ -28,5 +30,5 @@
     "context7": { "enabled": true },
     "github": { "enabled": true }
   },
-  "lsp": true
+  "lsp": false
 }
