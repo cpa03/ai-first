@@ -22,6 +22,13 @@ export {
   ASANA_CONFIG,
 } from './export-connectors';
 
+// Timeline and Task Configuration
+export {
+  TIMELINE_CONFIG,
+  TASK_CONFIG,
+  IDEA_CONFIG,
+} from './timeline';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
@@ -30,3 +37,8 @@ export type { AppConfig } from './app';
 export type {
   ExportConnectorConfig,
 } from './export-connectors';
+export type {
+  TimelineConfig,
+  TaskConfig,
+  IdeaConfig,
+} from './timeline';
