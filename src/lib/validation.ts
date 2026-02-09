@@ -1,3 +1,5 @@
+import { VALIDATION_LIMITS_CONFIG } from './config/constants';
+
 export interface ValidationError {
   field: string;
   message: string;
@@ -12,7 +14,6 @@ export const MAX_IDEA_LENGTH = 10000;
 export const MIN_IDEA_LENGTH = 10;
 export const MAX_TITLE_LENGTH = 500;
 export const MAX_IDEA_ID_LENGTH = 100;
-const MAX_USER_RESPONSE_SIZE = 5000;
 
 // Answer validation constants for clarification flow
 export const MIN_ANSWER_LENGTH = 5;
@@ -107,15 +108,18 @@ export function validateUserResponses(responses: unknown): ValidationResult {
   }
 
   const jsonStr = JSON.stringify(responses);
-  if (jsonStr.length > MAX_USER_RESPONSE_SIZE) {
+  if (jsonStr.length > VALIDATION_LIMITS_CONFIG.MAX_USER_RESPONSE_SIZE) {
     errors.push({
       field: 'userResponses',
-      message: `userResponses must not exceed ${MAX_USER_RESPONSE_SIZE} characters`,
+      message: `userResponses must not exceed ${VALIDATION_LIMITS_CONFIG.MAX_USER_RESPONSE_SIZE} characters`,
     });
   }
 
   for (const [key, value] of Object.entries(responses)) {
-    if (typeof key !== 'string' || key.length > 100) {
+    if (
+      typeof key !== 'string' ||
+      key.length > VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_KEY_LENGTH
+    ) {
       errors.push({
         field: 'userResponses',
         message: `Invalid key format: ${key}`,
@@ -129,10 +133,13 @@ export function validateUserResponses(responses: unknown): ValidationResult {
       });
     }
 
-    if (typeof value === 'string' && value.length > 1000) {
+    if (
+      typeof value === 'string' &&
+      value.length > VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_VALUE_LENGTH
+    ) {
       errors.push({
         field: 'userResponses',
-        message: `Value for key "${key}" must not exceed 1000 characters`,
+        message: `Value for key "${key}" must not exceed ${VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_VALUE_LENGTH} characters`,
       });
     }
   }
@@ -142,7 +149,7 @@ export function validateUserResponses(responses: unknown): ValidationResult {
 
 export function validateRequestSize(
   request: Request,
-  maxSizeBytes: number = 1024 * 1024
+  maxSizeBytes: number = VALIDATION_LIMITS_CONFIG.DEFAULT_MAX_REQUEST_SIZE_BYTES
 ): ValidationResult {
   const errors: ValidationError[] = [];
   const contentLength = request.headers.get('content-length');

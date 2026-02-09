@@ -5,6 +5,8 @@
  * to ensure user privacy and security compliance.
  */
 
+import { PII_REDACTION_CONFIG } from './config/constants';
+
 interface PIIPatterns {
   email: RegExp;
   phone: RegExp;
@@ -38,8 +40,7 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  * 2. Including common prefixes in higher-priority patterns (like JWT) to ensure they
  *    start matching at the same position as lower-priority patterns (like API Key).
  */
-const API_KEY_PREFIXES =
-  '(?:api[_-]?key|apikey|secret|token|credential|auth|authorization)[\\s:=]+[\'"]?';
+const API_KEY_PREFIXES = `(?:${PII_REDACTION_CONFIG.API_KEY_PREFIXES.join('|')})[\\s:=]+['"]?`;
 
 const COMBINED_PII_REGEX = new RegExp(
   [
@@ -66,12 +67,14 @@ export function redactPII(text: string): string {
     // In String.replace(regex, replacer), the last argument is the groups object if named groups are used
     const groups = args[args.length - 1] as Record<string, string | undefined>;
 
-    if (groups.jwt) return '[REDACTED_TOKEN]';
-    if (groups.urlWithCredentials) return '[REDACTED_URL]';
-    if (groups.email) return '[REDACTED_EMAIL]';
-    if (groups.phone) return '[REDACTED_PHONE]';
-    if (groups.ssn) return '[REDACTED_SSN]';
-    if (groups.creditCard) return '[REDACTED_CARD]';
+    if (groups.jwt) return PII_REDACTION_CONFIG.REDACTION_LABELS.JWT;
+    if (groups.urlWithCredentials)
+      return PII_REDACTION_CONFIG.REDACTION_LABELS.URL_WITH_CREDENTIALS;
+    if (groups.email) return PII_REDACTION_CONFIG.REDACTION_LABELS.EMAIL;
+    if (groups.phone) return PII_REDACTION_CONFIG.REDACTION_LABELS.PHONE;
+    if (groups.ssn) return PII_REDACTION_CONFIG.REDACTION_LABELS.SSN;
+    if (groups.creditCard)
+      return PII_REDACTION_CONFIG.REDACTION_LABELS.CREDIT_CARD;
     if (groups.ipAddress) {
       const parts = match.split('.');
       const isPrivate =
@@ -82,9 +85,11 @@ export function redactPII(text: string): string {
         (parts[0] === '192' && parts[1] === '168') ||
         parts[0] === '127';
 
-      return isPrivate ? match : '[REDACTED_IP]';
+      return isPrivate
+        ? match
+        : PII_REDACTION_CONFIG.REDACTION_LABELS.IP_ADDRESS;
     }
-    if (groups.apiKey) return '[REDACTED_API_KEY]';
+    if (groups.apiKey) return PII_REDACTION_CONFIG.REDACTION_LABELS.API_KEY;
 
     return match;
   });
@@ -96,14 +101,7 @@ export function redactPII(text: string): string {
 const SENSITIVE_FIELD_REGEX =
   /api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address/i;
 
-const SAFE_FIELDS_SET = new Set([
-  'id',
-  'created_at',
-  'updated_at',
-  'status',
-  'priority',
-  'estimate_hours',
-]);
+const SAFE_FIELDS_SET = new Set<string>(PII_REDACTION_CONFIG.SAFE_FIELDS);
 
 /**
  * Redact PII from an object recursively
