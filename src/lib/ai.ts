@@ -114,7 +114,21 @@ class AIService {
     try {
       const response = await this.executeWithResilience(async () => {
         if (config.provider === 'openai') {
-          const completion = await this.openai!.chat.completions.create({
+          if (!this.openai) {
+            const { AppError, ErrorCode } = await import('./errors');
+            throw new AppError(
+              'OpenAI client not initialized. Check OPENAI_API_KEY environment variable.',
+              ErrorCode.SERVICE_UNAVAILABLE,
+              503,
+              undefined,
+              false,
+              [
+                'Ensure OPENAI_API_KEY is set in environment variables',
+                'Verify the API key is valid and has not expired',
+              ]
+            );
+          }
+          const completion = await this.openai.chat.completions.create({
             model: config.model,
             messages,
             max_tokens: config.maxTokens,
