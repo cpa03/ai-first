@@ -3,6 +3,9 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  compress: true,
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
   async redirects() {
     return [
       {
@@ -19,6 +22,17 @@ const nextConfig = {
         hostname: 'ideaflow.ai',
       },
     ],
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+  },
+  experimental: {
+    optimizePackageImports: ['@supabase/supabase-js', 'googleapis', 'openai'],
+  },
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
   },
 };
 

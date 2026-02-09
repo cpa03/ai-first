@@ -1,20 +1,27 @@
 import { BreakdownSession } from '../breakdown-engine';
+import { AGENT_CONFIG } from '@/lib/config/constants';
+
+const { BREAKDOWN_CONFIDENCE_WEIGHTS, BREAKDOWN_FALLBACK_CONFIDENCE } =
+  AGENT_CONFIG;
 
 export class ConfidenceCalculator {
   calculateOverallConfidence(session: BreakdownSession): number {
-    const weights = {
-      analysis: 0.3,
-      tasks: 0.3,
-      dependencies: 0.2,
-      timeline: 0.2,
-    };
-
     let confidence = 0;
     if (session.analysis)
-      confidence += session.analysis.overallConfidence * weights.analysis;
-    if (session.tasks) confidence += session.tasks.confidence * weights.tasks;
-    if (session.dependencies) confidence += 0.8 * weights.dependencies;
-    if (session.timeline) confidence += 0.7 * weights.timeline;
+      confidence +=
+        session.analysis.overallConfidence *
+        BREAKDOWN_CONFIDENCE_WEIGHTS.ANALYSIS;
+    if (session.tasks)
+      confidence +=
+        session.tasks.confidence * BREAKDOWN_CONFIDENCE_WEIGHTS.TASKS;
+    if (session.dependencies)
+      confidence +=
+        BREAKDOWN_FALLBACK_CONFIDENCE.DEPENDENCIES *
+        BREAKDOWN_CONFIDENCE_WEIGHTS.DEPENDENCIES;
+    if (session.timeline)
+      confidence +=
+        BREAKDOWN_FALLBACK_CONFIDENCE.TIMELINE *
+        BREAKDOWN_CONFIDENCE_WEIGHTS.TIMELINE;
 
     return Math.round(confidence * 100) / 100;
   }
