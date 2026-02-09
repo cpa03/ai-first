@@ -1,35 +1,31 @@
 import { NextResponse } from 'next/server';
-import { SECURITY_CONFIG } from '@/lib/config/constants';
+import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
+
+function buildCSPHeader(): string {
+  const directives: string[] = [];
+
+  for (const [directive, values] of Object.entries(CSP_CONFIG.DIRECTIVES)) {
+    if (values.length === 0) {
+      directives.push(directive);
+    } else {
+      directives.push(`${directive} ${values.join(' ')}`);
+    }
+  }
+
+  return directives.join('; ');
+}
 
 export function middleware() {
   const response = NextResponse.next();
 
-  const cspDirectives = [
-    "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' https://vercel.live",
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https: blob:",
-    "font-src 'self' data:",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    'upgrade-insecure-requests',
-    "connect-src 'self' https://*.supabase.co",
-    "worker-src 'self'",
-    "manifest-src 'self'",
-  ];
-
-  const cspHeader = cspDirectives.join('; ');
-
-  response.headers.set('Content-Security-Policy', cspHeader);
+  response.headers.set('Content-Security-Policy', buildCSPHeader());
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
   response.headers.set(
     'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()'
+    CSP_CONFIG.PERMISSIONS_POLICY.join(', ')
   );
 
   if (process.env.NODE_ENV === 'production') {
