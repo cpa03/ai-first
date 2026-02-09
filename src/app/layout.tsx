@@ -7,17 +7,17 @@ import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG, FONT_CONFIG, APP_CONFIG } from '@/lib/config';
 
 const inter = Inter({
-  subsets: [...FONT_CONFIG.INTER.SUBSETS],
-  variable: FONT_CONFIG.INTER.VARIABLE,
-  display: FONT_CONFIG.INTER.DISPLAY,
-  weight: [...FONT_CONFIG.INTER.WEIGHTS],
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 const jetBrainsMono = JetBrains_Mono({
-  subsets: [...FONT_CONFIG.MONO.SUBSETS],
+  subsets: ['latin'],
   variable: '--font-jetbrains-mono',
-  display: FONT_CONFIG.MONO.DISPLAY,
-  weight: [...FONT_CONFIG.MONO.WEIGHTS],
+  display: 'swap',
+  weight: ['400', '500', '600'],
 });
 
 export const metadata: Metadata = {
