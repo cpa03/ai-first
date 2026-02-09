@@ -4,81 +4,59 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import MobileNav from '@/components/MobileNav';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import { SEO_CONFIG, FONT_CONFIG, APP_CONFIG } from '@/lib/config';
 
 const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-  weight: ['300', '400', '500', '600', '700'],
+  subsets: [...FONT_CONFIG.INTER.SUBSETS],
+  variable: FONT_CONFIG.INTER.VARIABLE,
+  display: FONT_CONFIG.INTER.DISPLAY,
+  weight: [...FONT_CONFIG.INTER.WEIGHTS],
 });
 
 const jetBrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
+  subsets: [...FONT_CONFIG.MONO.SUBSETS],
   variable: '--font-jetbrains-mono',
-  display: 'swap',
-  weight: ['400', '500'],
+  display: FONT_CONFIG.MONO.DISPLAY,
+  weight: [...FONT_CONFIG.MONO.WEIGHTS],
 });
 
 export const metadata: Metadata = {
-  title: 'IdeaFlow - AI-Powered Project Planning & Task Management Tool',
-  description:
-    'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, timelines, and roadmaps. Free project planning tool for developers and teams.',
-  keywords: [
-    'AI project planning',
-    'task management',
-    'project roadmap',
-    'idea to action',
-    'automated planning',
-    'project management tool',
-    'AI task breakdown',
-  ],
-  authors: [{ name: 'IdeaFlow Team' }],
-  creator: 'IdeaFlow',
-  publisher: 'IdeaFlow',
+  title: SEO_CONFIG.METADATA.title.default,
+  description: SEO_CONFIG.METADATA.description,
+  keywords: [...SEO_CONFIG.METADATA.keywords],
+  authors: [...SEO_CONFIG.METADATA.authors],
+  creator: SEO_CONFIG.METADATA.creator,
+  publisher: SEO_CONFIG.METADATA.publisher,
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://ideaflow.ai'),
-  alternates: {
-    canonical: '/',
-  },
+  metadataBase: new URL(APP_CONFIG.URLS.BASE),
+  alternates: SEO_CONFIG.METADATA.alternates,
   openGraph: {
-    title: 'IdeaFlow - AI-Powered Project Planning & Task Management',
-    description:
-      'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, timelines, and roadmaps.',
-    url: 'https://ideaflow.ai',
-    siteName: 'IdeaFlow',
+    title: SEO_CONFIG.METADATA.openGraph.title,
+    description: SEO_CONFIG.METADATA.openGraph.description,
+    url: SEO_CONFIG.METADATA.openGraph.url,
+    siteName: SEO_CONFIG.METADATA.openGraph.siteName,
     images: [
       {
-        url: '/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'IdeaFlow - AI Project Planning Tool',
+        url: SEO_CONFIG.METADATA.openGraph.images[0].url,
+        width: SEO_CONFIG.METADATA.openGraph.images[0].width,
+        height: SEO_CONFIG.METADATA.openGraph.images[0].height,
+        alt: SEO_CONFIG.METADATA.openGraph.images[0].alt,
       },
     ],
-    locale: 'en_US',
-    type: 'website',
+    locale: SEO_CONFIG.METADATA.openGraph.locale,
+    type: SEO_CONFIG.METADATA.openGraph.type,
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'IdeaFlow - AI-Powered Project Planning',
-    description:
-      'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, timelines, and roadmaps.',
-    images: ['/og-image.jpg'],
+    card: SEO_CONFIG.METADATA.twitter.card,
+    title: SEO_CONFIG.METADATA.twitter.title,
+    description: SEO_CONFIG.METADATA.twitter.description,
+    images: [...SEO_CONFIG.METADATA.twitter.images],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
+  robots: SEO_CONFIG.METADATA.robots,
 };
 
 export default function RootLayout({

@@ -38,6 +38,9 @@ export {
   TOAST_CONFIG,
 } from './ui';
 
+// SEO Configuration
+export { SEO_CONFIG, FONT_CONFIG } from './seo';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
@@ -52,3 +55,4 @@ export type {
   IdeaConfig,
 } from './timeline';
 export type { UiConfig, ToastConfig } from './ui';
+export type { SeoConfig, FontConfig } from './seo';
