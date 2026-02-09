@@ -6,8 +6,10 @@ import {
   isClarifierQuestion,
 } from '@/lib/validation';
 import { createLogger } from '@/lib/logger';
+import { AGENT_CONFIG } from '@/lib/config/constants';
 
 const logger = createLogger('QuestionGenerator');
+const { QUESTION_GENERATOR } = AGENT_CONFIG;
 
 export interface ClarifierQuestion {
   id: string;
@@ -69,12 +71,16 @@ export class QuestionGenerator {
       const mappedQuestions = questionsData.map((q, index: number) => ({
         id: q.id || `q_${index + 1}`,
         question: q.question || `Question ${index + 1}`,
-        type: q.type || 'open',
+        type: q.type || QUESTION_GENERATOR.DEFAULT_QUESTION_TYPE,
         options: q.options || [],
-        required: q.required !== false,
+        required:
+          q.required !== false ? QUESTION_GENERATOR.REQUIRED_DEFAULT : false,
       })) as ClarifierQuestion[];
 
-      if (mappedQuestions.length < 3 || mappedQuestions.length > 5) {
+      if (
+        mappedQuestions.length < QUESTION_GENERATOR.MIN_QUESTIONS ||
+        mappedQuestions.length > QUESTION_GENERATOR.MAX_QUESTIONS
+      ) {
         logger.warn(
           `Invalid question count: ${mappedQuestions.length}, using fallback`
         );

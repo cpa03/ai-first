@@ -4,8 +4,10 @@ import { safeJsonParse } from '@/lib/validation';
 import { isIdeaAnalysis } from '@/lib/type-guards';
 import { createLogger } from '@/lib/logger';
 import { IdeaAnalysis } from '../breakdown-engine';
+import { AGENT_CONFIG } from '@/lib/config/constants';
 
 const logger = createLogger('IdeaAnalyzer');
+const { IDEA_ANALYSIS_FALLBACK } = AGENT_CONFIG;
 
 export interface IdeaAnalyzerConfig {
   aiConfig: AIModelConfig;
@@ -88,10 +90,18 @@ export class IdeaAnalyzer {
       typedAnalysis.deliverables = [];
     }
     if (!typedAnalysis.complexity) {
-      typedAnalysis.complexity = { score: 5, factors: [], level: 'medium' };
+      typedAnalysis.complexity = {
+        score: IDEA_ANALYSIS_FALLBACK.COMPLEXITY_SCORE,
+        factors: [],
+        level: IDEA_ANALYSIS_FALLBACK.COMPLEXITY_LEVEL,
+      };
     }
     if (!typedAnalysis.scope) {
-      typedAnalysis.scope = { size: 'medium', estimatedWeeks: 8, teamSize: 2 };
+      typedAnalysis.scope = {
+        size: IDEA_ANALYSIS_FALLBACK.SCOPE_SIZE,
+        estimatedWeeks: IDEA_ANALYSIS_FALLBACK.ESTIMATED_WEEKS,
+        teamSize: IDEA_ANALYSIS_FALLBACK.TEAM_SIZE,
+      };
     }
     if (
       !typedAnalysis.riskFactors ||
@@ -106,7 +116,8 @@ export class IdeaAnalyzer {
       typedAnalysis.successCriteria = [];
     }
     if (typeof typedAnalysis.overallConfidence !== 'number') {
-      typedAnalysis.overallConfidence = 0.7;
+      typedAnalysis.overallConfidence =
+        IDEA_ANALYSIS_FALLBACK.OVERALL_CONFIDENCE;
     }
 
     return typedAnalysis as IdeaAnalysis;
@@ -116,11 +127,19 @@ export class IdeaAnalyzer {
     return {
       objectives: [],
       deliverables: [],
-      complexity: { score: 5, factors: [], level: 'medium' },
-      scope: { size: 'medium', estimatedWeeks: 8, teamSize: 2 },
+      complexity: {
+        score: IDEA_ANALYSIS_FALLBACK.COMPLEXITY_SCORE,
+        factors: [],
+        level: IDEA_ANALYSIS_FALLBACK.COMPLEXITY_LEVEL,
+      },
+      scope: {
+        size: IDEA_ANALYSIS_FALLBACK.SCOPE_SIZE,
+        estimatedWeeks: IDEA_ANALYSIS_FALLBACK.ESTIMATED_WEEKS,
+        teamSize: IDEA_ANALYSIS_FALLBACK.TEAM_SIZE,
+      },
       riskFactors: [],
       successCriteria: [],
-      overallConfidence: 0.7,
+      overallConfidence: IDEA_ANALYSIS_FALLBACK.OVERALL_CONFIDENCE,
     };
   }
 }
