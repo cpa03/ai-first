@@ -34,6 +34,7 @@ Thumbs.db
 
 # Logs
 *.log
+task_plan.md
 
 # Runtime data
 pids
