@@ -2,8 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
 import { redactPIIInObject } from './pii-redaction';
 import { createLogger } from './logger';
+import { AGENT_CONFIG } from './config/constants';
 
 const logger = createLogger('DatabaseService');
+const { DATABASE } = AGENT_CONFIG;
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
@@ -121,7 +123,7 @@ export class DatabaseService {
   private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
   private connectionRetries = 0;
-  private maxConnectionRetries = 3;
+  private maxConnectionRetries = DATABASE.MAX_CONNECTION_RETRIES;
   private connectionHealthy = false;
   private lastHealthCheck: Date | null = null;
 
@@ -197,10 +199,12 @@ export class DatabaseService {
   }
 
   isConnectionHealthy(): boolean {
-    // Check if last health check is within 30 seconds
+    // Check if last health check is within stale threshold
     if (!this.lastHealthCheck) return false;
-    const thirtySecondsAgo = new Date(Date.now() - 30000);
-    return this.connectionHealthy && this.lastHealthCheck > thirtySecondsAgo;
+    const staleThreshold = new Date(
+      Date.now() - DATABASE.HEALTH_CHECK_STALE_THRESHOLD_MS
+    );
+    return this.connectionHealthy && this.lastHealthCheck > staleThreshold;
   }
 
   // Ideas CRUD operations
@@ -671,7 +675,7 @@ export class DatabaseService {
   async searchSimilarVectors(
     ideaId: string,
     queryEmbedding: number[],
-    limit: number = 10
+    limit: number = DATABASE.DEFAULT_SEARCH_LIMIT
   ): Promise<Vector[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -679,7 +683,7 @@ export class DatabaseService {
 
     const { data, error } = await this.client.rpc('match_vectors', {
       query_embedding: embeddingString,
-      match_threshold: 0.78,
+      match_threshold: DATABASE.VECTOR_SIMILARITY_THRESHOLD,
       match_count: limit,
       idea_id_filter: ideaId,
     } as never);
