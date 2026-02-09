@@ -100,3 +100,7 @@ __pycache__/
 .Python-e 
 # Git worktrees
 .worktrees/
+
+# Agent temporary directories
+.jules/
+.sisyphus/
