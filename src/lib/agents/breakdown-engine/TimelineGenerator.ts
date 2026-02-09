@@ -1,4 +1,5 @@
 import { createLogger } from '@/lib/logger';
+import { TIMELINE_CONFIG } from '@/lib/config';
 import {
   IdeaAnalysis,
   TaskDecomposition,
@@ -8,10 +9,10 @@ import {
 
 const _logger = createLogger('TimelineGenerator');
 
-const HOURS_PER_WEEK = 40;
-const MILLISECONDS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
-const PHASE_PLANNING_RATIO = 0.2;
-const PHASE_DEVELOPMENT_RATIO = 0.8;
+const HOURS_PER_WEEK = TIMELINE_CONFIG.HOURS.PER_WEEK;
+const MILLISECONDS_PER_WEEK = TIMELINE_CONFIG.MILLISECONDS.PER_WEEK;
+const PHASE_PLANNING_RATIO = TIMELINE_CONFIG.PHASES.RATIOS.PLANNING;
+const PHASE_DEVELOPMENT_RATIO = TIMELINE_CONFIG.PHASES.RATIOS.DEVELOPMENT;
 
 export class TimelineGenerator {
   generateTimeline(
@@ -58,11 +59,11 @@ export class TimelineGenerator {
     dependencies: string[];
   }> {
     return analysis.deliverables.map((deliverable, index) => ({
-      id: `m_${index + 1}`,
+      id: `m_${index + TIMELINE_CONFIG.MILESTONES.SPACING_MULTIPLIER}`,
       title: deliverable.title,
       date: new Date(
         startDate.getTime() +
-          (index + 1) *
+          (index + TIMELINE_CONFIG.MILESTONES.SPACING_MULTIPLIER) *
             (totalWeeks / analysis.deliverables.length) *
             MILLISECONDS_PER_WEEK
       ),

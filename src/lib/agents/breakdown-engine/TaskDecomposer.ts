@@ -3,6 +3,7 @@ import { promptService } from '@/lib/prompt-service';
 import { safeJsonParse } from '@/lib/validation';
 import { isArrayOf, isTask } from '@/lib/type-guards';
 import { createLogger } from '@/lib/logger';
+import { TASK_CONFIG } from '@/lib/config';
 import { IdeaAnalysis, TaskDecomposition } from '../breakdown-engine';
 
 const logger = createLogger('TaskDecomposer');
@@ -79,8 +80,8 @@ export class TaskDecomposer {
             title: `Complete ${deliverable.title}`,
             description: deliverable.description,
             estimatedHours: deliverable.estimatedHours,
-            complexity: 5,
-            requiredSkills: ['General'],
+            complexity: TASK_CONFIG.DEFAULTS.COMPLEXITY,
+            requiredSkills: TASK_CONFIG.DEFAULTS.SKILLS,
             dependencies: [],
             deliverableId: deliverable.title,
           };
@@ -102,7 +103,7 @@ export class TaskDecomposer {
       result.tasks.forEach(
         (task: TaskDecomposition['tasks'][0], _taskIndex: number) => {
           if (task.id === '') {
-            task.id = `t_${tasks.length + 1}`;
+            task.id = TASK_CONFIG.ID.GENERATOR(tasks.length);
           }
           tasks.push(task);
         }
@@ -113,7 +114,7 @@ export class TaskDecomposer {
     return {
       tasks,
       totalEstimatedHours: totalHours,
-      confidence: analysis.overallConfidence * 0.9,
+      confidence: analysis.overallConfidence * TASK_CONFIG.CONFIDENCE.MULTIPLIER,
     };
   }
 }
