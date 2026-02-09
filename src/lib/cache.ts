@@ -66,6 +66,10 @@ export class Cache<T = unknown> {
       return null;
     }
 
+    // Update access order for LRU: delete and re-insert to move to end
+    this.cache.delete(key);
+    this.cache.set(key, entry);
+
     entry.hits++;
     return entry.value;
   }

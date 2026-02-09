@@ -1,5 +1,6 @@
 import { createLogger } from '../logger';
 import { CircuitBreakerOptions, CircuitBreakerState } from './types';
+import { CircuitBreakerError } from '../errors';
 
 type CircuitBreakerInternalState = {
   state: 'closed' | 'open' | 'half-open';
@@ -31,10 +32,9 @@ export class CircuitBreaker {
       if (Date.now() >= (this.circuitState.nextAttemptTime || 0)) {
         this.circuitState.state = 'half-open';
       } else {
-        throw new Error(
-          `Circuit breaker ${this.name} is OPEN. Retry after ${new Date(
-            this.circuitState.nextAttemptTime || 0
-          ).toISOString()}`
+        throw new CircuitBreakerError(
+          this.name,
+          new Date(this.circuitState.nextAttemptTime || 0)
         );
       }
     }

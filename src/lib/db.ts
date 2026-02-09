@@ -178,7 +178,8 @@ export class DatabaseService {
 
   // For testing purposes only - reset the singleton instance
   static resetInstance(): void {
-    DatabaseService.instance = undefined as unknown as DatabaseService;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (DatabaseService as any).instance = undefined;
   }
 
   // Connection health monitoring

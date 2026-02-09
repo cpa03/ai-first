@@ -180,10 +180,44 @@ export function cleanupExpiredEntries(): void {
   }
 }
 
-setInterval(
-  cleanupExpiredEntries,
-  RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_INTERVAL_MS
-);
+// Store interval ID to allow cleanup (prevents memory leaks in tests/HMR)
+let cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
+
+/**
+ * Starts the cleanup interval for expired rate limit entries.
+ * Idempotent - safe to call multiple times.
+ */
+export function startCleanupInterval(): void {
+  if (cleanupIntervalId) {
+    return; // Already running
+  }
+  cleanupIntervalId = setInterval(
+    cleanupExpiredEntries,
+    RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_INTERVAL_MS
+  );
+}
+
+/**
+ * Stops the cleanup interval.
+ * Call this in tests or during cleanup to prevent memory leaks.
+ */
+export function stopCleanupInterval(): void {
+  if (cleanupIntervalId) {
+    clearInterval(cleanupIntervalId);
+    cleanupIntervalId = null;
+  }
+}
+
+/**
+ * Restarts the cleanup interval (useful for testing).
+ */
+export function restartCleanupInterval(): void {
+  stopCleanupInterval();
+  startCleanupInterval();
+}
+
+// Auto-start cleanup interval in production
+startCleanupInterval();
 
 export function rateLimitResponse(
   rateLimitInfo: RateLimitInfo,
