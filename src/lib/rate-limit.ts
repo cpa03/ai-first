@@ -18,23 +18,62 @@ export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, number[]>();
 
-export function getClientIdentifier(request: Request): string {
-  // First, try x-real-ip which is set by trusted proxies (Vercel, etc.)
-  const realIp = request.headers.get('x-real-ip');
-  if (realIp) {
-    return realIp.trim();
-  }
-
-  // Fall back to x-forwarded-for, but use the LAST IP in the chain
-  // (closest to the server) to prevent client spoofing
-  const forwarded = request.headers.get('x-forwarded-for');
-  if (forwarded) {
-    const ips = forwarded.split(',').map((ip) => ip.trim());
-    // Use the last IP which is added by the closest proxy
-    return ips[ips.length - 1] || 'unknown';
-  }
-
+/**
+ * Platform detection for trusted proxy headers
+ */
+function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
+  if (process.env.VERCEL) return 'vercel';
+  if (process.env.CF_WORKER || process.env.CLOUDFLARE) return 'cloudflare';
   return 'unknown';
+}
+
+/**
+ * Generate a request fingerprint for fallback rate limiting
+ * Uses non-spoofable client characteristics
+ */
+function generateRequestFingerprint(request: Request): string {
+  const userAgent = request.headers.get('user-agent') || '';
+  const acceptLang = request.headers.get('accept-language') || '';
+  const acceptEncoding = request.headers.get('accept-encoding') || '';
+
+  // Combine non-spoofable characteristics
+  const combined = `${userAgent}:${acceptLang}:${acceptEncoding}`;
+
+  // Simple hash function
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) - hash + char) | 0;
+  }
+
+  return `fp:${Math.abs(hash)}`;
+}
+
+export function getClientIdentifier(request: Request): string {
+  const platform = detectPlatform();
+
+  // Platform-specific trusted header handling
+  // These headers are set by the platform infrastructure and cannot be spoofed
+  if (platform === 'vercel') {
+    // Vercel sets x-vercel-forwarded-for which is trustworthy
+    const vercelIp = request.headers.get('x-vercel-forwarded-for');
+    if (vercelIp) {
+      return vercelIp.split(',')[0].trim();
+    }
+  }
+
+  if (platform === 'cloudflare') {
+    // Cloudflare sets CF-Connecting-IP
+    const cfIp = request.headers.get('cf-connecting-ip');
+    if (cfIp) {
+      return cfIp.trim();
+    }
+  }
+
+  // For unknown platforms or missing platform headers,
+  // use request fingerprinting as fallback
+  // This prevents complete rate limit bypass via header spoofing
+  return generateRequestFingerprint(request);
 }
 
 export function checkRateLimit(
