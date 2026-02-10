@@ -69,6 +69,7 @@ CREATE TABLE deliverables (
     priority INTEGER DEFAULT 0,
     estimate_hours INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE,
     milestone_id UUID REFERENCES milestones(id) ON DELETE SET NULL,
     completion_percentage INTEGER DEFAULT 0 CHECK (completion_percentage >= 0 AND completion_percentage <= 100),
