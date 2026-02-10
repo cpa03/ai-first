@@ -25,6 +25,5 @@
     "websearch": { "enabled": true },
     "context7": { "enabled": true },
     "github": { "enabled": true }
-  },
-  "lsp": true
+  }
 }
