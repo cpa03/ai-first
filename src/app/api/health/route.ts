@@ -39,10 +39,18 @@ async function handleGet(context: ApiContext) {
 
   requiredVars.forEach((varName) => {
     const isSet = !!process.env[varName];
-    envStatus.checks[varName] = {
-      present: isSet,
-      required: true,
-    };
+    const isSensitive =
+      varName.toUpperCase().includes('KEY') ||
+      varName.toUpperCase().includes('SECRET') ||
+      varName.toUpperCase().includes('TOKEN');
+
+    // Security: Only expose non-sensitive variable names in the health check response
+    if (!isSensitive) {
+      envStatus.checks[varName] = {
+        present: isSet,
+        required: true,
+      };
+    }
 
     if (!isSet) {
       missingVars.push(varName);
@@ -51,10 +59,18 @@ async function handleGet(context: ApiContext) {
 
   aiVars.forEach((varName) => {
     const isSet = !!process.env[varName];
-    envStatus.checks[varName] = {
-      present: isSet,
-      required: false,
-    };
+    const isSensitive =
+      varName.toUpperCase().includes('KEY') ||
+      varName.toUpperCase().includes('SECRET') ||
+      varName.toUpperCase().includes('TOKEN');
+
+    // Security: Only expose non-sensitive variable names in the health check response
+    if (!isSensitive) {
+      envStatus.checks[varName] = {
+        present: isSet,
+        required: false,
+      };
+    }
 
     if (isSet) {
       hasAIProvider = true;

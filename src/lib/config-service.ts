@@ -39,7 +39,9 @@ class ConfigurationService {
   }
 
   private getConfigPath(agentName: string): string {
-    return path.join(process.cwd(), this.configDir, `${agentName}.yml`);
+    // Sanitize agentName to prevent path traversal
+    const sanitizedName = agentName.replace(/[^a-zA-Z0-9_-]/g, '');
+    return path.join(process.cwd(), this.configDir, `${sanitizedName}.yml`);
   }
 
   private async loadFromDisk(agentName: string): Promise<AgentConfig> {
