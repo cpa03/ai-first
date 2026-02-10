@@ -2,37 +2,31 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "sisyphus": {
-      "model": "opencode/claude-opus-4-6",
-      "variant": "max"
+      "model": "opencode/kimi-k2.5-free"
     },
     "hephaestus": {
-      "model": "opencode/gpt-5.3-codex",
-      "variant": "medium"
+      "model": "opencode/glm-4.7-free"
     },
     "oracle": {
-      "model": "opencode/gpt-5.2",
-      "variant": "high"
+      "model": "opencode/kimi-k2.5-free"
     },
     "librarian": {
       "model": "opencode/glm-4.7-free"
     },
     "explore": {
-      "model": "opencode/claude-haiku-4-5"
+      "model": "opencode/glm-4.7-free"
     },
     "multimodal_looker": {
-      "model": "opencode/gemini-3-flash"
+      "model": "opencode/glm-4.7-free"
     },
     "prometheus": {
-      "model": "opencode/claude-opus-4-6",
-      "variant": "max"
+      "model": "opencode/kimi-k2.5-free"
     },
     "metis": {
-      "model": "opencode/claude-opus-4-6",
-      "variant": "max"
+      "model": "opencode/kimi-k2.5-free"
     },
     "momus": {
-      "model": "opencode/gpt-5.2",
-      "variant": "medium"
+      "model": "opencode/kimi-k2.5-free"
     },
     "atlas": {
       "model": "opencode/kimi-k2.5-free"
@@ -40,31 +34,28 @@
   },
   "categories": {
     "visual-engineering": {
-      "model": "opencode/gemini-3-pro"
+      "model": "opencode/glm-4.7-free"
     },
     "ultrabrain": {
-      "model": "opencode/gpt-5.3-codex",
-      "variant": "xhigh"
+      "model": "opencode/kimi-k2.5-free"
     },
     "deep": {
-      "model": "opencode/gpt-5.3-codex",
-      "variant": "medium"
+      "model": "opencode/kimi-k2.5-free"
     },
     "artistry": {
-      "model": "opencode/gemini-3-pro",
-      "variant": "high"
+      "model": "opencode/glm-4.7-free"
     },
     "quick": {
-      "model": "opencode/claude-haiku-4-5"
+      "model": "opencode/minimax-m2.1-free"
     },
     "unspecified-low": {
-      "model": "opencode/claude-sonnet-4-5"
+      "model": "opencode/minimax-m2.1-free"
     },
     "unspecified-high": {
-      "model": "opencode/claude-sonnet-4-5"
+      "model": "opencode/kimi-k2.5-free"
     },
     "writing": {
-      "model": "opencode/gemini-3-flash"
+      "model": "opencode/glm-4.7-free"
     }
   },
   "version": "3.0.0",
@@ -141,7 +132,8 @@
       "stop",
       "pre_model_use",
       "post_model_use"
-    ]
+    ],
+    "disabled": ["anthropic-context-window-limit-recovery"]
   },
   "performance": {
     "cache_enabled": true,
