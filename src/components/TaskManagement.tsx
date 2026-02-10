@@ -194,6 +194,25 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           throw new Error('Invalid response from server');
         }
 
+        // Show success toast when task is completed
+        if (newStatus === 'completed' && typeof window !== 'undefined') {
+          const task = data?.deliverables
+            .flatMap((d) => d.tasks)
+            .find((t) => t.id === taskId);
+          if (task) {
+            const win = window as unknown as {
+              showToast?: (options: {
+                type: string;
+                message: string;
+              }) => void;
+            };
+            win.showToast?.({
+              type: 'success',
+              message: `Nicely done! "${task.title}" is complete.`,
+            });
+          }
+        }
+
         // PERFORMANCE: Use incremental updates and only update the affected deliverable.
         // This avoids O(D * T) nested loops and minimizes React re-renders.
         setData((prevData) => {
@@ -396,6 +415,7 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
             aria-valuemin={0}
             aria-valuemax={100}
             role="progressbar"
+            aria-label="Overall project progress"
           />
         </div>
 
@@ -480,6 +500,11 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
                       <div
                         className="bg-primary-500 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${deliverable.progress}%` }}
+                        role="progressbar"
+                        aria-valuenow={deliverable.progress}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-label={`${deliverable.title} progress`}
                       />
                     </div>
                   </div>
