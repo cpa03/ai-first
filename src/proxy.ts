@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 
-function buildCSPHeader(): string {
+// PERFORMANCE: Pre-calculate the CSP header to avoid overhead on every request.
+const CSP_HEADER = ((): string => {
   const directives: string[] = [];
 
   for (const [directive, values] of Object.entries(CSP_CONFIG.DIRECTIVES)) {
@@ -13,31 +14,27 @@ function buildCSPHeader(): string {
   }
 
   return directives.join('; ');
-}
+})();
+
+// PERFORMANCE: Pre-calculate the Permissions-Policy header.
+const PERMISSIONS_POLICY = CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
+
+// PERFORMANCE: Pre-calculate HSTS header if applicable.
+const HSTS_HEADER = `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}${
+  SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''
+}${SECURITY_CONFIG.HSTS_PRELOAD ? '; preload' : ''}`;
 
 export function proxy() {
   const response = NextResponse.next();
 
-  response.headers.set('Content-Security-Policy', buildCSPHeader());
+  response.headers.set('Content-Security-Policy', CSP_HEADER);
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-
-  response.headers.set(
-    'Permissions-Policy',
-    CSP_CONFIG.PERMISSIONS_POLICY.join(', ')
-  );
+  response.headers.set('Permissions-Policy', PERMISSIONS_POLICY);
 
   if (process.env.NODE_ENV === 'production') {
-    const hstsDirectives = [
-      `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}`,
-      ...(SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? ['includeSubDomains'] : []),
-      ...(SECURITY_CONFIG.HSTS_PRELOAD ? ['preload'] : []),
-    ];
-    response.headers.set(
-      'Strict-Transport-Security',
-      hstsDirectives.join('; ')
-    );
+    response.headers.set('Strict-Transport-Security', HSTS_HEADER);
   }
 
   return response;
