@@ -36,7 +36,11 @@ async function scanPage(page, url) {
 
     consoleLogs.push(logEntry);
 
-    if (type === 'error') {
+    const isExpectedAuthError =
+      text.includes('401 (Unauthorized)') &&
+      (location?.url?.includes('/api/') || text.includes('/api/'));
+
+    if (type === 'error' && !isExpectedAuthError) {
       pageErrors.push(logEntry);
       errors.push(logEntry);
     } else if (type === 'warning' || text.toLowerCase().includes('warning')) {

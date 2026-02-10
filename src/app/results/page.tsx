@@ -101,7 +101,7 @@ export default function ResultsPage() {
     };
 
     fetchResults();
-  }, []);
+  }, [router]);
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!idea) return;

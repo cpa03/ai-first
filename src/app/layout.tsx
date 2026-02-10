@@ -65,7 +65,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetBrainsMono.variable}`}>
+    <html
+      lang="en"
+      className={`${inter.variable} ${jetBrainsMono.variable}`}
+      data-scroll-behavior="smooth"
+    >
       <body className="min-h-screen bg-gray-50 font-sans">
         <ErrorBoundary>
           <a
