@@ -2,6 +2,7 @@ import '../styles/globals.css';
 import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import MobileNav from '@/components/MobileNav';
+import ToastContainer from '@/components/ToastContainer';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
@@ -79,6 +80,7 @@ export default function RootLayout({
             Skip to main content
           </a>
           <div className="min-h-screen flex flex-col">
+            <ToastContainer />
             <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
