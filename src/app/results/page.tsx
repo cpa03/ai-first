@@ -63,7 +63,9 @@ export default function ResultsPage() {
         const ideaId = urlParams.get('ideaId');
 
         if (!ideaId) {
-          throw new Error('Idea ID is required');
+          // Gracefully handle missing ideaId - redirect to dashboard
+          router.push('/dashboard');
+          return;
         }
 
         const [ideaResponse, sessionResponse] = await Promise.all([

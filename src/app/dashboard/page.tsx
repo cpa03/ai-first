@@ -66,6 +66,13 @@ export default function DashboardPage() {
       const response = await fetch(url.toString());
 
       if (!response.ok) {
+        // Handle 401 gracefully - user not authenticated
+        if (response.status === 401) {
+          setError('Please sign in to view your ideas');
+          setIdeas([]);
+          setPagination(null);
+          return;
+        }
         throw new Error('Failed to fetch ideas');
       }
 
@@ -78,10 +85,13 @@ export default function DashboardPage() {
       setIdeas(data.data.ideas);
       setPagination(data.data.pagination);
     } catch (err) {
-      logger.error('Error fetching ideas:', err);
-      setError(
-        err instanceof Error ? err.message : 'An unknown error occurred'
-      );
+      // Only log unexpected errors, not auth errors
+      const errorMessage =
+        err instanceof Error ? err.message : 'An unknown error occurred';
+      if (!errorMessage.includes('sign in')) {
+        logger.error('Error fetching ideas:', err);
+      }
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
