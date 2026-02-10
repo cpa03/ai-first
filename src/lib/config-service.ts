@@ -41,6 +41,9 @@ class ConfigurationService {
   private getConfigPath(agentName: string): string {
     // Sanitize agentName to prevent path traversal
     const sanitizedName = agentName.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!sanitizedName) {
+      throw new Error(`Invalid agent name: ${agentName}`);
+    }
     return path.join(process.cwd(), this.configDir, `${sanitizedName}.yml`);
   }
 
@@ -100,8 +103,8 @@ class ConfigurationService {
   }
 
   async configExists(agentName: string): Promise<boolean> {
-    const configPath = this.getConfigPath(agentName);
     try {
+      const configPath = this.getConfigPath(agentName);
       await access(configPath);
       return true;
     } catch {

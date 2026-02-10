@@ -4,6 +4,13 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 
+function isSensitiveVar(varName: string): boolean {
+  const upper = varName.toUpperCase();
+  return (
+    upper.includes('KEY') || upper.includes('SECRET') || upper.includes('TOKEN')
+  );
+}
+
 async function handleGet(context: ApiContext) {
   const { rateLimit: _rateLimit } = context;
   const envStatus: {
@@ -39,13 +46,9 @@ async function handleGet(context: ApiContext) {
 
   requiredVars.forEach((varName) => {
     const isSet = !!process.env[varName];
-    const isSensitive =
-      varName.toUpperCase().includes('KEY') ||
-      varName.toUpperCase().includes('SECRET') ||
-      varName.toUpperCase().includes('TOKEN');
 
     // Security: Only expose non-sensitive variable names in the health check response
-    if (!isSensitive) {
+    if (!isSensitiveVar(varName)) {
       envStatus.checks[varName] = {
         present: isSet,
         required: true,
@@ -59,13 +62,9 @@ async function handleGet(context: ApiContext) {
 
   aiVars.forEach((varName) => {
     const isSet = !!process.env[varName];
-    const isSensitive =
-      varName.toUpperCase().includes('KEY') ||
-      varName.toUpperCase().includes('SECRET') ||
-      varName.toUpperCase().includes('TOKEN');
 
     // Security: Only expose non-sensitive variable names in the health check response
-    if (!isSensitive) {
+    if (!isSensitiveVar(varName)) {
       envStatus.checks[varName] = {
         present: isSet,
         required: false,
