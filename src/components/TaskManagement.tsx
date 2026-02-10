@@ -82,44 +82,63 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           throw new Error('Invalid response from server');
         }
 
-        // PERFORMANCE: Pre-calculate deliverable-level and global hours to ensure consistency
-        // and avoid O(T) reduce calls in the render loop.
+        // PERFORMANCE: Pre-calculate deliverable-level and global statistics to ensure consistency
+        // and avoid redundant calculations in the render loop. This also provides a safe
+        // base for incremental delta updates in handleToggleTaskStatus.
+        let totalTasks = 0;
+        let completedTasks = 0;
         let totalHours = 0;
         let completedHours = 0;
 
         const deliverables = (result.data.deliverables || []).map(
           (d: Deliverable & { tasks: Task[] }) => {
-            const hours = d.tasks.reduce(
+            const stats = d.tasks.reduce(
               (acc, t) => {
                 const est = Number(t.estimate) || 0;
-                acc.total += est;
-                if (t.status === 'completed') acc.completed += est;
+                acc.totalHours += est;
+                acc.totalCount += 1;
+                if (t.status === 'completed') {
+                  acc.completedHours += est;
+                  acc.completedCount += 1;
+                }
                 return acc;
               },
-              { total: 0, completed: 0 }
+              { totalHours: 0, completedHours: 0, totalCount: 0, completedCount: 0 }
             );
 
-            const dTotalHours = Math.round(hours.total * 10) / 10;
-            const dCompletedHours = Math.round(hours.completed * 10) / 10;
+            const dTotalHours = Math.round(stats.totalHours * 10) / 10;
+            const dCompletedHours = Math.round(stats.completedHours * 10) / 10;
 
+            totalTasks += stats.totalCount;
+            completedTasks += stats.completedCount;
             totalHours += dTotalHours;
             completedHours += dCompletedHours;
 
             return {
               ...d,
+              totalCount: stats.totalCount,
+              completedCount: stats.completedCount,
               totalHours: dTotalHours,
               completedHours: dCompletedHours,
+              progress: Math.round(
+                stats.totalCount > 0 ? (stats.completedCount / stats.totalCount) * 100 : 0
+              ),
             };
           }
         );
 
         const summary = {
-          ...(result.data.summary || {}),
+          totalDeliverables: deliverables.length,
+          totalTasks,
+          completedTasks,
           totalHours: Math.round(totalHours * 10) / 10,
           completedHours: Math.round(completedHours * 10) / 10,
+          overallProgress: Math.round(
+            totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
+          ),
         };
 
-        setData({ ...result.data, deliverables, summary });
+        setData({ ideaId, deliverables, summary });
 
         // Expand all deliverables by default
         if (deliverables.length > 0) {
