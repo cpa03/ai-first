@@ -12,6 +12,8 @@ interface DeliverableWithTasks extends Deliverable {
   progress: number;
   completedCount: number;
   totalCount: number;
+  totalHours: number;
+  completedHours: number;
 }
 
 interface TaskManagementProps {
@@ -80,14 +82,49 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           throw new Error('Invalid response from server');
         }
 
-        setData(result.data);
+        // PERFORMANCE: Pre-calculate deliverable-level and global hours to ensure consistency
+        // and avoid O(T) reduce calls in the render loop.
+        let totalHours = 0;
+        let completedHours = 0;
+
+        const deliverables = (result.data.deliverables || []).map(
+          (d: Deliverable & { tasks: Task[] }) => {
+            const hours = d.tasks.reduce(
+              (acc, t) => {
+                const est = Number(t.estimate) || 0;
+                acc.total += est;
+                if (t.status === 'completed') acc.completed += est;
+                return acc;
+              },
+              { total: 0, completed: 0 }
+            );
+
+            const dTotalHours = Math.round(hours.total * 10) / 10;
+            const dCompletedHours = Math.round(hours.completed * 10) / 10;
+
+            totalHours += dTotalHours;
+            completedHours += dCompletedHours;
+
+            return {
+              ...d,
+              totalHours: dTotalHours,
+              completedHours: dCompletedHours,
+            };
+          }
+        );
+
+        const summary = {
+          ...(result.data.summary || {}),
+          totalHours: Math.round(totalHours * 10) / 10,
+          completedHours: Math.round(completedHours * 10) / 10,
+        };
+
+        setData({ ...result.data, deliverables, summary });
 
         // Expand all deliverables by default
-        if (result.data.deliverables) {
+        if (deliverables.length > 0) {
           setExpandedDeliverables(
-            new Set(
-              result.data.deliverables.map((d: DeliverableWithTasks) => d.id)
-            )
+            new Set(deliverables.map((d: DeliverableWithTasks) => d.id))
           );
         }
       } catch (err) {
@@ -138,65 +175,78 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
           throw new Error('Invalid response from server');
         }
 
-        // Update local state
+        // PERFORMANCE: Use incremental updates and only update the affected deliverable.
+        // This avoids O(D * T) nested loops and minimizes React re-renders.
         setData((prevData) => {
           if (!prevData) return null;
 
-          const updatedDeliverables = prevData.deliverables.map(
-            (deliverable) => {
-              const updatedTasks = deliverable.tasks.map((task) => {
-                if (task.id === taskId) {
-                  return {
-                    ...task,
-                    status: newStatus,
-                    completion_percentage: newStatus === 'completed' ? 100 : 0,
-                  };
-                }
-                return task;
-              });
-
-              const completedCount = updatedTasks.filter(
-                (t) => t.status === 'completed'
-              ).length;
-              const progress =
-                updatedTasks.length > 0
-                  ? (completedCount / updatedTasks.length) * 100
-                  : 0;
-
-              return {
-                ...deliverable,
-                tasks: updatedTasks,
-                completedCount,
-                progress: Math.round(progress),
-              };
-            }
+          // Find the deliverable that contains the task
+          const dIndex = prevData.deliverables.findIndex((d) =>
+            d.tasks.some((t) => t.id === taskId)
           );
+          if (dIndex === -1) return prevData;
 
-          let totalTasks = 0,
-            completedTasks = 0,
-            totalHours = 0,
-            completedHours = 0;
-          updatedDeliverables.forEach((d) => {
-            totalTasks += d.tasks.length;
-            completedTasks += d.completedCount;
-            d.tasks.forEach((t) => {
-              const est = Number(t.estimate) || 0;
-              totalHours += est;
-              if (t.status === 'completed') completedHours += est;
-            });
-          });
+          const deliverable = prevData.deliverables[dIndex];
+          const taskIndex = deliverable.tasks.findIndex((t) => t.id === taskId);
+          const task = deliverable.tasks[taskIndex];
+          const est = Number(task.estimate) || 0;
+
+          let deltaTasks = 0;
+          let deltaHours = 0;
+
+          // Calculate deltas for summary
+          if (newStatus === 'completed' && task.status !== 'completed') {
+            deltaTasks = 1;
+            deltaHours = est;
+          } else if (newStatus !== 'completed' && task.status === 'completed') {
+            deltaTasks = -1;
+            deltaHours = -est;
+          }
+
+          if (deltaTasks === 0) return prevData;
+
+          const updatedTasks = [...deliverable.tasks];
+          updatedTasks[taskIndex] = {
+            ...task,
+            status: newStatus,
+            completion_percentage: newStatus === 'completed' ? 100 : 0,
+          };
+
+          const newCompletedCount = deliverable.completedCount + deltaTasks;
+          const newCompletedHours =
+            Math.round((deliverable.completedHours + deltaHours) * 10) / 10;
+
+          const updatedDeliverable = {
+            ...deliverable,
+            tasks: updatedTasks,
+            completedCount: newCompletedCount,
+            completedHours: newCompletedHours,
+            progress: Math.round(
+              updatedTasks.length > 0
+                ? (newCompletedCount / updatedTasks.length) * 100
+                : 0
+            ),
+          };
+
+          const updatedDeliverables = [...prevData.deliverables];
+          updatedDeliverables[dIndex] = updatedDeliverable;
+
+          const { summary } = prevData;
+          const newOverallCompletedTasks = summary.completedTasks + deltaTasks;
+          const newOverallCompletedHours =
+            Math.round((summary.completedHours + deltaHours) * 10) / 10;
 
           return {
             ...prevData,
             deliverables: updatedDeliverables,
             summary: {
-              ...prevData.summary,
-              totalTasks,
-              completedTasks,
-              totalHours: Math.round(totalHours * 10) / 10,
-              completedHours: Math.round(completedHours * 10) / 10,
+              ...summary,
+              completedTasks: newOverallCompletedTasks,
+              completedHours: newOverallCompletedHours,
               overallProgress: Math.round(
-                totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
+                summary.totalTasks > 0
+                  ? (newOverallCompletedTasks / summary.totalTasks) * 100
+                  : 0
               ),
             },
           };
@@ -345,16 +395,6 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
       <div className="space-y-4">
         {deliverables.map((deliverable) => {
           const isExpanded = expandedDeliverables.has(deliverable.id);
-          const deliverableHours = deliverable.tasks.reduce(
-            (acc, t) => {
-              const est = Number(t.estimate) || 0;
-              acc.total += est;
-              if (t.status === 'completed') acc.completed += est;
-              return acc;
-            },
-            { total: 0, completed: 0 }
-          );
-
           const deliverableStyle =
             deliverable.progress === 100
               ? { bgColor: 'bg-green-50', borderColor: 'border-green-200' }
@@ -390,8 +430,8 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
                     </div>
                     <div className="text-xs text-gray-600">
                       {deliverable.completedCount}/{deliverable.totalCount}{' '}
-                      tasks ({deliverableHours.completed}/
-                      {deliverableHours.total}h)
+                      tasks ({deliverable.completedHours}/
+                      {deliverable.totalHours}h)
                     </div>
                   </div>
                   <svg
