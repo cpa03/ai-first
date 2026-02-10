@@ -1,4 +1,5 @@
 {
+  "_comment": "Get your API key from https://console.supermemory.ai and set it via SUPERMEMORY_API_KEY env var or add apiKey field here",
   "similarityThreshold": 0.6,
   "maxMemories": 5,
   "maxProjectMemories": 10,
