@@ -5,6 +5,8 @@
  * and ensuring proper cleanup of async operations.
  */
 
+import { CLEANUP_CONFIG } from './config';
+
 export interface CleanupTask {
   id: string;
   cleanup: () => void | Promise<void>;
@@ -30,7 +32,7 @@ export class ResourceCleanupManager {
   register(
     id: string,
     cleanup: () => void | Promise<void>,
-    priority: number = 0
+    priority: number = CLEANUP_CONFIG.RESOURCE_MANAGER.DEFAULT_PRIORITY
   ): void {
     if (this.isCleaningUp) {
       console.warn(
@@ -74,7 +76,7 @@ export class ResourceCleanupManager {
           new Promise((_, reject) =>
             setTimeout(
               () => reject(new Error(`Cleanup timeout for ${task.id}`)),
-              5000
+              CLEANUP_CONFIG.RESOURCE_MANAGER.TASK_TIMEOUT_MS
             )
           ),
         ]);

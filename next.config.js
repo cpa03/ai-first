@@ -26,7 +26,13 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
   experimental: {
-    optimizePackageImports: ['@supabase/supabase-js', 'googleapis'],
+    optimizePackageImports: ['@supabase/supabase-js', 'googleapis', 'openai'],
+  },
+  compiler: {
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? { exclude: ['error', 'warn'] }
+        : false,
   },
 };
 

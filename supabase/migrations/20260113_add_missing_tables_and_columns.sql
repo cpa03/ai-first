@@ -129,7 +129,7 @@ CREATE TABLE IF NOT EXISTS time_tracking (
 CREATE TABLE IF NOT EXISTS task_comments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
     task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
-    user_id TEXT NOT NULL,
+    user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     comment TEXT NOT NULL,
     parent_comment_id UUID REFERENCES task_comments(id) ON DELETE CASCADE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

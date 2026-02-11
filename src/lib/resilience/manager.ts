@@ -2,6 +2,7 @@ import { ResilienceConfig } from './types';
 import { CircuitBreakerManager } from './circuit-breaker-manager';
 import { CircuitBreaker } from './circuit-breaker';
 import { createResilientWrapper } from './resilient-wrapper';
+import { DEFAULT_CIRCUIT_BREAKER_CONFIG, DEFAULT_RETRIES } from './config';
 
 const cbManager = CircuitBreakerManager.getInstance();
 
@@ -14,8 +15,10 @@ export const resilienceManager = {
     const circuitBreaker = config.failureThreshold
       ? cbManager.getOrCreate(context || 'default', {
           failureThreshold: config.failureThreshold,
-          resetTimeoutMs: config.resetTimeoutMs || 60000,
-          monitoringPeriodMs: 10000,
+          resetTimeoutMs:
+            config.resetTimeoutMs ??
+            DEFAULT_CIRCUIT_BREAKER_CONFIG.resetTimeoutMs,
+          monitoringPeriodMs: DEFAULT_CIRCUIT_BREAKER_CONFIG.monitoringPeriodMs,
         })
       : undefined;
 
@@ -24,9 +27,10 @@ export const resilienceManager = {
       retryConfig: config.maxRetries
         ? {
             maxRetries: config.maxRetries,
-            initialDelayMs: config.baseDelayMs || 1000,
-            maxDelayMs: config.maxDelayMs || 30000,
-            backoffMultiplier: 2,
+            initialDelayMs:
+              config.baseDelayMs ?? DEFAULT_RETRIES.initialDelayMs,
+            maxDelayMs: config.maxDelayMs ?? DEFAULT_RETRIES.maxDelayMs,
+            backoffMultiplier: DEFAULT_RETRIES.backoffMultiplier,
           }
         : undefined,
       circuitBreaker,

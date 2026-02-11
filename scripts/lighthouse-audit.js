@@ -4,8 +4,8 @@
  * Runs Lighthouse audits on all pages and generates optimization report
  */
 
-const lighthouse = require('lighthouse');
-const puppeteer = require('puppeteer');
+const { default: lighthouse } = require('lighthouse');
+const chromeLauncher = require('chrome-launcher');
 const fs = require('fs');
 const path = require('path');
 
@@ -40,16 +40,15 @@ const CONFIG = {
 const audits = [];
 
 async function runLighthouse(url) {
-  const browser = await puppeteer.launch({
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  const chrome = await chromeLauncher.launch({
+    chromeFlags: ['--no-sandbox', '--headless', '--disable-gpu'],
   });
 
   try {
     const { lhr } = await lighthouse(
       url,
       {
-        port: new URL(browser.wsEndpoint()).port,
+        port: chrome.port,
         output: 'json',
         logLevel: 'error',
       },
@@ -108,7 +107,7 @@ async function runLighthouse(url) {
 
     return results;
   } finally {
-    await browser.close();
+    await chrome.kill();
   }
 }
 

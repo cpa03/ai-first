@@ -8,6 +8,7 @@ import {
   MIN_SHORT_ANSWER_LENGTH,
   MAX_SHORT_ANSWER_LENGTH,
 } from '@/lib/validation';
+import { UI_CONFIG, LABELS, CLARIFIER_CONFIG } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -36,24 +37,19 @@ interface ClarificationFlowProps {
   onComplete: (answers: Record<string, string>) => void;
 }
 
-const FALLBACK_QUESTIONS: Question[] = [
-  {
-    id: 'target_audience',
-    question: 'Who is your target audience?',
-    type: 'textarea',
-  },
-  {
-    id: 'main_goal',
-    question: 'What is the main goal you want to achieve?',
-    type: 'textarea',
-  },
-  {
-    id: 'timeline',
-    question: 'What is your desired timeline for this project?',
-    type: 'select',
-    options: ['1-2 weeks', '1 month', '3 months', '6 months', '1 year'],
-  },
-];
+const FALLBACK_QUESTIONS: Question[] = CLARIFIER_CONFIG.FALLBACK_QUESTIONS.map(
+  (q): Question => ({
+    id: q.id,
+    question: q.question,
+    type:
+      q.type === 'multiple_choice'
+        ? 'select'
+        : q.type === 'open'
+          ? 'textarea'
+          : 'text',
+    ...('options' in q && q.options && { options: [...q.options] }),
+  })
+);
 
 function ClarificationFlow({
   idea,
@@ -67,6 +63,7 @@ function ClarificationFlow({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isMac, setIsMac] = useState(false);
 
   const textInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -84,7 +81,7 @@ function ClarificationFlow({
     () =>
       questions.map((q, index) => ({
         id: q.id,
-        label: `Question ${index + 1}`,
+        label: LABELS.QUESTION(index),
         completed: index < currentStep,
         current: index === currentStep,
       })),
@@ -124,6 +121,26 @@ function ClarificationFlow({
     }
   }, [currentStep, questions, answers]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.key === 'Enter' &&
+        currentAnswer.trim()
+      ) {
+        e.preventDefault();
+        handleNext();
+      }
+    },
+    [currentAnswer, handleNext]
+  );
+
+  useEffect(() => {
+    setIsMac(
+      typeof window !== 'undefined' && navigator.platform.includes('Mac')
+    );
+  }, []);
+
   useEffect(() => {
     if (!currentQuestion || questions.length === 0) return;
 
@@ -136,7 +153,7 @@ function ClarificationFlow({
         } else {
           textInputRef.current?.focus();
         }
-      }, 50);
+      }, UI_CONFIG.FOCUS.DELAY_MS);
     };
 
     focusInput();
@@ -314,12 +331,13 @@ function ClarificationFlow({
                 label={currentQuestion.question}
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Enter your answer here..."
                 multiline={true}
                 minLength={MIN_ANSWER_LENGTH}
                 maxLength={MAX_ANSWER_LENGTH}
                 showCharCount={true}
-                helpText="Provide a detailed answer to help us understand your needs better."
+                helpText={`Provide a detailed answer to help us understand your needs better. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
                 required={true}
                 autoFocus={true}
                 className="min-h-[100px]"
@@ -333,10 +351,12 @@ function ClarificationFlow({
                 label="Your answer"
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
+                onKeyDown={handleKeyDown}
                 placeholder="Enter your answer here..."
                 minLength={MIN_SHORT_ANSWER_LENGTH}
                 maxLength={MAX_SHORT_ANSWER_LENGTH}
                 showCharCount={true}
+                helpText={`Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
                 required={true}
                 autoFocus={true}
                 ref={textInputRef}
@@ -348,9 +368,8 @@ function ClarificationFlow({
                 <label
                   htmlFor="answer-select"
                   className="block text-sm font-medium text-gray-700"
-                  id="answer-select-label"
                 >
-                  Your answer{' '}
+                  <span id="answer-select-label">Your answer</span>{' '}
                   <span className="text-red-500 ml-1" aria-hidden="true">
                     *
                   </span>
@@ -360,6 +379,7 @@ function ClarificationFlow({
                   ref={selectRef}
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
+                  onKeyDown={handleKeyDown}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.2)] transition-all duration-200 bg-white min-h-[44px]"
                   aria-labelledby="answer-select-label"
                   aria-required="true"
@@ -383,7 +403,7 @@ function ClarificationFlow({
             )}
           </div>
 
-          <div className="flex justify-between mt-8">
+          <div className="flex justify-between items-center mt-8">
             <Button
               type="button"
               variant="secondary"
@@ -393,6 +413,19 @@ function ClarificationFlow({
             >
               ← Previous
             </Button>
+
+            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500 mr-4">
+              <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+                Enter
+              </kbd>
+              <span>
+                to {currentStep === questions.length - 1 ? 'complete' : 'next'}
+              </span>
+            </div>
+
             <Button
               type="submit"
               variant="primary"

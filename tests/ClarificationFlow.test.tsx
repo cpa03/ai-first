@@ -87,12 +87,14 @@ describe('ClarificationFlow', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { name: /who is your target audience/i })
+        screen.getByRole('heading', {
+          name: /who is the target audience for this project/i,
+        })
       ).toBeInTheDocument();
     });
 
     expect(
-      screen.getByText(/question 1 of 3/i, { selector: 'span' })
+      screen.getByText(/question 1 of 5/i, { selector: 'span' })
     ).toBeInTheDocument();
   });
 
@@ -103,7 +105,9 @@ describe('ClarificationFlow', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { name: /who is your target audience/i })
+        screen.getByRole('heading', {
+          name: /who is the target audience for this project/i,
+        })
       ).toBeInTheDocument();
     });
 
@@ -198,7 +202,9 @@ describe('ClarificationFlow', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { name: /who is your target audience/i })
+        screen.getByRole('heading', {
+          name: /who is the target audience for this project/i,
+        })
       ).toBeInTheDocument();
     });
 
@@ -214,7 +220,7 @@ describe('ClarificationFlow', () => {
     await waitFor(() => {
       expect(
         screen.getByRole('heading', {
-          name: /what is the main goal you want to achieve/i,
+          name: /what are the 3 most important features/i,
         })
       ).toBeInTheDocument();
     });
@@ -230,7 +236,7 @@ describe('ClarificationFlow', () => {
     await waitFor(() => {
       expect(
         screen.getByRole('heading', {
-          name: /what is your desired timeline for this project/i,
+          name: /what is your desired timeline/i,
         })
       ).toBeInTheDocument();
     });
@@ -450,7 +456,9 @@ describe('ClarificationFlow', () => {
     // but we can at least verify the error handling
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { name: /who is your target audience/i })
+        screen.getByRole('heading', {
+          name: /who is the target audience for this project/i,
+        })
       ).toBeInTheDocument();
     });
 
@@ -587,5 +595,14 @@ describe('ClarificationFlow', () => {
 
     // Should not call onComplete since answer is empty
     expect(mockOnComplete).not.toHaveBeenCalled();
+  });
+
+  it('submits on Ctrl+Enter', async () => {
+    (fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => ({ data: { questions: [{ id: '1', question: 'Q?', type: 'open' }] } }) });
+    render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
+    const t = await screen.findByPlaceholderText(/enter your answer/i);
+    fireEvent.change(t, { target: { value: 'A' } });
+    fireEvent.keyDown(t, { key: 'Enter', ctrlKey: true });
+    expect(mockOnComplete).toHaveBeenCalledWith({ 1: 'A' });
   });
 });

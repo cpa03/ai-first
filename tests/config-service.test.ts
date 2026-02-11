@@ -68,6 +68,13 @@ describe('ConfigurationService', () => {
       expect(service.getCacheSize()).toBe(2);
     });
 
+    it('should not allow path traversal in agentName', async () => {
+      const traversalName = '../package.json';
+      await expect(service.loadAgentConfig(traversalName)).rejects.toThrow(
+        /Failed to load/
+      );
+    });
+
     it('should throw error for non-existent configuration', async () => {
       await expect(
         service.loadAgentConfig('nonexistent-agent')

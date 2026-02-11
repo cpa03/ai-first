@@ -3,6 +3,7 @@ import yaml from 'js-yaml';
 import { readFile, access } from 'fs/promises';
 import path from 'path';
 import { Cache } from './cache';
+import { CACHE_CONFIG } from './config';
 
 interface AgentConfig {
   name: string;
@@ -21,8 +22,8 @@ class ConfigurationService {
   constructor(configDir: string = 'ai/agent-configs') {
     this.configDir = configDir;
     this.cache = new Cache<AgentConfig>({
-      ttl: 5 * 60 * 1000,
-      maxSize: 100,
+      ttl: CACHE_CONFIG.SERVICES.CONFIG.TTL_MS,
+      maxSize: CACHE_CONFIG.SERVICES.CONFIG.MAX_SIZE,
     });
   }
 
@@ -38,7 +39,12 @@ class ConfigurationService {
   }
 
   private getConfigPath(agentName: string): string {
-    return path.join(process.cwd(), this.configDir, `${agentName}.yml`);
+    // Sanitize agentName to prevent path traversal
+    const sanitizedName = agentName.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!sanitizedName) {
+      throw new Error(`Invalid agent name: ${agentName}`);
+    }
+    return path.join(process.cwd(), this.configDir, `${sanitizedName}.yml`);
   }
 
   private async loadFromDisk(agentName: string): Promise<AgentConfig> {
@@ -97,8 +103,8 @@ class ConfigurationService {
   }
 
   async configExists(agentName: string): Promise<boolean> {
-    const configPath = this.getConfigPath(agentName);
     try {
+      const configPath = this.getConfigPath(agentName);
       await access(configPath);
       return true;
     } catch {

@@ -428,6 +428,8 @@ export const PII_REDACTION_CONFIG = {
     'credential',
     'auth',
     'authorization',
+    'admin[-_ ]?key',
+    'adminkey',
   ] as const,
 
   /**
@@ -488,4 +490,211 @@ export const ERROR_CONFIG = {
     ERROR_CODE: 'RATE_LIMIT_EXCEEDED',
     STATUS_CODE: 429,
   } as const,
+} as const;
+
+/**
+ * Agent configuration for breakdown engine and clarifier
+ */
+export const AGENT_CONFIG = {
+  /**
+   * Confidence calculation weights for breakdown engine
+   * Used in ConfidenceCalculator
+   */
+  BREAKDOWN_CONFIDENCE_WEIGHTS: {
+    ANALYSIS: 0.3,
+    TASKS: 0.3,
+    DEPENDENCIES: 0.2,
+    TIMELINE: 0.2,
+  } as const,
+
+  /**
+   * Fallback confidence values for missing components
+   * Used when components don't provide their own confidence
+   */
+  BREAKDOWN_FALLBACK_CONFIDENCE: {
+    DEPENDENCIES: 0.8,
+    TIMELINE: 0.7,
+  } as const,
+
+  /**
+   * Idea analysis fallback values
+   * Used in IdeaAnalyzer when analysis fails or is incomplete
+   */
+  IDEA_ANALYSIS_FALLBACK: {
+    COMPLEXITY_SCORE: 5,
+    COMPLEXITY_LEVEL: 'medium' as const,
+    SCOPE_SIZE: 'medium' as const,
+    ESTIMATED_WEEKS: 8,
+    TEAM_SIZE: 2,
+    OVERALL_CONFIDENCE: 0.7,
+  } as const,
+
+  /**
+   * Question generator configuration for clarifier
+   */
+  QUESTION_GENERATOR: {
+    MIN_QUESTIONS: 3,
+    MAX_QUESTIONS: 5,
+    DEFAULT_QUESTION_TYPE: 'open' as const,
+    REQUIRED_DEFAULT: true,
+  } as const,
+
+  /**
+   * Clarifier confidence calculator configuration
+   */
+  CLARIFIER_CONFIDENCE: {
+    BASE_CONFIDENCE: 0.3,
+    CONFIDENCE_INCREMENT_PER_ANSWER: 0.6,
+    MAX_CONFIDENCE: 0.9,
+    DEFAULT_CONFIDENCE: 0.5,
+  } as const,
+
+  /**
+   * Database connection configuration
+   */
+  DATABASE: {
+    MAX_CONNECTION_RETRIES: 3,
+    HEALTH_CHECK_STALE_THRESHOLD_MS: 30000,
+    DEFAULT_SEARCH_LIMIT: 10,
+    VECTOR_SIMILARITY_THRESHOLD: 0.78,
+  } as const,
+} as const;
+
+/**
+ * Resilience configuration defaults
+ * Used for circuit breakers, retries, and timeouts
+ */
+export const RESILIENCE_CONFIG = {
+  /**
+   * Default retry configuration
+   */
+  RETRY: {
+    DEFAULT_MAX_RETRIES: 3,
+    DEFAULT_BASE_DELAY_MS: 1000,
+    DEFAULT_MAX_DELAY_MS: 30000,
+    DEFAULT_BACKOFF_MULTIPLIER: 2,
+  } as const,
+
+  /**
+   * Default circuit breaker configuration
+   */
+  CIRCUIT_BREAKER: {
+    DEFAULT_FAILURE_THRESHOLD: 5,
+    DEFAULT_RESET_TIMEOUT_MS: 60000,
+    DEFAULT_MONITORING_PERIOD_MS: 10000,
+  } as const,
+
+  /**
+   * Service-specific timeout configurations (in milliseconds)
+   */
+  TIMEOUTS: {
+    OPENAI: 60000,
+    NOTION: 30000,
+    TRELLO: 15000,
+    GITHUB: 30000,
+    DATABASE: 10000,
+    SUPABASE: 10000,
+    DEFAULT: 30000,
+  } as const,
+
+  /**
+   * Service-specific retry configurations
+   */
+  SERVICE_RETRY: {
+    OPENAI: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
+    GITHUB: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
+    NOTION: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
+    TRELLO: { maxRetries: 3, baseDelayMs: 500, maxDelayMs: 3000 },
+    SUPABASE: { maxRetries: 2, baseDelayMs: 1000, maxDelayMs: 10000 },
+  } as const,
+
+  /**
+   * Service-specific circuit breaker configurations
+   */
+  SERVICE_CIRCUIT_BREAKER: {
+    OPENAI: { failureThreshold: 5, resetTimeoutMs: 60000 },
+    GITHUB: { failureThreshold: 5, resetTimeoutMs: 30000 },
+    NOTION: { failureThreshold: 5, resetTimeoutMs: 30000 },
+    TRELLO: { failureThreshold: 3, resetTimeoutMs: 20000 },
+    SUPABASE: { failureThreshold: 10, resetTimeoutMs: 60000 },
+  } as const,
+} as const;
+
+/**
+ * Legacy validation limits configuration
+ * Note: VALIDATION_CONFIG above is the primary source for API validation
+ * These constants provide field-specific limits for use in validation.ts
+ */
+export const VALIDATION_LIMITS = {
+  /**
+   * Idea validation limits
+   */
+  IDEA: {
+    MIN_LENGTH: 10,
+    MAX_LENGTH: 10000,
+    MAX_ID_LENGTH: 100,
+  } as const,
+
+  /**
+   * Title validation limits
+   */
+  TITLE: {
+    MAX_LENGTH: 500,
+  } as const,
+
+  /**
+   * Answer validation limits for clarification flow
+   */
+  ANSWER: {
+    MIN_LENGTH: 5,
+    MAX_LENGTH: 500,
+    MIN_SHORT_LENGTH: 2,
+    MAX_SHORT_LENGTH: 100,
+  } as const,
+
+  /**
+   * Pagination limits
+   */
+  PAGINATION: {
+    DEFAULT_LIMIT: 50,
+    MAX_LIMIT: 100,
+    AGENT_LOGS_DEFAULT: 100,
+  } as const,
+
+  /**
+   * Database query limits
+   */
+  DATABASE: {
+    STALE_SESSION_THRESHOLD_MS: 30000,
+  } as const,
+} as const;
+
+/**
+ * Cache TTL configuration
+ */
+export const CACHE_TTL_CONFIG = {
+  /**
+   * Default cache TTL for use-cache hook (5 minutes)
+   */
+  DEFAULT_CACHE_TTL_MS: 5 * 60 * 1000,
+
+  /**
+   * Default stale-while-revalidate setting
+   */
+  DEFAULT_STALE_WHILE_REVALIDATE: true,
+} as const;
+
+/**
+ * Rate limit statistics configuration
+ */
+export const RATE_LIMIT_STATS_CONFIG = {
+  /**
+   * Default window for rate limit stats (1 minute)
+   */
+  DEFAULT_STATS_WINDOW_MS: 60 * 1000,
+
+  /**
+   * Number of top users to display in stats
+   */
+  TOP_USERS_LIMIT: 10,
 } as const;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { CACHE_TTL_CONFIG } from './config/constants';
 
 interface CacheEntry<T> {
   data: T;
@@ -22,7 +23,10 @@ export function useCache<T>(
   loading: boolean;
   revalidate: () => Promise<void>;
 } {
-  const { ttl = 5 * 60 * 1000, staleWhileRevalidate = true } = options;
+  const {
+    ttl = CACHE_TTL_CONFIG.DEFAULT_CACHE_TTL_MS,
+    staleWhileRevalidate = CACHE_TTL_CONFIG.DEFAULT_STALE_WHILE_REVALIDATE,
+  } = options;
 
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);

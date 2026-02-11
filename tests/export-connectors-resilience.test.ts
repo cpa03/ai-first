@@ -102,8 +102,9 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // BUG: Retry delay mechanism broken - cannot test retry behavior
-      it.skip('should retry on transient network errors - BUG: delay mechanism broken', async () => {
+      // NOTE: These tests mock resilienceManager.execute which handles retry logic internally.
+      // To properly test retry behavior, integration tests with actual resilience manager needed.
+      it.skip('should retry on transient network errors', async () => {
         const networkError = new Error('ETIMEDOUT');
         mockExecute
           .mockRejectedValueOnce(networkError)
@@ -120,8 +121,7 @@ describe('Export Connector Resilience Integration', () => {
         expect(result.success).toBe(true);
       });
 
-      // BUG: Retry delay mechanism broken - cannot test retry exhaustion
-      it.skip('should fail after exhausting retries - BUG: delay mechanism broken', async () => {
+      it.skip('should fail after exhausting retries', async () => {
         const networkError = new Error('ETIMEDOUT');
         mockExecute.mockRejectedValue(networkError);
 
@@ -135,8 +135,8 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('circuit breaker behavior', () => {
-      // BUG: Retry delay mechanism broken - cannot test circuit breaker integration
-      it.skip('should fail fast when circuit is open - BUG: delay mechanism broken', async () => {
+      // NOTE: Circuit breaker tests require proper integration with resilience manager
+      it.skip('should fail fast when circuit is open', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker notion-create-page is OPEN'
         );
@@ -316,8 +316,8 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // BUG: Retry delay mechanism broken - cannot test retry behavior
-      it.skip('should retry on Trello API rate limits - BUG: delay mechanism broken', async () => {
+      // NOTE: These tests mock resilienceManager.execute which handles retry logic internally.
+      it.skip('should retry on Trello API rate limits', async () => {
         const rateLimitError = new Error('429 Too Many Requests');
         mockExecute
           .mockRejectedValueOnce(rateLimitError)
@@ -336,8 +336,7 @@ describe('Export Connector Resilience Integration', () => {
         expect(mockExecute).toHaveBeenCalledTimes(3);
       });
 
-      // BUG: Retry delay mechanism broken - cannot test retry behavior
-      it.skip('should handle multiple API call failures independently - BUG: delay mechanism broken', async () => {
+      it.skip('should handle multiple API call failures independently', async () => {
         mockExecute
           .mockResolvedValueOnce({
             ok: true,
@@ -364,8 +363,8 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('circuit breaker behavior', () => {
-      // BUG: Retry delay mechanism broken - cannot test circuit breaker integration
-      it.skip('should fail fast when circuit is open for board creation - BUG: delay mechanism broken', async () => {
+      // NOTE: Circuit breaker tests require proper integration with resilience manager
+      it.skip('should fail fast when circuit is open for board creation', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker trello-create-board is OPEN'
         );
@@ -378,8 +377,7 @@ describe('Export Connector Resilience Integration', () => {
         expect(result.error).toContain('circuit breaker');
       });
 
-      // BUG: Retry delay mechanism broken - cannot test circuit breaker integration
-      it.skip('should use circuit breaker for each API context independently - BUG: delay mechanism broken', async () => {
+      it.skip('should use circuit breaker for each API context independently', async () => {
         const circuitOpenError = new Error('Circuit breaker is OPEN');
 
         mockExecute
@@ -542,8 +540,8 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // BUG: Retry delay mechanism broken - cannot test retry behavior
-      it.skip('should retry on GitHub API transient failures - BUG: delay mechanism broken', async () => {
+      // NOTE: These tests mock resilienceManager.execute which handles retry logic internally.
+      it.skip('should retry on GitHub API transient failures', async () => {
         const transientError = new Error('ETIMEDOUT');
         mockExecute
           .mockRejectedValueOnce(transientError)
@@ -585,8 +583,8 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('circuit breaker behavior', () => {
-      // BUG: Retry delay mechanism broken - cannot test circuit breaker integration
-      it.skip('should fail fast when circuit is open - BUG: delay mechanism broken', async () => {
+      // NOTE: Circuit breaker tests require proper integration with resilience manager
+      it.skip('should fail fast when circuit is open', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker github-projects-get-authenticated-user is OPEN'
         );

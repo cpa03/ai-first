@@ -32,7 +32,7 @@ export default function WhyChooseSection() {
             <h3 className="font-semibold text-gray-900 mb-1">
               AI-Powered Intelligence
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700 text-sm">
               Advanced AI algorithms analyze your ideas and generate
               comprehensive project plans
             </p>
@@ -59,7 +59,7 @@ export default function WhyChooseSection() {
             <h3 className="font-semibold text-gray-900 mb-1">
               Time-Saving Automation
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700 text-sm">
               Reduce planning time by 80% with automated task breakdown and
               timeline generation
             </p>
@@ -86,7 +86,7 @@ export default function WhyChooseSection() {
             <h3 className="font-semibold text-gray-900 mb-1">
               Developer-Friendly
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700 text-sm">
               Export plans to GitHub, Notion, and other tools your team already
               uses
             </p>
@@ -113,7 +113,7 @@ export default function WhyChooseSection() {
             <h3 className="font-semibold text-gray-900 mb-1">
               Collaborative Planning
             </h3>
-            <p className="text-gray-600 text-sm">
+            <p className="text-gray-700 text-sm">
               Share blueprints with your team and iterate on plans in real-time
             </p>
           </div>

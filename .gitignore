@@ -22,7 +22,10 @@ dist/
 
 # TypeScript
 *.tsbuildinfo
-next-env.d.ts
+# next-env.d.ts should be committed - see Next.js docs
+
+# SWC (Next.js compiler cache)
+.swc/
 
 # IDE
 .vscode/
@@ -97,3 +100,7 @@ __pycache__/
 .Python-e 
 # Git worktrees
 .worktrees/
+
+# Agent temporary directories
+.jules/
+.sisyphus/

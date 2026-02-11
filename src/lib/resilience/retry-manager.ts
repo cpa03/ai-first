@@ -4,7 +4,7 @@ import {
   ErrorCode,
   isRetryableError,
 } from '../errors';
-import { RETRY_DELAY_CONFIG } from '../config/constants';
+import { RESILIENCE_CONFIG } from '../config/constants';
 import { RetryOptions } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerState } from './types';
@@ -17,9 +17,9 @@ export class RetryManager {
     circuitBreaker?: CircuitBreaker
   ): Promise<T> {
     const {
-      maxRetries = 3,
-      baseDelay = 1000,
-      maxDelay = 30000,
+      maxRetries = RESILIENCE_CONFIG.RETRY.DEFAULT_MAX_RETRIES,
+      baseDelay = RESILIENCE_CONFIG.RETRY.DEFAULT_BASE_DELAY_MS,
+      maxDelay = RESILIENCE_CONFIG.RETRY.DEFAULT_MAX_DELAY_MS,
       shouldRetry,
     } = options;
 
@@ -89,24 +89,8 @@ export class RetryManager {
           maxDelay
         );
 
-        // Use AbortController for cancellable delay
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), delay);
-
-        try {
-          await new Promise((resolve, reject) => {
-            const checkAbort = () => {
-              if (controller.signal.aborted) {
-                reject(new Error('Retry delay aborted'));
-              } else {
-                setTimeout(resolve, RETRY_DELAY_CONFIG.POLLING_INTERVAL_MS);
-              }
-            };
-            checkAbort();
-          });
-        } finally {
-          clearTimeout(timeoutId);
-        }
+        // Wait for the calculated delay before retrying
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 

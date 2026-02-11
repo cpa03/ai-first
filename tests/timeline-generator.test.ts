@@ -263,9 +263,12 @@ describe('TimelineGenerator', () => {
 
       expect(timeline.phases[0].tasks).toContain('t1');
       expect(timeline.phases[0].tasks).toContain('t2');
+      expect(timeline.phases[1].tasks).toContain('t3');
       expect(timeline.phases[1].tasks).toContain('t4');
-      expect(timeline.phases[1].tasks).toContain('t6');
-      expect(timeline.phases[1].tasks).toContain('t8');
+      expect(timeline.phases[1].tasks).toContain('t5');
+      expect(timeline.phases[2].tasks).toContain('t6');
+      expect(timeline.phases[2].tasks).toContain('t7');
+      expect(timeline.phases[2].tasks).toContain('t8');
       expect(timeline.phases[2].tasks).toContain('t9');
     });
 
