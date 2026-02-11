@@ -29,9 +29,17 @@ export default function FeatureGrid() {
   return (
     <section className="mt-16 grid md:grid-cols-3 gap-8">
       {features.map((feature) => (
-        <article key={feature.step} className="text-center">
+        <article
+          key={feature.step}
+          className="text-center p-6 rounded-xl transition-all duration-300 ease-out
+                     hover:shadow-lg hover:-translate-y-1 hover:bg-white
+                     focus-within:shadow-lg focus-within:-translate-y-1 focus-within:bg-white
+                     motion-reduce:transition-none motion-reduce:hover:transform-none"
+          tabIndex={0}
+        >
           <div
-            className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4"
+            className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4
+                       transition-transform duration-300 group-hover:scale-110"
             aria-hidden="true"
           >
             <span className="text-primary-600 text-2xl font-bold">
