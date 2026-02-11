@@ -57,13 +57,16 @@ export default function DashboardPage() {
       setLoading(true);
       setError(null);
 
-      const url = new URL('/api/ideas', window.location.origin);
+      const params = new URLSearchParams();
       if (filter !== 'all') {
-        url.searchParams.set('status', filter);
+        params.set('status', filter);
       }
-      url.searchParams.set('limit', '50');
+      params.set('limit', '50');
 
-      const response = await fetch(url.toString());
+      const queryString = params.toString();
+      const response = await fetch(
+        `/api/ideas${queryString ? `?${queryString}` : ''}`
+      );
 
       if (!response.ok) {
         // Handle 401 gracefully - user not authenticated
