@@ -42,6 +42,12 @@ export interface CostTracker {
   timestamp: Date;
 }
 
+// Memory leak prevention: Maximum number of cost trackers to prevent unbounded growth
+const MAX_COST_TRACKERS = 10000;
+
+// Memory leak prevention: Maximum age of cost tracker entries (24 hours)
+const MAX_COST_TRACKER_AGE_MS = 24 * 60 * 60 * 1000;
+
 // Context windowing strategy
 export interface ContextWindow {
   shortTerm: Array<{ role: string; content: string }>;
@@ -354,6 +360,9 @@ class AIService {
 
   // Cost tracking and guardrails
   private async trackCost(tokens: number, model: string): Promise<void> {
+    // Memory leak prevention: Clean up old cost trackers before adding new ones
+    this.cleanupOldCostTrackers();
+
     // Simple cost calculation (can be enhanced with actual pricing)
     const costPerToken = this.getCostPerToken(model);
     const cost = tokens * costPerToken;
@@ -371,6 +380,12 @@ class AIService {
     };
 
     this.costTrackers.push(tracker);
+
+    // Memory leak prevention: If array exceeds max size, remove oldest 20% of entries
+    if (this.costTrackers.length > MAX_COST_TRACKERS) {
+      const entriesToRemove = Math.floor(MAX_COST_TRACKERS * 0.2);
+      this.costTrackers.splice(0, entriesToRemove);
+    }
 
     // PERFORMANCE: Update cache with the new total instead of clearing it.
     // This keeps subsequent calls to getTodayCost() as O(1).
@@ -402,6 +417,20 @@ class AIService {
     return (
       AI_CONFIG.PRICING[model as keyof typeof AI_CONFIG.PRICING] ??
       AI_CONFIG.DEFAULT_PRICING_PER_TOKEN
+    );
+  }
+
+  /**
+   * Memory leak prevention: Clean up old cost tracker entries
+   * Removes entries older than MAX_COST_TRACKER_AGE_MS (24 hours)
+   */
+  private cleanupOldCostTrackers(): void {
+    const now = Date.now();
+    const cutoffTime = now - MAX_COST_TRACKER_AGE_MS;
+
+    // Filter out entries older than 24 hours
+    this.costTrackers = this.costTrackers.filter(
+      (tracker) => tracker.timestamp.getTime() > cutoffTime
     );
   }
 

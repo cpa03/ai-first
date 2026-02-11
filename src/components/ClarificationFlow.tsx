@@ -145,7 +145,7 @@ function ClarificationFlow({
     if (!currentQuestion || questions.length === 0) return;
 
     const focusInput = () => {
-      setTimeout(() => {
+      return setTimeout(() => {
         if (currentQuestion.type === 'textarea') {
           textareaRef.current?.focus();
         } else if (currentQuestion.type === 'select') {
@@ -156,7 +156,9 @@ function ClarificationFlow({
       }, UI_CONFIG.FOCUS.DELAY_MS);
     };
 
-    focusInput();
+    const timeoutId = focusInput();
+
+    return () => clearTimeout(timeoutId);
   }, [currentStep, questions, currentQuestion]);
 
   useEffect(() => {

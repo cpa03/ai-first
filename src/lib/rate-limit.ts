@@ -76,6 +76,9 @@ export function getClientIdentifier(request: Request): string {
   return generateRequestFingerprint(request);
 }
 
+// Memory leak prevention: Maximum requests per identifier to prevent unbounded growth
+const MAX_REQUESTS_PER_IDENTIFIER = 1000;
+
 export function checkRateLimit(
   identifier: string,
   config: RateLimitConfig
@@ -94,7 +97,12 @@ export function checkRateLimit(
   }
 
   const requests = rateLimitStore.get(identifier) || [];
-  const recentRequests = requests.filter((r) => r >= windowStart);
+  let recentRequests = requests.filter((r) => r >= windowStart);
+
+  // Memory leak prevention: Limit requests per identifier to prevent unbounded growth
+  if (recentRequests.length > MAX_REQUESTS_PER_IDENTIFIER) {
+    recentRequests = recentRequests.slice(-MAX_REQUESTS_PER_IDENTIFIER);
+  }
 
   if (recentRequests.length >= config.limit) {
     return {
