@@ -286,11 +286,11 @@ function ClarificationFlow({
 
       <div aria-live="polite" aria-atomic="true">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-700">
+          <span className="text-sm font-medium text-gray-900">
             Question {currentStep + 1} of {questions.length}
           </span>
           <span
-            className="text-sm text-gray-700 font-medium"
+            className="text-sm text-gray-900 font-medium"
             aria-label={`Progress: ${Math.round(progress)} percent`}
           >
             {Math.round(progress)}%
@@ -367,10 +367,11 @@ function ClarificationFlow({
               <div className="space-y-2">
                 <label
                   htmlFor="answer-select"
-                  className="block text-sm font-medium text-gray-700"
+                  id="answer-select-label"
+                  className="block text-sm font-medium text-gray-900"
                 >
-                  <span id="answer-select-label">Your answer</span>{' '}
-                  <span className="text-red-500 ml-1" aria-hidden="true">
+                  Your answer
+                  <span className="text-red-600 ml-1" aria-hidden="true">
                     *
                   </span>
                 </label>
@@ -414,11 +415,11 @@ function ClarificationFlow({
               ← Previous
             </Button>
 
-            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-500 mr-4">
-              <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-600 mr-4">
+              <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800">
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
-              <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+              <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800">
                 Enter
               </kbd>
               <span>
