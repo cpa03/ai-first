@@ -7,6 +7,8 @@ import {
   withApiHandler,
   standardSuccessResponse,
 } from '@/lib/api-handler';
+import { requireAdminAuth } from '@/lib/auth';
+import { redactPII } from '@/lib/pii-redaction';
 
 interface HealthCheckResult {
   service: string;
@@ -34,6 +36,9 @@ interface HealthResponse {
 }
 
 async function handleGet(context: ApiContext) {
+  // Security: Detailed health information is restricted to administrators
+  requireAdminAuth(context.request);
+
   const circuitBreakerStatuses = circuitBreakerManager.getAllStatuses();
 
   const checks: {
@@ -86,7 +91,7 @@ async function handleGet(context: ApiContext) {
     checks.database = {
       ...checks.database,
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: redactPII(error instanceof Error ? error.message : 'Unknown error'),
     };
   }
 
@@ -103,7 +108,7 @@ async function handleGet(context: ApiContext) {
     checks.ai = {
       ...checks.ai,
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: redactPII(error instanceof Error ? error.message : 'Unknown error'),
     };
   }
 
@@ -126,14 +131,16 @@ async function handleGet(context: ApiContext) {
       lastChecked: new Date().toISOString(),
       error:
         healthyExports < totalExports
-          ? `${totalExports - healthyExports}/${totalExports} connectors unavailable`
+          ? redactPII(
+              `${totalExports - healthyExports}/${totalExports} connectors unavailable`
+            )
           : undefined,
     };
   } catch (error) {
     checks.exports = {
       ...checks.exports,
       status: 'unhealthy',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error: redactPII(error instanceof Error ? error.message : 'Unknown error'),
     };
   }
 

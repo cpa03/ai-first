@@ -1,6 +1,6 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { supabaseAdmin } from '@/lib/db';
-import { timingSafeEqual } from 'crypto';
+import { timingSafeEqual } from 'node:crypto';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 
