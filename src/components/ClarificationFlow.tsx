@@ -368,9 +368,8 @@ function ClarificationFlow({
                 <label
                   htmlFor="answer-select"
                   className="block text-sm font-medium text-gray-700"
-                  id="answer-select-label"
                 >
-                  Your answer{' '}
+                  <span id="answer-select-label">Your answer</span>{' '}
                   <span className="text-red-500 ml-1" aria-hidden="true">
                     *
                   </span>
@@ -422,7 +421,9 @@ function ClarificationFlow({
               <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
                 Enter
               </kbd>
-              <span>to {currentStep === questions.length - 1 ? 'complete' : 'next'}</span>
+              <span>
+                to {currentStep === questions.length - 1 ? 'complete' : 'next'}
+              </span>
             </div>
 
             <Button
