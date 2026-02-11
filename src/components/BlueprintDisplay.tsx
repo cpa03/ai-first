@@ -23,6 +23,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 }: BlueprintDisplayProps) {
   const [isGenerating, setIsGenerating] = useState(true);
   const [blueprint, setBlueprint] = useState('');
+  const [copied, setCopied] = useState(false);
 
   // Simulate blueprint generation
   useEffect(() => {
@@ -64,6 +65,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
     try {
       await navigator.clipboard.writeText(blueprint);
+      setCopied(true);
+      setTimeout(() => setCopied(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
+
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'success',
@@ -168,7 +172,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                 fullWidth={false}
                 aria-label="Copy blueprint to clipboard"
               >
-                Copy to Clipboard
+                {copied ? 'Copied!' : 'Copy to Clipboard'}
               </Button>
               <Button
                 onClick={handleDownload}
