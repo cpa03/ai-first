@@ -41,7 +41,7 @@ export default function FeatureGrid() {
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             {feature.title}
           </h3>
-          <p className="text-gray-700">{feature.description}</p>
+          <p className="text-gray-800">{feature.description}</p>
         </article>
       ))}
     </section>

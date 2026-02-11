@@ -51,7 +51,7 @@ export default function HomePage() {
         <h1 id="hero-heading" className="text-4xl font-bold text-gray-900 mb-4">
           AI-Powered Project Planning & Task Management
         </h1>
-        <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+        <p className="text-xl text-gray-800 max-w-2xl mx-auto">
           Transform raw ideas into actionable project plans with AI. Get
           automated task breakdown, realistic timelines, and comprehensive
           roadmaps in minutes.

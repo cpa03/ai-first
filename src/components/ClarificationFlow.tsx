@@ -367,9 +367,11 @@ function ClarificationFlow({
               <div className="space-y-2">
                 <label
                   htmlFor="answer-select"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-gray-800"
                 >
-                  <span id="answer-select-label">Your answer</span>{' '}
+                  <span id="answer-select-label">
+                    {currentQuestion.question}
+                  </span>{' '}
                   <span className="text-red-500 ml-1" aria-hidden="true">
                     *
                   </span>
