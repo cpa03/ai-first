@@ -372,7 +372,7 @@ function ClarificationFlow({
                   id="answer-select-label"
                   className="block text-sm font-medium text-gray-900"
                 >
-                  Your answer *
+                  Select your answer for: {currentQuestion.question}
                 </label>
                 <select
                   id="answer-select"
