@@ -158,7 +158,7 @@ const InputWithValidation = forwardRef<
         <div className="flex justify-between items-start">
           <div>
             {helpText && !isInvalid && (
-              <p id={`${props.id}-help`} className="text-sm text-gray-500">
+              <p id={`${props.id}-help`} className="text-sm text-gray-600">
                 {helpText}
               </p>
             )}
@@ -203,7 +203,7 @@ const InputWithValidation = forwardRef<
                       ? 'text-amber-600'
                       : isValid && touched
                         ? 'text-green-600'
-                        : 'text-gray-500'
+                        : 'text-gray-600'
                 }`}
                 aria-live="polite"
                 aria-atomic="true"

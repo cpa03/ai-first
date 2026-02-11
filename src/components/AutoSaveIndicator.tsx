@@ -207,7 +207,7 @@ export default function AutoSaveIndicator({
       <span
         className={`font-medium transition-colors duration-200 ${
           saveState === 'typing'
-            ? 'text-gray-500'
+            ? 'text-gray-600'
             : saveState === 'saving'
               ? 'text-primary-600'
               : 'text-green-600'
@@ -219,7 +219,7 @@ export default function AutoSaveIndicator({
           <span className="flex items-center gap-1">
             <span className="animate-in fade-in duration-200">Saved</span>
             {lastSaved && (
-              <span className="text-gray-400 animate-in fade-in slide-in-from-left-1 duration-300 delay-100">
+              <span className="text-gray-600 animate-in fade-in slide-in-from-left-1 duration-300 delay-100">
                 • {formatLastSaved(lastSaved)}
               </span>
             )}
