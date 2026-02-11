@@ -11,7 +11,10 @@ const { DATABASE } = AGENT_CONFIG;
 // Supabase client configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// SECURITY: Service role key is NEVER accessed at module level
+// to prevent accidental bundling in client-side code.
+// Use getSupabaseAdmin() function instead for server-side operations.
 
 // Client for browser-side operations (with RLS)
 export const supabaseClient =
@@ -24,16 +27,52 @@ export const supabaseClient =
       })
     : null;
 
-// Admin client for server-side operations (bypasses RLS)
+// SECURITY: Lazy-loaded admin client to prevent client-side bundle exposure
+// This ensures the service role key is only accessed in server-side contexts
+let _supabaseAdmin: ReturnType<typeof createClient<Database>> | null = null;
+
+/**
+ * Get the Supabase admin client (server-side only)
+ * SECURITY: This function must ONLY be called in server-side contexts (API routes, server components)
+ * The service role key bypasses RLS and should never be exposed to the client
+ */
+export function getSupabaseAdmin(): ReturnType<
+  typeof createClient<Database>
+> | null {
+  // SECURITY: Ensure we're on the server
+  if (typeof window !== 'undefined') {
+    throw new Error(
+      'getSupabaseAdmin() must not be called in browser context. ' +
+        'This is a critical security violation - the service role key bypasses RLS.'
+    );
+  }
+
+  // Lazy initialization to prevent key from being accessed during module load
+  if (!_supabaseAdmin) {
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceKey) {
+      logger.warn(
+        'Supabase admin client not initialized: missing URL or service role key'
+      );
+      return null;
+    }
+
+    _supabaseAdmin = createClient<Database>(supabaseUrl, serviceKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+  }
+
+  return _supabaseAdmin;
+}
+
+// DEPRECATED: Kept for backward compatibility during migration
+// TODO: Remove after all imports are updated to use getSupabaseAdmin()
 export const supabaseAdmin =
-  supabaseUrl && supabaseServiceKey
-    ? createClient(supabaseUrl, supabaseServiceKey, {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        },
-      })
-    : null;
+  typeof window === 'undefined' ? getSupabaseAdmin() : null;
 
 // Database types and utilities
 export interface Idea {

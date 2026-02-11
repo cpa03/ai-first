@@ -1,5 +1,5 @@
 import { AppError, ErrorCode } from '@/lib/errors';
-import { supabaseAdmin } from '@/lib/db';
+import { getSupabaseAdmin } from '@/lib/db';
 import { timingSafeEqual } from 'crypto';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
@@ -85,7 +85,8 @@ export async function verifyAuth(
   }
 
   try {
-    if (!supabaseAdmin) {
+    const adminClient = getSupabaseAdmin();
+    if (!adminClient) {
       throw new Error('Supabase admin client not initialized');
     }
 
@@ -93,7 +94,7 @@ export async function verifyAuth(
     const {
       data: { user },
       error,
-    } = await supabaseAdmin.auth.getUser(token);
+    } = await adminClient.auth.getUser(token);
 
     if (error || !user) {
       return null;
