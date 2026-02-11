@@ -698,3 +698,68 @@ export const RATE_LIMIT_STATS_CONFIG = {
    */
   TOP_USERS_LIMIT: 10,
 } as const;
+
+/**
+ * HTTP Status Codes
+ * Centralized status codes for API responses
+ */
+export const STATUS_CODES = {
+  // Success
+  OK: 200,
+  CREATED: 201,
+
+  // Client Errors
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  FORBIDDEN: 403,
+  NOT_FOUND: 404,
+  PAYLOAD_TOO_LARGE: 413,
+  RATE_LIMITED: 429,
+
+  // Server Errors
+  INTERNAL_ERROR: 500,
+  NOT_IMPLEMENTED: 501,
+  BAD_GATEWAY: 502,
+  SERVICE_UNAVAILABLE: 503,
+  GATEWAY_TIMEOUT: 504,
+} as const;
+
+/**
+ * AI Service Limits
+ */
+export const AI_SERVICE_LIMITS = {
+  MAX_COST_TRACKERS: 10000,
+  MAX_COST_TRACKER_AGE_MS: 24 * 60 * 60 * 1000, // 24 hours
+  CLEANUP_PERCENTAGE: 0.2, // Remove 20% when at capacity
+  CACHE_KEY_HASH_LENGTH: 64,
+} as const;
+
+/**
+ * Rate Limiting - Additional Config
+ */
+export const RATE_LIMIT_VALUES = {
+  MAX_REQUESTS_PER_IDENTIFIER: 1000,
+} as const;
+
+/**
+ * Clarifier Agent Values
+ */
+export const CLARIFIER_VALUES = {
+  LOG_PREVIEW_LENGTH: 100,
+  INITIAL_CONFIDENCE: 0.5,
+  COMPLETION_CONFIDENCE: 0.9,
+} as const;
+
+/**
+ * Task Validation
+ */
+export const TASK_VALIDATION = {
+  MAX_TITLE_LENGTH: 255,
+} as const;
+
+/**
+ * Retry Configuration - Additional
+ */
+export const RETRY_VALUES = {
+  JITTER_MULTIPLIER_MS: 1000,
+} as const;

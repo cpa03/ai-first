@@ -1,3 +1,5 @@
+import { APP_CONFIG } from '@/lib/config';
+
 export default function robots() {
   return {
     rules: {
@@ -5,6 +7,6 @@ export default function robots() {
       allow: '/',
       disallow: ['/api/', '/admin/'],
     },
-    sitemap: 'https://ideaflow.ai/sitemap.xml',
+    sitemap: `${APP_CONFIG.URLS.SITE}/sitemap.xml`,
   };
 }
