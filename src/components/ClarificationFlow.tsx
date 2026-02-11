@@ -370,10 +370,7 @@ function ClarificationFlow({
                   id="answer-select-label"
                   className="block text-sm font-medium text-gray-900"
                 >
-                  Your answer
-                  <span className="text-red-600 ml-1" aria-hidden="true">
-                    *
-                  </span>
+                  Your answer *
                 </label>
                 <select
                   id="answer-select"

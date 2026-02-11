@@ -87,11 +87,7 @@ const InputWithValidation = forwardRef<
           className="block text-sm font-medium text-gray-900 cursor-pointer"
         >
           {label}
-          {props.required && (
-            <span className="text-red-600 ml-1" aria-hidden="true">
-              *
-            </span>
-          )}
+          {props.required && <span className="text-red-600 ml-1">*</span>}
         </label>
 
         <div className="relative">
