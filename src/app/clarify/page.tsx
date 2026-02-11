@@ -3,7 +3,6 @@
 import { useState, useRef, useLayoutEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
@@ -94,10 +93,21 @@ function ClarifyPageContent() {
     completedAnswers: Record<string, string>
   ) => {
     try {
-      // Store answers in database if ideaId is available
       if (ideaId) {
-        // Update idea status to 'clarified'
-        await dbService.updateIdea(ideaId, { status: 'clarified' });
+        const response = await fetch(`/api/ideas/${ideaId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'clarified' }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.error || `Failed to update idea: ${response.status}`
+          );
+        }
       }
 
       setAnswers(completedAnswers);
