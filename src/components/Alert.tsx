@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -9,6 +9,8 @@ interface AlertProps {
   className?: string;
   onClose?: () => void;
 }
+
+const EXIT_ANIMATION_DURATION_MS = 200;
 
 const alertStyles = {
   error: {
@@ -77,12 +79,29 @@ const AlertComponent = function Alert({
   onClose,
 }: AlertProps) {
   const [isVisible, setIsVisible] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
   const styles = alertStyles[type];
 
-  const handleClose = () => {
-    setIsVisible(false);
-    onClose?.();
-  };
+  const handleClose = useCallback(() => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      onClose?.();
+    }, EXIT_ANIMATION_DURATION_MS);
+  }, [onClose]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && onClose) {
+        handleClose();
+      }
+    };
+
+    if (onClose) {
+      document.addEventListener('keydown', handleEscape);
+      return () => document.removeEventListener('keydown', handleEscape);
+    }
+  }, [onClose, handleClose]);
 
   if (!isVisible) return null;
 
@@ -90,7 +109,13 @@ const AlertComponent = function Alert({
     <div
       role="alert"
       aria-live={type === 'error' ? 'assertive' : 'polite'}
-      className={`${styles.container} border rounded-lg p-4 flex items-start gap-3 ${className}`}
+      className={`
+        ${styles.container} border rounded-lg p-4 flex items-start gap-3
+        transition-all duration-200 ease-out
+        ${isExiting ? 'opacity-0 scale-[0.98] translate-y-[-8px]' : 'opacity-100 scale-100 translate-y-0'}
+        motion-reduce:transition-none
+        ${className}
+      `}
     >
       <svg
         className={`w-5 h-5 ${styles.iconColor} flex-shrink-0 mt-0.5`}
