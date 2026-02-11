@@ -4,7 +4,11 @@ import {
   ErrorCode,
   isRetryableError,
 } from '../errors';
-import { RESILIENCE_CONFIG } from '../config/constants';
+import {
+  RESILIENCE_CONFIG,
+  STATUS_CODES,
+  RETRY_VALUES,
+} from '../config/constants';
 import { RetryOptions } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerState } from './types';
@@ -58,7 +62,7 @@ export class RetryManager {
             throw new AppError(
               `Circuit breaker is OPEN for ${context || 'operation'}. Not accepting requests until ${nextAttempt || 'unknown'}`,
               ErrorCode.CIRCUIT_BREAKER_OPEN,
-              503,
+              STATUS_CODES.SERVICE_UNAVAILABLE,
               undefined,
               true
             );
@@ -85,7 +89,8 @@ export class RetryManager {
 
         // Exponential backoff with jitter
         const delay = Math.min(
-          baseDelay * Math.pow(2, attempt - 1) + Math.random() * 1000,
+          baseDelay * Math.pow(2, attempt - 1) +
+            Math.random() * RETRY_VALUES.JITTER_MULTIPLIER_MS,
           maxDelay
         );
 

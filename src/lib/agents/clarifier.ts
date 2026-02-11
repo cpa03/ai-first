@@ -1,6 +1,7 @@
 import { AIModelConfig, aiService } from '@/lib/ai';
 import { dbService, type Idea } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
+import { CLARIFIER_VALUES } from '@/lib/config/constants';
 import {
   QuestionGenerator,
   IdeaRefiner,
@@ -59,7 +60,8 @@ export class ClarifierAgent {
     try {
       await dbService.logAgentAction('clarifier', 'start-clarification', {
         ideaId,
-        ideaText: ideaText.substring(0, 100) + '...',
+        ideaText:
+          ideaText.substring(0, CLARIFIER_VALUES.LOG_PREVIEW_LENGTH) + '...',
       });
 
       const questions = await this.questionGenerator!.generate(ideaText);
@@ -69,7 +71,7 @@ export class ClarifierAgent {
         originalIdea: ideaText,
         questions,
         answers: {},
-        confidence: 0.5,
+        confidence: CLARIFIER_VALUES.INITIAL_CONFIDENCE,
         status: 'pending',
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -149,7 +151,7 @@ export class ClarifierAgent {
 
       session.refinedIdea = refinedIdea;
       session.status = 'completed';
-      session.confidence = 0.9;
+      session.confidence = CLARIFIER_VALUES.COMPLETION_CONFIDENCE;
       session.updatedAt = new Date();
 
       await this.sessionManager!.store(session);

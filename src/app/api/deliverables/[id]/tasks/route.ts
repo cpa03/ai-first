@@ -8,6 +8,7 @@ import {
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { TASK_VALIDATION } from '@/lib/config/constants';
 
 // Valid task statuses
 const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
@@ -48,8 +49,10 @@ async function handlePost(context: ApiContext) {
     return badRequestResponse('Task title is required');
   }
 
-  if (body.title.length > 255) {
-    return badRequestResponse('Task title must be less than 255 characters');
+  if (body.title.length > TASK_VALIDATION.MAX_TITLE_LENGTH) {
+    return badRequestResponse(
+      `Task title must be less than ${TASK_VALIDATION.MAX_TITLE_LENGTH} characters`
+    );
   }
 
   // Validate status if provided
@@ -78,14 +81,19 @@ async function handlePost(context: ApiContext) {
     const user = await requireAuth(request);
 
     // Get deliverable with idea to verify ownership
-    const deliverableWithIdea = await dbService.getDeliverableWithIdea(deliverableId);
+    const deliverableWithIdea =
+      await dbService.getDeliverableWithIdea(deliverableId);
 
     if (!deliverableWithIdea) {
       return notFoundResponse('Deliverable not found');
     }
 
     // Verify ownership
-    verifyResourceOwnership(user.id, deliverableWithIdea.idea.user_id, 'deliverable');
+    verifyResourceOwnership(
+      user.id,
+      deliverableWithIdea.idea.user_id,
+      'deliverable'
+    );
 
     const newTask = await dbService.createTask({
       deliverable_id: deliverableId,

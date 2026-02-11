@@ -77,7 +77,8 @@ export function getClientIdentifier(request: Request): string {
 }
 
 // Memory leak prevention: Maximum requests per identifier to prevent unbounded growth
-const MAX_REQUESTS_PER_IDENTIFIER = 1000;
+const MAX_REQUESTS_PER_IDENTIFIER =
+  RATE_LIMIT_VALUES.MAX_REQUESTS_PER_IDENTIFIER;
 
 export function checkRateLimit(
   identifier: string,
@@ -173,6 +174,7 @@ import {
   RATE_LIMIT_STORE_CONFIG,
   ERROR_CONFIG,
   RATE_LIMIT_STATS_CONFIG,
+  RATE_LIMIT_VALUES,
 } from './config/constants';
 
 export function cleanupExpiredEntries(): void {

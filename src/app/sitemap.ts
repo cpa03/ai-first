@@ -1,5 +1,7 @@
+import { APP_CONFIG } from '@/lib/config';
+
 export default function sitemap() {
-  const baseUrl = 'https://ideaflow.ai';
+  const baseUrl = APP_CONFIG.URLS.SITE;
 
   return [
     {

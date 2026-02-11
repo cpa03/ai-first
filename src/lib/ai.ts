@@ -11,7 +11,7 @@ import {
   type ServiceResilienceConfig,
   type ResilienceConfig,
 } from './resilience';
-import { AI_CONFIG } from './config/constants';
+import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -43,10 +43,10 @@ export interface CostTracker {
 }
 
 // Memory leak prevention: Maximum number of cost trackers to prevent unbounded growth
-const MAX_COST_TRACKERS = 10000;
+const MAX_COST_TRACKERS = AI_SERVICE_LIMITS.MAX_COST_TRACKERS;
 
 // Memory leak prevention: Maximum age of cost tracker entries (24 hours)
-const MAX_COST_TRACKER_AGE_MS = 24 * 60 * 60 * 1000;
+const MAX_COST_TRACKER_AGE_MS = AI_SERVICE_LIMITS.MAX_COST_TRACKER_AGE_MS;
 
 // Context windowing strategy
 export interface ContextWindow {
@@ -125,7 +125,7 @@ class AIService {
             throw new AppError(
               'OpenAI client not initialized. Check OPENAI_API_KEY environment variable.',
               ErrorCode.SERVICE_UNAVAILABLE,
-              503,
+              STATUS_CODES.SERVICE_UNAVAILABLE,
               undefined,
               false,
               [
@@ -154,7 +154,7 @@ class AIService {
           throw new AppError(
             `Provider ${config.provider} not yet implemented`,
             ErrorCode.EXTERNAL_SERVICE_ERROR,
-            501,
+            STATUS_CODES.NOT_IMPLEMENTED,
             undefined,
             false,
             [
@@ -203,7 +203,10 @@ class AIService {
       typeof crypto === 'undefined' ||
       !crypto.subtle
     ) {
-      const hash = btoa(key).substring(0, 64);
+      const hash = btoa(key).substring(
+        0,
+        AI_SERVICE_LIMITS.CACHE_KEY_HASH_LENGTH
+      );
       return hash;
     }
 
@@ -215,7 +218,7 @@ class AIService {
       .map((b) => b.toString(16).padStart(2, '0'))
       .join('');
 
-    return hashHex.substring(0, 64);
+    return hashHex.substring(0, AI_SERVICE_LIMITS.CACHE_KEY_HASH_LENGTH);
   }
 
   private async executeWithResilience<T>(
@@ -244,7 +247,7 @@ class AIService {
         throw new AppError(
           String(error),
           ErrorCode.EXTERNAL_SERVICE_ERROR,
-          502,
+          STATUS_CODES.BAD_GATEWAY,
           undefined,
           true
         );
@@ -383,7 +386,9 @@ class AIService {
 
     // Memory leak prevention: If array exceeds max size, remove oldest 20% of entries
     if (this.costTrackers.length > MAX_COST_TRACKERS) {
-      const entriesToRemove = Math.floor(MAX_COST_TRACKERS * 0.2);
+      const entriesToRemove = Math.floor(
+        MAX_COST_TRACKERS * AI_SERVICE_LIMITS.CLEANUP_PERCENTAGE
+      );
       this.costTrackers.splice(0, entriesToRemove);
     }
 
