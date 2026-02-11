@@ -132,16 +132,16 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div
-            className="flex items-center gap-2 text-sm text-gray-500"
+            className="flex items-center gap-2 text-sm text-gray-600"
             aria-label="Keyboard shortcut: Command Enter to submit"
           >
-            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-700">
+            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
               {isMac ? '⌘' : 'Ctrl'}
             </kbd>
-            <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-700">
+            <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
               Enter
             </kbd>
-            <span className="hidden sm:inline text-gray-400">to submit</span>
+            <span className="hidden sm:inline text-gray-600">to submit</span>
           </div>
           <AutoSaveIndicator value={idea} />
         </div>
