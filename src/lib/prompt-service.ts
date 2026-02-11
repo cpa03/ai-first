@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises';
-import path from 'path';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
 
@@ -58,21 +58,18 @@ export class PromptService {
   }
 
   interpolate(template: string, variables: PromptVariable): string {
-    let result = template;
-
-    for (const [key, value] of Object.entries(variables)) {
-      const placeholder = `{${key}}`;
-      const valueStr =
-        typeof value === 'object'
+    // Single-pass regex replacement to optimize from O(V * T) to O(T),
+    // where V is the number of variables and T is the template length.
+    // Using [^{}]+ to avoid matching across multiple placeholders or nested braces.
+    return template.replace(/\{([^{}]+)\}/g, (match, key) => {
+      if (Object.prototype.hasOwnProperty.call(variables, key)) {
+        const value = variables[key];
+        return typeof value === 'object'
           ? JSON.stringify(value, null, 2)
           : String(value);
-      result = result.replace(
-        new RegExp(placeholder.replace(/[{}]/g, '\\$&'), 'g'),
-        valueStr
-      );
-    }
-
-    return result;
+      }
+      return match;
+    });
   }
 
   async getPrompt(
