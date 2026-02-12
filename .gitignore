@@ -7,7 +7,6 @@ yarn-error.log*
 # Next.js
 .next/
 out/
-build/
 dist/
 
 # Environment variables
@@ -74,9 +73,6 @@ jspm_packages/
 .cache
 .parcel-cache
 
-# next.js build output
-.next
-
 # nuxt.js build output
 .nuxt
 
@@ -97,10 +93,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python-e 
+.Python
 # Git worktrees
 .worktrees/
 
 # Agent temporary directories
 .jules/
+.Jules/
 .sisyphus/
