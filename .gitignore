@@ -38,6 +38,10 @@ Thumbs.db
 *.log
 task_plan.md
 
+# Generated reports
+console-scan-report.json
+lighthouse-report.json
+
 # Runtime data
 pids
 *.pid
