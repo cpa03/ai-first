@@ -61,16 +61,31 @@ jest.mock('openai', () => {
 });
 
 // Mock environment variables for all tests
-process.env.OPENAI_API_KEY = 'test-key';
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
-process.env.NOTION_API_KEY = 'test-notion-key';
-process.env.TRELLO_API_KEY = 'test-trello-key';
-process.env.TRELLO_TOKEN = 'test-trello-token';
-process.env.GITHUB_TOKEN = 'test-github-token';
-process.env.GOOGLE_CLIENT_ID = 'test-google-client-id';
-process.env.GOOGLE_CLIENT_SECRET = 'test-google-client-secret';
+// SECURITY: These are test-only placeholder values, not real secrets
+// In CI/production, real values should be injected via environment variables
+// Never commit actual API keys or credentials to version control
+process.env.OPENAI_API_KEY =
+  process.env.TEST_OPENAI_API_KEY || 'test-openai-api-key-placeholder';
+process.env.NEXT_PUBLIC_SUPABASE_URL =
+  process.env.TEST_SUPABASE_URL || 'https://test-project.supabase.co';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY =
+  process.env.TEST_SUPABASE_ANON_KEY || 'test-supabase-anon-key-placeholder';
+process.env.SUPABASE_SERVICE_ROLE_KEY =
+  process.env.TEST_SUPABASE_SERVICE_ROLE_KEY ||
+  'test-supabase-service-key-placeholder';
+process.env.NOTION_API_KEY =
+  process.env.TEST_NOTION_API_KEY || 'test-notion-api-key-placeholder';
+process.env.TRELLO_API_KEY =
+  process.env.TEST_TRELLO_API_KEY || 'test-trello-api-key-placeholder';
+process.env.TRELLO_TOKEN =
+  process.env.TEST_TRELLO_TOKEN || 'test-trello-token-placeholder';
+process.env.GITHUB_TOKEN =
+  process.env.TEST_GITHUB_TOKEN || 'test-github-token-placeholder';
+process.env.GOOGLE_CLIENT_ID =
+  process.env.TEST_GOOGLE_CLIENT_ID || 'test-google-client-id-placeholder';
+process.env.GOOGLE_CLIENT_SECRET =
+  process.env.TEST_GOOGLE_CLIENT_SECRET ||
+  'test-google-client-secret-placeholder';
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({

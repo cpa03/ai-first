@@ -38,7 +38,7 @@ Thumbs.db
 *.log
 task_plan.md
 
-# Generated reports
+# Generated reports (by npm scripts)
 console-scan-report.json
 lighthouse-report.json
 

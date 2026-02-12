@@ -204,6 +204,11 @@ export const ANIMATION_CONFIG = {
    * Error boundary reload delay
    */
   ERROR_RELOAD_DELAY: 3000,
+
+  /**
+   * Alert exit animation duration
+   */
+  ALERT_EXIT: 200,
 } as const;
 
 /**
