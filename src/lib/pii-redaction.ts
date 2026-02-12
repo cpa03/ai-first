@@ -63,33 +63,42 @@ export function redactPII(text: string): string {
   if (typeof text !== 'string') return text;
   if (!text) return text;
 
+  const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
+
   return text.replace(COMBINED_PII_REGEX, (match, ...args) => {
     // In String.replace(regex, replacer), the last argument is the groups object if named groups are used
     const groups = args[args.length - 1] as Record<string, string | undefined>;
 
-    if (groups.jwt) return PII_REDACTION_CONFIG.REDACTION_LABELS.JWT;
-    if (groups.urlWithCredentials)
-      return PII_REDACTION_CONFIG.REDACTION_LABELS.URL_WITH_CREDENTIALS;
-    if (groups.email) return PII_REDACTION_CONFIG.REDACTION_LABELS.EMAIL;
-    if (groups.phone) return PII_REDACTION_CONFIG.REDACTION_LABELS.PHONE;
-    if (groups.ssn) return PII_REDACTION_CONFIG.REDACTION_LABELS.SSN;
-    if (groups.creditCard)
-      return PII_REDACTION_CONFIG.REDACTION_LABELS.CREDIT_CARD;
+    if (groups.jwt) return labels.JWT;
+    if (groups.urlWithCredentials) return labels.URL_WITH_CREDENTIALS;
+    if (groups.email) return labels.EMAIL;
+    if (groups.phone) return labels.PHONE;
+    if (groups.ssn) return labels.SSN;
+    if (groups.creditCard) return labels.CREDIT_CARD;
     if (groups.ipAddress) {
-      const parts = match.split('.');
-      const isPrivate =
-        parts[0] === '10' ||
-        (parts[0] === '172' &&
-          parseInt(parts[1]) >= 16 &&
-          parseInt(parts[1]) <= 31) ||
-        (parts[0] === '192' && parts[1] === '168') ||
-        parts[0] === '127';
+      // PERFORMANCE: Faster private IP check without full split
+      const firstDot = match.indexOf('.');
+      if (firstDot === -1) return labels.IP_ADDRESS;
 
-      return isPrivate
-        ? match
-        : PII_REDACTION_CONFIG.REDACTION_LABELS.IP_ADDRESS;
+      const firstOctet = match.substring(0, firstDot);
+
+      if (firstOctet === '10' || firstOctet === '127') return match;
+      if (firstOctet === '192') {
+        if (match.startsWith('192.168.')) return match;
+      } else if (firstOctet === '172') {
+        const secondDot = match.indexOf('.', firstDot + 1);
+        if (secondDot !== -1) {
+          const secondOctet = parseInt(
+            match.substring(firstDot + 1, secondDot),
+            10
+          );
+          if (secondOctet >= 16 && secondOctet <= 31) return match;
+        }
+      }
+
+      return labels.IP_ADDRESS;
     }
-    if (groups.apiKey) return PII_REDACTION_CONFIG.REDACTION_LABELS.API_KEY;
+    if (groups.apiKey) return labels.API_KEY;
 
     return match;
   });
@@ -101,7 +110,31 @@ export function redactPII(text: string): string {
 const SENSITIVE_FIELD_REGEX =
   /api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey/i;
 
-const SAFE_FIELDS_SET = new Set<string>(PII_REDACTION_CONFIG.SAFE_FIELDS);
+const SAFE_FIELDS_SET = new Set<string>(
+  PII_REDACTION_CONFIG.SAFE_FIELDS.map((f) => f.toLowerCase())
+);
+
+const REDACTION_LABEL_CACHE = new Map<string, string>();
+
+/**
+ * Get or create a redaction label for a sensitive field key
+ */
+function getRedactionLabel(key: string): string {
+  let label = REDACTION_LABEL_CACHE.get(key);
+  if (label) return label;
+
+  // Convert field name to uppercase with underscores for redaction label (camelCase to snake_case)
+  const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+  const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
+  label = `[REDACTED_${fieldNameUpper}]`;
+
+  // Prevent unbounded cache growth
+  if (REDACTION_LABEL_CACHE.size < 1000) {
+    REDACTION_LABEL_CACHE.set(key, label);
+  }
+
+  return label;
+}
 
 /**
  * Redact PII from an object recursively
@@ -142,23 +175,39 @@ export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
     }
 
     if (Array.isArray(obj)) {
-      return obj.map((item) => redactPIIInObject(item, seen));
+      // PERFORMANCE: Faster array processing with pre-allocated array and for loop
+      const result = new Array(obj.length);
+      for (let i = 0; i < obj.length; i++) {
+        result[i] = redactPIIInObject(obj[i], seen);
+      }
+      return result;
     }
 
     const redacted: Record<string, unknown> = {};
-    for (const [key, value] of Object.entries(obj)) {
-      // Optimized sensitive field check
-      const isSensitive = SENSITIVE_FIELD_REGEX.test(key);
+    for (const key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        const value = (obj as Record<string, unknown>)[key];
 
-      if (SAFE_FIELDS_SET.has(key.toLowerCase())) {
-        redacted[key] = value;
-      } else if (isSensitive) {
-        // Convert field name to uppercase with underscores for redaction label
-        const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-        const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
-        redacted[key] = `[REDACTED_${fieldNameUpper}]`;
-      } else {
-        redacted[key] = redactPIIInObject(value, seen);
+        // PERFORMANCE: O(1) safe field check (checking both original and lowercase for efficiency)
+        if (SAFE_FIELDS_SET.has(key) || SAFE_FIELDS_SET.has(key.toLowerCase())) {
+          redacted[key] = value;
+          continue;
+        }
+
+        // PERFORMANCE: O(1) label lookup after first hit
+        if (SENSITIVE_FIELD_REGEX.test(key)) {
+          redacted[key] = getRedactionLabel(key);
+          continue;
+        }
+
+        // PERFORMANCE: Skip recursive call for non-string primitives
+        if (typeof value === 'string') {
+          redacted[key] = redactPII(value);
+        } else if (value !== null && typeof value === 'object') {
+          redacted[key] = redactPIIInObject(value, seen);
+        } else {
+          redacted[key] = value;
+        }
       }
     }
     return redacted;
