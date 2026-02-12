@@ -1,7 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { UI_CONFIG, ANIMATION_CONFIG } from '@/lib/config/constants';
+import {
+  UI_CONFIG as UI_CONSTANTS,
+  ANIMATION_CONFIG,
+} from '@/lib/config/constants';
+import { TOAST_CONFIG } from '@/lib/config';
 
 export interface Toast {
   id: string;
@@ -54,28 +58,28 @@ const toastIcons = {
 
 const toastColors = {
   success: {
-    container: 'bg-green-50 border-green-200',
-    iconColor: 'text-green-600',
-    titleColor: 'text-green-900',
-    textColor: 'text-green-800',
+    container: `${TOAST_CONFIG.STYLES.SUCCESS.BG} ${TOAST_CONFIG.STYLES.SUCCESS.BORDER}`,
+    iconColor: `text-[${TOAST_CONFIG.STYLES.SUCCESS.ICON_COLOR}]`,
+    titleColor: TOAST_CONFIG.STYLES.SUCCESS.TEXT,
+    textColor: TOAST_CONFIG.STYLES.SUCCESS.TEXT,
   },
   error: {
-    container: 'bg-red-50 border-red-200',
-    iconColor: 'text-red-600',
-    titleColor: 'text-red-900',
-    textColor: 'text-red-800',
+    container: `${TOAST_CONFIG.STYLES.ERROR.BG} ${TOAST_CONFIG.STYLES.ERROR.BORDER}`,
+    iconColor: `text-[${TOAST_CONFIG.STYLES.ERROR.ICON_COLOR}]`,
+    titleColor: TOAST_CONFIG.STYLES.ERROR.TEXT,
+    textColor: TOAST_CONFIG.STYLES.ERROR.TEXT,
   },
   warning: {
-    container: 'bg-yellow-50 border-yellow-200',
-    iconColor: 'text-yellow-600',
-    titleColor: 'text-yellow-900',
-    textColor: 'text-yellow-800',
+    container: `${TOAST_CONFIG.STYLES.WARNING.BG} ${TOAST_CONFIG.STYLES.WARNING.BORDER}`,
+    iconColor: `text-[${TOAST_CONFIG.STYLES.WARNING.ICON_COLOR}]`,
+    titleColor: TOAST_CONFIG.STYLES.WARNING.TEXT,
+    textColor: TOAST_CONFIG.STYLES.WARNING.TEXT,
   },
   info: {
-    container: 'bg-blue-50 border-blue-200',
-    iconColor: 'text-blue-600',
-    titleColor: 'text-blue-900',
-    textColor: 'text-blue-800',
+    container: `${TOAST_CONFIG.STYLES.INFO.BG} ${TOAST_CONFIG.STYLES.INFO.BORDER}`,
+    iconColor: `text-[${TOAST_CONFIG.STYLES.INFO.ICON_COLOR}]`,
+    titleColor: TOAST_CONFIG.STYLES.INFO.TEXT,
+    textColor: TOAST_CONFIG.STYLES.INFO.TEXT,
   },
 };
 
@@ -84,8 +88,8 @@ function Toast({ toast, onClose }: ToastProps) {
   const [progress, setProgress] = useState(100);
 
   useEffect(() => {
-    const duration = toast.duration || UI_CONFIG.TOAST_DURATION;
-    const updateInterval = UI_CONFIG.TOAST_PROGRESS_INTERVAL;
+    const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
+    const updateInterval = UI_CONSTANTS.TOAST_PROGRESS_INTERVAL;
     const totalSteps = duration / updateInterval;
     let currentStep = 0;
 
