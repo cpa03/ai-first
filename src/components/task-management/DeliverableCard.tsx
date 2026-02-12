@@ -46,7 +46,7 @@ export function DeliverableCard({
       <button
         onClick={() => onToggleExpand(deliverable.id)}
         aria-expanded={isExpanded}
-        aria-controls={`deliverable-tasks-${deliverable.id}`}
+        aria-controls={isExpanded ? `deliverable-tasks-${deliverable.id}` : undefined}
         className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 rounded-lg"
       >
         <div className="flex-1">
