@@ -94,7 +94,11 @@ export class RateLimitError extends AppError {
       `Rate limit exceeded. Retry after ${retryAfter} seconds`,
       ErrorCode.RATE_LIMIT_EXCEEDED,
       429,
-      undefined,
+      [
+        {
+          message: `Limit: ${limit}, Remaining: ${remaining}`,
+        },
+      ],
       true,
       suggestions
     );
@@ -103,21 +107,6 @@ export class RateLimitError extends AppError {
   }
 
   retryAfter: number;
-
-  toJSON(): ErrorResponse {
-    return {
-      error: redactPII(this.message),
-      code: this.code,
-      details: redactPIIInObject([
-        {
-          message: `Limit: ${this.limit}, Remaining: ${this.remaining}`,
-        },
-      ]) as ErrorDetail[],
-      timestamp: new Date().toISOString(),
-      retryable: true,
-      suggestions: this.suggestions,
-    };
-  }
 }
 
 export class ExternalServiceError extends AppError {
@@ -186,16 +175,6 @@ export class CircuitBreakerError extends AppError {
 
   service: string;
   resetTime: Date;
-
-  toJSON(): ErrorResponse {
-    return {
-      error: redactPII(this.message),
-      code: this.code,
-      timestamp: new Date().toISOString(),
-      retryable: true,
-      suggestions: this.suggestions,
-    };
-  }
 }
 
 export class RetryExhaustedError extends AppError {
