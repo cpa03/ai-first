@@ -3,10 +3,36 @@
  *
  * This utility redacts personally identifiable information from agent logs
  * to ensure user privacy and security compliance.
+ *
+ * Security Improvements (Issue #923):
+ * - Comprehensive edge case handling (Symbol keys, Maps, Sets, Dates)
+ * - Strong type safety with strict types
+ * - Safe property access with try-catch for getters/setters
+ * - Handling of frozen objects and special object types
  */
 
 import { PII_REDACTION_CONFIG } from './config/constants';
 
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Supported PII pattern types
+ */
+export type PIIPatternType =
+  | 'email'
+  | 'phone'
+  | 'ssn'
+  | 'creditCard'
+  | 'ipAddress'
+  | 'apiKey'
+  | 'jwt'
+  | 'urlWithCredentials';
+
+/**
+ * PII regex patterns interface
+ */
 interface PIIPatterns {
   email: RegExp;
   phone: RegExp;
@@ -16,6 +42,35 @@ interface PIIPatterns {
   apiKey: RegExp;
   jwt: RegExp;
   urlWithCredentials: RegExp;
+}
+
+/**
+ * Redaction result type for type safety
+ */
+export type RedactionResult =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | RedactedObject
+  | RedactedArray;
+
+interface RedactedObject {
+  [key: string]: RedactionResult;
+}
+
+interface RedactedArray extends Array<RedactionResult> {}
+
+/**
+ * Safe property descriptor for error handling
+ */
+interface SafePropertyDescriptor {
+  key: string | symbol;
+  value: unknown;
+  enumerable: boolean;
+  hasGetter: boolean;
+  error?: Error;
 }
 
 const PII_REGEX_PATTERNS: PIIPatterns = {
@@ -76,27 +131,7 @@ export function redactPII(text: string): string {
     if (groups.ssn) return labels.SSN;
     if (groups.creditCard) return labels.CREDIT_CARD;
     if (groups.ipAddress) {
-      // PERFORMANCE: Faster private IP check without full split
-      const firstDot = match.indexOf('.');
-      if (firstDot === -1) return labels.IP_ADDRESS;
-
-      const firstOctet = match.substring(0, firstDot);
-
-      if (firstOctet === '10' || firstOctet === '127') return match;
-      if (firstOctet === '192') {
-        if (match.startsWith('192.168.')) return match;
-      } else if (firstOctet === '172') {
-        const secondDot = match.indexOf('.', firstDot + 1);
-        if (secondDot !== -1) {
-          const secondOctet = parseInt(
-            match.substring(firstDot + 1, secondDot),
-            10
-          );
-          if (secondOctet >= 16 && secondOctet <= 31) return match;
-        }
-      }
-
-      return labels.IP_ADDRESS;
+      return isPrivateIP(match) ? match : labels.IP_ADDRESS;
     }
     if (groups.apiKey) return labels.API_KEY;
 
@@ -116,19 +151,18 @@ const SAFE_FIELDS_SET = new Set<string>(
 
 const REDACTION_LABEL_CACHE = new Map<string, string>();
 
-/**
- * Get or create a redaction label for a sensitive field key
- */
+function isSafeField(key: string): boolean {
+  return SAFE_FIELDS_SET.has(key.toLowerCase());
+}
+
 function getRedactionLabel(key: string): string {
   let label = REDACTION_LABEL_CACHE.get(key);
   if (label) return label;
 
-  // Convert field name to uppercase with underscores for redaction label (camelCase to snake_case)
   const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
   const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
   label = `[REDACTED_${fieldNameUpper}]`;
 
-  // Prevent unbounded cache growth
   if (REDACTION_LABEL_CACHE.size < 1000) {
     REDACTION_LABEL_CACHE.set(key, label);
   }
@@ -136,89 +170,229 @@ function getRedactionLabel(key: string): string {
   return label;
 }
 
-/**
- * Redact PII from an object recursively
- */
-export function redactPIIInObject(obj: unknown, seen = new WeakSet()): unknown {
+function isPrivateIP(ip: string): boolean {
+  const firstDot = ip.indexOf('.');
+  if (firstDot === -1) return false;
+
+  const firstOctet = ip.substring(0, firstDot);
+
+  if (firstOctet === '127' || firstOctet === '10') return true;
+  if (firstOctet === '192' && ip.startsWith('192.168.')) return true;
+  if (firstOctet === '172') {
+    const secondDot = ip.indexOf('.', firstDot + 1);
+    if (secondDot !== -1) {
+      const secondOctet = parseInt(ip.substring(firstDot + 1, secondDot), 10);
+      return secondOctet >= 16 && secondOctet <= 31;
+    }
+  }
+
+  return false;
+}
+
+function getAllPropertyDescriptors(obj: object): SafePropertyDescriptor[] {
+  const descriptors: SafePropertyDescriptor[] = [];
+
+  try {
+    const stringKeys = Object.getOwnPropertyNames(obj);
+    for (const key of stringKeys) {
+      try {
+        const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+        if (descriptor) {
+          let value: unknown;
+          let hasGetter = false;
+
+          if (descriptor.get) {
+            hasGetter = true;
+            try {
+              value = descriptor.get.call(obj);
+            } catch {
+              value = '[Getter Error]';
+            }
+          } else if ('value' in descriptor) {
+            value = descriptor.value;
+          }
+
+          descriptors.push({
+            key,
+            value,
+            enumerable: descriptor.enumerable ?? false,
+            hasGetter,
+          });
+        }
+      } catch (e) {
+        descriptors.push({
+          key,
+          value: '[Property Access Error]',
+          enumerable: false,
+          hasGetter: false,
+          error: e instanceof Error ? e : new Error(String(e)),
+        });
+      }
+    }
+
+    const symbolKeys = Object.getOwnPropertySymbols(obj);
+    for (const key of symbolKeys) {
+      try {
+        const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+        if (descriptor) {
+          let value: unknown;
+          let hasGetter = false;
+
+          if (descriptor.get) {
+            hasGetter = true;
+            try {
+              value = descriptor.get.call(obj);
+            } catch {
+              value = '[Getter Error]';
+            }
+          } else if ('value' in descriptor) {
+            value = descriptor.value;
+          }
+
+          descriptors.push({
+            key,
+            value,
+            enumerable: descriptor.enumerable ?? false,
+            hasGetter,
+          });
+        }
+      } catch (e) {
+        descriptors.push({
+          key,
+          value: '[Property Access Error]',
+          enumerable: false,
+          hasGetter: false,
+          error: e instanceof Error ? e : new Error(String(e)),
+        });
+      }
+    }
+  } catch {}
+
+  return descriptors;
+}
+
+const MAX_RECURSION_DEPTH = 100;
+
+export function redactPIIInObject(
+  obj: unknown,
+  seen = new WeakSet<object>(),
+  depth = 0
+): RedactionResult {
+  if (depth > MAX_RECURSION_DEPTH) {
+    return '[Max Depth Exceeded]';
+  }
+
   if (typeof obj === 'string') {
     return redactPII(obj);
   }
 
-  if (obj !== null && typeof obj === 'object') {
-    // Handle circular references
-    if (seen.has(obj)) {
-      return '[Circular Reference]';
-    }
-    seen.add(obj);
-
-    if (obj instanceof Error) {
-      // For Error objects, we convert to a POJO including non-enumerable props
-      // then recursively redact to ensure all custom properties are protected
-      const errorData = {
-        name: obj.name,
-        message: obj.message,
-        stack: obj.stack,
-        ...Object.getOwnPropertyNames(obj).reduce(
-          (acc, key) => {
-            try {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              acc[key] = (obj as unknown as Record<string, unknown>)[key];
-            } catch {
-              // Skip properties that can't be accessed
-            }
-            return acc;
-          },
-          {} as Record<string, unknown>
-        ),
-      };
-      return redactPIIInObject(errorData, seen);
-    }
-
-    if (Array.isArray(obj)) {
-      // PERFORMANCE: Faster array processing with pre-allocated array and for loop
-      const result = new Array(obj.length);
-      for (let i = 0; i < obj.length; i++) {
-        result[i] = redactPIIInObject(obj[i], seen);
-      }
-      return result;
-    }
-
-    const redacted: Record<string, unknown> = {};
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        const value = (obj as Record<string, unknown>)[key];
-
-        // PERFORMANCE: O(1) safe field check (checking both original and lowercase for efficiency)
-        if (SAFE_FIELDS_SET.has(key) || SAFE_FIELDS_SET.has(key.toLowerCase())) {
-          redacted[key] = value;
-          continue;
-        }
-
-        // PERFORMANCE: O(1) label lookup after first hit
-        if (SENSITIVE_FIELD_REGEX.test(key)) {
-          redacted[key] = getRedactionLabel(key);
-          continue;
-        }
-
-        // PERFORMANCE: Skip recursive call for non-string primitives
-        if (typeof value === 'string') {
-          redacted[key] = redactPII(value);
-        } else if (value !== null && typeof value === 'object') {
-          redacted[key] = redactPIIInObject(value, seen);
-        } else {
-          redacted[key] = value;
-        }
-      }
-    }
-    return redacted;
+  if (obj === null || typeof obj !== 'object') {
+    return obj as RedactionResult;
   }
 
-  return obj;
+  if (seen.has(obj)) {
+    return '[Circular Reference]';
+  }
+  seen.add(obj);
+
+  if (obj instanceof Date) {
+    return obj.toISOString();
+  }
+
+  if (obj instanceof RegExp) {
+    return obj.toString();
+  }
+
+  if (obj instanceof Map) {
+    const redactedMap = new Map<RedactionResult, RedactionResult>();
+    for (const [key, value] of obj.entries()) {
+      const redactedKey = redactPIIInObject(key, seen, depth + 1);
+      const redactedValue = redactPIIInObject(value, seen, depth + 1);
+      redactedMap.set(redactedKey, redactedValue);
+    }
+    return redactedMap as unknown as RedactionResult;
+  }
+
+  if (obj instanceof Set) {
+    const redactedSet = new Set<RedactionResult>();
+    for (const value of obj.values()) {
+      redactedSet.add(redactPIIInObject(value, seen, depth + 1));
+    }
+    return redactedSet as unknown as RedactionResult;
+  }
+
+  if (obj instanceof WeakMap || obj instanceof WeakSet) {
+    return '[Weak Collection]';
+  }
+
+  if (obj instanceof Error) {
+    const errorData: Record<string, unknown> = {
+      name: obj.name,
+      message: obj.message,
+      stack: obj.stack,
+    };
+
+    const descriptors = getAllPropertyDescriptors(obj);
+    for (const descriptor of descriptors) {
+      const key =
+        typeof descriptor.key === 'symbol'
+          ? descriptor.key.toString()
+          : descriptor.key;
+      if (!(key in errorData)) {
+        errorData[key] = descriptor.value;
+      }
+    }
+
+    return redactPIIInObject(errorData, seen, depth + 1);
+  }
+
+  if (Array.isArray(obj)) {
+    const result: RedactionResult[] = new Array(obj.length);
+    for (let i = 0; i < obj.length; i++) {
+      result[i] = redactPIIInObject(obj[i], seen, depth + 1);
+    }
+    return result;
+  }
+
+  const redacted: RedactedObject = {};
+  const descriptors = getAllPropertyDescriptors(obj);
+
+  for (const descriptor of descriptors) {
+    if (!descriptor.enumerable && !(obj instanceof Error)) {
+      continue;
+    }
+
+    let key: string;
+    if (typeof descriptor.key === 'symbol') {
+      key = descriptor.key.toString();
+    } else {
+      key = descriptor.key;
+    }
+
+    const value = descriptor.value;
+
+    if (isSafeField(key)) {
+      redacted[key] = value as RedactionResult;
+      continue;
+    }
+
+    if (SENSITIVE_FIELD_REGEX.test(key)) {
+      redacted[key] = getRedactionLabel(key);
+      continue;
+    }
+
+    if (typeof value === 'string') {
+      redacted[key] = redactPII(value);
+    } else if (value !== null && typeof value === 'object') {
+      redacted[key] = redactPIIInObject(value, seen, depth + 1);
+    } else {
+      redacted[key] = value as RedactionResult;
+    }
+  }
+
+  return redacted;
 }
 
-/**
- * Sanitize agent log payload before storing
- */
 export function sanitizeAgentLog(
   agent: string,
   action: string,
@@ -232,10 +406,24 @@ export function sanitizeAgentLog(
   };
 }
 
-/**
- * Check if a string contains potential PII
- */
 export function containsPII(text: string): boolean {
+  if (typeof text !== 'string') return false;
   const redacted = redactPII(text);
   return redacted !== text;
+}
+
+export function getRedactionStats(): {
+  labelCacheSize: number;
+  maxRecursionDepth: number;
+  safeFieldsCount: number;
+} {
+  return {
+    labelCacheSize: REDACTION_LABEL_CACHE.size,
+    maxRecursionDepth: MAX_RECURSION_DEPTH,
+    safeFieldsCount: SAFE_FIELDS_SET.size,
+  };
+}
+
+export function clearRedactionCache(): void {
+  REDACTION_LABEL_CACHE.clear();
 }

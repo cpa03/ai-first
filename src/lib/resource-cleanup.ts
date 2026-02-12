@@ -6,6 +6,9 @@
  */
 
 import { CLEANUP_CONFIG } from './config';
+import { createLogger } from './logger';
+
+const logger = createLogger('ResourceCleanupManager');
 
 export interface CleanupTask {
   id: string;
@@ -35,9 +38,7 @@ export class ResourceCleanupManager {
     priority: number = CLEANUP_CONFIG.RESOURCE_MANAGER.DEFAULT_PRIORITY
   ): void {
     if (this.isCleaningUp) {
-      console.warn(
-        `[ResourceCleanupManager] Cannot register task '${id}' during cleanup`
-      );
+      logger.warn(`Cannot register task '${id}' during cleanup`);
       return;
     }
 
@@ -56,7 +57,7 @@ export class ResourceCleanupManager {
    */
   async cleanup(): Promise<void> {
     if (this.isCleaningUp) {
-      console.warn('[ResourceCleanupManager] Cleanup already in progress');
+      logger.warn('Cleanup already in progress');
       return;
     }
 
@@ -92,7 +93,7 @@ export class ResourceCleanupManager {
     this.isCleaningUp = false;
 
     if (errors.length > 0) {
-      console.error('[ResourceCleanupManager] Cleanup errors:', errors);
+      logger.error(`Cleanup completed with ${errors.length} errors`, errors);
       throw new Error(`Cleanup completed with ${errors.length} errors`);
     }
   }

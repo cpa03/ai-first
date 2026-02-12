@@ -10,6 +10,8 @@ import {
   redactPIIInObject,
   sanitizeAgentLog,
   containsPII,
+  getRedactionStats,
+  clearRedactionCache,
 } from '@/lib/pii-redaction';
 
 describe('PII Redaction Utility', () => {
@@ -557,6 +559,193 @@ describe('PII Redaction Utility', () => {
       });
 
       expect(endTime - startTime).toBeLessThan(5000);
+    });
+  });
+
+  describe('Advanced Edge Cases (Issue #923)', () => {
+    it('should handle Map objects', () => {
+      const input = new Map([
+        ['id', '123'],
+        ['email', 'test@example.com'],
+      ]);
+
+      const output = redactPIIInObject(input) as Map<unknown, unknown>;
+
+      expect(output.get('id')).toBe('123');
+      expect(output.get('email')).toBe('[REDACTED_EMAIL]');
+    });
+
+    it('should handle Set objects', () => {
+      const input = new Set(['test@example.com', 'safe text', '123-456-7890']);
+
+      const output = redactPIIInObject(input) as Set<unknown>;
+
+      expect(output.has('[REDACTED_EMAIL]')).toBe(true);
+      expect(output.has('[REDACTED_PHONE]')).toBe(true);
+      expect(output.has('safe text')).toBe(true);
+    });
+
+    it('should handle Date objects', () => {
+      const date = new Date('2024-01-01T00:00:00Z');
+      const input = {
+        id: '123',
+        createdAt: date,
+        email: 'test@example.com',
+      };
+
+      const output = redactPIIInObject(input) as Record<string, unknown>;
+
+      expect(output.id).toBe('123');
+      expect(output.createdAt).toBe('2024-01-01T00:00:00.000Z');
+      expect(output.email).toBe('[REDACTED_EMAIL]');
+    });
+
+    it('should handle WeakMap and WeakSet', () => {
+      const weakMap = new WeakMap();
+      const weakSet = new WeakSet();
+
+      const output = redactPIIInObject({ weakMap, weakSet }) as Record<
+        string,
+        unknown
+      >;
+
+      expect(output.weakMap).toBe('[Weak Collection]');
+      expect(output.weakSet).toBe('[Weak Collection]');
+    });
+
+    it('should handle RegExp objects', () => {
+      const input = {
+        id: '123',
+        pattern: /test@example\.com/gi,
+      };
+
+      const output = redactPIIInObject(input) as Record<string, unknown>;
+
+      expect(output.id).toBe('123');
+      expect(output.pattern).toBe('/test@example\\.com/gi');
+    });
+
+    it('should handle objects with getters and setters', () => {
+      const input = {
+        id: '123',
+        get email() {
+          return 'test@example.com';
+        },
+        get apiKey() {
+          return 'sk-test-1234567890abcdef';
+        },
+      };
+
+      const output = redactPIIInObject(input) as Record<string, unknown>;
+
+      expect(output.id).toBe('123');
+      expect(output.email).toBe('[REDACTED_EMAIL]');
+      expect(output.apiKey).toBe('[REDACTED_API_KEY]');
+    });
+
+    it('should handle frozen objects', () => {
+      const input = Object.freeze({
+        id: '123',
+        email: 'test@example.com',
+      });
+
+      const output = redactPIIInObject(input) as Record<string, unknown>;
+
+      expect(output.id).toBe('123');
+      expect(output.email).toBe('[REDACTED_EMAIL]');
+    });
+
+    it('should handle mixed arrays with complex types', () => {
+      const input = [
+        'test@example.com',
+        123,
+        true,
+        null,
+        new Date('2024-01-01'),
+        { email: 'nested@example.com' },
+        new Set(['phone@example.com']),
+      ];
+
+      const output = redactPIIInObject(input) as unknown[];
+
+      expect(output[0]).toBe('[REDACTED_EMAIL]');
+      expect(output[1]).toBe(123);
+      expect(output[2]).toBe(true);
+      expect(output[3]).toBeNull();
+      expect(output[4]).toBe('2024-01-01T00:00:00.000Z');
+      expect((output[5] as Record<string, unknown>).email).toBe(
+        '[REDACTED_EMAIL]'
+      );
+      expect((output[6] as Set<unknown>).has('[REDACTED_EMAIL]')).toBe(true);
+    });
+
+    it('should handle Error objects with custom properties', () => {
+      const error = new Error('Test error');
+      (error as Error & { email: string }).email = 'test@example.com';
+      (error as Error & { apiKey: string }).apiKey = 'sk-test-12345';
+
+      const output = redactPIIInObject(error) as Record<string, unknown>;
+
+      expect(output.name).toBe('Error');
+      expect(output.message).toBe('Test error');
+      expect(output.email).toBe('[REDACTED_EMAIL]');
+      expect(output.apiKey).toBe('[REDACTED_API_KEY]');
+    });
+
+    it('should handle maps with PII in keys', () => {
+      const input = new Map([
+        ['test@example.com', 'value1'],
+        ['safe_key', 'safe value'],
+      ]);
+
+      const output = redactPIIInObject(input) as Map<unknown, unknown>;
+
+      const keys = Array.from(output.keys());
+      expect(keys).toContain('[REDACTED_EMAIL]');
+      expect(keys).toContain('safe_key');
+    });
+
+    it('should handle getters that throw errors', () => {
+      const input = {
+        id: '123',
+        get problematicField() {
+          throw new Error('Getter error');
+        },
+        apiKey: 'sk-test-12345',
+      };
+
+      const output = redactPIIInObject(input) as Record<string, unknown>;
+
+      expect(output.id).toBe('123');
+      expect(output.problematicField).toBe('[Getter Error]');
+      expect(output.apiKey).toBe('[REDACTED_API_KEY]');
+    });
+
+    it('should return false for containsPII with non-string input', () => {
+      expect(containsPII(123 as unknown as string)).toBe(false);
+      expect(containsPII(null as unknown as string)).toBe(false);
+      expect(containsPII(undefined as unknown as string)).toBe(false);
+      expect(containsPII({} as unknown as string)).toBe(false);
+    });
+
+    it('should expose redaction stats', () => {
+      const stats = getRedactionStats();
+
+      expect(stats.labelCacheSize).toBeGreaterThanOrEqual(0);
+      expect(stats.maxRecursionDepth).toBe(100);
+      expect(stats.safeFieldsCount).toBeGreaterThan(0);
+    });
+
+    it('should clear redaction cache', () => {
+      redactPIIInObject({ customField: 'value' });
+
+      const statsBefore = getRedactionStats();
+      expect(statsBefore.labelCacheSize).toBeGreaterThanOrEqual(0);
+
+      clearRedactionCache();
+
+      const statsAfter = getRedactionStats();
+      expect(statsAfter.labelCacheSize).toBe(0);
     });
   });
 });

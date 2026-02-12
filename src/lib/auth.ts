@@ -1,11 +1,13 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
+import { createLogger } from '@/lib/logger';
 import { timingSafeEqual, createHash } from 'node:crypto';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
+const logger = createLogger('auth');
 
 if (!ADMIN_API_KEY && process.env.NODE_ENV !== 'development') {
-  console.warn(
+  logger.warn(
     'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
   );
 }

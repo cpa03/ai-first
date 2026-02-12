@@ -51,7 +51,7 @@ export class AppError extends Error {
       error: redactPII(this.message),
       code: this.code,
       details: this.details
-        ? (redactPIIInObject(this.details) as ErrorDetail[])
+        ? (redactPIIInObject(this.details) as unknown as ErrorDetail[])
         : undefined,
       timestamp: new Date().toISOString(),
       retryable: this.retryable,
@@ -112,7 +112,7 @@ export class RateLimitError extends AppError {
         {
           message: `Limit: ${this.limit}, Remaining: ${this.remaining}`,
         },
-      ]) as ErrorDetail[],
+      ]) as unknown as ErrorDetail[],
       timestamp: new Date().toISOString(),
       retryable: true,
       suggestions: this.suggestions,
