@@ -9,6 +9,11 @@ export enum LogLevel {
 
 let currentLogLevel = LogLevel.INFO;
 
+// Detect if we're in a build/SSR environment where console output causes Lighthouse issues
+const isBuildTime =
+  typeof window === 'undefined' && process.env.NODE_ENV === 'production';
+const isSilentMode = isBuildTime && process.env.SUPPRESS_BUILD_LOGS === 'true';
+
 export function setLogLevel(level: LogLevel): void {
   currentLogLevel = level;
 }
@@ -47,7 +52,10 @@ export class Logger {
   debug(message: string, ...args: unknown[]): void {
     if (currentLogLevel <= LogLevel.DEBUG) {
       const sanitizedArgs = args.map((a) => redactPIIInObject(a));
-      console.debug(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
+      console.debug(
+        `[${this.context}] ${redactPII(message)}`,
+        ...sanitizedArgs
+      );
     }
   }
 
@@ -89,7 +97,7 @@ export class Logger {
   }
 
   warn(message: string, ...args: unknown[]): void {
-    if (currentLogLevel <= LogLevel.WARN) {
+    if (currentLogLevel <= LogLevel.WARN && !isSilentMode) {
       const sanitizedArgs = args.map((a) => redactPIIInObject(a));
       console.warn(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
     }
@@ -100,7 +108,7 @@ export class Logger {
     context: LogContext,
     ...args: unknown[]
   ): void {
-    if (currentLogLevel <= LogLevel.WARN) {
+    if (currentLogLevel <= LogLevel.WARN && !isSilentMode) {
       const allArgs = this.formatArgs(args, context);
       const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
       console.warn(
@@ -111,9 +119,12 @@ export class Logger {
   }
 
   error(message: string, ...args: unknown[]): void {
-    if (currentLogLevel <= LogLevel.ERROR) {
+    if (currentLogLevel <= LogLevel.ERROR && !isSilentMode) {
       const sanitizedArgs = args.map((a) => redactPIIInObject(a));
-      console.error(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
+      console.error(
+        `[${this.context}] ${redactPII(message)}`,
+        ...sanitizedArgs
+      );
     }
   }
 
@@ -122,7 +133,7 @@ export class Logger {
     context: LogContext,
     ...args: unknown[]
   ): void {
-    if (currentLogLevel <= LogLevel.ERROR) {
+    if (currentLogLevel <= LogLevel.ERROR && !isSilentMode) {
       const allArgs = this.formatArgs(args, context);
       const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
       console.error(
