@@ -35,15 +35,15 @@ export function TaskItem({ task, isUpdating, onToggle }: TaskItemProps) {
       <button
         onClick={() => onToggle(task.id, task.status)}
         disabled={isUpdating}
-        className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 ${
+        className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 ${
           isCompleted
             ? 'bg-green-500 border-green-500 scale-110'
             : 'border-gray-300 hover:border-primary-500 hover:scale-105'
         } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
         aria-label={
           task.status === 'completed'
-            ? 'Mark as incomplete'
-            : 'Mark as complete'
+            ? `Mark "${task.title}" as incomplete`
+            : `Mark "${task.title}" as complete`
         }
         aria-pressed={task.status === 'completed'}
       >
