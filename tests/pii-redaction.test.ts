@@ -569,7 +569,10 @@ describe('PII Redaction Utility', () => {
         ['email', 'test@example.com'],
       ]);
 
-      const output = redactPIIInObject(input) as Map<unknown, unknown>;
+      const output = redactPIIInObject(input) as unknown as Map<
+        unknown,
+        unknown
+      >;
 
       expect(output.get('id')).toBe('123');
       expect(output.get('email')).toBe('[REDACTED_EMAIL]');
@@ -578,7 +581,7 @@ describe('PII Redaction Utility', () => {
     it('should handle Set objects', () => {
       const input = new Set(['test@example.com', 'safe text', '123-456-7890']);
 
-      const output = redactPIIInObject(input) as Set<unknown>;
+      const output = redactPIIInObject(input) as unknown as Set<unknown>;
 
       expect(output.has('[REDACTED_EMAIL]')).toBe(true);
       expect(output.has('[REDACTED_PHONE]')).toBe(true);
@@ -698,7 +701,10 @@ describe('PII Redaction Utility', () => {
         ['safe_key', 'safe value'],
       ]);
 
-      const output = redactPIIInObject(input) as Map<unknown, unknown>;
+      const output = redactPIIInObject(input) as unknown as Map<
+        unknown,
+        unknown
+      >;
 
       const keys = Array.from(output.keys());
       expect(keys).toContain('[REDACTED_EMAIL]');
