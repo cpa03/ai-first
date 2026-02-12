@@ -136,3 +136,16 @@
     opacity: 1;
   }
 }
+
+@keyframes drawCheck {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-check {
+  animation: drawCheck 0.3s ease-out forwards;
+}
