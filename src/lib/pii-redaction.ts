@@ -60,7 +60,7 @@ interface RedactedObject {
   [key: string]: RedactionResult;
 }
 
-interface RedactedArray extends Array<RedactionResult> {}
+type RedactedArray = Array<RedactionResult>;
 
 /**
  * Safe property descriptor for error handling
@@ -266,7 +266,9 @@ function getAllPropertyDescriptors(obj: object): SafePropertyDescriptor[] {
         });
       }
     }
-  } catch {}
+  } catch {
+    // Intentionally empty - errors are captured per-property above
+  }
 
   return descriptors;
 }
