@@ -1,0 +1,163 @@
+{
+  "timestamp": "2026-02-12T01:09:46.059Z",
+  "baseUrl": "http://localhost:3000",
+  "summary": {
+    "totalPages": 4,
+    "successfulAudits": 4,
+    "failedAudits": 0,
+    "averageScores": {
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 96,
+      "seo": 100
+    }
+  },
+  "audits": [
+    {
+      "url": "http://localhost:3000/",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 96,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaint": "0.2 s",
+        "largestContentfulPaint": "0.6 s",
+        "totalBlockingTime": "0 ms",
+        "cumulativeLayoutShift": "0",
+        "speedIndex": "0.2 s"
+      },
+      "opportunities": [],
+      "diagnostics": [
+        {
+          "title": "Browser errors were logged to the console",
+          "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more about this errors in console diagnostic audit](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)",
+          "score": 0
+        },
+        {
+          "title": "Legacy JavaScript",
+          "description": "Polyfills and transforms enable older browsers to use new JavaScript features. However, many aren't necessary for modern browsers. Consider modifying your JavaScript build process to not transpile [Baseline](https://web.dev/articles/baseline-and-polyfills) features, unless you know you must support older browsers. [Learn why most sites can deploy ES6+ code without transpiling](https://philipwalton.com/articles/the-state-of-es5-on-the-web/)",
+          "score": 0.5
+        },
+        {
+          "title": "Render blocking requests",
+          "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://web.dev/learn/performance/understanding-the-critical-path#render-blocking_resources) can move these network requests out of the critical path.",
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:3000/dashboard",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 96,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaint": "0.2 s",
+        "largestContentfulPaint": "0.6 s",
+        "totalBlockingTime": "0 ms",
+        "cumulativeLayoutShift": "0.009",
+        "speedIndex": "0.2 s"
+      },
+      "opportunities": [],
+      "diagnostics": [
+        {
+          "title": "Browser errors were logged to the console",
+          "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more about this errors in console diagnostic audit](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)",
+          "score": 0
+        },
+        {
+          "title": "Legacy JavaScript",
+          "description": "Polyfills and transforms enable older browsers to use new JavaScript features. However, many aren't necessary for modern browsers. Consider modifying your JavaScript build process to not transpile [Baseline](https://web.dev/articles/baseline-and-polyfills) features, unless you know you must support older browsers. [Learn why most sites can deploy ES6+ code without transpiling](https://philipwalton.com/articles/the-state-of-es5-on-the-web/)",
+          "score": 0
+        },
+        {
+          "title": "Render blocking requests",
+          "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://web.dev/learn/performance/understanding-the-critical-path#render-blocking_resources) can move these network requests out of the critical path.",
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:3000/clarify",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 96,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaint": "0.2 s",
+        "largestContentfulPaint": "0.6 s",
+        "totalBlockingTime": "0 ms",
+        "cumulativeLayoutShift": "0",
+        "speedIndex": "0.2 s"
+      },
+      "opportunities": [],
+      "diagnostics": [
+        {
+          "title": "Browser errors were logged to the console",
+          "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more about this errors in console diagnostic audit](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)",
+          "score": 0
+        },
+        {
+          "title": "Minimize main-thread work",
+          "description": "Consider reducing the time spent parsing, compiling and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to minimize main-thread work](https://developer.chrome.com/docs/lighthouse/performance/mainthread-work-breakdown/)",
+          "score": 0.5
+        },
+        {
+          "title": "Reduce JavaScript execution time",
+          "description": "Consider reducing the time spent parsing, compiling, and executing JS. You may find delivering smaller JS payloads helps with this. [Learn how to reduce Javascript execution time](https://developer.chrome.com/docs/lighthouse/performance/bootup-time/).",
+          "score": 0.5
+        },
+        {
+          "title": "Legacy JavaScript",
+          "description": "Polyfills and transforms enable older browsers to use new JavaScript features. However, many aren't necessary for modern browsers. Consider modifying your JavaScript build process to not transpile [Baseline](https://web.dev/articles/baseline-and-polyfills) features, unless you know you must support older browsers. [Learn why most sites can deploy ES6+ code without transpiling](https://philipwalton.com/articles/the-state-of-es5-on-the-web/)",
+          "score": 0.5
+        },
+        {
+          "title": "Render blocking requests",
+          "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://web.dev/learn/performance/understanding-the-critical-path#render-blocking_resources) can move these network requests out of the critical path.",
+          "score": 0.5
+        }
+      ]
+    },
+    {
+      "url": "http://localhost:3000/results",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 96,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaint": "0.2 s",
+        "largestContentfulPaint": "0.6 s",
+        "totalBlockingTime": "0 ms",
+        "cumulativeLayoutShift": "0.009",
+        "speedIndex": "0.2 s"
+      },
+      "opportunities": [],
+      "diagnostics": [
+        {
+          "title": "Browser errors were logged to the console",
+          "description": "Errors logged to the console indicate unresolved problems. They can come from network request failures and other browser concerns. [Learn more about this errors in console diagnostic audit](https://developer.chrome.com/docs/lighthouse/best-practices/errors-in-console/)",
+          "score": 0
+        },
+        {
+          "title": "Legacy JavaScript",
+          "description": "Polyfills and transforms enable older browsers to use new JavaScript features. However, many aren't necessary for modern browsers. Consider modifying your JavaScript build process to not transpile [Baseline](https://web.dev/articles/baseline-and-polyfills) features, unless you know you must support older browsers. [Learn why most sites can deploy ES6+ code without transpiling](https://philipwalton.com/articles/the-state-of-es5-on-the-web/)",
+          "score": 0
+        },
+        {
+          "title": "Render blocking requests",
+          "description": "Requests are blocking the page's initial render, which may delay LCP. [Deferring or inlining](https://web.dev/learn/performance/understanding-the-critical-path#render-blocking_resources) can move these network requests out of the critical path.",
+          "score": 0.5
+        }
+      ]
+    }
+  ]
+}
