@@ -440,11 +440,6 @@ function ClarificationFlow({
               type="submit"
               variant="primary"
               disabled={!currentAnswer.trim()}
-              aria-label={
-                currentStep === questions.length - 1
-                  ? 'Complete clarification'
-                  : 'Go to next question'
-              }
             >
               {currentStep === questions.length - 1
                 ? MESSAGES.NAVIGATION.COMPLETE
