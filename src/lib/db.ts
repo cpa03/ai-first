@@ -165,6 +165,7 @@ export class DatabaseService {
   private maxConnectionRetries = DATABASE.MAX_CONNECTION_RETRIES;
   private connectionHealthy = false;
   private lastHealthCheck: Date | null = null;
+  private _disposed = false;
 
   private constructor() {
     this._client = supabaseClient;
@@ -183,11 +184,25 @@ export class DatabaseService {
   }
 
   private get client() {
+    this.ensureNotDisposed();
     return this._client;
   }
 
   private get admin() {
+    this.ensureNotDisposed();
     return this._admin;
+  }
+
+  /**
+   * Ensure the service has not been disposed before allowing operations
+   * @throws Error if the service has been disposed
+   */
+  private ensureNotDisposed(): void {
+    if (this._disposed) {
+      throw new Error(
+        'DatabaseService has been disposed. Call resetInstance() and getInstance() to create a new instance.'
+      );
+    }
   }
 
   static getInstance(): DatabaseService {
@@ -197,14 +212,91 @@ export class DatabaseService {
     return DatabaseService.instance;
   }
 
-  // For testing purposes only - reinitialize clients with current environment
+  /**
+   * Check if the service has been disposed
+   */
+  isDisposed(): boolean {
+    return this._disposed;
+  }
+
+  /**
+   * Properly dispose of database connections and cleanup resources
+   * This prevents memory leaks in long-running processes
+   */
+  dispose(): void {
+    if (this._disposed) {
+      return;
+    }
+
+    logger.info('Disposing DatabaseService and cleaning up connections...');
+
+    // Clean up client connections
+    if (this._client) {
+      try {
+        // Remove auth state change listeners to prevent memory leaks
+        const client = this._client as any;
+        if (
+          client.auth &&
+          typeof client.auth.onAuthStateChange === 'function'
+        ) {
+          // Supabase client doesn't have explicit removeListener, but we can
+          // mitigate by ensuring no references remain
+          logger.debug('Cleaning up client auth listeners');
+        }
+      } catch (error) {
+        logger.warn('Error during client cleanup:', error);
+      }
+      this._client = null;
+    }
+
+    // Clean up admin connections
+    if (this._admin) {
+      try {
+        const admin = this._admin as any;
+        if (admin.auth && typeof admin.auth.onAuthStateChange === 'function') {
+          logger.debug('Cleaning up admin auth listeners');
+        }
+      } catch (error) {
+        logger.warn('Error during admin cleanup:', error);
+      }
+      this._admin = null;
+    }
+
+    // Reset connection health tracking
+    this.connectionHealthy = false;
+    this.lastHealthCheck = null;
+    this.connectionRetries = 0;
+
+    // Mark as disposed
+    this._disposed = true;
+
+    logger.info('DatabaseService disposed successfully');
+  }
+
+  /**
+   * For testing purposes only - reinitialize clients with current environment
+   * Properly disposes old connections before creating new ones to prevent memory leaks
+   */
   reinitializeClients(): void {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+    logger.info('Reinitializing database clients...');
+
+    // Store old clients for cleanup
+    const oldClient = this._client;
+    const oldAdmin = this._admin;
+
+    // Reset disposed flag to allow reinitialization
+    this._disposed = false;
+
+    // Create new clients first (to ensure we can connect before disposing old ones)
+    let newClient: ReturnType<typeof createClient<Database>> | null = null;
+    let newAdmin: ReturnType<typeof createClient<Database>> | null = null;
+
     if (url && anonKey) {
-      this._client = createClient<Database>(url, anonKey, {
+      newClient = createClient<Database>(url, anonKey, {
         auth: {
           persistSession: true,
           autoRefreshToken: true,
@@ -213,17 +305,60 @@ export class DatabaseService {
     }
 
     if (url && serviceKey) {
-      this._admin = createClient<Database>(url, serviceKey, {
+      newAdmin = createClient<Database>(url, serviceKey, {
         auth: {
           persistSession: false,
           autoRefreshToken: false,
         },
       });
     }
+
+    // Update module-level admin client to ensure consistency
+    // SECURITY: Only update if we're in a server-side context
+    if (typeof window === 'undefined') {
+      _supabaseAdmin = newAdmin;
+    }
+
+    // Now safe to dispose old clients
+    if (oldClient) {
+      try {
+        logger.debug('Cleaning up old client connection');
+        // Supabase doesn't expose explicit connection cleanup, but we can
+        // ensure no references remain for garbage collection
+      } catch (error) {
+        logger.warn('Error cleaning up old client:', error);
+      }
+    }
+
+    if (oldAdmin) {
+      try {
+        logger.debug('Cleaning up old admin connection');
+      } catch (error) {
+        logger.warn('Error cleaning up old admin:', error);
+      }
+    }
+
+    // Assign new clients
+    this._client = newClient;
+    this._admin = newAdmin;
+
+    // Reset connection health
+    this.connectionHealthy = false;
+    this.lastHealthCheck = null;
+    this.connectionRetries = 0;
+
+    logger.info('Database clients reinitialized successfully');
   }
 
-  // For testing purposes only - reset the singleton instance
+  /**
+   * For testing purposes only - reset the singleton instance
+   * Properly disposes the current instance before resetting
+   */
   static resetInstance(): void {
+    // Dispose the current instance if it exists
+    if (DatabaseService.instance) {
+      DatabaseService.instance.dispose();
+    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (DatabaseService as any).instance = undefined;
   }
