@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import IdeaInput from '@/components/IdeaInput';
+import CopyButton from '@/components/CopyButton';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
@@ -81,8 +82,24 @@ export default function HomePage() {
             Your Idea:
           </h3>
           <p className="text-blue-900">{idea}</p>
-          <p className="text-sm text-blue-800 mt-4">
-            Saved with ID: {ideaId}. Redirecting to clarification...
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
+            <p className="text-sm text-blue-800">
+              Saved with ID:{' '}
+              <code className="bg-blue-100 px-1.5 py-0.5 rounded text-blue-900 font-mono text-xs">
+                {ideaId}
+              </code>
+            </p>
+            <CopyButton
+              textToCopy={ideaId}
+              label="Copy ID"
+              successLabel="Copied!"
+              ariaLabel="Copy idea ID to clipboard"
+              variant="default"
+              toastMessage="Idea ID copied to clipboard!"
+            />
+          </div>
+          <p className="text-sm text-blue-600 mt-3">
+            Redirecting to clarification...
           </p>
         </section>
       )}
