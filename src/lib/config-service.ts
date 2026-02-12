@@ -1,7 +1,7 @@
 import { AIModelConfig } from './ai';
 import yaml from 'js-yaml';
-import { readFile, access } from 'fs/promises';
-import path from 'path';
+import { readFile, access } from 'node:fs/promises';
+import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
 

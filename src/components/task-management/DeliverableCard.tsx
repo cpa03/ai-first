@@ -46,7 +46,8 @@ export function DeliverableCard({
       <button
         onClick={() => onToggleExpand(deliverable.id)}
         aria-expanded={isExpanded}
-        className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity"
+        aria-controls={isExpanded ? `deliverable-tasks-${deliverable.id}` : undefined}
+        className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 rounded-lg"
       >
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900">
@@ -88,7 +89,10 @@ export function DeliverableCard({
 
       {/* Tasks List */}
       {isExpanded && (
-        <div className="px-6 pb-4 border-t border-gray-200">
+        <div
+          id={`deliverable-tasks-${deliverable.id}`}
+          className="px-6 pb-4 border-t border-gray-200"
+        >
           {/* Deliverable Progress Bar */}
           <div className="mt-4 mb-4">
             <div className="w-full bg-gray-200 rounded-full h-2">
