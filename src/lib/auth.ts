@@ -1,6 +1,6 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
-import { timingSafeEqual } from 'crypto';
+import { timingSafeEqual, createHash } from 'node:crypto';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 
@@ -29,27 +29,19 @@ export function isAdminAuthenticated(request: Request): boolean {
     return false;
   }
 
-  const bufferKey = Buffer.from(ADMIN_API_KEY, 'utf8');
+  const expectedHash = createHash('sha256').update(ADMIN_API_KEY).digest();
 
   if (authHeader) {
     const [scheme, credentials] = authHeader.split(' ');
     if (scheme.toLowerCase() === 'bearer' && credentials) {
-      const bufferCredentials = Buffer.from(credentials, 'utf8');
-      // Ensure buffers are same length to prevent early returns
-      if (bufferKey.length !== bufferCredentials.length) {
-        return false;
-      }
-      return timingSafeEqual(bufferKey, bufferCredentials);
+      const actualHash = createHash('sha256').update(credentials).digest();
+      return timingSafeEqual(expectedHash, actualHash);
     }
   }
 
   if (apiKey) {
-    const bufferApiKey = Buffer.from(apiKey, 'utf8');
-    // Ensure buffers are same length to prevent early returns
-    if (bufferKey.length !== bufferApiKey.length) {
-      return false;
-    }
-    return timingSafeEqual(bufferKey, bufferApiKey);
+    const actualHash = createHash('sha256').update(apiKey).digest();
+    return timingSafeEqual(expectedHash, actualHash);
   }
 
   return false;
