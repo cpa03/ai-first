@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * BroCula Lighthouse Auditor
- * Runs Lighthouse audits on all pages and generates optimization report
+ * BroCula Lighthouse Auditor (Using Playwright Chrome)
+ * Runs Lighthouse audits on all pages using Playwright's bundled Chrome
  */
 
 const { default: lighthouse } = require('lighthouse');
@@ -11,6 +11,9 @@ const path = require('path');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const PAGES = ['/', '/dashboard', '/clarify', '/results'];
+
+// Use Playwright's Chrome
+const CHROME_PATH = '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome';
 
 const CONFIG = {
   extends: 'lighthouse:default',
@@ -41,6 +44,7 @@ const audits = [];
 
 async function runLighthouse(url) {
   const chrome = await chromeLauncher.launch({
+    chromePath: CHROME_PATH,
     chromeFlags: ['--no-sandbox', '--headless', '--disable-gpu'],
   });
 
@@ -114,6 +118,7 @@ async function runLighthouse(url) {
 async function main() {
   console.log('🧛 BroCula Lighthouse Auditor Starting...');
   console.log(`Base URL: ${BASE_URL}`);
+  console.log(`Chrome Path: ${CHROME_PATH}`);
   console.log('');
 
   for (const pagePath of PAGES) {
