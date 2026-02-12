@@ -69,9 +69,34 @@ export const LABELS = {
 
 export const PLACEHOLDERS = {
   IDEA_INPUT: 'Describe your idea in detail...',
-  CLARIFICATION_ANSWER: 'Type your answer here...',
+  CLARIFICATION_ANSWER: 'Enter your answer here...',
   SEARCH: 'Search...',
   FILTER: 'Filter results...',
+} as const;
+
+export const MESSAGES = {
+  CLARIFICATION: {
+    GENERATING_QUESTIONS: 'Generating questions...',
+    LOADING_QUESTION: 'Loading question...',
+    NO_QUESTIONS_TITLE: 'No Questions Generated',
+    NO_QUESTIONS_DESCRIPTION:
+      "We couldn't generate specific questions for your idea.",
+    NO_QUESTIONS_SUGGESTION:
+      'Please go back and try with a more detailed idea.',
+    FALLBACK_ERROR: "We're using fallback questions to continue.",
+    ANSWER_HELP_TEXT:
+      'Provide a detailed answer to help us understand your needs better.',
+  },
+  NAVIGATION: {
+    PREVIOUS: '← Previous',
+    NEXT: 'Next →',
+    COMPLETE: 'Complete',
+  },
+  LOADING: {
+    DEFAULT: 'Loading...',
+    SAVING: 'Saving...',
+    SAVED: 'Saved',
+  },
 } as const;
 
 export const BUTTON_LABELS = {
@@ -130,3 +155,4 @@ export const TOAST_CONFIG = {
 
 export type UiConfig = typeof UI_CONFIG;
 export type ToastConfig = typeof TOAST_CONFIG;
+export type MessagesConfig = typeof MESSAGES;

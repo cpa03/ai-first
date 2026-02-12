@@ -8,7 +8,13 @@ import {
   MIN_SHORT_ANSWER_LENGTH,
   MAX_SHORT_ANSWER_LENGTH,
 } from '@/lib/validation';
-import { UI_CONFIG, LABELS, CLARIFIER_CONFIG } from '@/lib/config';
+import {
+  UI_CONFIG,
+  LABELS,
+  CLARIFIER_CONFIG,
+  MESSAGES,
+  PLACEHOLDERS,
+} from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -233,14 +239,16 @@ function ClarificationFlow({
         <LoadingAnnouncer message="Generating questions..." />
         <div className="flex flex-col items-center justify-center py-12">
           <LoadingSpinner size="lg" ariaLabel="Generating questions" />
-          <p className="mt-4 text-gray-600 text-sm">Generating questions...</p>
+          <p className="mt-4 text-gray-600 text-sm">
+            {MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
+          </p>
         </div>
         {error && (
           <div className="mb-6 slide-up">
             <Alert type="error" title="Error">
               <p>{error}</p>
               <p className="text-sm mt-4">
-                We're using fallback questions to continue.
+                {MESSAGES.CLARIFICATION.FALLBACK_ERROR}
               </p>
             </Alert>
           </div>
@@ -252,10 +260,10 @@ function ClarificationFlow({
   if (questions.length === 0) {
     return (
       <div className="max-w-2xl mx-auto">
-        <Alert type="warning" title="No Questions Generated">
-          <p>We couldn't generate specific questions for your idea.</p>
+        <Alert type="warning" title={MESSAGES.CLARIFICATION.NO_QUESTIONS_TITLE}>
+          <p>{MESSAGES.CLARIFICATION.NO_QUESTIONS_DESCRIPTION}</p>
           <p className="text-sm mt-4">
-            Please go back and try with a more detailed idea.
+            {MESSAGES.CLARIFICATION.NO_QUESTIONS_SUGGESTION}
           </p>
         </Alert>
       </div>
@@ -267,7 +275,9 @@ function ClarificationFlow({
       <div className="max-w-2xl mx-auto">
         <div className="flex flex-col items-center justify-center py-12">
           <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600 text-sm">Loading question...</p>
+          <p className="mt-4 text-gray-600 text-sm">
+            {MESSAGES.CLARIFICATION.LOADING_QUESTION}
+          </p>
         </div>
       </div>
     );
@@ -334,12 +344,12 @@ function ClarificationFlow({
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Enter your answer here..."
+                placeholder={PLACEHOLDERS.CLARIFICATION_ANSWER}
                 multiline={true}
                 minLength={MIN_ANSWER_LENGTH}
                 maxLength={MAX_ANSWER_LENGTH}
                 showCharCount={true}
-                helpText={`Provide a detailed answer to help us understand your needs better. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
+                helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
                 required={true}
                 autoFocus={true}
                 className="min-h-[100px]"
@@ -354,7 +364,7 @@ function ClarificationFlow({
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Enter your answer here..."
+                placeholder={PLACEHOLDERS.CLARIFICATION_ANSWER}
                 minLength={MIN_SHORT_ANSWER_LENGTH}
                 maxLength={MAX_SHORT_ANSWER_LENGTH}
                 showCharCount={true}
@@ -411,7 +421,7 @@ function ClarificationFlow({
               disabled={currentStep === 0}
               aria-label="Go to previous question"
             >
-              ← Previous
+              {MESSAGES.NAVIGATION.PREVIOUS}
             </Button>
 
             <div className="hidden sm:flex items-center gap-2 text-xs text-gray-600 mr-4">
@@ -436,7 +446,9 @@ function ClarificationFlow({
                   : 'Go to next question'
               }
             >
-              {currentStep === questions.length - 1 ? 'Complete' : 'Next →'}
+              {currentStep === questions.length - 1
+                ? MESSAGES.NAVIGATION.COMPLETE
+                : MESSAGES.NAVIGATION.NEXT}
             </Button>
           </div>
         </form>

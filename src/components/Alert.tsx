@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { ANIMATION_CONFIG } from '@/lib/config/constants';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -9,8 +10,6 @@ interface AlertProps {
   className?: string;
   onClose?: () => void;
 }
-
-const EXIT_ANIMATION_DURATION_MS = 200;
 
 const alertStyles = {
   error: {
@@ -87,7 +86,7 @@ const AlertComponent = function Alert({
     setTimeout(() => {
       setIsVisible(false);
       onClose?.();
-    }, EXIT_ANIMATION_DURATION_MS);
+    }, ANIMATION_CONFIG.ALERT_EXIT);
   }, [onClose]);
 
   useEffect(() => {
