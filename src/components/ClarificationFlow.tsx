@@ -350,7 +350,7 @@ function ClarificationFlow({
             {currentQuestion.type === 'text' && (
               <InputWithValidation
                 id="answer-text"
-                label="Your answer"
+                label={currentQuestion.question}
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
                 onKeyDown={handleKeyDown}

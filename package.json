@@ -68,5 +68,18 @@
   "overrides": {
     "glob": "^10.5.0",
     "test-exclude": "^7.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">= 0.5%",
+      "last 2 major versions",
+      "not dead",
+      "not IE 11"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
