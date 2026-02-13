@@ -166,7 +166,9 @@ const InputWithValidation = forwardRef<
           )}
 
           {isValid && charCount > 0 && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+            <div
+              className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+            >
               <svg
                 className="w-5 h-5 text-green-500 animate-in fade-in duration-200"
                 fill="none"
@@ -206,7 +208,11 @@ const InputWithValidation = forwardRef<
               {maxLength && (
                 <div
                   className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden"
-                  aria-hidden="true"
+                  role="progressbar"
+                  aria-valuenow={charCount}
+                  aria-valuemin={0}
+                  aria-valuemax={maxLength}
+                  aria-label="Character limit progress"
                 >
                   <div
                     className={`h-full transition-all duration-300 rounded-full ${

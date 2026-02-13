@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
@@ -22,6 +22,7 @@ export default function Tooltip({
   disabled = false,
   className = '',
 }: TooltipProps) {
+  const id = useId();
   const [isVisible, setIsVisible] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
@@ -66,6 +67,19 @@ export default function Tooltip({
     };
   }, []);
 
+  useEffect(() => {
+    if (!isVisible) return;
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        hideTooltip();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isVisible, hideTooltip]);
+
   const positionClasses = {
     top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
     bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
@@ -97,10 +111,12 @@ export default function Tooltip({
       onMouseLeave={hideTooltip}
       onFocus={showTooltip}
       onBlur={hideTooltip}
+      aria-describedby={isVisible ? id : undefined}
     >
       {children}
       {isMounted && (
         <div
+          id={id}
           ref={tooltipRef}
           role="tooltip"
           className={`
