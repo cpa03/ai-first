@@ -58,6 +58,8 @@ export function useCache<T>(
   }, [key]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchWithCache = async () => {
       try {
         const cached = localStorage.getItem(key);
@@ -68,16 +70,18 @@ export function useCache<T>(
             const age = Date.now() - entry.timestamp;
 
             if (age < ttl) {
-              setData(entry.data);
-              setLoading(false);
+              if (isMounted) {
+                setData(entry.data);
+                setLoading(false);
+              }
 
-              if (staleWhileRevalidate) {
+              if (staleWhileRevalidate && isMounted) {
                 revalidate();
               }
               return;
             }
 
-            if (staleWhileRevalidate) {
+            if (staleWhileRevalidate && isMounted) {
               setData(entry.data);
             }
           } catch {
@@ -85,14 +89,22 @@ export function useCache<T>(
           }
         }
 
-        await revalidate();
+        if (isMounted) {
+          await revalidate();
+        }
       } catch (err) {
-        setError(err instanceof Error ? err : new Error('Unknown error'));
-        setLoading(false);
+        if (isMounted) {
+          setError(err instanceof Error ? err : new Error('Unknown error'));
+          setLoading(false);
+        }
       }
     };
 
     fetchWithCache();
+
+    return () => {
+      isMounted = false;
+    };
   }, [key, revalidate, staleWhileRevalidate, ttl]);
 
   return { data, error, loading, revalidate };

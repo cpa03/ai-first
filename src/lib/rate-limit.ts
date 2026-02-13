@@ -129,7 +129,8 @@ export function checkRateLimit(
       info: {
         limit: config.limit,
         remaining: 0,
-        reset: (recentRequests[recentRequests.length - 1] || now) + config.windowMs,
+        reset:
+          (recentRequests[recentRequests.length - 1] || now) + config.windowMs,
       },
     };
   }
@@ -248,8 +249,16 @@ export function restartCleanupInterval(): void {
   startCleanupInterval();
 }
 
-// Auto-start cleanup interval in production
-startCleanupInterval();
+// Auto-start cleanup interval only in production, not during tests or HMR
+// This prevents memory leaks in test environments and hot module reloading
+if (
+  typeof process !== 'undefined' &&
+  process.env.NODE_ENV === 'production' &&
+  !process.env.JEST_WORKER_ID &&
+  !process.env.VITEST_WORKER_ID
+) {
+  startCleanupInterval();
+}
 
 export function rateLimitResponse(
   rateLimitInfo: RateLimitInfo,
