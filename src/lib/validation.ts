@@ -2,6 +2,7 @@ import {
   VALIDATION_LIMITS_CONFIG,
   VALIDATION_LIMITS,
 } from './config/constants';
+import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config';
 import { isString } from './type-guards';
 
 export interface ValidationError {
@@ -87,7 +88,7 @@ export function validateIdeaId(ideaId: unknown): ValidationResult {
     });
   }
 
-  const validFormat = /^[a-zA-Z0-9_-]+$/.test(trimmed);
+  const validFormat = VALIDATION_CONFIG.IDEA_ID.REGEX.test(trimmed);
   if (!validFormat) {
     errors.push({
       field: 'ideaId',
@@ -198,25 +199,23 @@ export function sanitizeHtml(input: string): string {
   }
 
   // Remove script tags and their contents
-  let sanitized = input.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  let sanitized = input.replace(SANITIZATION_CONFIG.REGEX.SCRIPT, '');
 
   // Remove event handlers (onload, onclick, etc.)
-  sanitized = sanitized.replace(/\s*on\w+\s*=\s*"[^"]*"/gi, '');
-  sanitized = sanitized.replace(/\s*on\w+\s*=\s*'[^']*'/gi, '');
+  sanitized = sanitized.replace(SANITIZATION_CONFIG.REGEX.EVENT_HANDLER, '');
 
   // Escape HTML entities to prevent script injection
-  const htmlEscapes: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;',
-    '/': '&#x2F;',
-  };
+  const htmlEscapes = SANITIZATION_CONFIG.HTML.ESCAPE_MAP;
+  const escapePattern = new RegExp(
+    `[${Object.keys(htmlEscapes)
+      .join('')
+      .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}]`,
+    'g'
+  );
 
   sanitized = sanitized.replace(
-    /[&<>"'/]/g,
-    (char) => htmlEscapes[char] || char
+    escapePattern,
+    (char) => htmlEscapes[char as keyof typeof htmlEscapes] || char
   );
 
   return sanitized.trim();

@@ -1,6 +1,6 @@
 /**
  * Application Configuration
- * Centralizes all app metadata, branding, and constants
+ * Centralizes all app metadata, branding, environment variables, and constants
  */
 
 export const APP_CONFIG = {
@@ -29,12 +29,51 @@ export const APP_CONFIG = {
   META: {
     TITLE: 'IdeaFlow - Turn Ideas into Action',
     TITLE_TEMPLATE: '%s | IdeaFlow',
-    DEFAULT_DESCRIPTION: 'Transform your ideas into structured projects with AI-powered planning, task breakdown, and export to your favorite tools.',
-    KEYWORDS: ['project planning', 'AI', 'idea management', 'task breakdown', 'productivity'],
+    DEFAULT_DESCRIPTION:
+      'Transform your ideas into structured projects with AI-powered planning, task breakdown, and export to your favorite tools.',
+    KEYWORDS: [
+      'project planning',
+      'AI',
+      'idea management',
+      'task breakdown',
+      'productivity',
+    ],
     AUTHORS: [{ name: 'IdeaFlow Team', url: 'https://ideaflow.ai' }],
     CREATOR: 'IdeaFlow Team',
     PUBLISHER: 'IdeaFlow',
     CATEGORY: 'Productivity',
+  },
+
+  ENV_VARS: {
+    REQUIRED: [
+      'NEXT_PUBLIC_SUPABASE_URL',
+      'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'COST_LIMIT_DAILY',
+      'NEXT_PUBLIC_APP_URL',
+    ] as const,
+
+    AI_PROVIDERS: ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY'] as const,
+
+    OPTIONAL: ['NODE_ENV', 'VERCEL', 'CF_WORKER', 'CLOUDFLARE'] as const,
+  },
+
+  HEALTH_STATUS: {
+    HEALTHY: 'healthy',
+    UNHEALTHY: 'unhealthy',
+    WARNING: 'warning',
+  } as const,
+
+  PAGINATION: {
+    DEFAULT_LIMIT: 50,
+    MAX_LIMIT: 100,
+    DEFAULT_OFFSET: 0,
+  },
+
+  STRING_LIMITS: {
+    TITLE_PREVIEW_LENGTH: 50,
+    IDEA_ID_RANDOM_LENGTH: 11,
+    IDEA_ID_RANDOM_RADIX: 36,
   },
 } as const;
 

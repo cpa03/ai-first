@@ -8,6 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth } from '@/lib/auth';
 import { VALIDATION_CONFIG } from '@/lib/config/constants';
+import { APP_CONFIG } from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
   const { request, rateLimit } = context;
@@ -83,7 +84,13 @@ async function handlePost(context: ApiContext) {
   const newIdea = {
     user_id: userId,
     title:
-      validatedIdea.substring(0, 50) + (validatedIdea.length > 50 ? '...' : ''),
+      validatedIdea.substring(
+        0,
+        APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
+      ) +
+      (validatedIdea.length > APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
+        ? '...'
+        : ''),
     raw_text: validatedIdea,
     status: 'draft' as const,
     deleted_at: null,
