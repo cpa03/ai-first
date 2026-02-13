@@ -74,6 +74,7 @@
   /app/                    ← Next.js app (app router)
     /clarify/              ← Clarification flow pages
     /results/              ← Results display pages
+    /dashboard/            ← Dashboard and analytics pages
     /api/                  ← API routes
       /health/             ← Health check endpoints
       /clarify/            ← Clarification API
@@ -88,6 +89,10 @@
     /BlueprintDisplay.tsx   ← Blueprint display UI
     /LoadingAnnouncer.tsx   ← Screen reader announcements
     /MobileNav.tsx         ← Responsive navigation
+    /AutoSaveIndicator.tsx  ← Auto-save status indicator
+    /CopyButton.tsx         ← Copy to clipboard button
+    /TaskManagement.tsx     ← Task management UI
+    /Tooltip.tsx            ← Accessible tooltip component
   /lib/                    ← Core utilities
     /ai.ts                ← AI service abstraction
     /db.ts                ← Database service
