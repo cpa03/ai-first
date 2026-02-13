@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { ToastOptions } from '@/components/ToastContainer';
@@ -30,6 +30,15 @@ const CopyButtonComponent = function CopyButton({
   toastMessage = 'Copied to clipboard!',
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleCopy = useCallback(async () => {
     const win = window as unknown as Window & {
@@ -40,7 +49,7 @@ const CopyButtonComponent = function CopyButton({
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
 
-      setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setCopied(false);
       }, UI_CONFIG.COPY_FEEDBACK_DURATION);
 

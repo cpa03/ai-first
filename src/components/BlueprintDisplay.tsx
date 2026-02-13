@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
@@ -24,6 +24,15 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   const [isGenerating, setIsGenerating] = useState(true);
   const [blueprint, setBlueprint] = useState('');
   const [copied, setCopied] = useState(false);
+  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Simulate blueprint generation
   useEffect(() => {
@@ -66,7 +75,10 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     try {
       await navigator.clipboard.writeText(blueprint);
       setCopied(true);
-      setTimeout(() => setCopied(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
+      copyTimeoutRef.current = setTimeout(
+        () => setCopied(false),
+        UI_CONFIG.COPY_FEEDBACK_DURATION
+      );
 
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
