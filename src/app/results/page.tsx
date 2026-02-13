@@ -64,7 +64,6 @@ function ResultsContent() {
         const ideaId = searchParams.get('ideaId');
 
         if (!ideaId) {
-          // Gracefully handle missing ideaId - redirect to dashboard
           router.push('/dashboard');
           return;
         }

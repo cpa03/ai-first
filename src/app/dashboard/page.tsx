@@ -69,7 +69,6 @@ export default function DashboardPage() {
       );
 
       if (!response.ok) {
-        // Handle 401 gracefully - user not authenticated
         if (response.status === 401) {
           setError('Please sign in to view your ideas');
           setIdeas([]);
@@ -88,7 +87,6 @@ export default function DashboardPage() {
       setIdeas(data.data.ideas);
       setPagination(data.data.pagination);
     } catch (err) {
-      // Only log unexpected errors, not auth errors
       const errorMessage =
         err instanceof Error ? err.message : 'An unknown error occurred';
       if (!errorMessage.includes('sign in')) {
