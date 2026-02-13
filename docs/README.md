@@ -64,7 +64,12 @@ Complete index of all IdeaFlow documentation.
 
 ## Maintenance
 
-- [RepoKeeper Report](./repokeeper-report-2026-02.md) - Repository maintenance report
+- [RepoKeeper Maintenance Report](./repokeeper-maintenance-report-2026-02-13-updated.md) - Latest repository maintenance report
+- [Branch Cleanup Registry](./BRANCH_CLEANUP.md) - Branch cleanup history and recommendations
+
+## Project Meta
+
+- [Changelog](../CHANGELOG.md) - Project changelog and version history
 
 ## Subdirectories
 
