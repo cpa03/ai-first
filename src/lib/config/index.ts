@@ -57,6 +57,22 @@ export { COMPONENT_CONFIG } from './components';
 // Cleanup Configuration
 export { CLEANUP_CONFIG } from './cleanup';
 
+// Environment-based Configuration (addresses issues #981-986)
+// These exports allow runtime configuration via environment variables
+export {
+  ENV_CONFIG,
+  TIMEOUT_CONFIG,
+  RATE_LIMIT_CONFIG,
+  RETRY_CONFIG,
+  CACHE_CONFIG as ENV_CACHE_CONFIG,
+  UI_CONFIG as ENV_UI_CONFIG,
+  VALIDATION_CONFIG as ENV_VALIDATION_CONFIG,
+  AI_CONFIG as ENV_AI_CONFIG,
+  RESILIENCE_CONFIG,
+  AGENT_CONFIG,
+  SECURITY_CONFIG,
+} from './environment';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
