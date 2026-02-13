@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 
-export const runtime = 'edge';
-
 // PERFORMANCE: Pre-calculate the CSP header to avoid overhead on every request.
 const CSP_HEADER = ((): string => {
   const directives: string[] = [];
