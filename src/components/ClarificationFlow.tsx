@@ -390,7 +390,6 @@ function ClarificationFlow({
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={handleKeyDown}
                   className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.2)] transition-all duration-200 bg-white min-h-[44px]"
-                  aria-label={currentQuestion.question}
                   aria-required="true"
                   aria-invalid={
                     !!(
@@ -423,11 +422,14 @@ function ClarificationFlow({
               {MESSAGES.NAVIGATION.PREVIOUS}
             </Button>
 
-            <div className="hidden sm:flex items-center gap-2 text-xs text-gray-600 mr-4">
-              <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800">
+            <div
+              className="hidden sm:flex items-center gap-2 text-xs text-gray-600 mr-4"
+              aria-hidden="true"
+            >
+              <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
-              <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800">
+              <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
                 Enter
               </kbd>
               <span>
