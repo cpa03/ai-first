@@ -435,6 +435,10 @@ export const PII_REDACTION_CONFIG = {
     'authorization',
     'admin[-_ ]?key',
     'adminkey',
+    'password',
+    'passphrase',
+    'bearer',
+    'access[_-]?key',
   ] as const,
 
   /**
