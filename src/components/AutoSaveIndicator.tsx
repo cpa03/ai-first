@@ -23,6 +23,7 @@ export default function AutoSaveIndicator({
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const hasValue = value.trim().length > 0;
@@ -48,6 +49,10 @@ export default function AutoSaveIndicator({
         clearInterval(progressIntervalRef.current);
       }
 
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+
       // Start progress animation
       const progressStep =
         100 / (delay / COMPONENT_CONFIG.AUTO_SAVE.PROGRESS_INTERVAL_MS);
@@ -69,7 +74,7 @@ export default function AutoSaveIndicator({
         });
 
         // Simulate save completion
-        setTimeout(() => {
+        saveTimeoutRef.current = setTimeout(() => {
           queueMicrotask(() => {
             setSaveState('saved');
             setLastSaved(new Date());
@@ -85,6 +90,9 @@ export default function AutoSaveIndicator({
       }
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
+      }
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
       }
     };
   }, [value, delay]);
