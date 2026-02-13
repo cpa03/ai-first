@@ -148,11 +148,7 @@ function ClarifyPageContent() {
         <div className="slide-up">
           <Alert type="error" title="Error">
             <p className="mb-4">{error}</p>
-            <Button
-              onClick={() => router.back()}
-              variant="primary"
-              aria-label="Go back to previous page"
-            >
+            <Button onClick={() => router.back()} variant="primary">
               Go Back
             </Button>
           </Alert>
@@ -180,11 +176,7 @@ function ClarifyPageContent() {
                 </div>
               ))}
             </div>
-            <Button
-              onClick={() => router.push('/results')}
-              variant="primary"
-              aria-label="Generate blueprint from clarified answers"
-            >
+            <Button onClick={() => router.push('/results')} variant="primary">
               Generate Blueprint
             </Button>
           </Alert>
@@ -199,11 +191,7 @@ function ClarifyPageContent() {
         <div className="slide-up">
           <Alert type="warning" title="No Idea Provided">
             <p className="mb-4">Please provide an idea to clarify.</p>
-            <Button
-              onClick={() => router.push('/')}
-              variant="primary"
-              aria-label="Navigate to home page to provide an idea"
-            >
+            <Button onClick={() => router.push('/')} variant="primary">
               Go to Home
             </Button>
           </Alert>

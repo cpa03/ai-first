@@ -417,7 +417,6 @@ function ClarificationFlow({
               variant="secondary"
               onClick={handlePrevious}
               disabled={currentStep === 0}
-              aria-label="Go to previous question"
             >
               {MESSAGES.NAVIGATION.PREVIOUS}
             </Button>
