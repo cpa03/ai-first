@@ -44,9 +44,9 @@ Prevents the site from being embedded in iframes, protecting against clickjackin
 
 Prevents MIME-type sniffing attacks by ensuring the browser respects the declared content type.
 
-### X-XSS-Protection: 1; mode=block
+### X-XSS-Protection: 0
 
-Enables XSS filtering in browsers that support it and blocks the response if an attack is detected.
+Disables the legacy browser XSS auditor, which is superseded by CSP and can sometimes be exploited to create vulnerabilities.
 
 ### Referrer-Policy: strict-origin-when-cross-origin
 

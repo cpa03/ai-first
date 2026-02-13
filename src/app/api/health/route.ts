@@ -7,7 +7,13 @@ import {
 function isSensitiveVar(varName: string): boolean {
   const upper = varName.toUpperCase();
   return (
-    upper.includes('KEY') || upper.includes('SECRET') || upper.includes('TOKEN')
+    upper.includes('KEY') ||
+    upper.includes('SECRET') ||
+    upper.includes('TOKEN') ||
+    upper.includes('PASSWORD') ||
+    upper.includes('PASSPHRASE') ||
+    upper.includes('CREDENTIAL') ||
+    upper.includes('AUTH')
   );
 }
 
