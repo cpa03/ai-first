@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useState, useEffect } from 'react';
+import React, { forwardRef, useState, useEffect, useCallback } from 'react';
 import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -13,7 +13,10 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
   minLength?: number;
   maxLength?: number;
   multiline?: boolean;
+  autoResize?: boolean;
 }
+
+const MIN_TEXTAREA_HEIGHT = 100;
 
 const InputWithValidation = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
@@ -28,6 +31,7 @@ const InputWithValidation = forwardRef<
       minLength: _minLength,
       maxLength,
       multiline = false,
+      autoResize = true,
       className = '',
       value = '',
       onChange,
@@ -37,10 +41,27 @@ const InputWithValidation = forwardRef<
   ) => {
     const [touched, setTouched] = useState(false);
     const [errorAnnounced, setErrorAnnounced] = useState(false);
+    const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
     const isValid = !error && touched;
     const isInvalid = !!error && touched;
+
+    const adjustTextareaHeight = useCallback(() => {
+      const textarea = internalTextareaRef.current;
+      if (!textarea || !multiline || !autoResize) return;
+
+      textarea.style.height = 'auto';
+      const scrollHeight = textarea.scrollHeight;
+      const height = Math.max(scrollHeight, MIN_TEXTAREA_HEIGHT);
+      textarea.style.height = `${height}px`;
+    }, [multiline, autoResize]);
+
+    useEffect(() => {
+      if (multiline && autoResize) {
+        requestAnimationFrame(adjustTextareaHeight);
+      }
+    }, [currentValue, multiline, autoResize, adjustTextareaHeight]);
 
     const handleBlur = () => {
       setTouched(true);
@@ -65,7 +86,6 @@ const InputWithValidation = forwardRef<
       ${className}
     `;
 
-    // Using ref to track error announcement state changes without triggering cascading renders
     const errorAnnouncedRef = React.useRef(errorAnnounced);
 
     useEffect(() => {
@@ -80,6 +100,21 @@ const InputWithValidation = forwardRef<
       }
     }, [isInvalid]);
 
+    const setTextareaRef = (element: HTMLTextAreaElement | null) => {
+      (
+        internalTextareaRef as React.MutableRefObject<HTMLTextAreaElement | null>
+      ).current = element;
+      if (typeof ref === 'function') {
+        ref(element);
+      } else if (ref) {
+        (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current =
+          element;
+      }
+    };
+
+    const textareaResizeClass =
+      multiline && autoResize ? 'resize-none' : 'resize-y';
+
     return (
       <div className="space-y-2">
         <label
@@ -93,12 +128,12 @@ const InputWithValidation = forwardRef<
         <div className="relative">
           {multiline ? (
             <textarea
-              ref={ref as React.Ref<HTMLTextAreaElement>}
+              ref={setTextareaRef}
               id={props.id}
               value={value}
               onChange={handleChange}
               onBlur={handleBlur}
-              className={`${baseInputClasses} resize-y min-h-[100px]`}
+              className={`${baseInputClasses} ${textareaResizeClass} min-h-[100px] overflow-hidden`}
               aria-invalid={isInvalid}
               aria-describedby={
                 error
@@ -130,7 +165,6 @@ const InputWithValidation = forwardRef<
             />
           )}
 
-          {/* Success indicator */}
           {isValid && charCount > 0 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <svg
