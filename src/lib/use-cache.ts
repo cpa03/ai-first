@@ -59,9 +59,16 @@ export function useCache<T>(
 
   useEffect(() => {
     let isMounted = true;
+    let abortController: AbortController | null = null;
 
     const fetchWithCache = async () => {
+      abortController = new AbortController();
+
       try {
+        if (abortController.signal.aborted) {
+          return;
+        }
+
         const cached = localStorage.getItem(key);
 
         if (cached) {
@@ -70,18 +77,43 @@ export function useCache<T>(
             const age = Date.now() - entry.timestamp;
 
             if (age < ttl) {
-              if (isMounted) {
+              if (isMounted && !abortController.signal.aborted) {
                 setData(entry.data);
                 setLoading(false);
               }
 
-              if (staleWhileRevalidate && isMounted) {
-                revalidate();
+              if (
+                staleWhileRevalidate &&
+                isMounted &&
+                !abortController.signal.aborted
+              ) {
+                try {
+                  const freshResult = await fetcherRef.current();
+                  if (isMounted && !abortController.signal.aborted) {
+                    const newEntry: CacheEntry<T> = {
+                      data: freshResult,
+                      timestamp: Date.now(),
+                    };
+                    localStorage.setItem(key, JSON.stringify(newEntry));
+                    setData(freshResult);
+                    setError(null);
+                  }
+                } catch (err) {
+                  if (isMounted && !abortController.signal.aborted) {
+                    setError(
+                      err instanceof Error ? err : new Error('Unknown error')
+                    );
+                  }
+                }
               }
               return;
             }
 
-            if (staleWhileRevalidate && isMounted) {
+            if (
+              staleWhileRevalidate &&
+              isMounted &&
+              !abortController.signal.aborted
+            ) {
               setData(entry.data);
             }
           } catch {
@@ -89,11 +121,11 @@ export function useCache<T>(
           }
         }
 
-        if (isMounted) {
+        if (isMounted && !abortController.signal.aborted) {
           await revalidate();
         }
       } catch (err) {
-        if (isMounted) {
+        if (isMounted && !abortController.signal.aborted) {
           setError(err instanceof Error ? err : new Error('Unknown error'));
           setLoading(false);
         }
@@ -104,8 +136,11 @@ export function useCache<T>(
 
     return () => {
       isMounted = false;
+      if (abortController) {
+        abortController.abort();
+      }
     };
-  }, [key, revalidate, staleWhileRevalidate, ttl]);
+  }, [key, ttl, staleWhileRevalidate, revalidate]);
 
   return { data, error, loading, revalidate };
 }

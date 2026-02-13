@@ -171,7 +171,6 @@ export class DatabaseService {
     this._client = supabaseClient;
     this._admin = supabaseAdmin;
 
-    // Only warn about missing clients in development, not in CI/production
     if (
       (!this._client || !this._admin) &&
       process.env.NODE_ENV === 'development' &&
@@ -179,6 +178,12 @@ export class DatabaseService {
     ) {
       logger.warn(
         'Supabase clients not initialized. Check environment variables.'
+      );
+    }
+
+    if (DatabaseService.instance) {
+      throw new Error(
+        'DatabaseService is a singleton. Use DatabaseService.getInstance() instead of new DatabaseService()'
       );
     }
   }
