@@ -3,6 +3,7 @@ import {
   ApiContext,
   withApiHandler,
 } from '@/lib/api-handler';
+import { APP_CONFIG } from '@/lib/config';
 
 function isSensitiveVar(varName: string): boolean {
   const upper = varName.toUpperCase();
@@ -32,20 +33,13 @@ async function handleGet(context: ApiContext) {
       environment: string;
     };
   } = {
-    status: 'healthy',
+    status: APP_CONFIG.HEALTH_STATUS.HEALTHY,
     environment: process.env.NODE_ENV || 'development',
     checks: {},
   };
 
-  const requiredVars = [
-    'NEXT_PUBLIC_SUPABASE_URL',
-    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'SUPABASE_SERVICE_ROLE_KEY',
-    'COST_LIMIT_DAILY',
-    'NEXT_PUBLIC_APP_URL',
-  ];
-
-  const aiVars = ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY'];
+  const requiredVars = [...APP_CONFIG.ENV_VARS.REQUIRED];
+  const aiVars = [...APP_CONFIG.ENV_VARS.AI_PROVIDERS];
 
   const missingVars: string[] = [];
   let hasAIProvider = false;
@@ -83,10 +77,10 @@ async function handleGet(context: ApiContext) {
   });
 
   if (missingVars.length > 0) {
-    envStatus.status = 'unhealthy';
+    envStatus.status = APP_CONFIG.HEALTH_STATUS.UNHEALTHY;
     envStatus.error = `Missing required environment variables`;
   } else if (!hasAIProvider) {
-    envStatus.status = 'warning';
+    envStatus.status = APP_CONFIG.HEALTH_STATUS.WARNING;
     envStatus.warning = 'No AI provider configured';
   }
 

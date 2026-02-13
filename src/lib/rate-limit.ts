@@ -98,7 +98,25 @@ export function checkRateLimit(
   }
 
   const requests = rateLimitStore.get(identifier) || [];
-  let recentRequests = requests.filter((r) => r >= windowStart);
+
+  // PERFORMANCE: Find the first index that is within the window without filter()
+  // This avoids O(N) allocation and reduces the number of checks in the common case.
+  let firstValidIndex = -1;
+  for (let i = 0; i < requests.length; i++) {
+    if (requests[i] >= windowStart) {
+      firstValidIndex = i;
+      break;
+    }
+  }
+
+  let recentRequests: number[];
+  if (firstValidIndex === -1) {
+    recentRequests = [];
+  } else if (firstValidIndex === 0) {
+    recentRequests = requests; // No allocation if all requests are still valid
+  } else {
+    recentRequests = requests.slice(firstValidIndex);
+  }
 
   // Memory leak prevention: Limit requests per identifier to prevent unbounded growth
   if (recentRequests.length > MAX_REQUESTS_PER_IDENTIFIER) {
@@ -111,7 +129,7 @@ export function checkRateLimit(
       info: {
         limit: config.limit,
         remaining: 0,
-        reset: Math.max(...recentRequests) + config.windowMs,
+        reset: (recentRequests[recentRequests.length - 1] || now) + config.windowMs,
       },
     };
   }
@@ -131,15 +149,18 @@ export function checkRateLimit(
 
 // Helper function to remove oldest entries when store reaches capacity
 function cleanupOldestEntries(count: number): void {
-  const entries = Array.from(rateLimitStore.entries());
-  entries.sort((a, b) => {
-    const aOldest = a[1].length > 0 ? Math.min(...a[1]) : Infinity;
-    const bOldest = b[1].length > 0 ? Math.min(...b[1]) : Infinity;
-    return aOldest - bOldest;
-  });
+  // PERFORMANCE: Use Map's insertion order for O(K) eviction instead of O(N log N) sort.
+  // In JS, Map preserves insertion order. Deleting the first K keys effectively
+  // removes the oldest identifiers from the store. This avoids creating a large
+  // temporary array and sorting it.
+  const iterator = rateLimitStore.keys();
+  let deletedCount = 0;
 
-  for (let i = 0; i < Math.min(count, entries.length); i++) {
-    rateLimitStore.delete(entries[i][0]);
+  while (deletedCount < count) {
+    const { value, done } = iterator.next();
+    if (done) break;
+    rateLimitStore.delete(value);
+    deletedCount++;
   }
 }
 
