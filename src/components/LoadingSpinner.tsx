@@ -1,42 +1,44 @@
 'use client';
 
+import { COMPONENT_CONFIG } from '@/lib/config';
+
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   ariaLabel?: string;
 }
 
-const sizeClasses = {
-  sm: 'w-4 h-4',
-  md: 'w-8 h-8',
-  lg: 'w-12 h-12',
-};
-
 export default function LoadingSpinner({
-  size = 'md',
+  size = COMPONENT_CONFIG.SPINNER.DEFAULT_SIZE,
   className = '',
-  ariaLabel = 'Loading...',
+  ariaLabel = COMPONENT_CONFIG.LOADING.DEFAULT_ARIA_LABEL,
 }: LoadingSpinnerProps) {
+  const spinnerSize =
+    COMPONENT_CONFIG.SPINNER.SIZES[
+      size.toUpperCase() as keyof typeof COMPONENT_CONFIG.SPINNER.SIZES
+    ];
+
   return (
     <div
       className={`flex justify-center ${className}`}
-      role="status"
-      aria-live="polite"
+      role={COMPONENT_CONFIG.ARIA.STATUS}
+      aria-live={COMPONENT_CONFIG.ARIA.POLITE}
       aria-label={ariaLabel}
     >
       <svg
-        className={`animate-spin rounded-full border-2 border-gray-300 border-t-primary-600 ${sizeClasses[size]}`}
+        className={`animate-spin rounded-full border-2 border-gray-300 border-t-primary-600`}
+        style={{ width: spinnerSize.width, height: spinnerSize.height }}
         fill="none"
-        viewBox="0 0 24 24"
+        viewBox={`0 0 ${COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE} ${COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE}`}
         aria-hidden="true"
       >
         <circle
           className="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
+          cx={COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE / 2}
+          cy={COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE / 2}
+          r={COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE / 2 - 2}
           stroke="currentColor"
-          strokeWidth="4"
+          strokeWidth={COMPONENT_CONFIG.SPINNER.STROKE_WIDTH}
         ></circle>
         <path
           className="opacity-75"

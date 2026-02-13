@@ -8,6 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
+import { IDEA_CONFIG } from '@/lib/config';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -40,7 +41,7 @@ async function handlePost(context: ApiContext) {
   } else {
     // Still require authentication even for new ideas
     await requireAuth(request);
-    finalIdeaId = `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    finalIdeaId = IDEA_CONFIG.ID.GENERATOR();
   }
 
   const session = await clarifierAgent.startClarification(
