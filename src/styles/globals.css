@@ -149,3 +149,24 @@
 .animate-draw-check {
   animation: drawCheck 0.3s ease-out forwards;
 }
+
+/* Shimmer loading animation - adds life to skeleton screens */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Reduced motion support for shimmer */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}
