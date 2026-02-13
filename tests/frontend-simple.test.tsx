@@ -19,7 +19,7 @@ describe('Frontend Component Tests - Basic', () => {
     it('should render form elements correctly', () => {
       const TestForm = () => (
         <form data-testid="test-form">
-          <label htmlFor="idea">What's your idea?</label>
+          <label htmlFor="idea">What&apos;s your idea?</label>
           <textarea id="idea" placeholder="Enter your idea..." />
           <button type="submit">Submit</button>
         </form>

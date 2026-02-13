@@ -290,7 +290,7 @@ function ClarificationFlow({
           <Alert type="error" title="Error">
             <p>{error}</p>
             <p className="text-sm mt-4">
-              We're using fallback questions to continue.
+              We&apos;re using fallback questions to continue.
             </p>
           </Alert>
         </div>

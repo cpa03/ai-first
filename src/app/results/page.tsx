@@ -193,7 +193,7 @@ function ResultsContent() {
             No Idea Found
           </h2>
           <p className="text-yellow-800">
-            The idea you're looking for doesn't exist.
+            The idea you&apos;re looking for doesn&apos;t exist.
           </p>
           <div className="mt-4">
             <Button onClick={() => router.push('/')} variant="primary">

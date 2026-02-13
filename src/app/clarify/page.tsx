@@ -71,7 +71,6 @@ function ClarifyPageContent() {
 
   // Use useLayoutEffect to safely read params after hydration
   // This is necessary to avoid hydration mismatches when reading URL params
-  // eslint-disable-next-line react-hooks/set-state-in-effect
   useLayoutEffect(() => {
     if (hasHydratedRef.current) return;
     hasHydratedRef.current = true;
@@ -79,7 +78,6 @@ function ClarifyPageContent() {
     const ideaFromUrl = searchParams?.get('idea');
     const ideaIdFromUrl = searchParams?.get('ideaId');
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParams({
       idea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
       ideaId: ideaIdFromUrl || '',
@@ -205,7 +203,7 @@ function ClarifyPageContent() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Let's Clarify Your Idea
+            Let&apos;s Clarify Your Idea
           </h1>
           <p className="text-lg text-gray-600">
             Answer a few questions to help us create the perfect action plan for
