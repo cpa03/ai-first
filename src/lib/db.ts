@@ -565,27 +565,22 @@ export class DatabaseService {
   ): Promise<(Deliverable & { idea: Idea }) | null> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
-    const { data: deliverable, error: deliverableError } = await this.client
+    const { data, error } = await this.client
       .from('deliverables')
-      .select('*')
+      .select(
+        `
+        *,
+        idea:ideas!inner(*)
+      `
+      )
       .eq('id', id)
-      .is('deleted_at', null)
+      .is('deliverables.deleted_at', null)
+      .is('ideas.deleted_at', null)
       .single();
 
-    if (deliverableError || !deliverable) return null;
+    if (error || !data) return null;
 
-    const typedDeliverable = deliverable as Deliverable;
-
-    const { data: idea, error: ideaError } = await this.client
-      .from('ideas')
-      .select('*')
-      .eq('id', typedDeliverable.idea_id)
-      .is('deleted_at', null)
-      .single();
-
-    if (ideaError || !idea) return null;
-
-    return { ...typedDeliverable, idea: idea as Idea };
+    return data as Deliverable & { idea: Idea };
   }
 
   async updateDeliverable(
@@ -719,38 +714,31 @@ export class DatabaseService {
   ): Promise<(Task & { deliverable: Deliverable; idea: Idea }) | null> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
-    const { data: task, error: taskError } = await this.client
+    const { data, error } = await this.client
       .from('tasks')
-      .select('*')
+      .select(
+        `
+        *,
+        deliverable:deliverables!inner(*),
+        idea:deliverables!inner(idea:ideas!inner(*))
+      `
+      )
       .eq('id', id)
-      .is('deleted_at', null)
+      .is('tasks.deleted_at', null)
+      .is('deliverables.deleted_at', null)
+      .is('ideas.deleted_at', null)
       .single();
 
-    if (taskError || !task) return null;
+    if (error || !data) return null;
 
-    const typedTask = task as Task;
-
-    const { data: deliverable, error: deliverableError } = await this.client
-      .from('deliverables')
-      .select('*')
-      .eq('id', typedTask.deliverable_id)
-      .is('deleted_at', null)
-      .single();
-
-    if (deliverableError || !deliverable) return null;
-
-    const typedDeliverable = deliverable as Deliverable;
-
-    const { data: idea, error: ideaError } = await this.client
-      .from('ideas')
-      .select('*')
-      .eq('id', typedDeliverable.idea_id)
-      .is('deleted_at', null)
-      .single();
-
-    if (ideaError || !idea) return null;
-
-    return { ...typedTask, deliverable: typedDeliverable, idea: idea as Idea };
+    const typedData = data as Task & {
+      deliverable: Deliverable;
+      idea: { idea: Idea };
+    };
+    return {
+      ...typedData,
+      idea: typedData.idea.idea,
+    };
   }
 
   // Vector operations for embeddings and context
