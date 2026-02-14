@@ -18,6 +18,8 @@ export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, number[]>();
 
+import { resourceCleanupManager } from './resource-cleanup';
+
 /**
  * Platform detection for trusted proxy headers
  */
@@ -258,6 +260,9 @@ if (
   !process.env.VITEST_WORKER_ID
 ) {
   startCleanupInterval();
+  resourceCleanupManager.register('rate-limit-cleanup', () =>
+    stopCleanupInterval()
+  );
 }
 
 export function rateLimitResponse(
