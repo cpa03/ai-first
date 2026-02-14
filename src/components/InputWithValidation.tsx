@@ -74,9 +74,10 @@ const InputWithValidation = forwardRef<
       onChange?.(e);
     };
 
+    const hasIcon = (isValid && charCount > 0) || isInvalid;
     const baseInputClasses = `${INPUT_STYLES.BASE} ${
       isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL
-    } ${className}`;
+    } ${hasIcon ? 'pr-10' : ''} ${className}`;
 
     const errorAnnouncedRef = React.useRef(errorAnnounced);
 
@@ -179,6 +180,27 @@ const InputWithValidation = forwardRef<
                     strokeDasharray: '24',
                     strokeDashoffset: '24',
                   }}
+                />
+              </svg>
+            </div>
+          )}
+
+          {isInvalid && (
+            <div
+              className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+            >
+              <svg
+                className="w-5 h-5 text-red-500 animate-in fade-in duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
             </div>
