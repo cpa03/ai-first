@@ -171,10 +171,10 @@ class AIService {
           }
 
           const choice = completion.choices[0];
-          if (!choice || !choice.message) {
+          if (!choice) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'Invalid response from OpenAI: missing message content',
+              'Invalid response from OpenAI: missing choice',
               ErrorCode.EXTERNAL_SERVICE_ERROR,
               STATUS_CODES.BAD_GATEWAY,
               undefined,
@@ -182,7 +182,7 @@ class AIService {
             );
           }
 
-          const response = choice.message.content || '';
+          const response = choice.message?.content || '';
 
           const usage = completion.usage;
           if (usage) {
