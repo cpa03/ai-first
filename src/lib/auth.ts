@@ -6,11 +6,6 @@ import { timingSafeEqual, createHash } from 'node:crypto';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');
 
-// SECURITY: Pre-calculate hash to improve performance and slightly reduce DoS surface
-const EXPECTED_ADMIN_HASH = ADMIN_API_KEY
-  ? createHash('sha256').update(ADMIN_API_KEY).digest()
-  : null;
-
 if (!ADMIN_API_KEY && process.env.NODE_ENV !== 'development') {
   logger.warn(
     'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
@@ -24,7 +19,7 @@ export interface AuthenticatedUser {
 }
 
 export function isAdminAuthenticated(request: Request): boolean {
-  if (!EXPECTED_ADMIN_HASH) {
+  if (!ADMIN_API_KEY) {
     return process.env.NODE_ENV === 'development';
   }
 
@@ -42,8 +37,10 @@ export function isAdminAuthenticated(request: Request): boolean {
     credentials &&
     credentials.length <= 512
   ) {
+    // SECURITY: Hash both strings before comparison to prevent timing attacks and leaking key length
+    const expectedHash = createHash('sha256').update(ADMIN_API_KEY).digest();
     const actualHash = createHash('sha256').update(credentials).digest();
-    return timingSafeEqual(EXPECTED_ADMIN_HASH, actualHash);
+    return timingSafeEqual(expectedHash, actualHash);
   }
 
   return false;
