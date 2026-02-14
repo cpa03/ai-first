@@ -44,7 +44,7 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 #### 1. Content-Security-Policy Uses 'unsafe-inline'
 
-**Location**: `src/middleware.ts`  
+**Location**: `src/proxy.ts`  
 **Severity**: Medium  
 **Current Status**: Acceptable for Next.js Development
 
@@ -79,7 +79,7 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 #### 2. Duplicate Security Headers (FIXED)
 
-**Location**: `next.config.js` and `src/middleware.ts`  
+**Location**: `next.config.js` and `src/proxy.ts`  
 **Severity**: Low  
 **Status**: ✅ FIXED
 
@@ -158,7 +158,7 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 ### ✅ Security Headers
 
-**Location**: `src/middleware.ts`
+**Location**: `src/proxy.ts`
 
 **Headers Implemented**:
 

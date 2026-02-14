@@ -95,7 +95,7 @@ npm test            # ✓ All tests pass
 
 ## Security Architecture
 
-### 1. Security Headers (src/middleware.ts)
+### 1. Security Headers (src/proxy.ts)
 
 All responses include comprehensive security headers:
 
