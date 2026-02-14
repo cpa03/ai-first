@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
 import { redactPIIInObject } from './pii-redaction';
 import { createLogger } from './logger';
+import { resourceCleanupManager } from './resource-cleanup';
 import { AGENT_CONFIG, VALIDATION_LIMITS } from './config/constants';
 
 const logger = createLogger('DatabaseService');
@@ -235,6 +236,9 @@ export class DatabaseService {
   static getInstance(): DatabaseService {
     if (!DatabaseService.instance) {
       DatabaseService.instance = new DatabaseService();
+      resourceCleanupManager.register('database-service', () =>
+        DatabaseService.instance?.dispose()
+      );
     }
     return DatabaseService.instance;
   }
