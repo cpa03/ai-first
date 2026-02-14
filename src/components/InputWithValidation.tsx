@@ -1,6 +1,7 @@
 'use client';
 
 import React, { forwardRef, useState, useEffect, useCallback } from 'react';
+import { INPUT_STYLES, TEXT_COLORS, BG_COLORS } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -73,18 +74,9 @@ const InputWithValidation = forwardRef<
       onChange?.(e);
     };
 
-    const baseInputClasses = `
-      w-full px-4 py-3 border rounded-md shadow-sm
-      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white
-      focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.2)]
-      transition-all duration-200
-      ${
-        isInvalid
-          ? 'border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500 focus-visible:shadow-[0_0_0_3px_rgba(239,68,68,0.2)]'
-          : 'border-gray-300 focus-visible:border-primary-500 focus-visible:ring-primary-500'
-      }
-      ${className}
-    `;
+    const baseInputClasses = `${INPUT_STYLES.BASE} ${
+      isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL
+    } ${className}`;
 
     const errorAnnouncedRef = React.useRef(errorAnnounced);
 
@@ -122,7 +114,9 @@ const InputWithValidation = forwardRef<
           className="block text-sm font-medium text-gray-900 cursor-pointer"
         >
           {label}
-          {props.required && <span className="text-red-600 ml-1">*</span>}
+          {props.required && (
+            <span className={`${TEXT_COLORS.ERROR} ml-1`}>*</span>
+          )}
         </label>
 
         <div className="relative">
@@ -207,7 +201,7 @@ const InputWithValidation = forwardRef<
             <div className="flex items-center gap-2">
               {maxLength && (
                 <div
-                  className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden"
+                  className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden`}
                   role="progressbar"
                   aria-valuenow={charCount}
                   aria-valuemin={0}
@@ -217,11 +211,11 @@ const InputWithValidation = forwardRef<
                   <div
                     className={`h-full transition-all duration-300 rounded-full ${
                       charCount > maxLength
-                        ? 'bg-red-500'
+                        ? BG_COLORS.ERROR
                         : charCount >=
                             maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                          ? 'bg-amber-500'
-                          : 'bg-green-500'
+                          ? BG_COLORS.WARNING
+                          : BG_COLORS.SUCCESS
                     }`}
                     style={{
                       width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
@@ -232,14 +226,14 @@ const InputWithValidation = forwardRef<
               <span
                 className={`text-sm ${
                   maxLength && charCount > maxLength
-                    ? 'text-red-600'
+                    ? TEXT_COLORS.ERROR
                     : maxLength &&
                         charCount >=
                           maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                      ? 'text-amber-600'
+                      ? TEXT_COLORS.WARNING
                       : isValid && touched
-                        ? 'text-green-600'
-                        : 'text-gray-600'
+                        ? TEXT_COLORS.SUCCESS
+                        : TEXT_COLORS.SECONDARY
                 }`}
                 aria-live="polite"
                 aria-atomic="true"

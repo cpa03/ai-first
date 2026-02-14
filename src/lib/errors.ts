@@ -1,5 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
-import { ERROR_CONFIG } from './config/constants';
+import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 
 export interface ErrorDetail {
   field?: string;
@@ -36,7 +36,7 @@ export class AppError extends Error {
   constructor(
     message: string,
     public readonly code: ErrorCode,
-    public readonly statusCode: number = 500,
+    public readonly statusCode: number = STATUS_CODES.INTERNAL_ERROR,
     public readonly details?: ErrorDetail[],
     public readonly retryable: boolean = false,
     public readonly suggestions?: string[]
@@ -70,7 +70,7 @@ export class ValidationError extends AppError {
     super(
       'Request validation failed',
       ErrorCode.VALIDATION_ERROR,
-      400,
+      STATUS_CODES.BAD_REQUEST,
       details,
       false,
       suggestions
@@ -93,7 +93,7 @@ export class RateLimitError extends AppError {
     super(
       `Rate limit exceeded. Retry after ${retryAfter} seconds`,
       ErrorCode.RATE_LIMIT_EXCEEDED,
-      429,
+      STATUS_CODES.RATE_LIMITED,
       undefined,
       true,
       suggestions
@@ -135,7 +135,7 @@ export class ExternalServiceError extends AppError {
     super(
       `External service error: ${service} - ${message}`,
       ErrorCode.EXTERNAL_SERVICE_ERROR,
-      502,
+      STATUS_CODES.BAD_GATEWAY,
       undefined,
       true,
       suggestions
@@ -158,7 +158,14 @@ export class TimeoutError extends AppError {
       'The system will automatically retry this operation',
       'Check if external services are experiencing high latency',
     ];
-    super(message, ErrorCode.TIMEOUT_ERROR, 504, undefined, true, suggestions);
+    super(
+      message,
+      ErrorCode.TIMEOUT_ERROR,
+      STATUS_CODES.GATEWAY_TIMEOUT,
+      undefined,
+      true,
+      suggestions
+    );
     this.name = 'TimeoutError';
   }
 }
@@ -174,7 +181,7 @@ export class CircuitBreakerError extends AppError {
     super(
       `Circuit breaker open for ${service}. Retry after ${resetTime.toISOString()}`,
       ErrorCode.CIRCUIT_BREAKER_OPEN,
-      503,
+      STATUS_CODES.SERVICE_UNAVAILABLE,
       undefined,
       true,
       suggestions
@@ -214,7 +221,7 @@ export class RetryExhaustedError extends AppError {
     super(
       `${message} after ${attempts} attempts`,
       ErrorCode.RETRY_EXHAUSTED,
-      502,
+      STATUS_CODES.BAD_GATEWAY,
       undefined,
       true,
       suggestions
@@ -230,7 +237,7 @@ export class RetryExhaustedError extends AppError {
 
 export function toErrorResponse(error: unknown, requestId?: string): Response {
   let appError: AppError;
-  let statusCode = 500;
+  let statusCode: number = STATUS_CODES.INTERNAL_ERROR;
 
   if (error instanceof AppError) {
     appError = error;
@@ -239,7 +246,7 @@ export function toErrorResponse(error: unknown, requestId?: string): Response {
     appError = new AppError(
       redactPII(error.message),
       ErrorCode.INTERNAL_ERROR,
-      500,
+      STATUS_CODES.INTERNAL_ERROR,
       undefined,
       false
     );
@@ -247,7 +254,7 @@ export function toErrorResponse(error: unknown, requestId?: string): Response {
     appError = new AppError(
       'Unknown error occurred',
       ErrorCode.INTERNAL_ERROR,
-      500,
+      STATUS_CODES.INTERNAL_ERROR,
       undefined,
       false
     );
@@ -361,7 +368,7 @@ export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
 export function createErrorWithSuggestions(
   code: ErrorCode,
   message: string,
-  statusCode: number = 500,
+  statusCode: number = STATUS_CODES.INTERNAL_ERROR,
   details?: ErrorDetail[],
   retryable: boolean = false
 ): AppError {

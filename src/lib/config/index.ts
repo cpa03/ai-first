@@ -57,6 +57,19 @@ export { COMPONENT_CONFIG } from './components';
 // Cleanup Configuration
 export { CLEANUP_CONFIG } from './cleanup';
 
+// Theme Configuration (eliminates hardcoded styling values)
+export {
+  FOCUS_SHADOWS,
+  BORDER_COLORS,
+  RING_COLORS,
+  TEXT_COLORS,
+  BG_COLORS,
+  INPUT_STYLES,
+  ANIMATION_DURATIONS,
+  SPACING_PX,
+  SIZES,
+} from './theme';
+
 // Environment-based Configuration (addresses issues #981-986)
 // These exports allow runtime configuration via environment variables
 export {
@@ -100,3 +113,11 @@ export type { ClarifierConfig, AgentPrompts, AiConfig } from './agents';
 export type { CacheConfig } from './cache';
 export type { ComponentConfig } from './components';
 export type { CleanupConfig } from './cleanup';
+export type {
+  FocusShadows,
+  BorderColors,
+  RingColors,
+  TextColors,
+  BgColors,
+  InputStyles,
+} from './theme';
