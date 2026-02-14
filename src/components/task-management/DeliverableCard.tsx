@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import { TaskStatus } from '@/hooks/useTaskManagement';
@@ -24,7 +25,7 @@ interface DeliverableCardProps {
   onToggleTask: (taskId: string, currentStatus: TaskStatus) => Promise<void>;
 }
 
-export function DeliverableCard({
+function DeliverableCardComponent({
   deliverable,
   isExpanded,
   updatingTaskId,
@@ -130,3 +131,5 @@ export function DeliverableCard({
     </div>
   );
 }
+
+export const DeliverableCard = memo(DeliverableCardComponent);
