@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- RepoKeeper automated maintenance workflow
+- Branch cleanup automation
+- Empty directory cleanup in `.swc/`
+
+### Changed
+
+- Updated BRANCH_CLEANUP.md with latest maintenance activities
+- Consolidated maintenance documentation
+
+### Removed
+
+- Merged branch: `repokeeper/maintenance-20260213-2026`
+- Empty directory: `.swc/plugins/linux_aarch64_23.0.0`
+
+### Added
+
 - AutoSaveIndicator component for real-time save status feedback
 - CopyButton component for one-click blueprint copying
 - TaskManagement component for enhanced task visualization
