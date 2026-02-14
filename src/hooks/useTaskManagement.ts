@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
 import { Task, Deliverable } from '@/lib/db';
 
@@ -52,6 +52,11 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const [expandedDeliverables, setExpandedDeliverables] = useState<Set<string>>(
     new Set()
   );
+
+  // PERFORMANCE: Use a ref to keep track of the latest data without triggering
+  // re-creations of callbacks that depend on it.
+  const dataRef = useRef(data);
+  dataRef.current = data;
 
   // Fetch tasks on mount
   useEffect(() => {
@@ -192,7 +197,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
         // Show success toast when task is completed
         if (newStatus === 'completed' && typeof window !== 'undefined') {
-          const task = data?.deliverables
+          const task = dataRef.current?.deliverables
             .flatMap((d) => d.tasks)
             .find((t) => t.id === taskId);
           if (task) {
@@ -297,7 +302,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [logger, data]
+    [logger]
   );
 
   // Toggle deliverable expansion
@@ -315,10 +320,12 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
   // Expand all deliverables
   const expandAll = useCallback(() => {
-    if (data?.deliverables) {
-      setExpandedDeliverables(new Set(data.deliverables.map((d) => d.id)));
+    if (dataRef.current?.deliverables) {
+      setExpandedDeliverables(
+        new Set(dataRef.current.deliverables.map((d) => d.id))
+      );
     }
-  }, [data]);
+  }, []);
 
   // Collapse all deliverables
   const collapseAll = useCallback(() => {

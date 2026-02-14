@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskStatus } from '@/hooks/useTaskManagement';
 
@@ -26,7 +27,7 @@ interface TaskItemProps {
   onToggle: (taskId: string, currentStatus: TaskStatus) => void;
 }
 
-export function TaskItem({ task, isUpdating, onToggle }: TaskItemProps) {
+function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = statusConfig[task.status];
   const isCompleted = task.status === 'completed';
 
@@ -168,3 +169,5 @@ export function TaskItem({ task, isUpdating, onToggle }: TaskItemProps) {
     </div>
   );
 }
+
+export const TaskItem = memo(TaskItemComponent);

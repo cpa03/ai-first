@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import Button from '@/components/Button';
 
 interface TaskManagementHeaderProps {
@@ -13,7 +14,7 @@ interface TaskManagementHeaderProps {
   onCollapseAll: () => void;
 }
 
-export function TaskManagementHeader({
+function TaskManagementHeaderComponent({
   totalDeliverables,
   totalTasks,
   completedTasks,
@@ -70,3 +71,5 @@ export function TaskManagementHeader({
     </div>
   );
 }
+
+export const TaskManagementHeader = memo(TaskManagementHeaderComponent);
