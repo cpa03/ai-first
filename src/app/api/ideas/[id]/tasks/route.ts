@@ -11,8 +11,8 @@ import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 async function handleGet(context: ApiContext) {
   const { request } = context;
   const url = new URL(request.url);
-  const pathname = url.pathname;
-  const ideaId = pathname.split('/')[3];
+  const segments = url.pathname.split('/').filter(Boolean);
+  const ideaId = segments.at(-2);
 
   if (!ideaId) {
     throw new AppError('Idea ID is required', ErrorCode.VALIDATION_ERROR, 400);

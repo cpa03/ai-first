@@ -1,7 +1,6 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import { timingSafeEqual, createHash } from 'node:crypto';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');
@@ -18,39 +17,75 @@ export interface AuthenticatedUser {
   role?: string;
 }
 
-export function isAdminAuthenticated(request: Request): boolean {
+/**
+ * Timing-safe comparison of two Uint8Arrays to prevent timing attacks.
+ * This is an environment-agnostic implementation of timingSafeEqual.
+ */
+function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a[i] ^ b[i];
+  }
+  return result === 0;
+}
+
+/**
+ * Validates administrative authentication.
+ * SECURITY: Uses SHA-256 hashing and timing-safe comparison to prevent secret leakage.
+ * Uses Web Crypto API for compatibility across Node, Edge, and Workers.
+ */
+export async function isAdminAuthenticated(
+  request: Request
+): Promise<boolean> {
   if (!ADMIN_API_KEY) {
     return process.env.NODE_ENV === 'development';
   }
 
   const authHeader = request.headers.get('authorization');
-  const url = new URL(request.url);
-  const apiKey = url.searchParams.get('admin_key');
-
-  if (!authHeader && !apiKey) {
+  if (!authHeader) {
     return false;
   }
 
-  const expectedHash = createHash('sha256').update(ADMIN_API_KEY).digest();
-
-  if (authHeader) {
-    const [scheme, credentials] = authHeader.split(' ');
-    if (scheme.toLowerCase() === 'bearer' && credentials) {
-      const actualHash = createHash('sha256').update(credentials).digest();
-      return timingSafeEqual(expectedHash, actualHash);
-    }
+  const parts = authHeader.split(' ');
+  if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
+    return false;
   }
 
-  if (apiKey) {
-    const actualHash = createHash('sha256').update(apiKey).digest();
-    return timingSafeEqual(expectedHash, actualHash);
+  const credentials = parts[1];
+
+  // SECURITY: Limit token length to prevent DoS attacks during hashing
+  if (!credentials || credentials.length > 512) {
+    return false;
   }
 
-  return false;
+  try {
+    const encoder = new TextEncoder();
+
+    // SECURITY: Hash both strings before comparison to prevent timing attacks and leaking key length.
+    // Use the standard Web Crypto API available in all modern runtimes.
+    const expectedHash = await crypto.subtle.digest(
+      'SHA-256',
+      encoder.encode(ADMIN_API_KEY)
+    );
+    const actualHash = await crypto.subtle.digest(
+      'SHA-256',
+      encoder.encode(credentials)
+    );
+
+    return safeEqual(new Uint8Array(expectedHash), new Uint8Array(actualHash));
+  } catch (error) {
+    logger.error('Admin authentication error', error);
+    return false;
+  }
 }
 
-export function requireAdminAuth(request: Request): void {
-  if (!isAdminAuthenticated(request)) {
+/**
+ * Throws an AppError if administrative authentication fails.
+ */
+export async function requireAdminAuth(request: Request): Promise<void> {
+  const authenticated = await isAdminAuthenticated(request);
+  if (!authenticated) {
     throw new AppError(
       'Unauthorized. Valid admin API key required.',
       ErrorCode.AUTHENTICATION_ERROR,

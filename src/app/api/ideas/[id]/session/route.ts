@@ -12,7 +12,8 @@ async function handleGet(context: ApiContext) {
   const { request } = context;
 
   const url = new URL(request.url);
-  const ideaId = url.pathname.split('/').slice(0, -1).at(-1);
+  const segments = url.pathname.split('/').filter(Boolean);
+  const ideaId = segments.at(-2);
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {

@@ -28,18 +28,18 @@ describe('auth', () => {
         delete process.env.ADMIN_API_KEY;
       });
 
-      it('should return true when ADMIN_API_KEY is not set', () => {
+      it('should return true when ADMIN_API_KEY is not set', async () => {
         const { isAdminAuthenticated } = require('@/lib/auth');
         const request = new Request('http://localhost/api/admin/test');
-        const result = isAdminAuthenticated(request);
+        const result = await isAdminAuthenticated(request);
 
         expect(result).toBe(true);
       });
 
-      it('should return true even without credentials', () => {
+      it('should return true even without credentials', async () => {
         const { isAdminAuthenticated } = require('@/lib/auth');
         const request = new Request('http://localhost/api/admin/test');
-        const result = isAdminAuthenticated(request);
+        const result = await isAdminAuthenticated(request);
 
         expect(result).toBe(true);
       });
@@ -52,160 +52,109 @@ describe('auth', () => {
       });
 
       describe('Bearer token authentication', () => {
-        it('should return true with valid Bearer token', () => {
+        it('should return true with valid Bearer token', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: 'Bearer test-admin-key-12345',
             },
           });
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(true);
         });
 
-        it('should return false with invalid Bearer token', () => {
+        it('should return false with invalid Bearer token', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: 'Bearer wrong-key',
             },
           });
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
 
-        it('should return false with malformed Bearer token (no credentials)', () => {
+        it('should return false with malformed Bearer token (no credentials)', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: 'Bearer',
             },
           });
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
 
-        it('should handle Bearer token case-insensitively', () => {
+        it('should handle Bearer token case-insensitively', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: 'bearer test-admin-key-12345',
             },
           });
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(true);
         });
 
-        it('should return false with different scheme', () => {
+        it('should return false with different scheme', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: 'Basic test-admin-key-12345',
             },
           });
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
 
-        it('should handle Authorization header with multiple spaces', () => {
+        it('should handle Authorization header with multiple spaces', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: 'Bearer  test-admin-key-12345',
             },
           });
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(false);
-        });
-      });
-
-      describe('Query parameter authentication', () => {
-        it('should return true with valid admin_key query parameter', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=test-admin-key-12345'
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(true);
-        });
-
-        it('should return false with invalid admin_key query parameter', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=wrong-key'
-          );
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
 
-        it('should return false with empty admin_key query parameter', () => {
+        it('should return false with extremely long token (DoS prevention)', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key='
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(false);
-        });
-      });
-
-      describe('Multiple authentication methods', () => {
-        it('should accept valid Bearer token even with admin_key query param', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=wrong-key',
-            {
-              headers: {
-                Authorization: 'Bearer test-admin-key-12345',
-              },
-            }
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(true);
-        });
-
-        it('should return false with valid admin_key but invalid Authorization header', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=test-admin-key-12345',
-            {
-              headers: {
-                Authorization: 'Bearer wrong-key',
-              },
-            }
-          );
-          const result = isAdminAuthenticated(request);
+          const longToken = 'a'.repeat(1000);
+          const request = new Request('http://localhost/api/admin/test', {
+            headers: {
+              Authorization: `Bearer ${longToken}`,
+            },
+          });
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
       });
 
       describe('No authentication provided', () => {
-        it('should return false when no Authorization header or admin_key', () => {
+        it('should return false when no Authorization header', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test');
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
 
-        it('should return false when Authorization header is empty', () => {
+        it('should return false when Authorization header is empty', async () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test', {
             headers: {
               Authorization: '',
             },
           });
-          const result = isAdminAuthenticated(request);
+          const result = await isAdminAuthenticated(request);
 
           expect(result).toBe(false);
         });
@@ -218,27 +167,18 @@ describe('auth', () => {
         process.env.ADMIN_API_KEY = 'test-key-with-special-chars!@#$%';
       });
 
-      it('should handle API keys with special characters', () => {
+      it('should handle API keys with special characters', async () => {
         const { isAdminAuthenticated } = require('@/lib/auth');
         const request = new Request('http://localhost/api/admin/test', {
           headers: {
             Authorization: 'Bearer test-key-with-special-chars!@#$%',
           },
         });
-        const result = isAdminAuthenticated(request);
+        const result = await isAdminAuthenticated(request);
 
         expect(result).toBe(true);
       });
 
-      it('should handle URL encoding in query parameter', () => {
-        const { isAdminAuthenticated } = require('@/lib/auth');
-        const request = new Request(
-          'http://localhost/api/admin/test?admin_key=test-key-with-special-chars%21%40%23%24%25'
-        );
-        const result = isAdminAuthenticated(request);
-
-        expect(result).toBe(true);
-      });
     });
   });
 
@@ -248,47 +188,41 @@ describe('auth', () => {
       process.env.ADMIN_API_KEY = 'test-admin-key';
     });
 
-    it('should throw error when not authenticated', () => {
+    it('should throw error when not authenticated', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      expect(() => requireAdminAuth(request)).toThrow();
+      await expect(requireAdminAuth(request)).rejects.toThrow();
     });
 
-    it('should throw error with AUTHENTICATION_ERROR code', () => {
+    it('should throw error with AUTHENTICATION_ERROR code', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      expect(() => requireAdminAuth(request)).toThrow(
-        expect.objectContaining({
-          code: ErrorCode.AUTHENTICATION_ERROR,
-        })
-      );
+      await expect(requireAdminAuth(request)).rejects.toMatchObject({
+        code: ErrorCode.AUTHENTICATION_ERROR,
+      });
     });
 
-    it('should throw error with 401 status code', () => {
+    it('should throw error with 401 status code', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      expect(() => requireAdminAuth(request)).toThrow(
-        expect.objectContaining({
-          statusCode: 401,
-        })
-      );
+      await expect(requireAdminAuth(request)).rejects.toMatchObject({
+        statusCode: 401,
+      });
     });
 
-    it('should throw error with descriptive message', () => {
+    it('should throw error with descriptive message', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      expect(() => requireAdminAuth(request)).toThrow(
-        expect.objectContaining({
-          message: expect.stringContaining('Unauthorized'),
-        })
-      );
+      await expect(requireAdminAuth(request)).rejects.toMatchObject({
+        message: expect.stringContaining('Unauthorized'),
+      });
     });
 
-    it('should not throw when authenticated with Bearer token', () => {
+    it('should not throw when authenticated with Bearer token', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test', {
         headers: {
@@ -296,23 +230,15 @@ describe('auth', () => {
         },
       });
 
-      expect(() => requireAdminAuth(request)).not.toThrow();
+      await expect(requireAdminAuth(request)).resolves.not.toThrow();
     });
 
-    it('should not throw when authenticated with admin_key', () => {
-      const { requireAdminAuth } = require('@/lib/auth');
-      const request = new Request(
-        'http://localhost/api/admin/test?admin_key=test-admin-key'
-      );
 
-      expect(() => requireAdminAuth(request)).not.toThrow();
-    });
-
-    it('should handle empty request gracefully', () => {
+    it('should handle empty request gracefully', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      expect(() => requireAdminAuth(request)).toThrow();
+      await expect(requireAdminAuth(request)).rejects.toThrow();
     });
   });
 
@@ -322,14 +248,14 @@ describe('auth', () => {
       delete process.env.ADMIN_API_KEY;
     });
 
-    it('should not throw in development mode without API key', () => {
+    it('should not throw in development mode without API key', async () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test');
 
-      expect(() => requireAdminAuth(request)).not.toThrow();
+      await expect(requireAdminAuth(request)).resolves.not.toThrow();
     });
 
-    it('should allow all requests in development mode', () => {
+    it('should allow all requests in development mode', async () => {
       const { isAdminAuthenticated, requireAdminAuth } = require('@/lib/auth');
       const request = new Request('http://localhost/api/admin/test', {
         headers: {
@@ -337,8 +263,8 @@ describe('auth', () => {
         },
       });
 
-      expect(isAdminAuthenticated(request)).toBe(true);
-      expect(() => requireAdminAuth(request)).not.toThrow();
+      expect(await isAdminAuthenticated(request)).toBe(true);
+      await expect(requireAdminAuth(request)).resolves.not.toThrow();
     });
   });
 });

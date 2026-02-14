@@ -198,6 +198,25 @@ global.open = jest.fn();
 // Mock URL.createObjectURL
 global.URL.createObjectURL = jest.fn(() => 'mock-url');
 
+// Polyfill TextEncoder and TextDecoder
+const util = require('node:util');
+if (typeof global.TextEncoder === 'undefined') {
+  global.TextEncoder = util.TextEncoder;
+}
+if (typeof global.TextDecoder === 'undefined') {
+  global.TextDecoder = util.TextDecoder;
+}
+
+// Polyfill crypto
+const cryptoModule = require('node:crypto');
+if (typeof global.crypto === 'undefined' || !global.crypto.subtle) {
+  Object.defineProperty(global, 'crypto', {
+    value: cryptoModule.webcrypto,
+    writable: true,
+    configurable: true,
+  });
+}
+
 // Polyfill Headers for Node.js environment
 if (typeof Headers === 'undefined') {
   global.Headers = class Headers {

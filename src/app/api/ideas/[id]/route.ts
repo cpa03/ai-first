@@ -17,7 +17,8 @@ async function handleGet(context: ApiContext) {
   const { request } = context;
 
   const url = new URL(request.url);
-  const ideaId = url.pathname.split('/').at(-2);
+  const segments = url.pathname.split('/').filter(Boolean);
+  const ideaId = segments.at(-1);
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
@@ -43,7 +44,8 @@ async function handlePut(context: ApiContext) {
   const { request } = context;
 
   const url = new URL(request.url);
-  const ideaId = url.pathname.split('/').at(-2);
+  const segments = url.pathname.split('/').filter(Boolean);
+  const ideaId = segments.at(-1);
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
@@ -100,7 +102,8 @@ async function handleDelete(context: ApiContext) {
   const { request } = context;
 
   const url = new URL(request.url);
-  const ideaId = url.pathname.split('/').at(-2);
+  const segments = url.pathname.split('/').filter(Boolean);
+  const ideaId = segments.at(-1);
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
