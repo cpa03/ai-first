@@ -64,7 +64,6 @@ Complete index of all IdeaFlow documentation.
 
 ## Maintenance
 
-- [RepoKeeper Maintenance Report](./repokeeper-maintenance-report-2026-02-13-updated.md) - Latest repository maintenance report
 - [Branch Cleanup Registry](./BRANCH_CLEANUP.md) - Branch cleanup history and recommendations
 
 ## Project Meta
