@@ -13,6 +13,11 @@ import {
   getRedactionStats,
   clearRedactionCache,
 } from '@/lib/pii-redaction';
+import {
+  TEST_API_KEY_OPENAI,
+  TEST_API_KEY_LONG,
+  TEST_API_KEY_SHORT,
+} from './utils/test-secrets';
 
 describe('PII Redaction Utility', () => {
   describe('redactPII', () => {
@@ -283,7 +288,7 @@ describe('PII Redaction Utility', () => {
           { type: 'phone', value: '123-456-7890' },
         ],
         metadata: {
-          api_key: 'very_long_api_key_string_here_12345',
+          api_key: TEST_API_KEY_LONG,
           timestamp: '2024-01-01T00:00:00Z',
         },
       };
@@ -490,7 +495,7 @@ describe('PII Redaction Utility', () => {
     });
 
     it('should redact common API key formats without labels', () => {
-      const openaiKey = 'sk-test-key-for-redaction-testing-only';
+      const openaiKey = TEST_API_KEY_OPENAI;
       const output = redactPII(`Key is ${openaiKey}`);
       expect(output).toBe('Key is [REDACTED_API_KEY]');
     });
@@ -635,7 +640,7 @@ describe('PII Redaction Utility', () => {
           return 'test@example.com';
         },
         get apiKey() {
-          return 'sk-test-1234567890abcdef';
+          return TEST_API_KEY_OPENAI;
         },
       };
 
@@ -685,7 +690,7 @@ describe('PII Redaction Utility', () => {
     it('should handle Error objects with custom properties', () => {
       const error = new Error('Test error');
       (error as Error & { email: string }).email = 'test@example.com';
-      (error as Error & { apiKey: string }).apiKey = 'sk-test-12345';
+      (error as Error & { apiKey: string }).apiKey = TEST_API_KEY_SHORT;
 
       const output = redactPIIInObject(error) as Record<string, unknown>;
 
@@ -717,7 +722,7 @@ describe('PII Redaction Utility', () => {
         get problematicField() {
           throw new Error('Getter error');
         },
-        apiKey: 'sk-test-12345',
+        apiKey: TEST_API_KEY_SHORT,
       };
 
       const output = redactPIIInObject(input) as Record<string, unknown>;

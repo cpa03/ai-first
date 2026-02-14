@@ -1,6 +1,7 @@
 import { Logger, LogLevel, setLogLevel } from '@/lib/logger';
 import { toErrorResponse } from '@/lib/errors';
 import { redactPII } from '@/lib/pii-redaction';
+import { TEST_API_KEY_OPENAI } from './utils/test-secrets';
 
 describe('Security Redaction Integration', () => {
   beforeEach(() => {
@@ -16,7 +17,7 @@ describe('Security Redaction Integration', () => {
   describe('Logger PII Redaction', () => {
     it('should redact PII in log messages', () => {
       const logger = new Logger('TestLogger');
-      const sensitiveMessage = 'User email is test@example.com and key is sk-1234567890abcdef1234567890abcdef';
+      const sensitiveMessage = `User email is test@example.com and key is ${TEST_API_KEY_OPENAI}`;
 
       logger.info(sensitiveMessage);
 
@@ -30,9 +31,9 @@ describe('Security Redaction Integration', () => {
     it('should redact PII in log arguments', () => {
       const logger = new Logger('TestLogger');
       const metadata = {
-        apiKey: 'sk-1234567890abcdef1234567890abcdef',
+        apiKey: TEST_API_KEY_OPENAI,
         userEmail: 'test@example.com',
-        safeField: 'safe'
+        safeField: 'safe',
       };
 
       logger.info('User action', metadata);
@@ -44,23 +45,25 @@ describe('Security Redaction Integration', () => {
     });
 
     it('should redact new sensitive fields like cookie and connection_string', () => {
-        const logger = new Logger('TestLogger');
-        const metadata = {
-            cookie: 'session_id=12345',
-            connection_string: 'postgres://user:password@host:5432/db'
-        };
+      const logger = new Logger('TestLogger');
+      const metadata = {
+        cookie: 'session_id=12345',
+        connection_string: 'postgres://user:password@host:5432/db',
+      };
 
-        logger.info('Connection info', metadata);
+      logger.info('Connection info', metadata);
 
-        const logArgs = (console.info as jest.Mock).mock.calls[0];
-        expect(logArgs[1].cookie).toBe('[REDACTED_COOKIE]');
-        expect(logArgs[1].connection_string).toBe('[REDACTED_CONNECTION_STRING]');
+      const logArgs = (console.info as jest.Mock).mock.calls[0];
+      expect(logArgs[1].cookie).toBe('[REDACTED_COOKIE]');
+      expect(logArgs[1].connection_string).toBe('[REDACTED_CONNECTION_STRING]');
     });
   });
 
   describe('Error Response PII Redaction', () => {
     it('should redact PII in generic error messages', async () => {
-      const sensitiveError = new Error('Failed to connect to database at postgres://admin:password123@localhost:5432/mydb');
+      const sensitiveError = new Error(
+        'Failed to connect to database at postgres://admin:password123@localhost:5432/mydb'
+      );
       const response = toErrorResponse(sensitiveError, 'req_123');
       const body = await response.json();
 

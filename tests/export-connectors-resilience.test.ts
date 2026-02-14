@@ -7,6 +7,7 @@ import {
 } from '@/lib/export-connectors';
 import { resilienceManager, CircuitBreaker } from '@/lib/resilience';
 import { ExportData } from '@/lib/export-connectors/base';
+import { TEST_NOTION_API_KEY } from './utils/test-secrets';
 
 jest.mock('@/lib/resilience');
 jest.mock('@notionhq/client');
@@ -25,7 +26,7 @@ describe('Export Connector Resilience Integration', () => {
       >;
       mockResilienceManager.execute = mockExecute;
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = TEST_NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'test-page-id';
     });
 

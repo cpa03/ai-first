@@ -1,4 +1,9 @@
 import { redactPIIInObject } from '../src/lib/pii-redaction';
+import {
+  TEST_API_KEY_OPENAI,
+  TEST_JWT_TOKEN,
+  TEST_PASSWORD_SIMPLE,
+} from './utils/test-secrets';
 
 describe('PII Redaction Performance', () => {
   const largeObject = {
@@ -18,14 +23,14 @@ describe('PII Redaction Performance', () => {
         zip: '12345',
         coordinates: {
           lat: 40.7128,
-          lng: -74.0060
-        }
-      }
+          lng: -74.006,
+        },
+      },
     },
     credentials: {
-      apiKey: 'sk-1234567890abcdef1234567890abcdef',
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c',
-      password: 'secret_password_123'
+      apiKey: TEST_API_KEY_OPENAI,
+      token: TEST_JWT_TOKEN,
+      password: TEST_PASSWORD_SIMPLE,
     },
     metadata: {
       ip_address: '192.168.1.1',
@@ -34,9 +39,9 @@ describe('PII Redaction Performance', () => {
       history: Array.from({ length: 20 }, (_, i) => ({
         event: `event_${i}`,
         timestamp: new Date().toISOString(),
-        details: `Detail information for event ${i} that contains no PII but is somewhat long.`
-      }))
-    }
+        details: `Detail information for event ${i} that contains no PII but is somewhat long.`,
+      })),
+    },
   };
 
   it('measures redaction performance for a large object', () => {
@@ -47,7 +52,11 @@ describe('PII Redaction Performance', () => {
     }
     const end = performance.now();
     const duration = end - start;
-    console.log(`Redacted large object ${iterations} times in ${duration.toFixed(2)}ms`);
-    console.log(`Average time per redaction: ${(duration / iterations).toFixed(4)}ms`);
+    console.log(
+      `Redacted large object ${iterations} times in ${duration.toFixed(2)}ms`
+    );
+    console.log(
+      `Average time per redaction: ${(duration / iterations).toFixed(4)}ms`
+    );
   });
 });
