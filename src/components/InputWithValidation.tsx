@@ -164,7 +164,7 @@ const InputWithValidation = forwardRef<
               className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
             >
               <svg
-                className="w-5 h-5 text-green-500 animate-in fade-in duration-200"
+                className="w-5 h-5 text-green-500 animate-in fade-in duration-200 animate-draw-check"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -175,6 +175,10 @@ const InputWithValidation = forwardRef<
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   d="M5 13l4 4L19 7"
+                  style={{
+                    strokeDasharray: '24',
+                    strokeDashoffset: '24',
+                  }}
                 />
               </svg>
             </div>
