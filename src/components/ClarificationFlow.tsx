@@ -14,6 +14,7 @@ import {
   CLARIFIER_CONFIG,
   MESSAGES,
   PLACEHOLDERS,
+  INPUT_STYLES,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -389,7 +390,7 @@ function ClarificationFlow({
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white focus-visible:ring-primary-500 focus-visible:border-primary-500 focus-visible:shadow-[0_0_0_3px_rgba(59,130,246,0.2)] transition-all duration-200 bg-white min-h-[44px]"
+                  className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px]`}
                   aria-required="true"
                   aria-invalid={
                     !!(
