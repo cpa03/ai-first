@@ -37,7 +37,7 @@ interface HealthResponse {
 
 async function handleGet(context: ApiContext) {
   // Security: Detailed health information is restricted to administrators
-  requireAdminAuth(context.request);
+  await requireAdminAuth(context.request);
 
   const circuitBreakerStatuses = circuitBreakerManager.getAllStatuses();
 

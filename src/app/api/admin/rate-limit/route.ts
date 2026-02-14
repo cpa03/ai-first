@@ -11,7 +11,7 @@ import {
 import { requireAdminAuth } from '@/lib/auth';
 
 async function handleGet(context: ApiContext) {
-  requireAdminAuth(context.request);
+  await requireAdminAuth(context.request);
 
   const stats = getRateLimitStats();
 
