@@ -62,6 +62,13 @@ export const metadata: Metadata = {
     images: [...SEO_CONFIG.METADATA.twitter.images],
   },
   robots: SEO_CONFIG.METADATA.robots,
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
