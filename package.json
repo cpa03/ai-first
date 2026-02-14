@@ -19,6 +19,8 @@
     "test:e2e": "jest --testPathPattern='tests/e2e-comprehensive'",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
     "env:check": "bash scripts/validate-env.sh",
+    "audit:ci": "npm audit --audit-level=high",
+    "audit:fix": "npm audit fix",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
     "scan:console": "node scripts/scan-console.js",
