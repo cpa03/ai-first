@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 const Button = dynamic(() => import('@/components/Button'), {
   loading: () => (
@@ -58,6 +59,7 @@ function ClarifyPageContent() {
   const searchParams = useSearchParams();
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
 
   // Read URL params safely - useSearchParams returns null on initial server render
   // We use a ref to track if we've hydrated to avoid hydration mismatches
@@ -125,7 +127,7 @@ function ClarifyPageContent() {
     }
   };
 
-  if (!hasLoaded) {
+  if (authLoading || !hasLoaded) {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
@@ -134,7 +136,25 @@ function ClarifyPageContent() {
             className="mb-4"
             ariaLabel="Loading clarification flow"
           />
-          <p className="text-gray-600">Loading clarification flow...</p>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-red-900 mb-4">
+            Sign In Required
+          </h2>
+          <p className="text-red-800">Please sign in to clarify your ideas.</p>
+          <div className="mt-4">
+            <Button onClick={() => router.push('/')} variant="primary">
+              Go Home
+            </Button>
+          </div>
         </div>
       </div>
     );

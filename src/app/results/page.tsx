@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import dynamic from 'next/dynamic';
 import TaskManagement from '@/components/TaskManagement';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 interface Idea {
   id: string;
@@ -55,8 +56,17 @@ function ResultsContent() {
   const [error, setError] = useState<string | null>(null);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
+  const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
 
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!isAuthenticated) {
+      setLoading(false);
+      setError('Please sign in to view results');
+      return;
+    }
+
     const fetchResults = async () => {
       try {
         setLoading(true);
@@ -101,7 +111,7 @@ function ResultsContent() {
     };
 
     fetchResults();
-  }, [router, searchParams]);
+  }, [router, searchParams, authLoading, isAuthenticated]);
 
   const handleExport = async (format: 'markdown' | 'json') => {
     if (!idea) return;

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { createLogger } from '@/lib/logger';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 interface Idea {
   id: string;
@@ -51,6 +52,7 @@ export default function DashboardPage() {
     isOpen: false,
     idea: null,
   });
+  const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
 
   const fetchIdeas = useCallback(async () => {
     try {
@@ -99,8 +101,16 @@ export default function DashboardPage() {
   }, [filter]);
 
   useEffect(() => {
-    fetchIdeas();
-  }, [fetchIdeas]);
+    if (!authLoading && !isAuthenticated) {
+      setLoading(false);
+      setError('Please sign in to view your ideas');
+      return;
+    }
+
+    if (!authLoading && isAuthenticated) {
+      fetchIdeas();
+    }
+  }, [fetchIdeas, authLoading, isAuthenticated]);
 
   const openDeleteModal = (idea: Idea) => {
     setDeleteModal({ isOpen: true, idea });
