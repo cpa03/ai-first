@@ -31,7 +31,7 @@ async function handlePost(context: ApiContext) {
   const { request } = context;
   const url = new URL(request.url);
   const segments = url.pathname.split('/').filter(Boolean);
-  const deliverableId = segments[2];
+  const deliverableId = segments.at(-2);
 
   if (!deliverableId) {
     return badRequestResponse('Deliverable ID is required');

@@ -12,7 +12,7 @@ async function handleGet(context: ApiContext) {
   const { request } = context;
   const url = new URL(request.url);
   const segments = url.pathname.split('/').filter(Boolean);
-  const ideaId = segments[2];
+  const ideaId = segments.at(-2);
 
   if (!ideaId) {
     throw new AppError('Idea ID is required', ErrorCode.VALIDATION_ERROR, 400);

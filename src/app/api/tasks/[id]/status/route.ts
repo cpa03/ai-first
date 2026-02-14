@@ -21,7 +21,7 @@ async function handlePatch(context: ApiContext) {
   const { request } = context;
   const url = new URL(request.url);
   const segments = url.pathname.split('/').filter(Boolean);
-  const taskId = segments[2];
+  const taskId = segments.at(-2);
 
   if (!taskId) {
     return badRequestResponse('Task ID is required');
