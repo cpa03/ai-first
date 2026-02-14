@@ -88,6 +88,14 @@ class AIService {
         timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
+
+    // Periodic cleanup of cost trackers to prevent memory leaks
+    setInterval(
+      () => {
+        this.cleanupOldCostTrackers();
+      },
+      5 * 60 * 1000
+    );
   }
 
   // Initialize AI service with provider-specific config
@@ -141,7 +149,34 @@ class AIService {
             temperature: config.temperature,
           });
 
-          const response = completion.choices[0]?.message?.content || '';
+          if (
+            !completion ||
+            !completion.choices ||
+            completion.choices.length === 0
+          ) {
+            const { AppError, ErrorCode } = await import('./errors');
+            throw new AppError(
+              'Invalid response from OpenAI: no choices returned',
+              ErrorCode.EXTERNAL_SERVICE_ERROR,
+              STATUS_CODES.BAD_GATEWAY,
+              undefined,
+              true
+            );
+          }
+
+          const choice = completion.choices[0];
+          if (!choice || !choice.message) {
+            const { AppError, ErrorCode } = await import('./errors');
+            throw new AppError(
+              'Invalid response from OpenAI: missing message content',
+              ErrorCode.EXTERNAL_SERVICE_ERROR,
+              STATUS_CODES.BAD_GATEWAY,
+              undefined,
+              true
+            );
+          }
+
+          const response = choice.message.content || '';
 
           const usage = completion.usage;
           if (usage) {
@@ -319,6 +354,10 @@ class AIService {
     // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
     let totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
 
+    // Maximum iterations to prevent potential infinite loops
+    const MAX_CONTEXT_ITERATIONS = 1000;
+    let iterations = 0;
+
     // If context exceeds token limit, remove oldest non-system messages
     if (Math.ceil(totalChars / 4) > maxTokens) {
       const systemMessages = context.filter((m) => m.role === 'system');
@@ -326,13 +365,22 @@ class AIService {
 
       while (
         Math.ceil(totalChars / 4) > maxTokens &&
-        nonSystemMessages.length > 0
+        nonSystemMessages.length > 0 &&
+        iterations < MAX_CONTEXT_ITERATIONS
       ) {
+        iterations++;
         const removed = nonSystemMessages.shift();
         if (removed) {
           totalChars -= removed.content.length;
         }
       }
+
+      if (iterations >= MAX_CONTEXT_ITERATIONS) {
+        logger.warn(
+          `Context window iteration limit reached (${MAX_CONTEXT_ITERATIONS}). Context may exceed token limit.`
+        );
+      }
+
       context = [...systemMessages, ...nonSystemMessages];
     }
 
