@@ -6,6 +6,10 @@ import ToastContainer from '@/components/ToastContainer';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
+import {
+  KeyboardShortcutsProvider,
+  KeyboardShortcutsButton,
+} from '@/components/KeyboardShortcutsProvider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -73,40 +77,45 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-gray-50 font-sans">
         <ErrorBoundary>
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
-          >
-            Skip to main content
-          </a>
-          <div className="min-h-screen flex flex-col">
-            <ToastContainer />
-            <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-16">
-                  <div className="flex items-center">
-                    <Link
-                      href="/"
-                      className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
-                    >
-                      IdeaFlow
-                    </Link>
+          <KeyboardShortcutsProvider>
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-600 text-white px-4 py-2 rounded-md z-50"
+            >
+              Skip to main content
+            </a>
+            <div className="min-h-screen flex flex-col">
+              <ToastContainer />
+              <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="flex justify-between items-center h-16">
+                    <div className="flex items-center">
+                      <Link
+                        href="/"
+                        className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
+                      >
+                        IdeaFlow
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <KeyboardShortcutsButton />
+                      <MobileNav />
+                    </div>
                   </div>
-                  <MobileNav />
                 </div>
-              </div>
-            </header>
-            <main id="main-content" className="flex-1" role="main">
-              {children}
-            </main>
-            <footer className="bg-white border-t border-gray-200">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <p className="text-center text-sm text-gray-500">
-                  © 2025 IdeaFlow. Turn ideas into action.
-                </p>
-              </div>
-            </footer>
-          </div>
+              </header>
+              <main id="main-content" className="flex-1" role="main">
+                {children}
+              </main>
+              <footer className="bg-white border-t border-gray-200">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                  <p className="text-center text-sm text-gray-500">
+                    © 2025 IdeaFlow. Turn ideas into action.
+                  </p>
+                </div>
+              </footer>
+            </div>
+          </KeyboardShortcutsProvider>
         </ErrorBoundary>
       </body>
     </html>
