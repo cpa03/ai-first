@@ -12,6 +12,7 @@ import {
   type ResilienceConfig,
 } from './resilience';
 import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
+import { resourceCleanupManager } from './resource-cleanup';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -61,6 +62,7 @@ class AIService {
   private costTrackers: CostTracker[] = [];
   private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
+  private cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
     this.todayCostCache = new Cache<number>({
@@ -90,11 +92,15 @@ class AIService {
     }
 
     // Periodic cleanup of cost trackers to prevent memory leaks
-    setInterval(
+    this.cleanupIntervalId = setInterval(
       () => {
         this.cleanupOldCostTrackers();
       },
       5 * 60 * 1000
+    );
+
+    resourceCleanupManager.register('ai-service-interval', () =>
+      this.cleanup()
     );
   }
 
@@ -485,6 +491,17 @@ class AIService {
     this.costTrackers = this.costTrackers.filter(
       (tracker) => tracker.timestamp.getTime() > cutoffTime
     );
+  }
+
+  /**
+   * Cleanup method to stop the interval and prevent memory leaks
+   * Should be called on service shutdown
+   */
+  cleanup(): void {
+    if (this.cleanupIntervalId) {
+      clearInterval(this.cleanupIntervalId);
+      this.cleanupIntervalId = null;
+    }
   }
 
   private getTodayCost(): number {
