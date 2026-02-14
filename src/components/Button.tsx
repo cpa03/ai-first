@@ -1,6 +1,6 @@
 'use client';
 
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import { ButtonHTMLAttributes, forwardRef, useState, useCallback } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -8,6 +8,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   fullWidth?: boolean;
   children: React.ReactNode;
+}
+
+interface Ripple {
+  id: number;
+  x: number;
+  y: number;
+  size: number;
 }
 
 const variantClasses = {
@@ -42,14 +49,48 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       disabled,
       children,
       className = '',
+      onClick,
       ...props
     },
     ref
   ) => {
+    const [ripples, setRipples] = useState<Ripple[]>([]);
+    const [rippleIdCounter, setRippleIdCounter] = useState(0);
+
+    const createRipple = useCallback(
+      (event: React.MouseEvent<HTMLButtonElement>) => {
+        if (disabled || loading) return;
+
+        const button = event.currentTarget;
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+
+        const newRipple: Ripple = {
+          id: rippleIdCounter,
+          x,
+          y,
+          size,
+        };
+
+        setRipples((prev) => [...prev, newRipple]);
+        setRippleIdCounter((prev) => prev + 1);
+
+        setTimeout(() => {
+          setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
+        }, 600);
+
+        onClick?.(event);
+      },
+      [disabled, loading, onClick, rippleIdCounter]
+    );
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
+        onClick={createRipple}
         className={`
           ${variantClasses[variant]}
           ${sizeClasses[size]}
@@ -58,6 +99,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           rounded-md font-medium transition-all duration-200
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRingClasses[variant]} focus-visible:ring-offset-white
           motion-reduce:hover:scale-100 motion-reduce:active:scale-100 hover:scale-[1.02] active:scale-[0.98]
+          relative overflow-hidden
           ${className}
         `}
         aria-busy={loading}
@@ -87,6 +129,19 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           </svg>
         )}
         {children}
+        {ripples.map((ripple) => (
+          <span
+            key={ripple.id}
+            className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
+            style={{
+              left: ripple.x,
+              top: ripple.y,
+              width: ripple.size,
+              height: ripple.size,
+            }}
+            aria-hidden="true"
+          />
+        ))}
       </button>
     );
   }
