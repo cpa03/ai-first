@@ -156,6 +156,28 @@ export interface AgentLog {
   timestamp: string;
 }
 
+/**
+ * Pagination options for list queries
+ * Prevents memory exhaustion by limiting result sets
+ */
+export interface PaginationOptions {
+  page?: number;
+  pageSize?: number;
+  cursor?: string;
+}
+
+/**
+ * Paginated result wrapper
+ */
+export interface PaginatedResult<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+  nextCursor?: string;
+}
+
 // Database service class
 export class DatabaseService {
   private _client: ReturnType<typeof createClient<Database>> | null = null;
@@ -432,6 +454,48 @@ export class DatabaseService {
 
     if (error) throw error;
     return data || [];
+  }
+
+  async getUserIdeasPaginated(
+    userId: string,
+    pagination: PaginationOptions = {}
+  ): Promise<PaginatedResult<Idea>> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const page = Math.max(1, pagination.page || 1);
+    const pageSize = Math.min(
+      pagination.pageSize || VALIDATION_LIMITS.PAGINATION.DEFAULT_LIMIT,
+      VALIDATION_LIMITS.PAGINATION.MAX_LIMIT
+    );
+    const offset = (page - 1) * pageSize;
+
+    const { count, error: countError } = await this.client
+      .from('ideas')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .is('deleted_at', null);
+
+    if (countError) throw countError;
+
+    const { data, error } = await this.client
+      .from('ideas')
+      .select('*')
+      .eq('user_id', userId)
+      .is('deleted_at', null)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (error) throw error;
+
+    const total = count || 0;
+
+    return {
+      data: data || [],
+      total,
+      page,
+      pageSize,
+      hasMore: offset + (data?.length || 0) < total,
+    };
   }
 
   async updateIdea(id: string, updates: Partial<Idea>): Promise<Idea> {
@@ -779,6 +843,59 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getVectorsPaginated(
+    ideaId: string,
+    referenceType?: string,
+    pagination: PaginationOptions = {}
+  ): Promise<PaginatedResult<Vector>> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const page = Math.max(1, pagination.page || 1);
+    const pageSize = Math.min(
+      pagination.pageSize || VALIDATION_LIMITS.PAGINATION.DEFAULT_LIMIT,
+      VALIDATION_LIMITS.PAGINATION.MAX_LIMIT
+    );
+    const offset = (page - 1) * pageSize;
+
+    let countQuery = this.client
+      .from('vectors')
+      .select('*', { count: 'exact', head: true })
+      .eq('idea_id', ideaId);
+
+    if (referenceType) {
+      countQuery = countQuery.eq('reference_type', referenceType);
+    }
+
+    const { count, error: countError } = await countQuery;
+
+    if (countError) throw countError;
+
+    let query = this.client
+      .from('vectors')
+      .select('*')
+      .eq('idea_id', ideaId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (referenceType) {
+      query = query.eq('reference_type', referenceType);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    const total = count || 0;
+
+    return {
+      data: data || [],
+      total,
+      page,
+      pageSize,
+      hasMore: offset + (data?.length || 0) < total,
+    };
+  }
+
   async getVectorsByIdeaIds(
     ideaIds: string[],
     referenceType?: string
@@ -946,14 +1063,81 @@ export class DatabaseService {
     return data || [];
   }
 
+  async getAgentLogsPaginated(
+    agent?: string,
+    pagination: PaginationOptions = {}
+  ): Promise<PaginatedResult<AgentLog>> {
+    if (!this.client) throw new Error('Supabase client not initialized');
+
+    const page = Math.max(1, pagination.page || 1);
+    const pageSize = Math.min(
+      pagination.pageSize || VALIDATION_LIMITS.PAGINATION.AGENT_LOGS_DEFAULT,
+      VALIDATION_LIMITS.PAGINATION.MAX_LIMIT
+    );
+    const offset = (page - 1) * pageSize;
+
+    let countQuery = this.client
+      .from('agent_logs')
+      .select('*', { count: 'exact', head: true });
+
+    if (agent) {
+      countQuery = countQuery.eq('agent', agent);
+    }
+
+    const { count, error: countError } = await countQuery;
+
+    if (countError) throw countError;
+
+    let query = this.client
+      .from('agent_logs')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .range(offset, offset + pageSize - 1);
+
+    if (agent) {
+      query = query.eq('agent', agent);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+
+    const total = count || 0;
+
+    return {
+      data: data || [],
+      total,
+      page,
+      pageSize,
+      hasMore: offset + (data?.length || 0) < total,
+    };
+  }
+
+  /**
+   * Helper method to chunk array into smaller batches
+   * Prevents query parameter overflow and memory exhaustion
+   */
+  private chunkArray<T>(array: T[], size: number): T[][] {
+    const chunks: T[][] = [];
+    for (let i = 0; i < array.length; i += size) {
+      chunks.push(array.slice(i, i + size));
+    }
+    return chunks;
+  }
+
   // Analytics and reporting
-  async getIdeaStats(userId: string): Promise<{
+  async getIdeaStats(
+    userId: string,
+    options: { batchSize?: number } = {}
+  ): Promise<{
     totalIdeas: number;
     ideasByStatus: Record<string, number>;
     totalDeliverables: number;
     totalTasks: number;
   }> {
     if (!this.client) throw new Error('Supabase client not initialized');
+
+    const batchSize = options.batchSize || 1000;
 
     const { data: ideas } = await this.client
       .from('ideas')
@@ -972,36 +1156,64 @@ export class DatabaseService {
 
     const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
 
-    const [deliverablesResponse, deliverableCountResponse] = await Promise.all([
-      this.client
-        .from('deliverables')
-        .select('id')
-        .in('idea_id', ideaIds)
-        .is('deleted_at', null),
-      this.client
+    if (ideaIds.length === 0) {
+      return {
+        totalIdeas: 0,
+        ideasByStatus,
+        totalDeliverables: 0,
+        totalTasks: 0,
+      };
+    }
+
+    let totalDeliverables = 0;
+    let totalTasks = 0;
+
+    const ideaIdChunks = this.chunkArray(ideaIds, batchSize);
+
+    for (const chunk of ideaIdChunks) {
+      const { count: deliverableCount } = await this.client
         .from('deliverables')
         .select('*', { count: 'exact', head: true })
-        .in('idea_id', ideaIds)
-        .is('deleted_at', null),
-    ]);
+        .in('idea_id', chunk)
+        .is('deleted_at', null);
 
-    const deliverableIds =
-      (deliverablesResponse.data as Array<{ id: string }> | null)?.map(
-        (d) => d.id
-      ) || [];
-    const { count: totalDeliverables } = deliverableCountResponse;
+      totalDeliverables += deliverableCount || 0;
 
-    const { count: totalTasks } = await this.client
-      .from('tasks')
-      .select('*', { count: 'exact', head: true })
-      .in('deliverable_id', deliverableIds)
-      .is('deleted_at', null);
+      if (deliverableCount && deliverableCount > 0) {
+        const { data: deliverables } = await this.client
+          .from('deliverables')
+          .select('id')
+          .in('idea_id', chunk)
+          .is('deleted_at', null);
+
+        const deliverableIds =
+          (deliverables as Array<{ id: string }> | null)?.map((d) => d.id) ||
+          [];
+
+        if (deliverableIds.length > 0) {
+          const deliverableIdChunks = this.chunkArray(
+            deliverableIds,
+            batchSize
+          );
+
+          for (const dChunk of deliverableIdChunks) {
+            const { count: taskCount } = await this.client
+              .from('tasks')
+              .select('*', { count: 'exact', head: true })
+              .in('deliverable_id', dChunk)
+              .is('deleted_at', null);
+
+            totalTasks += taskCount || 0;
+          }
+        }
+      }
+    }
 
     return {
       totalIdeas: ideas?.length || 0,
       ideasByStatus,
-      totalDeliverables: totalDeliverables || 0,
-      totalTasks: totalTasks || 0,
+      totalDeliverables,
+      totalTasks,
     };
   }
 
