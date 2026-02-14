@@ -6,6 +6,11 @@ import { timingSafeEqual, createHash } from 'node:crypto';
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');
 
+// SECURITY: Pre-calculate hash to improve performance and slightly reduce DoS surface
+const EXPECTED_ADMIN_HASH = ADMIN_API_KEY
+  ? createHash('sha256').update(ADMIN_API_KEY).digest()
+  : null;
+
 if (!ADMIN_API_KEY && process.env.NODE_ENV !== 'development') {
   logger.warn(
     'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
@@ -19,31 +24,26 @@ export interface AuthenticatedUser {
 }
 
 export function isAdminAuthenticated(request: Request): boolean {
-  if (!ADMIN_API_KEY) {
+  if (!EXPECTED_ADMIN_HASH) {
     return process.env.NODE_ENV === 'development';
   }
 
   const authHeader = request.headers.get('authorization');
-  const url = new URL(request.url);
-  const apiKey = url.searchParams.get('admin_key');
-
-  if (!authHeader && !apiKey) {
+  if (!authHeader) {
     return false;
   }
 
-  const expectedHash = createHash('sha256').update(ADMIN_API_KEY).digest();
+  const [scheme, credentials] = authHeader.split(' ');
 
-  if (authHeader) {
-    const [scheme, credentials] = authHeader.split(' ');
-    if (scheme.toLowerCase() === 'bearer' && credentials) {
-      const actualHash = createHash('sha256').update(credentials).digest();
-      return timingSafeEqual(expectedHash, actualHash);
-    }
-  }
-
-  if (apiKey) {
-    const actualHash = createHash('sha256').update(apiKey).digest();
-    return timingSafeEqual(expectedHash, actualHash);
+  // SECURITY: Limit token length to prevent CPU exhaustion during hashing
+  // Also remove insecure query parameter support (admin_key)
+  if (
+    scheme?.toLowerCase() === 'bearer' &&
+    credentials &&
+    credentials.length <= 512
+  ) {
+    const actualHash = createHash('sha256').update(credentials).digest();
+    return timingSafeEqual(EXPECTED_ADMIN_HASH, actualHash);
   }
 
   return false;

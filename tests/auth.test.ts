@@ -123,66 +123,15 @@ describe('auth', () => {
 
           expect(result).toBe(false);
         });
-      });
 
-      describe('Query parameter authentication', () => {
-        it('should return true with valid admin_key query parameter', () => {
+        it('should return false with extremely long token (DoS prevention)', () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=test-admin-key-12345'
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(true);
-        });
-
-        it('should return false with invalid admin_key query parameter', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=wrong-key'
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(false);
-        });
-
-        it('should return false with empty admin_key query parameter', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key='
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(false);
-        });
-      });
-
-      describe('Multiple authentication methods', () => {
-        it('should accept valid Bearer token even with admin_key query param', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=wrong-key',
-            {
-              headers: {
-                Authorization: 'Bearer test-admin-key-12345',
-              },
-            }
-          );
-          const result = isAdminAuthenticated(request);
-
-          expect(result).toBe(true);
-        });
-
-        it('should return false with valid admin_key but invalid Authorization header', () => {
-          const { isAdminAuthenticated } = require('@/lib/auth');
-          const request = new Request(
-            'http://localhost/api/admin/test?admin_key=test-admin-key-12345',
-            {
-              headers: {
-                Authorization: 'Bearer wrong-key',
-              },
-            }
-          );
+          const longToken = 'a'.repeat(1000);
+          const request = new Request('http://localhost/api/admin/test', {
+            headers: {
+              Authorization: `Bearer ${longToken}`,
+            },
+          });
           const result = isAdminAuthenticated(request);
 
           expect(result).toBe(false);
@@ -190,7 +139,7 @@ describe('auth', () => {
       });
 
       describe('No authentication provided', () => {
-        it('should return false when no Authorization header or admin_key', () => {
+        it('should return false when no Authorization header', () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request('http://localhost/api/admin/test');
           const result = isAdminAuthenticated(request);
@@ -230,15 +179,6 @@ describe('auth', () => {
         expect(result).toBe(true);
       });
 
-      it('should handle URL encoding in query parameter', () => {
-        const { isAdminAuthenticated } = require('@/lib/auth');
-        const request = new Request(
-          'http://localhost/api/admin/test?admin_key=test-key-with-special-chars%21%40%23%24%25'
-        );
-        const result = isAdminAuthenticated(request);
-
-        expect(result).toBe(true);
-      });
     });
   });
 
@@ -299,14 +239,6 @@ describe('auth', () => {
       expect(() => requireAdminAuth(request)).not.toThrow();
     });
 
-    it('should not throw when authenticated with admin_key', () => {
-      const { requireAdminAuth } = require('@/lib/auth');
-      const request = new Request(
-        'http://localhost/api/admin/test?admin_key=test-admin-key'
-      );
-
-      expect(() => requireAdminAuth(request)).not.toThrow();
-    });
 
     it('should handle empty request gracefully', () => {
       const { requireAdminAuth } = require('@/lib/auth');
