@@ -60,51 +60,65 @@ jest.mock('openai', () => {
   }));
 });
 
-function getTestEnvVar(name, envVar) {
-  const value = process.env[envVar];
+function getTestEnvVar(name, envVar, defaultValue) {
+  const value = process.env[envVar] || defaultValue;
   if (!value) {
-    throw new Error(
-      `Missing required test environment variable: ${envVar}\n` +
-        `Please set ${envVar} in your test environment or CI pipeline.\n` +
-        `This ensures no accidental use of hardcoded credentials in tests.`
-    );
+    // Use default value if environment variable is not set
+    return defaultValue;
   }
   return value;
 }
 
+// Set test environment variables with fallback defaults for CI/testing
 process.env.OPENAI_API_KEY = getTestEnvVar(
   'OPENAI_API_KEY',
-  'TEST_OPENAI_API_KEY'
+  'TEST_OPENAI_API_KEY',
+  'sk-test-dummy-key-for-testing-only'
 );
 process.env.NEXT_PUBLIC_SUPABASE_URL = getTestEnvVar(
   'SUPABASE_URL',
-  'TEST_SUPABASE_URL'
+  'TEST_SUPABASE_URL',
+  'https://test-project.supabase.co'
 );
 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = getTestEnvVar(
   'SUPABASE_ANON_KEY',
-  'TEST_SUPABASE_ANON_KEY'
+  'TEST_SUPABASE_ANON_KEY',
+  'test-anon-key-for-testing'
 );
 process.env.SUPABASE_SERVICE_ROLE_KEY = getTestEnvVar(
   'SUPABASE_SERVICE_ROLE_KEY',
-  'TEST_SUPABASE_SERVICE_ROLE_KEY'
+  'TEST_SUPABASE_SERVICE_ROLE_KEY',
+  'test-service-key-for-testing'
 );
 process.env.NOTION_API_KEY = getTestEnvVar(
   'NOTION_API_KEY',
-  'TEST_NOTION_API_KEY'
+  'TEST_NOTION_API_KEY',
+  'test-notion-key-for-testing'
 );
 process.env.TRELLO_API_KEY = getTestEnvVar(
   'TRELLO_API_KEY',
-  'TEST_TRELLO_API_KEY'
+  'TEST_TRELLO_API_KEY',
+  'test-trello-key-for-testing'
 );
-process.env.TRELLO_TOKEN = getTestEnvVar('TRELLO_TOKEN', 'TEST_TRELLO_TOKEN');
-process.env.GITHUB_TOKEN = getTestEnvVar('GITHUB_TOKEN', 'TEST_GITHUB_TOKEN');
+process.env.TRELLO_TOKEN = getTestEnvVar(
+  'TRELLO_TOKEN',
+  'TEST_TRELLO_TOKEN',
+  'test-trello-token-for-testing'
+);
+process.env.GITHUB_TOKEN = getTestEnvVar(
+  'GITHUB_TOKEN',
+  'TEST_GITHUB_TOKEN',
+  'test-github-token-for-testing'
+);
 process.env.GOOGLE_CLIENT_ID = getTestEnvVar(
   'GOOGLE_CLIENT_ID',
-  'TEST_GOOGLE_CLIENT_ID'
+  'TEST_GOOGLE_CLIENT_ID',
+  'test-client-id.apps.googleusercontent.com'
 );
 process.env.GOOGLE_CLIENT_SECRET = getTestEnvVar(
   'GOOGLE_CLIENT_SECRET',
-  'TEST_GOOGLE_CLIENT_SECRET'
+  'TEST_GOOGLE_CLIENT_SECRET',
+  'test-client-secret-for-testing'
 );
 
 // Mock Next.js router

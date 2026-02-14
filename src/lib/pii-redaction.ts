@@ -89,9 +89,9 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
     /(?:api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|admin[-_ ]?key|adminkey)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
-  // US Passport: 9 digits, optionally with spaces or dashes
+  // US Passport: 9 digits with passport prefix or context
   passport:
-    /\b(?:passport[:\s]+)?[0-9]{1,3}\s?[0-9]{1,3}\s?[0-9]{1,3}\b|\b[0-9]{9}\b/gi,
+    /\b(?:passport[:\s]+|passport\s*#\s*)[A-Z0-9]{6,9}\b|\b[A-Z]{1,2}[0-9]{7,9}\b|\b(?=.*[A-Z])[A-Z0-9]{9}\b/gi,
   // Driver's License: Alphanumeric, typically 6-14 characters, various formats
   driversLicense:
     /\b(?:dl|driver[\s_-]?license|license[:\s]+)[\s]*[:#]?\s*([A-Za-z0-9*-]{6,14})\b|\b[A-Z]{1,2}[0-9]{6,10}[A-Z]{0,2}\b/gi,
