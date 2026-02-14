@@ -19,6 +19,14 @@ export interface CopyButtonProps {
 
 const logger = createLogger('CopyButton');
 
+const HAPTIC_FEEDBACK_DURATION = 50;
+
+const triggerHapticFeedback = (): void => {
+  if (typeof navigator !== 'undefined' && navigator.vibrate) {
+    navigator.vibrate(HAPTIC_FEEDBACK_DURATION);
+  }
+};
+
 const CopyButtonComponent = function CopyButton({
   textToCopy,
   label = 'Copy',
@@ -47,6 +55,7 @@ const CopyButtonComponent = function CopyButton({
 
     try {
       await navigator.clipboard.writeText(textToCopy);
+      triggerHapticFeedback();
       setCopied(true);
 
       timeoutRef.current = setTimeout(() => {
