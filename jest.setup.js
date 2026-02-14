@@ -60,66 +60,31 @@ jest.mock('openai', () => {
   }));
 });
 
-function getTestEnvVar(name, envVar, defaultValue) {
-  const value = process.env[envVar] || defaultValue;
-  if (!value) {
-    // Use default value if environment variable is not set
-    return defaultValue;
-  }
-  return value;
-}
-
-// Set test environment variables with fallback defaults for CI/testing
-process.env.OPENAI_API_KEY = getTestEnvVar(
-  'OPENAI_API_KEY',
-  'TEST_OPENAI_API_KEY',
-  'sk-test-dummy-key-for-testing-only'
-);
-process.env.NEXT_PUBLIC_SUPABASE_URL = getTestEnvVar(
-  'SUPABASE_URL',
-  'TEST_SUPABASE_URL',
-  'https://test-project.supabase.co'
-);
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = getTestEnvVar(
-  'SUPABASE_ANON_KEY',
-  'TEST_SUPABASE_ANON_KEY',
-  'test-anon-key-for-testing'
-);
-process.env.SUPABASE_SERVICE_ROLE_KEY = getTestEnvVar(
-  'SUPABASE_SERVICE_ROLE_KEY',
-  'TEST_SUPABASE_SERVICE_ROLE_KEY',
-  'test-service-key-for-testing'
-);
-process.env.NOTION_API_KEY = getTestEnvVar(
-  'NOTION_API_KEY',
-  'TEST_NOTION_API_KEY',
-  'test-notion-key-for-testing'
-);
-process.env.TRELLO_API_KEY = getTestEnvVar(
-  'TRELLO_API_KEY',
-  'TEST_TRELLO_API_KEY',
-  'test-trello-key-for-testing'
-);
-process.env.TRELLO_TOKEN = getTestEnvVar(
-  'TRELLO_TOKEN',
-  'TEST_TRELLO_TOKEN',
-  'test-trello-token-for-testing'
-);
-process.env.GITHUB_TOKEN = getTestEnvVar(
-  'GITHUB_TOKEN',
-  'TEST_GITHUB_TOKEN',
-  'test-github-token-for-testing'
-);
-process.env.GOOGLE_CLIENT_ID = getTestEnvVar(
-  'GOOGLE_CLIENT_ID',
-  'TEST_GOOGLE_CLIENT_ID',
-  'test-client-id.apps.googleusercontent.com'
-);
-process.env.GOOGLE_CLIENT_SECRET = getTestEnvVar(
-  'GOOGLE_CLIENT_SECRET',
-  'TEST_GOOGLE_CLIENT_SECRET',
-  'test-client-secret-for-testing'
-);
+// Set test environment variables from environment or use safe defaults
+// These are DUMMY values for testing only - never real credentials
+process.env.OPENAI_API_KEY =
+  process.env.TEST_OPENAI_API_KEY || 'sk-test-DUMMY-VALUE-FOR-TESTING-ONLY';
+process.env.NEXT_PUBLIC_SUPABASE_URL =
+  process.env.TEST_SUPABASE_URL || 'https://test-DUMMY.supabase.co';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY =
+  process.env.TEST_SUPABASE_ANON_KEY || 'test-DUMMY-anon-key-FOR-TESTING';
+process.env.SUPABASE_SERVICE_ROLE_KEY =
+  process.env.TEST_SUPABASE_SERVICE_ROLE_KEY ||
+  'test-DUMMY-service-key-FOR-TESTING';
+process.env.NOTION_API_KEY =
+  process.env.TEST_NOTION_API_KEY || 'test-DUMMY-notion-key-FOR-TESTING';
+process.env.TRELLO_API_KEY =
+  process.env.TEST_TRELLO_API_KEY || 'test-DUMMY-trello-key-FOR-TESTING';
+process.env.TRELLO_TOKEN =
+  process.env.TEST_TRELLO_TOKEN || 'test-DUMMY-trello-token-FOR-TESTING';
+process.env.GITHUB_TOKEN =
+  process.env.TEST_GITHUB_TOKEN || 'test-DUMMY-github-token-FOR-TESTING';
+process.env.GOOGLE_CLIENT_ID =
+  process.env.TEST_GOOGLE_CLIENT_ID ||
+  'test-DUMMY-client-id.apps.googleusercontent.com';
+process.env.GOOGLE_CLIENT_SECRET =
+  process.env.TEST_GOOGLE_CLIENT_SECRET ||
+  'test-DUMMY-client-secret-FOR-TESTING';
 
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
