@@ -105,3 +105,9 @@ __pycache__/
 .jules/
 .Jules/
 .sisyphus/
+
+# Archive backups (should not be committed)
+docs/archive/*.gz
+docs/archive/*.zip
+docs/archive/*.tar
+docs/archive/*.tar.gz
