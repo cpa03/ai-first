@@ -1,9 +1,3 @@
-
-process.env.OPENAI_API_KEY = 'test-key';
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
-
 jest.mock('@/lib/db', () => ({
   dbService: {
     getIdea: jest.fn(),
@@ -41,14 +35,14 @@ describe('/api/ideas/[id]/tasks GET', () => {
       {
         id: 'del-2',
         title: 'Deliverable 2',
-        tasks: [
-          { id: 'task-3', status: 'completed', estimate: 2 },
-        ],
+        tasks: [{ id: 'task-3', status: 'completed', estimate: 2 }],
       },
     ];
 
     (dbService.getIdea as jest.Mock).mockResolvedValue(mockIdea);
-    (dbService.getIdeaDeliverablesWithTasks as jest.Mock).mockResolvedValue(mockDeliverablesWithTasks);
+    (dbService.getIdeaDeliverablesWithTasks as jest.Mock).mockResolvedValue(
+      mockDeliverablesWithTasks
+    );
 
     const request = new Request(`http://localhost/api/ideas/${ideaId}/tasks`);
     const response = await GET(request as any);
@@ -78,7 +72,9 @@ describe('/api/ideas/[id]/tasks GET', () => {
     ];
 
     (dbService.getIdea as jest.Mock).mockResolvedValue(mockIdea);
-    (dbService.getIdeaDeliverablesWithTasks as jest.Mock).mockResolvedValue(mockDeliverablesWithTasks);
+    (dbService.getIdeaDeliverablesWithTasks as jest.Mock).mockResolvedValue(
+      mockDeliverablesWithTasks
+    );
 
     const request = new Request(`http://localhost/api/ideas/${ideaId}/tasks`);
     const response = await GET(request as any);
