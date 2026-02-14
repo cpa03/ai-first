@@ -28,7 +28,9 @@ export type PIIPatternType =
   | 'ipAddress'
   | 'apiKey'
   | 'jwt'
-  | 'urlWithCredentials';
+  | 'urlWithCredentials'
+  | 'passport'
+  | 'driversLicense';
 
 /**
  * PII regex patterns interface
@@ -42,6 +44,8 @@ interface PIIPatterns {
   apiKey: RegExp;
   jwt: RegExp;
   urlWithCredentials: RegExp;
+  passport: RegExp;
+  driversLicense: RegExp;
 }
 
 /**
@@ -74,7 +78,8 @@ interface SafePropertyDescriptor {
 }
 
 const PII_REGEX_PATTERNS: PIIPatterns = {
-  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/g,
+  // Enhanced email regex with Unicode support for international characters
+  email: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/gu,
   phone:
     /\b(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})\b/g,
   ssn: /\b\d{3}-\d{2}-\d{4}\b/g,
@@ -84,6 +89,12 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
     /(?:api[_-]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[_-]?key|bearer|admin[-_ ]?key|adminkey)[\s:=]+['"]?([a-zA-Z0-9_-]{20,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
+  // US Passport: 9 digits, optionally with spaces or dashes
+  passport:
+    /\b(?:passport[:\s]+)?[0-9]{1,3}\s?[0-9]{1,3}\s?[0-9]{1,3}\b|\b[0-9]{9}\b/gi,
+  // Driver's License: Alphanumeric, typically 6-14 characters, various formats
+  driversLicense:
+    /\b(?:dl|driver[\s_-]?license|license[:\s]+)[\s]*[:#]?\s*([A-Za-z0-9*-]{6,14})\b|\b[A-Z]{1,2}[0-9]{6,10}[A-Z]{0,2}\b/gi,
 };
 
 /**
@@ -102,13 +113,15 @@ const COMBINED_PII_REGEX = new RegExp(
     `(?<jwt>(?:${API_KEY_PREFIXES})?${PII_REGEX_PATTERNS.jwt.source})`,
     `(?<urlWithCredentials>${PII_REGEX_PATTERNS.urlWithCredentials.source})`,
     `(?<email>${PII_REGEX_PATTERNS.email.source})`,
+    `(?<passport>${PII_REGEX_PATTERNS.passport.source})`,
+    `(?<driversLicense>${PII_REGEX_PATTERNS.driversLicense.source})`,
     `(?<phone>${PII_REGEX_PATTERNS.phone.source})`,
     `(?<ssn>${PII_REGEX_PATTERNS.ssn.source})`,
     `(?<creditCard>${PII_REGEX_PATTERNS.creditCard.source})`,
     `(?<ipAddress>${PII_REGEX_PATTERNS.ipAddress.source})`,
     `(?<apiKey>${PII_REGEX_PATTERNS.apiKey.source})`,
   ].join('|'),
-  'gi'
+  'giu'
 );
 
 /**
@@ -127,6 +140,8 @@ export function redactPII(text: string): string {
     if (groups.jwt) return labels.JWT;
     if (groups.urlWithCredentials) return labels.URL_WITH_CREDENTIALS;
     if (groups.email) return labels.EMAIL;
+    if (groups.passport) return labels.PASSPORT;
+    if (groups.driversLicense) return labels.DRIVERS_LICENSE;
     if (groups.phone) return labels.PHONE;
     if (groups.ssn) return labels.SSN;
     if (groups.creditCard) return labels.CREDIT_CARD;
