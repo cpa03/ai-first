@@ -1,7 +1,13 @@
 'use client';
 
 import React, { forwardRef, useState, useEffect, useCallback } from 'react';
-import { INPUT_STYLES, TEXT_COLORS, BG_COLORS } from '@/lib/config';
+import {
+  INPUT_STYLES,
+  TEXT_COLORS,
+  BG_COLORS,
+  SIZES,
+  SVG_ANIMATION,
+} from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -17,7 +23,7 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
   autoResize?: boolean;
 }
 
-const MIN_TEXTAREA_HEIGHT = 100;
+const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
 
 const InputWithValidation = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
@@ -177,8 +183,8 @@ const InputWithValidation = forwardRef<
                   strokeLinejoin="round"
                   d="M5 13l4 4L19 7"
                   style={{
-                    strokeDasharray: '24',
-                    strokeDashoffset: '24',
+                    strokeDasharray: SVG_ANIMATION.DASH_ARRAY.FULL,
+                    strokeDashoffset: SVG_ANIMATION.DASH_OFFSET.HIDDEN,
                   }}
                 />
               </svg>
