@@ -22,6 +22,7 @@ import ProgressStepper from '@/components/ProgressStepper';
 import InputWithValidation from '@/components/InputWithValidation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
+import CopyButton from '@/components/CopyButton';
 
 interface Question {
   id: string;
@@ -296,6 +297,51 @@ function ClarificationFlow({
           </Alert>
         </div>
       )}
+
+      <details className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden transition-all duration-200">
+        <summary className="px-4 py-3 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none">
+          <div className="flex items-center gap-2">
+            <svg
+              className="w-4 h-4 text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Reference: Your Original Idea</span>
+          </div>
+          <svg
+            className="w-4 h-4 text-gray-400 transition-transform duration-200 transform group-open:rotate-180"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </summary>
+        <div className="px-4 pb-4 pt-2 text-sm text-gray-600 border-t border-gray-100 bg-white">
+          <div className="flex justify-between items-start gap-4">
+            <p className="italic leading-relaxed">&quot;{idea}&quot;</p>
+            <CopyButton
+              textToCopy={idea}
+              variant="icon-only"
+              className="mt-1"
+              ariaLabel="Copy original idea"
+            />
+          </div>
+        </div>
+      </details>
 
       <div aria-live="polite" aria-atomic="true">
         <div className="flex justify-between items-center mb-2">

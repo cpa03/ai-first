@@ -229,10 +229,6 @@ function ClarifyPageContent() {
             Answer a few questions to help us create the perfect action plan for
             your project.
           </p>
-          <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600">Your idea:</p>
-            <p className="font-medium text-gray-900">{idea}</p>
-          </div>
         </div>
       </div>
 
