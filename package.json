@@ -8,7 +8,7 @@
     "build": "next build",
     "build:check": "npm run env:check && npm run build",
     "start": "next start",
-    "lint": "eslint src tests --ext .ts,.tsx --max-warnings=0",
+    "lint": "eslint src tests --max-warnings=0",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -44,6 +44,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.6",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.3.2",
