@@ -696,3 +696,153 @@ export const RATE_LIMIT_STATS_CONFIG = {
    */
   TOP_USERS_LIMIT: 10,
 } as const;
+
+/**
+ * Script configuration for audit and scan scripts
+ * Eliminates hardcoded values in scripts/ directory
+ */
+export const SCRIPT_CONFIG = {
+  /**
+   * Pages to scan/audit
+   */
+  PAGES: ['/', '/dashboard', '/clarify', '/results'] as const,
+
+  /**
+   * Default base URL for scripts
+   */
+  DEFAULT_BASE_URL: 'http://localhost:3000',
+
+  /**
+   * Console scanner configuration
+   */
+  CONSOLE_SCANNER: {
+    /**
+     * Navigation timeout in milliseconds
+     */
+    NAVIGATION_TIMEOUT_MS: 30000,
+
+    /**
+     * Wait time after page load for async errors (in milliseconds)
+     */
+    ASYNC_WAIT_MS: 2000,
+
+    /**
+     * Report filename
+     */
+    REPORT_FILENAME: 'console-scan-report.json',
+  } as const,
+
+  /**
+   * Lighthouse audit configuration
+   */
+  LIGHTHOUSE: {
+    /**
+     * Low score threshold (exit with error if below)
+     */
+    LOW_SCORE_THRESHOLD: 70,
+
+    /**
+     * Report filename
+     */
+    REPORT_FILENAME: 'lighthouse-report.json',
+
+    /**
+     * Lighthouse configuration object
+     */
+    CONFIG: {
+      extends: 'lighthouse:default',
+      settings: {
+        onlyCategories: [
+          'performance',
+          'accessibility',
+          'best-practices',
+          'seo',
+        ],
+        formFactor: 'desktop',
+        throttling: {
+          rttMs: 40,
+          throughputKbps: 10240,
+          cpuSlowdownMultiplier: 1,
+          requestLatencyMs: 0,
+          downloadThroughputKbps: 0,
+          uploadThroughputKbps: 0,
+        },
+        screenEmulation: {
+          mobile: false,
+          width: 1350,
+          height: 940,
+          deviceScaleFactor: 1,
+          disabled: false,
+        },
+        emulatedUserAgent:
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      },
+    } as const,
+  } as const,
+} as const;
+
+/**
+ * Component configuration
+ * UI-specific hardcoded values
+ */
+export const COMPONENT_CONFIG = {
+  /**
+   * CopyButton component
+   */
+  COPY_BUTTON: {
+    /**
+     * Haptic feedback duration in milliseconds
+     */
+    HAPTIC_FEEDBACK_DURATION_MS: 50,
+  } as const,
+
+  /**
+   * InputWithValidation component
+   */
+  INPUT: {
+    /**
+     * Minimum textarea height in pixels
+     */
+    MIN_TEXTAREA_HEIGHT_PX: 100,
+  } as const,
+} as const;
+
+/**
+ * API route configuration
+ * Hardcoded values from API routes
+ */
+export const API_ROUTE_CONFIG = {
+  /**
+   * Task statuses
+   */
+  TASK_STATUSES: ['todo', 'in_progress', 'completed'] as const,
+
+  /**
+   * Task risk levels
+   */
+  TASK_RISK_LEVELS: ['low', 'medium', 'high'] as const,
+
+  /**
+   * Completion percentages by status
+   */
+  COMPLETION_PERCENTAGES: {
+    COMPLETED: 100,
+    IN_PROGRESS: 50,
+    TODO: 0,
+  } as const,
+} as const;
+
+/**
+ * AI service configuration - additional values
+ */
+export const AI_SERVICE_CONFIG = {
+  /**
+   * Maximum iterations for context window management
+   */
+  MAX_CONTEXT_ITERATIONS: 1000,
+
+  /**
+   * Maximum recursion depth for PII redaction
+   */
+  MAX_RECURSION_DEPTH: 100,
+} as const;

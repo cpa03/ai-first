@@ -8,13 +8,10 @@ import {
 import { dbService, Task } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { API_ROUTE_CONFIG } from '@/lib/config/constants';
 
-// Valid task statuses
-const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
-type TaskStatus = (typeof VALID_STATUSES)[number];
-
-// Valid risk levels
-const VALID_RISK_LEVELS = ['low', 'medium', 'high'] as const;
+const { TASK_STATUSES, TASK_RISK_LEVELS } = API_ROUTE_CONFIG;
+type TaskStatus = (typeof TASK_STATUSES)[number];
 
 type TaskUpdateBody = Partial<
   Omit<Task, 'id' | 'created_at' | 'deliverable_id'>
@@ -38,16 +35,16 @@ async function handlePut(context: ApiContext) {
   }
 
   // Validate status if provided
-  if (body.status && !VALID_STATUSES.includes(body.status as TaskStatus)) {
+  if (body.status && !TASK_STATUSES.includes(body.status as TaskStatus)) {
     return badRequestResponse(
-      `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`
+      `Invalid status. Must be one of: ${TASK_STATUSES.join(', ')}`
     );
   }
 
   // Validate risk_level if provided
-  if (body.risk_level && !VALID_RISK_LEVELS.includes(body.risk_level)) {
+  if (body.risk_level && !TASK_RISK_LEVELS.includes(body.risk_level)) {
     return badRequestResponse(
-      `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`
+      `Invalid risk_level. Must be one of: ${TASK_RISK_LEVELS.join(', ')}`
     );
   }
 

@@ -8,34 +8,9 @@ const lighthouse = require('lighthouse');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
+const { PAGES, DEFAULT_BASE_URL, LIGHTHOUSE } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/dashboard', '/clarify', '/results'];
-
-const CONFIG = {
-  extends: 'lighthouse:default',
-  settings: {
-    onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
-    formFactor: 'desktop',
-    throttling: {
-      rttMs: 40,
-      throughputKbps: 10240,
-      cpuSlowdownMultiplier: 1,
-      requestLatencyMs: 0,
-      downloadThroughputKbps: 0,
-      uploadThroughputKbps: 0,
-    },
-    screenEmulation: {
-      mobile: false,
-      width: 1350,
-      height: 940,
-      deviceScaleFactor: 1,
-      disabled: false,
-    },
-    emulatedUserAgent:
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  },
-};
+const BASE_URL = process.env.BASE_URL || DEFAULT_BASE_URL;
 
 const audits = [];
 
@@ -53,7 +28,7 @@ async function runLighthouse(url) {
         output: 'json',
         logLevel: 'error',
       },
-      CONFIG
+      LIGHTHOUSE.CONFIG
     );
 
     const results = {
@@ -177,7 +152,7 @@ async function main() {
   };
 
   // Save report
-  const reportPath = path.join(process.cwd(), 'lighthouse-report.json');
+  const reportPath = path.join(process.cwd(), LIGHTHOUSE.REPORT_FILENAME);
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
   console.log('═══════════════════════════════════════════');
@@ -197,13 +172,12 @@ async function main() {
   console.log(`📄 Full report saved to: ${reportPath}`);
 
   // Check for low scores
-  const lowScoreThreshold = 70;
   const lowScores = validAudits.filter(
     (a) =>
-      a.scores.performance < lowScoreThreshold ||
-      a.scores.accessibility < lowScoreThreshold ||
-      a.scores.bestPractices < lowScoreThreshold ||
-      a.scores.seo < lowScoreThreshold
+      a.scores.performance < LIGHTHOUSE.LOW_SCORE_THRESHOLD ||
+      a.scores.accessibility < LIGHTHOUSE.LOW_SCORE_THRESHOLD ||
+      a.scores.bestPractices < LIGHTHOUSE.LOW_SCORE_THRESHOLD ||
+      a.scores.seo < LIGHTHOUSE.LOW_SCORE_THRESHOLD
   );
 
   if (lowScores.length > 0) {
@@ -211,17 +185,17 @@ async function main() {
     console.log('⚠️  PAGES WITH LOW SCORES:');
     lowScores.forEach((a) => {
       console.log(`  ${a.url}:`);
-      if (a.scores.performance < lowScoreThreshold)
+      if (a.scores.performance < LIGHTHOUSE.LOW_SCORE_THRESHOLD)
         console.log(`    - Performance: ${a.scores.performance.toFixed(1)}`);
-      if (a.scores.accessibility < lowScoreThreshold)
+      if (a.scores.accessibility < LIGHTHOUSE.LOW_SCORE_THRESHOLD)
         console.log(
           `    - Accessibility: ${a.scores.accessibility.toFixed(1)}`
         );
-      if (a.scores.bestPractices < lowScoreThreshold)
+      if (a.scores.bestPractices < LIGHTHOUSE.LOW_SCORE_THRESHOLD)
         console.log(
           `    - Best Practices: ${a.scores.bestPractices.toFixed(1)}`
         );
-      if (a.scores.seo < lowScoreThreshold)
+      if (a.scores.seo < LIGHTHOUSE.LOW_SCORE_THRESHOLD)
         console.log(`    - SEO: ${a.scores.seo.toFixed(1)}`);
     });
     process.exit(1);

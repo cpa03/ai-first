@@ -7,9 +7,9 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
+const { PAGES, DEFAULT_BASE_URL, CONSOLE_SCANNER } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/dashboard', '/clarify', '/results'];
+const BASE_URL = process.env.BASE_URL || DEFAULT_BASE_URL;
 
 const consoleLogs = [];
 const errors = [];
@@ -62,11 +62,11 @@ async function scanPage(page, url) {
   try {
     await page.goto(`${BASE_URL}${url}`, {
       waitUntil: 'networkidle',
-      timeout: 30000,
+      timeout: CONSOLE_SCANNER.NAVIGATION_TIMEOUT_MS,
     });
 
     // Wait a bit for any async errors
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(CONSOLE_SCANNER.ASYNC_WAIT_MS);
 
     console.log(
       `✓ Scanned ${url}: ${pageErrors.length} errors, ${pageWarnings.length} warnings`
@@ -135,7 +135,7 @@ async function main() {
   };
 
   // Save report
-  const reportPath = path.join(process.cwd(), 'console-scan-report.json');
+  const reportPath = path.join(process.cwd(), CONSOLE_SCANNER.REPORT_FILENAME);
   fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 
   console.log('');

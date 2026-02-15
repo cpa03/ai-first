@@ -8,13 +8,10 @@ import {
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { API_ROUTE_CONFIG } from '@/lib/config/constants';
 
-// Valid task statuses
-const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
-type TaskStatus = (typeof VALID_STATUSES)[number];
-
-// Valid risk levels
-const VALID_RISK_LEVELS = ['low', 'medium', 'high'] as const;
+const { TASK_STATUSES, TASK_RISK_LEVELS } = API_ROUTE_CONFIG;
+type TaskStatus = (typeof TASK_STATUSES)[number];
 
 interface CreateTaskBody {
   title: string;
@@ -22,7 +19,7 @@ interface CreateTaskBody {
   status?: TaskStatus;
   assignee?: string;
   estimate?: number;
-  risk_level?: (typeof VALID_RISK_LEVELS)[number];
+  risk_level?: (typeof TASK_RISK_LEVELS)[number];
   tags?: string[];
 }
 
@@ -53,16 +50,16 @@ async function handlePost(context: ApiContext) {
   }
 
   // Validate status if provided
-  if (body.status && !VALID_STATUSES.includes(body.status)) {
+  if (body.status && !TASK_STATUSES.includes(body.status)) {
     return badRequestResponse(
-      `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`
+      `Invalid status. Must be one of: ${TASK_STATUSES.join(', ')}`
     );
   }
 
   // Validate risk_level if provided
-  if (body.risk_level && !VALID_RISK_LEVELS.includes(body.risk_level)) {
+  if (body.risk_level && !TASK_RISK_LEVELS.includes(body.risk_level)) {
     return badRequestResponse(
-      `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`
+      `Invalid risk_level. Must be one of: ${TASK_RISK_LEVELS.join(', ')}`
     );
   }
 
@@ -78,14 +75,19 @@ async function handlePost(context: ApiContext) {
     const user = await requireAuth(request);
 
     // Get deliverable with idea to verify ownership
-    const deliverableWithIdea = await dbService.getDeliverableWithIdea(deliverableId);
+    const deliverableWithIdea =
+      await dbService.getDeliverableWithIdea(deliverableId);
 
     if (!deliverableWithIdea) {
       return notFoundResponse('Deliverable not found');
     }
 
     // Verify ownership
-    verifyResourceOwnership(user.id, deliverableWithIdea.idea.user_id, 'deliverable');
+    verifyResourceOwnership(
+      user.id,
+      deliverableWithIdea.idea.user_id,
+      'deliverable'
+    );
 
     const newTask = await dbService.createTask({
       deliverable_id: deliverableId,
