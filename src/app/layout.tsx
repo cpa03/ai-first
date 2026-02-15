@@ -1,6 +1,7 @@
 import '../styles/globals.css';
 import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import MobileNav from '@/components/MobileNav';
 import ToastContainer from '@/components/ToastContainer';
 import Link from 'next/link';
@@ -84,6 +85,7 @@ export default function RootLayout({
     >
       <body className="min-h-screen bg-gray-50 font-sans">
         <ErrorBoundary>
+          <GlobalErrorHandler />
           <KeyboardShortcutsProvider>
             <a
               href="#main-content"
