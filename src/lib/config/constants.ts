@@ -1,99 +1,197 @@
 /**
  * API timeout configuration
  * All timeout values are in milliseconds
+ * Now supports environment variable overrides
  */
+import { EnvLoader } from './environment';
+
 export const TIMEOUT_CONFIG = {
   /**
-   * Default timeout for API requests
+   * Default timeout for API requests (ms)
+   * Env: API_TIMEOUT_DEFAULT (default: 30000)
    */
-  DEFAULT: 30000,
+  DEFAULT: EnvLoader.number('API_TIMEOUT_DEFAULT', 30000, 1000, 300000),
 
   /**
-   * Timeout for quick API calls (health checks, simple lookups)
+   * Timeout for quick API calls (health checks, simple lookups) (ms)
+   * Env: API_TIMEOUT_QUICK (default: 5000)
    */
-  QUICK: 5000,
+  QUICK: EnvLoader.number('API_TIMEOUT_QUICK', 5000, 500, 60000),
 
   /**
-   * Timeout for standard API requests
+   * Timeout for standard API requests (ms)
+   * Env: API_TIMEOUT_STANDARD (default: 10000)
    */
-  STANDARD: 10000,
+  STANDARD: EnvLoader.number('API_TIMEOUT_STANDARD', 10000, 1000, 120000),
 
   /**
-   * Timeout for long-running operations (creating resources, large uploads)
+   * Timeout for long-running operations (creating resources, large uploads) (ms)
+   * Env: API_TIMEOUT_LONG (default: 30000)
    */
-  LONG: 30000,
+  LONG: EnvLoader.number('API_TIMEOUT_LONG', 30000, 5000, 600000),
 
   /**
    * Service-specific timeouts
    */
   TRELLO: {
-    CREATE_BOARD: 10000,
-    CREATE_LIST: 10000,
-    CREATE_CARD: 10000,
+    CREATE_BOARD: EnvLoader.number(
+      'API_TIMEOUT_TRELLO_BOARD',
+      10000,
+      1000,
+      60000
+    ),
+    CREATE_LIST: EnvLoader.number(
+      'API_TIMEOUT_TRELLO_LIST',
+      10000,
+      1000,
+      60000
+    ),
+    CREATE_CARD: EnvLoader.number(
+      'API_TIMEOUT_TRELLO_CARD',
+      10000,
+      1000,
+      60000
+    ),
   },
 
   GITHUB: {
-    GET_USER: 10000,
-    CREATE_REPO: 30000,
+    GET_USER: EnvLoader.number('API_TIMEOUT_GITHUB_USER', 10000, 1000, 60000),
+    CREATE_REPO: EnvLoader.number(
+      'API_TIMEOUT_GITHUB_REPO',
+      30000,
+      1000,
+      300000
+    ),
   },
 
   NOTION: {
-    CLIENT_TIMEOUT: 30000,
+    CLIENT_TIMEOUT: EnvLoader.number('API_TIMEOUT_NOTION', 30000, 1000, 300000),
   },
 } as const;
 
 /**
  * Rate limiting configuration
+ * Now supports environment variable overrides
  */
 export const RATE_LIMIT_CONFIG = {
   /**
    * Default request rate (requests per window)
+   * Env: RATE_LIMIT_DEFAULT_RATE (default: 100)
    */
-  DEFAULT_RATE: 100,
+  DEFAULT_RATE: EnvLoader.number('RATE_LIMIT_DEFAULT_RATE', 100, 1, 10000),
 
   /**
    * Default time window in milliseconds
+   * Env: RATE_LIMIT_DEFAULT_WINDOW (default: 60000)
    */
-  DEFAULT_WINDOW: 60000,
+  DEFAULT_WINDOW: EnvLoader.number(
+    'RATE_LIMIT_DEFAULT_WINDOW',
+    60000,
+    1000,
+    3600000
+  ),
 
   /**
    * Rate limits for different service tiers
    */
   TIER: {
-    FREE: { rate: 10, window: 60000 },
-    STANDARD: { rate: 100, window: 60000 },
-    PREMIUM: { rate: 1000, window: 60000 },
+    FREE: {
+      rate: EnvLoader.number('RATE_LIMIT_TIER_FREE_RATE', 10, 1, 1000),
+      window: EnvLoader.number(
+        'RATE_LIMIT_TIER_FREE_WINDOW',
+        60000,
+        1000,
+        3600000
+      ),
+    },
+    STANDARD: {
+      rate: EnvLoader.number('RATE_LIMIT_TIER_STANDARD_RATE', 100, 1, 5000),
+      window: EnvLoader.number(
+        'RATE_LIMIT_TIER_STANDARD_WINDOW',
+        60000,
+        1000,
+        3600000
+      ),
+    },
+    PREMIUM: {
+      rate: EnvLoader.number('RATE_LIMIT_TIER_PREMIUM_RATE', 1000, 1, 10000),
+      window: EnvLoader.number(
+        'RATE_LIMIT_TIER_PREMIUM_WINDOW',
+        60000,
+        1000,
+        3600000
+      ),
+    },
   },
+
+  /**
+   * Maximum number of entries in rate limit store
+   * Env: RATE_LIMIT_MAX_STORE_SIZE (default: 10000)
+   */
+  MAX_STORE_SIZE: EnvLoader.number(
+    'RATE_LIMIT_MAX_STORE_SIZE',
+    10000,
+    100,
+    100000
+  ),
+
+  /**
+   * Cleanup interval in milliseconds
+   * Env: RATE_LIMIT_CLEANUP_INTERVAL (default: 60000)
+   */
+  CLEANUP_INTERVAL_MS: EnvLoader.number(
+    'RATE_LIMIT_CLEANUP_INTERVAL',
+    60000,
+    5000,
+    300000
+  ),
+
+  /**
+   * Cleanup window in milliseconds
+   * Env: RATE_LIMIT_CLEANUP_WINDOW (default: 60000)
+   */
+  CLEANUP_WINDOW_MS: EnvLoader.number(
+    'RATE_LIMIT_CLEANUP_WINDOW',
+    60000,
+    1000,
+    3600000
+  ),
 } as const;
 
 /**
  * Retry configuration
+ * Now supports environment variable overrides
  */
 export const RETRY_CONFIG = {
   /**
    * Default number of retry attempts
+   * Env: RETRY_DEFAULT_MAX_RETRIES (default: 3)
    */
-  DEFAULT_MAX_RETRIES: 3,
+  DEFAULT_MAX_RETRIES: EnvLoader.number('RETRY_DEFAULT_MAX_RETRIES', 3, 0, 10),
 
   /**
    * Initial delay between retries (in milliseconds)
+   * Env: RETRY_INITIAL_DELAY (default: 1000)
    */
-  INITIAL_DELAY: 1000,
+  INITIAL_DELAY: EnvLoader.number('RETRY_INITIAL_DELAY', 1000, 100, 60000),
 
   /**
    * Maximum delay between retries (in milliseconds)
+   * Env: RETRY_MAX_DELAY (default: 10000)
    */
-  MAX_DELAY: 10000,
+  MAX_DELAY: EnvLoader.number('RETRY_MAX_DELAY', 10000, 1000, 300000),
 
   /**
    * Multiplier for exponential backoff
+   * Env: RETRY_BACKOFF_MULTIPLIER (default: 2)
    */
-  BACKOFF_MULTIPLIER: 2,
+  BACKOFF_MULTIPLIER: EnvLoader.number('RETRY_BACKOFF_MULTIPLIER', 2, 1, 10),
 
   /**
    * Whether to add jitter to retry delays
+   * Env: RETRY_ENABLE_JITTER (default: true)
    */
-  ENABLE_JITTER: true,
+  ENABLE_JITTER: EnvLoader.boolean('RETRY_ENABLE_JITTER', true),
 } as const;
 
 /**
@@ -103,151 +201,148 @@ export const UI_CONFIG = {
   /**
    * Character count warning threshold (0.0 - 1.0)
    * Shows warning color when character count reaches this percentage of max
+   * Env: UI_CHAR_COUNT_WARNING_THRESHOLD (default: 80, converted to 0.8)
    */
-  CHAR_COUNT_WARNING_THRESHOLD: 0.8,
+  CHAR_COUNT_WARNING_THRESHOLD:
+    EnvLoader.number('UI_CHAR_COUNT_WARNING_THRESHOLD', 80, 50, 95) / 100,
 
   /**
    * Blueprint generation simulated delay (in milliseconds)
    * Used to show loading state while "generating" blueprint
+   * Env: UI_BLUEPRINT_GENERATION_DELAY (default: 2000)
    */
-  BLUEPRINT_GENERATION_DELAY: 2000,
+  BLUEPRINT_GENERATION_DELAY: EnvLoader.number(
+    'UI_BLUEPRINT_GENERATION_DELAY',
+    2000,
+    0,
+    10000
+  ),
 
   /**
    * Toast notification duration (in milliseconds)
+   * Env: UI_TOAST_DURATION (default: 3000)
    */
-  TOAST_DURATION: 3000,
+  TOAST_DURATION: EnvLoader.number('UI_TOAST_DURATION', 3000, 1000, 30000),
 
   /**
    * Copy feedback duration (in milliseconds)
    * How long to show "Copied!" feedback
+   * Env: UI_COPY_FEEDBACK_DURATION (default: 2000)
    */
-  COPY_FEEDBACK_DURATION: 2000,
+  COPY_FEEDBACK_DURATION: EnvLoader.number(
+    'UI_COPY_FEEDBACK_DURATION',
+    2000,
+    500,
+    10000
+  ),
 
   /**
    * Toast progress update interval (in milliseconds)
    * How often to update the progress bar for smooth animation
+   * Env: UI_TOAST_PROGRESS_INTERVAL (default: 50)
    */
-  TOAST_PROGRESS_INTERVAL: 50,
+  TOAST_PROGRESS_INTERVAL: EnvLoader.number(
+    'UI_TOAST_PROGRESS_INTERVAL',
+    50,
+    10,
+    500
+  ),
 } as const;
 
 /**
  * API validation configuration
+ * Now supports environment variable overrides
  */
 export const VALIDATION_CONFIG = {
-  /**
-   * Maximum length for clarification answers (in characters)
-   */
-  MAX_ANSWER_LENGTH: 5000,
-
-  /**
-   * Default pagination limit for list endpoints
-   */
-  DEFAULT_PAGINATION_LIMIT: 50,
-
-  /**
-   * Maximum pagination limit for list endpoints
-   */
-  MAX_PAGINATION_LIMIT: 100,
-
-  /**
-   * Minimum length for idea text (in characters)
-   */
-  MIN_IDEA_LENGTH: 10,
-
-  /**
-   * Maximum length for idea text (in characters)
-   */
-  MAX_IDEA_LENGTH: 10000,
-
-  /**
-   * Maximum length for idea ID (in characters)
-   */
-  MAX_IDEA_ID_LENGTH: 100,
-
-  /**
-   * Maximum request body size (in bytes)
-   */
-  MAX_REQUEST_BODY_SIZE: 1048576, // 1MB
+  MAX_ANSWER_LENGTH: EnvLoader.number(
+    'VALIDATION_MAX_ANSWER_LENGTH',
+    5000,
+    100,
+    50000
+  ),
+  DEFAULT_PAGINATION_LIMIT: EnvLoader.number(
+    'VALIDATION_DEFAULT_PAGINATION_LIMIT',
+    50,
+    5,
+    500
+  ),
+  MAX_PAGINATION_LIMIT: EnvLoader.number(
+    'VALIDATION_MAX_PAGINATION_LIMIT',
+    100,
+    10,
+    1000
+  ),
+  MIN_IDEA_LENGTH: EnvLoader.number('VALIDATION_MIN_IDEA_LENGTH', 10, 1, 1000),
+  MAX_IDEA_LENGTH: EnvLoader.number(
+    'VALIDATION_MAX_IDEA_LENGTH',
+    10000,
+    100,
+    100000
+  ),
+  MAX_IDEA_ID_LENGTH: EnvLoader.number(
+    'VALIDATION_MAX_IDEA_ID_LENGTH',
+    100,
+    10,
+    500
+  ),
+  MAX_REQUEST_BODY_SIZE: EnvLoader.number(
+    'VALIDATION_MAX_REQUEST_BODY_SIZE',
+    1048576,
+    1024,
+    10485760
+  ),
 } as const;
 
 /**
  * Animation timing configuration
  * All duration values are in milliseconds
+ * Now supports environment variable overrides
  */
 export const ANIMATION_CONFIG = {
-  /**
-   * Fast transition duration (for micro-interactions)
-   */
-  FAST: 200,
-
-  /**
-   * Standard transition duration (for most UI transitions)
-   */
-  STANDARD: 300,
-
-  /**
-   * Slow transition duration (for emphasis animations)
-   */
-  SLOW: 500,
-
-  /**
-   * Toast exit animation duration
-   */
-  TOAST_EXIT: 300,
-
-  /**
-   * Input focus delay (for smooth focus transitions)
-   */
-  INPUT_FOCUS_DELAY: 50,
-
-  /**
-   * Error boundary reload delay
-   */
-  ERROR_RELOAD_DELAY: 3000,
-
-  /**
-   * Alert exit animation duration
-   */
-  ALERT_EXIT: 200,
+  FAST: EnvLoader.number('UI_ANIMATION_FAST', 200, 50, 1000),
+  STANDARD: EnvLoader.number('UI_ANIMATION_STANDARD', 300, 50, 2000),
+  SLOW: EnvLoader.number('UI_ANIMATION_SLOW', 500, 100, 5000),
+  TOAST_EXIT: EnvLoader.number('UI_ANIMATION_TOAST_EXIT', 300, 50, 2000),
+  INPUT_FOCUS_DELAY: EnvLoader.number(
+    'UI_ANIMATION_INPUT_FOCUS_DELAY',
+    50,
+    10,
+    500
+  ),
+  ERROR_RELOAD_DELAY: EnvLoader.number(
+    'UI_ANIMATION_ERROR_RELOAD_DELAY',
+    3000,
+    1000,
+    30000
+  ),
+  ALERT_EXIT: EnvLoader.number('UI_ANIMATION_ALERT_EXIT', 200, 50, 1000),
 } as const;
 
 /**
  * Rate limit cleanup configuration
+ * Now supports environment variable overrides
  */
 export const RATE_LIMIT_CLEANUP_CONFIG = {
-  /**
-   * Interval for running cleanup of expired rate limit entries (in milliseconds)
-   * Default: 1 minute
-   */
-  CLEANUP_INTERVAL_MS: 60000,
-
-  /**
-   * Window of time to keep rate limit entries for cleanup (in milliseconds)
-   * Entries older than this will be removed
-   * Default: 1 minute
-   */
-  CLEANUP_WINDOW_MS: 60000,
+  CLEANUP_INTERVAL_MS: RATE_LIMIT_CONFIG.CLEANUP_INTERVAL_MS,
+  CLEANUP_WINDOW_MS: RATE_LIMIT_CONFIG.CLEANUP_WINDOW_MS,
 } as const;
 
 /**
  * Security headers configuration
+ * Now supports environment variable overrides
  */
 export const SECURITY_CONFIG = {
-  /**
-   * HSTS max-age in seconds (1 year = 31536000 seconds)
-   * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-   */
-  HSTS_MAX_AGE: 31536000,
-
-  /**
-   * HSTS includeSubDomains directive
-   */
-  HSTS_INCLUDE_SUBDOMAINS: true,
-
-  /**
-   * HSTS preload directive
-   */
-  HSTS_PRELOAD: true,
+  HSTS_MAX_AGE: EnvLoader.number(
+    'SECURITY_HSTS_MAX_AGE',
+    31536000,
+    0,
+    63072000
+  ),
+  HSTS_INCLUDE_SUBDOMAINS: EnvLoader.boolean(
+    'SECURITY_HSTS_INCLUDE_SUBDOMAINS',
+    true
+  ),
+  HSTS_PRELOAD: EnvLoader.boolean('SECURITY_HSTS_PRELOAD', true),
 } as const;
 
 /**
@@ -264,53 +359,51 @@ export const RETRY_DELAY_CONFIG = {
 
 /**
  * AI Service configuration
+ * Now supports environment variable overrides
  */
 export const AI_CONFIG = {
-  /**
-   * Default max tokens for AI model calls
-   */
-  DEFAULT_MAX_TOKENS: 4000,
-
-  /**
-   * Cache TTL for today's cost tracking (in milliseconds)
-   * Default: 1 minute
-   */
-  COST_CACHE_TTL_MS: 60 * 1000,
-
-  /**
-   * Cache TTL for AI responses (in milliseconds)
-   * Default: 5 minutes
-   */
-  RESPONSE_CACHE_TTL_MS: 5 * 60 * 1000,
-
-  /**
-   * Maximum size for response cache
-   */
-  RESPONSE_CACHE_MAX_SIZE: 100,
-
-  /**
-   * Cost cache max size
-   */
-  COST_CACHE_MAX_SIZE: 1,
-
-  /**
-   * Token estimation ratio (characters per token)
-   * Rough estimate: 1 token ≈ 4 characters
-   */
-  CHARS_PER_TOKEN: 4,
-
-  /**
-   * SHA-256 hash substring length for cache keys
-   */
-  CACHE_KEY_HASH_LENGTH: 64,
-
-  /**
-   * Default daily cost limit in USD
-   */
-  DEFAULT_DAILY_COST_LIMIT: 10.0,
+  DEFAULT_MAX_TOKENS: EnvLoader.number(
+    'AI_DEFAULT_MAX_TOKENS',
+    4000,
+    100,
+    16000
+  ),
+  COST_CACHE_TTL_MS: EnvLoader.number(
+    'AI_COST_CACHE_TTL_MS',
+    60 * 1000,
+    1000,
+    600000
+  ),
+  RESPONSE_CACHE_TTL_MS: EnvLoader.number(
+    'AI_RESPONSE_CACHE_TTL_MS',
+    5 * 60 * 1000,
+    1000,
+    3600000
+  ),
+  RESPONSE_CACHE_MAX_SIZE: EnvLoader.number(
+    'AI_RESPONSE_CACHE_MAX_SIZE',
+    100,
+    10,
+    1000
+  ),
+  COST_CACHE_MAX_SIZE: EnvLoader.number('AI_COST_CACHE_MAX_SIZE', 1, 1, 100),
+  CHARS_PER_TOKEN: EnvLoader.number('AI_CHARS_PER_TOKEN', 4, 1, 10),
+  CACHE_KEY_HASH_LENGTH: EnvLoader.number(
+    'AI_CACHE_KEY_HASH_LENGTH',
+    64,
+    8,
+    128
+  ),
+  DEFAULT_DAILY_COST_LIMIT: EnvLoader.number(
+    'AI_DEFAULT_DAILY_COST_LIMIT',
+    10.0,
+    1.0,
+    1000.0
+  ),
 
   /**
    * Model pricing per token (in USD)
+   * NOTE: Pricing is not environment-configurable as it's tied to provider rates
    */
   PRICING: {
     'gpt-3.5-turbo': 0.000002,
@@ -320,39 +413,28 @@ export const AI_CONFIG = {
 
   /**
    * Default pricing fallback
+   * NOTE: Not environment-configurable
    */
   DEFAULT_PRICING_PER_TOKEN: 0.00001,
 } as const;
 
 /**
  * Rate limiting store configuration
+ * Now supports environment variable overrides
  */
 export const RATE_LIMIT_STORE_CONFIG = {
-  /**
-   * Maximum number of entries in the rate limit store
-   * Prevents unbounded memory growth
-   */
-  MAX_STORE_SIZE: 10000,
-
-  /**
-   * Percentage of entries to clean up when store reaches capacity
-   */
-  CLEANUP_PERCENTAGE: 0.2,
-
-  /**
-   * Default rate limit window (in milliseconds)
-   */
-  DEFAULT_WINDOW_MS: 60 * 1000,
+  MAX_STORE_SIZE: RATE_LIMIT_CONFIG.MAX_STORE_SIZE,
+  CLEANUP_PERCENTAGE:
+    EnvLoader.number('CACHE_TRIM_PERCENTAGE', 20, 5, 50) / 100,
+  DEFAULT_WINDOW_MS: RATE_LIMIT_CONFIG.DEFAULT_WINDOW,
 } as const;
 
 /**
  * Cache configuration defaults
+ * Now supports environment variable overrides
  */
 export const CACHE_CONFIG = {
-  /**
-   * Default maximum cache size to prevent memory leaks
-   */
-  DEFAULT_MAX_SIZE: 1000,
+  DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
 } as const;
 
 /**
@@ -458,27 +540,23 @@ export const PII_REDACTION_CONFIG = {
 
 /**
  * Validation limits configuration
+ * Now supports environment variable overrides
  */
 export const VALIDATION_LIMITS_CONFIG = {
-  /**
-   * Maximum length for user responses in validation
-   */
-  MAX_USER_RESPONSE_SIZE: 5000,
-
-  /**
-   * Maximum key length for user response keys
-   */
-  MAX_RESPONSE_KEY_LENGTH: 100,
-
-  /**
-   * Maximum value length for user response values
-   */
-  MAX_RESPONSE_VALUE_LENGTH: 1000,
-
-  /**
-   * Default max request size in bytes (1MB)
-   */
-  DEFAULT_MAX_REQUEST_SIZE_BYTES: 1024 * 1024,
+  MAX_USER_RESPONSE_SIZE: VALIDATION_CONFIG.MAX_ANSWER_LENGTH,
+  MAX_RESPONSE_KEY_LENGTH: EnvLoader.number(
+    'VALIDATION_MAX_RESPONSE_KEY_LENGTH',
+    100,
+    10,
+    500
+  ),
+  MAX_RESPONSE_VALUE_LENGTH: EnvLoader.number(
+    'VALIDATION_MAX_RESPONSE_VALUE_LENGTH',
+    1000,
+    100,
+    5000
+  ),
+  DEFAULT_MAX_REQUEST_SIZE_BYTES: VALIDATION_CONFIG.MAX_REQUEST_BODY_SIZE,
 } as const;
 
 /**
@@ -507,30 +585,21 @@ export const ERROR_CONFIG = {
  * Agent configuration for breakdown engine and clarifier
  */
 export const AGENT_CONFIG = {
-  /**
-   * Confidence calculation weights for breakdown engine
-   * Used in ConfidenceCalculator
-   */
   BREAKDOWN_CONFIDENCE_WEIGHTS: {
-    ANALYSIS: 0.3,
-    TASKS: 0.3,
-    DEPENDENCIES: 0.2,
-    TIMELINE: 0.2,
+    ANALYSIS:
+      EnvLoader.number('AGENT_BREAKDOWN_WEIGHT_ANALYSIS', 30, 0, 100) / 100,
+    TASKS: EnvLoader.number('AGENT_BREAKDOWN_WEIGHT_TASKS', 30, 0, 100) / 100,
+    DEPENDENCIES:
+      EnvLoader.number('AGENT_BREAKDOWN_WEIGHT_DEPENDENCIES', 20, 0, 100) / 100,
+    TIMELINE:
+      EnvLoader.number('AGENT_BREAKDOWN_WEIGHT_TIMELINE', 20, 0, 100) / 100,
   } as const,
 
-  /**
-   * Fallback confidence values for missing components
-   * Used when components don't provide their own confidence
-   */
   BREAKDOWN_FALLBACK_CONFIDENCE: {
     DEPENDENCIES: 0.8,
     TIMELINE: 0.7,
   } as const,
 
-  /**
-   * Idea analysis fallback values
-   * Used in IdeaAnalyzer when analysis fails or is incomplete
-   */
   IDEA_ANALYSIS_FALLBACK: {
     COMPLEXITY_SCORE: 5,
     COMPLEXITY_LEVEL: 'medium' as const,
@@ -540,34 +609,40 @@ export const AGENT_CONFIG = {
     OVERALL_CONFIDENCE: 0.7,
   } as const,
 
-  /**
-   * Question generator configuration for clarifier
-   */
   QUESTION_GENERATOR: {
-    MIN_QUESTIONS: 3,
-    MAX_QUESTIONS: 5,
+    MIN_QUESTIONS: EnvLoader.number('AGENT_QUESTION_MIN', 3, 1, 10),
+    MAX_QUESTIONS: EnvLoader.number('AGENT_QUESTION_MAX', 5, 1, 20),
     DEFAULT_QUESTION_TYPE: 'open' as const,
     REQUIRED_DEFAULT: true,
   } as const,
 
-  /**
-   * Clarifier confidence calculator configuration
-   */
   CLARIFIER_CONFIDENCE: {
-    BASE_CONFIDENCE: 0.3,
-    CONFIDENCE_INCREMENT_PER_ANSWER: 0.6,
-    MAX_CONFIDENCE: 0.9,
+    BASE_CONFIDENCE:
+      EnvLoader.number('AGENT_CLARIFIER_BASE_CONFIDENCE', 30, 0, 100) / 100,
+    CONFIDENCE_INCREMENT_PER_ANSWER:
+      EnvLoader.number('AGENT_CLARIFIER_INCREMENT', 60, 0, 100) / 100,
+    MAX_CONFIDENCE:
+      EnvLoader.number('AGENT_CLARIFIER_MAX_CONFIDENCE', 90, 50, 100) / 100,
     DEFAULT_CONFIDENCE: 0.5,
   } as const,
 
-  /**
-   * Database connection configuration
-   */
   DATABASE: {
-    MAX_CONNECTION_RETRIES: 3,
-    HEALTH_CHECK_STALE_THRESHOLD_MS: 30000,
-    DEFAULT_SEARCH_LIMIT: 10,
-    VECTOR_SIMILARITY_THRESHOLD: 0.78,
+    MAX_CONNECTION_RETRIES: EnvLoader.number('AGENT_DB_MAX_RETRIES', 3, 0, 10),
+    HEALTH_CHECK_STALE_THRESHOLD_MS: EnvLoader.number(
+      'AGENT_DB_HEALTH_CHECK_STALE_MS',
+      30000,
+      5000,
+      300000
+    ),
+    DEFAULT_SEARCH_LIMIT: EnvLoader.number(
+      'AGENT_DB_DEFAULT_SEARCH_LIMIT',
+      10,
+      1,
+      100
+    ),
+    VECTOR_SIMILARITY_THRESHOLD:
+      EnvLoader.number('AGENT_DB_VECTOR_SIMILARITY_THRESHOLD', 78, 0, 100) /
+      100,
   } as const,
 } as const;
 
@@ -576,41 +651,59 @@ export const AGENT_CONFIG = {
  * Used for circuit breakers, retries, and timeouts
  */
 export const RESILIENCE_CONFIG = {
-  /**
-   * Default retry configuration
-   */
   RETRY: {
-    DEFAULT_MAX_RETRIES: 3,
-    DEFAULT_BASE_DELAY_MS: 1000,
-    DEFAULT_MAX_DELAY_MS: 30000,
-    DEFAULT_BACKOFF_MULTIPLIER: 2,
+    DEFAULT_MAX_RETRIES: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
+    DEFAULT_BASE_DELAY_MS: RETRY_CONFIG.INITIAL_DELAY,
+    DEFAULT_MAX_DELAY_MS: RETRY_CONFIG.MAX_DELAY,
+    DEFAULT_BACKOFF_MULTIPLIER: RETRY_CONFIG.BACKOFF_MULTIPLIER,
   } as const,
 
-  /**
-   * Default circuit breaker configuration
-   */
   CIRCUIT_BREAKER: {
-    DEFAULT_FAILURE_THRESHOLD: 5,
-    DEFAULT_RESET_TIMEOUT_MS: 60000,
-    DEFAULT_MONITORING_PERIOD_MS: 10000,
+    DEFAULT_FAILURE_THRESHOLD: EnvLoader.number(
+      'RESILIENCE_CB_DEFAULT_FAILURE_THRESHOLD',
+      5,
+      1,
+      50
+    ),
+    DEFAULT_RESET_TIMEOUT_MS: EnvLoader.number(
+      'RESILIENCE_CB_DEFAULT_RESET_TIMEOUT_MS',
+      60000,
+      5000,
+      600000
+    ),
+    DEFAULT_MONITORING_PERIOD_MS: EnvLoader.number(
+      'RESILIENCE_CB_DEFAULT_MONITORING_PERIOD_MS',
+      10000,
+      1000,
+      60000
+    ),
   } as const,
 
-  /**
-   * Service-specific timeout configurations (in milliseconds)
-   */
   TIMEOUTS: {
-    OPENAI: 60000,
-    NOTION: 30000,
-    TRELLO: 15000,
-    GITHUB: 30000,
-    DATABASE: 10000,
-    SUPABASE: 10000,
-    DEFAULT: 30000,
+    OPENAI: EnvLoader.number('RESILIENCE_TIMEOUT_OPENAI', 60000, 5000, 300000),
+    NOTION: EnvLoader.number('RESILIENCE_TIMEOUT_NOTION', 30000, 5000, 300000),
+    TRELLO: EnvLoader.number('RESILIENCE_TIMEOUT_TRELLO', 15000, 1000, 120000),
+    GITHUB: EnvLoader.number('RESILIENCE_TIMEOUT_GITHUB', 30000, 5000, 300000),
+    DATABASE: EnvLoader.number(
+      'RESILIENCE_TIMEOUT_DATABASE',
+      10000,
+      1000,
+      120000
+    ),
+    SUPABASE: EnvLoader.number(
+      'RESILIENCE_TIMEOUT_SUPABASE',
+      10000,
+      1000,
+      120000
+    ),
+    DEFAULT: EnvLoader.number(
+      'RESILIENCE_TIMEOUT_DEFAULT',
+      30000,
+      1000,
+      300000
+    ),
   } as const,
 
-  /**
-   * Service-specific retry configurations
-   */
   SERVICE_RETRY: {
     OPENAI: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
     GITHUB: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
@@ -619,9 +712,6 @@ export const RESILIENCE_CONFIG = {
     SUPABASE: { maxRetries: 2, baseDelayMs: 1000, maxDelayMs: 10000 },
   } as const,
 
-  /**
-   * Service-specific circuit breaker configurations
-   */
   SERVICE_CIRCUIT_BREAKER: {
     OPENAI: { failureThreshold: 5, resetTimeoutMs: 60000 },
     GITHUB: { failureThreshold: 5, resetTimeoutMs: 30000 },
@@ -637,77 +727,71 @@ export const RESILIENCE_CONFIG = {
  * These constants provide field-specific limits for use in validation.ts
  */
 export const VALIDATION_LIMITS = {
-  /**
-   * Idea validation limits
-   */
   IDEA: {
-    MIN_LENGTH: 10,
-    MAX_LENGTH: 10000,
-    MAX_ID_LENGTH: 100,
+    MIN_LENGTH: VALIDATION_CONFIG.MIN_IDEA_LENGTH,
+    MAX_LENGTH: VALIDATION_CONFIG.MAX_IDEA_LENGTH,
+    MAX_ID_LENGTH: VALIDATION_CONFIG.MAX_IDEA_ID_LENGTH,
   } as const,
 
-  /**
-   * Title validation limits
-   */
   TITLE: {
-    MAX_LENGTH: 500,
+    MAX_LENGTH: EnvLoader.number('VALIDATION_TITLE_MAX_LENGTH', 500, 50, 1000),
   } as const,
 
-  /**
-   * Answer validation limits for clarification flow
-   */
   ANSWER: {
-    MIN_LENGTH: 5,
-    MAX_LENGTH: 500,
-    MIN_SHORT_LENGTH: 2,
-    MAX_SHORT_LENGTH: 100,
+    MIN_LENGTH: EnvLoader.number('VALIDATION_ANSWER_MIN_LENGTH', 5, 1, 50),
+    MAX_LENGTH: EnvLoader.number('VALIDATION_ANSWER_MAX_LENGTH', 500, 50, 5000),
+    MIN_SHORT_LENGTH: EnvLoader.number(
+      'VALIDATION_ANSWER_MIN_SHORT_LENGTH',
+      2,
+      1,
+      10
+    ),
+    MAX_SHORT_LENGTH: EnvLoader.number(
+      'VALIDATION_ANSWER_MAX_SHORT_LENGTH',
+      100,
+      10,
+      500
+    ),
   } as const,
 
-  /**
-   * Pagination limits
-   */
   PAGINATION: {
-    DEFAULT_LIMIT: 50,
-    MAX_LIMIT: 100,
-    AGENT_LOGS_DEFAULT: 100,
+    DEFAULT_LIMIT: VALIDATION_CONFIG.DEFAULT_PAGINATION_LIMIT,
+    MAX_LIMIT: VALIDATION_CONFIG.MAX_PAGINATION_LIMIT,
+    AGENT_LOGS_DEFAULT: EnvLoader.number(
+      'VALIDATION_AGENT_LOGS_DEFAULT',
+      100,
+      10,
+      1000
+    ),
   } as const,
 
-  /**
-   * Database query limits
-   */
   DATABASE: {
-    STALE_SESSION_THRESHOLD_MS: 30000,
+    STALE_SESSION_THRESHOLD_MS:
+      AGENT_CONFIG.DATABASE.HEALTH_CHECK_STALE_THRESHOLD_MS,
   } as const,
 } as const;
 
 /**
  * Cache TTL configuration
+ * Now supports environment variable overrides
  */
 export const CACHE_TTL_CONFIG = {
-  /**
-   * Default cache TTL for use-cache hook (5 minutes)
-   */
-  DEFAULT_CACHE_TTL_MS: 5 * 60 * 1000,
-
-  /**
-   * Default stale-while-revalidate setting
-   */
+  DEFAULT_CACHE_TTL_MS: EnvLoader.number(
+    'CACHE_TTL_STANDARD',
+    5 * 60 * 1000,
+    1000,
+    3600000
+  ),
   DEFAULT_STALE_WHILE_REVALIDATE: true,
 } as const;
 
 /**
  * Rate limit statistics configuration
+ * Now supports environment variable overrides
  */
 export const RATE_LIMIT_STATS_CONFIG = {
-  /**
-   * Default window for rate limit stats (1 minute)
-   */
-  DEFAULT_STATS_WINDOW_MS: 60 * 1000,
-
-  /**
-   * Number of top users to display in stats
-   */
-  TOP_USERS_LIMIT: 10,
+  DEFAULT_STATS_WINDOW_MS: RATE_LIMIT_CONFIG.DEFAULT_WINDOW,
+  TOP_USERS_LIMIT: EnvLoader.number('RATE_LIMIT_TOP_USERS_LIMIT', 10, 1, 100),
 } as const;
 
 /**
@@ -737,40 +821,65 @@ export const STATUS_CODES = {
 
 /**
  * AI Service Limits
+ * Now supports environment variable overrides
  */
 export const AI_SERVICE_LIMITS = {
-  MAX_COST_TRACKERS: 10000,
-  MAX_COST_TRACKER_AGE_MS: 24 * 60 * 60 * 1000, // 24 hours
-  CLEANUP_PERCENTAGE: 0.2, // Remove 20% when at capacity
-  CACHE_KEY_HASH_LENGTH: 64,
+  MAX_COST_TRACKERS: AI_CONFIG.RESPONSE_CACHE_MAX_SIZE * 100,
+  MAX_COST_TRACKER_AGE_MS: EnvLoader.number(
+    'AI_MAX_COST_TRACKER_AGE_MS',
+    24 * 60 * 60 * 1000,
+    3600000,
+    168 * 60 * 60 * 1000
+  ),
+  CLEANUP_PERCENTAGE: RATE_LIMIT_STORE_CONFIG.CLEANUP_PERCENTAGE,
+  CACHE_KEY_HASH_LENGTH: AI_CONFIG.CACHE_KEY_HASH_LENGTH,
 } as const;
 
 /**
  * Rate Limiting - Additional Config
+ * Now supports environment variable overrides
  */
 export const RATE_LIMIT_VALUES = {
-  MAX_REQUESTS_PER_IDENTIFIER: 1000,
+  MAX_REQUESTS_PER_IDENTIFIER: EnvLoader.number(
+    'RATE_LIMIT_MAX_REQUESTS_PER_IDENTIFIER',
+    1000,
+    100,
+    10000
+  ),
 } as const;
 
 /**
  * Clarifier Agent Values
+ * Now supports environment variable overrides
  */
 export const CLARIFIER_VALUES = {
-  LOG_PREVIEW_LENGTH: 100,
-  INITIAL_CONFIDENCE: 0.5,
-  COMPLETION_CONFIDENCE: 0.9,
+  LOG_PREVIEW_LENGTH: EnvLoader.number(
+    'AGENT_CLARIFIER_LOG_PREVIEW_LENGTH',
+    100,
+    50,
+    500
+  ),
+  INITIAL_CONFIDENCE: AGENT_CONFIG.CLARIFIER_CONFIDENCE.BASE_CONFIDENCE,
+  COMPLETION_CONFIDENCE: AGENT_CONFIG.CLARIFIER_CONFIDENCE.MAX_CONFIDENCE,
 } as const;
 
 /**
  * Task Validation
+ * Now supports environment variable overrides
  */
 export const TASK_VALIDATION = {
-  MAX_TITLE_LENGTH: 255,
+  MAX_TITLE_LENGTH: EnvLoader.number(
+    'VALIDATION_TASK_MAX_TITLE_LENGTH',
+    255,
+    50,
+    1000
+  ),
 } as const;
 
 /**
  * Retry Configuration - Additional
+ * Now supports environment variable overrides
  */
 export const RETRY_VALUES = {
-  JITTER_MULTIPLIER_MS: 1000,
+  JITTER_MULTIPLIER_MS: RETRY_CONFIG.INITIAL_DELAY,
 } as const;
