@@ -346,10 +346,11 @@ export function redactPIIInObject(
   }
 
   if (obj instanceof Error) {
+    // SECURITY: Do not include stack traces in redacted error data
+    // to prevent leaking internal application structure and file paths.
     const errorData: Record<string, unknown> = {
       name: obj.name,
       message: obj.message,
-      stack: obj.stack,
     };
 
     const descriptors = getAllPropertyDescriptors(obj);
@@ -358,7 +359,10 @@ export function redactPIIInObject(
         typeof descriptor.key === 'symbol'
           ? descriptor.key.toString()
           : descriptor.key;
-      if (!(key in errorData)) {
+
+      // SECURITY: Double-check to ensure 'stack' is never included even if it's
+      // an enumerable property or returned by property descriptors.
+      if (!(key in errorData) && key !== 'stack') {
         errorData[key] = descriptor.value;
       }
     }
