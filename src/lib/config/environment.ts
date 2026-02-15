@@ -7,7 +7,7 @@
 /**
  * Type-safe environment variable loader
  */
-class EnvLoader {
+export class EnvLoader {
   /**
    * Get string value from environment variable
    */
