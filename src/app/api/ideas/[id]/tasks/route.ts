@@ -37,7 +37,8 @@ async function handleGet(context: ApiContext) {
       return notFoundResponse('No deliverables found for this idea');
     }
 
-    // Calculate overall progress
+    // PERFORMANCE: Use a single pass over deliverables and tasks to calculate all stats
+    // This reduces complexity from O(3N) to O(N) where N is the number of tasks.
     let totalTasks = 0;
     let completedTasks = 0;
     let totalHours = 0;
@@ -45,20 +46,28 @@ async function handleGet(context: ApiContext) {
 
     const deliverables = deliverablesWithTasks.map((deliverable) => {
       const tasks = deliverable.tasks || [];
-      totalTasks += tasks.length;
-      completedTasks += tasks.filter((t) => t.status === 'completed').length;
+      let deliverableCompleted = 0;
+      let deliverableTotalHours = 0;
+      let deliverableCompletedHours = 0;
 
       tasks.forEach((t) => {
         const est = Number(t.estimate) || 0;
-        totalHours += est;
+        deliverableTotalHours += est;
         if (t.status === 'completed') {
-          completedHours += est;
+          deliverableCompleted++;
+          deliverableCompletedHours += est;
         }
       });
 
-      const deliverableCompleted = tasks.filter(
-        (t) => t.status === 'completed'
-      ).length;
+      totalTasks += tasks.length;
+      completedTasks += deliverableCompleted;
+      totalHours += deliverableTotalHours;
+      completedHours += deliverableCompletedHours;
+
+      // Round deliverable hours to 1 decimal place for the response
+      const dTotalHours = Math.round(deliverableTotalHours * 10) / 10;
+      const dCompletedHours = Math.round(deliverableCompletedHours * 10) / 10;
+
       const deliverableProgress =
         tasks.length > 0 ? (deliverableCompleted / tasks.length) * 100 : 0;
 
@@ -67,6 +76,8 @@ async function handleGet(context: ApiContext) {
         progress: Math.round(deliverableProgress),
         completedCount: deliverableCompleted,
         totalCount: tasks.length,
+        totalHours: dTotalHours,
+        completedHours: dCompletedHours,
       };
     });
 

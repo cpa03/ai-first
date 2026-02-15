@@ -78,66 +78,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           throw new Error('Invalid response from server');
         }
 
-        // PERFORMANCE: Pre-calculate deliverable-level and global statistics
-        let totalTasks = 0;
-        let completedTasks = 0;
-        let totalHours = 0;
-        let completedHours = 0;
-
-        const deliverables = (result.data.deliverables || []).map(
-          (d: Deliverable & { tasks: Task[] }) => {
-            const stats = d.tasks.reduce(
-              (acc, t) => {
-                const est = Number(t.estimate) || 0;
-                acc.totalHours += est;
-                acc.totalCount += 1;
-                if (t.status === 'completed') {
-                  acc.completedHours += est;
-                  acc.completedCount += 1;
-                }
-                return acc;
-              },
-              {
-                totalHours: 0,
-                completedHours: 0,
-                totalCount: 0,
-                completedCount: 0,
-              }
-            );
-
-            const dTotalHours = Math.round(stats.totalHours * 10) / 10;
-            const dCompletedHours = Math.round(stats.completedHours * 10) / 10;
-
-            totalTasks += stats.totalCount;
-            completedTasks += stats.completedCount;
-            totalHours += dTotalHours;
-            completedHours += dCompletedHours;
-
-            return {
-              ...d,
-              totalCount: stats.totalCount,
-              completedCount: stats.completedCount,
-              totalHours: dTotalHours,
-              completedHours: dCompletedHours,
-              progress: Math.round(
-                stats.totalCount > 0
-                  ? (stats.completedCount / stats.totalCount) * 100
-                  : 0
-              ),
-            };
-          }
-        );
-
-        const summary = {
-          totalDeliverables: deliverables.length,
-          totalTasks,
-          completedTasks,
-          totalHours: Math.round(totalHours * 10) / 10,
-          completedHours: Math.round(completedHours * 10) / 10,
-          overallProgress: Math.round(
-            totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0
-          ),
-        };
+        // PERFORMANCE: Use server-provided statistics to avoid redundant client-side calculations
+        // This leverages the work already done by the API and keeps the client lightweight.
+        const { deliverables, summary } = result.data;
 
         setData({ ideaId, deliverables, summary });
 
