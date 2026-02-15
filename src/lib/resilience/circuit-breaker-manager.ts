@@ -12,7 +12,7 @@ export class CircuitBreakerManager {
   private maxSize: number;
 
   constructor(options?: CircuitBreakerManagerOptions) {
-    this.maxSize = options?.maxSize ?? Number.MAX_SAFE_INTEGER;
+    this.maxSize = options?.maxSize ?? 100;
   }
 
   static getInstance(): CircuitBreakerManager {
