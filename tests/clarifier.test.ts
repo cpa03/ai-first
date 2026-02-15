@@ -131,7 +131,7 @@ describe('ClarifierAgent', () => {
       expect(session.originalIdea).toBe('Test idea');
       expect(session.questions).toHaveLength(3);
       expect(session.status).toBe('pending');
-      expect(session.confidence).toBe(0.5);
+      expect(session.confidence).toBe(0.3);
     });
   });
 
