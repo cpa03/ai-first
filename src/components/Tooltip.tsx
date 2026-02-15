@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
-import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -18,7 +18,7 @@ export default function Tooltip({
   children,
   content,
   position = 'top',
-  delay = 300,
+  delay = UI_CONFIG.TOOLTIP_DELAY,
   disabled = false,
   className = '',
 }: TooltipProps) {

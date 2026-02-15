@@ -168,20 +168,35 @@ function cleanupOldestEntries(count: number): void {
 }
 
 export const rateLimitConfigs = {
-  strict: { limit: 10, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
-  moderate: { limit: 30, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
-  lenient: { limit: 60, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
+  strict: {
+    limit: RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.STRICT,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
+  moderate: {
+    limit: RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.MODERATE,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
+  lenient: {
+    limit: RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.LENIENT,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
 } as const;
 
 export const tieredRateLimits: Record<UserRole, RateLimitConfig> = {
-  anonymous: { limit: 30, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
-  authenticated: {
-    limit: 60,
+  anonymous: {
+    limit: RATE_LIMIT_CONFIG.USER_TIER.ANONYMOUS,
     windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
   },
-  premium: { limit: 120, windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS },
+  authenticated: {
+    limit: RATE_LIMIT_CONFIG.USER_TIER.AUTHENTICATED,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
+  premium: {
+    limit: RATE_LIMIT_CONFIG.USER_TIER.PREMIUM,
+    windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
+  },
   enterprise: {
-    limit: 300,
+    limit: RATE_LIMIT_CONFIG.USER_TIER.ENTERPRISE,
     windowMs: RATE_LIMIT_STORE_CONFIG.DEFAULT_WINDOW_MS,
   },
 };
@@ -199,6 +214,7 @@ import {
   ERROR_CONFIG,
   RATE_LIMIT_STATS_CONFIG,
   RATE_LIMIT_VALUES,
+  RATE_LIMIT_CONFIG,
 } from './config/constants';
 
 export function cleanupExpiredEntries(): void {
