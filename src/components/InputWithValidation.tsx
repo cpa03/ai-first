@@ -48,6 +48,7 @@ const InputWithValidation = forwardRef<
   ) => {
     const [touched, setTouched] = useState(false);
     const [errorAnnounced, setErrorAnnounced] = useState(false);
+    const [shouldShake, setShouldShake] = useState(false);
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
@@ -74,6 +75,17 @@ const InputWithValidation = forwardRef<
       setTouched(true);
     };
 
+    // Trigger shake animation when validation error appears
+    useEffect(() => {
+      if (isInvalid) {
+        setShouldShake(true);
+        const timeout = setTimeout(() => {
+          setShouldShake(false);
+        }, 500); // Match animation duration
+        return () => clearTimeout(timeout);
+      }
+    }, [isInvalid, error]);
+
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
@@ -83,7 +95,7 @@ const InputWithValidation = forwardRef<
     const hasIcon = (isValid && charCount > 0) || isInvalid;
     const baseInputClasses = `${INPUT_STYLES.BASE} ${
       isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL
-    } ${hasIcon ? 'pr-10' : ''} ${className}`;
+    } ${hasIcon ? 'pr-10' : ''} ${shouldShake ? 'animate-shake' : ''} ${className}`;
 
     const errorAnnouncedRef = React.useRef(errorAnnounced);
 
