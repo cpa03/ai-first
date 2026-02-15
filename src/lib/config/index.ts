@@ -68,6 +68,7 @@ export {
   ANIMATION_DURATIONS,
   SPACING_PX,
   SIZES,
+  SVG_ANIMATION,
 } from './theme';
 
 // Environment-based Configuration (addresses issues #981-986)

@@ -189,6 +189,54 @@ export const SIZES = {
   },
 } as const;
 
+/**
+ * SVG Animation constants for stroke-dasharray and stroke-dashoffset
+ * Used for checkmark animations and progress indicators
+ * Eliminates hardcoded SVG animation values in components
+ */
+export const SVG_ANIMATION = {
+  /** Checkmark animation path length (matches the checkmark SVG path) */
+  CHECKMARK_PATH_LENGTH: 24,
+
+  /** Stroke dasharray values for different animation states */
+  DASH_ARRAY: {
+    /** Full path length for complete visibility */
+    FULL: 24,
+    /** Hidden state (for animation start) */
+    HIDDEN: 24,
+  } as const,
+
+  /** Stroke dashoffset values for different animation states */
+  DASH_OFFSET: {
+    /** Fully visible (animation complete) - matches numeric value used in TaskItem.tsx */
+    VISIBLE: 0,
+    /** Hidden (animation start) - matches string value used in InputWithValidation.tsx */
+    HIDDEN: '24',
+    /** Fully visible as string variant */
+    VISIBLE_STR: '0',
+  } as const,
+
+  /** Progress circle calculations */
+  PROGRESS: {
+    /** Default radius for progress circles */
+    DEFAULT_RADIUS: 10,
+    /**
+     * Calculate circumference for a given radius
+     * @param radius - Circle radius
+     * @returns Circumference (2 * PI * radius)
+     */
+    getCircumference: (radius: number) => 2 * Math.PI * radius,
+    /**
+     * Calculate stroke-dashoffset for a given progress percentage
+     * @param circumference - Circle circumference
+     * @param progress - Progress percentage (0-100)
+     * @returns Stroke dashoffset value
+     */
+    getDashOffset: (circumference: number, progress: number) =>
+      circumference * (1 - progress / 100),
+  },
+} as const;
+
 export type FocusShadows = typeof FOCUS_SHADOWS;
 export type BorderColors = typeof BORDER_COLORS;
 export type RingColors = typeof RING_COLORS;

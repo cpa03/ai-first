@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskStatus } from '@/hooks/useTaskManagement';
+import { SVG_ANIMATION } from '@/lib/config';
 
 const statusConfig: Record<
   TaskStatus,
@@ -56,8 +57,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             stroke="currentColor"
             viewBox="0 0 24 24"
             style={{
-              strokeDasharray: 24,
-              strokeDashoffset: 0,
+              strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
+              strokeDashoffset: SVG_ANIMATION.DASH_OFFSET.VISIBLE,
             }}
           >
             <path
