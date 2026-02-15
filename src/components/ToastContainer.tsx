@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
@@ -174,27 +174,28 @@ function Toast({ toast, onClose }: ToastProps) {
 export default function ToastContainer() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const showToast = (options: ToastOptions) => {
+  const showToast = useCallback((options: ToastOptions) => {
     const id = Math.random().toString(36).substring(2, 9);
     const newToast: Toast = { ...options, id };
     setToasts((prev) => [...prev, newToast]);
-  };
+  }, []);
 
-  const closeToast = (id: string) => {
+  const closeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  };
+  }, []);
 
   useEffect(() => {
-    (
-      window as Window & { showToast?: (options: ToastOptions) => void }
-    ).showToast = showToast;
+    if (typeof window === 'undefined') return;
+
+    const win = window as Window & {
+      showToast?: (options: ToastOptions) => void;
+    };
+    win.showToast = showToast;
+
     return () => {
-      const win = window as Window & {
-        showToast?: (options: ToastOptions) => void;
-      };
       delete win.showToast;
     };
-  }, []);
+  }, [showToast]);
 
   return (
     <div
