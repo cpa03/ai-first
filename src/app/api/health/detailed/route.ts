@@ -78,69 +78,111 @@ async function handleGet(context: ApiContext) {
     failures: status.failures,
   }));
 
-  try {
-    const dbStart = Date.now();
-    const dbHealth = await dbService.healthCheck();
+  // Run health checks concurrently with proper aggregate error handling
+  const healthCheckPromises = [
+    (async () => {
+      const dbStart = Date.now();
+      const dbHealth = await dbService.healthCheck();
+      return {
+        service: 'database' as const,
+        status: dbHealth.status,
+        latency: Date.now() - dbStart,
+        lastChecked: dbHealth.timestamp,
+      };
+    })(),
+    (async () => {
+      const aiStart = Date.now();
+      const aiHealth = await aiService.healthCheck();
+      return {
+        service: 'ai' as const,
+        status: aiHealth.status,
+        latency: Date.now() - aiStart,
+        lastChecked: new Date().toISOString(),
+      };
+    })(),
+    (async () => {
+      const exportStart = Date.now();
+      const exportStatuses = await exportManager.validateAllConnectors();
+      const healthyExports = Object.values(exportStatuses).filter(
+        (v) => v
+      ).length;
+      const totalExports = Object.keys(exportStatuses).length;
+      return {
+        service: 'exports' as const,
+        status:
+          healthyExports === totalExports
+            ? 'up'
+            : healthyExports > 0
+              ? 'degraded'
+              : 'down',
+        latency: Date.now() - exportStart,
+        lastChecked: new Date().toISOString(),
+        error:
+          healthyExports < totalExports
+            ? redactPII(
+                `${totalExports - healthyExports}/${totalExports} connectors unavailable`
+              )
+            : undefined,
+      };
+    })(),
+  ];
+
+  const results = await Promise.allSettled(healthCheckPromises);
+
+  // Process database check result
+  const dbResult = results[0];
+  if (dbResult.status === 'fulfilled') {
     checks.database = {
       ...checks.database,
-      status: dbHealth.status,
-      latency: Date.now() - dbStart,
-      lastChecked: dbHealth.timestamp,
+      ...dbResult.value,
     };
-  } catch (error) {
+  } else {
     checks.database = {
       ...checks.database,
       status: 'unhealthy',
-      error: redactPII(error instanceof Error ? error.message : 'Unknown error'),
+      error: redactPII(
+        dbResult.reason instanceof Error
+          ? dbResult.reason.message
+          : 'Unknown error'
+      ),
     };
   }
 
-  try {
-    const aiStart = Date.now();
-    const aiHealth = await aiService.healthCheck();
+  // Process AI check result
+  const aiResult = results[1];
+  if (aiResult.status === 'fulfilled') {
     checks.ai = {
       ...checks.ai,
-      status: aiHealth.status,
-      latency: Date.now() - aiStart,
-      lastChecked: new Date().toISOString(),
+      ...aiResult.value,
     };
-  } catch (error) {
+  } else {
     checks.ai = {
       ...checks.ai,
       status: 'unhealthy',
-      error: redactPII(error instanceof Error ? error.message : 'Unknown error'),
+      error: redactPII(
+        aiResult.reason instanceof Error
+          ? aiResult.reason.message
+          : 'Unknown error'
+      ),
     };
   }
 
-  try {
-    const exportStart = Date.now();
-    const exportStatuses = await exportManager.validateAllConnectors();
-    const healthyExports = Object.values(exportStatuses).filter(
-      (v) => v
-    ).length;
-    const totalExports = Object.keys(exportStatuses).length;
+  // Process exports check result
+  const exportResult = results[2];
+  if (exportResult.status === 'fulfilled') {
     checks.exports = {
       ...checks.exports,
-      status:
-        healthyExports === totalExports
-          ? 'up'
-          : healthyExports > 0
-            ? 'degraded'
-            : 'down',
-      latency: Date.now() - exportStart,
-      lastChecked: new Date().toISOString(),
-      error:
-        healthyExports < totalExports
-          ? redactPII(
-              `${totalExports - healthyExports}/${totalExports} connectors unavailable`
-            )
-          : undefined,
+      ...exportResult.value,
     };
-  } catch (error) {
+  } else {
     checks.exports = {
       ...checks.exports,
       status: 'unhealthy',
-      error: redactPII(error instanceof Error ? error.message : 'Unknown error'),
+      error: redactPII(
+        exportResult.reason instanceof Error
+          ? exportResult.reason.message
+          : 'Unknown error'
+      ),
     };
   }
 
