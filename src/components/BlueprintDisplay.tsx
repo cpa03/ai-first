@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
+import SuccessCelebration from '@/components/SuccessCelebration';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -24,6 +25,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   const [isGenerating, setIsGenerating] = useState(true);
   const [blueprint, setBlueprint] = useState('');
   const [copied, setCopied] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -34,7 +36,6 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     };
   }, []);
 
-  // Simulate blueprint generation
   useEffect(() => {
     const generateBlueprint = async () => {
       await new Promise((resolve) =>
@@ -45,6 +46,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
       setBlueprint(generatedBlueprint);
       setIsGenerating(false);
+      setShowCelebration(true);
     };
 
     generateBlueprint();
@@ -58,7 +60,6 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     a.download = 'project-blueprint.md';
     document.body.appendChild(a);
 
-    // Use setTimeout to ensure download starts before cleanup
     setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
@@ -89,7 +90,6 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
       }
     } catch (err) {
       logger.error('Failed to copy blueprint', err);
-      // Show error feedback to user
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'error',
@@ -238,6 +238,11 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           </div>
         </footer>
       </section>
+
+      <SuccessCelebration
+        show={showCelebration}
+        onComplete={() => setShowCelebration(false)}
+      />
     </div>
   );
 };
