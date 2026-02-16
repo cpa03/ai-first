@@ -399,6 +399,12 @@ CREATE POLICY "Users can update their clarification sessions" ON clarification_s
         OR auth.role() = 'service_role'
     );
 
+CREATE POLICY "Users can delete their clarification sessions" ON clarification_sessions
+    FOR DELETE USING (
+        idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid())
+        OR auth.role() = 'service_role'
+    );
+
 -- Clarification answers policies
 CREATE POLICY "Users can view clarification answers for their sessions" ON clarification_answers
     FOR SELECT USING (
@@ -434,6 +440,17 @@ CREATE POLICY "Users can update their clarification answers" ON clarification_an
         OR auth.role() = 'service_role'
     );
 
+CREATE POLICY "Users can delete their clarification answers" ON clarification_answers
+    FOR DELETE USING (
+        EXISTS (
+            SELECT 1 FROM clarification_sessions cs
+            JOIN ideas i ON cs.idea_id = i.id
+            WHERE cs.id = clarification_answers.session_id
+            AND i.user_id = auth.uid()
+        )
+        OR auth.role() = 'service_role'
+    );
+
 -- Enable Row Level Security for new tables
 ALTER TABLE clarification_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clarification_answers ENABLE ROW LEVEL SECURITY;
@@ -460,6 +477,28 @@ CREATE POLICY "Users can view task dependencies for their ideas" ON task_depende
 
 CREATE POLICY "Users can create task dependencies for their ideas" ON task_dependencies
     FOR INSERT WITH CHECK (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE (t.id = predecessor_task_id OR t.id = successor_task_id)
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can update task dependencies for their ideas" ON task_dependencies
+    FOR UPDATE USING (
+        EXISTS (
+            SELECT 1 FROM tasks t
+            JOIN deliverables d ON t.deliverable_id = d.id
+            JOIN ideas i ON d.idea_id = i.id
+            WHERE (t.id = predecessor_task_id OR t.id = successor_task_id)
+            AND i.user_id = auth.uid()
+        ) OR auth.role() = 'service_role'
+    );
+
+CREATE POLICY "Users can delete task dependencies for their ideas" ON task_dependencies
+    FOR DELETE USING (
         EXISTS (
             SELECT 1 FROM tasks t
             JOIN deliverables d ON t.deliverable_id = d.id
