@@ -33,10 +33,10 @@ ALTER TABLE time_tracking
 ADD CONSTRAINT time_tracking_hours_logged_valid 
 CHECK (hours_logged > 0);
 
--- Ensure risk score is within valid range (already exists, but adding explicit constraint for completeness)
+-- Ensure risk score is within valid range (0-100 scale)
 ALTER TABLE risk_assessments 
-ADD CONSTRAINT risk_assessments_confidence_score_valid 
-CHECK (confidence_score >= 0 AND confidence_score <= 1);
+ADD CONSTRAINT risk_assessments_risk_score_valid 
+CHECK (risk_score >= 0 AND risk_score <= 100);
 
 -- Ensure task complexity_score is valid (already exists, but adding explicit constraint for completeness)
 ALTER TABLE tasks 

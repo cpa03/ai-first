@@ -24,7 +24,7 @@ ALTER TABLE task_assignments DROP CONSTRAINT IF EXISTS task_assignments_allocati
 ALTER TABLE time_tracking DROP CONSTRAINT IF EXISTS time_tracking_hours_logged_valid;
 
 -- Remove risk_assessments constraints
-ALTER TABLE risk_assessments DROP CONSTRAINT IF EXISTS risk_assessments_confidence_score_valid;
+ALTER TABLE risk_assessments DROP CONSTRAINT IF EXISTS risk_assessments_risk_score_valid;
 
 -- Remove milestones constraints
 ALTER TABLE milestones DROP CONSTRAINT IF EXISTS milestones_priority_valid;
