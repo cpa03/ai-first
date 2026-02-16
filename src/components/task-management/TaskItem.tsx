@@ -1,9 +1,22 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useState, useEffect, useCallback, useRef } from 'react';
 import { Task } from '@/lib/db';
 import { TaskStatus } from '@/hooks/useTaskManagement';
 import { SVG_ANIMATION } from '@/lib/config';
+
+// Micro-celebration particle configuration
+const CELEBRATION_COLORS = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B'];
+const PARTICLE_COUNT = 5;
+
+interface Particle {
+  id: number;
+  x: number;
+  y: number;
+  color: string;
+  scale: number;
+  rotation: number;
+}
 
 const statusConfig: Record<
   TaskStatus,
@@ -31,13 +44,64 @@ interface TaskItemProps {
 function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = statusConfig[task.status];
   const isCompleted = task.status === 'completed';
+  const [particles, setParticles] = useState<Particle[]>([]);
+  const [shouldAnimate, setShouldAnimate] = useState(true);
+  const prevStatusRef = useRef<TaskStatus>(task.status);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
+  // Check for reduced motion preference
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setShouldAnimate(!mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setShouldAnimate(!e.matches);
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Generate celebration particles
+  const generateParticles = useCallback((): Particle[] => {
+    return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
+      id: i,
+      x: (Math.random() - 0.5) * 40,
+      y: (Math.random() - 0.5) * 40,
+      color:
+        CELEBRATION_COLORS[
+          Math.floor(Math.random() * CELEBRATION_COLORS.length)
+        ],
+      scale: 0.5 + Math.random() * 0.5,
+      rotation: Math.random() * 360,
+    }));
+  }, []);
+
+  // Trigger celebration when task is marked complete
+  useEffect(() => {
+    if (
+      shouldAnimate &&
+      task.status === 'completed' &&
+      prevStatusRef.current !== 'completed'
+    ) {
+      setParticles(generateParticles());
+
+      const timer = setTimeout(() => {
+        setParticles([]);
+      }, 600);
+
+      return () => clearTimeout(timer);
+    }
+    prevStatusRef.current = task.status;
+  }, [task.status, shouldAnimate, generateParticles]);
 
   return (
     <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
       <button
+        ref={buttonRef}
         onClick={() => onToggle(task.id, task.status)}
         disabled={isUpdating}
-        className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 ${
+        className={`relative mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 ${
           isCompleted
             ? 'bg-green-500 border-green-500 scale-110'
             : 'border-gray-300 hover:border-primary-500 hover:scale-105'
@@ -90,6 +154,20 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             />
           </svg>
         )}
+
+        {/* Micro-celebration particles */}
+        {particles.map((particle) => (
+          <span
+            key={particle.id}
+            className="absolute w-1.5 h-1.5 rounded-full pointer-events-none animate-celebration-particle"
+            style={{
+              backgroundColor: particle.color,
+              transform: `translate(${particle.x}px, ${particle.y}px) scale(${particle.scale}) rotate(${particle.rotation}deg)`,
+              opacity: 0,
+            }}
+            aria-hidden="true"
+          />
+        ))}
       </button>
 
       <div className="flex-1 min-w-0">

@@ -288,3 +288,59 @@
     animation: none;
   }
 }
+
+/* Micro-celebration particle animation for task completion */
+@keyframes celebration-particle {
+  0% {
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 30px), var(--ty, -30px)) scale(0)
+      rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-celebration-particle {
+  animation: celebration-particle 0.6s ease-out forwards;
+}
+
+/* Stagger particle animations for natural effect */
+.animate-celebration-particle:nth-child(1) {
+  --tx: 20px;
+  --ty: -25px;
+  animation-delay: 0ms;
+}
+
+.animate-celebration-particle:nth-child(2) {
+  --tx: -15px;
+  --ty: -30px;
+  animation-delay: 50ms;
+}
+
+.animate-celebration-particle:nth-child(3) {
+  --tx: 25px;
+  --ty: -15px;
+  animation-delay: 100ms;
+}
+
+.animate-celebration-particle:nth-child(4) {
+  --tx: -20px;
+  --ty: -20px;
+  animation-delay: 150ms;
+}
+
+.animate-celebration-particle:nth-child(5) {
+  --tx: 10px;
+  --ty: -35px;
+  animation-delay: 200ms;
+}
+
+/* Reduced motion support for celebration particles */
+@media (prefers-reduced-motion: reduce) {
+  .animate-celebration-particle {
+    animation: none;
+    opacity: 0;
+  }
+}
