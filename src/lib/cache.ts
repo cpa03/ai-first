@@ -81,7 +81,17 @@ export class Cache<T = unknown> {
   }
 
   has(key: string): boolean {
-    return this.get(key) !== null;
+    const entry = this.cache.get(key);
+
+    if (!entry) {
+      return false;
+    }
+
+    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+      return false;
+    }
+
+    return true;
   }
 
   delete(key: string): boolean {
@@ -113,20 +123,22 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
+    const keysToDelete: string[] = [];
 
-    // Since we maintain chronological order in the Map (via delete/set),
-    // we can stop as soon as we find an entry that hasn't expired.
-    // This reduces complexity from O(n) to O(k).
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
+        keysToDelete.push(key);
+      }
+    }
+
+    for (const key of keysToDelete) {
+      const entry = this.cache.get(key);
+      if (entry) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
         this.totalHits -= entry.hits;
         this.cache.delete(key);
-      } else {
-        // Entries are sorted by timestamp; if this one isn't expired, none after it are.
-        break;
       }
     }
   }
