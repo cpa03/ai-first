@@ -1,5 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task, Deliverable, Idea } from '../db';
+import { GITHUB_CONFIG } from '@/lib/config';
 
 import { createLogger } from '../logger';
 
@@ -8,7 +9,7 @@ const logger = createLogger('GitHubProjectsExporter');
 export class GitHubProjectsExporter extends ExportConnector {
   readonly type = 'github-projects';
   readonly name = 'GitHub Projects';
-  private readonly API_BASE = 'https://api.github.com';
+  private readonly API_BASE = GITHUB_CONFIG.API.BASE_URL;
 
   async export(
     data: ExportData,
@@ -174,7 +175,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       scope: scopes,
     });
 
-    return `https://github.com/login/oauth/authorize?${params.toString()}`;
+    return `${GITHUB_CONFIG.API.AUTH_URL}?${params.toString()}`;
   }
 
   async handleAuthCallback(_code: string): Promise<void> {

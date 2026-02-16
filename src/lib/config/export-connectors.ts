@@ -99,10 +99,27 @@ export const ASANA_CONFIG = {
   },
 } as const;
 
+export const GOOGLE_TASKS_CONFIG = {
+  API: {
+    BASE_URL: 'https://www.googleapis.com/tasks/v1',
+    AUTH_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
+    TOKEN_URL: 'https://oauth2.googleapis.com/token',
+    SCOPE: 'https://www.googleapis.com/auth/tasks',
+  },
+
+  DEFAULTS: {
+    TASK_LIST_TITLE: 'IdeaFlow Tasks',
+    ACCESS_TYPE: 'offline',
+    PROMPT: 'consent',
+    INCLUDE_GRANTED_SCOPES: 'true',
+  },
+} as const;
+
 export type ExportConnectorConfig = {
   trello: typeof TRELLO_CONFIG;
   notion: typeof NOTION_CONFIG;
   github: typeof GITHUB_CONFIG;
   linear: typeof LINEAR_CONFIG;
   asana: typeof ASANA_CONFIG;
+  googleTasks: typeof GOOGLE_TASKS_CONFIG;
 };

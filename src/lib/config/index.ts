@@ -13,13 +13,13 @@
 // Application Configuration
 export { APP_CONFIG } from './app';
 
-// Export Connectors Configuration
 export {
   TRELLO_CONFIG,
   NOTION_CONFIG,
   GITHUB_CONFIG,
   LINEAR_CONFIG,
   ASANA_CONFIG,
+  GOOGLE_TASKS_CONFIG,
 } from './export-connectors';
 
 // Timeline and Task Configuration
@@ -57,7 +57,6 @@ export { COMPONENT_CONFIG } from './components';
 // Cleanup Configuration
 export { CLEANUP_CONFIG } from './cleanup';
 
-// Theme Configuration (eliminates hardcoded styling values)
 export {
   FOCUS_SHADOWS,
   BORDER_COLORS,
@@ -69,7 +68,17 @@ export {
   SPACING_PX,
   SIZES,
   SVG_ANIMATION,
+  CELEBRATION_COLORS,
+  ANIMATION_PHYSICS,
 } from './theme';
+
+export {
+  PAGE_CONFIG,
+  RESULTS_PAGE_CONFIG,
+  CLARIFY_PAGE_CONFIG,
+  DASHBOARD_PAGE_CONFIG,
+  HOME_PAGE_CONFIG,
+} from './pages';
 
 // Environment-based Configuration (addresses issues #981-986)
 // These exports allow runtime configuration via environment variables
