@@ -130,11 +130,19 @@ const InputWithValidation = forwardRef<
     }, [errorAnnounced]);
 
     useEffect(() => {
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
       if (isInvalid && !errorAnnouncedRef.current) {
-        queueMicrotask(() => setErrorAnnounced(true));
+        timeoutId = setTimeout(() => setErrorAnnounced(true), 0);
       } else if (!isInvalid && errorAnnouncedRef.current) {
-        queueMicrotask(() => setErrorAnnounced(false));
+        timeoutId = setTimeout(() => setErrorAnnounced(false), 0);
       }
+
+      return () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      };
     }, [isInvalid]);
 
     const setTextareaRef = (element: HTMLTextAreaElement | null) => {
