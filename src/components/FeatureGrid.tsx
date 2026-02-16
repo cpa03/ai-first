@@ -35,7 +35,6 @@ export default function FeatureGrid() {
                      hover:shadow-lg hover:-translate-y-1 hover:bg-white
                      focus-within:shadow-lg focus-within:-translate-y-1 focus-within:bg-white
                      motion-reduce:transition-none motion-reduce:hover:transform-none"
-          tabIndex={0}
         >
           <div
             className="bg-primary-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4

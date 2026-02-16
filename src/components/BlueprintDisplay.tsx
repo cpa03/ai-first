@@ -203,7 +203,6 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             <pre
               className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
               aria-label="Generated project blueprint content"
-              tabIndex={0}
             >
               {blueprint}
             </pre>
@@ -222,6 +221,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                 fullWidth={false}
                 aria-label="Start over with a new idea"
                 disabled
+                title="Start over functionality coming soon"
               >
                 Start Over
               </Button>
@@ -230,6 +230,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                 fullWidth={false}
                 aria-label="Export blueprint to project management tools"
                 disabled
+                title="Export to tools functionality coming soon"
               >
                 Export to Tools
               </Button>

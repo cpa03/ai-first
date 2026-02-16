@@ -6,6 +6,7 @@ import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Alert from '@/components/Alert';
 import dynamic from 'next/dynamic';
 import TaskManagement from '@/components/TaskManagement';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
@@ -182,15 +183,14 @@ function ResultsContent() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
-          <p className="text-red-800">{error}</p>
+        <Alert type="error" title="Error">
+          {error}
           <div className="mt-4">
             <Button onClick={() => router.back()} variant="primary">
               Go Back
             </Button>
           </div>
-        </div>
+        </Alert>
       </div>
     );
   }

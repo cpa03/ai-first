@@ -398,7 +398,6 @@ function ClarificationFlow({
                 showCharCount={true}
                 helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
                 required={true}
-                autoFocus={true}
                 className="min-h-[100px]"
                 ref={textareaRef}
               />
@@ -417,7 +416,6 @@ function ClarificationFlow({
                 showCharCount={true}
                 helpText={`Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
                 required={true}
-                autoFocus={true}
                 ref={textInputRef}
               />
             )}
@@ -445,7 +443,6 @@ function ClarificationFlow({
                     )
                   }
                   required
-                  autoFocus
                 >
                   <option value="">Select an option...</option>
                   {currentQuestion.options.map((option) => (
