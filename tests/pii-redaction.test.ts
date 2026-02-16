@@ -759,4 +759,39 @@ describe('PII Redaction Utility', () => {
       expect(statsAfter.labelCacheSize).toBe(0);
     });
   });
+
+  describe('Improved Secret Redaction', () => {
+    it('should redact short passwords and secrets (>= 4 chars)', () => {
+      const inputs = [
+        'password: 1234',
+        'password=123456',
+        'secret: abcd',
+        'token: xyz1',
+      ];
+
+      inputs.forEach((input) => {
+        const output = redactPII(input);
+        expect(output).toContain('[REDACTED_API_KEY]');
+      });
+    });
+
+    it('should redact API keys with spaces in prefixes', () => {
+      const inputs = [
+        'API key: 12345678901234567890',
+        'access key: 12345678901234567890',
+        'admin key: 12345678901234567890',
+      ];
+
+      inputs.forEach((input) => {
+        const output = redactPII(input);
+        expect(output).toContain('[REDACTED_API_KEY]');
+      });
+    });
+
+    it('should not redact extremely short values (< 4 chars)', () => {
+      const input = 'password: 123';
+      const output = redactPII(input);
+      expect(output).toBe(input);
+    });
+  });
 });
