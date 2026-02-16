@@ -86,6 +86,38 @@ process.env.GOOGLE_CLIENT_SECRET =
   process.env.TEST_GOOGLE_CLIENT_SECRET ||
   'test-DUMMY-client-secret-FOR-TESTING';
 
+// Also set TEST_* variables for test-secrets.ts compatibility
+process.env.TEST_API_KEY_OPENAI =
+  process.env.TEST_API_KEY_OPENAI || 'sk-test-DUMMY-OPENAI-KEY-LONG-ENOUF';
+process.env.TEST_API_KEY_GENERIC =
+  process.env.TEST_API_KEY_GENERIC || 'test-DUMMY-GENERIC-KEY';
+process.env.TEST_API_KEY_SHORT = process.env.TEST_API_KEY_SHORT || 'test-key';
+process.env.TEST_API_KEY_LONG =
+  process.env.TEST_API_KEY_LONG || 'sk-test-DUMMY-LONG-KEY-1234567890ABCDEFGHI';
+process.env.TEST_JWT_TOKEN =
+  process.env.TEST_JWT_TOKEN || 'test-DUMMY-JWT-TOKEN';
+process.env.TEST_PASSWORD = process.env.TEST_PASSWORD || 'testpassword123';
+process.env.TEST_PASSWORD_SIMPLE =
+  process.env.TEST_PASSWORD_SIMPLE || 'testpass';
+process.env.TEST_NOTION_API_KEY =
+  process.env.TEST_NOTION_API_KEY || 'test-DUMMY-NOTION-KEY';
+process.env.TEST_GITHUB_TOKEN =
+  process.env.TEST_GITHUB_TOKEN || 'test-DUMMY-GITHUB-TOKEN';
+process.env.TEST_TRELLO_API_KEY =
+  process.env.TEST_TRELLO_API_KEY || 'test-DUMMY-TRELLO-KEY';
+process.env.TEST_TRELLO_TOKEN =
+  process.env.TEST_TRELLO_TOKEN || 'test-DUMMY-TRELLO-TOKEN';
+process.env.TEST_GOOGLE_CLIENT_ID =
+  process.env.TEST_GOOGLE_CLIENT_ID || 'test-DUMMY-CLIENT-ID';
+process.env.TEST_GOOGLE_CLIENT_SECRET =
+  process.env.TEST_GOOGLE_CLIENT_SECRET || 'test-DUMMY-CLIENT-SECRET';
+process.env.TEST_SUPABASE_URL =
+  process.env.TEST_SUPABASE_URL || 'https://test-DUMMY.supabase.co';
+process.env.TEST_SUPABASE_ANON_KEY =
+  process.env.TEST_SUPABASE_ANON_KEY || 'test-DUMMY-ANON-KEY';
+process.env.TEST_SUPABASE_SERVICE_KEY =
+  process.env.TEST_SUPABASE_SERVICE_KEY || 'test-DUMMY-SERVICE-KEY';
+
 // Mock Next.js router
 jest.mock('next/navigation', () => ({
   useRouter() {
@@ -141,6 +173,21 @@ global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   unobserve: jest.fn(),
   disconnect: jest.fn(),
 }));
+
+// Mock window.matchMedia for media query tests
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
 
 // Setup fetch mock helper
 global.mockFetch = (response, ok = true, status = 200) => {
