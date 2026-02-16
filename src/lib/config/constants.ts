@@ -488,13 +488,10 @@ export const CACHE_CONFIG = {
  * Content Security Policy configuration
  */
 export const CSP_CONFIG = {
-  /**
-   * Default CSP directives
-   */
   DIRECTIVES: {
     'default-src': ["'self'"],
     'script-src': ["'self'", "'nonce-placeholder'"],
-    'style-src': ["'self'", "'nonce-placeholder'"],
+    'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
     'font-src': ["'self'", 'data:'],
     'object-src': ["'none'"],
