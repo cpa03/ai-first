@@ -39,11 +39,22 @@ module.exports = {
       },
       animation: {
         shimmer: 'shimmer 2s linear infinite',
+        'ready-pulse': 'ready-pulse 2s ease-in-out infinite',
       },
       keyframes: {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        'ready-pulse': {
+          '0%, 100%': {
+            opacity: '1',
+            transform: 'scale(1)',
+          },
+          '50%': {
+            opacity: '0.85',
+            transform: 'scale(1.02)',
+          },
         },
       },
     },

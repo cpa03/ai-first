@@ -29,6 +29,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMac, setIsMac] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -39,6 +40,14 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     const newValue = e.target.value;
     setIdea(newValue);
     setValidationError(validateIdea(newValue));
+  };
+
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -109,6 +118,8 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         value={idea}
         onChange={handleIdeaChange}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
         helpText={`Be as specific or as general as you'd like. We'll help you clarify details. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
         multiline={true}
@@ -133,16 +144,32 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
           <div
-            className="flex items-center gap-2 text-sm text-gray-600"
+            className={`flex items-center gap-2 text-sm text-gray-600 transition-all duration-300 ${
+              isFocused && idea.trim() && !validationError && !isSubmitting
+                ? 'animate-ready-pulse text-primary-600'
+                : ''
+            }`}
             aria-label="Keyboard shortcut: Command Enter to submit"
           >
-            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
+            <kbd
+              className={`hidden sm:inline-flex items-center gap-1 px-2 py-1 border rounded text-xs font-sans font-medium transition-colors duration-300 ${
+                isFocused && idea.trim() && !validationError && !isSubmitting
+                  ? 'bg-primary-50 border-primary-300 text-primary-700'
+                  : 'bg-gray-100 border-gray-400 text-gray-800'
+              }`}
+            >
               {isMac ? '⌘' : 'Ctrl'}
             </kbd>
-            <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
+            <kbd
+              className={`hidden sm:inline-flex items-center px-2 py-1 border rounded text-xs font-sans font-medium transition-colors duration-300 ${
+                isFocused && idea.trim() && !validationError && !isSubmitting
+                  ? 'bg-primary-50 border-primary-300 text-primary-700'
+                  : 'bg-gray-100 border-gray-400 text-gray-800'
+              }`}
+            >
               Enter
             </kbd>
-            <span className="hidden sm:inline text-gray-600">to submit</span>
+            <span className="hidden sm:inline">to submit</span>
           </div>
           <AutoSaveIndicator value={idea} />
         </div>
