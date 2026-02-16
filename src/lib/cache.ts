@@ -84,13 +84,23 @@ export class Cache<T = unknown> {
     const entry = this.cache.get(key);
 
     if (!entry) {
+      this.misses++;
       return false;
     }
 
     if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+      this.totalHits -= entry.hits;
+      this.cache.delete(key);
+      this.misses++;
       return false;
     }
 
+    // Update access order for LRU: delete and re-insert to move to end
+    this.cache.delete(key);
+    this.cache.set(key, entry);
+
+    entry.hits++;
+    this.totalHits++;
     return true;
   }
 
