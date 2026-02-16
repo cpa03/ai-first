@@ -493,7 +493,7 @@ export const CSP_CONFIG = {
    */
   DIRECTIVES: {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'", 'https://vercel.live'],
+    'script-src': ["'self'", "'unsafe-inline'"],
     'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
     'font-src': ["'self'", 'data:'],
