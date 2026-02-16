@@ -5,6 +5,8 @@
  * @see https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
 
+import { resourceCleanupManager } from './lib/resource-cleanup';
+
 export async function register() {
   // Only register in Node.js runtime (not edge)
   if (process.env.NEXT_RUNTIME === 'nodejs') {
@@ -61,6 +63,62 @@ export async function register() {
 
       // Always exit on uncaught exceptions - the process is in an unknown state
       process.exit(1);
+    });
+
+    // Graceful shutdown handler for SIGTERM (e.g., Kubernetes, Docker)
+    process.on('SIGTERM', async () => {
+      const timestamp = new Date().toISOString();
+      console.log(
+        `[GRACEFUL] Received SIGTERM at ${timestamp}. Starting graceful shutdown...`
+      );
+
+      try {
+        // Execute all registered cleanup tasks
+        const taskCount = resourceCleanupManager.getTaskCount();
+        console.log(
+          `[GRACEFUL] Executing ${taskCount} registered cleanup tasks...`
+        );
+
+        await resourceCleanupManager.cleanup();
+
+        console.log('[GRACEFUL] Graceful shutdown completed successfully');
+      } catch (error) {
+        console.error(
+          '[GRACEFUL] Error during graceful shutdown:',
+          error instanceof Error ? error.message : String(error)
+        );
+      }
+
+      // Exit with success code
+      process.exit(0);
+    });
+
+    // Graceful shutdown handler for SIGINT (Ctrl+C)
+    process.on('SIGINT', async () => {
+      const timestamp = new Date().toISOString();
+      console.log(
+        `[GRACEFUL] Received SIGINT at ${timestamp}. Starting graceful shutdown...`
+      );
+
+      try {
+        // Execute all registered cleanup tasks
+        const taskCount = resourceCleanupManager.getTaskCount();
+        console.log(
+          `[GRACEFUL] Executing ${taskCount} registered cleanup tasks...`
+        );
+
+        await resourceCleanupManager.cleanup();
+
+        console.log('[GRACEFUL] Graceful shutdown completed successfully');
+      } catch (error) {
+        console.error(
+          '[GRACEFUL] Error during graceful shutdown:',
+          error instanceof Error ? error.message : String(error)
+        );
+      }
+
+      // Exit with success code
+      process.exit(0);
     });
 
     // Log successful registration in non-production environments
