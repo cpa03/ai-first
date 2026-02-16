@@ -34,21 +34,37 @@ let _supabaseAdmin: ReturnType<typeof createClient<Database>> | null = null;
 
 /**
  * Get the Supabase admin client (server-side only)
- * SECURITY: This function must ONLY be called in server-side contexts (API routes, server components)
- * The service role key bypasses RLS and should never be exposed to the client
+ *
+ * ⚠️ CRITICAL SECURITY WARNING ⚠️
+ * This function accesses the SUPABASE_SERVICE_ROLE_KEY which bypasses ALL Row Level Security (RLS) policies.
+ * It MUST ONLY be called in server-side contexts (API routes, server components, server actions).
+ *
+ * NEVER call this function from:
+ * - Client components (use 'use client' directive)
+ * - Browser-side code
+ * - Any code that may be bundled for the client
+ *
+ * The service role key grants FULL ADMIN ACCESS to the database. Exposing it to clients
+ * would allow anyone to read/modify/delete any data, bypassing all security policies.
+ *
+ * @returns Supabase admin client or null if not in server context
+ * @throws Error if called in browser context
  */
 export function getSupabaseAdmin(): ReturnType<
   typeof createClient<Database>
 > | null {
-  // SECURITY: Ensure we're on the server
+  // SECURITY: Runtime check to ensure we're on the server
+  // This prevents accidental usage in client components
   if (typeof window !== 'undefined') {
     throw new Error(
-      'getSupabaseAdmin() must not be called in browser context. ' +
-        'This is a critical security violation - the service role key bypasses RLS.'
+      'CRITICAL SECURITY VIOLATION: getSupabaseAdmin() was called in browser context.\n' +
+        'The Supabase service role key bypasses RLS and must NEVER be exposed to clients.\n' +
+        'Use API routes for admin operations instead.'
     );
   }
 
   // Lazy initialization to prevent key from being accessed during module load
+  // This ensures the key is only accessed when the function is actually called
   if (!_supabaseAdmin) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -70,10 +86,9 @@ export function getSupabaseAdmin(): ReturnType<
   return _supabaseAdmin;
 }
 
-// DEPRECATED: Kept for backward compatibility during migration
-// TODO: Remove after all imports are updated to use getSupabaseAdmin()
-export const supabaseAdmin =
-  typeof window === 'undefined' ? getSupabaseAdmin() : null;
+// SECURITY NOTE: The previous supabaseAdmin export has been REMOVED
+// to prevent any risk of the service role key being bundled in client code.
+// Always use getSupabaseAdmin() function instead.
 
 // Database types and utilities
 export interface Idea {
@@ -192,15 +207,16 @@ export class DatabaseService {
 
   private constructor() {
     this._client = supabaseClient;
-    this._admin = supabaseAdmin;
+    // SECURITY: _admin is lazy-loaded via getter to prevent client-side exposure
+    // The getSupabaseAdmin() function has runtime checks to prevent browser usage
 
     if (
-      (!this._client || !this._admin) &&
+      !this._client &&
       process.env.NODE_ENV === 'development' &&
       !process.env.CI
     ) {
       logger.warn(
-        'Supabase clients not initialized. Check environment variables.'
+        'Supabase client not initialized. Check environment variables.'
       );
     }
 
@@ -216,8 +232,17 @@ export class DatabaseService {
     return this._client;
   }
 
+  /**
+   * Get the admin client (lazy-loaded, server-side only)
+   * SECURITY: This getter calls getSupabaseAdmin() which has runtime checks
+   * to prevent usage in browser contexts
+   */
   private get admin() {
     this.ensureNotDisposed();
+    // Lazy initialization to prevent client-side bundling
+    if (!this._admin) {
+      this._admin = getSupabaseAdmin();
+    }
     return this._admin;
   }
 
