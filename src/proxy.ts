@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 
 // Generate a unique nonce for each request to enhance security
