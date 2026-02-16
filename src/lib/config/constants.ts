@@ -493,8 +493,8 @@ export const CSP_CONFIG = {
    */
   DIRECTIVES: {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'unsafe-inline'"],
-    'style-src': ["'self'", "'unsafe-inline'"],
+    'script-src': ["'self'", "'nonce-placeholder'"],
+    'style-src': ["'self'", "'nonce-placeholder'"],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
     'font-src': ["'self'", 'data:'],
     'object-src': ["'none'"],

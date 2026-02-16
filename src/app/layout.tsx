@@ -1,5 +1,6 @@
 import '../styles/globals.css';
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import MobileNav from '@/components/MobileNav';
@@ -77,9 +78,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const nonce = headers().get('x-nonce') || undefined;
+
   return (
     <html
       lang="en"
+      nonce={nonce}
       className={`${inter.variable} ${jetBrainsMono.variable}`}
       data-scroll-behavior="smooth"
     >
