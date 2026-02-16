@@ -1,20 +1,33 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { randomBytes } from 'crypto';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 
-// PERFORMANCE: Pre-calculate the CSP header to avoid overhead on every request.
-const CSP_HEADER = ((): string => {
+// Generate a unique nonce for each request to enhance security
+function generateNonce(): string {
+  return randomBytes(16).toString('base64');
+}
+
+// Build CSP header with dynamic nonce replacement
+function buildCSPHeader(nonce: string): string {
   const directives: string[] = [];
 
   for (const [directive, values] of Object.entries(CSP_CONFIG.DIRECTIVES)) {
     if (values.length === 0) {
       directives.push(directive);
     } else {
-      directives.push(`${directive} ${values.join(' ')}`);
+      const processedValues = values.map((value) => {
+        if (value === "'nonce-placeholder'") {
+          return `'nonce-${nonce}'`;
+        }
+        return value;
+      });
+      directives.push(`${directive} ${processedValues.join(' ')}`);
     }
   }
 
   return directives.join('; ');
-})();
+}
 
 // PERFORMANCE: Pre-calculate the Permissions-Policy header.
 const PERMISSIONS_POLICY = CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
@@ -24,10 +37,15 @@ const HSTS_HEADER = `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}${
   SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''
 }${SECURITY_CONFIG.HSTS_PRELOAD ? '; preload' : ''}`;
 
-export function proxy() {
+export function proxy(_request: NextRequest) {
+  const nonce = generateNonce();
   const response = NextResponse.next();
 
-  response.headers.set('Content-Security-Policy', CSP_HEADER);
+  // Set nonce header for layout.tsx to access
+  response.headers.set('x-nonce', nonce);
+
+  // Set security headers with nonce-based CSP
+  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-XSS-Protection', '0');
