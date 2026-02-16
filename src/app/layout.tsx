@@ -73,12 +73,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const nonce = headers().get('x-nonce') || undefined;
+  const headersList = await headers();
+  const nonce = headersList.get('x-nonce') || undefined;
 
   return (
     <html
