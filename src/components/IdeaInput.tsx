@@ -134,7 +134,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
         <div className="flex items-center gap-4">
           <div
             className="flex items-center gap-2 text-sm text-gray-600"
-            aria-label="Keyboard shortcut: Command Enter to submit"
+            aria-label={`Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`}
           >
             <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
               {isMac ? '⌘' : 'Ctrl'}

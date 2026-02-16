@@ -4,7 +4,7 @@ import KeyboardShortcutsHelp, {
   useKeyboardShortcutsHelp,
 } from '@/components/KeyboardShortcutsHelp';
 import Tooltip from '@/components/Tooltip';
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
 
 interface KeyboardShortcutsContextValue {
   openHelp: () => void;
@@ -44,9 +44,18 @@ export function KeyboardShortcutsProvider({
 
 export function KeyboardShortcutsButton() {
   const { openHelp } = useKeyboardShortcuts();
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(
+      typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
+    );
+  }, []);
+
+  const shortcut = isMac ? '⌘K' : 'Ctrl+K';
 
   return (
-    <Tooltip content="Keyboard shortcuts (⌘K)" position="bottom">
+    <Tooltip content={`Keyboard shortcuts (${shortcut})`} position="bottom">
       <button
         onClick={openHelp}
         className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"

@@ -168,7 +168,9 @@ const InputWithValidation = forwardRef<
         >
           {label}
           {props.required && (
-            <span className={`${TEXT_COLORS.ERROR} ml-1`}>*</span>
+            <span className={`${TEXT_COLORS.ERROR} ml-1`} aria-hidden="true">
+              *
+            </span>
           )}
         </label>
 
@@ -273,8 +275,7 @@ const InputWithValidation = forwardRef<
                 disabled:opacity-0
                 ${hasIcon ? 'right-10' : 'right-3'}
               `}
-              aria-label="Clear input"
-              tabIndex={0}
+              aria-label={`Clear ${label}`}
             >
               <svg
                 className="w-3.5 h-3.5"
