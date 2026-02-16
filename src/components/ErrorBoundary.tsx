@@ -19,6 +19,7 @@ interface State {
 
 export default class ErrorBoundary extends Component<Props, State> {
   private logger = createLogger('ErrorBoundary');
+  private errorRef = React.createRef<HTMLDivElement>();
 
   constructor(props: Props) {
     super(props);
@@ -41,6 +42,12 @@ export default class ErrorBoundary extends Component<Props, State> {
     this.setState({ error, errorInfo });
   }
 
+  componentDidUpdate(prevProps: Props, prevState: State) {
+    if (this.state.hasError && !prevState.hasError) {
+      this.errorRef.current?.focus();
+    }
+  }
+
   handleReset = () => {
     this.setState({ hasError: false, error: null, errorInfo: null });
   };
@@ -48,71 +55,90 @@ export default class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-          <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
-            <Alert type="error" title="Something went wrong">
-              <p className="text-gray-700 mb-4">
-                We apologize, but an unexpected error occurred. Please try
-                again.
-              </p>
-              <div className="mt-6 space-y-4">
-                <Button
-                  variant="primary"
-                  onClick={this.handleReset}
-                  className="w-full sm:w-auto"
-                >
-                  Try Again
-                </Button>
-                <Link href="/" passHref>
-                  <Button
-                    variant="secondary"
-                    className="w-full sm:w-auto ml-0 sm:ml-2"
-                  >
-                    Go to Home
-                  </Button>
-                </Link>
+        <>
+          <a
+            href="#error-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md"
+          >
+            Skip to error content
+          </a>
+          <div
+            id="error-content"
+            ref={this.errorRef}
+            tabIndex={-1}
+            className="min-h-screen bg-gray-50 flex items-center justify-center p-4"
+            role="main"
+            aria-labelledby="error-title"
+          >
+            <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
+              <div role="alert" aria-live="assertive" className="sr-only">
+                An error has occurred. Error message:{' '}
+                {this.state.error?.message}
               </div>
-            </Alert>
-
-            {this.state.error && (
-              <details className="mt-6 p-4 bg-gray-50 rounded-md">
-                <summary className="cursor-pointer text-sm font-medium text-gray-700">
-                  Error Details
-                </summary>
-                <div className="mt-3 text-xs text-gray-600 font-mono whitespace-pre-wrap overflow-auto max-h-48">
-                  <strong>Error:</strong> {this.state.error.toString()}
-                  {this.state.errorInfo && (
-                    <>
-                      <br />
-                      <strong>Stack:</strong>
-                      <br />
-                      {this.state.errorInfo.componentStack}
-                    </>
-                  )}
-                </div>
-                <div className="mt-4 flex gap-2">
+              <Alert type="error" title="Something went wrong">
+                <p className="text-gray-700 mb-4">
+                  We apologize, but an unexpected error occurred. Please try
+                  again.
+                </p>
+                <div className="mt-6 space-y-4">
                   <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || 'No stack trace available'}`;
-                      navigator.clipboard.writeText(errorText);
-                      const btn = document.activeElement as HTMLButtonElement;
-                      const originalText = btn?.textContent || '';
-                      if (btn) btn.textContent = 'Copied!';
-                      setTimeout(() => {
-                        if (btn) btn.textContent = originalText;
-                      }, UI_CONFIG.COPY_FEEDBACK_DURATION);
-                    }}
-                    aria-label="Copy error details to clipboard for bug reporting"
+                    variant="primary"
+                    onClick={this.handleReset}
+                    className="w-full sm:w-auto"
                   >
-                    Copy Error Details
+                    Try Again
                   </Button>
+                  <Link href="/" passHref>
+                    <Button
+                      variant="secondary"
+                      className="w-full sm:w-auto ml-0 sm:ml-2"
+                    >
+                      Go to Home
+                    </Button>
+                  </Link>
                 </div>
-              </details>
-            )}
+              </Alert>
+
+              {this.state.error && (
+                <details className="mt-6 p-4 bg-gray-50 rounded-md">
+                  <summary className="cursor-pointer text-sm font-medium text-gray-700">
+                    Error Details
+                  </summary>
+                  <div className="mt-3 text-xs text-gray-600 font-mono whitespace-pre-wrap overflow-auto max-h-48">
+                    <strong>Error:</strong> {this.state.error.toString()}
+                    {this.state.errorInfo && (
+                      <>
+                        <br />
+                        <strong>Stack:</strong>
+                        <br />
+                        {this.state.errorInfo.componentStack}
+                      </>
+                    )}
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || 'No stack trace available'}`;
+                        navigator.clipboard.writeText(errorText);
+                        const btn = document.activeElement as HTMLButtonElement;
+                        const originalText = btn?.textContent || '';
+                        if (btn) btn.textContent = 'Copied!';
+                        setTimeout(() => {
+                          if (btn) btn.textContent = originalText;
+                        }, UI_CONFIG.COPY_FEEDBACK_DURATION);
+                      }}
+                      aria-label="Copy error details to clipboard for bug reporting"
+                    >
+                      Copy Error Details
+                    </Button>
+                  </div>
+                </details>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       );
     }
 
