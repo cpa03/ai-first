@@ -21,6 +21,8 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
   maxLength?: number;
   multiline?: boolean;
   autoResize?: boolean;
+  clearable?: boolean;
+  onClear?: () => void;
 }
 
 const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
@@ -39,6 +41,8 @@ const InputWithValidation = forwardRef<
       maxLength,
       multiline = false,
       autoResize = true,
+      clearable = false,
+      onClear,
       className = '',
       value = '',
       onChange,
@@ -91,6 +95,28 @@ const InputWithValidation = forwardRef<
     ) => {
       onChange?.(e);
     };
+
+    const handleClear = useCallback(() => {
+      const emptyValueEvent = {
+        target: { value: '', name: props.name, id: props.id },
+        currentTarget: { value: '', name: props.name, id: props.id },
+        preventDefault: () => {},
+        stopPropagation: () => {},
+        persist: () => {},
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      onChange?.(emptyValueEvent);
+      onClear?.();
+
+      const focusTarget = multiline
+        ? internalTextareaRef.current
+        : ref && 'current' in ref
+          ? (ref.current as HTMLInputElement)
+          : null;
+      focusTarget?.focus();
+    }, [onChange, onClear, props.name, props.id, multiline, ref]);
+
+    const showClearButton = clearable && charCount > 0 && !props.disabled;
 
     const hasIcon = (isValid && charCount > 0) || isInvalid;
     const baseInputClasses = `${INPUT_STYLES.BASE} ${
@@ -222,6 +248,41 @@ const InputWithValidation = forwardRef<
                 />
               </svg>
             </div>
+          )}
+
+          {showClearButton && (
+            <button
+              type="button"
+              onClick={handleClear}
+              className={`
+                absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'}
+                w-5 h-5 flex items-center justify-center
+                text-gray-400 hover:text-gray-600
+                rounded-full hover:bg-gray-100
+                transition-all duration-200 ease-out
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+                animate-in fade-in zoom-in duration-200
+                disabled:opacity-0
+                ${hasIcon ? 'right-10' : 'right-3'}
+              `}
+              aria-label="Clear input"
+              tabIndex={0}
+            >
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
           )}
         </div>
 
