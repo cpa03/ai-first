@@ -57,8 +57,8 @@ export const SANITIZATION_CONFIG = {
       PHONE: /\b(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})\b/g,
       SSN: /\b\d{3}-\d{2}-\d{4}\b/g,
       CREDIT_CARD: /\b(?:\d[ -]*?){13,16}\b/g,
-      API_KEY: /\b(?:api[_-]?key|apikey)[\s]*[:=][\s]*["']?[a-zA-Z0-9]{32,}["']?\b/gi,
-      PASSWORD: /\b(?:password|passwd|pwd)[\s]*[:=][\s]*["']?[^"'\s]+["']?\b/gi,
+      API_KEY: /\b(?:api[-_ ]?key|apikey)[\s]*[:=][\s]*["']?[a-zA-Z0-9_-]{4,}["']?\b/gi,
+      PASSWORD: /\b(?:password|passwd|pwd)[\s]*[:=][\s]*["']?[^"'\s]{4,}["']?\b/gi,
     },
 
     SENSITIVE_FIELDS: [
