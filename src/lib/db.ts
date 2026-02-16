@@ -332,8 +332,22 @@ export class DatabaseService {
   /**
    * For testing purposes only - reinitialize clients with current environment
    * Properly disposes old connections before creating new ones to prevent memory leaks
+   *
+   * ⚠️ CRITICAL SECURITY WARNING ⚠️
+   * This method accesses SUPABASE_SERVICE_ROLE_KEY which bypasses ALL RLS policies.
+   * It MUST ONLY be called in server-side contexts.
    */
   reinitializeClients(): void {
+    // SECURITY: Runtime check to ensure we're on the server
+    // This prevents accidental usage in client components
+    if (typeof window !== 'undefined') {
+      throw new Error(
+        'CRITICAL SECURITY VIOLATION: reinitializeClients() was called in browser context.\n' +
+          'This method accesses the Supabase service role key which bypasses RLS\n' +
+          'and must NEVER be exposed to clients. Use API routes for admin operations instead.'
+      );
+    }
+
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
