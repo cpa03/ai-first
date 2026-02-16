@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
+import { CELEBRATION_COLORS, ANIMATION_PHYSICS } from '@/lib/config';
 
 interface Particle {
   id: number;
@@ -19,16 +20,8 @@ interface SuccessCelebrationProps {
   duration?: number;
 }
 
-const COLORS = [
-  '#10B981',
-  '#3B82F6',
-  '#8B5CF6',
-  '#F59E0B',
-  '#EC4899',
-  '#06B6D4',
-];
-
-const PARTICLE_COUNT = 30;
+const COLORS = CELEBRATION_COLORS.ALL;
+const PARTICLE_COUNT = ANIMATION_PHYSICS.PARTICLE_COUNT;
 
 export default function SuccessCelebration({
   show,
@@ -54,14 +47,20 @@ export default function SuccessCelebration({
   const generateParticles = useCallback((): Particle[] => {
     return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
       id: i,
-      x: 50 + (Math.random() - 0.5) * 20,
-      y: 50 + (Math.random() - 0.5) * 20,
+      x: 50 + (Math.random() - 0.5) * ANIMATION_PHYSICS.CENTER_OFFSET,
+      y: 50 + (Math.random() - 0.5) * ANIMATION_PHYSICS.CENTER_OFFSET,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
-      size: Math.random() * 8 + 4,
+      size:
+        Math.random() *
+          (ANIMATION_PHYSICS.PARTICLE_SIZE.MAX -
+            ANIMATION_PHYSICS.PARTICLE_SIZE.MIN) +
+        ANIMATION_PHYSICS.PARTICLE_SIZE.MIN,
       rotation: Math.random() * 360,
       velocity: {
-        x: (Math.random() - 0.5) * 30,
-        y: -Math.random() * 25 - 10,
+        x: (Math.random() - 0.5) * ANIMATION_PHYSICS.MAX_HORIZONTAL_VELOCITY,
+        y:
+          -Math.random() * ANIMATION_PHYSICS.MAX_VERTICAL_VELOCITY -
+          ANIMATION_PHYSICS.MIN_VERTICAL_BOOST,
       },
       opacity: 1,
     }));
@@ -76,7 +75,7 @@ export default function SuccessCelebration({
         setIsVisible(false);
         setParticles([]);
         onComplete?.();
-      }, duration);
+      }, duration ?? ANIMATION_PHYSICS.DEFAULT_DURATION_MS);
 
       return () => clearTimeout(timer);
     } else if (show && !shouldAnimate) {
@@ -84,7 +83,7 @@ export default function SuccessCelebration({
       const timer = setTimeout(() => {
         setIsVisible(false);
         onComplete?.();
-      }, 500);
+      }, ANIMATION_PHYSICS.REDUCED_MOTION_DURATION_MS);
       return () => clearTimeout(timer);
     }
   }, [show, shouldAnimate, duration, generateParticles, onComplete]);
@@ -93,22 +92,28 @@ export default function SuccessCelebration({
     if (!isVisible || particles.length === 0 || !shouldAnimate) return;
 
     let animationId: number;
-    const gravity = 0.8;
-    const friction = 0.98;
 
     const animate = () => {
       setParticles((prevParticles) =>
         prevParticles
           .map((particle) => ({
             ...particle,
-            x: particle.x + particle.velocity.x * 0.5,
-            y: particle.y + particle.velocity.y * 0.5,
+            x:
+              particle.x +
+              particle.velocity.x * ANIMATION_PHYSICS.VELOCITY_MULTIPLIER,
+            y:
+              particle.y +
+              particle.velocity.y * ANIMATION_PHYSICS.VELOCITY_MULTIPLIER,
             velocity: {
-              x: particle.velocity.x * friction,
-              y: particle.velocity.y * friction + gravity,
+              x: particle.velocity.x * ANIMATION_PHYSICS.FRICTION,
+              y:
+                particle.velocity.y * ANIMATION_PHYSICS.FRICTION +
+                ANIMATION_PHYSICS.GRAVITY,
             },
-            rotation: particle.rotation + particle.velocity.x * 2,
-            opacity: particle.opacity - 0.015,
+            rotation:
+              particle.rotation +
+              particle.velocity.x * ANIMATION_PHYSICS.ROTATION_MULTIPLIER,
+            opacity: particle.opacity - ANIMATION_PHYSICS.OPACITY_DECAY,
           }))
           .filter((p) => p.opacity > 0)
       );

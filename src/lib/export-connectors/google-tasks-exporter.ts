@@ -1,4 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
+import { GOOGLE_TASKS_CONFIG } from '@/lib/config';
 
 export class GoogleTasksExporter extends ExportConnector {
   readonly type = 'google-tasks';
@@ -30,12 +31,12 @@ export class GoogleTasksExporter extends ExportConnector {
     const params = new URLSearchParams({
       client_id: clientId || '',
       redirect_uri: redirectUri,
-      scope: 'https://www.googleapis.com/auth/tasks',
-      access_type: 'offline',
-      prompt: 'consent',
+      scope: GOOGLE_TASKS_CONFIG.API.SCOPE,
+      access_type: GOOGLE_TASKS_CONFIG.DEFAULTS.ACCESS_TYPE,
+      prompt: GOOGLE_TASKS_CONFIG.DEFAULTS.PROMPT,
     });
 
-    return `https://accounts.google.com/oauth/authorize?${params.toString()}`;
+    return `${GOOGLE_TASKS_CONFIG.API.AUTH_URL}?${params.toString()}`;
   }
 
   async handleAuthCallback(_code: string): Promise<void> {

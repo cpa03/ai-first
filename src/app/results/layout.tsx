@@ -1,22 +1,11 @@
 import { Metadata } from 'next';
+import { RESULTS_PAGE_CONFIG } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: 'Project Results & Blueprints - Your Action Plans | IdeaFlow',
-  description:
-    'View and download your AI-generated project blueprints, timelines, and task lists. Export to GitHub, Notion, and other project management tools.',
-  keywords: [
-    'project blueprints',
-    'action plans',
-    'task management',
-    'project results',
-    'AI-generated plans',
-  ],
-  openGraph: {
-    title: 'Project Results & Blueprints - Your Action Plans | IdeaFlow',
-    description:
-      'View and download your AI-generated project blueprints, timelines, and task lists.',
-    url: 'https://ideaflow.ai/results',
-  },
+  title: RESULTS_PAGE_CONFIG.METADATA.title,
+  description: RESULTS_PAGE_CONFIG.METADATA.description,
+  keywords: [...RESULTS_PAGE_CONFIG.METADATA.keywords],
+  openGraph: RESULTS_PAGE_CONFIG.METADATA.openGraph,
 };
 
 export default function ResultsLayout({

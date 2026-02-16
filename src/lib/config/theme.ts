@@ -237,9 +237,76 @@ export const SVG_ANIMATION = {
   },
 } as const;
 
+/**
+ * Celebration animation colors
+ * Used for success/confetti animations
+ * Eliminates hardcoded color values in SuccessCelebration component
+ */
+export const CELEBRATION_COLORS = {
+  /** Success green */
+  SUCCESS: '#10B981',
+  /** Primary blue */
+  PRIMARY: '#3B82F6',
+  /** Purple accent */
+  PURPLE: '#8B5CF6',
+  /** Amber/warning */
+  AMBER: '#F59E0B',
+  /** Pink accent */
+  PINK: '#EC4899',
+  /** Cyan accent */
+  CYAN: '#06B6D4',
+  /** All colors as array for iteration */
+  ALL: [
+    '#10B981',
+    '#3B82F6',
+    '#8B5CF6',
+    '#F59E0B',
+    '#EC4899',
+    '#06B6D4',
+  ] as const,
+} as const;
+
+/**
+ * Animation physics constants
+ * Used for particle animations and physics calculations
+ */
+export const ANIMATION_PHYSICS = {
+  /** Gravity constant for particle fall */
+  GRAVITY: 0.8,
+  /** Friction coefficient for velocity decay */
+  FRICTION: 0.98,
+  /** Default particle count for celebrations */
+  PARTICLE_COUNT: 30,
+  /** Default animation duration in ms */
+  DEFAULT_DURATION_MS: 2000,
+  /** Reduced motion duration in ms */
+  REDUCED_MOTION_DURATION_MS: 500,
+  /** Particle opacity decay rate */
+  OPACITY_DECAY: 0.015,
+  /** Velocity multiplier for particle movement */
+  VELOCITY_MULTIPLIER: 0.5,
+  /** Center position offset range (percentage) */
+  CENTER_OFFSET: 20,
+  /** Maximum horizontal velocity */
+  MAX_HORIZONTAL_VELOCITY: 30,
+  /** Maximum vertical velocity (negative = upward) */
+  MAX_VERTICAL_VELOCITY: 25,
+  /** Minimum vertical velocity boost */
+  MIN_VERTICAL_BOOST: 10,
+  /** Particle size range */
+  PARTICLE_SIZE: {
+    MIN: 4,
+    MAX: 8,
+  },
+  /** Rotation velocity multiplier */
+  ROTATION_MULTIPLIER: 2,
+} as const;
+
 export type FocusShadows = typeof FOCUS_SHADOWS;
 export type BorderColors = typeof BORDER_COLORS;
 export type RingColors = typeof RING_COLORS;
 export type TextColors = typeof TEXT_COLORS;
 export type BgColors = typeof BG_COLORS;
 export type InputStyles = typeof INPUT_STYLES;
+export type CelebrationColors = typeof CELEBRATION_COLORS;
+export type AnimationPhysics = typeof ANIMATION_PHYSICS;

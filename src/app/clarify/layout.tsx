@@ -1,22 +1,11 @@
 import { Metadata } from 'next';
+import { CLARIFY_PAGE_CONFIG } from '@/lib/config';
 
 export const metadata: Metadata = {
-  title: 'AI Idea Clarification - Refine Your Concepts | IdeaFlow',
-  description:
-    'Let our AI ask the right questions to clarify and refine your project ideas. Get detailed requirements and scope definition for better planning.',
-  keywords: [
-    'AI idea clarification',
-    'project requirements',
-    'scope definition',
-    'concept refinement',
-    'project planning',
-  ],
-  openGraph: {
-    title: 'AI Idea Clarification - Refine Your Concepts | IdeaFlow',
-    description:
-      'Let our AI ask the right questions to clarify and refine your project ideas.',
-    url: 'https://ideaflow.ai/clarify',
-  },
+  title: CLARIFY_PAGE_CONFIG.METADATA.title,
+  description: CLARIFY_PAGE_CONFIG.METADATA.description,
+  keywords: [...CLARIFY_PAGE_CONFIG.METADATA.keywords],
+  openGraph: CLARIFY_PAGE_CONFIG.METADATA.openGraph,
 };
 
 export default function ClarifyLayout({
