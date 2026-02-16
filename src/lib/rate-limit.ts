@@ -99,7 +99,8 @@ export function checkRateLimit(
     );
   }
 
-  const requests = rateLimitStore.get(identifier) || [];
+  const existingRequests = rateLimitStore.get(identifier);
+  const requests = existingRequests || [];
 
   // PERFORMANCE: Find the first index that is within the window without filter()
   // This avoids O(N) allocation and reduces the number of checks in the common case.
@@ -138,7 +139,12 @@ export function checkRateLimit(
   }
 
   recentRequests.push(now);
-  rateLimitStore.set(identifier, recentRequests);
+
+  // PERFORMANCE: Only update the store if we created a new array (via slice or empty array).
+  // If we're using the existing array reference, it's already in the Map.
+  if (recentRequests !== existingRequests) {
+    rateLimitStore.set(identifier, recentRequests);
+  }
 
   return {
     allowed: true,
@@ -219,15 +225,27 @@ import {
 
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
+  const windowStart = now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS;
+
   for (const [key, requests] of rateLimitStore.entries()) {
-    const recentRequests = requests.filter(
-      (r) => r >= now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS
-    );
-    if (recentRequests.length === 0) {
-      rateLimitStore.delete(key);
-    } else {
-      rateLimitStore.set(key, recentRequests);
+    // PERFORMANCE: Find the first index that is within the window without filter()
+    // This avoids O(N) allocation and reduces memory pressure during cleanup.
+    let firstValidIndex = -1;
+    for (let i = 0; i < requests.length; i++) {
+      if (requests[i] >= windowStart) {
+        firstValidIndex = i;
+        break;
+      }
     }
+
+    if (firstValidIndex === -1) {
+      // All requests in this entry have expired
+      rateLimitStore.delete(key);
+    } else if (firstValidIndex > 0) {
+      // Some requests have expired, update with the remaining ones
+      rateLimitStore.set(key, requests.slice(firstValidIndex));
+    }
+    // If firstValidIndex is 0, all requests are still valid; no action needed.
   }
 }
 
@@ -318,6 +336,7 @@ export function rateLimitResponse(
 
 export function getRateLimitStats() {
   const now = Date.now();
+  const windowStart = now - RATE_LIMIT_STATS_CONFIG.DEFAULT_STATS_WINDOW_MS;
   const stats = {
     totalEntries: 0,
     expiredEntries: 0,
@@ -326,18 +345,26 @@ export function getRateLimitStats() {
   };
 
   for (const [identifier, requests] of rateLimitStore.entries()) {
-    const recentRequests = requests.filter(
-      (r) => r >= now - RATE_LIMIT_STATS_CONFIG.DEFAULT_STATS_WINDOW_MS
-    );
-    stats.totalEntries += recentRequests.length;
+    // PERFORMANCE: Count valid requests without filter() to avoid O(N) allocation per entry.
+    let firstValidIndex = -1;
+    for (let i = 0; i < requests.length; i++) {
+      if (requests[i] >= windowStart) {
+        firstValidIndex = i;
+        break;
+      }
+    }
 
-    if (recentRequests.length === 0) {
+    const recentCount =
+      firstValidIndex === -1 ? 0 : requests.length - firstValidIndex;
+    stats.totalEntries += recentCount;
+
+    if (recentCount === 0) {
       stats.expiredEntries++;
     }
 
     stats.topUsers.push({
       identifier,
-      count: recentRequests.length,
+      count: recentCount,
     });
   }
 
