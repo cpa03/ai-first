@@ -71,11 +71,14 @@ function ClarificationFlow({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isMac, setIsMac] = useState(false);
-
   const textInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
+
+  const isMac = useMemo(
+    () => typeof window !== 'undefined' && navigator.platform.includes('Mac'),
+    []
+  );
 
   const currentQuestion = useMemo(
     () => questions[currentStep],
@@ -144,30 +147,21 @@ function ClarificationFlow({
   );
 
   useEffect(() => {
-    setIsMac(
-      typeof window !== 'undefined' && navigator.platform.includes('Mac')
-    );
-  }, []);
-
-  useEffect(() => {
     if (!currentQuestion || questions.length === 0) return;
 
-    const focusInput = () => {
-      return setTimeout(() => {
-        if (currentQuestion.type === 'textarea') {
-          textareaRef.current?.focus();
-        } else if (currentQuestion.type === 'select') {
-          selectRef.current?.focus();
-        } else {
-          textInputRef.current?.focus();
-        }
-      }, UI_CONFIG.FOCUS.DELAY_MS);
-    };
-
-    const timeoutId = focusInput();
+    const timeoutId = setTimeout(() => {
+      const ref =
+        currentQuestion.type === 'textarea'
+          ? textareaRef
+          : currentQuestion.type === 'select'
+            ? selectRef
+            : textInputRef;
+      ref.current?.focus();
+    }, UI_CONFIG.FOCUS.DELAY_MS);
 
     return () => clearTimeout(timeoutId);
-  }, [currentStep, questions, currentQuestion]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStep]);
 
   useEffect(() => {
     const fetchQuestions = async () => {
