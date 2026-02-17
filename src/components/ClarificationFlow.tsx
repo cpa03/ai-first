@@ -23,6 +23,7 @@ import InputWithValidation from '@/components/InputWithValidation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import CopyButton from '@/components/CopyButton';
+import StepCelebration from '@/components/StepCelebration';
 
 interface Question {
   id: string;
@@ -71,6 +72,7 @@ function ClarificationFlow({
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
   const textInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
@@ -110,8 +112,12 @@ function ClarificationFlow({
     setAnswers(newAnswers);
 
     if (currentStep < questions.length - 1) {
-      setCurrentStep(currentStep + 1);
-      setCurrentAnswer('');
+      const nextStep = currentStep + 1;
+      setShowCelebration(true);
+      setTimeout(() => {
+        setCurrentStep(nextStep);
+        setCurrentAnswer('');
+      }, 800);
     } else {
       onComplete(newAnswers);
     }
@@ -281,6 +287,13 @@ function ClarificationFlow({
 
   return (
     <div className="max-w-2xl mx-auto fade-in">
+      <StepCelebration
+        stepNumber={currentStep}
+        totalSteps={questions.length}
+        show={showCelebration}
+        onComplete={() => setShowCelebration(false)}
+      />
+
       {error && (
         <div className="mb-6 slide-up">
           <Alert type="error" title="Error">
