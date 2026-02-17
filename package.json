@@ -26,7 +26,10 @@
     "scan:console": "node scripts/scan-console.js",
     "audit:lighthouse": "node scripts/lighthouse-audit.js",
     "broc": "npm run build && npm run scan:console && npm run audit:lighthouse",
-    "analyze": "ANALYZE=true npm run build -- --webpack"
+    "analyze": "ANALYZE=true npm run build -- --webpack",
+    "build:cloudflare": "npx @cloudflare/next-on-pages@1",
+    "deploy:cloudflare": "npm run build:cloudflare && wrangler pages deploy .vercel/output/static",
+    "preview:cloudflare": "npm run build:cloudflare && wrangler pages dev .vercel/output/static"
   },
   "dependencies": {
     "@notionhq/client": "^5.9.0",
@@ -45,6 +48,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.6",
     "@testing-library/jest-dom": "^6.4.8",

@@ -3,7 +3,8 @@ compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
 # Cloudflare Pages configuration for Next.js
-pages_build_output_dir = ".next"
+# @cloudflare/next-on-pages outputs to .vercel/output/static
+pages_build_output_dir = ".vercel/output/static"
 
 [env.production]
 name = "ai-first"
