@@ -66,25 +66,25 @@ const toastIcons = {
 const toastColors = {
   success: {
     container: `${TOAST_CONFIG.STYLES.SUCCESS.BG} ${TOAST_CONFIG.STYLES.SUCCESS.BORDER}`,
-    iconColor: `text-[${TOAST_CONFIG.STYLES.SUCCESS.ICON_COLOR}]`,
+    iconColor: TOAST_CONFIG.STYLES.SUCCESS.ICON_COLOR,
     titleColor: TOAST_CONFIG.STYLES.SUCCESS.TEXT,
     textColor: TOAST_CONFIG.STYLES.SUCCESS.TEXT,
   },
   error: {
     container: `${TOAST_CONFIG.STYLES.ERROR.BG} ${TOAST_CONFIG.STYLES.ERROR.BORDER}`,
-    iconColor: `text-[${TOAST_CONFIG.STYLES.ERROR.ICON_COLOR}]`,
+    iconColor: TOAST_CONFIG.STYLES.ERROR.ICON_COLOR,
     titleColor: TOAST_CONFIG.STYLES.ERROR.TEXT,
     textColor: TOAST_CONFIG.STYLES.ERROR.TEXT,
   },
   warning: {
     container: `${TOAST_CONFIG.STYLES.WARNING.BG} ${TOAST_CONFIG.STYLES.WARNING.BORDER}`,
-    iconColor: `text-[${TOAST_CONFIG.STYLES.WARNING.ICON_COLOR}]`,
+    iconColor: TOAST_CONFIG.STYLES.WARNING.ICON_COLOR,
     titleColor: TOAST_CONFIG.STYLES.WARNING.TEXT,
     textColor: TOAST_CONFIG.STYLES.WARNING.TEXT,
   },
   info: {
     container: `${TOAST_CONFIG.STYLES.INFO.BG} ${TOAST_CONFIG.STYLES.INFO.BORDER}`,
-    iconColor: `text-[${TOAST_CONFIG.STYLES.INFO.ICON_COLOR}]`,
+    iconColor: TOAST_CONFIG.STYLES.INFO.ICON_COLOR,
     titleColor: TOAST_CONFIG.STYLES.INFO.TEXT,
     textColor: TOAST_CONFIG.STYLES.INFO.TEXT,
   },
@@ -194,7 +194,8 @@ function Toast({ toast, onClose }: ToastProps) {
       }}
     >
       <svg
-        className={`w-5 h-5 ${styles.iconColor} flex-shrink-0 mt-0.5`}
+        className="w-5 h-5 flex-shrink-0 mt-0.5"
+        style={{ color: styles.iconColor }}
         fill="currentColor"
         viewBox="0 0 20 20"
         aria-hidden="true"
