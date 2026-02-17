@@ -1,4 +1,3 @@
-import { timingSafeEqual } from 'node:crypto';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
@@ -16,6 +15,19 @@ export interface AuthenticatedUser {
   id: string;
   email?: string;
   role?: string;
+}
+
+/**
+ * Timing-safe comparison of two Uint8Arrays to prevent timing attacks.
+ * This is an environment-agnostic implementation of timingSafeEqual.
+ */
+function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a[i] ^ b[i];
+  }
+  return result === 0;
 }
 
 /**
@@ -61,10 +73,7 @@ export async function isAdminAuthenticated(
       encoder.encode(credentials)
     );
 
-    return timingSafeEqual(
-      new Uint8Array(expectedHash),
-      new Uint8Array(actualHash)
-    );
+    return safeEqual(new Uint8Array(expectedHash), new Uint8Array(actualHash));
   } catch (error) {
     logger.error('Admin authentication error', error);
     return false;
