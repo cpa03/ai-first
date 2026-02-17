@@ -8,25 +8,23 @@ function generateNonce(): string {
   return randomBytes(16).toString('base64');
 }
 
-// Build CSP header with dynamic nonce replacement
-function buildCSPHeader(nonce: string): string {
-  const directives: string[] = [];
-
-  for (const [directive, values] of Object.entries(CSP_CONFIG.DIRECTIVES)) {
+// PERFORMANCE: Pre-calculate the CSP header template.
+// This avoids re-iterating over the directives on every request.
+const CSP_TEMPLATE = Object.entries(CSP_CONFIG.DIRECTIVES)
+  .map(([directive, values]) => {
     if (values.length === 0) {
-      directives.push(directive);
-    } else {
-      const processedValues = values.map((value) => {
-        if (value === "'nonce-placeholder'") {
-          return `'nonce-${nonce}'`;
-        }
-        return value;
-      });
-      directives.push(`${directive} ${processedValues.join(' ')}`);
+      return directive;
     }
-  }
+    return `${directive} ${values.join(' ')}`;
+  })
+  .join('; ');
 
-  return directives.join('; ');
+/**
+ * Build CSP header with dynamic nonce replacement
+ * PERFORMANCE: Uses a pre-calculated template to minimize overhead.
+ */
+function buildCSPHeader(nonce: string): string {
+  return CSP_TEMPLATE.replaceAll("'nonce-placeholder'", `'nonce-${nonce}'`);
 }
 
 // PERFORMANCE: Pre-calculate the Permissions-Policy header.
