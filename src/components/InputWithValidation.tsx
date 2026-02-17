@@ -1,6 +1,7 @@
 'use client';
 
 import React, { forwardRef, useState, useEffect, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 import {
   INPUT_STYLES,
   TEXT_COLORS,
@@ -118,9 +119,19 @@ const InputWithValidation = forwardRef<
     const showClearButton = clearable && charCount > 0 && !props.disabled;
 
     const hasIcon = (isValid && charCount > 0) || isInvalid;
-    const baseInputClasses = `${INPUT_STYLES.BASE} ${
-      isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL
-    } ${hasIcon ? 'pr-10' : ''} ${shouldShake ? 'animate-shake' : ''} ${className}`;
+
+    // Calculate padding based on which icons are visible
+    // Each icon needs ~40px (pr-10), so both need ~80px (pr-20)
+    const paddingClass =
+      hasIcon && showClearButton ? 'pr-20' : hasIcon || showClearButton ? 'pr-10' : '';
+
+    const baseInputClasses = cn(
+      INPUT_STYLES.BASE,
+      isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL,
+      paddingClass,
+      shouldShake && 'animate-shake',
+      className
+    );
 
     const errorAnnouncedRef = React.useRef(errorAnnounced);
 

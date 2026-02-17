@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
@@ -47,7 +47,7 @@ export class PromptService {
     const templatePath = this.getTemplatePath(agent, templateName, role);
 
     try {
-      const content = await readFile(templatePath, 'utf-8');
+      const content = await fs.promises.readFile(templatePath, 'utf-8');
       this.promptsCache.set(cacheKey, content);
       return content;
     } catch (error) {

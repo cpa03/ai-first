@@ -312,12 +312,14 @@ describe('CircuitBreakerError', () => {
     expect(error.resetTime).toBe(resetTime);
   });
 
-  it('should not include details in toJSON', () => {
+  it('should include reset time in details of toJSON', () => {
     const resetTime = new Date('2024-01-01T12:00:00Z');
     const error = new CircuitBreakerError('Notion', resetTime);
     const json = error.toJSON();
 
-    expect(json.details).toBeUndefined();
+    expect(json.details).toEqual([
+      { message: `Reset time: ${resetTime.toISOString()}` },
+    ]);
   });
 });
 

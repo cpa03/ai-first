@@ -6,8 +6,8 @@
 
 const { default: lighthouse } = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
 const PAGES = ['/', '/dashboard', '/clarify', '/results'];

@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { randomBytes } from 'node:crypto';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 
 // Generate a unique nonce for each request to enhance security
 function generateNonce(): string {
-  return randomBytes(16).toString('base64');
+  const buffer = new Uint8Array(16);
+  crypto.getRandomValues(buffer);
+  return btoa(Array.from(buffer).map(b => String.fromCharCode(b)).join(''));
 }
 
 // PERFORMANCE: Pre-calculate the CSP header template.
