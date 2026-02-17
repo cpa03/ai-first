@@ -70,7 +70,7 @@
   /troubleshooting.md       ← Troubleshooting guide
   /integration-hardening.md  ← Resilience patterns
   /templates/               ← User-downloadable templates
-/src/
+  /src/
   /app/                    ← Next.js app (app router)
     /clarify/              ← Clarification flow pages
     /results/              ← Results display pages
@@ -93,11 +93,20 @@
     /CopyButton.tsx         ← Copy to clipboard button
     /TaskManagement.tsx     ← Task management UI
     /Tooltip.tsx            ← Accessible tooltip component
+  /hooks/                  ← React custom hooks
+    /useTaskManagement.ts   ← Task management hook
+    /useAuthCheck.ts        ← Authentication check hook
   /lib/                    ← Core utilities
     /ai.ts                ← AI service abstraction
     /db.ts                ← Database service
     /exports.ts           ← Export connectors
     /resilience.ts        ← Resilience framework
+    /resilience/          ← Resilience components
+      /circuit-breaker.ts    ← Circuit breaker implementation
+      /circuit-breaker-manager.ts ← Circuit breaker manager
+      /retry-manager.ts      ← Retry logic manager
+      /timeout-manager.ts    ← Timeout management
+      /resilient-wrapper.ts  ← Resilient operation wrapper
     /errors.ts           ← Error handling
     /validation.ts       ← Input validation
     /rate-limit.ts       ← Rate limiting
@@ -115,7 +124,10 @@
       /breakdown-engine.ts ← Breakdown engine
   /types/                   ← TypeScript type definitions
   /styles/                  ← Global styles
+  /templates/               ← Template files
   /middleware.ts            ← Next.js middleware
+  /instrumentation.ts       ← Next.js instrumentation
+  /proxy.ts                 ← Proxy configuration
 /supabase/
   schema.sql                 ← Database schema
   migrations/                ← Database migration files
