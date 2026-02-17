@@ -85,6 +85,7 @@ export default async function RootLayout({
     <html
       lang="en"
       nonce={nonce}
+      suppressHydrationWarning
       className={`${inter.variable} ${jetBrainsMono.variable}`}
       data-scroll-behavior="smooth"
     >
