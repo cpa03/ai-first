@@ -8,6 +8,7 @@ import {
 import { dbService, Task } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 // Valid task statuses
 const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
@@ -66,7 +67,7 @@ async function handlePut(context: ApiContext) {
       body.completion_percentage > 100
     ) {
       return badRequestResponse(
-        'Completion percentage must be between 0 and 100'
+        API_ERROR_MESSAGES.VALIDATION.COMPLETION_PERCENTAGE_RANGE
       );
     }
   }
@@ -122,7 +123,11 @@ async function handlePut(context: ApiContext) {
     if (error instanceof AppError) {
       throw error;
     }
-    throw new AppError('Failed to update task', ErrorCode.INTERNAL_ERROR, 500);
+    throw new AppError(
+      API_ERROR_MESSAGES.INTERNAL.UPDATE_TASK_FAILED,
+      ErrorCode.INTERNAL_ERROR,
+      500
+    );
   }
 }
 
@@ -163,7 +168,11 @@ async function handleDelete(context: ApiContext) {
     if (error instanceof AppError) {
       throw error;
     }
-    throw new AppError('Failed to delete task', ErrorCode.INTERNAL_ERROR, 500);
+    throw new AppError(
+      API_ERROR_MESSAGES.INTERNAL.DELETE_TASK_FAILED,
+      ErrorCode.INTERNAL_ERROR,
+      500
+    );
   }
 }
 
@@ -201,7 +210,11 @@ async function handleGet(context: ApiContext) {
     if (error instanceof AppError) {
       throw error;
     }
-    throw new AppError('Failed to fetch task', ErrorCode.INTERNAL_ERROR, 500);
+    throw new AppError(
+      API_ERROR_MESSAGES.INTERNAL.FETCH_TASK_FAILED,
+      ErrorCode.INTERNAL_ERROR,
+      500
+    );
   }
 }
 

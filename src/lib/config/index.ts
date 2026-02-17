@@ -81,6 +81,20 @@ export {
   HOME_PAGE_CONFIG,
 } from './pages';
 
+// Time Units Configuration
+export {
+  TIME_UNITS,
+  CACHE_TTL,
+  RATE_LIMIT_WINDOWS,
+  RETRY_DELAYS,
+  UI_DURATIONS,
+  CIRCUIT_BREAKER_TIMES,
+  API_TIMEOUTS,
+} from './time';
+
+// API Error Messages Configuration
+export { API_ERROR_MESSAGES } from './error-messages';
+
 // Environment-based Configuration (addresses issues #981-986)
 // These exports allow runtime configuration via environment variables
 export {
@@ -132,3 +146,15 @@ export type {
   BgColors,
   InputStyles,
 } from './theme';
+
+// Time and Error Message Types
+export type {
+  TimeUnits,
+  CacheTTL,
+  RateLimitWindows,
+  RetryDelays,
+  UIDurations,
+  CircuitBreakerTimes,
+  APITimeouts,
+} from './time';
+export type { APIErrorMessages } from './error-messages';
