@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
+import { fetchWithTimeout } from '@/lib/api-client';
 import { Task, Deliverable } from '@/lib/db';
 
 export interface DeliverableWithTasks extends Deliverable {
@@ -65,7 +66,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`/api/ideas/${ideaId}/tasks`);
+        const response = await fetchWithTimeout(`/api/ideas/${ideaId}/tasks`);
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -119,7 +120,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       try {
         setUpdatingTaskId(taskId);
 
-        const response = await fetch(`/api/tasks/${taskId}/status`, {
+        const response = await fetchWithTimeout(`/api/tasks/${taskId}/status`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

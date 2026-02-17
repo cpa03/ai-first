@@ -25,6 +25,7 @@ dist/
 
 # SWC (Next.js compiler cache)
 .swc/
+.next/cache/
 
 # IDE
 .vscode/

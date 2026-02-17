@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
+import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Alert from '@/components/Alert';
@@ -80,8 +81,8 @@ function ResultsContent() {
         }
 
         const [ideaResponse, sessionResponse] = await Promise.all([
-          fetch(`/api/ideas/${ideaId}`),
-          fetch(`/api/ideas/${ideaId}/session`),
+          fetchWithTimeout(`/api/ideas/${ideaId}`),
+          fetchWithTimeout(`/api/ideas/${ideaId}/session`),
         ]);
 
         if (!ideaResponse.ok) {

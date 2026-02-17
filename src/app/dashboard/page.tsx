@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { createLogger } from '@/lib/logger';
+import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
@@ -128,7 +129,7 @@ export default function DashboardPage() {
     try {
       setDeletingId(id);
 
-      const response = await fetch(`/api/ideas/${id}`, {
+      const response = await fetchWithTimeout(`/api/ideas/${id}`, {
         method: 'DELETE',
       });
 

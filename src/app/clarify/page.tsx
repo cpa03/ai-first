@@ -4,6 +4,7 @@ import { useState, useRef, useLayoutEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
+import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 
@@ -94,7 +95,7 @@ function ClarifyPageContent() {
   ) => {
     try {
       if (ideaId) {
-        const response = await fetch(`/api/ideas/${ideaId}`, {
+        const response = await fetchWithTimeout(`/api/ideas/${ideaId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

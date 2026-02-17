@@ -111,7 +111,7 @@ export default function Tooltip({
       onMouseLeave={hideTooltip}
       onFocus={showTooltip}
       onBlur={hideTooltip}
-      aria-describedby={isVisible ? id : undefined}
+      aria-describedby={isMounted ? id : undefined}
     >
       {children}
       {isMounted && (
