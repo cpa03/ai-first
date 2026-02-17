@@ -1,6 +1,13 @@
 'use client';
 
-import { ButtonHTMLAttributes, forwardRef, useState, useCallback } from 'react';
+import {
+  ButtonHTMLAttributes,
+  forwardRef,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 import { RIPPLE_CONFIG } from '@/lib/config';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -57,6 +64,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const [rippleIdCounter, setRippleIdCounter] = useState(0);
+    const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+    useEffect(() => {
+      const timeouts = timeoutRefs.current;
+      return () => {
+        timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+      };
+    }, []);
 
     const createRipple = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -78,9 +93,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         setRipples((prev) => [...prev, newRipple]);
         setRippleIdCounter((prev) => prev + 1);
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
           setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
         }, RIPPLE_CONFIG.DURATION_MS);
+        timeoutRefs.current.push(timeoutId);
 
         onClick?.(event);
       },
@@ -96,11 +112,10 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ${variantClasses[variant]}
           ${sizeClasses[size]}
           ${fullWidth ? 'w-full' : ''}
-          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'}
           rounded-md font-medium transition-all duration-200
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRingClasses[variant]} focus-visible:ring-offset-white
-          motion-reduce:hover:scale-100 motion-reduce:active:scale-100 hover:scale-[1.02] active:scale-[0.98]
-          relative overflow-hidden
+          motion-reduce:transition-none
           ${className}
         `}
         aria-busy={loading}

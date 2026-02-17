@@ -295,18 +295,18 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 ### ✅ OWASP Top 10 Coverage
 
-| Risk                           | Status       | Mitigation                                        |
-| ------------------------------ | ------------ | ------------------------------------------------- |
-| A01: Broken Access Control     | ✅ Mitigated | Role-based rate limiting, proper error codes      |
-| A02: Cryptographic Failures    | ✅ Mitigated | HTTPS enforced (HSTS), secrets in env vars        |
-| A03: Injection                 | ✅ Mitigated | Input validation, prepared statements (Supabase)  |
-| A04: Insecure Design           | ✅ Mitigated | Comprehensive error handling, resilience patterns |
-| A05: Security Misconfiguration | ✅ Mitigated | Security headers, CSP, no debugging in production |
-| A06: Vulnerable Components     | ✅ Mitigated | No CVEs, regular dependency audits                |
-| A07: Auth Failures             | ✅ N/A       | No authentication implemented yet (future work)   |
-| A08: Software & Data Integrity | ✅ Mitigated | TypeScript, proper error handling                 |
-| A09: Logging Failures          | ✅ Mitigated | Request ID tracking, structured errors            |
-| A10: SSRF                      | ✅ Mitigated | Restricted connect-src in CSP                     |
+| Risk                           | Status       | Mitigation                                               |
+| ------------------------------ | ------------ | -------------------------------------------------------- |
+| A01: Broken Access Control     | ✅ Mitigated | Role-based rate limiting, proper error codes             |
+| A02: Cryptographic Failures    | ✅ Mitigated | HTTPS enforced (HSTS), secrets in env vars               |
+| A03: Injection                 | ✅ Mitigated | Input validation, prepared statements (Supabase)         |
+| A04: Insecure Design           | ✅ Mitigated | Comprehensive error handling, resilience patterns        |
+| A05: Security Misconfiguration | ✅ Mitigated | Security headers, CSP, no debugging in production        |
+| A06: Vulnerable Components     | ✅ Mitigated | No CVEs, regular dependency audits                       |
+| A07: Auth Failures             | ✅ Mitigated | Supabase JWT auth on all API routes, frontend auth check |
+| A08: Software & Data Integrity | ✅ Mitigated | TypeScript, proper error handling                        |
+| A09: Logging Failures          | ✅ Mitigated | Request ID tracking, structured errors                   |
+| A10: SSRF                      | ✅ Mitigated | Restricted connect-src in CSP                            |
 
 ### ✅ Security Headers Best Practices
 
@@ -439,8 +439,8 @@ The few identified issues are minor and acceptable for production use. The main 
 - [x] Logging with request IDs
 - [x] Dependency audit (0 vulnerabilities)
 - [x] Deprecated packages checked (none found)
-- [x] Authentication planned (future work)
-- [x] Authorization planned (future work)
+- [x] Authentication implemented (Supabase JWT)
+- [x] Authorization implemented (resource ownership)
 - [x] HTTPS enforcement (HSTS)
 - [x] CSP configured
 - [x] File upload restrictions (not applicable)

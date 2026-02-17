@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
@@ -100,6 +100,9 @@ function Toast({ toast, onClose }: ToastProps) {
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
 
+  // Memoize reduced motion check to prevent calling on every render
+  const prefersReducedMotion = useMemo(() => checkPrefersReducedMotion(), []);
+
   useEffect(() => {
     const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
     const updateInterval = UI_CONSTANTS.TOAST_PROGRESS_INTERVAL;
@@ -183,7 +186,7 @@ function Toast({ toast, onClose }: ToastProps) {
         flex items-start gap-3 max-w-md relative overflow-hidden
         transform transition-all duration-300 ease-in-out
         ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}
-        ${checkPrefersReducedMotion() ? '' : 'touch-pan-y'}
+        ${prefersReducedMotion ? '' : 'touch-pan-y'}
       `}
       style={{
         transform:

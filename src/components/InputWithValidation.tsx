@@ -102,7 +102,6 @@ const InputWithValidation = forwardRef<
         currentTarget: { value: '', name: props.name, id: props.id },
         preventDefault: () => {},
         stopPropagation: () => {},
-        persist: () => {},
       } as React.ChangeEvent<HTMLInputElement>;
 
       onChange?.(emptyValueEvent);
