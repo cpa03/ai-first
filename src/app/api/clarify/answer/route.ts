@@ -9,6 +9,7 @@ import {
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
 import { VALIDATION_CONFIG } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;
@@ -54,7 +55,11 @@ async function handlePost(context: ApiContext) {
   // Verify idea exists and user owns it
   const idea = await dbService.getIdea(ideaId.trim());
   if (!idea) {
-    throw new AppError('Idea not found', ErrorCode.NOT_FOUND, 404);
+    throw new AppError(
+      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
+      ErrorCode.NOT_FOUND,
+      404
+    );
   }
 
   verifyResourceOwnership(user.id, idea.user_id, 'idea');

@@ -9,6 +9,7 @@ import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_VALIDATION } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 // Valid task statuses
 const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
@@ -127,7 +128,11 @@ async function handlePost(context: ApiContext) {
     if (error instanceof AppError) {
       throw error;
     }
-    throw new AppError('Failed to create task', ErrorCode.INTERNAL_ERROR, 500);
+    throw new AppError(
+      API_ERROR_MESSAGES.INTERNAL.CREATE_TASK_FAILED,
+      ErrorCode.INTERNAL_ERROR,
+      500
+    );
   }
 }
 

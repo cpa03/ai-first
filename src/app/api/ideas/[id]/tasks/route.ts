@@ -7,6 +7,7 @@ import {
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -15,7 +16,11 @@ async function handleGet(context: ApiContext) {
   const ideaId = segments.at(-2);
 
   if (!ideaId) {
-    throw new AppError('Idea ID is required', ErrorCode.VALIDATION_ERROR, 400);
+    throw new AppError(
+      API_ERROR_MESSAGES.VALIDATION.IDEA_ID_REQUIRED,
+      ErrorCode.VALIDATION_ERROR,
+      400
+    );
   }
 
   try {
@@ -105,7 +110,11 @@ async function handleGet(context: ApiContext) {
     if (error instanceof AppError) {
       throw error;
     }
-    throw new AppError('Failed to fetch tasks', ErrorCode.INTERNAL_ERROR, 500);
+    throw new AppError(
+      API_ERROR_MESSAGES.INTERNAL.FETCH_TASKS_FAILED,
+      ErrorCode.INTERNAL_ERROR,
+      500
+    );
   }
 }
 

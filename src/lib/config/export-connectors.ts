@@ -1,12 +1,21 @@
+import { EnvLoader } from './environment';
+
 /**
  * Export Connectors Configuration
  * Centralizes all third-party API configurations
+ * Supports environment variable overrides for API URLs
  */
 
 export const TRELLO_CONFIG = {
   API: {
-    BASE_URL: 'https://api.trello.com/1',
-    AUTH_URL: 'https://trello.com/1/authorize',
+    BASE_URL: EnvLoader.string(
+      'TRELLO_API_BASE_URL',
+      'https://api.trello.com/1'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'TRELLO_AUTH_URL',
+      'https://trello.com/1/authorize'
+    ),
     VERSION: '1',
   },
 
@@ -36,9 +45,15 @@ export const TRELLO_CONFIG = {
 
 export const NOTION_CONFIG = {
   API: {
-    BASE_URL: 'https://api.notion.com/v1',
-    AUTH_URL: 'https://api.notion.com/v1/oauth/authorize',
-    VERSION: '2022-06-28',
+    BASE_URL: EnvLoader.string(
+      'NOTION_API_BASE_URL',
+      'https://api.notion.com/v1'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'NOTION_AUTH_URL',
+      'https://api.notion.com/v1/oauth/authorize'
+    ),
+    VERSION: EnvLoader.string('NOTION_API_VERSION', '2022-06-28'),
   },
 
   DEFAULTS: {
@@ -63,8 +78,11 @@ export const NOTION_CONFIG = {
 
 export const GITHUB_CONFIG = {
   API: {
-    BASE_URL: 'https://api.github.com',
-    AUTH_URL: 'https://github.com/login/oauth/authorize',
+    BASE_URL: EnvLoader.string('GITHUB_API_BASE_URL', 'https://api.github.com'),
+    AUTH_URL: EnvLoader.string(
+      'GITHUB_AUTH_URL',
+      'https://github.com/login/oauth/authorize'
+    ),
   },
 
   DEFAULTS: {
@@ -75,8 +93,14 @@ export const GITHUB_CONFIG = {
 
 export const LINEAR_CONFIG = {
   API: {
-    BASE_URL: 'https://api.linear.app/graphql',
-    AUTH_URL: 'https://linear.app/oauth/authorize',
+    BASE_URL: EnvLoader.string(
+      'LINEAR_API_BASE_URL',
+      'https://api.linear.app/graphql'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'LINEAR_AUTH_URL',
+      'https://linear.app/oauth/authorize'
+    ),
   },
 
   DEFAULTS: {
@@ -89,8 +113,14 @@ export const LINEAR_CONFIG = {
 
 export const ASANA_CONFIG = {
   API: {
-    BASE_URL: 'https://app.asana.com/api/1.0',
-    AUTH_URL: 'https://app.asana.com/-/oauth_authorize',
+    BASE_URL: EnvLoader.string(
+      'ASANA_API_BASE_URL',
+      'https://app.asana.com/api/1.0'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'ASANA_AUTH_URL',
+      'https://app.asana.com/-/oauth_authorize'
+    ),
   },
 
   DEFAULTS: {
@@ -101,10 +131,22 @@ export const ASANA_CONFIG = {
 
 export const GOOGLE_TASKS_CONFIG = {
   API: {
-    BASE_URL: 'https://www.googleapis.com/tasks/v1',
-    AUTH_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
-    TOKEN_URL: 'https://oauth2.googleapis.com/token',
-    SCOPE: 'https://www.googleapis.com/auth/tasks',
+    BASE_URL: EnvLoader.string(
+      'GOOGLE_TASKS_API_BASE_URL',
+      'https://www.googleapis.com/tasks/v1'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'GOOGLE_AUTH_URL',
+      'https://accounts.google.com/o/oauth2/v2/auth'
+    ),
+    TOKEN_URL: EnvLoader.string(
+      'GOOGLE_TOKEN_URL',
+      'https://oauth2.googleapis.com/token'
+    ),
+    SCOPE: EnvLoader.string(
+      'GOOGLE_TASKS_SCOPE',
+      'https://www.googleapis.com/auth/tasks'
+    ),
   },
 
   DEFAULTS: {
