@@ -1,6 +1,6 @@
 import { AIModelConfig } from './ai';
 import yaml from 'js-yaml';
-import { readFile, access } from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
@@ -51,7 +51,7 @@ class ConfigurationService {
     const configPath = this.getConfigPath(agentName);
 
     try {
-      const configContent = await readFile(configPath, 'utf8');
+      const configContent = await fs.promises.readFile(configPath, 'utf8');
       const config = yaml.load(configContent) as AgentConfig;
 
       if (!config || !config.name || !config.model) {
@@ -105,7 +105,7 @@ class ConfigurationService {
   async configExists(agentName: string): Promise<boolean> {
     try {
       const configPath = this.getConfigPath(agentName);
-      await access(configPath);
+      await fs.promises.access(configPath);
       return true;
     } catch {
       return false;

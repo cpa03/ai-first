@@ -90,11 +90,16 @@ export class RateLimitError extends AppError {
       'Implement client-side rate limiting to avoid this error',
       'Reduce request frequency or upgrade your plan for higher limits',
     ];
+    const details: ErrorDetail[] = [
+      {
+        message: `Limit: ${limit}, Remaining: ${remaining}`,
+      },
+    ];
     super(
       `Rate limit exceeded. Retry after ${retryAfter} seconds`,
       ErrorCode.RATE_LIMIT_EXCEEDED,
       STATUS_CODES.RATE_LIMITED,
-      undefined,
+      details,
       true,
       suggestions
     );
@@ -103,21 +108,6 @@ export class RateLimitError extends AppError {
   }
 
   retryAfter: number;
-
-  toJSON(): ErrorResponse {
-    return {
-      error: redactPII(this.message),
-      code: this.code,
-      details: redactPIIInObject([
-        {
-          message: `Limit: ${this.limit}, Remaining: ${this.remaining}`,
-        },
-      ]) as unknown as ErrorDetail[],
-      timestamp: new Date().toISOString(),
-      retryable: true,
-      suggestions: this.suggestions,
-    };
-  }
 }
 
 export class ExternalServiceError extends AppError {
@@ -178,11 +168,16 @@ export class CircuitBreakerError extends AppError {
       'System will automatically test service recovery',
       'Use /api/health/detailed to monitor service status',
     ];
+    const details: ErrorDetail[] = [
+      {
+        message: `Reset time: ${resetTime.toISOString()}`,
+      },
+    ];
     super(
       `Circuit breaker open for ${service}. Retry after ${resetTime.toISOString()}`,
       ErrorCode.CIRCUIT_BREAKER_OPEN,
       STATUS_CODES.SERVICE_UNAVAILABLE,
-      undefined,
+      details,
       true,
       suggestions
     );
@@ -193,16 +188,6 @@ export class CircuitBreakerError extends AppError {
 
   service: string;
   resetTime: Date;
-
-  toJSON(): ErrorResponse {
-    return {
-      error: redactPII(this.message),
-      code: this.code,
-      timestamp: new Date().toISOString(),
-      retryable: true,
-      suggestions: this.suggestions,
-    };
-  }
 }
 
 export class RetryExhaustedError extends AppError {
