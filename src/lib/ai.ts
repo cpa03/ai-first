@@ -369,16 +369,16 @@ class AIService {
       const systemMessages = context.filter((m) => m.role === 'system');
       const nonSystemMessages = context.filter((m) => m.role !== 'system');
 
+      // PERFORMANCE: Use a slice index instead of shift() to avoid O(N^2) complexity in the loop.
+      let sliceIndex = 0;
       while (
+        sliceIndex < nonSystemMessages.length &&
         Math.ceil(totalChars / 4) > maxTokens &&
-        nonSystemMessages.length > 0 &&
         iterations < MAX_CONTEXT_ITERATIONS
       ) {
         iterations++;
-        const removed = nonSystemMessages.shift();
-        if (removed) {
-          totalChars -= removed.content.length;
-        }
+        totalChars -= nonSystemMessages[sliceIndex].content.length;
+        sliceIndex++;
       }
 
       if (iterations >= MAX_CONTEXT_ITERATIONS) {
@@ -387,7 +387,7 @@ class AIService {
         );
       }
 
-      context = [...systemMessages, ...nonSystemMessages];
+      context = [...systemMessages, ...nonSystemMessages.slice(sliceIndex)];
     }
 
     await this.supabase.from('vectors').upsert({

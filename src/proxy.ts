@@ -1,33 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { randomBytes } from 'crypto';
+import { randomBytes } from 'node:crypto';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
-
-// Generate a unique nonce for each request to enhance security
-function generateNonce(): string {
-  return randomBytes(16).toString('base64');
-}
-
-// Build CSP header with dynamic nonce replacement
-function buildCSPHeader(nonce: string): string {
-  const directives: string[] = [];
-
-  for (const [directive, values] of Object.entries(CSP_CONFIG.DIRECTIVES)) {
-    if (values.length === 0) {
-      directives.push(directive);
-    } else {
-      const processedValues = values.map((value) => {
-        if (value === "'nonce-placeholder'") {
-          return `'nonce-${nonce}'`;
-        }
-        return value;
-      });
-      directives.push(`${directive} ${processedValues.join(' ')}`);
-    }
-  }
-
-  return directives.join('; ');
-}
 
 // PERFORMANCE: Pre-calculate the Permissions-Policy header.
 const PERMISSIONS_POLICY = CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
@@ -36,6 +10,37 @@ const PERMISSIONS_POLICY = CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
 const HSTS_HEADER = `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}${
   SECURITY_CONFIG.HSTS_INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''
 }${SECURITY_CONFIG.HSTS_PRELOAD ? '; preload' : ''}`;
+
+// PERFORMANCE: Cache for the CSP template to avoid redundant calculations.
+let cachedCspTemplate: string | null = null;
+
+/**
+ * Build CSP header with dynamic nonce replacement.
+ * PERFORMANCE: Uses a cached template and global regex for efficient replacement.
+ */
+function buildCSPHeader(nonce: string): string {
+  if (cachedCspTemplate === null) {
+    const parts: string[] = [];
+    const directives = CSP_CONFIG.DIRECTIVES;
+    for (const [directive, values] of Object.entries(directives)) {
+      if (values.length === 0) {
+        parts.push(directive);
+      } else {
+        parts.push(`${directive} ${values.join(' ')}`);
+      }
+    }
+    cachedCspTemplate = parts.join('; ');
+  }
+
+  return cachedCspTemplate.replace(/'nonce-placeholder'/g, `'nonce-${nonce}'`);
+}
+
+/**
+ * Generate a unique nonce for each request.
+ */
+function generateNonce(): string {
+  return randomBytes(16).toString('base64');
+}
 
 export function proxy(_request: NextRequest) {
   const nonce = generateNonce();
