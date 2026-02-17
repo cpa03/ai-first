@@ -1,6 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useState, useRef, useMemo } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useSyncExternalStore,
+} from 'react';
 import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
@@ -27,10 +34,25 @@ interface ToastProps {
 
 const SWIPE_DISMISS_THRESHOLD = 80;
 
-const checkPrefersReducedMotion = (): boolean => {
+// Custom hook to subscribe to prefers-reduced-motion media query
+// This properly updates when OS accessibility settings change during runtime
+const subscribe = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getSnapshot = () => {
   if (typeof window === 'undefined') return false;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
+
+const getServerSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
 
 const toastIcons = {
   success: (
@@ -100,8 +122,7 @@ function Toast({ toast, onClose }: ToastProps) {
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
 
-  // Memoize reduced motion check to prevent calling on every render
-  const prefersReducedMotion = useMemo(() => checkPrefersReducedMotion(), []);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
