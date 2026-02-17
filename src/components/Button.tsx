@@ -1,6 +1,7 @@
 'use client';
 
 import { ButtonHTMLAttributes, forwardRef, useState, useCallback } from 'react';
+import { RIPPLE_CONFIG } from '@/lib/config';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -79,7 +80,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
         setTimeout(() => {
           setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
-        }, 600);
+        }, RIPPLE_CONFIG.DURATION_MS);
 
         onClick?.(event);
       },

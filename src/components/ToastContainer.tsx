@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
@@ -24,6 +24,13 @@ interface ToastProps {
   toast: Toast;
   onClose: (id: string) => void;
 }
+
+const SWIPE_DISMISS_THRESHOLD = 80;
+
+const checkPrefersReducedMotion = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
 
 const toastIcons = {
   success: (
@@ -86,6 +93,12 @@ const toastColors = {
 function Toast({ toast, onClose }: ToastProps) {
   const [isLeaving, setIsLeaving] = useState(false);
   const [progress, setProgress] = useState(100);
+  const [isPaused, setIsPaused] = useState(false);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const progressRef = useRef(100);
+  const touchStartXRef = useRef<number>(0);
+  const touchCurrentXRef = useRef<number>(0);
 
   useEffect(() => {
     const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
@@ -94,11 +107,14 @@ function Toast({ toast, onClose }: ToastProps) {
     let currentStep = 0;
 
     const progressTimer = setInterval(() => {
+      if (isPaused) return;
+
       currentStep++;
       const remainingProgress = Math.max(
         0,
         100 - (currentStep / totalSteps) * 100
       );
+      progressRef.current = remainingProgress;
       setProgress(remainingProgress);
 
       if (currentStep >= totalSteps) {
@@ -109,7 +125,46 @@ function Toast({ toast, onClose }: ToastProps) {
     }, updateInterval);
 
     return () => clearInterval(progressTimer);
-  }, [toast.id, toast.duration, onClose]);
+  }, [toast.id, toast.duration, onClose, isPaused]);
+
+  const handleMouseEnter = () => {
+    setIsPaused(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPaused(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    touchCurrentXRef.current = e.touches[0].clientX;
+    setIsSwiping(true);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isSwiping) return;
+    touchCurrentXRef.current = e.touches[0].clientX;
+    const diff = touchCurrentXRef.current - touchStartXRef.current;
+    if (diff > 0) {
+      setSwipeOffset(diff);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (!isSwiping) return;
+    setIsSwiping(false);
+    const diff = touchCurrentXRef.current - touchStartXRef.current;
+
+    if (diff > SWIPE_DISMISS_THRESHOLD) {
+      setIsLeaving(true);
+      setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
+    } else {
+      setSwipeOffset(0);
+    }
+
+    touchStartXRef.current = 0;
+    touchCurrentXRef.current = 0;
+  };
 
   const styles = toastColors[toast.type];
 
@@ -118,12 +173,25 @@ function Toast({ toast, onClose }: ToastProps) {
       role="alert"
       aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
       aria-atomic="true"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       className={`
         ${styles.container} border rounded-lg shadow-lg p-4
-        flex items-start gap-3 max-w-md
+        flex items-start gap-3 max-w-md relative overflow-hidden
         transform transition-all duration-300 ease-in-out
         ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}
+        ${checkPrefersReducedMotion() ? '' : 'touch-pan-y'}
       `}
+      style={{
+        transform:
+          isSwiping || isLeaving
+            ? `translateX(${isLeaving ? '100%' : `${swipeOffset}px`})`
+            : undefined,
+        transition: isSwiping ? 'none' : undefined,
+      }}
     >
       <svg
         className="w-5 h-5 flex-shrink-0 mt-0.5"
@@ -162,10 +230,22 @@ function Toast({ toast, onClose }: ToastProps) {
           />
         </svg>
       </button>
-      {/* Progress bar showing time remaining */}
+      {isSwiping && swipeOffset > 20 && (
+        <div
+          className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
+          style={{
+            opacity: Math.min(swipeOffset / SWIPE_DISMISS_THRESHOLD, 1) * 0.5,
+          }}
+          aria-hidden="true"
+        />
+      )}
+
       <div
         className="absolute bottom-0 left-0 h-1 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
-        style={{ width: `${progress}%` }}
+        style={{
+          width: `${progress}%`,
+          transitionDuration: isPaused ? '0ms' : '75ms',
+        }}
         aria-hidden="true"
       />
     </div>
