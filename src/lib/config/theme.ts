@@ -158,6 +158,21 @@ export const ANIMATION_DURATIONS = {
 } as const;
 
 /**
+ * Button ripple animation configuration
+ * Eliminates hardcoded ripple duration in Button component
+ */
+export const RIPPLE_CONFIG = {
+  /** Duration of the ripple animation in milliseconds */
+  DURATION_MS: 600,
+  /** Scale factor for ripple expansion */
+  SCALE_FACTOR: 4,
+  /** Opacity start value (0-1) */
+  START_OPACITY: 0.3,
+  /** Opacity end value (0-1) */
+  END_OPACITY: 0,
+} as const;
+
+/**
  * Spacing constants (in pixels) for calculations
  * For Tailwind classes, use the corresponding Tailwind classes instead
  */

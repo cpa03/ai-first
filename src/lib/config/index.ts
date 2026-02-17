@@ -70,6 +70,7 @@ export {
   SVG_ANIMATION,
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
+  RIPPLE_CONFIG,
 } from './theme';
 
 export {
