@@ -23,6 +23,30 @@ const nextConfig = {
       },
     ];
   },
+
+  async headers() {
+    return [
+      {
+        source: '/_next/static/chunks/:path*.map',
+        headers: [
+          {
+            key: 'Content-Type',
+            value: 'application/json',
+          },
+        ],
+      },
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value:
+              'camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
+          },
+        ],
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
