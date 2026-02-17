@@ -1,0 +1,118 @@
+# Security Policy
+
+## Reporting Security Vulnerabilities
+
+If you discover a security vulnerability, please report it by opening a GitHub issue with the `security` and `P0` labels. For critical vulnerabilities that should not be publicly disclosed immediately, please contact the maintainers directly.
+
+**Please do not open public issues for critical security vulnerabilities.**
+
+---
+
+## Security Measures
+
+### Supabase Service Role Key Protection
+
+The Supabase Service Role Key grants full administrative access to the database, bypassing all Row Level Security (RLS) policies. We implement multiple layers of protection:
+
+#### 1. Runtime Browser Detection
+
+```typescript
+if (typeof window !== 'undefined') {
+  throw new Error('CRITICAL SECURITY VIOLATION: ...');
+}
+```
+
+This ensures the service role key can never be accessed from browser contexts.
+
+#### 2. Lazy Loading
+
+The admin client is lazy-loaded and only initialized when explicitly requested in server-side contexts.
+
+#### 3. Environment Variable Isolation
+
+- Server-only: `SUPABASE_SERVICE_ROLE_KEY`
+- Client-safe: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+The service role key never has the `NEXT_PUBLIC_` prefix, ensuring Next.js never bundles it for the client.
+
+#### 4. API Route Abstraction
+
+All privileged database operations go through authenticated API routes:
+
+```typescript
+// Client-side (safe)
+const response = await fetch(`/api/ideas/${id}`, { method: 'PUT', ... });
+
+// Server-side API route (has admin access)
+const updated = await dbService.updateIdea(id, updates);
+```
+
+### Environment Variables
+
+Required environment variables:
+
+```bash
+# Client-side (safe to expose)
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+
+# Server-side only (NEVER expose to client)
+SUPABASE_SERVICE_ROLE_KEY=
+OPENAI_API_KEY=
+```
+
+### Content Security Policy
+
+We recommend implementing the following security headers:
+
+```
+Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline';
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Referrer-Policy: strict-origin-when-cross-origin
+Permissions-Policy: camera=(), microphone=(), geolocation=()
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+```
+
+---
+
+## Security Checklist
+
+### For Developers
+
+- [ ] Never use `SUPABASE_SERVICE_ROLE_KEY` in client components
+- [ ] Always use API routes for privileged operations
+- [ ] Never prefix sensitive variables with `NEXT_PUBLIC_`
+- [ ] Always validate and sanitize user input
+- [ ] Use parameterized queries (Supabase client does this automatically)
+- [ ] Implement proper authentication checks in API routes
+- [ ] Review bundle analyzer output for sensitive data
+
+### For DevOps
+
+- [ ] Rotate `SUPABASE_SERVICE_ROLE_KEY` periodically
+- [ ] Monitor for unauthorized database access
+- [ ] Enable Supabase audit logging
+- [ ] Configure IP allowlisting in Supabase (if applicable)
+- [ ] Set up security alerting for suspicious activity
+- [ ] Regular dependency vulnerability scanning
+
+---
+
+## Security Audit History
+
+| Date       | Issue                             | Status      | Report                                                   |
+| ---------- | --------------------------------- | ----------- | -------------------------------------------------------- |
+| 2026-02-17 | #1135 - Service Role Key Exposure | ✅ Resolved | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
+
+---
+
+## Related Documentation
+
+- [Security Audit Report #1135](./docs/security/SECURITY_AUDIT_P0_1135.md)
+- [Architecture Documentation](./docs/architecture.md)
+- [Environment Configuration](./config/.env.example)
+
+---
+
+_Last Updated: 2026-02-17_
