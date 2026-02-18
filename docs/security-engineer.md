@@ -1,7 +1,7 @@
 # Security Engineer Guide
 
 **Role**: Security Engineer Specialist  
-**Last Updated**: 2026-02-07  
+**Last Updated**: 2026-02-18  
 **Status**: ✅ Active
 
 ---
@@ -32,6 +32,7 @@ This document provides security-focused guidelines, findings, and best practices
 - ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
 - ⚠️ **CSP uses 'unsafe-inline'** (necessary for Next.js, but could be enhanced)
 - ⚠️ **Admin authentication** is basic API key only
+- ⚠️ **npm audit** shows 14 moderate vulnerabilities in devDependencies (ajv/eslint - not exploitable, accepted risk)
 
 ---
 
