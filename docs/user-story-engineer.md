@@ -6,6 +6,61 @@ Specialist guide for writing, managing, and refining user stories in the IdeaFlo
 
 The User Story Engineer is responsible for transforming ideas and requirements into well-structured, actionable user stories that follow industry best practices and integrate seamlessly with the IdeaFlow workflow.
 
+## Quick Reference
+
+### User Story Format (Copy-Paste Ready)
+
+```
+As a [persona],
+I want [goal/desire],
+So that [benefit/reason].
+```
+
+### INVEST Criteria Checklist
+
+| Criterion       | Question                                     | Pass |
+| --------------- | -------------------------------------------- | ---- |
+| **I**ndependent | Can this be delivered without other stories? | ✓/✗  |
+| **N**egotiable  | Is there room for discussion/refinement?     | ✓/✗  |
+| **V**aluable    | Does this deliver user/business value?       | ✓/✗  |
+| **E**stimable   | Can this be accurately estimated?            | ✓/✗  |
+| **S**mall       | Can this be completed in one sprint?         | ✓/✗  |
+| **T**estable    | Are there clear acceptance criteria?         | ✓/✗  |
+
+### Known Personas (from [personas.md](./user-stories/personas.md))
+
+| Persona         | Role         | Primary Need                  | Priority |
+| --------------- | ------------ | ----------------------------- | -------- |
+| Startup Founder | Entrepreneur | Quick idea-to-plan conversion | P0       |
+| Product Manager | PM           | Structured roadmap creation   | P1       |
+| Developer       | Engineer     | Technical task breakdown      | P1       |
+
+### Priority Labels (MoSCoW)
+
+| Label | Priority    | Description                |
+| ----- | ----------- | -------------------------- |
+| `P0`  | Must Have   | Critical for MVP           |
+| `P1`  | Should Have | Important but not critical |
+| `P2`  | Could Have  | Nice to have, can defer    |
+| `P3`  | Won't Have  | Explicitly out of scope    |
+
+### Acceptance Criteria Template (Gherkin)
+
+```gherkin
+Given [initial context/precondition]
+When [action/trigger]
+Then [expected outcome]
+```
+
+### Programmatic Validation
+
+```typescript
+import { validateUserStoryFormat } from '@/lib/validation';
+
+const result = validateUserStoryFormat(ideaText, { strict: true });
+// result.valid, result.persona, result.goal, result.benefit, result.suggestions
+```
+
 ## Core Responsibilities
 
 1. **Story Creation**: Write clear, concise user stories following the standard format
