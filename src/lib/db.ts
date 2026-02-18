@@ -429,7 +429,7 @@ export class DatabaseService {
     if (DatabaseService.instance) {
       DatabaseService.instance.dispose();
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (DatabaseService as any).instance = undefined;
   }
 
