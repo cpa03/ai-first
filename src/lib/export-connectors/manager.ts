@@ -116,6 +116,94 @@ export class ExportManager {
 
     return results;
   }
+
+  private static readonly EXTERNAL_CONNECTORS_REQUIRING_API_ACCESS = new Set([
+    'notion',
+    'trello',
+    'google-tasks',
+    'github-projects',
+  ]);
+
+  async getConnectorsHealth(): Promise<
+    Record<
+      string,
+      {
+        name: string;
+        configured: boolean;
+        isExternal: boolean;
+        lastChecked: string;
+        error?: string;
+      }
+    >
+  > {
+    const results: Record<
+      string,
+      {
+        name: string;
+        configured: boolean;
+        isExternal: boolean;
+        lastChecked: string;
+        error?: string;
+      }
+    > = {};
+
+    for (const [type, connector] of this.connectors.entries()) {
+      try {
+        const isValid = await connector.validateConfig();
+        results[type] = {
+          name: connector.name,
+          configured: isValid,
+          isExternal:
+            ExportManager.EXTERNAL_CONNECTORS_REQUIRING_API_ACCESS.has(type),
+          lastChecked: new Date().toISOString(),
+        };
+      } catch (error) {
+        results[type] = {
+          name: connector.name,
+          configured: false,
+          isExternal:
+            ExportManager.EXTERNAL_CONNECTORS_REQUIRING_API_ACCESS.has(type),
+          lastChecked: new Date().toISOString(),
+          error: error instanceof Error ? error.message : 'Unknown error',
+        };
+      }
+    }
+
+    return results;
+  }
+
+  async getConnectorsHealthSummary(): Promise<{
+    total: number;
+    configured: number;
+    external: number;
+    externalConfigured: number;
+    status: 'healthy' | 'degraded' | 'unhealthy';
+  }> {
+    const health = await this.getConnectorsHealth();
+    const connectors = Object.values(health);
+
+    const total = connectors.length;
+    const configured = connectors.filter((c) => c.configured).length;
+    const external = connectors.filter((c) => c.isExternal).length;
+    const externalConfigured = connectors.filter(
+      (c) => c.isExternal && c.configured
+    ).length;
+
+    const status: 'healthy' | 'degraded' | 'unhealthy' =
+      configured === total
+        ? 'healthy'
+        : configured > 0
+          ? 'degraded'
+          : 'unhealthy';
+
+    return {
+      total,
+      configured,
+      external,
+      externalConfigured,
+      status,
+    };
+  }
 }
 
 export const exportManager = new ExportManager();

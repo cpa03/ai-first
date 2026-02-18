@@ -101,9 +101,10 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 ## Security Audit History
 
-| Date       | Issue                             | Status      | Report                                                   |
-| ---------- | --------------------------------- | ----------- | -------------------------------------------------------- |
-| 2026-02-17 | #1135 - Service Role Key Exposure | ✅ Resolved | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
+| Date       | Issue                                          | Status           | Report                                                   |
+| ---------- | ---------------------------------------------- | ---------------- | -------------------------------------------------------- |
+| 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
+| 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                    |
 
 ---
 
@@ -115,4 +116,4 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 ---
 
-_Last Updated: 2026-02-17_
+_Last Updated: 2026-02-18_

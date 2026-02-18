@@ -18,6 +18,15 @@ export const CLEANUP_CONFIG = {
      * Default priority for cleanup tasks (higher = executed first)
      */
     DEFAULT_PRIORITY: 0,
+
+    /**
+     * Maximum time allowed for graceful shutdown before force exit (milliseconds)
+     * After this time, the process will exit regardless of cleanup completion
+     * This is critical for containerized environments (Kubernetes, Docker)
+     * that send SIGKILL after a grace period (typically 30s)
+     * Default: 10000ms (10 seconds) to allow time for cleanup + force exit
+     */
+    GRACEFUL_SHUTDOWN_TIMEOUT_MS: 10000,
   } as const,
 
   /**
