@@ -52,6 +52,7 @@ Complete index of all IdeaFlow documentation.
 - [Phase 1 Implementation Plan](./phase-1-implementation-plan.md) - Phase 1 detailed plan
 - [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
 - [User Story Engineer](./user-story-engineer.md) - User story writing best practices
+- [User Personas](./user-stories/personas.md) - Primary user personas for writing user stories
 
 ## Operations
 
