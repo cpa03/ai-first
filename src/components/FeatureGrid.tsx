@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { ANIMATION_DELAYS } from '@/lib/config';
 
 interface Feature {
   step: number;
@@ -100,14 +101,14 @@ export default function FeatureGrid() {
 
           {index < features.length - 1 && (
             <div
-              className="
+              className={`
                 hidden md:block absolute top-1/2 -right-4 
                 w-8 h-0.5 bg-gradient-to-r from-primary-300 to-primary-100
                 transform -translate-y-1/2
                 opacity-0 group-hover:opacity-100 
-                transition-opacity duration-500 delay-100
+                transition-opacity duration-500 ${ANIMATION_DELAYS.TAILWIND[100]}
                 motion-reduce:opacity-0
-              "
+              `}
               aria-hidden="true"
             />
           )}
