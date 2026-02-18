@@ -84,8 +84,10 @@ export class CircuitBreaker {
   private openCircuit(now: number): void {
     this.circuitState.state = 'open';
     this.circuitState.nextAttemptTime = now + this.config.resetTimeoutMs;
-    logger.debug(
-      `Opening circuit breaker. Failures: ${this.circuitState.failures}, Threshold: ${this.config.failureThreshold}`
+    // Log at WARN level to ensure visibility in production (error/warn are preserved)
+    // This is a critical reliability event that operators need to see
+    logger.warn(
+      `Circuit breaker OPENED for "${this.name}". Failures: ${this.circuitState.failures}, Threshold: ${this.config.failureThreshold}, Next attempt: ${new Date(this.circuitState.nextAttemptTime).toISOString()}`
     );
   }
 
