@@ -13,6 +13,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Branch cleanup automation
 - Empty directory cleanup in `.swc/`
 
+### Security 2026-02-18 (HIGH Severity Fix)
+
+**RepoKeeper Security Maintenance:**
+
+- 🔒 **Fixed HIGH severity vulnerability:**
+  - `fast-xml-parser` 5.3.4 → 5.3.6 (GHSA-jmr7-xgp7-cmfj)
+  - Vulnerability: DoS through entity expansion in DOCTYPE
+  - Fix: Added package.json override `"fast-xml-parser": "^5.3.6"`
+- ✅ **Post-Fix Verification:**
+  - npm audit: 0 high/critical vulnerabilities
+  - 14 moderate vulnerabilities remain (ESLint dependencies, non-breaking, dev-only)
+  - Lint: PASSED (0 errors, 0 warnings)
+  - TypeScript: PASSED (0 errors)
+  - Build: Successful
+
+- ✅ **Documentation:**
+  - Updated BRANCH_CLEANUP.md with maintenance entry
+  - Updated CHANGELOG.md with security fix details
+
+**Impact:** Production dependencies now secure. No breaking changes introduced.
+
 ### Maintenance 2026-02-18 (Mid-Day Ultrawork Scan)
 
 **RepoKeeper Audit Results:**
