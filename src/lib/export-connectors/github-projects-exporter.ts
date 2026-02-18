@@ -10,6 +10,15 @@ export class GitHubProjectsExporter extends ExportConnector {
   readonly type = 'github-projects';
   readonly name = 'GitHub Projects';
   private readonly API_BASE = GITHUB_CONFIG.API.BASE_URL;
+  private readonly API_VERSION = GITHUB_CONFIG.API.VERSION;
+
+  private getHeaders(token: string): Record<string, string> {
+    return {
+      Authorization: `token ${token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'X-GitHub-Api-Version': this.API_VERSION,
+    };
+  }
 
   async export(
     data: ExportData,
@@ -148,10 +157,7 @@ export class GitHubProjectsExporter extends ExportConnector {
       const response = await this.executeWithResilience(
         () =>
           fetch(`${this.API_BASE}/user`, {
-            headers: {
-              Authorization: `token ${token}`,
-              Accept: 'application/vnd.github.v3+json',
-            },
+            headers: this.getHeaders(token),
           }),
         'validate-config'
       );
@@ -190,10 +196,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const response = await this.executeWithResilience(
       () =>
         fetch(`${this.API_BASE}/user`, {
-          headers: {
-            Authorization: `token ${token}`,
-            Accept: 'application/vnd.github.v3+json',
-          },
+          headers: this.getHeaders(token),
         }),
       'get-authenticated-user'
     );
