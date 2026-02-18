@@ -87,7 +87,7 @@ const InputWithValidation = forwardRef<
         setShouldShake(true);
         const timeout = setTimeout(() => {
           setShouldShake(false);
-        }, 500); // Match animation duration
+        }, ANIMATION_DELAYS.SHAKE);
         return () => clearTimeout(timeout);
       }
     }, [isInvalid, error]);

@@ -80,19 +80,37 @@
       /clarify/            ← Clarification API
       /breakdown/          ← Breakdown API
       /admin/              ← Admin endpoints
+      /deliverables/       ← Deliverables API
+      /ideas/              ← Ideas CRUD API
+      /metrics/            ← Metrics API
+      /tasks/              ← Tasks API
   /components/             ← React components
-    /Button.tsx            ← Reusable button component
-    /InputWithValidation.tsx ← Form input with validation
     /Alert.tsx             ← Alert component
-    /ProgressStepper.tsx    ← Progress indicator
-    /ClarificationFlow.tsx  ← Clarification workflow UI
-    /BlueprintDisplay.tsx   ← Blueprint display UI
-    /LoadingAnnouncer.tsx   ← Screen reader announcements
-    /MobileNav.tsx         ← Responsive navigation
     /AutoSaveIndicator.tsx  ← Auto-save status indicator
+    /BlueprintDisplay.tsx   ← Blueprint display UI
+    /Button.tsx            ← Reusable button component
+    /ClarificationFlow.tsx  ← Clarification workflow UI
     /CopyButton.tsx         ← Copy to clipboard button
+    /ErrorBoundary.tsx      ← Error boundary component
+    /FeatureGrid.tsx        ← Feature showcase grid
+    /GlobalErrorHandler.tsx  ← Global error handling
+    /IdeaInput.tsx          ← Idea input component
+    /InputWithValidation.tsx ← Form input with validation
+    /KeyboardShortcutsHelp.tsx ← Keyboard shortcuts help
+    /KeyboardShortcutsProvider.tsx ← Keyboard shortcuts context
+    /LoadingAnnouncer.tsx   ← Screen reader announcements
+    /LoadingOverlay.tsx     ← Loading overlay component
+    /LoadingSpinner.tsx     ← Spinner component
+    /MobileNav.tsx         ← Responsive navigation
+    /ProgressStepper.tsx    ← Progress indicator
+    /Skeleton.tsx           ← Skeleton loading component
+    /StepCelebration.tsx    ← Step completion celebration
+    /SuccessCelebration.tsx  ← Success celebration animation
     /TaskManagement.tsx     ← Task management UI
+    /ToastContainer.tsx     ← Toast notification container
     /Tooltip.tsx            ← Accessible tooltip component
+    /WhyChooseSection.tsx   ← Why choose section
+    /task-management/       ← Task management components
   /hooks/                  ← React custom hooks
     /useTaskManagement.ts   ← Task management hook
     /useAuthCheck.ts        ← Authentication check hook

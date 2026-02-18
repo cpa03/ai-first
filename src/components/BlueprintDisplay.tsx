@@ -64,7 +64,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    }, ANIMATION_DELAYS.SHORT);
+    }, ANIMATION_DELAYS.CLEANUP);
 
     a.click();
   };

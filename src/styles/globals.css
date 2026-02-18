@@ -63,16 +63,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-  }
-
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid theme('colors.primary.600');
     outline-offset: 2px;
   }
 
@@ -286,5 +277,120 @@
   .animate-ripple-ring-1,
   .animate-ripple-ring-2 {
     animation: none;
+  }
+}
+
+/* FeatureGrid staggered entrance animations */
+@keyframes staggerFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-stagger-1 {
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-stagger-2 {
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  opacity: 0;
+}
+
+.animate-stagger-3 {
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+/* Gradient border animation for FeatureGrid cards */
+@keyframes gradientRotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-border-hover {
+  position: relative;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899, #3b82f6) border-box;
+  background-size: 300% 100%;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.gradient-border-hover:hover,
+.gradient-border-hover:focus-visible {
+  background-position: 100% 0;
+  animation: gradientRotate 3s ease infinite;
+  box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.3);
+}
+
+/* Enhanced focus indicator for keyboard navigation */
+.feature-card-focus:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(59, 130, 246, 0.5),
+    0 0 0 6px rgba(59, 130, 246, 0.2);
+}
+
+/* Card lift effect */
+.card-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+
+.card-lift:hover,
+.card-lift:focus-visible {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+}
+
+/* Number badge pulse on card hover */
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.group:hover .badge-animate,
+.group:focus-visible .badge-animate {
+  animation: badgePulse 0.6s ease-in-out;
+}
+
+/* Reduced motion support for FeatureGrid animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger-1,
+  .animate-stagger-2,
+  .animate-stagger-3 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .gradient-border-hover:hover,
+  .gradient-border-hover:focus-visible {
+    animation: none;
+  }
+
+  .card-lift:hover,
+  .card-lift:focus-visible {
+    transform: none;
   }
 }

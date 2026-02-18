@@ -449,6 +449,13 @@ export const AI_CONFIG = {
   ),
 
   /**
+   * Maximum iterations for context window truncation loop
+   * Prevents infinite loops when removing messages from context
+   * NOTE: Not environment-configurable as this is a safety limit
+   */
+  MAX_CONTEXT_ITERATIONS: 1000,
+
+  /**
    * Model pricing per token (in USD)
    * NOTE: Pricing is not environment-configurable as it's tied to provider rates
    */
@@ -580,6 +587,13 @@ export const PII_REDACTION_CONFIG = {
     'priority',
     'estimate_hours',
   ] as const,
+
+  /**
+   * Maximum recursion depth for PII redaction in nested objects
+   * Prevents stack overflow on deeply nested or circular structures
+   * NOTE: Not environment-configurable as this is a safety limit
+   */
+  MAX_RECURSION_DEPTH: 100,
 } as const;
 
 /**

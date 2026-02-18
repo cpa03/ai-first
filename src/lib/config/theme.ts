@@ -158,6 +158,39 @@ export const ANIMATION_DURATIONS = {
 } as const;
 
 /**
+ * Animation delay constants (in ms) for setTimeout/setInterval calls
+ * Eliminates hardcoded magic numbers in component timing logic
+ */
+export const ANIMATION_DELAYS = {
+  /** Immediate execution (setTimeout 0 pattern for next tick) */
+  IMMEDIATE: 0,
+  /** Micro delay for haptic feedback and quick UI updates */
+  MICRO: 50,
+  /** Small delay for particle stagger effects */
+  PARTICLE_STAGGER: 50,
+  /** Short delay for step transitions and quick animations */
+  SHORT: 100,
+  /** Standard delay for element cleanup (URL revocation, DOM removal) */
+  CLEANUP: 100,
+  /** Step celebration delay before transitioning */
+  STEP_TRANSITION: 800,
+  /** Shake animation duration */
+  SHAKE: 500,
+  /** Tailwind delay class mapping */
+  TAILWIND: {
+    0: 'delay-0',
+    50: 'delay-50',
+    100: 'delay-100',
+    150: 'delay-150',
+    200: 'delay-200',
+    300: 'delay-300',
+    500: 'delay-500',
+    700: 'delay-700',
+    1000: 'delay-1000',
+  } as const,
+} as const;
+
+/**
  * Button ripple animation configuration
  * Eliminates hardcoded ripple duration in Button component
  */
@@ -329,38 +362,6 @@ export const ANIMATION_PHYSICS = {
 } as const;
 
 /**
- * Animation delay constants
- * Used for staggered animations and particle effects
- * Eliminates hardcoded delay values in components
- */
-export const ANIMATION_DELAYS = {
-  /** Immediate execution delay (for setTimeout(..., 0) patterns) */
-  IMMEDIATE: 0,
-  /** Micro delay for UI feedback (50ms) - haptic feedback, etc. */
-  MICRO: 50,
-  /** Small delay for particle stagger effects */
-  PARTICLE_STAGGER: 50,
-  /** Short delay for quick animations (100ms) */
-  SHORT: 100,
-  /** Standard delay for most animations (150ms) */
-  STANDARD: 150,
-  /** Medium delay for coordinated animations (200ms) */
-  MEDIUM: 200,
-  /** Long delay for emphasis (300ms) */
-  LONG: 300,
-  /** Tailwind-compatible delay classes */
-  TAILWIND: {
-    100: 'delay-100',
-    150: 'delay-150',
-    200: 'delay-200',
-    300: 'delay-300',
-    500: 'delay-500',
-    700: 'delay-700',
-    1000: 'delay-1000',
-  },
-} as const;
-
-/**
  * Button Component Styles
  * Centralizes all button variant, size, and state styles
  * Eliminates hardcoded Tailwind classes in Button component
@@ -393,7 +394,7 @@ export const BUTTON_STYLES = {
 
   /** State classes for disabled/loading states */
   STATES: {
-    disabled: 'opacity-50 cursor-not-allowed',
+    disabled: 'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100',
     enabled: 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]',
   } as const,
 
