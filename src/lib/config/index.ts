@@ -125,6 +125,8 @@ export {
   CLARIFIER_VALUES,
   TASK_VALIDATION,
   RETRY_VALUES,
+  HTTP_HEADERS,
+  AUTH_CONFIG,
 } from './constants';
 
 // Configuration Validator
