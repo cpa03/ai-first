@@ -939,11 +939,13 @@ Located in `/supabase/migrations/`:
 | 002_data_integrity_constraints.sql                | Adds CHECK constraints              |
 | 002_schema_optimization.sql                       | Performance optimizations           |
 | 003_vectors_pgvector_support.sql                  | Vector extension setup              |
+| 005_risk_assessments_constraints_fix.sql          | Risk assessments constraint fix     |
 | 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns          |
 | 20260120_add_clarification_tables_and_indexes.sql | Clarification tables                |
 | 20260218_add_ideas_updated_at.sql                 | Ideas table updated_at              |
 | 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete           |
 | 20260218_add_missing_rls_policies.sql             | Missing RLS policies (#1189, #1172) |
+| 20260218_vector_index_maintenance.sql             | Vector index maintenance utilities  |
 
 ### Migration Best Practices
 
@@ -967,6 +969,33 @@ Located in `/supabase/migrations/`:
 2. **Tune match_threshold for precision/recall balance**
 3. **Limit match_count appropriately**
 4. **Use idea_id_filter when possible**
+
+### Vector Index Maintenance
+
+IVFFlat indexes require periodic maintenance as data grows. Use the provided utility functions:
+
+```sql
+-- Check index health (run monthly)
+SELECT * FROM check_vector_index_health();
+
+-- Monitor index statistics
+SELECT * FROM get_vector_index_stats();
+
+-- Rebuild indexes when needed (admin operation)
+SELECT * FROM rebuild_vector_indexes();
+```
+
+**When to rebuild:**
+
+- After bulk data imports (>10,000 new vectors)
+- When row-to-lists ratio exceeds 2000
+- When data has grown 2x since last rebuild
+
+**Optimal lists parameter by dataset size:**
+
+- < 100K vectors: lists = 100-300
+- 100K-1M vectors: lists = 300-1000
+- > 1M vectors: consider HNSW or lists = 1000+
 
 ### Connection Pooling
 
@@ -1003,6 +1032,24 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-18 - Vector Index Maintenance Utilities
+
+#### Performance Enhancement
+
+1. **Added vector index maintenance utility functions**
+   - Migration `20260218_vector_index_maintenance.sql` adds 3 utility functions
+   - Addresses GitHub Issue #1172 (missing vector index maintenance strategy)
+   - `get_vector_index_stats()` - Monitor IVFFlat index statistics
+   - `rebuild_vector_indexes()` - Rebuild indexes with optimal lists parameter
+   - `check_vector_index_health()` - Health check with recommendations
+
+2. **Down migration included**
+   - `20260218_vector_index_maintenance.down.sql` allows safe rollback
+
+3. **Documentation updated**
+   - Added Vector Index Maintenance section with operational guidance
+   - Added recommended maintenance schedules and thresholds
 
 ### 2026-02-18 - Missing RLS Policies Migration
 
