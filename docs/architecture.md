@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-The project follows a Next.js 14+ app router structure with Supabase integration and AI abstraction layer.
+The project follows a Next.js 16+ app router structure with Supabase integration and AI abstraction layer.
 
 ```
 src/
