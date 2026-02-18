@@ -27,9 +27,10 @@
     "audit:lighthouse": "node scripts/lighthouse-audit.js",
     "broc": "npm run build && npm run scan:console && npm run audit:lighthouse",
     "analyze": "ANALYZE=true npm run build -- --webpack",
-    "build:cloudflare": "npx @cloudflare/next-on-pages@1",
-    "deploy:cloudflare": "npm run build:cloudflare && wrangler pages deploy .vercel/output/static",
-    "preview:cloudflare": "npm run build:cloudflare && wrangler pages dev .vercel/output/static"
+    "build:cloudflare": "opennextjs-cloudflare build",
+    "preview:cloudflare": "opennextjs-cloudflare preview",
+    "deploy:cloudflare": "opennextjs-cloudflare deploy",
+    "deploy:cloudflare:staging": "opennextjs-cloudflare deploy --env staging"
   },
   "dependencies": {
     "@notionhq/client": "^5.9.0",
@@ -51,6 +52,7 @@
     "@cloudflare/next-on-pages": "^1.13.12",
     "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.6",
+    "@opennextjs/cloudflare": "^1.16.5",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -74,7 +76,8 @@
     "prettier": "^3.8.1",
     "puppeteer": "^24.37.2",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.66.0"
   },
   "engines": {
     "node": ">=18.0.0",

@@ -6,6 +6,7 @@ import {
 } from '@/lib/api-handler';
 import { createLogger } from '@/lib/logger';
 import { NextResponse } from 'next/server';
+import { STATUS_CODES } from '@/lib/config';
 
 const logger = createLogger('readiness');
 
@@ -62,7 +63,7 @@ async function handleGet(context: ApiContext) {
     return standardSuccessResponse(
       response,
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       _rateLimit
     );
   }
@@ -77,7 +78,7 @@ async function handleGet(context: ApiContext) {
       requestId: context.requestId,
       timestamp: new Date().toISOString(),
     },
-    { status: 503 }
+    { status: STATUS_CODES.SERVICE_UNAVAILABLE }
   );
 
   errorResponse.headers.set('X-Request-ID', context.requestId);

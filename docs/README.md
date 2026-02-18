@@ -49,6 +49,7 @@ Complete index of all IdeaFlow documentation.
 - [Roadmap](./roadmap.md) - Project roadmap and milestones
 - [Phase 1 Implementation Plan](./phase-1-implementation-plan.md) - Phase 1 detailed plan
 - [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
+- [User Story Engineer](./user-story-engineer.md) - User story writing best practices
 
 ## Operations
 
@@ -73,7 +74,6 @@ Complete index of all IdeaFlow documentation.
 ## Subdirectories
 
 - [API Specifications](./api/) - OpenAPI specifications
-- [Archive](./archive/) - Archived documentation
 - [Templates](./templates/) - User-downloadable templates
 
 ---

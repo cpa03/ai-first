@@ -2,7 +2,14 @@
 
 ## Overview
 
-This guide covers deploying IdeaFlow to Cloudflare Workers/Pages, including environment configuration, build setup, and CI/CD integration.
+This guide covers deploying IdeaFlow to Cloudflare Workers using the OpenNext adapter, which is the recommended approach for deploying Next.js applications to Cloudflare.
+
+> **Note**: This project uses `@opennextjs/cloudflare` (the recommended adapter) instead of the deprecated `@cloudflare/next-on-pages` package.
+>
+> - **OpenNext Cloudflare**: Full Node.js API support via Cloudflare's `nodejs_compat` flag
+> - **Key Difference**: OpenNext uses the Node.js runtime (not Edge), enabling most Next.js features
+>
+> @see https://opennext.js.org/cloudflare
 
 ## Prerequisites
 
@@ -10,7 +17,7 @@ This guide covers deploying IdeaFlow to Cloudflare Workers/Pages, including envi
 - Supabase account (free tier)
 - AI provider account (OpenAI or Anthropic)
 - Node.js 18+ installed locally
-- Wrangler CLI installed globally
+- Wrangler CLI (installed automatically as dev dependency)
 
 ## Quick Setup
 
@@ -88,12 +95,23 @@ This script will:
 ### 6. Deploy to Cloudflare
 
 ```bash
-# Deploy to production
-wrangler pages deploy .next --project-name=ideaflow
+# Build for Cloudflare (generates .open-next/ directory)
+npm run build:cloudflare
 
-# Or use npm script (if configured)
+# Preview locally before deploying
+npm run preview:cloudflare
+
+# Deploy to production
 npm run deploy:cloudflare
+
+# Deploy to staging environment
+npm run deploy:cloudflare:staging
 ```
+
+The OpenNext adapter outputs to `.open-next/` directory with:
+
+- `worker.js` - The Cloudflare Worker entry point
+- `assets/` - Static assets served by Cloudflare
 
 ## Manual Cloudflare Dashboard Configuration
 
@@ -174,10 +192,12 @@ Only configure these if you plan to use export features:
 
 In Cloudflare dashboard:
 
-1. Navigate to: **Workers & Pages** → **ideaflow** → **Settings** → **Builds**
+1. Navigate to: **Workers & Pages** → **ai-first** → **Settings** → **Builds**
 2. Configure:
-   - **Build command**: `npm run build`
-   - **Build output directory**: `.next`
+   - **Build command**: `npm run build:cloudflare`
+   - **Build output directory**: `.open-next/assets`
+
+> **Note**: OpenNext outputs to `.open-next/` directory, not `.next/`. The worker entry point is `.open-next/worker.js` as configured in `wrangler.toml`.
 
 ### Step 5: Configure Deployment Triggers
 
@@ -197,8 +217,9 @@ The project uses GitHub Actions for automated deployments:
 
 #### Workflows
 
-- **`.github/workflows/on-pull.yml`**: Runs on pull requests, performs CI checks
-- **`.github/workflows/on-push.yml`**: Runs on pushes to main, triggers deployment
+- **`.github/workflows/on-pull.yml`**: Runs on pull requests, performs CI checks and PR management
+- **`.github/workflows/iterate.yml`**: Runs on pushes to main (every 4 hours), executes specialized agents
+- **`.github/workflows/parallel.yml`**: Runs on pushes to main (every 4 hours), parallel specialist execution
 
 #### Cloudflare Build Check
 
@@ -416,8 +437,8 @@ Monitor errors via:
 **Solution**:
 
 - Check Cloudflare build logs for specific error
-- Verify `.next` directory exists after build
-- Ensure build output directory matches Cloudflare configuration
+- Verify `.open-next/` directory exists after build with `worker.js` and `assets/`
+- Ensure `wrangler.toml` points to `main = ".open-next/worker.js"`
 
 ### Issue: Preview deployments not working
 
@@ -426,6 +447,25 @@ Monitor errors via:
 - Ensure preview deployments are enabled in Cloudflare dashboard
 - Check branch protection rules
 - Verify GitHub integration is properly configured
+
+## Known Limitations
+
+### Middleware Support
+
+OpenNext Cloudflare has limited middleware support. Node.js middleware (introduced in Next.js 15.2) is not yet supported. If you need security headers like CSP:
+
+1. **Option A**: Configure security headers directly in Cloudflare dashboard (recommended)
+   - Go to: **Workers & Pages** → **ai-first** → **Settings** → **Headers**
+2. **Option B**: Use Cloudflare Page Rules for header modifications
+
+3. **Option C**: Wait for OpenNext Cloudflare middleware support to mature
+
+### Edge Runtime
+
+OpenNext Cloudflare uses Node.js runtime with `nodejs_compat` flag, not Edge runtime. This means:
+
+- ✅ Most Node.js APIs are available
+- ❌ `export const runtime = "edge"` is not supported - remove this from your code
 
 ## Security Best Practices
 

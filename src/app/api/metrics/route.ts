@@ -5,6 +5,7 @@ import {
   Histogram,
   Gauge,
 } from 'prom-client';
+import { STATUS_CODES } from '@/lib/config';
 
 const register = new Registry();
 
@@ -52,14 +53,14 @@ export async function GET() {
   try {
     const metrics = await register.metrics();
     return new Response(metrics, {
-      status: 200,
+      status: STATUS_CODES.OK,
       headers: {
         'Content-Type': register.contentType,
       },
     });
   } catch (_error) {
     return new Response('Error generating metrics', {
-      status: 500,
+      status: STATUS_CODES.INTERNAL_ERROR,
       headers: {
         'Content-Type': 'text/plain',
       },
