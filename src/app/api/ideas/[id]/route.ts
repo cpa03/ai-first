@@ -7,6 +7,7 @@ import { ValidationError } from '@/lib/errors';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { STATUS_CODES, IDEA_CONFIG } from '@/lib/config';
 
 // Type guard for valid idea status values
 function isValidStatus(status: string): status is Idea['status'] {
@@ -31,7 +32,11 @@ async function handleGet(context: ApiContext) {
   const idea = await dbService.getIdea(ideaId!);
 
   if (!idea) {
-    return standardSuccessResponse(null, context.requestId, 404);
+    return standardSuccessResponse(
+      null,
+      context.requestId,
+      STATUS_CODES.NOT_FOUND
+    );
   }
 
   // Verify ownership
@@ -60,7 +65,11 @@ async function handlePut(context: ApiContext) {
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
-    return standardSuccessResponse(null, context.requestId, 404);
+    return standardSuccessResponse(
+      null,
+      context.requestId,
+      STATUS_CODES.NOT_FOUND
+    );
   }
 
   // Verify ownership
@@ -75,7 +84,10 @@ async function handlePut(context: ApiContext) {
   };
 
   if (title !== undefined) {
-    updates.title = sanitizeHtml(title).substring(0, 100);
+    updates.title = sanitizeHtml(title).substring(
+      0,
+      IDEA_CONFIG.VALIDATION.MAX_TITLE_LENGTH
+    );
   }
 
   if (status !== undefined && typeof status === 'string') {
@@ -115,7 +127,11 @@ async function handleDelete(context: ApiContext) {
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
-    return standardSuccessResponse(null, context.requestId, 404);
+    return standardSuccessResponse(
+      null,
+      context.requestId,
+      STATUS_CODES.NOT_FOUND
+    );
   }
 
   // Verify ownership

@@ -1,6 +1,7 @@
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { BreakdownSession } from '../breakdown-engine';
+import { TASK_CONFIG } from '@/lib/config';
 
 const logger = createLogger('SessionManager');
 
@@ -42,8 +43,8 @@ export class SessionManager {
           priority: deliverable.priority,
           estimate_hours: deliverable.estimatedHours,
           milestone_id: null,
-          completion_percentage: 0,
-          business_value: 50,
+          completion_percentage: TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+          business_value: TASK_CONFIG.DEFAULTS.PRIORITY,
           risk_factors: [],
           acceptance_criteria: null,
           deliverable_type: 'feature' as const,
@@ -67,14 +68,14 @@ export class SessionManager {
             title: task.title,
             description: task.description,
             estimate: task.estimatedHours,
-            status: 'todo' as const,
+            status: TASK_CONFIG.STATUSES.TODO,
             start_date: null,
             end_date: null,
             actual_hours: null,
-            completion_percentage: 0,
-            priority_score: 50,
-            complexity_score: 50,
-            risk_level: 'low' as const,
+            completion_percentage: TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+            priority_score: TASK_CONFIG.DEFAULTS.PRIORITY_SCORE,
+            complexity_score: TASK_CONFIG.DEFAULTS.COMPLEXITY_SCORE,
+            risk_level: TASK_CONFIG.DEFAULTS.RISK_LEVEL,
             tags: [],
             custom_fields: null,
             milestone_id: null,

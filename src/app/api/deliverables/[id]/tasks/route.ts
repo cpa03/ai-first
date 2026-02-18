@@ -10,13 +10,20 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_VALIDATION } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { TASK_CONFIG } from '@/lib/config';
 
-// Valid task statuses
-const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
+const VALID_STATUSES = [
+  TASK_CONFIG.STATUSES.TODO,
+  TASK_CONFIG.STATUSES.IN_PROGRESS,
+  TASK_CONFIG.STATUSES.COMPLETED,
+] as const;
 type TaskStatus = (typeof VALID_STATUSES)[number];
 
-// Valid risk levels
-const VALID_RISK_LEVELS = ['low', 'medium', 'high'] as const;
+const VALID_RISK_LEVELS = [
+  TASK_CONFIG.RISK_LEVELS.LOW,
+  TASK_CONFIG.RISK_LEVELS.MEDIUM,
+  TASK_CONFIG.RISK_LEVELS.HIGH,
+] as const;
 
 interface CreateTaskBody {
   title: string;
@@ -100,16 +107,16 @@ async function handlePost(context: ApiContext) {
       deliverable_id: deliverableId,
       title: body.title.trim(),
       description: body.description,
-      status: body.status || 'todo',
+      status: body.status || TASK_CONFIG.STATUSES.TODO,
       assignee: body.assignee,
-      estimate: body.estimate || 0,
+      estimate: body.estimate || TASK_CONFIG.DEFAULTS.ESTIMATE,
       start_date: null,
       end_date: null,
       actual_hours: null,
-      completion_percentage: 0,
-      priority_score: 0,
-      complexity_score: 0,
-      risk_level: body.risk_level || 'low',
+      completion_percentage: TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+      priority_score: TASK_CONFIG.DEFAULTS.PRIORITY_SCORE,
+      complexity_score: TASK_CONFIG.DEFAULTS.COMPLEXITY_SCORE,
+      risk_level: body.risk_level || TASK_CONFIG.DEFAULTS.RISK_LEVEL,
       tags: body.tags || null,
       custom_fields: null,
       milestone_id: null,

@@ -9,13 +9,20 @@ import { dbService, Task } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { TASK_CONFIG } from '@/lib/config';
 
-// Valid task statuses
-const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
+const VALID_STATUSES = [
+  TASK_CONFIG.STATUSES.TODO,
+  TASK_CONFIG.STATUSES.IN_PROGRESS,
+  TASK_CONFIG.STATUSES.COMPLETED,
+] as const;
 type TaskStatus = (typeof VALID_STATUSES)[number];
 
-// Valid risk levels
-const VALID_RISK_LEVELS = ['low', 'medium', 'high'] as const;
+const VALID_RISK_LEVELS = [
+  TASK_CONFIG.RISK_LEVELS.LOW,
+  TASK_CONFIG.RISK_LEVELS.MEDIUM,
+  TASK_CONFIG.RISK_LEVELS.HIGH,
+] as const;
 
 type TaskUpdateBody = Partial<
   Omit<Task, 'id' | 'created_at' | 'deliverable_id'>
@@ -63,8 +70,8 @@ async function handlePut(context: ApiContext) {
   if (body.completion_percentage !== undefined) {
     if (
       typeof body.completion_percentage !== 'number' ||
-      body.completion_percentage < 0 ||
-      body.completion_percentage > 100
+      body.completion_percentage < TASK_CONFIG.COMPLETION.MIN ||
+      body.completion_percentage > TASK_CONFIG.COMPLETION.MAX
     ) {
       return badRequestResponse(
         API_ERROR_MESSAGES.VALIDATION.COMPLETION_PERCENTAGE_RANGE

@@ -13,6 +13,7 @@ import {
   GitHubProjectsExporter,
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
+import { TASK_CONFIG, IDEA_CONFIG } from '../config';
 
 export interface ExportManagerOptions {
   enableExternalConnectors?: boolean;
@@ -301,7 +302,7 @@ export const exportUtils = {
         title: idea.title,
         raw_text: idea.raw_text,
         created_at: idea.created_at || new Date().toISOString(),
-        status: (idea.status || 'draft') as Idea['status'],
+        status: (idea.status || IDEA_CONFIG.DEFAULTS.STATUS) as Idea['status'],
         deleted_at: idea.deleted_at || null,
       },
       deliverables: deliverables.map((d) => ({
@@ -309,11 +310,12 @@ export const exportUtils = {
         idea_id: d.idea_id || idea.id,
         title: d.title || '',
         description: d.description,
-        priority: d.priority || 50,
-        estimate_hours: d.estimate_hours || 0,
+        priority: d.priority || TASK_CONFIG.DEFAULTS.PRIORITY,
+        estimate_hours: d.estimate_hours || TASK_CONFIG.DEFAULTS.ESTIMATE,
         milestone_id: d.milestone_id || null,
-        completion_percentage: d.completion_percentage || 0,
-        business_value: d.business_value || 50,
+        completion_percentage:
+          d.completion_percentage || TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+        business_value: d.business_value || TASK_CONFIG.DEFAULTS.PRIORITY,
         risk_factors: d.risk_factors || [],
         acceptance_criteria: d.acceptance_criteria || null,
         deliverable_type: d.deliverable_type || 'feature',
@@ -326,15 +328,17 @@ export const exportUtils = {
         title: t.title || '',
         description: t.description,
         assignee: t.assignee,
-        status: (t.status || 'todo') as Task['status'],
-        estimate: t.estimate || 0,
+        status: (t.status || TASK_CONFIG.STATUSES.TODO) as Task['status'],
+        estimate: t.estimate || TASK_CONFIG.DEFAULTS.ESTIMATE,
         start_date: t.start_date || null,
         end_date: t.end_date || null,
         actual_hours: t.actual_hours || null,
-        completion_percentage: t.completion_percentage || 0,
-        priority_score: t.priority_score || 50,
-        complexity_score: t.complexity_score || 50,
-        risk_level: t.risk_level || 'low',
+        completion_percentage:
+          t.completion_percentage || TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+        priority_score: t.priority_score || TASK_CONFIG.DEFAULTS.PRIORITY_SCORE,
+        complexity_score:
+          t.complexity_score || TASK_CONFIG.DEFAULTS.COMPLEXITY_SCORE,
+        risk_level: t.risk_level || TASK_CONFIG.DEFAULTS.RISK_LEVEL,
         tags: t.tags || [],
         custom_fields: t.custom_fields || null,
         milestone_id: t.milestone_id || null,

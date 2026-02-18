@@ -1,6 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task } from '../db';
-import { TRELLO_CONFIG } from '../config';
+import { TRELLO_CONFIG, TASK_CONFIG } from '../config';
 
 import { createLogger } from '../logger';
 
@@ -31,7 +31,8 @@ export class TrelloExporter extends ExportConnector {
       const boardId = boardData.id;
       const boardUrl = boardData.url;
 
-      const [todoName, inProgressName, doneName] = TRELLO_CONFIG.DEFAULTS.LIST_NAMES;
+      const [todoName, inProgressName, doneName] =
+        TRELLO_CONFIG.DEFAULTS.LIST_NAMES;
       const todoList = await this.createList(boardId, todoName, apiKey, token);
       const inProgressList = await this.createList(
         boardId,
@@ -71,16 +72,16 @@ export class TrelloExporter extends ExportConnector {
             deliverable_id: '',
             title: TRELLO_CONFIG.DEFAULTS.PROJECT_CARD_TITLE,
             description: idea.raw_text,
-            status: 'todo',
+            status: TASK_CONFIG.STATUSES.TODO,
             assignee: undefined,
-            estimate: 0,
+            estimate: TASK_CONFIG.DEFAULTS.ESTIMATE,
             start_date: null,
             end_date: null,
             actual_hours: null,
-            completion_percentage: 0,
-            priority_score: 50,
-            complexity_score: 50,
-            risk_level: 'low',
+            completion_percentage: TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+            priority_score: TASK_CONFIG.DEFAULTS.PRIORITY_SCORE,
+            complexity_score: TASK_CONFIG.DEFAULTS.COMPLEXITY_SCORE,
+            risk_level: TASK_CONFIG.DEFAULTS.RISK_LEVEL,
             tags: null,
             custom_fields: null,
             milestone_id: null,

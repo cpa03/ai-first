@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import {
+  CELEBRATION_COLORS,
+  ANIMATION_PHYSICS,
+  SVG_ANIMATION,
+} from '@/lib/config';
 
 interface StepCelebrationProps {
   stepNumber: number;
@@ -65,7 +70,7 @@ export default function StepCelebration({
           setIsVisible(false);
           onComplete?.();
         }, ANIMATION_CONFIG.FAST);
-      }, 1500);
+      }, ANIMATION_PHYSICS.STEP_CELEBRATION_DURATION_MS);
 
       return () => clearTimeout(timer);
     } else if (show && !shouldAnimate) {
@@ -73,7 +78,7 @@ export default function StepCelebration({
       const timer = setTimeout(() => {
         setIsVisible(false);
         onComplete?.();
-      }, 500);
+      }, ANIMATION_PHYSICS.REDUCED_MOTION_DURATION_MS);
       return () => clearTimeout(timer);
     }
   }, [show, shouldAnimate, generateParticles, onComplete]);
@@ -81,6 +86,9 @@ export default function StepCelebration({
   if (!isVisible) return null;
 
   const progress = Math.round((stepNumber / totalSteps) * 100);
+  const circumference = SVG_ANIMATION.PROGRESS.getCircumference(
+    CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS
+  );
 
   return (
     <div
@@ -130,21 +138,24 @@ export default function StepCelebration({
             <circle
               cx="50"
               cy="50"
-              r="45"
+              r={CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS}
               fill="none"
-              stroke="#e5e7eb"
+              stroke={CELEBRATION_COLORS.PROGRESS_CIRCLE.TRACK}
               strokeWidth="6"
             />
             <circle
               cx="50"
               cy="50"
-              r="45"
+              r={CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS}
               fill="none"
-              stroke="#2563eb"
+              stroke={CELEBRATION_COLORS.PROGRESS_CIRCLE.PROGRESS}
               strokeWidth="6"
               strokeLinecap="round"
-              strokeDasharray={`${2 * Math.PI * 45}`}
-              strokeDashoffset={`${2 * Math.PI * 45 * (1 - stepNumber / totalSteps)}`}
+              strokeDasharray={circumference}
+              strokeDashoffset={SVG_ANIMATION.PROGRESS.getDashOffset(
+                circumference,
+                (stepNumber / totalSteps) * 100
+              )}
               className="transition-all duration-700 ease-out"
               style={{
                 filter: 'drop-shadow(0 0 6px rgba(37, 99, 235, 0.4))',
