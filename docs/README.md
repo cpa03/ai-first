@@ -39,6 +39,7 @@ Complete index of all IdeaFlow documentation.
 - [Performance Engineer](./performance-engineer.md) - Performance optimization
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
 - [Reliability Engineer](./reliability-engineer.md) - System reliability patterns
+- [Memory Management](./memory-management.md) - Memory leak prevention and bounded cache configurations
 
 ### Design & UX
 

@@ -222,7 +222,7 @@ vercel --prod
 
 ### Tech Stack
 
-- **Frontend**: Next.js 14+ with App Router
+- **Frontend**: Next.js 16+ with App Router
 - **Backend**: Supabase (PostgreSQL + Auth + Storage + Vector)
 - **AI**: OpenAI/Anthropic APIs via abstraction layer
 - **Hosting**: Vercel (free tier)
