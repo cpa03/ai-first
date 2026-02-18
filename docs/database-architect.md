@@ -938,6 +938,8 @@ Located in `/supabase/migrations/`:
 | 003_vectors_pgvector_support.sql                  | Vector extension setup       |
 | 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns   |
 | 20260120_add_clarification_tables_and_indexes.sql | Clarification tables         |
+| 20260218_add_ideas_updated_at.sql                 | Ideas table updated_at       |
+| 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete    |
 
 ### Migration Best Practices
 
@@ -1015,6 +1017,12 @@ Supabase handles connection pooling automatically. For high-traffic applications
    - Added `updated_at` column definition
    - Added trigger `update_ideas_updated_at`
    - Added index for performance
+
+4. **Added `deleted_at` column to `task_comments` table**
+   - Created migration `20260218_add_task_comments_soft_delete.sql`
+   - Enables soft delete pattern consistent with ideas, deliverables, and tasks tables
+   - Added index `idx_task_comments_deleted_at` for efficient soft delete queries
+   - References Issue #1172
 
 ### 2026-02-07 - Database Schema Fixes
 

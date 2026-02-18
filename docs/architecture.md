@@ -350,3 +350,13 @@ All logs use redacted versions of user input, never raw data.
 - Audit logging
 
 See [Security Headers Guide](./security-headers.md) for details.
+
+## User Personas
+
+The application is designed for three primary user personas. See [User Personas](./user-stories/personas.md) for detailed profiles:
+
+1. **Startup Founder** (P0) - Non-technical entrepreneurs who need quick idea-to-plan conversion
+2. **Product Manager** (P1) - Experienced PMs who need structured roadmap creation and integrations
+3. **Developer** (P1) - Technical users who need detailed task breakdowns and code generation
+
+When writing user stories, reference these personas to ensure consistent understanding of user needs and goals.
