@@ -8,7 +8,7 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { RIPPLE_CONFIG } from '@/lib/config';
+import { RIPPLE_CONFIG, BUTTON_STYLES } from '@/lib/config';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -24,28 +24,6 @@ interface Ripple {
   y: number;
   size: number;
 }
-
-const variantClasses = {
-  primary:
-    'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
-  secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-  outline:
-    'border border-gray-700 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
-  ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
-};
-
-const focusRingClasses = {
-  primary: 'focus-visible:ring-primary-500',
-  secondary: 'focus-visible:ring-gray-500',
-  outline: 'focus-visible:ring-gray-500',
-  ghost: 'focus-visible:ring-gray-500',
-};
-
-const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm min-h-[36px]',
-  md: 'px-4 py-2 text-base min-h-[44px]',
-  lg: 'px-6 py-3 text-lg min-h-[48px]',
-};
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -103,19 +81,22 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       [disabled, loading, onClick, rippleIdCounter]
     );
 
+    const stateClasses =
+      disabled || loading
+        ? BUTTON_STYLES.STATES.disabled
+        : BUTTON_STYLES.STATES.enabled;
+
     return (
       <button
         ref={ref}
         disabled={disabled || loading}
         onClick={createRipple}
         className={`
-          ${variantClasses[variant]}
-          ${sizeClasses[size]}
+          ${BUTTON_STYLES.VARIANTS[variant]}
+          ${BUTTON_STYLES.SIZES[size]}
           ${fullWidth ? 'w-full' : ''}
-          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'}
-          rounded-md font-medium transition-all duration-200
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRingClasses[variant]} focus-visible:ring-offset-white
-          motion-reduce:transition-none
+          ${stateClasses}
+          ${BUTTON_STYLES.BASE} ${BUTTON_STYLES.FOCUS_RINGS[variant]}
           ${className}
         `}
         aria-busy={loading}
