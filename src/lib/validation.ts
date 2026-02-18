@@ -1,6 +1,7 @@
 import {
   VALIDATION_LIMITS_CONFIG,
   VALIDATION_LIMITS,
+  USER_STORY_CONFIG,
 } from './config/constants';
 import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config';
 import { isString } from './type-guards';
@@ -259,4 +260,160 @@ export function safeJsonParse<T = unknown>(
   } catch {
     return fallback;
   }
+}
+
+export interface UserStoryValidationResult extends ValidationResult {
+  persona?: string;
+  goal?: string;
+  benefit?: string;
+  suggestions?: string[];
+  isPartial?: boolean;
+}
+
+export function validateUserStoryFormat(
+  idea: string,
+  options: { strict?: boolean; enabled?: boolean } = {}
+): UserStoryValidationResult {
+  const {
+    strict = true,
+    enabled = USER_STORY_CONFIG.FORMAT_VALIDATION_ENABLED,
+  } = options;
+
+  if (!enabled) {
+    return { valid: true, errors: [] };
+  }
+
+  const errors: ValidationError[] = [];
+  const suggestions: string[] = [];
+  const trimmed = idea.trim();
+
+  const fullMatch = trimmed.match(USER_STORY_CONFIG.PATTERNS.FULL_STORY);
+
+  if (fullMatch) {
+    const [, persona, goal, benefit] = fullMatch;
+
+    if (persona.length < USER_STORY_CONFIG.MIN_LENGTHS.PERSONA) {
+      errors.push({
+        field: 'idea',
+        message: USER_STORY_CONFIG.ERROR_MESSAGES.PERSONA_TOO_SHORT,
+      });
+    }
+
+    if (goal.length < USER_STORY_CONFIG.MIN_LENGTHS.GOAL) {
+      errors.push({
+        field: 'idea',
+        message: USER_STORY_CONFIG.ERROR_MESSAGES.GOAL_TOO_SHORT,
+      });
+    }
+
+    if (benefit.length < USER_STORY_CONFIG.MIN_LENGTHS.BENEFIT) {
+      errors.push({
+        field: 'idea',
+        message: USER_STORY_CONFIG.ERROR_MESSAGES.BENEFIT_TOO_SHORT,
+      });
+    }
+
+    const normalizedPersona = persona.toLowerCase().trim();
+    const hasKnownPersona = USER_STORY_CONFIG.KNOWN_PERSONAS.some((p) =>
+      normalizedPersona.includes(p)
+    );
+
+    if (!hasKnownPersona) {
+      suggestions.push(
+        `Consider using a known persona: ${USER_STORY_CONFIG.KNOWN_PERSONAS.join(', ')}`
+      );
+    }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+      persona,
+      goal,
+      benefit,
+      suggestions: suggestions.length > 0 ? suggestions : undefined,
+      isPartial: false,
+    };
+  }
+
+  const partialMatch = trimmed.match(USER_STORY_CONFIG.PATTERNS.PARTIAL_STORY);
+
+  if (partialMatch) {
+    if (strict) {
+      if (!/so\s+that/i.test(trimmed) && !/in\s+order\s+to/i.test(trimmed)) {
+        errors.push({
+          field: 'idea',
+          message: USER_STORY_CONFIG.ERROR_MESSAGES.MISSING_BENEFIT,
+        });
+      }
+
+      if (!/i\s+want/i.test(trimmed)) {
+        errors.push({
+          field: 'idea',
+          message: USER_STORY_CONFIG.ERROR_MESSAGES.MISSING_GOAL,
+        });
+      }
+    }
+
+    return {
+      valid: !strict || errors.length === 0,
+      errors,
+      suggestions: strict
+        ? [
+            'Complete the user story format: "As a [persona], I want [goal], So that [benefit]"',
+          ]
+        : undefined,
+      isPartial: true,
+    };
+  }
+
+  if (strict) {
+    errors.push({
+      field: 'idea',
+      message: USER_STORY_CONFIG.ERROR_MESSAGES.MISSING_FORMAT,
+    });
+  }
+
+  suggestions.push(
+    'Format your idea as a user story: "As a [persona], I want [goal], So that [benefit]"'
+  );
+
+  return {
+    valid: !strict,
+    errors,
+    suggestions,
+    isPartial: false,
+  };
+}
+
+export function validateIdeaWithUserStory(
+  idea: unknown,
+  options: { validateUserStory?: boolean; strictUserStory?: boolean } = {}
+): UserStoryValidationResult {
+  const { validateUserStory = false, strictUserStory = true } = options;
+
+  const baseResult = validateIdea(idea);
+
+  if (!baseResult.valid) {
+    return { ...baseResult, isPartial: false };
+  }
+
+  if (!validateUserStory) {
+    return { ...baseResult, isPartial: false };
+  }
+
+  const userStoryResult = validateUserStoryFormat(idea as string, {
+    strict: strictUserStory,
+    enabled: true,
+  });
+
+  return {
+    ...baseResult,
+    valid: userStoryResult.valid,
+    errors: [...baseResult.errors, ...userStoryResult.errors],
+    persona: userStoryResult.persona,
+    goal: userStoryResult.goal,
+    benefit: userStoryResult.benefit,
+    suggestions: userStoryResult.suggestions,
+    isPartial: userStoryResult.isPartial,
+  };
 }
