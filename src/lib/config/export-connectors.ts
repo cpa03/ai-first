@@ -16,7 +16,12 @@ export const TRELLO_CONFIG = {
       'TRELLO_AUTH_URL',
       'https://trello.com/1/authorize'
     ),
-    VERSION: '1',
+    /**
+     * Trello API version
+     * Currently at v1 - no breaking changes announced
+     * Env: TRELLO_API_VERSION (default: '1')
+     */
+    VERSION: EnvLoader.string('TRELLO_API_VERSION', '1'),
   },
 
   DEFAULTS: {
@@ -83,6 +88,12 @@ export const GITHUB_CONFIG = {
       'GITHUB_AUTH_URL',
       'https://github.com/login/oauth/authorize'
     ),
+    /**
+     * GitHub REST API version for X-GitHub-Api-Version header
+     * See: https://docs.github.com/rest/about-the-rest-api/api-versions
+     * Env: GITHUB_API_VERSION (default: '2022-11-28')
+     */
+    VERSION: EnvLoader.string('GITHUB_API_VERSION', '2022-11-28'),
   },
 
   DEFAULTS: {
