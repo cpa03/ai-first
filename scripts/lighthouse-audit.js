@@ -8,14 +8,16 @@ const { default: lighthouse } = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 const fs = require('node:fs');
 const path = require('node:path');
+const { LIGHTHOUSE_CONFIG } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/'];
-const AUTH_PAGES = ['/dashboard', '/clarify', '/results'];
-
-// Use Playwright's Chrome
-const CHROME_PATH =
-  '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome';
+const {
+  BASE_URL,
+  PAGES,
+  AUTH_PAGES,
+  CHROME_PATH,
+  THROTTLING,
+  SCREEN_EMULATION,
+} = LIGHTHOUSE_CONFIG;
 
 const CONFIG = {
   extends: 'lighthouse:default',
@@ -23,18 +25,18 @@ const CONFIG = {
     onlyCategories: ['performance', 'accessibility', 'best-practices', 'seo'],
     formFactor: 'desktop',
     throttling: {
-      rttMs: 40,
-      throughputKbps: 10240,
-      cpuSlowdownMultiplier: 1,
-      requestLatencyMs: 0,
-      downloadThroughputKbps: 0,
-      uploadThroughputKbps: 0,
+      rttMs: THROTTLING.RTT_MS,
+      throughputKbps: THROTTLING.THROUGHPUT_KBPS,
+      cpuSlowdownMultiplier: THROTTLING.CPU_SLOWDOWN_MULTIPLIER,
+      requestLatencyMs: THROTTLING.REQUEST_LATENCY_MS,
+      downloadThroughputKbps: THROTTLING.DOWNLOAD_THROUGHPUT_KBPS,
+      uploadThroughputKbps: THROTTLING.UPLOAD_THROUGHPUT_KBPS,
     },
     screenEmulation: {
       mobile: false,
-      width: 1350,
-      height: 940,
-      deviceScaleFactor: 1,
+      width: SCREEN_EMULATION.WIDTH,
+      height: SCREEN_EMULATION.HEIGHT,
+      deviceScaleFactor: SCREEN_EMULATION.DEVICE_SCALE_FACTOR,
       disabled: false,
     },
     emulatedUserAgent:
@@ -206,7 +208,7 @@ async function main() {
   console.log(`📄 Full report saved to: ${reportPath}`);
 
   // Check for low scores
-  const lowScoreThreshold = 70;
+  const lowScoreThreshold = LIGHTHOUSE_CONFIG.LOW_SCORE_THRESHOLD;
   const lowScores = validAudits.filter(
     (a) =>
       a.scores.performance < lowScoreThreshold ||
