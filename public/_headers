@@ -1,0 +1,70 @@
+# ============================================================
+# Cloudflare Workers Static Asset Headers
+# ============================================================
+# This file configures HTTP headers for static assets served by Cloudflare.
+# These headers improve performance through caching and enhance security.
+#
+# @see https://opennext.js.org/cloudflare/perf
+# @see https://developers.cloudflare.com/pages/platform/headers
+# ============================================================
+
+# Next.js static chunks - aggressive caching for better performance
+# These files have content hashes in names, so they are immutable
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+# Static assets (images, fonts, etc.)
+/_next/image
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  X-Content-Type-Options: nosniff
+
+# Favicon - cache for 1 week
+/favicon.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff
+
+/favicon.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff
+
+# Fonts - long-term caching
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+/*.woff
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+  X-Content-Type-Options: nosniff
+
+# Robots.txt and sitemap - short caching
+/robots.txt
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: text/plain; charset=utf-8
+
+/sitemap.xml
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+  Content-Type: application/xml; charset=utf-8
+
+# API routes - no caching, security headers
+/api/*
+  Cache-Control: no-store, no-cache, must-revalidate, proxy-revalidate
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+
+# Health check endpoints - short caching for load balancers
+/api/health
+  Cache-Control: public, max-age=5
+  X-Content-Type-Options: nosniff
+
+/api/health/live
+  Cache-Control: public, max-age=5
+  X-Content-Type-Options: nosniff
+
+/api/health/ready
+  Cache-Control: public, max-age=5
+  X-Content-Type-Options: nosniff
