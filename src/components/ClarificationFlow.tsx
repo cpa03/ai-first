@@ -17,6 +17,7 @@ import {
   PLACEHOLDERS,
   INPUT_STYLES,
   ANIMATION_DELAYS,
+  TEXT_COLORS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -75,6 +76,7 @@ function ClarificationFlow({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const textInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
@@ -103,8 +105,8 @@ function ClarificationFlow({
     [questions, currentStep]
   );
 
-  const handleNext = useCallback(() => {
-    if (!currentAnswer.trim()) return;
+  const handleNext = useCallback(async () => {
+    if (showCelebration || isSubmitting || !currentAnswer.trim()) return;
     if (!currentQuestion?.id) return;
 
     const newAnswers = {
@@ -121,9 +123,16 @@ function ClarificationFlow({
         setCurrentAnswer('');
       }, ANIMATION_DELAYS.STEP_TRANSITION);
     } else {
-      onComplete(newAnswers);
+      setIsSubmitting(true);
+      try {
+        await onComplete(newAnswers);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   }, [
+    showCelebration,
+    isSubmitting,
     currentAnswer,
     answers,
     currentQuestion?.id,
@@ -409,6 +418,7 @@ function ClarificationFlow({
                 required={true}
                 className="min-h-[100px]"
                 ref={textareaRef}
+                disabled={showCelebration || isSubmitting}
               />
             )}
 
@@ -426,6 +436,7 @@ function ClarificationFlow({
                 helpText={`Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
                 required={true}
                 ref={textInputRef}
+                disabled={showCelebration || isSubmitting}
               />
             )}
 
@@ -433,9 +444,15 @@ function ClarificationFlow({
               <div className="space-y-2">
                 <label
                   htmlFor="answer-select"
-                  className="block text-sm font-medium text-gray-900"
+                  className="block text-sm font-medium text-gray-900 cursor-pointer"
                 >
                   {currentQuestion.question}
+                  <span
+                    className={`${TEXT_COLORS.ERROR} ml-1`}
+                    aria-hidden="true"
+                  >
+                    *
+                  </span>
                 </label>
                 <select
                   id="answer-select"
@@ -443,7 +460,7 @@ function ClarificationFlow({
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px]`}
+                  className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px] cursor-pointer`}
                   aria-required="true"
                   aria-invalid={
                     !!(
@@ -451,6 +468,7 @@ function ClarificationFlow({
                       currentStep === questions.length - 1
                     )
                   }
+                  disabled={showCelebration || isSubmitting}
                   required
                 >
                   <option value="">Select an option...</option>
@@ -469,7 +487,7 @@ function ClarificationFlow({
               type="button"
               variant="secondary"
               onClick={handlePrevious}
-              disabled={currentStep === 0}
+              disabled={currentStep === 0 || showCelebration || isSubmitting}
             >
               {MESSAGES.NAVIGATION.PREVIOUS}
             </Button>
@@ -492,7 +510,8 @@ function ClarificationFlow({
             <Button
               type="submit"
               variant="primary"
-              disabled={!currentAnswer.trim()}
+              disabled={!currentAnswer.trim() || showCelebration}
+              loading={isSubmitting}
             >
               {currentStep === questions.length - 1
                 ? MESSAGES.NAVIGATION.COMPLETE
