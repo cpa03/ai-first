@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface LoadingSpinnerProps {
@@ -9,7 +9,7 @@ interface LoadingSpinnerProps {
   ariaLabel?: string;
 }
 
-export default function LoadingSpinner({
+function LoadingSpinnerComponent({
   size = COMPONENT_CONFIG.SPINNER.DEFAULT_SIZE,
   className = '',
   ariaLabel = COMPONENT_CONFIG.LOADING.DEFAULT_ARIA_LABEL,
@@ -115,3 +115,5 @@ export default function LoadingSpinner({
     </div>
   );
 }
+
+export default memo(LoadingSpinnerComponent);

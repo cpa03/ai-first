@@ -292,7 +292,7 @@ function getAllPropertyDescriptors(obj: object): SafePropertyDescriptor[] {
   return descriptors;
 }
 
-const MAX_RECURSION_DEPTH = 100;
+const MAX_RECURSION_DEPTH = PII_REDACTION_CONFIG.MAX_RECURSION_DEPTH;
 
 export function redactPIIInObject(
   obj: unknown,

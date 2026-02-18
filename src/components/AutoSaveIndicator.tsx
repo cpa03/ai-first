@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { COMPONENT_CONFIG } from '@/lib/config';
+import { COMPONENT_CONFIG, ANIMATION_DELAYS } from '@/lib/config';
 
 interface AutoSaveIndicatorProps {
   value: string;
@@ -227,7 +227,9 @@ export default function AutoSaveIndicator({
           <span className="flex items-center gap-1">
             <span className="animate-in fade-in duration-200">Saved</span>
             {lastSaved && (
-              <span className="text-gray-400 animate-in fade-in slide-in-from-left-1 duration-300 delay-100">
+              <span
+                className={`text-gray-400 animate-in fade-in slide-in-from-left-1 duration-300 ${ANIMATION_DELAYS.TAILWIND[100]}`}
+              >
                 • {formatLastSaved(lastSaved)}
               </span>
             )}

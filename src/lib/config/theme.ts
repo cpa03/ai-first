@@ -166,6 +166,8 @@ export const ANIMATION_DELAYS = {
   IMMEDIATE: 0,
   /** Micro delay for haptic feedback and quick UI updates */
   MICRO: 50,
+  /** Small delay for particle stagger effects */
+  PARTICLE_STAGGER: 50,
   /** Short delay for step transitions and quick animations */
   SHORT: 100,
   /** Standard delay for element cleanup (URL revocation, DOM removal) */
@@ -457,3 +459,4 @@ export type CelebrationColors = typeof CELEBRATION_COLORS;
 export type AnimationPhysics = typeof ANIMATION_PHYSICS;
 export type ButtonStyles = typeof BUTTON_STYLES;
 export type AlertStyles = typeof ALERT_STYLES;
+export type AnimationDelays = typeof ANIMATION_DELAYS;

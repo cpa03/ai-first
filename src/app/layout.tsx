@@ -5,6 +5,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import MobileNav from '@/components/MobileNav';
 import ToastContainer from '@/components/ToastContainer';
+import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
@@ -129,6 +130,7 @@ export default async function RootLayout({
                   </p>
                 </div>
               </footer>
+              <ScrollToTop />
             </div>
           </KeyboardShortcutsProvider>
         </ErrorBoundary>
