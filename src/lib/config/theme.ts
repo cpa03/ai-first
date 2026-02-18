@@ -392,7 +392,7 @@ export const BUTTON_STYLES = {
   /** Variant styles for different button types */
   VARIANTS: {
     primary:
-      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 focus:ring-primary-500',
+      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 focus:ring-primary-500 btn-glow-hover',
     secondary:
       'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600 focus:ring-gray-500',
     outline:

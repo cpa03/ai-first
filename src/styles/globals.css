@@ -398,6 +398,49 @@
   }
 }
 
+/* Button glow pulse animation - adds delightful hover effect to primary CTAs */
+/* Creates a soft breathing glow that draws attention and adds modern polish */
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 rgba(37, 99, 235, 0.4),
+      0 0 20px -5px rgba(37, 99, 235, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px rgba(37, 99, 235, 0.2),
+      0 0 30px -5px rgba(37, 99, 235, 0.5);
+  }
+}
+
+.btn-glow-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glow-hover:hover:not(:disabled) {
+  animation: glowPulse 2s ease-in-out infinite;
+  transform: translateY(-1px);
+}
+
+.btn-glow-hover:focus-visible:not(:disabled) {
+  animation: glowPulse 2s ease-in-out infinite;
+  outline: none;
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.5),
+    0 0 20px -5px rgba(37, 99, 235, 0.4);
+}
+
+/* Reduced motion support for button glow */
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow-hover:hover:not(:disabled),
+  .btn-glow-hover:focus-visible:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+    transform: none;
+  }
+}
+
 /* Reduced motion support for FeatureGrid animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-stagger-1,
