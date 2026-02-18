@@ -39,8 +39,7 @@ src/
 └── styles/              # Global styles
 supabase/
 ├── schema.sql           # Database schema
-├── migrations/          # Database migration files
-└── seeds/               # Seed data
+└── migrations/          # Database migration files
 ai/
 ├── agent-configs/       # Agent configuration files
 │   ├── clarifier.yml
