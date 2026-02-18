@@ -18,7 +18,7 @@ This document provides security-focused guidelines, findings, and best practices
 
 ### Strengths
 
-- ✅ **Zero known vulnerabilities** (0 CVEs from npm audit)
+- ✅ **Zero production vulnerabilities** (41 vulnerabilities in devDependencies only - accepted risk)
 - ✅ **Comprehensive security headers** (CSP, HSTS, X-Frame-Options, etc.)
 - ✅ **Proper secrets management** (environment variables, no hardcoded secrets)
 - ✅ **Input validation** on all API endpoints
@@ -32,7 +32,10 @@ This document provides security-focused guidelines, findings, and best practices
 - ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
 - ⚠️ **CSP uses 'unsafe-inline'** (necessary for Next.js, but could be enhanced)
 - ⚠️ **Admin authentication** is basic API key only
-- ⚠️ **npm audit** shows 14 moderate vulnerabilities in devDependencies (ajv/eslint - not exploitable, accepted risk)
+- ⚠️ **npm audit** shows 41 vulnerabilities in devDependencies:
+  - 27 HIGH: @aws-sdk/\* packages via @opennextjs/cloudflare (Cloudflare deployment tool)
+  - 14 MODERATE: ajv/eslint ecosystem (ReDoS vulnerability - not exploitable)
+  - All vulnerabilities are in devDependencies only - no production runtime risk
 
 ---
 
@@ -254,18 +257,18 @@ ADMIN_API_KEY
 
 ## OWASP Top 10 Coverage
 
-| Risk                           | Status       | Mitigation                              |
-| ------------------------------ | ------------ | --------------------------------------- |
-| A01: Broken Access Control     | ✅ Mitigated | Role-based rate limiting, admin auth    |
-| A02: Cryptographic Failures    | ✅ Mitigated | HTTPS only, HSTS, secrets in env        |
-| A03: Injection                 | ✅ Mitigated | Input validation, parameterized queries |
-| A04: Insecure Design           | ✅ Mitigated | Error handling, resilience patterns     |
-| A05: Security Misconfiguration | ✅ Mitigated | Security headers, no debug in prod      |
-| A06: Vulnerable Components     | ✅ Mitigated | 0 CVEs, dependency audits               |
-| A07: Auth Failures             | ⚠️ N/A       | Basic auth only (future: full auth)     |
-| A08: Data Integrity            | ✅ Mitigated | TypeScript, validation                  |
-| A09: Logging Failures          | ✅ Mitigated | Request IDs, PII redaction              |
-| A10: SSRF                      | ✅ Mitigated | CSP connect-src restrictions            |
+| Risk                           | Status       | Mitigation                                       |
+| ------------------------------ | ------------ | ------------------------------------------------ |
+| A01: Broken Access Control     | ✅ Mitigated | Role-based rate limiting, admin auth             |
+| A02: Cryptographic Failures    | ✅ Mitigated | HTTPS only, HSTS, secrets in env                 |
+| A03: Injection                 | ✅ Mitigated | Input validation, parameterized queries          |
+| A04: Insecure Design           | ✅ Mitigated | Error handling, resilience patterns              |
+| A05: Security Misconfiguration | ✅ Mitigated | Security headers, no debug in prod               |
+| A06: Vulnerable Components     | ✅ Mitigated | 0 production CVEs, devDependencies accepted risk |
+| A07: Auth Failures             | ⚠️ N/A       | Basic auth only (future: full auth)              |
+| A08: Data Integrity            | ✅ Mitigated | TypeScript, validation                           |
+| A09: Logging Failures          | ✅ Mitigated | Request IDs, PII redaction                       |
+| A10: SSRF                      | ✅ Mitigated | CSP connect-src restrictions                     |
 
 ---
 
