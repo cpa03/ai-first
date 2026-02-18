@@ -36,6 +36,7 @@
     "@notionhq/client": "^5.9.0",
     "@octokit/graphql": "^9.0.3",
     "@supabase/supabase-js": "^2.95.3",
+    "@testing-library/dom": "^10.4.1",
     "@types/js-yaml": "^4.0.9",
     "clsx": "^2.1.1",
     "googleapis": "^169.0.0",
