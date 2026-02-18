@@ -100,6 +100,29 @@ npm run dev
 curl http://localhost:3000/api/health
 ```
 
+### 6. Validation Checklist
+
+Use this checklist to verify your environment is correctly configured:
+
+| Check                  | Command                          | Expected Result               |
+| ---------------------- | -------------------------------- | ----------------------------- |
+| Dependencies installed | `npm install`                    | No errors, 1369 packages      |
+| Environment validation | `npm run env:check`              | All required variables pass   |
+| Type checking          | `npm run type-check`             | 0 errors                      |
+| Linting                | `npm run lint`                   | 0 errors, 0 warnings          |
+| Build                  | `npm run build`                  | Build successful              |
+| Health check           | `curl localhost:3000/api/health` | Returns `{"status":"ok",...}` |
+
+#### Quick Validation Script
+
+Run all checks at once:
+
+```bash
+npm install && npm run env:check && npm run lint && npm run type-check && npm run build
+```
+
+If all commands pass without errors, your environment is ready for development.
+
 ## Optional: Export Integrations
 
 The application supports exporting to various platforms. These are optional and only needed if you want to use these features:
