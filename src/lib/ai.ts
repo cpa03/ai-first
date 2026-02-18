@@ -12,6 +12,7 @@ import {
   type ResilienceConfig,
 } from './resilience';
 import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
+import { AI_SERVICE_CONFIG } from './config/ai';
 import { resourceCleanupManager } from './resource-cleanup';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
@@ -92,12 +93,9 @@ class AIService {
     }
 
     // Periodic cleanup of cost trackers to prevent memory leaks
-    this.cleanupIntervalId = setInterval(
-      () => {
-        this.cleanupOldCostTrackers();
-      },
-      5 * 60 * 1000
-    );
+    this.cleanupIntervalId = setInterval(() => {
+      this.cleanupOldCostTrackers();
+    }, AI_SERVICE_CONFIG.CLEANUP_INTERVAL_MS);
 
     resourceCleanupManager.register('ai-service-interval', () =>
       this.cleanup()
@@ -253,7 +251,10 @@ class AIService {
 
     const encoder = new TextEncoder();
     const data = encoder.encode(key);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await crypto.subtle.digest(
+      AI_SERVICE_CONFIG.HASH_ALGORITHM,
+      data
+    );
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
       .map((b) => b.toString(16).padStart(2, '0'))
@@ -360,8 +361,8 @@ class AIService {
     // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
     let totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
 
-    // Maximum iterations to prevent potential infinite loops
-    const MAX_CONTEXT_ITERATIONS = 1000;
+    // Maximum iterations to prevent potential infinite loops (from config)
+    const MAX_CONTEXT_ITERATIONS = AI_SERVICE_CONFIG.MAX_CONTEXT_ITERATIONS;
     let iterations = 0;
 
     // If context exceeds token limit, remove oldest non-system messages

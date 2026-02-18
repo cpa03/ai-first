@@ -1,6 +1,7 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
+import { SECURITY_CONFIG } from './config/security';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');
@@ -35,9 +36,7 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
  * SECURITY: Uses SHA-256 hashing and timing-safe comparison to prevent secret leakage.
  * Uses Web Crypto API for compatibility across Node, Edge, and Workers.
  */
-export async function isAdminAuthenticated(
-  request: Request
-): Promise<boolean> {
+export async function isAdminAuthenticated(request: Request): Promise<boolean> {
   if (!ADMIN_API_KEY) {
     return process.env.NODE_ENV === 'development';
   }
@@ -48,14 +47,20 @@ export async function isAdminAuthenticated(
   }
 
   const parts = authHeader.split(' ');
-  if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
+  if (
+    parts.length !== 2 ||
+    parts[0].toLowerCase() !== SECURITY_CONFIG.AUTH.SCHEME_BEARER
+  ) {
     return false;
   }
 
   const credentials = parts[1];
 
   // SECURITY: Limit token length to prevent DoS attacks during hashing
-  if (!credentials || credentials.length > 512) {
+  if (
+    !credentials ||
+    credentials.length > SECURITY_CONFIG.AUTH.CREDENTIALS_MAX_LENGTH
+  ) {
     return false;
   }
 
@@ -65,11 +70,11 @@ export async function isAdminAuthenticated(
     // SECURITY: Hash both strings before comparison to prevent timing attacks and leaking key length.
     // Use the standard Web Crypto API available in all modern runtimes.
     const expectedHash = await crypto.subtle.digest(
-      'SHA-256',
+      SECURITY_CONFIG.HASH_ALGORITHM,
       encoder.encode(ADMIN_API_KEY)
     );
     const actualHash = await crypto.subtle.digest(
-      'SHA-256',
+      SECURITY_CONFIG.HASH_ALGORITHM,
       encoder.encode(credentials)
     );
 

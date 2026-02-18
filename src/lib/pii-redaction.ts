@@ -12,6 +12,7 @@
  */
 
 import { PII_REDACTION_CONFIG } from './config/constants';
+import { SECURITY_CONFIG } from './config/security';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -182,7 +183,7 @@ function getRedactionLabel(key: string): string {
   const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
   label = `[REDACTED_${fieldNameUpper}]`;
 
-  if (REDACTION_LABEL_CACHE.size < 1000) {
+  if (REDACTION_LABEL_CACHE.size < SECURITY_CONFIG.PII.LABEL_CACHE_MAX_SIZE) {
     REDACTION_LABEL_CACHE.set(key, label);
   }
 
@@ -195,9 +196,21 @@ function isPrivateIP(ip: string): boolean {
 
   const firstOctet = ip.substring(0, firstDot);
 
-  if (firstOctet === '127' || firstOctet === '10') return true;
-  if (firstOctet === '192' && ip.startsWith('192.168.')) return true;
-  if (firstOctet === '172') {
+  if (
+    SECURITY_CONFIG.PII.PRIVATE_IP_RANGES.LOOPBACK.includes(firstOctet) ||
+    SECURITY_CONFIG.PII.PRIVATE_IP_RANGES.PRIVATE_CLASS_A.includes(firstOctet)
+  )
+    return true;
+  if (
+    SECURITY_CONFIG.PII.PRIVATE_IP_RANGES.PRIVATE_CLASS_C.includes(
+      firstOctet
+    ) &&
+    ip.startsWith('192.168.')
+  )
+    return true;
+  if (
+    SECURITY_CONFIG.PII.PRIVATE_IP_RANGES.PRIVATE_CLASS_B.includes(firstOctet)
+  ) {
     const secondDot = ip.indexOf('.', firstDot + 1);
     if (secondDot !== -1) {
       const secondOctet = parseInt(ip.substring(firstDot + 1, secondDot), 10);
@@ -292,7 +305,7 @@ function getAllPropertyDescriptors(obj: object): SafePropertyDescriptor[] {
   return descriptors;
 }
 
-const MAX_RECURSION_DEPTH = 100;
+const MAX_RECURSION_DEPTH = SECURITY_CONFIG.PII.MAX_REDACTION_DEPTH;
 
 export function redactPIIInObject(
   obj: unknown,

@@ -115,6 +115,12 @@ export {
   SECURITY_CONFIG,
 } from './environment';
 
+// AI Service Configuration
+export { AI_SERVICE_CONFIG, AI_PROVIDER_CONFIG, AI_COST_CONFIG } from './ai';
+
+// Security Configuration
+export { SECURITY_CONFIG as SECURITY } from './security';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
@@ -164,3 +170,9 @@ export type {
   APITimeouts,
 } from './time';
 export type { APIErrorMessages } from './error-messages';
+
+// AI Configuration Types
+export type { AIServiceConfig, AIProviderConfig, AICostConfig } from './ai';
+
+// Security Configuration Types
+export type { SecurityConfig } from './security';
