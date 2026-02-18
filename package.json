@@ -87,7 +87,8 @@
   "overrides": {
     "eslint": "8.57.1",
     "glob": "^13.0.0",
-    "test-exclude": "^7.0.1"
+    "test-exclude": "^7.0.1",
+    "fast-xml-parser": "^5.3.6"
   },
   "browserslist": {
     "production": [
