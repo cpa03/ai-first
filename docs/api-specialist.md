@@ -190,10 +190,12 @@ Retry-After: 60  # Only on rate limit errors
    - ~~Affected: `src/app/api/ideas/route.ts` (GET handler)~~
    - All API routes now consistently pass `rateLimit` to `standardSuccessResponse`
 
-2. **Inconsistent Null Response Pattern**
-   - Some routes return `null` with 404 status for not found
-   - Others throw `AppError` with `NOT_FOUND` code
-   - Recommendation: Standardize on throwing `AppError` for consistency
+2. **~~Inconsistent Null Response Pattern~~** ✅ FIXED (2026-02-18)
+   - ~~Some routes return `null` with 404 status for not found~~
+   - ~~Others throw `AppError` with `NOT_FOUND` code~~
+   - ~~Recommendation: Standardize on throwing `AppError` for consistency~~
+   - All API routes now consistently use `throw new AppError(..., ErrorCode.NOT_FOUND, 404)` for not found resources
+   - Fixed in: `src/app/api/ideas/[id]/route.ts`
 
 3. **~~Rate Limit Response Missing Request ID~~** ✅ FIXED
    - ~~`rateLimitResponse()` in `src/lib/rate-limit.ts` doesn't include `X-Request-ID` header~~
@@ -328,6 +330,15 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-18 - API Specialist Improvement
+
+- **Fix**: Standardized null response pattern in `ideas/[id]/route.ts`
+- **Change**: Replaced `standardSuccessResponse(null, ..., 404)` with `throw new AppError(..., ErrorCode.NOT_FOUND, 404)`
+- **Impact**: Consistent error response format across all API endpoints
+- **Build**: Passing
+- **Tests**: All tests passing
+- **Documentation**: Updated this guide
+
 ### 2026-02-07 - API Specialist Review
 
 - **Status**: All systems operational
@@ -349,4 +360,4 @@ For API-related issues:
 
 ---
 
-_This documentation is maintained by the API Specialist. Last updated: 2026-02-07_
+_This documentation is maintained by the API Specialist. Last updated: 2026-02-18_

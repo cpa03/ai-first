@@ -3,11 +3,12 @@ import {
   ApiContext,
   standardSuccessResponse,
 } from '@/lib/api-handler';
-import { ValidationError } from '@/lib/errors';
+import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
-import { STATUS_CODES, IDEA_CONFIG } from '@/lib/config';
+import { IDEA_CONFIG } from '@/lib/config';
 
 // Type guard for valid idea status values
 function isValidStatus(status: string): status is Idea['status'] {
@@ -32,11 +33,10 @@ async function handleGet(context: ApiContext) {
   const idea = await dbService.getIdea(ideaId!);
 
   if (!idea) {
-    return standardSuccessResponse(
-      null,
-      context.requestId,
-      STATUS_CODES.NOT_FOUND,
-      context.rateLimit
+    throw new AppError(
+      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
+      ErrorCode.NOT_FOUND,
+      404
     );
   }
 
@@ -71,11 +71,10 @@ async function handlePut(context: ApiContext) {
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
-    return standardSuccessResponse(
-      null,
-      context.requestId,
-      STATUS_CODES.NOT_FOUND,
-      context.rateLimit
+    throw new AppError(
+      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
+      ErrorCode.NOT_FOUND,
+      404
     );
   }
 
@@ -136,11 +135,10 @@ async function handleDelete(context: ApiContext) {
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
-    return standardSuccessResponse(
-      null,
-      context.requestId,
-      STATUS_CODES.NOT_FOUND,
-      context.rateLimit
+    throw new AppError(
+      API_ERROR_MESSAGES.NOT_FOUND.IDEA,
+      ErrorCode.NOT_FOUND,
+      404
     );
   }
 
