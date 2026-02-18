@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { Task } from '@/lib/db';
 import { TaskStatus } from '@/hooks/useTaskManagement';
 import { SVG_ANIMATION } from '@/lib/config';
@@ -32,10 +32,15 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = statusConfig[task.status];
   const isCompleted = task.status === 'completed';
 
+  // Stable callback to avoid inline arrow function recreation on every render
+  const handleToggle = useCallback(() => {
+    onToggle(task.id, task.status);
+  }, [onToggle, task.id, task.status]);
+
   return (
     <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
       <button
-        onClick={() => onToggle(task.id, task.status)}
+        onClick={handleToggle}
         disabled={isUpdating}
         className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 ${
           isCompleted

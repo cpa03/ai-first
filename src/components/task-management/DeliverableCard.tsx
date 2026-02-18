@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import { TaskStatus } from '@/hooks/useTaskManagement';
@@ -39,15 +39,21 @@ function DeliverableCardComponent({
         ? { bgColor: 'bg-blue-50', borderColor: 'border-blue-200' }
         : { bgColor: 'bg-white', borderColor: 'border-gray-200' };
 
+  const handleToggleExpand = useCallback(() => {
+    onToggleExpand(deliverable.id);
+  }, [onToggleExpand, deliverable.id]);
+
   return (
     <div
       className={`rounded-lg shadow-md border-2 transition-all duration-200 ${deliverableStyle.bgColor} ${deliverableStyle.borderColor}`}
     >
       {/* Deliverable Header */}
       <button
-        onClick={() => onToggleExpand(deliverable.id)}
+        onClick={handleToggleExpand}
         aria-expanded={isExpanded}
-        aria-controls={isExpanded ? `deliverable-tasks-${deliverable.id}` : undefined}
+        aria-controls={
+          isExpanded ? `deliverable-tasks-${deliverable.id}` : undefined
+        }
         className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 rounded-lg"
       >
         <div className="flex-1">
