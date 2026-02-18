@@ -171,6 +171,9 @@ const SAFE_FIELDS_SET = new Set<string>(
 const REDACTION_LABEL_CACHE = new Map<string, string>();
 
 function isSafeField(key: string): boolean {
+  // PERFORMANCE: Fast path for exact matches before calling toLowerCase()
+  // to avoid unnecessary string allocations.
+  if (SAFE_FIELDS_SET.has(key)) return true;
   return SAFE_FIELDS_SET.has(key.toLowerCase());
 }
 
@@ -349,6 +352,9 @@ export function redactPIIInObject(
   if (obj instanceof Error) {
     // SECURITY: Do not include stack traces in redacted error data
     // to prevent leaking internal application structure and file paths.
+    // NOTE: name and message are explicitly included here as they may be
+    // non-enumerable on some Error implementations. The recursive call
+    // to redactPIIInObject will then process these as enumerable keys.
     const errorData: Record<string, unknown> = {
       name: obj.name,
       message: obj.message,
@@ -380,30 +386,20 @@ export function redactPIIInObject(
   }
 
   const redacted: RedactedObject = {};
-  const descriptors = getAllPropertyDescriptors(obj);
 
-  for (const descriptor of descriptors) {
-    if (!descriptor.enumerable && !(obj instanceof Error)) {
-      continue;
-    }
-
-    let key: string;
-    if (typeof descriptor.key === 'symbol') {
-      key = descriptor.key.toString();
-    } else {
-      key = descriptor.key;
-    }
-
-    const value = descriptor.value;
-
+  // PERFORMANCE: Avoid expensive property descriptor lookups for non-Error objects.
+  // Using Object.keys() for string keys and processing symbols separately is
+  // significantly faster than getAllPropertyDescriptors() which fetches all
+  // property names, then calls getOwnPropertyDescriptor for each.
+  const processEntry = (key: string, value: unknown) => {
     if (isSafeField(key)) {
       redacted[key] = value as RedactionResult;
-      continue;
+      return;
     }
 
     if (SENSITIVE_FIELD_REGEX.test(key)) {
       redacted[key] = getRedactionLabel(key);
-      continue;
+      return;
     }
 
     if (typeof value === 'string') {
@@ -412,6 +408,21 @@ export function redactPIIInObject(
       redacted[key] = redactPIIInObject(value, seen, depth + 1);
     } else {
       redacted[key] = value as RedactionResult;
+    }
+  };
+
+  const keys = Object.keys(obj);
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    processEntry(key, (obj as Record<string, unknown>)[key]);
+  }
+
+  // Handle enumerable symbols
+  const symbols = Object.getOwnPropertySymbols(obj);
+  for (let i = 0; i < symbols.length; i++) {
+    const sym = symbols[i];
+    if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
+      processEntry(sym.toString(), (obj as Record<symbol, unknown>)[sym]);
     }
   }
 
