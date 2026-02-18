@@ -38,7 +38,12 @@ async function handleGet(context: ApiContext) {
 
   const session = await dbService.getIdeaSession(ideaId!);
 
-  return standardSuccessResponse(session, context.requestId);
+  return standardSuccessResponse(
+    session,
+    context.requestId,
+    200,
+    context.rateLimit
+  );
 }
 
 export const GET = withApiHandler(handleGet, { rateLimit: 'moderate' });
