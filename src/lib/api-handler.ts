@@ -15,6 +15,7 @@ import {
   getClientIdentifier,
 } from '@/lib/rate-limit';
 import { createLogger } from '@/lib/logger';
+import { STATUS_CODES } from '@/lib/config';
 
 const logger = createLogger('ApiHandler');
 
@@ -71,7 +72,7 @@ export function withApiHandler(
           throw new AppError(
             'Request size exceeds limit',
             ErrorCode.VALIDATION_ERROR,
-            413,
+            STATUS_CODES.PAYLOAD_TOO_LARGE,
             sizeValidation.errors
           );
         }
@@ -119,7 +120,7 @@ export function withApiHandler(
 
 export function successResponse<T>(
   data: T,
-  status: number = 200,
+  status: number = STATUS_CODES.OK,
   rateLimit?: RateLimitInfo
 ): NextResponse {
   const response = NextResponse.json(data, { status });
@@ -142,7 +143,7 @@ export function notFoundResponse(
 ): NextResponse {
   const response = NextResponse.json(
     { error: message, code: 'NOT_FOUND' },
-    { status: 404 }
+    { status: STATUS_CODES.NOT_FOUND }
   );
 
   if (rateLimit) {
@@ -164,7 +165,7 @@ export function badRequestResponse(
 ): NextResponse {
   const response = NextResponse.json(
     { error: message, code: 'BAD_REQUEST', details },
-    { status: 400 }
+    { status: STATUS_CODES.BAD_REQUEST }
   );
 
   if (rateLimit) {
@@ -182,7 +183,7 @@ export function badRequestResponse(
 export function standardSuccessResponse<T = unknown>(
   data: T,
   requestId: string,
-  status: number = 200,
+  status: number = STATUS_CODES.OK,
   rateLimit?: RateLimitInfo
 ): NextResponse {
   const response: ApiResponse<T> = {
