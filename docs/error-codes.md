@@ -169,25 +169,6 @@ Unexpected internal server error. Something went wrong on the server.
 }
 ```
 
-**Common Causes:**
-
-- Unhandled exceptions
-- Database connection issues
-- Configuration errors
-- Unexpected runtime errors
-
-**Example Response:**
-
-```json
-{
-  "error": "An unexpected error occurred",
-  "code": "INTERNAL_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": false
-}
-```
-
 **Resolution:** Contact support with the request ID. Check the `/api/health/detailed` endpoint for system status.
 
 ---
@@ -296,25 +277,6 @@ Authentication failed or missing.
 }
 ```
 
-**Common Causes:**
-
-- Missing authorization header
-- Invalid auth token
-- Expired auth token
-- Invalid API key
-
-**Example Response:**
-
-```json
-{
-  "error": "Authentication required",
-  "code": "AUTHENTICATION_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": false
-}
-```
-
 **Resolution:** Provide valid authentication credentials in the `Authorization` header.
 
 ---
@@ -347,24 +309,6 @@ Insufficient permissions to access resource.
     "Contact resource owner for access",
     "Check that you are accessing your own data"
   ]
-}
-```
-
-**Common Causes:**
-
-- User doesn't have access to idea
-- Insufficient role/permissions
-- Attempting to access another user's data
-
-**Example Response:**
-
-```json
-{
-  "error": "You don't have permission to access this resource",
-  "code": "AUTHORIZATION_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": false
 }
 ```
 
@@ -404,25 +348,6 @@ Requested resource not found.
 }
 ```
 
-**Common Causes:**
-
-- Invalid idea ID
-- Clarification session expired
-- Breakdown session doesn't exist
-- Invalid route
-
-**Example Response:**
-
-```json
-{
-  "error": "Clarification session not found",
-  "code": "NOT_FOUND",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": false
-}
-```
-
 **Resolution:** Verify the resource ID is correct. Check if the session has expired.
 
 ---
@@ -455,24 +380,6 @@ Resource conflict or duplicate creation attempt.
     "Resolve any concurrent modification conflicts",
     "Retry operation with updated data"
   ]
-}
-```
-
-**Common Causes:**
-
-- Attempting to create duplicate session
-- Concurrent modification conflicts
-- Unique constraint violation
-
-**Example Response:**
-
-```json
-{
-  "error": "Clarification session already exists for this idea",
-  "code": "CONFLICT",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": false
 }
 ```
 
@@ -512,25 +419,6 @@ Service temporarily unavailable for maintenance or high load.
 }
 ```
 
-**Common Causes:**
-
-- Scheduled maintenance
-- High system load
-- Database maintenance
-- AI service outage
-
-**Example Response:**
-
-```json
-{
-  "error": "Service temporarily unavailable",
-  "code": "SERVICE_UNAVAILABLE",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": true
-}
-```
-
 **Resolution:** Wait and retry with exponential backoff. Check `/api/health/detailed` for status updates.
 
 ---
@@ -566,24 +454,6 @@ Circuit breaker is open due to repeated failures of external service.
 }
 ```
 
-**Common Causes:**
-
-- External service degraded
-- Too many consecutive failures
-- Service outage
-
-**Example Response:**
-
-```json
-{
-  "error": "Circuit breaker open for openai. Retry after 2024-01-07T12:01:00Z",
-  "code": "CIRCUIT_BREAKER_OPEN",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": true
-}
-```
-
 **Resolution:** Wait until the specified retry time. The system will automatically test service recovery.
 
 ---
@@ -616,24 +486,6 @@ All retry attempts for an operation failed.
     "Verify your API credentials and quotas for external services",
     "Contact support with requestId if this persists"
   ]
-}
-```
-
-**Common Causes:**
-
-- Persistent service failure
-- Network issues
-- Invalid request causing consistent failures
-
-**Example Response:**
-
-```json
-{
-  "error": "Failed after 3 attempts",
-  "code": "RETRY_EXHAUSTED",
-  "timestamp": "2024-01-07T12:00:00Z",
-  "requestId": "req_1234567890_abc123",
-  "retryable": false
 }
 ```
 
