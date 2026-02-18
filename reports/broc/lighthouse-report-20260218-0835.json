@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-02-18T08:34:50.343Z",
+  "baseUrl": "http://localhost:3000",
+  "summary": {
+    "totalPages": 1,
+    "successfulAudits": 1,
+    "failedAudits": 0,
+    "averageScores": {
+      "performance": 100,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100
+    }
+  },
+  "audits": [
+    {
+      "url": "http://localhost:3000/",
+      "scores": {
+        "performance": 100,
+        "accessibility": 100,
+        "bestPractices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "firstContentfulPaint": "0.2 s",
+        "largestContentfulPaint": "0.8 s",
+        "totalBlockingTime": "20 ms",
+        "cumulativeLayoutShift": "0",
+        "speedIndex": "0.3 s"
+      },
+      "opportunities": [],
+      "diagnostics": [
+        {
+          "title": "Missing source maps for large first-party JavaScript",
+          "description": "Source maps translate minified code to the original source code. This helps developers debug in production. In addition, Lighthouse is able to provide further insights. Consider deploying source maps to take advantage of these benefits. [Learn more about source maps](https://developer.chrome.com/docs/devtools/javascript/source-maps/).",
+          "score": 0
+        },
+        {
+          "title": "Page prevented back/forward cache restoration",
+          "description": "Many navigations are performed by going back to a previous page, or forwards again. The back/forward cache (bfcache) can speed up these return navigations. [Learn more about the bfcache](https://developer.chrome.com/docs/lighthouse/performance/bf-cache/)",
+          "score": 0
+        },
+        {
+          "title": "Legacy JavaScript",
+          "description": "Polyfills and transforms enable older browsers to use new JavaScript features. However, many aren't necessary for modern browsers. Consider modifying your JavaScript build process to not transpile [Baseline](https://web.dev/articles/baseline-and-polyfills) features, unless you know you must support older browsers. [Learn why most sites can deploy ES6+ code without transpiling](https://philipwalton.com/articles/the-state-of-es5-on-the-web/)",
+          "score": 0.5
+        }
+      ]
+    }
+  ]
+}

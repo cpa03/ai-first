@@ -394,14 +394,20 @@ export const SECURITY_CONFIG = {
 
 /**
  * Retry delay polling configuration
+ * Now supports environment variable overrides
  */
 export const RETRY_DELAY_CONFIG = {
   /**
    * Polling interval for checking if retry delay should be aborted (in milliseconds)
    * Lower values provide more responsive cancellation but use more CPU
-   * Default: 100ms
+   * Env: RETRY_POLLING_INTERVAL_MS (default: 100)
    */
-  POLLING_INTERVAL_MS: 100,
+  POLLING_INTERVAL_MS: EnvLoader.number(
+    'RETRY_POLLING_INTERVAL_MS',
+    100,
+    10,
+    1000
+  ),
 } as const;
 
 /**
@@ -763,19 +769,154 @@ export const RESILIENCE_CONFIG = {
   } as const,
 
   SERVICE_RETRY: {
-    OPENAI: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 10000 },
-    GITHUB: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
-    NOTION: { maxRetries: 3, baseDelayMs: 1000, maxDelayMs: 5000 },
-    TRELLO: { maxRetries: 3, baseDelayMs: 500, maxDelayMs: 3000 },
-    SUPABASE: { maxRetries: 2, baseDelayMs: 1000, maxDelayMs: 10000 },
+    OPENAI: {
+      maxRetries: EnvLoader.number('RETRY_OPENAI_MAX_RETRIES', 3, 0, 10),
+      baseDelayMs: EnvLoader.number(
+        'RETRY_OPENAI_BASE_DELAY_MS',
+        1000,
+        100,
+        60000
+      ),
+      maxDelayMs: EnvLoader.number(
+        'RETRY_OPENAI_MAX_DELAY_MS',
+        10000,
+        1000,
+        300000
+      ),
+    },
+    GITHUB: {
+      maxRetries: EnvLoader.number('RETRY_GITHUB_MAX_RETRIES', 3, 0, 10),
+      baseDelayMs: EnvLoader.number(
+        'RETRY_GITHUB_BASE_DELAY_MS',
+        1000,
+        100,
+        60000
+      ),
+      maxDelayMs: EnvLoader.number(
+        'RETRY_GITHUB_MAX_DELAY_MS',
+        5000,
+        1000,
+        300000
+      ),
+    },
+    NOTION: {
+      maxRetries: EnvLoader.number('RETRY_NOTION_MAX_RETRIES', 3, 0, 10),
+      baseDelayMs: EnvLoader.number(
+        'RETRY_NOTION_BASE_DELAY_MS',
+        1000,
+        100,
+        60000
+      ),
+      maxDelayMs: EnvLoader.number(
+        'RETRY_NOTION_MAX_DELAY_MS',
+        5000,
+        1000,
+        300000
+      ),
+    },
+    TRELLO: {
+      maxRetries: EnvLoader.number('RETRY_TRELLO_MAX_RETRIES', 3, 0, 10),
+      baseDelayMs: EnvLoader.number(
+        'RETRY_TRELLO_BASE_DELAY_MS',
+        500,
+        100,
+        60000
+      ),
+      maxDelayMs: EnvLoader.number(
+        'RETRY_TRELLO_MAX_DELAY_MS',
+        3000,
+        500,
+        300000
+      ),
+    },
+    SUPABASE: {
+      maxRetries: EnvLoader.number('RETRY_SUPABASE_MAX_RETRIES', 2, 0, 10),
+      baseDelayMs: EnvLoader.number(
+        'RETRY_SUPABASE_BASE_DELAY_MS',
+        1000,
+        100,
+        60000
+      ),
+      maxDelayMs: EnvLoader.number(
+        'RETRY_SUPABASE_MAX_DELAY_MS',
+        10000,
+        1000,
+        300000
+      ),
+    },
   } as const,
 
   SERVICE_CIRCUIT_BREAKER: {
-    OPENAI: { failureThreshold: 5, resetTimeoutMs: 60000 },
-    GITHUB: { failureThreshold: 5, resetTimeoutMs: 30000 },
-    NOTION: { failureThreshold: 5, resetTimeoutMs: 30000 },
-    TRELLO: { failureThreshold: 3, resetTimeoutMs: 20000 },
-    SUPABASE: { failureThreshold: 10, resetTimeoutMs: 60000 },
+    OPENAI: {
+      failureThreshold: EnvLoader.number(
+        'CB_OPENAI_FAILURE_THRESHOLD',
+        5,
+        1,
+        50
+      ),
+      resetTimeoutMs: EnvLoader.number(
+        'CB_OPENAI_RESET_TIMEOUT_MS',
+        60000,
+        5000,
+        600000
+      ),
+    },
+    GITHUB: {
+      failureThreshold: EnvLoader.number(
+        'CB_GITHUB_FAILURE_THRESHOLD',
+        5,
+        1,
+        50
+      ),
+      resetTimeoutMs: EnvLoader.number(
+        'CB_GITHUB_RESET_TIMEOUT_MS',
+        30000,
+        5000,
+        600000
+      ),
+    },
+    NOTION: {
+      failureThreshold: EnvLoader.number(
+        'CB_NOTION_FAILURE_THRESHOLD',
+        5,
+        1,
+        50
+      ),
+      resetTimeoutMs: EnvLoader.number(
+        'CB_NOTION_RESET_TIMEOUT_MS',
+        30000,
+        5000,
+        600000
+      ),
+    },
+    TRELLO: {
+      failureThreshold: EnvLoader.number(
+        'CB_TRELLO_FAILURE_THRESHOLD',
+        3,
+        1,
+        50
+      ),
+      resetTimeoutMs: EnvLoader.number(
+        'CB_TRELLO_RESET_TIMEOUT_MS',
+        20000,
+        5000,
+        600000
+      ),
+    },
+    SUPABASE: {
+      failureThreshold: EnvLoader.number(
+        'CB_SUPABASE_FAILURE_THRESHOLD',
+        10,
+        1,
+        100
+      ),
+      resetTimeoutMs: EnvLoader.number(
+        'CB_SUPABASE_RESET_TIMEOUT_MS',
+        60000,
+        5000,
+        600000
+      ),
+    },
   } as const,
 } as const;
 
