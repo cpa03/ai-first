@@ -52,6 +52,11 @@ name = "ai-first-staging"
 # Deploy command: npm run deploy:cloudflare
 # Preview locally: npm run preview:cloudflare
 #
+# Environment Variable Management:
+# - Use `wrangler secret put` for secure runtime variables
+# - Or use scripts/setup-cloudflare-env.sh for automated setup
+# - This is a Workers deployment (not Pages), so use Workers secrets API
+#
 # Required environment variables in Cloudflare dashboard:
 # - NEXT_PUBLIC_SUPABASE_URL
 # - NEXT_PUBLIC_SUPABASE_ANON_KEY
