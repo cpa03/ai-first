@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UI_CONFIG } from '@/lib/config';
@@ -111,10 +111,14 @@ export default function MobileNav() {
     };
   }, [isOpen]);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     setIsOpen(false);
     buttonRef.current?.focus();
-  };
+  }, []);
+
+  const toggleMenu = useCallback(() => {
+    setIsOpen((prev) => !prev);
+  }, []);
 
   if (!isMobile) {
     return (
@@ -150,7 +154,7 @@ export default function MobileNav() {
     <nav aria-label="Main navigation">
       <button
         ref={buttonRef}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={toggleMenu}
         className="text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 min-h-[44px] min-w-[44px] transition-all duration-200"
         aria-expanded={isOpen}
         aria-haspopup="true"
