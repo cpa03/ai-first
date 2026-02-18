@@ -126,6 +126,7 @@ agent_logs (system table)
 | raw_text   | TEXT        | NOT NULL                                | Original idea description                           |
 | status     | TEXT        | DEFAULT 'draft', CHECK                  | Idea status: draft, clarified, breakdown, completed |
 | created_at | TIMESTAMPTZ | DEFAULT NOW()                           | Creation timestamp                                  |
+| updated_at | TIMESTAMPTZ | DEFAULT NOW()                           | Last update timestamp                               |
 | deleted_at | TIMESTAMPTZ | NULLABLE                                | Soft delete timestamp                               |
 
 **TypeScript Interface:**
@@ -137,9 +138,9 @@ interface Idea {
   title: string;
   raw_text: string;
   status: 'draft' | 'clarified' | 'breakdown' | 'completed';
-  deleted_at: string | null;
   created_at: string;
-  updated_at?: string;
+  updated_at: string;
+  deleted_at: string | null;
 }
 ```
 
@@ -420,6 +421,7 @@ interface ClarificationAnswer {
 - `idx_ideas_status` - status
 - `idx_ideas_user_status` - (user_id, status)
 - `idx_ideas_created_at` - created_at DESC
+- `idx_ideas_updated_at` - updated_at DESC
 - `idx_ideas_deleted_at` - deleted_at
 
 #### deliverables
@@ -995,6 +997,24 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-18 - Ideas Table Updated_at Column
+
+#### Enhancement
+
+1. **Added `updated_at` column to `ideas` table**
+   - The root table was missing an `updated_at` timestamp column
+   - Added automatic trigger to update `updated_at` on record modification
+   - Added index `idx_ideas_updated_at` for efficient sorting by last modification
+   - Ensures consistency with all other tables in the schema
+
+2. **Updated TypeScript types**
+   - Added `updated_at: string` to ideas Row/Insert/Update types in `src/types/database.ts`
+
+3. **Updated schema.sql**
+   - Added `updated_at` column definition
+   - Added trigger `update_ideas_updated_at`
+   - Added index for performance
 
 ### 2026-02-07 - Database Schema Fixes
 
