@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { UI_CONFIG } from '@/lib/config';
 
 interface NavLink {
   href: string;
@@ -30,7 +31,7 @@ export default function MobileNav() {
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < UI_CONFIG.BREAKPOINTS.MD);
     };
 
     checkMobile();
