@@ -74,7 +74,6 @@ Complete index of all IdeaFlow documentation.
 ## Subdirectories
 
 - [API Specifications](./api/) - OpenAPI specifications
-- [Archive](./archive/) - Archived documentation
 - [Templates](./templates/) - User-downloadable templates
 
 ---
