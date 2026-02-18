@@ -22,7 +22,7 @@ function isSensitiveVar(varName: string): boolean {
 }
 
 async function handleGet(context: ApiContext) {
-  const { rateLimit: _rateLimit } = context;
+  const { rateLimit } = context;
   const envStatus: {
     status: string;
     environment: string;
@@ -94,7 +94,7 @@ async function handleGet(context: ApiContext) {
     environment: envStatus.environment,
   };
 
-  return standardSuccessResponse(envStatus, context.requestId);
+  return standardSuccessResponse(envStatus, context.requestId, 200, rateLimit);
 }
 
 export const GET = withApiHandler(handleGet, {

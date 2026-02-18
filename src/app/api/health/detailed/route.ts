@@ -216,7 +216,12 @@ async function handleGet(context: ApiContext) {
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
-  return standardSuccessResponse(response, context.requestId, statusCode);
+  return standardSuccessResponse(
+    response,
+    context.requestId,
+    statusCode,
+    context.rateLimit
+  );
 }
 
 export const GET = withApiHandler(handleGet, {

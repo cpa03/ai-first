@@ -109,7 +109,8 @@ async function handlePost(context: ApiContext) {
       createdAt: savedIdea.created_at,
     },
     context.requestId,
-    201
+    201,
+    context.rateLimit
   );
 }
 

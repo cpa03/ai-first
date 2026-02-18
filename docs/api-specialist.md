@@ -184,20 +184,22 @@ Retry-After: 60  # Only on rate limit errors
 
 ### ⚠️ Minor Issues Found
 
-1. **Missing Rate Limit Info in Some Routes**
-   - Some GET routes don't pass `context.rateLimit` to `standardSuccessResponse`
-   - Impact: Low - Rate limit headers still added by `withApiHandler` wrapper
-   - Affected: `src/app/api/ideas/route.ts` (GET handler)
+1. **~~Missing Rate Limit Info in Some Routes~~** ✅ FIXED (2026-02-18)
+   - ~~Some GET routes don't pass `context.rateLimit` to `standardSuccessResponse`~~
+   - ~~Impact: Low - Rate limit headers still added by `withApiHandler` wrapper~~
+   - ~~Affected: `src/app/api/ideas/route.ts` (GET handler)~~
+   - All API routes now consistently pass `rateLimit` to `standardSuccessResponse`
 
 2. **Inconsistent Null Response Pattern**
    - Some routes return `null` with 404 status for not found
    - Others throw `AppError` with `NOT_FOUND` code
    - Recommendation: Standardize on throwing `AppError` for consistency
 
-3. **Rate Limit Response Missing Request ID**
-   - `rateLimitResponse()` in `src/lib/rate-limit.ts` doesn't include `X-Request-ID` header
-   - Impact: Low - Makes debugging rate limit issues slightly harder
-   - Fix: Add request ID parameter to `rateLimitResponse()`
+3. **~~Rate Limit Response Missing Request ID~~** ✅ FIXED
+   - ~~`rateLimitResponse()` in `src/lib/rate-limit.ts` doesn't include `X-Request-ID` header~~
+   - ~~Impact: Low - Makes debugging rate limit issues slightly harder~~
+   - ~~Fix: Add request ID parameter to `rateLimitResponse()`~~
+   - `rateLimitResponse()` now includes `X-Request-ID` header
 
 ### 📋 Recommendations
 
