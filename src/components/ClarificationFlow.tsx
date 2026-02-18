@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
+import { fetchWithTimeout } from '@/lib/api-client';
 import { createLogger } from '@/lib/logger';
 import {
   MIN_ANSWER_LENGTH,
@@ -174,7 +175,7 @@ function ClarificationFlow({
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/clarify', {
+        const response = await fetchWithTimeout('/api/clarify', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
