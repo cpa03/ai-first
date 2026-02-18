@@ -279,6 +279,15 @@ export const CELEBRATION_COLORS = {
     '#EC4899',
     '#06B6D4',
   ] as const,
+  /** Progress circle colors - eliminates hardcoded colors in StepCelebration */
+  PROGRESS_CIRCLE: {
+    /** Background track color (gray-200) */
+    TRACK: '#e5e7eb',
+    /** Progress indicator color (blue-600/primary) */
+    PROGRESS: '#2563eb',
+    /** Radius for the progress circle */
+    RADIUS: 45,
+  },
 } as const;
 
 /**
@@ -296,6 +305,8 @@ export const ANIMATION_PHYSICS = {
   DEFAULT_DURATION_MS: 2000,
   /** Reduced motion duration in ms */
   REDUCED_MOTION_DURATION_MS: 500,
+  /** Step celebration display duration before exit animation */
+  STEP_CELEBRATION_DURATION_MS: 1500,
   /** Particle opacity decay rate */
   OPACITY_DECAY: 0.015,
   /** Velocity multiplier for particle movement */
