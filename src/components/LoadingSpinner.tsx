@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useMemo } from 'react';
 import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface LoadingSpinnerProps {
@@ -37,6 +37,40 @@ function LoadingSpinnerComponent({
   const pulseRingSize = spinnerDimension * 1.4;
   const pulseRingOffset = (pulseRingSize - spinnerDimension) / 2;
 
+  // PERFORMANCE: Memoize style objects to prevent object recreation on each render
+  const pulseRingStyle = useMemo(
+    () => ({
+      width: `${pulseRingSize}px`,
+      height: `${pulseRingSize}px`,
+      top: `-${pulseRingOffset}px`,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      animation: 'ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite',
+    }),
+    [pulseRingSize, pulseRingOffset]
+  );
+
+  const borderRingStyle = useMemo(
+    () => ({
+      width: `${spinnerDimension + 8}px`,
+      height: `${spinnerDimension + 8}px`,
+      top: '-4px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+    }),
+    [spinnerDimension]
+  );
+
+  const svgStyle = useMemo(
+    () => ({
+      width: `${spinnerSize.width}px`,
+      height: `${spinnerSize.height}px`,
+      animationDuration: prefersReducedMotion ? '0s' : '0.75s',
+    }),
+    [spinnerSize.width, spinnerSize.height, prefersReducedMotion]
+  );
+
   return (
     <div
       className={`flex justify-center relative ${className}`}
@@ -47,14 +81,7 @@ function LoadingSpinnerComponent({
       {!prefersReducedMotion && (
         <div
           className="absolute rounded-full bg-primary-100/50"
-          style={{
-            width: `${pulseRingSize}px`,
-            height: `${pulseRingSize}px`,
-            top: `-${pulseRingOffset}px`,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            animation: 'ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite',
-          }}
+          style={pulseRingStyle}
           aria-hidden="true"
         />
       )}
@@ -62,14 +89,7 @@ function LoadingSpinnerComponent({
       {!prefersReducedMotion && (
         <div
           className="absolute rounded-full border border-primary-200/60"
-          style={{
-            width: `${spinnerDimension + 8}px`,
-            height: `${spinnerDimension + 8}px`,
-            top: '-4px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-          }}
+          style={borderRingStyle}
           aria-hidden="true"
         />
       )}
@@ -79,11 +99,7 @@ function LoadingSpinnerComponent({
           relative z-10 rounded-full
           ${prefersReducedMotion ? 'border-2 border-gray-400' : 'animate-spin border-2 border-gray-300 border-t-primary-600'}
         `}
-        style={{
-          width: `${spinnerSize.width}px`,
-          height: `${spinnerSize.height}px`,
-          animationDuration: prefersReducedMotion ? '0s' : '0.75s',
-        }}
+        style={svgStyle}
         fill="none"
         viewBox={`0 0 ${COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE} ${COMPONENT_CONFIG.SPINNER.VIEWBOX_SIZE}`}
         aria-hidden="true"

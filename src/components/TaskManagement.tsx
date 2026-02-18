@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
@@ -23,6 +24,11 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
     collapseAll,
   } = useTaskManagement(ideaId);
 
+  // PERFORMANCE: Memoize reload handler to prevent function recreation on each render
+  const handleRetry = useCallback(() => {
+    window.location.reload();
+  }, []);
+
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
@@ -39,11 +45,7 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
       <div className="bg-white rounded-lg shadow-lg p-8">
         <Alert type="error" title="Error Loading Tasks">
           <p>{error}</p>
-          <Button
-            onClick={() => window.location.reload()}
-            variant="primary"
-            className="mt-4"
-          >
+          <Button onClick={handleRetry} variant="primary" className="mt-4">
             Retry
           </Button>
         </Alert>
