@@ -374,6 +374,30 @@
   animation: badgePulse 0.6s ease-in-out;
 }
 
+/* Gentle pulse animation for current step indicator in ProgressStepper */
+/* Draws subtle attention to user's current position without being distracting */
+@keyframes gentlePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+  }
+}
+
+.animate-gentle-pulse {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for gentle pulse */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gentle-pulse {
+    animation: none;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+  }
+}
+
 /* Reduced motion support for FeatureGrid animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-stagger-1,
