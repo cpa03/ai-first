@@ -135,6 +135,7 @@ CREATE TABLE task_dependencies (
         CHECK (dependency_type IN ('finish_to_start', 'start_to_start', 'finish_to_finish', 'start_to_finish')),
     lag_days INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     UNIQUE(predecessor_task_id, successor_task_id)
 );
 
@@ -716,6 +717,7 @@ CREATE INDEX idx_idea_sessions_updated_at ON idea_sessions(updated_at);
 CREATE INDEX idx_task_dependencies_predecessor ON task_dependencies(predecessor_task_id);
 CREATE INDEX idx_task_dependencies_successor ON task_dependencies(successor_task_id);
 CREATE INDEX idx_task_dependencies_both ON task_dependencies(predecessor_task_id, successor_task_id);
+CREATE INDEX idx_task_dependencies_updated_at ON task_dependencies(updated_at DESC);
 
 CREATE INDEX idx_milestones_idea_id ON milestones(idea_id);
 CREATE INDEX idx_milestones_target_date ON milestones(target_date);
@@ -807,6 +809,10 @@ CREATE TRIGGER update_deliverables_updated_at BEFORE UPDATE ON deliverables
 
 -- Trigger for ideas table (root table)
 CREATE TRIGGER update_ideas_updated_at BEFORE UPDATE ON ideas
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger for task_dependencies table
+CREATE TRIGGER update_task_dependencies_updated_at BEFORE UPDATE ON task_dependencies
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
