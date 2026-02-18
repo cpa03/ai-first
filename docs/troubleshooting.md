@@ -657,7 +657,7 @@ Include the following information:
 
 - OS: [e.g., macOS, Ubuntu 20.04]
 - Node version: [e.g., v18.19.0]
-- Package manager: [npm/yarn]
+- Package manager: npm
 
 ## Problem
 

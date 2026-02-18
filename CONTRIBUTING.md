@@ -15,6 +15,14 @@
 3. Copy `.env.example` to `.env.local` and configure environment variables
 4. Start development server: `npm run dev`
 
+## Package Manager
+
+This project uses **npm** as its package manager. Please use npm for all dependency management:
+
+- ✅ `npm install` - Install dependencies
+- ✅ `npm run <script>` - Run npm scripts
+- ❌ Do not use yarn or pnpm (to avoid lock file conflicts)
+
 ## Code Guidelines
 
 - Use TypeScript with strict mode
