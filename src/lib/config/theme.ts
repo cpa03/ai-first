@@ -343,6 +343,13 @@ export const CELEBRATION_COLORS = {
     /** Radius for the progress circle */
     RADIUS: 45,
   },
+  /** Shadow colors for progress glow effects - eliminates hardcoded rgba() in StepCelebration */
+  SHADOWS: {
+    /** Drop shadow for progress circle (blue-600 at 40% opacity) */
+    DROP_SHADOW: 'rgba(37, 99, 235, 0.4)',
+    /** Box shadow for progress bar (blue-600 at 50% opacity) */
+    BOX_SHADOW: 'rgba(37, 99, 235, 0.5)',
+  },
 } as const;
 
 /**

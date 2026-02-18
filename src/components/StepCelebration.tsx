@@ -159,7 +159,7 @@ export default function StepCelebration({
               )}
               className="transition-all duration-700 ease-out"
               style={{
-                filter: 'drop-shadow(0 0 6px rgba(37, 99, 235, 0.4))',
+                filter: `drop-shadow(0 0 6px ${CELEBRATION_COLORS.SHADOWS.DROP_SHADOW})`,
               }}
             />
           </svg>
@@ -254,7 +254,7 @@ export default function StepCelebration({
             className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full transition-all duration-700 ease-out"
             style={{
               width: `${progress}%`,
-              boxShadow: '0 0 8px rgba(37, 99, 235, 0.5)',
+              boxShadow: `0 0 8px ${CELEBRATION_COLORS.SHADOWS.BOX_SHADOW}`,
             }}
           />
         </div>
