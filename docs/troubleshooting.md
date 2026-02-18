@@ -625,6 +625,332 @@ curl http://localhost:3000/api/health/detailed | jq '.checks.ai.latency'
 
 ---
 
+## Common Production Issues
+
+This section covers issues specific to production deployments.
+
+### Cold Start Timeouts
+
+**Symptoms:**
+
+- First request after deployment times out
+- Intermittent 504 Gateway Timeout errors
+- Vercel/Cloudflare function timeouts
+
+**Causes:**
+
+- Serverless functions have cold start overhead
+- Large dependency bundles slow initialization
+- Database connection establishment on cold start
+
+**Solutions:**
+
+1. **Use health endpoints for warmup:**
+
+   ```bash
+   # Configure cron job to ping health endpoint every 5 minutes
+   */5 * * * * curl -s https://your-domain.vercel.app/api/health/live > /dev/null
+   ```
+
+2. **Optimize bundle size:**
+
+   ```bash
+   # Analyze bundle size
+   ANALYZE=true npm run build
+   ```
+
+3. **Use connection pooling:**
+   - Supabase provides connection pooling by default
+   - Use the pooler connection string for serverless
+
+4. **Increase function timeout:**
+   - Vercel: Configure in `vercel.json`
+   - Cloudflare: Set in wrangler.toml
+
+---
+
+### Memory Limit Exceeded
+
+**Symptoms:**
+
+- Functions crash with "out of memory"
+- Large file processing fails
+- Intermittent 500 errors on complex requests
+
+**Causes:**
+
+- Serverless function memory limits (Vercel: 1024MB default)
+- Large AI responses consuming memory
+- Memory leaks in long-running processes
+
+**Solutions:**
+
+1. **Stream large responses:**
+
+   ```typescript
+   // Use streaming for AI responses
+   const stream = await openai.chat.completions.create({
+     model: 'gpt-4',
+     messages: [...],
+     stream: true,
+   });
+   ```
+
+2. **Paginate large datasets:**
+
+   ```bash
+   # Use limit/offset for large queries
+   GET /api/ideas?limit=20&offset=0
+   ```
+
+3. **Clear caches periodically:**
+   - Implement bounded caches (already configured in src/lib/cache.ts)
+   - Use TTL-based cache eviction
+
+4. **Monitor memory usage:**
+   ```bash
+   curl https://your-domain.vercel.app/api/metrics | grep memory
+   ```
+
+---
+
+### Rate Limit Exhaustion
+
+**Symptoms:**
+
+- 429 errors in production
+- Users unable to make requests
+- Sudden spike in blocked requests
+
+**Causes:**
+
+- Legitimate traffic spike
+- Bot/crawler activity
+- Inefficient API usage patterns
+- Missing client-side rate limiting
+
+**Solutions:**
+
+1. **Check rate limit status:**
+
+   ```bash
+   curl https://your-domain.vercel.app/api/admin/rate-limit
+   ```
+
+2. **Implement client-side debouncing:**
+
+   ```typescript
+   // Debounce rapid API calls
+   const debouncedSave = debounce(saveIdea, 500);
+   ```
+
+3. **Use caching for repeated requests:**
+   - Browser cache for static data
+   - React Query/SWR for API caching
+
+4. **Monitor usage patterns:**
+   - Check `/api/metrics` for request patterns
+   - Identify abusive IPs via logs
+
+5. **Adjust rate limits** (if needed):
+   - Contact support for enterprise tier
+   - Implement user-based rate limiting
+
+---
+
+### Database Connection Pool Exhaustion
+
+**Symptoms:**
+
+- "Too many connections" errors
+- Slow database queries
+- Connection timeout errors
+
+**Causes:**
+
+- Too many concurrent connections
+- Connections not being released
+- Long-running queries blocking pool
+
+**Solutions:**
+
+1. **Use Supabase connection pooling:**
+   - Enable "Connection Pooling" in Supabase dashboard
+   - Use pooler connection string (port 6543)
+
+2. **Check connection count:**
+
+   ```sql
+   SELECT count(*) FROM pg_stat_activity;
+   ```
+
+3. **Set connection timeouts:**
+
+   ```bash
+   # Already configured in src/lib/db.ts
+   DATABASE_CONNECTION_TIMEOUT=10000
+   ```
+
+4. **Optimize long queries:**
+   - Add indexes for frequent queries
+   - Use query analysis tools
+
+---
+
+### CDN/Edge Caching Issues
+
+**Symptoms:**
+
+- Stale data being served
+- Changes not appearing immediately
+- Inconsistent data across regions
+
+**Causes:**
+
+- Aggressive CDN caching
+- Missing cache invalidation
+- Incorrect cache headers
+
+**Solutions:**
+
+1. **Check cache headers:**
+
+   ```bash
+   curl -I https://your-domain.vercel.app/api/health
+   # Look for Cache-Control, Age, X-Vercel-Cache headers
+   ```
+
+2. **Invalidate cache on updates:**
+
+   ```bash
+   # Vercel cache purge
+   vercel --prod --force
+   ```
+
+3. **Set appropriate cache headers:**
+   - Static assets: `public, max-age=31536000, immutable`
+   - API responses: `no-store` or short TTL
+   - Health endpoints: `public, max-age=10`
+
+4. **Use cache busting for critical updates:**
+   ```http
+   GET /api/ideas?v=1234567890
+   ```
+
+---
+
+### SSL/TLS Certificate Issues
+
+**Symptoms:**
+
+- "Certificate not valid" warnings
+- Mixed content errors in browser
+- API calls failing from HTTPS pages
+
+**Causes:**
+
+- Domain not properly configured
+- Expired certificates
+- Mixed HTTP/HTTPS content
+
+**Solutions:**
+
+1. **Verify domain configuration:**
+   - Check Vercel domain settings
+   - Ensure DNS records are correct
+
+2. **Force HTTPS:**
+
+   ```javascript
+   // Already handled by middleware
+   // Ensure all API calls use https://
+   ```
+
+3. **Check mixed content:**
+   - Open browser console for warnings
+   - Ensure all resources load over HTTPS
+
+---
+
+### Environment Variable Issues in Production
+
+**Symptoms:**
+
+- "Environment variable not found" in production
+- Different behavior between environments
+- API keys not working
+
+**Causes:**
+
+- Variables not set in hosting platform
+- Variable name mismatches
+- Preview vs production environment differences
+
+**Solutions:**
+
+1. **Check environment in hosting dashboard:**
+   - Vercel: Project Settings > Environment Variables
+   - Verify all required variables are set
+
+2. **Use environment-specific values:**
+
+   ```bash
+   # Different values for preview vs production
+   NEXT_PUBLIC_APP_URL=https://preview.your-domain.com  # Preview
+   NEXT_PUBLIC_APP_URL=https://your-domain.com          # Production
+   ```
+
+3. **Verify variable names match exactly:**
+   - Case-sensitive: `OPENAI_API_KEY` ≠ `openai_api_key`
+   - No extra spaces or line breaks
+
+4. **Test with health endpoint:**
+   ```bash
+   curl https://your-domain.vercel.app/api/health
+   # Check "checks" object for missing variables
+   ```
+
+---
+
+### Monitoring and Alerting Setup
+
+For production, set up proper monitoring:
+
+1. **Health Check Alerts:**
+
+   ```yaml
+   # alertmanager/rules.yml
+   groups:
+     - name: ideaflow
+       rules:
+         - alert: HighErrorRate
+           expr: rate(http_request_errors_total[5m]) > 0.1
+           for: 5m
+           labels:
+             severity: critical
+           annotations:
+             summary: High error rate detected
+         - alert: CircuitBreakerOpen
+           expr: circuit_breaker_state == 2
+           for: 1m
+           labels:
+             severity: warning
+           annotations:
+             summary: Circuit breaker is open
+   ```
+
+2. **Log Aggregation:**
+   - Use Vercel Logs or external service (Datadog, LogRocket)
+   - Monitor for error patterns
+   - Set up alerts for critical errors
+
+3. **Performance Monitoring:**
+   - Track response times via `/api/metrics`
+   - Monitor database latency
+   - Set up synthetic monitoring for key flows
+
+---
+
 ## Getting Help
 
 ### Before seeking help:
