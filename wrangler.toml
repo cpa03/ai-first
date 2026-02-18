@@ -11,11 +11,18 @@
 # - nodejs_compat: Enables Node.js APIs in Workers
 # - global_fetch_strictly_public: Security flag for fetch requests
 # - Static assets served via Workers with proper caching (_headers)
+# - CPU limits: Configured for optimal free tier usage
 # ============================================================
 
 name = "ai-first"
 compatibility_date = "2025-02-18"
 compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+
+# CPU limit for Workers (milliseconds)
+# Free tier: 10ms, Paid: 50ms (bundled), 900s (unbound)
+# Setting this helps catch performance issues early
+[limits]
+cpu_ms = 50
 
 # OpenNext outputs the worker to .open-next/worker.js
 main = ".open-next/worker.js"

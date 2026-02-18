@@ -452,13 +452,15 @@ Monitor errors via:
 
 ### Middleware Support
 
-OpenNext Cloudflare has limited middleware support. Node.js middleware (introduced in Next.js 15.2) is not yet supported. If you need security headers like CSP:
+OpenNext Cloudflare has limited middleware support. Node.js middleware (introduced in Next.js 15.2) is not yet supported. For security headers like CSP:
 
-1. **Option A**: Configure security headers directly in Cloudflare dashboard (recommended)
+1. **Option A (Recommended)**: Use `public/_headers` file - already configured with CSP
+   - Content-Security-Policy is set for all routes
+   - Allows Supabase, OpenAI, Anthropic, Notion, Trello, GitHub integrations
+   - Modify as needed for additional external services
+2. **Option B**: Configure security headers directly in Cloudflare dashboard
    - Go to: **Workers & Pages** → **ai-first** → **Settings** → **Headers**
-2. **Option B**: Use Cloudflare Page Rules for header modifications
-
-3. **Option C**: Wait for OpenNext Cloudflare middleware support to mature
+3. **Option C**: Use Cloudflare Page Rules for header modifications
 
 ### Edge Runtime
 
@@ -493,13 +495,31 @@ OpenNext Cloudflare uses Node.js runtime with `nodejs_compat` flag, not Edge run
 - Restrict access based on user authentication
 - Test RLS policies before production deployment
 
+### 5. Content-Security-Policy (CSP)
+
+The project includes a comprehensive CSP configured in `public/_headers`:
+
+- **Default**: `default-src 'self'` - Only allow resources from same origin
+- **Scripts**: Allows inline scripts and eval for Next.js hydration
+- **Styles**: Allows inline styles for Tailwind CSS
+- **Images**: Allows data URIs, blobs, and HTTPS sources
+- **Connect**: Allows connections to Supabase, OpenAI, Anthropic, Notion, Trello, GitHub
+- **Frame-Ancestors**: Prevents clickjacking by restricting embedding
+
+To modify CSP for additional services:
+
+1. Edit `public/_headers`
+2. Add new domains to the appropriate directive (e.g., `connect-src` for API calls)
+3. Test thoroughly - overly restrictive CSP can break functionality
+
 ## Cost Optimization
 
 ### Cloudflare Limits
 
 - Free tier: 100,000 requests/day
-- Workers: 10ms CPU time limit (free tier)
+- Workers: 10ms CPU time limit (free tier), 50ms configured in `wrangler.toml`
 - Pages: 500 builds/month (free tier)
+- CPU limits are configured in `wrangler.toml` to catch performance issues early
 
 ### Supabase Limits
 
