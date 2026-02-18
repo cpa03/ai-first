@@ -5,12 +5,47 @@
  * @see https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
  */
 
+import { CLEANUP_CONFIG } from './lib/config';
 import { resourceCleanupManager } from './lib/resource-cleanup';
 
+const GRACEFUL_SHUTDOWN_TIMEOUT_MS =
+  CLEANUP_CONFIG.RESOURCE_MANAGER.GRACEFUL_SHUTDOWN_TIMEOUT_MS;
+
+function performGracefulShutdown(signal: string): void {
+  const timestamp = new Date().toISOString();
+  console.log(
+    `[GRACEFUL] Received ${signal} at ${timestamp}. Starting graceful shutdown...`
+  );
+
+  const taskCount = resourceCleanupManager.getTaskCount();
+  console.log(`[GRACEFUL] Executing ${taskCount} registered cleanup tasks...`);
+
+  const forceExitTimeout = setTimeout(() => {
+    console.error(
+      `[GRACEFUL] Forced shutdown after ${GRACEFUL_SHUTDOWN_TIMEOUT_MS}ms - cleanup timed out`
+    );
+    process.exit(1);
+  }, GRACEFUL_SHUTDOWN_TIMEOUT_MS);
+
+  resourceCleanupManager
+    .cleanup()
+    .then(() => {
+      clearTimeout(forceExitTimeout);
+      console.log('[GRACEFUL] Graceful shutdown completed successfully');
+      process.exit(0);
+    })
+    .catch((error) => {
+      clearTimeout(forceExitTimeout);
+      console.error(
+        '[GRACEFUL] Error during graceful shutdown:',
+        error instanceof Error ? error.message : String(error)
+      );
+      process.exit(1);
+    });
+}
+
 export async function register() {
-  // Only register in Node.js runtime (not edge)
   if (process.env.NEXT_RUNTIME === 'nodejs') {
-    // Handle unhandled promise rejections
     process.on(
       'unhandledRejection',
       (reason: unknown, _promise: Promise<unknown>) => {
@@ -19,7 +54,6 @@ export async function register() {
           reason instanceof Error ? reason.message : String(reason);
         const stack = reason instanceof Error ? reason.stack : undefined;
 
-        // Use structured logging for production observability
         const logEntry = {
           level: 'fatal',
           type: 'unhandledRejection',
@@ -29,14 +63,11 @@ export async function register() {
           environment: process.env.NODE_ENV || 'unknown',
         };
 
-        // Log to stderr for proper log aggregation
         console.error(
           '[FATAL] Unhandled Promise Rejection:',
           JSON.stringify(logEntry)
         );
 
-        // In development, exit immediately to catch bugs early
-        // In production, continue running but log for monitoring
         if (process.env.NODE_ENV === 'development') {
           console.error(
             '[FATAL] Exiting due to unhandled rejection in development mode'
@@ -46,7 +77,6 @@ export async function register() {
       }
     );
 
-    // Handle uncaught exceptions
     process.on('uncaughtException', (error: Error) => {
       const timestamp = new Date().toISOString();
 
@@ -61,67 +91,13 @@ export async function register() {
 
       console.error('[FATAL] Uncaught Exception:', JSON.stringify(logEntry));
 
-      // Always exit on uncaught exceptions - the process is in an unknown state
       process.exit(1);
     });
 
-    // Graceful shutdown handler for SIGTERM (e.g., Kubernetes, Docker)
-    process.on('SIGTERM', async () => {
-      const timestamp = new Date().toISOString();
-      console.log(
-        `[GRACEFUL] Received SIGTERM at ${timestamp}. Starting graceful shutdown...`
-      );
+    process.on('SIGTERM', () => performGracefulShutdown('SIGTERM'));
 
-      try {
-        // Execute all registered cleanup tasks
-        const taskCount = resourceCleanupManager.getTaskCount();
-        console.log(
-          `[GRACEFUL] Executing ${taskCount} registered cleanup tasks...`
-        );
+    process.on('SIGINT', () => performGracefulShutdown('SIGINT'));
 
-        await resourceCleanupManager.cleanup();
-
-        console.log('[GRACEFUL] Graceful shutdown completed successfully');
-      } catch (error) {
-        console.error(
-          '[GRACEFUL] Error during graceful shutdown:',
-          error instanceof Error ? error.message : String(error)
-        );
-      }
-
-      // Exit with success code
-      process.exit(0);
-    });
-
-    // Graceful shutdown handler for SIGINT (Ctrl+C)
-    process.on('SIGINT', async () => {
-      const timestamp = new Date().toISOString();
-      console.log(
-        `[GRACEFUL] Received SIGINT at ${timestamp}. Starting graceful shutdown...`
-      );
-
-      try {
-        // Execute all registered cleanup tasks
-        const taskCount = resourceCleanupManager.getTaskCount();
-        console.log(
-          `[GRACEFUL] Executing ${taskCount} registered cleanup tasks...`
-        );
-
-        await resourceCleanupManager.cleanup();
-
-        console.log('[GRACEFUL] Graceful shutdown completed successfully');
-      } catch (error) {
-        console.error(
-          '[GRACEFUL] Error during graceful shutdown:',
-          error instanceof Error ? error.message : String(error)
-        );
-      }
-
-      // Exit with success code
-      process.exit(0);
-    });
-
-    // Log successful registration in non-production environments
     if (process.env.NODE_ENV !== 'production') {
       console.log(
         '[Instrumentation] Global error handlers registered successfully'
