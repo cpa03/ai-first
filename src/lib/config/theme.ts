@@ -172,10 +172,18 @@ export const ANIMATION_DELAYS = {
   SHORT: 100,
   /** Standard delay for element cleanup (URL revocation, DOM removal) */
   CLEANUP: 100,
+  /** Medium delay for staggered element transitions */
+  MEDIUM: 150,
+  /** Long delay for secondary element transitions */
+  LONG: 200,
+  /** Ripple animation duration */
+  RIPPLE: 600,
   /** Step celebration delay before transitioning */
   STEP_TRANSITION: 800,
   /** Shake animation duration */
   SHAKE: 500,
+  /** Progress bar transition duration */
+  PROGRESS: 700,
   /** Tailwind delay class mapping */
   TAILWIND: {
     0: 'delay-0',
@@ -187,6 +195,20 @@ export const ANIMATION_DELAYS = {
     500: 'delay-500',
     700: 'delay-700',
     1000: 'delay-1000',
+  } as const,
+  /**
+   * Inline style delay strings for use with style prop
+   * Returns string with 'ms' suffix for CSS transitions
+   */
+  INLINE: {
+    IMMEDIATE: '0ms',
+    MICRO: '50ms',
+    SHORT: '100ms',
+    MEDIUM: '150ms',
+    LONG: '200ms',
+    STANDARD: '300ms',
+    RIPPLE: '600ms',
+    STEP_TRANSITION: '800ms',
   } as const,
 } as const;
 

@@ -173,7 +173,7 @@ export default function StepCelebration({
                 ${isExiting ? 'scale-50 opacity-0' : 'scale-100 opacity-100'}
               `}
               style={{
-                transitionDelay: '100ms',
+                transitionDelay: ANIMATION_DELAYS.INLINE.SHORT,
               }}
             >
               <svg
@@ -191,7 +191,7 @@ export default function StepCelebration({
                   style={{
                     strokeDasharray: 24,
                     strokeDashoffset: isExiting ? 24 : 0,
-                    transition: 'stroke-dashoffset 300ms ease-out',
+                    transition: `stroke-dashoffset ${ANIMATION_DELAYS.INLINE.STANDARD} ease-out`,
                   }}
                 />
               </svg>
@@ -206,7 +206,7 @@ export default function StepCelebration({
                   ${isExiting ? 'scale-150 opacity-0' : 'scale-100 opacity-100'}
                 `}
                 style={{
-                  transition: 'all 600ms ease-out',
+                  transition: `all ${ANIMATION_DELAYS.INLINE.RIPPLE} ease-out`,
                 }}
               />
               <div
@@ -215,7 +215,7 @@ export default function StepCelebration({
                   ${isExiting ? 'scale-175 opacity-0' : 'scale-100 opacity-100'}
                 `}
                 style={{
-                  transition: 'all 800ms ease-out 100ms',
+                  transition: `all ${ANIMATION_DELAYS.INLINE.STEP_TRANSITION} ease-out ${ANIMATION_DELAYS.INLINE.SHORT}`,
                 }}
               />
             </>
@@ -229,7 +229,7 @@ export default function StepCelebration({
             ${isExiting ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}
           `}
           style={{
-            transitionDelay: '150ms',
+            transitionDelay: ANIMATION_DELAYS.INLINE.MEDIUM,
           }}
         >
           <p className="text-lg font-bold text-gray-900">
@@ -247,7 +247,7 @@ export default function StepCelebration({
             ${isExiting ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'}
           `}
           style={{
-            transitionDelay: '200ms',
+            transitionDelay: ANIMATION_DELAYS.INLINE.LONG,
           }}
         >
           <div
