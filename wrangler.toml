@@ -1,25 +1,56 @@
+# ============================================================
+# Cloudflare Workers Configuration for OpenNext
+# ============================================================
+# This project uses @opennextjs/cloudflare (recommended) instead of
+# the deprecated @cloudflare/next-on-pages package.
+#
+# @see https://opennext.js.org/cloudflare
+# @see https://developers.cloudflare.com/workers/wrangler/configuration/
+# ============================================================
+
 name = "ai-first"
-compatibility_date = "2024-01-01"
+compatibility_date = "2025-02-18"
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare Pages configuration for Next.js
-pages_build_output_dir = ".next"
+# OpenNext outputs the worker to .open-next/worker.js
+main = ".open-next/worker.js"
 
+# Assets binding for static files served by Cloudflare
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# ============================================================
+# Production Environment
+# ============================================================
 [env.production]
 name = "ai-first"
 
-[env.staging] 
+# Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
+# DO NOT hardcode sensitive values here
+[env.production.vars]
+# NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
+
+# ============================================================
+# Staging Environment
+# ============================================================
+[env.staging]
 name = "ai-first-staging"
 
-# Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
-# DO NOT hardcode sensitive values here - use environment-specific sections below
-
-[env.production.vars]
-# Set via Cloudflare dashboard: NEXT_PUBLIC_APP_URL
-
 [env.staging.vars]
-# Set via Cloudflare dashboard: NEXT_PUBLIC_APP_URL
+# NEXT_PUBLIC_APP_URL = "https://staging.ideaflow.ai"
 
-# For Cloudflare Pages deployment
-# Build command should be: npm run build
-# Output directory should be: .next
+# ============================================================
+# Deployment Notes
+# ============================================================
+# Build command: npm run build:cloudflare
+# Deploy command: npm run deploy:cloudflare
+# Preview locally: npm run preview:cloudflare
+#
+# Required environment variables in Cloudflare dashboard:
+# - NEXT_PUBLIC_SUPABASE_URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY
+# - SUPABASE_SERVICE_ROLE_KEY
+# - OPENAI_API_KEY (or ANTHROPIC_API_KEY)
+# - COST_LIMIT_DAILY
+# - NEXT_PUBLIC_APP_URL

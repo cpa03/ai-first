@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
 
 interface TaskManagementHeaderProps {
@@ -24,6 +24,12 @@ function TaskManagementHeaderComponent({
   onExpandAll,
   onCollapseAll,
 }: TaskManagementHeaderProps) {
+  // PERFORMANCE: Memoize progress bar style to prevent object recreation on each render
+  const progressStyle = useMemo(
+    () => ({ width: `${overallProgress}%` }),
+    [overallProgress]
+  );
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
@@ -50,7 +56,7 @@ function TaskManagementHeaderComponent({
       <div className="w-full bg-gray-200 rounded-full h-3">
         <div
           className="bg-primary-600 h-3 rounded-full transition-all duration-500"
-          style={{ width: `${overallProgress}%` }}
+          style={progressStyle}
           aria-valuenow={overallProgress}
           aria-valuemin={0}
           aria-valuemax={100}

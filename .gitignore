@@ -19,6 +19,10 @@ dist/
 # Vercel
 .vercel
 
+# OpenNext Cloudflare build output
+.open-next/
+.wrangler/
+
 # TypeScript
 *.tsbuildinfo
 # next-env.d.ts should be committed - see Next.js docs
