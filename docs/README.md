@@ -2,6 +2,42 @@
 
 Complete index of all IdeaFlow documentation.
 
+## 🚀 Quick Reference
+
+### Common Commands
+
+| Command              | Description                                  |
+| -------------------- | -------------------------------------------- |
+| `npm run dev`        | Start development server                     |
+| `npm run dev:check`  | Start dev server with environment validation |
+| `npm run build`      | Build for production                         |
+| `npm run lint`       | Run ESLint with 0 warnings allowed           |
+| `npm run type-check` | Run TypeScript type checking                 |
+| `npm test`           | Run all tests                                |
+| `npm run test:watch` | Run tests in watch mode                      |
+| `npm run check`      | Run lint + type-check + tests                |
+| `npm run env:check`  | Validate environment variables               |
+| `npm run db:migrate` | Run database migrations                      |
+
+### Quick Start for New Developers
+
+1. **Setup Environment**: See [Environment Setup](./environment-setup.md)
+2. **Run Development Server**: `npm run dev:check`
+3. **Check Health**: `curl http://localhost:3000/api/health`
+4. **Run All Checks**: `npm run check`
+
+### Architecture at a Glance
+
+| Layer    | Technology                       |
+| -------- | -------------------------------- |
+| Frontend | Next.js 16+ (App Router)         |
+| Backend  | Supabase (PostgreSQL + Auth)     |
+| AI       | OpenAI/Anthropic via abstraction |
+| Hosting  | Vercel / Cloudflare              |
+| CI/CD    | GitHub Actions                   |
+
+---
+
 ## Core Documentation
 
 - [Architecture](./architecture.md) - Technical architecture and system design
