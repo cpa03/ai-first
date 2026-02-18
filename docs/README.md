@@ -17,6 +17,7 @@ Complete index of all IdeaFlow documentation.
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
 - [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
 - [Environment Setup](./environment-setup.md) - Development environment setup
+- [Memory Management](./memory-management.md) - Memory optimization patterns and best practices
 
 ## Specialist Guides
 
@@ -44,6 +45,7 @@ Complete index of all IdeaFlow documentation.
 
 - [UI/UX Engineer](./ui-ux-engineer.md) - User interface guidelines
 - [Technical Writer](./technical-writer.md) - Documentation standards
+- [Technical Writer Tasks](./technical-writer-tasks.md) - Technical writing task assignments
 
 ## Project Management
 
