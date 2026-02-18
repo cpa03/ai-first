@@ -930,16 +930,17 @@ SELECT query, calls, mean_time, total_time FROM pg_stat_statements ORDER BY mean
 
 Located in `/supabase/migrations/`:
 
-| Migration                                         | Description                  |
-| ------------------------------------------------- | ---------------------------- |
-| 001_breakdown_engine_extensions.sql               | Adds breakdown engine tables |
-| 002_data_integrity_constraints.sql                | Adds CHECK constraints       |
-| 002_schema_optimization.sql                       | Performance optimizations    |
-| 003_vectors_pgvector_support.sql                  | Vector extension setup       |
-| 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns   |
-| 20260120_add_clarification_tables_and_indexes.sql | Clarification tables         |
-| 20260218_add_ideas_updated_at.sql                 | Ideas table updated_at       |
-| 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete    |
+| Migration                                         | Description                         |
+| ------------------------------------------------- | ----------------------------------- |
+| 001_breakdown_engine_extensions.sql               | Adds breakdown engine tables        |
+| 002_data_integrity_constraints.sql                | Adds CHECK constraints              |
+| 002_schema_optimization.sql                       | Performance optimizations           |
+| 003_vectors_pgvector_support.sql                  | Vector extension setup              |
+| 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns          |
+| 20260120_add_clarification_tables_and_indexes.sql | Clarification tables                |
+| 20260218_add_ideas_updated_at.sql                 | Ideas table updated_at              |
+| 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete           |
+| 20260218_add_missing_rls_policies.sql             | Missing RLS policies (#1189, #1172) |
 
 ### Migration Best Practices
 
@@ -999,6 +1000,21 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-18 - Missing RLS Policies Migration
+
+#### Security Enhancement
+
+1. **Added missing RLS UPDATE and DELETE policies to breakdown engine tables**
+   - Migration `20260218_add_missing_rls_policies.sql` adds 16 missing RLS policies
+   - Addresses GitHub Issues #1189 and #1172
+   - Tables affected: task_dependencies, milestones, task_assignments, time_tracking, task_comments, breakdown_sessions, timelines, risk_assessments
+   - All policies follow the pattern: users can only modify data they own through the idea chain
+   - Service role is always exempted for backend operations
+
+2. **Migration file includes down migration**
+   - `20260218_add_missing_rls_policies.down.sql` allows safe rollback
+   - Uses `DROP POLICY IF EXISTS` for idempotency
 
 ### 2026-02-18 - Ideas Table Updated_at Column
 
