@@ -1,8 +1,21 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ClarificationFlow from '@/components/ClarificationFlow';
 
-// Mock fetch
+// Mock fetchWithTimeout to avoid AbortController timeout issues in tests
+jest.mock('@/lib/api-client', () => ({
+  fetchWithTimeout: jest.fn(),
+}));
+
+import { fetchWithTimeout } from '@/lib/api-client';
+
+// Mock fetch for other tests
 global.fetch = jest.fn();
 
 describe('ClarificationFlow', () => {
@@ -11,22 +24,23 @@ describe('ClarificationFlow', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (fetch as jest.Mock).mockClear();
-    jest.useFakeTimers();
+    (fetchWithTimeout as jest.Mock).mockClear();
+    (fetchWithTimeout as jest.Mock).mockClear();
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+    jest.clearAllTimers();
   });
 
-  it('shows loading state initially', () => {
-    (fetch as jest.Mock).mockImplementation(() => new Promise(() => {})); // Never resolves
+  it('shows loading state initially', async () => {
+    (fetchWithTimeout as jest.Mock).mockImplementation(
+      () => new Promise(() => {})
+    ); // Never resolves
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     expect(
-      screen.getAllByText(/Generating questions\.\.\./i).length
+      screen.getAllByText(/Generating questions\.{3}/i).length
     ).toBeGreaterThan(0);
     // Check for loading spinner by its class name
     expect(document.querySelector('.animate-spin')).toBeInTheDocument();
@@ -48,7 +62,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -73,7 +87,7 @@ describe('ClarificationFlow', () => {
   });
 
   it('uses fallback questions when API returns no questions', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -99,7 +113,7 @@ describe('ClarificationFlow', () => {
   });
 
   it('uses fallback questions when API fails', async () => {
-    (fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
+    (fetchWithTimeout as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
@@ -127,7 +141,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -161,7 +175,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -188,7 +202,7 @@ describe('ClarificationFlow', () => {
 
   it('handles select input correctly', async () => {
     // Use fallback questions that include a select
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -263,7 +277,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -320,7 +334,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -359,7 +373,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -396,7 +410,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -419,7 +433,7 @@ describe('ClarificationFlow', () => {
   });
 
   it('shows error state when API fails', async () => {
-    (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+    (fetchWithTimeout as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
@@ -436,7 +450,7 @@ describe('ClarificationFlow', () => {
   });
 
   it('shows no questions state when no questions available', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -466,7 +480,7 @@ describe('ClarificationFlow', () => {
   });
 
   it('calls API with correct parameters', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -496,18 +510,21 @@ describe('ClarificationFlow', () => {
     );
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/clarify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idea: mockIdea, ideaId }),
-      });
+      expect(fetchWithTimeout).toHaveBeenCalledWith(
+        '/api/clarify',
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idea: mockIdea, ideaId }),
+        })
+      );
     });
   });
 
   it('handles API error response correctly', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: false,
       json: async () => ({ error: 'Invalid request' }),
     });
@@ -533,7 +550,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -572,7 +589,7 @@ describe('ClarificationFlow', () => {
       },
     ];
 
-    (fetch as jest.Mock).mockResolvedValueOnce({
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
         success: true,
@@ -598,7 +615,12 @@ describe('ClarificationFlow', () => {
   });
 
   it('submits on Ctrl+Enter', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => ({ data: { questions: [{ id: '1', question: 'Q?', type: 'open' }] } }) });
+    (fetchWithTimeout as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        data: { questions: [{ id: '1', question: 'Q?', type: 'open' }] },
+      }),
+    });
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
     const t = await screen.findByPlaceholderText(/enter your answer/i);
     fireEvent.change(t, { target: { value: 'A' } });
