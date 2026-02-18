@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 interface NavLink {
   href: string;
@@ -27,6 +28,12 @@ export default function MobileNav() {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const lastMenuItemRef = useRef<HTMLAnchorElement>(null);
+  const pathname = usePathname();
+
+  const isActive = (href: string): boolean => {
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname.startsWith(href);
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -111,18 +118,28 @@ export default function MobileNav() {
   if (!isMobile) {
     return (
       <nav aria-label="Main navigation">
-        <ul className="flex space-x-4 sm:space-x-8">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-gray-800 hover:text-primary-600 px-4 py-3 text-sm sm:text-base font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md min-h-[44px] inline-flex items-center hover:bg-gray-50"
-                aria-label={link.ariaLabel}
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
+        <ul className="flex space-x-2 sm:space-x-4">
+          {navLinks.map((link) => {
+            const active = isActive(link.href);
+            return (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className={`
+                    px-4 py-3 text-sm sm:text-base font-medium
+                    transition-all duration-300 ease-out
+                    border-b-2 ${active ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:border-primary-300'}
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-t-md min-h-[44px] inline-flex items-center
+                    ${active ? 'bg-primary-50/30' : 'hover:bg-gray-50'}
+                  `}
+                  aria-label={link.ariaLabel}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </nav>
     );
@@ -178,26 +195,43 @@ export default function MobileNav() {
             id="mobile-menu"
             className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[100] fade-in"
           >
-            <ul className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-4 bg-white">
-              {navLinks.map((link, index) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    ref={
-                      index === 0
-                        ? firstMenuItemRef
-                        : index === navLinks.length - 1
-                          ? lastMenuItemRef
-                          : undefined
-                    }
-                    onClick={closeMenu}
-                    className="w-full text-left px-6 py-4 text-lg font-semibold text-gray-800 hover:text-primary-600 hover:bg-gray-50 rounded-md transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 min-h-[56px] flex items-center"
-                    aria-label={link.ariaLabel}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
+            <ul className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-2 bg-white">
+              {navLinks.map((link, index) => {
+                const active = isActive(link.href);
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      ref={
+                        index === 0
+                          ? firstMenuItemRef
+                          : index === navLinks.length - 1
+                            ? lastMenuItemRef
+                            : undefined
+                      }
+                      onClick={closeMenu}
+                      className={`
+                        w-full text-left px-6 py-4 text-lg font-semibold
+                        transition-all duration-300 ease-out rounded-md
+                        border-l-[3px] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 min-h-[56px] flex items-center
+                      `}
+                      aria-label={link.ariaLabel}
+                      aria-current={active ? 'page' : undefined}
+                    >
+                      <span className="flex items-center gap-3">
+                        {active && (
+                          <span
+                            className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"
+                            aria-hidden="true"
+                          />
+                        )}
+                        {link.label}
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         </>
