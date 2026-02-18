@@ -8,7 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
-import { IDEA_CONFIG } from '@/lib/config';
+import { IDEA_CONFIG, STATUS_CODES } from '@/lib/config';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -57,7 +57,7 @@ async function handlePost(context: ApiContext) {
       confidence: session.confidence,
     },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }

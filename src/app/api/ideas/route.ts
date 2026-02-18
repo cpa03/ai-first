@@ -7,7 +7,7 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { requireAuth } from '@/lib/auth';
-import { APP_CONFIG } from '@/lib/config';
+import { APP_CONFIG, STATUS_CODES } from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
   const { request, rateLimit } = context;
@@ -64,7 +64,7 @@ async function handleGet(context: ApiContext) {
       },
     },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     rateLimit
   );
 }
@@ -109,7 +109,7 @@ async function handlePost(context: ApiContext) {
       createdAt: savedIdea.created_at,
     },
     context.requestId,
-    201,
+    STATUS_CODES.CREATED,
     context.rateLimit
   );
 }

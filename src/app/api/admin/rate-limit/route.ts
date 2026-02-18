@@ -9,6 +9,7 @@ import {
   tieredRateLimits,
 } from '@/lib/rate-limit';
 import { requireAdminAuth } from '@/lib/auth';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
   await requireAdminAuth(context.request);
@@ -42,7 +43,7 @@ async function handleGet(context: ApiContext) {
   return standardSuccessResponse(
     data,
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }
