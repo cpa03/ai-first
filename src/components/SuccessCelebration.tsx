@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { CELEBRATION_COLORS, ANIMATION_PHYSICS } from '@/lib/config';
+import {
+  CELEBRATION_COLORS,
+  ANIMATION_PHYSICS,
+  COMPONENT_DEFAULTS,
+} from '@/lib/config';
 
 interface Particle {
   id: number;
@@ -26,7 +30,7 @@ const PARTICLE_COUNT = ANIMATION_PHYSICS.PARTICLE_COUNT;
 export default function SuccessCelebration({
   show,
   onComplete,
-  duration = 2000,
+  duration = COMPONENT_DEFAULTS.SUCCESS_CELEBRATION.DURATION_MS,
 }: SuccessCelebrationProps) {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [isVisible, setIsVisible] = useState(false);
