@@ -17,6 +17,14 @@ interface HealthCheckResult {
   latency?: number;
   lastChecked: string;
   error?: string;
+  metrics?: {
+    totalConnections?: number;
+    failedConnections?: number;
+    lastSuccessfulConnection?: string | null;
+    lastFailedConnection?: string | null;
+    connectionHealthy?: boolean;
+    connectionRetries?: number;
+  };
 }
 
 interface ConnectorHealthInfo {
@@ -100,6 +108,7 @@ async function handleGet(context: ApiContext) {
         status: dbHealth.status,
         latency: Date.now() - dbStart,
         lastChecked: dbHealth.timestamp,
+        metrics: dbHealth.metrics,
       };
     })(),
     (async () => {

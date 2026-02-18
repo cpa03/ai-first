@@ -205,6 +205,16 @@ export class DatabaseService {
   private lastHealthCheck: Date | null = null;
   private _disposed = false;
 
+  // Connection metrics for observability
+  private connectionMetrics = {
+    totalConnections: 0,
+    failedConnections: 0,
+    lastSuccessfulConnection: null as Date | null,
+    lastFailedConnection: null as Date | null,
+    totalQueries: 0,
+    failedQueries: 0,
+  };
+
   private constructor() {
     this._client = supabaseClient;
     // SECURITY: _admin is lazy-loaded via getter to prevent client-side exposure
@@ -481,25 +491,52 @@ export class DatabaseService {
   // Connection health monitoring
   async checkConnection(): Promise<boolean> {
     try {
-      if (!this.client) return false;
+      if (!this.client) {
+        this.connectionMetrics.failedConnections++;
+        this.connectionMetrics.lastFailedConnection = new Date();
+        return false;
+      }
 
+      this.connectionMetrics.totalConnections++;
       const { error } = await this.client.from('ideas').select('id').limit(1);
       this.connectionHealthy = !error;
       this.lastHealthCheck = new Date();
+
+      if (error) {
+        this.connectionMetrics.failedConnections++;
+        this.connectionMetrics.lastFailedConnection = new Date();
+      } else {
+        this.connectionMetrics.lastSuccessfulConnection = new Date();
+      }
+
       return this.connectionHealthy;
     } catch {
       this.connectionHealthy = false;
+      this.connectionMetrics.failedConnections++;
+      this.connectionMetrics.lastFailedConnection = new Date();
       return false;
     }
   }
 
   isConnectionHealthy(): boolean {
-    // Check if last health check is within stale threshold
     if (!this.lastHealthCheck) return false;
     const staleThreshold = new Date(
       Date.now() - DATABASE.HEALTH_CHECK_STALE_THRESHOLD_MS
     );
     return this.connectionHealthy && this.lastHealthCheck > staleThreshold;
+  }
+
+  getConnectionMetrics() {
+    return {
+      ...this.connectionMetrics,
+      lastSuccessfulConnection:
+        this.connectionMetrics.lastSuccessfulConnection?.toISOString() ?? null,
+      lastFailedConnection:
+        this.connectionMetrics.lastFailedConnection?.toISOString() ?? null,
+      connectionHealthy: this.connectionHealthy,
+      lastHealthCheck: this.lastHealthCheck?.toISOString() ?? null,
+      connectionRetries: this.connectionRetries,
+    };
   }
 
   // Ideas CRUD operations
@@ -1306,7 +1343,11 @@ export class DatabaseService {
   }
 
   // Health check
-  async healthCheck(): Promise<{ status: string; timestamp: string }> {
+  async healthCheck(): Promise<{
+    status: string;
+    timestamp: string;
+    metrics?: ReturnType<DatabaseService['getConnectionMetrics']>;
+  }> {
     try {
       if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -1317,11 +1358,13 @@ export class DatabaseService {
       return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
+        metrics: this.getConnectionMetrics(),
       };
     } catch {
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
+        metrics: this.getConnectionMetrics(),
       };
     }
   }
