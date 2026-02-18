@@ -20,7 +20,7 @@ describe('ScrollToTop', () => {
   it('should not render when scroll position is below threshold', () => {
     render(<ScrollToTop showAt={400} />);
     expect(
-      screen.queryByLabelText('Scroll to top of page')
+      screen.queryByLabelText(/Scroll to top of page/)
     ).not.toBeInTheDocument();
   });
 
@@ -30,7 +30,7 @@ describe('ScrollToTop', () => {
 
     fireEvent.scroll(window);
 
-    expect(screen.getByLabelText('Scroll to top of page')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Scroll to top of page/)).toBeInTheDocument();
   });
 
   it('should scroll to top when clicked', () => {
@@ -38,7 +38,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} smooth={true} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText('Scroll to top of page');
+    const button = screen.getByLabelText(/Scroll to top of page/);
     fireEvent.click(button);
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -52,7 +52,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} smooth={false} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText('Scroll to top of page');
+    const button = screen.getByLabelText(/Scroll to top of page/);
     fireEvent.click(button);
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -66,7 +66,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText('Scroll to top of page');
+    const button = screen.getByLabelText(/Scroll to top of page/);
     fireEvent.keyDown(button, { key: 'Enter' });
 
     expect(mockScrollTo).toHaveBeenCalled();
@@ -77,7 +77,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText('Scroll to top of page');
+    const button = screen.getByLabelText(/Scroll to top of page/);
     fireEvent.keyDown(button, { key: ' ' });
 
     expect(mockScrollTo).toHaveBeenCalled();
@@ -88,7 +88,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText('Scroll to top of page');
+    const button = screen.getByLabelText(/Scroll to top of page/);
 
     expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveAttribute('aria-live', 'polite');
@@ -100,7 +100,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} className="custom-class" />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText('Scroll to top of page');
+    const button = screen.getByLabelText(/Scroll to top of page/);
 
     expect(button).toHaveClass('custom-class');
   });
@@ -112,13 +112,13 @@ describe('ScrollToTop', () => {
     fireEvent.scroll(window);
 
     expect(
-      screen.queryByLabelText('Scroll to top of page')
+      screen.queryByLabelText(/Scroll to top of page/)
     ).not.toBeInTheDocument();
 
     Object.defineProperty(window, 'scrollY', { value: 450, writable: true });
     fireEvent.scroll(window);
 
-    expect(screen.getByLabelText('Scroll to top of page')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Scroll to top of page/)).toBeInTheDocument();
   });
 
   it('should remove event listener on unmount', () => {
