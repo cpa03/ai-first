@@ -294,6 +294,18 @@ export const UI_CONFIG = {
     10,
     500
   ),
+
+  /**
+   * Toast swipe dismiss threshold (in pixels)
+   * Minimum swipe distance required to dismiss a toast notification
+   * Env: UI_TOAST_SWIPE_DISMISS_THRESHOLD (default: 80)
+   */
+  TOAST_SWIPE_DISMISS_THRESHOLD: EnvLoader.number(
+    'UI_TOAST_SWIPE_DISMISS_THRESHOLD',
+    80,
+    20,
+    200
+  ),
 } as const;
 
 /**
