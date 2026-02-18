@@ -10,6 +10,7 @@
     "start": "next start",
     "lint": "eslint src tests --max-warnings=0",
     "type-check": "tsc --noEmit",
+    "check": "npm run lint && npm run type-check && npm run test:ci",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
