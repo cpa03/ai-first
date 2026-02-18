@@ -112,7 +112,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           ${variantClasses[variant]}
           ${sizeClasses[size]}
           ${fullWidth ? 'w-full' : ''}
-          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'}
+          ${disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:transform-none motion-reduce:active:transform-none'}
           rounded-md font-medium transition-all duration-200
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${focusRingClasses[variant]} focus-visible:ring-offset-white
           motion-reduce:transition-none
