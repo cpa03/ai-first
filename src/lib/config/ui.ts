@@ -153,6 +153,59 @@ export const TOAST_CONFIG = {
   },
 } as const;
 
+/**
+ * Component default values
+ * Centralizes hardcoded defaults from components
+ */
+export const COMPONENT_DEFAULTS = {
+  /**
+   * SuccessCelebration component defaults
+   */
+  SUCCESS_CELEBRATION: {
+    /** Default animation duration in milliseconds */
+    DURATION_MS: 2000,
+    /** Default particle count */
+    PARTICLE_COUNT: 30,
+    /** Default reduced motion duration */
+    REDUCED_MOTION_DURATION_MS: 500,
+  } as const,
+
+  /**
+   * ScrollToTop component defaults
+   */
+  SCROLL_TO_TOP: {
+    /** Default scroll position (in pixels) to show button */
+    SHOW_AT_PX: 400,
+    /** Default smooth scroll behavior */
+    SMOOTH: true,
+    /** Circle radius for progress indicator */
+    PROGRESS_RADIUS: 22,
+    /** Progress stroke width */
+    STROKE_WIDTH: 2,
+  } as const,
+
+  /**
+   * AutoSaveIndicator component defaults
+   */
+  AUTO_SAVE_INDICATOR: {
+    /** Maximum progress percentage */
+    MAX_PROGRESS: 100,
+    /** Minimum progress percentage */
+    MIN_PROGRESS: 0,
+  } as const,
+
+  /**
+   * Progress calculation defaults
+   */
+  PROGRESS: {
+    /** Full percentage */
+    COMPLETE: 100,
+    /** Empty percentage */
+    EMPTY: 0,
+  } as const,
+} as const;
+
 export type UiConfig = typeof UI_CONFIG;
 export type ToastConfig = typeof TOAST_CONFIG;
 export type MessagesConfig = typeof MESSAGES;
+export type ComponentDefaults = typeof COMPONENT_DEFAULTS;
