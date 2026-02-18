@@ -327,11 +327,19 @@ Repository includes GitHub Actions workflows:
 - Runs on every pull request
 - Runs build, type-check, lint, and tests
 - Provides CI status checks
+- Handles PR/issue management and repairs
 
-**`.github/workflows/on-push.yml`**
+**`.github/workflows/iterate.yml`**
 
-- Runs on push to main
+- Runs on push to main and scheduled every 4 hours
+- Executes specialized agents (RepoKeeper, BugFixer, Palette, Flexy, Brocula)
 - Triggers deployment via Vercel git integration
+
+**`.github/workflows/parallel.yml`**
+
+- Runs on push to main and scheduled every 4 hours
+- Executes 18 domain specialists in parallel
+- Handles issue management and PR integration
 
 ### Automatic Deployment Flow
 

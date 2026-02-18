@@ -197,8 +197,9 @@ The project uses GitHub Actions for automated deployments:
 
 #### Workflows
 
-- **`.github/workflows/on-pull.yml`**: Runs on pull requests, performs CI checks
-- **`.github/workflows/on-push.yml`**: Runs on pushes to main, triggers deployment
+- **`.github/workflows/on-pull.yml`**: Runs on pull requests, performs CI checks and PR management
+- **`.github/workflows/iterate.yml`**: Runs on pushes to main (every 4 hours), executes specialized agents
+- **`.github/workflows/parallel.yml`**: Runs on pushes to main (every 4 hours), parallel specialist execution
 
 #### Cloudflare Build Check
 
