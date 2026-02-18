@@ -105,7 +105,48 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 | ---------- | ---------------------------------------------- | ---------------- | -------------------------------------------------------- |
 | 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
 | 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                    |
-| 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                  |
+| 2026-02-18 | #1171 - OWASP Security Headers Implementation  | ✅ Resolved      | All OWASP-recommended headers added                      |
+
+### Implementation Details (#1171)
+
+**Security Headers Added:**
+
+| Header                    | Value                                                | Purpose                          |
+| ------------------------- | ---------------------------------------------------- | -------------------------------- |
+| Content-Security-Policy   | See CSP configuration below                          | XSS and injection protection     |
+| X-Frame-Options           | DENY                                                 | Clickjacking protection          |
+| X-Content-Type-Options    | nosniff                                              | MIME sniffing prevention         |
+| Referrer-Policy           | strict-origin-when-cross-origin                      | Privacy protection               |
+| Strict-Transport-Security | max-age=31536000; includeSubDomains; preload         | HTTPS enforcement                |
+| Permissions-Policy        | camera=(), microphone=(), geolocation=(), ...        | Feature policy restriction       |
+
+**CSP Configuration:**
+```
+default-src 'self';
+script-src 'self' 'nonce-<unique-per-request>';
+style-src 'self' 'unsafe-inline';
+img-src 'self' data: https: blob:;
+font-src 'self' data:;
+object-src 'none';
+base-uri 'self';
+form-action 'self';
+frame-ancestors 'none';
+upgrade-insecure-requests;
+connect-src 'self' https://*.supabase.co;
+worker-src 'self';
+manifest-src 'self'
+```
+
+**Environment Variable Support:**
+- `SECURITY_HSTS_MAX_AGE` - HSTS max-age value (default: 31536000)
+- `SECURITY_HSTS_INCLUDE_SUBDOMAINS` - Include subdomains (default: true)
+- `SECURITY_HSTS_PRELOAD` - Enable HSTS preload (default: true)
+
+**Files Modified:**
+- `next.config.js` - Added async headers() configuration
+- `src/lib/security/csp.ts` - CSP builder utility (new file)
+- `src/middleware.ts` - CSP nonce generation middleware (new file)
+- `SECURITY.md` - Updated audit log (this file)
 
 ## Current npm Audit Status (2026-02-18)
 
