@@ -4,6 +4,7 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 import { APP_CONFIG } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 function isSensitiveVar(varName: string): boolean {
   const upper = varName.toUpperCase();
@@ -94,7 +95,12 @@ async function handleGet(context: ApiContext) {
     environment: envStatus.environment,
   };
 
-  return standardSuccessResponse(envStatus, context.requestId, 200, rateLimit);
+  return standardSuccessResponse(
+    envStatus,
+    context.requestId,
+    STATUS_CODES.OK,
+    rateLimit
+  );
 }
 
 export const GET = withApiHandler(handleGet, {

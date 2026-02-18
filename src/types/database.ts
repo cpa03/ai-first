@@ -278,6 +278,7 @@ export interface Database {
           lag_days: number;
           predecessor_task_id: string;
           successor_task_id: string;
+          updated_at: string;
         };
         Insert: {
           created_at?: string;
@@ -290,6 +291,7 @@ export interface Database {
           lag_days?: number;
           predecessor_task_id: string;
           successor_task_id: string;
+          updated_at?: string;
         };
         Update: {
           created_at?: string;
@@ -302,6 +304,7 @@ export interface Database {
           lag_days?: number;
           predecessor_task_id?: string;
           successor_task_id?: string;
+          updated_at?: string;
         };
       };
       milestones: {

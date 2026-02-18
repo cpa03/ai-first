@@ -6,11 +6,16 @@
 #
 # @see https://opennext.js.org/cloudflare
 # @see https://developers.cloudflare.com/workers/wrangler/configuration/
+#
+# Best Practices Applied:
+# - nodejs_compat: Enables Node.js APIs in Workers
+# - global_fetch_strictly_public: Security flag for fetch requests
+# - Static assets served via Workers with proper caching (_headers)
 # ============================================================
 
 name = "ai-first"
 compatibility_date = "2025-02-18"
-compatibility_flags = ["nodejs_compat"]
+compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
 
 # OpenNext outputs the worker to .open-next/worker.js
 main = ".open-next/worker.js"
