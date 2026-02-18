@@ -10,6 +10,7 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TASK_CONFIG } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 const VALID_STATUSES = [
   TASK_CONFIG.STATUSES.TODO,
@@ -123,7 +124,7 @@ async function handlePut(context: ApiContext) {
     return standardSuccessResponse(
       { task: updatedTask },
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       context.rateLimit
     );
   } catch (error) {
@@ -133,7 +134,7 @@ async function handlePut(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.INTERNAL.UPDATE_TASK_FAILED,
       ErrorCode.INTERNAL_ERROR,
-      500
+      STATUS_CODES.INTERNAL_ERROR
     );
   }
 }
@@ -168,7 +169,7 @@ async function handleDelete(context: ApiContext) {
     return standardSuccessResponse(
       { message: 'Task deleted successfully', taskId },
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       context.rateLimit
     );
   } catch (error) {
@@ -178,7 +179,7 @@ async function handleDelete(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.INTERNAL.DELETE_TASK_FAILED,
       ErrorCode.INTERNAL_ERROR,
-      500
+      STATUS_CODES.INTERNAL_ERROR
     );
   }
 }
@@ -210,7 +211,7 @@ async function handleGet(context: ApiContext) {
     return standardSuccessResponse(
       { task: taskWithOwnership },
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       context.rateLimit
     );
   } catch (error) {
@@ -220,7 +221,7 @@ async function handleGet(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.INTERNAL.FETCH_TASK_FAILED,
       ErrorCode.INTERNAL_ERROR,
-      500
+      STATUS_CODES.INTERNAL_ERROR
     );
   }
 }

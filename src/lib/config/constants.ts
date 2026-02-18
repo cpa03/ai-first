@@ -455,6 +455,18 @@ export const AI_CONFIG = {
   ),
 
   /**
+   * Cost tracker cleanup interval in milliseconds
+   * Prevents memory leaks by periodically cleaning old cost tracker entries
+   * Env: AI_COST_TRACKER_CLEANUP_INTERVAL_MS (default: 300000 = 5 minutes)
+   */
+  COST_TRACKER_CLEANUP_INTERVAL_MS: EnvLoader.number(
+    'AI_COST_TRACKER_CLEANUP_INTERVAL_MS',
+    5 * 60 * 1000,
+    60000,
+    3600000
+  ),
+
+  /**
    * Maximum iterations for context window truncation loop
    * Prevents infinite loops when removing messages from context
    * NOTE: Not environment-configurable as this is a safety limit

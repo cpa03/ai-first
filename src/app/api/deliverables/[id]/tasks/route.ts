@@ -8,7 +8,7 @@ import {
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
-import { TASK_VALIDATION } from '@/lib/config/constants';
+import { TASK_VALIDATION, STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TASK_CONFIG } from '@/lib/config';
 
@@ -128,7 +128,7 @@ async function handlePost(context: ApiContext) {
         message: 'Task created successfully',
       },
       context.requestId,
-      201,
+      STATUS_CODES.CREATED,
       context.rateLimit
     );
   } catch (error) {
@@ -138,7 +138,7 @@ async function handlePost(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.INTERNAL.CREATE_TASK_FAILED,
       ErrorCode.INTERNAL_ERROR,
-      500
+      STATUS_CODES.INTERNAL_ERROR
     );
   }
 }

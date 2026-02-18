@@ -9,6 +9,7 @@ import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_CONFIG } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 const VALID_STATUSES = [
   TASK_CONFIG.STATUSES.TODO,
@@ -83,7 +84,7 @@ async function handlePatch(context: ApiContext) {
         message: `Task status updated to ${body.status}`,
       },
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       context.rateLimit
     );
   } catch (error) {
@@ -93,7 +94,7 @@ async function handlePatch(context: ApiContext) {
     throw new AppError(
       'Failed to update task status',
       ErrorCode.INTERNAL_ERROR,
-      500
+      STATUS_CODES.INTERNAL_ERROR
     );
   }
 }

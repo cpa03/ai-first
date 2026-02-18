@@ -8,6 +8,7 @@ import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -19,7 +20,7 @@ async function handleGet(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.VALIDATION.IDEA_ID_REQUIRED,
       ErrorCode.VALIDATION_ERROR,
-      400
+      STATUS_CODES.BAD_REQUEST
     );
   }
 
@@ -113,7 +114,7 @@ async function handleGet(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.INTERNAL.FETCH_TASKS_FAILED,
       ErrorCode.INTERNAL_ERROR,
-      500
+      STATUS_CODES.INTERNAL_ERROR
     );
   }
 }
