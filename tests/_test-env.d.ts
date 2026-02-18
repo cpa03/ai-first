@@ -2,7 +2,7 @@
  * Test environment type declarations
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-var */
 declare global {
   // Mock for fetch with Jest methods
   var fetch: jest.Mock<Promise<Response>>;

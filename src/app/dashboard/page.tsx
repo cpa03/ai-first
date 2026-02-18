@@ -40,6 +40,15 @@ const statusLabels: Record<string, string> = {
 
 const logger = createLogger('DashboardPage');
 
+// PERFORMANCE: Move formatDate outside component - pure function doesn't need recreation
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
 export default function DashboardPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -114,15 +123,15 @@ export default function DashboardPage() {
     }
   }, [fetchIdeas, authLoading, isAuthenticated]);
 
-  const openDeleteModal = (idea: Idea) => {
+  const openDeleteModal = useCallback((idea: Idea) => {
     setDeleteModal({ isOpen: true, idea });
-  };
+  }, []);
 
-  const closeDeleteModal = () => {
+  const closeDeleteModal = useCallback(() => {
     setDeleteModal({ isOpen: false, idea: null });
-  };
+  }, []);
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!deleteModal.idea) return;
 
     const id = deleteModal.idea.id;
@@ -144,7 +153,7 @@ export default function DashboardPage() {
         throw new Error(data.error || 'Failed to delete idea');
       }
 
-      setIdeas(ideas.filter((idea) => idea.id !== id));
+      setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
       closeDeleteModal();
     } catch (err) {
       logger.error('Error deleting idea:', err);
@@ -152,15 +161,14 @@ export default function DashboardPage() {
     } finally {
       setDeletingId(null);
     }
-  };
+  }, [deleteModal.idea, closeDeleteModal]);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
+  const handleModalBackdropClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.target === e.currentTarget) closeDeleteModal();
+    },
+    [closeDeleteModal]
+  );
 
   // Refs for focus management
   const modalRef = useRef<HTMLDivElement>(null);
@@ -218,7 +226,7 @@ export default function DashboardPage() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [deleteModal.isOpen]);
+  }, [deleteModal.isOpen, closeDeleteModal]);
 
   if (loading) {
     return (
@@ -439,9 +447,7 @@ export default function DashboardPage() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-modal-title"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) closeDeleteModal();
-          }}
+          onClick={handleModalBackdropClick}
         >
           <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 transform transition-all">
             <div className="flex items-center gap-3 mb-4">
