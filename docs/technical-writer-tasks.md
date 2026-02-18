@@ -1395,6 +1395,68 @@ All documentation links in README.md verified:
 
 ---
 
+### Task 17: Remove Duplicate Content from Error Codes Documentation ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-18
+
+#### Objectives
+
+- Remove duplicate "Common Causes" and "Example Response" sections in error-codes.md
+- Improve documentation readability and reduce confusion
+- Ensure single source of truth for error code documentation
+
+#### Issues Found
+
+**docs/error-codes.md** had duplicate content blocks in 8 error codes:
+
+- INTERNAL_ERROR
+- AUTHENTICATION_ERROR
+- AUTHORIZATION_ERROR
+- NOT_FOUND
+- CONFLICT
+- SERVICE_UNAVAILABLE
+- CIRCUIT_BREAKER_OPEN
+- RETRY_EXHAUSTED
+
+Each of these error codes had:
+
+1. Complete section with Common Causes + Example Response + Suggestions
+2. Duplicate Common Causes + Example Response (without suggestions)
+3. Resolution text
+
+This duplication made the documentation longer and harder to read.
+
+#### Completed Work
+
+1. **Removed duplicate sections** from 8 error codes
+2. **Maintained enhanced sections** with suggestions field
+3. **Kept resolution guidance** for each error code
+4. **Reduced file length** by ~130 lines of redundant content
+
+#### Verification
+
+- `npm run lint`: ✅ 0 errors, 0 warnings
+- `npm run type-check`: ✅ 0 errors
+- `npm run build`: ✅ Build successful
+- Documentation is cleaner and easier to read
+
+#### Files Modified
+
+- `docs/error-codes.md` (CLEANED - removed duplicate sections from 8 error codes)
+
+#### Success Criteria Met
+
+- [x] Duplicate content removed from error codes
+- [x] Enhanced sections with suggestions retained
+- [x] Documentation is clearer and more concise
+- [x] Lint passes (0 errors)
+- [x] Type-check passes (0 errors)
+- [x] Build succeeds
+
+---
+
 ## Next Steps for Future Documentation
 
 Potential improvements for future iterations:
@@ -1411,4 +1473,4 @@ Potential improvements for future iterations:
 
 **Last Updated**: 2026-02-18
 **Agent**: Technical Writer
-**Documentation Version**: 0.5.2
+**Documentation Version**: 0.5.3

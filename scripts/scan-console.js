@@ -47,10 +47,19 @@ async function scanPage(page, url) {
       text.includes('Failed to load resource') ||
       text.includes('the server responded with a status of');
 
+    // Filter out expected Supabase initialization warnings in dev mode
+    // These warnings are expected when running without Supabase environment variables
+    const isExpectedDevWarning =
+      text.includes('[DatabaseService] Supabase client not initialized') &&
+      text.includes('Check environment variables');
+
     if (type === 'error' && !isExpectedAPIError) {
       pageErrors.push(logEntry);
       errors.push(logEntry);
-    } else if (type === 'warning' || text.toLowerCase().includes('warning')) {
+    } else if (
+      (type === 'warning' || text.toLowerCase().includes('warning')) &&
+      !isExpectedDevWarning
+    ) {
       pageWarnings.push(logEntry);
       warnings.push(logEntry);
     }

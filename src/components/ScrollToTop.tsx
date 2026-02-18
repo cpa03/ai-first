@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { COMPONENT_DEFAULTS } from '@/lib/config';
 
 interface ScrollToTopProps {
   showAt?: number;
@@ -9,8 +10,8 @@ interface ScrollToTopProps {
 }
 
 export default function ScrollToTop({
-  showAt = 400,
-  smooth = true,
+  showAt = COMPONENT_DEFAULTS.SCROLL_TO_TOP.SHOW_AT_PX,
+  smooth = COMPONENT_DEFAULTS.SCROLL_TO_TOP.SMOOTH,
   className = '',
 }: ScrollToTopProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -84,7 +85,8 @@ export default function ScrollToTop({
 
   if (!isVisible) return null;
 
-  const circumference = 2 * Math.PI * 22;
+  const circumference =
+    2 * Math.PI * COMPONENT_DEFAULTS.SCROLL_TO_TOP.PROGRESS_RADIUS;
   const strokeDashoffset =
     circumference - (scrollProgress / 100) * circumference;
 

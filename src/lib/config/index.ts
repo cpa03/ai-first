@@ -33,6 +33,7 @@ export {
   BUTTON_LABELS,
   TOAST_CONFIG,
   MESSAGES,
+  COMPONENT_DEFAULTS,
 } from './ui';
 
 // SEO Configuration
@@ -143,6 +144,7 @@ export type { ExportConnectorConfig } from './export-connectors';
 export type { TimelineConfig, TaskConfig, IdeaConfig } from './timeline';
 export type { UiConfig, ToastConfig, MessagesConfig } from './ui';
 export type { SeoConfig, FontConfig } from './seo';
+export type { ComponentDefaults } from './ui';
 export type {
   ValidationConfig,
   SanitizationConfig,
