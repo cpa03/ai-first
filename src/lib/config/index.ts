@@ -127,6 +127,14 @@ export {
   RETRY_VALUES,
 } from './constants';
 
+// Configuration Validator
+export {
+  validateConfiguration,
+  validateConfigurationOrThrow,
+  isConfigurationHealthy,
+  type ConfigValidationResult,
+} from './config-validator';
+
 // Type exports
 export type { AppConfig } from './app';
 export type { ExportConnectorConfig } from './export-connectors';
