@@ -3,8 +3,30 @@
 # Environment Setup Validation Script
 # This script validates that all required environment variables are set
 # and includes security validations for sensitive configuration values
+#
+# Usage:
+#   ./scripts/validate-env.sh           # Full validation (for local dev)
+#   ./scripts/validate-env.sh --ci      # CI mode (strict, exit on error)
+#   ./scripts/validate-env.sh --quick   # Quick mode (only required vars)
 
 set -e
+
+# Parse arguments
+CI_MODE=false
+QUICK_MODE=false
+
+for arg in "$@"; do
+    case $arg in
+        --ci)
+            CI_MODE=true
+            shift
+            ;;
+        --quick)
+            QUICK_MODE=true
+            shift
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -24,6 +46,16 @@ security_warnings=0
 print_status() {
     local status=$1
     local message=$2
+    
+    if [ "$CI_MODE" = true ]; then
+        case $status in
+            "OK") echo "[OK] $message" ;;
+            "WARN") echo "[WARN] $message" ;;
+            "ERROR") echo "[ERROR] $message" ;;
+            "INFO") echo "[INFO] $message" ;;
+        esac
+        return
+    fi
     
     case $status in
         "OK")
@@ -191,21 +223,39 @@ validate_cost_limit() {
 
 # Main validation function
 main() {
-    echo -e "${BLUE}🔍 Environment Configuration Validation${NC}"
-    echo -e "${BLUE}============================================${NC}"
+    if [ "$CI_MODE" = true ]; then
+        echo "Environment Configuration Validation (CI Mode)"
+        echo "================================================"
+    elif [ "$QUICK_MODE" = true ]; then
+        echo "Environment Configuration Validation (Quick Mode)"
+        echo "=================================================="
+    else
+        echo -e "${BLUE}🔍 Environment Configuration Validation${NC}"
+        echo -e "${BLUE}============================================${NC}"
+    fi
     echo
     
     # Load environment from .env.local if it exists
     if [ -f ".env.local" ]; then
         print_status "INFO" "Loading environment from .env.local"
-        export $(grep -v '^#' .env.local | xargs)
+        set -a
+        source <(grep -v '^#' .env.local | grep -v '^\s*$')
+        set +a
     else
-        print_status "WARN" ".env.local file not found"
-        print_status "INFO" "Create .env.local from config/.env.example"
+        if [ "$CI_MODE" = true ]; then
+            print_status "WARN" ".env.local not found (CI may use secrets)"
+        else
+            print_status "WARN" ".env.local file not found"
+            print_status "INFO" "Create .env.local from config/.env.example"
+        fi
     fi
     
     echo
-    echo -e "${BLUE}Checking Required Variables:${NC}"
+    if [ "$CI_MODE" = true ]; then
+        echo "Checking Required Variables:"
+    else
+        echo -e "${BLUE}Checking Required Variables:${NC}"
+    fi
     echo
     
     # Initialize error count
@@ -218,8 +268,24 @@ main() {
     check_env_var "COST_LIMIT_DAILY" "true" || ((errors++))
     check_env_var "NEXT_PUBLIC_APP_URL" "true" || ((errors++))
     
+    # Skip detailed validation in quick mode
+    if [ "$QUICK_MODE" = true ]; then
+        echo
+        if [ $errors -eq 0 ]; then
+            print_status "OK" "Required environment variables are set"
+            exit 0
+        else
+            print_status "ERROR" "Found $errors configuration error(s)"
+            exit 1
+        fi
+    fi
+    
     echo
-    echo -e "${BLUE}Validating Configurations:${NC}"
+    if [ "$CI_MODE" = true ]; then
+        echo "Validating Configurations:"
+    else
+        echo -e "${BLUE}Validating Configurations:${NC}"
+    fi
     echo
     
     # Validate Supabase
@@ -230,6 +296,19 @@ main() {
     
     # Validate cost limit
     validate_cost_limit || ((errors++))
+    
+    # Skip optional integrations in CI mode
+    if [ "$CI_MODE" = true ]; then
+        echo
+        echo "================================================"
+        if [ $errors -eq 0 ]; then
+            print_status "OK" "CI environment configuration is valid"
+            exit 0
+        else
+            print_status "ERROR" "Found $errors configuration error(s)"
+            exit 1
+        fi
+    fi
     
     echo
     echo -e "${BLUE}Security Validations:${NC}"
