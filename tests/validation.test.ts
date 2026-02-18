@@ -8,6 +8,8 @@ import {
   MAX_IDEA_LENGTH,
   MIN_IDEA_LENGTH,
   MAX_IDEA_ID_LENGTH,
+  validateUserStoryFormat,
+  validateIdeaWithUserStory,
 } from '@/lib/validation';
 
 describe('validateIdea', () => {
@@ -945,6 +947,245 @@ describe('buildErrorResponse', () => {
 
       expect(body.details[0].message).toContain('🚀');
       expect(body.details[0].message).toContain('中文');
+    });
+  });
+});
+
+describe('validateUserStoryFormat', () => {
+  describe('when validation is disabled', () => {
+    it('should return valid when disabled', () => {
+      const result = validateUserStoryFormat('Any text', { enabled: false });
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+  });
+
+  describe('valid user stories', () => {
+    it('should accept valid user story with all components', () => {
+      const idea =
+        'As a startup founder, I want to quickly convert my app idea into a prioritized task list, So that I can start development with a clear roadmap.';
+      const result = validateUserStoryFormat(idea, {
+        enabled: true,
+        strict: true,
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+      expect(result.persona).toBe('startup founder');
+      expect(result.goal).toBe(
+        'to quickly convert my app idea into a prioritized task list'
+      );
+      expect(result.benefit).toBe(
+        'I can start development with a clear roadmap.'
+      );
+    });
+
+    it('should accept user story with "As an" prefix', () => {
+      const idea =
+        'As an administrator, I want to manage users, So that I can control access.';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(true);
+      expect(result.persona).toBe('administrator');
+    });
+
+    it('should accept user story with "In order to" benefit format', () => {
+      const idea =
+        'As a developer, I want to see API documentation, In order to integrate faster.';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(true);
+      expect(result.benefit).toBe('integrate faster.');
+    });
+
+    it('should be case-insensitive', () => {
+      const idea =
+        'AS A STARTUP FOUNDER, I WANT TO CREATE AN APP, SO THAT I CAN MAKE MONEY';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(true);
+    });
+
+    it('should handle optional commas', () => {
+      const idea =
+        'As a product manager I want to export my plan So that I can share it with my team';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(true);
+    });
+
+    it('should suggest known personas for unknown personas', () => {
+      const idea =
+        'As a random person, I want to do something, So that I can achieve a goal.';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(true);
+      expect(result.suggestions).toBeDefined();
+      expect(
+        result.suggestions?.some((s) => s.includes('startup founder'))
+      ).toBe(true);
+    });
+  });
+
+  describe('partial user stories', () => {
+    it('should detect partial user story without benefit', () => {
+      const idea = 'As a startup founder, I want to create a landing page';
+      const result = validateUserStoryFormat(idea, {
+        enabled: true,
+        strict: true,
+      });
+
+      expect(result.valid).toBe(false);
+      expect(result.isPartial).toBe(true);
+      expect(result.errors.some((e) => e.message.includes('benefit'))).toBe(
+        true
+      );
+    });
+
+    it('should accept partial user story in non-strict mode', () => {
+      const idea = 'As a startup founder, I want to create a landing page';
+      const result = validateUserStoryFormat(idea, {
+        enabled: true,
+        strict: false,
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.isPartial).toBe(true);
+    });
+  });
+
+  describe('invalid user stories', () => {
+    it('should reject non-user-story format in strict mode', () => {
+      const idea = 'I want to build a SaaS product';
+      const result = validateUserStoryFormat(idea, {
+        enabled: true,
+        strict: true,
+      });
+
+      expect(result.valid).toBe(false);
+      expect(
+        result.errors.some((e) => e.message.includes('user story format'))
+      ).toBe(true);
+    });
+
+    it('should accept non-user-story format in non-strict mode', () => {
+      const idea = 'I want to build a SaaS product';
+      const result = validateUserStoryFormat(idea, {
+        enabled: true,
+        strict: false,
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.suggestions).toBeDefined();
+    });
+
+    it('should reject persona that is too short', () => {
+      const idea = 'As a x, I want to create something, So that I can benefit.';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('Persona'))).toBe(
+        true
+      );
+    });
+
+    it('should reject goal that is too short', () => {
+      const idea =
+        'As a founder, I want x, So that I can benefit from this feature.';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('Goal'))).toBe(true);
+    });
+
+    it('should reject benefit that is too short', () => {
+      const idea = 'As a founder, I want to create a product, So that x.';
+      const result = validateUserStoryFormat(idea, { enabled: true });
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes('Benefit'))).toBe(
+        true
+      );
+    });
+  });
+});
+
+describe('validateIdeaWithUserStory', () => {
+  describe('basic validation', () => {
+    it('should pass basic validation without user story check', () => {
+      const idea = 'I want to build a SaaS product for analytics';
+      const result = validateIdeaWithUserStory(idea, {
+        validateUserStory: false,
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.errors).toEqual([]);
+    });
+
+    it('should fail for invalid idea regardless of user story check', () => {
+      const idea = 'short';
+      const result = validateIdeaWithUserStory(idea, {
+        validateUserStory: false,
+      });
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+  });
+
+  describe('with user story validation enabled', () => {
+    it('should pass for valid user story', () => {
+      const idea =
+        'As a startup founder, I want to quickly convert my app idea into a prioritized task list, So that I can start development with a clear roadmap.';
+      const result = validateIdeaWithUserStory(idea, {
+        validateUserStory: true,
+        strictUserStory: true,
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.persona).toBe('startup founder');
+      expect(result.goal).toBeDefined();
+      expect(result.benefit).toBeDefined();
+    });
+
+    it('should fail for non-user-story in strict mode', () => {
+      const idea = 'I want to build a SaaS product for analytics';
+      const result = validateIdeaWithUserStory(idea, {
+        validateUserStory: true,
+        strictUserStory: true,
+      });
+
+      expect(result.valid).toBe(false);
+      expect(result.suggestions).toBeDefined();
+    });
+
+    it('should pass for non-user-story in non-strict mode', () => {
+      const idea = 'I want to build a SaaS product for analytics';
+      const result = validateIdeaWithUserStory(idea, {
+        validateUserStory: true,
+        strictUserStory: false,
+      });
+
+      expect(result.valid).toBe(true);
+      expect(result.suggestions).toBeDefined();
+    });
+  });
+
+  describe('edge cases', () => {
+    it('should handle null input', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = validateIdeaWithUserStory(null as any);
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it('should handle undefined input', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = validateIdeaWithUserStory(undefined as any);
+
+      expect(result.valid).toBe(false);
     });
   });
 });
