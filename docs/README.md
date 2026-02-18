@@ -34,6 +34,7 @@ Complete index of all IdeaFlow documentation.
 - [Security Engineer](./security-engineer.md) - Security best practices
 - [Security Assessment](./security-assessment.md) - Security audit guidelines
 - [Security Headers](./security-headers.md) - HTTP security headers reference
+- [Security Sentinel](./security/sentinel.md) - Security vulnerability log and lessons learned
 - [Quality Assurance](./quality-assurance.md) - Testing and quality standards
 - [Performance Engineer](./performance-engineer.md) - Performance optimization
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
@@ -74,6 +75,7 @@ Complete index of all IdeaFlow documentation.
 ## Subdirectories
 
 - [API Specifications](./api/) - OpenAPI specifications
+- [Security](./security/) - Security documentation and logs
 - [Templates](./templates/) - User-downloadable templates
 
 ---

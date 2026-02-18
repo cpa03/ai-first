@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
+import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
 import Alert from './Alert';
 import Button from './Button';
@@ -74,7 +75,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     setError(null);
 
     try {
-      const response = await fetch('/api/ideas', {
+      const response = await fetchWithTimeout('/api/ideas', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

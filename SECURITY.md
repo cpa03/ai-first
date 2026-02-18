@@ -105,6 +105,39 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 | ---------- | ---------------------------------------------- | ---------------- | -------------------------------------------------------- |
 | 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
 | 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                    |
+| 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                  |
+
+## Current npm Audit Status (2026-02-18)
+
+**Summary**: 46 vulnerabilities detected (1 low, 18 moderate, 27 high, 0 critical)
+
+### Vulnerability Breakdown
+
+| Category             | Count | Risk Level | Notes                                            |
+| -------------------- | ----- | ---------- | ------------------------------------------------ |
+| Production deps      | 0     | ✅ Safe    | No direct production vulnerabilities             |
+| DevDependencies      | 46    | ⚠️ Low     | All in dev tooling, not deployed                 |
+| Transitive (AWS SDK) | 27    | ⚠️ Low     | From @opennextjs/cloudflare, not used at runtime |
+
+### Accepted Risks
+
+1. **eslint/ajv vulnerabilities** (18 moderate) - DevDependencies only
+   - ReDoS in ajv when using `$data` option
+   - Not exploitable in production builds
+   - Breaking change required to update
+
+2. **fast-xml-parser** (27 high) - Transitive dependency
+   - From @opennextjs/cloudflare → AWS SDK chain
+   - DoS through entity expansion in DOCTYPE
+   - Not used at runtime in deployed application
+   - Requires major dependency tree changes to fix
+
+### Mitigation
+
+- Production dependencies are clean (0 vulnerabilities)
+- All vulnerabilities are in development/build tooling
+- Runtime application is not affected
+- Regular monitoring for new vulnerabilities
 
 ---
 
