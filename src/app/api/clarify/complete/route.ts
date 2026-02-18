@@ -9,6 +9,7 @@ import {
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handlePost(context: ApiContext) {
   const { request, rateLimit: _rateLimit } = context;
@@ -36,7 +37,12 @@ async function handlePost(context: ApiContext) {
 
   const result = await clarifierAgent.completeClarification(ideaId.trim());
 
-  return standardSuccessResponse(result, context.requestId, 200, _rateLimit);
+  return standardSuccessResponse(
+    result,
+    context.requestId,
+    STATUS_CODES.OK,
+    _rateLimit
+  );
 }
 
 export const POST = withApiHandler(handlePost, { rateLimit: 'moderate' });

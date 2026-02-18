@@ -13,6 +13,7 @@ import {
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -60,7 +61,7 @@ async function handlePost(context: ApiContext) {
   return standardSuccessResponse(
     { session },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }
@@ -109,7 +110,7 @@ async function handleGet(context: ApiContext) {
   return standardSuccessResponse(
     { session },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }
