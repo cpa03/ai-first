@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  memo,
   useCallback,
   useEffect,
   useState,
@@ -109,7 +110,7 @@ const toastColors = {
   },
 };
 
-function Toast({ toast, onClose }: ToastProps) {
+function ToastComponent({ toast, onClose }: ToastProps) {
   const [isLeaving, setIsLeaving] = useState(false);
   const [progress, setProgress] = useState(100);
   const [isPaused, setIsPaused] = useState(false);
@@ -189,6 +190,12 @@ function Toast({ toast, onClose }: ToastProps) {
 
   const styles = toastColors[toast.type];
 
+  // PERFORMANCE: Memoize close handler to prevent function recreation on each render
+  const handleClose = useCallback(() => {
+    setIsLeaving(true);
+    setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
+  }, [onClose, toast.id]);
+
   return (
     <div
       role="alert"
@@ -229,10 +236,7 @@ function Toast({ toast, onClose }: ToastProps) {
         </p>
       </div>
       <button
-        onClick={() => {
-          setIsLeaving(true);
-          setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
-        }}
+        onClick={handleClose}
         className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
         aria-label="Close notification"
       >
@@ -276,6 +280,8 @@ function Toast({ toast, onClose }: ToastProps) {
     </div>
   );
 }
+
+const Toast = memo(ToastComponent);
 
 export default function ToastContainer() {
   const [toasts, setToasts] = useState<Toast[]>([]);
