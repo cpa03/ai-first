@@ -86,7 +86,8 @@
     "glob": "^13.0.0",
     "test-exclude": "^7.0.1",
     "@aws-sdk/core": "^3.750.0",
-    "@aws-sdk/client-lambda": "^3.750.0"
+    "@aws-sdk/client-lambda": "^3.750.0",
+    "fast-xml-parser": "^5.3.6"
   },
   "browserslist": {
     "production": [
