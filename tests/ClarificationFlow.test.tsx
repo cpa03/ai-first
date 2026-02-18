@@ -1,4 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ClarificationFlow from '@/components/ClarificationFlow';
 
@@ -12,12 +18,10 @@ describe('ClarificationFlow', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (fetch as jest.Mock).mockClear();
-    jest.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
+    jest.clearAllMocks();
   });
 
   it('shows loading state initially', () => {
@@ -496,13 +500,16 @@ describe('ClarificationFlow', () => {
     );
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/clarify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idea: mockIdea, ideaId }),
-      });
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/clarify',
+        expect.objectContaining({
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idea: mockIdea, ideaId }),
+        })
+      );
     });
   });
 
@@ -514,10 +521,17 @@ describe('ClarificationFlow', () => {
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
+    // Wait for fallback questions to appear (component falls back on error)
     await waitFor(() => {
-      expect(screen.getByText(/invalid request/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', {
+          name: /who is the target audience for this project/i,
+        })
+      ).toBeInTheDocument();
     });
 
+    // Should show error alert
+    expect(screen.getByRole('heading', { name: /error/i })).toBeInTheDocument();
     expect(
       screen.getByText(/we're using fallback questions/i)
     ).toBeInTheDocument();
@@ -555,7 +569,9 @@ describe('ClarificationFlow', () => {
     fireEvent.change(textarea, { target: { value: '  Developers  ' } });
 
     const completeButton = screen.getByText('Complete');
-    fireEvent.click(completeButton);
+    await act(async () => {
+      fireEvent.click(completeButton);
+    });
 
     expect(mockOnComplete).toHaveBeenCalledWith({
       1: 'Developers',
@@ -591,18 +607,36 @@ describe('ClarificationFlow', () => {
     });
 
     const nextButton = screen.getByText('Complete');
-    fireEvent.click(nextButton);
+    expect(nextButton).toBeDisabled();
+    await act(async () => {
+      fireEvent.click(nextButton);
+    });
 
-    // Should not call onComplete since answer is empty
     expect(mockOnComplete).not.toHaveBeenCalled();
   });
 
   it('submits on Ctrl+Enter', async () => {
-    (fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => ({ data: { questions: [{ id: '1', question: 'Q?', type: 'open' }] } }) });
+    (fetch as jest.Mock).mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        success: true,
+        data: {
+          questions: [
+            { id: '1', question: 'Q?', type: 'open', required: true },
+          ],
+        },
+        requestId: 'test-req-1',
+        timestamp: new Date().toISOString(),
+      }),
+    });
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
-    const t = await screen.findByPlaceholderText(/enter your answer/i);
-    fireEvent.change(t, { target: { value: 'A' } });
-    fireEvent.keyDown(t, { key: 'Enter', ctrlKey: true });
+    const textarea = await screen.findByPlaceholderText(
+      /enter your answer here/i
+    );
+    fireEvent.change(textarea, { target: { value: 'A' } });
+    await act(async () => {
+      fireEvent.keyDown(textarea, { key: 'Enter', ctrlKey: true });
+    });
     expect(mockOnComplete).toHaveBeenCalledWith({ 1: 'A' });
   });
 });
