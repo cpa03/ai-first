@@ -63,7 +63,25 @@ This guide provides comprehensive information for DevOps engineers working on th
 
 ### GitHub Actions Workflows
 
-#### 1. On Push (`.github/workflows/on-push.yml`)
+#### 1. Iterate (`.github/workflows/iterate.yml`)
+
+**Triggers:**
+
+- Push to `main` branch
+- Scheduled every 4 hours
+- Manual dispatch
+
+**Jobs:**
+
+| Job       | Purpose                                  | Agent                  |
+| --------- | ---------------------------------------- | ---------------------- |
+| architect | Repository maintenance & strategy        | RepoKeeper (Kimi K2.5) |
+| bugfix    | Bug fixing and error resolution          | BugFixer (Kimi K2.5)   |
+| Palette   | UX improvements and accessibility        | Palette (Kimi K2.5)    |
+| Flexy     | Modularization and hardcoded elimination | Flexy (Kimi K2.5)      |
+| Brocula   | Browser console and lighthouse audits    | BroCula (Kimi K2.5)    |
+
+#### 2. Parallel (`.github/workflows/parallel.yml`)
 
 **Triggers:**
 
@@ -73,11 +91,12 @@ This guide provides comprehensive information for DevOps engineers working on th
 
 **Stages:**
 
-| Stage | Job         | Purpose                                  | Agent                    |
-| ----- | ----------- | ---------------------------------------- | ------------------------ |
-| 1     | Architect   | Strategy & triage                        | `arsitek` (GLM-4.7-free) |
-| 2     | Specialists | Parallel execution of domain specialists | Various (Kimi K2.5-free) |
-| 3     | Integrator  | PR merge & validation                    | `integrator`             |
+| Stage | Job         | Purpose                              | Agents                 |
+| ----- | ----------- | ------------------------------------ | ---------------------- |
+| 1     | Architect   | Strategy & triage                    | RepoKeeper (Kimi K2.5) |
+| 2     | Specialists | Parallel execution of 18 specialists | Various (GLM-5-free)   |
+| 3     | IsMan       | Issue consolidation & management     | Big-Pickle             |
+| 4     | Integrator  | PR merge & validation                | Fixer (Big-Pickle)     |
 
 **Specialist Roles:**
 
