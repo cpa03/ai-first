@@ -178,6 +178,7 @@ export interface Database {
           title: string;
           user_id: string;
           deleted_at: string | null;
+          updated_at: string;
         };
         Insert: {
           created_at?: string;
@@ -187,6 +188,7 @@ export interface Database {
           title: string;
           user_id: string;
           deleted_at?: string | null;
+          updated_at?: string;
         };
         Update: {
           created_at?: string;
@@ -196,6 +198,7 @@ export interface Database {
           title?: string;
           user_id?: string;
           deleted_at?: string | null;
+          updated_at?: string;
         };
       };
       tasks: {

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskStatus } from '@/hooks/useTaskManagement';
 import { SVG_ANIMATION } from '@/lib/config';
@@ -32,15 +32,24 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = statusConfig[task.status];
   const isCompleted = task.status === 'completed';
 
-  // Stable callback to avoid inline arrow function recreation on every render
-  const handleToggle = useCallback(() => {
+  // PERFORMANCE: Memoize click handler to prevent function recreation on each render
+  const handleClick = useCallback(() => {
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
+
+  // PERFORMANCE: Memoize SVG style object to prevent object recreation on each render
+  const checkmarkStyle = useMemo(
+    () => ({
+      strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
+      strokeDashoffset: SVG_ANIMATION.DASH_OFFSET.VISIBLE,
+    }),
+    []
+  );
 
   return (
     <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
       <button
-        onClick={handleToggle}
+        onClick={handleClick}
         disabled={isUpdating}
         className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 ${
           isCompleted
@@ -61,10 +70,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
-            style={{
-              strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
-              strokeDashoffset: SVG_ANIMATION.DASH_OFFSET.VISIBLE,
-            }}
+            style={checkmarkStyle}
           >
             <path
               strokeLinecap="round"
