@@ -1457,6 +1457,95 @@ This duplication made the documentation longer and harder to read.
 
 ---
 
+### Task 18: Add Missing API Endpoint Documentation and Production Troubleshooting ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-18
+
+#### Objectives
+
+- Document missing API endpoints (Ideas, Tasks, Deliverables, Metrics, Kubernetes Health)
+- Add Common Production Issues section to troubleshooting guide
+- Address documentation gaps identified in Issue #1169
+
+#### Issues Found
+
+1. **Missing API Documentation**: docs/api.md was missing documentation for:
+   - Ideas API endpoints (GET, POST, PUT, DELETE)
+   - Tasks API endpoints (GET, PUT, DELETE)
+   - Deliverables API (POST tasks to deliverable)
+   - Metrics API (Prometheus metrics)
+   - Kubernetes Health endpoints (/api/health/live, /api/health/ready)
+
+2. **Missing Production Troubleshooting**: docs/troubleshooting.md lacked:
+   - Cold start timeouts
+   - Memory limit issues
+   - Rate limit exhaustion
+   - Database connection pool exhaustion
+   - CDN/Edge caching issues
+   - SSL/TLS certificate issues
+   - Environment variable issues in production
+   - Monitoring and alerting setup
+
+#### Completed Work
+
+1. **Added Ideas API Documentation** (docs/api.md)
+   - GET /api/ideas - List all ideas with pagination
+   - POST /api/ideas - Create new idea
+   - GET /api/ideas/[id] - Get specific idea
+   - PUT /api/ideas/[id] - Update idea
+   - DELETE /api/ideas/[id] - Soft delete idea
+
+2. **Added Tasks API Documentation** (docs/api.md)
+   - GET /api/tasks/[id] - Get specific task
+   - PUT /api/tasks/[id] - Update task with field descriptions
+   - DELETE /api/tasks/[id] - Soft delete task
+
+3. **Added Deliverables API Documentation** (docs/api.md)
+   - POST /api/deliverables/[id]/tasks - Create task in deliverable
+
+4. **Added Metrics API Documentation** (docs/api.md)
+   - GET /api/metrics - Prometheus-compatible metrics
+   - Documented all available metrics
+
+5. **Added Kubernetes Health Endpoints** (docs/api.md)
+   - GET /api/health/live - Liveness probe
+   - GET /api/health/ready - Readiness probe
+
+6. **Added Common Production Issues Section** (docs/troubleshooting.md)
+   - Cold Start Timeouts
+   - Memory Limit Exceeded
+   - Rate Limit Exhaustion
+   - Database Connection Pool Exhaustion
+   - CDN/Edge Caching Issues
+   - SSL/TLS Certificate Issues
+   - Environment Variable Issues in Production
+   - Monitoring and Alerting Setup
+
+#### Verification
+
+- All documentation matches actual API implementations
+- Code examples validated against route handlers
+
+#### Files Modified
+
+- `docs/api.md` (ADDED - 400+ lines of API documentation)
+- `docs/troubleshooting.md` (ADDED - 250+ lines of production troubleshooting)
+
+#### Success Criteria Met
+
+- [x] Ideas API fully documented
+- [x] Tasks API fully documented
+- [x] Deliverables API documented
+- [x] Metrics API documented
+- [x] Kubernetes health endpoints documented
+- [x] Production troubleshooting section added
+- [x] Documentation matches implementation
+- [x] All changes committed with proper format
+
+---
+
 ## Next Steps for Future Documentation
 
 Potential improvements for future iterations:
@@ -1473,4 +1562,4 @@ Potential improvements for future iterations:
 
 **Last Updated**: 2026-02-18
 **Agent**: Technical Writer
-**Documentation Version**: 0.5.3
+**Documentation Version**: 0.5.4
