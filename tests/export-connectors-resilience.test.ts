@@ -396,7 +396,7 @@ describe('Export Connector Resilience Integration', () => {
 
         expect(mockExecute).toHaveBeenCalled();
         if (!result.success) {
-          expect(result.error).toContain('circuit breaker');
+          expect(result.error).toContain('Circuit breaker');
         }
       });
     });
@@ -419,8 +419,7 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('error handling', () => {
-      // BUG: Mock not properly intercepting resilience manager calls
-      it.skip('should return error object on API failure - BUG: mocking issue', async () => {
+      it('should return error object on API failure', async () => {
         mockExecute.mockRejectedValue(new Error('Unauthorized'));
 
         const testData = createMockExportData();
@@ -558,34 +557,24 @@ describe('Export Connector Resilience Integration', () => {
         expect(mockExecute).toHaveBeenCalledTimes(3);
       });
 
-      // BUG: Test expectation incorrect - repository already exists error not handled as fallback
-      it.skip('should handle repository creation fallback - BUG: incorrect test expectation', async () => {
+      it('should handle repository creation errors gracefully', async () => {
         mockExecute
-          .mockResolvedValue({
+          .mockResolvedValueOnce({
             ok: true,
             json: async () => ({ login: 'testuser' }),
           })
-          .mockRejectedValueOnce(new Error('Repository already exists'))
-          .mockResolvedValue({
-            ok: true,
-            json: async () => ({
-              id: 1,
-              name: 'test-project',
-              html_url: 'https://github.com/testuser/test-project',
-            }),
-          });
+          .mockRejectedValueOnce(new Error('Repository already exists'));
 
         const testData = createMockExportData();
         const result = await exporter.export(testData);
 
-        expect(result.success).toBe(true);
-        expect(mockExecute).toHaveBeenCalledTimes(2);
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('Repository already exists');
       });
     });
 
     describe('circuit breaker behavior', () => {
-      // NOTE: Circuit breaker tests require proper integration with resilience manager
-      it.skip('should fail fast when circuit is open', async () => {
+      it('should fail fast when circuit is open', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker github-projects-get-authenticated-user is OPEN'
         );
@@ -595,11 +584,10 @@ describe('Export Connector Resilience Integration', () => {
         const result = await exporter.export(testData);
 
         expect(result.success).toBe(false);
-        expect(result.error).toContain('circuit breaker');
+        expect(result.error).toContain('Circuit breaker');
       });
 
-      // BUG: Test mocks don't properly simulate independent circuit breakers
-      it.skip('should use independent circuit breakers for different operations - BUG: mocking issue', async () => {
+      it('should use independent circuit breakers for different operations', async () => {
         const contextOrder: string[] = [];
         mockExecute.mockImplementation((_, __, context) => {
           contextOrder.push(context);
@@ -631,8 +619,7 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('error handling', () => {
-      // BUG: Mock not properly intercepting resilience manager calls
-      it.skip('should return error object on API failure - BUG: mocking issue', async () => {
+      it('should return error object on API failure', async () => {
         mockExecute.mockRejectedValue(new Error('Bad credentials'));
 
         const testData = createMockExportData();
@@ -672,13 +659,16 @@ describe('Export Connector Resilience Integration', () => {
       expect(isValid).toBe(true);
     });
 
-    // BUG: GoogleTasksExporter actually implements OAuth methods - test expectation is wrong
-    it.skip('should throw error for auth methods - BUG: incorrect test expectation', async () => {
-      await expect(exporter.getAuthUrl()).rejects.toThrow(
-        'Google Tasks export does not require direct OAuth'
-      );
+    it('should provide auth URL for OAuth flow', async () => {
+      const authUrl = await exporter.getAuthUrl();
+      expect(authUrl).toContain('accounts.google.com');
+      expect(authUrl).toContain('client_id');
+      expect(authUrl).toContain('scope');
+    });
+
+    it('should throw error for auth callback handling', async () => {
       await expect(exporter.handleAuthCallback('code')).rejects.toThrow(
-        'Google Tasks export does not require direct OAuth'
+        'Google OAuth callback handling requires server-side implementation'
       );
     });
   });
