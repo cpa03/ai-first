@@ -31,8 +31,6 @@ interface ToastProps {
   onClose: (id: string) => void;
 }
 
-const SWIPE_DISMISS_THRESHOLD = 80;
-
 // Custom hook to subscribe to prefers-reduced-motion media query
 // This properly updates when OS accessibility settings change during runtime
 const subscribe = (callback: () => void) => {
@@ -178,7 +176,7 @@ function Toast({ toast, onClose }: ToastProps) {
     setIsSwiping(false);
     const diff = touchCurrentXRef.current - touchStartXRef.current;
 
-    if (diff > SWIPE_DISMISS_THRESHOLD) {
+    if (diff > UI_CONSTANTS.TOAST_SWIPE_DISMISS_THRESHOLD) {
       setIsLeaving(true);
       setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
     } else {
@@ -257,7 +255,11 @@ function Toast({ toast, onClose }: ToastProps) {
         <div
           className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
           style={{
-            opacity: Math.min(swipeOffset / SWIPE_DISMISS_THRESHOLD, 1) * 0.5,
+            opacity:
+              Math.min(
+                swipeOffset / UI_CONSTANTS.TOAST_SWIPE_DISMISS_THRESHOLD,
+                1
+              ) * 0.5,
           }}
           aria-hidden="true"
         />
