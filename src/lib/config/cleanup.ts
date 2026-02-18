@@ -1,32 +1,26 @@
 /**
  * Resource Cleanup Configuration
  * Centralizes cleanup and timeout settings for resource management
+ * Supports environment variable overrides for containerized deployments
  */
 
+import { EnvLoader } from './environment';
+
 export const CLEANUP_CONFIG = {
-  /**
-   * Resource cleanup manager settings
-   */
   RESOURCE_MANAGER: {
-    /**
-     * Timeout for individual cleanup tasks (milliseconds)
-     * If a cleanup task exceeds this time, it will be aborted
-     */
-    TASK_TIMEOUT_MS: 5000,
-
-    /**
-     * Default priority for cleanup tasks (higher = executed first)
-     */
+    TASK_TIMEOUT_MS: EnvLoader.number(
+      'CLEANUP_TASK_TIMEOUT_MS',
+      5000,
+      1000,
+      30000
+    ),
     DEFAULT_PRIORITY: 0,
-
-    /**
-     * Maximum time allowed for graceful shutdown before force exit (milliseconds)
-     * After this time, the process will exit regardless of cleanup completion
-     * This is critical for containerized environments (Kubernetes, Docker)
-     * that send SIGKILL after a grace period (typically 30s)
-     * Default: 10000ms (10 seconds) to allow time for cleanup + force exit
-     */
-    GRACEFUL_SHUTDOWN_TIMEOUT_MS: 10000,
+    GRACEFUL_SHUTDOWN_TIMEOUT_MS: EnvLoader.number(
+      'GRACEFUL_SHUTDOWN_TIMEOUT_MS',
+      10000,
+      5000,
+      60000
+    ),
   } as const,
 
   /**

@@ -6,6 +6,7 @@ import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
   SVG_ANIMATION,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 
 interface StepCelebrationProps {
@@ -54,7 +55,7 @@ export default function StepCelebration({
       y: Math.sin((i / 8) * Math.PI * 2) * 30,
       rotation: (i / 8) * 360,
       scale: 0.5 + Math.random() * 0.5,
-      delay: i * 50,
+      delay: i * ANIMATION_DELAYS.PARTICLE_STAGGER,
     }));
   }, []);
 

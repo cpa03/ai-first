@@ -7,6 +7,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { APP_CONFIG } from '@/lib/config';
 
 interface Idea {
   id: string;
@@ -64,7 +65,7 @@ export default function DashboardPage() {
       if (filter !== 'all') {
         params.set('status', filter);
       }
-      params.set('limit', '50');
+      params.set('limit', String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT));
 
       const queryString = params.toString();
       const response = await fetch(

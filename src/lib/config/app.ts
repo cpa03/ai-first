@@ -64,11 +64,20 @@ export const APP_CONFIG = {
     WARNING: 'warning',
   } as const,
 
+  /**
+   * Pagination configuration
+   * Centralizes pagination limits and offsets
+   */
   PAGINATION: {
+    /** Default number of items per page */
     DEFAULT_LIMIT: 50,
+    /** Maximum allowed items per page */
     MAX_LIMIT: 100,
+    /** Minimum allowed items per page */
+    MIN_LIMIT: 10,
+    /** Default offset for pagination */
     DEFAULT_OFFSET: 0,
-  },
+  } as const,
 
   STRING_LIMITS: {
     TITLE_PREVIEW_LENGTH: 50,
