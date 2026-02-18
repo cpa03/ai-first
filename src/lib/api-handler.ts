@@ -29,6 +29,8 @@ export interface ApiResponse<T = unknown> {
 export interface ApiHandlerOptions {
   rateLimit?: keyof typeof rateLimitConfigs;
   validateSize?: boolean;
+  cacheTtlSeconds?: number;
+  cacheScope?: 'public' | 'private';
 }
 
 export interface ApiContext {
@@ -97,9 +99,20 @@ export function withApiHandler(
         String(new Date(context.rateLimit.reset).toISOString())
       );
 
-      // Log successful request metrics
       const duration = Date.now() - requestStartTime;
       response.headers.set('X-Response-Time', `${duration}ms`);
+
+      if (
+        options.cacheTtlSeconds !== undefined &&
+        options.cacheTtlSeconds > 0 &&
+        !response.headers.has('Cache-Control')
+      ) {
+        const scope = options.cacheScope || 'public';
+        response.headers.set(
+          'Cache-Control',
+          `${scope}, max-age=${options.cacheTtlSeconds}`
+        );
+      }
 
       return response;
     } catch (error) {

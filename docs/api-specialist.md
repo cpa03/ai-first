@@ -120,7 +120,14 @@ X-Request-ID: req_1234567890_abc123
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 57
 X-RateLimit-Reset: 2026-02-07T12:05:00Z
+X-Response-Time: 45ms
 Content-Type: application/json
+```
+
+GET endpoints with caching enabled also include:
+
+```http
+Cache-Control: public, max-age=5
 ```
 
 Error responses additionally include:
@@ -209,7 +216,7 @@ Retry-After: 60  # Only on rate limit errors
 2. **OpenAPI Spec**: Generate OpenAPI/Swagger documentation from types
 3. **API Client**: Consider generating TypeScript client from API types
 4. **Metrics**: Add endpoint-level metrics (response times, error rates)
-5. **Caching**: Add cache headers for appropriate GET endpoints
+5. ~~**Caching**: Add cache headers for appropriate GET endpoints~~ ✅ DONE (2026-02-18)
 6. **Batch Operations**: Consider batch endpoints for bulk operations
 
 ---
@@ -329,6 +336,26 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-18 - API Cache Headers Implementation
+
+- **Feature**: Added HTTP Cache-Control headers for GET endpoints
+- **New Config**: `API_CACHE_CONFIG` in constants.ts with configurable TTLs
+- **New Options**: `cacheTtlSeconds` and `cacheScope` in `ApiHandlerOptions`
+- **Affected Endpoints**:
+  - `/api/health` - 5 second public cache
+  - `/api/health/database` - 5 second public cache
+  - `/api/health/live` - 1 second public cache (k8s liveness)
+  - `/api/health/ready` - 2 second public cache (k8s readiness)
+  - `/api/health/detailed` - 10 second private cache (admin only)
+- **Environment Variables**:
+  - `API_CACHE_HEALTH_TTL_SECONDS` (default: 5)
+  - `API_CACHE_DATABASE_HEALTH_TTL_SECONDS` (default: 5)
+  - `API_CACHE_LIVE_TTL_SECONDS` (default: 1)
+  - `API_CACHE_READY_TTL_SECONDS` (default: 2)
+  - `API_CACHE_DETAILED_HEALTH_TTL_SECONDS` (default: 10)
+  - `API_CACHE_IDEAS_LIST_TTL_SECONDS` (default: 10)
+- **Impact**: Reduced server load from repeated health checks, improved response times
 
 ### 2026-02-18 - API Specialist Improvement
 

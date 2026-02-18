@@ -4,7 +4,7 @@ import {
   ApiContext,
   withApiHandler,
 } from '@/lib/api-handler';
-import { STATUS_CODES } from '@/lib/config/constants';
+import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit: _rateLimit } = context;
@@ -28,4 +28,6 @@ async function handleGet(context: ApiContext) {
 export const GET = withApiHandler(handleGet, {
   validateSize: false,
   rateLimit: 'strict',
+  cacheTtlSeconds: API_CACHE_CONFIG.DATABASE_HEALTH_TTL_SECONDS,
+  cacheScope: 'public',
 });
