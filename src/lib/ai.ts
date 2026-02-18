@@ -58,7 +58,7 @@ export interface ContextWindow {
 
 class AIService {
   private openai: OpenAI | null = null;
-  private supabase: SupabaseClient | null = null;
+  private _supabase: SupabaseClient | null = null;
   private costTrackers: CostTracker[] = [];
   private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
@@ -74,16 +74,9 @@ class AIService {
       ttl: AI_CONFIG.RESPONSE_CACHE_TTL_MS,
       maxSize: AI_CONFIG.RESPONSE_CACHE_MAX_SIZE,
     });
-    if (
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    ) {
-      this.supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
-      );
-    }
 
+    // SECURITY: OpenAI client is safe to initialize in constructor
+    // as it only uses API keys (not service role keys with database access)
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
@@ -102,6 +95,59 @@ class AIService {
     resourceCleanupManager.register('ai-service-interval', () =>
       this.cleanup()
     );
+  }
+
+  /**
+   * Get the Supabase admin client (lazy-loaded, server-side only)
+   *
+   * ⚠️ CRITICAL SECURITY WARNING ⚠️
+   * This getter accesses the SUPABASE_SERVICE_ROLE_KEY which bypasses ALL Row Level Security (RLS) policies.
+   * It MUST ONLY be called in server-side contexts (API routes, server components, server actions).
+   *
+   * NEVER call this from:
+   * - Client components (use 'use client' directive)
+   * - Browser-side code
+   * - Any code that may be bundled for the client
+   *
+   * The service role key grants FULL ADMIN ACCESS to the database. Exposing it to clients
+   * would allow anyone to read/modify/delete any data, bypassing all security policies.
+   *
+   * @returns Supabase admin client or null if not in server context
+   * @throws Error if called in browser context
+   */
+  private get supabase(): SupabaseClient | null {
+    // SECURITY: Runtime check to ensure we're on the server
+    // This prevents accidental usage in client components
+    if (typeof window !== 'undefined') {
+      throw new Error(
+        'CRITICAL SECURITY VIOLATION: AIService supabase client was accessed in browser context.\n' +
+          'The Supabase service role key bypasses RLS and must NEVER be exposed to clients.\n' +
+          'Use API routes for database operations instead.'
+      );
+    }
+
+    // Lazy initialization to prevent key from being accessed during module load
+    // This ensures the key is only accessed when actually needed
+    if (!this._supabase) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!supabaseUrl || !serviceKey) {
+        logger.warn(
+          'Supabase admin client not initialized: missing URL or service role key'
+        );
+        return null;
+      }
+
+      this._supabase = createClient(supabaseUrl, serviceKey, {
+        auth: {
+          persistSession: false,
+          autoRefreshToken: false,
+        },
+      });
+    }
+
+    return this._supabase;
   }
 
   // Initialize AI service with provider-specific config
