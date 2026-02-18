@@ -9,6 +9,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAdminAuth } from '@/lib/auth';
 import { redactPII } from '@/lib/pii-redaction';
+import { API_CACHE_CONFIG } from '@/lib/config/constants';
 
 interface HealthCheckResult {
   service: string;
@@ -227,4 +228,6 @@ async function handleGet(context: ApiContext) {
 export const GET = withApiHandler(handleGet, {
   validateSize: false,
   rateLimit: 'strict',
+  cacheTtlSeconds: API_CACHE_CONFIG.DETAILED_HEALTH_TTL_SECONDS,
+  cacheScope: 'private',
 });

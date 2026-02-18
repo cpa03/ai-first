@@ -6,7 +6,7 @@ import {
 } from '@/lib/api-handler';
 import { createLogger } from '@/lib/logger';
 import { NextResponse } from 'next/server';
-import { STATUS_CODES } from '@/lib/config';
+import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config';
 
 const logger = createLogger('readiness');
 
@@ -101,4 +101,6 @@ async function handleGet(context: ApiContext) {
 export const GET = withApiHandler(handleGet, {
   validateSize: false,
   rateLimit: 'strict',
+  cacheTtlSeconds: API_CACHE_CONFIG.READY_TTL_SECONDS,
+  cacheScope: 'public',
 });

@@ -4,7 +4,7 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 import { APP_CONFIG } from '@/lib/config';
-import { STATUS_CODES } from '@/lib/config/constants';
+import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 
 function isSensitiveVar(varName: string): boolean {
   const upper = varName.toUpperCase();
@@ -106,4 +106,6 @@ async function handleGet(context: ApiContext) {
 export const GET = withApiHandler(handleGet, {
   validateSize: false,
   rateLimit: 'strict',
+  cacheTtlSeconds: API_CACHE_CONFIG.HEALTH_TTL_SECONDS,
+  cacheScope: 'public',
 });
