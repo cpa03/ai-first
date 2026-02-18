@@ -392,7 +392,7 @@ export const BUTTON_STYLES = {
 
   /** State classes for disabled/loading states */
   STATES: {
-    disabled: 'opacity-50 cursor-not-allowed',
+    disabled: 'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100',
     enabled: 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]',
   } as const,
 
