@@ -13,6 +13,7 @@ CREATE TABLE ideas (
     title TEXT NOT NULL,
     raw_text TEXT NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'clarified', 'breakdown', 'completed')),
     deleted_at TIMESTAMP WITH TIME ZONE
 );
@@ -681,6 +682,7 @@ CREATE INDEX idx_ideas_user_id ON ideas(user_id);
 CREATE INDEX idx_ideas_status ON ideas(status);
 CREATE INDEX idx_ideas_user_status ON ideas(user_id, status);
 CREATE INDEX idx_ideas_created_at ON ideas(created_at DESC);
+CREATE INDEX idx_ideas_updated_at ON ideas(updated_at DESC);
 CREATE INDEX idx_ideas_deleted_at ON ideas(deleted_at);
 
 CREATE INDEX idx_deliverables_idea_id ON deliverables(idea_id);
@@ -801,6 +803,10 @@ CREATE TRIGGER update_clarification_answers_updated_at BEFORE UPDATE ON clarific
 
 -- Trigger for deliverables table (missing in original schema)
 CREATE TRIGGER update_deliverables_updated_at BEFORE UPDATE ON deliverables
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger for ideas table (root table)
+CREATE TRIGGER update_ideas_updated_at BEFORE UPDATE ON ideas
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
