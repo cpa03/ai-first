@@ -50,7 +50,6 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.12",
     "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.6",
     "@opennextjs/cloudflare": "^1.16.5",
