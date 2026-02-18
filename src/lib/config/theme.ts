@@ -279,6 +279,15 @@ export const CELEBRATION_COLORS = {
     '#EC4899',
     '#06B6D4',
   ] as const,
+  /** Progress circle colors - eliminates hardcoded colors in StepCelebration */
+  PROGRESS_CIRCLE: {
+    /** Background track color (gray-200) */
+    TRACK: '#e5e7eb',
+    /** Progress indicator color (blue-600/primary) */
+    PROGRESS: '#2563eb',
+    /** Radius for the progress circle */
+    RADIUS: 45,
+  },
 } as const;
 
 /**
@@ -296,6 +305,8 @@ export const ANIMATION_PHYSICS = {
   DEFAULT_DURATION_MS: 2000,
   /** Reduced motion duration in ms */
   REDUCED_MOTION_DURATION_MS: 500,
+  /** Step celebration display duration before exit animation */
+  STEP_CELEBRATION_DURATION_MS: 1500,
   /** Particle opacity decay rate */
   OPACITY_DECAY: 0.015,
   /** Velocity multiplier for particle movement */
@@ -317,6 +328,94 @@ export const ANIMATION_PHYSICS = {
   ROTATION_MULTIPLIER: 2,
 } as const;
 
+/**
+ * Button Component Styles
+ * Centralizes all button variant, size, and state styles
+ * Eliminates hardcoded Tailwind classes in Button component
+ */
+export const BUTTON_STYLES = {
+  /** Variant styles for different button types */
+  VARIANTS: {
+    primary:
+      'bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500',
+    secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
+    outline:
+      'border border-gray-700 text-gray-700 hover:bg-gray-50 focus:ring-gray-500',
+    ghost: 'text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+  } as const,
+
+  /** Focus ring classes per variant */
+  FOCUS_RINGS: {
+    primary: 'focus-visible:ring-primary-500',
+    secondary: 'focus-visible:ring-gray-500',
+    outline: 'focus-visible:ring-gray-500',
+    ghost: 'focus-visible:ring-gray-500',
+  } as const,
+
+  /** Size classes for button dimensions */
+  SIZES: {
+    sm: 'px-3 py-1.5 text-sm min-h-[36px]',
+    md: 'px-4 py-2 text-base min-h-[44px]',
+    lg: 'px-6 py-3 text-lg min-h-[48px]',
+  } as const,
+
+  /** State classes for disabled/loading states */
+  STATES: {
+    disabled: 'opacity-50 cursor-not-allowed',
+    enabled: 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]',
+  } as const,
+
+  /** Base classes applied to all buttons */
+  BASE: 'rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none',
+} as const;
+
+/**
+ * Alert Component Styles
+ * Centralizes all alert type styles including colors
+ * Eliminates hardcoded Tailwind classes in Alert component
+ */
+export const ALERT_STYLES = {
+  error: {
+    container: 'bg-red-50 border-red-200',
+    iconColor: 'text-red-600',
+    titleColor: 'text-red-900',
+    textColor: 'text-red-800',
+    subtextColor: 'text-red-600',
+  },
+  warning: {
+    container: 'bg-yellow-50 border-yellow-200',
+    iconColor: 'text-yellow-600',
+    titleColor: 'text-yellow-900',
+    textColor: 'text-yellow-800',
+    subtextColor: 'text-yellow-600',
+  },
+  info: {
+    container: 'bg-blue-50 border-blue-200',
+    iconColor: 'text-blue-600',
+    titleColor: 'text-blue-900',
+    textColor: 'text-blue-800',
+    subtextColor: 'text-blue-600',
+  },
+  success: {
+    container: 'bg-green-50 border-green-200',
+    iconColor: 'text-green-600',
+    titleColor: 'text-green-900',
+    textColor: 'text-green-800',
+    subtextColor: 'text-green-600',
+  },
+} as const;
+
+/** Base classes applied to all alerts */
+export const ALERT_BASE_STYLES = {
+  container: 'border rounded-lg p-4 flex items-start gap-3',
+  transition:
+    'transition-all duration-200 ease-out motion-reduce:transition-none',
+  visible: 'opacity-100 scale-100 translate-y-0',
+  exiting: 'opacity-0 scale-[0.98] translate-y-[-8px]',
+  closeButton:
+    'flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity',
+} as const;
+
 export type FocusShadows = typeof FOCUS_SHADOWS;
 export type BorderColors = typeof BORDER_COLORS;
 export type RingColors = typeof RING_COLORS;
@@ -325,3 +424,5 @@ export type BgColors = typeof BG_COLORS;
 export type InputStyles = typeof INPUT_STYLES;
 export type CelebrationColors = typeof CELEBRATION_COLORS;
 export type AnimationPhysics = typeof ANIMATION_PHYSICS;
+export type ButtonStyles = typeof BUTTON_STYLES;
+export type AlertStyles = typeof ALERT_STYLES;

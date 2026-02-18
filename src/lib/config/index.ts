@@ -71,6 +71,9 @@ export {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
   RIPPLE_CONFIG,
+  BUTTON_STYLES,
+  ALERT_STYLES,
+  ALERT_BASE_STYLES,
 } from './theme';
 
 export {
@@ -145,6 +148,8 @@ export type {
   TextColors,
   BgColors,
   InputStyles,
+  ButtonStyles,
+  AlertStyles,
 } from './theme';
 
 // Time and Error Message Types

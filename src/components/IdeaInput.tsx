@@ -7,6 +7,7 @@ import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
 import AutoSaveIndicator from './AutoSaveIndicator';
+import SuccessCelebration from './SuccessCelebration';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
@@ -29,6 +30,11 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
   const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMac, setIsMac] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [submittedIdeaData, setSubmittedIdeaData] = useState<{
+    idea: string;
+    ideaId: string;
+  } | null>(null);
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -84,7 +90,8 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
       const data = await response.json();
       const ideaId = data.data.id;
 
-      onSubmit(idea.trim(), ideaId);
+      setSubmittedIdeaData({ idea: idea.trim(), ideaId });
+      setShowCelebration(true);
     } catch (err) {
       logger.errorWithContext('Failed to save idea', {
         component: 'IdeaInput',
@@ -100,61 +107,74 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     }
   };
 
+  const handleCelebrationComplete = () => {
+    if (submittedIdeaData) {
+      onSubmit(submittedIdeaData.idea, submittedIdeaData.ideaId);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 fade-in" noValidate>
-      <InputWithValidation
-        id="idea-input"
-        name="idea"
-        label="What's your idea?"
-        value={idea}
-        onChange={handleIdeaChange}
-        onKeyDown={handleKeyDown}
-        placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-        helpText={`Be as specific or as general as you'd like. We'll help you clarify details. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
-        multiline={true}
-        minLength={MIN_IDEA_LENGTH}
-        maxLength={MAX_IDEA_LENGTH}
-        showCharCount={true}
-        clearable={true}
-        error={validationError || undefined}
-        required={true}
-        disabled={isSubmitting}
-        className="min-h-[120px]"
+    <>
+      <SuccessCelebration
+        show={showCelebration}
+        onComplete={handleCelebrationComplete}
+        duration={1500}
       />
+      <form onSubmit={handleSubmit} className="space-y-6 fade-in" noValidate>
+        <InputWithValidation
+          id="idea-input"
+          name="idea"
+          label="What's your idea?"
+          value={idea}
+          onChange={handleIdeaChange}
+          onKeyDown={handleKeyDown}
+          placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
+          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
+          multiline={true}
+          minLength={MIN_IDEA_LENGTH}
+          maxLength={MAX_IDEA_LENGTH}
+          showCharCount={true}
+          clearable={true}
+          error={validationError || undefined}
+          required={true}
+          disabled={isSubmitting}
+          className="min-h-[120px]"
+        />
 
-      {error && (
-        <div className="slide-up">
-          <Alert type="error" onClose={() => setError(null)}>
-            <p className="text-sm">{error}</p>
-          </Alert>
-        </div>
-      )}
-
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <div
-            className="flex items-center gap-2 text-sm text-gray-600"
-            aria-label={`Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`}
-          >
-            <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
-              {isMac ? '⌘' : 'Ctrl'}
-            </kbd>
-            <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
-              Enter
-            </kbd>
-            <span className="hidden sm:inline text-gray-600">to submit</span>
+        {error && (
+          <div className="slide-up">
+            <Alert type="error" onClose={() => setError(null)}>
+              <p className="text-sm">{error}</p>
+            </Alert>
           </div>
-          <AutoSaveIndicator value={idea} />
+        )}
+
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
+            <div
+              className="flex items-center gap-2 text-sm text-gray-600"
+              aria-label={`Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`}
+            >
+              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
+                Enter
+              </kbd>
+              <span className="hidden sm:inline text-gray-600">to submit</span>
+            </div>
+            <AutoSaveIndicator value={idea} />
+          </div>
+          <Button
+            type="submit"
+            variant="primary"
+            loading={isSubmitting}
+            disabled={!idea.trim() || !!validationError}
+          >
+            {isSubmitting ? 'Processing...' : 'Start Clarifying →'}
+          </Button>
         </div>
-        <Button
-          type="submit"
-          variant="primary"
-          loading={isSubmitting}
-          disabled={!idea.trim() || !!validationError}
-        >
-          {isSubmitting ? 'Processing...' : 'Start Clarifying →'}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </>
   );
 }

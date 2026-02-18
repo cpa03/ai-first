@@ -7,6 +7,9 @@ This directory contains archived documentation that is no longer actively mainta
 - **Historical Reference**: Documents that document past decisions, deprecated features, or superseded specifications
 - **Audit Trail**: Preserved for compliance and historical analysis
 - **Knowledge Base**: Valuable context that may inform future decisions
+- Preserve historical documentation for reference
+- Track deprecated features and their migration paths
+- Maintain audit trail of documentation changes
 
 ## Archive Guidelines
 
@@ -24,9 +27,18 @@ This directory contains archived documentation that is no longer actively mainta
 - Sensitive information (should be removed entirely)
 - Temporary files (use .gitignore instead)
 
+### Archive Requirements
+
+Archived documents should include:
+
+- Original creation date
+- Date of archival
+- Reason for archival
+- Link to replacement documentation (if applicable)
+
 ## File Naming Convention
 
-Archive files should follow this naming pattern:
+Archive files should follow this pattern:
 
 ```
 YYYY-MM-DD_original-filename_archived.md
@@ -43,3 +55,7 @@ Example: `2025-01-15_old-api-design_archived.md`
 ---
 
 _This archive is maintained as part of the documentation quality process. See [Documentation Quality Issue #1169](https://github.com/cpa03/ai-first/issues/1169) for context._
+
+## Note
+
+Documents in this directory are not updated and may contain outdated information. Refer to the main documentation in `/docs` for current information.

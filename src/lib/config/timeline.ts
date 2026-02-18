@@ -45,7 +45,13 @@ export const TIMELINE_CONFIG = {
   },
 
   OPTIONS: {
-    TIMELINE_CHOICES: ['1-2 weeks', '1 month', '3 months', '6 months', '1 year'] as const,
+    TIMELINE_CHOICES: [
+      '1-2 weeks',
+      '1 month',
+      '3 months',
+      '6 months',
+      '1 year',
+    ] as const,
     DEFAULT_TIMELINE: '1 month',
   },
 } as const;
@@ -56,6 +62,11 @@ export const TASK_CONFIG = {
     SKILLS: ['General'] as string[],
     PRIORITY: 3,
     STATUS: 'pending' as const,
+    COMPLETION_PERCENTAGE: 0,
+    PRIORITY_SCORE: 0,
+    COMPLEXITY_SCORE: 0,
+    RISK_LEVEL: 'low' as const,
+    ESTIMATE: 0,
   },
 
   ID: {
@@ -88,19 +99,46 @@ export const TASK_CONFIG = {
     MAX_DEPTH: 10,
     SEPARATOR: ',',
   },
+
+  STATUSES: {
+    TODO: 'todo',
+    IN_PROGRESS: 'in_progress',
+    COMPLETED: 'completed',
+  } as const,
+
+  RISK_LEVELS: {
+    LOW: 'low',
+    MEDIUM: 'medium',
+    HIGH: 'high',
+  } as const,
+
+  COMPLETION: {
+    MIN: 0,
+    MAX: 100,
+    PERCENTAGES: {
+      NOT_STARTED: 0,
+      IN_PROGRESS: 50,
+      COMPLETED: 100,
+    },
+  },
 } as const;
 
 export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
     SEPARATOR: '_',
-    GENERATOR: () => `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+    GENERATOR: () =>
+      `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
   },
 
   VALIDATION: {
     MAX_TITLE_LENGTH: 100,
     MAX_DESCRIPTION_LENGTH: 5000,
     MIN_TITLE_LENGTH: 3,
+  },
+
+  DEFAULTS: {
+    STATUS: 'draft',
   },
 } as const;
 

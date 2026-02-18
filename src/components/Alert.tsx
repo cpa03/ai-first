@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import { ALERT_STYLES, ALERT_BASE_STYLES } from '@/lib/config';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -11,64 +12,36 @@ interface AlertProps {
   onClose?: () => void;
 }
 
-const alertStyles = {
-  error: {
-    container: 'bg-red-50 border-red-200',
-    iconColor: 'text-red-600',
-    titleColor: 'text-red-900',
-    textColor: 'text-red-800',
-    subtextColor: 'text-red-600',
-    icon: (
-      <path
-        fillRule="evenodd"
-        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-        clipRule="evenodd"
-      />
-    ),
-  },
-  warning: {
-    container: 'bg-yellow-50 border-yellow-200',
-    iconColor: 'text-yellow-600',
-    titleColor: 'text-yellow-900',
-    textColor: 'text-yellow-800',
-    subtextColor: 'text-yellow-600',
-    icon: (
-      <path
-        fillRule="evenodd"
-        d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-        clipRule="evenodd"
-      />
-    ),
-  },
-  info: {
-    container: 'bg-blue-50 border-blue-200',
-    iconColor: 'text-blue-600',
-    titleColor: 'text-blue-900',
-    textColor: 'text-blue-800',
-    subtextColor: 'text-blue-600',
-    icon: (
-      <path
-        fillRule="evenodd"
-        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-        clipRule="evenodd"
-      />
-    ),
-  },
-  success: {
-    container: 'bg-green-50 border-green-200',
-    iconColor: 'text-green-600',
-    titleColor: 'text-green-900',
-    textColor: 'text-green-800',
-    subtextColor: 'text-green-600',
-    icon: (
-      <path
-        fillRule="evenodd"
-        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-        clipRule="evenodd"
-      />
-    ),
-  },
-};
+const ALERT_ICONS = {
+  error: (
+    <path
+      fillRule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+      clipRule="evenodd"
+    />
+  ),
+  warning: (
+    <path
+      fillRule="evenodd"
+      d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+      clipRule="evenodd"
+    />
+  ),
+  info: (
+    <path
+      fillRule="evenodd"
+      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+      clipRule="evenodd"
+    />
+  ),
+  success: (
+    <path
+      fillRule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+      clipRule="evenodd"
+    />
+  ),
+} as const;
 
 const AlertComponent = function Alert({
   type,
@@ -79,7 +52,7 @@ const AlertComponent = function Alert({
 }: AlertProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
-  const styles = alertStyles[type];
+  const styles = ALERT_STYLES[type];
 
   const handleClose = useCallback(() => {
     setIsExiting(true);
@@ -104,15 +77,18 @@ const AlertComponent = function Alert({
 
   if (!isVisible) return null;
 
+  const visibilityClass = isExiting
+    ? ALERT_BASE_STYLES.exiting
+    : ALERT_BASE_STYLES.visible;
+
   return (
     <div
       role="alert"
       aria-live={type === 'error' ? 'assertive' : 'polite'}
       className={`
-        ${styles.container} border rounded-lg p-4 flex items-start gap-3
-        transition-all duration-200 ease-out
-        ${isExiting ? 'opacity-0 scale-[0.98] translate-y-[-8px]' : 'opacity-100 scale-100 translate-y-0'}
-        motion-reduce:transition-none
+        ${styles.container} ${ALERT_BASE_STYLES.container}
+        ${ALERT_BASE_STYLES.transition}
+        ${visibilityClass}
         ${className}
       `}
     >
@@ -122,7 +98,7 @@ const AlertComponent = function Alert({
         viewBox="0 0 20 20"
         aria-hidden="true"
       >
-        {styles.icon}
+        {ALERT_ICONS[type]}
       </svg>
       <div className="flex-1 min-w-0">
         {title && (
@@ -135,7 +111,7 @@ const AlertComponent = function Alert({
       {onClose && (
         <button
           onClick={handleClose}
-          className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
+          className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor}`}
           aria-label="Dismiss alert"
           type="button"
         >

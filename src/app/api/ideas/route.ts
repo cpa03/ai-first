@@ -7,7 +7,6 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { requireAuth } from '@/lib/auth';
-import { VALIDATION_CONFIG } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
@@ -17,10 +16,14 @@ async function handleGet(context: ApiContext) {
   const status = url.searchParams.get('status');
   const limit = parseInt(
     url.searchParams.get('limit') ||
-      String(VALIDATION_CONFIG.DEFAULT_PAGINATION_LIMIT),
+      String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT),
     10
   );
-  const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+  const offset = parseInt(
+    url.searchParams.get('offset') ||
+      String(APP_CONFIG.PAGINATION.DEFAULT_OFFSET),
+    10
+  );
 
   // Authenticate user
   const user = await requireAuth(request);
