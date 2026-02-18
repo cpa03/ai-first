@@ -3,6 +3,7 @@
 import {
   ButtonHTMLAttributes,
   forwardRef,
+  memo,
   useState,
   useCallback,
   useEffect,
@@ -25,7 +26,7 @@ interface Ripple {
   size: number;
 }
 
-const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       variant = 'primary',
@@ -144,6 +145,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-Button.displayName = 'Button';
+ButtonComponent.displayName = 'Button';
+
+const Button = memo(ButtonComponent);
 
 export default Button;
