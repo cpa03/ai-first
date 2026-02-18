@@ -68,7 +68,7 @@ export default function DashboardPage() {
       params.set('limit', String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT));
 
       const queryString = params.toString();
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `/api/ideas${queryString ? `?${queryString}` : ''}`
       );
 
