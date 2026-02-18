@@ -11,9 +11,9 @@ export default function WhyChooseSection() {
         Why Choose IdeaFlow for Project Planning?
       </h2>
       <div className="grid md:grid-cols-2 gap-6">
-        <article className="flex items-start space-x-3">
+        <article className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 hover:bg-green-50/30 transition-all duration-200 ease-out motion-reduce:transition-none">
           <div
-            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1"
+            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 group-hover:bg-green-200 transition-colors duration-200"
             aria-hidden="true"
           >
             <svg
@@ -38,9 +38,9 @@ export default function WhyChooseSection() {
             </p>
           </div>
         </article>
-        <article className="flex items-start space-x-3">
+        <article className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 hover:bg-green-50/30 transition-all duration-200 ease-out motion-reduce:transition-none">
           <div
-            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1"
+            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 group-hover:bg-green-200 transition-colors duration-200"
             aria-hidden="true"
           >
             <svg
@@ -65,9 +65,9 @@ export default function WhyChooseSection() {
             </p>
           </div>
         </article>
-        <article className="flex items-start space-x-3">
+        <article className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 hover:bg-green-50/30 transition-all duration-200 ease-out motion-reduce:transition-none">
           <div
-            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1"
+            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 group-hover:bg-green-200 transition-colors duration-200"
             aria-hidden="true"
           >
             <svg
@@ -92,9 +92,9 @@ export default function WhyChooseSection() {
             </p>
           </div>
         </article>
-        <article className="flex items-start space-x-3">
+        <article className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:border-green-200 hover:bg-green-50/30 transition-all duration-200 ease-out motion-reduce:transition-none">
           <div
-            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1"
+            className="bg-green-100 rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 group-hover:bg-green-200 transition-colors duration-200"
             aria-hidden="true"
           >
             <svg
