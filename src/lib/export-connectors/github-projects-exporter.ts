@@ -1,6 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task, Deliverable, Idea } from '../db';
-import { GITHUB_CONFIG } from '@/lib/config';
+import { GITHUB_CONFIG, TASK_CONFIG } from '@/lib/config';
 
 import { createLogger } from '../logger';
 
@@ -98,16 +98,16 @@ export class GitHubProjectsExporter extends ExportConnector {
             deliverable_id: '',
             title: '📋 Project Overview',
             description: idea.raw_text,
-            status: 'todo',
+            status: TASK_CONFIG.STATUSES.TODO,
             assignee: undefined,
-            estimate: 0,
+            estimate: TASK_CONFIG.DEFAULTS.ESTIMATE,
             start_date: null,
             end_date: null,
             actual_hours: null,
-            completion_percentage: 0,
-            priority_score: 50,
-            complexity_score: 50,
-            risk_level: 'low',
+            completion_percentage: TASK_CONFIG.DEFAULTS.COMPLETION_PERCENTAGE,
+            priority_score: TASK_CONFIG.DEFAULTS.PRIORITY_SCORE,
+            complexity_score: TASK_CONFIG.DEFAULTS.COMPLEXITY_SCORE,
+            risk_level: TASK_CONFIG.DEFAULTS.RISK_LEVEL,
             tags: null,
             custom_fields: null,
             milestone_id: null,

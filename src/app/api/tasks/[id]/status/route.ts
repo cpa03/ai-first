@@ -8,9 +8,13 @@ import {
 import { dbService } from '@/lib/db';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
+import { TASK_CONFIG } from '@/lib/config';
 
-// Valid task statuses
-const VALID_STATUSES = ['todo', 'in_progress', 'completed'] as const;
+const VALID_STATUSES = [
+  TASK_CONFIG.STATUSES.TODO,
+  TASK_CONFIG.STATUSES.IN_PROGRESS,
+  TASK_CONFIG.STATUSES.COMPLETED,
+] as const;
 type TaskStatus = (typeof VALID_STATUSES)[number];
 
 interface StatusUpdateBody {
@@ -62,11 +66,11 @@ async function handlePatch(context: ApiContext) {
 
     // Calculate completion percentage based on status
     const completionPercentage =
-      body.status === 'completed'
-        ? 100
-        : body.status === 'in_progress'
-          ? 50
-          : 0;
+      body.status === TASK_CONFIG.STATUSES.COMPLETED
+        ? TASK_CONFIG.COMPLETION.PERCENTAGES.COMPLETED
+        : body.status === TASK_CONFIG.STATUSES.IN_PROGRESS
+          ? TASK_CONFIG.COMPLETION.PERCENTAGES.IN_PROGRESS
+          : TASK_CONFIG.COMPLETION.PERCENTAGES.NOT_STARTED;
 
     const updatedTask = await dbService.updateTask(taskId, {
       status: body.status,
