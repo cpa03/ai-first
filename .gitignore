@@ -114,6 +114,9 @@ __pycache__/
 .Jules/
 .sisyphus/
 
+# OpenCode CLI - ignore auto-generated node_modules
+.opencode/node_modules/
+
 # Archive backups (should not be committed)
 docs/archive/*.gz
 docs/archive/*.zip
