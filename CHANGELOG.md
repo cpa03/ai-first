@@ -46,6 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - RepoKeeper automated maintenance workflow
 - Branch cleanup automation
 - Empty directory cleanup in `.swc/`
+- Roadmap progress tracking with partial implementation markers [~]
+
+### Changed
+
+- Updated `docs/roadmap.md` with accurate Phase 1 progress tracking
+  - Added progress legend explaining [ ], [~], [x] markers
+  - Marked 4 P0 features as partial implementation with notes
+  - Task Management Interface, Markdown Export, Testing, Monitoring
 
 ### Security 2026-02-18 (HIGH Severity Fix)
 
