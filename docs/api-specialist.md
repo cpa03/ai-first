@@ -217,7 +217,8 @@ Retry-After: 60  # Only on rate limit errors
 3. **API Client**: Consider generating TypeScript client from API types
 4. **Metrics**: Add endpoint-level metrics (response times, error rates)
 5. ~~**Caching**: Add cache headers for appropriate GET endpoints~~ ✅ DONE (2026-02-18)
-6. **Batch Operations**: Consider batch endpoints for bulk operations
+6. ~~**External API Versioning**: Centralize external API version tracking~~ ✅ DONE (2026-02-18)
+7. **Batch Operations**: Consider batch endpoints for bulk operations
 
 ---
 
@@ -317,6 +318,73 @@ const data = unwrapApiResponse(result);
 
 ---
 
+## External API Versioning
+
+### Overview
+
+All external API versions are centralized in `EXTERNAL_API_VERSIONS` constant (`src/lib/config/constants.ts`). This addresses Issue #876 for consistent API versioning and compatibility management.
+
+### Supported External APIs
+
+| Service      | Version    | Last Verified | Notes                        |
+| ------------ | ---------- | ------------- | ---------------------------- |
+| OpenAI       | latest     | 2026-02-18    | SDK manages versioning       |
+| Notion       | 2022-06-28 | 2026-02-18    | Dated version in header      |
+| Trello       | 1          | 2026-02-18    | Stable, no changes announced |
+| GitHub       | 2022-11-28 | 2026-02-18    | REST API version header      |
+| Google Tasks | v1         | 2026-02-18    | Versioned endpoint in URL    |
+| Linear       | graphql    | 2026-02-18    | Schema-based versioning      |
+| Asana        | 1.0        | 2026-02-18    | Versioned endpoint in URL    |
+| Supabase     | v2         | 2026-02-18    | Client library version       |
+
+### Environment Variable Overrides
+
+Each API version can be overridden via environment variables for emergency pinning:
+
+```bash
+# OpenAI
+OPENAI_API_VERSION=latest
+OPENAI_DEFAULT_MODEL=gpt-4-turbo-preview
+
+# Notion
+NOTION_API_VERSION=2022-06-28
+
+# Trello
+TRELLO_API_VERSION=1
+
+# GitHub
+GITHUB_API_VERSION=2022-11-28
+
+# Google Tasks
+GOOGLE_TASKS_API_VERSION=v1
+
+# Asana
+ASANA_API_VERSION=1.0
+```
+
+### Usage Example
+
+```typescript
+import { EXTERNAL_API_VERSIONS } from '@/lib/config/constants';
+
+// Access version info
+const notionVersion = EXTERNAL_API_VERSIONS.NOTION.VERSION;
+const lastVerified = EXTERNAL_API_VERSIONS.NOTION.LAST_VERIFIED;
+const changelogUrl = EXTERNAL_API_VERSIONS.NOTION.CHANGELOG_URL;
+```
+
+### Version Update Procedure
+
+When updating external API versions:
+
+1. Check the provider's changelog for breaking changes
+2. Update the version in `EXTERNAL_API_VERSIONS`
+3. Update `LAST_VERIFIED` date
+4. Run integration tests to verify compatibility
+5. Update resilience config if timeout/retry behavior changes
+
+---
+
 ## Deployment Checklist
 
 Before deploying API changes:
@@ -336,6 +404,22 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-18 - External API Versioning (Issue #876)
+
+- **Feature**: Added centralized `EXTERNAL_API_VERSIONS` configuration
+- **New Config**: `EXTERNAL_API_VERSIONS` in constants.ts with version tracking for all external APIs
+- **Addresses**: Issue #876 - Inconsistent API versioning and compatibility management
+- **Included APIs**: OpenAI, Notion, Trello, GitHub, Google Tasks, Linear, Asana, Supabase
+- **Features**:
+  - Version numbers for each API
+  - Last verified dates
+  - Changelog URLs
+  - Environment variable overrides for emergency version pinning
+- **Impact**: Single source of truth for external API versions, easier debugging, better compatibility tracking
+- **Build**: Passing
+- **Tests**: All tests passing
+- **Documentation**: Updated this guide
 
 ### 2026-02-18 - API Cache Headers Implementation
 
