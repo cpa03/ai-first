@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: CLARIFY_PAGE_CONFIG.METADATA.description,
   keywords: [...CLARIFY_PAGE_CONFIG.METADATA.keywords],
   openGraph: CLARIFY_PAGE_CONFIG.METADATA.openGraph,
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ClarifyLayout({

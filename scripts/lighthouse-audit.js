@@ -10,10 +10,12 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/dashboard', '/clarify', '/results'];
+const PAGES = ['/'];
+const AUTH_PAGES = ['/dashboard', '/clarify', '/results'];
 
 // Use Playwright's Chrome
-const CHROME_PATH = '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome';
+const CHROME_PATH =
+  '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome';
 
 const CONFIG = {
   extends: 'lighthouse:default',
@@ -119,6 +121,9 @@ async function main() {
   console.log('🧛 BroCula Lighthouse Auditor Starting...');
   console.log(`Base URL: ${BASE_URL}`);
   console.log(`Chrome Path: ${CHROME_PATH}`);
+  console.log(
+    `Auditing ${PAGES.length} public page(s) (skipping ${AUTH_PAGES.length} auth-required pages)`
+  );
   console.log('');
 
   for (const pagePath of PAGES) {
