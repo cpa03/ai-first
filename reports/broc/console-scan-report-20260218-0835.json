@@ -1,0 +1,127 @@
+{
+  "timestamp": "2026-02-18T08:34:55.305Z",
+  "baseUrl": "http://localhost:3000",
+  "summary": {
+    "totalErrors": 0,
+    "totalWarnings": 3,
+    "totalLogs": 19
+  },
+  "errors": [],
+  "warnings": [
+    {
+      "type": "warning",
+      "message": "[DatabaseService] Supabase client not initialized. Check environment variables.",
+      "page": "/dashboard",
+      "location": "http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2384:27"
+    },
+    {
+      "type": "warning",
+      "message": "[DatabaseService] Supabase client not initialized. Check environment variables.",
+      "page": "/clarify",
+      "location": "http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2384:27"
+    },
+    {
+      "type": "warning",
+      "message": "[DatabaseService] Supabase client not initialized. Check environment variables.",
+      "page": "/results",
+      "location": "http://localhost:3000/_next/static/chunks/node_modules_next_dist_f3530cac._.js:2384:27"
+    }
+  ],
+  "allLogs": [
+    {
+      "type": "info",
+      "message": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "page": "/"
+    },
+    {
+      "type": "log",
+      "message": "[HMR] connected",
+      "page": "/"
+    },
+    {
+      "type": "info",
+      "message": "[GlobalErrorHandler] Global error handlers registered {component: GlobalErrorHandler, action: mount}",
+      "page": "/"
+    },
+    {
+      "type": "log",
+      "message": "[Fast Refresh] rebuilding",
+      "page": "/"
+    },
+    {
+      "type": "log",
+      "message": "[Fast Refresh] done in 128ms",
+      "page": "/"
+    },
+    {
+      "type": "info",
+      "message": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "page": "/dashboard"
+    },
+    {
+      "type": "warning",
+      "message": "[DatabaseService] Supabase client not initialized. Check environment variables.",
+      "page": "/dashboard"
+    },
+    {
+      "type": "log",
+      "message": "[HMR] connected",
+      "page": "/dashboard"
+    },
+    {
+      "type": "info",
+      "message": "[GlobalErrorHandler] Global error handlers registered {component: GlobalErrorHandler, action: mount}",
+      "page": "/dashboard"
+    },
+    {
+      "type": "log",
+      "message": "[Fast Refresh] rebuilding",
+      "page": "/dashboard"
+    },
+    {
+      "type": "log",
+      "message": "[Fast Refresh] done in 160ms",
+      "page": "/dashboard"
+    },
+    {
+      "type": "info",
+      "message": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "page": "/clarify"
+    },
+    {
+      "type": "warning",
+      "message": "[DatabaseService] Supabase client not initialized. Check environment variables.",
+      "page": "/clarify"
+    },
+    {
+      "type": "log",
+      "message": "[HMR] connected",
+      "page": "/clarify"
+    },
+    {
+      "type": "info",
+      "message": "[GlobalErrorHandler] Global error handlers registered {component: GlobalErrorHandler, action: mount}",
+      "page": "/clarify"
+    },
+    {
+      "type": "info",
+      "message": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold",
+      "page": "/results"
+    },
+    {
+      "type": "warning",
+      "message": "[DatabaseService] Supabase client not initialized. Check environment variables.",
+      "page": "/results"
+    },
+    {
+      "type": "log",
+      "message": "[HMR] connected",
+      "page": "/results"
+    },
+    {
+      "type": "info",
+      "message": "[GlobalErrorHandler] Global error handlers registered {component: GlobalErrorHandler, action: mount}",
+      "page": "/results"
+    }
+  ]
+}
