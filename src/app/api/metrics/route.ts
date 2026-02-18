@@ -5,8 +5,15 @@ import {
   Histogram,
   Gauge,
 } from 'prom-client';
+import {
+  withApiHandler,
+  standardSuccessResponse,
+  ApiContext,
+} from '@/lib/api-handler';
 import { STATUS_CODES } from '@/lib/config';
+import { createLogger } from '@/lib/logger';
 
+const logger = createLogger('MetricsAPI');
 const register = new Registry();
 
 collectDefaultMetrics({ register });
@@ -49,21 +56,46 @@ export const rateLimiterHits = new Counter({
 
 export { register };
 
-export async function GET() {
+async function handleGet(context: ApiContext) {
   try {
     const metrics = await register.metrics();
+
+    logger.debug('Metrics requested', {
+      requestId: context.requestId,
+      contentType: register.contentType,
+    });
+
     return new Response(metrics, {
       status: STATUS_CODES.OK,
       headers: {
         'Content-Type': register.contentType,
+        'X-Request-ID': context.requestId,
+        'X-RateLimit-Limit': String(context.rateLimit.limit),
+        'X-RateLimit-Remaining': String(context.rateLimit.remaining),
+        'X-RateLimit-Reset': String(
+          new Date(context.rateLimit.reset).toISOString()
+        ),
       },
     });
-  } catch (_error) {
-    return new Response('Error generating metrics', {
-      status: STATUS_CODES.INTERNAL_ERROR,
-      headers: {
-        'Content-Type': 'text/plain',
-      },
+  } catch (error) {
+    logger.error('Failed to generate metrics', {
+      requestId: context.requestId,
+      error: error instanceof Error ? error.message : 'Unknown error',
     });
+
+    return standardSuccessResponse(
+      {
+        error: 'Failed to generate metrics',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      context.requestId,
+      STATUS_CODES.INTERNAL_ERROR,
+      context.rateLimit
+    );
   }
 }
+
+export const GET = withApiHandler(handleGet, {
+  validateSize: false,
+  rateLimit: 'strict',
+});
