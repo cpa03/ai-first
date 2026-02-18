@@ -276,8 +276,50 @@ export class DatabaseService {
   }
 
   /**
+   * Check if the service has been fully disposed with all cleanup complete
+   * Returns detailed status for debugging and verification
+   */
+  isFullyDisposed(): {
+    disposed: boolean;
+    clientCleared: boolean;
+    adminCleared: boolean;
+    healthTrackingReset: boolean;
+  } {
+    return {
+      disposed: this._disposed,
+      clientCleared: this._client === null,
+      adminCleared: this._admin === null,
+      healthTrackingReset:
+        !this.connectionHealthy &&
+        this.lastHealthCheck === null &&
+        this.connectionRetries === 0,
+    };
+  }
+
+  /**
    * Properly dispose of database connections and cleanup resources
    * This prevents memory leaks in long-running processes
+   *
+   * IMPORTANT: Connection Cleanup Behavior
+   * =====================================
+   * The Supabase JS SDK uses HTTP/REST for database operations, which does not
+   * maintain persistent TCP connections. Therefore:
+   *
+   * 1. There is no explicit "close" or "disconnect" method to call
+   * 2. Each request opens and closes its own HTTP connection automatically
+   * 3. The main cleanup concern is removing internal references and state
+   *
+   * This method handles:
+   * - Clearing client and admin references for garbage collection
+   * - Resetting connection health tracking state
+   * - Marking the service as disposed to prevent further operations
+   *
+   * For PostgreSQL connection pooling (server-side), Supabase handles this
+   * automatically through their infrastructure.
+   *
+   * References:
+   * - https://supabase.com/docs/reference/javascript/initializing
+   * - GitHub Issue #1147
    */
   dispose(): void {
     if (this._disposed) {
@@ -286,7 +328,6 @@ export class DatabaseService {
 
     logger.info('Disposing DatabaseService and cleaning up connections...');
 
-    // Clean up client connections
     if (this._client) {
       try {
         // Remove auth state change listeners to prevent memory leaks
@@ -316,6 +357,10 @@ export class DatabaseService {
         logger.warn('Error during admin cleanup:', error);
       }
       this._admin = null;
+    }
+
+    if (typeof window === 'undefined') {
+      _supabaseAdmin = null;
     }
 
     // Reset connection health tracking
@@ -429,7 +474,7 @@ export class DatabaseService {
     if (DatabaseService.instance) {
       DatabaseService.instance.dispose();
     }
-     
+
     (DatabaseService as any).instance = undefined;
   }
 
