@@ -12,7 +12,7 @@
 ### Prerequisites
 
 - Node.js 18+
-- npm or yarn
+- npm (package manager)
 
 ### Development Commands
 

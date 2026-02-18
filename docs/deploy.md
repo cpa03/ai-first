@@ -28,7 +28,7 @@ This guide covers deploying IdeaFlow to Vercel with Supabase backend.
 
 - Node.js 18+ installed
 - Git installed
-- npm or yarn package manager
+- npm (package manager)
 
 ### Optional for Export Features
 
