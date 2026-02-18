@@ -1,6 +1,7 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
+import { AUTH_CONFIG } from '@/lib/config/constants';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');
@@ -35,9 +36,7 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
  * SECURITY: Uses SHA-256 hashing and timing-safe comparison to prevent secret leakage.
  * Uses Web Crypto API for compatibility across Node, Edge, and Workers.
  */
-export async function isAdminAuthenticated(
-  request: Request
-): Promise<boolean> {
+export async function isAdminAuthenticated(request: Request): Promise<boolean> {
   if (!ADMIN_API_KEY) {
     return process.env.NODE_ENV === 'development';
   }
@@ -55,7 +54,7 @@ export async function isAdminAuthenticated(
   const credentials = parts[1];
 
   // SECURITY: Limit token length to prevent DoS attacks during hashing
-  if (!credentials || credentials.length > 512) {
+  if (!credentials || credentials.length > AUTH_CONFIG.MAX_CREDENTIAL_LENGTH) {
     return false;
   }
 

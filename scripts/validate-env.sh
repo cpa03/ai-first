@@ -2,8 +2,31 @@
 
 # Environment Setup Validation Script
 # This script validates that all required environment variables are set
+# and includes security validations for sensitive configuration values
+#
+# Usage:
+#   ./scripts/validate-env.sh           # Full validation (for local dev)
+#   ./scripts/validate-env.sh --ci      # CI mode (strict, exit on error)
+#   ./scripts/validate-env.sh --quick   # Quick mode (only required vars)
 
 set -e
+
+# Parse arguments
+CI_MODE=false
+QUICK_MODE=false
+
+for arg in "$@"; do
+    case $arg in
+        --ci)
+            CI_MODE=true
+            shift
+            ;;
+        --quick)
+            QUICK_MODE=true
+            shift
+            ;;
+    esac
+done
 
 # Colors for output
 RED='\033[0;31m'
@@ -12,10 +35,27 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
+# Security validation settings
+MIN_ADMIN_KEY_LENGTH=32
+PLACEHOLDER_PATTERNS="your-|placeholder|example|test|demo|changeme|secret123|admin123|default"
+
+# Track security warnings separately
+security_warnings=0
+
 # Function to print colored output
 print_status() {
     local status=$1
     local message=$2
+    
+    if [ "$CI_MODE" = true ]; then
+        case $status in
+            "OK") echo "[OK] $message" ;;
+            "WARN") echo "[WARN] $message" ;;
+            "ERROR") echo "[ERROR] $message" ;;
+            "INFO") echo "[INFO] $message" ;;
+        esac
+        return
+    fi
     
     case $status in
         "OK")
@@ -29,6 +69,9 @@ print_status() {
             ;;
         "INFO")
             echo -e "${BLUE}ℹ $message${NC}"
+            ;;
+        "SECURITY")
+            echo -e "${RED}🔒 $message${NC}"
             ;;
     esac
 }
@@ -50,6 +93,71 @@ check_env_var() {
         print_status "OK" "$var_name is set"
         return 0
     fi
+}
+
+# Function to check for placeholder values in sensitive variables
+check_placeholder_value() {
+    local var_name=$1
+    local var_value="${!var_name}"
+    
+    if [ -z "$var_value" ]; then
+        return 0
+    fi
+    
+    local lower_value=$(echo "$var_value" | tr '[:upper:]' '[:lower:]')
+    
+    for pattern in $(echo $PLACEHOLDER_PATTERNS | tr '|' ' '); do
+        if [[ "$lower_value" == *"$pattern"* ]]; then
+            print_status "SECURITY" "$var_name appears to contain a placeholder value: '...${pattern}...'"
+            ((security_warnings++)) || true
+            return 1
+        fi
+    done
+    
+    return 0
+}
+
+# Function to validate ADMIN_API_KEY complexity
+validate_admin_key_security() {
+    local key="${ADMIN_API_KEY}"
+    
+    if [ -z "$key" ]; then
+        print_status "WARN" "ADMIN_API_KEY is not set (optional but recommended)"
+        return 2
+    fi
+    
+    local key_length=${#key}
+    local has_upper=$(echo "$key" | grep -c '[A-Z]' || echo 0)
+    local has_lower=$(echo "$key" | grep -c '[a-z]' || echo 0)
+    local has_number=$(echo "$key" | grep -c '[0-9]' || echo 0)
+    local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || echo 0)
+    
+    if [ "$key_length" -lt "$MIN_ADMIN_KEY_LENGTH" ]; then
+        print_status "SECURITY" "ADMIN_API_KEY is too short ($key_length chars, minimum $MIN_ADMIN_KEY_LENGTH)"
+        ((security_warnings++)) || true
+        return 1
+    fi
+    
+    if [ "$has_upper" -eq 0 ] || [ "$has_lower" -eq 0 ]; then
+        print_status "SECURITY" "ADMIN_API_KEY should contain both uppercase and lowercase letters"
+        ((security_warnings++)) || true
+        return 1
+    fi
+    
+    if [ "$has_number" -eq 0 ]; then
+        print_status "SECURITY" "ADMIN_API_KEY should contain at least one number"
+        ((security_warnings++)) || true
+        return 1
+    fi
+    
+    if [ "$has_special" -eq 0 ]; then
+        print_status "SECURITY" "ADMIN_API_KEY should contain at least one special character"
+        ((security_warnings++)) || true
+        return 1
+    fi
+    
+    print_status "OK" "ADMIN_API_KEY meets security requirements ($key_length chars, mixed case, numbers, special)"
+    return 0
 }
 
 # Function to validate Supabase connection
@@ -115,21 +223,39 @@ validate_cost_limit() {
 
 # Main validation function
 main() {
-    echo -e "${BLUE}🔍 Environment Configuration Validation${NC}"
-    echo -e "${BLUE}============================================${NC}"
+    if [ "$CI_MODE" = true ]; then
+        echo "Environment Configuration Validation (CI Mode)"
+        echo "================================================"
+    elif [ "$QUICK_MODE" = true ]; then
+        echo "Environment Configuration Validation (Quick Mode)"
+        echo "=================================================="
+    else
+        echo -e "${BLUE}🔍 Environment Configuration Validation${NC}"
+        echo -e "${BLUE}============================================${NC}"
+    fi
     echo
     
     # Load environment from .env.local if it exists
     if [ -f ".env.local" ]; then
         print_status "INFO" "Loading environment from .env.local"
-        export $(grep -v '^#' .env.local | xargs)
+        set -a
+        source <(grep -v '^#' .env.local | grep -v '^\s*$')
+        set +a
     else
-        print_status "WARN" ".env.local file not found"
-        print_status "INFO" "Create .env.local from config/.env.example"
+        if [ "$CI_MODE" = true ]; then
+            print_status "WARN" ".env.local not found (CI may use secrets)"
+        else
+            print_status "WARN" ".env.local file not found"
+            print_status "INFO" "Create .env.local from config/.env.example"
+        fi
     fi
     
     echo
-    echo -e "${BLUE}Checking Required Variables:${NC}"
+    if [ "$CI_MODE" = true ]; then
+        echo "Checking Required Variables:"
+    else
+        echo -e "${BLUE}Checking Required Variables:${NC}"
+    fi
     echo
     
     # Initialize error count
@@ -142,8 +268,24 @@ main() {
     check_env_var "COST_LIMIT_DAILY" "true" || ((errors++))
     check_env_var "NEXT_PUBLIC_APP_URL" "true" || ((errors++))
     
+    # Skip detailed validation in quick mode
+    if [ "$QUICK_MODE" = true ]; then
+        echo
+        if [ $errors -eq 0 ]; then
+            print_status "OK" "Required environment variables are set"
+            exit 0
+        else
+            print_status "ERROR" "Found $errors configuration error(s)"
+            exit 1
+        fi
+    fi
+    
     echo
-    echo -e "${BLUE}Validating Configurations:${NC}"
+    if [ "$CI_MODE" = true ]; then
+        echo "Validating Configurations:"
+    else
+        echo -e "${BLUE}Validating Configurations:${NC}"
+    fi
     echo
     
     # Validate Supabase
@@ -154,6 +296,31 @@ main() {
     
     # Validate cost limit
     validate_cost_limit || ((errors++))
+    
+    # Skip optional integrations in CI mode
+    if [ "$CI_MODE" = true ]; then
+        echo
+        echo "================================================"
+        if [ $errors -eq 0 ]; then
+            print_status "OK" "CI environment configuration is valid"
+            exit 0
+        else
+            print_status "ERROR" "Found $errors configuration error(s)"
+            exit 1
+        fi
+    fi
+    
+    echo
+    echo -e "${BLUE}Security Validations:${NC}"
+    echo
+    
+    # Security validations for sensitive environment variables
+    check_placeholder_value "SUPABASE_SERVICE_ROLE_KEY"
+    check_placeholder_value "OPENAI_API_KEY"
+    check_placeholder_value "ANTHROPIC_API_KEY"
+    check_placeholder_value "ADMIN_API_KEY"
+    
+    validate_admin_key_security
     
     echo
     echo -e "${BLUE}Optional Integrations:${NC}"
@@ -171,10 +338,16 @@ main() {
     echo -e "${BLUE}============================================${NC}"
     
     # Summary
-    if [ $errors -eq 0 ]; then
+    if [ $errors -eq 0 ] && [ $security_warnings -eq 0 ]; then
         print_status "OK" "Environment configuration is valid! 🎉"
         echo
         print_status "INFO" "You can now start the application with: npm run dev"
+        exit 0
+    elif [ $errors -eq 0 ] && [ $security_warnings -gt 0 ]; then
+        print_status "WARN" "Environment configuration is valid but has $security_warnings security warning(s)"
+        echo
+        print_status "INFO" "Review security warnings above before deploying to production"
+        print_status "INFO" "Generate a secure ADMIN_API_KEY: openssl rand -base64 32"
         exit 0
     else
         print_status "ERROR" "Found $errors configuration error(s) that must be fixed"

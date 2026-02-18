@@ -2,6 +2,8 @@ import {
   VALIDATION_LIMITS_CONFIG,
   VALIDATION_LIMITS,
   USER_STORY_CONFIG,
+  STATUS_CODES,
+  HTTP_HEADERS,
 } from './config/constants';
 import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config';
 import { isString } from './type-guards';
@@ -229,8 +231,8 @@ export function buildErrorResponse(errors: ValidationError[]): Response {
       details: errors,
     }),
     {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
+      status: STATUS_CODES.BAD_REQUEST,
+      headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
     }
   );
 }

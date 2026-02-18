@@ -125,7 +125,17 @@ export {
   CLARIFIER_VALUES,
   TASK_VALIDATION,
   RETRY_VALUES,
+  HTTP_HEADERS,
+  AUTH_CONFIG,
 } from './constants';
+
+// Configuration Validator
+export {
+  validateConfiguration,
+  validateConfigurationOrThrow,
+  isConfigurationHealthy,
+  type ConfigValidationResult,
+} from './config-validator';
 
 // Type exports
 export type { AppConfig } from './app';
