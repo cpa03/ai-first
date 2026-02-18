@@ -15,6 +15,7 @@ import {
   MESSAGES,
   PLACEHOLDERS,
   INPUT_STYLES,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -117,7 +118,7 @@ function ClarificationFlow({
       setTimeout(() => {
         setCurrentStep(nextStep);
         setCurrentAnswer('');
-      }, 800);
+      }, ANIMATION_DELAYS.STEP_TRANSITION);
     } else {
       onComplete(newAnswers);
     }
