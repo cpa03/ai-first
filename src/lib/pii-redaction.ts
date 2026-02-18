@@ -414,7 +414,11 @@ export function redactPIIInObject(
   const keys = Object.keys(obj);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    processEntry(key, (obj as Record<string, unknown>)[key]);
+    try {
+      processEntry(key, (obj as Record<string, unknown>)[key]);
+    } catch {
+      redacted[key] = '[Getter Error]';
+    }
   }
 
   // Handle enumerable symbols
@@ -422,7 +426,11 @@ export function redactPIIInObject(
   for (let i = 0; i < symbols.length; i++) {
     const sym = symbols[i];
     if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
-      processEntry(sym.toString(), (obj as Record<symbol, unknown>)[sym]);
+      try {
+        processEntry(sym.toString(), (obj as Record<symbol, unknown>)[sym]);
+      } catch {
+        redacted[sym.toString()] = '[Getter Error]';
+      }
     }
   }
 
