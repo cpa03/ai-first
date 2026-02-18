@@ -1,10 +1,10 @@
+const { LHCI_CONFIG } = require('./scripts/config');
+
 module.exports = {
   ci: {
     collect: {
-      url: [
-        process.env.LHCI_URL || process.env.BASE_URL || 'http://localhost:3000',
-      ],
-      numberOfRuns: 1,
+      url: [LHCI_CONFIG.URL],
+      numberOfRuns: LHCI_CONFIG.NUMBER_OF_RUNS,
       settings: {
         chromeFlags: '--no-sandbox --headless',
         preset: 'desktop',
@@ -12,10 +12,19 @@ module.exports = {
     },
     assert: {
       assertions: {
-        'categories:performance': ['warn', { minScore: 0.7 }],
-        'categories:accessibility': ['error', { minScore: 0.9 }],
-        'categories:best-practices': ['warn', { minScore: 0.8 }],
-        'categories:seo': ['warn', { minScore: 0.8 }],
+        'categories:performance': [
+          'warn',
+          { minScore: LHCI_CONFIG.MIN_SCORES.PERFORMANCE },
+        ],
+        'categories:accessibility': [
+          'error',
+          { minScore: LHCI_CONFIG.MIN_SCORES.ACCESSIBILITY },
+        ],
+        'categories:best-practices': [
+          'warn',
+          { minScore: LHCI_CONFIG.MIN_SCORES.BEST_PRACTICES },
+        ],
+        'categories:seo': ['warn', { minScore: LHCI_CONFIG.MIN_SCORES.SEO }],
       },
     },
     upload: {
