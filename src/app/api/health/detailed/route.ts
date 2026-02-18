@@ -18,6 +18,14 @@ interface HealthCheckResult {
   error?: string;
 }
 
+interface ConnectorHealthInfo {
+  name: string;
+  configured: boolean;
+  isExternal: boolean;
+  lastChecked: string;
+  error?: string;
+}
+
 interface HealthResponse {
   status: string;
   timestamp: string;
@@ -28,6 +36,7 @@ interface HealthResponse {
     ai: HealthCheckResult;
     exports: HealthCheckResult;
   };
+  connectors: Record<string, ConnectorHealthInfo>;
   circuitBreakers: Array<{
     service: string;
     state: string;
@@ -77,6 +86,8 @@ async function handleGet(context: ApiContext) {
     state: status.state,
     failures: status.failures,
   }));
+
+  const connectors = await exportManager.getConnectorsHealth();
 
   // Run health checks concurrently with proper aggregate error handling
   const healthCheckPromises = [
@@ -199,6 +210,7 @@ async function handleGet(context: ApiContext) {
     version: '0.1.0',
     uptime: process.uptime(),
     checks,
+    connectors,
     circuitBreakers,
   };
 
