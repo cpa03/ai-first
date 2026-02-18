@@ -283,10 +283,10 @@ function ResultsContent() {
         </div>
 
         {exportUrl && (
-          <div className="mt-6 p-4 bg-green-50 rounded-lg">
-            <p className="text-green-800">
-              Export successful! The file should download automatically.
-            </p>
+          <div className="mt-6">
+            <Alert type="success" title="Export Successful">
+              The file should download automatically.
+            </Alert>
           </div>
         )}
       </div>
