@@ -269,6 +269,7 @@ interface ClarificationAnswer {
 | dependency_type     | TEXT        | DEFAULT 'finish_to_start', CHECK         | Type: finish_to_start, start_to_start, finish_to_finish, start_to_finish |
 | lag_days            | INTEGER     | DEFAULT 0                                | Lag in days                                                              |
 | created_at          | TIMESTAMPTZ | DEFAULT NOW()                            | Creation timestamp                                                       |
+| updated_at          | TIMESTAMPTZ | DEFAULT NOW()                            | Last update timestamp                                                    |
 | UNIQUE              |             | (predecessor_task_id, successor_task_id) | Prevent duplicate dependencies                                           |
 
 ### 8. task_assignments
@@ -577,6 +578,8 @@ Automatically updates the `updated_at` timestamp on row updates.
 - clarification_sessions
 - clarification_answers
 - deliverables
+- ideas
+- task_dependencies
 
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -1039,6 +1042,25 @@ Supabase handles connection pooling automatically. For high-traffic applications
    - Enables soft delete pattern consistent with ideas, deliverables, and tasks tables
    - Added index `idx_task_comments_deleted_at` for efficient soft delete queries
    - References Issue #1172
+
+### 2026-02-18 - Task Dependencies Updated_at Column
+
+#### Enhancement
+
+1. **Added `updated_at` column to `task_dependencies` table**
+   - Created migration `20260218_add_task_dependencies_updated_at.sql`
+   - Added automatic trigger to update `updated_at` on record modification
+   - Added index `idx_task_dependencies_updated_at` for efficient sorting by last modification
+   - Ensures consistency with all other tables in the schema
+   - References Issue #1172 (consolidated), #839 (original)
+
+2. **Updated schema.sql**
+   - Added `updated_at` column definition to task_dependencies table
+   - Added trigger `update_task_dependencies_updated_at`
+   - Added index for performance
+
+3. **Down migration included**
+   - `20260218_add_task_dependencies_updated_at.down.sql` allows safe rollback
 
 ### 2026-02-07 - Database Schema Fixes
 

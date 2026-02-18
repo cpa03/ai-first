@@ -255,6 +255,50 @@ Before submitting a story for review:
 
 Use the [User Story Template](./templates/user-story_template.md) for consistent story formatting.
 
+## Programmatic Validation
+
+The codebase includes built-in user story format validation that can be used programmatically:
+
+### Available Functions
+
+```typescript
+import {
+  validateUserStoryFormat,
+  validateIdeaWithUserStory,
+} from '@/lib/validation';
+
+// Validate user story format only
+const result = validateUserStoryFormat(ideaText, { strict: true });
+
+// Validate idea with user story format
+const result = validateIdeaWithUserStory(ideaText, {
+  validateUserStory: true,
+  strictUserStory: true,
+});
+```
+
+### Validation Result
+
+```typescript
+interface UserStoryValidationResult {
+  valid: boolean;
+  errors: ValidationError[];
+  persona?: string; // Extracted persona if valid
+  goal?: string; // Extracted goal if valid
+  benefit?: string; // Extracted benefit if valid
+  suggestions?: string[]; // Improvement suggestions
+  isPartial?: boolean; // True if partially matches format
+}
+```
+
+### Configuration
+
+User story validation is controlled by environment variable:
+
+- `USER_STORY_FORMAT_VALIDATION_ENABLED`: Set to `true` to enable format validation (default: `false` for backward compatibility)
+
+The validation uses patterns defined in `src/lib/config/constants.ts` under `USER_STORY_CONFIG`.
+
 ## Related Documentation
 
 - [Blueprint Template](./templates/blueprint_template.md) - For project blueprints

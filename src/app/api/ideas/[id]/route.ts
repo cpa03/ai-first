@@ -8,7 +8,7 @@ import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
-import { IDEA_CONFIG } from '@/lib/config';
+import { IDEA_CONFIG, STATUS_CODES } from '@/lib/config';
 
 // Type guard for valid idea status values
 function isValidStatus(status: string): status is Idea['status'] {
@@ -46,7 +46,7 @@ async function handleGet(context: ApiContext) {
   return standardSuccessResponse(
     idea,
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }
@@ -113,7 +113,7 @@ async function handlePut(context: ApiContext) {
       updatedAt: updatedIdea.updated_at,
     },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }
@@ -153,7 +153,7 @@ async function handleDelete(context: ApiContext) {
       id: ideaId,
     },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     context.rateLimit
   );
 }

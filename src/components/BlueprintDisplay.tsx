@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import SuccessCelebration from '@/components/SuccessCelebration';
+import Tooltip from '@/components/Tooltip';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -217,24 +218,40 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               or keep it as your guide.
             </p>
             <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
-              <Button
-                variant="secondary"
-                fullWidth={false}
-                aria-label="Start over with a new idea"
-                disabled
-                title="Start over functionality coming soon"
+              <Tooltip
+                content="Start over with a new idea - coming soon"
+                position="top"
               >
-                Start Over
-              </Button>
-              <Button
-                variant="primary"
-                fullWidth={false}
-                aria-label="Export blueprint to project management tools"
-                disabled
-                title="Export to tools functionality coming soon"
+                <Button
+                  variant="secondary"
+                  fullWidth={false}
+                  aria-label="Start over with a new idea (coming soon)"
+                  aria-disabled="true"
+                  disabled
+                >
+                  Start Over
+                  <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                    Soon
+                  </span>
+                </Button>
+              </Tooltip>
+              <Tooltip
+                content="Export to Notion, Trello, and more - coming soon"
+                position="top"
               >
-                Export to Tools
-              </Button>
+                <Button
+                  variant="primary"
+                  fullWidth={false}
+                  aria-label="Export blueprint to project management tools (coming soon)"
+                  aria-disabled="true"
+                  disabled
+                >
+                  Export to Tools
+                  <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                    Soon
+                  </span>
+                </Button>
+              </Tooltip>
             </div>
           </div>
         </footer>

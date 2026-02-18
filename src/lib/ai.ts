@@ -92,12 +92,9 @@ class AIService {
     }
 
     // Periodic cleanup of cost trackers to prevent memory leaks
-    this.cleanupIntervalId = setInterval(
-      () => {
-        this.cleanupOldCostTrackers();
-      },
-      5 * 60 * 1000
-    );
+    this.cleanupIntervalId = setInterval(() => {
+      this.cleanupOldCostTrackers();
+    }, AI_CONFIG.COST_TRACKER_CLEANUP_INTERVAL_MS);
 
     resourceCleanupManager.register('ai-service-interval', () =>
       this.cleanup()
