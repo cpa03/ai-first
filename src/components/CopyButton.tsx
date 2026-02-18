@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
+import { ANIMATION_DELAYS } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
 
@@ -19,7 +20,7 @@ export interface CopyButtonProps {
 
 const logger = createLogger('CopyButton');
 
-const HAPTIC_FEEDBACK_DURATION = 50;
+const HAPTIC_FEEDBACK_DURATION = ANIMATION_DELAYS.MICRO;
 
 const triggerHapticFeedback = (): void => {
   if (typeof navigator !== 'undefined' && navigator.vibrate) {

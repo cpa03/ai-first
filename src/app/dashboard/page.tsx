@@ -7,6 +7,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { APP_CONFIG } from '@/lib/config';
 
 interface Idea {
   id: string;
@@ -64,7 +65,7 @@ export default function DashboardPage() {
       if (filter !== 'all') {
         params.set('status', filter);
       }
-      params.set('limit', '50');
+      params.set('limit', String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT));
 
       const queryString = params.toString();
       const response = await fetch(
@@ -221,11 +222,15 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        role="status"
+        aria-live="polite"
+      >
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <LoadingSpinner
             size="md"
-            className="mb-4"
+            className="mb-4 mx-auto"
             ariaLabel="Loading your ideas"
           />
           <p className="text-gray-600">Loading your ideas...</p>

@@ -360,8 +360,8 @@ class AIService {
     // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
     let totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
 
-    // Maximum iterations to prevent potential infinite loops
-    const MAX_CONTEXT_ITERATIONS = 1000;
+    // Maximum iterations to prevent potential infinite loops (from config)
+    const MAX_CONTEXT_ITERATIONS = AI_CONFIG.MAX_CONTEXT_ITERATIONS;
     let iterations = 0;
 
     // If context exceeds token limit, remove oldest non-system messages
