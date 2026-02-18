@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
+import { fetchWithTimeout } from '@/lib/api-client';
 import { createLogger } from '@/lib/logger';
 import {
   MIN_ANSWER_LENGTH,
@@ -15,6 +16,7 @@ import {
   MESSAGES,
   PLACEHOLDERS,
   INPUT_STYLES,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -117,7 +119,7 @@ function ClarificationFlow({
       setTimeout(() => {
         setCurrentStep(nextStep);
         setCurrentAnswer('');
-      }, 800);
+      }, ANIMATION_DELAYS.STEP_TRANSITION);
     } else {
       onComplete(newAnswers);
     }
@@ -173,7 +175,7 @@ function ClarificationFlow({
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/clarify', {
+        const response = await fetchWithTimeout('/api/clarify', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

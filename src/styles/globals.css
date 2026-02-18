@@ -63,16 +63,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid #2563eb;
-    outline-offset: 2px;
-  }
-
-  button:focus-visible,
-  a:focus-visible,
-  input:focus-visible,
-  textarea:focus-visible,
-  select:focus-visible {
-    outline: 2px solid #2563eb;
+    outline: 2px solid theme('colors.primary.600');
     outline-offset: 2px;
   }
 

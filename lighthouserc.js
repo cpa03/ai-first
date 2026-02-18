@@ -1,7 +1,9 @@
 module.exports = {
   ci: {
     collect: {
-      url: ['http://localhost:3000'],
+      url: [
+        process.env.LHCI_URL || process.env.BASE_URL || 'http://localhost:3000',
+      ],
       numberOfRuns: 1,
       settings: {
         chromeFlags: '--no-sandbox --headless',

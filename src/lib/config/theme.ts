@@ -158,6 +158,37 @@ export const ANIMATION_DURATIONS = {
 } as const;
 
 /**
+ * Animation delay constants (in ms) for setTimeout/setInterval calls
+ * Eliminates hardcoded magic numbers in component timing logic
+ */
+export const ANIMATION_DELAYS = {
+  /** Immediate execution (setTimeout 0 pattern for next tick) */
+  IMMEDIATE: 0,
+  /** Micro delay for haptic feedback and quick UI updates */
+  MICRO: 50,
+  /** Short delay for step transitions and quick animations */
+  SHORT: 100,
+  /** Standard delay for element cleanup (URL revocation, DOM removal) */
+  CLEANUP: 100,
+  /** Step celebration delay before transitioning */
+  STEP_TRANSITION: 800,
+  /** Shake animation duration */
+  SHAKE: 500,
+  /** Tailwind delay class mapping */
+  TAILWIND: {
+    0: 'delay-0',
+    50: 'delay-50',
+    100: 'delay-100',
+    150: 'delay-150',
+    200: 'delay-200',
+    300: 'delay-300',
+    500: 'delay-500',
+    700: 'delay-700',
+    1000: 'delay-1000',
+  } as const,
+} as const;
+
+/**
  * Button ripple animation configuration
  * Eliminates hardcoded ripple duration in Button component
  */
@@ -361,7 +392,7 @@ export const BUTTON_STYLES = {
 
   /** State classes for disabled/loading states */
   STATES: {
-    disabled: 'opacity-50 cursor-not-allowed',
+    disabled: 'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100',
     enabled: 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]',
   } as const,
 
