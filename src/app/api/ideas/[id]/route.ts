@@ -35,14 +35,20 @@ async function handleGet(context: ApiContext) {
     return standardSuccessResponse(
       null,
       context.requestId,
-      STATUS_CODES.NOT_FOUND
+      STATUS_CODES.NOT_FOUND,
+      context.rateLimit
     );
   }
 
   // Verify ownership
   verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
-  return standardSuccessResponse(idea, context.requestId);
+  return standardSuccessResponse(
+    idea,
+    context.requestId,
+    200,
+    context.rateLimit
+  );
 }
 
 async function handlePut(context: ApiContext) {
@@ -68,7 +74,8 @@ async function handlePut(context: ApiContext) {
     return standardSuccessResponse(
       null,
       context.requestId,
-      STATUS_CODES.NOT_FOUND
+      STATUS_CODES.NOT_FOUND,
+      context.rateLimit
     );
   }
 
@@ -106,7 +113,9 @@ async function handlePut(context: ApiContext) {
       createdAt: updatedIdea.created_at,
       updatedAt: updatedIdea.updated_at,
     },
-    context.requestId
+    context.requestId,
+    200,
+    context.rateLimit
   );
 }
 
@@ -130,7 +139,8 @@ async function handleDelete(context: ApiContext) {
     return standardSuccessResponse(
       null,
       context.requestId,
-      STATUS_CODES.NOT_FOUND
+      STATUS_CODES.NOT_FOUND,
+      context.rateLimit
     );
   }
 
@@ -144,7 +154,9 @@ async function handleDelete(context: ApiContext) {
       message: 'Idea deleted successfully',
       id: ideaId,
     },
-    context.requestId
+    context.requestId,
+    200,
+    context.rateLimit
   );
 }
 

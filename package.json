@@ -21,6 +21,7 @@
     "env:check": "bash scripts/validate-env.sh",
     "audit:ci": "npm audit --audit-level=high",
     "audit:fix": "npm audit fix",
+    "security:check": "bash scripts/security-check.sh",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset",
     "scan:console": "node scripts/scan-console.js",
@@ -49,10 +50,11 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.12",
     "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.6",
     "@opennextjs/cloudflare": "^1.16.5",
-    "@testing-library/dom": "^10.4.0",
+    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
