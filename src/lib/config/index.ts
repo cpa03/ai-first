@@ -74,6 +74,7 @@ export {
   BUTTON_STYLES,
   ALERT_STYLES,
   ALERT_BASE_STYLES,
+  ANIMATION_DELAYS,
 } from './theme';
 
 export {

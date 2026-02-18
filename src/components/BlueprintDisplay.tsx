@@ -9,6 +9,7 @@ import SuccessCelebration from '@/components/SuccessCelebration';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
 import { UI_CONFIG } from '@/lib/config/constants';
+import { ANIMATION_DELAYS } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('BlueprintDisplay');
@@ -63,7 +64,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    }, 100);
+    }, ANIMATION_DELAYS.SHORT);
 
     a.click();
   };

@@ -8,6 +8,7 @@ import {
   BG_COLORS,
   SIZES,
   SVG_ANIMATION,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 
@@ -123,7 +124,11 @@ const InputWithValidation = forwardRef<
     // Calculate padding based on which icons are visible
     // Each icon needs ~40px (pr-10), so both need ~80px (pr-20)
     const paddingClass =
-      hasIcon && showClearButton ? 'pr-20' : hasIcon || showClearButton ? 'pr-10' : '';
+      hasIcon && showClearButton
+        ? 'pr-20'
+        : hasIcon || showClearButton
+          ? 'pr-10'
+          : '';
 
     const baseInputClasses = cn(
       INPUT_STYLES.BASE,
@@ -143,9 +148,15 @@ const InputWithValidation = forwardRef<
       let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
       if (isInvalid && !errorAnnouncedRef.current) {
-        timeoutId = setTimeout(() => setErrorAnnounced(true), 0);
+        timeoutId = setTimeout(
+          () => setErrorAnnounced(true),
+          ANIMATION_DELAYS.IMMEDIATE
+        );
       } else if (!isInvalid && errorAnnouncedRef.current) {
-        timeoutId = setTimeout(() => setErrorAnnounced(false), 0);
+        timeoutId = setTimeout(
+          () => setErrorAnnounced(false),
+          ANIMATION_DELAYS.IMMEDIATE
+        );
       }
 
       return () => {
