@@ -222,11 +222,15 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        role="status"
+        aria-live="polite"
+      >
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <LoadingSpinner
             size="md"
-            className="mb-4"
+            className="mb-4 mx-auto"
             ariaLabel="Loading your ideas"
           />
           <p className="text-gray-600">Loading your ideas...</p>

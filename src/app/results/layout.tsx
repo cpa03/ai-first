@@ -6,6 +6,10 @@ export const metadata: Metadata = {
   description: RESULTS_PAGE_CONFIG.METADATA.description,
   keywords: [...RESULTS_PAGE_CONFIG.METADATA.keywords],
   openGraph: RESULTS_PAGE_CONFIG.METADATA.openGraph,
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ResultsLayout({
