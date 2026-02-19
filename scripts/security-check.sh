@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Security Check Script for Hardcoded Secrets Detection
+# Security Check Script for Comprehensive Security Audit
 # This script scans the codebase for potential security issues
 # Part of security-engineer best practices
+# Enhanced: 2026-02-19 by security-engineer specialist
 
 set -e
 
@@ -39,7 +40,7 @@ print_status() {
     esac
 }
 
-echo -e "${BLUE}🔒 Security Check - Hardcoded Secrets Detection${NC}"
+echo -e "${BLUE}🔒 Security Check - Comprehensive Security Audit${NC}"
 echo -e "${BLUE}================================================${NC}"
 echo
 
@@ -123,6 +124,107 @@ elif [ "$high" -gt 0 ]; then
     print_status "WARN" "Found $high HIGH npm vulnerabilities (review: npm audit)"
 else
     print_status "OK" "No critical/high npm vulnerabilities found"
+fi
+
+# 9. Check for potential SQL injection patterns
+echo -e "${BLUE}Checking for potential SQL injection patterns...${NC}"
+if grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
+    -E '\$\{[^}]+\}.*(?:SELECT|INSERT|UPDATE|DELETE|FROM|WHERE)' \
+    src/ 2>/dev/null | grep -v "// " | grep -v "process.env" | grep -v "parameterized"; then
+    print_status "ERROR" "Found potential SQL injection (string interpolation in SQL)"
+else
+    print_status "OK" "No SQL injection patterns found"
+fi
+
+# 10. Check for SSRF vulnerabilities (unvalidated URL fetches)
+echo -e "${BLUE}Checking for potential SSRF vulnerabilities...${NC}"
+ssrf_patterns=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
+    -E '(fetch|axios|http\.get|https\.get|request)\s*\(\s*(req\.|request\.|params\.|query\.)' \
+    src/ 2>/dev/null | grep -v "validation" | grep -v "sanitize" || true)
+if [ -n "$ssrf_patterns" ]; then
+    count=$(echo "$ssrf_patterns" | wc -l)
+    print_status "WARN" "Found $count potential SSRF patterns (unvalidated URL fetches) - review for URL validation"
+else
+    print_status "OK" "No obvious SSRF patterns found"
+fi
+
+# 11. Check for ReDoS vulnerable regex patterns
+echo -e "${BLUE}Checking for ReDoS vulnerable regex patterns...${NC}"
+redos_patterns=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
+    -E '/[^/]*\([^)]*\+[^)]*\)[^/]*/[gimsuvy]*' \
+    src/ 2>/dev/null | head -10 || true)
+if [ -n "$redos_patterns" ]; then
+    count=$(echo "$redos_patterns" | wc -l)
+    print_status "WARN" "Found $count potential ReDoS patterns (nested quantifiers) - review regex complexity"
+else
+    print_status "OK" "No obvious ReDoS patterns found"
+fi
+
+# 12. Check for prototype pollution risks
+echo -e "${BLUE}Checking for prototype pollution risks...${NC}"
+proto_pollution=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
+    -E '(Object\.assign|Object\.merge|\.extend\s*\()\s*\(\s*\{\s*\}\s*,' \
+    src/ 2>/dev/null | grep -v "Object.create(null)" || true)
+if [ -n "$proto_pollution" ]; then
+    count=$(echo "$proto_pollution" | wc -l)
+    print_status "WARN" "Found $count potential prototype pollution risks - review Object.assign usage"
+else
+    print_status "OK" "No prototype pollution risks found"
+fi
+
+# 13. Check for insecure random number generation
+echo -e "${BLUE}Checking for insecure random number generation...${NC}"
+insecure_random=$(grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
+    -E '(Math\.random\(\)|Math\.floor\(Math\.random)' \
+    src/ 2>/dev/null | grep -v "test" | grep -v "mock" | grep -v "example" | grep -v "demo" || true)
+if [ -n "$insecure_random" ]; then
+    count=$(echo "$insecure_random" | wc -l)
+    print_status "WARN" "Found $count Math.random() usages - ensure crypto.randomUUID() is used for security-sensitive random values"
+else
+    print_status "OK" "No insecure random number generation found"
+fi
+
+# 14. Check for missing authentication on API routes
+echo -e "${BLUE}Checking for API routes without authentication...${NC}"
+api_routes=$(find src/app/api -name "route.ts" -type f 2>/dev/null || true)
+unauth_routes=0
+for route in $api_routes; do
+    if ! grep -q "auth\|session\|token\|user" "$route" 2>/dev/null; then
+        if ! grep -q "GET\|public" "$route" 2>/dev/null; then
+            unauth_routes=$((unauth_routes + 1))
+        fi
+    fi
+done
+if [ "$unauth_routes" -gt 0 ]; then
+    print_status "WARN" "Found $unauth_routes API routes potentially without authentication - review for public endpoints"
+else
+    print_status "OK" "All API routes have authentication or are explicitly public"
+fi
+
+# 15. Check for exposed sensitive data in API responses
+echo -e "${BLUE}Checking for sensitive data exposure in API responses...${NC}"
+sensitive_exposure=$(grep -rn --include="*.ts" --include="*.tsx" \
+    -E 'return\s+(Response\.json\(|NextResponse\.json\(|{).*\b(password|secret|token|api_key|private_key)\b' \
+    src/app/api/ 2>/dev/null | grep -v "redact\|REDACTED\|process.env" || true)
+if [ -n "$sensitive_exposure" ]; then
+    print_status "ERROR" "Found potential sensitive data exposure in API responses"
+else
+    print_status "OK" "No sensitive data exposure patterns found in API responses"
+fi
+
+# 16. Check for missing rate limiting on sensitive endpoints
+echo -e "${BLUE}Checking for rate limiting on sensitive endpoints...${NC}"
+sensitive_endpoints=$(find src/app/api -name "route.ts" -type f -exec grep -l "POST\|PUT\|DELETE\|PATCH" {} \; 2>/dev/null || true)
+unrated_count=0
+for endpoint in $sensitive_endpoints; do
+    if ! grep -q "rate\|limit\|throttle" "$endpoint" 2>/dev/null; then
+        unrated_count=$((unrated_count + 1))
+    fi
+done
+if [ "$unrated_count" -gt 0 ]; then
+    print_status "INFO" "Found $unrated_count mutation endpoints without explicit rate limiting - ensure middleware handles this"
+else
+    print_status "OK" "All sensitive endpoints have rate limiting"
 fi
 
 # Summary
