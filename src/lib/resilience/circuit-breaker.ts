@@ -28,6 +28,9 @@ export class CircuitBreaker {
     if (this.circuitState.state === 'open') {
       if (Date.now() >= (this.circuitState.nextAttemptTime || 0)) {
         this.circuitState.state = 'half-open';
+        logger.info(
+          `Circuit breaker HALF-OPEN transition for "${this.name}" - starting recovery probe`
+        );
       } else {
         throw new CircuitBreakerError(
           this.name,
@@ -64,9 +67,16 @@ export class CircuitBreaker {
   }
 
   private onSuccess(_now: number): void {
+    const previousState = this.circuitState.state;
     this.recentFailures = [];
     this.circuitState.failures = 0;
     this.circuitState.state = 'closed';
+
+    if (previousState !== 'closed') {
+      logger.info(
+        `Circuit breaker RECOVERED for "${this.name}" - state transitioned from ${previousState.toUpperCase()} to CLOSED`
+      );
+    }
   }
 
   private onError(error: Error, now: number, attemptCount: number = 1): void {
