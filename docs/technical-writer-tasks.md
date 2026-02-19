@@ -1779,6 +1779,75 @@ Potential improvements for future iterations:
 
 ---
 
+### Task 23: Architecture Documentation Update - Missing API Routes ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-19
+
+#### Objectives
+
+- Update architecture.md to include all current API routes
+- Add missing pages to project structure documentation
+- Ensure documentation accurately reflects actual codebase
+
+#### Issues Found
+
+**docs/architecture.md** had incomplete project structure:
+
+1. **Missing API routes**: Only listed health/, clarify/, breakdown/ but actual codebase has:
+   - admin/ - Admin endpoints
+   - ideas/ - Ideas CRUD API
+   - tasks/ - Tasks API
+   - deliverables/ - Deliverables API
+   - metrics/ - Prometheus metrics API
+   - csp-report/ - CSP reporting endpoint
+
+2. **Missing pages**: Only showed clarify/ and results/ but also has:
+   - dashboard/ - Dashboard and analytics pages
+   - login/ - Login page
+   - signup/ - Signup page
+   - auth/ - Auth callback routes
+
+3. **Missing health endpoints**: Health Monitoring section only documented 3 endpoints but there are 5:
+   - /api/health/live (Kubernetes liveness probe)
+   - /api/health/ready (Kubernetes readiness probe)
+
+#### Completed Work
+
+1. **Updated Project Structure section** (docs/architecture.md)
+   - Added all missing pages (dashboard, login, signup, auth)
+   - Added all missing API routes (admin, ideas, tasks, deliverables, metrics, csp-report)
+   - Added brief descriptions for each API route directory
+
+2. **Updated Health Endpoints section** (docs/architecture.md)
+   - Added GET /api/health/live (Kubernetes liveness probe)
+   - Added GET /api/health/ready (Kubernetes readiness probe)
+
+#### Verification
+
+- `npm run lint`: ✅ 0 errors, 0 warnings
+- `npm run type-check`: ✅ 0 errors
+- `npm run build`: ✅ Build successful (28 routes)
+- Documentation now matches actual implementation
+
+#### Files Modified
+
+- `docs/architecture.md` (UPDATED - added missing API routes and pages to project structure)
+
+#### Success Criteria Met
+
+- [x] All API routes documented in architecture.md
+- [x] All pages documented in architecture.md
+- [x] All health endpoints documented
+- [x] Documentation matches implementation
+- [x] Lint passes (0 errors)
+- [x] Type-check passes (0 errors)
+- [x] Build succeeds
+- [x] All changes committed with proper format
+
+---
+
 **Last Updated**: 2026-02-19
 **Agent**: Technical Writer
-**Documentation Version**: 0.5.8
+**Documentation Version**: 0.5.9
