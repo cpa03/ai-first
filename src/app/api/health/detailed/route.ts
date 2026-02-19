@@ -41,6 +41,13 @@ interface HealthResponse {
   timestamp: string;
   version: string;
   uptime: number;
+  reliabilityScore: number;
+  reliabilityFactors: {
+    database: number;
+    ai: number;
+    exports: number;
+    circuitBreakers: number;
+  };
   checks: {
     database: HealthCheckResult;
     ai: HealthCheckResult;
@@ -215,11 +222,57 @@ async function handleGet(context: ApiContext) {
         : 'degraded'
       : 'unhealthy';
 
+  const HEALTH_SCORE = 100;
+  const DEGRADED_SCORE = 50;
+  const UNHEALTHY_SCORE = 0;
+
+  const reliabilityFactors = {
+    database:
+      checks.database.status === 'healthy'
+        ? HEALTH_SCORE
+        : checks.database.status === 'unhealthy'
+          ? UNHEALTHY_SCORE
+          : DEGRADED_SCORE,
+    ai:
+      checks.ai.status === 'healthy'
+        ? HEALTH_SCORE
+        : checks.ai.status === 'unhealthy'
+          ? UNHEALTHY_SCORE
+          : DEGRADED_SCORE,
+    exports:
+      checks.exports.status === 'up'
+        ? HEALTH_SCORE
+        : checks.exports.status === 'degraded'
+          ? DEGRADED_SCORE
+          : UNHEALTHY_SCORE,
+    circuitBreakers:
+      circuitBreakers.length === 0
+        ? HEALTH_SCORE
+        : (circuitBreakers.filter((cb) => cb.state === 'closed').length /
+            circuitBreakers.length) *
+          HEALTH_SCORE,
+  };
+
+  const RELIABILITY_WEIGHTS = {
+    database: 0.3,
+    ai: 0.3,
+    exports: 0.2,
+    circuitBreakers: 0.2,
+  };
+  const reliabilityScore = Math.round(
+    reliabilityFactors.database * RELIABILITY_WEIGHTS.database +
+      reliabilityFactors.ai * RELIABILITY_WEIGHTS.ai +
+      reliabilityFactors.exports * RELIABILITY_WEIGHTS.exports +
+      reliabilityFactors.circuitBreakers * RELIABILITY_WEIGHTS.circuitBreakers
+  );
+
   const response: HealthResponse = {
     status: overallStatus,
     timestamp: new Date().toISOString(),
     version: APP_CONFIG.VERSION,
     uptime: process.uptime(),
+    reliabilityScore,
+    reliabilityFactors,
     checks,
     connectors,
     circuitBreakers,
