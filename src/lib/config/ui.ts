@@ -5,10 +5,25 @@
  */
 import { EnvLoader } from './environment';
 
+/**
+ * Design System Color Tokens
+ * These constants align with Tailwind theme colors defined in tailwind.config.js
+ * and CSS variables in globals.css for consistent color usage across the app.
+ */
+const DESIGN_TOKENS = {
+  COLORS: {
+    SUCCESS: '#16a34a', // green-600
+    ERROR: '#dc2626', // red-600
+    WARNING: '#ca8a04', // yellow-600
+    INFO: '#2563eb', // primary-600 (blue-600)
+  },
+} as const;
+
 export const UI_CONFIG = {
   FOCUS: {
     /** Env: UI_FOCUS_DELAY_MS (default: 50) */
     DELAY_MS: EnvLoader.number('UI_FOCUS_DELAY_MS', 50, 10, 500),
+    /** Focus ring color - matches primary-500 (#3b82f6) with 20% opacity */
     RING_COLOR: 'rgba(59, 130, 246, 0.2)',
     RING_WIDTH: '2px',
   },
@@ -207,25 +222,25 @@ export const TOAST_CONFIG = {
       BG: 'bg-green-50',
       BORDER: 'border-green-200',
       TEXT: 'text-green-800',
-      ICON_COLOR: '#16a34a',
+      ICON_COLOR: DESIGN_TOKENS.COLORS.SUCCESS, // green-600
     },
     ERROR: {
       BG: 'bg-red-50',
       BORDER: 'border-red-200',
       TEXT: 'text-red-800',
-      ICON_COLOR: '#dc2626',
+      ICON_COLOR: DESIGN_TOKENS.COLORS.ERROR, // red-600
     },
     WARNING: {
       BG: 'bg-yellow-50',
       BORDER: 'border-yellow-200',
       TEXT: 'text-yellow-800',
-      ICON_COLOR: '#ca8a04',
+      ICON_COLOR: DESIGN_TOKENS.COLORS.WARNING, // yellow-600
     },
     INFO: {
       BG: 'bg-blue-50',
       BORDER: 'border-blue-200',
       TEXT: 'text-blue-800',
-      ICON_COLOR: '#2563eb',
+      ICON_COLOR: DESIGN_TOKENS.COLORS.INFO, // primary-600
     },
   },
 } as const;
