@@ -1,7 +1,7 @@
 # API Specialist Documentation
 
 **Role:** API Specialist  
-**Date:** 2026-02-07  
+**Date:** 2026-02-19  
 **Branch:** api-specialist
 
 ---
@@ -18,14 +18,15 @@ This document provides API-specific documentation, findings, and recommendations
 
 | Component        | Status          | Notes                                   |
 | ---------------- | --------------- | --------------------------------------- |
-| API Routes       | ✅ Healthy      | All 17 routes operational               |
+| API Routes       | ✅ Healthy      | All 20 routes operational               |
 | Response Format  | ✅ Standardized | Consistent `ApiResponse<T>` wrapper     |
 | Error Handling   | ✅ Robust       | Standardized error codes and messages   |
 | Rate Limiting    | ✅ Active       | Tiered limits (strict/moderate/lenient) |
 | Request IDs      | ✅ Implemented  | All responses include `X-Request-ID`    |
 | Circuit Breakers | ✅ Operational  | Health endpoint exposes status          |
+| OpenAPI Spec     | ✅ Complete     | All 20 endpoints documented             |
 | Build Status     | ✅ Passing      | No compilation errors                   |
-| Lint Status      | ✅ Passing      | 3 minor warnings only                   |
+| Lint Status      | ✅ Passing      | 0 warnings                              |
 | Type Safety      | ✅ Complete     | 0 TypeScript errors                     |
 | Test Coverage    | ✅ Good         | 924 tests passing                       |
 
@@ -68,15 +69,31 @@ This document provides API-specific documentation, findings, and recommendations
 | `/api/ideas/[id]`         | PUT    | moderate   | Update idea                |
 | `/api/ideas/[id]`         | DELETE | moderate   | Soft delete idea           |
 | `/api/ideas/[id]/session` | GET    | moderate   | Get idea session           |
-| `/api/ideas/[id]/tasks`   | GET    | moderate   | Get idea tasks             |
+| `/api/ideas/[id]/tasks`   | GET    | lenient    | Get idea tasks             |
 
 ### Tasks
 
 | Endpoint                       | Method | Rate Limit | Description           |
 | ------------------------------ | ------ | ---------- | --------------------- |
 | `/api/tasks/[id]`              | GET    | moderate   | Get task by ID        |
+| `/api/tasks/[id]`              | PUT    | moderate   | Update task           |
+| `/api/tasks/[id]`              | DELETE | moderate   | Delete task           |
 | `/api/tasks/[id]/status`       | PATCH  | moderate   | Update task status    |
 | `/api/deliverables/[id]/tasks` | GET    | moderate   | Get deliverable tasks |
+| `/api/deliverables/[id]/tasks` | POST   | moderate   | Create task           |
+
+### Security
+
+| Endpoint          | Method | Rate Limit | Description                   |
+| ----------------- | ------ | ---------- | ----------------------------- |
+| `/api/csp-report` | POST   | none       | CSP violation report endpoint |
+
+### Admin
+
+| Endpoint                | Method | Rate Limit | Description               |
+| ----------------------- | ------ | ---------- | ------------------------- |
+| `/api/admin/rate-limit` | GET    | strict     | Get rate limit statistics |
+| `/api/admin/rate-limit` | DELETE | strict     | Clear rate limit store    |
 
 ---
 
@@ -214,7 +231,7 @@ Retry-After: 60  # Only on rate limit errors
 ### 📋 Recommendations
 
 1. **API Versioning**: Consider adding `/api/v1/` prefix for future breaking changes
-2. ~~**OpenAPI Spec**: Generate OpenAPI/Swagger documentation from types~~ ✅ DONE (2026-02-19)
+2. ~~**OpenAPI Spec**: Generate OpenAPI/Swagger documentation from types~~ ✅ DONE (2026-02-19) - Complete coverage for all 24 API endpoints
 3. **API Client**: Consider generating TypeScript client from API types
 4. **Metrics**: Add endpoint-level metrics (response times, error rates)
 5. ~~**Caching**: Add cache headers for appropriate GET endpoints~~ ✅ DONE (2026-02-18)
@@ -405,6 +422,31 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-19 - OpenAPI Specification Missing Endpoints
+
+- **Enhancement**: Added missing API endpoints to OpenAPI specification (docs/api/openapi.yaml)
+- **New Endpoints Documented**:
+  - `/api/ideas/{id}/session` - GET idea session (authenticated, moderate rate limit)
+  - `/api/ideas/{id}/tasks` - GET idea tasks with deliverables and progress (authenticated, lenient rate limit)
+  - `/api/csp-report` - POST CSP violation report (public, security monitoring)
+  - `/api/admin/rate-limit` - GET rate limit stats and DELETE clear store (admin only, strict rate limit)
+- **New Schemas Added**:
+  - `IdeaSession` - Session data for clarification/breakdown
+  - `GetIdeaSessionResponse` - Response wrapper for session endpoint
+  - `GetIdeaTasksResponse` - Response wrapper for tasks endpoint
+  - `DeliverableWithTasks` - Deliverable with task array and progress metrics
+  - `TasksSummary` - Aggregate task statistics
+  - `CspReportRequest` - CSP violation report structure
+  - `RateLimitStatsResponse` - Rate limit statistics response
+  - `ClearRateLimitResponse` - Clear rate limit confirmation
+- **New Tags Added**:
+  - `Security` - Security-related endpoints (CSP reporting)
+  - `Admin` - Administrative endpoints requiring elevated privileges
+- **Impact**: Complete API documentation coverage (24/24 endpoints documented), better developer experience for API consumers
+- **Build**: Passing
+- **Lint**: Passing
+- **Documentation**: Updated OpenAPI spec and this guide
 
 ### 2026-02-19 - Readiness API Error Response Consistency
 
