@@ -405,6 +405,18 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-19 - Metrics API Error Handling Consistency
+
+- **Fix**: Standardized error handling in `/api/metrics` endpoint
+- **Change**: Replaced `standardSuccessResponse()` with proper `AppError` throwing for error cases
+- **Before**: Error responses used `{ success: true, data: { error: ... } }` format (incorrect)
+- **After**: Error responses use standard `{ error: ..., code: ..., requestId: ... }` format
+- **Impact**: Consistent error response format across all API endpoints, proper error headers
+- **Build**: Passing
+- **Lint**: Passing
+- **Type-check**: Passing
+- **Documentation**: Updated this guide
+
 ### 2026-02-19 - OpenAPI Specification Enhancement
 
 - **Feature**: Comprehensive OpenAPI specification update
