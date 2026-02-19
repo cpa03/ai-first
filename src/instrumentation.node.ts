@@ -3,7 +3,7 @@
  * Separated into a separate file to avoid Edge Runtime compatibility warnings
  */
 
-import { CLEANUP_CONFIG } from './lib/config';
+import { CLEANUP_CONFIG, validateConfigurationOrThrow } from './lib/config';
 import { resourceCleanupManager } from './lib/resource-cleanup';
 import { createLogger } from './lib/logger';
 
@@ -42,6 +42,12 @@ function performGracefulShutdown(signal: string): void {
 }
 
 export function registerNodejsHandlers(): void {
+  // SECURITY: Validate configuration at startup to fail fast if required
+  // environment variables are missing. This prevents the app from starting
+  // with incomplete or insecure configuration.
+  // Addresses issues #804 and #788 - Environment Variable Validation
+  validateConfigurationOrThrow();
+
   process.on(
     'unhandledRejection',
     (reason: unknown, _promise: Promise<unknown>) => {

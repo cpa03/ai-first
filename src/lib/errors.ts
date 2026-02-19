@@ -220,7 +220,11 @@ export class RetryExhaustedError extends AppError {
   attempts: number;
 }
 
-export function toErrorResponse(error: unknown, requestId?: string): Response {
+export function toErrorResponse(
+  error: unknown,
+  requestId?: string,
+  responseTimeMs?: number
+): Response {
   let appError: AppError;
   let statusCode: number = STATUS_CODES.INTERNAL_ERROR;
 
@@ -254,6 +258,10 @@ export function toErrorResponse(error: unknown, requestId?: string): Response {
     'X-Error-Code': appError.code,
     'X-Retryable': String(appError.retryable),
   };
+
+  if (responseTimeMs !== undefined) {
+    headers['X-Response-Time'] = `${responseTimeMs}ms`;
+  }
 
   if (appError instanceof RateLimitError) {
     headers['Retry-After'] = String(appError.retryAfter);

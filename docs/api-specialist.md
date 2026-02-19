@@ -135,6 +135,7 @@ Error responses additionally include:
 ```http
 X-Error-Code: ERROR_CODE
 X-Retryable: true
+X-Response-Time: 45ms
 Retry-After: 60  # Only on rate limit errors
 ```
 
@@ -404,6 +405,20 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-19 - Error Response Time Tracking
+
+- **Feature**: Added `X-Response-Time` header to error responses
+- **Change**: Modified `toErrorResponse()` in errors.ts to accept optional `responseTimeMs` parameter
+- **Change**: Updated `withApiHandler()` to pass response duration to error handler
+- **Before**: Error responses did not include response time, making it hard to debug slow errors
+- **After**: All error responses include `X-Response-Time` header for debugging
+- **Impact**: Improved observability for error response performance, easier debugging of slow error cases
+- **Build**: Passing
+- **Lint**: Passing
+- **Type-check**: Passing
+- **Tests**: 113 tests passing (errors + api-handler)
+- **Documentation**: Updated this guide
 
 ### 2026-02-19 - Metrics API Error Handling Consistency
 

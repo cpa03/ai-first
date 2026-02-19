@@ -426,7 +426,7 @@ export const BUTTON_STYLES = {
   /** State classes for disabled/loading states */
   STATES: {
     disabled:
-      'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100 motion-reduce:hover:scale-100 motion-reduce:active:scale-100 pointer-events-none shadow-none translate-y-0',
+      'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100 hover:translate-y-0 active:translate-y-0 motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0 motion-reduce:active:translate-y-0 pointer-events-none shadow-none',
     enabled:
       'cursor-pointer hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0 motion-reduce:active:translate-y-0',
   } as const,

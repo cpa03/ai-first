@@ -126,7 +126,7 @@ export function withApiHandler(
         method: request.method,
       });
 
-      return toErrorResponse(error, requestId);
+      return toErrorResponse(error, requestId, duration);
     }
   };
 }
