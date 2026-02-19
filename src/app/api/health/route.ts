@@ -16,6 +16,12 @@ function isSensitiveVar(varName: string): boolean {
     upper.includes('PASSPHRASE') ||
     upper.includes('CREDENTIAL') ||
     upper.includes('AUTH') ||
+    upper.includes('PWD') ||
+    upper.includes('DATABASE') ||
+    upper.includes('CONNECTION') ||
+    upper.includes('CERT') ||
+    upper.includes('SIGNATURE') ||
+    upper.includes('PRIVATE') ||
     upper.includes('_SK') ||
     upper.includes('_PK') ||
     upper.includes('_RK')

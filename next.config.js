@@ -12,7 +12,7 @@ const nextConfig = {
   },
   compress: true,
   poweredByHeader: false,
-  productionBrowserSourceMaps: true,
+  productionBrowserSourceMaps: false,
   // Suppress build-time logs that cause Lighthouse best-practices issues
   env: {
     SUPPRESS_BUILD_LOGS: 'true',
@@ -46,11 +46,11 @@ const nextConfig = {
         key: 'Referrer-Policy',
         value: 'strict-origin-when-cross-origin',
       },
-      // XSS Protection - deprecated in modern browsers but useful for legacy browser support
-      // Modern browsers rely on CSP; this is kept for defense-in-depth
+      // XSS Protection - explicitly disabled to follow modern security standards
+      // Modern browsers rely on CSP; legacy auditors can introduce new vulnerabilities
       {
         key: 'X-XSS-Protection',
-        value: '1; mode=block',
+        value: '0',
       },
       // Restrict browser features
       {
