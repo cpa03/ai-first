@@ -43,7 +43,7 @@ describe('Environment Validation', () => {
       const result = validateEnvironment();
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY')
       );
     });
@@ -56,7 +56,7 @@ describe('Environment Validation', () => {
       const result = validateEnvironment();
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain(
+      expect(result.errors).toContainEqual(
         expect.stringContaining('SUPABASE_SERVICE_ROLE_KEY')
       );
     });
