@@ -399,12 +399,13 @@ export const BUTTON_STYLES = {
   /** Variant styles for different button types */
   VARIANTS: {
     primary:
-      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 btn-glow-hover',
+      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 focus:ring-primary-500 btn-glow-hover shadow-md hover:shadow-lg active:shadow-sm hover:-translate-y-0.5 active:translate-y-0',
     secondary:
-      'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600',
+      'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600 focus:ring-gray-500 shadow-md hover:shadow-lg active:shadow-sm hover:-translate-y-0.5 active:translate-y-0',
     outline:
-      'border border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent',
-    ghost: 'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent',
+      'border-2 border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent focus:ring-gray-500 shadow-sm hover:shadow-md active:shadow-sm hover:-translate-y-0.5 active:translate-y-0 hover:border-gray-900',
+    ghost:
+      'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent focus:ring-gray-500 hover:-translate-y-0.5 active:translate-y-0',
   } as const,
 
   /** Focus ring classes per variant */
@@ -425,13 +426,13 @@ export const BUTTON_STYLES = {
   /** State classes for disabled/loading states */
   STATES: {
     disabled:
-      'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100 motion-reduce:hover:scale-100 motion-reduce:active:scale-100 pointer-events-none',
+      'opacity-50 cursor-not-allowed hover:scale-100 active:scale-100 motion-reduce:hover:scale-100 motion-reduce:active:scale-100 pointer-events-none shadow-none translate-y-0',
     enabled:
-      'cursor-pointer hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100',
+      'cursor-pointer hover:scale-[1.02] active:scale-[0.98] motion-reduce:hover:scale-100 motion-reduce:active:scale-100 motion-reduce:hover:translate-y-0 motion-reduce:active:translate-y-0',
   } as const,
 
   /** Base classes applied to all buttons */
-  BASE: 'rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none',
+  BASE: 'rounded-md font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none relative overflow-hidden',
 } as const;
 
 /**
