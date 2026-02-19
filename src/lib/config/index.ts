@@ -100,6 +100,22 @@ export {
   HOME_PAGE_CONFIG,
 } from './pages';
 
+// Layout Configuration
+export {
+  CONTAINER_SIZES,
+  PAGE_PADDING,
+  Z_INDEX,
+  COMPONENT_SIZES,
+  GRID_CONFIG,
+  SPACING,
+  DIMENSIONS,
+  BORDER_RADIUS,
+  SHADOWS,
+  ANIMATION_MS,
+  TIMEOUT_MS,
+  OPACITY,
+} from './layout';
+
 // Time Units Configuration
 export {
   TIME_UNITS,
@@ -190,3 +206,15 @@ export type {
   APITimeouts,
 } from './time';
 export type { APIErrorMessages } from './error-messages';
+
+// Layout Type Exports
+export type {
+  ContainerSize,
+  PagePadding,
+  ZIndex,
+  ComponentSize,
+  GridConfig,
+  Spacing,
+  BorderRadius,
+  Shadow,
+} from './layout';

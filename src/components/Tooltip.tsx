@@ -10,6 +10,7 @@ import React, {
   useSyncExternalStore,
 } from 'react';
 import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
+import { TIMEOUT_MS } from '@/lib/config/layout';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -44,7 +45,7 @@ function usePrefersReducedMotion() {
   );
 }
 
-const TOUCH_PRESS_DURATION_MS = 500;
+const TOUCH_PRESS_DURATION_MS = TIMEOUT_MS.QUICK;
 
 // PERFORMANCE: Memoize Tooltip to prevent re-renders when parent components update
 // Tooltip is a wrapper component that may be nested inside frequently updating parents
@@ -110,7 +111,7 @@ function TooltipComponent({
     }
     const pressDuration = Date.now() - touchStartRef.current;
     if (pressDuration >= TOUCH_PRESS_DURATION_MS) {
-      setTimeout(hideTooltip, 1000);
+      setTimeout(hideTooltip, TIMEOUT_MS.TOOLTIP_HIDE);
     }
   }, [hideTooltip]);
 
