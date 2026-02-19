@@ -114,6 +114,7 @@ export const MESSAGES = {
     UNKNOWN_ERROR: 'An unknown error occurred',
   },
   TASK_MANAGEMENT: {
+    TITLE: 'Task Management',
     NO_TASKS_TITLE: 'No Tasks Found',
     NO_TASKS_DESCRIPTION: 'Get started by creating your first task.',
     RETRY_BUTTON: 'Retry',

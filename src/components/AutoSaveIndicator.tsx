@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { COMPONENT_CONFIG, ANIMATION_DELAYS } from '@/lib/config';
 
 interface AutoSaveIndicatorProps {
@@ -11,7 +11,7 @@ interface AutoSaveIndicatorProps {
 
 type SaveState = 'idle' | 'typing' | 'saving' | 'saved';
 
-export default function AutoSaveIndicator({
+function AutoSaveIndicatorComponent({
   value,
   delay = COMPONENT_CONFIG.AUTO_SAVE.DELAY_MS,
   className = '',
@@ -239,3 +239,8 @@ export default function AutoSaveIndicator({
     </div>
   );
 }
+
+// PERFORMANCE: Memoize component to prevent unnecessary re-renders when parent re-renders
+// This component manages its own state based on the `value` prop and doesn't need
+// to re-render when unrelated parent state changes.
+export default memo(AutoSaveIndicatorComponent);

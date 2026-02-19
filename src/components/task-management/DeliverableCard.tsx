@@ -4,7 +4,11 @@ import { memo, useCallback, useMemo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import { TaskStatus } from '@/hooks/useTaskManagement';
-import { DELIVERABLE_STYLES } from '@/lib/config';
+import {
+  DELIVERABLE_STYLES,
+  DELIVERABLE_CARD_STYLES,
+  DELIVERABLE_PROGRESS_CONFIG,
+} from '@/lib/config';
 
 interface DeliverableWithTasks {
   id: string;
@@ -38,54 +42,61 @@ function DeliverableCardComponent({
     [deliverable.progress]
   );
 
-  // PERFORMANCE: Memoize click handler to prevent function recreation on each render
   const handleToggleExpand = useCallback(() => {
     onToggleExpand(deliverable.id);
   }, [onToggleExpand, deliverable.id]);
 
-  // PERFORMANCE: Memoize progress bar style to prevent object recreation on each render
   const progressStyle = useMemo(
     () => ({ width: `${deliverable.progress}%` }),
     [deliverable.progress]
   );
 
+  const containerClasses = useMemo(
+    () =>
+      DELIVERABLE_CARD_STYLES.CONTAINER(
+        deliverableStyle.bgColor,
+        deliverableStyle.borderColor
+      ),
+    [deliverableStyle.bgColor, deliverableStyle.borderColor]
+  );
+
+  const iconClasses = useMemo(
+    () => DELIVERABLE_CARD_STYLES.HEADER.ICON(isExpanded),
+    [isExpanded]
+  );
+
   return (
-    <div
-      className={`rounded-lg shadow-md border-2 transition-all duration-200 ${deliverableStyle.bgColor} ${deliverableStyle.borderColor}`}
-    >
-      {/* Deliverable Header */}
+    <div className={containerClasses}>
       <button
         onClick={handleToggleExpand}
         aria-expanded={isExpanded}
         aria-controls={
           isExpanded ? `deliverable-tasks-${deliverable.id}` : undefined
         }
-        className="w-full px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 text-left hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500 rounded-lg"
+        className={DELIVERABLE_CARD_STYLES.HEADER.BASE}
       >
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className={DELIVERABLE_CARD_STYLES.HEADER.TITLE}>
             {deliverable.title}
           </h3>
           {deliverable.description && (
-            <p className="text-sm text-gray-600 mt-1">
+            <p className={DELIVERABLE_CARD_STYLES.HEADER.DESCRIPTION}>
               {deliverable.description}
             </p>
           )}
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <div className="text-lg font-semibold text-gray-900">
+            <div className={DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.VALUE}>
               {deliverable.progress}%
             </div>
-            <div className="text-xs text-gray-600">
+            <div className={DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.LABEL}>
               {deliverable.completedCount}/{deliverable.totalCount} tasks (
               {deliverable.completedHours}/{deliverable.totalHours}h)
             </div>
           </div>
           <svg
-            className={`w-5 h-5 text-gray-500 transform transition-transform ${
-              isExpanded ? 'rotate-180' : ''
-            }`}
+            className={iconClasses}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -100,31 +111,32 @@ function DeliverableCardComponent({
         </div>
       </button>
 
-      {/* Tasks List */}
       {isExpanded && (
         <div
           id={`deliverable-tasks-${deliverable.id}`}
-          className="px-6 pb-4 border-t border-gray-200"
+          className={DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER}
         >
-          {/* Deliverable Progress Bar */}
           <div className="mt-4 mb-4">
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className={DELIVERABLE_CARD_STYLES.CONTENT.PROGRESS_BAR.CONTAINER}
+            >
               <div
-                className="bg-primary-500 h-2 rounded-full transition-all duration-500"
+                className={DELIVERABLE_CARD_STYLES.CONTENT.PROGRESS_BAR.FILL}
                 style={progressStyle}
                 role="progressbar"
                 aria-valuenow={deliverable.progress}
-                aria-valuemin={0}
-                aria-valuemax={100}
+                aria-valuemin={
+                  DELIVERABLE_PROGRESS_CONFIG.THRESHOLDS.IN_PROGRESS
+                }
+                aria-valuemax={DELIVERABLE_PROGRESS_CONFIG.THRESHOLDS.COMPLETED}
                 aria-label={`${deliverable.title} progress`}
               />
             </div>
           </div>
 
-          {/* Tasks */}
           <div className="space-y-2">
             {deliverable.tasks.length === 0 ? (
-              <p className="text-gray-500 text-sm py-4">
+              <p className={DELIVERABLE_CARD_STYLES.CONTENT.EMPTY_STATE}>
                 No tasks in this deliverable.
               </p>
             ) : (

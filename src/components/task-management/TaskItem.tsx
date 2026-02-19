@@ -3,24 +3,13 @@
 import { memo, useCallback, useMemo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskStatus } from '@/hooks/useTaskManagement';
-import { SVG_ANIMATION } from '@/lib/config';
-
-const statusConfig: Record<
-  TaskStatus,
-  { label: string; color: string; bgColor: string }
-> = {
-  todo: { label: 'To Do', color: 'text-gray-600', bgColor: 'bg-gray-100' },
-  in_progress: {
-    label: 'In Progress',
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100',
-  },
-  completed: {
-    label: 'Completed',
-    color: 'text-green-600',
-    bgColor: 'bg-green-100',
-  },
-};
+import {
+  SVG_ANIMATION,
+  TASK_STATUS_CONFIG,
+  RISK_LEVEL_CONFIG,
+  TASK_ITEM_STYLES,
+  TASK_MANAGEMENT_MESSAGES,
+} from '@/lib/config';
 
 interface TaskItemProps {
   task: Task;
@@ -29,15 +18,13 @@ interface TaskItemProps {
 }
 
 function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
-  const taskStatus = statusConfig[task.status];
+  const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
 
-  // PERFORMANCE: Memoize click handler to prevent function recreation on each render
   const handleClick = useCallback(() => {
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
 
-  // PERFORMANCE: Memoize SVG style object to prevent object recreation on each render
   const checkmarkStyle = useMemo(
     () => ({
       strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
@@ -46,27 +33,41 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     []
   );
 
+  const checkboxClasses = useMemo(() => {
+    const baseClasses = TASK_ITEM_STYLES.CHECKBOX.BASE;
+    const stateClasses = isCompleted
+      ? TASK_ITEM_STYLES.CHECKBOX.CHECKED
+      : TASK_ITEM_STYLES.CHECKBOX.UNCHECKED;
+    const disabledClasses = isUpdating
+      ? TASK_ITEM_STYLES.CHECKBOX.DISABLED
+      : '';
+    return `${baseClasses} ${stateClasses} ${disabledClasses}`;
+  }, [isCompleted, isUpdating]);
+
+  const titleClasses = useMemo(() => {
+    const baseClasses = TASK_ITEM_STYLES.TITLE.BASE;
+    const stateClasses = isCompleted
+      ? TASK_ITEM_STYLES.TITLE.COMPLETED
+      : TASK_ITEM_STYLES.TITLE.PENDING;
+    return `${baseClasses} ${stateClasses}`;
+  }, [isCompleted]);
+
   return (
-    <div className="flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow">
+    <div className={TASK_ITEM_STYLES.CONTAINER}>
       <button
         onClick={handleClick}
         disabled={isUpdating}
-        className={`mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 ${
+        className={checkboxClasses}
+        aria-label={TASK_MANAGEMENT_MESSAGES.ARIA.CHECKBOX_LABEL(
+          task.title,
           isCompleted
-            ? 'bg-green-500 border-green-500 scale-110'
-            : 'border-gray-300 hover:border-primary-500 hover:scale-105'
-        } ${isUpdating ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-        aria-label={
-          task.status === 'completed'
-            ? `Mark "${task.title}" as incomplete`
-            : `Mark "${task.title}" as complete`
-        }
-        aria-pressed={task.status === 'completed'}
+        )}
+        aria-pressed={isCompleted}
       >
         {isCompleted && (
           <svg
             key={`check-${task.id}`}
-            className="w-3 h-3 text-white animate-draw-check"
+            className={TASK_ITEM_STYLES.CHECKMARK.CONTAINER}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -75,14 +76,14 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={3}
-              d="M5 13l4 4L19 7"
+              strokeWidth={TASK_ITEM_STYLES.CHECKMARK.STROKE_WIDTH}
+              d={TASK_ITEM_STYLES.CHECKMARK.PATH}
             />
           </svg>
         )}
         {isUpdating && (
           <svg
-            className="w-3 h-3 text-gray-500 animate-spin"
+            className={TASK_ITEM_STYLES.LOADING_SPINNER.CONTAINER}
             fill="none"
             viewBox="0 0 24 24"
           >
@@ -92,7 +93,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
               cy="12"
               r="10"
               stroke="currentColor"
-              strokeWidth="4"
+              strokeWidth={TASK_ITEM_STYLES.LOADING_SPINNER.STROKE_WIDTH}
             />
             <path
               className="opacity-75"
@@ -105,34 +106,23 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
 
       <div className="flex-1 min-w-0">
         <div className="flex items-start justify-between gap-2">
-          <p
-            className={`text-sm font-medium transition-all duration-300 ${
-              task.status === 'completed'
-                ? 'text-gray-500 line-through decoration-2 decoration-gray-400'
-                : 'text-gray-900'
-            }`}
-          >
-            {task.title}
-          </p>
+          <p className={titleClasses}>{task.title}</p>
           <span
-            className={`flex-shrink-0 px-2 py-0.5 text-xs rounded-full ${taskStatus.bgColor} ${taskStatus.color}`}
+            className={`${TASK_ITEM_STYLES.STATUS_BADGE.BASE} ${taskStatus.bgColor} ${taskStatus.color}`}
           >
             {taskStatus.label}
           </span>
         </div>
 
         {task.description && (
-          <p className="text-xs text-gray-600 mt-1 line-clamp-2">
-            {task.description}
-          </p>
+          <p className={TASK_ITEM_STYLES.DESCRIPTION}>{task.description}</p>
         )}
 
-        {/* Task Metadata */}
-        <div className="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500">
+        <div className={TASK_ITEM_STYLES.METADATA.CONTAINER}>
           {task.estimate > 0 && (
             <span className="flex items-center gap-1">
               <svg
-                className="w-3 h-3"
+                className={TASK_ITEM_STYLES.METADATA.ICON}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -150,7 +140,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
           {task.assignee && (
             <span className="flex items-center gap-1">
               <svg
-                className="w-3 h-3"
+                className={TASK_ITEM_STYLES.METADATA.ICON}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -167,11 +157,9 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
           )}
           {task.risk_level !== 'low' && (
             <span
-              className={`px-1.5 py-0.5 rounded ${
-                task.risk_level === 'high'
-                  ? 'bg-red-100 text-red-700'
-                  : 'bg-yellow-100 text-yellow-700'
-              }`}
+              className={`${TASK_ITEM_STYLES.METADATA.RISK_BADGE} ${
+                RISK_LEVEL_CONFIG[task.risk_level].bgColor
+              } ${RISK_LEVEL_CONFIG[task.risk_level].textColor}`}
             >
               {task.risk_level} risk
             </span>
