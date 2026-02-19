@@ -6,6 +6,59 @@ Specialist guide for writing, managing, and refining user stories in the IdeaFlo
 
 The User Story Engineer is responsible for transforming ideas and requirements into well-structured, actionable user stories that follow industry best practices and integrate seamlessly with the IdeaFlow workflow.
 
+---
+
+## ⚡ Quick Reference
+
+### Story Format (Copy-Paste Ready)
+
+```
+As a [persona],
+I want [goal],
+So that [benefit].
+```
+
+### Acceptance Criteria Format
+
+```gherkin
+Given [context]
+When [action]
+Then [expected outcome]
+```
+
+### Priority Labels
+
+| Label | MoSCoW      | When to Use             |
+| ----- | ----------- | ----------------------- |
+| `P0`  | Must Have   | Blocks MVP/release      |
+| `P1`  | Should Have | Important, not blocking |
+| `P2`  | Could Have  | Nice to have            |
+| `P3`  | Won't Have  | Explicitly deferred     |
+
+### INVEST Checklist
+
+- **I**ndependent - No blocking dependencies
+- **N**egotiable - Details can be refined
+- **V**aluable - Clear user/business value
+- **E**stimable - Can be sized
+- **S**mall - Completable in one sprint
+- **T**estable - Verifiable acceptance criteria
+
+### Definition of Done Summary
+
+- [ ] No TypeScript errors
+- [ ] No lint warnings
+- [ ] Unit tests passing
+- [ ] Acceptance criteria verified
+- [ ] Code reviewed
+
+### Templates
+
+- [User Story Template](./templates/user-story_template.md)
+- [User Personas](./user-stories/personas.md)
+
+---
+
 ## Core Responsibilities
 
 1. **Story Creation**: Write clear, concise user stories following the standard format

@@ -60,6 +60,9 @@ jest.mock('@/lib/resilience', () => ({
   withTimeout: jest.fn((operation, options) => operation()),
 }));
 
+// Mock window to be undefined (server-side) - required for AIService security checks
+delete (global as any).window;
+
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
 >;
