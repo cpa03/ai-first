@@ -200,6 +200,42 @@ Access detailed health at `/api/health/detailed`:
 ✅ **Error responses standardized**: Error codes and structure consistent
 ✅ **Zero breaking changes**: Backward compatible with existing API consumers
 
+## API Versioning
+
+All external API integrations use centralized version management defined in `src/lib/config/constants.ts`. This ensures compatibility and provides a single source of truth for API versions.
+
+### Supported APIs and Versions
+
+| Service      | Version    | Env Override               | Last Verified |
+| ------------ | ---------- | -------------------------- | ------------- |
+| OpenAI       | latest     | `OPENAI_API_VERSION`       | 2026-02-18    |
+| Notion       | 2022-06-28 | `NOTION_API_VERSION`       | 2026-02-18    |
+| Trello       | 1          | `TRELLO_API_VERSION`       | 2026-02-18    |
+| GitHub       | 2022-11-28 | `GITHUB_API_VERSION`       | 2026-02-18    |
+| Google Tasks | v1         | `GOOGLE_TASKS_API_VERSION` | 2026-02-18    |
+| Linear       | graphql    | -                          | 2026-02-18    |
+| Asana        | 1.0        | `ASANA_API_VERSION`        | 2026-02-18    |
+| Supabase     | v2         | -                          | 2026-02-18    |
+
+### Usage
+
+```typescript
+import { EXTERNAL_API_VERSIONS } from '@/lib/config/constants';
+
+// Access version info
+const notionVersion = EXTERNAL_API_VERSIONS.NOTION.VERSION;
+const notionChangelog = EXTERNAL_API_VERSIONS.NOTION.CHANGELOG_URL;
+```
+
+### Update Process
+
+When updating API versions:
+
+1. Check the provider's changelog for breaking changes
+2. Update `LAST_VERIFIED` date in constants.ts
+3. Run integration tests to verify compatibility
+4. Update corresponding resilience config if timeout/retry behavior changes
+
 ## Monitoring Recommendations
 
 1. **Health Checks**: Poll `/api/health/detailed` every 30s
