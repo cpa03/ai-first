@@ -1,7 +1,7 @@
 # Security Engineer Guide
 
 **Role**: Security Engineer Specialist  
-**Last Updated**: 2026-02-18  
+**Last Updated**: 2026-02-19  
 **Status**: ✅ Active
 
 ---
@@ -99,18 +99,21 @@ npm test            # ✓ All tests pass
 
 ## Security Architecture
 
-### 1. Security Headers (src/proxy.ts)
+### 1. Security Headers (next.config.js)
 
 All responses include comprehensive security headers:
 
-| Header                    | Value                                                                            | Purpose                      |
-| ------------------------- | -------------------------------------------------------------------------------- | ---------------------------- |
-| Content-Security-Policy   | `default-src 'self'; script-src 'self' 'unsafe-inline' https://vercel.live; ...` | Prevents XSS, data injection |
-| X-Frame-Options           | `DENY`                                                                           | Prevents clickjacking        |
-| X-Content-Type-Options    | `nosniff`                                                                        | Prevents MIME sniffing       |
-| Referrer-Policy           | `strict-origin-when-cross-origin`                                                | Controls referrer info       |
-| Permissions-Policy        | `camera=(), microphone=(), ...`                                                  | Restricts browser features   |
-| Strict-Transport-Security | `max-age=31536000; includeSubDomains; preload`                                   | Enforces HTTPS (production)  |
+| Header                       | Value                                                       | Purpose                                  |
+| ---------------------------- | ----------------------------------------------------------- | ---------------------------------------- |
+| Content-Security-Policy      | `default-src 'self'; script-src 'self' 'unsafe-inline' ...` | Prevents XSS, data injection             |
+| X-Frame-Options              | `DENY`                                                      | Prevents clickjacking                    |
+| X-Content-Type-Options       | `nosniff`                                                   | Prevents MIME sniffing                   |
+| X-XSS-Protection             | `1; mode=block`                                             | Legacy XSS protection (defense-in-depth) |
+| Referrer-Policy              | `strict-origin-when-cross-origin`                           | Controls referrer info                   |
+| Permissions-Policy           | `camera=(), microphone=(), ...`                             | Restricts browser features               |
+| Strict-Transport-Security    | `max-age=31536000; includeSubDomains; preload`              | Enforces HTTPS (production)              |
+| Cross-Origin-Resource-Policy | `same-origin`                                               | Prevents cross-origin resource leaks     |
+| Cross-Origin-Opener-Policy   | `same-origin-allow-popups`                                  | Isolates browsing context                |
 
 ### 2. Input Validation (src/lib/validation.ts)
 

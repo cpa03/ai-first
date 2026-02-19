@@ -29,6 +29,7 @@ const nextConfig = {
 
   async headers() {
     // Base security headers applied to all routes
+    // Aligned with OWASP recommendations and Issue #1171 security hardening
     const securityHeaders = [
       // Prevent clickjacking attacks
       {
@@ -45,7 +46,8 @@ const nextConfig = {
         key: 'Referrer-Policy',
         value: 'strict-origin-when-cross-origin',
       },
-      // XSS Protection (legacy but still useful for older browsers)
+      // XSS Protection - deprecated in modern browsers but useful for legacy browser support
+      // Modern browsers rely on CSP; this is kept for defense-in-depth
       {
         key: 'X-XSS-Protection',
         value: '1; mode=block',
@@ -55,6 +57,18 @@ const nextConfig = {
         key: 'Permissions-Policy',
         value:
           'camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()',
+      },
+      // Cross-Origin-Resource-Policy - prevents cross-origin resource leaks
+      // 'same-origin' is safest but 'same-site' may be needed for subdomain resources
+      {
+        key: 'Cross-Origin-Resource-Policy',
+        value: 'same-origin',
+      },
+      // Cross-Origin-Opener-Policy - isolates browsing context, prevents cross-origin attacks
+      // 'same-origin-allow-popups' allows popup windows while protecting the opener
+      {
+        key: 'Cross-Origin-Opener-Policy',
+        value: 'same-origin-allow-popups',
       },
       // Content Security Policy - comprehensive protection against XSS
       {

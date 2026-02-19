@@ -72,7 +72,20 @@ X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin
 Permissions-Policy: camera=(), microphone=(), geolocation=()
 Strict-Transport-Security: max-age=31536000; includeSubDomains
+Cross-Origin-Resource-Policy: same-origin
+Cross-Origin-Opener-Policy: same-origin-allow-popups
 ```
+
+### Cross-Origin Security Headers (Added 2026-02-19)
+
+We implement modern cross-origin security headers to prevent cross-origin attacks:
+
+| Header                         | Value                      | Purpose                                                                               |
+| ------------------------------ | -------------------------- | ------------------------------------------------------------------------------------- |
+| `Cross-Origin-Resource-Policy` | `same-origin`              | Prevents cross-origin resource leaks (CORP)                                           |
+| `Cross-Origin-Opener-Policy`   | `same-origin-allow-popups` | Isolates browsing context, prevents cross-origin attacks while allowing popup windows |
+
+These headers address Issue #1171 (Security Hardening) and align with OWASP recommendations.
 
 ---
 
@@ -106,6 +119,7 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 | 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
 | 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                    |
 | 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                  |
+| 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations    |
 
 ## Current npm Audit Status (2026-02-18)
 
@@ -149,4 +163,4 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 
 ---
 
-_Last Updated: 2026-02-18_
+_Last Updated: 2026-02-19_
