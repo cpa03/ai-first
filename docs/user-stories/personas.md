@@ -2,6 +2,28 @@
 
 This document defines the primary user personas for IdeaFlow. Use these personas when writing user stories to ensure consistent understanding of user needs, goals, and pain points.
 
+---
+
+## ⚡ Quick Reference
+
+| Persona           | Role            | Primary Need                  | Best For                               |
+| ----------------- | --------------- | ----------------------------- | -------------------------------------- |
+| **Alex Chen**     | Startup Founder | Quick idea-to-plan conversion | Onboarding, exports, simple UI         |
+| **Jordan Taylor** | Product Manager | Structured roadmap creation   | Integrations, templates, collaboration |
+| **Sam Rivera**    | Developer       | Technical task breakdown      | Dependencies, code generation, APIs    |
+
+### Persona Selection by Feature Area
+
+| Feature Area              | Primary Persona | Secondary       |
+| ------------------------- | --------------- | --------------- |
+| Onboarding / Quick Start  | Startup Founder | -               |
+| Export / Sharing          | Startup Founder | Product Manager |
+| Integrations              | Product Manager | Developer       |
+| Technical Breakdown       | Developer       | Product Manager |
+| Templates / Customization | Product Manager | Developer       |
+
+---
+
 ## Persona Overview
 
 | Persona       | Role            | Primary Need                  | Priority |

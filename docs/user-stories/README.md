@@ -121,3 +121,36 @@ When adding new user stories:
 ---
 
 _Maintained by the User Story Engineer specialist. Last updated: February 19, 2026._
+
+## ⚡ Quick Reference
+
+### Story Format
+
+```
+As a [persona],
+I want [goal],
+So that [benefit].
+```
+
+### Acceptance Criteria Format
+
+```gherkin
+Given [context]
+When [action]
+Then [expected outcome]
+```
+
+### Priority Labels
+
+| Priority | Label       | Description             |
+| -------- | ----------- | ----------------------- |
+| P0       | Must Have   | Critical for MVP        |
+| P1       | Should Have | Important, not blocking |
+| P2       | Could Have  | Nice to have            |
+| P3       | Won't Have  | Deferred                |
+
+### Key Links
+
+- [User Story Template](../templates/user-story_template.md)
+- [User Personas](./personas.md)
+- [User Story Engineer Guide](../user-story-engineer.md)
