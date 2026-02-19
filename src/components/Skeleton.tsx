@@ -1,12 +1,18 @@
 'use client';
 
-export default function Skeleton({
-  className = '',
-  variant = 'rect',
-}: {
+import React, { memo } from 'react';
+
+interface SkeletonProps {
   className?: string;
   variant?: 'rect' | 'circle' | 'text';
-}) {
+}
+
+// PERFORMANCE: Memoize Skeleton to prevent unnecessary re-renders
+// Skeleton is a pure presentational component used frequently in loading states
+function SkeletonComponent({
+  className = '',
+  variant = 'rect',
+}: SkeletonProps) {
   const baseClasses =
     'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]';
 
@@ -23,3 +29,7 @@ export default function Skeleton({
     />
   );
 }
+
+SkeletonComponent.displayName = 'Skeleton';
+
+export default memo(SkeletonComponent);

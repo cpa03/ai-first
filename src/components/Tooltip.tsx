@@ -1,6 +1,13 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback, useId } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useId,
+  memo,
+} from 'react';
 import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
@@ -14,7 +21,9 @@ interface TooltipProps {
   className?: string;
 }
 
-export default function Tooltip({
+// PERFORMANCE: Memoize Tooltip to prevent re-renders when parent components update
+// Tooltip is a wrapper component that may be nested inside frequently updating parents
+function TooltipComponent({
   children,
   content,
   position = 'top',
@@ -150,3 +159,7 @@ export default function Tooltip({
     </div>
   );
 }
+
+TooltipComponent.displayName = 'Tooltip';
+
+export default memo(TooltipComponent);
