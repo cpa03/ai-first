@@ -1,4 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
+import { APP_CONFIG } from '../config/app';
 
 export class JSONExporter extends ExportConnector {
   readonly type = 'json';
@@ -43,7 +44,7 @@ export class JSONExporter extends ExportConnector {
       ...data,
       metadata: {
         exported_at: new Date().toISOString(),
-        version: '1.0.0',
+        version: APP_CONFIG.VERSION,
         ...options,
       },
     };

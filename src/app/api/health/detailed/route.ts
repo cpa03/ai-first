@@ -10,6 +10,7 @@ import {
 import { requireAdminAuth } from '@/lib/auth';
 import { redactPII } from '@/lib/pii-redaction';
 import { API_CACHE_CONFIG } from '@/lib/config/constants';
+import { APP_CONFIG } from '@/lib/config/app';
 
 interface HealthCheckResult {
   service: string;
@@ -217,7 +218,7 @@ async function handleGet(context: ApiContext) {
   const response: HealthResponse = {
     status: overallStatus,
     timestamp: new Date().toISOString(),
-    version: '0.1.0',
+    version: APP_CONFIG.VERSION,
     uptime: process.uptime(),
     checks,
     connectors,
