@@ -120,7 +120,7 @@ Launch a usable product that delivers core value to early adopters.
 
 - [~] Automatic Breakdown Engine _(breakdown-engine.ts with IdeaAnalyzer, TaskDecomposer, DependencyAnalyzer, TimelineGenerator exists; API endpoint /api/breakdown ready)_
 - [~] Frontend UI for Idea Management _(dashboard, clarify, results pages exist with full functionality)_
-- [ ] User Authentication Flow
+- [~] User Authentication Flow _(login/signup pages with email/password + OAuth (Google/GitHub), auth callback handler, JWT verification implemented)_
 - [~] Basic Idea Dashboard _(dashboard page with idea listing, filtering, status badges, deletion exists)_
 - [~] Task Management Interface _(component exists, needs integration)_
 - [~] Markdown Export _(BlueprintDisplay component exists)_
