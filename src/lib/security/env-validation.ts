@@ -100,6 +100,76 @@ function checkKeySafety(): string[] {
 }
 
 /**
+ * Check ADMIN_API_KEY strength requirements
+ * Enforces the security requirements documented in config/.env.example
+ */
+function checkAdminApiKeyStrength(): string[] {
+  const warnings: string[] = [];
+  const adminKey = process.env.ADMIN_API_KEY;
+
+  // Skip validation if not set (already warned elsewhere)
+  if (!adminKey) {
+    return warnings;
+  }
+
+  // Skip validation in development mode to allow easier local development
+  if (process.env.NODE_ENV === 'development') {
+    return warnings;
+  }
+
+  // Check minimum length (32 characters as per documentation)
+  const MIN_LENGTH = 32;
+  if (adminKey.length < MIN_LENGTH) {
+    warnings.push(
+      `SECURITY WARNING: ADMIN_API_KEY is too short (${adminKey.length} chars). ` +
+        `Minimum required: ${MIN_LENGTH} characters. ` +
+        `Generate a secure key with: openssl rand -base64 32`
+    );
+  }
+
+  // Check complexity requirements
+  const hasUppercase = /[A-Z]/.test(adminKey);
+  const hasLowercase = /[a-z]/.test(adminKey);
+  const hasNumber = /[0-9]/.test(adminKey);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(adminKey);
+
+  const missingRequirements: string[] = [];
+  if (!hasUppercase) missingRequirements.push('uppercase letters');
+  if (!hasLowercase) missingRequirements.push('lowercase letters');
+  if (!hasNumber) missingRequirements.push('numbers');
+  if (!hasSpecialChar) missingRequirements.push('special characters');
+
+  if (missingRequirements.length > 0) {
+    warnings.push(
+      `SECURITY WARNING: ADMIN_API_KEY lacks complexity. ` +
+        `Missing: ${missingRequirements.join(', ')}. ` +
+        `A strong key should contain uppercase, lowercase, numbers, and special characters.`
+    );
+  }
+
+  // Check for common weak patterns
+  const weakPatterns = [
+    /^(password|admin|secret|key|token)+$/i,
+    /^([a-zA-Z0-9])\1+$/, // Repeated characters
+    /^123456/,
+    /^qwerty/i,
+    /^abcdef/i,
+  ];
+
+  for (const pattern of weakPatterns) {
+    if (pattern.test(adminKey)) {
+      warnings.push(
+        `SECURITY WARNING: ADMIN_API_KEY matches a weak pattern. ` +
+          `Please use a cryptographically secure random key.`
+      );
+      break;
+    }
+  }
+
+  return warnings;
+}
+
+/**
  * Check if required security environment variables are present
  */
 function checkRequiredEnvVars(): string[] {
@@ -134,10 +204,10 @@ export function validateEnvironment(): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // Run all validation checks
   errors.push(...checkNextPublicPrefix());
   errors.push(...checkRequiredEnvVars());
   warnings.push(...checkKeySafety());
+  warnings.push(...checkAdminApiKeyStrength());
 
   const valid = errors.length === 0;
 

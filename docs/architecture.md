@@ -9,20 +9,10 @@ src/
 ├── app/                 # Next.js app router pages
 │   ├── clarify/         # Clarification flow pages
 │   ├── results/         # Results display pages
-│   ├── dashboard/       # Dashboard and analytics pages
-│   ├── login/           # Login page
-│   ├── signup/          # Signup page
-│   ├── auth/            # Auth callback routes
 │   ├── api/             # API routes
-│   │   ├── health/      # Health check endpoints (basic, detailed, database, live, ready)
-│   │   ├── clarify/     # Clarification API (start, answer, complete)
-│   │   ├── breakdown/   # Breakdown API
-│   │   ├── admin/       # Admin endpoints (rate-limit stats)
-│   │   ├── ideas/       # Ideas CRUD API
-│   │   ├── tasks/       # Tasks API
-│   │   ├── deliverables/ # Deliverables API
-│   │   ├── metrics/     # Prometheus metrics API
-│   │   └── csp-report/  # Content Security Policy reporting
+│   │   ├── health/      # Health check endpoints
+│   │   ├── clarify/     # Clarification API
+│   │   └── breakdown/   # Breakdown API
 │   ├── layout.tsx       # Root layout
 │   └── page.tsx         # Home page
 ├── components/          # React components
@@ -210,14 +200,6 @@ Comprehensive health monitoring system for visibility into system status:
 3. **GET /api/health/database**
    - Database-specific health check
    - Connection testing
-
-4. **GET /api/health/live** (Kubernetes liveness probe)
-   - Minimal health check for container orchestration
-   - Returns 200 if the service is running
-
-5. **GET /api/health/ready** (Kubernetes readiness probe)
-   - Checks if service is ready to accept traffic
-   - Validates database connectivity
 
 ### Monitoring Metrics
 
