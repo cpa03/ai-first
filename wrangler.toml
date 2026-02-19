@@ -9,20 +9,27 @@
 #
 # Best Practices Applied:
 # - nodejs_compat: Enables Node.js APIs in Workers
+# - nodejs_als: Enables Node.js AsyncLocalStorage for Next.js
 # - global_fetch_strictly_public: Security flag for fetch requests
 # - Static assets served via Workers with proper caching (_headers)
 # - CPU limits: Configured for optimal free tier usage
+# - Smart placement: Optimizes worker location for performance
 # ============================================================
 
 name = "ai-first"
 compatibility_date = "2025-02-18"
-compatibility_flags = ["nodejs_compat", "global_fetch_strictly_public"]
+compatibility_flags = ["nodejs_compat", "nodejs_als", "global_fetch_strictly_public"]
 
 # CPU limit for Workers (milliseconds)
 # Free tier: 10ms, Paid: 50ms (bundled), 900s (unbound)
 # Setting this helps catch performance issues early
 [limits]
 cpu_ms = 50
+
+# Smart placement optimizes worker location for better performance
+# @see https://developers.cloudflare.com/workers/configuration/smart-placement/
+[placement]
+mode = "smart"
 
 # OpenNext outputs the worker to .open-next/worker.js
 main = ".open-next/worker.js"
