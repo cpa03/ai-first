@@ -172,6 +172,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
             variant="primary"
             loading={isSubmitting}
             disabled={!idea.trim() || !!validationError}
+            attention={!!idea.trim() && !validationError && !isSubmitting}
           >
             {isSubmitting
               ? MESSAGES.IDEA_INPUT.PROCESSING_BUTTON
