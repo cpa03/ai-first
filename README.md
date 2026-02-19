@@ -144,9 +144,8 @@
   /types/                   ← TypeScript type definitions
   /styles/                  ← Global styles
   /templates/               ← Template files
-  /middleware.ts            ← Next.js middleware
+  /proxy.ts                 ← Next.js proxy (replaces middleware)
   /instrumentation.ts       ← Next.js instrumentation
-  /proxy.ts                 ← Proxy configuration
 /supabase/
   schema.sql                 ← Database schema
   migrations/                ← Database migration files

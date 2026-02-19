@@ -83,12 +83,12 @@ The application demonstrates a **strong security posture** with comprehensive se
 **Severity**: Low  
 **Status**: ✅ FIXED
 
-**Issue**: Security headers were defined in both `next.config.js` and `middleware.ts`, creating redundancy.
+**Issue**: Security headers were defined in both `next.config.js` and `proxy.ts` (previously middleware.ts), creating redundancy.
 
 **Fix Applied**:
 
 - Removed duplicate security headers from `next.config.js`
-- Consolidated all security headers in `middleware.ts` as single source of truth
+- Consolidated all security headers in `proxy.ts` as single source of truth
 - Verified with lint and type-check (all passing)
 
 **Files Modified**:
