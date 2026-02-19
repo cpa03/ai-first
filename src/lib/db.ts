@@ -172,6 +172,23 @@ export interface AgentLog {
   timestamp: string;
 }
 
+export interface ClarificationSessionRow {
+  id: string;
+  idea_id: string;
+  status: 'active' | 'completed' | 'cancelled';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ClarificationAnswerRow {
+  id: string;
+  session_id: string;
+  question_id: string;
+  answer: string;
+  created_at: string;
+  updated_at: string;
+}
+
 /**
  * Pagination options for list queries
  * Prevents memory exhaustion by limiting result sets
@@ -1133,7 +1150,9 @@ export class DatabaseService {
   }
 
   // Clarification session operations
-  async createClarificationSession(ideaId: string): Promise<any> {
+  async createClarificationSession(
+    ideaId: string
+  ): Promise<ClarificationSessionRow> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const { data, error } = await this.client
@@ -1152,7 +1171,7 @@ export class DatabaseService {
   async saveAnswers(
     sessionId: string,
     answers: Record<string, string>
-  ): Promise<any> {
+  ): Promise<ClarificationAnswerRow[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
     const entries = Object.entries(answers).map(([questionId, answer]) => ({
@@ -1167,7 +1186,7 @@ export class DatabaseService {
       .select();
 
     if (error) throw error;
-    return data;
+    return data || [];
   }
 
   async getAgentLogs(
