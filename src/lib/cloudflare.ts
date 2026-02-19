@@ -3,9 +3,10 @@
  *
  * This module provides utilities for detecting and working with Cloudflare
  * Workers environment, including platform detection, header extraction,
- * and edge-specific operations.
+ * geo information, cache control, and edge-specific operations.
  *
  * @see https://developers.cloudflare.com/workers/runtime-apis/
+ * @see https://developers.cloudflare.com/workers/runtime-apis/request/
  */
 
 /**
@@ -30,6 +31,16 @@ export const CLOUDFLARE_HEADERS = {
   CF_VISITOR: 'cf-visitor',
   /** Worker trace ID for debugging */
   CF_TRACE_ID: 'cf-trace-id',
+  /** Postal code (if available) */
+  CF_POSTAL_CODE: 'cf-postal-code',
+  /** Region/subdivision code (e.g., "CA" for California) */
+  CF_REGION: 'cf-region',
+  /** Timezone of the client */
+  CF_TIMEZONE: 'cf-timezone',
+  /** ASN (Autonomous System Number) of the client's ISP */
+  CF_ASN: 'cf-asn',
+  /** Name of the ISP */
+  CF_IPORG: 'cf-iporg',
 } as const;
 
 /**
@@ -68,6 +79,42 @@ export type CfCacheStatusType =
   (typeof CF_CACHE_STATUS)[keyof typeof CF_CACHE_STATUS];
 
 /**
+ * Cloudflare cache TTL presets for common use cases
+ * @see https://developers.cloudflare.com/cache/about/cache-control/
+ */
+export const CF_CACHE_TTL = {
+  /** No caching */
+  NO_STORE: 0,
+  /** Short cache for frequently changing content (API responses) */
+  SHORT: 60,
+  /** Medium cache for semi-static content */
+  MEDIUM: 3600,
+  /** Long cache for static assets */
+  LONG: 86400,
+  /** Very long cache for immutable assets (with versioned URLs) */
+  IMMUTABLE: 31536000,
+} as const;
+
+/**
+ * Cloudflare platform limits and constraints
+ * @see https://developers.cloudflare.com/workers/platform/limits/
+ */
+export const CF_LIMITS = {
+  /** Free tier CPU time limit (milliseconds) */
+  CPU_MS_FREE: 10,
+  /** Paid tier CPU time limit (milliseconds) */
+  CPU_MS_PAID: 50,
+  /** Unbound worker CPU limit (milliseconds) */
+  CPU_MS_UNBOUND: 900000,
+  /** Maximum request body size (bytes) - 100MB */
+  MAX_BODY_SIZE: 100 * 1024 * 1024,
+  /** Maximum KV value size (bytes) - 25MB */
+  MAX_KV_VALUE_SIZE: 25 * 1024 * 1024,
+  /** Maximum D1 database size */
+  MAX_D1_SIZE: '500MB',
+} as const;
+
+/**
  * Information extracted from Cloudflare headers
  */
 export interface CloudflareRequestInfo {
@@ -88,17 +135,72 @@ export interface CloudflareRequestInfo {
 }
 
 /**
- * Detect if running in a Cloudflare Workers environment
- *
- * This checks multiple indicators to reliably detect Cloudflare:
- * 1. Environment variables set by Workers runtime
- * 2. Presence of CF-Ray header (indicates request passed through Cloudflare)
- * 3. Global Cloudflare-specific APIs
- *
- * @returns True if running in Cloudflare Workers environment
+ * Geographic information extracted from Cloudflare headers
  */
+export interface CloudflareGeoInfo {
+  /** Country code (ISO 3166-1 Alpha-2, e.g., "US", "GB") */
+  country: string | null;
+  /** City name */
+  city: string | null;
+  /** Region/subdivision code (e.g., "CA" for California) */
+  region: string | null;
+  /** Postal/ZIP code */
+  postalCode: string | null;
+  /** Timezone (e.g., "America/Los_Angeles") */
+  timezone: string | null;
+  /** ASN of the client's ISP */
+  asn: string | null;
+  /** ISP name */
+  isp: string | null;
+  /** Whether geo information is available */
+  hasGeoData: boolean;
+}
+
+/**
+ * Execution context information for the current runtime
+ */
+export interface ExecutionContext {
+  /** Detected platform */
+  platform: 'cloudflare' | 'vercel' | 'node' | 'unknown';
+  /** Whether running in edge runtime */
+  isEdge: boolean;
+  /** Whether running in Node.js runtime */
+  isNode: boolean;
+  /** Whether running in development mode */
+  isDevelopment: boolean;
+  /** Whether running in production mode */
+  isProduction: boolean;
+  /** Node.js version if available */
+  nodeVersion: string | null;
+  /** Region hint if available (e.g., "auto" for smart placement) */
+  region: string | null;
+}
+
+/**
+ * Cache control options for Cloudflare
+ */
+export interface CacheControlOptions {
+  /** Max age in seconds */
+  maxAge?: number;
+  /** Shared max age for CDN caching */
+  sMaxAge?: number;
+  /** Whether the response can be cached by browser */
+  public?: boolean;
+  /** Whether the response is private to the user */
+  private?: boolean;
+  /** Whether to always revalidate with origin */
+  noCache?: boolean;
+  /** Whether to not cache at all */
+  noStore?: boolean;
+  /** Whether to allow stale content while revalidating */
+  staleWhileRevalidate?: number;
+  /** Whether to serve stale content on error */
+  staleIfError?: number;
+  /** Whether the resource is immutable (never changes) */
+  immutable?: boolean;
+}
+
 export function isCloudflareWorker(): boolean {
-  // Check environment variables
   if (
     process.env[CLOUDFLARE_ENV_VARS.CF_WORKER] ||
     process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE] ||
@@ -107,7 +209,6 @@ export function isCloudflareWorker(): boolean {
     return true;
   }
 
-  // Check for Cloudflare-specific global (available in Workers runtime)
   if (typeof globalThis !== 'undefined') {
     // @ts-expect-error - Cloudflare Workers-specific global
     if (typeof globalThis.caches !== 'undefined' && globalThis.caches.default) {
@@ -118,28 +219,10 @@ export function isCloudflareWorker(): boolean {
   return false;
 }
 
-/**
- * Detect if a request has passed through Cloudflare's network
- *
- * This is useful for detecting Cloudflare even when not running in a Worker
- * (e.g., running on another platform behind Cloudflare proxy)
- *
- * @param request - The incoming request
- * @returns True if the request has Cloudflare headers
- */
 export function isCloudflareRequest(request: Request): boolean {
   return !!request.headers.get(CLOUDFLARE_HEADERS.CF_RAY);
 }
 
-/**
- * Extract Cloudflare-specific information from a request
- *
- * This function extracts all relevant Cloudflare headers and environment
- * information for observability and debugging purposes.
- *
- * @param request - The incoming request
- * @returns Cloudflare request information
- */
 export function getCloudflareRequestInfo(
   request: Request
 ): CloudflareRequestInfo {
@@ -167,31 +250,42 @@ export function getCloudflareRequestInfo(
   };
 }
 
-/**
- * Get the client IP address from a request
- *
- * This function tries multiple sources to get the real client IP:
- * 1. Cloudflare's CF-Connecting-IP header (most reliable when behind Cloudflare)
- * 2. X-Forwarded-For header (standard proxy header)
- * 3. X-Real-IP header (alternative proxy header)
- *
- * @param request - The incoming request
- * @returns The client IP address or null if not available
- */
+export function getCloudflareGeoInfo(request: Request): CloudflareGeoInfo {
+  const headers = request.headers;
+
+  const country = headers.get(CLOUDFLARE_HEADERS.CF_IPCOUNTRY);
+  const city = headers.get(CLOUDFLARE_HEADERS.CF_IPCITY);
+  const region = headers.get(CLOUDFLARE_HEADERS.CF_REGION);
+  const postalCode = headers.get(CLOUDFLARE_HEADERS.CF_POSTAL_CODE);
+  const timezone = headers.get(CLOUDFLARE_HEADERS.CF_TIMEZONE);
+  const asn = headers.get(CLOUDFLARE_HEADERS.CF_ASN);
+  const isp = headers.get(CLOUDFLARE_HEADERS.CF_IPORG);
+
+  const hasGeoData = !!(country || city || region || timezone);
+
+  return {
+    country,
+    city,
+    region,
+    postalCode,
+    timezone,
+    asn,
+    isp,
+    hasGeoData,
+  };
+}
+
 export function getClientIp(request: Request): string | null {
-  // Cloudflare's CF-Connecting-IP is the most reliable when behind Cloudflare
   const cfIp = request.headers.get(CLOUDFLARE_HEADERS.CF_CONNECTING_IP);
   if (cfIp) {
     return cfIp.trim();
   }
 
-  // X-Forwarded-For: client, proxy1, proxy2
   const forwardedFor = request.headers.get('x-forwarded-for');
   if (forwardedFor) {
     return forwardedFor.split(',')[0].trim();
   }
 
-  // X-Real-IP (used by some proxies)
   const realIp = request.headers.get('x-real-ip');
   if (realIp) {
     return realIp.trim();
@@ -200,15 +294,6 @@ export function getClientIp(request: Request): string | null {
   return null;
 }
 
-/**
- * Create Cloudflare-specific response headers for debugging
- *
- * These headers can be added to responses for observability in production.
- * Note: Only add these in non-production or when debugging.
- *
- * @param request - The incoming request
- * @returns Headers object with Cloudflare debug info
- */
 export function createCloudflareDebugHeaders(
   request: Request
 ): Record<string, string> {
@@ -232,11 +317,53 @@ export function createCloudflareDebugHeaders(
   return headers;
 }
 
-/**
- * Detect the hosting platform
- *
- * @returns The detected platform
- */
+export function createCacheControlHeaders(
+  options: CacheControlOptions
+): string {
+  const directives: string[] = [];
+
+  if (options.noStore) {
+    directives.push('no-store');
+    return directives.join(', ');
+  }
+
+  if (options.public) {
+    directives.push('public');
+  } else if (options.private) {
+    directives.push('private');
+  }
+
+  if (options.noCache) {
+    directives.push('no-cache');
+  }
+
+  if (options.maxAge !== undefined) {
+    directives.push(`max-age=${options.maxAge}`);
+  }
+
+  if (options.sMaxAge !== undefined) {
+    directives.push(`s-maxage=${options.sMaxAge}`);
+  }
+
+  if (options.staleWhileRevalidate !== undefined) {
+    directives.push(`stale-while-revalidate=${options.staleWhileRevalidate}`);
+  }
+
+  if (options.staleIfError !== undefined) {
+    directives.push(`stale-if-error=${options.staleIfError}`);
+  }
+
+  if (options.immutable) {
+    directives.push('immutable');
+  }
+
+  if (directives.length === 0) {
+    directives.push('no-store');
+  }
+
+  return directives.join(', ');
+}
+
 export function detectPlatform(): 'cloudflare' | 'vercel' | 'unknown' {
   if (isCloudflareWorker()) {
     return 'cloudflare';
@@ -247,4 +374,57 @@ export function detectPlatform(): 'cloudflare' | 'vercel' | 'unknown' {
   }
 
   return 'unknown';
+}
+
+export function getExecutionContext(): ExecutionContext {
+  const platform = detectPlatform();
+  const isEdge = platform === 'cloudflare';
+  const isNode =
+    typeof process !== 'undefined' &&
+    typeof process.versions !== 'undefined' &&
+    typeof process.versions.node !== 'undefined';
+
+  const nodeEnv = process.env.NODE_ENV;
+  const isDevelopment = nodeEnv === 'development';
+  const isProduction = nodeEnv === 'production';
+
+  const nodeVersion = isNode ? process.versions.node : null;
+  const region = process.env.VERCEL_REGION || process.env.CF_REGION || null;
+
+  return {
+    platform: isNode && platform === 'unknown' ? 'node' : platform,
+    isEdge,
+    isNode,
+    isDevelopment,
+    isProduction,
+    nodeVersion,
+    region,
+  };
+}
+
+export function isEdgeRequest(request: Request): boolean {
+  return isCloudflareRequest(request);
+}
+
+export function getCacheKey(
+  url: string,
+  variants?: Record<string, string>
+): string {
+  try {
+    const urlObj = new URL(url);
+    const baseKey = `cache:${urlObj.hostname}${urlObj.pathname}`;
+
+    if (!variants || Object.keys(variants).length === 0) {
+      return baseKey;
+    }
+
+    const variantParts = Object.entries(variants)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([key, value]) => `${key}=${value}`)
+      .join(':');
+
+    return `${baseKey}:${variantParts}`;
+  } catch {
+    return `cache:${url}`;
+  }
 }
