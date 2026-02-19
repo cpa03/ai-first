@@ -1,11 +1,14 @@
 /**
  * UI Configuration
  * Centralizes UI constants, styling, and component defaults
+ * Now supports environment variable overrides via EnvLoader for timing values
  */
+import { EnvLoader } from './environment';
 
 export const UI_CONFIG = {
   FOCUS: {
-    DELAY_MS: 50,
+    /** Env: UI_FOCUS_DELAY_MS (default: 50) */
+    DELAY_MS: EnvLoader.number('UI_FOCUS_DELAY_MS', 50, 10, 500),
     RING_COLOR: 'rgba(59, 130, 246, 0.2)',
     RING_WIDTH: '2px',
   },
@@ -18,9 +21,12 @@ export const UI_CONFIG = {
 
   ANIMATION: {
     DURATION: {
-      FAST: 150,
-      NORMAL: 300,
-      SLOW: 500,
+      /** Env: UI_ANIMATION_FAST (default: 150) */
+      FAST: EnvLoader.number('UI_ANIMATION_FAST', 150, 50, 1000),
+      /** Env: UI_ANIMATION_NORMAL (default: 300) */
+      NORMAL: EnvLoader.number('UI_ANIMATION_NORMAL', 300, 50, 2000),
+      /** Env: UI_ANIMATION_SLOW (default: 500) */
+      SLOW: EnvLoader.number('UI_ANIMATION_SLOW', 500, 100, 5000),
     },
     EASING: {
       DEFAULT: 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -57,11 +63,18 @@ export const UI_CONFIG = {
 
   SCROLL: {
     BEHAVIOR: 'smooth' as ScrollBehavior,
-    OFFSET: 80,
+    /** Env: UI_SCROLL_OFFSET (default: 80) */
+    OFFSET: EnvLoader.number('UI_SCROLL_OFFSET', 80, 0, 500),
   },
 
   FEEDBACK: {
-    COPY_FEEDBACK_DURATION_MS: 2000,
+    /** Env: UI_COPY_FEEDBACK_DURATION_MS (default: 2000) */
+    COPY_FEEDBACK_DURATION_MS: EnvLoader.number(
+      'UI_COPY_FEEDBACK_DURATION_MS',
+      2000,
+      500,
+      10000
+    ),
   },
 } as const;
 
