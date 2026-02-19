@@ -737,20 +737,24 @@ export class DatabaseService {
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
+    // PERFORMANCE: Server-side filtering for tasks prevents fetching deleted records
+    // This reduces network payload and eliminates client-side filtering overhead
     const { data, error } = await this.client
       .from('deliverables')
-      .select('*, tasks(*)')
+      .select('*, tasks!tasks_deliverable_id_fkey(*)')
       .eq('idea_id', ideaId)
       .is('deleted_at', null)
+      .is('tasks.deleted_at', null)
       .order('priority', { ascending: false });
 
     if (error) throw error;
 
     const deliverables = (data || []) as (Deliverable & { tasks: Task[] })[];
 
+    // No client-side filtering needed - server handles deleted_at filtering
     return deliverables.map((d) => ({
       ...d,
-      tasks: (d.tasks || []).filter((t: Task) => !t.deleted_at),
+      tasks: d.tasks || [],
     }));
   }
 
