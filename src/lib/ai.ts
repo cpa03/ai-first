@@ -522,10 +522,26 @@ class AIService {
     const now = Date.now();
     const cutoffTime = now - MAX_COST_TRACKER_AGE_MS;
 
-    // Filter out entries older than 24 hours
-    this.costTrackers = this.costTrackers.filter(
-      (tracker) => tracker.timestamp.getTime() > cutoffTime
-    );
+    // PERFORMANCE: Use a manual loop to find the first index that is within the window
+    // instead of filter(). Since costTrackers is naturally sorted by timestamp
+    // (new entries are always pushed to the end), we can find the split point in O(N).
+    // This avoids O(N) property lookups and reduces memory pressure.
+    let firstValidIndex = -1;
+    for (let i = 0; i < this.costTrackers.length; i++) {
+      if (this.costTrackers[i].timestamp.getTime() > cutoffTime) {
+        firstValidIndex = i;
+        break;
+      }
+    }
+
+    if (firstValidIndex === -1) {
+      // All entries are expired
+      this.costTrackers = [];
+    } else if (firstValidIndex > 0) {
+      // Some entries are expired, remove them
+      this.costTrackers = this.costTrackers.slice(firstValidIndex);
+    }
+    // If firstValidIndex is 0, all entries are still valid; no action needed.
   }
 
   /**
@@ -548,9 +564,18 @@ class AIService {
       return cachedCost;
     }
 
-    const cost = this.costTrackers
-      .filter((tracker) => tracker.timestamp.toDateString() === today)
-      .reduce((sum, tracker) => sum + tracker.cost, 0);
+    // PERFORMANCE: Use a manual loop to iterate backwards from the latest entries.
+    // Since entries are added chronologically, we can stop as soon as we hit an
+    // entry from a previous day, avoiding O(N) traversal of the entire array.
+    let cost = 0;
+    for (let i = this.costTrackers.length - 1; i >= 0; i--) {
+      if (this.costTrackers[i].timestamp.toDateString() === today) {
+        cost += this.costTrackers[i].cost;
+      } else {
+        // Found an entry from a previous day, can stop searching
+        break;
+      }
+    }
 
     this.todayCostCache.set(cacheKey, cost);
     return cost;
