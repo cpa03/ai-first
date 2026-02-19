@@ -16,12 +16,22 @@
   X-Content-Type-Options: nosniff
 
 # Main pages - security headers with CSP
+# Security headers follow Cloudflare best practices:
+# @see https://developers.cloudflare.com/pages/platform/headers
+# @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), geolocation=()
+  # HSTS: Force HTTPS for 1 year, include subdomains, preload to browser lists
+  # Only enable after confirming HTTPS works correctly for all resources
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  # COOP: Isolate browsing context to prevent cross-origin attacks
+  Cross-Origin-Opener-Policy: same-origin
+  # CORP: Prevent cross-origin resource leaks
+  Cross-Origin-Resource-Policy: same-origin
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://*.supabase.co wss://*.supabase.co https://api.notion.com https://api.trello.com https://api.github.com; frame-ancestors 'self'; base-uri 'self'; form-action 'self'
 
 # Static assets (images, fonts, etc.)
@@ -65,6 +75,12 @@
   X-Frame-Options: DENY
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
+  # HSTS: Force HTTPS for API routes
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  # COOP: Isolate browsing context
+  Cross-Origin-Opener-Policy: same-origin
+  # CORP: Prevent cross-origin resource leaks
+  Cross-Origin-Resource-Policy: same-origin
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://*.supabase.co https://api.notion.com https://api.trello.com https://api.github.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
 # Health check endpoints - short caching for load balancers
