@@ -642,10 +642,15 @@ RETURNS TABLE (
 - `risk_level IN ('low', 'medium', 'high')`
 - `estimate >= 0`
 - `actual_hours >= 0`
+- `end_date >= start_date` (when both are set)
 
 #### task_dependencies
 
 - `dependency_type IN ('finish_to_start', 'start_to_start', 'finish_to_finish', 'start_to_finish')`
+
+#### timelines
+
+- `end_date >= start_date`
 
 #### risk_assessments
 
@@ -1035,6 +1040,27 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-19 - Date Integrity Constraints
+
+#### Data Integrity Enhancement
+
+1. **Added date integrity CHECK constraints**
+   - Migration `20260219_add_date_integrity_constraints.sql` adds data validation
+   - Addresses GitHub Issue #1189 (Database schema quality)
+   - `chk_timelines_end_after_start` - Ensures `end_date >= start_date` for timelines
+   - `chk_tasks_end_after_start` - Ensures `end_date >= start_date` for tasks (when both are set)
+
+2. **Constraint behavior**
+   - Timelines: Both dates are NOT NULL, constraint always applies
+   - Tasks: Dates are nullable, constraint only applies when both are set (allows open-ended tasks)
+
+3. **Updated schema.sql**
+   - Added CHECK constraint definitions to both tables
+   - Constraint names follow naming convention `chk_<table>_<description>`
+
+4. **Down migration included**
+   - `20260219_add_date_integrity_constraints.down.sql` allows safe rollback
 
 ### 2026-02-18 - Vector Index Maintenance Utilities
 
