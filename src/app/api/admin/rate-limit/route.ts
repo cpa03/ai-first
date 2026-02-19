@@ -7,6 +7,7 @@ import {
   getRateLimitStats,
   rateLimitConfigs,
   tieredRateLimits,
+  clearRateLimitStore,
 } from '@/lib/rate-limit';
 import { requireAdminAuth } from '@/lib/auth';
 import { STATUS_CODES } from '@/lib/config/constants';
@@ -48,4 +49,24 @@ async function handleGet(context: ApiContext) {
   );
 }
 
+async function handleDelete(context: ApiContext) {
+  await requireAdminAuth(context.request);
+
+  clearRateLimitStore();
+
+  const data = {
+    message: 'Rate limit store cleared successfully',
+    timestamp: new Date().toISOString(),
+  };
+
+  return standardSuccessResponse(
+    data,
+    context.requestId,
+    STATUS_CODES.OK,
+    context.rateLimit
+  );
+}
+
 export const GET = withApiHandler(handleGet, { rateLimit: 'strict' });
+
+export const DELETE = withApiHandler(handleDelete, { rateLimit: 'strict' });
