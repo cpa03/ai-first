@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Alert from '@/components/Alert';
@@ -65,7 +66,7 @@ function ResultsContent() {
 
     if (!isAuthenticated) {
       setLoading(false);
-      setError('Please sign in to view results');
+      setError(API_ERROR_MESSAGES.AUTH.SIGN_IN_REQUIRED_RESULTS);
       return;
     }
 
@@ -93,7 +94,7 @@ function ResultsContent() {
         const ideaData = await ideaResponse.json();
 
         if (!ideaData.success || !ideaData.data) {
-          throw new Error('Idea not found');
+          throw new Error(API_ERROR_MESSAGES.NOT_FOUND.IDEA);
         }
 
         const sessionData = sessionResponse.ok
@@ -105,7 +106,9 @@ function ResultsContent() {
       } catch (err) {
         logger.error('Error fetching results:', err);
         setError(
-          err instanceof Error ? err.message : 'An unknown error occurred'
+          err instanceof Error
+            ? err.message
+            : API_ERROR_MESSAGES.INTERNAL.UNKNOWN_ERROR
         );
       } finally {
         setLoading(false);

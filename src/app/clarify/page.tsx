@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 
@@ -124,7 +125,7 @@ function ClarifyPageContent() {
           error: err instanceof Error ? err.message : 'Unknown error',
         },
       });
-      setError('Failed to save your answers. Please try again.');
+      setError(API_ERROR_MESSAGES.SERVICE.SAVE_ANSWERS_FAILED);
     }
   };
 

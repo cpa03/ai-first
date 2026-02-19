@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { ANIMATION_DELAYS } from '@/lib/config';
+import { ANIMATION_DELAYS, API_ERROR_MESSAGES } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
 
@@ -80,7 +80,7 @@ const CopyButtonComponent = function CopyButton({
       if (showToast && typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'error',
-          message: 'Failed to copy. Please try selecting and copying manually.',
+          message: API_ERROR_MESSAGES.SERVICE.COPY_FAILED,
           duration: UI_CONFIG.TOAST_DURATION,
         });
       }

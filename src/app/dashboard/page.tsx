@@ -7,7 +7,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
-import { APP_CONFIG } from '@/lib/config';
+import { APP_CONFIG, API_ERROR_MESSAGES } from '@/lib/config';
 
 interface Idea {
   id: string;
@@ -74,25 +74,29 @@ export default function DashboardPage() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError('Please sign in to view your ideas');
+          setError(API_ERROR_MESSAGES.AUTH.SIGN_IN_REQUIRED_IDEAS);
           setIdeas([]);
           setPagination(null);
           return;
         }
-        throw new Error('Failed to fetch ideas');
+        throw new Error(API_ERROR_MESSAGES.INTERNAL.FETCH_IDEAS_FAILED);
       }
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to fetch ideas');
+        throw new Error(
+          data.error || API_ERROR_MESSAGES.INTERNAL.FETCH_IDEAS_FAILED
+        );
       }
 
       setIdeas(data.data.ideas);
       setPagination(data.data.pagination);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'An unknown error occurred';
+        err instanceof Error
+          ? err.message
+          : API_ERROR_MESSAGES.INTERNAL.UNKNOWN_ERROR;
       if (!errorMessage.includes('sign in')) {
         logger.error('Error fetching ideas:', err);
       }
@@ -105,7 +109,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       setLoading(false);
-      setError('Please sign in to view your ideas');
+      setError(API_ERROR_MESSAGES.AUTH.SIGN_IN_REQUIRED_IDEAS);
       return;
     }
 
@@ -135,20 +139,26 @@ export default function DashboardPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete idea');
+        throw new Error(API_ERROR_MESSAGES.INTERNAL.DELETE_IDEA_FAILED);
       }
 
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to delete idea');
+        throw new Error(
+          data.error || API_ERROR_MESSAGES.INTERNAL.DELETE_IDEA_FAILED
+        );
       }
 
       setIdeas(ideas.filter((idea) => idea.id !== id));
       closeDeleteModal();
     } catch (err) {
       logger.error('Error deleting idea:', err);
-      setError(err instanceof Error ? err.message : 'Failed to delete idea');
+      setError(
+        err instanceof Error
+          ? err.message
+          : API_ERROR_MESSAGES.INTERNAL.DELETE_IDEA_FAILED
+      );
     } finally {
       setDeletingId(null);
     }

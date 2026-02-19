@@ -10,7 +10,7 @@ import Tooltip from '@/components/Tooltip';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { ANIMATION_DELAYS } from '@/lib/config';
+import { ANIMATION_DELAYS, API_ERROR_MESSAGES } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('BlueprintDisplay');
@@ -95,7 +95,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'error',
-          message: 'Failed to copy. Please try selecting and copying manually.',
+          message: API_ERROR_MESSAGES.SERVICE.COPY_FAILED,
           duration: UI_CONFIG.TOAST_DURATION,
         });
       }

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -102,7 +103,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
           error: err instanceof Error ? err.message : 'Unknown error',
         },
       });
-      setError('Failed to save your idea. Please try again.');
+      setError(API_ERROR_MESSAGES.SERVICE.SAVE_IDEA_FAILED);
     } finally {
       setIsSubmitting(false);
     }
