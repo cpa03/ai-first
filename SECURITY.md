@@ -87,6 +87,28 @@ We implement modern cross-origin security headers to prevent cross-origin attack
 
 These headers address Issue #1171 (Security Hardening) and align with OWASP recommendations.
 
+### CSP Violation Reporting (Added 2026-02-19)
+
+We monitor Content Security Policy violations to detect potential XSS attacks and policy misconfigurations:
+
+| Feature       | Description                                        |
+| ------------- | -------------------------------------------------- |
+| **Endpoint**  | `/api/csp-report` (POST)                           |
+| **Purpose**   | Receives CSP violation reports from browsers       |
+| **Response**  | 204 No Content (efficient for browser reporting)   |
+| **Logging**   | All violations logged with severity classification |
+| **Issue Ref** | #891 (partial - CSP reporting capability)          |
+
+**Severity Classification**:
+
+| Severity | Condition                                               |
+| -------- | ------------------------------------------------------- |
+| ERROR    | Script violations from external sources (potential XSS) |
+| WARN     | Default source and resource violations                  |
+| INFO     | Other policy violations                                 |
+
+The reporting endpoint is designed to be lightweight and non-blocking for browsers. It logs all violations with contextual information for security incident response.
+
 ---
 
 ## Security Checklist
@@ -120,6 +142,7 @@ These headers address Issue #1171 (Security Hardening) and align with OWASP reco
 | 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                    |
 | 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                  |
 | 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations    |
+| 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring              |
 
 ## Current npm Audit Status (2026-02-18)
 
