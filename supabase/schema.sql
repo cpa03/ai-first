@@ -815,6 +815,10 @@ CREATE TRIGGER update_ideas_updated_at BEFORE UPDATE ON ideas
 CREATE TRIGGER update_task_dependencies_updated_at BEFORE UPDATE ON task_dependencies
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+-- Trigger for idea_sessions table
+CREATE TRIGGER update_idea_sessions_updated_at BEFORE UPDATE ON idea_sessions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
 -- ============================================================================
 -- Vector Similarity Search Function
 -- ============================================================================

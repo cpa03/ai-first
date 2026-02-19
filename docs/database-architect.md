@@ -580,6 +580,7 @@ Automatically updates the `updated_at` timestamp on row updates.
 - deliverables
 - ideas
 - task_dependencies
+- idea_sessions
 
 ```sql
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -946,6 +947,8 @@ Located in `/supabase/migrations/`:
 | 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete           |
 | 20260218_add_missing_rls_policies.sql             | Missing RLS policies (#1189, #1172) |
 | 20260218_vector_index_maintenance.sql             | Vector index maintenance utilities  |
+| 20260218_add_task_dependencies_updated_at.sql     | Task dependencies updated_at        |
+| 20260219_add_idea_sessions_updated_at_trigger.sql | Idea sessions updated_at trigger    |
 
 ### Migration Best Practices
 
@@ -1146,6 +1149,19 @@ Supabase handles connection pooling automatically. For high-traffic applications
 #### TypeScript Types Update
 
 - Updated `src/types/database.ts` to include `deleted_at` field in `task_comments` type definitions
+
+### 2026-02-19 - idea_sessions Updated_at Trigger
+
+#### Enhancement
+
+1. **Added `updated_at` trigger to `idea_sessions` table**
+   - Migration `20260219_add_idea_sessions_updated_at_trigger.sql` adds the missing trigger
+   - Addresses GitHub Issue #1172 (incomplete trigger implementations)
+   - The table had an `updated_at` column with an index but was missing the automatic trigger
+   - Ensures consistency with all other tables that have `updated_at` columns with triggers
+
+2. **Down migration included**
+   - `20260219_add_idea_sessions_updated_at_trigger.down.sql` allows safe rollback
 
 ## Conclusion
 
