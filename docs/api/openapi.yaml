@@ -30,6 +30,10 @@ tags:
     description: Deliverable management and task creation
   - name: Metrics
     description: Prometheus metrics for monitoring
+  - name: Security
+    description: Security-related endpoints (CSP reporting)
+  - name: Admin
+    description: Administrative endpoints requiring elevated privileges
 
 paths:
   /api/clarify:
@@ -804,6 +808,161 @@ paths:
                   # TYPE http_request_duration_seconds histogram
                   http_request_duration_seconds_bucket{method="GET",route="/api/health",status_code="200",le="0.001"} 15
                   http_request_duration_seconds_bucket{method="GET",route="/api/health",status_code="200",le="0.005"} 42
+
+  /api/ideas/{id}/session:
+    get:
+      tags:
+        - Ideas
+      summary: Get idea session
+      description: Retrieve the clarification/breakdown session associated with an idea
+      operationId: getIdeaSession
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIdeaSessionResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea or session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/ideas/{id}/tasks:
+    get:
+      tags:
+        - Ideas
+      summary: Get idea tasks
+      description: Retrieve all tasks for an idea with deliverables and progress summary
+      operationId: getIdeaTasks
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIdeaTasksResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea or deliverables not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/csp-report:
+    post:
+      tags:
+        - Security
+      summary: CSP violation report
+      description: |
+        Content Security Policy violation report endpoint.
+        Browsers automatically send reports to this endpoint when CSP violations occur.
+        Used for security monitoring and incident response.
+      operationId: reportCspViolation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CspReportRequest'
+          application/csp-report:
+            schema:
+              $ref: '#/components/schemas/CspReportRequest'
+      responses:
+        '204':
+          description: Report received (no content returned)
+    options:
+      tags:
+        - Security
+      summary: CSP report CORS preflight
+      description: CORS preflight handler for CSP report endpoint
+      operationId: cspReportPreflight
+      responses:
+        '204':
+          description: CORS preflight successful
+
+  /api/admin/rate-limit:
+    get:
+      tags:
+        - Admin
+      summary: Get rate limit statistics
+      description: |
+        Retrieve current rate limiting statistics including total entries,
+        top users, and configuration details. Requires admin authentication.
+      operationId: getRateLimitStats
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Rate limit statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitStatsResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Admin
+      summary: Clear rate limit store
+      description: |
+        Clear all rate limit entries from the store.
+        Use with caution - this resets all rate limiting state.
+        Requires admin authentication.
+      operationId: clearRateLimitStore
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Rate limit store cleared successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClearRateLimitResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 components:
   schemas:
@@ -1935,6 +2094,275 @@ components:
           type: boolean
           description: Whether the request can be retried
           example: false
+
+    GetIdeaSessionResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/IdeaSession'
+              nullable: true
+
+    IdeaSession:
+      type: object
+      description: Clarification or breakdown session associated with an idea
+      properties:
+        id:
+          type: string
+          example: session_1704625200000_abc123
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        type:
+          type: string
+          enum: [clarification, breakdown]
+          example: clarification
+        status:
+          type: string
+          enum: [in_progress, completed, abandoned]
+          example: in_progress
+        data:
+          type: object
+          description: Session-specific data (questions, answers, deliverables, etc.)
+        createdAt:
+          type: string
+          format: date-time
+          example: '2024-01-07T00:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2024-01-07T00:00:00Z'
+
+    GetIdeaTasksResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - ideaId
+                - deliverables
+                - summary
+              properties:
+                ideaId:
+                  type: string
+                  example: idea_1704625200000_abc123def
+                deliverables:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DeliverableWithTasks'
+                summary:
+                  $ref: '#/components/schemas/TasksSummary'
+
+    DeliverableWithTasks:
+      allOf:
+        - $ref: '#/components/schemas/Deliverable'
+        - type: object
+          properties:
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+            progress:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Completion percentage for this deliverable
+              example: 45
+            completedCount:
+              type: integer
+              example: 3
+            totalCount:
+              type: integer
+              example: 7
+            totalHours:
+              type: number
+              example: 32.5
+            completedHours:
+              type: number
+              example: 12.0
+
+    TasksSummary:
+      type: object
+      properties:
+        totalDeliverables:
+          type: integer
+          example: 3
+        totalTasks:
+          type: integer
+          example: 15
+        completedTasks:
+          type: integer
+          example: 5
+        totalHours:
+          type: number
+          description: Total estimated hours across all tasks
+          example: 120.5
+        completedHours:
+          type: number
+          description: Estimated hours for completed tasks
+          example: 40.0
+        overallProgress:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Overall completion percentage
+          example: 33
+
+    CspReportRequest:
+      type: object
+      required:
+        - csp-report
+      properties:
+        csp-report:
+          type: object
+          required:
+            - document-uri
+            - violated-directive
+          properties:
+            document-uri:
+              type: string
+              description: The URI of the document where the violation occurred
+              example: https://example.com/page
+            referrer:
+              type: string
+              description: The referrer of the request
+              example: https://example.com/
+            violated-directive:
+              type: string
+              description: The CSP directive that was violated
+              example: script-src
+            effective-directive:
+              type: string
+              description: The directive that actually enforced the policy
+              example: script-src-elem
+            original-policy:
+              type: string
+              description: The complete CSP policy
+            blocked-uri:
+              type: string
+              description: The URI of the resource that was blocked
+              example: https://evil.com/malware.js
+            status-code:
+              type: integer
+              description: HTTP status code of the request
+              example: 200
+            script-sample:
+              type: string
+              description: First 40 characters of the inline script
+            source-file:
+              type: string
+              description: URL of the file where the violation occurred
+            line-number:
+              type: integer
+              description: Line number in the source file
+            column-number:
+              type: integer
+              description: Column number in the source file
+
+    RateLimitStatsResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - timestamp
+                - totalEntries
+                - expiredEntries
+                - topUsers
+                - rateLimitConfigs
+                - tieredRateLimits
+              properties:
+                timestamp:
+                  type: string
+                  format: date-time
+                  example: '2024-01-07T00:00:00Z'
+                totalEntries:
+                  type: integer
+                  description: Total number of rate limit entries
+                  example: 150
+                expiredEntries:
+                  type: integer
+                  description: Number of expired entries pending cleanup
+                  example: 12
+                entriesByRole:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  description: Count of entries by user role
+                  example:
+                    anonymous: 50
+                    authenticated: 80
+                    premium: 20
+                topUsers:
+                  type: array
+                  description: Top users by request count
+                  items:
+                    type: object
+                    properties:
+                      identifier:
+                        type: string
+                        example: 192.168.1.1
+                      count:
+                        type: integer
+                        example: 45
+                rateLimitConfigs:
+                  type: object
+                  description: Active rate limit configurations
+                  additionalProperties:
+                    type: object
+                    properties:
+                      windowMs:
+                        type: integer
+                        example: 60000
+                      maxRequests:
+                        type: integer
+                        example: 30
+                  example:
+                    strict:
+                      windowMs: 60000
+                      maxRequests: 10
+                    moderate:
+                      windowMs: 60000
+                      maxRequests: 30
+                    lenient:
+                      windowMs: 60000
+                      maxRequests: 60
+                tieredRateLimits:
+                  type: object
+                  description: Rate limits by user tier
+                  additionalProperties:
+                    type: object
+                    properties:
+                      windowMs:
+                        type: integer
+                        example: 60000
+                      maxRequests:
+                        type: integer
+                        example: 60
+
+    ClearRateLimitResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - message
+                - timestamp
+              properties:
+                message:
+                  type: string
+                  example: Rate limit store cleared successfully
+                timestamp:
+                  type: string
+                  format: date-time
+                  example: '2024-01-07T00:00:00Z'
 
   securitySchemes:
     BearerAuth:
