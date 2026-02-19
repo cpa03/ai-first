@@ -103,6 +103,7 @@
     /LoadingSpinner.tsx     ← Spinner component
     /MobileNav.tsx         ← Responsive navigation
     /ProgressStepper.tsx    ← Progress indicator
+    /ScrollToTop.tsx        ← Scroll to top button
     /Skeleton.tsx           ← Skeleton loading component
     /StepCelebration.tsx    ← Step completion celebration
     /SuccessCelebration.tsx  ← Success celebration animation
