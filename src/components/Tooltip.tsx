@@ -44,8 +44,6 @@ function usePrefersReducedMotion() {
   );
 }
 
-const TOUCH_PRESS_DURATION_MS = 500;
-
 // PERFORMANCE: Memoize Tooltip to prevent re-renders when parent components update
 // Tooltip is a wrapper component that may be nested inside frequently updating parents
 function TooltipComponent({
@@ -101,7 +99,7 @@ function TooltipComponent({
     touchStartRef.current = Date.now();
     touchTimeoutRef.current = setTimeout(() => {
       showTooltip();
-    }, TOUCH_PRESS_DURATION_MS);
+    }, UI_CONFIG.TOOLTIP_TOUCH_PRESS_MS);
   }, [showTooltip]);
 
   const handleTouchEnd = useCallback(() => {
@@ -109,8 +107,8 @@ function TooltipComponent({
       clearTimeout(touchTimeoutRef.current);
     }
     const pressDuration = Date.now() - touchStartRef.current;
-    if (pressDuration >= TOUCH_PRESS_DURATION_MS) {
-      setTimeout(hideTooltip, 1000);
+    if (pressDuration >= UI_CONFIG.TOOLTIP_TOUCH_PRESS_MS) {
+      setTimeout(hideTooltip, UI_CONFIG.TOOLTIP_HIDE_DELAY_MS);
     }
   }, [hideTooltip]);
 
