@@ -5,7 +5,12 @@ import Link from 'next/link';
 import Alert from './Alert';
 import Button from './Button';
 import { createLogger } from '@/lib/logger';
-import { UI_CONFIG } from '@/lib/config/constants';
+import {
+  UI_CONFIG,
+  MESSAGES,
+  BUTTON_LABELS,
+  COMPONENT_DEFAULTS,
+} from '@/lib/config';
 
 interface Props {
   children: ReactNode;
@@ -72,13 +77,12 @@ export default class ErrorBoundary extends Component<Props, State> {
           >
             <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
               <div role="alert" aria-live="assertive" className="sr-only">
-                An error has occurred. Error message:{' '}
+                {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}{' '}
                 {this.state.error?.message}
               </div>
-              <Alert type="error" title="Something went wrong">
+              <Alert type="error" title={MESSAGES.ERROR_BOUNDARY.TITLE}>
                 <p className="text-gray-700 mb-4">
-                  We apologize, but an unexpected error occurred. Please try
-                  again.
+                  {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}
                 </p>
                 <div className="mt-6 space-y-4">
                   <Button
@@ -86,14 +90,14 @@ export default class ErrorBoundary extends Component<Props, State> {
                     onClick={this.handleReset}
                     className="w-full sm:w-auto"
                   >
-                    Try Again
+                    {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
                   </Button>
                   <Link href="/" passHref>
                     <Button
                       variant="secondary"
                       className="w-full sm:w-auto ml-0 sm:ml-2"
                     >
-                      Go to Home
+                      {BUTTON_LABELS.CANCEL}
                     </Button>
                   </Link>
                 </div>
@@ -102,7 +106,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               {this.state.error && (
                 <details className="mt-6 p-4 bg-gray-50 rounded-md">
                   <summary className="cursor-pointer text-sm font-medium text-gray-700">
-                    Error Details
+                    {MESSAGES.ERROR_BOUNDARY.DETAILS_BUTTON}
                   </summary>
                   <div className="mt-3 text-xs text-gray-600 font-mono whitespace-pre-wrap overflow-auto max-h-48">
                     <strong>Error:</strong> {this.state.error.toString()}
@@ -120,18 +124,19 @@ export default class ErrorBoundary extends Component<Props, State> {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || 'No stack trace available'}`;
+                        const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || MESSAGES.ERROR_BOUNDARY.NO_STACK_TRACE}`;
                         navigator.clipboard.writeText(errorText);
                         const btn = document.activeElement as HTMLButtonElement;
                         const originalText = btn?.textContent || '';
-                        if (btn) btn.textContent = 'Copied!';
+                        if (btn)
+                          btn.textContent = MESSAGES.BLUEPRINT.COPIED_BUTTON;
                         setTimeout(() => {
                           if (btn) btn.textContent = originalText;
-                        }, UI_CONFIG.COPY_FEEDBACK_DURATION);
+                        }, UI_CONFIG.FEEDBACK.COPY_FEEDBACK_DURATION_MS);
                       }}
-                      aria-label="Copy error details to clipboard for bug reporting"
+                      aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.CLOSE_ERROR}
                     >
-                      Copy Error Details
+                      {MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
                     </Button>
                   </div>
                 </details>

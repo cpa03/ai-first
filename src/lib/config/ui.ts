@@ -59,6 +59,10 @@ export const UI_CONFIG = {
     BEHAVIOR: 'smooth' as ScrollBehavior,
     OFFSET: 80,
   },
+
+  FEEDBACK: {
+    COPY_FEEDBACK_DURATION_MS: 2000,
+  },
 } as const;
 
 export const LABELS = {
@@ -86,6 +90,8 @@ export const MESSAGES = {
     FALLBACK_ERROR: "We're using fallback questions to continue.",
     ANSWER_HELP_TEXT:
       'Provide a detailed answer to help us understand your needs better.',
+    ERROR_TITLE: 'Error',
+    ERROR_FETCH_QUESTIONS: 'Failed to fetch clarifying questions',
   },
   NAVIGATION: {
     PREVIOUS: '← Previous',
@@ -96,6 +102,59 @@ export const MESSAGES = {
     DEFAULT: 'Loading...',
     SAVING: 'Saving...',
     SAVED: 'Saved',
+    TASKS: 'Loading tasks...',
+    BLUEPRINT: 'Generating your blueprint',
+  },
+  ERRORS: {
+    DEFAULT: 'An error occurred',
+    LOADING_TASKS: 'Error Loading Tasks',
+    LOADING_TASKS_DESCRIPTION: 'Unable to load tasks. Please try again.',
+    SOMETHING_WENT_WRONG: 'Something went wrong',
+    FAILED_SAVE_IDEA: 'Failed to save your idea. Please try again.',
+    UNKNOWN_ERROR: 'An unknown error occurred',
+  },
+  TASK_MANAGEMENT: {
+    NO_TASKS_TITLE: 'No Tasks Found',
+    NO_TASKS_DESCRIPTION: 'Get started by creating your first task.',
+    RETRY_BUTTON: 'Retry',
+    EXPAND_ALL: 'Expand All',
+    COLLAPSE_ALL: 'Collapse All',
+    PROGRESS_LABEL: 'Overall project progress',
+  },
+  IDEA_INPUT: {
+    SUBMIT_BUTTON: 'Start Clarifying →',
+    PROCESSING_BUTTON: 'Processing...',
+    KEYBOARD_SHORTCUT_LABEL: (isMac: boolean) =>
+      `Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`,
+  },
+  BLUEPRINT: {
+    COPY_BUTTON: 'Copy to Clipboard',
+    COPIED_BUTTON: 'Copied!',
+    DOWNLOAD_BUTTON: 'Download Markdown',
+    GENERATING_TITLE: 'Generating Your Blueprint...',
+    GENERATING_DESCRIPTION:
+      'Our AI is analyzing your answers and creating a detailed action plan.',
+    PAGE_TITLE: 'Your Project Blueprint',
+    FOOTER_TEXT:
+      'Ready to start implementing? Share this blueprint with your team or keep it as your guide.',
+    START_OVER_BUTTON: 'Start Over',
+    EXPORT_BUTTON: 'Export to Tools',
+    COMING_SOON_BADGE: 'Soon',
+    TOOLTIP_START_OVER: 'Start over with a new idea - coming soon',
+    TOOLTIP_EXPORT: 'Export to Notion, Trello, and more - coming soon',
+    ARIA_LABEL_GENERATING: 'Generating your blueprint',
+    ARIA_LABEL_CONTENT: 'Generated project blueprint content',
+    ARIA_LABEL_START_OVER: 'Start over with a new idea (coming soon)',
+    ARIA_LABEL_EXPORT:
+      'Export blueprint to project management tools (coming soon)',
+  },
+  ERROR_BOUNDARY: {
+    TITLE: 'Something went wrong',
+    DESCRIPTION: 'An error has occurred.',
+    RETRY_BUTTON: 'Try Again',
+    DETAILS_BUTTON: 'Error Details',
+    COPY_BUTTON: 'Copy Error Details',
+    NO_STACK_TRACE: 'No stack trace available',
   },
 } as const;
 
@@ -109,6 +168,10 @@ export const BUTTON_LABELS = {
   DELETE: 'Delete',
   EDIT: 'Edit',
   EXPORT: 'Export',
+  RETRY: 'Retry',
+  CLOSE: 'Close',
+  COPY: 'Copy',
+  DOWNLOAD: 'Download',
 } as const;
 
 export const TOAST_CONFIG = {
@@ -202,6 +265,40 @@ export const COMPONENT_DEFAULTS = {
     COMPLETE: 100,
     /** Empty percentage */
     EMPTY: 0,
+  } as const,
+
+  /**
+   * ARIA labels for accessibility
+   */
+  ARIA_LABELS: {
+    LOADING_TASKS: 'Loading tasks',
+    LOADING_QUESTIONS: 'Generating questions',
+    GENERATING_BLUEPRINT: 'Generating your blueprint',
+    COPY_IDEA: 'Copy original idea',
+    COPY_BLUEPRINT: 'Copy blueprint to clipboard',
+    DOWNLOAD_BLUEPRINT: 'Download blueprint as Markdown file',
+    CLOSE_ERROR: 'Dismiss error',
+  } as const,
+
+  /**
+   * ErrorBoundary component defaults
+   */
+  ERROR_BOUNDARY: {
+    DEFAULT_ERROR_TITLE: 'Something went wrong',
+  } as const,
+
+  /**
+   * ClarificationFlow component defaults
+   */
+  CLARIFICATION_FLOW: {
+    ANSWER_TEXTAREA_NAME: 'answer',
+    ANSWER_TEXTAREA_PLACEHOLDER: 'Enter your answer here...',
+    REFERENCE_LABEL: 'Reference: Your Original Idea',
+    STEP_DESCRIPTION: (currentStep: number, totalSteps: number) =>
+      `Answer the following question and then click Next to continue or Previous to go back. Question ${currentStep} of ${totalSteps}.`,
+    KEYBOARD_SHORTCUT_TEXT: (isMac: boolean, isLastStep: boolean) =>
+      `Press ${isMac ? '⌘' : 'Ctrl'} + Enter to ${isLastStep ? 'complete' : 'submit'}.`,
+    SELECT_PLACEHOLDER: 'Select an option...',
   } as const,
 } as const;
 

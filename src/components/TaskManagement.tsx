@@ -6,6 +6,7 @@ import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { TaskManagementHeader, DeliverableCard } from './task-management';
 import { useTaskManagement } from '@/hooks/useTaskManagement';
+import { MESSAGES, BUTTON_LABELS, COMPONENT_DEFAULTS } from '@/lib/config';
 
 interface TaskManagementProps {
   ideaId: string;
@@ -33,8 +34,11 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
         <div className="flex flex-col items-center justify-center py-12">
-          <LoadingSpinner size="lg" ariaLabel="Loading tasks" />
-          <p className="mt-4 text-gray-600">Loading tasks...</p>
+          <LoadingSpinner
+            size="lg"
+            ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.LOADING_TASKS}
+          />
+          <p className="mt-4 text-gray-600">{MESSAGES.LOADING.TASKS}</p>
         </div>
       </div>
     );
@@ -43,10 +47,10 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
   if (error) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
-        <Alert type="error" title="Error Loading Tasks">
+        <Alert type="error" title={MESSAGES.ERRORS.LOADING_TASKS}>
           <p>{error}</p>
           <Button onClick={handleRetry} variant="primary" className="mt-4">
-            Retry
+            {BUTTON_LABELS.RETRY}
           </Button>
         </Alert>
       </div>
@@ -56,8 +60,8 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
   if (!data || data.deliverables.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
-        <Alert type="info" title="No Tasks Found">
-          <p>No tasks have been created for this idea yet.</p>
+        <Alert type="info" title={MESSAGES.TASK_MANAGEMENT.NO_TASKS_TITLE}>
+          <p>{MESSAGES.TASK_MANAGEMENT.NO_TASKS_DESCRIPTION}</p>
           <p className="text-sm mt-2 text-gray-600">
             Complete the clarification process to generate tasks.
           </p>

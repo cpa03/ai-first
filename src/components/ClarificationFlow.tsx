@@ -18,6 +18,7 @@ import {
   INPUT_STYLES,
   ANIMATION_DELAYS,
   TEXT_COLORS,
+  COMPONENT_DEFAULTS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -195,7 +196,7 @@ function ClarificationFlow({
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(
-            errorData.error || 'Failed to fetch clarifying questions'
+            errorData.error || MESSAGES.CLARIFICATION.ERROR_FETCH_QUESTIONS
           );
         }
 
@@ -234,7 +235,7 @@ function ClarificationFlow({
           },
         });
         setError(
-          err instanceof Error ? err.message : 'An unknown error occurred'
+          err instanceof Error ? err.message : MESSAGES.ERRORS.UNKNOWN_ERROR
         );
 
         setQuestions(FALLBACK_QUESTIONS);
@@ -249,16 +250,21 @@ function ClarificationFlow({
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto fade-in">
-        <LoadingAnnouncer message="Generating questions..." />
+        <LoadingAnnouncer
+          message={MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
+        />
         <div className="flex flex-col items-center justify-center py-12">
-          <LoadingSpinner size="lg" ariaLabel="Generating questions" />
+          <LoadingSpinner
+            size="lg"
+            ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.LOADING_QUESTIONS}
+          />
           <p className="mt-4 text-gray-600 text-sm">
             {MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
           </p>
         </div>
         {error && (
           <div className="mb-6 slide-up">
-            <Alert type="error" title="Error">
+            <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
               <p>{error}</p>
               <p className="text-sm mt-4">
                 {MESSAGES.CLARIFICATION.FALLBACK_ERROR}
@@ -307,10 +313,10 @@ function ClarificationFlow({
 
       {error && (
         <div className="mb-6 slide-up">
-          <Alert type="error" title="Error">
+          <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
             <p>{error}</p>
             <p className="text-sm mt-4">
-              We&apos;re using fallback questions to continue.
+              {MESSAGES.CLARIFICATION.FALLBACK_ERROR}
             </p>
           </Alert>
         </div>
@@ -332,7 +338,7 @@ function ClarificationFlow({
                 d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span>Reference: Your Original Idea</span>
+            <span>{COMPONENT_DEFAULTS.CLARIFICATION_FLOW.REFERENCE_LABEL}</span>
           </div>
           <svg
             className="w-4 h-4 text-gray-400 transition-transform duration-200 transform group-open:rotate-180"
@@ -355,7 +361,7 @@ function ClarificationFlow({
               textToCopy={idea}
               variant="icon-only"
               className="mt-1"
-              ariaLabel="Copy original idea"
+              ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.COPY_IDEA}
             />
           </div>
         </div>
@@ -364,7 +370,7 @@ function ClarificationFlow({
       <div aria-live="polite" aria-atomic="true">
         <div className="flex justify-between items-center mb-2">
           <span className="text-sm font-medium text-gray-900">
-            Question {currentStep + 1} of {questions.length}
+            {LABELS.QUESTION(currentStep)} of {questions.length}
           </span>
           <span
             className="text-sm text-gray-900 font-medium"
@@ -395,9 +401,10 @@ function ClarificationFlow({
             {currentQuestion.question}
           </h2>
           <p id="question-description" className="sr-only">
-            Answer the following question and then click Next to continue or
-            Previous to go back. Question {currentStep + 1} of{' '}
-            {questions.length}.
+            {COMPONENT_DEFAULTS.CLARIFICATION_FLOW.STEP_DESCRIPTION(
+              currentStep + 1,
+              questions.length
+            )}
           </p>
 
           <div className="space-y-4">
@@ -414,7 +421,7 @@ function ClarificationFlow({
                 minLength={MIN_ANSWER_LENGTH}
                 maxLength={MAX_ANSWER_LENGTH}
                 showCharCount={true}
-                helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
+                helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} ${COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(isMac, currentStep === questions.length - 1)}`}
                 required={true}
                 className="min-h-[100px]"
                 ref={textareaRef}
@@ -433,7 +440,10 @@ function ClarificationFlow({
                 minLength={MIN_SHORT_ANSWER_LENGTH}
                 maxLength={MAX_SHORT_ANSWER_LENGTH}
                 showCharCount={true}
-                helpText={`Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
+                helpText={COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(
+                  isMac,
+                  currentStep === questions.length - 1
+                )}
                 required={true}
                 ref={textInputRef}
                 disabled={showCelebration || isSubmitting}
@@ -471,7 +481,9 @@ function ClarificationFlow({
                   disabled={showCelebration || isSubmitting}
                   required
                 >
-                  <option value="">Select an option...</option>
+                  <option value="">
+                    {COMPONENT_DEFAULTS.CLARIFICATION_FLOW.SELECT_PLACEHOLDER}
+                  </option>
                   {currentQuestion.options.map((option) => (
                     <option key={option} value={option}>
                       {option}
@@ -503,7 +515,10 @@ function ClarificationFlow({
                 Enter
               </kbd>
               <span>
-                to {currentStep === questions.length - 1 ? 'complete' : 'next'}
+                to{' '}
+                {currentStep === questions.length - 1
+                  ? MESSAGES.NAVIGATION.COMPLETE.toLowerCase()
+                  : MESSAGES.NAVIGATION.NEXT.replace(' →', '').toLowerCase()}
               </span>
             </div>
 

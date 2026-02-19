@@ -10,7 +10,7 @@ import Tooltip from '@/components/Tooltip';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { ToastOptions } from '@/components/ToastContainer';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { ANIMATION_DELAYS } from '@/lib/config';
+import { ANIMATION_DELAYS, MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('BlueprintDisplay');
@@ -105,19 +105,18 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   if (isGenerating) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-        <LoadingAnnouncer message="Generating your blueprint" />
+        <LoadingAnnouncer message={MESSAGES.LOADING.BLUEPRINT} />
         <div className="text-center mb-8">
           <LoadingSpinner
             size="lg"
             className="mb-4"
-            ariaLabel="Generating your blueprint"
+            ariaLabel={MESSAGES.BLUEPRINT.ARIA_LABEL_GENERATING}
           />
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
-            Generating Your Blueprint...
+            {MESSAGES.BLUEPRINT.GENERATING_TITLE}
           </h2>
           <p className="text-sm sm:text-base text-gray-600">
-            Our AI is analyzing your answers and creating a detailed action
-            plan.
+            {MESSAGES.BLUEPRINT.GENERATING_DESCRIPTION}
           </p>
         </div>
 
@@ -177,24 +176,26 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               id="blueprint-heading"
               className="text-xl sm:text-2xl font-semibold text-gray-900"
             >
-              Your Project Blueprint
+              {MESSAGES.BLUEPRINT.PAGE_TITLE}
             </h2>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 onClick={handleCopy}
                 variant="outline"
                 fullWidth={false}
-                aria-label="Copy blueprint to clipboard"
+                aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.COPY_BLUEPRINT}
               >
-                {copied ? 'Copied!' : 'Copy to Clipboard'}
+                {copied
+                  ? MESSAGES.BLUEPRINT.COPIED_BUTTON
+                  : MESSAGES.BLUEPRINT.COPY_BUTTON}
               </Button>
               <Button
                 onClick={handleDownload}
                 variant="primary"
                 fullWidth={false}
-                aria-label="Download blueprint as Markdown file"
+                aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.DOWNLOAD_BLUEPRINT}
               >
-                Download Markdown
+                {MESSAGES.BLUEPRINT.DOWNLOAD_BUTTON}
               </Button>
             </div>
           </div>
@@ -204,7 +205,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <div className="prose prose-sm sm:prose-lg max-w-none">
             <pre
               className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
-              aria-label="Generated project blueprint content"
+              aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
             >
               {blueprint}
             </pre>
@@ -214,41 +215,40 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         <footer className="border-t border-gray-200 px-4 sm:px-8 py-4 sm:py-6 bg-gray-50">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <p className="text-xs sm:text-sm text-gray-600">
-              Ready to start implementing? Share this blueprint with your team
-              or keep it as your guide.
+              {MESSAGES.BLUEPRINT.FOOTER_TEXT}
             </p>
             <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
               <Tooltip
-                content="Start over with a new idea - coming soon"
+                content={MESSAGES.BLUEPRINT.TOOLTIP_START_OVER}
                 position="top"
               >
                 <Button
                   variant="secondary"
                   fullWidth={false}
-                  aria-label="Start over with a new idea (coming soon)"
+                  aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_START_OVER}
                   aria-disabled="true"
                   disabled
                 >
-                  Start Over
+                  {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
                   <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
-                    Soon
+                    {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
               </Tooltip>
               <Tooltip
-                content="Export to Notion, Trello, and more - coming soon"
+                content={MESSAGES.BLUEPRINT.TOOLTIP_EXPORT}
                 position="top"
               >
                 <Button
                   variant="primary"
                   fullWidth={false}
-                  aria-label="Export blueprint to project management tools (coming soon)"
+                  aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_EXPORT}
                   aria-disabled="true"
                   disabled
                 >
-                  Export to Tools
+                  {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
                   <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                    Soon
+                    {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
               </Tooltip>

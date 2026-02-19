@@ -2,6 +2,7 @@
 
 import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
+import { MESSAGES } from '@/lib/config';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -61,17 +62,17 @@ function TaskManagementHeaderComponent({
           aria-valuemin={0}
           aria-valuemax={100}
           role="progressbar"
-          aria-label="Overall project progress"
+          aria-label={MESSAGES.TASK_MANAGEMENT.PROGRESS_LABEL}
         />
       </div>
 
       {/* Expand/Collapse Controls */}
       <div className="flex gap-2 mt-4">
         <Button onClick={onExpandAll} variant="outline" size="sm">
-          Expand All
+          {MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
         </Button>
         <Button onClick={onCollapseAll} variant="outline" size="sm">
-          Collapse All
+          {MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
         </Button>
       </div>
     </div>

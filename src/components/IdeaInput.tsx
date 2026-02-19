@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
+import { MESSAGES, PLACEHOLDERS } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -85,7 +86,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save idea');
+        throw new Error(errorData.error || MESSAGES.ERRORS.FAILED_SAVE_IDEA);
       }
 
       const data = await response.json();
@@ -102,7 +103,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
           error: err instanceof Error ? err.message : 'Unknown error',
         },
       });
-      setError('Failed to save your idea. Please try again.');
+      setError(MESSAGES.ERRORS.FAILED_SAVE_IDEA);
     } finally {
       setIsSubmitting(false);
     }
@@ -129,8 +130,8 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
           value={idea}
           onChange={handleIdeaChange}
           onKeyDown={handleKeyDown}
-          placeholder="Describe your idea in a few sentences. For example: 'I want to build a mobile app that helps people track their daily habits and stay motivated to achieve their goals.'"
-          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. Press ${isMac ? '⌘' : 'Ctrl'} + Enter to submit.`}
+          placeholder={PLACEHOLDERS.IDEA_INPUT}
+          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}`}
           multiline={true}
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}
@@ -154,7 +155,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
           <div className="flex items-center gap-4">
             <div
               className="flex items-center gap-2 text-sm text-gray-600"
-              aria-label={`Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`}
+              aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
             >
               <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
                 {isMac ? '⌘' : 'Ctrl'}
@@ -172,7 +173,9 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
             loading={isSubmitting}
             disabled={!idea.trim() || !!validationError}
           >
-            {isSubmitting ? 'Processing...' : 'Start Clarifying →'}
+            {isSubmitting
+              ? MESSAGES.IDEA_INPUT.PROCESSING_BUTTON
+              : MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
           </Button>
         </div>
       </form>
