@@ -473,6 +473,78 @@
   }
 }
 
+/* Skip to Content Link - Enhanced Accessibility */
+/* Provides keyboard users with an elegant way to skip navigation */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--color-primary-600)) 0%,
+    rgb(var(--color-primary-700)) 100%
+  );
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-decoration: none;
+  outline: none;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 1rem;
+  opacity: 1;
+  transform: translateY(0);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 3px rgb(var(--color-primary-500) / 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.skip-link:focus-visible {
+  outline: 3px solid rgb(var(--color-primary-500));
+  outline-offset: 3px;
+}
+
+.skip-link:hover {
+  transform: translateY(0) scale(1.02);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgb(var(--color-primary-500) / 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+/* Reduced motion support for skip link */
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+    transform: none;
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+
+  .skip-link:hover {
+    transform: none;
+  }
+}
+
 /* Reduced motion support for FeatureGrid animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-stagger-1,
