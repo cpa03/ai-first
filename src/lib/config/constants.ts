@@ -272,6 +272,30 @@ export const UI_CONFIG = {
   TOOLTIP_DELAY: EnvLoader.number('UI_TOOLTIP_DELAY', 300, 50, 2000),
 
   /**
+   * Tooltip touch press duration (in milliseconds)
+   * Minimum long-press duration on touch devices to show tooltip
+   * Env: UI_TOOLTIP_TOUCH_PRESS_MS (default: 500)
+   */
+  TOOLTIP_TOUCH_PRESS_MS: EnvLoader.number(
+    'UI_TOOLTIP_TOUCH_PRESS_MS',
+    500,
+    100,
+    2000
+  ),
+
+  /**
+   * Tooltip hide delay after touch release (in milliseconds)
+   * How long tooltip stays visible after touch release on mobile
+   * Env: UI_TOOLTIP_HIDE_DELAY_MS (default: 1000)
+   */
+  TOOLTIP_HIDE_DELAY_MS: EnvLoader.number(
+    'UI_TOOLTIP_HIDE_DELAY_MS',
+    1000,
+    200,
+    5000
+  ),
+
+  /**
    * Copy feedback duration (in milliseconds)
    * How long to show "Copied!" feedback
    * Env: UI_COPY_FEEDBACK_DURATION (default: 2000)
