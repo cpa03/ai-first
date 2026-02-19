@@ -1,0 +1,210 @@
+/**
+ * Runtime Environment Security Validation
+ *
+ * Validates environment variables on application startup to prevent
+ * security misconfigurations such as exposing sensitive keys to client bundles.
+ *
+ * This module runs on the server-side only and throws errors if critical
+ * security violations are detected, preventing the application from starting
+ * with insecure configuration.
+ *
+ * @module lib/security/env-validation
+ */
+
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('EnvValidation');
+
+// Sensitive keys that must NEVER be exposed to client
+const SENSITIVE_KEYS = [
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'ADMIN_API_KEY',
+  'OPENAI_API_KEY',
+  'ANTHROPIC_API_KEY',
+] as const;
+
+// Keys that must NOT have NEXT_PUBLIC_ prefix
+const MUST_BE_PRIVATE = ['SUPABASE_SERVICE_ROLE_KEY', 'ADMIN_API_KEY'] as const;
+
+interface ValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+/**
+ * Check if sensitive keys are incorrectly prefixed with NEXT_PUBLIC_
+ */
+function checkNextPublicPrefix(): string[] {
+  const errors: string[] = [];
+
+  for (const key of MUST_BE_PRIVATE) {
+    const publicKey = `NEXT_PUBLIC_${key}`;
+    const value = process.env[publicKey];
+
+    if (value !== undefined) {
+      errors.push(
+        `CRITICAL SECURITY VIOLATION: ${publicKey} is defined. ` +
+          `${key} must NEVER be prefixed with NEXT_PUBLIC_ as it would expose the key to client bundles. ` +
+          `Remove ${publicKey} from your environment and use ${key} instead.`
+      );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Check if sensitive keys have safe values (not placeholder/example values)
+ */
+function checkKeySafety(): string[] {
+  const warnings: string[] = [];
+
+  for (const key of SENSITIVE_KEYS) {
+    const value = process.env[key];
+
+    if (value) {
+      // Check for placeholder values
+      const unsafePatterns = [
+        /your_.*?_here/i,
+        /example/i,
+        /placeholder/i,
+        /test.*key/i,
+        /fake/i,
+        /mock/i,
+        /^key$/i,
+        /^token$/i,
+      ];
+
+      for (const pattern of unsafePatterns) {
+        if (pattern.test(value)) {
+          warnings.push(
+            `WARNING: ${key} appears to contain a placeholder or example value. ` +
+              `Ensure this is a real credential before deploying to production.`
+          );
+          break;
+        }
+      }
+
+      // Check for suspiciously short keys
+      if (value.length < 20) {
+        warnings.push(
+          `WARNING: ${key} is suspiciously short (${value.length} chars). ` +
+            `This may be a placeholder or invalid key.`
+        );
+      }
+    }
+  }
+
+  return warnings;
+}
+
+/**
+ * Check if required security environment variables are present
+ */
+function checkRequiredEnvVars(): string[] {
+  const errors: string[] = [];
+  const required = [
+    'NEXT_PUBLIC_SUPABASE_URL',
+    'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+    'SUPABASE_SERVICE_ROLE_KEY',
+  ];
+
+  for (const key of required) {
+    const value = process.env[key];
+    if (!value || value.trim() === '') {
+      errors.push(
+        `CRITICAL: ${key} is not defined or is empty. ` +
+          `This environment variable is required for the application to function.`
+      );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate all environment variables for security compliance
+ *
+ * @returns ValidationResult with status and messages
+ */
+export function validateEnvironment(): ValidationResult {
+  logger.info('Running environment security validation...');
+
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Run all validation checks
+  errors.push(...checkNextPublicPrefix());
+  errors.push(...checkRequiredEnvVars());
+  warnings.push(...checkKeySafety());
+
+  const valid = errors.length === 0;
+
+  if (valid && warnings.length === 0) {
+    logger.info(
+      '✅ Environment validation passed - no security issues detected'
+    );
+  } else if (valid) {
+    logger.warn('⚠️  Environment validation passed with warnings');
+    warnings.forEach((w) => logger.warn(w));
+  } else {
+    logger.error(
+      '❌ Environment validation failed - critical security issues detected'
+    );
+    errors.forEach((e) => logger.error(e));
+  }
+
+  return { valid, errors, warnings };
+}
+
+/**
+ * Validates environment and throws on critical errors.
+ * Use this in critical startup paths to prevent launching with bad config.
+ *
+ * @throws Error if critical security violations are detected
+ */
+export function validateEnvironmentStrict(): void {
+  const result = validateEnvironment();
+
+  if (!result.valid) {
+    const errorMessage = [
+      'ENVIRONMENT VALIDATION FAILED - Critical security issues detected:',
+      '',
+      ...result.errors.map((e) => `  ❌ ${e}`),
+      '',
+      'The application cannot start with these security violations.',
+      'Please fix the issues above and restart.',
+      '',
+      'For more information, see:',
+      '  - SECURITY.md',
+      '  - docs/security.md',
+      '  - config/.env.example',
+    ].join('\n');
+
+    throw new Error(errorMessage);
+  }
+
+  // Log warnings but don't fail
+  if (result.warnings.length > 0) {
+    logger.warn('Environment validation warnings:');
+    result.warnings.forEach((w) => logger.warn(`  ⚠️  ${w}`));
+  }
+}
+
+/**
+ * Quick check for NEXT_PUBLIC_ prefix violations only.
+ * Useful for build-time checks.
+ *
+ * @returns true if safe, false if violations detected
+ */
+export function checkNoPublicPrefix(): boolean {
+  const errors = checkNextPublicPrefix();
+
+  if (errors.length > 0) {
+    errors.forEach((e) => logger.error(e));
+    return false;
+  }
+
+  return true;
+}
