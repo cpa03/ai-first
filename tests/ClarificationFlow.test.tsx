@@ -11,6 +11,21 @@ import ClarificationFlow from '@/components/ClarificationFlow';
 // Mock fetch
 global.fetch = jest.fn();
 
+// Mock matchMedia for reduced motion to speed up StepCelebration
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query: string) => ({
+    matches: query === '(prefers-reduced-motion: reduce)',
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // Deprecated
+    removeListener: jest.fn(), // Deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
 describe('ClarificationFlow', () => {
   const mockOnComplete = jest.fn();
   const mockIdea = 'Test idea for clarification';
@@ -32,8 +47,8 @@ describe('ClarificationFlow', () => {
     expect(
       screen.getAllByText(/Generating questions\.\.\./i).length
     ).toBeGreaterThan(0);
-    // Check for loading spinner by its class name
-    expect(document.querySelector('.animate-spin')).toBeInTheDocument();
+    // Check for loading spinner by its aria-label (works with or without reduced motion)
+    expect(screen.getByLabelText(/generating questions/i)).toBeInTheDocument();
   });
 
   it('displays questions after successful fetch', async () => {
