@@ -2,7 +2,10 @@
  * Theme Configuration
  * Centralizes Tailwind-compatible styling values, colors, and shadow utilities
  * Eliminates hardcoded CSS values in component files
+ * Supports environment variable overrides for timing values
  */
+
+import { EnvLoader } from './environment';
 
 /**
  * Focus ring shadow utilities for form inputs
@@ -363,12 +366,27 @@ export const ANIMATION_PHYSICS = {
   FRICTION: 0.98,
   /** Default particle count for celebrations */
   PARTICLE_COUNT: 30,
-  /** Default animation duration in ms */
-  DEFAULT_DURATION_MS: 2000,
-  /** Reduced motion duration in ms */
-  REDUCED_MOTION_DURATION_MS: 500,
-  /** Step celebration display duration before exit animation */
-  STEP_CELEBRATION_DURATION_MS: 1500,
+  /** Env: THEME_ANIMATION_DEFAULT_DURATION_MS (default: 2000) */
+  DEFAULT_DURATION_MS: EnvLoader.number(
+    'THEME_ANIMATION_DEFAULT_DURATION_MS',
+    2000,
+    500,
+    10000
+  ),
+  /** Env: THEME_ANIMATION_REDUCED_MOTION_DURATION_MS (default: 500) */
+  REDUCED_MOTION_DURATION_MS: EnvLoader.number(
+    'THEME_ANIMATION_REDUCED_MOTION_DURATION_MS',
+    500,
+    100,
+    2000
+  ),
+  /** Env: THEME_STEP_CELEBRATION_DURATION_MS (default: 1500) */
+  STEP_CELEBRATION_DURATION_MS: EnvLoader.number(
+    'THEME_STEP_CELEBRATION_DURATION_MS',
+    1500,
+    500,
+    5000
+  ),
   /** Particle opacity decay rate */
   OPACITY_DECAY: 0.015,
   /** Velocity multiplier for particle movement */

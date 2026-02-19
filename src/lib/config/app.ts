@@ -16,7 +16,10 @@ export const APP_CONFIG = {
   },
 
   BRANDING: {
-    COPYRIGHT: '© 2025 IdeaFlow. Turn ideas into action.',
+    /** Dynamic copyright with current year - eliminates hardcoded year */
+    get COPYRIGHT() {
+      return `© ${new Date().getFullYear()} IdeaFlow. Turn ideas into action.`;
+    },
     OG_IMAGE_PATH: '/og-image.jpg',
     FAVICON_PATH: '/favicon.ico',
   },

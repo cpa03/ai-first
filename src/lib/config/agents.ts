@@ -1,7 +1,10 @@
 /**
  * Agent Configuration
  * Centralizes agent prompts, fallback questions, and clarifier settings
+ * Supports environment variable overrides for tuning agent behavior
  */
+
+import { EnvLoader } from './environment';
 
 export const CLARIFIER_CONFIG = {
   FALLBACK_QUESTIONS: [
@@ -109,8 +112,10 @@ Respond in JSON format with a "questions" array.`,
 export const AI_CONFIG = {
   CACHE: {
     KEY_HASH_LENGTH: 64,
-    TTL_SECONDS: 3600,
-    MAX_ENTRIES: 1000,
+    /** Env: AGENT_CACHE_TTL_SECONDS (default: 3600) */
+    TTL_SECONDS: EnvLoader.number('AGENT_CACHE_TTL_SECONDS', 3600, 60, 86400),
+    /** Env: AGENT_CACHE_MAX_ENTRIES (default: 1000) */
+    MAX_ENTRIES: EnvLoader.number('AGENT_CACHE_MAX_ENTRIES', 1000, 100, 10000),
   },
 
   TOKENIZATION: {
@@ -121,13 +126,37 @@ export const AI_CONFIG = {
   RETRY: {
     MAX_ATTEMPTS: 3,
     BACKOFF_MULTIPLIER: 2,
-    INITIAL_DELAY_MS: 1000,
-    MAX_DELAY_MS: 10000,
+    /** Env: AGENT_RETRY_INITIAL_DELAY_MS (default: 1000) */
+    INITIAL_DELAY_MS: EnvLoader.number(
+      'AGENT_RETRY_INITIAL_DELAY_MS',
+      1000,
+      100,
+      60000
+    ),
+    /** Env: AGENT_RETRY_MAX_DELAY_MS (default: 10000) */
+    MAX_DELAY_MS: EnvLoader.number(
+      'AGENT_RETRY_MAX_DELAY_MS',
+      10000,
+      1000,
+      300000
+    ),
   },
 
   TIMEOUT: {
-    DEFAULT_MS: 30000,
-    LONG_RUNNING_MS: 120000,
+    /** Env: AGENT_TIMEOUT_DEFAULT_MS (default: 30000) */
+    DEFAULT_MS: EnvLoader.number(
+      'AGENT_TIMEOUT_DEFAULT_MS',
+      30000,
+      5000,
+      120000
+    ),
+    /** Env: AGENT_TIMEOUT_LONG_RUNNING_MS (default: 120000) */
+    LONG_RUNNING_MS: EnvLoader.number(
+      'AGENT_TIMEOUT_LONG_RUNNING_MS',
+      120000,
+      30000,
+      600000
+    ),
   },
 } as const;
 
