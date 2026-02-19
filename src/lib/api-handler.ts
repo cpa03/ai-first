@@ -14,7 +14,12 @@ import {
   RateLimitInfo,
   getClientIdentifier,
 } from '@/lib/rate-limit';
-import { createLogger } from '@/lib/logger';
+import {
+  createLogger,
+  generateCorrelationId,
+  setCorrelationId,
+  LogContext,
+} from '@/lib/logger';
 import { STATUS_CODES } from '@/lib/config';
 
 const logger = createLogger('ApiHandler');
@@ -48,9 +53,24 @@ export function withApiHandler(
   return async (request: NextRequest) => {
     const requestId = generateRequestId();
     const requestStartTime = Date.now();
+    const correlationId = generateCorrelationId();
+
+    setCorrelationId(correlationId);
+
     const rateLimitConfig = options.rateLimit
       ? rateLimitConfigs[options.rateLimit]
       : rateLimitConfigs.lenient;
+
+    const logContext: LogContext = {
+      requestId,
+      action: request.method,
+      metadata: {
+        path: request.url ? new URL(request.url).pathname : '/unknown',
+        correlationId,
+      },
+    };
+
+    logger.infoWithContext('API request started', logContext);
 
     try {
       const rateLimitResult = checkRateLimit(
@@ -59,6 +79,9 @@ export function withApiHandler(
       );
 
       if (!rateLimitResult.allowed) {
+        logger.warnWithContext('Rate limit exceeded', logContext, {
+          limit: rateLimitResult.info.limit,
+        });
         return rateLimitResponse(rateLimitResult.info, requestId);
       }
 
@@ -85,6 +108,8 @@ export function withApiHandler(
       if (!response.headers.has('X-Request-ID')) {
         response.headers.set('X-Request-ID', requestId);
       }
+
+      response.headers.set('X-Correlation-ID', correlationId);
 
       response.headers.set(
         'X-RateLimit-Limit',
@@ -114,19 +139,24 @@ export function withApiHandler(
         );
       }
 
+      logger.infoWithContext('API request completed', logContext, {
+        duration,
+        status: response.status,
+      });
+
       return response;
     } catch (error) {
-      // Log error details for monitoring
       const duration = Date.now() - requestStartTime;
-      logger.error('API request failed', {
-        requestId,
+      logger.errorWithContext('API request failed', logContext, {
         duration,
         error: error instanceof Error ? error.message : 'Unknown error',
-        path: request.url,
-        method: request.method,
+        errorType: error?.constructor?.name || 'Unknown',
+        stack: error instanceof Error ? error.stack : undefined,
       });
 
       return toErrorResponse(error, requestId, duration);
+    } finally {
+      setCorrelationId(undefined);
     }
   };
 }
