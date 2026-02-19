@@ -19,7 +19,7 @@ const PUBLIC_PATHS = [
 
 const AUTH_PATHS = ['/login', '/signup'];
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
