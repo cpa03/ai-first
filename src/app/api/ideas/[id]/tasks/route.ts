@@ -104,7 +104,7 @@ async function handleGet(context: ApiContext) {
         },
       },
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       context.rateLimit
     );
   } catch (error) {

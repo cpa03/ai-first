@@ -310,7 +310,7 @@ class AIService {
       throw new AppError(
         'Supabase client not initialized',
         ErrorCode.SERVICE_UNAVAILABLE,
-        503,
+        STATUS_CODES.SERVICE_UNAVAILABLE,
         undefined,
         false,
         [
