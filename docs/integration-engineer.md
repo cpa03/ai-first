@@ -365,11 +365,13 @@ npm test
     echo "$HOME/.opencode/bin" >> $GITHUB_PATH
 ```
 
-**Files Updated:**
+**Files to Update:**
 
-- `.github/workflows/iterate.yml`
-- `.github/workflows/parallel.yml`
-- `.github/workflows/on-pull.yml`
+- `.github/workflows/iterate.yml` (5 occurrences)
+- `.github/workflows/parallel.yml` (4 occurrences)
+- `.github/workflows/on-pull.yml` (1 occurrence)
+
+**Status:** ⚠️ Requires manual application - GitHub App lacks `workflows` permission to modify workflow files. A human with appropriate permissions needs to apply this fix.
 
 **Usage:**
 
@@ -540,7 +542,7 @@ Object.entries(states).forEach(([service, status]) => {
 
 - **Agent Role:** Integration Engineer
 - **Specialization:** External API Integration, Resilience Patterns, Error Handling
-- **Last Updated:** 2026-02-07
+- **Last Updated:** 2026-02-19
 - **Branch:** integration-engineer
 
 ---
