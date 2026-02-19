@@ -399,13 +399,12 @@ export const BUTTON_STYLES = {
   /** Variant styles for different button types */
   VARIANTS: {
     primary:
-      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 focus:ring-primary-500 btn-glow-hover',
+      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 btn-glow-hover',
     secondary:
-      'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600 focus:ring-gray-500',
+      'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600',
     outline:
-      'border border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent focus:ring-gray-500',
-    ghost:
-      'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent focus:ring-gray-500',
+      'border border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent',
+    ghost: 'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent',
   } as const,
 
   /** Focus ring classes per variant */
