@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { memo, useEffect, useState, useCallback, useRef } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 
 export interface KeyboardShortcut {
@@ -98,15 +98,23 @@ export function useKeyboardShortcutsHelp() {
   return { isOpen, openHelp, closeHelp, toggleHelp };
 }
 
-function KeyboardKey({ children }: { children: React.ReactNode }) {
+const KeyboardKey = memo(function KeyboardKey({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <kbd className="inline-flex items-center justify-center min-w-[28px] h-7 px-2 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-800 shadow-sm">
       {children}
     </kbd>
   );
-}
+});
 
-function ShortcutRow({ shortcut }: { shortcut: KeyboardShortcut }) {
+const ShortcutRow = memo(function ShortcutRow({
+  shortcut,
+}: {
+  shortcut: KeyboardShortcut;
+}) {
   const isMac =
     typeof navigator !== 'undefined' && navigator.platform.includes('Mac');
 
@@ -131,7 +139,7 @@ function ShortcutRow({ shortcut }: { shortcut: KeyboardShortcut }) {
       </div>
     </div>
   );
-}
+});
 
 export default function KeyboardShortcutsHelp({
   isOpen,
