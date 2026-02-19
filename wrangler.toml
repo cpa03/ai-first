@@ -45,6 +45,12 @@ binding = "ASSETS"
 [env.production]
 name = "ai-first"
 
+# Observability for production debugging
+# @see https://developers.cloudflare.com/workers/observability/
+[env.production.observability]
+enabled = true
+head_sampling_rate = 0.1  # 10% sampling for cost control
+
 # Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
 # DO NOT hardcode sensitive values here
 [env.production.vars]
@@ -55,6 +61,11 @@ name = "ai-first"
 # ============================================================
 [env.staging]
 name = "ai-first-staging"
+
+# Observability for staging - full sampling for debugging
+[env.staging.observability]
+enabled = true
+head_sampling_rate = 1.0  # 100% sampling in staging
 
 [env.staging.vars]
 # NEXT_PUBLIC_APP_URL = "https://staging.ideaflow.ai"
