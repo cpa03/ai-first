@@ -196,11 +196,11 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
   }, [onClose, toast.id]);
 
+  const toastRole = toast.type === 'error' ? 'alert' : 'status';
+
   return (
     <div
-      role="alert"
-      aria-live={toast.type === 'error' ? 'assertive' : 'polite'}
-      aria-atomic="true"
+      role={toastRole}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
