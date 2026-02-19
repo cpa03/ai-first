@@ -19,14 +19,14 @@ export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 const rateLimitStore = new Map<string, number[]>();
 
 import { resourceCleanupManager } from './resource-cleanup';
+import { detectPlatform as detectCloudflarePlatform } from './cloudflare';
 
 /**
  * Platform detection for trusted proxy headers
+ * Delegates to cloudflare.ts for comprehensive detection
  */
 function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
-  if (process.env.VERCEL) return 'vercel';
-  if (process.env.CF_WORKER || process.env.CLOUDFLARE) return 'cloudflare';
-  return 'unknown';
+  return detectCloudflarePlatform();
 }
 
 /**
