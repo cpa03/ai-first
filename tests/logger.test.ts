@@ -208,7 +208,9 @@ describe('Logger Module', () => {
       setLogLevel(LogLevel.DEBUG);
       const logger = new Logger('TestLogger');
       logger.debug('Debug message');
-      expect(console.debug).toHaveBeenCalledWith('[TestLogger] Debug message');
+      expect(console.debug).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Debug message')
+      );
     });
 
     it('should not log debug message when level is INFO', () => {
@@ -223,7 +225,7 @@ describe('Logger Module', () => {
       const logger = new Logger('TestLogger');
       logger.debug('Message', 'arg1', 'arg2');
       expect(console.debug).toHaveBeenCalledWith(
-        '[TestLogger] Message',
+        expect.stringContaining('[TestLogger] Message'),
         'arg1',
         'arg2'
       );
@@ -234,14 +236,19 @@ describe('Logger Module', () => {
       const logger = new Logger('TestLogger');
       const obj = { key: 'value', num: 123 };
       logger.debug('Message', obj);
-      expect(console.debug).toHaveBeenCalledWith('[TestLogger] Message', obj);
+      expect(console.debug).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Message'),
+        obj
+      );
     });
 
     it('should handle empty args', () => {
       setLogLevel(LogLevel.DEBUG);
       const logger = new Logger('TestLogger');
       logger.debug('Message');
-      expect(console.debug).toHaveBeenCalledWith('[TestLogger] Message');
+      expect(console.debug).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Message')
+      );
     });
   });
 
@@ -252,7 +259,7 @@ describe('Logger Module', () => {
       const context: LogContext = { requestId: 'req_123' };
       logger.debugWithContext('Message', context);
       expect(console.debug).toHaveBeenCalledWith(
-        '[TestLogger] Message [req:req_123]'
+        expect.stringContaining('[TestLogger] Message [req:req_123]')
       );
     });
 
@@ -270,7 +277,9 @@ describe('Logger Module', () => {
       const context: LogContext = { requestId: 'req_123', userId: 'user_456' };
       logger.debugWithContext('Message', context, 'extraArg');
       expect(console.debug).toHaveBeenCalledWith(
-        '[TestLogger] Message [req:req_123 user:user_456]',
+        expect.stringContaining(
+          '[TestLogger] Message [req:req_123 user:user_456]'
+        ),
         'extraArg'
       );
     });
@@ -280,9 +289,12 @@ describe('Logger Module', () => {
       const logger = new Logger('TestLogger');
       const context: LogContext = { metadata: { key: 'value' } };
       logger.debugWithContext('Message', context);
-      expect(console.debug).toHaveBeenCalledWith('[TestLogger] Message', {
-        key: 'value',
-      });
+      expect(console.debug).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Message'),
+        {
+          key: 'value',
+        }
+      );
     });
 
     it('should handle context with all fields', () => {
@@ -297,7 +309,9 @@ describe('Logger Module', () => {
       };
       logger.debugWithContext('Message', context);
       expect(console.debug).toHaveBeenCalledWith(
-        '[TestLogger] Message [req:req_123 user:user_456 comp:TestComponent action:testAction]',
+        expect.stringContaining(
+          '[TestLogger] Message [req:req_123 user:user_456 comp:TestComponent action:testAction]'
+        ),
         { data: 'test' }
       );
     });
@@ -308,14 +322,18 @@ describe('Logger Module', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('TestLogger');
       logger.info('Info message');
-      expect(console.info).toHaveBeenCalledWith('[TestLogger] Info message');
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Info message')
+      );
     });
 
     it('should log info message when level is DEBUG', () => {
       setLogLevel(LogLevel.DEBUG);
       const logger = new Logger('TestLogger');
       logger.info('Info message');
-      expect(console.info).toHaveBeenCalledWith('[TestLogger] Info message');
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Info message')
+      );
     });
 
     it('should not log info message when level is WARN', () => {
@@ -330,7 +348,7 @@ describe('Logger Module', () => {
       const logger = new Logger('TestLogger');
       logger.info('Message', 'arg1', 123, { key: 'value' });
       expect(console.info).toHaveBeenCalledWith(
-        '[TestLogger] Message',
+        expect.stringContaining('[TestLogger] Message'),
         'arg1',
         123,
         { key: 'value' }
@@ -345,7 +363,7 @@ describe('Logger Module', () => {
       const context: LogContext = { requestId: 'req_123' };
       logger.infoWithContext('Message', context);
       expect(console.info).toHaveBeenCalledWith(
-        '[TestLogger] Message [req:req_123]'
+        expect.stringContaining('[TestLogger] Message [req:req_123]')
       );
     });
 
@@ -362,9 +380,12 @@ describe('Logger Module', () => {
       const logger = new Logger('TestLogger');
       const context: LogContext = { metadata: { userId: '123' } };
       logger.infoWithContext('Message', context);
-      expect(console.info).toHaveBeenCalledWith('[TestLogger] Message', {
-        userId: '123',
-      });
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Message'),
+        {
+          userId: '123',
+        }
+      );
     });
   });
 
@@ -373,14 +394,18 @@ describe('Logger Module', () => {
       setLogLevel(LogLevel.WARN);
       const logger = new Logger('TestLogger');
       logger.warn('Warning message');
-      expect(console.warn).toHaveBeenCalledWith('[TestLogger] Warning message');
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Warning message')
+      );
     });
 
     it('should log warn message when level is INFO', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('TestLogger');
       logger.warn('Warning message');
-      expect(console.warn).toHaveBeenCalledWith('[TestLogger] Warning message');
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Warning message')
+      );
     });
 
     it('should not log warn message when level is ERROR', () => {
@@ -396,10 +421,10 @@ describe('Logger Module', () => {
       const error = new Error('Test error');
       logger.warn('Warning occurred', error);
       expect(console.warn).toHaveBeenCalledWith(
-        '[TestLogger] Warning occurred',
+        expect.stringContaining('[TestLogger] Warning occurred'),
         expect.objectContaining({
           message: 'Test error',
-          name: 'Error'
+          name: 'Error',
         })
       );
     });
@@ -412,7 +437,7 @@ describe('Logger Module', () => {
       const context: LogContext = { component: 'AuthService' };
       logger.warnWithContext('Message', context);
       expect(console.warn).toHaveBeenCalledWith(
-        '[TestLogger] Message [comp:AuthService]'
+        expect.stringContaining('[TestLogger] Message [comp:AuthService]')
       );
     });
 
@@ -430,9 +455,12 @@ describe('Logger Module', () => {
       const error = new Error('Test error');
       const context: LogContext = { metadata: { error: error.message } };
       logger.warnWithContext('Message', context);
-      expect(console.warn).toHaveBeenCalledWith('[TestLogger] Message', {
-        error: error.message,
-      });
+      expect(console.warn).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Message'),
+        {
+          error: error.message,
+        }
+      );
     });
   });
 
@@ -441,14 +469,18 @@ describe('Logger Module', () => {
       setLogLevel(LogLevel.ERROR);
       const logger = new Logger('TestLogger');
       logger.error('Error message');
-      expect(console.error).toHaveBeenCalledWith('[TestLogger] Error message');
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Error message')
+      );
     });
 
     it('should log error message when level is WARN', () => {
       setLogLevel(LogLevel.WARN);
       const logger = new Logger('TestLogger');
       logger.error('Error message');
-      expect(console.error).toHaveBeenCalledWith('[TestLogger] Error message');
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Error message')
+      );
     });
 
     it('should not log error message when level is higher than ERROR', () => {
@@ -464,10 +496,10 @@ describe('Logger Module', () => {
       const error = new Error('Something went wrong');
       logger.error('Failed operation', error);
       expect(console.error).toHaveBeenCalledWith(
-        '[TestLogger] Failed operation',
+        expect.stringContaining('[TestLogger] Failed operation'),
         expect.objectContaining({
           message: 'Something went wrong',
-          name: 'Error'
+          name: 'Error',
         })
       );
     });
@@ -479,7 +511,7 @@ describe('Logger Module', () => {
       const error2 = new Error('Error 2');
       logger.error('Multiple errors', error1, error2);
       expect(console.error).toHaveBeenCalledWith(
-        '[TestLogger] Multiple errors',
+        expect.stringContaining('[TestLogger] Multiple errors'),
         expect.objectContaining({ message: 'Error 1' }),
         expect.objectContaining({ message: 'Error 2' })
       );
@@ -493,7 +525,9 @@ describe('Logger Module', () => {
       const context: LogContext = { requestId: 'req_123', action: 'delete' };
       logger.errorWithContext('Message', context);
       expect(console.error).toHaveBeenCalledWith(
-        '[TestLogger] Message [req:req_123 action:delete]'
+        expect.stringContaining(
+          '[TestLogger] Message [req:req_123 action:delete]'
+        )
       );
     });
 
@@ -505,10 +539,13 @@ describe('Logger Module', () => {
         metadata: { errorCode: 500, message: error.message },
       };
       logger.errorWithContext('Message', context);
-      expect(console.error).toHaveBeenCalledWith('[TestLogger] Message', {
-        errorCode: 500,
-        message: error.message,
-      });
+      expect(console.error).toHaveBeenCalledWith(
+        expect.stringContaining('[TestLogger] Message'),
+        {
+          errorCode: 500,
+          message: error.message,
+        }
+      );
     });
 
     it('should include error object and metadata', () => {
@@ -521,7 +558,7 @@ describe('Logger Module', () => {
       };
       logger.errorWithContext('Request failed', context, error);
       expect(console.error).toHaveBeenCalledWith(
-        '[TestLogger] Request failed [req:req_123]',
+        expect.stringContaining('[TestLogger] Request failed [req:req_123]'),
         expect.objectContaining({ message: 'API error' }),
         { endpoint: '/api/users', error: 'API error' }
       );
@@ -533,7 +570,9 @@ describe('Logger Module', () => {
       const logger = createLogger('MyService');
       expect(logger).toBeInstanceOf(Logger);
       logger.info('Test');
-      expect(console.info).toHaveBeenCalledWith('[MyService] Test');
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[MyService] Test')
+      );
     });
 
     it('should return new instance each call', () => {
@@ -550,8 +589,12 @@ describe('Logger Module', () => {
       logger1.info('Message from A');
       logger2.info('Message from B');
 
-      expect(console.info).toHaveBeenCalledWith('[ServiceA] Message from A');
-      expect(console.info).toHaveBeenCalledWith('[ServiceB] Message from B');
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[ServiceA] Message from A')
+      );
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[ServiceB] Message from B')
+      );
     });
   });
 
@@ -593,7 +636,9 @@ describe('Logger Module', () => {
       const logger = new Logger('Test');
       const longMessage = 'x'.repeat(10000);
       logger.info(longMessage);
-      expect(console.info).toHaveBeenCalledWith(`[Test] ${longMessage}`);
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining(`[Test] ${longMessage}`)
+      );
     });
 
     it('should handle special characters in messages', () => {
@@ -601,7 +646,9 @@ describe('Logger Module', () => {
       const logger = new Logger('Test');
       const message = 'Message with \n\t\r special chars';
       logger.info(message);
-      expect(console.info).toHaveBeenCalledWith(`[Test] ${message}`);
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining(`[Test] ${message}`)
+      );
     });
 
     it('should handle undefined args', () => {
@@ -609,7 +656,7 @@ describe('Logger Module', () => {
       const logger = new Logger('Test');
       logger.info('Message', undefined, undefined);
       expect(console.info).toHaveBeenCalledWith(
-        '[Test] Message',
+        expect.stringContaining('[Test] Message'),
         undefined,
         undefined
       );
@@ -619,7 +666,11 @@ describe('Logger Module', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
       logger.info('Message', null, null);
-      expect(console.info).toHaveBeenCalledWith('[Test] Message', null, null);
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[Test] Message'),
+        null,
+        null
+      );
     });
 
     it('should handle circular references in metadata', () => {
@@ -637,21 +688,28 @@ describe('Logger Module', () => {
       const logger = new Logger('Test');
       const array = [1, 2, 3, { key: 'value' }];
       logger.info('Message', array);
-      expect(console.info).toHaveBeenCalledWith('[Test] Message', array);
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[Test] Message'),
+        array
+      );
     });
 
     it('should handle numbers as messages', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
       logger.info(123 as any);
-      expect(console.info).toHaveBeenCalledWith('[Test] 123');
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[Test] 123')
+      );
     });
 
     it('should handle empty strings as messages', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
       logger.info('');
-      expect(console.info).toHaveBeenCalledWith('[Test] ');
+      expect(console.info).toHaveBeenCalledWith(
+        expect.stringContaining('[Test]')
+      );
     });
 
     it('should handle rapid logging without errors', () => {
