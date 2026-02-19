@@ -58,7 +58,9 @@ export interface ContextWindow {
 
 class AIService {
   private openai: OpenAI | null = null;
-  private supabase: SupabaseClient | null = null;
+  // SECURITY: Lazy-loaded Supabase client to prevent service role key exposure in client bundle
+  // The client is only initialized when explicitly needed in server-side contexts
+  private _supabase: SupabaseClient | null = null;
   private costTrackers: CostTracker[] = [];
   private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
@@ -74,15 +76,10 @@ class AIService {
       ttl: AI_CONFIG.RESPONSE_CACHE_TTL_MS,
       maxSize: AI_CONFIG.RESPONSE_CACHE_MAX_SIZE,
     });
-    if (
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    ) {
-      this.supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY
-      );
-    }
+
+    // SECURITY: Removed direct Supabase client initialization from constructor
+    // to prevent SUPABASE_SERVICE_ROLE_KEY from being accessed at module load time
+    // Use getSupabase() method instead for lazy initialization
 
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({
@@ -99,6 +96,43 @@ class AIService {
     resourceCleanupManager.register('ai-service-interval', () =>
       this.cleanup()
     );
+  }
+
+  /**
+   * Get the Supabase admin client (server-side only)
+   *
+   * SECURITY: This method implements lazy initialization to prevent the service role key
+   * from being bundled in client-side JavaScript. The key is only accessed at runtime
+   * when this method is called in a server-side context.
+   *
+   * @returns Supabase client with service role access, or null if not in server context
+   * @throws Error if called in browser context
+   */
+  private getSupabase(): SupabaseClient | null {
+    // SECURITY: Runtime check to prevent browser execution
+    if (typeof window !== 'undefined') {
+      throw new Error(
+        'CRITICAL SECURITY VIOLATION: getSupabase() was called in browser context. ' +
+          'The Supabase service role key bypasses RLS and must NEVER be exposed to clients.'
+      );
+    }
+
+    // Lazy initialization to prevent key from being accessed during module load
+    if (!this._supabase) {
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+      if (!supabaseUrl || !serviceKey) {
+        logger.warn(
+          'Supabase admin client not initialized: missing URL or service role key'
+        );
+        return null;
+      }
+
+      this._supabase = createClient(supabaseUrl, serviceKey);
+    }
+
+    return this._supabase;
   }
 
   // Initialize AI service with provider-specific config
@@ -203,7 +237,8 @@ class AIService {
         }
       }, config);
 
-      if (this.supabase) {
+      const supabase = this.getSupabase();
+      if (supabase) {
         await this.logAgentAction('ai-service', 'model-call', {
           provider: config.provider,
           model: config.model,
@@ -216,7 +251,8 @@ class AIService {
 
       return response;
     } catch (error) {
-      if (this.supabase) {
+      const supabase = this.getSupabase();
+      if (supabase) {
         await this.logAgentAction('ai-service', 'model-call-error', {
           provider: config.provider,
           model: config.model,
@@ -305,7 +341,8 @@ class AIService {
   ): Promise<
     Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
   > {
-    if (!this.supabase) {
+    const supabase = this.getSupabase();
+    if (!supabase) {
       const { AppError, ErrorCode } = await import('./errors');
       throw new AppError(
         'Supabase client not initialized',
@@ -335,7 +372,7 @@ class AIService {
         logger.error('Failed to parse cached context:', error);
       }
     } else {
-      const { data: existingContext } = await this.supabase
+      const { data: existingContext } = await supabase
         .from('vectors')
         .select('vector_data')
         .eq('idea_id', ideaId)
@@ -387,7 +424,7 @@ class AIService {
       context = [...systemMessages, ...nonSystemMessages];
     }
 
-    await this.supabase.from('vectors').upsert({
+    await supabase.from('vectors').upsert({
       idea_id: ideaId,
       reference_type: 'context',
       vector_data: { messages: context } as unknown as Record<string, unknown>,
@@ -460,8 +497,9 @@ class AIService {
     }
 
     // Store cost tracking
-    if (this.supabase) {
-      await this.supabase.from('agent_logs').insert({
+    const supabase = this.getSupabase();
+    if (supabase) {
+      await supabase.from('agent_logs').insert({
         agent: 'ai-service',
         action: 'cost-tracking',
         payload: tracker,
@@ -524,11 +562,12 @@ class AIService {
     action: string,
     payload: Record<string, unknown>
   ): Promise<void> {
-    if (this.supabase) {
+    const supabase = this.getSupabase();
+    if (supabase) {
       // Redact sensitive information before logging to database
       const sanitizedPayload = redactPIIInObject(payload);
 
-      await this.supabase.from('agent_logs').insert({
+      await supabase.from('agent_logs').insert({
         agent,
         action,
         payload: {
