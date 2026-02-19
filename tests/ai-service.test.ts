@@ -5,6 +5,14 @@
  * context management, and health checks.
  */
 
+// Mock window as undefined to simulate server-side environment
+// Required because AIService.getSupabase() throws security error in browser context
+Object.defineProperty(global, 'window', {
+  value: undefined,
+  writable: true,
+  configurable: true,
+});
+
 import 'openai/shims/node';
 
 import { AIService, AIModelConfig } from '@/lib/ai';
