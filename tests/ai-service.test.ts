@@ -5,6 +5,10 @@
  * context management, and health checks.
  */
 
+// Mock window to be undefined (server-side) - MUST be before any imports
+// that might trigger code checking for browser context
+delete (global as any).window;
+
 import 'openai/shims/node';
 
 import { AIService, AIModelConfig } from '@/lib/ai';
