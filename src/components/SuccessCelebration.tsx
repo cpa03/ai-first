@@ -5,6 +5,7 @@ import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
   COMPONENT_DEFAULTS,
+  SVG_ANIMATION,
 } from '@/lib/config';
 
 interface Particle {
@@ -160,7 +161,7 @@ export default function SuccessCelebration({
               style={
                 shouldAnimate
                   ? {
-                      strokeDasharray: 24,
+                      strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
                       strokeDashoffset: 0,
                     }
                   : undefined
