@@ -17,7 +17,7 @@
 # ============================================================
 
 name = "ai-first"
-compatibility_date = "2025-02-18"
+compatibility_date = "2026-02-19"
 compatibility_flags = ["nodejs_compat", "nodejs_als", "global_fetch_strictly_public"]
 
 # CPU limit for Workers (milliseconds)
