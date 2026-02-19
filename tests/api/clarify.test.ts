@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/route';
 import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
-import { buildApiUrl } from '../config/test-config';
 
 // Mock the dependencies
 jest.mock('@/lib/agents/clarifier');
@@ -44,7 +43,7 @@ describe('/api/clarify', () => {
 
       mockClarifierAgent.startClarification.mockResolvedValue(mockSession);
 
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({ idea: 'Test idea' }),
         headers: { 'Content-Type': 'application/json' },
@@ -84,7 +83,7 @@ describe('/api/clarify', () => {
 
       mockClarifierAgent.startClarification.mockResolvedValue(mockSession);
 
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({
           idea: 'Test idea',
@@ -103,7 +102,7 @@ describe('/api/clarify', () => {
     });
 
     it('should return 400 when idea is missing', async () => {
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({}),
         headers: { 'Content-Type': 'application/json' },
@@ -117,7 +116,7 @@ describe('/api/clarify', () => {
     });
 
     it('should return 400 when idea is empty string', async () => {
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({ idea: '' }),
         headers: { 'Content-Type': 'application/json' },
@@ -135,7 +134,7 @@ describe('/api/clarify', () => {
         new Error('AI service unavailable')
       );
 
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({ idea: 'Test idea' }),
         headers: { 'Content-Type': 'application/json' },
@@ -152,7 +151,7 @@ describe('/api/clarify', () => {
     // Removed database error test as the new agent handles its own database operations
 
     it('should handle malformed JSON', async () => {
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: 'invalid json',
         headers: { 'Content-Type': 'application/json' },
@@ -187,7 +186,7 @@ describe('/api/clarify', () => {
 
       mockClarifierAgent.startClarification.mockResolvedValue(mockSession);
 
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({ idea: longIdea }),
         headers: { 'Content-Type': 'application/json' },
@@ -220,7 +219,7 @@ describe('/api/clarify', () => {
 
       mockClarifierAgent.startClarification.mockResolvedValue(mockSession);
 
-      const request = new NextRequest(buildApiUrl('/clarify'), {
+      const request = new NextRequest('http://localhost:3000/api/clarify', {
         method: 'POST',
         body: JSON.stringify({ idea: 'Test idea' }),
         headers: { 'Content-Type': 'application/json' },

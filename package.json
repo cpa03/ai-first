@@ -14,7 +14,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls",
-    "test:ci": "jest --coverage --ci --watchAll=false --passWithNoTests --forceExit",
+    "test:ci": "jest --coverage --ci --watchAll=false --passWithNoTests",
     "test:unit": "jest --testPathPattern='tests/(backend-comprehensive|frontend-comprehensive)'",
     "test:integration": "jest --testPathPattern='tests/integration-comprehensive'",
     "test:e2e": "jest --testPathPattern='tests/e2e-comprehensive'",

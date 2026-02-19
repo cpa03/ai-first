@@ -1,4 +1,8 @@
-export default function WhyChooseSection() {
+import { memo } from 'react';
+
+// PERFORMANCE: Component is wrapped with memo to prevent unnecessary re-renders
+// since it's a pure static component with no props, state, or dynamic content.
+function WhyChooseSectionComponent() {
   return (
     <section
       className="mt-16 bg-gray-50 rounded-lg p-8"
@@ -122,3 +126,5 @@ export default function WhyChooseSection() {
     </section>
   );
 }
+
+export default memo(WhyChooseSectionComponent);
