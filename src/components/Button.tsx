@@ -16,6 +16,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   fullWidth?: boolean;
+  attention?: boolean;
   children: React.ReactNode;
 }
 
@@ -33,6 +34,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       size = 'md',
       loading = false,
       fullWidth = false,
+      attention = false,
       disabled,
       children,
       className = '',
@@ -98,6 +100,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           ${fullWidth ? 'w-full' : ''}
           ${stateClasses}
           ${BUTTON_STYLES.BASE} ${BUTTON_STYLES.FOCUS_RINGS[variant]}
+          ${attention && !disabled && !loading ? 'btn-attention-pulse' : ''}
           ${className}
         `}
         aria-busy={loading}

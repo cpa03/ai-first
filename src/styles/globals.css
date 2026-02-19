@@ -473,6 +473,60 @@
   }
 }
 
+/* Attention Pulse Animation - Subtle guidance for ready-to-submit state */
+/* Draws gentle attention to primary CTAs when form becomes valid */
+@keyframes attentionPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 var(--shadow-primary-600-medium),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1);
+  }
+  25% {
+    box-shadow:
+      0 0 0 6px var(--shadow-primary-600-light),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px var(--shadow-primary-600-medium),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1.01);
+  }
+  75% {
+    box-shadow:
+      0 0 0 5px var(--shadow-primary-600-light),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1.015);
+  }
+}
+
+.btn-attention-pulse {
+  animation: attentionPulse 2s ease-in-out infinite;
+}
+
+/* Ensure attention pulse doesn't conflict with hover states */
+.btn-attention-pulse:hover:not(:disabled) {
+  animation: glowPulse 2s ease-in-out infinite;
+  transform: translateY(-1px);
+}
+
+/* Reduced motion support for attention pulse */
+@media (prefers-reduced-motion: reduce) {
+  .btn-attention-pulse {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
+  }
+
+  .btn-attention-pulse:hover:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
+    transform: none;
+  }
+}
+
 /* Skip to Content Link - Enhanced Accessibility */
 /* Provides keyboard users with an elegant way to skip navigation */
 .skip-link {
