@@ -335,6 +335,53 @@ npm test
 - ✅ Fixed unused parameter in `export-connectors/manager.ts`
 - ✅ Skipped problematic resilience edge case test (async timing issue)
 
+## CI/CD Workflow Improvements
+
+### 2026-02-19: Configurable OpenCode CLI Installation URL
+
+**Issue:** Hardcoded OpenCode CLI installation URL in workflow files (Issue #864)
+
+**Problem:** The OpenCode CLI installation URL was hardcoded in all workflow files, making it difficult to:
+
+- Use alternative installation sources
+- Test with different versions
+- Handle network issues with the primary source
+
+**Fix:** Made the installation URL configurable via GitHub Actions repository variable:
+
+```yaml
+# Before: Hardcoded URL
+- name: Install OpenCode CLI
+  run: |
+    curl -fsSL https://opencode.ai/install | bash
+    echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+
+# After: Configurable via repository variable
+- name: Install OpenCode CLI
+  env:
+    OPENCODE_INSTALL_URL: ${{ vars.OPENCODE_INSTALL_URL || 'https://opencode.ai/install' }}
+  run: |
+    curl -fsSL "$OPENCODE_INSTALL_URL" | bash
+    echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+```
+
+**Files Updated:**
+
+- `.github/workflows/iterate.yml`
+- `.github/workflows/parallel.yml`
+- `.github/workflows/on-pull.yml`
+
+**Usage:**
+
+1. Set `OPENCODE_INSTALL_URL` repository variable in GitHub Settings → Secrets and variables → Actions → Variables
+2. If not set, defaults to `https://opencode.ai/install`
+
+**Benefits:**
+
+- Allows using mirror/alternative installation sources
+- Easier testing with different CLI versions
+- Better disaster recovery if primary URL is unavailable
+
 ## Best Practices
 
 ### 1. Always Use Resilience Framework
