@@ -28,14 +28,26 @@ function LoadingSpinnerComponent({
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  const spinnerSize =
-    COMPONENT_CONFIG.SPINNER.SIZES[
-      size.toUpperCase() as keyof typeof COMPONENT_CONFIG.SPINNER.SIZES
-    ];
+  // PERFORMANCE: Memoize spinner dimensions to prevent recalculation on every render
+  // These values only change when the size prop changes
+  const spinnerDimensions = useMemo(() => {
+    const spinnerSize =
+      COMPONENT_CONFIG.SPINNER.SIZES[
+        size.toUpperCase() as keyof typeof COMPONENT_CONFIG.SPINNER.SIZES
+      ];
+    const dimension = spinnerSize.width;
+    const pulseRing = dimension * 1.4;
+    const pulseRingOffset = (pulseRing - dimension) / 2;
 
-  const spinnerDimension = spinnerSize.width;
-  const pulseRingSize = spinnerDimension * 1.4;
-  const pulseRingOffset = (pulseRingSize - spinnerDimension) / 2;
+    return { spinnerSize, dimension, pulseRing, pulseRingOffset };
+  }, [size]);
+
+  const {
+    spinnerSize,
+    dimension: spinnerDimension,
+    pulseRing: pulseRingSize,
+    pulseRingOffset,
+  } = spinnerDimensions;
 
   // PERFORMANCE: Memoize style objects to prevent object recreation on each render
   const pulseRingStyle = useMemo(
