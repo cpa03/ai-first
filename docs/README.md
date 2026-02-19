@@ -71,6 +71,7 @@ Complete index of all IdeaFlow documentation.
 - [Security Assessment](./security-assessment.md) - Security audit guidelines
 - [Security Headers](./security-headers.md) - HTTP security headers reference
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log and lessons learned
+- [Security Validation](./SECURITY_VALIDATION.md) - Credential exposure prevention and validation
 - [Quality Assurance](./quality-assurance.md) - Testing and quality standards
 - [Performance Engineer](./performance-engineer.md) - Performance optimization
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
