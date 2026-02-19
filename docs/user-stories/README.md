@@ -14,8 +14,10 @@ user-stories/
 │   └── us-auth-003-password-reset.md # Self-service password reset
 ├── idea-management/             # Idea management feature stories
 │   └── us-idea-001-submission.md # Idea submission with clarification
-└── breakdown/                   # Breakdown system feature stories
-    └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
+├── breakdown/                   # Breakdown system feature stories
+│   └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
+└── export/                      # Export feature stories
+    └── us-export-001-markdown.md # Export plan to Markdown format
 ```
 
 ## User Story Index
@@ -45,6 +47,14 @@ user-stories/
 | [US-BREAKDOWN-001](./breakdown/us-breakdown-001-engine.md) | Automatic Breakdown Engine | P0       | Ready  | Startup Founder |
 
 **Related Issues**: #721, #747
+
+### Export & Integration
+
+| Story ID                                            | Title                   | Priority | Status | Persona         |
+| --------------------------------------------------- | ----------------------- | -------- | ------ | --------------- |
+| [US-EXPORT-001](./export/us-export-001-markdown.md) | Export Plan to Markdown | P1       | Ready  | Startup Founder |
+
+**Related Issues**: #205, #219
 
 ## How to Use This Directory
 
