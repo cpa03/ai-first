@@ -13,7 +13,7 @@ import {
   GitHubProjectsExporter,
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
-import { TASK_CONFIG, IDEA_CONFIG } from '../config';
+import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
 
 export interface ExportManagerOptions {
   enableExternalConnectors?: boolean;
@@ -347,7 +347,7 @@ export const exportUtils = {
       })),
       metadata: {
         exported_at: new Date().toISOString(),
-        version: '1.0.0',
+        version: APP_CONFIG.VERSION,
       },
     };
   },

@@ -55,6 +55,19 @@ export { CACHE_CONFIG } from './cache';
 // Component Configuration
 export { COMPONENT_CONFIG } from './components';
 
+// Task Management Configuration
+export {
+  TASK_STATUS_CONFIG,
+  RISK_LEVEL_CONFIG,
+  TASK_ITEM_STYLES,
+  TASK_HEADER_STYLES,
+  DELIVERABLE_CARD_STYLES,
+  DELIVERABLE_PROGRESS_CONFIG,
+  TASK_MANAGEMENT_MESSAGES,
+  TASK_DIMENSIONS,
+  TASK_ANIMATION_DURATIONS,
+} from './task-management';
+
 // Cleanup Configuration
 export { CLEANUP_CONFIG } from './cleanup';
 
