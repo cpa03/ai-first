@@ -384,6 +384,81 @@ npm test
 - Easier testing with different CLI versions
 - Better disaster recovery if primary URL is unavailable
 
+### 2026-02-19: Remove continue-on-error for Proper Failure Reporting (Issue #1170)
+
+**Issue:** The `continue-on-error: true` directive in `.github/workflows/iterate.yml` was silently hiding failures across all 5 jobs.
+
+**Problem:**
+
+- Node.js installation failures were silently ignored
+- npm ci failures were silently ignored
+- **Critical**: Main execution steps had retry logic with `exit 1` when all retries failed, but `continue-on-error: true` was ignoring this exit code
+
+This meant that even when agents completely failed after all retries, the GitHub Actions workflow showed "success" (green checkmark).
+
+**Fix:** Remove all 15 instances of `continue-on-error: true`:
+
+```yaml
+# Before: Failures silently ignored
+- name: Install Node.js
+  continue-on-error: true
+  uses: actions/setup-node@v4
+  with:
+    node-version: '20'
+- name: Install Dependencies
+  continue-on-error: true
+  run: npm ci
+- name: arsitek
+  timeout-minutes: 20
+  continue-on-error: true # This hides exit 1 from retry logic!
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    # ... retry logic that exits 1 on failure
+
+# After: Failures properly reported
+- name: Install Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: '20'
+- name: Install Dependencies
+  run: npm ci
+- name: arsitek
+  timeout-minutes: 20
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    # ... retry logic properly reports failures now
+```
+
+**Files to Update:**
+
+- `.github/workflows/iterate.yml` - Remove 15 instances of `continue-on-error: true`
+
+**Changes Summary:**
+
+```
+ .github/workflows/iterate.yml | 47 +++++++++++++++----------------------------
+ 1 file changed, 16 insertions(+), 31 deletions(-)
+```
+
+**Status:** ⚠️ Requires manual application - GitHub App lacks `workflows` permission to modify workflow files. A human with appropriate permissions needs to apply this fix.
+
+**Benefits:**
+
+- Failures are properly visible in GitHub Actions
+- Retry logic's `exit 1` is properly respected
+- Workflow status accurately reflects actual job outcomes
+- Easier debugging of CI/CD issues
+
+**How to Apply:**
+
+1. Create a feature branch from main
+2. Edit `.github/workflows/iterate.yml`
+3. Remove all `continue-on-error: true` lines (15 total)
+4. Commit with message: `fix(ci): remove continue-on-error to properly report workflow failures`
+5. Create PR and merge
+
 ## Best Practices
 
 ### 1. Always Use Resilience Framework
