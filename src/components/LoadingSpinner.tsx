@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useState, useMemo } from 'react';
+import { memo, useMemo, useSyncExternalStore } from 'react';
 import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface LoadingSpinnerProps {
@@ -9,24 +9,34 @@ interface LoadingSpinnerProps {
   ariaLabel?: string;
 }
 
+const subscribeReducedMotion = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getReducedMotionSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getReducedMotionServerSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot
+  );
+}
+
 function LoadingSpinnerComponent({
   size = COMPONENT_CONFIG.SPINNER.DEFAULT_SIZE,
   className = '',
   ariaLabel = COMPONENT_CONFIG.LOADING.DEFAULT_ARIA_LABEL,
 }: LoadingSpinnerProps) {
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setPrefersReducedMotion(mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setPrefersReducedMotion(e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const spinnerSize =
     COMPONENT_CONFIG.SPINNER.SIZES[
