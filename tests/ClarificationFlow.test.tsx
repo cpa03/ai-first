@@ -8,7 +8,36 @@ import {
 import '@testing-library/jest-dom';
 import ClarificationFlow from '@/components/ClarificationFlow';
 
-// Mock fetch
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
+
+jest.mock('@/components/StepCelebration', () => ({
+  __esModule: true,
+  default: ({
+    show,
+    onComplete,
+  }: {
+    show: boolean;
+    onComplete?: () => void;
+  }) => {
+    if (show && onComplete) {
+      setTimeout(onComplete, 0);
+    }
+    return null;
+  },
+}));
+
 global.fetch = jest.fn();
 
 // Mock matchMedia for reduced motion to speed up StepCelebration
@@ -206,7 +235,6 @@ describe('ClarificationFlow', () => {
   });
 
   it('handles select input correctly', async () => {
-    // Use fallback questions that include a select
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -227,38 +255,41 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    // Answer first question to enable navigation
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
     fireEvent.change(textarea, { target: { value: 'Developers' } });
 
-    // Navigate to second question
     const nextButton = screen.getByText('Next →');
     fireEvent.click(nextButton);
 
-    // Answer second question
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', {
-          name: /what are the 3 most important features/i,
-        })
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', {
+            name: /what are the 3 most important features/i,
+          })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
+
     const secondTextarea = screen.getByPlaceholderText(
       /enter your answer here/i
     );
     fireEvent.change(secondTextarea, { target: { value: 'Build a MVP' } });
 
-    // Navigate to timeline question (3rd question)
     const secondNextButton = screen.getByText('Next →');
     fireEvent.click(secondNextButton);
 
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', {
-          name: /what is your desired timeline/i,
-        })
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', {
+            name: /what is your desired timeline/i,
+          })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
 
     const select = screen.getByDisplayValue(/select an option/i);
     fireEvent.change(select, { target: { value: '1 month' } });
