@@ -406,6 +406,19 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-19 - Readiness API Error Response Consistency
+
+- **Fix**: Standardized error handling in `/api/health/ready` endpoint
+- **Change**: Replaced custom `{ success: false, data: ... }` format with standard `{ error, code, details, requestId, retryable }` format
+- **Before**: Error responses used `{ success: false, error: ..., data: response }` format (inconsistent)
+- **After**: Error responses use standard `{ error: ..., code: 'NOT_READY', details: [...], retryable: true }` format with proper headers
+- **New Headers**: Added `X-Error-Code` and `X-Retryable` headers for consistency
+- **Impact**: Consistent error response format across all API endpoints, better error diagnostics with structured `details` array
+- **Build**: Pending verification
+- **Lint**: Pending verification
+- **Type-check**: Pending verification
+- **Documentation**: Updated this guide
+
 ### 2026-02-19 - Error Response Time Tracking
 
 - **Feature**: Added `X-Response-Time` header to error responses
