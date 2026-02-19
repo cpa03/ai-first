@@ -12,7 +12,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "target": "ES2017",
+    "target": "ES2022",
     "downlevelIteration": true,
     "plugins": [
       {
