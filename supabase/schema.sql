@@ -100,7 +100,8 @@ CREATE TABLE tasks (
     risk_level TEXT DEFAULT 'low' CHECK (risk_level IN ('low', 'medium', 'high')),
     tags TEXT[],
     custom_fields JSONB,
-    milestone_id UUID REFERENCES milestones(id) ON DELETE SET NULL
+    milestone_id UUID REFERENCES milestones(id) ON DELETE SET NULL,
+    CONSTRAINT chk_tasks_end_after_start CHECK (start_date IS NULL OR end_date IS NULL OR end_date >= start_date)
 );
 
 -- Enable pgvector extension for vector similarity search
@@ -201,7 +202,8 @@ CREATE TABLE timelines (
     critical_path JSONB,
     resource_allocation JSONB,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT chk_timelines_end_after_start CHECK (end_date >= start_date)
 );
 
 -- Risk Assessment Table
