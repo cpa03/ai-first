@@ -1560,6 +1560,54 @@ Potential improvements for future iterations:
 
 ---
 
-**Last Updated**: 2026-02-18
+### Task 19: Add Missing ScrollToTop Component to README ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-19
+
+#### Objectives
+
+- Add missing ScrollToTop.tsx component to README.md project structure
+- Ensure documentation accurately reflects all React components
+- Maintain single source of truth for project structure
+
+#### Issues Found
+
+1. **README.md Project Structure**: `src/components/ScrollToTop.tsx` exists but was not documented
+   - Component is used in `src/app/layout.tsx`
+   - Has comprehensive tests in `tests/ScrollToTop.test.tsx`
+   - Configuration defaults in `src/lib/config/ui.ts`
+
+#### Completed Work
+
+1. **Updated README.md**
+   - Added `ScrollToTop.tsx` to components section
+   - Positioned between ProgressStepper.tsx and Skeleton.tsx (alphabetical)
+   - Description: "Scroll to top button"
+
+#### Verification
+
+- `npm run lint`: ✅ 0 errors, 0 warnings
+- `npm run type-check`: ✅ 0 errors
+- `npm run build`: ✅ Build successful
+- Documentation matches actual implementation
+
+#### Files Modified
+
+- `README.md` (UPDATED - added ScrollToTop.tsx to project structure)
+
+#### Success Criteria Met
+
+- [x] ScrollToTop.tsx documented in README
+- [x] Documentation matches implementation
+- [x] Lint passes (0 errors)
+- [x] Type-check passes (0 errors)
+- [x] Build succeeds
+- [x] All changes committed with proper format
+
+---
+
+**Last Updated**: 2026-02-19
 **Agent**: Technical Writer
-**Documentation Version**: 0.5.4
+**Documentation Version**: 0.5.5
