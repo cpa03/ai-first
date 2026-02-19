@@ -399,13 +399,13 @@ export const BUTTON_STYLES = {
   /** Variant styles for different button types */
   VARIANTS: {
     primary:
-      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 focus:ring-primary-500 btn-glow-hover shadow-md hover:shadow-lg active:shadow-sm hover:-translate-y-0.5 active:translate-y-0',
+      'bg-primary-600 text-white hover:bg-primary-700 disabled:hover:bg-primary-600 focus:ring-primary-500 btn-glow-hover shadow-md hover:shadow-lg active:shadow-sm disabled:hover:shadow-md disabled:active:shadow-md hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0',
     secondary:
-      'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600 focus:ring-gray-500 shadow-md hover:shadow-lg active:shadow-sm hover:-translate-y-0.5 active:translate-y-0',
+      'bg-gray-600 text-white hover:bg-gray-700 disabled:hover:bg-gray-600 focus:ring-gray-500 shadow-md hover:shadow-lg active:shadow-sm disabled:hover:shadow-md disabled:active:shadow-md hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0',
     outline:
-      'border-2 border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent focus:ring-gray-500 shadow-sm hover:shadow-md active:shadow-sm hover:-translate-y-0.5 active:translate-y-0 hover:border-gray-900',
+      'border-2 border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent focus:ring-gray-500 shadow-sm hover:shadow-md active:shadow-sm disabled:hover:shadow-sm disabled:active:shadow-sm hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0 hover:border-gray-900 disabled:hover:border-gray-700',
     ghost:
-      'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent focus:ring-gray-500 hover:-translate-y-0.5 active:translate-y-0',
+      'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent focus:ring-gray-500 hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0',
   } as const,
 
   /** Focus ring classes per variant */
