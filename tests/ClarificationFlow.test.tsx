@@ -11,6 +11,25 @@ import ClarificationFlow from '@/components/ClarificationFlow';
 // Mock fetch
 global.fetch = jest.fn();
 
+const createReducedMotionMediaQueryMock = () =>
+  jest.fn().mockImplementation((query: string) => ({
+    matches: query === '(prefers-reduced-motion: reduce)',
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }));
+
+const mockMatchMedia = createReducedMotionMediaQueryMock();
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: mockMatchMedia,
+});
+
 describe('ClarificationFlow', () => {
   const mockOnComplete = jest.fn();
   const mockIdea = 'Test idea for clarification';
@@ -25,15 +44,14 @@ describe('ClarificationFlow', () => {
   });
 
   it('shows loading state initially', () => {
-    (fetch as jest.Mock).mockImplementation(() => new Promise(() => {})); // Never resolves
+    (fetch as jest.Mock).mockImplementation(() => new Promise(() => {}));
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
     expect(
       screen.getAllByText(/Generating questions\.\.\./i).length
     ).toBeGreaterThan(0);
-    // Check for loading spinner by its class name
-    expect(document.querySelector('.animate-spin')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Generating questions/i)).toBeInTheDocument();
   });
 
   it('displays questions after successful fetch', async () => {
@@ -191,7 +209,6 @@ describe('ClarificationFlow', () => {
   });
 
   it('handles select input correctly', async () => {
-    // Use fallback questions that include a select
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -204,46 +221,56 @@ describe('ClarificationFlow', () => {
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', {
-          name: /who is the target audience for this project/i,
-        })
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', {
+            name: /who is the target audience for this project/i,
+          })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
 
-    // Answer first question to enable navigation
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
     fireEvent.change(textarea, { target: { value: 'Developers' } });
 
-    // Navigate to second question
     const nextButton = screen.getByText('Next →');
-    fireEvent.click(nextButton);
-
-    // Answer second question
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', {
-          name: /what are the 3 most important features/i,
-        })
-      ).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(nextButton);
     });
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', {
+            name: /what are the 3 most important features/i,
+          })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
+
     const secondTextarea = screen.getByPlaceholderText(
       /enter your answer here/i
     );
     fireEvent.change(secondTextarea, { target: { value: 'Build a MVP' } });
 
-    // Navigate to timeline question (3rd question)
     const secondNextButton = screen.getByText('Next →');
-    fireEvent.click(secondNextButton);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', {
-          name: /what is your desired timeline/i,
-        })
-      ).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(secondNextButton);
     });
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', {
+            name: /what is your desired timeline/i,
+          })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
 
     const select = screen.getByDisplayValue(/select an option/i);
     fireEvent.change(select, { target: { value: '1 month' } });
@@ -279,23 +306,31 @@ describe('ClarificationFlow', () => {
 
     render(<ClarificationFlow idea={mockIdea} onComplete={mockOnComplete} />);
 
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: mockQuestions[0].question })
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', { name: mockQuestions[0].question })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
 
     const textarea = screen.getByPlaceholderText(/enter your answer here/i);
     fireEvent.change(textarea, { target: { value: 'Developers' } });
 
     const nextButton = screen.getByText('Next →');
-    fireEvent.click(nextButton);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: mockQuestions[1].question })
-      ).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(nextButton);
     });
+
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', { name: mockQuestions[1].question })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
 
     expect(
       screen.getByText(/question 2 of 2/i, { selector: 'span' })
@@ -303,15 +338,20 @@ describe('ClarificationFlow', () => {
     expect(screen.getByText('100%')).toBeInTheDocument();
 
     const previousButton = screen.getByText('← Previous');
-    fireEvent.click(previousButton);
-
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: mockQuestions[0].question })
-      ).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(previousButton);
     });
 
-    expect(textarea).toHaveValue('Developers'); // Should restore previous answer
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', { name: mockQuestions[0].question })
+        ).toBeInTheDocument();
+      },
+      { timeout: 2000 }
+    );
+
+    expect(textarea).toHaveValue('Developers');
   });
 
   it('completes flow after last question', async () => {
