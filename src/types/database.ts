@@ -350,6 +350,7 @@ export interface Database {
           id: string;
           role: 'assignee' | 'reviewer' | 'contributor';
           task_id: string;
+          updated_at: string;
           user_id: string;
         };
         Insert: {
@@ -359,6 +360,7 @@ export interface Database {
           id?: string;
           role?: 'assignee' | 'reviewer' | 'contributor';
           task_id: string;
+          updated_at?: string;
           user_id: string;
         };
         Update: {
@@ -368,6 +370,7 @@ export interface Database {
           id?: string;
           role?: 'assignee' | 'reviewer' | 'contributor';
           task_id?: string;
+          updated_at?: string;
           user_id?: string;
         };
       };
