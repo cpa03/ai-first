@@ -28,7 +28,6 @@ const customJestConfig = {
     '<rootDir>/tests/fixtures/',
     '<rootDir>/tests/api/',
     '<rootDir>/tests/utils/',
-    '<rootDir>/tests/config/',
     '<rootDir>/tests/_test-env.d.ts',
   ],
   transform: {

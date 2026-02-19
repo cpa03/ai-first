@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/start/route';
 import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
-import { buildApiUrl } from '../config/test-config';
 
 // Mock the dependencies
 jest.mock('@/lib/agents/clarifier');
@@ -38,11 +37,14 @@ describe('/api/clarify/start', () => {
 
       mockClarifierAgent.startClarification.mockResolvedValue(mockSession);
 
-      const request = new NextRequest(buildApiUrl('/clarify/start'), {
-        method: 'POST',
-        body: JSON.stringify({ ideaId: 'idea-123', idea: 'Test idea' }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/clarify/start',
+        {
+          method: 'POST',
+          body: JSON.stringify({ ideaId: 'idea-123', idea: 'Test idea' }),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -57,11 +59,14 @@ describe('/api/clarify/start', () => {
     });
 
     it('should return 400 when ideaId is missing', async () => {
-      const request = new NextRequest(buildApiUrl('/clarify/start'), {
-        method: 'POST',
-        body: JSON.stringify({ idea: 'Test idea' }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/clarify/start',
+        {
+          method: 'POST',
+          body: JSON.stringify({ idea: 'Test idea' }),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -71,11 +76,14 @@ describe('/api/clarify/start', () => {
     });
 
     it('should return 400 when idea is missing', async () => {
-      const request = new NextRequest(buildApiUrl('/clarify/start'), {
-        method: 'POST',
-        body: JSON.stringify({ ideaId: 'idea-123' }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/clarify/start',
+        {
+          method: 'POST',
+          body: JSON.stringify({ ideaId: 'idea-123' }),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -89,11 +97,14 @@ describe('/api/clarify/start', () => {
         new Error('Failed to start clarification')
       );
 
-      const request = new NextRequest(buildApiUrl('/clarify/start'), {
-        method: 'POST',
-        body: JSON.stringify({ ideaId: 'idea-123', idea: 'Test idea' }),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/clarify/start',
+        {
+          method: 'POST',
+          body: JSON.stringify({ ideaId: 'idea-123', idea: 'Test idea' }),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -104,11 +115,14 @@ describe('/api/clarify/start', () => {
     });
 
     it('should handle malformed JSON', async () => {
-      const request = new NextRequest(buildApiUrl('/clarify/start'), {
-        method: 'POST',
-        body: 'invalid json',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/clarify/start',
+        {
+          method: 'POST',
+          body: 'invalid json',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();

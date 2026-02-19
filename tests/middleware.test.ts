@@ -1,5 +1,3 @@
-import { TEST_CONFIG } from './config/test-config';
-
 describe('middleware - unit tests for internal logic', () => {
   describe('CSP header construction', () => {
     it('should build CSP with correct directives', () => {
@@ -26,30 +24,31 @@ describe('middleware - unit tests for internal logic', () => {
 
   describe('Allowed origins parsing', () => {
     it('should parse comma-separated origins', () => {
-      const allowedOrigins = `${TEST_CONFIG.VALUES.LOCALHOST_ORIGIN},${TEST_CONFIG.VALUES.EXAMPLE_ORIGIN},https://www.example.com`;
+      const allowedOrigins =
+        'http://localhost:3000,https://example.com,https://www.example.com';
       const origins = allowedOrigins.split(',').map((o) => o.trim());
 
       expect(origins).toHaveLength(3);
-      expect(origins[0]).toBe(TEST_CONFIG.VALUES.LOCALHOST_ORIGIN);
-      expect(origins[1]).toBe(TEST_CONFIG.VALUES.EXAMPLE_ORIGIN);
+      expect(origins[0]).toBe('http://localhost:3000');
+      expect(origins[1]).toBe('https://example.com');
       expect(origins[2]).toBe('https://www.example.com');
     });
 
     it('should trim whitespace from origins', () => {
-      const allowedOrigins = `${TEST_CONFIG.VALUES.LOCALHOST_ORIGIN} , ${TEST_CONFIG.VALUES.EXAMPLE_ORIGIN} `;
+      const allowedOrigins = 'http://localhost:3000 , https://example.com ';
       const origins = allowedOrigins.split(',').map((o) => o.trim());
 
-      expect(origins[0]).toBe(TEST_CONFIG.VALUES.LOCALHOST_ORIGIN);
-      expect(origins[1]).toBe(TEST_CONFIG.VALUES.EXAMPLE_ORIGIN);
+      expect(origins[0]).toBe('http://localhost:3000');
+      expect(origins[1]).toBe('https://example.com');
     });
 
     it('should default to localhost:3000 when not set', () => {
       const allowedOrigins = undefined;
       const origins = allowedOrigins
         ? (allowedOrigins as string).split(',').map((o) => o.trim())
-        : [TEST_CONFIG.VALUES.LOCALHOST_ORIGIN];
+        : ['http://localhost:3000'];
 
-      expect(origins).toEqual([TEST_CONFIG.VALUES.LOCALHOST_ORIGIN]);
+      expect(origins).toEqual(['http://localhost:3000']);
     });
   });
 
