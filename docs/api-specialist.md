@@ -213,7 +213,7 @@ Retry-After: 60  # Only on rate limit errors
 ### 📋 Recommendations
 
 1. **API Versioning**: Consider adding `/api/v1/` prefix for future breaking changes
-2. **OpenAPI Spec**: Generate OpenAPI/Swagger documentation from types
+2. ~~**OpenAPI Spec**: Generate OpenAPI/Swagger documentation from types~~ ✅ DONE (2026-02-19)
 3. **API Client**: Consider generating TypeScript client from API types
 4. **Metrics**: Add endpoint-level metrics (response times, error rates)
 5. ~~**Caching**: Add cache headers for appropriate GET endpoints~~ ✅ DONE (2026-02-18)
@@ -405,6 +405,28 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-19 - OpenAPI Specification Enhancement
+
+- **Feature**: Comprehensive OpenAPI specification update
+- **New Endpoints Documented**:
+  - Ideas API: GET, POST, PUT, DELETE endpoints
+  - Tasks API: GET, PUT, DELETE, PATCH status endpoints
+  - Deliverables API: POST tasks to deliverable
+  - Metrics API: GET Prometheus metrics
+  - Kubernetes Health: GET /api/health/live, GET /api/health/ready
+- **New Schemas Added**:
+  - ApiResponse (common response wrapper)
+  - Idea, Task, TaskWithOwnership schemas
+  - CreateIdeaRequest/Response, ListIdeasResponse
+  - UpdateTaskRequest/Response, CreateTaskRequest/Response
+  - LivenessProbeResponse, ReadinessProbeResponse
+- **Security Schemes Updated**:
+  - Added BearerAuth for Supabase JWT authentication
+  - Updated ApiKeyAuth description for admin routes
+- **Impact**: Complete API documentation coverage, better developer experience
+- **Build**: Passing
+- **Documentation**: Updated OpenAPI spec (docs/api/openapi.yaml)
+
 ### 2026-02-18 - External API Versioning (Issue #876)
 
 - **Feature**: Added centralized `EXTERNAL_API_VERSIONS` configuration
@@ -471,4 +493,4 @@ For API-related issues:
 
 ---
 
-_This documentation is maintained by the API Specialist. Last updated: 2026-02-18_
+_This documentation is maintained by the API Specialist. Last updated: 2026-02-19_
