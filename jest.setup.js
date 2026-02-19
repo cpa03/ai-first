@@ -4,61 +4,27 @@ import '@testing-library/jest-dom';
 import 'openai/shims/node';
 
 // Mock OpenAI module - must be before imports that use it
-jest.mock('openai', () => ({
-  default: jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
-        create: jest.fn().mockResolvedValue({
-          choices: [
-            {
-              message: {
-                content: 'Mock AI response',
-              },
+// Create a mock class that can be instantiated with `new OpenAI()`
+const MockOpenAI = jest.fn().mockImplementation(() => ({
+  chat: {
+    completions: {
+      create: jest.fn().mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: 'Mock AI response',
             },
-          ],
-        }),
-      },
+          },
+        ],
+      }),
     },
-  })),
+  },
 }));
 
-// Mock OpenAI module
-jest.mock('openai', () => {
-  return jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
-        create: jest.fn().mockResolvedValue({
-          choices: [
-            {
-              message: {
-                content: 'Mock AI response',
-              },
-            },
-          ],
-        }),
-      },
-    },
-  }));
-});
-
-// Mock OpenAI module
-jest.mock('openai', () => {
-  return jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
-        create: jest.fn().mockResolvedValue({
-          choices: [
-            {
-              message: {
-                content: 'Mock AI response',
-              },
-            },
-          ],
-        }),
-      },
-    },
-  }));
-});
+jest.mock('openai', () => ({
+  __esModule: true,
+  default: MockOpenAI,
+}));
 
 // Set test environment variables from environment or use safe defaults
 // These are DUMMY values for testing only - never real credentials
