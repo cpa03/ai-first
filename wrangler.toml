@@ -71,6 +71,20 @@ head_sampling_rate = 1.0  # 100% sampling in staging
 # NEXT_PUBLIC_APP_URL = "https://staging.ideaflow.ai"
 
 # ============================================================
+# Preview Environment (for PR deployments)
+# ============================================================
+[env.preview]
+name = "ai-first-preview"
+
+# Observability for preview - moderate sampling
+[env.preview.observability]
+enabled = true
+head_sampling_rate = 0.5  # 50% sampling for debugging with cost control
+
+[env.preview.vars]
+# NEXT_PUBLIC_APP_URL = "https://preview.ai-first.pages.dev"
+
+# ============================================================
 # Deployment Notes
 # ============================================================
 # Build command: npm run build:cloudflare
