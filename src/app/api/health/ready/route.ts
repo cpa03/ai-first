@@ -69,19 +69,30 @@ async function handleGet(context: ApiContext) {
   }
 
   // Return 503 Service Unavailable if not ready
-  const errorResponse = NextResponse.json(
-    {
-      success: false,
-      error: 'Service not ready',
-      code: 'NOT_READY',
-      data: response,
-      requestId: context.requestId,
-      timestamp: new Date().toISOString(),
-    },
-    { status: STATUS_CODES.SERVICE_UNAVAILABLE }
-  );
+  const notReadyChecks = Object.entries(checks)
+    .filter(([, check]) => check.status === 'not_ready')
+    .map(([name, check]) => ({
+      field: name,
+      message: check.error || `Service ${name} is not ready`,
+    }));
 
+  const errorResponseBody = {
+    error: 'Service not ready',
+    code: 'NOT_READY',
+    details: notReadyChecks,
+    timestamp: new Date().toISOString(),
+    requestId: context.requestId,
+    retryable: true,
+  };
+
+  const errorResponse = NextResponse.json(errorResponseBody, {
+    status: STATUS_CODES.SERVICE_UNAVAILABLE,
+  });
+
+  errorResponse.headers.set('Content-Type', 'application/json');
   errorResponse.headers.set('X-Request-ID', context.requestId);
+  errorResponse.headers.set('X-Error-Code', 'NOT_READY');
+  errorResponse.headers.set('X-Retryable', 'true');
 
   if (_rateLimit) {
     errorResponse.headers.set('X-RateLimit-Limit', String(_rateLimit.limit));
