@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useId,
   memo,
+  useSyncExternalStore,
 } from 'react';
 import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
 
@@ -20,6 +21,30 @@ interface TooltipProps {
   disabled?: boolean;
   className?: string;
 }
+
+const subscribeReducedMotion = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getReducedMotionSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getReducedMotionServerSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot
+  );
+}
+
+const TOUCH_PRESS_DURATION_MS = 500;
 
 // PERFORMANCE: Memoize Tooltip to prevent re-renders when parent components update
 // Tooltip is a wrapper component that may be nested inside frequently updating parents
@@ -38,6 +63,10 @@ function TooltipComponent({
   const tooltipRef = useRef<HTMLDivElement>(null);
   const showTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const touchStartRef = useRef<number>(0);
+  const touchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const showTooltip = useCallback(() => {
     if (disabled) return;
@@ -58,11 +87,37 @@ function TooltipComponent({
     if (showTimeoutRef.current) {
       clearTimeout(showTimeoutRef.current);
     }
+    if (touchTimeoutRef.current) {
+      clearTimeout(touchTimeoutRef.current);
+    }
 
     setIsVisible(false);
     hideTimeoutRef.current = setTimeout(() => {
       setIsMounted(false);
     }, ANIMATION_CONFIG.FAST);
+  }, []);
+
+  const handleTouchStart = useCallback(() => {
+    touchStartRef.current = Date.now();
+    touchTimeoutRef.current = setTimeout(() => {
+      showTooltip();
+    }, TOUCH_PRESS_DURATION_MS);
+  }, [showTooltip]);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchTimeoutRef.current) {
+      clearTimeout(touchTimeoutRef.current);
+    }
+    const pressDuration = Date.now() - touchStartRef.current;
+    if (pressDuration >= TOUCH_PRESS_DURATION_MS) {
+      setTimeout(hideTooltip, 1000);
+    }
+  }, [hideTooltip]);
+
+  const handleTouchMove = useCallback(() => {
+    if (touchTimeoutRef.current) {
+      clearTimeout(touchTimeoutRef.current);
+    }
   }, []);
 
   useEffect(() => {
@@ -72,6 +127,9 @@ function TooltipComponent({
       }
       if (hideTimeoutRef.current) {
         clearTimeout(hideTimeoutRef.current);
+      }
+      if (touchTimeoutRef.current) {
+        clearTimeout(touchTimeoutRef.current);
       }
     };
   }, []);
@@ -120,6 +178,9 @@ function TooltipComponent({
       onMouseLeave={hideTooltip}
       onFocus={showTooltip}
       onBlur={hideTooltip}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchMove={handleTouchMove}
       aria-describedby={isMounted ? id : undefined}
     >
       {children}
@@ -128,10 +189,11 @@ function TooltipComponent({
           id={id}
           ref={tooltipRef}
           role="tooltip"
+          aria-live="polite"
           className={`
             absolute z-50 pointer-events-none
             ${positionClasses[position]}
-            transition-all duration-200 ease-out
+            ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `}
         >
