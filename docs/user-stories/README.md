@@ -8,10 +8,14 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 user-stories/
 ├── README.md                    # This file
 ├── personas.md                  # User personas reference
-└── authentication/              # Authentication feature stories
-    ├── us-auth-001-signup.md    # User signup with email verification
-    ├── us-auth-002-login.md     # User login with error handling
-    └── us-auth-003-password-reset.md # Self-service password reset
+├── authentication/              # Authentication feature stories
+│   ├── us-auth-001-signup.md    # User signup with email verification
+│   ├── us-auth-002-login.md     # User login with error handling
+│   └── us-auth-003-password-reset.md # Self-service password reset
+├── idea-management/             # Idea management feature stories
+│   └── us-idea-001-submission.md # Idea submission with clarification
+└── breakdown/                   # Breakdown system feature stories
+    └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
 ```
 
 ## User Story Index
@@ -25,6 +29,22 @@ user-stories/
 | [US-AUTH-003](./authentication/us-auth-003-password-reset.md) | Password Reset | P1       | Ready  | Startup Founder |
 
 **Related Issues**: #1177, #1176
+
+### Idea Management
+
+| Story ID                                                   | Title           | Priority | Status | Persona         |
+| ---------------------------------------------------------- | --------------- | -------- | ------ | --------------- |
+| [US-IDEA-001](./idea-management/us-idea-001-submission.md) | Idea Submission | P0       | Ready  | Startup Founder |
+
+**Related Issues**: #205, #219, #638
+
+### Breakdown System
+
+| Story ID                                                   | Title                      | Priority | Status | Persona         |
+| ---------------------------------------------------------- | -------------------------- | -------- | ------ | --------------- |
+| [US-BREAKDOWN-001](./breakdown/us-breakdown-001-engine.md) | Automatic Breakdown Engine | P0       | Ready  | Startup Founder |
+
+**Related Issues**: #721, #747
 
 ## How to Use This Directory
 
