@@ -148,6 +148,7 @@ CREATE TABLE task_assignments (
     allocation_percentage INTEGER DEFAULT 100 CHECK (allocation_percentage > 0 AND allocation_percentage <= 100),
     assigned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     assigned_by UUID REFERENCES auth.users(id),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     UNIQUE(task_id, user_id, role)
 );
 
@@ -724,6 +725,7 @@ CREATE INDEX idx_milestones_target_date ON milestones(target_date);
 
 CREATE INDEX idx_task_assignments_task_id ON task_assignments(task_id);
 CREATE INDEX idx_task_assignments_user_id ON task_assignments(user_id);
+CREATE INDEX idx_task_assignments_updated_at ON task_assignments(updated_at DESC);
 
 CREATE INDEX idx_time_tracking_task_id ON time_tracking(task_id);
 CREATE INDEX idx_time_tracking_date ON time_tracking(date_logged);
@@ -817,6 +819,10 @@ CREATE TRIGGER update_task_dependencies_updated_at BEFORE UPDATE ON task_depende
 
 -- Trigger for idea_sessions table
 CREATE TRIGGER update_idea_sessions_updated_at BEFORE UPDATE ON idea_sessions
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger for task_assignments table
+CREATE TRIGGER update_task_assignments_updated_at BEFORE UPDATE ON task_assignments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================================
