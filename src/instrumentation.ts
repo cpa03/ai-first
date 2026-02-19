@@ -10,6 +10,12 @@
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
+    // SECURITY: Validate environment before starting application
+    // This prevents the app from running with misconfigured credentials
+    const { validateEnvironmentStrict } =
+      await import('./lib/security/env-validation');
+    validateEnvironmentStrict();
+
     const { registerNodejsHandlers } = await import('./instrumentation.node');
     registerNodejsHandlers();
   }
