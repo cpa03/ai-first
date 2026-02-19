@@ -19,10 +19,10 @@ const PUBLIC_PATHS = [
 
 const AUTH_PATHS = ['/login', '/signup'];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  
-  if (PUBLIC_PATHS.some(path => pathname.startsWith(path))) {
+
+  if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
@@ -30,8 +30,9 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const authToken = request.cookies.get('sb-auth-token')?.value || 
-                   request.cookies.get('supabase-auth-token')?.value;
+  const authToken =
+    request.cookies.get('sb-auth-token')?.value ||
+    request.cookies.get('supabase-auth-token')?.value;
 
   if (!authToken && !AUTH_PATHS.includes(pathname)) {
     const loginUrl = new URL('/login', request.url);
