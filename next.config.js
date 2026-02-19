@@ -93,6 +93,8 @@ const nextConfig = {
           "base-uri 'self'",
           // Form action: self only
           "form-action 'self'",
+          // Report URI: CSP violation reporting endpoint (Issue #891)
+          'report-uri /api/csp-report',
           // Upgrade insecure requests in production
           process.env.NODE_ENV === 'production'
             ? 'upgrade-insecure-requests'

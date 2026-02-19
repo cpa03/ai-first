@@ -38,7 +38,7 @@
      - Added 'worker-src' directive for better web worker security
      - Added 'manifest-src' directive for web app manifest security
      - Kept 'unsafe-inline' only where necessary (Next.js + Tailwind CSS)
-   - **Files Modified**: `src/proxy.ts`
+   - **Files Modified**: `next.config.js`
    - **Current CSP**:
      - script-src: 'self' 'unsafe-inline' https://vercel.live
      - style-src: 'self' 'unsafe-inline'
@@ -155,7 +155,7 @@
 ### Files Modified
 
 - `package.json` (UPDATED - eslint-config-next: 14.2.35 → 16.1.1)
-- `src/proxy.ts` (UPDATED - tightened CSP headers)
+- `next.config.js` (UPDATED - tightened CSP headers)
 - `docs/task.md` (UPDATED - security audit documentation)
 
 ### Security Score: 8.5/10

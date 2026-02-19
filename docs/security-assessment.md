@@ -44,8 +44,8 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 #### 1. Content-Security-Policy Uses 'unsafe-inline'
 
-**Location**: `src/proxy.ts`  
-**Severity**: Medium  
+**Location**: `next.config.js`
+**Severity**: Medium
 **Current Status**: Acceptable for Next.js Development
 
 **Issue**: The CSP directive uses `'unsafe-inline'` for script and style sources, which is a security risk as it allows inline scripts and styles.
@@ -79,21 +79,20 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 #### 2. Duplicate Security Headers (FIXED)
 
-**Location**: `next.config.js` and `src/proxy.ts`  
-**Severity**: Low  
+**Location**: `next.config.js`
+**Severity**: Low
 **Status**: ✅ FIXED
 
 **Issue**: Security headers were defined in both `next.config.js` and `middleware.ts`, creating redundancy.
 
 **Fix Applied**:
 
-- Removed duplicate security headers from `next.config.js`
-- Consolidated all security headers in `middleware.ts` as single source of truth
+- Consolidated all security headers in `next.config.js` as single source of truth
 - Verified with lint and type-check (all passing)
 
 **Files Modified**:
 
-- `next.config.js` (removed headers section)
+- `next.config.js` (consolidated headers section)
 
 ---
 
@@ -158,7 +157,7 @@ The application demonstrates a **strong security posture** with comprehensive se
 
 ### ✅ Security Headers
 
-**Location**: `src/proxy.ts`
+**Location**: `next.config.js`
 
 **Headers Implemented**:
 
