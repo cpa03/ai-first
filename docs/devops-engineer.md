@@ -188,11 +188,11 @@ npm run build
 
 **Current Build Status:**
 
-- Lint: ✓ Passing (0 errors, 3 warnings in test files)
+- Lint: ✓ Passing (0 errors, 0 warnings)
 - Type Check: ✓ Passing
 - Build: ✓ Passing
 
-**Note:** Test file warnings about `any` types are acceptable and do not affect production builds.
+**Note:** All lint warnings have been resolved.
 
 ---
 
@@ -203,19 +203,40 @@ npm run build
 #### Configuration (`wrangler.toml`)
 
 ```toml
+# Cloudflare Workers Configuration for OpenNext
 name = "ai-first"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
-pages_build_output_dir = ".next"
+compatibility_date = "2025-02-18"
+compatibility_flags = ["nodejs_compat", "nodejs_als", "global_fetch_strictly_public"]
+
+# CPU limit for Workers (milliseconds)
+[limits]
+cpu_ms = 50
+
+# Smart placement optimizes worker location
+[placement]
+mode = "smart"
+
+# OpenNext outputs the worker to .open-next/worker.js
+main = ".open-next/worker.js"
+
+# Assets binding for static files
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
 
 [env.production]
 name = "ai-first"
 
+[env.production.observability]
+enabled = true
+head_sampling_rate = 0.1
+
 [env.staging]
 name = "ai-first-staging"
 
-[vars]
-NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
+[env.staging.observability]
+enabled = true
+head_sampling_rate = 1.0
 ```
 
 #### Deployment Methods
