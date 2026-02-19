@@ -8,14 +8,38 @@ export enum LogLevel {
 }
 
 let currentLogLevel = LogLevel.INFO;
+let globalCorrelationId: string | undefined;
 
 // Detect if we're in a build/SSR environment where console output causes Lighthouse issues
 const isBuildTime =
   typeof window === 'undefined' && process.env.NODE_ENV === 'production';
 const isSilentMode = isBuildTime && process.env.SUPPRESS_BUILD_LOGS === 'true';
 
+// Emergency debug mode - allows debug logs in production via environment variable
+const isEmergencyDebugMode =
+  typeof window === 'undefined' && process.env.ENABLE_DEBUG_LOGS === 'true';
+
+// Check if structured JSON logging is enabled for production
+const isStructuredLogging =
+  typeof window === 'undefined' && process.env.STRUCTURED_LOGGING === 'true';
+
 export function setLogLevel(level: LogLevel): void {
   currentLogLevel = level;
+}
+
+export function setCorrelationId(correlationId: string | undefined): void {
+  globalCorrelationId = correlationId;
+}
+
+export function getCorrelationId(): string | undefined {
+  return globalCorrelationId;
+}
+
+/**
+ * Generate a unique correlation ID for request tracing
+ */
+export function generateCorrelationId(): string {
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
 export interface LogContext {
@@ -26,8 +50,52 @@ export interface LogContext {
   metadata?: Record<string, unknown>;
 }
 
+export interface StructuredLogEntry {
+  timestamp: string;
+  level: string;
+  context: string;
+  message: string;
+  correlationId?: string;
+  requestId?: string;
+  userId?: string;
+  component?: string;
+  action?: string;
+  metadata?: Record<string, unknown>;
+  environment: string;
+}
+
 export class Logger {
   constructor(private context: string) {}
+
+  private getTimestamp(): string {
+    return new Date().toISOString();
+  }
+
+  private getEnvironment(): string {
+    return process.env.NODE_ENV || 'unknown';
+  }
+
+  private createStructuredEntry(
+    level: string,
+    message: string,
+    logContext?: LogContext
+  ): StructuredLogEntry {
+    return {
+      timestamp: this.getTimestamp(),
+      level,
+      context: this.context,
+      message: redactPII(message),
+      correlationId: globalCorrelationId,
+      requestId: logContext?.requestId,
+      userId: logContext?.userId,
+      component: logContext?.component,
+      action: logContext?.action,
+      metadata: logContext?.metadata
+        ? (redactPIIInObject(logContext.metadata) as Record<string, unknown>)
+        : undefined,
+      environment: this.getEnvironment(),
+    };
+  }
 
   private formatMessage(message: string, context?: LogContext): string {
     if (!context) return message;
@@ -49,13 +117,57 @@ export class Logger {
     return args;
   }
 
-  debug(message: string, ...args: unknown[]): void {
-    if (currentLogLevel <= LogLevel.DEBUG) {
+  private shouldLog(level: LogLevel, isDebug: boolean = false): boolean {
+    if (isSilentMode && level !== LogLevel.ERROR) return false;
+    if (isDebug && isEmergencyDebugMode) return true;
+    return currentLogLevel <= level;
+  }
+
+  private output(
+    level: LogLevel,
+    levelName: string,
+    message: string,
+    args: unknown[],
+    logContext?: LogContext
+  ): void {
+    if (isStructuredLogging) {
+      const entry = this.createStructuredEntry(levelName, message, logContext);
+      const output = JSON.stringify(entry);
+      if (level === LogLevel.ERROR) console.error(output);
+      else if (level === LogLevel.WARN) console.warn(output);
+      else console.log(output);
+    } else {
+      const formattedMessage = this.formatMessage(message, logContext);
       const sanitizedArgs = args.map((a) => redactPIIInObject(a));
-      console.debug(
-        `[${this.context}] ${redactPII(message)}`,
-        ...sanitizedArgs
-      );
+      const prefix = `[${this.getTimestamp()}] [${this.context}]`;
+
+      if (level === LogLevel.ERROR) {
+        console.error(
+          `${prefix} ${redactPII(formattedMessage)}`,
+          ...sanitizedArgs
+        );
+      } else if (level === LogLevel.WARN) {
+        console.warn(
+          `${prefix} ${redactPII(formattedMessage)}`,
+          ...sanitizedArgs
+        );
+      } else if (level === LogLevel.INFO) {
+        console.info(
+          `${prefix} ${redactPII(formattedMessage)}`,
+          ...sanitizedArgs
+        );
+      } else {
+        console.debug(
+          `${prefix} ${redactPII(formattedMessage)}`,
+          ...sanitizedArgs
+        );
+      }
+    }
+  }
+
+  debug(message: string, ...args: unknown[]): void {
+    if (this.shouldLog(LogLevel.DEBUG, true)) {
+      this.output(LogLevel.DEBUG, 'DEBUG', message, args);
     }
   }
 
@@ -64,20 +176,20 @@ export class Logger {
     context: LogContext,
     ...args: unknown[]
   ): void {
-    if (currentLogLevel <= LogLevel.DEBUG) {
-      const allArgs = this.formatArgs(args, context);
-      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
-      console.debug(
-        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
-        ...sanitizedArgs
+    if (this.shouldLog(LogLevel.DEBUG, true)) {
+      this.output(
+        LogLevel.DEBUG,
+        'DEBUG',
+        message,
+        this.formatArgs(args, context),
+        context
       );
     }
   }
 
   info(message: string, ...args: unknown[]): void {
-    if (currentLogLevel <= LogLevel.INFO) {
-      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
-      console.info(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
+    if (this.shouldLog(LogLevel.INFO)) {
+      this.output(LogLevel.INFO, 'INFO', message, args);
     }
   }
 
@@ -86,20 +198,20 @@ export class Logger {
     context: LogContext,
     ...args: unknown[]
   ): void {
-    if (currentLogLevel <= LogLevel.INFO) {
-      const allArgs = this.formatArgs(args, context);
-      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
-      console.info(
-        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
-        ...sanitizedArgs
+    if (this.shouldLog(LogLevel.INFO)) {
+      this.output(
+        LogLevel.INFO,
+        'INFO',
+        message,
+        this.formatArgs(args, context),
+        context
       );
     }
   }
 
   warn(message: string, ...args: unknown[]): void {
-    if (currentLogLevel <= LogLevel.WARN && !isSilentMode) {
-      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
-      console.warn(`[${this.context}] ${redactPII(message)}`, ...sanitizedArgs);
+    if (this.shouldLog(LogLevel.WARN)) {
+      this.output(LogLevel.WARN, 'WARN', message, args);
     }
   }
 
@@ -108,23 +220,20 @@ export class Logger {
     context: LogContext,
     ...args: unknown[]
   ): void {
-    if (currentLogLevel <= LogLevel.WARN && !isSilentMode) {
-      const allArgs = this.formatArgs(args, context);
-      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
-      console.warn(
-        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
-        ...sanitizedArgs
+    if (this.shouldLog(LogLevel.WARN)) {
+      this.output(
+        LogLevel.WARN,
+        'WARN',
+        message,
+        this.formatArgs(args, context),
+        context
       );
     }
   }
 
   error(message: string, ...args: unknown[]): void {
-    if (currentLogLevel <= LogLevel.ERROR && !isSilentMode) {
-      const sanitizedArgs = args.map((a) => redactPIIInObject(a));
-      console.error(
-        `[${this.context}] ${redactPII(message)}`,
-        ...sanitizedArgs
-      );
+    if (this.shouldLog(LogLevel.ERROR)) {
+      this.output(LogLevel.ERROR, 'ERROR', message, args);
     }
   }
 
@@ -133,14 +242,27 @@ export class Logger {
     context: LogContext,
     ...args: unknown[]
   ): void {
-    if (currentLogLevel <= LogLevel.ERROR && !isSilentMode) {
-      const allArgs = this.formatArgs(args, context);
-      const sanitizedArgs = allArgs.map((a) => redactPIIInObject(a));
-      console.error(
-        `[${this.context}] ${redactPII(this.formatMessage(message, context))}`,
-        ...sanitizedArgs
+    if (this.shouldLog(LogLevel.ERROR)) {
+      this.output(
+        LogLevel.ERROR,
+        'ERROR',
+        message,
+        this.formatArgs(args, context),
+        context
       );
     }
+  }
+
+  fatal(message: string, error?: Error, ...args: unknown[]): void {
+    const errorInfo = error
+      ? { errorMessage: error.message, stack: error.stack }
+      : undefined;
+    this.output(
+      LogLevel.ERROR,
+      'FATAL',
+      message,
+      [...args, errorInfo].filter(Boolean)
+    );
   }
 }
 

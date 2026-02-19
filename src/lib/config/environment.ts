@@ -2,6 +2,9 @@
  * Environment Configuration
  * Loads configuration from environment variables with type safety and validation
  * All values have sensible defaults but can be overridden via environment variables
+ *
+ * Note: This module uses console.warn directly to avoid circular dependencies
+ * with the logger module (logger → pii-redaction → config/constants).
  */
 
 /**
