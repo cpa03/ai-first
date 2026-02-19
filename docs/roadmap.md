@@ -118,10 +118,10 @@ Launch a usable product that delivers core value to early adopters.
 
 #### Must-Have (P0)
 
-- [ ] Automatic Breakdown Engine (rule-based + LLM-assisted)
-- [ ] Frontend UI for Idea Management
+- [~] Automatic Breakdown Engine _(breakdown-engine.ts with IdeaAnalyzer, TaskDecomposer, DependencyAnalyzer, TimelineGenerator exists; API endpoint /api/breakdown ready)_
+- [~] Frontend UI for Idea Management _(dashboard, clarify, results pages exist with full functionality)_
 - [ ] User Authentication Flow
-- [ ] Basic Idea Dashboard
+- [~] Basic Idea Dashboard _(dashboard page with idea listing, filtering, status badges, deletion exists)_
 - [~] Task Management Interface _(component exists, needs integration)_
 - [~] Markdown Export _(BlueprintDisplay component exists)_
 - [ ] Performance Optimization
@@ -132,7 +132,7 @@ Launch a usable product that delivers core value to early adopters.
 
 - [ ] Timeline Generator (simplified)
 - [ ] Export Connectors (Notion, Trello, Google Tasks, GitHub)
-- [ ] API for Developers
+- [~] API for Developers _(19 API routes exist: ideas, tasks, clarify, breakdown, health, metrics)_
 - [ ] Data Export & Backup
 - [ ] Mobile-First Responsive Design
 - [ ] Accessibility (WCAG 2.1 AA)
