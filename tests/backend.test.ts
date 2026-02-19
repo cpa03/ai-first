@@ -1,3 +1,26 @@
+/**
+ * Backend Service Tests
+ *
+ * IMPORTANT: Mocks must be set up BEFORE any imports that use them.
+ * This file tests basic backend service functionality.
+ */
+
+// Set environment variables BEFORE any imports
+import { mockEnvVars } from './utils/_testHelpers';
+Object.assign(process.env, mockEnvVars);
+
+// Mock OpenAI shims first
+import 'openai/shims/node';
+
+// Mock external dependencies BEFORE importing any modules that use them
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(),
+}));
+
+jest.mock('openai', () => {
+  return jest.fn();
+});
+
 import { aiService, AIService } from '../src/lib/ai';
 import { dbService } from '../src/lib/db';
 import { exportManager, type ExportData } from '../src/lib/export-connectors';
