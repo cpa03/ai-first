@@ -527,6 +527,30 @@
   }
 }
 
+/* Button disabled state - ensures no hover/active effects when disabled */
+/* This addresses GitHub issue #1178: hover scale effects on disabled buttons */
+button:disabled,
+button[aria-disabled='true'],
+.btn-disabled {
+  pointer-events: none;
+}
+
+button:disabled:hover,
+button:disabled:active,
+button[aria-disabled='true']:hover,
+button[aria-disabled='true']:active {
+  transform: none !important;
+  box-shadow: inherit !important;
+  background-color: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Override btn-glow-hover for disabled buttons */
+button:disabled.btn-glow-hover,
+button[aria-disabled='true'].btn-glow-hover {
+  animation: none !important;
+}
+
 /* Skip to Content Link - Enhanced Accessibility */
 /* Provides keyboard users with an elegant way to skip navigation */
 .skip-link {
