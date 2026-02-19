@@ -314,6 +314,8 @@ export default function ToastContainer() {
       className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-h-screen overflow-y-auto"
       role="region"
       aria-label="Notifications"
+      aria-live="polite"
+      aria-atomic="false"
     >
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onClose={closeToast} />
