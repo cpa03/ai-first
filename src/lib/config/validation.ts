@@ -1,7 +1,10 @@
 /**
  * Validation Configuration
  * Centralizes regex patterns, validation rules, and sanitization
+ * Supports environment variable overrides for validation limits
  */
+
+import { EnvLoader } from './environment';
 
 export const VALIDATION_CONFIG = {
   IDEA_ID: {
@@ -12,7 +15,13 @@ export const VALIDATION_CONFIG = {
   },
 
   TEXT: {
-    MAX_LENGTH: 10000,
+    /** Env: VALIDATION_TEXT_MAX_LENGTH (default: 10000) */
+    MAX_LENGTH: EnvLoader.number(
+      'VALIDATION_TEXT_MAX_LENGTH',
+      10000,
+      100,
+      100000
+    ),
     MIN_LENGTH: 1,
     TRIM_WHITESPACE: true,
   },
@@ -24,7 +33,8 @@ export const VALIDATION_CONFIG = {
 
   NUMBER: {
     MIN: 0,
-    MAX: 999999,
+    /** Env: VALIDATION_NUMBER_MAX (default: 999999) */
+    MAX: EnvLoader.number('VALIDATION_NUMBER_MAX', 999999, 1000, 9999999),
     DECIMAL_PLACES: 2,
   },
 } as const;
@@ -54,16 +64,27 @@ export const SANITIZATION_CONFIG = {
   PII: {
     PATTERNS: {
       EMAIL: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-      PHONE: /\b(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})\b/g,
+      PHONE:
+        /\b(?:\+?1[-.\s]?)?\(?([0-9]{3})\)?[-.\s]?([0-9]{3})[-.\s]?([0-9]{4})\b/g,
       SSN: /\b\d{3}-\d{2}-\d{4}\b/g,
       CREDIT_CARD: /\b(?:\d[ -]*?){13,16}\b/g,
-      API_KEY: /\b(?:api[_-]?key|apikey)[\s]*[:=][\s]*["']?[a-zA-Z0-9]{32,}["']?\b/gi,
+      API_KEY:
+        /\b(?:api[_-]?key|apikey)[\s]*[:=][\s]*["']?[a-zA-Z0-9]{32,}["']?\b/gi,
       PASSWORD: /\b(?:password|passwd|pwd)[\s]*[:=][\s]*["']?[^"'\s]+["']?\b/gi,
     },
 
     SENSITIVE_FIELDS: [
-      'password', 'passwd', 'pwd', 'secret', 'token', 'api_key', 'apikey',
-      'access_token', 'refresh_token', 'private_key', 'credit_card',
+      'password',
+      'passwd',
+      'pwd',
+      'secret',
+      'token',
+      'api_key',
+      'apikey',
+      'access_token',
+      'refresh_token',
+      'private_key',
+      'credit_card',
     ] as const,
 
     REDACTION_TEXT: '[REDACTED]',
@@ -79,7 +100,8 @@ export const ERROR_SUGGESTIONS_CONFIG = {
 
   RATE_LIMIT: {
     title: 'Rate Limited',
-    suggestion: 'You\'ve made too many requests. Please wait a moment before trying again.',
+    suggestion:
+      "You've made too many requests. Please wait a moment before trying again.",
     action: 'Wait',
   },
 
