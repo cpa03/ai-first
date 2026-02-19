@@ -4,6 +4,7 @@ import { memo, useCallback, useMemo } from 'react';
 import { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import { TaskStatus } from '@/hooks/useTaskManagement';
+import { DELIVERABLE_STYLES } from '@/lib/config';
 
 interface DeliverableWithTasks {
   id: string;
@@ -32,14 +33,8 @@ function DeliverableCardComponent({
   onToggleExpand,
   onToggleTask,
 }: DeliverableCardProps) {
-  // PERFORMANCE: Memoize style config to prevent object recreation on each render
   const deliverableStyle = useMemo(
-    () =>
-      deliverable.progress === 100
-        ? { bgColor: 'bg-green-50', borderColor: 'border-green-200' }
-        : deliverable.progress > 0
-          ? { bgColor: 'bg-blue-50', borderColor: 'border-blue-200' }
-          : { bgColor: 'bg-white', borderColor: 'border-gray-200' },
+    () => DELIVERABLE_STYLES.getByProgress(deliverable.progress),
     [deliverable.progress]
   );
 

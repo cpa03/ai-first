@@ -482,6 +482,39 @@ export const ALERT_BASE_STYLES = {
     'flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity',
 } as const;
 
+/**
+ * Deliverable Card Styles
+ * Centralizes deliverable card styling based on progress status
+ * Eliminates inline style logic in DeliverableCard component
+ */
+export const DELIVERABLE_STYLES = {
+  /** Completed deliverable (100% progress) */
+  COMPLETED: {
+    bgColor: 'bg-green-50',
+    borderColor: 'border-green-200',
+  },
+  /** In-progress deliverable (>0% and <100%) */
+  IN_PROGRESS: {
+    bgColor: 'bg-blue-50',
+    borderColor: 'border-blue-200',
+  },
+  /** Not started deliverable (0% progress) */
+  NOT_STARTED: {
+    bgColor: 'bg-white',
+    borderColor: 'border-gray-200',
+  },
+  /**
+   * Get style based on progress percentage
+   * @param progress - Progress percentage (0-100)
+   * @returns Style object with bgColor and borderColor
+   */
+  getByProgress: (progress: number) => {
+    if (progress === 100) return DELIVERABLE_STYLES.COMPLETED;
+    if (progress > 0) return DELIVERABLE_STYLES.IN_PROGRESS;
+    return DELIVERABLE_STYLES.NOT_STARTED;
+  },
+} as const;
+
 export type FocusShadows = typeof FOCUS_SHADOWS;
 export type BorderColors = typeof BORDER_COLORS;
 export type RingColors = typeof RING_COLORS;
