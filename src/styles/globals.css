@@ -461,3 +461,48 @@
     transform: none;
   }
 }
+
+/* Character counter pulse animation - draws attention when nearing limit */
+/* Creates a subtle breathing effect that intensifies as user approaches maximum */
+@keyframes counterPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-counter-pulse {
+  animation: counterPulse 1.5s ease-in-out infinite;
+}
+
+/* Character counter glow animation - adds emphasis at warning threshold */
+/* Soft glow that makes the progress indicator more noticeable */
+@keyframes counterGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px rgba(245, 158, 11, 0.3);
+  }
+}
+
+.animate-counter-glow {
+  animation: counterGlow 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for character counter animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-counter-pulse,
+  .animate-counter-glow {
+    animation: none;
+    transform: none;
+    opacity: 1;
+    box-shadow: none;
+  }
+}

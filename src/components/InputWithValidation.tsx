@@ -336,7 +336,7 @@ const InputWithValidation = forwardRef<
             <div className="flex items-center gap-2">
               {maxLength && (
                 <div
-                  className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden`}
+                  className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative`}
                   role="progressbar"
                   aria-valuenow={charCount}
                   aria-valuemin={0}
@@ -346,11 +346,15 @@ const InputWithValidation = forwardRef<
                   <div
                     className={`h-full transition-all duration-300 rounded-full ${
                       charCount > maxLength
-                        ? BG_COLORS.ERROR
+                        ? `${BG_COLORS.ERROR} animate-counter-pulse`
                         : charCount >=
                             maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                          ? BG_COLORS.WARNING
-                          : BG_COLORS.SUCCESS
+                          ? `${BG_COLORS.WARNING} animate-counter-glow`
+                          : charCount >=
+                              maxLength *
+                                (UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD * 0.7)
+                            ? BG_COLORS.WARNING
+                            : BG_COLORS.SUCCESS
                     }`}
                     style={{
                       width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
@@ -359,16 +363,21 @@ const InputWithValidation = forwardRef<
                 </div>
               )}
               <span
-                className={`text-sm ${
+                className={`text-sm font-medium transition-all duration-300 ${
                   maxLength && charCount > maxLength
-                    ? TEXT_COLORS.ERROR
+                    ? `${TEXT_COLORS.ERROR} animate-counter-pulse`
                     : maxLength &&
                         charCount >=
                           maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                      ? TEXT_COLORS.WARNING
-                      : isValid && touched
-                        ? TEXT_COLORS.SUCCESS
-                        : TEXT_COLORS.SECONDARY
+                      ? `${TEXT_COLORS.WARNING} scale-110`
+                      : maxLength &&
+                          charCount >=
+                            maxLength *
+                              (UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD * 0.7)
+                        ? TEXT_COLORS.WARNING
+                        : isValid && touched
+                          ? TEXT_COLORS.SUCCESS
+                          : TEXT_COLORS.SECONDARY
                 }`}
                 aria-live="polite"
                 aria-atomic="true"
