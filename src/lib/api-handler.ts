@@ -25,7 +25,7 @@ import {
   httpRequestDuration,
   httpRequestErrors,
   httpRequestTotal,
-} from '@/app/api/metrics/route';
+} from '@/lib/metrics';
 
 /**
  * API Version for all responses
