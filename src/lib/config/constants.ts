@@ -782,6 +782,17 @@ export const AGENT_CONFIG = {
       5000,
       300000
     ),
+    /**
+     * Timeout for database health check operations (ms)
+     * Prevents health checks from hanging indefinitely
+     * Env: AGENT_DB_HEALTH_CHECK_TIMEOUT_MS (default: 5000)
+     */
+    HEALTH_CHECK_TIMEOUT_MS: EnvLoader.number(
+      'AGENT_DB_HEALTH_CHECK_TIMEOUT_MS',
+      5000,
+      1000,
+      30000
+    ),
     DEFAULT_SEARCH_LIMIT: EnvLoader.number(
       'AGENT_DB_DEFAULT_SEARCH_LIMIT',
       10,

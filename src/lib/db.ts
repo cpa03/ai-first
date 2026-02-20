@@ -515,7 +515,41 @@ export class DatabaseService {
       }
 
       this.connectionMetrics.totalConnections++;
-      const { error } = await this.client.from('ideas').select('id').limit(1);
+
+      const healthCheckPromise = this.client
+        .from('ideas')
+        .select('id')
+        .limit(1);
+
+      const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Health check timeout'));
+        }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
+      });
+
+      const { error } = await Promise.race([
+        healthCheckPromise,
+        timeoutPromise
+          .then(() => ({ error: null }))
+          .catch((err) => ({
+            error: err,
+          })),
+      ]);
+
+      const timedOut =
+        error instanceof Error && error.message === 'Health check timeout';
+
+      if (timedOut) {
+        logger.warn(
+          `Database health check timed out after ${DATABASE.HEALTH_CHECK_TIMEOUT_MS}ms`
+        );
+        this.connectionHealthy = false;
+        this.connectionMetrics.failedConnections++;
+        this.connectionMetrics.lastFailedConnection = new Date();
+        this.lastHealthCheck = new Date();
+        return false;
+      }
+
       this.connectionHealthy = !error;
       this.lastHealthCheck = new Date();
 
