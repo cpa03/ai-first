@@ -713,6 +713,8 @@ CREATE INDEX idx_vectors_embedding_l2 ON vectors USING ivfflat (embedding vector
 CREATE INDEX idx_agent_logs_timestamp ON agent_logs(timestamp DESC);
 CREATE INDEX idx_agent_logs_agent ON agent_logs(agent);
 CREATE INDEX idx_agent_logs_agent_timestamp ON agent_logs(agent, timestamp DESC);
+CREATE INDEX idx_agent_logs_action ON agent_logs(action);
+CREATE INDEX idx_agent_logs_action_timestamp ON agent_logs(action, timestamp DESC);
 
 CREATE INDEX idx_idea_sessions_last_agent ON idea_sessions(last_agent);
 CREATE INDEX idx_idea_sessions_updated_at ON idea_sessions(updated_at);
