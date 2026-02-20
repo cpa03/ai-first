@@ -22,6 +22,9 @@ import {
   createCorrelationHeaders,
   addCorrelationHeaders,
   getRequestContext,
+  createEarlyHintsHeaders,
+  shouldSendEarlyHints,
+  detectBot,
 } from '@/lib/cloudflare';
 
 function createMockRequest(headers: Record<string, string> = {}): Request {
@@ -682,5 +685,209 @@ describe('getRequestContext', () => {
     expect(context.clientIp).toBeNull();
     expect(context.country).toBeNull();
     expect(context.requestId).toBeDefined();
+  });
+});
+
+describe('createEarlyHintsHeaders', () => {
+  it('should return empty object when no hints provided', () => {
+    const headers = createEarlyHintsHeaders({});
+    expect(headers).toEqual({});
+  });
+
+  it('should create preload headers for CSS', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/styles.css'],
+    });
+    expect(headers['link']).toBe('</styles.css>; rel=preload; as=style');
+  });
+
+  it('should create preload headers for JavaScript', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/app.js'],
+    });
+    expect(headers['link']).toBe('</app.js>; rel=preload; as=script');
+  });
+
+  it('should create preload headers for fonts', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/font.woff2'],
+    });
+    expect(headers['link']).toBe('</font.woff2>; rel=preload; as=font');
+  });
+
+  it('should create preconnect headers', () => {
+    const headers = createEarlyHintsHeaders({
+      preconnect: ['https://api.example.com'],
+    });
+    expect(headers['link']).toBe('<https://api.example.com>; rel=preconnect');
+  });
+
+  it('should combine multiple hints', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/styles.css', '/app.js'],
+      preconnect: ['https://api.example.com'],
+    });
+    expect(headers['link']).toContain('</styles.css>; rel=preload; as=style');
+    expect(headers['link']).toContain('</app.js>; rel=preload; as=script');
+    expect(headers['link']).toContain(
+      '<https://api.example.com>; rel=preconnect'
+    );
+  });
+
+  it('should handle images', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/hero.webp', '/icon.png'],
+    });
+    expect(headers['link']).toContain('as=image');
+  });
+
+  it('should handle resources without recognized extensions', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/data.json'],
+    });
+    expect(headers['link']).toBe('</data.json>; rel=preload');
+  });
+
+  it('should handle query strings in URLs', () => {
+    const headers = createEarlyHintsHeaders({
+      preload: ['/script.js?v=123'],
+    });
+    expect(headers['link']).toBe('</script.js?v=123>; rel=preload; as=script');
+  });
+});
+
+describe('shouldSendEarlyHints', () => {
+  it('should return true for Cloudflare request with caching', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+      'cf-cache-status': 'HIT',
+    });
+    expect(shouldSendEarlyHints(request)).toBe(true);
+  });
+
+  it('should return true for Cloudflare request without cache status', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+    });
+    expect(shouldSendEarlyHints(request)).toBe(true);
+  });
+
+  it('should return false for non-Cloudflare request', () => {
+    const request = createMockRequest();
+    expect(shouldSendEarlyHints(request)).toBe(false);
+  });
+
+  it('should return false when cache is bypassed', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+      'cf-cache-status': 'BYPASS',
+    });
+    expect(shouldSendEarlyHints(request)).toBe(false);
+  });
+});
+
+describe('detectBot', () => {
+  it('should detect bot from low bot score', () => {
+    const request = createMockRequest({
+      'cf-bot-score': '20',
+    });
+    const result = detectBot(request);
+    expect(result.isBot).toBe(true);
+    expect(result.botScore).toBe(20);
+  });
+
+  it('should detect human from high bot score', () => {
+    const request = createMockRequest({
+      'cf-bot-score': '80',
+    });
+    const result = detectBot(request);
+    expect(result.isBot).toBe(false);
+    expect(result.botScore).toBe(80);
+  });
+
+  it('should detect bot from high threat score', () => {
+    const request = createMockRequest({
+      'cf-threat-score': '75',
+    });
+    const result = detectBot(request);
+    expect(result.isBot).toBe(true);
+    expect(result.threatScore).toBe(75);
+  });
+
+  it('should detect WARP usage', () => {
+    const request = createMockRequest({
+      'cf-warp': '1',
+    });
+    const result = detectBot(request);
+    expect(result.isWarp).toBe(true);
+  });
+
+  it('should extract TLS fingerprint', () => {
+    const request = createMockRequest({
+      'cf-tls-fingerprint': 'abc123def456',
+    });
+    const result = detectBot(request);
+    expect(result.tlsFingerprint).toBe('abc123def456');
+  });
+
+  it('should return default values for non-Cloudflare request', () => {
+    const request = createMockRequest();
+    const result = detectBot(request);
+    expect(result.isBot).toBe(false);
+    expect(result.botScore).toBeNull();
+    expect(result.threatScore).toBeNull();
+    expect(result.isWarp).toBe(false);
+    expect(result.tlsFingerprint).toBeNull();
+  });
+
+  it('should handle all headers together', () => {
+    const request = createMockRequest({
+      'cf-bot-score': '25',
+      'cf-threat-score': '30',
+      'cf-warp': 'true',
+      'cf-tls-fingerprint': 'fingerprint123',
+    });
+    const result = detectBot(request);
+    expect(result.isBot).toBe(true); // bot score < 30
+    expect(result.botScore).toBe(25);
+    expect(result.threatScore).toBe(30);
+    expect(result.isWarp).toBe(true);
+    expect(result.tlsFingerprint).toBe('fingerprint123');
+  });
+
+  it('should handle invalid numeric values', () => {
+    const request = createMockRequest({
+      'cf-bot-score': 'invalid',
+      'cf-threat-score': 'not-a-number',
+    });
+    const result = detectBot(request);
+    expect(result.botScore).toBeNull();
+    expect(result.threatScore).toBeNull();
+  });
+});
+
+describe('Extended CLOUDFLARE_HEADERS', () => {
+  it('should have CF-WARP header', () => {
+    expect(CLOUDFLARE_HEADERS.CF_WARP).toBe('cf-warp');
+  });
+
+  it('should have CF-EW-VTT header for Early Hints', () => {
+    expect(CLOUDFLARE_HEADERS.CF_EW_VTT).toBe('cf-ew-vtt');
+  });
+
+  it('should have CF-RTT-MS header', () => {
+    expect(CLOUDFLARE_HEADERS.CF_RTT_MS).toBe('cf-rtt-ms');
+  });
+
+  it('should have CF-TLS-FINGERPRINT header', () => {
+    expect(CLOUDFLARE_HEADERS.CF_TLS_FINGERPRINT).toBe('cf-tls-fingerprint');
+  });
+
+  it('should have CF-BOT-SCORE header', () => {
+    expect(CLOUDFLARE_HEADERS.CF_BOT_SCORE).toBe('cf-bot-score');
+  });
+
+  it('should have CF-THREAT-SCORE header', () => {
+    expect(CLOUDFLARE_HEADERS.CF_THREAT_SCORE).toBe('cf-threat-score');
   });
 });
