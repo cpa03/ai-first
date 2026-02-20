@@ -749,16 +749,52 @@ export class DatabaseService {
     return data || [];
   }
 
+  /**
+   * Fetches all deliverables for an idea with their associated tasks in a single optimized query.
+   *
+   * PERFORMANCE OPTIMIZATION (Issue #855 - N+1 Query Resolution):
+   * ===========================================================================
+   * This method uses a SINGLE database query with a JOIN (via Supabase's embedded select)
+   * instead of the classic N+1 pattern that would fetch deliverables first, then
+   * fetch tasks for each deliverable individually.
+   *
+   * Query Pattern Analysis:
+   * - OLD (N+1): 1 query for deliverables + N queries for tasks = N+1 total queries
+   * - NEW (Optimized): 1 query with embedded select = 1 total query
+   *
+   * Performance Characteristics:
+   * - Best Case: 1 deliverable = 1 query
+   * - Typical Case: 10 deliverables = 1 query (not 11)
+   * - Worst Case: 100 deliverables = 1 query (not 101)
+   * - Scaling: O(1) regardless of deliverable count
+   *
+   * Additional Optimizations:
+   * - Server-side filtering via `.is('tasks.deleted_at', null)` eliminates
+   *   client-side filtering and reduces network payload
+   * - Deliverables ordered by priority (highest first)
+   * - Tasks ordered by creation date (oldest first) for consistent UI display
+   *
+   * @param ideaId - The ID of the idea to fetch deliverables for
+   * @returns Array of deliverables with their tasks, sorted by priority
+   * @throws Error if Supabase client is not initialized
+   *
+   * @see https://supabase.com/docs/reference/javascript/select#query-foreign-tables
+   */
   async getIdeaDeliverablesWithTasks(
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
-    // PERFORMANCE: Server-side filtering for tasks prevents fetching deleted records
-    // This reduces network payload and eliminates client-side filtering overhead
     const { data, error } = await this.client
       .from('deliverables')
-      .select('*, tasks!tasks_deliverable_id_fkey(*)')
+      .select(
+        `
+        *,
+        tasks!tasks_deliverable_id_fkey (
+          *
+        )
+      `
+      )
       .eq('idea_id', ideaId)
       .is('deleted_at', null)
       .is('tasks.deleted_at', null)
@@ -768,10 +804,11 @@ export class DatabaseService {
 
     const deliverables = (data || []) as (Deliverable & { tasks: Task[] })[];
 
-    // No client-side filtering needed - server handles deleted_at filtering
     return deliverables.map((d) => ({
       ...d,
-      tasks: d.tasks || [],
+      tasks: (d.tasks || []).sort((a, b) =>
+        a.created_at.localeCompare(b.created_at)
+      ),
     }));
   }
 
