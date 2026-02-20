@@ -191,3 +191,5 @@ export type {
   APITimeouts,
 } from './time';
 export type { APIErrorMessages } from './error-messages';
+
+export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
