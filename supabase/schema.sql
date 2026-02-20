@@ -724,23 +724,36 @@ CREATE INDEX idx_task_dependencies_updated_at ON task_dependencies(updated_at DE
 
 CREATE INDEX idx_milestones_idea_id ON milestones(idea_id);
 CREATE INDEX idx_milestones_target_date ON milestones(target_date);
+CREATE INDEX idx_milestones_status ON milestones(status);
+CREATE INDEX idx_milestones_idea_status ON milestones(idea_id, status);
 
 CREATE INDEX idx_task_assignments_task_id ON task_assignments(task_id);
 CREATE INDEX idx_task_assignments_user_id ON task_assignments(user_id);
 CREATE INDEX idx_task_assignments_updated_at ON task_assignments(updated_at DESC);
+CREATE INDEX idx_task_assignments_task_user ON task_assignments(task_id, user_id);
 
 CREATE INDEX idx_time_tracking_task_id ON time_tracking(task_id);
 CREATE INDEX idx_time_tracking_date ON time_tracking(date_logged);
+CREATE INDEX idx_time_tracking_user_id ON time_tracking(user_id);
+CREATE INDEX idx_time_tracking_date_logged ON time_tracking(date_logged DESC);
+CREATE INDEX idx_time_tracking_task_date ON time_tracking(task_id, date_logged DESC);
 
 CREATE INDEX idx_task_comments_task_id ON task_comments(task_id);
 CREATE INDEX idx_task_comments_deleted_at ON task_comments(deleted_at);
+CREATE INDEX idx_task_comments_parent_id ON task_comments(parent_comment_id);
+CREATE INDEX idx_task_comments_created_at ON task_comments(created_at DESC);
 
 CREATE INDEX idx_breakdown_sessions_idea_id ON breakdown_sessions(idea_id);
+CREATE INDEX idx_breakdown_sessions_status ON breakdown_sessions(status);
+CREATE INDEX idx_breakdown_sessions_idea_status ON breakdown_sessions(idea_id, status);
 
 CREATE INDEX idx_timelines_idea_id ON timelines(idea_id);
+CREATE INDEX idx_timelines_dates ON timelines(start_date, end_date);
 
 CREATE INDEX idx_risk_assessments_idea_id ON risk_assessments(idea_id);
 CREATE INDEX idx_risk_assessments_task_id ON risk_assessments(task_id);
+CREATE INDEX idx_risk_assessments_status ON risk_assessments(status);
+CREATE INDEX idx_risk_assessments_idea_task ON risk_assessments(idea_id, task_id);
 
 -- ============================================================================
 -- Performance Indexes for Analytics
