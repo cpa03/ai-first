@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/start/route';
 import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
+import { buildApiUrl, TEST_CONFIG } from '../config/test-config';
 
 // Mock the dependencies
 jest.mock('@/lib/agents/clarifier');
@@ -38,7 +39,7 @@ describe('/api/clarify/start', () => {
       mockClarifierAgent.startClarification.mockResolvedValue(mockSession);
 
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/start',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_START),
         {
           method: 'POST',
           body: JSON.stringify({ ideaId: 'idea-123', idea: 'Test idea' }),
@@ -60,7 +61,7 @@ describe('/api/clarify/start', () => {
 
     it('should return 400 when ideaId is missing', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/start',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_START),
         {
           method: 'POST',
           body: JSON.stringify({ idea: 'Test idea' }),
@@ -77,7 +78,7 @@ describe('/api/clarify/start', () => {
 
     it('should return 400 when idea is missing', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/start',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_START),
         {
           method: 'POST',
           body: JSON.stringify({ ideaId: 'idea-123' }),
@@ -98,7 +99,7 @@ describe('/api/clarify/start', () => {
       );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/start',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_START),
         {
           method: 'POST',
           body: JSON.stringify({ ideaId: 'idea-123', idea: 'Test idea' }),
@@ -116,7 +117,7 @@ describe('/api/clarify/start', () => {
 
     it('should handle malformed JSON', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/start',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_START),
         {
           method: 'POST',
           body: 'invalid json',

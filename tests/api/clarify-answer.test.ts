@@ -5,6 +5,7 @@ import {
   ClarifierQuestion,
   ClarificationSession,
 } from '@/lib/agents/clarifier';
+import { buildApiUrl, TEST_CONFIG } from '../config/test-config';
 
 // Mock the dependencies
 jest.mock('@/lib/agents/clarifier');
@@ -39,7 +40,7 @@ describe('/api/clarify/answer', () => {
       mockClarifierAgent.submitAnswer.mockResolvedValue(mockUpdatedSession);
 
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -66,7 +67,7 @@ describe('/api/clarify/answer', () => {
 
     it('should return 400 when ideaId is missing', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -86,7 +87,7 @@ describe('/api/clarify/answer', () => {
 
     it('should return 400 when questionId is missing', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -106,7 +107,7 @@ describe('/api/clarify/answer', () => {
 
     it('should return 400 when answer is missing', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -126,7 +127,7 @@ describe('/api/clarify/answer', () => {
 
     it('should handle empty answer', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -151,7 +152,7 @@ describe('/api/clarify/answer', () => {
       );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -194,7 +195,7 @@ describe('/api/clarify/answer', () => {
       mockClarifierAgent.submitAnswer.mockResolvedValue(mockUpdatedSession);
 
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
@@ -239,7 +240,7 @@ describe('/api/clarify/answer', () => {
       mockClarifierAgent.submitAnswer.mockResolvedValue(mockUpdatedSession);
 
       const request = new NextRequest(
-        'http://localhost:3000/api/clarify/answer',
+        buildApiUrl(TEST_CONFIG.ENDPOINTS.CLARIFY_ANSWER),
         {
           method: 'POST',
           body: JSON.stringify({
