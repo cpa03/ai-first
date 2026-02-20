@@ -1,0 +1,152 @@
+# Composite Action: Workflow Setup
+# Purpose: Centralized workflow setup to eliminate duplication across CI/CD workflows
+# Related: Issue #1170 - CI/CD Workflow Reliability
+# Related: Issue #864 - Hardcoded OpenCode CLI installation URL
+# Maintainer: DevOps Engineer
+
+name: 'Workflow Setup'
+description: 'Complete workflow setup: Git config, Node.js, dependencies, cache, and OpenCode CLI'
+
+inputs:
+  node-version:
+    description: 'Node.js version to use'
+    required: false
+    default: '20'
+  install-opencode:
+    description: 'Whether to install OpenCode CLI'
+    required: false
+    default: 'true'
+  opencode-version:
+    description: 'OpenCode CLI version to install'
+    required: false
+    default: 'latest'
+  opencode-install-url:
+    description: 'URL for OpenCode CLI installation script'
+    required: false
+    default: 'https://opencode.ai/install'
+  cache-opencode:
+    description: 'Whether to cache OpenCode CLI'
+    required: false
+    default: 'true'
+  cache-npm:
+    description: 'Whether to cache npm dependencies'
+    required: false
+    default: 'true'
+  skip-npm-ci:
+    description: 'Skip npm ci installation (useful when dependencies are cached)'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure Git
+      shell: bash
+      run: |
+        git config --global user.name "${{ github.actor }}"
+        git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+        echo "✅ Git configured for ${{ github.actor }}"
+
+    - name: Setup Node.js
+      if: inputs.cache-npm == 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'npm'
+
+    - name: Setup Node.js (no cache)
+      if: inputs.cache-npm != 'true'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Setup npm cache
+      if: inputs.cache-npm == 'true'
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.npm
+        key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+        restore-keys: |
+          npm-${{ runner.os }}-v1
+          npm-${{ runner.os }}-
+
+    - name: Install dependencies
+      if: inputs.skip-npm-ci != 'true'
+      shell: bash
+      run: |
+        echo "📦 Installing dependencies..."
+        npm ci --prefer-offline
+        echo "✅ Dependencies installed"
+
+    - name: Check if OpenCode is already installed
+      if: inputs.install-opencode == 'true'
+      id: check-opencode
+      shell: bash
+      run: |
+        if command -v opencode &> /dev/null; then
+          echo "already-installed=true" >> $GITHUB_OUTPUT
+          echo "✅ OpenCode CLI already installed: $(opencode --version 2>/dev/null || echo 'version unknown')"
+        else
+          echo "already-installed=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Restore OpenCode from cache
+      if: |
+        inputs.install-opencode == 'true' &&
+        inputs.cache-opencode == 'true' &&
+        steps.check-opencode.outputs.already-installed != 'true'
+      id: cache-opencode
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.opencode
+        key: opencode-${{ runner.os }}-${{ inputs.opencode-version }}-v1
+        restore-keys: |
+          opencode-${{ runner.os }}-v1
+          opencode-${{ runner.os }}-
+
+    - name: Install OpenCode CLI
+      if: |
+        inputs.install-opencode == 'true' &&
+        steps.check-opencode.outputs.already-installed != 'true' &&
+        steps.cache-opencode.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        echo "📦 Installing OpenCode CLI..."
+        echo "   Version: ${{ inputs.opencode-version }}"
+        echo "   Install URL: ${{ inputs.opencode-install-url }}"
+
+        # Download and execute installation script
+        curl -fsSL "${{ inputs.opencode-install-url }}" | bash
+
+        # Verify installation
+        if ! command -v opencode &> /dev/null; then
+          echo "❌ OpenCode CLI installation failed"
+          exit 1
+        fi
+
+        echo "✅ OpenCode CLI installed successfully"
+        opencode --version 2>/dev/null || echo "Version check skipped"
+
+    - name: Add OpenCode to PATH
+      if: |
+        inputs.install-opencode == 'true' &&
+        steps.check-opencode.outputs.already-installed != 'true'
+      shell: bash
+      run: |
+        echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+        echo "✅ OpenCode CLI added to PATH"
+
+    - name: Verify setup
+      shell: bash
+      run: |
+        echo "🔍 Verifying workflow setup..."
+        echo "  Node.js: $(node --version)"
+        echo "  npm: $(npm --version)"
+        if [[ "${{ inputs.install-opencode }}" == "true" ]]; then
+          echo "  OpenCode: $(opencode --version 2>/dev/null || echo 'installed')"
+        fi
+        echo "✅ Workflow setup complete"
