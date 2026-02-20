@@ -8,8 +8,33 @@ import {
   useCallback,
   useEffect,
   useRef,
+  useSyncExternalStore,
 } from 'react';
 import { RIPPLE_CONFIG, BUTTON_STYLES } from '@/lib/config';
+
+// Custom hook to subscribe to prefers-reduced-motion media query
+// This properly updates when OS accessibility settings change during runtime
+const subscribeToMotionPreference = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getMotionSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getServerMotionSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToMotionPreference,
+    getMotionSnapshot,
+    getServerMotionSnapshot
+  );
+}
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -46,6 +71,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const [rippleIdCounter, setRippleIdCounter] = useState(0);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
+    const prefersReducedMotion = usePrefersReducedMotion();
 
     useEffect(() => {
       const timeouts = timeoutRefs.current;
@@ -56,7 +82,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const createRipple = useCallback(
       (event: React.MouseEvent<HTMLButtonElement>) => {
-        if (disabled || loading) return;
+        onClick?.(event);
+
+        if (disabled || loading || prefersReducedMotion) return;
 
         const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
@@ -78,10 +106,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
         }, RIPPLE_CONFIG.DURATION_MS);
         timeoutRefs.current.push(timeoutId);
-
-        onClick?.(event);
       },
-      [disabled, loading, onClick, rippleIdCounter]
+      [disabled, loading, onClick, rippleIdCounter, prefersReducedMotion]
     );
 
     const stateClasses =
