@@ -144,6 +144,7 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 | 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations    |
 | 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring              |
 | 2026-02-20 | #878 - Rate Limiting for CSP Report Endpoint   | ✅ Implemented   | Added rate limiting (60 req/min) to prevent DoS abuse    |
+| 2026-02-20 | #1171 - Health Endpoint Sensitive Var Filter   | ✅ Implemented   | Added OAUTH, WEBHOOK, SALT, HMAC, APIKEY patterns        |
 
 ## Current npm Audit Status (2026-02-18)
 
