@@ -112,6 +112,9 @@
     /Tooltip.tsx            ← Accessible tooltip component
     /WhyChooseSection.tsx   ← Why choose section
     /task-management/       ← Task management components
+      /DeliverableCard.tsx    ← Deliverable card with tasks list
+      /TaskItem.tsx           ← Individual task item with status toggle
+      /TaskManagementHeader.tsx ← Header with progress stats
   /hooks/                  ← React custom hooks
     /useTaskManagement.ts   ← Task management hook
     /useAuthCheck.ts        ← Authentication check hook
