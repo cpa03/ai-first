@@ -230,7 +230,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
-                  <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+                  <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
@@ -247,7 +247,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
-                  <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                  <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full animate-coming-soon-badge">
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
