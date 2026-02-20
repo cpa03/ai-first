@@ -14,11 +14,17 @@
 # - Static assets served via Workers with proper caching (_headers)
 # - CPU limits: Configured for optimal free tier usage
 # - Smart placement: Optimizes worker location for performance
+# - send_metrics: Disabled for privacy (no anonymous usage data)
+# - Observability: Enabled for production debugging
 # ============================================================
 
 name = "ai-first"
 compatibility_date = "2026-02-19"
 compatibility_flags = ["nodejs_compat", "nodejs_als", "global_fetch_strictly_public"]
+
+# Privacy: Disable anonymous usage metrics collection
+# @see https://developers.cloudflare.com/workers/wrangler/configuration/#send_metrics
+send_metrics = false
 
 # CPU limit for Workers (milliseconds)
 # Free tier: 10ms, Paid: 50ms (bundled), 900s (unbound)
@@ -49,12 +55,26 @@ name = "ai-first"
 # @see https://developers.cloudflare.com/workers/observability/
 [env.production.observability]
 enabled = true
-head_sampling_rate = 0.1  # 10% sampling for cost control
+head_sampling_rate = 0.1
+
+# Logpush for production logs (requires Cloudflare paid plan)
+# Sends logs to external destinations (S3, R2, etc.)
+# @see https://developers.cloudflare.com/workers/observability/logpush/
+# [env.production.logpush]
+# enabled = true
+# destination = "your-logpush-destination"
 
 # Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
 # DO NOT hardcode sensitive values here
 [env.production.vars]
 # NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
+
+# Route configuration for custom domain (optional)
+# Uncomment and configure when ready to deploy to custom domain
+# @see https://developers.cloudflare.com/workers/configuration/routing/routes/
+# [[env.production.routes]]
+# pattern = "ideaflow.ai/*"
+# zone_name = "ideaflow.ai"
 
 # ============================================================
 # Staging Environment
