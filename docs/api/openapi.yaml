@@ -11,8 +11,14 @@ info:
 
 servers:
   - url: http://localhost:3000
-    description: Development server
-  - url: https://your-app.vercel.app
+    description: Local development server (default)
+  - url: https://{environment}.vercel.app
+    description: Vercel preview deployment
+    variables:
+      environment:
+        description: Vercel deployment URL (e.g., your-app-git-main-username)
+        default: your-app
+  - url: https://your-production-domain.com
     description: Production server
 
 tags:
