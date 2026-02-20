@@ -146,7 +146,7 @@ export class Cache<T = unknown> {
     // PERFORMANCE: Since entries are added chronologically and TTL is constant,
     // we only need to check from the beginning of the Map.
     // This makes the common case (no expired entries) O(1).
-    for (const [key, entry] of this.cache.entries()) {
+    for (const [key, entry] of this.cache) {
       if (now - entry.timestamp > this.ttl) {
         if (this.onEvict) {
           this.onEvict(key, entry);
@@ -165,18 +165,14 @@ export class Cache<T = unknown> {
     // This is true O(1) instead of O(N) searching for hits. Since we move entries
     // to the end of the Map on every get() and set(), the first entry is
     // guaranteed to be the least recently accessed.
-    const iterator = this.cache.entries();
-    const result = iterator.next();
-
-    if (result.done) return;
-
-    const [lruKey, lruEntry] = result.value;
-
-    if (this.onEvict) {
-      this.onEvict(lruKey, lruEntry);
+    for (const [key, entry] of this.cache) {
+      if (this.onEvict) {
+        this.onEvict(key, entry);
+      }
+      this.totalHits -= entry.hits;
+      this.cache.delete(key);
+      return;
     }
-    this.totalHits -= lruEntry.hits;
-    this.cache.delete(lruKey);
   }
 
   getStats(): {

@@ -19,9 +19,8 @@ const PUBLIC_PATHS = [
 
 const AUTH_PATHS = ['/login', '/signup'];
 
-export const runtime = 'experimental-edge';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   let response: NextResponse;
