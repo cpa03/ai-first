@@ -1,6 +1,13 @@
 'use client';
 
-import React, { memo, useEffect, useState, useCallback, useRef } from 'react';
+import React, {
+  memo,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 
 export interface KeyboardShortcut {
@@ -112,12 +119,11 @@ const KeyboardKey = memo(function KeyboardKey({
 
 const ShortcutRow = memo(function ShortcutRow({
   shortcut,
+  isMac,
 }: {
   shortcut: KeyboardShortcut;
+  isMac: boolean;
 }) {
-  const isMac =
-    typeof navigator !== 'undefined' && navigator.platform.includes('Mac');
-
   const displayKeys = shortcut.keys.map((key) => {
     if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
     if (key === '⌥') return isMac ? '⌥' : 'Alt';
@@ -125,8 +131,10 @@ const ShortcutRow = memo(function ShortcutRow({
   });
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
-      <span className="text-sm text-gray-700">{shortcut.description}</span>
+    <div className="flex items-center justify-between py-3 px-2 -mx-2 rounded-lg hover:bg-gray-50 transition-all duration-200 border-b border-gray-100 last:border-b-0 group">
+      <span className="text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+        {shortcut.description}
+      </span>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-4">
         {displayKeys.map((key, index) => (
           <React.Fragment key={index}>
@@ -147,6 +155,13 @@ export default function KeyboardShortcutsHelp({
 }: KeyboardShortcutsHelpProps) {
   const [isLeaving, setIsLeaving] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(
+      typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
+    );
+  }, []);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -199,18 +214,24 @@ export default function KeyboardShortcutsHelp({
     };
   }, [isOpen, handleClose]);
 
-  if (!isOpen && !isMounted) return null;
-
-  const groupedShortcuts = contextOrder.reduce(
-    (acc, context) => {
-      const shortcuts = keyboardShortcuts.filter((s) => s.context === context);
-      if (shortcuts.length > 0) {
-        acc[context] = shortcuts;
-      }
-      return acc;
-    },
-    {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>
+  const groupedShortcuts = useMemo(
+    () =>
+      contextOrder.reduce(
+        (acc, context) => {
+          const shortcuts = keyboardShortcuts.filter(
+            (s) => s.context === context
+          );
+          if (shortcuts.length > 0) {
+            acc[context] = shortcuts;
+          }
+          return acc;
+        },
+        {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>
+      ),
+    []
   );
+
+  if (!isOpen && !isMounted) return null;
 
   return (
     <div
@@ -299,6 +320,7 @@ export default function KeyboardShortcutsHelp({
                   <ShortcutRow
                     key={`${context}-${index}`}
                     shortcut={shortcut}
+                    isMac={isMac}
                   />
                 ))}
               </div>
@@ -307,9 +329,14 @@ export default function KeyboardShortcutsHelp({
         </div>
 
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-xs text-gray-500 text-center">
-            Tip: Keyboard shortcuts make navigating IdeaFlow faster and more
-            accessible
+          <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
+            <span role="img" aria-label="Tip" className="text-base">
+              💡
+            </span>
+            <span>
+              Tip: Keyboard shortcuts make navigating IdeaFlow faster and more
+              accessible
+            </span>
           </p>
         </div>
       </div>
