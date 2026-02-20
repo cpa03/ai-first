@@ -1,6 +1,6 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
-import * as crypto from 'crypto';
+import * as crypto from 'node:crypto';
 
 const API_VERSION = '1.0.0';
 
