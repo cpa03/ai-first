@@ -51,6 +51,14 @@ declare global {
       CLOUDFLARE?: string;
       /** Cloudflare Workers request context */
       CLOUDFLARE_WORKERS?: string;
+      /** Set when running in Cloudflare Pages environment */
+      CF_PAGES?: string;
+      /** Cloudflare Pages branch name */
+      CF_PAGES_BRANCH?: string;
+      /** Cloudflare Pages commit SHA */
+      CF_PAGES_COMMIT_SHA?: string;
+      /** Cloudflare Pages deployment URL */
+      CF_PAGES_URL?: string;
       /** Cloudflare region hint */
       CF_REGION?: string;
     }
