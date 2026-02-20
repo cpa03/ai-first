@@ -69,6 +69,37 @@ npm run lint        # ✓ Pass
 npm run type-check  # ✓ Pass
 ```
 
+### 2026-02-20: PII Redaction Sensitive Field Pattern Enhancement
+
+**Issue**: PII redaction system was missing some sensitive field patterns for banking, tax, and identification data.
+
+**Risk**: International Bank Account Numbers (IBAN), SWIFT/BIC codes, Tax IDs, National Insurance numbers, and license numbers could potentially be logged without redaction.
+
+**Fix Applied**:
+
+- Enhanced `API_KEY_PREFIXES` in `src/lib/config/constants.ts` to include additional patterns:
+  - `iban` - International Bank Account Numbers
+  - `swift`, `bic` - Bank Identifier Codes
+  - `tax[-_ ]?id` - Tax identification numbers
+  - `nino`, `ni[-_ ]?number` - UK National Insurance numbers
+  - `license`, `licence` - License/permit numbers
+
+- Updated `SENSITIVE_FIELD_REGEX` in `src/lib/pii-redaction.ts` with the new patterns
+
+**Files Modified**:
+
+- `src/lib/config/constants.ts` - Added sensitive field prefixes
+- `src/lib/pii-redaction.ts` - Enhanced regex pattern
+- `SECURITY.md` - Updated audit history
+- `docs/security-engineer.md` - Documented fix
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+```
+
 ### 2026-02-07: IP Address Spoofing Prevention
 
 **Issue**: Rate limiting used first IP from `X-Forwarded-For` header, which can be spoofed by malicious clients.
