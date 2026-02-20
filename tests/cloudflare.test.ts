@@ -107,6 +107,9 @@ describe('isCloudflareWorker', () => {
     delete process.env[CLOUDFLARE_ENV_VARS.CF_WORKER];
     delete process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE];
     delete process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE_WORKERS];
+    delete process.env[CLOUDFLARE_ENV_VARS.CF_PAGES];
+    delete process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_BRANCH];
+    delete process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_URL];
     expect(isCloudflareWorker()).toBe(false);
   });
 
@@ -122,6 +125,21 @@ describe('isCloudflareWorker', () => {
 
   it('should return true when CLOUDFLARE_WORKERS env var is set', () => {
     process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE_WORKERS] = 'true';
+    expect(isCloudflareWorker()).toBe(true);
+  });
+
+  it('should return true when CF_PAGES env var is set', () => {
+    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES] = '1';
+    expect(isCloudflareWorker()).toBe(true);
+  });
+
+  it('should return true when CF_PAGES_BRANCH env var is set', () => {
+    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_BRANCH] = 'main';
+    expect(isCloudflareWorker()).toBe(true);
+  });
+
+  it('should return true when CF_PAGES_URL env var is set', () => {
+    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_URL] = 'https://example.pages.dev';
     expect(isCloudflareWorker()).toBe(true);
   });
 });

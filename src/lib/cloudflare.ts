@@ -44,7 +44,8 @@ export const CLOUDFLARE_HEADERS = {
 } as const;
 
 /**
- * Cloudflare environment variables that indicate a Workers environment
+ * Cloudflare environment variables that indicate a Workers or Pages environment
+ * @see https://developers.cloudflare.com/pages/platform/build-configuration/
  */
 export const CLOUDFLARE_ENV_VARS = {
   /** Set automatically by Cloudflare Workers runtime */
@@ -53,6 +54,16 @@ export const CLOUDFLARE_ENV_VARS = {
   CLOUDFLARE: 'CLOUDFLARE',
   /** Set by Cloudflare Workers for the request context */
   CLOUDFLARE_WORKERS: 'CLOUDFLARE_WORKERS',
+  /** Set when running in Cloudflare Pages environment */
+  CF_PAGES: 'CF_PAGES',
+  /** Cloudflare Pages branch name */
+  CF_PAGES_BRANCH: 'CF_PAGES_BRANCH',
+  /** Cloudflare Pages commit SHA */
+  CF_PAGES_COMMIT_SHA: 'CF_PAGES_COMMIT_SHA',
+  /** Cloudflare Pages deployment URL */
+  CF_PAGES_URL: 'CF_PAGES_URL',
+  /** Cloudflare account ID */
+  CF_ACCOUNT_ID: 'CF_ACCOUNT_ID',
 } as const;
 
 /**
@@ -205,6 +216,14 @@ export function isCloudflareWorker(): boolean {
     process.env[CLOUDFLARE_ENV_VARS.CF_WORKER] ||
     process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE] ||
     process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE_WORKERS]
+  ) {
+    return true;
+  }
+
+  if (
+    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES] ||
+    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_BRANCH] ||
+    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_URL]
   ) {
     return true;
   }
