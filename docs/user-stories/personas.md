@@ -76,6 +76,24 @@ When writing stories for Alex, focus on:
 - Clear, non-technical language
 - Export options for sharing with developers
 
+### Success Metrics
+
+| Metric                     | Target      | Measurement Method                   |
+| -------------------------- | ----------- | ------------------------------------ |
+| Time to first plan         | < 5 minutes | Analytics: idea submission to export |
+| Onboarding completion rate | > 80%       | Funnel analysis                      |
+| Plan export rate           | > 60%       | Export action tracking               |
+| Return within 7 days       | > 40%       | User retention analytics             |
+| NPS score                  | > 40        | In-app survey                        |
+| Support ticket rate        | < 5%        | Help desk integration                |
+
+**Key Indicators of Success:**
+
+- User completes idea submission in first session
+- User exports plan within first visit
+- User returns to refine or create additional ideas
+- User shares plan with stakeholders
+
 ### Example User Stories
 
 ```
@@ -134,6 +152,24 @@ When writing stories for Jordan, focus on:
 - Collaboration and sharing features
 - Progress tracking and reporting
 
+### Success Metrics
+
+| Metric                       | Target   | Measurement Method               |
+| ---------------------------- | -------- | -------------------------------- |
+| Integration adoption rate    | > 50%    | Integration connection tracking  |
+| Template customization rate  | > 30%    | Template edit analytics          |
+| Team collaboration sessions  | > 2/week | Shared plan analytics            |
+| Plan update frequency        | > 1/week | Plan revision tracking           |
+| Cross-tool sync success rate | > 95%    | Integration health monitoring    |
+| Stakeholder share rate       | > 70%    | Export and share action tracking |
+
+**Key Indicators of Success:**
+
+- User connects at least one external integration
+- User customizes breakdown templates
+- User updates plans based on team feedback
+- User maintains consistent planning cadence
+
 ### Example User Stories
 
 ```
@@ -191,6 +227,24 @@ When writing stories for Sam, focus on:
 - Dependency visualization
 - Code generation and templates
 - GitHub/GitLab integration
+
+### Success Metrics
+
+| Metric                         | Target | Measurement Method                  |
+| ------------------------------ | ------ | ----------------------------------- |
+| Task estimation accuracy       | > 80%  | Planned vs actual time comparison   |
+| GitHub/GitLab integration rate | > 60%  | Integration connection tracking     |
+| Dependency identification rate | > 90%  | Task dependency analysis            |
+| Code template usage            | > 40%  | Template generation tracking        |
+| Sprint planning accuracy       | > 75%  | Committed vs completed story points |
+| Technical spec completeness    | > 85%  | Spec quality scoring                |
+
+**Key Indicators of Success:**
+
+- User connects GitHub/GitLab for project sync
+- User utilizes dependency visualization features
+- User leverages code generation for project setup
+- User provides accurate time estimates
 
 ### Example User Stories
 
