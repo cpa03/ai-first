@@ -2,6 +2,64 @@
 
 This directory contains all user stories for the IdeaFlow project, organized by feature area.
 
+## 📊 Progress Dashboard
+
+### Summary Statistics
+
+| Metric               | Count |
+| -------------------- | ----- |
+| **Total Stories**    | 7     |
+| **P0 (Must Have)**   | 4     |
+| **P1 (Should Have)** | 3     |
+| **P2 (Could Have)**  | 0     |
+| **P3 (Won't Have)**  | 0     |
+
+### Status Overview
+
+| Status      | Count | Stories                                                                             |
+| ----------- | ----- | ----------------------------------------------------------------------------------- |
+| Ready       | 7     | US-AUTH-001, US-AUTH-002, US-AUTH-003, US-IDEA-001, US-BREAKDOWN-001, US-EXPORT-001 |
+| In Progress | 0     | -                                                                                   |
+| Done        | 0     | -                                                                                   |
+| Released    | 0     | -                                                                                   |
+
+### Issue-to-Story Cross-Reference
+
+| Issue | Title                        | Related Stories                       | Priority | Status |
+| ----- | ---------------------------- | ------------------------------------- | -------- | ------ |
+| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003 | P1       | Open   |
+| #1176 | MVP launch timeline at risk  | All P0 Stories                        | P1       | Open   |
+| #205  | Export functionality         | US-IDEA-001, US-EXPORT-001            | -        | Open   |
+| #219  | Plan generation              | US-IDEA-001, US-EXPORT-001            | -        | Open   |
+| #638  | Idea submission improvements | US-IDEA-001                           | -        | Open   |
+| #721  | Breakdown system             | US-BREAKDOWN-001                      | -        | Open   |
+| #747  | Task decomposition           | US-BREAKDOWN-001                      | -        | Open   |
+
+### MVP Progress Tracker
+
+**Target: Phase 1 MVP**
+
+| P0 Story         | Title            | Status | Blocking Issues | Ready for Dev |
+| ---------------- | ---------------- | ------ | --------------- | ------------- |
+| US-AUTH-001      | User Signup      | Ready  | #1177           | ✅ Yes        |
+| US-AUTH-002      | User Login       | Ready  | #1177           | ✅ Yes        |
+| US-IDEA-001      | Idea Submission  | Ready  | -               | ✅ Yes        |
+| US-BREAKDOWN-001 | Breakdown Engine | Ready  | -               | ✅ Yes        |
+
+**MVP Completion: 0% (0/4 P0 stories implemented)**
+
+### Priority Distribution by Feature
+
+| Feature Area    | P0    | P1    | P2    | P3    | Total |
+| --------------- | ----- | ----- | ----- | ----- | ----- |
+| Authentication  | 2     | 1     | 0     | 0     | 3     |
+| Idea Management | 1     | 0     | 0     | 0     | 1     |
+| Breakdown       | 1     | 0     | 0     | 0     | 1     |
+| Export          | 0     | 1     | 0     | 0     | 1     |
+| **Total**       | **4** | **2** | **0** | **0** | **7** |
+
+---
+
 ## Directory Structure
 
 ```
@@ -150,4 +208,4 @@ When adding new user stories:
 
 ---
 
-_Maintained by the User Story Engineer specialist. Last updated: February 20, 2026._
+_Maintained by the User Story Engineer specialist. Last updated: February 20, 2026 (Progress Dashboard added)._
