@@ -89,13 +89,30 @@ class AIService {
     }
 
     // Periodic cleanup of cost trackers to prevent memory leaks
-    this.cleanupIntervalId = setInterval(() => {
-      this.cleanupOldCostTrackers();
-    }, AI_CONFIG.COST_TRACKER_CLEANUP_INTERVAL_MS);
+    // Only start in production to avoid open handles in tests
+    // RELIABILITY: Conditional interval start prevents Jest force exit warnings
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'production' &&
+      !process.env.JEST_WORKER_ID &&
+      !process.env.VITEST_WORKER_ID
+    ) {
+      this.cleanupIntervalId = setInterval(() => {
+        this.cleanupOldCostTrackers();
+      }, AI_CONFIG.COST_TRACKER_CLEANUP_INTERVAL_MS);
 
-    resourceCleanupManager.register('ai-service-interval', () =>
-      this.cleanup()
-    );
+      // Prevent interval from keeping process alive
+      if (
+        this.cleanupIntervalId &&
+        typeof (this.cleanupIntervalId as NodeJS.Timeout).unref === 'function'
+      ) {
+        (this.cleanupIntervalId as NodeJS.Timeout).unref();
+      }
+
+      resourceCleanupManager.register('ai-service-interval', () =>
+        this.cleanup()
+      );
+    }
   }
 
   /**
