@@ -1,7 +1,61 @@
 'use client';
 
-import React, { memo, useEffect, useState, useCallback, useRef } from 'react';
+import React, {
+  memo,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+
+/**
+ * Custom hook to detect if the user is on a Mac platform.
+ * Uses the modern navigator.userAgentData API with fallback to navigator.platform.
+ * This is more reliable and future-proof than using navigator.platform directly.
+ */
+function useIsMac(): boolean {
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    // Try modern API first (navigator.userAgentData)
+    if (
+      typeof navigator !== 'undefined' &&
+      'userAgentData' in navigator &&
+      navigator.userAgentData
+    ) {
+      const uaData = navigator.userAgentData as {
+        platform?: string;
+        getHighEntropyValues?: (
+          hints: string[]
+        ) => Promise<{ platform?: string }>;
+      };
+      // Check if platform is available
+      if (uaData.platform) {
+        setIsMac(uaData.platform.toLowerCase().includes('mac'));
+      } else if (uaData.getHighEntropyValues) {
+        // Fall back to high entropy values
+        uaData
+          .getHighEntropyValues(['platform'])
+          .then((data) => {
+            if (data.platform) {
+              setIsMac(data.platform.toLowerCase().includes('mac'));
+            }
+          })
+          .catch(() => {
+            // If high entropy values fail, fall back to deprecated platform
+            setIsMac(navigator.platform.toLowerCase().includes('mac'));
+          });
+      }
+    } else if (typeof navigator !== 'undefined') {
+      // Fall back to deprecated navigator.platform for older browsers
+      setIsMac(navigator.platform.toLowerCase().includes('mac'));
+    }
+  }, []);
+
+  return isMac;
+}
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -115,8 +169,7 @@ const ShortcutRow = memo(function ShortcutRow({
 }: {
   shortcut: KeyboardShortcut;
 }) {
-  const isMac =
-    typeof navigator !== 'undefined' && navigator.platform.includes('Mac');
+  const isMac = useIsMac();
 
   const displayKeys = shortcut.keys.map((key) => {
     if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
@@ -125,7 +178,7 @@ const ShortcutRow = memo(function ShortcutRow({
   });
 
   return (
-    <div className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
+    <div className="flex items-center justify-between py-3 px-2 -mx-2 rounded-lg border-b border-gray-100 last:border-b-0 hover:bg-gray-50 transition-colors duration-150">
       <span className="text-sm text-gray-700">{shortcut.description}</span>
       <div className="flex items-center gap-1.5 flex-shrink-0 ml-4">
         {displayKeys.map((key, index) => (
@@ -199,18 +252,24 @@ export default function KeyboardShortcutsHelp({
     };
   }, [isOpen, handleClose]);
 
-  if (!isOpen && !isMounted) return null;
-
-  const groupedShortcuts = contextOrder.reduce(
-    (acc, context) => {
-      const shortcuts = keyboardShortcuts.filter((s) => s.context === context);
-      if (shortcuts.length > 0) {
-        acc[context] = shortcuts;
-      }
-      return acc;
-    },
-    {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>
+  const groupedShortcuts = useMemo(
+    () =>
+      contextOrder.reduce(
+        (acc, context) => {
+          const shortcuts = keyboardShortcuts.filter(
+            (s) => s.context === context
+          );
+          if (shortcuts.length > 0) {
+            acc[context] = shortcuts;
+          }
+          return acc;
+        },
+        {} as Record<KeyboardShortcut['context'], KeyboardShortcut[]>
+      ),
+    []
   );
+
+  if (!isOpen && !isMounted) return null;
 
   return (
     <div
@@ -307,9 +366,19 @@ export default function KeyboardShortcutsHelp({
         </div>
 
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-xs text-gray-500 text-center">
-            Tip: Keyboard shortcuts make navigating IdeaFlow faster and more
-            accessible
+          <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
+            <svg
+              className="w-4 h-4 text-yellow-500"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              aria-hidden="true"
+            >
+              <path d="M11.983 1.907a.75.75 0 00-1.292-.657l-8.5 9.5A.75.75 0 002.75 12h6.572l-1.305 6.093a.75.75 0 001.292.657l8.5-9.5A.75.75 0 0017.25 8h-6.572l1.305-6.093z" />
+            </svg>
+            <span>
+              Tip: Keyboard shortcuts make navigating IdeaFlow faster and more
+              accessible
+            </span>
           </p>
         </div>
       </div>
