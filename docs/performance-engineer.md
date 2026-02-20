@@ -228,6 +228,11 @@ npm install eslint-plugin-react-hooks@latest --save-dev
    - **Solution**: Used index-based iteration to find valid requests without allocation
    - **File**: `src/lib/rate-limit.ts`
    - **Impact**: O(k) eviction instead of O(n log n), reduced memory pressure
+8. **Fixed**: setTimeout cleanup for memory leak prevention (PR #1509)
+   - **Problem**: Multiple components had `setTimeout` calls without cleanup, causing potential memory leaks when components unmount
+   - **Solution**: Added cleanup patterns - `isCancelled` flag for async operations, `useRef` for timeout IDs, cleanup functions in useEffect
+   - **Files**: BlueprintDisplay.tsx, ClarificationFlow.tsx, Dashboard page.tsx
+   - **Impact**: Prevents stale state updates and memory leaks on component unmount
 
 ### Verified Issues (Already Resolved)
 
