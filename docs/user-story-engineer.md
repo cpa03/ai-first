@@ -44,6 +44,14 @@ Then [expected outcome]
 - **S**mall - Completable in one sprint
 - **T**estable - Verifiable acceptance criteria
 
+### Definition of Ready Summary
+
+- [ ] Story follows standard format
+- [ ] Acceptance criteria are testable
+- [ ] Priority and story points assigned
+- [ ] No unresolved questions
+- [ ] Dependencies documented
+
 ### Definition of Done Summary
 
 - [ ] No TypeScript errors
@@ -159,6 +167,50 @@ And I should receive a breakdown within 60 seconds
 3. **Be Testable**: Each criterion should be verifiable
 4. **Be Concise**: One criterion per line, clear language
 5. **Prioritize**: Mark criteria as required/optional if needed
+
+## Definition of Ready (DoR)
+
+A user story is "Ready" to be worked on when all of the following criteria are met:
+
+### Story Quality
+
+- [ ] Story follows the standard format (As a... I want... So that...)
+- [ ] Story meets all INVEST criteria
+- [ ] Story has clear, testable acceptance criteria
+- [ ] Story includes appropriate persona reference
+- [ ] Story has been reviewed by product owner
+
+### Clarity & Scope
+
+- [ ] Story is small enough to complete in one sprint (≤8 story points)
+- [ ] Story has no unresolved questions or ambiguities
+- [ ] Technical approach is understood by the team
+- [ ] Dependencies on other stories are documented and resolved
+
+### Priority & Estimation
+
+- [ ] Priority label assigned (P0/P1/P2/P3)
+- [ ] Story points estimated by the team
+- [ ] Story is in the sprint backlog
+
+### Resources
+
+- [ ] Necessary design mockups available (if UI-related)
+- [ ] API documentation available (if integration-related)
+- [ ] Technical specifications available (if complex)
+
+### Readiness Checklist Summary
+
+| Category      | Required Items                               | Status    |
+| ------------- | -------------------------------------------- | --------- |
+| Story Quality | Format, INVEST, Acceptance Criteria, Persona | ☐ All met |
+| Clarity       | Scope defined, No blockers, Tech approach    | ☐ All met |
+| Priority      | Label, Points, Backlog position              | ☐ All met |
+| Resources     | Mockups, Docs, Specs                         | ☐ All met |
+
+**A story should NOT be pulled into a sprint if any Required item is missing.**
+
+---
 
 ## Definition of Done (DoD)
 
