@@ -145,6 +145,7 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 | 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring              |
 | 2026-02-20 | #878 - Rate Limiting for CSP Report Endpoint   | ✅ Implemented   | Added rate limiting (60 req/min) to prevent DoS abuse    |
 | 2026-02-20 | #1171 - Health Endpoint Sensitive Var Filter   | ✅ Implemented   | Added OAUTH, WEBHOOK, SALT, HMAC, APIKEY patterns        |
+| 2026-02-20 | #1171 - PII Redaction Enhancement              | ✅ Implemented   | Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns    |
 
 ## Current npm Audit Status (2026-02-18)
 
@@ -188,4 +189,4 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 
 ---
 
-_Last Updated: 2026-02-19_
+_Last Updated: 2026-02-20_

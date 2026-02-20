@@ -160,9 +160,10 @@ export function redactPII(text: string): string {
 /**
  * Combined regex for sensitive field detection to avoid iterating through an array
  * SECURITY: Includes common sensitive fields like CVV, CVC, PIN to prevent accidental logging.
+ * Updated: Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns (Issue #1171).
  */
 const SENSITIVE_FIELD_REGEX =
-  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd/i;
+  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd|iban|swift|bic|tax[-_]?id|nino|ni[-_]?num|license|licence/i;
 
 const SAFE_FIELDS_SET = new Set<string>(
   PII_REDACTION_CONFIG.SAFE_FIELDS.map((f) => f.toLowerCase())

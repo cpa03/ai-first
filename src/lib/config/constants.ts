@@ -653,6 +653,17 @@ export const PII_REDACTION_CONFIG = {
     'oauth',
     'cert',
     'pwd',
+    // Additional banking/financial patterns (Issue #1171 security hardening)
+    'iban',
+    'swift',
+    'bic',
+    // Tax/identification patterns
+    'tax[-_ ]?id',
+    'nino',
+    'ni[-_ ]?number',
+    // License patterns
+    'license',
+    'licence',
   ] as const,
 
   /**
