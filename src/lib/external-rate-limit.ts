@@ -97,13 +97,19 @@ class ExternalRateLimitTracker {
   constructor(config: Partial<ExternalRateLimitConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...config };
 
-    // Start periodic cleanup
-    this.startCleanupInterval();
+    // RELIABILITY: Only start cleanup interval in production to avoid open handles in tests
+    if (
+      typeof process !== 'undefined' &&
+      process.env.NODE_ENV === 'production' &&
+      !process.env.JEST_WORKER_ID &&
+      !process.env.VITEST_WORKER_ID
+    ) {
+      this.startCleanupInterval();
 
-    // Register cleanup on shutdown
-    resourceCleanupManager.register('external-rate-limit-cleanup', () =>
-      this.cleanup()
-    );
+      resourceCleanupManager.register('external-rate-limit-cleanup', () =>
+        this.cleanup()
+      );
+    }
   }
 
   /**
@@ -299,11 +305,17 @@ class ExternalRateLimitTracker {
   private startCleanupInterval(): void {
     if (this.cleanupIntervalId) return;
 
-    // Run cleanup every 5 minutes
     this.cleanupIntervalId = setInterval(
       () => this.cleanupExpired(),
       5 * 60 * 1000
     );
+
+    if (
+      this.cleanupIntervalId &&
+      typeof (this.cleanupIntervalId as NodeJS.Timeout).unref === 'function'
+    ) {
+      (this.cleanupIntervalId as NodeJS.Timeout).unref();
+    }
   }
 
   /**
