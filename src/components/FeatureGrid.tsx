@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { ANIMATION_DELAYS } from '@/lib/config';
 
 interface Feature {
@@ -30,7 +30,7 @@ const features: Feature[] = [
   },
 ];
 
-export default function FeatureGrid() {
+function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -117,3 +117,5 @@ export default function FeatureGrid() {
     </section>
   );
 }
+
+export default memo(FeatureGridComponent);
