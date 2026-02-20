@@ -1099,6 +1099,7 @@ export const HTTP_HEADERS = {
   X_RATELIMIT_LIMIT: 'X-RateLimit-Limit',
   X_RATELIMIT_REMAINING: 'X-RateLimit-Remaining',
   X_RATELIMIT_RESET: 'X-RateLimit-Reset',
+  X_API_VERSION: 'X-API-Version',
 } as const;
 
 /**
