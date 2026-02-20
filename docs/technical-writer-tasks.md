@@ -1915,6 +1915,55 @@ All documentation files are current, links are valid, and quality gates pass. Op
 
 ---
 
+### Task 25: Add Task-Management Subdirectory Components to README ✅ COMPLETE
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-20
+
+#### Objectives
+
+- Add individual task-management component files to README.md project structure
+- Ensure documentation accurately reflects all React components
+- Maintain single source of truth for project structure
+
+#### Issues Found
+
+1. **README.md Project Structure**: The `/task-management/` directory was listed but individual files were not documented
+   - Three components exist in `src/components/task-management/`:
+     - `DeliverableCard.tsx` - Deliverable card with tasks list
+     - `TaskItem.tsx` - Individual task item with status toggle
+     - `TaskManagementHeader.tsx` - Header with progress stats
+
+#### Completed Work
+
+1. **Updated README.md**
+   - Expanded `/task-management/` entry to show individual component files
+   - Added descriptions for each component
+   - Follows the same pattern as `/resilience/` directory structure
+
+#### Verification
+
+- `npm run lint`: ✅ 0 errors, 0 warnings
+- `npm run type-check`: ✅ 0 errors
+- `npm run build`: ✅ Build successful (28 routes)
+- Documentation matches actual implementation
+
+#### Files Modified
+
+- `README.md` (UPDATED - expanded task-management directory documentation)
+
+#### Success Criteria Met
+
+- [x] Task-management components documented in README
+- [x] Documentation matches implementation
+- [x] Lint passes (0 errors)
+- [x] Type-check passes (0 errors)
+- [x] Build succeeds
+- [x] All changes committed with proper format
+
+---
+
 **Last Updated**: 2026-02-20
 **Agent**: Technical Writer
-**Documentation Version**: 0.6.0
+**Documentation Version**: 0.6.1
