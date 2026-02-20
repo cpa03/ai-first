@@ -35,6 +35,18 @@ Then [expected outcome]
 | `P2`  | Could Have  | Nice to have            |
 | `P3`  | Won't Have  | Explicitly deferred     |
 
+### Story Points Quick Reference
+
+| Points | Complexity | Time Estimate |
+| ------ | ---------- | ------------- |
+| 1      | Trivial    | < 1 hour      |
+| 2      | Simple     | 1-2 hours     |
+| 3      | Medium     | 2-4 hours     |
+| 5      | Complex    | 4-8 hours     |
+| 8      | Large      | 1-2 days      |
+| 13     | Very Large | 2-3 days      |
+| ?      | Unknown    | Needs spike   |
+
 ### INVEST Checklist
 
 - **I**ndependent - No blocking dependencies
@@ -294,6 +306,77 @@ A user story is "Done" when:
 2. "As a user, I want to export my plan to Notion"
 3. "As a user, I want to export my plan to Trello"
 4. "As a user, I want to export my plan to GitHub Projects"
+
+## Story Points Estimation Guide
+
+### Fibonacci Scale
+
+IdeaFlow uses the Fibonacci sequence for story point estimation:
+
+| Points | Complexity      | Time Estimate   | Example                                         |
+| ------ | --------------- | --------------- | ----------------------------------------------- |
+| **1**  | Trivial         | < 1 hour        | Fix typo, add log statement                     |
+| **2**  | Simple          | 1-2 hours       | Add form field, small UI tweak                  |
+| **3**  | Straightforward | 2-4 hours       | Simple CRUD operation, basic validation         |
+| **5**  | Medium          | 4-8 hours       | Feature with clear requirements, known patterns |
+| **8**  | Complex         | 1-2 days        | Multi-component feature, some unknowns          |
+| **13** | Very Complex    | 2-3 days        | Significant feature, integration required       |
+| **21** | Epic            | 3-5 days        | Should be decomposed into smaller stories       |
+| **?**  | Unknown         | Cannot estimate | Needs spike/research first                      |
+
+### Estimation Considerations
+
+When estimating story points, consider:
+
+1. **Complexity**: How difficult is the implementation?
+2. **Uncertainty**: How much is unknown about the solution?
+3. **Dependencies**: Are there external dependencies?
+4. **Risk**: What could go wrong?
+5. **Effort**: How much work is actually required?
+
+### Estimation Anti-Patterns
+
+| Anti-Pattern            | Problem                         | Solution                                |
+| ----------------------- | ------------------------------- | --------------------------------------- |
+| Padding estimates       | Inflates velocity, hides issues | Estimate honestly, track actuals        |
+| Averaging team opinions | Loses important context         | Discuss outliers, reach consensus       |
+| Ignoring tech debt      | Accumulates over time           | Include refactoring in estimates        |
+| One-person estimation   | Missing perspectives            | Use planning poker with team            |
+| Perfect precision       | Wastes time on false precision  | Use relative sizing, accept uncertainty |
+
+### Planning Poker Process
+
+1. **Read Story**: Product owner reads the user story
+2. **Discuss**: Team asks clarifying questions
+3. **Estimate**: Each member selects a card privately
+4. **Reveal**: All cards revealed simultaneously
+5. **Discuss Outliers**: High/low estimates explain reasoning
+6. **Consensus**: Re-vote until consensus (or accept majority)
+
+### Quick Estimation Checklist
+
+- [ ] Story meets INVEST criteria
+- [ ] Acceptance criteria are clear
+- [ ] Technical approach is understood
+- [ ] Dependencies are identified
+- [ ] Similar stories have been estimated before (for reference)
+- [ ] Team has necessary skills/knowledge
+
+### Velocity Tracking
+
+Track team velocity to improve estimation accuracy:
+
+```
+Velocity = Total Story Points Completed / Sprint
+```
+
+| Metric                     | Purpose                        |
+| -------------------------- | ------------------------------ |
+| **Average Velocity**       | Sprint planning baseline       |
+| **Velocity Trend**         | Team improvement over time     |
+| **Commitment Reliability** | Committed vs. completed points |
+
+---
 
 ## Integration with IdeaFlow
 
