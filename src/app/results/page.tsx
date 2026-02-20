@@ -276,7 +276,7 @@ function ResultsContent() {
             aria-label="Export to Notion - Coming soon, this feature is not yet available"
           >
             Export to Notion
-            <span className="ml-2 text-xs bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full">
+            <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
               Coming Soon
             </span>
           </Button>

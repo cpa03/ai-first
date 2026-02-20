@@ -688,3 +688,30 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Coming Soon Badge Animation - Subtle pulse for feature announcements */
+/* Draws gentle attention to upcoming features without being distracting */
+@keyframes comingSoonPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-coming-soon-badge {
+  animation: comingSoonPulse 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for coming soon badge */
+@media (prefers-reduced-motion: reduce) {
+  .animate-coming-soon-badge {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
