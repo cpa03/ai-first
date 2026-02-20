@@ -8,6 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { rateLimitConfigs } from '@/lib/rate-limit';
+import { buildApiUrl } from './config/test-config';
 
 jest.mock('@/lib/rate-limit', () => ({
   checkRateLimit: jest.fn(),
@@ -50,7 +51,7 @@ describe('withApiHandler', () => {
     it('should generate and inject request ID', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -72,7 +73,7 @@ describe('withApiHandler', () => {
     it('should pass ApiContext to handler with request ID', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -95,7 +96,7 @@ describe('withApiHandler', () => {
     it('should allow request through when rate limit check passes', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('Success'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -122,7 +123,7 @@ describe('withApiHandler', () => {
         )
       );
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -143,7 +144,7 @@ describe('withApiHandler', () => {
     it('should use lenient config by default', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -167,7 +168,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler as any, {
         rateLimit: 'strict',
       });
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -189,7 +190,7 @@ describe('withApiHandler', () => {
     it('should extract IP from x-forwarded-for header', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test', {
+      const request = new NextRequest(buildApiUrl('/test'), {
         headers: { 'x-forwarded-for': '192.168.1.1' },
       });
 
@@ -213,7 +214,7 @@ describe('withApiHandler', () => {
     it('should return rate limit response when limit exceeded', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
       const resetTime = Date.now() + 60000;
 
       mockCheckRateLimit.mockReturnValue({
@@ -245,7 +246,7 @@ describe('withApiHandler', () => {
     it('should not call handler when rate limit exceeded', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: false,
@@ -273,7 +274,7 @@ describe('withApiHandler', () => {
           new AppError('Test error', ErrorCode.VALIDATION_ERROR, 400)
         );
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -299,7 +300,7 @@ describe('withApiHandler', () => {
           new AppError('Test error', ErrorCode.INTERNAL_ERROR, 500)
         );
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -320,7 +321,7 @@ describe('withApiHandler', () => {
         .fn()
         .mockRejectedValue(new Error('Standard error'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -341,7 +342,7 @@ describe('withApiHandler', () => {
     it('should handle non-Error thrown values', async () => {
       const mockHandler = jest.fn().mockRejectedValue('String error');
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -365,7 +366,7 @@ describe('withApiHandler', () => {
         code: 'CUSTOM_ERROR',
       });
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -386,7 +387,7 @@ describe('withApiHandler', () => {
     it('should handle null thrown value', async () => {
       const mockHandler = jest.fn().mockRejectedValue(null);
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: true,
@@ -409,7 +410,7 @@ describe('withApiHandler', () => {
     it('should validate request size by default', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test', {
+      const request = new NextRequest(buildApiUrl('/test'), {
         method: 'POST',
         body: JSON.stringify({ data: 'test' }),
       });
@@ -433,7 +434,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler as any, {
         validateSize: false,
       });
-      const request = new NextRequest('http://localhost/api/test', {
+      const request = new NextRequest(buildApiUrl('/test'), {
         method: 'POST',
         body: JSON.stringify({ data: 'test' }),
       });
@@ -455,7 +456,7 @@ describe('withApiHandler', () => {
     it('should handle size validation error', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test', {
+      const request = new NextRequest(buildApiUrl('/test'), {
         method: 'POST',
         body: JSON.stringify({ data: 'x'.repeat(10 * 1024 * 1024) }),
         headers: { 'content-length': String(10 * 1024 * 1024 + 1) },
@@ -490,7 +491,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler as any, {
         rateLimit: 'moderate',
       });
-      const request = new NextRequest('http://localhost/api/test', {
+      const request = new NextRequest(buildApiUrl('/test'), {
         headers: { 'x-forwarded-for': '10.0.0.1' },
       });
 
@@ -516,7 +517,7 @@ describe('withApiHandler', () => {
     it('should prioritize rate limit check over handler execution', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
       const wrapped = withApiHandler(mockHandler as any);
-      const request = new NextRequest('http://localhost/api/test');
+      const request = new NextRequest(buildApiUrl('/test'));
 
       mockCheckRateLimit.mockReturnValue({
         allowed: false,

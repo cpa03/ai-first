@@ -14,6 +14,7 @@ jest.mock('@/lib/auth', () => ({
 
 import { GET } from '@/app/api/ideas/[id]/tasks/route';
 import { dbService } from '@/lib/db';
+import { buildApiUrl } from './config/test-config';
 
 describe('/api/ideas/[id]/tasks GET', () => {
   beforeEach(() => {
@@ -44,7 +45,7 @@ describe('/api/ideas/[id]/tasks GET', () => {
       mockDeliverablesWithTasks
     );
 
-    const request = new Request(`http://localhost/api/ideas/${ideaId}/tasks`);
+    const request = new Request(buildApiUrl(`/ideas/${ideaId}/tasks`));
     const response = await GET(request as any);
     const data = await response.json();
 
@@ -76,7 +77,7 @@ describe('/api/ideas/[id]/tasks GET', () => {
       mockDeliverablesWithTasks
     );
 
-    const request = new Request(`http://localhost/api/ideas/${ideaId}/tasks`);
+    const request = new Request(buildApiUrl(`/ideas/${ideaId}/tasks`));
     const response = await GET(request as any);
     const data = await response.json();
 
