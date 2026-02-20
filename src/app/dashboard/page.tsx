@@ -169,17 +169,22 @@ export default function DashboardPage() {
 
   // Handle focus when modal opens/closes
   useEffect(() => {
+    let focusTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
     if (deleteModal.isOpen) {
-      // Store the previously focused element
       previousFocusRef.current = document.activeElement as HTMLElement;
-      // Move focus to the cancel button when modal opens
-      setTimeout(() => {
+      focusTimeoutId = setTimeout(() => {
         cancelButtonRef.current?.focus();
       }, 0);
     } else if (previousFocusRef.current) {
-      // Return focus to the trigger element when modal closes
       previousFocusRef.current.focus();
     }
+
+    return () => {
+      if (focusTimeoutId) {
+        clearTimeout(focusTimeoutId);
+      }
+    };
   }, [deleteModal.isOpen]);
 
   // Handle keyboard events for focus trap and escape

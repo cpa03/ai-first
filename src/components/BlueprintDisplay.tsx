@@ -39,10 +39,15 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   }, []);
 
   useEffect(() => {
+    let isCancelled = false;
+
     const generateBlueprint = async () => {
       await new Promise((resolve) =>
         setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
       );
+
+      // Prevent state updates if component unmounted during generation
+      if (isCancelled) return;
 
       const generatedBlueprint = generateBlueprintTemplate(idea, answers);
 
@@ -52,6 +57,10 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     };
 
     generateBlueprint();
+
+    return () => {
+      isCancelled = true;
+    };
   }, [idea, answers]);
 
   const handleDownload = () => {
