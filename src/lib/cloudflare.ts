@@ -9,6 +9,8 @@
  * @see https://developers.cloudflare.com/workers/runtime-apis/request/
  */
 
+import { PLATFORM_ENV_VARS } from './config/constants';
+
 /**
  * Cloudflare-specific headers that are added to requests
  * @see https://developers.cloudflare.com/fundamentals/reference/http-headers/
@@ -77,25 +79,9 @@ export const CLOUDFLARE_HEADERS = {
 /**
  * Cloudflare environment variables that indicate a Workers or Pages environment
  * @see https://developers.cloudflare.com/pages/platform/build-configuration/
+ * @deprecated Use PLATFORM_ENV_VARS.CLOUDFLARE from config/constants instead
  */
-export const CLOUDFLARE_ENV_VARS = {
-  /** Set automatically by Cloudflare Workers runtime */
-  CF_WORKER: 'CF_WORKER',
-  /** Alternative indicator for Cloudflare environment */
-  CLOUDFLARE: 'CLOUDFLARE',
-  /** Set by Cloudflare Workers for the request context */
-  CLOUDFLARE_WORKERS: 'CLOUDFLARE_WORKERS',
-  /** Set when running in Cloudflare Pages environment */
-  CF_PAGES: 'CF_PAGES',
-  /** Cloudflare Pages branch name */
-  CF_PAGES_BRANCH: 'CF_PAGES_BRANCH',
-  /** Cloudflare Pages commit SHA */
-  CF_PAGES_COMMIT_SHA: 'CF_PAGES_COMMIT_SHA',
-  /** Cloudflare Pages deployment URL */
-  CF_PAGES_URL: 'CF_PAGES_URL',
-  /** Cloudflare account ID */
-  CF_ACCOUNT_ID: 'CF_ACCOUNT_ID',
-} as const;
+export const CLOUDFLARE_ENV_VARS = PLATFORM_ENV_VARS.CLOUDFLARE;
 
 /**
  * Cache status values returned by CF-Cache-Status header
@@ -419,7 +405,8 @@ export function detectPlatform(): 'cloudflare' | 'vercel' | 'unknown' {
     return 'cloudflare';
   }
 
-  if (process.env.VERCEL || process.env.NEXT_PUBLIC_VERCEL_URL) {
+  const { VERCEL, NEXT_PUBLIC_VERCEL_URL } = PLATFORM_ENV_VARS.VERCEL;
+  if (process.env[VERCEL] || process.env[NEXT_PUBLIC_VERCEL_URL]) {
     return 'vercel';
   }
 
@@ -439,7 +426,10 @@ export function getExecutionContext(): ExecutionContext {
   const isProduction = nodeEnv === 'production';
 
   const nodeVersion = isNode ? process.versions.node : null;
-  const region = process.env.VERCEL_REGION || process.env.CF_REGION || null;
+  const region =
+    process.env[PLATFORM_ENV_VARS.VERCEL.VERCEL_REGION] ||
+    process.env[PLATFORM_ENV_VARS.CLOUDFLARE.CF_REGION] ||
+    null;
 
   return {
     platform: isNode && platform === 'unknown' ? 'node' : platform,
