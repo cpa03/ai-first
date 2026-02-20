@@ -3,6 +3,8 @@
  * Centralizes all app metadata, branding, environment variables, and constants
  */
 
+import { PLATFORM_ENV_VARS } from './constants';
+
 export const APP_CONFIG = {
   NAME: 'IdeaFlow',
   VERSION: '1.0.0',
@@ -58,7 +60,12 @@ export const APP_CONFIG = {
 
     AI_PROVIDERS: ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY'] as const,
 
-    OPTIONAL: ['NODE_ENV', 'VERCEL', 'CF_WORKER', 'CLOUDFLARE'] as const,
+    OPTIONAL: [
+      'NODE_ENV',
+      PLATFORM_ENV_VARS.VERCEL.VERCEL,
+      PLATFORM_ENV_VARS.CLOUDFLARE.CF_WORKER,
+      PLATFORM_ENV_VARS.CLOUDFLARE.CLOUDFLARE,
+    ] as const,
   },
 
   HEALTH_STATUS: {
