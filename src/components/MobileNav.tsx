@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { memo, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UI_CONFIG } from '@/lib/config';
@@ -22,7 +22,7 @@ const navLinks: NavLink[] = [
   { href: '/results', label: 'Results', ariaLabel: 'Navigate to results page' },
 ];
 
-export default function MobileNav() {
+function MobileNavComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -31,10 +31,13 @@ export default function MobileNav() {
   const lastMenuItemRef = useRef<HTMLAnchorElement>(null);
   const pathname = usePathname();
 
-  const isActive = (href: string): boolean => {
-    if (href === '/') return pathname === '/';
-    return pathname === href || pathname.startsWith(href);
-  };
+  const isActive = useCallback(
+    (href: string): boolean => {
+      if (href === '/') return pathname === '/';
+      return pathname === href || pathname.startsWith(href);
+    },
+    [pathname]
+  );
 
   useEffect(() => {
     const checkMobile = () => {
@@ -244,3 +247,5 @@ export default function MobileNav() {
     </nav>
   );
 }
+
+export default memo(MobileNavComponent);
