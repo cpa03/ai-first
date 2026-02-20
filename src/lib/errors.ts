@@ -1,7 +1,39 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
+import * as crypto from 'crypto';
 
 const API_VERSION = '1.0.0';
+
+const LONG_NUMBER_PATTERN = /\d{4,}/g;
+const UUID_PATTERN =
+  /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi;
+const IP_ADDRESS_PATTERN = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
+const FINGERPRINT_HASH_LENGTH = 12;
+
+export function generateErrorFingerprint(
+  code: ErrorCode | string,
+  message: string,
+  stackFirstLine?: string
+): string {
+  const normalizedMessage = message
+    .replace(UUID_PATTERN, 'UUID')
+    .replace(IP_ADDRESS_PATTERN, 'IP')
+    .replace(LONG_NUMBER_PATTERN, 'N')
+    .toLowerCase()
+    .trim();
+
+  const fingerprintInput = stackFirstLine
+    ? `${code}:${normalizedMessage}:${stackFirstLine}`
+    : `${code}:${normalizedMessage}`;
+
+  const hash = crypto
+    .createHash('sha256')
+    .update(fingerprintInput)
+    .digest('hex')
+    .substring(0, FINGERPRINT_HASH_LENGTH);
+
+  return `fp_${hash}`;
+}
 
 export interface ErrorDetail {
   field?: string;
@@ -12,6 +44,7 @@ export interface ErrorDetail {
 export interface ErrorResponse {
   error: string;
   code: string;
+  fingerprint?: string;
   details?: ErrorDetail[];
   timestamp: string;
   requestId?: string;
@@ -35,6 +68,8 @@ export enum ErrorCode {
 }
 
 export class AppError extends Error {
+  private _fingerprint?: string;
+
   constructor(
     message: string,
     public readonly code: ErrorCode,
@@ -48,10 +83,23 @@ export class AppError extends Error {
     Error.captureStackTrace(this, this.constructor);
   }
 
+  get fingerprint(): string {
+    if (!this._fingerprint) {
+      const stackFirstLine = this.stack?.split('\n')[1]?.trim();
+      this._fingerprint = generateErrorFingerprint(
+        this.code,
+        this.message,
+        stackFirstLine
+      );
+    }
+    return this._fingerprint;
+  }
+
   toJSON(): ErrorResponse {
     return {
       error: redactPII(this.message),
       code: this.code,
+      fingerprint: this.fingerprint,
       details: this.details
         ? (redactPIIInObject(this.details) as unknown as ErrorDetail[])
         : undefined,
@@ -258,6 +306,7 @@ export function toErrorResponse(
     'Content-Type': 'application/json',
     'X-Request-ID': errorResponse.requestId || '',
     'X-Error-Code': appError.code,
+    'X-Error-Fingerprint': appError.fingerprint,
     'X-Retryable': String(appError.retryable),
     'X-API-Version': API_VERSION,
   };
