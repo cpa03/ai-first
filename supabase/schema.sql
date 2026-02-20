@@ -214,7 +214,7 @@ CREATE TABLE risk_assessments (
     risk_factor TEXT NOT NULL,
     impact_level TEXT CHECK (impact_level IN ('very_low', 'low', 'medium', 'high', 'very_high')),
     probability_level TEXT CHECK (probability_level IN ('very_low', 'low', 'medium', 'high', 'very_high')),
-    risk_score DECIMAL(3,2) CHECK (risk_score >= 0 AND risk_score <= 100),
+    risk_score DECIMAL(5,2) CHECK (risk_score >= 0 AND risk_score <= 100),
     mitigation_strategy TEXT,
     status TEXT DEFAULT 'open' CHECK (status IN ('open', 'mitigated', 'accepted', 'closed')),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

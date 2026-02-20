@@ -379,7 +379,7 @@ interface ClarificationAnswer {
 | risk_factor         | TEXT         | NOT NULL                               | Description of risk                                 |
 | impact_level        | TEXT         | CHECK                                  | Impact: very_low, low, medium, high, very_high      |
 | probability_level   | TEXT         | CHECK                                  | Probability: very_low, low, medium, high, very_high |
-| risk_score          | DECIMAL(3,2) | NULLABLE                               | Calculated risk score                               |
+| risk_score          | DECIMAL(5,2) | NULLABLE                               | Calculated risk score (0-100)                       |
 | mitigation_strategy | TEXT         | NULLABLE                               | Mitigation plan                                     |
 | status              | TEXT         | DEFAULT 'open', CHECK                  | Status: open, mitigated, accepted, closed           |
 | created_at          | TIMESTAMPTZ  | DEFAULT NOW()                          | Creation timestamp                                  |
@@ -945,6 +945,7 @@ Located in `/supabase/migrations/`:
 | 002_data_integrity_constraints.sql                | Adds CHECK constraints              |
 | 002_schema_optimization.sql                       | Performance optimizations           |
 | 003_vectors_pgvector_support.sql                  | Vector extension setup              |
+| 004_risk_assessments_not_null_constraints.sql     | Risk assessments NOT NULL           |
 | 005_risk_assessments_constraints_fix.sql          | Risk assessments constraint fix     |
 | 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns          |
 | 20260120_add_clarification_tables_and_indexes.sql | Clarification tables                |
@@ -953,7 +954,10 @@ Located in `/supabase/migrations/`:
 | 20260218_add_missing_rls_policies.sql             | Missing RLS policies (#1189, #1172) |
 | 20260218_vector_index_maintenance.sql             | Vector index maintenance utilities  |
 | 20260218_add_task_dependencies_updated_at.sql     | Task dependencies updated_at        |
+| 20260219_add_date_integrity_constraints.sql       | Date integrity constraints          |
 | 20260219_add_idea_sessions_updated_at_trigger.sql | Idea sessions updated_at trigger    |
+| 20260219_add_task_assignments_updated_at.sql      | Task assignments updated_at         |
+| 20260220_fix_risk_score_data_type.sql             | Fix risk_score DECIMAL type (#1172) |
 
 ### Migration Best Practices
 
@@ -1040,6 +1044,20 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-20 - Risk Score Data Type Fix
+
+#### Bug Fix
+
+1. **Fixed risk_score data type mismatch in risk_assessments table**
+   - Migration `20260220_fix_risk_score_data_type.sql` fixes data type
+   - Addresses GitHub Issue #1172 (Database architecture quality)
+   - Changed `DECIMAL(3,2)` to `DECIMAL(5,2)` to properly support 0-100 range
+   - The CHECK constraint allows 0-100 but DECIMAL(3,2) could only store up to 9.99
+
+2. **Down migration included**
+   - `20260220_fix_risk_score_data_type.down.sql` allows safe rollback
+   - Warning: Rollback will fail if any risk_score values exceed 9.99
 
 ### 2026-02-19 - Date Integrity Constraints
 
