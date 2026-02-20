@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
@@ -79,36 +79,42 @@ export default function SignupPage() {
     }
   };
 
-  const handleOAuthSignUp = async (provider: 'google' | 'github') => {
-    setIsLoading(true);
-    setError(null);
+  const handleOAuthSignUp = useCallback(
+    async (provider: 'google' | 'github') => {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      if (!supabaseClient) {
-        throw new Error('Authentication service not available');
+      try {
+        if (!supabaseClient) {
+          throw new Error('Authentication service not available');
+        }
+
+        const { error: oauthError } = await supabaseClient.auth.signInWithOAuth(
+          {
+            provider,
+            options: {
+              redirectTo: `${window.location.origin}/auth/callback`,
+            },
+          }
+        );
+
+        if (oauthError) {
+          throw oauthError;
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : `Failed to sign up with ${provider}`;
+        setError(
+          errorMessage ||
+            `Failed to sign up with ${provider}. Please try again.`
+        );
+        setIsLoading(false);
       }
-
-      const { error: oauthError } = await supabaseClient.auth.signInWithOAuth({
-        provider,
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (oauthError) {
-        throw oauthError;
-      }
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : `Failed to sign up with ${provider}`;
-      setError(
-        errorMessage || `Failed to sign up with ${provider}. Please try again.`
-      );
-      setIsLoading(false);
-    }
-  };
+    },
+    []
+  );
 
   if (success) {
     return (
