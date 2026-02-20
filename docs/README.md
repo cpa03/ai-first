@@ -6,18 +6,20 @@ Complete index of all IdeaFlow documentation.
 
 ### Common Commands
 
-| Command              | Description                                  |
-| -------------------- | -------------------------------------------- |
-| `npm run dev`        | Start development server                     |
-| `npm run dev:check`  | Start dev server with environment validation |
-| `npm run build`      | Build for production                         |
-| `npm run lint`       | Run ESLint with 0 warnings allowed           |
-| `npm run type-check` | Run TypeScript type checking                 |
-| `npm test`           | Run all tests                                |
-| `npm run test:watch` | Run tests in watch mode                      |
-| `npm run check`      | Run lint + type-check + tests                |
-| `npm run env:check`  | Validate environment variables               |
-| `npm run db:migrate` | Run database migrations                      |
+| Command                | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `npm run dev`          | Start development server                     |
+| `npm run dev:check`    | Start dev server with environment validation |
+| `npm run build`        | Build for production                         |
+| `npm run lint`         | Run ESLint with 0 warnings allowed           |
+| `npm run lint:fix`     | Run ESLint with auto-fix                     |
+| `npm run type-check`   | Run TypeScript type checking                 |
+| `npm test`             | Run all tests                                |
+| `npm run test:watch`   | Run tests in watch mode                      |
+| `npm run test:changed` | Run only tests for changed files             |
+| `npm run check`        | Run lint + type-check + tests                |
+| `npm run env:check`    | Validate environment variables               |
+| `npm run db:migrate`   | Run database migrations                      |
 
 ### Quick Start for New Developers
 
