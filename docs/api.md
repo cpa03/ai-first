@@ -207,6 +207,18 @@ async function resilientCall(url: string, data: any) {
 }
 ```
 
+### Quick Reference: Error Handling by Scenario
+
+| Scenario                 | Error Code               | Action               | Example                                         |
+| ------------------------ | ------------------------ | -------------------- | ----------------------------------------------- |
+| **Invalid request body** | `VALIDATION_ERROR`       | Fix request fields   | Check `details` array for field-specific errors |
+| **Rate limit hit**       | `RATE_LIMIT_EXCEEDED`    | Wait and retry       | Use `Retry-After` header value                  |
+| **AI service down**      | `CIRCUIT_BREAKER_OPEN`   | Wait for reset       | Check `nextAttemptTime` in response             |
+| **Database timeout**     | `TIMEOUT_ERROR`          | Retry with backoff   | Use exponential backoff (1s, 2s, 4s)            |
+| **Auth token expired**   | `AUTHENTICATION_ERROR`   | Re-authenticate      | Refresh token or re-login                       |
+| **Resource not found**   | `NOT_FOUND`              | Check resource ID    | Verify ID exists and you have access            |
+| **External API error**   | `EXTERNAL_SERVICE_ERROR` | Check service status | Monitor `/api/health/detailed`                  |
+
 ---
 
 ## Health Endpoints

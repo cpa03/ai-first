@@ -452,7 +452,7 @@ Monitor errors via:
 
 ### Middleware Support
 
-OpenNext Cloudflare has limited middleware support. Node.js middleware (introduced in Next.js 15.2) is not yet supported. For security headers like CSP:
+OpenNext Cloudflare has limited middleware support. Node.js middleware (introduced in Next.js 15.2, also available in 16.x) is not yet supported. For security headers like CSP:
 
 1. **Option A (Recommended)**: Use `public/_headers` file - already configured with CSP
    - Content-Security-Policy is set for all routes
