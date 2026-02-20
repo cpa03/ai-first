@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
@@ -43,77 +43,87 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     setIsMac(navigator.platform.includes('Mac'));
   }, []);
 
-  const handleIdeaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newValue = e.target.value;
-    setIdea(newValue);
-    setValidationError(validateIdea(newValue));
-  };
+  const handleIdeaChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      const newValue = e.target.value;
+      setIdea(newValue);
+      setValidationError(validateIdea(newValue));
+    },
+    []
+  );
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Submit on Cmd/Ctrl + Enter
-    if (
-      (e.metaKey || e.ctrlKey) &&
-      e.key === 'Enter' &&
-      !isSubmitting &&
-      idea.trim() &&
-      !validationError
-    ) {
+  // PERFORMANCE: Define handleSubmit first so it can be referenced in handleKeyDown
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
       e.preventDefault();
-      handleSubmit(e as unknown as React.FormEvent);
-    }
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const validationError = validateIdea(idea);
-    if (validationError) {
-      setValidationError(validationError);
-      return;
-    }
-
-    setIsSubmitting(true);
-    setError(null);
-
-    try {
-      const response = await fetchWithTimeout('/api/ideas', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idea }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || MESSAGES.ERRORS.FAILED_SAVE_IDEA);
+      const validationError = validateIdea(idea);
+      if (validationError) {
+        setValidationError(validationError);
+        return;
       }
 
-      const data = await response.json();
-      const ideaId = data.data.id;
+      setIsSubmitting(true);
+      setError(null);
 
-      setSubmittedIdeaData({ idea: idea.trim(), ideaId });
-      setShowCelebration(true);
-    } catch (err) {
-      logger.errorWithContext('Failed to save idea', {
-        component: 'IdeaInput',
-        action: 'handleSubmit',
-        metadata: {
-          ideaLength: idea.length,
-          error: err instanceof Error ? err.message : 'Unknown error',
-        },
-      });
-      setError(MESSAGES.ERRORS.FAILED_SAVE_IDEA);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      try {
+        const response = await fetchWithTimeout('/api/ideas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ idea }),
+        });
 
-  const handleCelebrationComplete = () => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || MESSAGES.ERRORS.FAILED_SAVE_IDEA);
+        }
+
+        const data = await response.json();
+        const ideaId = data.data.id;
+
+        setSubmittedIdeaData({ idea: idea.trim(), ideaId });
+        setShowCelebration(true);
+      } catch (err) {
+        logger.errorWithContext('Failed to save idea', {
+          component: 'IdeaInput',
+          action: 'handleSubmit',
+          metadata: {
+            ideaLength: idea.length,
+            error: err instanceof Error ? err.message : 'Unknown error',
+          },
+        });
+        setError(MESSAGES.ERRORS.FAILED_SAVE_IDEA);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [idea, logger]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      // Submit on Cmd/Ctrl + Enter
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.key === 'Enter' &&
+        !isSubmitting &&
+        idea.trim() &&
+        !validationError
+      ) {
+        e.preventDefault();
+        handleSubmit(e as unknown as React.FormEvent);
+      }
+    },
+    [isSubmitting, idea, validationError, handleSubmit]
+  );
+
+  const handleCelebrationComplete = useCallback(() => {
     if (submittedIdeaData) {
       onSubmit(submittedIdeaData.idea, submittedIdeaData.ideaId);
     }
-  };
+  }, [submittedIdeaData, onSubmit]);
 
   return (
     <>
