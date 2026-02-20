@@ -114,7 +114,10 @@ fi
 
 # 8. Check npm audit for critical/high vulnerabilities
 echo -e "${BLUE}Running npm audit check...${NC}"
-audit_result=$(npm audit --audit-level=high --json 2>/dev/null || echo '{"metadata":{"vulnerabilities":{"critical":0,"high":0}}}')
+# SECURITY: Capture npm audit output without masking exit code
+# The --audit-level flag causes non-zero exit when vulnerabilities are found
+# We want to capture the JSON output regardless of exit code
+audit_result=$(npm audit --json 2>/dev/null) || true
 critical=$(echo "$audit_result" | node -e "const d=require('fs').readFileSync(0,'utf8');const j=JSON.parse(d);console.log(j.metadata?.vulnerabilities?.critical || 0)" 2>/dev/null || echo "0")
 high=$(echo "$audit_result" | node -e "const d=require('fs').readFileSync(0,'utf8');const j=JSON.parse(d);console.log(j.metadata?.vulnerabilities?.high || 0)" 2>/dev/null || echo "0")
 
