@@ -62,6 +62,7 @@ Complete index of all IdeaFlow documentation.
 - [Frontend Engineer](./frontend-engineer.md) - Frontend development guide
 - [Database Architect](./database-architect.md) - Database design and optimization
 - [DevOps Engineer](./devops-engineer.md) - DevOps and infrastructure
+- [DX Engineer](./dx-engineer.md) - Developer experience and tooling
 - [Integration Engineer](./integration-engineer.md) - Integration patterns
 - [API Specialist](./api-specialist.md) - API design and implementation
 
