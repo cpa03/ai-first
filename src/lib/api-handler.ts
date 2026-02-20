@@ -21,6 +21,11 @@ import {
   LogContext,
 } from '@/lib/logger';
 import { STATUS_CODES } from '@/lib/config';
+import {
+  httpRequestDuration,
+  httpRequestErrors,
+  httpRequestTotal,
+} from '@/app/api/metrics/route';
 
 /**
  * API Version for all responses
@@ -147,6 +152,18 @@ export function withApiHandler(
         );
       }
 
+      const route = new URL(request.url).pathname;
+      const statusCode = String(response.status);
+      httpRequestDuration.observe(
+        { method: request.method, route, status_code: statusCode },
+        duration / 1000
+      );
+      httpRequestTotal.inc({
+        method: request.method,
+        route,
+        status_code: statusCode,
+      });
+
       logger.infoWithContext('API request completed', logContext, {
         duration,
         status: response.status,
@@ -155,6 +172,25 @@ export function withApiHandler(
       return response;
     } catch (error) {
       const duration = Date.now() - requestStartTime;
+      const route = new URL(request.url).pathname;
+      const errorStatusCode =
+        error instanceof AppError ? String(error.statusCode) : '500';
+
+      httpRequestDuration.observe(
+        { method: request.method, route, status_code: errorStatusCode },
+        duration / 1000
+      );
+      httpRequestErrors.inc({
+        method: request.method,
+        route,
+        status_code: errorStatusCode,
+      });
+      httpRequestTotal.inc({
+        method: request.method,
+        route,
+        status_code: errorStatusCode,
+      });
+
       logger.errorWithContext('API request failed', logContext, {
         duration,
         error: error instanceof Error ? error.message : 'Unknown error',

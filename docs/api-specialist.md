@@ -234,7 +234,7 @@ Retry-After: 60  # Only on rate limit errors
 1. **API Versioning**: ~~Consider adding `/api/v1/` prefix for future breaking changes~~ ✅ PARTIAL (2026-02-20) - `X-API-Version` header now included in all responses. URL prefix `/api/v1/` still recommended for major version changes.
 2. ~~**OpenAPI Spec**: Generate OpenAPI/Swagger documentation from types~~ ✅ DONE (2026-02-19) - Complete coverage for all 24 API endpoints
 3. **API Client**: Consider generating TypeScript client from API types
-4. **Metrics**: Add endpoint-level metrics (response times, error rates)
+4. ~~**Metrics**: Add endpoint-level metrics (response times, error rates)~~ ✅ DONE (2026-02-20) - Prometheus metrics now recorded for all API requests
 5. ~~**Caching**: Add cache headers for appropriate GET endpoints~~ ✅ DONE (2026-02-18)
 6. ~~**External API Versioning**: Centralize external API version tracking~~ ✅ DONE (2026-02-18)
 7. **Batch Operations**: Consider batch endpoints for bulk operations
@@ -423,6 +423,27 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-20 - Prometheus Metrics Recording Implementation
+
+- **Feature**: Added automatic Prometheus metric recording for all API requests
+- **Change**: API handler now records request duration, total requests, and errors to Prometheus metrics
+- **Location**:
+  - `src/lib/api-handler.ts` - Added metric recording in `withApiHandler()` for success and error paths
+- **Metrics Recorded**:
+  - `http_request_duration_seconds` - Histogram of request durations (observed for all requests)
+  - `http_requests_total` - Counter of total requests by method, route, and status code
+  - `http_request_errors_total` - Counter of error requests (incremented only on errors)
+- **Labels**: All metrics include `method`, `route`, and `status_code` labels for granular analysis
+- **Impact**:
+  - Addresses Issue #874 (Missing monitoring and alerting for external integrations)
+  - Enables real-time monitoring of API performance and error rates
+  - Provides data for alerting on high error rates or slow endpoints
+  - All existing Prometheus metrics are now actively populated
+- **Build**: Passing
+- **Lint**: Passing
+- **Tests**: 31 tests passing (api-handler)
+- **Documentation**: Updated this guide
 
 ### 2026-02-20 - API Version Header Implementation
 
