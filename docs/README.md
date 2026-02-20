@@ -86,6 +86,7 @@ Complete index of all IdeaFlow documentation.
 ## Project Management
 
 - [Roadmap](./roadmap.md) - Project roadmap and milestones
+- [MVP Feature Status](./mvp-feature-status.md) - Current MVP progress dashboard
 - [Phase 1 Implementation Plan](./phase-1-implementation-plan.md) - Phase 1 detailed plan
 - [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
 - [User Story Engineer](./user-story-engineer.md) - User story writing best practices
