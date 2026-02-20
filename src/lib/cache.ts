@@ -66,15 +66,20 @@ export class Cache<T = unknown> {
       return null;
     }
 
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    const now = Date.now();
+    if (this.ttl && now - entry.timestamp > this.ttl) {
       this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
       return null;
     }
 
-    // Update access order for LRU: delete and re-insert to move to end
+    // Update access order for LRU and TTL: delete and re-insert to move to end.
+    // PERFORMANCE: By refreshing the timestamp on access, we maintain a sliding window
+    // expiration policy where LRU order matches chronological order. This allows
+    // O(1) eviction for both capacity and TTL.
     this.cache.delete(key);
+    entry.timestamp = now;
     this.cache.set(key, entry);
 
     entry.hits++;
@@ -90,15 +95,17 @@ export class Cache<T = unknown> {
       return false;
     }
 
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    const now = Date.now();
+    if (this.ttl && now - entry.timestamp > this.ttl) {
       this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
       return false;
     }
 
-    // Update access order for LRU: delete and re-insert to move to end
+    // Update access order for LRU and TTL
     this.cache.delete(key);
+    entry.timestamp = now;
     this.cache.set(key, entry);
 
     entry.hits++;
