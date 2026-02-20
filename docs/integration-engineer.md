@@ -384,6 +384,85 @@ npm test
 - Easier testing with different CLI versions
 - Better disaster recovery if primary URL is unavailable
 
+### 2026-02-20: Remove continue-on-error from CI/CD Workflows
+
+**Issue:** `continue-on-error: true` was hiding failures in CI/CD workflows (Issue #1170)
+
+**Problem:** The `continue-on-error: true` directive was used extensively across all workflow files, which:
+
+- Silently ignored Node.js installation failures
+- Silently ignored npm ci failures
+- Silently ignored main execution step failures
+- Made it impossible to detect real issues in CI
+
+**Root Cause Analysis:**
+
+1. Node.js setup steps with `continue-on-error: true` would report success even if Node.js wasn't installed
+2. `npm ci` with `continue-on-error: true` would report success even if dependencies failed to install
+3. Main execution steps with `continue-on-error: true` defeated the built-in retry logic that correctly does `exit 1` when all retries fail
+
+**Fix:** Remove all `continue-on-error: true` directives and add proper error handling:
+
+```yaml
+# Before: Silently hiding failures
+- name: Install Node.js
+  continue-on-error: true
+  uses: actions/setup-node@v4
+  with:
+    node-version: '20'
+- name: Install Dependencies
+  continue-on-error: true
+  run: npm ci
+- name: arsitek
+  timeout-minutes: 20
+  continue-on-error: true
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    # retry logic that correctly exits 1 on failure
+
+# After: Proper error reporting
+- name: Install Node.js
+  uses: actions/setup-node@v4
+  with:
+    node-version: '20'
+    cache: 'npm'
+- name: Install Dependencies
+  run: npm ci
+- name: arsitek
+  timeout-minutes: 20
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  run: |
+    # retry logic that correctly exits 1 on failure
+```
+
+**Additional Improvements:**
+
+- Added npm caching to all Node.js setup steps for faster CI
+- Standardized action versions: `actions/checkout@v5`, `actions/setup-node@v4`
+- Standardized runner: `ubuntu-24.04-arm` across all workflows
+
+**Files Modified:**
+
+- `.github/workflows/iterate.yml` (removed 15+ continue-on-error instances)
+- `.github/workflows/parallel.yml` (removed 8+ continue-on-error instances)
+- `.github/workflows/on-pull.yml` (removed 2 continue-on-error instances)
+
+**Commit:** `be88ddb` on branch `devops-cicd-reliability-fix-20260220`
+
+**Status:** ⚠️ Requires manual application - GitHub App lacks `workflows` permission to modify workflow files. A maintainer with appropriate permissions needs to either:
+
+1. Grant `workflows` permission to the GitHub Actions token
+2. Manually apply the changes from the local branch
+3. Cherry-pick the commit: `git cherry-pick be88ddb`
+
+**Impact:**
+
+- CI will now properly report failures instead of silently passing
+- Developers will get accurate feedback on build/test status
+- The retry logic built into the scripts will still work correctly
+
 ## Best Practices
 
 ### 1. Always Use Resilience Framework
