@@ -6,6 +6,11 @@ import {
   ResilienceConfig,
   type ServiceResilienceConfig,
 } from '../resilience';
+import {
+  shouldThrottleRequest,
+  captureRateLimit,
+  type ExternalRateLimitInfo,
+} from '../external-rate-limit';
 import { createLogger } from '../logger';
 import { Idea, Deliverable, Task } from '../db';
 
@@ -110,6 +115,51 @@ export abstract class ExportConnector {
       config,
       `${this.type}-${context || 'operation'}`
     );
+  }
+
+  /**
+   * Check if we should throttle requests to this service
+   * Returns the wait time in milliseconds if throttling is needed
+   */
+  protected checkRateLimit(): { throttle: boolean; waitTimeMs: number } {
+    const result = shouldThrottleRequest(this.type);
+    return {
+      throttle: result.throttle,
+      waitTimeMs: result.waitTimeMs,
+    };
+  }
+
+  /**
+   * Capture rate limit info from response headers
+   * Call this after receiving a response from an external API
+   */
+  protected captureRateLimit(
+    headers: Headers | Record<string, string | undefined>
+  ): ExternalRateLimitInfo | null {
+    return captureRateLimit(this.type, headers);
+  }
+
+  protected async executeWithRateLimitAndResilience<T>(
+    operation: () => Promise<T & { headers?: Headers }>,
+    context?: string
+  ): Promise<T> {
+    const { throttle, waitTimeMs } = this.checkRateLimit();
+    if (throttle && waitTimeMs > 0) {
+      logger.info(
+        `[${this.type}] Rate limit approaching, waiting ${waitTimeMs}ms before ${context || 'operation'}`
+      );
+      await new Promise((resolve) => setTimeout(resolve, waitTimeMs));
+    }
+
+    const result = await this.executeWithResilience(operation, context);
+
+    const hasHeaders =
+      result && typeof result === 'object' && 'headers' in result;
+    if (hasHeaders) {
+      this.captureRateLimit(result.headers as Headers);
+    }
+
+    return result;
   }
 
   protected async executeWithTimeout<T>(

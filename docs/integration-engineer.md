@@ -463,6 +463,107 @@ npm test
 - Developers will get accurate feedback on build/test status
 - The retry logic built into the scripts will still work correctly
 
+## External API Rate Limit Tracking
+
+### Overview
+
+The `ExternalRateLimitTracker` (`src/lib/external-rate-limit.ts`) provides proactive rate limit management for external API integrations. It extracts rate limit information from API response headers and provides throttling recommendations to prevent hitting rate limits.
+
+**Addresses Issue #878: Missing rate limiting and throttling management**
+
+### Supported Services
+
+| Service | Rate Limit Headers Tracked                                     |
+| ------- | -------------------------------------------------------------- |
+| OpenAI  | `x-ratelimit-remaining-requests`, `x-ratelimit-limit-requests` |
+| GitHub  | `x-ratelimit-remaining`, `x-ratelimit-limit`                   |
+| Notion  | `x-ratelimit-remaining`, `x-ratelimit-limit`                   |
+| Trello  | `x-rate-limit-api-key-remaining`, `x-rate-limit-api-key-limit` |
+
+### Usage
+
+#### Capturing Rate Limit Info
+
+```typescript
+import {
+  captureRateLimit,
+  shouldThrottleRequest,
+} from '@/lib/external-rate-limit';
+
+// After making an API call, capture rate limit headers
+const response = await fetch('https://api.github.com/...');
+const info = captureRateLimit('github', response.headers);
+
+// Check before making a request
+const { throttle, waitTimeMs, remaining } = shouldThrottleRequest('github');
+if (throttle) {
+  console.log(
+    `Approaching rate limit. ${remaining} requests remaining. Wait ${waitTimeMs}ms`
+  );
+  await new Promise((resolve) => setTimeout(resolve, waitTimeMs));
+}
+```
+
+#### Integration with Export Connectors
+
+```typescript
+// Example: Integrating with NotionExporter
+async export(data: ExportData): Promise<ExportResult> {
+  // Check rate limit before making request
+  const { throttle, waitTimeMs } = shouldThrottleRequest('notion');
+  if (throttle && waitTimeMs > 0) {
+    await new Promise(resolve => setTimeout(resolve, waitTimeMs));
+  }
+
+  const response = await this.notionClient.pages.create(data);
+
+  // Capture rate limit info from response
+  captureRateLimit('notion', response.headers);
+
+  return { success: true, data: response };
+}
+```
+
+#### Getting Statistics
+
+```typescript
+import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
+
+const tracker = getExternalRateLimitTracker();
+const stats = tracker.getStats();
+// {
+//   servicesTracked: 3,
+//   services: [
+//     { service: 'github', remaining: 4500, limit: 5000 },
+//     { service: 'notion', remaining: 80, limit: 100 },
+//     { service: 'openai', remaining: 1500, limit: 10000 }
+//   ]
+// }
+```
+
+### Configuration
+
+Default configuration can be customized:
+
+```typescript
+import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
+
+const tracker = getExternalRateLimitTracker({
+  throttleThreshold: 0.2, // Throttle when 20% or less remaining
+  maxAgeMs: 60 * 60 * 1000, // Discard info older than 1 hour
+  maxServices: 20, // Track up to 20 services
+});
+```
+
+### Memory Management
+
+The tracker includes automatic memory management:
+
+- **Bounded Store**: Maximum of 20 services tracked by default
+- **Auto-cleanup**: Expired entries removed every 5 minutes
+- **Stale Detection**: Info older than `maxAgeMs` is discarded
+- **Resource Cleanup**: Registered with `resourceCleanupManager` for graceful shutdown
+
 ## Best Practices
 
 ### 1. Always Use Resilience Framework
@@ -522,6 +623,32 @@ const manager = new ExportManager({
 
 // Mock external dependencies
 jest.spyOn(NotionExporter.prototype, 'validateConfig').mockResolvedValue(true);
+```
+
+### 5. Proactive Rate Limiting
+
+Check rate limits before making external API calls:
+
+```typescript
+import { shouldThrottleRequest, captureRateLimit } from '@/lib/external-rate-limit';
+
+// ✅ Good: Check rate limit before request
+async function makeApiCall() {
+  const { throttle, waitTimeMs } = shouldThrottleRequest('openai');
+  if (throttle && waitTimeMs > 0) {
+    logger.info(`Rate limit approaching, waiting ${waitTimeMs}ms`);
+    await new Promise(resolve => setTimeout(resolve, waitTimeMs));
+  }
+
+  const response = await openai.chat.completions.create(...);
+  captureRateLimit('openai', response.headers);
+  return response;
+}
+
+// ❌ Bad: No rate limit awareness
+async function makeApiCall() {
+  return await openai.chat.completions.create(...);
+}
 ```
 
 ## Troubleshooting
@@ -620,8 +747,8 @@ Object.entries(states).forEach(([service, status]) => {
 ## Agent Information
 
 - **Agent Role:** Integration Engineer
-- **Specialization:** External API Integration, Resilience Patterns, Error Handling
-- **Last Updated:** 2026-02-19
+- **Specialization:** External API Integration, Resilience Patterns, Error Handling, Rate Limiting
+- **Last Updated:** 2026-02-20
 - **Branch:** integration-engineer
 
 ---
