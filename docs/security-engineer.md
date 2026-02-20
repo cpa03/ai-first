@@ -41,6 +41,31 @@ This document provides security-focused guidelines, findings, and best practices
 
 ## Security Fixes Log
 
+### 2026-02-20: CSP worker-src and manifest-src Directives Added
+
+**Issue**: Content Security Policy was missing `worker-src` and `manifest-src` directives, creating potential security gaps for web workers and web app manifests.
+
+**Risk**: Without these directives:
+
+- Web workers could potentially be loaded from untrusted sources
+- Web app manifests could be loaded from external domains
+
+**Fix Applied**:
+
+- Added `worker-src 'self'` directive to restrict web worker scripts to same origin
+- Added `manifest-src 'self'` directive to restrict web app manifests to same origin
+
+**Files Modified**:
+
+- `next.config.js` - Added worker-src and manifest-src CSP directives
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+```
+
 ### 2026-02-20: Health Endpoint Sensitive Variable Filter Enhancement
 
 **Issue**: Health endpoint's `isSensitiveVar()` function could miss some sensitive variable patterns.
@@ -162,17 +187,17 @@ npm test            # ✓ All tests pass
 
 All responses include comprehensive security headers:
 
-| Header                       | Value                                                       | Purpose                                  |
-| ---------------------------- | ----------------------------------------------------------- | ---------------------------------------- |
-| Content-Security-Policy      | `default-src 'self'; script-src 'self' 'unsafe-inline' ...` | Prevents XSS, data injection             |
-| X-Frame-Options              | `DENY`                                                      | Prevents clickjacking                    |
-| X-Content-Type-Options       | `nosniff`                                                   | Prevents MIME sniffing                   |
-| X-XSS-Protection             | `1; mode=block`                                             | Legacy XSS protection (defense-in-depth) |
-| Referrer-Policy              | `strict-origin-when-cross-origin`                           | Controls referrer info                   |
-| Permissions-Policy           | `camera=(), microphone=(), ...`                             | Restricts browser features               |
-| Strict-Transport-Security    | `max-age=31536000; includeSubDomains; preload`              | Enforces HTTPS (production)              |
-| Cross-Origin-Resource-Policy | `same-origin`                                               | Prevents cross-origin resource leaks     |
-| Cross-Origin-Opener-Policy   | `same-origin-allow-popups`                                  | Isolates browsing context                |
+| Header                       | Value                                                       | Purpose                              |
+| ---------------------------- | ----------------------------------------------------------- | ------------------------------------ |
+| Content-Security-Policy      | `default-src 'self'; script-src 'self' 'unsafe-inline' ...` | Prevents XSS, data injection         |
+| X-Frame-Options              | `DENY`                                                      | Prevents clickjacking                |
+| X-Content-Type-Options       | `nosniff`                                                   | Prevents MIME sniffing               |
+| X-XSS-Protection             | `0`                                                         | Disabled (rely on CSP instead)       |
+| Referrer-Policy              | `strict-origin-when-cross-origin`                           | Controls referrer info               |
+| Permissions-Policy           | `camera=(), microphone=(), ...`                             | Restricts browser features           |
+| Strict-Transport-Security    | `max-age=31536000; includeSubDomains; preload`              | Enforces HTTPS (production)          |
+| Cross-Origin-Resource-Policy | `same-origin`                                               | Prevents cross-origin resource leaks |
+| Cross-Origin-Opener-Policy   | `same-origin-allow-popups`                                  | Isolates browsing context            |
 
 ### 2. Input Validation (src/lib/validation.ts)
 
