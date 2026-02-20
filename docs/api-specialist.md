@@ -424,6 +424,21 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-20 - API Handler URL Safety Fix
+
+- **Fix**: Added null safety check for `request.url` in API handler metrics recording
+- **Change**: Both success and error paths now safely handle undefined `request.url`
+- **Location**:
+  - `src/lib/api-handler.ts` - Added null checks at lines 155 and 175
+- **Impact**:
+  - Fixes `TypeError: Invalid URL: undefined` in tests and edge cases
+  - Ensures Prometheus metrics recording doesn't crash when URL is undefined
+  - Falls back to `/unknown` route when URL is not available
+- **Build**: Passing
+- **Lint**: Passing
+- **Tests**: 59 API tests passing (all 18 ideas-api tests now passing)
+- **Documentation**: Updated this guide
+
 ### 2026-02-20 - Prometheus Metrics Recording Implementation
 
 - **Feature**: Added automatic Prometheus metric recording for all API requests
