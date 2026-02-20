@@ -31,13 +31,16 @@ export class Cache<T = unknown> {
   }
 
   set(key: string, value: T): void {
-    this.evictExpiredEntries();
-
     const existingEntry = this.cache.get(key);
 
-    // If key doesn't exist and we're at capacity, evict LRU
+    // PERFORMANCE: Only run expiration cleanup when approaching capacity
+    // to avoid O(N) loop on every set. This makes set() O(1) in most cases.
     if (this.maxSize && this.cache.size >= this.maxSize && !existingEntry) {
-      this.evictLRU();
+      this.evictExpiredEntries();
+      // If we are still full after TTL eviction, evict the least recently used entry
+      if (this.cache.size >= this.maxSize) {
+        this.evictLRU();
+      }
     }
 
     const entry: CacheEntry<T> = {
@@ -133,17 +136,11 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const keysToDelete: string[] = [];
 
+    // PERFORMANCE: Delete while iterating to avoid extra array and second loop.
+    // Map.prototype.entries() remains stable during deletions in modern JS.
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
-        keysToDelete.push(key);
-      }
-    }
-
-    for (const key of keysToDelete) {
-      const entry = this.cache.get(key);
-      if (entry) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
@@ -154,34 +151,22 @@ export class Cache<T = unknown> {
   }
 
   private evictLRU(): void {
-    let lruKey: string | null = null;
-    let lruEntry: CacheEntry<T> | null = null;
-    let lowestHits = Infinity;
+    // PERFORMANCE: Take the first entry from the Map (Least Recently Used).
+    // This is true O(1) instead of O(N) searching for hits. Since we move entries
+    // to the end of the Map on every get() and set(), the first entry is
+    // guaranteed to be the least recently accessed.
+    const iterator = this.cache.entries();
+    const result = iterator.next();
 
-    // Optimization: Stop searching if we find an entry with 0 hits.
-    // Since Map preserves insertion order and we move entries to the end on access,
-    // the first entry with 0 hits is the oldest cold entry.
-    for (const [key, entry] of this.cache.entries()) {
-      if (entry.hits === 0) {
-        lruKey = key;
-        lruEntry = entry;
-        break;
-      }
+    if (result.done) return;
 
-      if (entry.hits < lowestHits) {
-        lowestHits = entry.hits;
-        lruKey = key;
-        lruEntry = entry;
-      }
+    const [lruKey, lruEntry] = result.value;
+
+    if (this.onEvict) {
+      this.onEvict(lruKey, lruEntry);
     }
-
-    if (lruKey && lruEntry) {
-      if (this.onEvict) {
-        this.onEvict(lruKey, lruEntry);
-      }
-      this.totalHits -= lruEntry.hits;
-      this.cache.delete(lruKey);
-    }
+    this.totalHits -= lruEntry.hits;
+    this.cache.delete(lruKey);
   }
 
   getStats(): {
