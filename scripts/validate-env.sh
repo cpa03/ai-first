@@ -221,6 +221,44 @@ validate_cost_limit() {
     fi
 }
 
+# Function to validate logging configuration
+validate_logging_config() {
+    local has_warnings=false
+    
+    # Check STRUCTURED_LOGGING
+    if [ -n "$STRUCTURED_LOGGING" ]; then
+        if [[ "$STRUCTURED_LOGGING" == "true" ]]; then
+            print_status "OK" "STRUCTURED_LOGGING is enabled (JSON output for log aggregation)"
+        elif [[ "$STRUCTURED_LOGGING" == "false" ]]; then
+            print_status "INFO" "STRUCTURED_LOGGING is disabled (using human-readable format)"
+        else
+            print_status "WARN" "STRUCTURED_LOGGING should be 'true' or 'false', got: $STRUCTURED_LOGGING"
+            has_warnings=true
+        fi
+    fi
+    
+    # Check ENABLE_DEBUG_LOGS (security concern in production)
+    if [ -n "$ENABLE_DEBUG_LOGS" ]; then
+        if [[ "$ENABLE_DEBUG_LOGS" == "true" ]]; then
+            print_status "SECURITY" "ENABLE_DEBUG_LOGS is TRUE - debug logs visible in production!"
+            print_status "WARN" "Disable ENABLE_DEBUG_LOGS after troubleshooting is complete"
+            ((security_warnings++)) || true
+        fi
+    fi
+    
+    # Check SUPPRESS_BUILD_LOGS
+    if [ -n "$SUPPRESS_BUILD_LOGS" ]; then
+        if [[ "$SUPPRESS_BUILD_LOGS" == "true" ]]; then
+            print_status "OK" "SUPPRESS_BUILD_LOGS is enabled (cleaner build output)"
+        fi
+    fi
+    
+    if [ "$has_warnings" = true ]; then
+        return 1
+    fi
+    return 0
+}
+
 # Main validation function
 main() {
     if [ "$CI_MODE" = true ]; then
@@ -296,6 +334,9 @@ main() {
     
     # Validate cost limit
     validate_cost_limit || ((errors++))
+    
+    # Validate logging configuration
+    validate_logging_config
     
     # Skip optional integrations in CI mode
     if [ "$CI_MODE" = true ]; then
