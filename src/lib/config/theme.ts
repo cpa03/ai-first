@@ -356,6 +356,30 @@ export const CELEBRATION_COLORS = {
 } as const;
 
 /**
+ * OAuth provider brand colors
+ * Used for social login buttons (Google, GitHub, etc.)
+ * Eliminates hardcoded brand colors in login/signup pages
+ */
+export const OAUTH_PROVIDER_COLORS = {
+  /** Google brand colors for OAuth button SVG paths */
+  GOOGLE: {
+    /** Google Blue - used for "G" letter part */
+    BLUE: '#4285F4',
+    /** Google Green - used for "L" part */
+    GREEN: '#34A853',
+    /** Google Yellow - used for "E" part */
+    YELLOW: '#FBBC05',
+    /** Google Red - used for "G" curved part */
+    RED: '#EA4335',
+  } as const,
+  /** GitHub brand color (for future use) */
+  GITHUB: {
+    /** GitHub brand black */
+    BLACK: '#24292F',
+  } as const,
+} as const;
+
+/**
  * Animation physics constants
  * Used for particle animations and physics calculations
  */

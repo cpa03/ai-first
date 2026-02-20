@@ -90,6 +90,7 @@ export {
   ALERT_STYLES,
   ALERT_BASE_STYLES,
   DELIVERABLE_STYLES,
+  OAUTH_PROVIDER_COLORS,
 } from './theme';
 
 export {
