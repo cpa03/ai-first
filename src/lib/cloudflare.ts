@@ -11,6 +11,7 @@
 
 /**
  * Cloudflare-specific headers that are added to requests
+ * @see https://developers.cloudflare.com/fundamentals/reference/http-headers/
  */
 export const CLOUDFLARE_HEADERS = {
   /** Unique request ID assigned by Cloudflare (e.g., "7c1c2c3d4e5f6g7h") */
@@ -41,6 +42,36 @@ export const CLOUDFLARE_HEADERS = {
   CF_ASN: 'cf-asn',
   /** Name of the ISP */
   CF_IPORG: 'cf-iporg',
+  /**
+   * Indicates if request came through Cloudflare WARP
+   * @see https://developers.cloudflare.com/warp-client/
+   */
+  CF_WARP: 'cf-warp',
+  /**
+   * Early Hints verification token for 103 responses
+   * @see https://developers.cloudflare.com/cache/about/early-hints/
+   */
+  CF_EW_VTT: 'cf-ew-vtt',
+  /**
+   * Client TCP RTT (Round Trip Time) in milliseconds
+   * Useful for performance monitoring and adaptive content
+   */
+  CF_RTT_MS: 'cf-rtt-ms',
+  /**
+   * TLS fingerprint for bot detection
+   * @see https://developers.cloudflare.com/bots/concepts/bot-score/
+   */
+  CF_TLS_FINGERPRINT: 'cf-tls-fingerprint',
+  /**
+   * Bot management score (1-99, lower = more likely bot)
+   * @see https://developers.cloudflare.com/bots/concepts/bot-score/
+   */
+  CF_BOT_SCORE: 'cf-bot-score',
+  /**
+   * Threat score (0-100, higher = more threatening)
+   * @see https://developers.cloudflare.com/waf/
+   */
+  CF_THREAT_SCORE: 'cf-threat-score',
 } as const;
 
 /**
@@ -604,5 +635,149 @@ export function getRequestContext(request: Request): RequestContext {
     path: url.pathname,
     method: request.method,
     timestamp: new Date().toISOString(),
+  };
+}
+
+/**
+ * Early Hints configuration for 103 responses
+ * @see https://developers.cloudflare.com/cache/about/early-hints/
+ */
+export interface EarlyHintsOptions {
+  /** Resources to preload (scripts, styles, fonts) */
+  preload?: string[];
+  /** Resources to preconnect to (origins) */
+  preconnect?: string[];
+}
+
+/**
+ * Create Early Hints headers for 103 response
+ *
+ * Early Hints allow browsers to start loading critical resources
+ * before the main response arrives, improving page load performance.
+ *
+ * @example
+ * ```ts
+ * const hints = createEarlyHintsHeaders({
+ *   preload: ['/styles.css', '/script.js'],
+ *   preconnect: ['https://api.example.com']
+ * });
+ * // Returns: { 'link': '</styles.css>; rel=preload; as=style, </script.js>; rel=preload; as=script, <https://api.example.com>; rel=preconnect' }
+ * ```
+ */
+export function createEarlyHintsHeaders(
+  options: EarlyHintsOptions
+): Record<string, string> {
+  const links: string[] = [];
+
+  if (options.preload) {
+    for (const resource of options.preload) {
+      const asType = getResourceType(resource);
+      links.push(`<${resource}>; rel=preload${asType ? `; as=${asType}` : ''}`);
+    }
+  }
+
+  if (options.preconnect) {
+    for (const origin of options.preconnect) {
+      links.push(`<${origin}>; rel=preconnect`);
+    }
+  }
+
+  if (links.length === 0) {
+    return {};
+  }
+
+  return {
+    link: links.join(', '),
+  };
+}
+
+/**
+ * Determine the 'as' attribute for preload based on file extension
+ */
+function getResourceType(resource: string): string | null {
+  const ext = resource.split('?')[0].split('.').pop()?.toLowerCase();
+  const typeMap: Record<string, string> = {
+    css: 'style',
+    js: 'script',
+    woff: 'font',
+    woff2: 'font',
+    ttf: 'font',
+    otf: 'font',
+    eot: 'font',
+    jpg: 'image',
+    jpeg: 'image',
+    png: 'image',
+    gif: 'image',
+    webp: 'image',
+    svg: 'image',
+    mp4: 'video',
+    webm: 'video',
+  };
+  return ext ? typeMap[ext] || null : null;
+}
+
+/**
+ * Check if Early Hints are supported and should be sent
+ * Early Hints work best when Cloudflare can cache the Link header
+ */
+export function shouldSendEarlyHints(request: Request): boolean {
+  const cfRay = request.headers.get(CLOUDFLARE_HEADERS.CF_RAY);
+  const cacheStatus = request.headers.get(CLOUDFLARE_HEADERS.CF_CACHE_STATUS);
+
+  // Only send Early Hints through Cloudflare with valid caching
+  return !!cfRay && cacheStatus !== 'BYPASS';
+}
+
+/**
+ * Cloudflare Bot Detection result
+ */
+export interface BotDetectionResult {
+  /** Whether the request is likely from a bot */
+  isBot: boolean;
+  /** Bot score from Cloudflare (1-99, lower = more likely bot) */
+  botScore: number | null;
+  /** Threat score from Cloudflare (0-100, higher = more threatening) */
+  threatScore: number | null;
+  /** Client is using Cloudflare WARP */
+  isWarp: boolean;
+  /** TLS fingerprint hash */
+  tlsFingerprint: string | null;
+}
+
+/**
+ * Detect bot and threat information from Cloudflare headers
+ * Useful for rate limiting and security decisions
+ *
+ * @example
+ * ```ts
+ * const botInfo = detectBot(request);
+ * if (botInfo.isBot || (botInfo.threatScore && botInfo.threatScore > 50)) {
+ *   // Apply stricter rate limiting
+ * }
+ * ```
+ */
+export function detectBot(request: Request): BotDetectionResult {
+  const headers = request.headers;
+
+  const botScoreStr = headers.get(CLOUDFLARE_HEADERS.CF_BOT_SCORE);
+  const threatScoreStr = headers.get(CLOUDFLARE_HEADERS.CF_THREAT_SCORE);
+  const warpStatus = headers.get(CLOUDFLARE_HEADERS.CF_WARP);
+  const tlsFingerprint = headers.get(CLOUDFLARE_HEADERS.CF_TLS_FINGERPRINT);
+
+  const botScore = botScoreStr ? parseInt(botScoreStr, 10) : null;
+  const threatScore = threatScoreStr ? parseInt(threatScoreStr, 10) : null;
+
+  // Bot score < 30 is highly likely a bot, 30-50 is uncertain, > 50 is likely human
+  const isLikelyBot =
+    botScore !== null
+      ? botScore < 30
+      : threatScore !== null && threatScore > 50;
+
+  return {
+    isBot: isLikelyBot,
+    botScore: isNaN(botScore as number) ? null : botScore,
+    threatScore: isNaN(threatScore as number) ? null : threatScore,
+    isWarp: warpStatus === '1' || warpStatus === 'true',
+    tlsFingerprint,
   };
 }
