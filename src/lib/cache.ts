@@ -31,16 +31,15 @@ export class Cache<T = unknown> {
   }
 
   set(key: string, value: T): void {
+    // PERFORMANCE: Call evictExpiredEntries on every set to keep cache clean.
+    // It remains O(1) in the common case due to chronological optimization.
+    this.evictExpiredEntries();
+
     const existingEntry = this.cache.get(key);
 
-    // PERFORMANCE: Only run expiration cleanup when approaching capacity
-    // to avoid O(N) loop on every set. This makes set() O(1) in most cases.
+    // If key doesn't exist and we're at capacity, evict LRU
     if (this.maxSize && this.cache.size >= this.maxSize && !existingEntry) {
-      this.evictExpiredEntries();
-      // If we are still full after TTL eviction, evict the least recently used entry
-      if (this.cache.size >= this.maxSize) {
-        this.evictLRU();
-      }
+      this.evictLRU();
     }
 
     const entry: CacheEntry<T> = {
@@ -137,8 +136,9 @@ export class Cache<T = unknown> {
 
     const now = Date.now();
 
-    // PERFORMANCE: Delete while iterating to avoid extra array and second loop.
-    // Map.prototype.entries() remains stable during deletions in modern JS.
+    // PERFORMANCE: Since entries are added chronologically and TTL is constant,
+    // we only need to check from the beginning of the Map.
+    // This makes the common case (no expired entries) O(1).
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
         if (this.onEvict) {
@@ -146,6 +146,9 @@ export class Cache<T = unknown> {
         }
         this.totalHits -= entry.hits;
         this.cache.delete(key);
+      } else {
+        // Since entries are chronologically sorted, no further entries can be expired
+        break;
       }
     }
   }

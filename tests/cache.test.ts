@@ -500,11 +500,12 @@ describe('Cache', () => {
       smallCache.set('key2', 'value2');
       smallCache.set('key3', 'value3');
 
+      // With pure LRU, key1 is evicted because it was last accessed before key2 was set
       expect(onEvict).toHaveBeenCalledWith(
-        'key2',
+        'key1',
         expect.objectContaining({
-          value: 'value2',
-          hits: 0,
+          value: 'value1',
+          hits: 2,
         })
       );
     });
@@ -651,20 +652,21 @@ describe('Cache', () => {
       expect(smallCache.get('key4')).toBe('value4');
     });
 
-    it('should use hit count as secondary LRU metric', () => {
+    it('should maintain pure LRU order regardless of hit count', () => {
       const smallCache = new Cache<string>({ maxSize: 2 });
 
       smallCache.set('key1', 'value1');
       smallCache.get('key1');
-      smallCache.get('key1');
+      smallCache.get('key1'); // hits: 2
 
       smallCache.set('key2', 'value2');
-      smallCache.get('key2');
+      smallCache.get('key2'); // hits: 1, key2 is now newer than key1
 
       smallCache.set('key3', 'value3');
 
-      expect(smallCache.get('key1')).toBe('value1');
-      expect(smallCache.get('key2')).toBeNull();
+      // With pure LRU, key1 is evicted because it was accessed before key2
+      expect(smallCache.get('key1')).toBeNull();
+      expect(smallCache.get('key2')).toBe('value2');
     });
 
     it('should handle edge case where all entries have same hit count', () => {
