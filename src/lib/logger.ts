@@ -7,7 +7,26 @@ export enum LogLevel {
   ERROR = 3,
 }
 
-let currentLogLevel = LogLevel.INFO;
+const VALID_LOG_LEVELS = ['DEBUG', 'INFO', 'WARN', 'ERROR'] as const;
+type ValidLogLevelString = (typeof VALID_LOG_LEVELS)[number];
+
+function parseLogLevelFromEnv(): LogLevel {
+  const envLevel = process.env.LOG_LEVEL?.toUpperCase();
+  if (!envLevel) return LogLevel.INFO;
+
+  if (!VALID_LOG_LEVELS.includes(envLevel as ValidLogLevelString)) {
+    if (process.env.SUPPRESS_BUILD_LOGS !== 'true') {
+      console.warn(
+        `[Logger] Invalid LOG_LEVEL "${envLevel}", falling back to INFO. Valid values: ${VALID_LOG_LEVELS.join(', ')}`
+      );
+    }
+    return LogLevel.INFO;
+  }
+
+  return LogLevel[envLevel as ValidLogLevelString];
+}
+
+let currentLogLevel = parseLogLevelFromEnv();
 let globalCorrelationId: string | undefined;
 
 // Detect if we're in a build/SSR environment where console output causes Lighthouse issues
