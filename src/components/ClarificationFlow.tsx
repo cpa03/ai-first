@@ -81,6 +81,7 @@ function ClarificationFlow({
   const textInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
+  const stepTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const isMac = useMemo(
     () => typeof window !== 'undefined' && navigator.platform.includes('Mac'),
@@ -119,7 +120,7 @@ function ClarificationFlow({
     if (currentStep < questions.length - 1) {
       const nextStep = currentStep + 1;
       setShowCelebration(true);
-      setTimeout(() => {
+      stepTransitionTimeoutRef.current = setTimeout(() => {
         setCurrentStep(nextStep);
         setCurrentAnswer('');
       }, ANIMATION_DELAYS.STEP_TRANSITION);
@@ -180,6 +181,14 @@ function ClarificationFlow({
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
+
+  useEffect(() => {
+    return () => {
+      if (stepTransitionTimeoutRef.current) {
+        clearTimeout(stepTransitionTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const fetchQuestions = async () => {
