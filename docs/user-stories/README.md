@@ -14,6 +14,25 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | **P2 (Could Have)**  | 0     |
 | **P3 (Won't Have)**  | 0     |
 
+### Story Points Summary
+
+| Category          | Story Points | Stories Included                                                        |
+| ----------------- | ------------ | ----------------------------------------------------------------------- |
+| **MVP (P0)**      | 18           | US-AUTH-001 (3), US-AUTH-002 (2), US-IDEA-001 (5), US-BREAKDOWN-001 (8) |
+| **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                      |
+| **Total**         | **23**       | All stories                                                             |
+
+### Estimated Effort (Based on Story Points)
+
+| Points | Time Estimate | MVP Stories                      | Post-MVP Stories  |
+| ------ | ------------- | -------------------------------- | ----------------- |
+| 1-2    | < 2 hours     | US-AUTH-002 (2)                  | US-AUTH-003 (2)   |
+| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5) | US-EXPORT-001 (3) |
+| 8+     | 1-2+ days     | US-BREAKDOWN-001 (8)             | -                 |
+
+**MVP Estimated Effort**: ~3-4 development days (based on 18 story points)
+**Total Estimated Effort**: ~4-5 development days (based on 23 story points)
+
 ### Status Overview
 
 | Status      | Count | Stories                                                                             |
@@ -208,4 +227,4 @@ When adding new user stories:
 
 ---
 
-_Maintained by the User Story Engineer specialist. Last updated: February 20, 2026 (Progress Dashboard added)._
+_Maintained by the User Story Engineer specialist. Last updated: February 20, 2026 (Story Points Summary added)._
