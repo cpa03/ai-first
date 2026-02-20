@@ -1,7 +1,23 @@
 import { NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  rateLimitResponse,
+} from '@/lib/rate-limit';
 
 const logger = createLogger('CSPReport');
+
+/**
+ * Rate limit configuration for CSP report endpoint
+ * Lenient limits to allow legitimate reports while preventing abuse
+ * - 60 requests per minute per client (1 per second average)
+ * - Prevents DoS via CSP report flooding
+ */
+const CSP_RATE_LIMIT = {
+  limit: 60,
+  windowMs: 60000,
+};
 
 /**
  * CSP Violation Report Interface
@@ -34,8 +50,14 @@ interface CSPReportBody {
  * @see Issue #891 - CSP reporting capability
  */
 export async function POST(request: Request): Promise<Response> {
+  const identifier = getClientIdentifier(request);
+  const rateCheck = checkRateLimit(identifier, CSP_RATE_LIMIT);
+
+  if (!rateCheck.allowed) {
+    return rateLimitResponse(rateCheck.info);
+  }
+
   try {
-    // CSP reports are sent as JSON but browsers may not set proper content-type
     const contentType = request.headers.get('content-type') || '';
     let reportData: CSPReportBody | null = null;
 
