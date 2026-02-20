@@ -1,3 +1,14 @@
+import { resourceCleanupManager } from './resource-cleanup';
+import { detectPlatform as detectCloudflarePlatform } from './cloudflare';
+import {
+  RATE_LIMIT_CLEANUP_CONFIG,
+  RATE_LIMIT_STORE_CONFIG,
+  ERROR_CONFIG,
+  RATE_LIMIT_STATS_CONFIG,
+  RATE_LIMIT_VALUES,
+  RATE_LIMIT_CONFIG,
+} from './config/constants';
+
 export interface RateLimitInfo {
   limit: number;
   remaining: number;
@@ -17,9 +28,6 @@ export interface RateLimitConfig {
 export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 const rateLimitStore = new Map<string, number[]>();
-
-import { resourceCleanupManager } from './resource-cleanup';
-import { detectPlatform as detectCloudflarePlatform } from './cloudflare';
 
 /**
  * Platform detection for trusted proxy headers
@@ -213,15 +221,6 @@ export function createRateLimitMiddleware(config: RateLimitConfig) {
     return checkRateLimit(identifier, config);
   };
 }
-
-import {
-  RATE_LIMIT_CLEANUP_CONFIG,
-  RATE_LIMIT_STORE_CONFIG,
-  ERROR_CONFIG,
-  RATE_LIMIT_STATS_CONFIG,
-  RATE_LIMIT_VALUES,
-  RATE_LIMIT_CONFIG,
-} from './config/constants';
 
 export function cleanupExpiredEntries(): void {
   const now = Date.now();
