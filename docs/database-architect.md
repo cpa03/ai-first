@@ -958,6 +958,7 @@ Located in `/supabase/migrations/`:
 | 20260219_add_idea_sessions_updated_at_trigger.sql | Idea sessions updated_at trigger    |
 | 20260219_add_task_assignments_updated_at.sql      | Task assignments updated_at         |
 | 20260220_fix_risk_score_data_type.sql             | Fix risk_score DECIMAL type (#1172) |
+| 20260220_add_task_assignments_indexes.sql         | Task assignments FK indexes (#1189) |
 
 ### Migration Best Practices
 
@@ -1044,6 +1045,27 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-20 - Task Assignments Indexes
+
+#### Performance Enhancement
+
+1. **Added missing foreign key indexes for task_assignments table**
+   - Migration `20260220_add_task_assignments_indexes.sql` adds 2 indexes
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_task_assignments_assigned_by` - Index on `assigned_by` for filtering by who assigned tasks
+   - `idx_task_assignments_user_assigned_by` - Composite index for common query pattern
+
+2. **Performance improvements**
+   - Faster queries filtering by "who assigned this task"
+   - Optimized admin views and reporting queries
+   - Better JOIN performance on assigned_by column
+
+3. **Down migration included**
+   - `20260220_add_task_assignments_indexes.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definitions to task_assignments section
 
 ### 2026-02-20 - Risk Score Data Type Fix
 
