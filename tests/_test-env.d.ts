@@ -2,6 +2,8 @@
  * Test environment type declarations
  */
 
+/// <reference types="@types/jest" />
+
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 declare global {
   // Mock for fetch with Jest methods

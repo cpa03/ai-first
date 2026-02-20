@@ -142,7 +142,7 @@ export default async function RootLayout({
               <footer className="bg-white border-t border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                   <p className="text-center text-sm text-gray-500">
-                    © 2025 IdeaFlow. Turn ideas into action.
+                    © 2026 IdeaFlow. Turn ideas into action.
                   </p>
                 </div>
               </footer>
