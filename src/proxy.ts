@@ -1,6 +1,15 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+/**
+ * Proxy (Middleware) for Next.js 16+
+ *
+ * This file replaces the deprecated middleware.ts convention.
+ * In Next.js 16+, middleware files should be named proxy.ts.
+ *
+ * See: https://nextjs.org/docs/messages/middleware-to-proxy
+ */
+
 const PUBLIC_PATHS = [
   '/',
   '/login',
@@ -19,9 +28,7 @@ const PUBLIC_PATHS = [
 
 const AUTH_PATHS = ['/login', '/signup'];
 
-export const runtime = 'experimental-edge';
-
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   let response: NextResponse;
