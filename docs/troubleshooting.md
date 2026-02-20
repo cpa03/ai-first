@@ -417,11 +417,11 @@ psql $DATABASE_URL -c "SELECT 1"
 **Diagnosis:**
 
 ```bash
-# Check schema
-npm run db:migrate --dry-run
+# Check schema migration status
+npm run db:migrate
 
-# Compare with expected schema
-supabase db diff
+# Verify migration files exist
+ls -la supabase/migrations/
 ```
 
 **Solutions:**
@@ -461,8 +461,8 @@ supabase db diff
 # Check AI service health
 curl http://localhost:3000/api/health/detailed | jq '.checks.ai'
 
-# Check agent logs
-tail -f logs/agent.log
+# Check application logs in browser console (for client-side errors)
+# Or check server logs in terminal where 'npm run dev' is running
 ```
 
 **Solutions:**
