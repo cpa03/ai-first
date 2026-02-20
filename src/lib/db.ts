@@ -3,7 +3,11 @@ import { Database } from '@/types/database';
 import { redactPIIInObject } from './pii-redaction';
 import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
-import { AGENT_CONFIG, VALIDATION_LIMITS } from './config/constants';
+import {
+  AGENT_CONFIG,
+  VALIDATION_LIMITS,
+  TIMEOUT_CONFIG,
+} from './config/constants';
 
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
@@ -506,6 +510,14 @@ export class DatabaseService {
   }
 
   // Connection health monitoring
+  /**
+   * Check database connection health with timeout protection
+   * PERFORMANCE FIX (Issue #695): Added timeout to prevent indefinite blocking
+   * on slow/unresponsive database connections.
+   *
+   * Uses Promise.race with TIMEOUT_CONFIG.QUICK (5s default) to ensure
+   * health checks don't hang the system during database outages.
+   */
   async checkConnection(): Promise<boolean> {
     try {
       if (!this.client) {
@@ -515,7 +527,24 @@ export class DatabaseService {
       }
 
       this.connectionMetrics.totalConnections++;
-      const { error } = await this.client.from('ideas').select('id').limit(1);
+
+      // PERFORMANCE: Use Promise.race with timeout to prevent indefinite blocking
+      const healthCheckPromise = this.client
+        .from('ideas')
+        .select('id')
+        .limit(1);
+
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(new Error('Database health check timeout'));
+        }, TIMEOUT_CONFIG.QUICK);
+      });
+
+      const { error } = await Promise.race([
+        healthCheckPromise,
+        timeoutPromise,
+      ]);
+
       this.connectionHealthy = !error;
       this.lastHealthCheck = new Date();
 
