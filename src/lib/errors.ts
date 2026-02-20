@@ -1,6 +1,8 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 
+const API_VERSION = '1.0.0';
+
 export interface ErrorDetail {
   field?: string;
   message: string;
@@ -257,6 +259,7 @@ export function toErrorResponse(
     'X-Request-ID': errorResponse.requestId || '',
     'X-Error-Code': appError.code,
     'X-Retryable': String(appError.retryable),
+    'X-API-Version': API_VERSION,
   };
 
   if (responseTimeMs !== undefined) {

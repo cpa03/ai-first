@@ -22,6 +22,13 @@ import {
 } from '@/lib/logger';
 import { STATUS_CODES } from '@/lib/config';
 
+/**
+ * API Version for all responses
+ * Follows semantic versioning (MAJOR.MINOR.PATCH)
+ * Increment MAJOR for breaking changes, MINOR for new features, PATCH for bug fixes
+ */
+const API_VERSION = '1.0.0';
+
 const logger = createLogger('ApiHandler');
 
 export interface ApiResponse<T = unknown> {
@@ -126,6 +133,7 @@ export function withApiHandler(
 
       const duration = Date.now() - requestStartTime;
       response.headers.set('X-Response-Time', `${duration}ms`);
+      response.headers.set('X-API-Version', API_VERSION);
 
       if (
         options.cacheTtlSeconds !== undefined &&
