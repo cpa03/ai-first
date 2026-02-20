@@ -646,6 +646,13 @@ export const PII_REDACTION_CONFIG = {
     'passphrase',
     'bearer',
     'access[-_ ]?key',
+    'signature',
+    'salt',
+    'hmac',
+    'webhook',
+    'oauth',
+    'cert',
+    'pwd',
   ] as const,
 
   /**

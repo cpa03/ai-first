@@ -162,7 +162,7 @@ export function redactPII(text: string): string {
  * SECURITY: Includes common sensitive fields like CVV, CVC, PIN to prevent accidental logging.
  */
 const SENSITIVE_FIELD_REGEX =
-  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin/i;
+  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd/i;
 
 const SAFE_FIELDS_SET = new Set<string>(
   PII_REDACTION_CONFIG.SAFE_FIELDS.map((f) => f.toLowerCase())
