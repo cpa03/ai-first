@@ -19,32 +19,37 @@ const PUBLIC_PATHS = [
 
 const AUTH_PATHS = ['/login', '/signup'];
 
+export const runtime = 'experimental-edge';
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  let response: NextResponse;
+
   if (PUBLIC_PATHS.some((path) => pathname.startsWith(path))) {
-    return NextResponse.next();
+    response = NextResponse.next();
+  } else if (pathname.startsWith('/api/')) {
+    response = NextResponse.next();
+  } else {
+    const authToken =
+      request.cookies.get('sb-auth-token')?.value ||
+      request.cookies.get('supabase-auth-token')?.value;
+
+    if (!authToken && !AUTH_PATHS.includes(pathname)) {
+      const loginUrl = new URL('/login', request.url);
+      loginUrl.searchParams.set('redirect', pathname);
+      response = NextResponse.redirect(loginUrl);
+    } else if (authToken && AUTH_PATHS.includes(pathname)) {
+      response = NextResponse.redirect(new URL('/dashboard', request.url));
+    } else {
+      response = NextResponse.next();
+    }
   }
 
-  if (pathname.startsWith('/api/')) {
-    return NextResponse.next();
-  }
+  // Security: Disable legacy browser XSS auditor (modern standard)
+  response.headers.set('X-XSS-Protection', '0');
 
-  const authToken =
-    request.cookies.get('sb-auth-token')?.value ||
-    request.cookies.get('supabase-auth-token')?.value;
-
-  if (!authToken && !AUTH_PATHS.includes(pathname)) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  if (authToken && AUTH_PATHS.includes(pathname)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
-  }
-
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {
