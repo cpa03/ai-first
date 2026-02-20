@@ -152,7 +152,7 @@ export function withApiHandler(
         );
       }
 
-      const route = new URL(request.url).pathname;
+      const route = request.url ? new URL(request.url).pathname : '/unknown';
       const statusCode = String(response.status);
       httpRequestDuration.observe(
         { method: request.method, route, status_code: statusCode },
@@ -172,7 +172,7 @@ export function withApiHandler(
       return response;
     } catch (error) {
       const duration = Date.now() - requestStartTime;
-      const route = new URL(request.url).pathname;
+      const route = request.url ? new URL(request.url).pathname : '/unknown';
       const errorStatusCode =
         error instanceof AppError ? String(error.statusCode) : '500';
 
