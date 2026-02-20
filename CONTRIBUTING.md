@@ -269,19 +269,21 @@ AGENT=frontend-engineer
 
 ## Development Scripts
 
-| Script                | Description                          |
-| --------------------- | ------------------------------------ |
-| `npm run dev`         | Start development server             |
-| `npm run dev:check`   | Start dev server with env validation |
-| `npm run build`       | Build for production                 |
-| `npm run build:check` | Build with env validation            |
-| `npm run lint`        | Run ESLint                           |
-| `npm run type-check`  | Run TypeScript type checking         |
-| `npm test`            | Run tests                            |
-| `npm run test:ci`     | Run tests with coverage (CI mode)    |
-| `npm run test:watch`  | Run tests in watch mode              |
-| `npm run env:check`   | Validate environment configuration   |
-| `npm run check`       | Run lint, type-check, and tests      |
+| Script                 | Description                          |
+| ---------------------- | ------------------------------------ |
+| `npm run dev`          | Start development server             |
+| `npm run dev:check`    | Start dev server with env validation |
+| `npm run build`        | Build for production                 |
+| `npm run build:check`  | Build with env validation            |
+| `npm run lint`         | Run ESLint                           |
+| `npm run lint:fix`     | Run ESLint with auto-fix             |
+| `npm run type-check`   | Run TypeScript type checking         |
+| `npm test`             | Run tests                            |
+| `npm run test:ci`      | Run tests with coverage (CI mode)    |
+| `npm run test:watch`   | Run tests in watch mode              |
+| `npm run test:changed` | Run only tests for changed files     |
+| `npm run env:check`    | Validate environment configuration   |
+| `npm run check`        | Run lint, type-check, and tests      |
 
 ## IDE Setup
 

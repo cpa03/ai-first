@@ -100,18 +100,20 @@ npm run env:check -- --ci
 
 ### Available Scripts
 
-| Script               | Purpose                         | Time    |
-| -------------------- | ------------------------------- | ------- |
-| `npm run dev`        | Start development server        | ~5 sec  |
-| `npm run dev:check`  | Dev server with env validation  | ~6 sec  |
-| `npm run build`      | Production build                | ~45 sec |
-| `npm run lint`       | ESLint (0 warnings allowed)     | ~3 sec  |
-| `npm run type-check` | TypeScript check                | ~5 sec  |
-| `npm test`           | Run tests                       | ~25 sec |
-| `npm run test:watch` | Test watch mode                 | N/A     |
-| `npm run test:ci`    | CI mode tests with coverage     | ~30 sec |
-| `npm run check`      | All checks (lint + type + test) | ~40 sec |
-| `npm run env:check`  | Validate environment variables  | ~1 sec  |
+| Script                 | Purpose                         | Time    |
+| ---------------------- | ------------------------------- | ------- |
+| `npm run dev`          | Start development server        | ~5 sec  |
+| `npm run dev:check`    | Dev server with env validation  | ~6 sec  |
+| `npm run build`        | Production build                | ~45 sec |
+| `npm run lint`         | ESLint (0 warnings allowed)     | ~3 sec  |
+| `npm run lint:fix`     | ESLint with auto-fix            | ~3 sec  |
+| `npm run type-check`   | TypeScript check                | ~5 sec  |
+| `npm test`             | Run tests                       | ~25 sec |
+| `npm run test:watch`   | Test watch mode                 | N/A     |
+| `npm run test:changed` | Run only changed tests          | ~5 sec  |
+| `npm run test:ci`      | CI mode tests with coverage     | ~30 sec |
+| `npm run check`        | All checks (lint + type + test) | ~40 sec |
+| `npm run env:check`    | Validate environment variables  | ~1 sec  |
 
 ### Pre-Commit Workflow
 
