@@ -9,6 +9,7 @@ import {
   RateLimitInfo,
   clearRateLimitStore,
 } from '@/lib/rate-limit';
+import { BASE_URL } from './config/test-config';
 
 describe('checkRateLimit', () => {
   beforeEach(() => {
@@ -289,7 +290,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should extract IP from x-vercel-forwarded-for header', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: { 'x-vercel-forwarded-for': '192.168.1.1' },
       });
 
@@ -299,7 +300,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should use first IP from x-vercel-forwarded-for when multiple present', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: { 'x-vercel-forwarded-for': '10.0.0.1, 10.0.0.2, 10.0.0.3' },
       });
 
@@ -309,7 +310,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should ignore spoofed x-real-ip on Vercel', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '172.16.0.1',
           'user-agent': 'test-agent',
@@ -330,7 +331,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should extract IP from cf-connecting-ip header', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: { 'cf-connecting-ip': '192.168.1.1' },
       });
 
@@ -340,7 +341,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should ignore spoofed headers on Cloudflare', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '172.16.0.1',
           'user-agent': 'test-agent',
@@ -357,7 +358,7 @@ describe('getClientIdentifier', () => {
 
   describe('Unknown platform (fallback)', () => {
     it('should use request fingerprint when no platform headers present', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'user-agent': 'test-agent',
           'accept-language': 'en-US',
@@ -371,7 +372,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should generate consistent fingerprints for same request characteristics', () => {
-      const request1 = new Request('http://localhost', {
+      const request1 = new Request(BASE_URL, {
         headers: {
           'user-agent': 'test-agent',
           'accept-language': 'en-US',
@@ -379,7 +380,7 @@ describe('getClientIdentifier', () => {
         },
       });
 
-      const request2 = new Request('http://localhost', {
+      const request2 = new Request(BASE_URL, {
         headers: {
           'user-agent': 'test-agent',
           'accept-language': 'en-US',
@@ -394,14 +395,14 @@ describe('getClientIdentifier', () => {
     });
 
     it('should generate different fingerprints for different request characteristics', () => {
-      const request1 = new Request('http://localhost', {
+      const request1 = new Request(BASE_URL, {
         headers: {
           'user-agent': 'test-agent-1',
           'accept-language': 'en-US',
         },
       });
 
-      const request2 = new Request('http://localhost', {
+      const request2 = new Request(BASE_URL, {
         headers: {
           'user-agent': 'test-agent-2',
           'accept-language': 'en-US',
@@ -415,7 +416,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should ignore spoofed x-forwarded-for on unknown platforms', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'x-forwarded-for': '10.0.0.1',
           'user-agent': 'test-agent',
@@ -430,7 +431,7 @@ describe('getClientIdentifier', () => {
     });
 
     it('should ignore spoofed x-real-ip on unknown platforms', () => {
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '172.16.0.1',
           'user-agent': 'test-agent',
@@ -450,7 +451,7 @@ describe('getClientIdentifier', () => {
       delete process.env.VERCEL;
       delete process.env.CLOUDFLARE;
 
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '1.1.1.1', // Spoofed header
           'user-agent': 'attacker',
@@ -468,7 +469,7 @@ describe('getClientIdentifier', () => {
       delete process.env.VERCEL;
       delete process.env.CLOUDFLARE;
 
-      const request = new Request('http://localhost', {
+      const request = new Request(BASE_URL, {
         headers: {
           'x-forwarded-for': '1.1.1.1, 2.2.2.2', // Spoofed header
           'user-agent': 'attacker',
@@ -523,7 +524,7 @@ describe('createRateLimitMiddleware', () => {
   it('should call checkRateLimit with client identifier', () => {
     process.env.VERCEL = '1';
     const middleware = createRateLimitMiddleware(rateLimitConfigs.moderate);
-    const request = new Request('http://localhost', {
+    const request = new Request(BASE_URL, {
       headers: { 'x-vercel-forwarded-for': '192.168.1.1' },
     });
 
@@ -537,7 +538,7 @@ describe('createRateLimitMiddleware', () => {
   it('should work with different config', () => {
     process.env.CLOUDFLARE = '1';
     const middleware = createRateLimitMiddleware(rateLimitConfigs.strict);
-    const request = new Request('http://localhost', {
+    const request = new Request(BASE_URL, {
       headers: { 'cf-connecting-ip': '10.0.0.1' },
     });
 

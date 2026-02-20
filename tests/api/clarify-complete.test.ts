@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/clarify/complete/route';
 import { clarifierAgent, ClarificationSession } from '@/lib/agents/clarifier';
+import { buildApiUrl } from '../config/test-config';
 
 // Mock the dependencies
 jest.mock('@/lib/agents/clarifier');
@@ -35,14 +36,11 @@ describe('/api/clarify/complete', () => {
 
       mockClarifierAgent.completeClarification.mockResolvedValue(mockResult);
 
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ideaId: 'idea-123' }),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({ ideaId: 'idea-123' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -56,14 +54,11 @@ describe('/api/clarify/complete', () => {
     });
 
     it('should return 400 when ideaId is missing', async () => {
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({}),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({}),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -73,14 +68,11 @@ describe('/api/clarify/complete', () => {
     });
 
     it('should return 400 when ideaId is empty string', async () => {
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ideaId: '' }),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({ ideaId: '' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -94,14 +86,11 @@ describe('/api/clarify/complete', () => {
         new Error('Required questions not answered')
       );
 
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ideaId: 'idea-123' }),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({ ideaId: 'idea-123' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -116,14 +105,11 @@ describe('/api/clarify/complete', () => {
         new Error('Clarification session not found')
       );
 
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ideaId: 'nonexistent-idea' }),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({ ideaId: 'nonexistent-idea' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -134,14 +120,11 @@ describe('/api/clarify/complete', () => {
     });
 
     it('should handle malformed JSON', async () => {
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: 'invalid json',
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: 'invalid json',
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -155,14 +138,11 @@ describe('/api/clarify/complete', () => {
         new Error('2 required questions still unanswered')
       );
 
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ideaId: 'idea-123' }),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({ ideaId: 'idea-123' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
       const data = await response.json();
@@ -194,14 +174,11 @@ describe('/api/clarify/complete', () => {
 
       mockClarifierAgent.completeClarification.mockResolvedValue(mockResult);
 
-      const request = new NextRequest(
-        'http://localhost:3000/api/clarify/complete',
-        {
-          method: 'POST',
-          body: JSON.stringify({ ideaId: 'idea-123' }),
-          headers: { 'Content-Type': 'application/json' },
-        }
-      );
+      const request = new NextRequest(buildApiUrl('/clarify/complete'), {
+        method: 'POST',
+        body: JSON.stringify({ ideaId: 'idea-123' }),
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       const response = await POST(request);
 
