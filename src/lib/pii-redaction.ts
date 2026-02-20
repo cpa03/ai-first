@@ -86,7 +86,7 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   creditCard: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g,
   ipAddress: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
   apiKey:
-    /(?:api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|admin[-_ ]?key|adminkey|signature|salt|hmac|webhook|oauth|cert|pwd)[\s:=]+['"]?([a-zA-Z0-9_/+=-]{4,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
+    /(?:api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|admin[-_ ]?key|adminkey)[\s:=]+['"]?([a-zA-Z0-9_/+=-]{4,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
   // US Passport: 9 characters (alphanumeric, starting with letter for newer formats)
@@ -162,7 +162,7 @@ export function redactPII(text: string): string {
  * SECURITY: Includes common sensitive fields like CVV, CVC, PIN to prevent accidental logging.
  */
 const SENSITIVE_FIELD_REGEX =
-  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd|_sk|_pk|_rk|database|connection/i;
+  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd/i;
 
 const SAFE_FIELDS_SET = new Set<string>(
   PII_REDACTION_CONFIG.SAFE_FIELDS.map((f) => f.toLowerCase())
