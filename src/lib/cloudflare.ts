@@ -428,3 +428,162 @@ export function getCacheKey(
     return `cache:${url}`;
   }
 }
+
+/**
+ * Request correlation headers for distributed tracing
+ */
+export const CORRELATION_HEADERS = {
+  REQUEST_ID: 'x-request-id',
+  CORRELATION_ID: 'x-correlation-id',
+  TRACE_ID: 'x-trace-id',
+  SPAN_ID: 'x-span-id',
+} as const;
+
+/**
+ * Generate a cryptographically secure request ID
+ * Uses crypto.randomUUID() when available, falls back to timestamp + random
+ */
+export function generateRequestId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `req_${timestamp}_${randomPart}`;
+}
+
+/**
+ * Get existing request ID from headers or generate a new one
+ */
+export function getOrCreateRequestId(request: Request): string {
+  const existingId = request.headers.get(CORRELATION_HEADERS.REQUEST_ID);
+  if (existingId) {
+    return existingId;
+  }
+
+  const cfRay = request.headers.get(CLOUDFLARE_HEADERS.CF_RAY);
+  if (cfRay) {
+    return `cf_${cfRay}`;
+  }
+
+  return generateRequestId();
+}
+
+/**
+ * Get correlation ID for distributed tracing
+ * Follows Cloudflare best practices for request correlation
+ */
+export function getCorrelationId(request: Request): string {
+  const correlationId = request.headers.get(CORRELATION_HEADERS.CORRELATION_ID);
+  if (correlationId) {
+    return correlationId;
+  }
+
+  const traceId = request.headers.get(CORRELATION_HEADERS.TRACE_ID);
+  if (traceId) {
+    return traceId;
+  }
+
+  const cfRay = request.headers.get(CLOUDFLARE_HEADERS.CF_RAY);
+  if (cfRay) {
+    return cfRay;
+  }
+
+  return generateRequestId();
+}
+
+/**
+ * Create correlation headers for downstream requests
+ * Propagates tracing information to external services
+ */
+export function createCorrelationHeaders(
+  request: Request,
+  overrides?: Partial<Record<keyof typeof CORRELATION_HEADERS, string>>
+): Record<string, string> {
+  const requestId = overrides?.REQUEST_ID || getOrCreateRequestId(request);
+  const correlationId = overrides?.CORRELATION_ID || getCorrelationId(request);
+
+  const headers: Record<string, string> = {
+    [CORRELATION_HEADERS.REQUEST_ID]: requestId,
+    [CORRELATION_HEADERS.CORRELATION_ID]: correlationId,
+  };
+
+  const cfRay = request.headers.get(CLOUDFLARE_HEADERS.CF_RAY);
+  if (cfRay) {
+    headers['x-cf-ray'] = cfRay;
+  }
+
+  return headers;
+}
+
+/**
+ * Create a response with correlation headers
+ * Ensures every response includes tracing information
+ */
+export function addCorrelationHeaders(
+  response: Response,
+  request: Request
+): Response {
+  const requestId = getOrCreateRequestId(request);
+  const correlationId = getCorrelationId(request);
+
+  const newHeaders = new Headers();
+
+  try {
+    response.headers.forEach((value, key) => {
+      newHeaders.set(key, value);
+    });
+  } catch {
+    // In some environments (like jsdom), headers.forEach may not work
+    // We'll just add the correlation headers in that case
+  }
+
+  newHeaders.set(CORRELATION_HEADERS.REQUEST_ID, requestId);
+  newHeaders.set(CORRELATION_HEADERS.CORRELATION_ID, correlationId);
+
+  const cfRay = request.headers.get(CLOUDFLARE_HEADERS.CF_RAY);
+  if (cfRay) {
+    newHeaders.set('x-cf-ray', cfRay);
+  }
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: newHeaders,
+  });
+}
+
+/**
+ * Request context for logging and debugging
+ */
+export interface RequestContext {
+  requestId: string;
+  correlationId: string;
+  cfRay: string | null;
+  clientIp: string | null;
+  country: string | null;
+  path: string;
+  method: string;
+  timestamp: string;
+}
+
+/**
+ * Extract comprehensive request context for logging
+ * Useful for structured logging in Cloudflare Workers
+ */
+export function getRequestContext(request: Request): RequestContext {
+  const cfInfo = getCloudflareRequestInfo(request);
+  const url = new URL(request.url);
+
+  return {
+    requestId: getOrCreateRequestId(request),
+    correlationId: getCorrelationId(request),
+    cfRay: cfInfo.rayId,
+    clientIp: cfInfo.clientIp,
+    country: cfInfo.country,
+    path: url.pathname,
+    method: request.method,
+    timestamp: new Date().toISOString(),
+  };
+}

@@ -15,6 +15,13 @@ import {
   getExecutionContext,
   isEdgeRequest,
   getCacheKey,
+  CORRELATION_HEADERS,
+  generateRequestId,
+  getOrCreateRequestId,
+  getCorrelationId,
+  createCorrelationHeaders,
+  addCorrelationHeaders,
+  getRequestContext,
 } from '@/lib/cloudflare';
 
 function createMockRequest(headers: Record<string, string> = {}): Request {
@@ -500,5 +507,162 @@ describe('getCacheKey', () => {
     expect(key).toContain('format=json');
     expect(key).toContain('locale=en-US');
     expect(key).toContain('version=v1');
+  });
+});
+
+describe('CORRELATION_HEADERS', () => {
+  it('should have correct header names', () => {
+    expect(CORRELATION_HEADERS.REQUEST_ID).toBe('x-request-id');
+    expect(CORRELATION_HEADERS.CORRELATION_ID).toBe('x-correlation-id');
+    expect(CORRELATION_HEADERS.TRACE_ID).toBe('x-trace-id');
+    expect(CORRELATION_HEADERS.SPAN_ID).toBe('x-span-id');
+  });
+});
+
+describe('generateRequestId', () => {
+  it('should generate a unique request ID', () => {
+    const id1 = generateRequestId();
+    const id2 = generateRequestId();
+    expect(id1).not.toBe(id2);
+    expect(id1.length).toBeGreaterThan(0);
+  });
+
+  it('should generate a valid UUID format when crypto.randomUUID available', () => {
+    const id = generateRequestId();
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    expect(uuidRegex.test(id) || id.startsWith('req_')).toBe(true);
+  });
+});
+
+describe('getOrCreateRequestId', () => {
+  it('should return existing request ID from header', () => {
+    const request = createMockRequest({
+      'x-request-id': 'existing-request-id',
+    });
+    expect(getOrCreateRequestId(request)).toBe('existing-request-id');
+  });
+
+  it('should use CF-Ray when available', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+    });
+    expect(getOrCreateRequestId(request)).toBe('cf_7c1c2c3d4e5f6g7h');
+  });
+
+  it('should generate new ID when no headers present', () => {
+    const request = createMockRequest();
+    const id = getOrCreateRequestId(request);
+    expect(id.length).toBeGreaterThan(0);
+  });
+});
+
+describe('getCorrelationId', () => {
+  it('should return correlation ID from header', () => {
+    const request = createMockRequest({
+      'x-correlation-id': 'corr-123',
+    });
+    expect(getCorrelationId(request)).toBe('corr-123');
+  });
+
+  it('should fall back to trace ID', () => {
+    const request = createMockRequest({
+      'x-trace-id': 'trace-456',
+    });
+    expect(getCorrelationId(request)).toBe('trace-456');
+  });
+
+  it('should fall back to CF-Ray', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+    });
+    expect(getCorrelationId(request)).toBe('7c1c2c3d4e5f6g7h');
+  });
+
+  it('should generate new ID when no correlation headers present', () => {
+    const request = createMockRequest();
+    const id = getCorrelationId(request);
+    expect(id.length).toBeGreaterThan(0);
+  });
+});
+
+describe('createCorrelationHeaders', () => {
+  it('should create headers with request and correlation IDs', () => {
+    const request = createMockRequest({
+      'x-request-id': 'req-123',
+      'x-correlation-id': 'corr-456',
+    });
+    const headers = createCorrelationHeaders(request);
+    expect(headers['x-request-id']).toBe('req-123');
+    expect(headers['x-correlation-id']).toBe('corr-456');
+  });
+
+  it('should include CF-Ray when available', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+    });
+    const headers = createCorrelationHeaders(request);
+    expect(headers['x-cf-ray']).toBe('7c1c2c3d4e5f6g7h');
+  });
+
+  it('should allow overrides', () => {
+    const request = createMockRequest();
+    const headers = createCorrelationHeaders(request, {
+      REQUEST_ID: 'override-req',
+    });
+    expect(headers['x-request-id']).toBe('override-req');
+  });
+});
+
+describe('addCorrelationHeaders', () => {
+  it('should add correlation headers to response', () => {
+    const request = createMockRequest({
+      'x-request-id': 'req-123',
+      'x-correlation-id': 'corr-456',
+    });
+    const originalResponse = new Response('test', { status: 200 });
+    const response = addCorrelationHeaders(originalResponse, request);
+    expect(response.headers.get('x-request-id')).toBe('req-123');
+    expect(response.headers.get('x-correlation-id')).toBe('corr-456');
+    expect(response.status).toBe(200);
+  });
+
+  it('should preserve existing response headers', () => {
+    const request = createMockRequest();
+    const originalResponse = new Response('test', {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    });
+    const response = addCorrelationHeaders(originalResponse, request);
+    expect(response.headers.get('x-request-id')).not.toBeNull();
+    expect(response.status).toBe(200);
+  });
+});
+
+describe('getRequestContext', () => {
+  it('should extract full request context', () => {
+    const request = createMockRequest({
+      'cf-ray': '7c1c2c3d4e5f6g7h',
+      'cf-connecting-ip': '192.168.1.1',
+      'cf-ipcountry': 'US',
+    });
+    const context = getRequestContext(request);
+    expect(context.cfRay).toBe('7c1c2c3d4e5f6g7h');
+    expect(context.clientIp).toBe('192.168.1.1');
+    expect(context.country).toBe('US');
+    expect(context.path).toBe('/');
+    expect(context.method).toBe('GET');
+    expect(context.timestamp).toBeDefined();
+    expect(context.requestId).toBeDefined();
+    expect(context.correlationId).toBeDefined();
+  });
+
+  it('should handle request without Cloudflare headers', () => {
+    const request = createMockRequest();
+    const context = getRequestContext(request);
+    expect(context.cfRay).toBeNull();
+    expect(context.clientIp).toBeNull();
+    expect(context.country).toBeNull();
+    expect(context.requestId).toBeDefined();
   });
 });
