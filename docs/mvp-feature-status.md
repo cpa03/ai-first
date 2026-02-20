@@ -4,6 +4,8 @@
 **Target Launch**: March 31, 2026
 **Days Remaining**: 39 days
 
+> **See Also**: [Launch Readiness Checklist](./launch-readiness-checklist.md) for detailed go/no-go criteria
+
 ---
 
 ## Quick Summary
