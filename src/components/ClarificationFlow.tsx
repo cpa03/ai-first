@@ -28,6 +28,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
+import Tooltip from '@/components/Tooltip';
 
 interface Question {
   id: string;
@@ -531,16 +532,22 @@ function ClarificationFlow({
               </span>
             </div>
 
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={!currentAnswer.trim() || showCelebration}
-              loading={isSubmitting}
+            <Tooltip
+              content="Please enter an answer to continue"
+              disabled={!!currentAnswer.trim() || showCelebration || isSubmitting}
+              position="top"
             >
-              {currentStep === questions.length - 1
-                ? MESSAGES.NAVIGATION.COMPLETE
-                : MESSAGES.NAVIGATION.NEXT}
-            </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={!currentAnswer.trim() || showCelebration}
+                loading={isSubmitting}
+              >
+                {currentStep === questions.length - 1
+                  ? MESSAGES.NAVIGATION.COMPLETE
+                  : MESSAGES.NAVIGATION.NEXT}
+              </Button>
+            </Tooltip>
           </div>
         </form>
       </section>
