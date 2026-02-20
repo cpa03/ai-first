@@ -1,0 +1,54 @@
+{
+  "recommendations": [
+    // Core Extensions
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "editorconfig.editorconfig",
+
+    // TypeScript/JavaScript
+    "ms-vscode.vscode-typescript-next",
+
+    // Tailwind CSS
+    "bradlc.vscode-tailwindcss",
+
+    // React
+    "dsznajder.es7-react-js-snippets",
+
+    // Git
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github",
+
+    // Testing
+    "orta.vscode-jest",
+
+    // Environment Variables
+    "mikestead.dotenv-syntax",
+
+    // Documentation
+    "yzhang.markdown-all-in-one",
+    "davidanson.vscode-markdownlint",
+
+    // Error Lens - Inline error display
+    "usernamehw.errorlens",
+
+    // Path Intelligence
+    "christian-kohler.path-intellisense",
+
+    // Auto Rename Tag
+    "formulahendry.auto-rename-tag",
+
+    // TODO Highlight
+    "wayou.vscode-todo-highlight",
+
+    // Import Cost
+    "wix.vscode-import-cost",
+
+    // REST Client for API testing
+    "humao.rest-client"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript", // Use the nightly version instead
+    "hookyqr.beautify", // Prettier handles this
+    "dbaeumer.jshint" // ESLint handles linting
+  ]
+}
