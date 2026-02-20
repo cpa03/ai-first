@@ -213,6 +213,31 @@ npm install eslint-plugin-react-hooks@latest --save-dev
    - **Solution**: Used `useRef` pattern to store fetcher without triggering re-renders
    - **Impact**: Prevents infinite loops and improves hook stability
    - **Code**: See `src/lib/use-cache.ts` for implementation details
+5. **Fixed**: Inline functions and styles in TaskManagement components (Issue #1084)
+   - **Problem**: Inline arrow functions and style objects in JSX caused unnecessary re-renders
+   - **Solution**: Wrapped handlers in `useCallback`, used `useMemo` for derived values, applied `React.memo`
+   - **Files**: TaskManagement.tsx, DeliverableCard.tsx, TaskItem.tsx, TaskManagementHeader.tsx, LoadingSpinner.tsx, Button.tsx
+   - **Impact**: Prevents function/object recreation on each render
+6. **Fixed**: N+1 query pattern in getIdeaDeliverablesWithTasks (Issue #855)
+   - **Problem**: Sequential queries for deliverables then tasks caused exponential database load
+   - **Solution**: Used Supabase's join syntax with `.select('*, tasks!tasks_deliverable_id_fkey(*)')`
+   - **File**: `src/lib/db.ts` (getIdeaDeliverablesWithTasks method)
+   - **Impact**: Single query instead of N+1, O(1) scaling with deliverable count
+7. **Fixed**: Rate limiting O(n) operations (Issue #950)
+   - **Problem**: Rate limiting store used filter() causing O(n) memory allocations
+   - **Solution**: Used index-based iteration to find valid requests without allocation
+   - **File**: `src/lib/rate-limit.ts`
+   - **Impact**: O(k) eviction instead of O(n log n), reduced memory pressure
+
+### Verified Issues (Already Resolved)
+
+The following issues from the performance audit (#962) have been verified as resolved:
+
+- ✅ Rate Limiting Performance Bottleneck (#950) - Now O(k) eviction
+- ✅ Database N+1 Query Pattern (#855) - Now single query with JOIN
+- ✅ Memory Leak in Cache Hook (#945) - Fixed with useRef pattern
+- ✅ Bundle Size Optimization (#956) - Dynamic imports applied
+- ✅ Frontend DOM Performance (#943) - Component memoization applied
 
 ## Resources
 
@@ -223,5 +248,5 @@ npm install eslint-plugin-react-hooks@latest --save-dev
 
 ---
 
-Last Updated: 2026-02-07
+Last Updated: 2026-02-20
 Performance Engineer: CMZ Agent
