@@ -5,18 +5,21 @@ import {
   getClientIdentifier,
   rateLimitResponse,
 } from '@/lib/rate-limit';
+import { RATE_LIMIT_CONFIG } from '@/lib/config/constants';
+import { RATE_LIMIT_WINDOWS } from '@/lib/config/time';
 
 const logger = createLogger('CSPReport');
 
 /**
  * Rate limit configuration for CSP report endpoint
- * Lenient limits to allow legitimate reports while preventing abuse
- * - 60 requests per minute per client (1 per second average)
+ * Uses centralized rate limit configuration with lenient preset
+ * - Uses RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.LENIENT (default: 60 requests)
+ * - Uses RATE_LIMIT_WINDOWS.DEFAULT (1 minute window)
  * - Prevents DoS via CSP report flooding
  */
 const CSP_RATE_LIMIT = {
-  limit: 60,
-  windowMs: 60000,
+  limit: RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.LENIENT,
+  windowMs: RATE_LIMIT_WINDOWS.DEFAULT,
 };
 
 /**
