@@ -136,16 +136,17 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 
 ## Security Audit History
 
-| Date       | Issue                                          | Status           | Report                                                   |
-| ---------- | ---------------------------------------------- | ---------------- | -------------------------------------------------------- |
-| 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md) |
-| 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                    |
-| 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                  |
-| 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations    |
-| 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring              |
-| 2026-02-20 | #878 - Rate Limiting for CSP Report Endpoint   | ✅ Implemented   | Added rate limiting (60 req/min) to prevent DoS abuse    |
-| 2026-02-20 | #1171 - Health Endpoint Sensitive Var Filter   | ✅ Implemented   | Added OAUTH, WEBHOOK, SALT, HMAC, APIKEY patterns        |
-| 2026-02-20 | #1171 - PII Redaction Enhancement              | ✅ Implemented   | Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns    |
+| Date       | Issue                                          | Status           | Report                                                     |
+| ---------- | ---------------------------------------------- | ---------------- | ---------------------------------------------------------- |
+| 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md)   |
+| 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                      |
+| 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                    |
+| 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations      |
+| 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring                |
+| 2026-02-20 | #878 - Rate Limiting for CSP Report Endpoint   | ✅ Implemented   | Added rate limiting (60 req/min) to prevent DoS abuse      |
+| 2026-02-20 | #1171 - Health Endpoint Sensitive Var Filter   | ✅ Implemented   | Added OAUTH, WEBHOOK, SALT, HMAC, APIKEY patterns          |
+| 2026-02-20 | #1171 - PII Redaction Enhancement              | ✅ Implemented   | Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns      |
+| 2026-02-20 | #1171 - CSP worker-src/manifest-src Directives | ✅ Implemented   | Added missing CSP directives for web workers and manifests |
 
 ## Current npm Audit Status (2026-02-18)
 

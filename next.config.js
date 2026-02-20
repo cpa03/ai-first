@@ -89,6 +89,10 @@ const nextConfig = {
           "frame-src 'none'",
           // Object/embed: deny
           "object-src 'none'",
+          // Worker sources: restrict web worker scripts (security hardening)
+          "worker-src 'self'",
+          // Manifest sources: restrict web app manifests (security hardening)
+          "manifest-src 'self'",
           // Base URI: self only
           "base-uri 'self'",
           // Form action: self only
