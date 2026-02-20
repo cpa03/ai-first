@@ -731,6 +731,8 @@ CREATE INDEX idx_task_assignments_task_id ON task_assignments(task_id);
 CREATE INDEX idx_task_assignments_user_id ON task_assignments(user_id);
 CREATE INDEX idx_task_assignments_updated_at ON task_assignments(updated_at DESC);
 CREATE INDEX idx_task_assignments_task_user ON task_assignments(task_id, user_id);
+CREATE INDEX idx_task_assignments_assigned_by ON task_assignments(assigned_by);
+CREATE INDEX idx_task_assignments_user_assigned_by ON task_assignments(user_id, assigned_by);
 
 CREATE INDEX idx_time_tracking_task_id ON time_tracking(task_id);
 CREATE INDEX idx_time_tracking_date ON time_tracking(date_logged);
