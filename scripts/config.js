@@ -89,12 +89,50 @@ const LIGHTHOUSE_CONFIG = {
 
   /**
    * Chrome executable path
-   * Env: CHROME_PATH (default: Playwright's bundled Chrome path)
+   * Env: CHROME_PATH (default: Auto-detected from Playwright)
+   *
+   * Priority:
+   * 1. CHROME_PATH environment variable
+   * 2. Playwright's bundled Chromium (auto-detected)
+   * 3. Fallback paths for common CI environments
    */
-  CHROME_PATH: getEnvString(
-    'CHROME_PATH',
-    '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome'
-  ),
+  CHROME_PATH: (() => {
+    const envPath = getEnvString('CHROME_PATH', '');
+    if (envPath) return envPath;
+
+    // Try to get Playwright's bundled Chromium path
+    try {
+      const { chromium } = require('playwright');
+      const playwrightPath = chromium.executablePath();
+      if (playwrightPath) return playwrightPath;
+    } catch {
+      // Playwright not available or path not found
+    }
+
+    // Fallback paths for common CI environments
+    const fallbackPaths = [
+      // GitHub Actions (Linux)
+      '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome',
+      // GitHub Actions (alternative versions)
+      '/home/runner/.cache/ms-playwright/chromium-1155/chrome-linux/chrome',
+      // macOS
+      '/Users/runner/.cache/ms-playwright/chromium-1208/chrome-mac/Chromium.app/Contents/MacOS/Chromium',
+      // Windows
+      'C:\\Users\\runneradmin\\.cache\\ms-playwright\\chromium-1208\\chrome-win\\chrome.exe',
+    ];
+
+    const fs = require('fs');
+    for (const fallback of fallbackPaths) {
+      try {
+        if (fs.existsSync(fallback)) return fallback;
+      } catch {
+        // Ignore errors checking path existence
+      }
+    }
+
+    // Final fallback - let Lighthouse find Chrome
+    return undefined;
+  })(),
 
   /**
    * Low score threshold for warnings
