@@ -235,7 +235,6 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   variant="secondary"
                   fullWidth={false}
                   aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_START_OVER}
-                  aria-disabled="true"
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
@@ -252,11 +251,10 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   variant="primary"
                   fullWidth={false}
                   aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_EXPORT}
-                  aria-disabled="true"
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
-                  <span className="ml-2 text-xs bg-white/20 px-2 py-0.5 rounded-full animate-coming-soon-badge">
+                  <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
