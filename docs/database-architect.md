@@ -467,6 +467,14 @@ interface ClarificationAnswer {
 - `idx_task_comments_task_id` - task_id
 - `idx_task_comments_deleted_at` - deleted_at
 
+#### agent_logs
+
+- `idx_agent_logs_timestamp` - timestamp DESC
+- `idx_agent_logs_agent` - agent
+- `idx_agent_logs_agent_timestamp` - (agent, timestamp DESC)
+- `idx_agent_logs_action` - action
+- `idx_agent_logs_action_timestamp` - (action, timestamp DESC)
+
 ## Row Level Security (RLS)
 
 ### RLS Policies by Table
@@ -959,6 +967,7 @@ Located in `/supabase/migrations/`:
 | 20260219_add_task_assignments_updated_at.sql      | Task assignments updated_at         |
 | 20260220_fix_risk_score_data_type.sql             | Fix risk_score DECIMAL type (#1172) |
 | 20260220_add_task_assignments_indexes.sql         | Task assignments FK indexes (#1189) |
+| 20260220_add_agent_logs_action_index.sql          | Agent logs action indexes (#1189)   |
 
 ### Migration Best Practices
 
@@ -1045,6 +1054,27 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-20 - Agent Logs Action Index
+
+#### Performance Enhancement
+
+1. **Added missing indexes for agent_logs.action column**
+   - Migration `20260220_add_agent_logs_action_index.sql` adds 2 indexes
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_agent_logs_action` - Index on `action` for filtering by action type
+   - `idx_agent_logs_action_timestamp` - Composite index for action + timestamp queries
+
+2. **Performance improvements**
+   - Faster queries filtering agent logs by action type
+   - Optimized queries for specific actions (e.g., "find all 'error' actions")
+   - Better performance for time-range filtered action queries
+
+3. **Down migration included**
+   - `20260220_add_agent_logs_action_index.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definitions to agent_logs section
 
 ### 2026-02-20 - Task Assignments Indexes
 
