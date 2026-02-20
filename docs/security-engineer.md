@@ -41,6 +41,34 @@ This document provides security-focused guidelines, findings, and best practices
 
 ## Security Fixes Log
 
+### 2026-02-20: Health Endpoint Sensitive Variable Filter Enhancement
+
+**Issue**: Health endpoint's `isSensitiveVar()` function could miss some sensitive variable patterns.
+
+**Risk**: OAuth tokens, webhook secrets, salt values, and HMAC keys could potentially be exposed in health check responses.
+
+**Fix Applied**:
+
+- Enhanced `isSensitiveVar()` in `src/app/api/health/route.ts` to include additional patterns:
+  - `OAUTH` - OAuth tokens and secrets
+  - `WEBHOOK` - Webhook secrets
+  - `SALT` - Salt values for hashing
+  - `HMAC` - HMAC keys
+  - `APIKEY` - API key without underscore (edge case)
+
+**Files Modified**:
+
+- `src/app/api/health/route.ts` - Enhanced sensitive variable detection
+- `SECURITY.md` - Updated audit history
+- `docs/security-engineer.md` - Documented fix
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+```
+
 ### 2026-02-07: IP Address Spoofing Prevention
 
 **Issue**: Rate limiting used first IP from `X-Forwarded-For` header, which can be spoofed by malicious clients.
