@@ -11,6 +11,7 @@ import {
   toErrorResponse,
   generateRequestId,
   isRetryableError,
+  generateErrorFingerprint,
 } from '@/lib/errors';
 
 describe('AppError', () => {
@@ -782,5 +783,165 @@ describe('ErrorDetail interface', () => {
     };
 
     expect(detail.code).toBe('INVALID_VALUE');
+  });
+});
+
+describe('generateErrorFingerprint', () => {
+  it('should generate consistent fingerprints for identical inputs', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Database connection failed'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Database connection failed'
+    );
+
+    expect(fp1).toBe(fp2);
+    expect(fp1).toMatch(/^fp_[a-f0-9]{12}$/);
+  });
+
+  it('should generate different fingerprints for different error codes', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Same message'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.VALIDATION_ERROR,
+      'Same message'
+    );
+
+    expect(fp1).not.toBe(fp2);
+  });
+
+  it('should generate different fingerprints for different messages', () => {
+    const fp1 = generateErrorFingerprint(ErrorCode.INTERNAL_ERROR, 'Error one');
+    const fp2 = generateErrorFingerprint(ErrorCode.INTERNAL_ERROR, 'Error two');
+
+    expect(fp1).not.toBe(fp2);
+  });
+
+  it('should normalize long numbers in messages', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Error with ID 12345678 failed'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Error with ID 87654321 failed'
+    );
+
+    expect(fp1).toBe(fp2);
+  });
+
+  it('should normalize UUIDs in messages', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'User 12345678-1234-5678-1234-567812345678 not found'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'User abcdef01-abcd-cdef-abcd-cdefabcdef01 not found'
+    );
+
+    expect(fp1).toBe(fp2);
+  });
+
+  it('should normalize IP addresses in messages', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Request from 192.168.1.1 blocked'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Request from 10.0.0.1 blocked'
+    );
+
+    expect(fp1).toBe(fp2);
+  });
+
+  it('should be case insensitive', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'DATABASE ERROR'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'database error'
+    );
+
+    expect(fp1).toBe(fp2);
+  });
+
+  it('should include stack trace line when provided', () => {
+    const fp1 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Test error',
+      'at Object.test (file.ts:10:5)'
+    );
+    const fp2 = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Test error',
+      'at Object.test (file.ts:20:10)'
+    );
+
+    expect(fp1).not.toBe(fp2);
+  });
+
+  it('should handle empty message', () => {
+    const fp = generateErrorFingerprint(ErrorCode.INTERNAL_ERROR, '');
+
+    expect(fp).toMatch(/^fp_[a-f0-9]{12}$/);
+  });
+
+  it('should handle special characters in message', () => {
+    const fp = generateErrorFingerprint(
+      ErrorCode.INTERNAL_ERROR,
+      'Error: "invalid" <data> & more'
+    );
+
+    expect(fp).toMatch(/^fp_[a-f0-9]{12}$/);
+  });
+});
+
+describe('AppError fingerprint', () => {
+  it('should include fingerprint in toJSON output', () => {
+    const error = new AppError('Test error', ErrorCode.INTERNAL_ERROR);
+    const json = error.toJSON();
+
+    expect(json.fingerprint).toBeDefined();
+    expect(json.fingerprint).toMatch(/^fp_[a-f0-9]{12}$/);
+  });
+
+  it('should return same fingerprint on multiple calls', () => {
+    const error = new AppError('Test error', ErrorCode.INTERNAL_ERROR);
+
+    expect(error.fingerprint).toBe(error.fingerprint);
+  });
+
+  it('should generate different fingerprints for different errors', () => {
+    const error1 = new AppError('Error one', ErrorCode.INTERNAL_ERROR);
+    const error2 = new AppError('Error two', ErrorCode.INTERNAL_ERROR);
+
+    expect(error1.fingerprint).not.toBe(error2.fingerprint);
+  });
+
+  it('should include fingerprint in toErrorResponse headers', () => {
+    const error = new AppError('Test error', ErrorCode.INTERNAL_ERROR);
+    const response = toErrorResponse(error, 'req_123');
+
+    expect(response.headers.get('X-Error-Fingerprint')).toBeDefined();
+    expect(response.headers.get('X-Error-Fingerprint')).toMatch(
+      /^fp_[a-f0-9]{12}$/
+    );
+  });
+
+  it('should include fingerprint in response body', async () => {
+    const error = new AppError('Test error', ErrorCode.INTERNAL_ERROR);
+    const response = toErrorResponse(error, 'req_123');
+    const body = (await response.json()) as { fingerprint?: string };
+
+    expect(body.fingerprint).toBeDefined();
+    expect(body.fingerprint).toMatch(/^fp_[a-f0-9]{12}$/);
   });
 });
