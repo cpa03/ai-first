@@ -148,6 +148,7 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 | 2026-02-20 | #1171 - PII Redaction Enhancement              | ✅ Implemented   | Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns      |
 | 2026-02-20 | #1171 - CSP worker-src/manifest-src Directives | ✅ Implemented   | Added missing CSP directives for web workers and manifests |
 | 2026-02-21 | #841 - Centralized Test Secrets Management     | ✅ Implemented   | Added MOCK_SECRETS object with safe test credential values |
+| 2026-02-21 | CSP 'unsafe-eval' Directive Removed            | ✅ Implemented   | Hardened CSP by removing eval permission (not used)        |
 
 ## Current npm Audit Status (2026-02-18)
 
