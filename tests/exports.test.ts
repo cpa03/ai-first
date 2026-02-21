@@ -14,6 +14,7 @@ import {
   type ExportResult,
   type ExportData,
 } from '@/lib/export-connectors';
+import { MOCK_SECRETS } from './utils/test-secrets';
 
 function createMockIdea(overrides: Partial<ExportData> = {}): ExportData {
   return {
@@ -294,7 +295,7 @@ describe('Export Services', () => {
     it('should validate config based on environment variable', async () => {
       const originalEnv = process.env.NOTION_API_KEY;
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       // Note: This will fail in test environment without actual API access
       // but we test the logic structure
       const result1 = await exporter.validateConfig();
@@ -344,8 +345,8 @@ describe('Export Services', () => {
       const originalApiKey = process.env.TRELLO_API_KEY;
       const originalToken = process.env.TRELLO_TOKEN;
 
-      process.env.TRELLO_API_KEY = 'test-key';
-      process.env.TRELLO_TOKEN = 'test-token';
+      process.env.TRELLO_API_KEY = MOCK_SECRETS.TRELLO_API_KEY;
+      process.env.TRELLO_TOKEN = MOCK_SECRETS.TRELLO_TOKEN;
       // Note: This will fail in test environment without actual API access
       const result1 = await exporter.validateConfig();
       expect(typeof result1).toBe('boolean');
@@ -382,8 +383,8 @@ describe('Export Services', () => {
       const originalEnv = process.env.GOOGLE_CLIENT_ID;
       const originalSecret = process.env.GOOGLE_CLIENT_SECRET;
 
-      process.env.GOOGLE_CLIENT_ID = 'test-id';
-      process.env.GOOGLE_CLIENT_SECRET = 'test-secret';
+      process.env.GOOGLE_CLIENT_ID = MOCK_SECRETS.GOOGLE_CLIENT_ID;
+      process.env.GOOGLE_CLIENT_SECRET = MOCK_SECRETS.GOOGLE_CLIENT_SECRET;
       // Note: This will fail without refresh token but tests the logic
       const result1 = await exporter.validateConfig();
       expect(typeof result1).toBe('boolean');
@@ -422,7 +423,7 @@ describe('Export Services', () => {
     it('should validate config based on environment variable', async () => {
       const originalEnv = process.env.GITHUB_TOKEN;
 
-      process.env.GITHUB_TOKEN = 'test-token';
+      process.env.GITHUB_TOKEN = MOCK_SECRETS.GITHUB_TOKEN;
       // Note: This will fail in test environment without actual API access
       const result1 = await exporter.validateConfig();
       expect(typeof result1).toBe('boolean');

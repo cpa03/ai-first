@@ -7,7 +7,7 @@ import {
 } from '@/lib/export-connectors';
 import { resilienceManager, CircuitBreaker } from '@/lib/resilience';
 import { ExportData } from '@/lib/export-connectors/base';
-import { TEST_NOTION_API_KEY } from './utils/test-secrets';
+import { TEST_NOTION_API_KEY, MOCK_SECRETS } from './utils/test-secrets';
 
 jest.mock('@/lib/resilience');
 jest.mock('@notionhq/client');
@@ -227,8 +227,8 @@ describe('Export Connector Resilience Integration', () => {
       exporter = new TrelloExporter();
       (resilienceManager.execute as jest.Mock).mockImplementation(mockExecute);
 
-      process.env.TRELLO_API_KEY = 'test-key';
-      process.env.TRELLO_TOKEN = 'test-token';
+      process.env.TRELLO_API_KEY = MOCK_SECRETS.TRELLO_API_KEY;
+      process.env.TRELLO_TOKEN = MOCK_SECRETS.TRELLO_TOKEN;
     });
 
     afterEach(() => {
