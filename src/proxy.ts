@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 
 /**
  * Proxy (Middleware) for Next.js 16+
@@ -28,8 +29,85 @@ const PUBLIC_PATHS = [
 
 const AUTH_PATHS = ['/login', '/signup'];
 
+function generateNonce(): string {
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  return Buffer.from(array).toString('base64');
+}
+
+function buildCSPHeader(nonce: string): string {
+  const directives = CSP_CONFIG.DIRECTIVES;
+  const cspParts: string[] = [];
+
+  for (const [directive, values] of Object.entries(directives)) {
+    if (directive === 'script-src') {
+      const scriptValues = values.map((v) =>
+        v === "'nonce-placeholder'" ? `'nonce-${nonce}'` : v
+      );
+      scriptValues.push('https://vercel.live');
+      cspParts.push(`${directive} ${scriptValues.join(' ')}`);
+    } else if (values.length === 0) {
+      cspParts.push(directive);
+    } else {
+      cspParts.push(`${directive} ${values.join(' ')}`);
+    }
+  }
+
+  cspParts.push('report-uri /api/csp-report');
+  cspParts.push('report-to csp-endpoint');
+
+  return cspParts.join('; ');
+}
+
+function buildPermissionsPolicy(): string {
+  return CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
+}
+
+function applySecurityHeaders(
+  response: NextResponse,
+  nonce: string,
+  isProduction: boolean
+): void {
+  response.headers.set('X-Frame-Options', SECURITY_CONFIG.X_FRAME_OPTIONS);
+  response.headers.set(
+    'X-Content-Type-Options',
+    SECURITY_CONFIG.X_CONTENT_TYPE_OPTIONS
+  );
+  response.headers.set('Referrer-Policy', SECURITY_CONFIG.REFERRER_POLICY);
+  response.headers.set('Permissions-Policy', buildPermissionsPolicy());
+  response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
+  response.headers.set(
+    'Cross-Origin-Resource-Policy',
+    SECURITY_CONFIG.CROSS_ORIGIN_RESOURCE_POLICY
+  );
+  response.headers.set(
+    'Cross-Origin-Opener-Policy',
+    SECURITY_CONFIG.CROSS_ORIGIN_OPENER_POLICY
+  );
+
+  if (isProduction) {
+    const hstsValue = `max-age=${SECURITY_CONFIG.HSTS_MAX_AGE}; includeSubDomains${
+      SECURITY_CONFIG.HSTS_PRELOAD ? '; preload' : ''
+    }`;
+    response.headers.set('Strict-Transport-Security', hstsValue);
+  }
+
+  response.headers.set('x-nonce', nonce);
+
+  response.headers.set(
+    'Report-To',
+    JSON.stringify({
+      group: 'csp-endpoint',
+      max_age: 10886400,
+      endpoints: [{ url: '/api/csp-report' }],
+    })
+  );
+}
+
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const nonce = generateNonce();
+  const isProduction = process.env.NODE_ENV === 'production';
 
   let response: NextResponse;
 
@@ -53,8 +131,7 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // Security: Disable legacy browser XSS auditor (modern standard)
-  response.headers.set('X-XSS-Protection', '0');
+  applySecurityHeaders(response, nonce, isProduction);
 
   return response;
 }
