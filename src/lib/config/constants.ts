@@ -320,6 +320,18 @@ export const UI_CONFIG = {
   ),
 
   /**
+   * Toast progress bar transition duration (in milliseconds)
+   * Controls the smoothness of progress bar animation
+   * Env: UI_TOAST_PROGRESS_TRANSITION_MS (default: 75)
+   */
+  TOAST_PROGRESS_TRANSITION_MS: EnvLoader.number(
+    'UI_TOAST_PROGRESS_TRANSITION_MS',
+    75,
+    10,
+    200
+  ),
+
+  /**
    * Toast swipe dismiss threshold (in pixels)
    * Minimum swipe distance required to dismiss a toast notification
    * Env: UI_TOAST_SWIPE_DISMISS_THRESHOLD (default: 80)
