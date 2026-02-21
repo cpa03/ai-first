@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Technical Writer Maintenance - 2026-02-21
+
+**Skills Documentation Completeness Fix:**
+
+- ✅ **Fixed AGENTS.md Skills Documentation**:
+  - Added 6 missing skills to documentation
+  - Removed 1 non-existent skill (`github-workflow-automation`)
+  - All 32 skills in `.opencode/skills/` now properly documented
+
+- ✅ **Added Missing Skills**:
+  - `superpowers-using` - How to access and use skills
+  - `superpowers-parallel-agents` - Parallel agent dispatch for independent tasks
+  - `superpowers-receiving-review` - Receiving code review feedback
+  - `superpowers-requesting-review` - Requesting code review
+  - `claude-codepro-backend` - Enterprise backend development standards
+  - `superpowers-writing-skills` - Creating and editing skills
+
+- ✅ **Updated technical-writer-tasks.md**:
+  - Added Task 28 documenting the skills documentation fix
+  - Updated documentation version to 0.6.4
+
+**Quality Gates Verified:**
+
+- Lint: PASSED (0 errors, 0 warnings)
+- TypeScript: PASSED (0 errors)
+- Build: PASSED (28 routes)
+
+**Impact:** AGENTS.md now accurately reflects all 32 available skills, improving discoverability for developers and agents.
+
 ### Product Manager Maintenance - 2026-02-20
 
 **Launch Readiness Documentation:**
