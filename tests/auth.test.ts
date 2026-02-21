@@ -1,5 +1,6 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { buildApiUrl } from './config/test-config';
+import { MOCK_SECRETS } from './utils/test-secrets';
 
 describe('auth', () => {
   let originalNodeEnv: string | undefined;
@@ -49,7 +50,7 @@ describe('auth', () => {
     describe('production mode', () => {
       beforeEach(() => {
         (process.env as any).NODE_ENV = 'production';
-        process.env.ADMIN_API_KEY = 'test-admin-key-12345';
+        process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY;
       });
 
       describe('Bearer token authentication', () => {
@@ -57,7 +58,7 @@ describe('auth', () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request(buildApiUrl('/admin/test'), {
             headers: {
-              Authorization: 'Bearer test-admin-key-12345',
+              Authorization: `Bearer ${MOCK_SECRETS.ADMIN_API_KEY}`,
             },
           });
           const result = await isAdminAuthenticated(request);
@@ -93,7 +94,7 @@ describe('auth', () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request(buildApiUrl('/admin/test'), {
             headers: {
-              Authorization: 'bearer test-admin-key-12345',
+              Authorization: `bearer ${MOCK_SECRETS.ADMIN_API_KEY}`,
             },
           });
           const result = await isAdminAuthenticated(request);
@@ -105,7 +106,7 @@ describe('auth', () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request(buildApiUrl('/admin/test'), {
             headers: {
-              Authorization: 'Basic test-admin-key-12345',
+              Authorization: `Basic ${MOCK_SECRETS.ADMIN_API_KEY}`,
             },
           });
           const result = await isAdminAuthenticated(request);
@@ -117,7 +118,7 @@ describe('auth', () => {
           const { isAdminAuthenticated } = require('@/lib/auth');
           const request = new Request(buildApiUrl('/admin/test'), {
             headers: {
-              Authorization: 'Bearer  test-admin-key-12345',
+              Authorization: `Bearer  ${MOCK_SECRETS.ADMIN_API_KEY}`,
             },
           });
           const result = await isAdminAuthenticated(request);
@@ -165,14 +166,14 @@ describe('auth', () => {
     describe('edge cases', () => {
       beforeEach(() => {
         (process.env as any).NODE_ENV = 'production';
-        process.env.ADMIN_API_KEY = 'test-key-with-special-chars!@#$%';
+        process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY_SPECIAL_CHARS;
       });
 
       it('should handle API keys with special characters', async () => {
         const { isAdminAuthenticated } = require('@/lib/auth');
         const request = new Request(buildApiUrl('/admin/test'), {
           headers: {
-            Authorization: 'Bearer test-key-with-special-chars!@#$%',
+            Authorization: `Bearer ${MOCK_SECRETS.ADMIN_API_KEY_SPECIAL_CHARS}`,
           },
         });
         const result = await isAdminAuthenticated(request);
@@ -185,7 +186,7 @@ describe('auth', () => {
   describe('requireAdminAuth', () => {
     beforeEach(() => {
       (process.env as any).NODE_ENV = 'production';
-      process.env.ADMIN_API_KEY = 'test-admin-key';
+      process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY;
     });
 
     it('should throw error when not authenticated', async () => {
@@ -226,7 +227,7 @@ describe('auth', () => {
       const { requireAdminAuth } = require('@/lib/auth');
       const request = new Request(buildApiUrl('/admin/test'), {
         headers: {
-          Authorization: 'Bearer test-admin-key',
+          Authorization: `Bearer ${MOCK_SECRETS.ADMIN_API_KEY}`,
         },
       });
 

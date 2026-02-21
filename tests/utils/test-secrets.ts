@@ -60,6 +60,9 @@ export const MOCK_SECRETS = {
   /** Mock admin API key for testing */
   ADMIN_API_KEY: 'MOCK_TEST_ADMIN_KEY_NOT_REAL',
 
+  /** Mock admin API key with special characters for testing */
+  ADMIN_API_KEY_SPECIAL_CHARS: 'MOCK_TEST_ADMIN_KEY_SPECIAL_!@#$%_NOT_REAL',
+
   /** Mock JWT token for testing */
   JWT_TOKEN: 'MOCK_TEST_JWT_TOKEN_NOT_REAL_XXXXX.YYYYY.ZZZZZ',
 

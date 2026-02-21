@@ -451,7 +451,7 @@ describe('Export Connector Resilience Integration', () => {
       exporter = new GitHubProjectsExporter();
       (resilienceManager.execute as jest.Mock).mockImplementation(mockExecute);
 
-      process.env.GITHUB_TOKEN = 'ghp_test_token';
+      process.env.GITHUB_TOKEN = MOCK_SECRETS.GITHUB_TOKEN;
     });
 
     afterEach(() => {
