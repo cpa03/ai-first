@@ -744,6 +744,7 @@ CREATE INDEX idx_time_tracking_date ON time_tracking(date_logged);
 CREATE INDEX idx_time_tracking_user_id ON time_tracking(user_id);
 CREATE INDEX idx_time_tracking_date_logged ON time_tracking(date_logged DESC);
 CREATE INDEX idx_time_tracking_task_date ON time_tracking(task_id, date_logged DESC);
+CREATE INDEX idx_time_tracking_task_user ON time_tracking(task_id, user_id);
 
 CREATE INDEX idx_task_comments_task_id ON task_comments(task_id);
 CREATE INDEX idx_task_comments_user_id ON task_comments(user_id);
