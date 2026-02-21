@@ -6,6 +6,7 @@ import React, {
   useCallback,
   useRef,
   useSyncExternalStore,
+  memo,
 } from 'react';
 import { COMPONENT_DEFAULTS } from '@/lib/config';
 
@@ -37,7 +38,9 @@ function usePrefersReducedMotion() {
   );
 }
 
-export default function ScrollToTop({
+// PERFORMANCE: Memoize ScrollToTop to prevent re-renders when parent components update
+// This component only needs to re-render when its own state changes
+function ScrollToTopComponent({
   showAt = COMPONENT_DEFAULTS.SCROLL_TO_TOP.SHOW_AT_PX,
   smooth = COMPONENT_DEFAULTS.SCROLL_TO_TOP.SMOOTH,
   className = '',
@@ -187,3 +190,7 @@ export default function ScrollToTop({
     </button>
   );
 }
+
+ScrollToTopComponent.displayName = 'ScrollToTop';
+
+export default memo(ScrollToTopComponent);

@@ -149,7 +149,9 @@ const ShortcutRow = memo(function ShortcutRow({
   );
 });
 
-export default function KeyboardShortcutsHelp({
+// PERFORMANCE: Memoize KeyboardShortcutsHelp to prevent re-renders when parent components update
+// Modal components benefit from memoization to avoid re-renders during animations
+function KeyboardShortcutsHelpComponent({
   isOpen,
   onClose,
 }: KeyboardShortcutsHelpProps) {
@@ -343,3 +345,7 @@ export default function KeyboardShortcutsHelp({
     </div>
   );
 }
+
+KeyboardShortcutsHelpComponent.displayName = 'KeyboardShortcutsHelp';
+
+export default memo(KeyboardShortcutsHelpComponent);
