@@ -9,7 +9,11 @@ import {
 } from '@/lib/api-handler';
 import { requireAdminAuth } from '@/lib/auth';
 import { redactPII } from '@/lib/pii-redaction';
-import { API_CACHE_CONFIG, HEALTH_CONFIG } from '@/lib/config/constants';
+import {
+  API_CACHE_CONFIG,
+  HEALTH_CONFIG,
+  MEMORY_CONFIG,
+} from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
 
 interface HealthCheckResult {
@@ -26,6 +30,21 @@ interface HealthCheckResult {
     connectionHealthy?: boolean;
     connectionRetries?: number;
   };
+}
+
+interface MemoryMetrics {
+  heapUsed: number;
+  heapTotal: number;
+  heapUsedPercent: number;
+  rss: number;
+  external: number;
+  arrayBuffers: number;
+}
+
+interface MemoryHealthResult {
+  status: 'healthy' | 'warning' | 'critical';
+  metrics: MemoryMetrics;
+  warnings: string[];
 }
 
 interface ConnectorHealthInfo {
@@ -47,18 +66,80 @@ interface HealthResponse {
     ai: number;
     exports: number;
     circuitBreakers: number;
+    memory: number;
   };
   checks: {
     database: HealthCheckResult;
     ai: HealthCheckResult;
     exports: HealthCheckResult;
   };
+  memory: MemoryHealthResult;
   connectors: Record<string, ConnectorHealthInfo>;
   circuitBreakers: Array<{
     service: string;
     state: string;
     failures: number;
   }>;
+}
+
+function getMemoryHealth(): MemoryHealthResult {
+  const memUsage = process.memoryUsage();
+  const warnings: string[] = [];
+
+  const metrics: MemoryMetrics = {
+    heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
+    heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+    heapUsedPercent: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100),
+    rss: Math.round(memUsage.rss / 1024 / 1024),
+    external: Math.round(memUsage.external / 1024 / 1024),
+    arrayBuffers: Math.round(memUsage.arrayBuffers / 1024 / 1024),
+  };
+
+  let status: 'healthy' | 'warning' | 'critical' = 'healthy';
+
+  if (metrics.heapUsedPercent >= MEMORY_CONFIG.HEAP_CRITICAL_THRESHOLD) {
+    status = 'critical';
+    warnings.push(
+      `Heap usage at ${metrics.heapUsedPercent}% (critical: ${MEMORY_CONFIG.HEAP_CRITICAL_THRESHOLD}%)`
+    );
+  } else if (metrics.heapUsedPercent >= MEMORY_CONFIG.HEAP_WARNING_THRESHOLD) {
+    status = 'warning';
+    warnings.push(
+      `Heap usage at ${metrics.heapUsedPercent}% (warning: ${MEMORY_CONFIG.HEAP_WARNING_THRESHOLD}%)`
+    );
+  }
+
+  if (metrics.rss >= MEMORY_CONFIG.RSS_CRITICAL_MB) {
+    status = 'critical';
+    warnings.push(
+      `RSS at ${metrics.rss}MB (critical: ${MEMORY_CONFIG.RSS_CRITICAL_MB}MB)`
+    );
+  } else if (
+    metrics.rss >= MEMORY_CONFIG.RSS_WARNING_MB &&
+    status !== 'critical'
+  ) {
+    status = 'warning';
+    warnings.push(
+      `RSS at ${metrics.rss}MB (warning: ${MEMORY_CONFIG.RSS_WARNING_MB}MB)`
+    );
+  }
+
+  if (metrics.external >= MEMORY_CONFIG.EXTERNAL_CRITICAL_MB) {
+    status = 'critical';
+    warnings.push(
+      `External memory at ${metrics.external}MB (critical: ${MEMORY_CONFIG.EXTERNAL_CRITICAL_MB}MB)`
+    );
+  } else if (
+    metrics.external >= MEMORY_CONFIG.EXTERNAL_WARNING_MB &&
+    status !== 'critical'
+  ) {
+    status = 'warning';
+    warnings.push(
+      `External memory at ${metrics.external}MB (warning: ${MEMORY_CONFIG.EXTERNAL_WARNING_MB}MB)`
+    );
+  }
+
+  return { status, metrics, warnings };
 }
 
 async function handleGet(context: ApiContext) {
@@ -222,6 +303,8 @@ async function handleGet(context: ApiContext) {
         : 'degraded'
       : 'unhealthy';
 
+  const memoryHealth = getMemoryHealth();
+
   const { SCORES, RELIABILITY_WEIGHTS } = HEALTH_CONFIG;
 
   const reliabilityFactors = {
@@ -249,13 +332,20 @@ async function handleGet(context: ApiContext) {
         : (circuitBreakers.filter((cb) => cb.state === 'closed').length /
             circuitBreakers.length) *
           SCORES.HEALTHY,
+    memory:
+      memoryHealth.status === 'healthy'
+        ? SCORES.HEALTHY
+        : memoryHealth.status === 'critical'
+          ? SCORES.UNHEALTHY
+          : SCORES.DEGRADED,
   };
 
   const reliabilityScore = Math.round(
     reliabilityFactors.database * RELIABILITY_WEIGHTS.database +
       reliabilityFactors.ai * RELIABILITY_WEIGHTS.ai +
       reliabilityFactors.exports * RELIABILITY_WEIGHTS.exports +
-      reliabilityFactors.circuitBreakers * RELIABILITY_WEIGHTS.circuitBreakers
+      reliabilityFactors.circuitBreakers * RELIABILITY_WEIGHTS.circuitBreakers +
+      reliabilityFactors.memory * RELIABILITY_WEIGHTS.memory
   );
 
   const response: HealthResponse = {
@@ -266,6 +356,7 @@ async function handleGet(context: ApiContext) {
     reliabilityScore,
     reliabilityFactors,
     checks,
+    memory: memoryHealth,
     connectors,
     circuitBreakers,
   };

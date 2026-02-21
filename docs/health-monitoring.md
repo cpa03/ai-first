@@ -103,6 +103,7 @@ Comprehensive health check with all services, latencies, and circuit breaker sta
 - AI service availability
 - Export connector status
 - Circuit breaker monitoring
+- Memory health monitoring
 - Overall system status calculation
 
 **Response:**
@@ -113,6 +114,7 @@ Comprehensive health check with all services, latencies, and circuit breaker sta
   "timestamp": "2024-01-07T12:00:00Z",
   "version": "0.1.0",
   "uptime": 3600,
+  "reliabilityScore": 95,
   "checks": {
     "database": {
       "status": "up",
@@ -128,41 +130,55 @@ Comprehensive health check with all services, latencies, and circuit breaker sta
       "status": "degraded",
       "error": "2/5 connectors",
       "lastChecked": "2024-01-07T12:00:00Z"
+    }
+  },
+  "memory": {
+    "status": "healthy",
+    "metrics": {
+      "heapUsed": 128,
+      "heapTotal": 256,
+      "heapUsedPercent": 50,
+      "rss": 300,
+      "external": 15,
+      "arrayBuffers": 5
     },
-    "circuitBreakers": [
-      {
-        "service": "openai",
-        "state": "closed",
-        "failures": 0,
-        "nextAttemptTime": null
-      },
-      {
-        "service": "trello",
-        "state": "open",
-        "failures": 5,
-        "nextAttemptTime": "2024-01-07T12:01:00Z"
-      }
-    ]
-  }
+    "warnings": []
+  },
+  "circuitBreakers": [
+    {
+      "service": "openai",
+      "state": "closed",
+      "failures": 0,
+      "nextAttemptTime": null
+    },
+    {
+      "service": "trello",
+      "state": "open",
+      "failures": 5,
+      "nextAttemptTime": "2024-01-07T12:01:00Z"
+    }
+  ]
 }
 ```
 
 **Overall Status Logic:**
 
-| Database | AI   | Exports  | Circuit Breakers Open | Overall Status |
-| -------- | ---- | -------- | --------------------- | -------------- |
-| up       | up   | up       | 0                     | healthy        |
-| up       | up   | degraded | 0-1                   | degraded       |
-| up       | up   | down     | 0-1                   | degraded       |
-| down     | any  | any      | any                   | unhealthy      |
-| up       | down | any      | any                   | unhealthy      |
-| any      | any  | any      | 3+                    | unhealthy      |
+| Database | AI   | Exports  | Memory   | Circuit Breakers Open | Overall Status |
+| -------- | ---- | -------- | -------- | --------------------- | -------------- |
+| up       | up   | up       | healthy  | 0                     | healthy        |
+| up       | up   | degraded | healthy  | 0-1                   | degraded       |
+| up       | up   | down     | healthy  | 0-1                   | degraded       |
+| up       | up   | any      | warning  | any                   | degraded       |
+| down     | any  | any      | any      | any                   | unhealthy      |
+| up       | down | any      | any      | any                   | unhealthy      |
+| any      | any  | any      | critical | any                   | unhealthy      |
+| any      | any  | any      | any      | 3+                    | unhealthy      |
 
 **Status Values:**
 
-- `healthy`: All critical services up, no circuit breakers open
-- `degraded`: Some services degraded or circuit breaker open
-- `unhealthy`: Critical service down or multiple circuit breakers open
+- `healthy`: All critical services up, memory healthy, no circuit breakers open
+- `degraded`: Some services degraded, memory warning, or circuit breaker open
+- `unhealthy`: Critical service down, memory critical, or multiple circuit breakers open
 
 **Use Cases:**
 
@@ -309,6 +325,93 @@ curl http://localhost:3000/api/health/detailed | jq '.checks.circuitBreakers'
 - Alert when any circuit breaker opens
 - Alert when multiple circuit breakers open (system degraded)
 - Alert when circuit breaker stays open > 5 minutes
+
+---
+
+## Memory Health Monitoring
+
+Memory health monitoring helps detect memory leaks and resource exhaustion early.
+
+### Memory Metrics
+
+| Metric          | Description                                  | Unit |
+| --------------- | -------------------------------------------- | ---- |
+| heapUsed        | Memory used by JavaScript objects            | MB   |
+| heapTotal       | Total heap memory allocated                  | MB   |
+| heapUsedPercent | Percentage of heap used                      | %    |
+| rss             | Resident Set Size (total memory allocated)   | MB   |
+| external        | Memory for C++ objects bound to JavaScript   | MB   |
+| arrayBuffers    | Memory for ArrayBuffer and SharedArrayBuffer | MB   |
+
+### Memory Status Values
+
+- `healthy`: Memory usage within normal parameters
+- `warning`: Memory usage approaching thresholds (may need attention)
+- `critical`: Memory usage at dangerous levels (immediate action required)
+
+### Memory Thresholds
+
+| Metric     | Warning Threshold | Critical Threshold |
+| ---------- | ----------------- | ------------------ |
+| Heap Usage | 80%               | 95%                |
+| RSS        | 512 MB            | 1024 MB            |
+| External   | 100 MB            | 256 MB             |
+
+These thresholds can be configured via environment variables:
+
+- `MEMORY_HEAP_WARNING_THRESHOLD` - Heap warning percentage
+- `MEMORY_HEAP_CRITICAL_THRESHOLD` - Heap critical percentage
+- `MEMORY_RSS_WARNING_MB` - RSS warning threshold in MB
+- `MEMORY_RSS_CRITICAL_MB` - RSS critical threshold in MB
+- `MEMORY_EXTERNAL_WARNING_MB` - External memory warning threshold in MB
+- `MEMORY_EXTERNAL_CRITICAL_MB` - External memory critical threshold in MB
+
+### Checking Memory Health
+
+```bash
+# Check memory health
+curl http://localhost:3000/api/health/detailed | jq '.memory'
+```
+
+**Output:**
+
+```json
+{
+  "status": "healthy",
+  "metrics": {
+    "heapUsed": 128,
+    "heapTotal": 256,
+    "heapUsedPercent": 50,
+    "rss": 300,
+    "external": 15,
+    "arrayBuffers": 5
+  },
+  "warnings": []
+}
+```
+
+**Warning Example:**
+
+```json
+{
+  "status": "warning",
+  "metrics": {
+    "heapUsed": 220,
+    "heapTotal": 256,
+    "heapUsedPercent": 86,
+    "rss": 300,
+    "external": 15,
+    "arrayBuffers": 5
+  },
+  "warnings": ["Heap usage at 86% (warning: 80%)"]
+}
+```
+
+### Alerting Rules for Memory
+
+- Alert when memory status becomes `warning`
+- Alert immediately when memory status becomes `critical`
+- Alert when heap usage increases steadily over time (potential memory leak)
 
 ---
 
