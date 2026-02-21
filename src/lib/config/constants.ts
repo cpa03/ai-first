@@ -1531,10 +1531,11 @@ export const HEALTH_CONFIG = {
    * Higher weight = more impact on overall reliability
    */
   RELIABILITY_WEIGHTS: {
-    database: 0.3,
-    ai: 0.3,
-    exports: 0.2,
-    circuitBreakers: 0.2,
+    database: 0.25,
+    ai: 0.25,
+    exports: 0.15,
+    circuitBreakers: 0.15,
+    memory: 0.2,
   } as const,
 
   /**
@@ -1548,4 +1549,68 @@ export const HEALTH_CONFIG = {
     DEGRADED_MIN: 50,
     /** Score < DEGRADED_MIN is considered unhealthy */
   } as const,
+} as const;
+
+/**
+ * Memory Health Configuration
+ * Thresholds for memory usage monitoring and alerts
+ * Used by the detailed health endpoint for memory leak detection
+ */
+export const MEMORY_CONFIG = {
+  /**
+   * Heap usage warning threshold (percentage of heapTotal)
+   * Env: MEMORY_HEAP_WARNING_THRESHOLD (default: 80)
+   */
+  HEAP_WARNING_THRESHOLD: EnvLoader.number(
+    'MEMORY_HEAP_WARNING_THRESHOLD',
+    80,
+    50,
+    95
+  ),
+
+  /**
+   * Heap usage critical threshold (percentage of heapTotal)
+   * Env: MEMORY_HEAP_CRITICAL_THRESHOLD (default: 95)
+   */
+  HEAP_CRITICAL_THRESHOLD: EnvLoader.number(
+    'MEMORY_HEAP_CRITICAL_THRESHOLD',
+    95,
+    80,
+    99
+  ),
+
+  /**
+   * RSS (Resident Set Size) warning threshold in MB
+   * Env: MEMORY_RSS_WARNING_MB (default: 512)
+   */
+  RSS_WARNING_MB: EnvLoader.number('MEMORY_RSS_WARNING_MB', 512, 128, 4096),
+
+  /**
+   * RSS critical threshold in MB
+   * Env: MEMORY_RSS_CRITICAL_MB (default: 1024)
+   */
+  RSS_CRITICAL_MB: EnvLoader.number('MEMORY_RSS_CRITICAL_MB', 1024, 256, 8192),
+
+  /**
+   * External memory warning threshold in MB
+   * (Array buffers, bindings, etc.)
+   * Env: MEMORY_EXTERNAL_WARNING_MB (default: 100)
+   */
+  EXTERNAL_WARNING_MB: EnvLoader.number(
+    'MEMORY_EXTERNAL_WARNING_MB',
+    100,
+    10,
+    1024
+  ),
+
+  /**
+   * External memory critical threshold in MB
+   * Env: MEMORY_EXTERNAL_CRITICAL_MB (default: 256)
+   */
+  EXTERNAL_CRITICAL_MB: EnvLoader.number(
+    'MEMORY_EXTERNAL_CRITICAL_MB',
+    256,
+    50,
+    2048
+  ),
 } as const;
