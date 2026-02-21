@@ -307,6 +307,108 @@ A user story is "Done" when:
 3. "As a user, I want to export my plan to Trello"
 4. "As a user, I want to export my plan to GitHub Projects"
 
+---
+
+## Story Splitting Decision Tree
+
+Use this decision tree when a story exceeds 8 story points or feels too large for a single sprint.
+
+### Quick Decision Flowchart
+
+```
+┌─────────────────────────────────────┐
+│   Story > 8 points or feels large?  │
+└─────────────────┬───────────────────┘
+                  │ YES
+                  ▼
+┌─────────────────────────────────────┐
+│  Does it have multiple user types?  │
+└─────────────────┬───────────────────┘
+                  │ YES → Split by User Type
+                  │ NO
+                  ▼
+┌─────────────────────────────────────┐
+│  Does it have multiple outcomes?    │
+└─────────────────┬───────────────────┘
+                  │ YES → Split by Outcome
+                  │ NO
+                  ▼
+┌─────────────────────────────────────┐
+│  Does it have multiple steps?       │
+└─────────────────┬───────────────────┘
+                  │ YES → Split by Workflow Step
+                  │ NO
+                  ▼
+┌─────────────────────────────────────┐
+│  Does it handle multiple data types?│
+└─────────────────┬───────────────────┘
+                  │ YES → Split by Data Type
+                  │ NO
+                  ▼
+┌─────────────────────────────────────┐
+│  Does it have CRUD operations?      │
+└─────────────────┬───────────────────┘
+                  │ YES → Split by Operation
+                  │ NO
+                  ▼
+┌─────────────────────────────────────┐
+│   Split Happy Path vs Edge Cases    │
+└─────────────────────────────────────┘
+```
+
+### Splitting Strategy Selection
+
+| Situation                  | Strategy            | Example                                                |
+| -------------------------- | ------------------- | ------------------------------------------------------ |
+| Multiple user types        | Split by Persona    | "As a founder..." → "As a PM..." → "As a developer..." |
+| Multiple outputs/outcomes  | Split by Outcome    | Export → Markdown, Notion, Trello (separate stories)   |
+| Sequential process steps   | Split by Workflow   | Submit → Clarify → Confirm → Complete                  |
+| Different data categories  | Split by Data Type  | Manage users, manage ideas, manage exports             |
+| Create/Read/Update/Delete  | Split by CRUD       | Create idea, View idea, Update idea, Delete idea       |
+| Simple + Complex scenarios | Split by Complexity | Basic auth, 2FA auth, SSO auth (incremental)           |
+| Platform-specific behavior | Split by Platform   | Web, Mobile, API (separate stories)                    |
+
+### When NOT to Split
+
+| Situation                               | Reason                                |
+| --------------------------------------- | ------------------------------------- |
+| Story is already ≤5 points              | Appropriate size, no splitting needed |
+| Splitting breaks INVEST independence    | Creates artificial dependencies       |
+| Acceptance criteria are tightly coupled | Cannot be delivered separately        |
+| Value is lost without complete story    | User doesn't get value from partial   |
+
+### Splitting Checklist
+
+Before splitting a story, confirm:
+
+- [ ] Story has multiple independent acceptance criteria
+- [ ] Each split story can deliver value independently
+- [ ] Splits don't create circular dependencies
+- [ ] Each split meets INVEST criteria
+- [ ] Estimated points per split ≤8
+
+### Example: Splitting a Large Story
+
+**Original Story (13 points)**:
+
+```
+As a startup founder,
+I want to manage my ideas with full CRUD operations,
+So that I can organize my projects effectively.
+```
+
+**Split Stories**:
+
+| Split | Story                                                 | Points |
+| ----- | ----------------------------------------------------- | ------ |
+| 1     | As a founder, I want to create and save new ideas     | 3      |
+| 2     | As a founder, I want to view my saved ideas           | 2      |
+| 3     | As a founder, I want to edit my existing ideas        | 3      |
+| 4     | As a founder, I want to delete ideas I no longer need | 2      |
+| 5     | As a founder, I want to archive ideas for later       | 2      |
+
+**Result**: 5 stories totaling 12 points, each independently deliverable.
+
 ## Story Points Estimation Guide
 
 ### Fibonacci Scale
