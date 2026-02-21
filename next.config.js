@@ -110,10 +110,24 @@ const nextConfig = {
     ];
 
     // Add HSTS only in production (requires HTTPS)
+    // Values are configurable via environment variables (see SECURITY_CONFIG in constants.ts)
     if (process.env.NODE_ENV === 'production') {
+      const hstsMaxAge = process.env.SECURITY_HSTS_MAX_AGE || '31536000';
+      const hstsIncludeSubdomains =
+        process.env.SECURITY_HSTS_INCLUDE_SUBDOMAINS !== 'false';
+      const hstsPreload = process.env.SECURITY_HSTS_PRELOAD !== 'false';
+
+      const hstsValue = [
+        `max-age=${hstsMaxAge}`,
+        hstsIncludeSubdomains ? 'includeSubDomains' : '',
+        hstsPreload ? 'preload' : '',
+      ]
+        .filter(Boolean)
+        .join('; ');
+
       securityHeaders.push({
         key: 'Strict-Transport-Security',
-        value: 'max-age=31536000; includeSubDomains; preload',
+        value: hstsValue,
       });
     }
 
