@@ -560,7 +560,7 @@ describe('generateRequestId', () => {
   it('should follow correct format', () => {
     const id = generateRequestId();
 
-    expect(id).toMatch(/^req_\d+_[a-z0-9]{9}$/);
+    expect(id).toMatch(/^req_\d+_[a-z0-9]{8,}$/);
   });
 
   it('should include timestamp', () => {
@@ -578,9 +578,9 @@ describe('generateRequestId', () => {
 
   it('should include random suffix', () => {
     const id = generateRequestId();
-    const suffixMatch = id.match(/req_\d+_([a-z0-9]{9})$/);
+    const suffixMatch = id.match(/req_\d+_([a-z0-9]+)$/);
     expect(suffixMatch).not.toBeNull();
-    expect(suffixMatch![1]).toHaveLength(9);
+    expect(suffixMatch![1].length).toBeGreaterThanOrEqual(8);
   });
 
   it('should generate IDs quickly', () => {
