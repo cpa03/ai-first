@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { memo, useCallback } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
@@ -12,7 +12,10 @@ interface TaskManagementProps {
   ideaId: string;
 }
 
-export default function TaskManagement({ ideaId }: TaskManagementProps) {
+// PERFORMANCE: Memoize TaskManagement to prevent unnecessary re-renders when parent updates.
+// Child components (DeliverableCard, TaskItem, TaskManagementHeader) are already memoized.
+// This ensures the entire task management tree only re-renders when ideaId prop changes.
+function TaskManagementComponent({ ideaId }: TaskManagementProps) {
   const {
     loading,
     error,
@@ -100,3 +103,5 @@ export default function TaskManagement({ ideaId }: TaskManagementProps) {
     </div>
   );
 }
+
+export default memo(TaskManagementComponent);
