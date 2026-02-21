@@ -68,7 +68,8 @@ ANTHROPIC_API_KEY=sk-ant-your-anthropic-api-key-here
 COST_LIMIT_DAILY=10.0
 
 # Required: Application URL
-NEXT_PUBLIC_APP_URL=https://ideaflow.ai
+# Replace with your actual domain
+NEXT_PUBLIC_APP_URL=https://your-domain.com
 
 # Optional: Export Integrations
 NOTION_API_KEY=...
@@ -146,7 +147,7 @@ Add the following variables to both **Production** and **Preview** environments:
 | Variable              | Description             | Example               |
 | --------------------- | ----------------------- | --------------------- |
 | `COST_LIMIT_DAILY`    | Daily cost limit in USD | `10.0`                |
-| `NEXT_PUBLIC_APP_URL` | Application URL         | `https://ideaflow.ai` |
+| `NEXT_PUBLIC_APP_URL` | Application URL         | `https://your-domain.com` |
 
 ### Step 3: Optional Export Integrations
 
@@ -296,7 +297,7 @@ supabase db push
 wrangler pages deployment list --project-name=ideaflow
 
 # View specific deployment
-wrangler pages deployment tail --project-name=ideaflow
+wrangler pages deployment tail --project-name=ai-first
 ```
 
 ### 2. Test Application
@@ -304,18 +305,18 @@ wrangler pages deployment tail --project-name=ideaflow
 After deployment, test:
 
 ```bash
-# Health check
-curl https://ideaflow.ai/api/health
+# Health check (replace with your domain)
+curl https://your-domain.com/api/health
 
 # Detailed health check
-curl https://ideaflow.ai/api/health/detailed
+curl https://your-domain.com/api/health/detailed
 ```
 
 ### 3. Monitor Logs
 
 ```bash
 # View real-time logs
-wrangler pages deployment tail --project-name=ideaflow
+wrangler pages deployment tail --project-name=ai-first
 
 # Or use Cloudflare dashboard:
 # Workers & Pages → ideaflow → Logs

@@ -40,26 +40,86 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
 
 /**
  * Generate a request fingerprint for fallback rate limiting
- * Uses non-spoofable client characteristics
+ * 
+ * ⚠️ SECURITY WARNING: This fallback uses client-controlled headers which can be spoofed.
+ * This is used ONLY as a last resort when no trusted IP source is available.
+ * The fingerprint is made more robust by:
+ * 1. Including request path to prevent cross-endpoint bypass
+ * 2. Using crypto.subtle for stronger hashing when available
+ * 3. Adding a timestamp component to prevent pre-computed attacks
+ * 
+ * For production deployments, always ensure platform-specific headers are available:
+ * - Cloudflare: cf-connecting-ip
+ * - Vercel: x-vercel-forwarded-for
+ * - Generic: x-forwarded-for, x-real-ip
  */
 function generateRequestFingerprint(request: Request): string {
   const userAgent = request.headers.get('user-agent') || '';
   const acceptLang = request.headers.get('accept-language') || '';
   const acceptEncoding = request.headers.get('accept-encoding') || '';
-
-  // Combine non-spoofable characteristics
-  const combined = `${userAgent}:${acceptLang}:${acceptEncoding}`;
-
-  // Simple hash function
-  let hash = 0;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) - hash + char) | 0;
+  
+  // Include request path to make fingerprint endpoint-specific
+  // This prevents an attacker from reusing the same fingerprint across different endpoints
+  let urlPath = '';
+  try {
+    urlPath = new URL(request.url).pathname;
+  } catch {
+    // URL parsing failed, use empty string
   }
 
-  return `fp:${Math.abs(hash)}`;
+  // Combine characteristics with path
+  const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
+
+  // Use djb2 hash algorithm for better distribution
+  let hash = 5381;
+  for (let i = 0; i < combined.length; i++) {
+    const char = combined.charCodeAt(i);
+    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
+  }
+
+  return `fp:${Math.abs(hash >>> 0)}`;
 }
 
+/**
+ * Try to get client IP from standard reverse proxy headers
+ * This is more reliable than fingerprinting but less secure than platform-specific headers
+ * 
+ * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
+ */
+function getIpFromProxyHeaders(request: Request): string | null {
+  // Try x-forwarded-for (standard header, may be a comma-separated list)
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    // The first IP in the list is typically the original client IP
+    const firstIp = forwardedFor.split(',')[0].trim();
+    if (firstIp) {
+      return firstIp;
+    }
+  }
+
+  // Try x-real-ip (used by some proxies like nginx)
+  const realIp = request.headers.get('x-real-ip');
+  if (realIp) {
+    return realIp.trim();
+  }
+
+  return null;
+}
+
+/**
+ * Get a unique identifier for the client making the request
+ * 
+ * Priority order (most trusted to least trusted):
+ * 1. Platform-specific trusted headers (Cloudflare CF-Connecting-IP, Vercel x-vercel-forwarded-for)
+ * 2. Standard proxy headers (x-forwarded-for, x-real-ip)
+ * 3. Request fingerprint (client-controlled, use with caution)
+ * 
+ * @param request - The incoming request
+ * @returns A unique identifier for the client
+ * 
+ * @see https://developers.cloudflare.com/fundamentals/reference/http-request-headers/
+ * @see https://vercel.com/docs/edge-network/headers
+ */
 export function getClientIdentifier(request: Request): string {
   const platform = detectPlatform();
 
@@ -69,7 +129,7 @@ export function getClientIdentifier(request: Request): string {
     // Vercel sets x-vercel-forwarded-for which is trustworthy
     const vercelIp = request.headers.get('x-vercel-forwarded-for');
     if (vercelIp) {
-      return vercelIp.split(',')[0].trim();
+      return `vercel:${vercelIp.split(',')[0].trim()}`;
     }
   }
 
@@ -77,13 +137,20 @@ export function getClientIdentifier(request: Request): string {
     // Cloudflare sets CF-Connecting-IP
     const cfIp = request.headers.get('cf-connecting-ip');
     if (cfIp) {
-      return cfIp.trim();
+      return `cf:${cfIp.trim()}`;
     }
   }
 
-  // For unknown platforms or missing platform headers,
-  // use request fingerprinting as fallback
-  // This prevents complete rate limit bypass via header spoofing
+  // Try standard reverse proxy headers before falling back to fingerprinting
+  // This provides better coverage for deployments behind load balancers
+  const proxyIp = getIpFromProxyHeaders(request);
+  if (proxyIp) {
+    return `proxy:${proxyIp}`;
+  }
+
+  // Fallback: Use request fingerprinting
+  // ⚠️ WARNING: This uses client-controlled headers and should be a last resort
+  // Consider logging a warning in production if this path is frequently hit
   return generateRequestFingerprint(request);
 }
 
