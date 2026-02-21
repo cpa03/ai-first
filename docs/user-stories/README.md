@@ -8,9 +8,9 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 | Metric               | Count |
 | -------------------- | ----- |
-| **Total Stories**    | 7     |
+| **Total Stories**    | 6     |
 | **P0 (Must Have)**   | 4     |
-| **P1 (Should Have)** | 3     |
+| **P1 (Should Have)** | 2     |
 | **P2 (Could Have)**  | 0     |
 | **P3 (Won't Have)**  | 0     |
 
@@ -37,7 +37,7 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 | Status      | Count | Stories                                                                             |
 | ----------- | ----- | ----------------------------------------------------------------------------------- |
-| Ready       | 7     | US-AUTH-001, US-AUTH-002, US-AUTH-003, US-IDEA-001, US-BREAKDOWN-001, US-EXPORT-001 |
+| Ready       | 6     | US-AUTH-001, US-AUTH-002, US-AUTH-003, US-IDEA-001, US-BREAKDOWN-001, US-EXPORT-001 |
 | In Progress | 0     | -                                                                                   |
 | Done        | 0     | -                                                                                   |
 | Released    | 0     | -                                                                                   |
@@ -75,7 +75,7 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | Idea Management | 1     | 0     | 0     | 0     | 1     |
 | Breakdown       | 1     | 0     | 0     | 0     | 1     |
 | Export          | 0     | 1     | 0     | 0     | 1     |
-| **Total**       | **4** | **2** | **0** | **0** | **7** |
+| **Total**       | **4** | **2** | **0** | **0** | **6** |
 
 ---
 
@@ -227,4 +227,4 @@ When adding new user stories:
 
 ---
 
-_Maintained by the User Story Engineer specialist. Last updated: February 20, 2026 (Story Points Summary added)._
+_Maintained by the User Story Engineer specialist. Last updated: February 21, 2026 (Statistics corrected: Total Stories = 6, P1 = 2)._
