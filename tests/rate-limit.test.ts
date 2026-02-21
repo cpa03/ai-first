@@ -296,7 +296,8 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      expect(identifier).toBe('192.168.1.1');
+      // Now includes 'vercel:' prefix to indicate the source
+      expect(identifier).toBe('vercel:192.168.1.1');
     });
 
     it('should use first IP from x-vercel-forwarded-for when multiple present', () => {
@@ -306,10 +307,11 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      expect(identifier).toBe('10.0.0.1');
+      // Now includes 'vercel:' prefix to indicate the source
+      expect(identifier).toBe('vercel:10.0.0.1');
     });
 
-    it('should ignore spoofed x-real-ip on Vercel', () => {
+    it('should use proxy header fallback when no platform header on Vercel', () => {
       const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '172.16.0.1',
@@ -319,9 +321,9 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      // Should not use spoofed x-real-ip, should use fingerprint fallback
-      expect(identifier).not.toBe('172.16.0.1');
-      expect(identifier).toMatch(/^fp:/);
+      // Now uses proxy header fallback (x-real-ip) before fingerprinting
+      // This provides better coverage for deployments behind load balancers
+      expect(identifier).toBe('proxy:172.16.0.1');
     });
   });
 
@@ -337,10 +339,11 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      expect(identifier).toBe('192.168.1.1');
+      // Now includes 'cf:' prefix to indicate the source
+      expect(identifier).toBe('cf:192.168.1.1');
     });
 
-    it('should ignore spoofed headers on Cloudflare', () => {
+    it('should use proxy header fallback when no platform header on Cloudflare', () => {
       const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '172.16.0.1',
@@ -350,9 +353,9 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      // Should not use spoofed x-real-ip, should use fingerprint fallback
-      expect(identifier).not.toBe('172.16.0.1');
-      expect(identifier).toMatch(/^fp:/);
+      // Now uses proxy header fallback (x-real-ip) before fingerprinting
+      // This provides better coverage for deployments behind load balancers
+      expect(identifier).toBe('proxy:172.16.0.1');
     });
   });
 
@@ -415,7 +418,7 @@ describe('getClientIdentifier', () => {
       expect(identifier1).not.toBe(identifier2);
     });
 
-    it('should ignore spoofed x-forwarded-for on unknown platforms', () => {
+    it('should use x-forwarded-for on unknown platforms (proxy fallback)', () => {
       const request = new Request(BASE_URL, {
         headers: {
           'x-forwarded-for': '10.0.0.1',
@@ -425,12 +428,12 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      // Should not use spoofed x-forwarded-for
-      expect(identifier).not.toBe('10.0.0.1');
-      expect(identifier).toMatch(/^fp:/);
+      // Now uses proxy header fallback before fingerprinting
+      // This provides better coverage for deployments behind load balancers
+      expect(identifier).toBe('proxy:10.0.0.1');
     });
 
-    it('should ignore spoofed x-real-ip on unknown platforms', () => {
+    it('should use x-real-ip on unknown platforms (proxy fallback)', () => {
       const request = new Request(BASE_URL, {
         headers: {
           'x-real-ip': '172.16.0.1',
@@ -440,48 +443,49 @@ describe('getClientIdentifier', () => {
 
       const identifier = getClientIdentifier(request);
 
-      // Should not use spoofed x-real-ip
-      expect(identifier).not.toBe('172.16.0.1');
-      expect(identifier).toMatch(/^fp:/);
+      // Now uses proxy header fallback before fingerprinting
+      // This provides better coverage for deployments behind load balancers
+      expect(identifier).toBe('proxy:172.16.0.1');
     });
   });
 
   describe('Security - IP spoofing prevention', () => {
-    it('should not be vulnerable to X-Real-IP spoofing attacks', () => {
+    it('should use proxy header fallback when available', () => {
       delete process.env.VERCEL;
       delete process.env.CLOUDFLARE;
 
       const request = new Request(BASE_URL, {
         headers: {
-          'x-real-ip': '1.1.1.1', // Spoofed header
+          'x-real-ip': '1.1.1.1', // Could be from trusted proxy
           'user-agent': 'attacker',
         },
       });
 
       const identifier = getClientIdentifier(request);
 
-      // Should not use the spoofed IP
-      expect(identifier).not.toBe('1.1.1.1');
-      expect(identifier).toMatch(/^fp:/);
+      // Now uses proxy header fallback (x-real-ip) before fingerprinting
+      // This is more practical for deployments behind trusted proxies
+      // The 'proxy:' prefix indicates this came from a proxy header
+      expect(identifier).toBe('proxy:1.1.1.1');
     });
 
-    it('should not be vulnerable to X-Forwarded-For spoofing attacks', () => {
+    it('should use first IP from x-forwarded-for (proxy fallback)', () => {
       delete process.env.VERCEL;
       delete process.env.CLOUDFLARE;
 
       const request = new Request(BASE_URL, {
         headers: {
-          'x-forwarded-for': '1.1.1.1, 2.2.2.2', // Spoofed header
+          'x-forwarded-for': '1.1.1.1, 2.2.2.2',
           'user-agent': 'attacker',
         },
       });
 
       const identifier = getClientIdentifier(request);
 
-      // Should not use the spoofed IP
-      expect(identifier).not.toBe('1.1.1.1');
-      expect(identifier).not.toBe('2.2.2.2');
-      expect(identifier).toMatch(/^fp:/);
+      // Now uses proxy header fallback (x-forwarded-for) before fingerprinting
+      // Uses the first IP in the chain which is typically the original client
+      // The 'proxy:' prefix indicates this came from a proxy header
+      expect(identifier).toBe('proxy:1.1.1.1');
     });
   });
 });
