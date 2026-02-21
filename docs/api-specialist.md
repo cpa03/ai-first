@@ -304,6 +304,14 @@ const { data } = await apiRequest<HealthStatus>('/api/health/detailed', {
   timeoutMs: 5000,
 });
 
+// With request cancellation
+const controller = new AbortController();
+const promise = apiRequest<Idea[]>('/api/ideas', {
+  signal: controller.signal,
+});
+// Cancel the request when needed (e.g., component unmount)
+controller.abort();
+
 // Without automatic unwrapping
 const { data: rawResponse } = await apiRequest<ApiResponse<Idea>>(
   '/api/ideas/123',
@@ -466,6 +474,29 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-21 - API Client Request Cancellation Support
+
+- **Feature**: Added `signal` parameter to `apiRequest` and `fetchWithTimeout` for request cancellation
+- **New Parameter**: `signal?: AbortSignal` in `ApiRequestOptions`
+- **Use Case**: Cancel in-flight API requests (e.g., when component unmounts, user navigates away)
+- **Example**:
+
+  ```typescript
+  const controller = new AbortController();
+
+  // Make request with cancellation support
+  const promise = apiRequest('/api/ideas', { signal: controller.signal });
+
+  // Cancel the request
+  controller.abort();
+  ```
+
+- **Error Handling**: Distinguishes between timeout errors and user-initiated aborts
+- **Location**: `src/lib/api-client.ts`
+- **Build**: Passing
+- **Lint**: Passing
+- **Type-check**: Passing
 
 ### 2026-02-21 - OpenAPI Documentation Completeness
 
