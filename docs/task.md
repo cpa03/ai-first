@@ -140,4 +140,4 @@ This task requires browser automation tools (Playwright) or manual testing. Envi
 
 ---
 
-**Note**: For complete task history, see [docs/archive/](docs/archive/)
+**Note**: For complete task history, see [docs/archive/](./archive/)
