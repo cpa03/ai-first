@@ -1,7 +1,7 @@
 # Security Engineer Guide
 
-**Role**: Security Engineer Specialist  
-**Last Updated**: 2026-02-19  
+**Role**: Security Engineer Specialist
+**Last Updated**: 2026-02-21
 **Status**: ✅ Active
 
 ---
@@ -40,6 +40,37 @@ This document provides security-focused guidelines, findings, and best practices
 ---
 
 ## Security Fixes Log
+
+### 2026-02-21: Centralized Test Secrets Management (Issue #841)
+
+**Issue**: Test files contained hardcoded secrets like `'test-key'`, `'test-service-key'` that could create security anti-patterns and risk accidental commit of real credentials.
+
+**Risk**:
+
+- Developers may become desensitized to seeing secrets in code
+- Pattern normalization makes it easier to accidentally add real secrets
+- CI/CD pipelines may expose test values in build logs
+- No clear distinction between test and production secrets
+
+**Fix Applied**:
+
+- Created `MOCK_SECRETS` constant object with clearly-marked test values (`MOCK_TEST_*` prefix)
+- Added `setMockEnvVars()` helper function for test setup
+- Updated `tests/utils/_testHelpers.ts` to use centralized mock values
+- All mock values include `NOT_REAL` marker to prevent confusion
+
+**Files Modified**:
+
+- `tests/utils/test-secrets.ts` - Added MOCK_SECRETS object and setMockEnvVars helper
+- `tests/utils/_testHelpers.ts` - Updated to import from test-secrets.ts
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ 1219 tests passed
+```
 
 ### 2026-02-20: CSP worker-src and manifest-src Directives Added
 
