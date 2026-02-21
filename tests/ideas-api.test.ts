@@ -58,7 +58,9 @@ describe('/api/ideas POST', () => {
         status: 'draft',
         createdAt: '2024-01-15T10:00:00.000Z',
       });
-      expect(data.requestId).toMatch(/^req_\d+_[a-z0-9]+$/);
+      expect(data.requestId).toMatch(
+        /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+      );
       expect(data.timestamp).toBeTruthy();
       expect(response.headers.get('X-Request-ID')).toBeTruthy();
       expect(mockCreateIdea).toHaveBeenCalledTimes(1);
@@ -289,7 +291,9 @@ describe('/api/ideas POST', () => {
       expect(response.status).toBe(500);
       expect(data.error).toBeTruthy();
       expect(data.code).toBe('INTERNAL_ERROR');
-      expect(data.requestId).toMatch(/^req_\d+_[a-z0-9]+$/);
+      expect(data.requestId).toMatch(
+        /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+      );
     });
 
     it('should include request ID in error responses', async () => {
@@ -303,7 +307,9 @@ describe('/api/ideas POST', () => {
       const response = await POST(request as any);
       const data = await response.json();
 
-      expect(data.requestId).toMatch(/^req_\d+_[a-z0-9]+$/);
+      expect(data.requestId).toMatch(
+        /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+      );
     });
   });
 

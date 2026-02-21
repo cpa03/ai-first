@@ -442,7 +442,9 @@ describe('toErrorResponse', () => {
     const requestId = response.headers.get('X-Request-ID');
 
     expect(requestId).toBeDefined();
-    expect(requestId).toMatch(/^req_\d+_[a-z0-9]+$/);
+    expect(requestId).toMatch(
+      /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    );
   });
 
   it('should parse response body for AppError', async () => {
@@ -557,30 +559,32 @@ describe('generateRequestId', () => {
     expect(id1).not.toBe(id2);
   });
 
-  it('should follow correct format', () => {
+  it('should follow correct format with UUID', () => {
     const id = generateRequestId();
 
-    expect(id).toMatch(/^req_\d+_[a-z0-9]{8,}$/);
+    expect(id).toMatch(
+      /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+    );
   });
 
-  it('should include timestamp', () => {
-    const before = Date.now();
+  it('should include valid UUID v4 format', () => {
     const id = generateRequestId();
-    const after = Date.now();
+    const uuidMatch = id.match(
+      /^req_([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$/
+    );
+    expect(uuidMatch).not.toBeNull();
 
-    const timestampMatch = id.match(/req_(\d+)_/);
-    expect(timestampMatch).not.toBeNull();
-
-    const timestamp = parseInt(timestampMatch![1], 10);
-    expect(timestamp).toBeGreaterThanOrEqual(before);
-    expect(timestamp).toBeLessThanOrEqual(after);
+    const uuid = uuidMatch![1];
+    expect(uuid.length).toBe(36);
+    expect(uuid.split('-').length).toBe(5);
   });
 
-  it('should include random suffix', () => {
-    const id = generateRequestId();
-    const suffixMatch = id.match(/req_\d+_([a-z0-9]+)$/);
-    expect(suffixMatch).not.toBeNull();
-    expect(suffixMatch![1].length).toBeGreaterThanOrEqual(8);
+  it('should be cryptographically unique', () => {
+    const ids = new Set<string>();
+    for (let i = 0; i < 100; i++) {
+      ids.add(generateRequestId());
+    }
+    expect(ids.size).toBe(100);
   });
 
   it('should generate IDs quickly', () => {

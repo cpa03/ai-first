@@ -66,7 +66,7 @@ describe('withApiHandler', () => {
 
       expect(response.headers.get('X-Request-ID')).toBeTruthy();
       expect(response.headers.get('X-Request-ID')).toMatch(
-        /^req_\d+_[a-z0-9]{8,}$/
+        /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
       );
     });
 
@@ -239,7 +239,9 @@ describe('withApiHandler', () => {
           remaining: 0,
           reset: resetTime,
         },
-        expect.stringMatching(/^req_\d+_[a-z0-9]{8,}$/)
+        expect.stringMatching(
+          /^req_[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
+        )
       );
     });
 
