@@ -255,6 +255,7 @@ interface ClarificationAnswer {
 | custom_fields         | JSONB        | NULLABLE                                      | Custom fields in JSON                |
 | milestone_id          | UUID         | REFERENCES milestones(id) ON DELETE SET NULL  | Associated milestone                 |
 | created_at            | TIMESTAMPTZ  | DEFAULT NOW()                                 | Creation timestamp                   |
+| updated_at            | TIMESTAMPTZ  | DEFAULT NOW()                                 | Last update timestamp                |
 | deleted_at            | TIMESTAMPTZ  | NULLABLE                                      | Soft delete timestamp                |
 
 ### 7. task_dependencies
@@ -578,7 +579,9 @@ Automatically updates the `updated_at` timestamp on row updates.
 **Applied to:**
 
 - milestones
+- tasks
 - task_comments
+- task_assignments
 - time_tracking
 - breakdown_sessions
 - timelines
@@ -947,29 +950,30 @@ SELECT query, calls, mean_time, total_time FROM pg_stat_statements ORDER BY mean
 
 Located in `/supabase/migrations/`:
 
-| Migration                                         | Description                         |
-| ------------------------------------------------- | ----------------------------------- |
-| 001_breakdown_engine_extensions.sql               | Adds breakdown engine tables        |
-| 002_data_integrity_constraints.sql                | Adds CHECK constraints              |
-| 002_schema_optimization.sql                       | Performance optimizations           |
-| 003_vectors_pgvector_support.sql                  | Vector extension setup              |
-| 004_risk_assessments_not_null_constraints.sql     | Risk assessments NOT NULL           |
-| 005_risk_assessments_constraints_fix.sql          | Risk assessments constraint fix     |
-| 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns          |
-| 20260120_add_clarification_tables_and_indexes.sql | Clarification tables                |
-| 20260218_add_ideas_updated_at.sql                 | Ideas table updated_at              |
-| 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete           |
-| 20260218_add_missing_rls_policies.sql             | Missing RLS policies (#1189, #1172) |
-| 20260218_vector_index_maintenance.sql             | Vector index maintenance utilities  |
-| 20260218_add_task_dependencies_updated_at.sql     | Task dependencies updated_at        |
-| 20260219_add_date_integrity_constraints.sql       | Date integrity constraints          |
-| 20260219_add_idea_sessions_updated_at_trigger.sql | Idea sessions updated_at trigger    |
-| 20260219_add_task_assignments_updated_at.sql      | Task assignments updated_at         |
-| 20260220_fix_risk_score_data_type.sql             | Fix risk_score DECIMAL type (#1172) |
-| 20260220_add_task_assignments_indexes.sql         | Task assignments FK indexes (#1189) |
-| 20260220_add_agent_logs_action_index.sql          | Agent logs action indexes (#1189)   |
-| 20260221_add_clarification_question_index.sql     | Clarification question indexes      |
-| 20260221_add_missing_fk_indexes.sql               | Missing FK indexes (#1189, #1172)   |
+| Migration                                         | Description                            |
+| ------------------------------------------------- | -------------------------------------- |
+| 001_breakdown_engine_extensions.sql               | Adds breakdown engine tables           |
+| 002_data_integrity_constraints.sql                | Adds CHECK constraints                 |
+| 002_schema_optimization.sql                       | Performance optimizations              |
+| 003_vectors_pgvector_support.sql                  | Vector extension setup                 |
+| 004_risk_assessments_not_null_constraints.sql     | Risk assessments NOT NULL              |
+| 005_risk_assessments_constraints_fix.sql          | Risk assessments constraint fix        |
+| 20260113_add_missing_tables_and_columns.sql       | Missing tables and columns             |
+| 20260120_add_clarification_tables_and_indexes.sql | Clarification tables                   |
+| 20260218_add_ideas_updated_at.sql                 | Ideas table updated_at                 |
+| 20260218_add_task_comments_soft_delete.sql        | Task comments soft delete              |
+| 20260218_add_missing_rls_policies.sql             | Missing RLS policies (#1189, #1172)    |
+| 20260218_vector_index_maintenance.sql             | Vector index maintenance utilities     |
+| 20260218_add_task_dependencies_updated_at.sql     | Task dependencies updated_at           |
+| 20260219_add_date_integrity_constraints.sql       | Date integrity constraints             |
+| 20260219_add_idea_sessions_updated_at_trigger.sql | Idea sessions updated_at trigger       |
+| 20260219_add_task_assignments_updated_at.sql      | Task assignments updated_at            |
+| 20260220_fix_risk_score_data_type.sql             | Fix risk_score DECIMAL type (#1172)    |
+| 20260220_add_task_assignments_indexes.sql         | Task assignments FK indexes (#1189)    |
+| 20260220_add_agent_logs_action_index.sql          | Agent logs action indexes (#1189)      |
+| 20260221_add_clarification_question_index.sql     | Clarification question indexes         |
+| 20260221_add_missing_fk_indexes.sql               | Missing FK indexes (#1189, #1172)      |
+| 20260221_add_tasks_updated_at.sql                 | Tasks updated_at column (#1189, #1172) |
 
 ### Migration Best Practices
 
@@ -1056,6 +1060,29 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-21 - Tasks Table Updated_at Column
+
+#### Schema Quality Enhancement
+
+1. **Added updated_at column to tasks table**
+   - Migration `20260221_add_tasks_updated_at.sql` adds column with trigger
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - Adds `updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()` column
+   - Creates `idx_tasks_updated_at` index for efficient queries
+   - Creates `update_tasks_updated_at` trigger for automatic updates
+
+2. **Consistency improvements**
+   - Tasks table now consistent with all other core tables (ideas, deliverables, etc.)
+   - Proper audit trail for task modifications
+   - Enables tracking of task status changes, assignment changes, etc.
+
+3. **Down migration included**
+   - `20260221_add_tasks_updated_at.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added updated_at column definition to tasks table
+   - Added index and trigger definitions
 
 ### 2026-02-21 - Missing Foreign Key Indexes
 
