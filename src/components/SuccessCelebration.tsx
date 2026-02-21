@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, memo } from 'react';
 import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
@@ -28,7 +28,7 @@ interface SuccessCelebrationProps {
 const COLORS = CELEBRATION_COLORS.ALL;
 const PARTICLE_COUNT = ANIMATION_PHYSICS.PARTICLE_COUNT;
 
-export default function SuccessCelebration({
+function SuccessCelebrationComponent({
   show,
   onComplete,
   duration = COMPONENT_DEFAULTS.SUCCESS_CELEBRATION.DURATION_MS,
@@ -198,3 +198,5 @@ export default function SuccessCelebration({
     </div>
   );
 }
+
+export default memo(SuccessCelebrationComponent);

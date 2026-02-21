@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import LoadingSpinner from './LoadingSpinner';
 import LoadingAnnouncer from './LoadingAnnouncer';
 
@@ -10,7 +11,7 @@ interface LoadingOverlayProps {
   className?: string;
 }
 
-export default function LoadingOverlay({
+function LoadingOverlayComponent({
   message = 'Loading...',
   size = 'lg',
   fullScreen = false,
@@ -35,3 +36,5 @@ export default function LoadingOverlay({
     </div>
   );
 }
+
+export default memo(LoadingOverlayComponent);

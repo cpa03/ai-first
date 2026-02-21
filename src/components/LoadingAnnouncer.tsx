@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, memo } from 'react';
 
 interface LoadingAnnouncerProps {
   message: string;
   ariaLive?: 'polite' | 'assertive';
 }
 
-export default function LoadingAnnouncer({
+function LoadingAnnouncerComponent({
   message,
   ariaLive = 'polite',
 }: LoadingAnnouncerProps) {
@@ -36,3 +36,5 @@ export default function LoadingAnnouncer({
     </div>
   );
 }
+
+export default memo(LoadingAnnouncerComponent);
