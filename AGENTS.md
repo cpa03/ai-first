@@ -56,6 +56,7 @@ CMZ automatically delegates based on task type:
 - `superpowers-executing-plans` - Plan execution
 - `superpowers-tdd` - Test-driven development
 - `systematic-debugging` - Root cause analysis
+- `superpowers-using` - How to access and use skills
 
 ### Development Skills
 
@@ -63,6 +64,9 @@ CMZ automatically delegates based on task type:
 - `superpowers-git-worktrees` - Parallel development
 - `superpowers-verification` - Completion verification
 - `superpowers-finishing-branch` - Merge/PR workflow
+- `superpowers-parallel-agents` - Parallel agent dispatch for independent tasks
+- `superpowers-receiving-review` - Receiving code review feedback
+- `superpowers-requesting-review` - Requesting code review
 
 ### Domain Skills
 
@@ -70,8 +74,9 @@ CMZ automatically delegates based on task type:
 - `planning` - Task planning
 - `skill-creator` - Create new skills
 - `skill-builder` - Build skills with templates
-- `github-workflow-automation` - CI/CD workflows
 - `codepro-backend-standards` - Backend standards
+- `claude-codepro-backend` - Enterprise backend development standards
+- `superpowers-writing-skills` - Creating and editing skills
 
 ### GitHub Skills
 

@@ -2084,6 +2084,80 @@ All documentation files are current, links are valid, and quality gates pass. Op
 
 ---
 
-**Last Updated**: 2026-02-20
+### Task 28: Skills Documentation Completeness Fix ✅ COMPLETE
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-02-21
+
+#### Objectives
+
+- Fix incomplete skills documentation in AGENTS.md
+- Remove reference to non-existent skill (`github-workflow-automation`)
+- Add missing skills to ensure documentation matches actual skills directory
+- Ensure all 32 skills in `.opencode/skills/` are properly documented
+
+#### Issues Found
+
+1. **AGENTS.md Skills Incomplete**: Documented only ~24 of 32 skills
+   - 6 unique skills were missing from documentation
+   - 1 non-existent skill (`github-workflow-automation`) was documented
+2. **Missing Skills Identified**:
+   - `superpowers-using` - How to access and use skills
+   - `superpowers-parallel-agents` - Parallel agent dispatch for independent tasks
+   - `superpowers-receiving-review` - Receiving code review feedback
+   - `superpowers-requesting-review` - Requesting code review
+   - `claude-codepro-backend` - Enterprise backend development standards
+   - `superpowers-writing-skills` - Creating and editing skills
+
+3. **Non-Existent Skill**:
+   - `github-workflow-automation` was listed but doesn't exist in `.opencode/skills/`
+
+#### Completed Work
+
+1. **Updated AGENTS.md Skills Documentation**
+   - Added `superpowers-using` to Process Skills section
+   - Added `superpowers-parallel-agents`, `superpowers-receiving-review`, `superpowers-requesting-review` to Development Skills section
+   - Added `claude-codepro-backend` and `superpowers-writing-skills` to Domain Skills section
+   - Removed `github-workflow-automation` (non-existent)
+
+2. **Skills Organization**:
+   - Process Skills: 6 skills (was 5)
+   - Development Skills: 7 skills (was 4)
+   - Domain Skills: 7 skills (was 6, removed 1 non-existent, added 2)
+   - GitHub Skills: 3 skills (unchanged)
+   - Context & Memory Skills: 2 skills (unchanged)
+   - Testing & Debugging Skills: 3 skills (unchanged)
+   - Tools & Integration Skills: 2 skills (moai-adk-tool + adk-moai-tool)
+
+3. **Note on Aliases**: 2 skill directories are aliases:
+   - `ai-agents-git-commit` → alias for `git-commit-message`
+   - `superpowers-debugging` → alias for `systematic-debugging`
+   - These are documented via their primary names
+
+#### Verification
+
+- `npm run lint`: ✅ 0 errors, 0 warnings
+- `npm run type-check`: ✅ 0 errors
+- `npm run build`: ✅ Build successful (28 routes)
+- All 32 skill directories now properly accounted for in documentation
+
+#### Files Modified
+
+- `AGENTS.md` (FIXED - added 6 missing skills, removed 1 non-existent skill)
+
+#### Success Criteria Met
+
+- [x] All 32 skills documented or accounted for
+- [x] Non-existent skill removed
+- [x] Missing skills added with accurate descriptions
+- [x] Lint passes (0 errors)
+- [x] Type-check passes (0 errors)
+- [x] Build succeeds
+- [x] Documentation matches actual implementation
+
+---
+
+**Last Updated**: 2026-02-21
 **Agent**: Technical Writer
-**Documentation Version**: 0.6.3
+**Documentation Version**: 0.6.4
