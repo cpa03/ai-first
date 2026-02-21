@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { memo, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('GlobalErrorHandler');
 
-export default function GlobalErrorHandler() {
+function GlobalErrorHandlerComponent() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -78,3 +78,7 @@ export default function GlobalErrorHandler() {
 
   return null;
 }
+
+const GlobalErrorHandler = memo(GlobalErrorHandlerComponent);
+
+export default GlobalErrorHandler;

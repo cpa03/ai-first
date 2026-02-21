@@ -287,7 +287,11 @@ function ToastComponent({ toast, onClose }: ToastProps) {
 
 const Toast = memo(ToastComponent);
 
-export default function ToastContainer() {
+/**
+ * ToastContainer component - displays toast notifications
+ * Wrapped in React.memo to prevent unnecessary re-renders when parent updates
+ */
+function ToastContainerComponent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((options: ToastOptions) => {
@@ -325,3 +329,7 @@ export default function ToastContainer() {
     </div>
   );
 }
+
+const ToastContainer = memo(ToastContainerComponent);
+
+export default ToastContainer;
