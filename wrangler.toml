@@ -105,6 +105,14 @@ head_sampling_rate = 0.5  # 50% sampling for debugging with cost control
 # NEXT_PUBLIC_APP_URL = "https://preview.ai-first.pages.dev"
 
 # ============================================================
+# Cloudflare AI Binding (Optional)
+# ============================================================
+# Uncomment to enable Cloudflare AI for local inference
+# @see https://developers.cloudflare.com/workers-ai/
+# [ai]
+# binding = "AI"
+
+# ============================================================
 # Deployment Notes
 # ============================================================
 # Build command: npm run build:cloudflare
