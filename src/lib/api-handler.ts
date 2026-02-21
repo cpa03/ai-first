@@ -26,13 +26,15 @@ import {
   httpRequestErrors,
   httpRequestTotal,
 } from '@/app/api/metrics/route';
+import { APP_CONFIG } from '@/lib/config/app';
 
 /**
  * API Version for all responses
+ * Uses centralized APP_CONFIG.VERSION for single source of truth
  * Follows semantic versioning (MAJOR.MINOR.PATCH)
  * Increment MAJOR for breaking changes, MINOR for new features, PATCH for bug fixes
  */
-const API_VERSION = '1.0.0';
+const API_VERSION = APP_CONFIG.VERSION;
 
 const logger = createLogger('ApiHandler');
 
