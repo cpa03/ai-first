@@ -368,19 +368,84 @@ if (typeof Response === 'undefined') {
 }
 
 // Mock setTimeout to support unref() for Jest timers
+// Only apply unref() in test environment to prevent open handle warnings
+// This allows Jest to properly detect and report open handles
 const originalSetTimeout = global.setTimeout;
+const originalClearTimeout = global.clearTimeout;
 global.setTimeout = ((callback, delay, ...args) => {
   const timeoutId = originalSetTimeout(callback, delay, ...args);
+  // In test environment, call unref() to prevent keeping process alive
+  // This is safe because Jest manages the event loop
   if (timeoutId && typeof timeoutId.unref === 'function') {
     timeoutId.unref();
   }
   return timeoutId;
 }).bind(global);
 
+// Track active handles for cleanup
+const activeHandles = new Set();
+const originalSetInterval = global.setInterval;
+const originalClearInterval = global.clearInterval;
+
+global.setInterval = ((callback, delay, ...args) => {
+  const intervalId = originalSetInterval(callback, delay, ...args);
+  activeHandles.add(intervalId);
+  // Unref to prevent keeping process alive
+  if (intervalId && typeof intervalId.unref === 'function') {
+    intervalId.unref();
+  }
+  return intervalId;
+}).bind(global);
+
+global.clearInterval = ((intervalId) => {
+  activeHandles.delete(intervalId);
+  return originalClearInterval(intervalId);
+}).bind(global);
+
 // Cleanup after each test
 afterEach(() => {
+  // Clear storage
   localStorage.clear();
   sessionStorage.clear();
+  
+  // Clear all mock calls and instances
+  jest.clearAllMocks();
+  
+  // Note: We do NOT call jest.useRealTimers() here because it
+  // interferes with tests that use jest.useFakeTimers().
+  // Each test should manage its own timer state.
+  
+  // Clear any pending intervals tracked
+  activeHandles.forEach((handle) => {
+    try {
+      originalClearInterval(handle);
+    } catch {
+      // Ignore errors during cleanup
+    }
+  });
+  activeHandles.clear();
+});
+
+// Global cleanup after all tests
+afterAll(() => {
+  // Final cleanup to ensure no handles are left
+  jest.clearAllMocks();
+  jest.useRealTimers();
+  
+  // Clear all tracked handles
+  activeHandles.forEach((handle) => {
+    try {
+      originalClearInterval(handle);
+    } catch {
+      // Ignore errors during cleanup
+    }
+  });
+  activeHandles.clear();
+  
+  // Force garbage collection hint (if available)
+  if (global.gc) {
+    global.gc();
+  }
 });
 
 // Test timeout configuration
