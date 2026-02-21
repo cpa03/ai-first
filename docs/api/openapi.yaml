@@ -11,15 +11,29 @@ info:
 
 servers:
   - url: http://localhost:3000
-    description: Local development server (default)
+    description: |
+      Local development server (default).
+
+      **Configuration:** Set via `BASE_URL` or `NEXT_PUBLIC_APP_URL` environment variable.
+      See `config/.env.example` for all available options.
+
+      Example: `BASE_URL=http://localhost:3000 npm run dev`
   - url: https://{environment}.vercel.app
     description: Vercel preview deployment
     variables:
       environment:
         description: Vercel deployment URL (e.g., your-app-git-main-username)
         default: your-app
-  - url: https://your-production-domain.com
-    description: Production server
+  - url: https://{domain}
+    description: |
+      Production server.
+
+      **Configuration:** Set via `NEXT_PUBLIC_APP_URL` environment variable.
+      Example: `NEXT_PUBLIC_APP_URL=https://ideaflow.ai`
+    variables:
+      domain:
+        description: Production domain (e.g., ideaflow.ai)
+        default: ideaflow.ai
 
 tags:
   - name: Clarification
