@@ -446,6 +446,71 @@ export function isEdgeRequest(request: Request): boolean {
   return isCloudflareRequest(request);
 }
 
+/**
+ * Get client Round Trip Time (RTT) from Cloudflare header
+ * Returns the TCP RTT in milliseconds between the client and Cloudflare's edge
+ *
+ * This is useful for:
+ * - Performance monitoring and adaptive content delivery
+ * - Detecting slow connections for optimization
+ * - Geographic latency analysis
+ *
+ * @param request - The incoming request
+ * @returns RTT in milliseconds or null if not available
+ *
+ * @see https://developers.cloudflare.com/fundamentals/reference/http-headers/
+ *
+ * @example
+ * ```ts
+ * const rtt = getRequestLatency(request);
+ * if (rtt && rtt > 500) {
+ *   // Client has high latency, consider serving lighter content
+ * }
+ * ```
+ */
+export function getRequestLatency(request: Request): number | null {
+  const rtt = request.headers.get(CLOUDFLARE_HEADERS.CF_RTT_MS);
+  if (!rtt) return null;
+
+  const parsed = parseInt(rtt, 10);
+  return isNaN(parsed) ? null : parsed;
+}
+
+/**
+ * Get visitor scheme from Cloudflare CF-Visitor header
+ * Returns the original scheme (http/https) used by the visitor
+ *
+ * This is useful for:
+ * - Detecting if the original request was HTTP or HTTPS
+ * - Building correct URLs for redirects
+ * - Security checks for mixed content
+ *
+ * @param request - The incoming request
+ * @returns 'http', 'https', or null if not available/parseable
+ *
+ * @see https://developers.cloudflare.com/fundamentals/reference/http-headers/
+ *
+ * @example
+ * ```ts
+ * const scheme = getVisitorScheme(request);
+ * const originalUrl = `${scheme}://${host}${path}`;
+ * ```
+ */
+export function getVisitorScheme(request: Request): 'http' | 'https' | null {
+  const visitor = request.headers.get(CLOUDFLARE_HEADERS.CF_VISITOR);
+  if (!visitor) return null;
+
+  try {
+    const parsed = JSON.parse(visitor);
+    if (parsed.scheme === 'http' || parsed.scheme === 'https') {
+      return parsed.scheme;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 export function getCacheKey(
   url: string,
   variants?: Record<string, string>
@@ -997,6 +1062,42 @@ export class CloudflareKV {
       return metadata.value !== null;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Get a value along with its metadata from KV
+   * Useful for storing and retrieving additional context with cached data
+   *
+   * @param key - Cache key
+   * @returns Object with value and metadata, or nulls if not found
+   *
+   * @example
+   * ```ts
+   * const { value, metadata } = await cache.getWithMetadata<UserData>('user:123');
+   * if (value && metadata?.cachedAt) {
+   *   const age = Date.now() - metadata.cachedAt;
+   * }
+   * ```
+   */
+  async getWithMetadata<T = unknown>(
+    key: string
+  ): Promise<{ value: T | null; metadata: unknown | null }> {
+    if (!this.kv) {
+      return { value: null, metadata: null };
+    }
+
+    try {
+      const result = await this.kv.getWithMetadata<T>(
+        this.buildKey(key),
+        'json'
+      );
+      return {
+        value: result.value,
+        metadata: result.metadata,
+      };
+    } catch {
+      return { value: null, metadata: null };
     }
   }
 
