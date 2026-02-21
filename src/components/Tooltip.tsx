@@ -187,7 +187,6 @@ function TooltipComponent({
           id={id}
           ref={tooltipRef}
           role="tooltip"
-          aria-live="polite"
           className={`
             absolute z-50 pointer-events-none
             ${positionClasses[position]}
