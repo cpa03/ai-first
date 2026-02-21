@@ -113,6 +113,34 @@ head_sampling_rate = 0.5  # 50% sampling for debugging with cost control
 # binding = "AI"
 
 # ============================================================
+# Cloudflare D1 Database Binding (Optional)
+# ============================================================
+# D1 is Cloudflare's serverless SQL database at the edge.
+# Useful for: session storage, user preferences, edge-optimized data.
+# To enable:
+# 1. Create D1 database: wrangler d1 create ai-first-db
+# 2. Copy the database_id and uncomment below
+# @see https://developers.cloudflare.com/d1/
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "ai-first-db"
+# database_id = "your-database-id"
+# migrations_dir = "migrations"
+
+# ============================================================
+# Cloudflare KV Namespace Binding (Optional)
+# ============================================================
+# KV provides edge key-value storage for caching.
+# Useful for: session caching, API response caching, feature flags.
+# To enable:
+# 1. Create KV namespace: wrangler kv:namespace create "CACHE_KV"
+# 2. Copy the ID and uncomment below
+# @see https://developers.cloudflare.com/kv/
+# [[kv_namespaces]]
+# binding = "CACHE_KV"
+# id = "your-kv-namespace-id"
+
+# ============================================================
 # Deployment Notes
 # ============================================================
 # Build command: npm run build:cloudflare

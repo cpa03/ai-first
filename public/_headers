@@ -33,7 +33,15 @@
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   # CORP: Prevent cross-origin resource leaks
   Cross-Origin-Resource-Policy: same-origin
+  # COEP: Require explicit opt-in for cross-origin resources
+  # This header prevents Spectre-style attacks by requiring all resources to opt-in
+  # Note: Some third-party scripts may break with this header; test thoroughly
+  # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy
+  Cross-Origin-Embedder-Policy: credentialless
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://*.supabase.co wss://*.supabase.co https://api.notion.com https://api.trello.com https://api.github.com; frame-ancestors 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
+  # CSP Reporting: Uncomment and configure report-to for CSP violation monitoring
+  # @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-to
+  # Report-To: {"group":"csp-endpoint","max_age":10886400,"endpoints":[{"url":"https://your-domain.com/api/csp-report"}]}
 
 # Static assets (images, fonts, etc.)
 /_next/image
@@ -83,6 +91,8 @@
   Cross-Origin-Opener-Policy: same-origin-allow-popups
   # CORP: Prevent cross-origin resource leaks
   Cross-Origin-Resource-Policy: same-origin
+  # COEP: Require explicit opt-in for cross-origin resources
+  Cross-Origin-Embedder-Policy: credentialless
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://api.openai.com https://api.anthropic.com https://*.supabase.co https://api.notion.com https://api.trello.com https://api.github.com; frame-ancestors 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'
 
 # Health check endpoints - short caching for load balancers
