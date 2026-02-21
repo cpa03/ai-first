@@ -7,6 +7,7 @@ import { circuitBreakerManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/export-connectors';
 import { APP_CONFIG } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
+import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
 
 interface IntegrationStatus {
   service: string;
@@ -27,6 +28,15 @@ interface IntegrationsHealthResponse {
     degraded: number;
     unhealthy: number;
     unknown: number;
+  };
+  rateLimits: {
+    servicesTracked: number;
+    services: Array<{
+      service: string;
+      remaining: number;
+      limit: number;
+      approaching: boolean;
+    }>;
   };
 }
 
@@ -93,12 +103,24 @@ async function handleGet(context: ApiContext): Promise<Response> {
 
   const overallStatus = determineOverallStatus(summary);
 
+  // Get external rate limit stats
+  const rateLimitTracker = getExternalRateLimitTracker();
+  const rateLimitStats = rateLimitTracker.getStats();
+  const rateLimits = {
+    servicesTracked: rateLimitStats.servicesTracked,
+    services: rateLimitStats.services.map((s) => ({
+      ...s,
+      approaching: s.remaining / s.limit <= 0.2, // 20% threshold
+    })),
+  };
+
   const response: IntegrationsHealthResponse = {
     status: overallStatus,
     timestamp,
     version: APP_CONFIG.VERSION,
     integrations,
     summary,
+    rateLimits,
   };
 
   const statusCode = overallStatus === 'unhealthy' ? 503 : STATUS_CODES.OK;
