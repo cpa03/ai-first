@@ -763,6 +763,8 @@ CREATE INDEX idx_risk_assessments_idea_id ON risk_assessments(idea_id);
 CREATE INDEX idx_risk_assessments_task_id ON risk_assessments(task_id);
 CREATE INDEX idx_risk_assessments_status ON risk_assessments(status);
 CREATE INDEX idx_risk_assessments_idea_task ON risk_assessments(idea_id, task_id);
+CREATE INDEX idx_risk_assessments_risk_score ON risk_assessments(risk_score DESC NULLS LAST);
+CREATE INDEX idx_risk_assessments_idea_risk_score ON risk_assessments(idea_id, risk_score DESC NULLS LAST);
 
 -- ============================================================================
 -- Performance Indexes for Analytics
