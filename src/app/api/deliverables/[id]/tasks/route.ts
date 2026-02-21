@@ -1,12 +1,10 @@
 import {
   withApiHandler,
   standardSuccessResponse,
-  badRequestResponse,
-  notFoundResponse,
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
-import { AppError, ErrorCode } from '@/lib/errors';
+import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_VALIDATION, STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -42,45 +40,62 @@ async function handlePost(context: ApiContext) {
   const deliverableId = segments.at(-2);
 
   if (!deliverableId) {
-    return badRequestResponse('Deliverable ID is required');
+    throw new ValidationError([
+      { field: 'deliverableId', message: 'Deliverable ID is required' },
+    ]);
   }
 
   let body: CreateTaskBody;
   try {
     body = await request.json();
   } catch {
-    return badRequestResponse('Invalid JSON body');
+    throw new ValidationError([
+      { field: 'body', message: 'Invalid JSON body' },
+    ]);
   }
 
   // Validate required fields
   if (!body.title || body.title.trim().length === 0) {
-    return badRequestResponse('Task title is required');
+    throw new ValidationError([
+      { field: 'title', message: 'Task title is required' },
+    ]);
   }
 
   if (body.title.length > TASK_VALIDATION.MAX_TITLE_LENGTH) {
-    return badRequestResponse(
-      `Task title must be less than ${TASK_VALIDATION.MAX_TITLE_LENGTH} characters`
-    );
+    throw new ValidationError([
+      {
+        field: 'title',
+        message: `Task title must be less than ${TASK_VALIDATION.MAX_TITLE_LENGTH} characters`,
+      },
+    ]);
   }
 
   // Validate status if provided
   if (body.status && !VALID_STATUSES.includes(body.status)) {
-    return badRequestResponse(
-      `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`
-    );
+    throw new ValidationError([
+      {
+        field: 'status',
+        message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+      },
+    ]);
   }
 
   // Validate risk_level if provided
   if (body.risk_level && !VALID_RISK_LEVELS.includes(body.risk_level)) {
-    return badRequestResponse(
-      `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`
-    );
+    throw new ValidationError([
+      {
+        field: 'risk_level',
+        message: `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`,
+      },
+    ]);
   }
 
   // Validate estimate if provided
   if (body.estimate !== undefined) {
     if (typeof body.estimate !== 'number' || body.estimate < 0) {
-      return badRequestResponse('Estimate must be a positive number');
+      throw new ValidationError([
+        { field: 'estimate', message: 'Estimate must be a positive number' },
+      ]);
     }
   }
 
@@ -93,7 +108,11 @@ async function handlePost(context: ApiContext) {
       await dbService.getDeliverableWithIdea(deliverableId);
 
     if (!deliverableWithIdea) {
-      return notFoundResponse('Deliverable not found');
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.DELIVERABLE,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     // Verify ownership
