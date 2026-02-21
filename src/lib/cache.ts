@@ -19,6 +19,7 @@ export class Cache<T = unknown> {
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
   private totalHits: number;
+  private lastCleanup: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
@@ -28,16 +29,29 @@ export class Cache<T = unknown> {
     this.onEvict = options.onEvict;
     this.misses = 0;
     this.totalHits = 0;
+    this.lastCleanup = Date.now();
   }
 
   set(key: string, value: T): void {
-    this.evictExpiredEntries();
-
     const existingEntry = this.cache.get(key);
 
-    // If key doesn't exist and we're at capacity, evict LRU
+    // PERFORMANCE: Only evict if we're at capacity and adding a new key.
+    // This defers the O(N) TTL check until absolutely necessary.
     if (this.maxSize && this.cache.size >= this.maxSize && !existingEntry) {
-      this.evictLRU();
+      // PERFORMANCE: Further throttle TTL eviction to once per 10% of TTL or 1 min.
+      // This makes the average complexity O(1) even when the cache is full.
+      const now = Date.now();
+      const cleanupInterval = Math.min(this.ttl || 60000, 60000) / 10;
+
+      if (now - this.lastCleanup > cleanupInterval) {
+        this.evictExpiredEntries();
+        this.lastCleanup = now;
+      }
+
+      // If still at capacity (or we skipped TTL cleanup), use O(1) LRU eviction.
+      if (this.cache.size >= this.maxSize) {
+        this.evictLRU();
+      }
     }
 
     const entry: CacheEntry<T> = {
@@ -133,17 +147,12 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const keysToDelete: string[] = [];
 
+    // PERFORMANCE: Delete expired entries directly during iteration.
+    // JS Map preserves insertion order and allows deletion during iteration.
+    // This avoids allocating an intermediate array of keys.
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
-        keysToDelete.push(key);
-      }
-    }
-
-    for (const key of keysToDelete) {
-      const entry = this.cache.get(key);
-      if (entry) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
@@ -158,10 +167,10 @@ export class Cache<T = unknown> {
     let lruEntry: CacheEntry<T> | null = null;
     let lowestHits = Infinity;
 
-    // Optimization: Stop searching if we find an entry with 0 hits.
-    // Since Map preserves insertion order and we move entries to the end on access,
-    // the first entry with 0 hits is the oldest cold entry.
-    for (const [key, entry] of this.cache.entries()) {
+    // PERFORMANCE: Use Map's insertion order to find the oldest entry with the fewest hits.
+    // Since we move entries to the end on access, the beginning of the Map has the oldest entries.
+    // We stop searching immediately if we find an entry with 0 hits (the common case for new data).
+    for (const [key, entry] of this.cache) {
       if (entry.hits === 0) {
         lruKey = key;
         lruEntry = entry;
