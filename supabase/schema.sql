@@ -716,6 +716,7 @@ CREATE INDEX idx_agent_logs_agent_timestamp ON agent_logs(agent, timestamp DESC)
 CREATE INDEX idx_agent_logs_action ON agent_logs(action);
 CREATE INDEX idx_agent_logs_action_timestamp ON agent_logs(action, timestamp DESC);
 
+CREATE INDEX idx_idea_sessions_idea_id ON idea_sessions(idea_id);
 CREATE INDEX idx_idea_sessions_last_agent ON idea_sessions(last_agent);
 CREATE INDEX idx_idea_sessions_updated_at ON idea_sessions(updated_at);
 
@@ -743,6 +744,8 @@ CREATE INDEX idx_time_tracking_date_logged ON time_tracking(date_logged DESC);
 CREATE INDEX idx_time_tracking_task_date ON time_tracking(task_id, date_logged DESC);
 
 CREATE INDEX idx_task_comments_task_id ON task_comments(task_id);
+CREATE INDEX idx_task_comments_user_id ON task_comments(user_id);
+CREATE INDEX idx_task_comments_task_user ON task_comments(task_id, user_id);
 CREATE INDEX idx_task_comments_deleted_at ON task_comments(deleted_at);
 CREATE INDEX idx_task_comments_parent_id ON task_comments(parent_comment_id);
 CREATE INDEX idx_task_comments_created_at ON task_comments(created_at DESC);

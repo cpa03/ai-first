@@ -968,6 +968,8 @@ Located in `/supabase/migrations/`:
 | 20260220_fix_risk_score_data_type.sql             | Fix risk_score DECIMAL type (#1172) |
 | 20260220_add_task_assignments_indexes.sql         | Task assignments FK indexes (#1189) |
 | 20260220_add_agent_logs_action_index.sql          | Agent logs action indexes (#1189)   |
+| 20260221_add_clarification_question_index.sql     | Clarification question indexes      |
+| 20260221_add_missing_fk_indexes.sql               | Missing FK indexes (#1189, #1172)   |
 
 ### Migration Best Practices
 
@@ -1054,6 +1056,29 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+
+### 2026-02-21 - Missing Foreign Key Indexes
+
+#### Performance Enhancement
+
+1. **Added missing foreign key indexes**
+   - Migration `20260221_add_missing_fk_indexes.sql` adds 3 indexes
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_idea_sessions_idea_id` - Index on `idea_sessions.idea_id` FK to `ideas(id)`
+   - `idx_task_comments_user_id` - Index on `task_comments.user_id` FK to `auth.users(id)`
+   - `idx_task_comments_task_user` - Composite index for common query pattern
+
+2. **Performance improvements**
+   - Faster CASCADE operations when parent records are deleted
+   - Faster JOINs between idea_sessions ↔ ideas tables
+   - Faster JOINs between task_comments ↔ auth.users tables
+   - Optimized queries for "get all comments by user on task"
+
+3. **Down migration included**
+   - `20260221_add_missing_fk_indexes.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definitions to idea_sessions and task_comments sections
 
 ### 2026-02-21 - Clarification Answers Question Index
 
