@@ -283,7 +283,50 @@ npm test          # ✅ Passing - 924 tests
 
 ## API Client Usage
 
+### High-Level API Request Helper
+
+The `apiRequest` helper provides a clean, typed interface for making API calls with automatic timeout, JSON handling, and error handling:
+
+```typescript
+import { apiRequest, ApiRequestError } from '@/lib/api-client';
+
+// Simple GET request with typed response
+const { data, requestId } = await apiRequest<Idea[]>('/api/ideas');
+
+// POST request with body
+const { data: newIdea } = await apiRequest<Idea>('/api/ideas', {
+  method: 'POST',
+  body: { idea: 'My new idea' },
+});
+
+// With custom timeout
+const { data } = await apiRequest<HealthStatus>('/api/health/detailed', {
+  timeoutMs: 5000,
+});
+
+// Without automatic unwrapping
+const { data: rawResponse } = await apiRequest<ApiResponse<Idea>>(
+  '/api/ideas/123',
+  {
+    unwrap: false,
+  }
+);
+
+// Error handling
+try {
+  const { data } = await apiRequest<Idea>('/api/ideas/invalid');
+} catch (error) {
+  if (error instanceof ApiRequestError) {
+    console.log(`Status: ${error.statusCode}, Code: ${error.code}`);
+    console.log(`Request ID: ${error.requestId}`);
+    console.log(`Retryable: ${error.retryable}`);
+  }
+}
+```
+
 ### Unwrapping Responses
+
+For manual response handling:
 
 ```typescript
 import { unwrapApiResponse, unwrapApiResponseSafe } from '@/lib/api-client';
@@ -295,21 +338,21 @@ const data = unwrapApiResponse<ClarificationData>(response);
 const data = unwrapApiResponseSafe(response, defaultData);
 ```
 
-### Making API Calls
+### Fetch with Timeout
+
+For low-level control:
 
 ```typescript
-// Example: Start clarification
-const response = await fetch('/api/clarify/start', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    ideaId: '550e8400-e29b-41d4-a716-446655440000',
-    ideaText: 'I want to build a fitness tracking app',
-  }),
-});
+import { fetchWithTimeout } from '@/lib/api-client';
 
-const result = await response.json();
-const data = unwrapApiResponse(result);
+const response = await fetchWithTimeout(
+  '/api/ideas',
+  {
+    method: 'GET',
+    headers: { Authorization: 'Bearer token' },
+  },
+  5000
+); // 5 second timeout
 ```
 
 ---
@@ -423,6 +466,27 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-21 - API Client Helper Enhancement
+
+- **Feature**: Added `apiRequest` helper function for typed, high-level API calls
+- **New Exports**:
+  - `apiRequest<T>()` - High-level request helper with automatic timeout, JSON handling, and unwrapping
+  - `ApiRequestError` - Structured error class for API request failures
+  - `ApiRequestOptions` - TypeScript interface for request options
+  - `ApiRequestResult<T>` - TypeScript interface for response data
+- **Location**: `src/lib/api-client.ts`
+- **Benefits**:
+  - Single function call for complete request flow (fetch + timeout + parse + unwrap)
+  - Automatic JSON body stringification for object bodies
+  - Automatic Content-Type header for JSON requests
+  - Structured error handling with `ApiRequestError` class
+  - Request ID tracking from response headers
+  - Full TypeScript support with generics
+- **Build**: Passing
+- **Lint**: Passing
+- **Tests**: 22 tests passing (api-client)
+- **Documentation**: Updated this guide with usage examples
 
 ### 2026-02-20 - API Handler URL Safety Fix
 

@@ -1,6 +1,37 @@
 import { ApiResponse } from '@/lib/api-handler';
 import { TIMEOUT_CONFIG } from '@/lib/config/constants';
 
+/**
+ * Error class for API request failures
+ * Provides structured error information from API responses
+ */
+export class ApiRequestError extends Error {
+  public readonly code?: string;
+  public readonly statusCode: number;
+  public readonly requestId?: string;
+  public readonly retryable: boolean;
+  public readonly details?: Array<{ field: string; message: string }>;
+
+  constructor(
+    message: string,
+    statusCode: number,
+    options?: {
+      code?: string;
+      requestId?: string;
+      retryable?: boolean;
+      details?: Array<{ field: string; message: string }>;
+    }
+  ) {
+    super(message);
+    this.name = 'ApiRequestError';
+    this.statusCode = statusCode;
+    this.code = options?.code;
+    this.requestId = options?.requestId;
+    this.retryable = options?.retryable ?? false;
+    this.details = options?.details;
+  }
+}
+
 export function unwrapApiResponse<T>(response: ApiResponse<T>): T {
   if (!response.success) {
     throw new Error('Invalid API response: success must be true');
@@ -50,4 +81,123 @@ export async function fetchWithTimeout(
   } finally {
     clearTimeout(timeoutId);
   }
+}
+
+/**
+ * Options for apiRequest helper
+ */
+export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
+  /** Request body - will be JSON stringified if object */
+  body?: unknown;
+  /** Timeout in milliseconds (default: from TIMEOUT_CONFIG.STANDARD) */
+  timeoutMs?: number;
+  /** Whether to automatically unwrap the response (default: true) */
+  unwrap?: boolean;
+}
+
+/**
+ * Response from apiRequest helper
+ */
+export interface ApiRequestResult<T> {
+  /** The response data (unwrapped if unwrap=true) */
+  data: T;
+  /** The raw response object */
+  response: Response;
+  /** Request ID from X-Request-ID header */
+  requestId: string | null;
+}
+
+/**
+ * High-level API request helper with automatic timeout, JSON handling, and error handling.
+ *
+ * @example
+ * // Simple GET request with typed response
+ * const { data } = await apiRequest<Idea[]>('/api/ideas');
+ *
+ * @example
+ * // POST request with body
+ * const { data, requestId } = await apiRequest<Idea>('/api/ideas', {
+ *   method: 'POST',
+ *   body: { idea: 'My new idea' }
+ * });
+ *
+ * @example
+ * // Without automatic unwrapping
+ * const { data, response } = await apiRequest<ApiResponse<Idea>>('/api/ideas/123', {
+ *   unwrap: false
+ * });
+ */
+export async function apiRequest<T = unknown>(
+  url: string,
+  options: ApiRequestOptions = {}
+): Promise<ApiRequestResult<T>> {
+  const { body, timeoutMs, unwrap = true, ...fetchOptions } = options;
+
+  const headers = new Headers(fetchOptions.headers);
+
+  if (body && !headers.has('Content-Type')) {
+    headers.set('Content-Type', 'application/json');
+  }
+
+  const requestBody =
+    body !== undefined
+      ? typeof body === 'string'
+        ? body
+        : JSON.stringify(body)
+      : undefined;
+
+  const response = await fetchWithTimeout(
+    url,
+    {
+      ...fetchOptions,
+      headers,
+      body: requestBody,
+    },
+    timeoutMs
+  );
+
+  const requestId = response.headers.get('X-Request-ID');
+
+  if (!response.ok) {
+    let errorBody: {
+      error?: string;
+      code?: string;
+      requestId?: string;
+      retryable?: boolean;
+      details?: Array<{ field: string; message: string }>;
+    } = {};
+
+    try {
+      errorBody = await response.json();
+    } catch {
+      // Fall through to use status text
+    }
+
+    throw new ApiRequestError(
+      errorBody.error || response.statusText || 'Request failed',
+      response.status,
+      {
+        code: errorBody.code,
+        requestId: errorBody.requestId || requestId || undefined,
+        retryable: errorBody.retryable,
+        details: errorBody.details,
+      }
+    );
+  }
+
+  const responseData = await response.json();
+
+  if (unwrap && responseData.success === true && 'data' in responseData) {
+    return {
+      data: responseData.data as T,
+      response,
+      requestId,
+    };
+  }
+
+  return {
+    data: responseData as T,
+    response,
+    requestId,
+  };
 }
