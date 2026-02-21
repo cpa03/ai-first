@@ -67,7 +67,6 @@ function LoadingSpinnerComponent({
       top: `-${pulseRingOffset}px`,
       left: '50%',
       transform: 'translateX(-50%)',
-      animation: 'ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite',
     }),
     [pulseRingSize, pulseRingOffset]
   );
@@ -102,7 +101,7 @@ function LoadingSpinnerComponent({
     >
       {!prefersReducedMotion && (
         <div
-          className="absolute rounded-full bg-primary-100/50"
+          className="absolute rounded-full bg-primary-100/50 animate-ping-slow"
           style={pulseRingStyle}
           aria-hidden="true"
         />
@@ -140,16 +139,6 @@ function LoadingSpinnerComponent({
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
-
-      <style jsx>{`
-        @keyframes ping-slow {
-          75%,
-          100% {
-            transform: translateX(-50%) scale(1.4);
-            opacity: 0;
-          }
-        }
-      `}</style>
     </div>
   );
 }

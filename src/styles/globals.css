@@ -715,3 +715,29 @@ button[aria-disabled='true'].btn-glow-hover {
     opacity: 1;
   }
 }
+
+/* Loading Spinner Pulse Animation - Creates a soft pulsing ring effect */
+/* Used in LoadingSpinner component for visual feedback during loading states */
+@keyframes pingSlow {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.5;
+  }
+  75%,
+  100% {
+    transform: translateX(-50%) scale(1.4);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: pingSlow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Reduced motion support for ping-slow */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping-slow {
+    animation: none;
+    opacity: 0;
+  }
+}
