@@ -1468,15 +1468,12 @@ export const USER_STORY_CONFIG = {
   /**
    * Known personas from docs/user-stories/personas.md
    * Used for validation hints and suggestions
+   *
+   * Note: Generic personas like 'user' are intentionally excluded as they are
+   * considered anti-patterns per user-story-engineer.md (lines 289-291).
+   * User stories should use specific personas for clarity.
    */
-  KNOWN_PERSONAS: [
-    'startup founder',
-    'product manager',
-    'developer',
-    'user',
-    'admin',
-    'administrator',
-  ] as const,
+  KNOWN_PERSONAS: ['startup founder', 'product manager', 'developer'] as const,
 
   /**
    * Minimum lengths for user story components
