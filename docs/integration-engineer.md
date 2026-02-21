@@ -443,25 +443,30 @@ npm test
 - Standardized action versions: `actions/checkout@v5`, `actions/setup-node@v4`
 - Standardized runner: `ubuntu-24.04-arm` across all workflows
 
-**Files Modified:**
+**Files to Modify:**
 
-- `.github/workflows/iterate.yml` (removed 15+ continue-on-error instances)
-- `.github/workflows/parallel.yml` (removed 8+ continue-on-error instances)
-- `.github/workflows/on-pull.yml` (removed 2 continue-on-error instances)
+- `.github/workflows/iterate.yml` (remove 15+ continue-on-error instances)
+- `.github/workflows/parallel.yml` (remove 8+ continue-on-error instances)
+- `.github/workflows/on-pull.yml` (remove 2 continue-on-error instances)
 
-**Commit:** `be88ddb` on branch `devops-cicd-reliability-fix-20260220`
+**Status:** ⚠️ PENDING MANUAL APPLICATION - GitHub App lacks `workflows` permission to modify workflow files directly.
 
-**Status:** ⚠️ Requires manual application - GitHub App lacks `workflows` permission to modify workflow files. A maintainer with appropriate permissions needs to either:
+**Manual Steps Required:**
 
-1. Grant `workflows` permission to the GitHub Actions token
-2. Manually apply the changes from the local branch
-3. Cherry-pick the commit: `git cherry-pick be88ddb`
+A maintainer with appropriate permissions needs to apply these changes:
 
-**Impact:**
+1. For each workflow file, find all `continue-on-error: true` directives
+2. Remove them from critical steps (Node.js setup, npm ci, main execution)
+3. Add `cache: 'npm'` to all `actions/setup-node` steps
+4. Add `OPENCODE_INSTALL_URL` environment variable to OpenCode CLI installation steps
+5. Standardize action versions to `actions/checkout@v5` and `actions/setup-node@v4`
 
-- CI will now properly report failures instead of silently passing
+**Expected Impact After Application:**
+
+- CI will properly report failures instead of silently passing
 - Developers will get accurate feedback on build/test status
 - The retry logic built into the scripts will still work correctly
+- Faster CI runs with npm caching
 
 ## External API Rate Limit Tracking
 
