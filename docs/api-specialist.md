@@ -24,7 +24,7 @@ This document provides API-specific documentation, findings, and recommendations
 | Rate Limiting    | ✅ Active       | Tiered limits (strict/moderate/lenient) |
 | Request IDs      | ✅ Implemented  | All responses include `X-Request-ID`    |
 | Circuit Breakers | ✅ Operational  | Health endpoint exposes status          |
-| OpenAPI Spec     | ✅ Complete     | All 20 endpoints documented             |
+| OpenAPI Spec     | ✅ Complete     | All 25 routes documented                |
 | Build Status     | ✅ Passing      | No compilation errors                   |
 | Lint Status      | ✅ Passing      | 0 warnings                              |
 | Type Safety      | ✅ Complete     | 0 TypeScript errors                     |
@@ -466,6 +466,19 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-21 - OpenAPI Documentation Completeness
+
+- **Fix**: Added missing `/api/health/integrations` endpoint to OpenAPI specification
+- **New Schemas Added**:
+  - `IntegrationsHealthResponse` - Response wrapper for integrations health check
+  - `IntegrationStatus` - Individual integration status with service name, health state, and configuration
+- **Location**: `docs/api/openapi.yaml`
+- **Impact**: Complete OpenAPI documentation coverage (25/25 endpoints documented), better developer experience for API consumers
+- **Build**: Passing
+- **Lint**: Passing
+- **Tests**: 1247 tests passing
+- **Documentation**: Updated OpenAPI spec and this guide
 
 ### 2026-02-21 - API Client Helper Enhancement
 

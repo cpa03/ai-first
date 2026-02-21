@@ -378,6 +378,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ReadinessProbeResponse'
 
+  /api/health/integrations:
+    get:
+      tags:
+        - Health
+      summary: Integrations health check
+      description: |
+        Check the health status of all external integrations and services.
+        Returns the status of circuit breakers, export connectors, and external APIs.
+        Useful for monitoring external service dependencies.
+      operationId: integrationsHealthCheck
+      responses:
+        '200':
+          description: Integrations health check successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationsHealthResponse'
+        '503':
+          description: One or more integrations are unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationsHealthResponse'
+
   /api/ideas:
     get:
       tags:
@@ -2046,6 +2070,108 @@ components:
           type: string
           format: date-time
           example: '2024-01-07T00:05:00Z'
+
+    IntegrationsHealthResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - timestamp
+            - version
+            - integrations
+            - summary
+          properties:
+            status:
+              type: string
+              enum: [healthy, degraded, unhealthy]
+              description: Overall health status based on all integrations
+              example: healthy
+            timestamp:
+              type: string
+              format: date-time
+              example: '2024-01-07T00:00:00Z'
+            version:
+              type: string
+              description: API version
+              example: 1.0.0
+            integrations:
+              type: array
+              description: List of all integration statuses
+              items:
+                $ref: '#/components/schemas/IntegrationStatus'
+            summary:
+              type: object
+              description: Summary counts of integration statuses
+              required:
+                - total
+                - healthy
+                - degraded
+                - unhealthy
+                - unknown
+              properties:
+                total:
+                  type: integer
+                  description: Total number of integrations
+                  example: 8
+                healthy:
+                  type: integer
+                  description: Number of healthy integrations
+                  example: 6
+                degraded:
+                  type: integer
+                  description: Number of degraded integrations
+                  example: 1
+                unhealthy:
+                  type: integer
+                  description: Number of unhealthy integrations
+                  example: 1
+                unknown:
+                  type: integer
+                  description: Number of integrations with unknown status
+                  example: 0
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    IntegrationStatus:
+      type: object
+      required:
+        - service
+        - status
+        - configured
+        - lastChecked
+      properties:
+        service:
+          type: string
+          description: Name of the integration service
+          example: openai
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy, unknown]
+          description: Health status of the integration
+          example: healthy
+        state:
+          type: string
+          enum: [closed, open, half-open]
+          description: Circuit breaker state (if applicable)
+          example: closed
+        configured:
+          type: boolean
+          description: Whether the integration is configured
+          example: true
+        lastChecked:
+          type: string
+          format: date-time
+          description: Timestamp of last health check
+          example: '2024-01-07T00:00:00Z'
 
     ErrorResponse:
       type: object
