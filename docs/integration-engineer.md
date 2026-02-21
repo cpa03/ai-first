@@ -569,6 +569,87 @@ The tracker includes automatic memory management:
 - **Stale Detection**: Info older than `maxAgeMs` is discarded
 - **Resource Cleanup**: Registered with `resourceCleanupManager` for graceful shutdown
 
+## External API Versioning
+
+### Overview
+
+The `EXTERNAL_API_VERSIONS` constant in `src/lib/config/constants.ts` provides centralized API version management for all external service integrations. This ensures compatibility and provides a single source of truth for API versions.
+
+**Addresses Issue #876: Inconsistent API versioning and compatibility management**
+
+### Supported Services
+
+| Service      | Default Version | Environment Override       | Header Used            |
+| ------------ | --------------- | -------------------------- | ---------------------- |
+| OpenAI       | `latest`        | `OPENAI_API_VERSION`       | SDK-managed            |
+| Notion       | `2022-06-28`    | `NOTION_API_VERSION`       | `Notion-Version`       |
+| Trello       | `1`             | `TRELLO_API_VERSION`       | URL path               |
+| GitHub       | `2022-11-28`    | `GITHUB_API_VERSION`       | `X-GitHub-Api-Version` |
+| Google Tasks | `v1`            | `GOOGLE_TASKS_API_VERSION` | URL path               |
+| Linear       | `graphql`       | N/A                        | Schema evolution       |
+| Asana        | `1.0`           | `ASANA_API_VERSION`        | URL path               |
+| Supabase     | `v2`            | N/A                        | SDK-managed            |
+
+### Usage
+
+#### Accessing API Version Info
+
+```typescript
+import { EXTERNAL_API_VERSIONS } from '@/lib/config/constants';
+
+// Get the configured version for a service
+const notionVersion = EXTERNAL_API_VERSIONS.NOTION.VERSION; // '2022-06-28'
+
+// Get changelog URL for updates
+const githubChangelog = EXTERNAL_API_VERSIONS.GITHUB.CHANGELOG_URL;
+
+// Get last verified date
+const lastVerified = EXTERNAL_API_VERSIONS.OPENAI.LAST_VERIFIED; // '2026-02-18'
+```
+
+#### Integration with Export Connectors
+
+```typescript
+// Example: Using API version in GitHub exporter
+import { GITHUB_CONFIG } from '@/lib/config/constants';
+
+class GitHubProjectsExporter extends ExportConnector {
+  private readonly API_VERSION = GITHUB_CONFIG.API.VERSION;
+
+  async export(data: ExportData): Promise<ExportResult> {
+    const response = await fetch('https://api.github.com/...', {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'X-GitHub-Api-Version': this.API_VERSION,
+      },
+    });
+    // ...
+  }
+}
+```
+
+### Environment Variable Overrides
+
+For emergency version pinning or testing, all API versions can be overridden via environment variables:
+
+```bash
+# Pin Notion to a specific version for testing
+NOTION_API_VERSION=2022-02-22
+
+# Use an older GitHub API version
+GITHUB_API_VERSION=2022-11-28
+```
+
+### Maintenance
+
+When updating API versions:
+
+1. Update the version in `EXTERNAL_API_VERSIONS`
+2. Update `LAST_VERIFIED` date
+3. Test integration with the new version
+4. Check the changelog URL for breaking changes
+5. Update any affected code in export connectors
+
 ## Best Practices
 
 ### 1. Always Use Resilience Framework
@@ -752,8 +833,8 @@ Object.entries(states).forEach(([service, status]) => {
 ## Agent Information
 
 - **Agent Role:** Integration Engineer
-- **Specialization:** External API Integration, Resilience Patterns, Error Handling, Rate Limiting
-- **Last Updated:** 2026-02-20
+- **Specialization:** External API Integration, Resilience Patterns, Error Handling, Rate Limiting, API Versioning
+- **Last Updated:** 2026-02-21
 - **Branch:** integration-engineer
 
 ---
