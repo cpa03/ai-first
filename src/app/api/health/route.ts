@@ -6,42 +6,7 @@ import {
 import { APP_CONFIG } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getCloudflareRequestInfo } from '@/lib/cloudflare';
-
-/**
- * Check if an environment variable name contains sensitive patterns.
- * SECURITY: Variables matching these patterns are excluded from health check responses
- * to prevent credential exposure.
- *
- * @see SECURITY.md for security documentation
- * @see docs/security-engineer.md for security guidelines
- */
-function isSensitiveVar(varName: string): boolean {
-  const upper = varName.toUpperCase();
-  return (
-    upper.includes('KEY') ||
-    upper.includes('SECRET') ||
-    upper.includes('TOKEN') ||
-    upper.includes('PASSWORD') ||
-    upper.includes('PASSPHRASE') ||
-    upper.includes('CREDENTIAL') ||
-    upper.includes('AUTH') ||
-    upper.includes('PWD') ||
-    upper.includes('DATABASE') ||
-    upper.includes('CONNECTION') ||
-    upper.includes('CERT') ||
-    upper.includes('SIGNATURE') ||
-    upper.includes('PRIVATE') ||
-    upper.includes('_SK') ||
-    upper.includes('_PK') ||
-    upper.includes('_RK') ||
-    // Additional sensitive patterns (Issue #1171 security hardening)
-    upper.includes('OAUTH') || // OAuth tokens/secrets
-    upper.includes('WEBHOOK') || // Webhook secrets
-    upper.includes('SALT') || // Salt values for hashing
-    upper.includes('HMAC') || // HMAC keys
-    upper.includes('APIKEY') // API key without underscore
-  );
-}
+import { isSensitiveVar } from '@/lib/security/env-validation';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit, request } = context;

@@ -23,6 +23,61 @@ const SENSITIVE_KEYS = [
   'ANTHROPIC_API_KEY',
 ] as const;
 
+/**
+ * Patterns that indicate a sensitive environment variable name.
+ * Variables matching these patterns should be excluded from health check
+ * responses and logs to prevent credential exposure.
+ *
+ * @see SECURITY.md for security documentation
+ * @see docs/security-engineer.md for security guidelines
+ */
+const SENSITIVE_VAR_PATTERNS = [
+  'KEY',
+  'SECRET',
+  'TOKEN',
+  'PASSWORD',
+  'PASSPHRASE',
+  'CREDENTIAL',
+  'AUTH',
+  'PWD',
+  'DATABASE',
+  'CONNECTION',
+  'CERT',
+  'SIGNATURE',
+  'PRIVATE',
+  '_SK',
+  '_PK',
+  '_RK',
+  'OAUTH', // OAuth tokens/secrets
+  'WEBHOOK', // Webhook secrets
+  'SALT', // Salt values for hashing
+  'HMAC', // HMAC keys
+  'APIKEY', // API key without underscore
+  'IBAN', // Bank account info
+  'SESSION', // Session identifiers
+  'SSN', // Social security numbers
+] as const;
+
+/**
+ * Check if an environment variable name contains sensitive patterns.
+ * SECURITY: Variables matching these patterns are excluded from health check responses
+ * to prevent credential exposure.
+ *
+ * @param varName - The environment variable name to check
+ * @returns true if the variable name matches sensitive patterns
+ *
+ * @example
+ * ```typescript
+ * if (!isSensitiveVar(varName)) {
+ *   envStatus.checks[varName] = { present: isSet, required: true };
+ * }
+ * ```
+ */
+export function isSensitiveVar(varName: string): boolean {
+  const upper = varName.toUpperCase();
+  return SENSITIVE_VAR_PATTERNS.some((pattern) => upper.includes(pattern));
+}
+
 // Keys that must NOT have NEXT_PUBLIC_ prefix
 const MUST_BE_PRIVATE = ['SUPABASE_SERVICE_ROLE_KEY', 'ADMIN_API_KEY'] as const;
 
