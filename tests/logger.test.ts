@@ -2,6 +2,8 @@ import {
   Logger,
   LogLevel,
   setLogLevel,
+  setLogSampleRate,
+  getLogSampleRate,
   createLogger,
   LogContext,
 } from '@/lib/logger';
@@ -719,6 +721,124 @@ describe('Logger Module', () => {
         logger.info(`Message ${i}`);
       }
       expect(console.info).toHaveBeenCalledTimes(1000);
+    });
+  });
+
+  describe('Log Sampling', () => {
+    beforeEach(() => {
+      setLogLevel(LogLevel.DEBUG);
+      setLogSampleRate(1.0);
+    });
+
+    afterEach(() => {
+      setLogSampleRate(1.0);
+    });
+
+    it('should have default sample rate of 1.0', () => {
+      expect(getLogSampleRate()).toBe(1.0);
+    });
+
+    it('should allow setting sample rate via setLogSampleRate', () => {
+      setLogSampleRate(0.5);
+      expect(getLogSampleRate()).toBe(0.5);
+    });
+
+    it('should reject invalid sample rates below 0', () => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      setLogSampleRate(-0.5);
+      expect(getLogSampleRate()).toBe(1.0);
+      expect(warnSpy).toHaveBeenCalled();
+      warnSpy.mockRestore();
+    });
+
+    it('should reject invalid sample rates above 1', () => {
+      const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+      setLogSampleRate(1.5);
+      expect(getLogSampleRate()).toBe(1.0);
+      expect(warnSpy).toHaveBeenCalled();
+      warnSpy.mockRestore();
+    });
+
+    it('should always log ERROR regardless of sample rate', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      logger.error('Error message');
+      expect(console.error).toHaveBeenCalled();
+    });
+
+    it('should always log WARN regardless of sample rate', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      logger.warn('Warning message');
+      expect(console.warn).toHaveBeenCalled();
+    });
+
+    it('should sample INFO logs when sample rate < 1', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      logger.info('Info message');
+      expect(console.info).not.toHaveBeenCalled();
+    });
+
+    it('should sample DEBUG logs when sample rate < 1', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      logger.debug('Debug message');
+      expect(console.debug).not.toHaveBeenCalled();
+    });
+
+    it('should log all messages when sample rate is 1', () => {
+      setLogSampleRate(1.0);
+      const logger = new Logger('Test');
+      for (let i = 0; i < 100; i++) {
+        logger.info(`Message ${i}`);
+      }
+      expect(console.info).toHaveBeenCalledTimes(100);
+    });
+
+    it('should approximately match sample rate for INFO logs', () => {
+      setLogSampleRate(0.5);
+      const logger = new Logger('Test');
+      const iterations = 1000;
+      for (let i = 0; i < iterations; i++) {
+        logger.info(`Message ${i}`);
+      }
+      const callCount = (console.info as jest.Mock).mock.calls.length;
+      const ratio = callCount / iterations;
+      expect(ratio).toBeGreaterThan(0.4);
+      expect(ratio).toBeLessThan(0.6);
+    });
+
+    it('should apply sampling to infoWithContext', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      const context: LogContext = { requestId: 'req_123' };
+      logger.infoWithContext('Message', context);
+      expect(console.info).not.toHaveBeenCalled();
+    });
+
+    it('should apply sampling to debugWithContext', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      const context: LogContext = { requestId: 'req_123' };
+      logger.debugWithContext('Message', context);
+      expect(console.debug).not.toHaveBeenCalled();
+    });
+
+    it('should not apply sampling to warnWithContext', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      const context: LogContext = { requestId: 'req_123' };
+      logger.warnWithContext('Message', context);
+      expect(console.warn).toHaveBeenCalled();
+    });
+
+    it('should not apply sampling to errorWithContext', () => {
+      setLogSampleRate(0);
+      const logger = new Logger('Test');
+      const context: LogContext = { requestId: 'req_123' };
+      logger.errorWithContext('Message', context);
+      expect(console.error).toHaveBeenCalled();
     });
   });
 });
