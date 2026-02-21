@@ -1055,6 +1055,27 @@ Supabase handles connection pooling automatically. For high-traffic applications
 
 ## Changelog
 
+### 2026-02-21 - Clarification Answers Question Index
+
+#### Performance Enhancement
+
+1. **Added missing indexes for clarification_answers.question_id column**
+   - Migration `20260221_add_clarification_question_index.sql` adds 2 indexes
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_clarification_answers_question_id` - Index on `question_id` for filtering by question type
+   - `idx_clarification_answers_session_question` - Composite index for session_id + question_id queries
+
+2. **Performance improvements**
+   - Faster queries filtering clarification answers by question type
+   - Optimized lookups for specific questions within a session
+   - Better JOIN performance on question_id column
+
+3. **Down migration included**
+   - `20260221_add_clarification_question_index.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definitions to clarification_answers section
+
 ### 2026-02-20 - Agent Logs Action Index
 
 #### Performance Enhancement

@@ -784,6 +784,12 @@ CREATE INDEX idx_clarification_sessions_idea_status ON clarification_sessions(id
 -- Index for clarification_answers: session_id
 CREATE INDEX idx_clarification_answers_session ON clarification_answers(session_id);
 
+-- Index for clarification_answers: question_id (for filtering by question type)
+CREATE INDEX idx_clarification_answers_question_id ON clarification_answers(question_id);
+
+-- Composite index for session_id + question_id queries
+CREATE INDEX idx_clarification_answers_session_question ON clarification_answers(session_id, question_id);
+
 -- ============================================================================
 -- Triggers
 -- ============================================================================
