@@ -46,7 +46,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 interface Ripple {
-  id: number;
+  id: string;
   x: number;
   y: number;
   size: number;
@@ -69,7 +69,6 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const [ripples, setRipples] = useState<Ripple[]>([]);
-    const [rippleIdCounter, setRippleIdCounter] = useState(0);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
     const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -92,22 +91,24 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         const x = event.clientX - rect.left - size / 2;
         const y = event.clientY - rect.top - size / 2;
 
+        // Generate unique ID for ripple - prevents unbounded counter growth
+        // Using timestamp + random string ensures uniqueness without state
+        const rippleId = `ripple-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
         const newRipple: Ripple = {
-          id: rippleIdCounter,
+          id: rippleId,
           x,
           y,
           size,
         };
 
         setRipples((prev) => [...prev, newRipple]);
-        setRippleIdCounter((prev) => prev + 1);
 
         const timeoutId = setTimeout(() => {
-          setRipples((prev) => prev.filter((r) => r.id !== newRipple.id));
+          setRipples((prev) => prev.filter((r) => r.id !== rippleId));
         }, RIPPLE_CONFIG.DURATION_MS);
         timeoutRefs.current.push(timeoutId);
       },
-      [disabled, loading, onClick, rippleIdCounter, prefersReducedMotion]
+      [disabled, loading, onClick, prefersReducedMotion]
     );
 
     const stateClasses =
