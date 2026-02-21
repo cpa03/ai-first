@@ -104,10 +104,36 @@ fi
 
 # 7. Check for console.log in production code
 echo -e "${BLUE}Checking for console.log statements...${NC}"
-console_logs=$(grep -rn --include="*.ts" --include="*.tsx" "console\.\(log\|debug\)" src/ 2>/dev/null | grep -v "logger.ts" | grep -v "instrumentation.ts" | grep -v "// " || true)
+console_logs=$(grep -rn --include="*.ts" --include="*.tsx" "console\.\(log\|debug\)" src/ 2>/dev/null | \
+    grep -v "logger.ts" | \
+    grep -v "instrumentation.ts" | \
+    grep -v "// " | \
+    grep -v "@example" || true)
 if [ -n "$console_logs" ]; then
-    count=$(echo "$console_logs" | wc -l)
-    print_status "WARN" "Found $count console.log/debug statements (review for sensitive data leakage)"
+    filtered_logs=""
+    while IFS= read -r line; do
+        file=$(echo "$line" | cut -d: -f1)
+        linenum=$(echo "$line" | cut -d: -f2)
+        if [ -f "$file" ]; then
+            context=$(sed -n "$((linenum - 20)),${linenum}p" "$file" 2>/dev/null)
+            jsdoc_pattern='@example|```typescript|```ts'
+            if ! echo "$context" | grep -qE "$jsdoc_pattern"; then
+                filtered_logs="${filtered_logs}${line}"$'\n'
+            fi
+        fi
+    done <<< "$console_logs"
+    
+    if [ -n "$filtered_logs" ]; then
+        count=$(echo "$filtered_logs" | grep -c "console\." 2>/dev/null || echo 0)
+        if [ "$count" -gt 0 ]; then
+            print_status "WARN" "Found $count console.log/debug statements in production code (review for sensitive data leakage)"
+            echo "$filtered_logs" | head -5
+        else
+            print_status "OK" "No console.log/debug statements found in production code (JSDoc examples excluded)"
+        fi
+    else
+        print_status "OK" "No console.log/debug statements found in production code (JSDoc examples excluded)"
+    fi
 else
     print_status "OK" "No console.log/debug statements found (excluding logger.ts)"
 fi
