@@ -3,11 +3,17 @@
  * Centralizes all app metadata, branding, environment variables, and constants
  */
 
+import { EnvLoader } from './environment';
 import { PLATFORM_ENV_VARS } from './constants';
 
 export const APP_CONFIG = {
   NAME: 'IdeaFlow',
-  VERSION: '1.0.0',
+  /**
+   * Application version
+   * Env: APP_VERSION (default: '1.0.0')
+   * Allows for dynamic versioning in different deployment environments
+   */
+  VERSION: EnvLoader.string('APP_VERSION', '1.0.0'),
   DESCRIPTION: 'Turn ideas into action with AI-powered project planning',
   TAGLINE: 'Turn ideas into action.',
 
