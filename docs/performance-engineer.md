@@ -238,6 +238,21 @@ npm install eslint-plugin-react-hooks@latest --save-dev
    - **Solution**: Wrapped TaskManagement with React.memo to prevent unnecessary re-renders when parent updates
    - **File**: `src/components/TaskManagement.tsx`
    - **Impact**: Prevents re-renders of entire task management tree when only ideaId prop changes
+10. **Fixed**: ScrollToTop component memoization
+    - **Problem**: ScrollToTop.tsx was not wrapped in React.memo, causing unnecessary re-renders when parent components update
+    - **Solution**: Wrapped ScrollToTop with React.memo to prevent re-renders when props haven't changed
+    - **File**: `src/components/ScrollToTop.tsx`
+    - **Impact**: Prevents re-renders during scroll events and parent state changes
+11. **Fixed**: IdeaInput component memoization
+    - **Problem**: IdeaInput.tsx was not wrapped in React.memo, causing unnecessary re-renders when parent components update
+    - **Solution**: Wrapped IdeaInput with React.memo to prevent re-renders when onSubmit prop reference is stable
+    - **File**: `src/components/IdeaInput.tsx`
+    - **Impact**: Prevents re-renders during form interactions and parent state changes
+12. **Fixed**: KeyboardShortcutsHelp component memoization
+    - **Problem**: KeyboardShortcutsHelp.tsx main export was not wrapped in React.memo, while internal components were
+    - **Solution**: Wrapped KeyboardShortcutsHelp with React.memo to prevent re-renders during modal animations
+    - **File**: `src/components/KeyboardShortcutsHelp.tsx`
+    - **Impact**: Prevents re-renders during modal open/close animations
 
 ### Verified Issues (Already Resolved)
 

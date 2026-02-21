@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
@@ -25,7 +25,9 @@ const validateIdea = (idea: string): string | null => {
   return null;
 };
 
-export default function IdeaInput({ onSubmit }: IdeaInputProps) {
+// PERFORMANCE: Memoize IdeaInput to prevent re-renders when parent components update
+// This component only needs to re-render when its own state changes or onSubmit prop changes
+function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   const logger = createLogger('IdeaInput');
   const [idea, setIdea] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -193,3 +195,7 @@ export default function IdeaInput({ onSubmit }: IdeaInputProps) {
     </>
   );
 }
+
+IdeaInputComponent.displayName = 'IdeaInput';
+
+export default memo(IdeaInputComponent);
