@@ -8,6 +8,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Alert from '@/components/Alert';
+import Tooltip from '@/components/Tooltip';
 import dynamic from 'next/dynamic';
 import TaskManagement from '@/components/TaskManagement';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
@@ -269,17 +270,21 @@ function ResultsContent() {
             {exportLoading ? 'Exporting...' : 'Export JSON'}
           </Button>
 
-          <Button
-            variant="outline"
-            disabled={true}
-            title="Export to Notion - Coming soon"
-            aria-label="Export to Notion - Coming soon, this feature is not yet available"
+          <Tooltip
+            content="Notion export is coming soon! This feature is currently in development."
+            position="top"
           >
-            Export to Notion
-            <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
-              Coming Soon
-            </span>
-          </Button>
+            <Button
+              variant="outline"
+              disabled={true}
+              aria-label="Export to Notion - Coming soon, this feature is not yet available"
+            >
+              Export to Notion
+              <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
+                Coming Soon
+              </span>
+            </Button>
+          </Tooltip>
         </div>
 
         {exportUrl && (
