@@ -2,18 +2,22 @@
  * Mock utilities for consistent test environment setup
  */
 
-// Enhanced environment variable mocking
+import { MOCK_SECRETS } from './test-secrets';
+
+// Centralized mock environment variables using MOCK_SECRETS
+// This ensures all test files use the same safe, mock credentials
+// @see tests/utils/test-secrets.ts for the source of truth
 export const mockEnvVars = {
-  OPENAI_API_KEY: 'test-openai-key',
-  NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
-  SUPABASE_SERVICE_ROLE_KEY: 'test-service-key',
-  NOTION_API_KEY: 'test-notion-key',
-  TRELLO_API_KEY: 'test-trello-key',
-  TRELLO_TOKEN: 'test-trello-token',
-  GITHUB_TOKEN: 'test-github-token',
-  GOOGLE_CLIENT_ID: 'test-google-client-id',
-  GOOGLE_CLIENT_SECRET: 'test-google-client-secret',
+  OPENAI_API_KEY: MOCK_SECRETS.OPENAI_API_KEY,
+  NEXT_PUBLIC_SUPABASE_URL: MOCK_SECRETS.SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: MOCK_SECRETS.SUPABASE_ANON_KEY,
+  SUPABASE_SERVICE_ROLE_KEY: MOCK_SECRETS.SUPABASE_SERVICE_ROLE_KEY,
+  NOTION_API_KEY: MOCK_SECRETS.NOTION_API_KEY,
+  TRELLO_API_KEY: MOCK_SECRETS.TRELLO_API_KEY,
+  TRELLO_TOKEN: MOCK_SECRETS.TRELLO_TOKEN,
+  GITHUB_TOKEN: MOCK_SECRETS.GITHUB_TOKEN,
+  GOOGLE_CLIENT_ID: MOCK_SECRETS.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET: MOCK_SECRETS.GOOGLE_CLIENT_SECRET,
 };
 
 // Mock Supabase client
