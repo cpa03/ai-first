@@ -8,51 +8,51 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 | Metric               | Count |
 | -------------------- | ----- |
-| **Total Stories**    | 6     |
-| **P0 (Must Have)**   | 4     |
+| **Total Stories**    | 7     |
+| **P0 (Must Have)**   | 5     |
 | **P1 (Should Have)** | 2     |
 | **P2 (Could Have)**  | 0     |
 | **P3 (Won't Have)**  | 0     |
 
 ### Story Points Summary
 
-| Category          | Story Points | Stories Included                                                        |
-| ----------------- | ------------ | ----------------------------------------------------------------------- |
-| **MVP (P0)**      | 18           | US-AUTH-001 (3), US-AUTH-002 (2), US-IDEA-001 (5), US-BREAKDOWN-001 (8) |
-| **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                      |
-| **Total**         | **23**       | All stories                                                             |
+| Category          | Story Points | Stories Included                                                                         |
+| ----------------- | ------------ | ---------------------------------------------------------------------------------------- |
+| **MVP (P0)**      | 23           | US-AUTH-001 (3), US-AUTH-002 (2), US-IDEA-001 (5), US-IDEA-002 (5), US-BREAKDOWN-001 (8) |
+| **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                                       |
+| **Total**         | **28**       | All stories                                                                              |
 
 ### Estimated Effort (Based on Story Points)
 
-| Points | Time Estimate | MVP Stories                      | Post-MVP Stories  |
-| ------ | ------------- | -------------------------------- | ----------------- |
-| 1-2    | < 2 hours     | US-AUTH-002 (2)                  | US-AUTH-003 (2)   |
-| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5) | US-EXPORT-001 (3) |
-| 8+     | 1-2+ days     | US-BREAKDOWN-001 (8)             | -                 |
+| Points | Time Estimate | MVP Stories                                       | Post-MVP Stories  |
+| ------ | ------------- | ------------------------------------------------- | ----------------- |
+| 1-2    | < 2 hours     | US-AUTH-002 (2)                                   | US-AUTH-003 (2)   |
+| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5), US-IDEA-002 (5) | US-EXPORT-001 (3) |
+| 8+     | 1-2+ days     | US-BREAKDOWN-001 (8)                              | -                 |
 
-**MVP Estimated Effort**: ~3-4 development days (based on 18 story points)
-**Total Estimated Effort**: ~4-5 development days (based on 23 story points)
+**MVP Estimated Effort**: ~4-5 development days (based on 23 story points)
+**Total Estimated Effort**: ~5-6 development days (based on 28 story points)
 
 ### Status Overview
 
-| Status      | Count | Stories                                                                             |
-| ----------- | ----- | ----------------------------------------------------------------------------------- |
-| Ready       | 6     | US-AUTH-001, US-AUTH-002, US-AUTH-003, US-IDEA-001, US-BREAKDOWN-001, US-EXPORT-001 |
-| In Progress | 0     | -                                                                                   |
-| Done        | 0     | -                                                                                   |
-| Released    | 0     | -                                                                                   |
+| Status      | Count | Stories                                                                                          |
+| ----------- | ----- | ------------------------------------------------------------------------------------------------ |
+| Ready       | 7     | US-AUTH-001, US-AUTH-002, US-AUTH-003, US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001, US-EXPORT-001 |
+| In Progress | 0     | -                                                                                                |
+| Done        | 0     | -                                                                                                |
+| Released    | 0     | -                                                                                                |
 
 ### Issue-to-Story Cross-Reference
 
-| Issue | Title                        | Related Stories                       | Priority | Status |
-| ----- | ---------------------------- | ------------------------------------- | -------- | ------ |
-| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003 | P1       | Open   |
-| #1176 | MVP launch timeline at risk  | All P0 Stories                        | P1       | Open   |
-| #205  | Export functionality         | US-IDEA-001, US-EXPORT-001            | -        | Open   |
-| #219  | Plan generation              | US-IDEA-001, US-EXPORT-001            | -        | Open   |
-| #638  | Idea submission improvements | US-IDEA-001                           | -        | Open   |
-| #721  | Breakdown system             | US-BREAKDOWN-001                      | -        | Open   |
-| #747  | Task decomposition           | US-BREAKDOWN-001                      | -        | Open   |
+| Issue | Title                        | Related Stories                                    | Priority | Status |
+| ----- | ---------------------------- | -------------------------------------------------- | -------- | ------ |
+| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003              | P1       | Open   |
+| #1176 | MVP launch timeline at risk  | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001, All P0 | P1       | Open   |
+| #205  | Export functionality         | US-IDEA-001, US-IDEA-002, US-EXPORT-001            | -        | Open   |
+| #219  | Plan generation              | US-IDEA-001, US-IDEA-002, US-EXPORT-001            | -        | Open   |
+| #638  | Idea submission improvements | US-IDEA-001, US-IDEA-002                           | -        | Open   |
+| #721  | Breakdown system             | US-BREAKDOWN-001                                   | -        | Open   |
+| #747  | Task decomposition           | US-BREAKDOWN-001                                   | -        | Open   |
 
 ### MVP Progress Tracker
 
@@ -63,19 +63,20 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | US-AUTH-001      | User Signup      | Ready  | #1177           | ✅ Yes        |
 | US-AUTH-002      | User Login       | Ready  | #1177           | ✅ Yes        |
 | US-IDEA-001      | Idea Submission  | Ready  | -               | ✅ Yes        |
+| US-IDEA-002      | Idea Dashboard   | Ready  | -               | ✅ Yes        |
 | US-BREAKDOWN-001 | Breakdown Engine | Ready  | -               | ✅ Yes        |
 
-**MVP Completion: 0% (0/4 P0 stories implemented)**
+**MVP Completion: 0% (0/5 P0 stories implemented)**
 
 ### Priority Distribution by Feature
 
 | Feature Area    | P0    | P1    | P2    | P3    | Total |
 | --------------- | ----- | ----- | ----- | ----- | ----- |
 | Authentication  | 2     | 1     | 0     | 0     | 3     |
-| Idea Management | 1     | 0     | 0     | 0     | 1     |
+| Idea Management | 2     | 0     | 0     | 0     | 2     |
 | Breakdown       | 1     | 0     | 0     | 0     | 1     |
 | Export          | 0     | 1     | 0     | 0     | 1     |
-| **Total**       | **4** | **2** | **0** | **0** | **6** |
+| **Total**       | **5** | **2** | **0** | **0** | **7** |
 
 ---
 
@@ -90,7 +91,8 @@ user-stories/
 │   ├── us-auth-002-login.md     # User login with error handling
 │   └── us-auth-003-password-reset.md # Self-service password reset
 ├── idea-management/             # Idea management feature stories
-│   └── us-idea-001-submission.md # Idea submission with clarification
+│   ├── us-idea-001-submission.md # Idea submission with clarification
+│   └── us-idea-002-dashboard.md  # Idea dashboard for viewing and managing ideas
 ├── breakdown/                   # Breakdown system feature stories
 │   └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
 └── export/                      # Export & integration feature stories
@@ -114,8 +116,9 @@ user-stories/
 | Story ID                                                   | Title           | Priority | Status | Persona         |
 | ---------------------------------------------------------- | --------------- | -------- | ------ | --------------- |
 | [US-IDEA-001](./idea-management/us-idea-001-submission.md) | Idea Submission | P0       | Ready  | Startup Founder |
+| [US-IDEA-002](./idea-management/us-idea-002-dashboard.md)  | Idea Dashboard  | P0       | Ready  | Startup Founder |
 
-**Related Issues**: #205, #219, #638
+**Related Issues**: #205, #219, #638, #1176
 
 ### Breakdown System
 
@@ -227,4 +230,4 @@ When adding new user stories:
 
 ---
 
-_Maintained by the User Story Engineer specialist. Last updated: February 21, 2026 (Statistics corrected: Total Stories = 6, P1 = 2)._
+_Maintained by the User Story Engineer specialist. Last updated: February 21, 2026 (Added US-IDEA-002: Idea Dashboard)._
