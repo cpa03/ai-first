@@ -6,10 +6,34 @@ module.exports = {
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   safelist: [
+    // Animation delay classes used dynamically
     {
       pattern: /^delay-/,
       variants: [],
     },
+    // Task status badge colors (dynamic from TASK_STATUS_CONFIG)
+    'bg-gray-100',
+    'text-gray-600',
+    'bg-blue-100',
+    'text-blue-600',
+    'bg-green-100',
+    'text-green-600',
+    // Risk level colors (dynamic from RISK_LEVEL_CONFIG)
+    'bg-yellow-100',
+    'text-yellow-700',
+    'bg-red-100',
+    'text-red-700',
+    // Border colors for status/risk
+    'border-gray-300',
+    'border-blue-300',
+    'border-green-300',
+    'border-green-200',
+    'border-yellow-200',
+    'border-red-200',
+    // Focus ring colors for accessibility
+    'focus-visible:ring-gray-400',
+    'focus-visible:ring-blue-500',
+    'focus-visible:ring-green-500',
   ],
   theme: {
     extend: {
