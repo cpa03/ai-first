@@ -11,6 +11,7 @@ import {
   circuitBreakerManager,
   CircuitBreaker,
 } from '@/lib/resilience';
+import { MOCK_SECRETS } from './utils/test-secrets';
 
 // Track circuit breaker states for testing
 const mockCircuitBreakerStates: Record<
@@ -232,7 +233,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(NotionExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
 
       const testData = createMockExportData();
@@ -268,10 +269,10 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(TrelloExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
-      process.env.TRELLO_API_KEY = 'test-key';
-      process.env.TRELLO_TOKEN = 'test-token';
+      process.env.TRELLO_API_KEY = MOCK_SECRETS.TRELLO_API_KEY;
+      process.env.TRELLO_TOKEN = MOCK_SECRETS.TRELLO_TOKEN;
 
       const testData1 = createMockExportData();
       const testData2 = createMockExportData();
@@ -309,7 +310,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(NotionExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
 
       const testData = createMockExportData();
@@ -332,7 +333,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(NotionExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
 
       const testData = createMockExportData();
@@ -353,7 +354,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(NotionExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
 
       const testData = createMockExportData();
@@ -367,7 +368,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
   describe('Configuration Validation Integration', () => {
     // BUG: Mock not properly intercepting resilience manager calls
     it.skip('should validate configuration with resilience - BUG: mocking issue', async () => {
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
 
       const notionExporter = new NotionExporter();
       const isValid = await notionExporter.validateConfig();
@@ -402,7 +403,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(NotionExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
 
       const testData = createMockExportData();
@@ -439,8 +440,8 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(TrelloExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.TRELLO_API_KEY = 'test-key';
-      process.env.TRELLO_TOKEN = 'test-token';
+      process.env.TRELLO_API_KEY = MOCK_SECRETS.TRELLO_API_KEY;
+      process.env.TRELLO_TOKEN = MOCK_SECRETS.TRELLO_TOKEN;
 
       const testData = createMockExportData();
       await exportManager.exportToTrello(testData);
@@ -476,7 +477,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
         .spyOn(GitHubProjectsExporter.prototype, 'validateConfig')
         .mockResolvedValue(true);
 
-      process.env.GITHUB_TOKEN = 'ghp_test';
+      process.env.GITHUB_TOKEN = MOCK_SECRETS.GITHUB_TOKEN;
 
       const testData = createMockExportData();
       await exportManager.exportToGitHubProjects(testData);
@@ -501,7 +502,7 @@ describe('Export Connectors Integration with Resilience Framework', () => {
   describe('Resilience Monitoring and Observability', () => {
     // BUG: Mock not properly tracking circuit breaker states
     it.skip('should expose circuit breaker states for all services - BUG: mocking issue', async () => {
-      process.env.NOTION_API_KEY = 'test-key';
+      process.env.NOTION_API_KEY = MOCK_SECRETS.NOTION_API_KEY;
       process.env.NOTION_PARENT_PAGE_ID = 'page-123';
 
       jest

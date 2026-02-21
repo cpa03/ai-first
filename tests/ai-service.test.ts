@@ -19,6 +19,7 @@ delete (global as any).window;
 import { AIService, AIModelConfig } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
 import OpenAI from 'openai';
+import { MOCK_SECRETS } from './utils/test-secrets';
 
 jest.mock('openai', () => {
   return jest.fn();
@@ -76,9 +77,10 @@ describe('AIService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    process.env.OPENAI_API_KEY = 'test-key';
-    process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
-    process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
+    process.env.OPENAI_API_KEY = MOCK_SECRETS.OPENAI_API_KEY;
+    process.env.NEXT_PUBLIC_SUPABASE_URL = MOCK_SECRETS.SUPABASE_URL;
+    process.env.SUPABASE_SERVICE_ROLE_KEY =
+      MOCK_SECRETS.SUPABASE_SERVICE_ROLE_KEY;
     process.env.COST_LIMIT_DAILY = '10.0';
 
     mockOpenAI = {
@@ -118,7 +120,7 @@ describe('AIService', () => {
   describe('constructor', () => {
     it('should initialize OpenAI client when API key is provided', () => {
       expect(OpenAI).toHaveBeenCalledWith({
-        apiKey: 'test-key',
+        apiKey: MOCK_SECRETS.OPENAI_API_KEY,
         timeout: 60000,
       });
     });
@@ -162,7 +164,7 @@ describe('AIService', () => {
       await expect(service.initialize(config)).rejects.toThrow(
         'OpenAI API key not configured'
       );
-      process.env.OPENAI_API_KEY = 'test-key';
+      process.env.OPENAI_API_KEY = MOCK_SECRETS.OPENAI_API_KEY;
     });
   });
 
