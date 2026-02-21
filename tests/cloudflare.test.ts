@@ -14,6 +14,8 @@ import {
   detectPlatform,
   getExecutionContext,
   isEdgeRequest,
+  getRequestLatency,
+  getVisitorScheme,
   getCacheKey,
   CORRELATION_HEADERS,
   generateRequestId,
@@ -480,6 +482,83 @@ describe('isEdgeRequest', () => {
       'cf-ray': '7c1c2c3d4e5f6g7h',
     });
     expect(isEdgeRequest(request)).toBe(true);
+  });
+});
+
+describe('getRequestLatency', () => {
+  it('should return null when CF-RTT-MS header is not present', () => {
+    const request = createMockRequest();
+    expect(getRequestLatency(request)).toBeNull();
+  });
+
+  it('should return the RTT value in milliseconds', () => {
+    const request = createMockRequest({
+      'cf-rtt-ms': '150',
+    });
+    expect(getRequestLatency(request)).toBe(150);
+  });
+
+  it('should return null for invalid RTT value', () => {
+    const request = createMockRequest({
+      'cf-rtt-ms': 'invalid',
+    });
+    expect(getRequestLatency(request)).toBeNull();
+  });
+
+  it('should handle zero RTT value', () => {
+    const request = createMockRequest({
+      'cf-rtt-ms': '0',
+    });
+    expect(getRequestLatency(request)).toBe(0);
+  });
+
+  it('should handle large RTT values', () => {
+    const request = createMockRequest({
+      'cf-rtt-ms': '9999',
+    });
+    expect(getRequestLatency(request)).toBe(9999);
+  });
+});
+
+describe('getVisitorScheme', () => {
+  it('should return null when CF-Visitor header is not present', () => {
+    const request = createMockRequest();
+    expect(getVisitorScheme(request)).toBeNull();
+  });
+
+  it('should return https when scheme is https', () => {
+    const request = createMockRequest({
+      'cf-visitor': '{"scheme":"https"}',
+    });
+    expect(getVisitorScheme(request)).toBe('https');
+  });
+
+  it('should return http when scheme is http', () => {
+    const request = createMockRequest({
+      'cf-visitor': '{"scheme":"http"}',
+    });
+    expect(getVisitorScheme(request)).toBe('http');
+  });
+
+  it('should return null for invalid JSON', () => {
+    const request = createMockRequest({
+      'cf-visitor': 'not-valid-json',
+    });
+    expect(getVisitorScheme(request)).toBeNull();
+  });
+
+  it('should return null for invalid scheme value', () => {
+    const request = createMockRequest({
+      'cf-visitor': '{"scheme":"ftp"}',
+    });
+    expect(getVisitorScheme(request)).toBeNull();
+  });
+
+  it('should return null for missing scheme property', () => {
+    const request = createMockRequest({
+      'cf-visitor': '{"other":"value"}',
+    });
+    expect(getVisitorScheme(request)).toBeNull();
   });
 });
 
@@ -1099,6 +1178,29 @@ describe('CloudflareKV', () => {
       const cache = new CloudflareKV(kv);
       const result = await cache.exists('nonexistent');
       expect(result).toBe(false);
+    });
+  });
+
+  describe('getWithMetadata', () => {
+    it('should return nulls when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.getWithMetadata('key');
+      expect(result).toEqual({ value: null, metadata: null });
+    });
+
+    it('should return value and metadata for existing key', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.set('key', { foo: 'bar' });
+      const result = await cache.getWithMetadata<{ foo: string }>('key');
+      expect(result.value).toEqual({ foo: 'bar' });
+    });
+
+    it('should return nulls for non-existent key', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const result = await cache.getWithMetadata('nonexistent');
+      expect(result).toEqual({ value: null, metadata: null });
     });
   });
 
