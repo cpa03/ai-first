@@ -275,7 +275,9 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         className="absolute bottom-0 left-0 h-1 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
         style={{
           width: `${progress}%`,
-          transitionDuration: isPaused ? '0ms' : '75ms',
+          transitionDuration: isPaused
+            ? '0ms'
+            : `${UI_CONSTANTS.TOAST_PROGRESS_TRANSITION_MS}ms`,
         }}
         aria-hidden="true"
       />
