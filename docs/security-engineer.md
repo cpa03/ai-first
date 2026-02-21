@@ -42,6 +42,35 @@ This document provides security-focused guidelines, findings, and best practices
 
 ## Security Fixes Log
 
+### 2026-02-21: Metrics Endpoint Authentication Added
+
+**Issue**: The `/api/metrics` endpoint exposed Prometheus metrics without authentication, potentially allowing unauthorized access to operational telemetry data.
+
+**Risk**: Metrics could expose:
+
+- Request patterns and volumes
+- Error rates and types
+- Circuit breaker states
+- Rate limiting statistics
+
+**Fix Applied**:
+
+- Added conditional admin authentication to the metrics endpoint
+- In production (when `ADMIN_API_KEY` is set): requires Bearer token authentication
+- In development (when `ADMIN_API_KEY` is not set): allows access for developer experience
+
+**Files Modified**:
+
+- `src/app/api/metrics/route.ts` - Added admin authentication check
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ All tests pass
+```
+
 ### 2026-02-21: CSP 'unsafe-eval' Directive Removed
 
 **Issue**: Content Security Policy included `'unsafe-eval'` directive, which allows execution of dynamic code via `eval()`, `new Function()`, and similar methods. This creates a potential XSS attack vector.

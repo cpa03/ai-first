@@ -9,8 +9,18 @@ import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
+import { isAdminAuthenticated } from '@/lib/auth';
 
 const logger = createLogger('MetricsAPI');
+
+/**
+ * SECURITY: The metrics endpoint exposes operational telemetry data.
+ * In production (when ADMIN_API_KEY is set), this endpoint requires admin authentication.
+ * In development (when ADMIN_API_KEY is not set), access is allowed for DX.
+ *
+ * This prevents unauthorized access to potentially sensitive metrics data
+ * while maintaining developer experience during local development.
+ */
 const register = new Registry();
 
 collectDefaultMetrics({ register });
@@ -54,6 +64,17 @@ export const rateLimiterHits = new Counter({
 export { register };
 
 async function handleGet(context: ApiContext) {
+  if (process.env.ADMIN_API_KEY) {
+    const authenticated = await isAdminAuthenticated(context.request);
+    if (!authenticated) {
+      throw new AppError(
+        'Unauthorized. Admin authentication required for metrics endpoint.',
+        ErrorCode.AUTHENTICATION_ERROR,
+        STATUS_CODES.UNAUTHORIZED
+      );
+    }
+  }
+
   const metrics = await register.metrics();
 
   logger.debug('Metrics requested', {
