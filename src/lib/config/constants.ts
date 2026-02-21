@@ -665,6 +665,13 @@ export const PII_REDACTION_CONFIG = {
     'oauth',
     'cert',
     'pwd',
+    'cvv',
+    'cvc',
+    'pin',
+    'cookie',
+    'session',
+    'csrf',
+    'xsrf',
     // Additional banking/financial patterns (Issue #1171 security hardening)
     'iban',
     'swift',

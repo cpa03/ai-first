@@ -92,6 +92,21 @@ describe('PII Redaction Utility', () => {
       });
     });
 
+    it('should redact IPv6 addresses', () => {
+      const ipv6Addresses = [
+        '2001:0db8:85a3:0000:0000:8a2e:0370:7334',
+        '2001:db8:85a3:0:0:8a2e:370:7334',
+        '2001:db8:85a3::8a2e:370:7334',
+        '::1',
+      ];
+
+      ipv6Addresses.forEach((ip) => {
+        const output = redactPII(`IPv6 address: ${ip}`);
+        expect(output).toContain('[REDACTED_IP]');
+        expect(output).not.toContain(ip);
+      });
+    });
+
     it('should redact API keys with long values', () => {
       const inputs = [
         'api_key=abc123xyz789verylongkey',
@@ -498,6 +513,23 @@ describe('PII Redaction Utility', () => {
       const openaiKey = TEST_API_KEY_OPENAI;
       const output = redactPII(`Key is ${openaiKey}`);
       expect(output).toBe('Key is [REDACTED_API_KEY]');
+    });
+
+    it('should redact financial and session PII in strings', () => {
+      const inputs = [
+        'IBAN: DE12345678901234567890',
+        'SWIFT: ABCDUS33',
+        'CVV: 1234',
+        'PIN: 5678',
+        'session: sess_1234567890',
+        'cookie: id=1234567890',
+      ];
+
+      inputs.forEach((input) => {
+        const output = redactPII(input);
+        expect(output).toContain('[REDACTED_API_KEY]');
+        expect(output).not.toMatch(/\d{4,}/);
+      });
     });
 
     it('should redact sensitive fields with camelCase names', () => {

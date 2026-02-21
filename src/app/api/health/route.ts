@@ -39,7 +39,20 @@ function isSensitiveVar(varName: string): boolean {
     upper.includes('WEBHOOK') || // Webhook secrets
     upper.includes('SALT') || // Salt values for hashing
     upper.includes('HMAC') || // HMAC keys
-    upper.includes('APIKEY') // API key without underscore
+    upper.includes('APIKEY') || // API key without underscore
+    upper.includes('IBAN') || // Banking
+    upper.includes('SWIFT') || // Banking
+    upper.includes('BIC') || // Banking
+    upper.includes('CVV') || // Credit card
+    upper.includes('CVC') || // Credit card
+    upper.includes('PIN') || // Personal ID
+    upper.includes('COOKIE') || // Session/Auth
+    upper.includes('SESSION') || // Session/Auth
+    upper.includes('CSRF') || // Security token
+    upper.includes('XSRF') || // Security token
+    upper.includes('TAXID') || // Tax identification
+    upper.includes('NINO') || // National Insurance
+    upper.includes('LICENSE') // ID/License
   );
 }
 

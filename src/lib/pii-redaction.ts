@@ -26,6 +26,7 @@ export type PIIPatternType =
   | 'ssn'
   | 'creditCard'
   | 'ipAddress'
+  | 'ipv6'
   | 'apiKey'
   | 'jwt'
   | 'urlWithCredentials'
@@ -41,6 +42,7 @@ interface PIIPatterns {
   ssn: RegExp;
   creditCard: RegExp;
   ipAddress: RegExp;
+  ipv6: RegExp;
   apiKey: RegExp;
   jwt: RegExp;
   urlWithCredentials: RegExp;
@@ -85,8 +87,9 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   ssn: /\b\d{3}-\d{2}-\d{4}\b/g,
   creditCard: /\b(?:\d{4}[-\s]?){3}\d{4}\b/g,
   ipAddress: /\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b/g,
+  ipv6: /\b(?:[A-Fa-f0-9]{1,4}:|:){2,7}[A-Fa-f0-9]{1,4}\b|(?<=\s|^)::(?=\s|$)|(?<=\s|^)::1\b/g,
   apiKey:
-    /(?:api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|admin[-_ ]?key|adminkey)[\s:=]+['"]?([a-zA-Z0-9_/+=-]{4,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
+    /(?:api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|admin[-_ ]?key|adminkey|iban|swift|bic|cvv|cvc|pin|cookie|session|csrf|xsrf)[\s:=]+['"]?([a-zA-Z0-9_/+=-]{4,})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*/g,
   urlWithCredentials: /[a-zA-Z]+:\/\/[^:\s]+:[^@\s]+@[^\s]+/g,
   // US Passport: 9 characters (alphanumeric, starting with letter for newer formats)
@@ -122,6 +125,7 @@ const COMBINED_PII_REGEX = new RegExp(
     `(?<ssn>${PII_REGEX_PATTERNS.ssn.source})`,
     `(?<creditCard>${PII_REGEX_PATTERNS.creditCard.source})`,
     `(?<ipAddress>${PII_REGEX_PATTERNS.ipAddress.source})`,
+    `(?<ipv6>${PII_REGEX_PATTERNS.ipv6.source})`,
     `(?<apiKey>${PII_REGEX_PATTERNS.apiKey.source})`,
   ].join('|'),
   'giu'
@@ -149,6 +153,9 @@ export function redactPII(text: string): string {
     if (groups.ssn) return labels.SSN;
     if (groups.creditCard) return labels.CREDIT_CARD;
     if (groups.ipAddress) {
+      return isPrivateIP(match) ? match : labels.IP_ADDRESS;
+    }
+    if (groups.ipv6) {
       return isPrivateIP(match) ? match : labels.IP_ADDRESS;
     }
     if (groups.apiKey) return labels.API_KEY;
@@ -194,19 +201,34 @@ function getRedactionLabel(key: string): string {
 }
 
 function isPrivateIP(ip: string): boolean {
-  const firstDot = ip.indexOf('.');
-  if (firstDot === -1) return false;
+  // Handle IPv4
+  if (ip.includes('.')) {
+    const firstDot = ip.indexOf('.');
+    const firstOctet = ip.substring(0, firstDot);
 
-  const firstOctet = ip.substring(0, firstDot);
-
-  if (firstOctet === '127' || firstOctet === '10') return true;
-  if (firstOctet === '192' && ip.startsWith('192.168.')) return true;
-  if (firstOctet === '172') {
-    const secondDot = ip.indexOf('.', firstDot + 1);
-    if (secondDot !== -1) {
-      const secondOctet = parseInt(ip.substring(firstDot + 1, secondDot), 10);
-      return secondOctet >= 16 && secondOctet <= 31;
+    if (firstOctet === '127' || firstOctet === '10') return true;
+    if (firstOctet === '192' && ip.startsWith('192.168.')) return true;
+    if (firstOctet === '172') {
+      const secondDot = ip.indexOf('.', firstDot + 1);
+      if (secondDot !== -1) {
+        const secondOctet = parseInt(ip.substring(firstDot + 1, secondDot), 10);
+        return secondOctet >= 16 && secondOctet <= 31;
+      }
     }
+    return false;
+  }
+
+  // Handle IPv6
+  if (ip.includes(':')) {
+    const normalized = ip.toLowerCase();
+    // Loopback (::1)
+    if (normalized === '::1' || normalized === '0:0:0:0:0:0:0:1') return true;
+    // Link-local (fe80::/10)
+    if (normalized.startsWith('fe80:')) return true;
+    // Unique local (fc00::/7)
+    if (normalized.startsWith('fc') || normalized.startsWith('fd')) return true;
+    // Unspecified (::)
+    if (normalized === '::' || normalized === '0:0:0:0:0:0:0:0') return true;
   }
 
   return false;
