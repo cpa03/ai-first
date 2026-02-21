@@ -70,11 +70,10 @@ function FeatureGridComponent() {
           className={`
             group relative text-center p-6 rounded-xl
             gradient-border-hover card-lift feature-card-focus
-            bg-white cursor-pointer
+            bg-white
             motion-reduce:transition-none
             ${isVisible ? `animate-stagger-${index + 1}` : 'opacity-0'}
           `}
-          tabIndex={0}
           aria-label={`Step ${feature.step}: ${feature.title}. ${feature.description}`}
         >
           <div
