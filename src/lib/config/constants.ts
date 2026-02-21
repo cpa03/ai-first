@@ -1494,3 +1494,46 @@ export const USER_STORY_CONFIG = {
     BENEFIT_TOO_SHORT: 'Benefit is too short. Explain why this goal matters',
   } as const,
 } as const;
+
+/**
+ * Health Check Configuration
+ * Centralizes health score constants and reliability weights
+ * Used by the detailed health endpoint for consistent health scoring
+ */
+export const HEALTH_CONFIG = {
+  /**
+   * Health score values (0-100 scale)
+   * HEALTHY = 100: Service is fully operational
+   * DEGRADED = 50: Service is operational but with reduced functionality
+   * UNHEALTHY = 0: Service is not operational
+   */
+  SCORES: {
+    HEALTHY: 100,
+    DEGRADED: 50,
+    UNHEALTHY: 0,
+  } as const,
+
+  /**
+   * Reliability factor weights (must sum to 1.0)
+   * Used to calculate overall reliability score from individual service scores
+   * Higher weight = more impact on overall reliability
+   */
+  RELIABILITY_WEIGHTS: {
+    database: 0.3,
+    ai: 0.3,
+    exports: 0.2,
+    circuitBreakers: 0.2,
+  } as const,
+
+  /**
+   * Status thresholds for reliability score
+   * Used to determine overall health status from reliability score
+   */
+  THRESHOLDS: {
+    /** Score >= this threshold is considered healthy */
+    HEALTHY_MIN: 80,
+    /** Score >= this threshold is considered degraded */
+    DEGRADED_MIN: 50,
+    /** Score < DEGRADED_MIN is considered unhealthy */
+  } as const,
+} as const;

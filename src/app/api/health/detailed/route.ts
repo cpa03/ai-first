@@ -9,7 +9,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAdminAuth } from '@/lib/auth';
 import { redactPII } from '@/lib/pii-redaction';
-import { API_CACHE_CONFIG } from '@/lib/config/constants';
+import { API_CACHE_CONFIG, HEALTH_CONFIG } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
 
 interface HealthCheckResult {
@@ -222,43 +222,35 @@ async function handleGet(context: ApiContext) {
         : 'degraded'
       : 'unhealthy';
 
-  const HEALTH_SCORE = 100;
-  const DEGRADED_SCORE = 50;
-  const UNHEALTHY_SCORE = 0;
+  const { SCORES, RELIABILITY_WEIGHTS } = HEALTH_CONFIG;
 
   const reliabilityFactors = {
     database:
       checks.database.status === 'healthy'
-        ? HEALTH_SCORE
+        ? SCORES.HEALTHY
         : checks.database.status === 'unhealthy'
-          ? UNHEALTHY_SCORE
-          : DEGRADED_SCORE,
+          ? SCORES.UNHEALTHY
+          : SCORES.DEGRADED,
     ai:
       checks.ai.status === 'healthy'
-        ? HEALTH_SCORE
+        ? SCORES.HEALTHY
         : checks.ai.status === 'unhealthy'
-          ? UNHEALTHY_SCORE
-          : DEGRADED_SCORE,
+          ? SCORES.UNHEALTHY
+          : SCORES.DEGRADED,
     exports:
       checks.exports.status === 'up'
-        ? HEALTH_SCORE
+        ? SCORES.HEALTHY
         : checks.exports.status === 'degraded'
-          ? DEGRADED_SCORE
-          : UNHEALTHY_SCORE,
+          ? SCORES.DEGRADED
+          : SCORES.UNHEALTHY,
     circuitBreakers:
       circuitBreakers.length === 0
-        ? HEALTH_SCORE
+        ? SCORES.HEALTHY
         : (circuitBreakers.filter((cb) => cb.state === 'closed').length /
             circuitBreakers.length) *
-          HEALTH_SCORE,
+          SCORES.HEALTHY,
   };
 
-  const RELIABILITY_WEIGHTS = {
-    database: 0.3,
-    ai: 0.3,
-    exports: 0.2,
-    circuitBreakers: 0.2,
-  };
   const reliabilityScore = Math.round(
     reliabilityFactors.database * RELIABILITY_WEIGHTS.database +
       reliabilityFactors.ai * RELIABILITY_WEIGHTS.ai +
