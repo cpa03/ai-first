@@ -9,8 +9,6 @@ export const UI_CONFIG = {
   FOCUS: {
     /** Env: UI_FOCUS_DELAY_MS (default: 50) */
     DELAY_MS: EnvLoader.number('UI_FOCUS_DELAY_MS', 50, 10, 500),
-    RING_COLOR: 'rgba(59, 130, 246, 0.2)',
-    RING_WIDTH: '2px',
   },
 
   TEXTAREA: {
