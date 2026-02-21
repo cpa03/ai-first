@@ -30,16 +30,50 @@ This document provides security-focused guidelines, findings, and best practices
 ### Areas for Improvement
 
 - ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
-- ⚠️ **CSP uses 'unsafe-inline'** (necessary for Next.js, but could be enhanced)
+- ⚠️ **CSP uses 'unsafe-inline'** (necessary for Next.js, but could be enhanced with nonces in future)
+- ✅ **CSP 'unsafe-eval' removed** (2026-02-21 - codebase doesn't use eval)
 - ⚠️ **Admin authentication** is basic API key only
-- ⚠️ **npm audit** shows 41 vulnerabilities in devDependencies:
-  - 27 HIGH: @aws-sdk/\* packages via @opennextjs/cloudflare (Cloudflare deployment tool)
-  - 14 MODERATE: ajv/eslint ecosystem (ReDoS vulnerability - not exploitable)
+- ⚠️ **npm audit** shows 33 vulnerabilities in devDependencies:
+  - 32 HIGH: Mostly from @aws-sdk/\* packages via @opennextjs/cloudflare (Cloudflare deployment tool)
+  - 1 MODERATE: ajv/eslint ecosystem (ReDoS vulnerability - not exploitable)
   - All vulnerabilities are in devDependencies only - no production runtime risk
 
 ---
 
 ## Security Fixes Log
+
+### 2026-02-21: CSP 'unsafe-eval' Directive Removed
+
+**Issue**: Content Security Policy included `'unsafe-eval'` directive, which allows execution of dynamic code via `eval()`, `new Function()`, and similar methods. This creates a potential XSS attack vector.
+
+**Risk**: `'unsafe-eval'` could allow attackers to:
+
+- Execute arbitrary JavaScript code via eval-based injection
+- Bypass CSP protections if any input reaches eval-like functions
+- Reduce overall security posture score
+
+**Analysis**:
+
+- Codebase audit confirmed no usage of `eval()`, `new Function()`, or similar dynamic code execution
+- Grep search found no `dangerouslySetInnerHTML` usage
+- Next.js does not require `'unsafe-eval'` for core functionality
+
+**Fix Applied**:
+
+- Removed `'unsafe-eval'` from `script-src` directive in CSP
+- Added documentation comment explaining the removal rationale
+
+**Files Modified**:
+
+- `next.config.js` - Removed 'unsafe-eval' from CSP script-src directive
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ 1282 tests passed
+```
 
 ### 2026-02-21: Centralized Test Secrets Management (Issue #841)
 
