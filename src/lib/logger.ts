@@ -26,7 +26,31 @@ function parseLogLevelFromEnv(): LogLevel {
   return LogLevel[envLevel as ValidLogLevelString];
 }
 
+/**
+ * Parse log sample rate from environment variable.
+ * Value should be between 0.0 and 1.0 (e.g., 0.1 = 10% of logs).
+ * Default is 1.0 (no sampling - log everything).
+ * Only applies to INFO and DEBUG logs; ERROR and WARN are always logged.
+ */
+function parseLogSampleRate(): number {
+  const envRate = process.env.LOG_SAMPLE_RATE;
+  if (!envRate) return 1.0;
+
+  const rate = parseFloat(envRate);
+  if (isNaN(rate) || rate < 0 || rate > 1) {
+    if (process.env.SUPPRESS_BUILD_LOGS !== 'true') {
+      console.warn(
+        `[Logger] Invalid LOG_SAMPLE_RATE "${envRate}", falling back to 1.0. Valid values: 0.0 to 1.0`
+      );
+    }
+    return 1.0;
+  }
+
+  return rate;
+}
+
 let currentLogLevel = parseLogLevelFromEnv();
+let currentSampleRate = parseLogSampleRate();
 let globalCorrelationId: string | undefined;
 
 // Detect if we're in a build/SSR environment where console output causes Lighthouse issues
@@ -44,6 +68,20 @@ const isStructuredLogging =
 
 export function setLogLevel(level: LogLevel): void {
   currentLogLevel = level;
+}
+
+export function setLogSampleRate(rate: number): void {
+  if (rate < 0 || rate > 1) {
+    console.warn(
+      `[Logger] Invalid sample rate ${rate}, must be between 0 and 1. Ignoring.`
+    );
+    return;
+  }
+  currentSampleRate = rate;
+}
+
+export function getLogSampleRate(): number {
+  return currentSampleRate;
 }
 
 export function setCorrelationId(correlationId: string | undefined): void {
@@ -139,7 +177,13 @@ export class Logger {
   private shouldLog(level: LogLevel, isDebug: boolean = false): boolean {
     if (isSilentMode && level !== LogLevel.ERROR) return false;
     if (isDebug && isEmergencyDebugMode) return true;
-    return currentLogLevel <= level;
+    if (currentLogLevel > level) return false;
+
+    if (currentSampleRate < 1.0 && level <= LogLevel.INFO) {
+      return Math.random() < currentSampleRate;
+    }
+
+    return true;
   }
 
   private output(
