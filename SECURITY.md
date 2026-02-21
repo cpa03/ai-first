@@ -150,6 +150,7 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 | 2026-02-21 | #841 - Centralized Test Secrets Management     | ✅ Implemented   | Added MOCK_SECRETS object with safe test credential values |
 | 2026-02-21 | CSP 'unsafe-eval' Directive Removed            | ✅ Implemented   | Hardened CSP by removing eval permission (not used)        |
 | 2026-02-21 | Metrics Endpoint Authentication                | ✅ Implemented   | Added admin auth requirement for /api/metrics endpoint     |
+| 2026-02-21 | #1171 - Sensitive Variable Patterns Enhanced  | ✅ Implemented   | Added PEM, KEYSTORE, ENCRYPTION, DECRYPT, MFA, MNEMONIC, RECOVERY, BACKUP, SEED, JWK patterns |
 
 ## Current npm Audit Status (2026-02-18)
 

@@ -56,6 +56,17 @@ const SENSITIVE_VAR_PATTERNS = [
   'IBAN', // Bank account info
   'SESSION', // Session identifiers
   'SSN', // Social security numbers
+  // Security improvement: Added 2026-02-21
+  'PEM', // Certificate files
+  'KEYSTORE', // Java keystores
+  'ENCRYPTION', // Encryption keys
+  'DECRYPT', // Decryption keys
+  'MFA', // Multi-factor authentication secrets
+  'MNEMONIC', // Wallet seed phrases (crypto)
+  'RECOVERY', // Recovery codes/keys
+  'BACKUP', // Backup keys/codes
+  'SEED', // Seed phrases/values
+  'JWK', // JSON Web Keys
 ] as const;
 
 /**
