@@ -115,6 +115,9 @@ export {
 // API Error Messages Configuration
 export { API_ERROR_MESSAGES } from './error-messages';
 
+// Health Monitoring Configuration (extracted from constants.ts for modularity)
+export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
+
 // Environment-based Configuration (addresses issues #981-986)
 // These exports allow runtime configuration via environment variables
 export {
@@ -193,3 +196,6 @@ export type {
 export type { APIErrorMessages } from './error-messages';
 
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
+
+// Health Monitoring Types
+export type { HealthConfig, MemoryConfig } from './health';
