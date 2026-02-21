@@ -6,7 +6,7 @@ import {
 import { APP_CONFIG } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getCloudflareRequestInfo } from '@/lib/cloudflare';
-import { isSensitiveVar } from '@/lib/security/env-validation';
+import { isSensitiveVar } from '@/lib/security';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit, request } = context;
