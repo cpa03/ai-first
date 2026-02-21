@@ -127,7 +127,7 @@ And I should be allowed to proceed but with a confirmation prompt
 
 ## Resources
 
-- [Clarification Agent Documentation](../../lib/prompts/clarifier/)
+- [Clarification Agent Documentation](../../../src/lib/prompts/clarifier/)
 - [API Reference](../../api.md)
 - [User Personas](../personas.md)
 
