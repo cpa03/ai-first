@@ -5,6 +5,8 @@
 **Target Launch**: March 31, 2026
 **Days Remaining**: 38 days
 
+> **Update (Feb 21, 2026)**: FAQ content (8.4) completed. Documentation completion now 3/4 (75%).
+
 ---
 
 ## Overview
@@ -107,7 +109,7 @@ This checklist defines the criteria that must be met before IdeaFlow MVP can lau
 | 8.1 | User Documentation    | 🟡 IN PROGRESS | 30% complete            | Portal in progress      |
 | 8.2 | API Documentation     | 🟢 COMPLETE    | docs/api.md             | 19 endpoints documented |
 | 8.3 | Troubleshooting Guide | 🟢 COMPLETE    | docs/troubleshooting.md | Comprehensive guide     |
-| 8.4 | FAQ                   | 🔴 NOT STARTED | -                       | Content needed          |
+| 8.4 | FAQ                   | 🟢 COMPLETE    | docs/faq.md             | Comprehensive FAQ added |
 
 ---
 

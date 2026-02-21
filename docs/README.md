@@ -55,6 +55,7 @@ Complete index of all IdeaFlow documentation.
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
 - [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
 - [Environment Setup](./environment-setup.md) - Development environment setup
+- [FAQ](./faq.md) - Frequently asked questions
 
 ## Specialist Guides
 
