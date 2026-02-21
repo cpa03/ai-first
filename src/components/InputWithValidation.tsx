@@ -205,6 +205,7 @@ const InputWithValidation = forwardRef<
               onBlur={handleBlur}
               className={`${baseInputClasses} ${textareaResizeClass} min-h-[100px] overflow-hidden`}
               aria-invalid={isInvalid}
+              aria-required={props.required}
               aria-describedby={
                 error
                   ? `${props.id}-error`
@@ -224,6 +225,7 @@ const InputWithValidation = forwardRef<
               className={baseInputClasses}
               type={props.type || 'text'}
               aria-invalid={isInvalid}
+              aria-required={props.required}
               aria-describedby={
                 error
                   ? `${props.id}-error`
