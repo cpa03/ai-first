@@ -57,15 +57,33 @@ export function unwrapApiResponseSafe<T>(
  * @param url - URL to fetch
  * @param options - Fetch options
  * @param timeoutMs - Timeout in milliseconds (default: STANDARD timeout)
+ * @param externalSignal - Optional external AbortSignal to combine with timeout
  * @returns Promise<Response>
  */
 export async function fetchWithTimeout(
   url: string,
   options: RequestInit = {},
-  timeoutMs: number = TIMEOUT_CONFIG.STANDARD
+  timeoutMs: number = TIMEOUT_CONFIG.STANDARD,
+  externalSignal?: AbortSignal
 ): Promise<Response> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  let timedOut = false;
+  const timeoutId = setTimeout(() => {
+    timedOut = true;
+    controller.abort();
+  }, timeoutMs);
+
+  // Combine external signal with timeout signal if provided
+  if (externalSignal) {
+    if (externalSignal.aborted) {
+      clearTimeout(timeoutId);
+      throw new DOMException('The user aborted a request.', 'AbortError');
+    }
+    externalSignal.addEventListener('abort', () => {
+      controller.abort();
+      clearTimeout(timeoutId);
+    });
+  }
 
   try {
     const response = await fetch(url, {
@@ -75,7 +93,10 @@ export async function fetchWithTimeout(
     return response;
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`);
+      if (timedOut) {
+        throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`);
+      }
+      throw new DOMException('The user aborted a request.', 'AbortError');
     }
     throw error;
   } finally {
@@ -93,6 +114,15 @@ export interface ApiRequestOptions extends Omit<RequestInit, 'body'> {
   timeoutMs?: number;
   /** Whether to automatically unwrap the response (default: true) */
   unwrap?: boolean;
+  /**
+   * AbortSignal for request cancellation
+   * Allows cancelling in-flight requests
+   * @example
+   * const controller = new AbortController();
+   * apiRequest('/api/ideas', { signal: controller.signal });
+   * // Later: controller.abort();
+   */
+  signal?: AbortSignal;
 }
 
 /**
@@ -131,7 +161,7 @@ export async function apiRequest<T = unknown>(
   url: string,
   options: ApiRequestOptions = {}
 ): Promise<ApiRequestResult<T>> {
-  const { body, timeoutMs, unwrap = true, ...fetchOptions } = options;
+  const { body, timeoutMs, unwrap = true, signal, ...fetchOptions } = options;
 
   const headers = new Headers(fetchOptions.headers);
 
@@ -153,7 +183,8 @@ export async function apiRequest<T = unknown>(
       headers,
       body: requestBody,
     },
-    timeoutMs
+    timeoutMs,
+    signal
   );
 
   const requestId = response.headers.get('X-Request-ID');
