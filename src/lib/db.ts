@@ -8,7 +8,6 @@ import { AGENT_CONFIG, VALIDATION_LIMITS } from './config/constants';
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Supabase client configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -157,7 +156,7 @@ export interface Task {
 export interface Vector {
   id: string;
   idea_id: string;
-  vector_data?: Record<string, any>;
+  vector_data?: Record<string, unknown>;
   reference_type: string;
   reference_id?: string;
   created_at: string;
@@ -168,7 +167,7 @@ export interface AgentLog {
   id: string;
   agent: string;
   action: string;
-  payload: Record<string, any>;
+  payload: Record<string, unknown>;
   timestamp: string;
 }
 
@@ -358,6 +357,7 @@ export class DatabaseService {
     if (this._client) {
       try {
         // Remove auth state change listeners to prevent memory leaks
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase client internal access for cleanup
         const client = this._client as any;
         if (
           client.auth &&
@@ -376,6 +376,7 @@ export class DatabaseService {
     // Clean up admin connections
     if (this._admin) {
       try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Supabase admin internal access for cleanup
         const admin = this._admin as any;
         if (admin.auth && typeof admin.auth.onAuthStateChange === 'function') {
           logger.debug('Cleaning up admin auth listeners');
@@ -502,6 +503,7 @@ export class DatabaseService {
       DatabaseService.instance.dispose();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Resetting private static property for testing
     (DatabaseService as any).instance = undefined;
   }
 
@@ -1159,7 +1161,7 @@ export class DatabaseService {
     referenceType: string,
     embedding: number[],
     referenceId?: string,
-    vectorData?: Record<string, any>
+    vectorData?: Record<string, unknown>
   ): Promise<Vector> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
@@ -1203,7 +1205,7 @@ export class DatabaseService {
   async logAgentAction(
     agent: string,
     action: string,
-    payload: Record<string, any>
+    payload: Record<string, unknown>
   ): Promise<void> {
     if (!this.admin) throw new Error('Supabase admin client not initialized');
 
@@ -1364,16 +1366,17 @@ export class DatabaseService {
       .eq('user_id', userId)
       .is('deleted_at', null);
 
-    const ideasByStatus =
-      (ideas as any[])?.reduce(
-        (acc, idea) => {
-          acc[idea.status] = (acc[idea.status] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>
-      ) || {};
+    const typedIdeas = (ideas as { status: string; id: string }[] | null) ?? [];
 
-    const ideaIds = (ideas as any[])?.map((i) => i.id) || [];
+    const ideasByStatus = typedIdeas.reduce(
+      (acc, idea) => {
+        acc[idea.status] = (acc[idea.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
+
+    const ideaIds = typedIdeas.map((i) => i.id);
 
     if (ideaIds.length === 0) {
       return {
