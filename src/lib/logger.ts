@@ -196,9 +196,11 @@ export class Logger {
     if (isStructuredLogging) {
       const entry = this.createStructuredEntry(levelName, message, logContext);
       const output = JSON.stringify(entry);
-      if (level === LogLevel.ERROR) console.error(output);
-      else if (level === LogLevel.WARN) console.warn(output);
-      else console.log(output);
+      // Use console.error for ALL structured log output to ensure logs survive
+      // Next.js's removeConsole configuration in production (Issue #949).
+      // The JSON "level" field indicates actual severity for log aggregators.
+      // This preserves production observability while maintaining structured format.
+      console.error(output);
     } else {
       const formattedMessage = this.formatMessage(message, logContext);
       const sanitizedArgs = args.map((a) => redactPIIInObject(a));
