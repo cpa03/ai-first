@@ -1,8 +1,9 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
+import { APP_CONFIG } from './config/app';
 import * as crypto from 'crypto';
 
-const API_VERSION = '1.0.0';
+const API_VERSION = APP_CONFIG.VERSION;
 
 const LONG_NUMBER_PATTERN = /\d{4,}/g;
 const UUID_PATTERN =
