@@ -216,12 +216,12 @@ Retry-After: 60  # Only on rate limit errors
    - ~~Affected: `src/app/api/ideas/route.ts` (GET handler)~~
    - All API routes now consistently pass `rateLimit` to `standardSuccessResponse`
 
-2. **~~Inconsistent Null Response Pattern~~** ✅ FIXED (2026-02-18)
+2. **~~Inconsistent Null Response Pattern~~** ✅ FIXED (2026-02-21)
    - ~~Some routes return `null` with 404 status for not found~~
    - ~~Others throw `AppError` with `NOT_FOUND` code~~
    - ~~Recommendation: Standardize on throwing `AppError` for consistency~~
    - All API routes now consistently use `throw new AppError(..., ErrorCode.NOT_FOUND, 404)` for not found resources
-   - Fixed in: `src/app/api/ideas/[id]/route.ts`
+   - Fixed in: `src/app/api/ideas/[id]/route.ts`, `src/app/api/deliverables/[id]/tasks/route.ts`
 
 3. **~~Rate Limit Response Missing Request ID~~** ✅ FIXED
    - ~~`rateLimitResponse()` in `src/lib/rate-limit.ts` doesn't include `X-Request-ID` header~~
@@ -474,6 +474,21 @@ Before deploying API changes:
 ---
 
 ## Changelog
+
+### 2026-02-21 - Deliverables API Error Handling Standardization
+
+- **Fix**: Standardized error handling in `/api/deliverables/[id]/tasks` endpoint
+- **Changes**:
+  - Replaced `badRequestResponse()` helper with `throw new ValidationError()` for consistent error responses
+  - Replaced `notFoundResponse()` helper with `throw new AppError(..., ErrorCode.NOT_FOUND, 404)` for consistent 404 handling
+  - Removed unused imports (`badRequestResponse`, `notFoundResponse`) from `api-handler`
+  - Added `ValidationError` import from `errors` module
+- **Impact**: All API routes now consistently use `AppError` subclasses for error handling, matching the documented standard
+- **Location**: `src/app/api/deliverables/[id]/tasks/route.ts`
+- **Build**: Passing
+- **Lint**: Passing
+- **Type-check**: Passing
+- **Documentation**: Updated this guide
 
 ### 2026-02-21 - API Client Request Cancellation Support
 
