@@ -8,6 +8,7 @@ import {
   RATE_LIMIT_VALUES,
   RATE_LIMIT_CONFIG,
 } from './config/constants';
+import { generateRequestId } from './errors';
 
 export interface RateLimitInfo {
   limit: number;
@@ -308,11 +309,7 @@ export function rateLimitResponse(
     code: ERROR_CONFIG.RATE_LIMIT.ERROR_CODE,
     retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
     timestamp: new Date().toISOString(),
-    requestId:
-      requestId ||
-      `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}_${Math.random()
-        .toString(ERROR_CONFIG.REQUEST_ID.RADIX)
-        .substring(2, 2 + ERROR_CONFIG.REQUEST_ID.RANDOM_LENGTH)}`,
+    requestId: requestId || generateRequestId(),
     retryable: true,
   };
 

@@ -332,9 +332,9 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}_${Math.random()
-    .toString(ERROR_CONFIG.REQUEST_ID.RADIX)
-    .substring(2, 2 + ERROR_CONFIG.REQUEST_ID.RANDOM_LENGTH)}`;
+  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+  // This ensures request IDs are unique and cannot be predicted for security tracing
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${crypto.randomUUID()}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
