@@ -150,6 +150,7 @@ export interface Task {
   custom_fields: Record<string, unknown> | null;
   milestone_id: string | null;
   created_at: string;
+  updated_at?: string;
   deleted_at?: string | null;
 }
 

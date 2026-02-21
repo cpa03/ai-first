@@ -90,6 +90,7 @@ CREATE TABLE tasks (
     status TEXT DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'completed')),
     estimate INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     deleted_at TIMESTAMP WITH TIME ZONE,
     start_date DATE,
     end_date DATE,
@@ -699,6 +700,7 @@ CREATE INDEX idx_tasks_deliverable_id ON tasks(deliverable_id);
 CREATE INDEX idx_tasks_status ON tasks(status);
 CREATE INDEX idx_tasks_deliverable_status ON tasks(deliverable_id, status);
 CREATE INDEX idx_tasks_created_at ON tasks(created_at ASC);
+CREATE INDEX idx_tasks_updated_at ON tasks(updated_at DESC);
 CREATE INDEX idx_tasks_deleted_at ON tasks(deleted_at);
 CREATE INDEX idx_tasks_start_date ON tasks(start_date);
 CREATE INDEX idx_tasks_end_date ON tasks(end_date);
@@ -839,6 +841,10 @@ CREATE TRIGGER update_deliverables_updated_at BEFORE UPDATE ON deliverables
 
 -- Trigger for ideas table (root table)
 CREATE TRIGGER update_ideas_updated_at BEFORE UPDATE ON ideas
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Trigger for tasks table
+CREATE TRIGGER update_tasks_updated_at BEFORE UPDATE ON tasks
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Trigger for task_dependencies table

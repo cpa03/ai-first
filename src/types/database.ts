@@ -221,6 +221,7 @@ export interface Database {
           tags: string[] | null;
           custom_fields: Json | null;
           milestone_id: string | null;
+          updated_at: string;
           deleted_at: string | null;
         };
         Insert: {
@@ -242,6 +243,7 @@ export interface Database {
           tags?: string[] | null;
           custom_fields?: Json | null;
           milestone_id?: string | null;
+          updated_at?: string;
           deleted_at?: string | null;
         };
         Update: {
@@ -263,6 +265,7 @@ export interface Database {
           tags?: string[] | null;
           custom_fields?: Json | null;
           milestone_id?: string | null;
+          updated_at?: string;
           deleted_at?: string | null;
         };
       };
