@@ -71,25 +71,80 @@ declare global {
  */
 declare global {
   /**
-   * KV namespace options for read operations
+   * KV namespace key metadata
    */
-  interface KVGetOptions {
-    /** Cache TTL in seconds */
-    cacheTtl?: number;
-    /** Type of the stored value */
-    type?: 'text' | 'json' | 'arrayBuffer' | 'stream';
+  interface KVKey {
+    name: string;
+    expiration?: number;
+    metadata?: unknown;
   }
 
   /**
-   * KV namespace options for write operations
+   * KV namespace list result
    */
-  interface KVPutOptions {
+  interface KVListResult {
+    keys: KVKey[];
+    list_complete: boolean;
+    cursor?: string;
+  }
+
+  /**
+   * KV namespace get with metadata result
+   */
+  interface KVGetResult<T = unknown> {
+    value: T | null;
+    metadata: unknown | null;
+  }
+
+  /**
+   * KV namespace options for put operations
+   */
+  interface KVNamespacePutOptions {
     /** Expiration time in seconds from now */
     expirationTtl?: number;
     /** Absolute expiration time as Unix timestamp */
     expiration?: number;
     /** Content type hint */
     contentType?: string;
+    /** Custom metadata */
+    metadata?: Record<string, unknown>;
+  }
+
+  /**
+   * KV namespace interface
+   * @see https://developers.cloudflare.com/kv/api/write-key-value-pairs/
+   */
+  interface KVNamespace {
+    get(
+      key: string,
+      options?: { type?: 'text'; cacheTtl?: number }
+    ): Promise<string | null>;
+    get(key: string, type: 'text'): Promise<string | null>;
+    get(key: string, type: 'json'): Promise<unknown | null>;
+    get(key: string, type: 'arrayBuffer'): Promise<ArrayBuffer | null>;
+    get(key: string, type: 'stream'): Promise<ReadableStream | null>;
+    get(
+      key: string,
+      options?: {
+        type?: 'text' | 'json' | 'arrayBuffer' | 'stream';
+        cacheTtl?: number;
+      }
+    ): Promise<string | ArrayBuffer | ReadableStream | unknown | null>;
+    getWithMetadata<T = unknown>(
+      key: string,
+      type?: 'text' | 'json' | 'arrayBuffer' | 'stream'
+    ): Promise<KVGetResult<T>>;
+    put(
+      key: string,
+      value: string | ReadableStream | ArrayBuffer,
+      options?: KVNamespacePutOptions
+    ): Promise<void>;
+    delete(key: string): Promise<void>;
+    list(options?: {
+      prefix?: string;
+      limit?: number;
+      cursor?: string;
+    }): Promise<KVListResult>;
   }
 }
 

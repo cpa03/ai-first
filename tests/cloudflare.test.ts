@@ -891,3 +891,335 @@ describe('Extended CLOUDFLARE_HEADERS', () => {
     expect(CLOUDFLARE_HEADERS.CF_THREAT_SCORE).toBe('cf-threat-score');
   });
 });
+
+import {
+  CloudflareKV,
+  createKVCache,
+  KV_CACHE_OPTIONS,
+} from '@/lib/cloudflare';
+
+function createMockKVNamespace(): KVNamespace {
+  const store = new Map<string, { value: string; metadata?: unknown }>();
+
+  return {
+    get: jest.fn(async (key: string, type?: string | object) => {
+      const entry = store.get(key);
+      if (!entry) return null;
+
+      const typeStr =
+        typeof type === 'string'
+          ? type
+          : (type as { type?: string })?.type || 'text';
+      if (typeStr === 'json') {
+        return JSON.parse(entry.value);
+      }
+      if (typeStr === 'arrayBuffer') {
+        return new TextEncoder().encode(entry.value).buffer;
+      }
+      return entry.value;
+    }),
+    getWithMetadata: jest.fn(async (key: string, _type?: string) => {
+      const entry = store.get(key);
+      if (!entry) return { value: null, metadata: null };
+      return {
+        value: JSON.parse(entry.value),
+        metadata: entry.metadata ?? null,
+      };
+    }) as KVNamespace['getWithMetadata'],
+    put: jest.fn(
+      async (
+        key: string,
+        value: string | ReadableStream | ArrayBuffer,
+        _options?: unknown
+      ) => {
+        const valueStr =
+          typeof value === 'string'
+            ? value
+            : value instanceof ArrayBuffer
+              ? new TextDecoder().decode(value)
+              : JSON.stringify(value);
+        store.set(key, { value: valueStr });
+      }
+    ),
+    delete: jest.fn(async (key: string) => {
+      store.delete(key);
+    }),
+    list: jest.fn(
+      async (options?: {
+        prefix?: string;
+        limit?: number;
+        cursor?: string;
+      }) => {
+        const keys = Array.from(store.keys())
+          .filter((k) => !options?.prefix || k.startsWith(options.prefix))
+          .slice(0, options?.limit ?? 1000)
+          .map((name) => ({ name }));
+        return { keys, list_complete: true, cursor: options?.cursor };
+      }
+    ),
+  };
+}
+
+describe('CloudflareKV', () => {
+  describe('constructor', () => {
+    it('should create instance with null KV', () => {
+      const cache = new CloudflareKV(null);
+      expect(cache.isAvailable).toBe(false);
+    });
+
+    it('should create instance with undefined KV', () => {
+      const cache = new CloudflareKV(undefined);
+      expect(cache.isAvailable).toBe(false);
+    });
+
+    it('should create instance with KV namespace', () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      expect(cache.isAvailable).toBe(true);
+    });
+
+    it('should support key prefix', () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv, { prefix: 'myapp' });
+      expect(cache.isAvailable).toBe(true);
+    });
+  });
+
+  describe('get', () => {
+    it('should return null when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.get('key');
+      expect(result).toBeNull();
+    });
+
+    it('should get value from KV with JSON parsing', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.set('key', { foo: 'bar' });
+      const result = await cache.get<{ foo: string }>('key');
+      expect(result).toEqual({ foo: 'bar' });
+    });
+
+    it('should return null for non-existent key', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const result = await cache.get('nonexistent');
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('getText', () => {
+    it('should return null when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.getText('key');
+      expect(result).toBeNull();
+    });
+
+    it('should get text value from KV', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.setText('key', 'hello world');
+      const result = await cache.getText('key');
+      expect(result).toBe('hello world');
+    });
+  });
+
+  describe('set', () => {
+    it('should return false when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.set('key', { foo: 'bar' });
+      expect(result).toBe(false);
+    });
+
+    it('should set value in KV with JSON serialization', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const result = await cache.set('key', { foo: 'bar' }, { ttl: 60 });
+      expect(result).toBe(true);
+    });
+
+    it('should set value with TTL', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const result = await cache.set('key', 'value', {
+        ttl: CF_CACHE_TTL.SHORT,
+      });
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('setText', () => {
+    it('should return false when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.setText('key', 'value');
+      expect(result).toBe(false);
+    });
+
+    it('should set text value in KV', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const result = await cache.setText('key', 'plain text');
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('delete', () => {
+    it('should return false when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.delete('key');
+      expect(result).toBe(false);
+    });
+
+    it('should delete key from KV', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.set('key', 'value');
+      const result = await cache.delete('key');
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('exists', () => {
+    it('should return false when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.exists('key');
+      expect(result).toBe(false);
+    });
+
+    it('should return true for existing key', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.set('key', 'value');
+      const result = await cache.exists('key');
+      expect(result).toBe(true);
+    });
+
+    it('should return false for non-existing key', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const result = await cache.exists('nonexistent');
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('getOrSet', () => {
+    it('should fetch and cache when key does not exist', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      const fetcher = jest.fn().mockResolvedValue({ data: 'fetched' });
+
+      const result = await cache.getOrSet('key', fetcher, { ttl: 60 });
+
+      expect(result).toEqual({ data: 'fetched' });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return cached value when key exists', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.set('key', { data: 'cached' });
+      const fetcher = jest.fn().mockResolvedValue({ data: 'fetched' });
+
+      const result = await cache.getOrSet('key', fetcher);
+
+      expect(result).toEqual({ data: 'cached' });
+      expect(fetcher).not.toHaveBeenCalled();
+    });
+
+    it('should fetch when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const fetcher = jest.fn().mockResolvedValue({ data: 'fetched' });
+
+      const result = await cache.getOrSet('key', fetcher);
+
+      expect(result).toEqual({ data: 'fetched' });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('list', () => {
+    it('should return null when KV is not available', async () => {
+      const cache = new CloudflareKV(null);
+      const result = await cache.list();
+      expect(result).toBeNull();
+    });
+
+    it('should list keys from KV', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv);
+      await cache.set('key1', 'value1');
+      await cache.set('key2', 'value2');
+
+      const result = await cache.list();
+
+      expect(result).not.toBeNull();
+      expect(result?.keys.length).toBeGreaterThanOrEqual(2);
+    });
+  });
+
+  describe('prefix support', () => {
+    it('should prefix keys on get', async () => {
+      const kv = createMockKVNamespace();
+      const cache = new CloudflareKV(kv, { prefix: 'myapp' });
+      await cache.set('key', 'value');
+
+      const result = await cache.get('key');
+
+      expect(result).toBe('value');
+    });
+  });
+});
+
+describe('createKVCache', () => {
+  it('should create cache with env binding', () => {
+    const kv = createMockKVNamespace();
+    const cache = createKVCache({ CACHE_KV: kv });
+    expect(cache.isAvailable).toBe(true);
+  });
+
+  it('should create cache without env binding', () => {
+    const cache = createKVCache({});
+    expect(cache.isAvailable).toBe(false);
+  });
+
+  it('should create cache with undefined env', () => {
+    const cache = createKVCache(undefined);
+    expect(cache.isAvailable).toBe(false);
+  });
+
+  it('should support custom binding name', () => {
+    const kv = createMockKVNamespace();
+    const cache = createKVCache({ MY_CACHE: kv }, 'MY_CACHE');
+    expect(cache.isAvailable).toBe(true);
+  });
+
+  it('should support prefix option', () => {
+    const kv = createMockKVNamespace();
+    const cache = createKVCache({ CACHE_KV: kv }, 'CACHE_KV', {
+      prefix: 'test',
+    });
+    expect(cache.isAvailable).toBe(true);
+  });
+});
+
+describe('KV_CACHE_OPTIONS', () => {
+  it('should have NO_STORE option', () => {
+    expect(KV_CACHE_OPTIONS.NO_STORE.ttl).toBe(CF_CACHE_TTL.NO_STORE);
+  });
+
+  it('should have SHORT option', () => {
+    expect(KV_CACHE_OPTIONS.SHORT.ttl).toBe(CF_CACHE_TTL.SHORT);
+  });
+
+  it('should have MEDIUM option', () => {
+    expect(KV_CACHE_OPTIONS.MEDIUM.ttl).toBe(CF_CACHE_TTL.MEDIUM);
+  });
+
+  it('should have LONG option', () => {
+    expect(KV_CACHE_OPTIONS.LONG.ttl).toBe(CF_CACHE_TTL.LONG);
+  });
+
+  it('should have IMMUTABLE option', () => {
+    expect(KV_CACHE_OPTIONS.IMMUTABLE.ttl).toBe(CF_CACHE_TTL.IMMUTABLE);
+  });
+});
