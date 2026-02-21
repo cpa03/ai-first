@@ -42,6 +42,50 @@ This document provides security-focused guidelines, findings, and best practices
 
 ## Security Fixes Log
 
+### 2026-02-21: Sensitive Variable Pattern Enhancement
+
+**Issue**: The `SENSITIVE_VAR_PATTERNS` list in environment validation was missing several modern security-sensitive patterns, potentially allowing exposure of additional credential types in health check responses.
+
+**Risk**: Without comprehensive pattern coverage, sensitive values such as:
+- Certificate files (PEM)
+- Java keystores (KEYSTORE)
+- Encryption/decryption keys
+- MFA secrets
+- Wallet seed phrases (MNEMONIC)
+- Recovery codes
+- Backup keys
+- JSON Web Keys (JWK)
+
+could potentially be exposed in health check responses or logs.
+
+**Fix Applied**:
+
+- Added 10 new sensitive patterns to `SENSITIVE_VAR_PATTERNS`:
+  - `PEM` - Certificate files
+  - `KEYSTORE` - Java keystores
+  - `ENCRYPTION` - Encryption keys
+  - `DECRYPT` - Decryption keys
+  - `MFA` - Multi-factor authentication secrets
+  - `MNEMONIC` - Wallet seed phrases (crypto)
+  - `RECOVERY` - Recovery codes/keys
+  - `BACKUP` - Backup keys/codes
+  - `SEED` - Seed phrases/values
+  - `JWK` - JSON Web Keys
+
+**Files Modified**:
+
+- `src/lib/security/env-validation.ts` - Extended SENSITIVE_VAR_PATTERNS array
+- `SECURITY.md` - Updated security audit history
+- `docs/security-engineer.md` - Documented fix
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ 1296 tests passed
+```
+
 ### 2026-02-21: Metrics Endpoint Authentication Added
 
 **Issue**: The `/api/metrics` endpoint exposed Prometheus metrics without authentication, potentially allowing unauthorized access to operational telemetry data.
