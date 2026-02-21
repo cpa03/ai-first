@@ -332,6 +332,46 @@ try {
 }
 ```
 
+### Typed API Endpoint Factory
+
+The `createTypedApiEndpoint` helper creates pre-configured endpoint functions, reducing boilerplate for repeated API calls:
+
+```typescript
+import { createTypedApiEndpoint, ApiRequestError } from '@/lib/api-client';
+
+// Create a typed endpoint for fetching ideas
+const getIdeas = createTypedApiEndpoint<Idea[]>({
+  url: '/api/ideas',
+  method: 'GET',
+});
+
+// Create a typed endpoint for creating ideas with request body
+const createIdea = createTypedApiEndpoint<Idea, { idea: string }>({
+  url: '/api/ideas',
+  method: 'POST',
+});
+
+// Create endpoint with custom timeout and headers
+const getHealth = createTypedApiEndpoint<HealthStatus>({
+  url: '/api/health/detailed',
+  timeoutMs: 5000,
+  headers: { 'X-Custom-Header': 'value' },
+});
+
+// Create endpoint with response validation
+const getValidatedData = createTypedApiEndpoint<MyData>({
+  url: '/api/data',
+  validateResponse: (data): data is MyData => {
+    return typeof data === 'object' && 'id' in data;
+  },
+});
+
+// Use the endpoints
+const { data: ideas } = await getIdeas();
+const { data: newIdea } = await createIdea({ idea: 'My new idea' });
+```
+
+
 ### Unwrapping Responses
 
 For manual response handling:
@@ -475,7 +515,32 @@ Before deploying API changes:
 
 ## Changelog
 
-### 2026-02-21 - Deliverables API Error Handling Standardization
+### 2026-02-21 - Typed API Endpoint Factory
+
+- **Feature**: Added `createTypedApiEndpoint` helper for creating pre-configured typed API endpoints
+- **New Exports**:
+  - `TypedApiEndpointConfig<TResponse>` - Configuration interface for typed endpoints
+  - `TypedApiEndpoint<TResponse, TRequest>` - Type alias for endpoint functions
+  - `createTypedApiEndpoint<TResponse, TRequest>()` - Factory function for typed endpoints
+- **Benefits**:
+  - Reduces boilerplate for repeated API calls to the same endpoint
+  - Pre-configures method, timeout, headers, and response validation
+  - Full TypeScript support with generics for request/response types
+- **Example**:
+  ```typescript
+  const getIdeas = createTypedApiEndpoint<Idea[]>({
+    url: '/api/ideas',
+    method: 'GET',
+  });
+  const { data } = await getIdeas();
+  ```
+- **Location**: `src/lib/api-client.ts`
+- **Build**: Passing
+- **Lint**: Passing
+- **Type-check**: Passing
+- **Documentation**: Updated this guide
+
+
 
 - **Fix**: Standardized error handling in `/api/deliverables/[id]/tasks` endpoint
 - **Changes**:

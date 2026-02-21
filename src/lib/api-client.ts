@@ -232,3 +232,93 @@ export async function apiRequest<T = unknown>(
     requestId,
   };
 }
+
+/**
+ * Configuration for creating a typed API endpoint
+ */
+export interface TypedApiEndpointConfig<TResponse> {
+  /** Base URL for the API endpoint */
+  url: string;
+  /** HTTP method (default: 'GET') */
+  method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+  /** Default timeout in milliseconds */
+  timeoutMs?: number;
+  /** Default headers to include with every request */
+  headers?: Record<string, string>;
+  /** Whether to unwrap the response (default: true) */
+  unwrap?: boolean;
+  /** Optional response validator/type guard */
+  validateResponse?: (data: unknown) => data is TResponse;
+}
+
+/**
+ * A typed API endpoint function
+ */
+export type TypedApiEndpoint<TResponse, TRequest = void> = (
+  body?: TRequest,
+  options?: Omit<ApiRequestOptions, 'body' | 'method'>
+) => Promise<ApiRequestResult<TResponse>>;
+
+/**
+ * Creates a typed API endpoint function with pre-configured settings.
+ * This reduces boilerplate when making repeated calls to the same endpoint.
+ *
+ * @example
+ * ```typescript
+ * // Create a typed endpoint for fetching ideas
+ * const getIdeas = createTypedApiEndpoint<Idea[]>({
+ *   url: '/api/ideas',
+ *   method: 'GET',
+ * });
+ *
+ * // Create a typed endpoint for creating ideas
+ * const createIdea = createTypedApiEndpoint<Idea, { idea: string }>({
+ *   url: '/api/ideas',
+ *   method: 'POST',
+ * });
+ *
+ * // Use the endpoints
+ * const { data: ideas } = await getIdeas();
+ * const { data: newIdea } = await createIdea({ idea: 'My new idea' });
+ * ```
+ */
+export function createTypedApiEndpoint<TResponse, TRequest = void>(
+  config: TypedApiEndpointConfig<TResponse>
+): TypedApiEndpoint<TResponse, TRequest> {
+  const {
+    url,
+    method = 'GET',
+    timeoutMs,
+    headers: defaultHeaders,
+    unwrap = true,
+    validateResponse,
+  } = config;
+
+  return async (
+    body?: TRequest,
+    options?: Omit<ApiRequestOptions, 'body' | 'method'>
+  ) => {
+    const mergedHeaders = defaultHeaders
+      ? { ...defaultHeaders, ...options?.headers }
+      : options?.headers;
+
+    const result = await apiRequest<TResponse>(url, {
+      ...options,
+      method,
+      body,
+      timeoutMs: timeoutMs ?? options?.timeoutMs,
+      headers: mergedHeaders,
+      unwrap,
+    });
+
+    if (validateResponse && !validateResponse(result.data)) {
+      throw new ApiRequestError(
+        'Response validation failed',
+        500,
+        { code: 'VALIDATION_ERROR', retryable: false }
+      );
+    }
+
+    return result;
+  };
+}
