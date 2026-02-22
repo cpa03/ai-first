@@ -27,6 +27,7 @@ import {
   httpRequestTotal,
 } from '@/app/api/metrics/route';
 import { APP_CONFIG } from '@/lib/config/app';
+import { detectSuspiciousPatterns } from '@/lib/security';
 
 /**
  * API Version for all responses
@@ -85,6 +86,14 @@ export function withApiHandler(
     };
 
     logger.infoWithContext('API request started', logContext);
+    // SECURITY: Detect suspicious patterns in the request for security monitoring
+    // This integrates the suspicious-patterns module that was previously unused
+    // Patterns are logged via SecurityAuditLog for incident response
+    detectSuspiciousPatterns(request, {
+      scanBody: false, // Performance: skip body scanning by default
+      minSeverity: 2, // Only log medium+ severity patterns (avoid noise)
+      logDetected: true,
+    });
 
     try {
       const rateLimitResult = checkRateLimit(
