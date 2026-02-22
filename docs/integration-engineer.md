@@ -1055,9 +1055,14 @@ abstract class ExportConnector {
 
 **Implementation:**
 
-- `NotionExporter` implements `checkServiceHealth()` as reference implementation
-- `ExportManager.getConnectorsHealth()` now includes `serviceHealth` in response
-- The `/api/health/integrations` endpoint exposes this information
+All external connectors implement `checkServiceHealth()`:
+- `NotionExporter` - Validates API key and calls `/users/me` endpoint
+- `TrelloExporter` - Validates API key/token and checks member info
+- `GitHubProjectsExporter` - Validates token and checks authenticated user
+- `GoogleTasksExporter` - Validates OAuth credentials configuration
+
+`ExportManager.getConnectorsHealth()` includes `serviceHealth` in response for all connectors.
+The `/api/health/integrations` endpoint exposes this information.
 
 **Benefits:**
 
@@ -1078,6 +1083,73 @@ if (notionHealth && !notionHealth.available) {
 }
 ```
 
+### Health Check API Endpoints
+
+The following health check endpoints are available for monitoring integration status:
+
+| Endpoint | Description | Auth Required |
+| -------- | ----------- | ------------- |
+| `GET /api/health` | Basic environment check | No |
+| `GET /api/health/live` | Liveness probe (Kubernetes) | No |
+| `GET /api/health/ready` | Readiness probe (Kubernetes) | No |
+| `GET /api/health/database` | Database connectivity check | No |
+| `GET /api/health/integrations` | External integration health + rate limits | No |
+| `GET /api/health/detailed` | Comprehensive system status | Admin only |
+
+**Integration Health Response (`/api/health/integrations`):**
+
+```json
+{
+  "status": "healthy",
+  "timestamp": "2026-02-22T12:00:00Z",
+  "version": "0.1.1",
+  "integrations": [
+    {
+      "service": "notion",
+      "status": "healthy",
+      "state": "closed",
+      "configured": true,
+      "lastChecked": "2026-02-22T12:00:00Z"
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "healthy": 4,
+    "degraded": 0,
+    "unhealthy": 0,
+    "unknown": 2
+  },
+  "rateLimits": {
+    "servicesTracked": 3,
+    "services": [
+      {
+        "service": "github",
+        "remaining": 4500,
+        "limit": 5000,
+        "approaching": false
+      }
+    ]
+  }
+}
+```
+
+**Detailed Health Response (`/api/health/detailed`):**
+
+In addition to basic health checks, this endpoint includes:
+- Memory metrics and thresholds
+- Circuit breaker states for all services
+- External rate limit tracking with status (healthy/warning/critical)
+- Reliability score (0-100) based on weighted factors
+- Individual connector health with latency measurements
+
+**Rate Limit Status Thresholds:**
+
+| Remaining % | Status | Description |
+| ----------- | ------ | ----------- |
+| > 20% | healthy | Normal operation |
+| 10-20% | warning | Approaching limit, consider throttling |
+| < 10% | critical | Rate limit imminent, must throttle |
+
 ## References
 
 - [Integration Hardening](./integration-hardening.md) - Detailed resilience patterns
@@ -1089,8 +1161,8 @@ if (notionHealth && !notionHealth.available) {
 
 - **Agent Role:** Integration Engineer
 - **Specialization:** External API Integration, Resilience Patterns, Error Handling, Rate Limiting, API Versioning
-- **Last Updated:** 2026-02-21
-- **Branch:** integration-engineer
+ **Last Updated:** 2026-02-22
+ **Branch:** integration-engineer/health-monitoring-docs-20260222
 
 ---
 
