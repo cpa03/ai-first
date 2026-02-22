@@ -1,4 +1,30 @@
 # Environment Configuration Setup
+## Quick Start
+
+Get up and running in under 5 minutes:
+
+```bash
+# 1. Clone and install
+git clone https://github.com/cpa03/ai-first.git && cd ai-first && npm install
+
+# 2. Configure environment
+cp config/.env.example .env.local
+
+# 3. Edit .env.local with your credentials (minimum required):
+#    NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+#    NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+#    SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+#    COST_LIMIT_DAILY=10.0
+#    NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# 4. Validate and start
+npm run env:check && npm run dev
+
+# 5. Verify (open new terminal)
+curl http://localhost:3000/api/health
+```
+
+---
 
 # This file helps developers set up their environment correctly
 
