@@ -10,6 +10,7 @@
 
 import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
+import { TIME_UNITS } from './config';
 
 const logger = createLogger('ExternalRateLimit');
 
@@ -80,7 +81,7 @@ const RATE_LIMIT_HEADERS: Record<
  */
 const DEFAULT_CONFIG: ExternalRateLimitConfig = {
   throttleThreshold: 0.2, // Start throttling when 20% or less remaining
-  maxAgeMs: 60 * 60 * 1000, // 1 hour
+  maxAgeMs: TIME_UNITS.HOUR, // 1 hour
   maxServices: 20,
 };
 
@@ -163,7 +164,7 @@ class ExternalRateLimitTracker {
           : resetValue * 1000;
     } else {
       // Default to 1 hour from now if no reset header
-      resetTime = Date.now() + 60 * 60 * 1000;
+      resetTime = Date.now() + TIME_UNITS.HOUR;
     }
 
     if (isNaN(remaining) || isNaN(limit)) {
@@ -307,7 +308,7 @@ class ExternalRateLimitTracker {
 
     this.cleanupIntervalId = setInterval(
       () => this.cleanupExpired(),
-      5 * 60 * 1000
+      5 * TIME_UNITS.MINUTE
     );
 
     if (
