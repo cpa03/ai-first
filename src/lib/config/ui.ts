@@ -208,25 +208,29 @@ export const TOAST_CONFIG = {
       BG: 'bg-green-50',
       BORDER: 'border-green-200',
       TEXT: 'text-green-800',
-      ICON_COLOR: '#16a34a',
+      // Use CSS custom property for theming support (Issue #1028, #1166)
+      ICON_COLOR: 'rgb(var(--toast-success-icon))',
     },
     ERROR: {
       BG: 'bg-red-50',
       BORDER: 'border-red-200',
       TEXT: 'text-red-800',
-      ICON_COLOR: '#dc2626',
+      // Use CSS custom property for theming support (Issue #1028, #1166)
+      ICON_COLOR: 'rgb(var(--toast-error-icon))',
     },
     WARNING: {
       BG: 'bg-yellow-50',
       BORDER: 'border-yellow-200',
       TEXT: 'text-yellow-800',
-      ICON_COLOR: '#ca8a04',
+      // Use CSS custom property for theming support (Issue #1028, #1166)
+      ICON_COLOR: 'rgb(var(--toast-warning-icon))',
     },
     INFO: {
       BG: 'bg-blue-50',
       BORDER: 'border-blue-200',
       TEXT: 'text-blue-800',
-      ICON_COLOR: '#2563eb',
+      // Use CSS custom property for theming support (Issue #1028, #1166)
+      ICON_COLOR: 'rgb(var(--toast-info-icon))',
     },
   },
 } as const;
