@@ -7,12 +7,11 @@ import {
 } from '@/lib/config/constants';
 
 /**
- * Proxy (Middleware) for Next.js 16+
+ * Middleware for Next.js 16+ on Cloudflare Workers
  *
- * This file replaces the deprecated middleware.ts convention.
- * In Next.js 16+, middleware files should be named proxy.ts.
- *
- * See: https://nextjs.org/docs/messages/middleware-to-proxy
+ * This file uses the standard middleware.ts convention to ensure compatibility
+ * with Cloudflare Workers (OpenNext), which currently does not support the
+ * Node.js-only proxy.ts convention.
  */
 
 const PUBLIC_PATHS = [
@@ -36,7 +35,12 @@ const AUTH_PATHS = ['/login', '/signup'];
 function generateNonce(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
-  return Buffer.from(array).toString('base64');
+  // Web-standard base64 encoding without Node.js Buffer for Edge compatibility
+  let binary = '';
+  for (let i = 0; i < array.length; i++) {
+    binary += String.fromCharCode(array[i]);
+  }
+  return btoa(binary);
 }
 
 function buildCSPHeader(nonce: string): string {
@@ -78,6 +82,7 @@ function applySecurityHeaders(
     SECURITY_CONFIG.X_CONTENT_TYPE_OPTIONS
   );
   response.headers.set('Referrer-Policy', SECURITY_CONFIG.REFERRER_POLICY);
+  // SECURITY: Explicitly disable legacy XSS auditor
   response.headers.set('X-XSS-Protection', SECURITY_CONFIG.X_XSS_PROTECTION);
   response.headers.set('Permissions-Policy', buildPermissionsPolicy());
   response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
@@ -109,7 +114,7 @@ function applySecurityHeaders(
   );
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';

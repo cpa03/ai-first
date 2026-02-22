@@ -55,8 +55,21 @@ const SENSITIVE_VAR_PATTERNS = [
   'HMAC', // HMAC keys
   'APIKEY', // API key without underscore
   'IBAN', // Bank account info
+  'SWIFT', // SWIFT/BIC codes
+  'BIC', // SWIFT/BIC codes
   'SESSION', // Session identifiers
   'SSN', // Social security numbers
+  'CSRF', // CSRF tokens
+  'XSRF', // XSRF tokens
+  'COOKIE', // Cookies
+  'OTP', // One-time passwords
+  'NONCE', // Cryptographic nonces
+  'PIN', // Personal identification numbers
+  'TAXID', // Tax identification numbers
+  'NINO', // National Insurance numbers
+  'PASSPORT', // Passport numbers
+  'LICENSE', // License numbers
+  'LICENCE', // License numbers (UK)
   // Security improvement: Added 2026-02-21
   'PEM', // Certificate files
   'KEYSTORE', // Java keystores
@@ -68,21 +81,6 @@ const SENSITIVE_VAR_PATTERNS = [
   'BACKUP', // Backup keys/codes
   'SEED', // Seed phrases/values
   'JWK', // JSON Web Keys
-  'CSRF', // CSRF tokens
-  'XSRF', // XSRF tokens
-  'COOKIE', // Cookies
-  'OTP', // One-time passwords
-  'NONCE', // Cryptographic nonces
-  'CVV', // Card security codes
-  'CVC', // Card security codes
-  'PIN', // Personal identification numbers
-  'SWIFT', // SWIFT/BIC codes
-  'BIC', // SWIFT/BIC codes
-  'TAXID', // Tax identification numbers
-  'NINO', // National Insurance numbers
-  'PASSPORT', // Passport numbers
-  'LICENSE', // License numbers
-  'LICENCE', // License numbers (UK spelling)
 ] as const;
 
 /**
