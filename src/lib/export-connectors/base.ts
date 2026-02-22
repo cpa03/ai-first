@@ -65,6 +65,20 @@ export interface ExportResult {
   error?: string;
 }
 
+/**
+ * Result of an external service health check
+ */
+export interface ServiceHealthResult {
+  /** Whether the service is reachable and responding */
+  available: boolean;
+  /** Response latency in milliseconds */
+  latencyMs?: number;
+  /** Error message if service is unavailable */
+  error?: string;
+  /** Timestamp when the check was performed */
+  checkedAt: string;
+}
+
 export interface SyncStatus {
   lastSync?: string;
   status: 'pending' | 'in_progress' | 'completed' | 'failed';
@@ -89,6 +103,14 @@ export abstract class ExportConnector {
   abstract validateConfig(): Promise<boolean>;
   abstract getAuthUrl?(): Promise<string>;
   abstract handleAuthCallback?(code: string): Promise<void>;
+  /**
+   * Optional method to check external service health/availability.
+   * This performs a lightweight probe to verify the external service is reachable.
+   * Returns null if not implemented or not applicable.
+   * 
+   * @returns Health check result with status, latency, and optional error message
+   */
+  async checkServiceHealth?(): Promise<ServiceHealthResult | null>;
 
   protected getResilienceConfig(): ResilienceConfig {
     const type = this.type;
