@@ -1062,6 +1062,29 @@ Supabase handles connection pooling automatically. For high-traffic applications
 
 ## Changelog
 
+### 2026-02-22 - Risk Assessments Status Score Composite Index
+
+#### Performance Enhancement
+
+1. **Added composite index for risk_assessments(status, risk_score DESC)**
+   - Migration `20260222_add_risk_assessments_status_score_index.sql`
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_risk_assessments_status_risk_score` - Composite index for status + risk_score queries
+   - Optimizes the common query pattern: "show all open risks ordered by severity"
+
+2. **Performance improvements**
+   - Before: Uses `idx_risk_assessments_status` for filtering, then sorts in memory
+   - After: Uses composite index for both filtering AND ordering (no sort needed)
+   - Estimated 30-50% faster for risk dashboard queries
+
+3. **Down migration included**
+   - `20260222_add_risk_assessments_status_score_index.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definition to risk_assessments section
+
+### 2026-02-21 - Tasks Table Updated_at Column
+
 ### 2026-02-21 - Tasks Table Updated_at Column
 
 #### Schema Quality Enhancement
