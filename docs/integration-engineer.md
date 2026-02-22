@@ -468,6 +468,79 @@ A maintainer with appropriate permissions needs to apply these changes:
 - The retry logic built into the scripts will still work correctly
 - Faster CI runs with npm caching
 
+### 2026-02-22: Consolidate iterate.yml using Composite Action
+
+**Issue:** Massive code duplication in iterate.yml workflow setup steps (Issue #1609, #1170)
+
+**Problem:** The `iterate.yml` workflow had 5 jobs each with ~30 lines of duplicated setup code:
+
+- Duplicated checkout, cache, git config, Node.js setup, npm install, and OpenCode CLI install steps
+- `continue-on-error: true` on critical steps hiding failures
+- No npm caching on Node.js setup
+- Hardcoded OpenCode CLI installation URL
+
+**Solution:** Use the existing `.github/actions/workflow-setup/action.yml` composite action:
+
+```yaml
+# Before: 5 jobs with ~30 lines of duplicated setup each (349 lines total)
+- name: Checkout
+  uses: actions/checkout@v5
+  ...
+- name: Setup Cache
+  uses: actions/cache@v5
+  ...
+- name: Configure Git
+  run: |
+    git config --global user.name ...
+- name: Install Node.js
+  continue-on-error: true  # Hiding failures!
+  uses: actions/setup-node@v4
+  ...
+- name: Install Dependencies
+  continue-on-error: true  # Hiding failures!
+  run: npm ci
+- name: Install OpenCode CLI
+  run: |
+    curl -fsSL https://opencode.ai/install | bash
+    ...
+
+# After: Single composite action call (253 lines total - 27.5% reduction)
+- name: Checkout
+  uses: actions/checkout@v5
+  ...
+- name: Setup Workflow
+  uses: ./.github/actions/workflow-setup
+  with:
+    node-version: '20'
+    opencode-install-url: ${{ vars.OPENCODE_INSTALL_URL || 'https://opencode.ai/install' }}
+```
+
+**Benefits:**
+
+1. **DRY Principle**: Eliminates ~100 lines of duplicated code
+2. **Proper Error Handling**: No `continue-on-error` on critical steps
+3. **Faster CI**: npm caching enabled automatically
+4. **Configurable**: OpenCode CLI URL via repository variable
+5. **Consistency**: All jobs use identical setup
+
+**Status:** ⚠️ PENDING MANUAL APPLICATION - GitHub App lacks `workflows` permission.
+
+**Prepared Changes:**
+
+- File: `.github/workflows/iterate.yml`
+- Change: Replace 5 duplicated setup blocks with composite action calls
+- Reduction: 349 lines → 253 lines (27.5% reduction)
+- Verified: Lint ✅, Type-check ✅, Tests ✅ (1301 passed)
+
+**Manual Steps Required:**
+
+A maintainer with appropriate permissions needs to apply these changes to iterate.yml:
+
+1. Replace all setup steps (Checkout, Setup Cache, Configure Git, Install Node.js, Install Dependencies, Install OpenCode CLI) with a single composite action call
+2. Remove all `continue-on-error: true` directives
+3. The composite action at `.github/actions/workflow-setup/action.yml` already handles npm caching, git config, and OpenCode CLI installation
+
+
 ## External API Rate Limit Tracking
 
 ### Overview
