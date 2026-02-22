@@ -5,6 +5,48 @@
 
 ---
 
+## Current Status (MVP)
+
+### What features are available right now?
+
+IdeaFlow is currently in **MVP development phase** (Phase 1). Here's what's available:
+
+**✅ Available Now:**
+- User Authentication (Email/Password + OAuth with Google/GitHub)
+- Task Management Interface
+- Basic Idea Dashboard
+- Frontend UI for Idea Management (85%)
+- Markdown Export (85%)
+- Automatic Breakdown Engine (70%)
+
+**🚧 In Progress:**
+- Performance Optimization
+- Testing & Quality Assurance (75% coverage)
+- Monitoring & Alerting
+
+**📅 Coming Soon (Phase 2 - Q2 2026):**
+- Notion Integration
+- Trello Integration
+- Google Tasks Integration
+- GitHub Projects Integration
+- Team Collaboration
+
+### When will IdeaFlow launch publicly?
+
+**Target Launch:** March 31, 2026
+
+We're currently in beta testing. Sign up to join our beta program and be notified when we launch!
+
+### Can I try IdeaFlow before launch?
+
+Yes! We're running a closed beta program. To join:
+
+1. Sign up at [ideaflow.app](https://ideaflow.app)
+2. Request beta access
+3. We'll notify you when your account is activated
+
+---
+
 ## General Questions
 
 ### What is IdeaFlow?
