@@ -489,6 +489,27 @@ Before deploying API changes:
 ---
 
 ## Changelog
+### 2026-02-22 - OpenAPI Response Headers Schema Documentation
+
+- **Improvement**: Added comprehensive response headers documentation to OpenAPI specification
+- **Changes**:
+  - Added `CommonResponseHeaders` schema documenting standard headers (X-Request-ID, X-Correlation-ID, X-RateLimit-*, X-Response-Time, X-API-Version)
+  - Added `ErrorResponseHeaders` schema for error-specific headers (X-Error-Code, X-Retryable, Retry-After)
+  - Added `RateLimitHeaders` schema for rate limit information headers
+  - All schemas include type, description, and example values
+- **Rationale**:
+  - OpenAPI spec was missing documentation for response headers that are already implemented
+  - Improves API discoverability for developers using the OpenAPI spec
+  - Enables automatic documentation generation tools to include header information
+  - Completes the OpenAPI specification coverage (was 24/24 endpoints, now includes headers)
+- **Location**: `docs/api/openapi.yaml` (components/schemas section)
+- **Build**: Passing
+- **Lint**: Passing (0 warnings)
+- **Type-check**: Passing (0 errors)
+- **Documentation**: Updated OpenAPI spec
+
+---
+
 ### 2026-02-22 - API Response Headers Documentation Enhancement
 
 - **Improvement**: Added comprehensive documentation for API response headers
