@@ -15,6 +15,7 @@ import {
   MEMORY_CONFIG,
 } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
+import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
 
 interface HealthCheckResult {
   service: string;
@@ -55,6 +56,18 @@ interface ConnectorHealthInfo {
   error?: string;
 }
 
+interface ExternalRateLimitStats {
+  servicesTracked: number;
+  services: Array<{
+    service: string;
+    remaining: number;
+    limit: number;
+    percentRemaining: number;
+    status: 'healthy' | 'warning' | 'critical';
+  }>;
+}
+
+
 interface HealthResponse {
   status: string;
   timestamp: string;
@@ -80,7 +93,9 @@ interface HealthResponse {
     state: string;
     failures: number;
   }>;
+  externalRateLimits: ExternalRateLimitStats;
 }
+
 
 function getMemoryHealth(): MemoryHealthResult {
   const memUsage = process.memoryUsage();
@@ -141,6 +156,39 @@ function getMemoryHealth(): MemoryHealthResult {
 
   return { status, metrics, warnings };
 }
+
+/**
+ * Get external rate limit stats for health monitoring
+ * Addresses issue #874: Missing monitoring for external integrations
+ */
+function getExternalRateLimitStats(): ExternalRateLimitStats {
+  const tracker = getExternalRateLimitTracker();
+  const stats = tracker.getStats();
+
+  const services = stats.services.map((s) => {
+    const percentRemaining = s.limit > 0 ? Math.round((s.remaining / s.limit) * 100) : 0;
+    let status: 'healthy' | 'warning' | 'critical' = 'healthy';
+    if (percentRemaining <= 10) {
+      status = 'critical';
+    } else if (percentRemaining <= 20) {
+      status = 'warning';
+    }
+
+    return {
+      service: s.service,
+      remaining: s.remaining,
+      limit: s.limit,
+      percentRemaining,
+      status,
+    };
+  });
+
+  return {
+    servicesTracked: stats.servicesTracked,
+    services,
+  };
+}
+
 
 async function handleGet(context: ApiContext) {
   // Security: Detailed health information is restricted to administrators
@@ -359,7 +407,10 @@ async function handleGet(context: ApiContext) {
     memory: memoryHealth,
     connectors,
     circuitBreakers,
+    externalRateLimits: getExternalRateLimitStats(),
   };
+
+
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 
