@@ -456,7 +456,11 @@ export const SECURITY_CONFIG = {
     'SECURITY_REFERRER_POLICY',
     'strict-origin-when-cross-origin'
   ),
+  X_XSS_PROTECTION: EnvLoader.string('SECURITY_X_XSS_PROTECTION', '0'),
 } as const;
+
+
+
 
 /**
  * Retry delay polling configuration
