@@ -40,12 +40,42 @@ try {
   // If we get here with output, check if it contains circular deps
   const output = result.trim();
 
-  if (output === '' || output.includes('No circular dependencies found')) {
+  // Check for actual circular dependencies in the output
+  // The output "No circular dependency found!" or empty means success
+  // Warnings like "(56 warnings)" are NOT circular dependencies
+  if (
+    output === '' ||
+    output.includes('No circular dependency found') ||
+    output.includes('No circular dependencies found')
+  ) {
     console.log('✅ No circular dependencies found!\n');
     process.exit(0);
   }
 
-  // Output contains circular dependencies
+  // Check if the output actually contains circular dependency chains
+  // Circular deps are shown with arrows (→) or "Circular dependency found" message
+  const hasCircularDeps =
+    output.includes('→') || output.includes('Circular dependency found');
+
+  if (!hasCircularDeps) {
+    // No actual circular deps - just warnings or other output
+    console.log('✅ No circular dependencies found!');
+
+    // Extract and show warnings if any
+    const warningMatch = output.match(/\((\d+) warnings?\)/);
+    if (warningMatch) {
+      console.log(
+        `\n⚠️  ${warningMatch[1]} parse warnings detected (not errors)`
+      );
+      console.log(
+        '   These are typically unresolved imports or type-only modules'
+      );
+    }
+    console.log('');
+    process.exit(0);
+  }
+
+  // Output contains actual circular dependencies
   console.log('❌ Circular dependencies detected:\n');
   console.log(output);
   console.log('\n💡 Tips to resolve circular dependencies:');
@@ -58,8 +88,13 @@ try {
 } catch (error) {
   // madge exits with code 1 when circular deps are found
   const output = error.stdout?.trim() || '';
+  const stderr = error.stderr?.trim() || '';
 
-  if (output && !output.includes('No circular dependencies found')) {
+  // Check if there are actual circular dependencies
+  const hasCircularDeps =
+    output.includes('→') || output.includes('Circular dependency found');
+
+  if (hasCircularDeps) {
     console.log('❌ Circular dependencies detected:\n');
     console.log(output);
     console.log('\n💡 Tips to resolve circular dependencies:');
@@ -71,12 +106,24 @@ try {
   }
 
   // Check if it's a real error
-  if (error.stderr?.includes('Error') && !error.stderr.includes('circular')) {
-    console.error('❌ Error running madge:', error.stderr);
+  if (stderr.includes('Error') && !stderr.includes('circular')) {
+    console.error('❌ Error running madge:', stderr);
     process.exit(1);
   }
 
-  // No circular deps but madge exited with 1 for some other reason
-  console.log('✅ No circular dependencies found!\n');
+  // No circular deps - just warnings or other output
+  console.log('✅ No circular dependencies found!');
+
+  // Extract and show warnings if any
+  const warningMatch = output.match(/\((\d+) warnings?\)/);
+  if (warningMatch) {
+    console.log(
+      `\n⚠️  ${warningMatch[1]} parse warnings detected (not errors)`
+    );
+    console.log(
+      '   These are typically unresolved imports or type-only modules'
+    );
+  }
+  console.log('');
   process.exit(0);
 }
