@@ -36,7 +36,8 @@
     "preview:cloudflare": "opennextjs-cloudflare preview",
     "deploy:cloudflare": "opennextjs-cloudflare deploy",
     "deploy:cloudflare:staging": "opennextjs-cloudflare deploy --env staging",
-    "docs:check-links": "node scripts/docs-link-validator.js"
+    "docs:check-links": "node scripts/docs-link-validator.js",
+    "user-stories:validate": "node scripts/validate-user-stories.js"
   },
   "dependencies": {
     "@notionhq/client": "^5.9.0",
