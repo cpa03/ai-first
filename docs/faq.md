@@ -1,6 +1,6 @@
 # IdeaFlow FAQ
 
-**Last Updated**: February 21, 2026
+**Last Updated**: February 22, 2026
 **Version**: 1.0.0
 
 ---
