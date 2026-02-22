@@ -42,6 +42,7 @@ const SENSITIVE_VAR_PATTERNS = [
   'PWD',
   'DATABASE',
   'CONNECTION',
+  'DB_', // Database identifiers
   'CERT',
   'SIGNATURE',
   'PRIVATE',
@@ -67,6 +68,21 @@ const SENSITIVE_VAR_PATTERNS = [
   'BACKUP', // Backup keys/codes
   'SEED', // Seed phrases/values
   'JWK', // JSON Web Keys
+  'CSRF', // CSRF tokens
+  'XSRF', // XSRF tokens
+  'COOKIE', // Cookies
+  'OTP', // One-time passwords
+  'NONCE', // Cryptographic nonces
+  'CVV', // Card security codes
+  'CVC', // Card security codes
+  'PIN', // Personal identification numbers
+  'SWIFT', // SWIFT/BIC codes
+  'BIC', // SWIFT/BIC codes
+  'TAXID', // Tax identification numbers
+  'NINO', // National Insurance numbers
+  'PASSPORT', // Passport numbers
+  'LICENSE', // License numbers
+  'LICENCE', // License numbers (UK spelling)
 ] as const;
 
 /**

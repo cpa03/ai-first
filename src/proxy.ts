@@ -78,6 +78,7 @@ function applySecurityHeaders(
     SECURITY_CONFIG.X_CONTENT_TYPE_OPTIONS
   );
   response.headers.set('Referrer-Policy', SECURITY_CONFIG.REFERRER_POLICY);
+  response.headers.set('X-XSS-Protection', SECURITY_CONFIG.X_XSS_PROTECTION);
   response.headers.set('Permissions-Policy', buildPermissionsPolicy());
   response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
   response.headers.set(
