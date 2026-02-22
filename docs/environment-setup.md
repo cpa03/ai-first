@@ -132,7 +132,7 @@ Use this checklist to verify your environment is correctly configured:
 
 | Check                  | Command                          | Expected Result               |
 | ---------------------- | -------------------------------- | ----------------------------- |
-| Dependencies installed | `npm install`                    | No errors, 1354 packages      |
+| Dependencies installed | `npm install`                    | No errors, 1443 packages      |
 | Environment validation | `npm run env:check`              | All required variables pass   |
 | Type checking          | `npm run type-check`             | 0 errors                      |
 | Linting                | `npm run lint`                   | 0 errors, 0 warnings          |
