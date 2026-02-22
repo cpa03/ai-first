@@ -1,6 +1,6 @@
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import { BreakdownSession } from '../breakdown-engine';
+import type { BreakdownSession } from './types';
 import { TASK_CONFIG } from '@/lib/config';
 
 const logger = createLogger('SessionManager');

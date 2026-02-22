@@ -1,4 +1,4 @@
-import { BreakdownSession } from '../breakdown-engine';
+import type { BreakdownSession } from './types';
 import { AGENT_CONFIG } from '@/lib/config/constants';
 
 const { BREAKDOWN_CONFIDENCE_WEIGHTS, BREAKDOWN_FALLBACK_CONFIDENCE } =
