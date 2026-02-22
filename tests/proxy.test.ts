@@ -1,4 +1,4 @@
-describe('middleware - unit tests for internal logic', () => {
+describe('proxy - unit tests for internal logic', () => {
   describe('CSP header construction', () => {
     it('should build CSP with correct directives', () => {
       const cspHeader = [
@@ -90,7 +90,7 @@ describe('middleware - unit tests for internal logic', () => {
     });
   });
 
-  describe('Middleware configuration', () => {
+  describe('Proxy configuration', () => {
     it('should have correct matcher pattern', () => {
       const matcher = '/((?!_next/static|_next/image|favicon.ico).*)';
 

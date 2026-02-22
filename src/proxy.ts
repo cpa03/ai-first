@@ -7,11 +7,14 @@ import {
 } from '@/lib/config/constants';
 
 /**
- * Middleware for Next.js
+ * Proxy for Next.js (formerly middleware)
  *
- * 
- * 
+ * Handles request interception for:
+ * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
+ * - Authentication flow (redirect unauthenticated users)
+ * - CSP nonce generation for inline scripts
  *
+ * Renamed from middleware.ts to proxy.ts in Next.js 16
  * See: https://nextjs.org/docs/messages/middleware-to-proxy
  */
 
@@ -114,7 +117,7 @@ function applySecurityHeaders(
   );
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';

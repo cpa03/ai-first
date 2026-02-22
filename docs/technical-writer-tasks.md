@@ -430,7 +430,7 @@ The README showed incomplete and misleading project structure:
 - Listed only 4 directories in src/lib/ (actually 15+ files/directories)
 - Listed `/ai/prompts/` which doesn't exist (actual: `ai/agent-configs/`)
 - Missing critical directories: config/, scripts/, tests/, types/
-- Missing many files: middleware.ts, config files, test structure
+- Missing many files: config files, test structure
 - Showed `supabase/seeds/` which doesn't exist
 
 **Issue 2: Architecture.md Directory References**

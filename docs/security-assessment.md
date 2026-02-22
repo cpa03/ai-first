@@ -83,7 +83,7 @@ The application demonstrates a **strong security posture** with comprehensive se
 **Severity**: Low
 **Status**: ✅ FIXED
 
-**Issue**: Security headers were defined in both `next.config.js` and `middleware.ts`, creating redundancy.
+**Issue**: Security headers were defined in both `next.config.js` and `proxy.ts`, creating redundancy.
 
 **Fix Applied**:
 
