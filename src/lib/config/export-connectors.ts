@@ -31,8 +31,10 @@ export const TRELLO_CONFIG = {
   },
 
   PRIORITY: {
-    HIGH_THRESHOLD: 4,
-    MEDIUM_THRESHOLD: 2,
+    /** High priority threshold (1-5) - Env: TRELLO_PRIORITY_HIGH_THRESHOLD (default: 4) */
+    HIGH_THRESHOLD: EnvLoader.number('TRELLO_PRIORITY_HIGH_THRESHOLD', 4, 1, 5),
+    /** Medium priority threshold (1-5) - Env: TRELLO_PRIORITY_MEDIUM_THRESHOLD (default: 2) */
+    MEDIUM_THRESHOLD: EnvLoader.number('TRELLO_PRIORITY_MEDIUM_THRESHOLD', 2, 1, 5),
     LABELS: {
       HIGH: 'High Priority',
       MEDIUM: 'Medium Priority',
@@ -41,7 +43,8 @@ export const TRELLO_CONFIG = {
   },
 
   APP: {
-    NAME: 'IdeaFlow',
+    /** Application name for Trello OAuth - Env: TRELLO_APP_NAME (default: 'IdeaFlow') */
+    NAME: EnvLoader.string('TRELLO_APP_NAME', 'IdeaFlow'),
     EXPIRATION: 'never',
     RESPONSE_TYPE: 'token',
     SCOPE: 'read,write',
