@@ -19,3 +19,16 @@ export {
   validateEnvironmentStrict,
   checkNoPublicPrefix,
 } from './env-validation';
+
+// Security Audit Logging
+export {
+  SecurityAuditLog,
+  type SecurityEventSeverity,
+  type SecurityEventCategory,
+  type SecurityEventBase,
+  type AuthEventDetails,
+  type RateLimitEventDetails,
+  type CSPViolationEventDetails,
+  type EnvironmentEventDetails,
+  type InputValidationEventDetails,
+} from './audit-log';
