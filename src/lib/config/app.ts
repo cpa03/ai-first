@@ -83,22 +83,46 @@ export const APP_CONFIG = {
   /**
    * Pagination configuration
    * Centralizes pagination limits and offsets
+   * All values have sensible defaults but can be overridden via environment variables
    */
   PAGINATION: {
-    /** Default number of items per page */
-    DEFAULT_LIMIT: 50,
-    /** Maximum allowed items per page */
-    MAX_LIMIT: 100,
-    /** Minimum allowed items per page */
-    MIN_LIMIT: 10,
-    /** Default offset for pagination */
-    DEFAULT_OFFSET: 0,
-  } as const,
+    /** Default number of items per page - Default: 50 */
+    DEFAULT_LIMIT: EnvLoader.number('PAGINATION_DEFAULT_LIMIT', 50, 1, 1000),
+    /** Maximum allowed items per page - Default: 100 */
+    MAX_LIMIT: EnvLoader.number('PAGINATION_MAX_LIMIT', 100, 10, 1000),
+    /** Minimum allowed items per page - Default: 10 */
+    MIN_LIMIT: EnvLoader.number('PAGINATION_MIN_LIMIT', 10, 1, 100),
+    /** Default offset for pagination - Default: 0 */
+    DEFAULT_OFFSET: EnvLoader.number('PAGINATION_DEFAULT_OFFSET', 0, 0, 10000),
+  },
 
+  /**
+   * String limits configuration
+   * Centralizes string length limits for IDs and previews
+   * All values have sensible defaults but can be overridden via environment variables
+   */
   STRING_LIMITS: {
-    TITLE_PREVIEW_LENGTH: 50,
-    IDEA_ID_RANDOM_LENGTH: 11,
-    IDEA_ID_RANDOM_RADIX: 36,
+    /** Maximum length for title preview - Default: 50 */
+    TITLE_PREVIEW_LENGTH: EnvLoader.number(
+      'STRING_TITLE_PREVIEW_LENGTH',
+      50,
+      10,
+      200
+    ),
+    /** Length of random portion in idea IDs - Default: 11 */
+    IDEA_ID_RANDOM_LENGTH: EnvLoader.number(
+      'STRING_ID_RANDOM_LENGTH',
+      11,
+      4,
+      32
+    ),
+    /** Radix for idea ID generation (2-36) - Default: 36 */
+    IDEA_ID_RANDOM_RADIX: EnvLoader.number(
+      'STRING_ID_RANDOM_RADIX',
+      36,
+      2,
+      36
+    ),
   },
 } as const;
 
