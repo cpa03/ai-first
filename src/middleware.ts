@@ -7,10 +7,10 @@ import {
 } from '@/lib/config/constants';
 
 /**
- * Proxy (Middleware) for Next.js 16+
+ * Middleware for Next.js
  *
- * This file replaces the deprecated middleware.ts convention.
- * In Next.js 16+, middleware files should be named proxy.ts.
+ * 
+ * 
  *
  * See: https://nextjs.org/docs/messages/middleware-to-proxy
  */
@@ -36,7 +36,13 @@ const AUTH_PATHS = ['/login', '/signup'];
 function generateNonce(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
-  return Buffer.from(array).toString('base64');
+  // Convert Uint8Array to base64 using Web APIs (Edge-compatible)
+  // Avoids Node.js Buffer which is not available in Cloudflare Workers
+  let binary = '';
+  for (let i = 0; i < array.length; i++) {
+    binary += String.fromCharCode(array[i]);
+  }
+  return btoa(binary);
 }
 
 function buildCSPHeader(nonce: string): string {
@@ -108,7 +114,7 @@ function applySecurityHeaders(
   );
 }
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
