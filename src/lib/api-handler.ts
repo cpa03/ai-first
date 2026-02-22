@@ -27,7 +27,7 @@ import {
   httpRequestTotal,
 } from '@/app/api/metrics/route';
 import { APP_CONFIG } from '@/lib/config/app';
-import { detectSuspiciousPatterns } from '@/lib/security';
+import { detectSuspiciousPatterns, SecurityAuditLog } from '@/lib/security';
 
 /**
  * API Version for all responses
@@ -105,6 +105,19 @@ export function withApiHandler(
         logger.warnWithContext('Rate limit exceeded', logContext, {
           limit: rateLimitResult.info.limit,
         });
+        
+        // SECURITY: Log rate limit violation to security audit for incident response
+        SecurityAuditLog.logRateLimit({
+          blocked: true,
+          config: options.rateLimit || 'lenient',
+          requestCount: rateLimitResult.info.limit - rateLimitResult.info.remaining,
+          limit: rateLimitResult.info.limit,
+          windowMs: rateLimitConfig.windowMs,
+          clientIdentifier: getClientIdentifier(request),
+          endpoint: request.url ? new URL(request.url).pathname : undefined,
+          requestId,
+        });
+        
         return rateLimitResponse(rateLimitResult.info, requestId);
       }
 
