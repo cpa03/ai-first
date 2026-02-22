@@ -415,21 +415,32 @@ class AIService {
     const MAX_CONTEXT_ITERATIONS = AI_CONFIG.MAX_CONTEXT_ITERATIONS;
     let iterations = 0;
 
-    // If context exceeds token limit, remove oldest non-system messages
-    if (Math.ceil(totalChars / 4) > maxTokens) {
-      const systemMessages = context.filter((m) => m.role === 'system');
-      const nonSystemMessages = context.filter((m) => m.role !== 'system');
+    // PERFORMANCE: Use a single pass to separate messages and avoid O(N^2) truncation.
+    // Math.ceil(totalChars / 4) > maxTokens is equivalent to totalChars > maxTokens * 4.
+    const charLimit = maxTokens * 4;
+    if (totalChars > charLimit) {
+      const systemMessages: typeof context = [];
+      const nonSystemMessages: typeof context = [];
 
+      for (let i = 0; i < context.length; i++) {
+        const msg = context[i];
+        if (msg.role === 'system') {
+          systemMessages.push(msg);
+        } else {
+          nonSystemMessages.push(msg);
+        }
+      }
+
+      let messagesToRemove = 0;
+      const maxRemovable = nonSystemMessages.length;
       while (
-        Math.ceil(totalChars / 4) > maxTokens &&
-        nonSystemMessages.length > 0 &&
+        totalChars > charLimit &&
+        messagesToRemove < maxRemovable &&
         iterations < MAX_CONTEXT_ITERATIONS
       ) {
+        totalChars -= nonSystemMessages[messagesToRemove].content.length;
+        messagesToRemove++;
         iterations++;
-        const removed = nonSystemMessages.shift();
-        if (removed) {
-          totalChars -= removed.content.length;
-        }
       }
 
       if (iterations >= MAX_CONTEXT_ITERATIONS) {
@@ -438,7 +449,13 @@ class AIService {
         );
       }
 
-      context = [...systemMessages, ...nonSystemMessages];
+      // PERFORMANCE: Use slice() once instead of multiple shift() calls to avoid O(N^2).
+      const remainingNonSystem =
+        messagesToRemove > 0
+          ? nonSystemMessages.slice(messagesToRemove)
+          : nonSystemMessages;
+
+      context = [...systemMessages, ...remainingNonSystem];
     }
 
     await supabase.from('vectors').upsert({
