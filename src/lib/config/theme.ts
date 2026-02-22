@@ -474,7 +474,7 @@ export const BUTTON_STYLES = {
   } as const,
 
   /** Base classes applied to all buttons */
-  BASE: 'rounded-md font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none relative overflow-hidden',
+  BASE: 'rounded-md font-medium transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transition-none touch-manipulation relative overflow-hidden',
 } as const;
 
 /**
