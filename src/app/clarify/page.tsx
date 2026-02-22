@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useLayoutEffect, Suspense } from 'react';
+import { useState, useRef, useLayoutEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
@@ -90,7 +90,9 @@ function ClarifyPageContent() {
 
   const { idea, ideaId, hasLoaded } = params;
 
-  const handleClarificationComplete = async (
+  // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of ClarificationFlow
+  // which receives this function as a prop
+  const handleClarificationComplete = useCallback(async (
     completedAnswers: Record<string, string>
   ) => {
     try {
@@ -126,7 +128,7 @@ function ClarifyPageContent() {
       });
       setError('Failed to save your answers. Please try again.');
     }
-  };
+  }, [ideaId, logger]);
 
   if (authLoading || !hasLoaded) {
     return (
