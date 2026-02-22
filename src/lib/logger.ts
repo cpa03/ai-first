@@ -214,7 +214,18 @@ export class Logger {
       const sanitizedArgs = args.map((a) => redactPIIInObject(a));
       const prefix = `[${this.getTimestamp()}] [${this.context}]`;
 
-      if (level === LogLevel.ERROR) {
+      // Use console.error for ALL logs in production to ensure they survive
+      // Next.js's removeConsole configuration (Issue #949).
+      // This preserves production observability for incident response.
+      const isProduction = process.env.NODE_ENV === 'production';
+
+      if (isProduction) {
+        // In production, ALL logs go to console.error to survive removeConsole
+        console.error(
+          `${prefix} ${redactPII(formattedMessage)}`,
+          ...sanitizedArgs
+        );
+      } else if (level === LogLevel.ERROR) {
         console.error(
           `${prefix} ${redactPII(formattedMessage)}`,
           ...sanitizedArgs
