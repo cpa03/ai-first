@@ -18,9 +18,12 @@ export const APP_CONFIG = {
   TAGLINE: 'Turn ideas into action.',
 
   URLS: {
-    BASE: 'https://ideaflow.ai',
-    SITE: 'https://ideaflow.ai',
-    WWW: 'https://www.ideaflow.ai',
+    /** Base URL for the application - Env: APP_BASE_URL (default: 'https://ideaflow.ai') */
+    BASE: EnvLoader.string('APP_BASE_URL', 'https://ideaflow.ai'),
+    /** Site URL for SEO - Env: APP_SITE_URL (default: 'https://ideaflow.ai') */
+    SITE: EnvLoader.string('APP_SITE_URL', 'https://ideaflow.ai'),
+    /** WWW redirect URL - Env: APP_WWW_URL (default: 'https://www.ideaflow.ai') */
+    WWW: EnvLoader.string('APP_WWW_URL', 'https://www.ideaflow.ai'),
   },
 
   BRANDING: {
@@ -33,8 +36,10 @@ export const APP_CONFIG = {
   },
 
   CONTACT: {
-    SUPPORT_EMAIL: 'support@ideaflow.ai',
-    TWITTER_HANDLE: '@ideaflowai',
+    /** Support email address - Env: APP_SUPPORT_EMAIL (default: 'support@ideaflow.ai') */
+    SUPPORT_EMAIL: EnvLoader.string('APP_SUPPORT_EMAIL', 'support@ideaflow.ai'),
+    /** Twitter handle - Env: APP_TWITTER_HANDLE (default: '@ideaflowai') */
+    TWITTER_HANDLE: EnvLoader.string('APP_TWITTER_HANDLE', '@ideaflowai'),
   },
 
   META: {

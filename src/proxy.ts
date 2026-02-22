@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
+import {
+  SECURITY_CONFIG,
+  CSP_CONFIG,
+  PROXY_CONFIG,
+} from '@/lib/config/constants';
 
 /**
  * Proxy (Middleware) for Next.js 16+
@@ -44,7 +48,7 @@ function buildCSPHeader(nonce: string): string {
       const scriptValues = values.map((v) =>
         v === "'nonce-placeholder'" ? `'nonce-${nonce}'` : v
       );
-      scriptValues.push('https://vercel.live');
+      scriptValues.push(PROXY_CONFIG.VERCEL_LIVE_URL);
       cspParts.push(`${directive} ${scriptValues.join(' ')}`);
     } else if (values.length === 0) {
       cspParts.push(directive);
@@ -53,7 +57,7 @@ function buildCSPHeader(nonce: string): string {
     }
   }
 
-  cspParts.push('report-uri /api/csp-report');
+  cspParts.push(`report-uri ${PROXY_CONFIG.CSP_REPORT_PATH}`);
   cspParts.push('report-to csp-endpoint');
 
   return cspParts.join('; ');
@@ -98,8 +102,8 @@ function applySecurityHeaders(
     'Report-To',
     JSON.stringify({
       group: 'csp-endpoint',
-      max_age: 10886400,
-      endpoints: [{ url: '/api/csp-report' }],
+      max_age: PROXY_CONFIG.CSP_REPORT_MAX_AGE,
+      endpoints: [{ url: PROXY_CONFIG.CSP_REPORT_PATH }],
     })
   );
 }
