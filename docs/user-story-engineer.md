@@ -547,7 +547,7 @@ Use the [User Story Template](./templates/user-story_template.md) for consistent
 
 ## Programmatic Validation
 
-The codebase includes built-in user story format validation that can be used programmatically:
+The codebase includes built-in user story format validation that can be used programmatically. This section provides comprehensive examples for integrating validation into your workflow.
 
 ### Available Functions
 
@@ -555,29 +555,108 @@ The codebase includes built-in user story format validation that can be used pro
 import {
   validateUserStoryFormat,
   validateIdeaWithUserStory,
+  type UserStoryValidationResult,
+  type ValidationError,
 } from '@/lib/validation';
+```
 
-// Validate user story format only
-const result = validateUserStoryFormat(ideaText, { strict: true });
+### Function Signatures
 
-// Validate idea with user story format
-const result = validateIdeaWithUserStory(ideaText, {
-  validateUserStory: true,
-  strictUserStory: true,
+```typescript
+// Validate user story format only (no length checks)
+function validateUserStoryFormat(
+  idea: string,
+  options?: {
+    strict?: boolean;   // Default: true - reject partial/incomplete stories
+    enabled?: boolean;  // Default: from USER_STORY_FORMAT_VALIDATION_ENABLED env
+  }
+): UserStoryValidationResult;
+
+// Validate idea with user story format (includes length checks)
+function validateIdeaWithUserStory(
+  idea: unknown,
+  options?: {
+    validateUserStory?: boolean;  // Default: false
+    strictUserStory?: boolean;    // Default: true
+  }
+): UserStoryValidationResult;
+```
+
+### Usage Examples
+
+#### Basic User Story Validation
+
+```typescript
+// Validate a complete user story
+const result = validateUserStoryFormat(
+  'As a startup founder, I want to create a landing page, So that I can attract customers.',
+  { strict: true, enabled: true }
+);
+
+if (result.valid) {
+  console.log('Persona:', result.persona);     // 'startup founder'
+  console.log('Goal:', result.goal);           // 'to create a landing page'
+  console.log('Benefit:', result.benefit);     // 'I can attract customers.'
+} else {
+  console.log('Errors:', result.errors);
+  console.log('Suggestions:', result.suggestions);
+}
+```
+
+#### Partial Story Detection
+
+```typescript
+// Non-strict mode allows partial stories
+const partialResult = validateUserStoryFormat(
+  'As a developer, I want to see API docs',  // Missing benefit clause
+  { strict: false, enabled: true }
+);
+
+// Result: valid=true, isPartial=true
+console.log('Is partial:', partialResult.isPartial);  // true
+```
+
+#### Integration with Idea Submission
+
+```typescript
+// Validate idea with optional user story enforcement
+const ideaResult = validateIdeaWithUserStory(userInput, {
+  validateUserStory: true,    // Enable user story format check
+  strictUserStory: true,      // Require complete format
 });
+
+if (!ideaResult.valid) {
+  // Handle validation errors
+  const errorMessages = ideaResult.errors.map(e => e.message).join('; ');
+  return { error: errorMessages, suggestions: ideaResult.suggestions };
+}
+
+return {
+  success: true,
+  extracted: {
+    persona: ideaResult.persona,
+    goal: ideaResult.goal,
+    benefit: ideaResult.benefit,
+  },
+};
 ```
 
 ### Validation Result
 
 ```typescript
 interface UserStoryValidationResult {
-  valid: boolean;
-  errors: ValidationError[];
-  persona?: string; // Extracted persona if valid
-  goal?: string; // Extracted goal if valid
-  benefit?: string; // Extracted benefit if valid
-  suggestions?: string[]; // Improvement suggestions
-  isPartial?: boolean; // True if partially matches format
+  valid: boolean;           // Overall validation status
+  errors: ValidationError[]; // Array of validation errors
+  persona?: string;         // Extracted persona if valid (e.g., 'startup founder')
+  goal?: string;            // Extracted goal if valid
+  benefit?: string;         // Extracted benefit if valid
+  suggestions?: string[];   // Improvement suggestions for partial/invalid stories
+  isPartial?: boolean;      // True if story has 'As a... I want...' but missing benefit
+}
+
+interface ValidationError {
+  field: string;            // Field that failed validation
+  message: string;          // Human-readable error message
 }
 ```
 
@@ -585,9 +664,53 @@ interface UserStoryValidationResult {
 
 User story validation is controlled by environment variable:
 
-- `USER_STORY_FORMAT_VALIDATION_ENABLED`: Set to `true` to enable format validation (default: `false` for backward compatibility)
+- `USER_STORY_FORMAT_VALIDATION_ENABLED`: Set to `true` to enable format validation by default (default: `false` for backward compatibility)
 
-The validation uses patterns defined in `src/lib/config/constants.ts` under `USER_STORY_CONFIG`.
+The validation uses patterns defined in `src/lib/config/constants.ts` under `USER_STORY_CONFIG`:
+
+```typescript
+const USER_STORY_CONFIG = {
+  FORMAT_VALIDATION_ENABLED: false, // Default off for backward compatibility
+  KNOWN_PERSONAS: ['startup founder', 'product manager', 'developer'],
+  MIN_LENGTHS: { PERSONA: 3, GOAL: 5, BENEFIT: 5 },
+  PATTERNS: {
+    FULL_STORY: /^As\s+(?:an?\s+)?(.+?),?\s*I\s+want\s+(.+?),?\s*(?:So\s+that|In\s+order\s+to)\s+(.+)$/i,
+    PARTIAL_STORY: /^As\s+(?:an?\s+)?(.+?),?\s*I\s+want\s+/i,
+  },
+  // ... error messages, etc.
+};
+```
+
+### Troubleshooting
+
+#### Common Issues and Solutions
+
+| Issue | Cause | Solution |
+|-------|-------|----------|
+| Story rejected but looks correct | Missing comma or wrong punctuation | Ensure format: `As a [persona], I want [goal], So that [benefit]` |
+| `isPartial=true` with no errors | Missing 'So that' clause | Add benefit: `So that [benefit]` or use `In order to [benefit]` |
+| Persona not recognized | Unknown persona used | Use known personas: startup founder, product manager, developer |
+| Goal/Benefit too short | Content below minimum length | Provide more descriptive goal/benefit (min 5 chars each) |
+| Validation always passes | `enabled: false` by default | Set `USER_STORY_FORMAT_VALIDATION_ENABLED=true` or pass `{ enabled: true }` |
+
+#### Testing User Story Format
+
+```typescript
+// Quick test in development console
+import { validateUserStoryFormat } from '@/lib/validation';
+
+const testStories = [
+  'As a founder, I want x, So that y.',           // Invalid: too short
+  'As a startup founder, I want to build an app, So that I can launch my business.', // Valid
+  'Build me a SaaS product',                     // Invalid: not user story format
+  'As a developer, I want API docs',             // Partial: missing benefit
+];
+
+testStories.forEach(story => {
+  const result = validateUserStoryFormat(story, { enabled: true, strict: true });
+  console.log({ story, valid: result.valid, isPartial: result.isPartial });
+});
+```
 
 ## Related Documentation
 
