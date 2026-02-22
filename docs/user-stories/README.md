@@ -44,10 +44,10 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 ### Issue-to-Story Cross-Reference
 
-| Issue | Title                        | Related Stories                                    | Priority | Status |
-| ----- | ---------------------------- | -------------------------------------------------- | -------- | ------ |
-| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003              | P1       | Open   |
-| #1176 | MVP launch timeline at risk  | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001, All P0 | P1       | Open   |
+| Issue | Title                        | Related Stories                                    | Priority | Status   |
+| ----- | ---------------------------- | -------------------------------------------------- | -------- | -------- |
+| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003              | P1       | Closed   |
+| #1176 | MVP launch timeline at risk  | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001, All P0 | P1       | Open     |
 | #205  | Export functionality         | US-IDEA-001, US-IDEA-002, US-EXPORT-001            | -        | Open   |
 | #219  | Plan generation              | US-IDEA-001, US-IDEA-002, US-EXPORT-001            | -        | Open   |
 | #638  | Idea submission improvements | US-IDEA-001, US-IDEA-002                           | -        | Open   |
@@ -60,8 +60,8 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 | P0 Story         | Title            | Status | Blocking Issues | Ready for Dev |
 | ---------------- | ---------------- | ------ | --------------- | ------------- |
-| US-AUTH-001      | User Signup      | Ready  | #1177           | ✅ Yes        |
-| US-AUTH-002      | User Login       | Ready  | #1177           | ✅ Yes        |
+| US-AUTH-001      | User Signup      | Ready  | -               | ✅ Yes        |
+| US-AUTH-002      | User Login       | Ready  | -               | ✅ Yes        |
 | US-IDEA-001      | Idea Submission  | Ready  | -               | ✅ Yes        |
 | US-IDEA-002      | Idea Dashboard   | Ready  | -               | ✅ Yes        |
 | US-BREAKDOWN-001 | Breakdown Engine | Ready  | -               | ✅ Yes        |
@@ -109,7 +109,7 @@ user-stories/
 | [US-AUTH-002](./authentication/us-auth-002-login.md)          | User Login     | P0       | Ready  | Startup Founder |
 | [US-AUTH-003](./authentication/us-auth-003-password-reset.md) | Password Reset | P1       | Ready  | Startup Founder |
 
-**Related Issues**: #1177, #1176
+**Related Issues**: #1177 (Closed), #1176
 
 ### Idea Management
 
@@ -230,4 +230,4 @@ When adding new user stories:
 
 ---
 
-_Maintained by the User Story Engineer specialist. Last updated: February 21, 2026 (Added US-IDEA-002: Idea Dashboard)._
+_Maintained by the User Story Engineer specialist. Last updated: February 22, 2026 (Updated Issue #1177 status to Closed)._
