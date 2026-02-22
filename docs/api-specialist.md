@@ -134,6 +134,7 @@ All API responses include these headers:
 
 ```http
 X-Request-ID: req_1234567890_abc123
+X-Correlation-ID: corr_abc123def456
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 57
 X-RateLimit-Reset: 2026-02-07T12:05:00Z
@@ -141,6 +142,20 @@ X-Response-Time: 45ms
 X-API-Version: 1.0.0
 Content-Type: application/json
 ```
+
+### Header Descriptions
+
+| Header | Description | Example |
+| ------ | ----------- | ------- |
+| `X-Request-ID` | Unique identifier for each API request | `req_1704625200000_abc123` |
+| `X-Correlation-ID` | Correlation ID for tracing requests across services | `corr_abc123def456` |
+| `X-RateLimit-Limit` | Maximum requests allowed per window | `60` |
+| `X-RateLimit-Remaining` | Requests remaining in current window | `57` |
+| `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit resets | `2026-02-07T12:05:00Z` |
+| `X-Response-Time` | Request processing time in milliseconds | `45ms` |
+| `X-API-Version` | Current API version (semantic versioning) | `1.0.0` |
+
+### Cache Headers
 
 GET endpoints with caching enabled also include:
 
@@ -474,9 +489,27 @@ Before deploying API changes:
 ---
 
 ## Changelog
+### 2026-02-22 - API Response Headers Documentation Enhancement
+
+- **Improvement**: Added comprehensive documentation for API response headers
+- **Changes**:
+  - Added `X-Correlation-ID` header documentation for request tracing across services
+  - Added `X-Response-Time` header documentation for performance monitoring
+  - Added `X-API-Version` header documentation for API version tracking
+  - Created header descriptions table with examples in both `docs/api-specialist.md` and `docs/api.md`
+- **Rationale**:
+  - These headers were being set in `api-handler.ts` but not documented
+  - Improves developer experience by documenting all available response headers
+  - Enables better debugging and monitoring with documented header usage
+- **Location**: `docs/api-specialist.md`, `docs/api.md`
+- **Build**: Passing
+- **Lint**: Passing (0 warnings)
+- **Type-check**: Passing (0 errors)
+- **Documentation**: Updated both API documentation files
+
+---
 
 ### 2026-02-22 - API Handler Helper Functions Deprecation Notices
-
 - **Improvement**: Added JSDoc `@deprecated` notices to legacy helper functions in `api-handler.ts`
 - **Changes**:
   - Added comprehensive JSDoc deprecation notice to `notFoundResponse()` function
@@ -494,6 +527,7 @@ Before deploying API changes:
 - **Lint**: Passing (0 warnings)
 - **Type-check**: Passing (0 errors)
 - **Documentation**: Updated this guide
+---
 
 ---
 
@@ -794,4 +828,4 @@ For API-related issues:
 
 ---
 
-_This documentation is maintained by the API Specialist. Last updated: 2026-02-19_
+_This documentation is maintained by the API Specialist. Last updated: 2026-02-22_
