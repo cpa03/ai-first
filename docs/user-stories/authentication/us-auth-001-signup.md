@@ -2,13 +2,13 @@
 
 ## Story Metadata
 
-- **Story ID**: US-AUTH-001
-- **Title**: User Signup with Email Verification
-- **Priority**: P0 (Must Have)
-- **Story Points**: 3
-- **Epic**: Authentication Flow
-- **Sprint**: Phase 1 MVP
-- **Related Issues**: #1177 (Closed), #1176
+ **Story ID**: US-AUTH-001
+ **Title**: User Signup with Email Verification
+ **Status**: Done ✅
+ **Implementation**: 100%
+ **Priority**: P0 (Must Have)
+ **Story Points**: 3
+ **Epic**: Authentication Flow
 
 ## User Story
 
@@ -64,13 +64,13 @@ And the account should not be created
 
 ### Checklist
 
-- [ ] Signup form with email and password fields
-- [ ] Password strength validation (min 8 chars, uppercase, lowercase, number, special char)
-- [ ] Email format validation
-- [ ] Duplicate email detection
-- [ ] Verification email sent via Supabase Auth
-- [ ] Success/error toast notifications
-- [ ] Redirect to login after verification
+ [x] Signup form with email and password fields
+ [x] Password strength validation (min 8 chars, uppercase, lowercase, number, special char)
+ [x] Email format validation
+ [x] Duplicate email detection
+ [x] Verification email sent via Supabase Auth
+ [x] Success/error toast notifications
+ [x] Redirect to login after verification
 
 ## Technical Requirements
 
@@ -148,10 +148,12 @@ And the account should not be created
 
 ## History
 
-| Date       | Action        | Author              |
-| ---------- | ------------- | ------------------- |
-| 2026-02-19 | Story created | User Story Engineer |
+| Date       | Action                      | Author              |
+| ---------- | --------------------------- | ------------------- |
+| 2026-02-19 | Story created               | User Story Engineer |
 
 ---
 
 _This user story follows the [User Story Engineer Guide](../../user-story-engineer.md) best practices._
+
+| 2026-02-22 | Status updated to Done (100%) | User Story Engineer |
