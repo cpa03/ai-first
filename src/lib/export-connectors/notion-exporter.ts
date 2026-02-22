@@ -118,6 +118,45 @@ export class NotionExporter extends ExportConnector {
     }
   }
 
+  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+    const startTime = Date.now();
+    const checkedAt = new Date().toISOString();
+
+    try {
+      const apiKey = process.env.NOTION_API_KEY;
+      if (!apiKey) {
+        return {
+          available: false,
+          error: 'Notion API key not configured',
+          checkedAt,
+        };
+      }
+
+      // Use a lightweight API call to check service availability
+      const { Client } = await import('@notionhq/client');
+      const client = new Client({ auth: apiKey });
+
+      // Make a minimal request to verify the service is reachable
+      await client.users.me({});
+
+      const latencyMs = Date.now() - startTime;
+
+      return {
+        available: true,
+        latencyMs,
+        checkedAt,
+      };
+    } catch (error) {
+      const latencyMs = Date.now() - startTime;
+      return {
+        available: false,
+        latencyMs,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        checkedAt,
+      };
+    }
+  }
+
   private buildNotionBlocks(
     idea: ExportData['idea'],
     deliverables: ExportData['deliverables'] = [],

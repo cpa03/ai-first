@@ -204,4 +204,84 @@ export class Cache<T = unknown> {
   get size(): number {
     return this.cache.size;
   }
+
+  /**
+   * Get health status for observability and monitoring.
+   * Provides detailed metrics about cache health for reliability monitoring.
+   *
+   * A cache is considered "healthy" if:
+   * - It's not at capacity (>80% full is a warning, >95% is critical)
+   * - Hit rate is above 50% (configurable threshold)
+   *
+   * @returns Health status object with metrics and status
+   */
+  getHealthStatus(): {
+    status: 'healthy' | 'warning' | 'critical';
+    size: number;
+    maxSize: number | undefined;
+    utilizationPercent: number;
+    hitRate: number;
+    oldestEntryAge: number | null;
+    ttl: number | undefined;
+    recommendation?: string;
+  } {
+    const stats = this.getStats();
+    const utilizationPercent = this.maxSize
+      ? (stats.size / this.maxSize) * 100
+      : 0;
+
+    // Calculate age of oldest entry
+    let oldestEntryAge: number | null = null;
+    for (const entry of this.cache.values()) {
+      const age = Date.now() - entry.timestamp;
+      if (oldestEntryAge === null || age > oldestEntryAge) {
+        oldestEntryAge = age;
+      }
+    }
+
+    // Determine health status based on utilization and hit rate
+    let status: 'healthy' | 'warning' | 'critical' = 'healthy';
+    const recommendations: string[] = [];
+
+    // Check utilization thresholds
+    if (utilizationPercent >= 95) {
+      status = 'critical';
+      recommendations.push(
+        'Cache is nearly full. Consider increasing maxSize or reducing TTL.'
+      );
+    } else if (utilizationPercent >= 80) {
+      status = 'warning';
+      recommendations.push(
+        'Cache is approaching capacity. Monitor for evictions.'
+      );
+    }
+
+    // Check hit rate (only if we have enough requests)
+    const totalRequests = stats.hits + stats.misses;
+    if (totalRequests >= 100 && stats.hitRate < 0.5) {
+      if (status === 'healthy') {
+        status = 'warning';
+      }
+      recommendations.push('Low hit rate detected. Review caching strategy.');
+    }
+
+    // Check TTL expiration status
+    if (this.ttl && oldestEntryAge !== null && oldestEntryAge > this.ttl) {
+      recommendations.push(
+        'Some entries may be stale. Consider proactive cleanup.'
+      );
+    }
+
+    return {
+      status,
+      size: stats.size,
+      maxSize: this.maxSize,
+      utilizationPercent: Math.round(utilizationPercent * 100) / 100,
+      hitRate: Math.round(stats.hitRate * 10000) / 10000,
+      oldestEntryAge,
+      ttl: this.ttl,
+      recommendation:
+        recommendations.length > 0 ? recommendations.join(' ') : undefined,
+    };
+  }
 }

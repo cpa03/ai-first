@@ -9,6 +9,21 @@ import {
 import { requireAuth } from '@/lib/auth';
 import { APP_CONFIG, STATUS_CODES } from '@/lib/config';
 
+/**
+ * GET /api/ideas
+ *
+ * Retrieves paginated ideas for the authenticated user.
+ * Uses database-level pagination and filtering for optimal performance.
+ *
+ * Query Parameters:
+ * - status: Filter by status ('draft', 'clarified', 'breakdown', 'completed', 'all')
+ * - limit: Number of items per page (default: from APP_CONFIG)
+ * - page: Page number (1-indexed, default: 1)
+ *
+ * PERFORMANCE: This endpoint now uses database-level pagination instead of
+ * in-memory filtering, reducing memory usage and improving response times
+ * for users with many ideas.
+ */
 async function handleGet(context: ApiContext) {
   const { request, rateLimit } = context;
   const url = new URL(request.url);
@@ -19,33 +34,29 @@ async function handleGet(context: ApiContext) {
       String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT),
     10
   );
-  const offset = parseInt(
-    url.searchParams.get('offset') ||
-      String(APP_CONFIG.PAGINATION.DEFAULT_OFFSET),
-    10
-  );
+  const page = parseInt(url.searchParams.get('page') || '1', 10);
 
   // Authenticate user
   const user = await requireAuth(request);
   const userId = user.id;
 
-  let ideas = await dbService.getUserIdeas(userId);
-
-  if (status && status !== 'all') {
-    ideas = ideas.filter((idea) => idea.status === status);
-  }
-
-  ideas = ideas.filter((idea) => !idea.deleted_at);
-
-  ideas.sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  // Use database-level pagination and filtering for better performance
+  // This avoids fetching all ideas and filtering in-memory
+  const result = await dbService.getUserIdeasPaginated(
+    userId,
+    { page, pageSize: limit },
+    {
+      status: status as
+        | 'draft'
+        | 'clarified'
+        | 'breakdown'
+        | 'completed'
+        | 'all'
+        | undefined,
+    }
   );
 
-  const total = ideas.length;
-  const paginatedIdeas = ideas.slice(offset, offset + limit);
-
-  const formattedIdeas = paginatedIdeas.map((idea) => ({
+  const formattedIdeas = result.data.map((idea) => ({
     id: idea.id,
     title: idea.title,
     status: idea.status,
@@ -57,10 +68,10 @@ async function handleGet(context: ApiContext) {
     {
       ideas: formattedIdeas,
       pagination: {
-        total,
-        limit,
-        offset,
-        hasMore: offset + limit < total,
+        total: result.total,
+        page: result.page,
+        limit: result.pageSize,
+        hasMore: result.hasMore,
       },
     },
     context.requestId,
@@ -69,6 +80,11 @@ async function handleGet(context: ApiContext) {
   );
 }
 
+/**
+ * POST /api/ideas
+ *
+ * Creates a new idea for the authenticated user.
+ */
 async function handlePost(context: ApiContext) {
   const { request } = context;
   const { idea } = await request.json();

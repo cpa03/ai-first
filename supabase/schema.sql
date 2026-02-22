@@ -695,6 +695,8 @@ CREATE INDEX idx_deliverables_priority ON deliverables(priority DESC);
 CREATE INDEX idx_deliverables_idea_priority ON deliverables(idea_id, priority DESC);
 CREATE INDEX idx_deliverables_deleted_at ON deliverables(deleted_at);
 CREATE INDEX idx_deliverables_milestone_id ON deliverables(milestone_id);
+CREATE INDEX idx_deliverables_idea_deleted_priority ON deliverables(idea_id, deleted_at, priority DESC);
+CREATE INDEX idx_deliverables_idea_milestone_priority ON deliverables(idea_id, milestone_id, priority DESC) WHERE deleted_at IS NULL;
 
 CREATE INDEX idx_tasks_deliverable_id ON tasks(deliverable_id);
 CREATE INDEX idx_tasks_status ON tasks(status);
