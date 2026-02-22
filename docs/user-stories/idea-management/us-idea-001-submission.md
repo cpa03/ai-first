@@ -3,6 +3,7 @@
 ## Story Metadata
 
 - **Story ID**: US-IDEA-001
+- **Status**: In Progress (85%)
 - **Title**: Idea Submission with Clarification
 - **Priority**: P0 (Must Have)
 - **Story Points**: 5

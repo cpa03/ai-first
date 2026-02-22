@@ -3,6 +3,7 @@
 ## Story Metadata
 
 - **Story ID**: US-EXPORT-001
+- **Status**: Ready
 - **Title**: Export Plan to Markdown Format
 - **Priority**: P1 (Should Have)
 - **Story Points**: 3

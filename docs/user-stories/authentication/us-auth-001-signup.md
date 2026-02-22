@@ -2,13 +2,13 @@
 
 ## Story Metadata
 
- **Story ID**: US-AUTH-001
- **Title**: User Signup with Email Verification
- **Status**: Done ✅
- **Implementation**: 100%
- **Priority**: P0 (Must Have)
- **Story Points**: 3
- **Epic**: Authentication Flow
+- **Story ID**: US-AUTH-001
+- **Title**: User Signup with Email Verification
+- **Status**: Done ✅
+- **Implementation**: 100%
+- **Priority**: P0 (Must Have)
+- **Story Points**: 3
+- **Epic**: Authentication Flow
 
 ## User Story
 

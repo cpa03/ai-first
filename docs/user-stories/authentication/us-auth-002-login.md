@@ -2,10 +2,12 @@
 
 ## Story Metadata
 
- **Story ID**: US-AUTH-002
- **Title**: User Login with Error Handling
- **Status**: Done ✅
- **Implementation**: 100%
+- **Story ID**: US-AUTH-002
+- **Title**: User Login with Error Handling
+- **Status**: Done ✅
+- **Implementation**: 100%
+- **Priority**: P0 (Must Have)
+- **Story Points**: 2
 - **Epic**: Authentication Flow
 - **Sprint**: Phase 1 MVP
 - **Related Issues**: #1177 (Closed), #1176
