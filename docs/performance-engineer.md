@@ -290,6 +290,12 @@ npm install eslint-plugin-react-hooks@latest --save-dev
     - **File**: `src/components/GlobalErrorHandler.tsx`
     - **Impact**: Prevents re-renders of error handler component
 
+19. **Added**: Bundle size budgets for CI enforcement (Issue #1001)
+    - **Problem**: No bundle size limits defined, allowing uncontrolled bundle growth
+    - **Solution**: Added `bundlesize` configuration to package.json with budgets for JS chunks (500 kB max) and CSS (100 kB max)
+    - **File**: `package.json`
+    - **Impact**: Prevents bundle size regressions, enforces performance budgets in CI
+
 ### Verified Issues (Already Resolved)
 
 The following issues from the performance audit (#962) have been verified as resolved:
