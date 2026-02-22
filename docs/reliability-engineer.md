@@ -338,6 +338,65 @@ Coverage:    >85%
 - ✅ Timeout management and cleanup
 - ✅ Resource cleanup utilities
 
+## Issue #949: Production Logging Resolution
+
+**Status:** ✅ RESOLVED
+
+**Original Issue:** PR #936 introduced console log suppression in production via `next.config.js`:
+
+```javascript
+compiler: {
+  removeConsole: production ? { exclude: ['error', 'warn'] } : false
+}
+```
+
+**Concern:** This configuration removes `console.log`, `console.info`, and `console.debug` in production, potentially obscuring critical debugging information.
+
+**Resolution Implemented:**
+
+The `src/lib/logger.ts` now handles this by:
+
+1. **Using `console.error` for ALL production logs** - Since `console.error` and `console.warn` are excluded from removal, all log output is directed through `console.error` in production environments.
+
+2. **Preserving log level information** - The JSON output includes a `level` field (`DEBUG`, `INFO`, `WARN`, `ERROR`) so log aggregators can properly categorize messages.
+
+---
+
+## Pending: CI/CD Workflow Reliability (Issue #1170, #1609)
+
+**Status:** ⏳ READY TO APPLY (Blocked by workflow permission)
+
+**Issue:** The `continue-on-error: true` directive in workflow files hides failures:
+
+| File | Affected Steps |
+|------|----------------|
+| `.github/workflows/iterate.yml` | Install Node.js, Install Dependencies, Main execution (15 instances) |
+| `.github/workflows/parallel.yml` | Multiple setup steps |
+| `.github/workflows/on-pull.yml` | Checkout, Setup Node.js |
+
+**Impact:** Failures in setup steps are silently ignored, making CI/CD unreliable and hiding actual build/deployment issues.
+
+**Prepared Solution (Issue #1609):**
+
+A composite action `.github/actions/workflow-setup/action.yml` exists and can replace duplicated setup steps:
+
+```yaml
+- name: Workflow Setup
+  uses: ./.github/actions/workflow-setup
+  with:
+    node-version: '20'
+    install-opencode: 'true'
+```
+
+**Benefits:**
+- ✅ Removes `continue-on-error: true` for proper error propagation
+- ✅ Reduces ~120 lines of duplicated code
+- ✅ Centralizes setup logic for easier maintenance
+- ✅ Consistent setup across all workflows
+
+**Action Required:**
+A maintainer with `workflows` write permission needs to apply these changes from the prepared branches.
+
 ---
 
 ## Build and Lint Status
