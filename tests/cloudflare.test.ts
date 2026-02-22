@@ -1325,3 +1325,88 @@ describe('KV_CACHE_OPTIONS', () => {
     expect(KV_CACHE_OPTIONS.IMMUTABLE.ttl).toBe(CF_CACHE_TTL.IMMUTABLE);
   });
 });
+
+describe('CloudflareKV error logging', () => {
+  it('should call onError callback when get operation fails', async () => {
+    const kv = createMockKVNamespace();
+    const errorHandler = jest.fn();
+    const cache = new CloudflareKV(kv, { onError: errorHandler });
+
+    // Force an error by making the KV get throw
+    (kv.get as jest.Mock).mockRejectedValueOnce(new Error('KV error'));
+
+    const result = await cache.get('test-key');
+
+    expect(result).toBeNull();
+    expect(errorHandler).toHaveBeenCalledWith(
+      expect.any(Error),
+      'get',
+      'test-key'
+    );
+  });
+
+  it('should call onError callback when set operation fails', async () => {
+    const kv = createMockKVNamespace();
+    const errorHandler = jest.fn();
+    const cache = new CloudflareKV(kv, { onError: errorHandler });
+
+    // Force an error by making the KV put throw
+    (kv.put as jest.Mock).mockRejectedValueOnce(new Error('KV write error'));
+
+    const result = await cache.set('test-key', { foo: 'bar' });
+
+    expect(result).toBe(false);
+    expect(errorHandler).toHaveBeenCalledWith(
+      expect.any(Error),
+      'set',
+      'test-key'
+    );
+  });
+
+  it('should not call onError when no callback provided', async () => {
+    const kv = createMockKVNamespace();
+    const cache = new CloudflareKV(kv);
+
+    // Force an error
+    (kv.get as jest.Mock).mockRejectedValueOnce(new Error('KV error'));
+
+    // Should not throw
+    const result = await cache.get('test-key');
+    expect(result).toBeNull();
+  });
+
+  it('should call onError for delete operation', async () => {
+    const kv = createMockKVNamespace();
+    const errorHandler = jest.fn();
+    const cache = new CloudflareKV(kv, { onError: errorHandler });
+
+    (kv.delete as jest.Mock).mockRejectedValueOnce(new Error('Delete error'));
+
+    const result = await cache.delete('test-key');
+
+    expect(result).toBe(false);
+    expect(errorHandler).toHaveBeenCalledWith(
+      expect.any(Error),
+      'delete',
+      'test-key'
+    );
+  });
+
+  it('should handle non-Error objects in catch block', async () => {
+    const kv = createMockKVNamespace();
+    const errorHandler = jest.fn();
+    const cache = new CloudflareKV(kv, { onError: errorHandler });
+
+    // Force a non-Error rejection
+    (kv.get as jest.Mock).mockRejectedValueOnce('string error');
+
+    const result = await cache.get('test-key');
+
+    expect(result).toBeNull();
+    expect(errorHandler).toHaveBeenCalledWith(
+      expect.any(Error),
+      'get',
+      'test-key'
+    );
+  });
+});

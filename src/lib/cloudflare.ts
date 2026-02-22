@@ -868,18 +868,24 @@ export function detectBot(request: Request): BotDetectionResult {
 export class CloudflareKV {
   private kv: KVNamespace | null;
   private prefix: string;
+  private onError?: (error: Error, operation: string, key: string) => void;
 
   /**
    * Create a new CloudflareKV instance
    * @param kv - KV namespace binding (can be null in non-edge environments)
    * @param options - Configuration options
+   * @param options.prefix - Optional key prefix for namespace isolation
+   * @param options.onError - Optional callback for logging KV operation errors.
+   *   Useful for production debugging and observability. Errors are caught and logged,
+   *   but do not break the application (graceful degradation).
    */
   constructor(
     kv: KVNamespace | undefined | null,
-    options?: { prefix?: string }
+    options?: { prefix?: string; onError?: (error: Error, operation: string, key: string) => void }
   ) {
     this.kv = kv ?? null;
     this.prefix = options?.prefix ?? '';
+    this.onError = options?.onError;
   }
 
   /**
@@ -910,8 +916,9 @@ export class CloudflareKV {
     try {
       const value = await this.kv.get(this.buildKey(key), 'json');
       return value as T | null;
-    } catch {
+    } catch (error) {
       // KV errors should not break the application
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'get', key);
       return null;
     }
   }
@@ -928,7 +935,8 @@ export class CloudflareKV {
 
     try {
       return await this.kv.get(this.buildKey(key), 'text');
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'getText', key);
       return null;
     }
   }
@@ -945,7 +953,8 @@ export class CloudflareKV {
 
     try {
       return await this.kv.get(this.buildKey(key), 'arrayBuffer');
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'getArrayBuffer', key);
       return null;
     }
   }
@@ -989,7 +998,8 @@ export class CloudflareKV {
 
       await this.kv.put(this.buildKey(key), JSON.stringify(value), kvOptions);
       return true;
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'set', key);
       return false;
     }
   }
@@ -1026,7 +1036,8 @@ export class CloudflareKV {
 
       await this.kv.put(this.buildKey(key), value, kvOptions);
       return true;
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'setText', key);
       return false;
     }
   }
@@ -1043,7 +1054,8 @@ export class CloudflareKV {
     try {
       await this.kv.delete(this.buildKey(key));
       return true;
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'delete', key);
       return false;
     }
   }
@@ -1060,7 +1072,8 @@ export class CloudflareKV {
     try {
       const metadata = await this.kv.getWithMetadata(this.buildKey(key));
       return metadata.value !== null;
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'exists', key);
       return false;
     }
   }
@@ -1096,7 +1109,8 @@ export class CloudflareKV {
         value: result.value,
         metadata: result.metadata,
       };
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'getWithMetadata', key);
       return { value: null, metadata: null };
     }
   }
@@ -1163,7 +1177,8 @@ export class CloudflareKV {
         })),
         cursor: result.list_complete ? undefined : result.cursor,
       };
-    } catch {
+    } catch (error) {
+      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'list', options?.prefix ?? '');
       return null;
     }
   }
@@ -1180,7 +1195,7 @@ export class CloudflareKV {
 export function createKVCache(
   env: Record<string, unknown> | undefined,
   bindingName: string = 'CACHE_KV',
-  options?: { prefix?: string }
+  options?: { prefix?: string; onError?: (error: Error, operation: string, key: string) => void }
 ): CloudflareKV {
   const kv = env?.[bindingName] as KVNamespace | undefined;
   return new CloudflareKV(kv, options);
