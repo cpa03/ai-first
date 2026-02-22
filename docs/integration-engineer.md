@@ -954,6 +954,57 @@ This workflow addresses the dependency security scanning recommendation:
 - ✅ Secret pattern detection
 - ✅ Weekly scheduled scans
 
+## External Service Health Monitoring
+
+### 2026-02-22: Service Health Check Interface
+
+**Issue:** Missing proactive external service health monitoring (Issue #874)
+
+**Solution:** Added `checkServiceHealth()` optional method to `ExportConnector` base class:
+
+```typescript
+export interface ServiceHealthResult {
+  /** Whether the service is reachable and responding */
+  available: boolean;
+  /** Response latency in milliseconds */
+  latencyMs?: number;
+  /** Error message if service is unavailable */
+  error?: string;
+  /** Timestamp when the check was performed */
+  checkedAt: string;
+}
+
+abstract class ExportConnector {
+  // Optional method to check external service health/availability
+  async checkServiceHealth?(): Promise<ServiceHealthResult | null>;
+}
+```
+
+**Implementation:**
+
+- `NotionExporter` implements `checkServiceHealth()` as reference implementation
+- `ExportManager.getConnectorsHealth()` now includes `serviceHealth` in response
+- The `/api/health/integrations` endpoint exposes this information
+
+**Benefits:**
+
+- Proactive detection of external service issues
+- Latency monitoring for each service
+- Early warning before exports fail
+- Integration with existing health monitoring infrastructure
+
+**Usage Example:**
+
+```typescript
+// In health endpoint or monitoring
+const health = await exportManager.getConnectorsHealth();
+const notionHealth = health['notion']?.serviceHealth;
+
+if (notionHealth && !notionHealth.available) {
+  logger.warn(`Notion service unavailable: ${notionHealth.error}`);
+}
+```
+
 ## References
 
 - [Integration Hardening](./integration-hardening.md) - Detailed resilience patterns

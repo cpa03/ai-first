@@ -3,6 +3,7 @@ import {
   ExportResult,
   ExportFormat,
   ExportData,
+  ServiceHealthResult,
 } from './base';
 import {
   JSONExporter,
@@ -134,6 +135,7 @@ export class ExportManager {
         isExternal: boolean;
         lastChecked: string;
         error?: string;
+        serviceHealth?: ServiceHealthResult | null;
       }
     >
   > {
@@ -145,18 +147,22 @@ export class ExportManager {
         isExternal: boolean;
         lastChecked: string;
         error?: string;
+        serviceHealth?: ServiceHealthResult | null;
       }
+
     > = {};
 
     for (const [type, connector] of this.connectors.entries()) {
       try {
         const isValid = await connector.validateConfig();
+        const serviceHealth = connector.checkServiceHealth ? await connector.checkServiceHealth() : null;
         results[type] = {
           name: connector.name,
           configured: isValid,
           isExternal:
             ExportManager.EXTERNAL_CONNECTORS_REQUIRING_API_ACCESS.has(type),
           lastChecked: new Date().toISOString(),
+          serviceHealth,
         };
       } catch (error) {
         results[type] = {
