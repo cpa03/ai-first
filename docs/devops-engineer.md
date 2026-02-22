@@ -168,6 +168,57 @@ This guide provides comprehensive information for DevOps engineers working on th
 3. **Retry Logic**: 3 attempts with 30-second intervals
 4. **Error Handling**: `continue-on-error: true` for non-critical steps
 
+### Composite Action: Workflow Setup
+
+A reusable composite action is available at `.github/actions/workflow-setup/action.yml` to standardize workflow setup across all CI/CD jobs.
+
+**Features:**
+- Git configuration with actor identity
+- Node.js setup with npm caching
+- OpenCode CLI installation with caching
+- Configurable via inputs
+
+**Usage:**
+
+```yaml
+jobs:
+  example-job:
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Workflow Setup
+        uses: ./.github/actions/workflow-setup
+        with:
+          node-version: '20'
+          install-opencode: 'true'
+          cache-opencode: 'true'
+          cache-npm: 'true'
+          skip-npm-ci: 'false'
+```
+
+**Inputs:**
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `node-version` | `'20'` | Node.js version |
+| `install-opencode` | `'true'` | Install OpenCode CLI |
+| `opencode-version` | `'latest'` | OpenCode CLI version |
+| `opencode-install-url` | `'https://opencode.ai/install'` | Installation URL (configurable) |
+| `cache-opencode` | `'true'` | Cache OpenCode CLI |
+| `cache-npm` | `'true'` | Cache npm dependencies |
+| `skip-npm-ci` | `'false'` | Skip npm ci |
+
+**Benefits:**
+- Reduces code duplication across workflows
+- Centralizes configuration for easier maintenance
+- Makes OpenCode CLI URL configurable (addresses Issue #864)
+- Improves workflow reliability (addresses Issue #1170)
+
 ### Build Verification
 
 **Required Checks Before Deployment:**
