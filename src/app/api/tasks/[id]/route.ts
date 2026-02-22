@@ -1,12 +1,10 @@
 import {
   withApiHandler,
   standardSuccessResponse,
-  notFoundResponse,
-  badRequestResponse,
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService, Task } from '@/lib/db';
-import { AppError, ErrorCode } from '@/lib/errors';
+import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TASK_CONFIG } from '@/lib/config';
@@ -36,34 +34,46 @@ async function handlePut(context: ApiContext) {
   const taskId = segments.at(-1);
 
   if (!taskId) {
-    return badRequestResponse('Task ID is required');
+    throw new ValidationError([
+      { field: 'taskId', message: 'Task ID is required' },
+    ]);
   }
 
   let body: TaskUpdateBody;
   try {
     body = await request.json();
   } catch {
-    return badRequestResponse('Invalid JSON body');
+    throw new ValidationError([
+      { field: 'body', message: 'Invalid JSON body' },
+    ]);
   }
 
   // Validate status if provided
   if (body.status && !VALID_STATUSES.includes(body.status as TaskStatus)) {
-    return badRequestResponse(
-      `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`
-    );
+    throw new ValidationError([
+      {
+        field: 'status',
+        message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+      },
+    ]);
   }
 
   // Validate risk_level if provided
   if (body.risk_level && !VALID_RISK_LEVELS.includes(body.risk_level)) {
-    return badRequestResponse(
-      `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`
-    );
+    throw new ValidationError([
+      {
+        field: 'risk_level',
+        message: `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`,
+      },
+    ]);
   }
 
   // Validate estimate if provided
   if (body.estimate !== undefined) {
     if (typeof body.estimate !== 'number' || body.estimate < 0) {
-      return badRequestResponse('Estimate must be a positive number');
+      throw new ValidationError([
+        { field: 'estimate', message: 'Estimate must be a positive number' },
+      ]);
     }
   }
 
@@ -74,9 +84,12 @@ async function handlePut(context: ApiContext) {
       body.completion_percentage < TASK_CONFIG.COMPLETION.MIN ||
       body.completion_percentage > TASK_CONFIG.COMPLETION.MAX
     ) {
-      return badRequestResponse(
-        API_ERROR_MESSAGES.VALIDATION.COMPLETION_PERCENTAGE_RANGE
-      );
+      throw new ValidationError([
+        {
+          field: 'completion_percentage',
+          message: API_ERROR_MESSAGES.VALIDATION.COMPLETION_PERCENTAGE_RANGE,
+        },
+      ]);
     }
   }
 
@@ -88,7 +101,11 @@ async function handlePut(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      return notFoundResponse('Task not found');
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.TASK,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     // Verify ownership
@@ -146,7 +163,9 @@ async function handleDelete(context: ApiContext) {
   const taskId = segments.at(-1);
 
   if (!taskId) {
-    return badRequestResponse('Task ID is required');
+    throw new ValidationError([
+      { field: 'taskId', message: 'Task ID is required' },
+    ]);
   }
 
   try {
@@ -157,7 +176,11 @@ async function handleDelete(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      return notFoundResponse('Task not found');
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.TASK,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     // Verify ownership
@@ -191,7 +214,9 @@ async function handleGet(context: ApiContext) {
   const taskId = segments.at(-1);
 
   if (!taskId) {
-    return badRequestResponse('Task ID is required');
+    throw new ValidationError([
+      { field: 'taskId', message: 'Task ID is required' },
+    ]);
   }
 
   try {
@@ -202,7 +227,11 @@ async function handleGet(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      return notFoundResponse('Task not found');
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.TASK,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     // Verify ownership

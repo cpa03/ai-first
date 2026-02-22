@@ -475,6 +475,27 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-22 - Tasks API Error Handling Standardization
+
+- **Fix**: Standardized error handling in Tasks API endpoints
+- **Changes**:
+  - Replaced `badRequestResponse()` helper with `throw new ValidationError()` for consistent validation error responses
+  - Replaced `notFoundResponse()` helper with `throw new AppError(..., ErrorCode.NOT_FOUND, 404)` for consistent 404 handling
+  - Removed unused imports (`badRequestResponse`, `notFoundResponse`) from `api-handler`
+  - Added `ValidationError` import from `errors` module
+- **Affected Files**:
+  - `src/app/api/tasks/[id]/route.ts` - GET, PUT, DELETE handlers
+  - `src/app/api/tasks/[id]/status/route.ts` - PATCH handler
+  - `src/app/api/ideas/[id]/tasks/route.ts` - GET handler
+- **Impact**: All API routes now consistently use `AppError` subclasses for error handling, ensuring unified error response format with `error`, `code`, `fingerprint`, `details`, `timestamp`, `requestId`, `retryable`, and `suggestions` fields
+- **Build**: Passing
+- **Lint**: Passing (0 warnings)
+- **Type-check**: Passing (0 errors)
+- **Tests**: 1296 passing
+- **Documentation**: Updated this guide
+
+### 2026-02-21 - Deliverables API Error Handling Standardization
+
 ### 2026-02-21 - Deliverables API Error Handling Standardization
 
 - **Fix**: Standardized error handling in `/api/deliverables/[id]/tasks` endpoint

@@ -1,7 +1,6 @@
 import {
   withApiHandler,
   standardSuccessResponse,
-  notFoundResponse,
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
@@ -31,7 +30,11 @@ async function handleGet(context: ApiContext) {
     // Verify idea exists and user owns it
     const idea = await dbService.getIdea(ideaId);
     if (!idea) {
-      return notFoundResponse('Idea not found');
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.IDEA,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     verifyResourceOwnership(user.id, idea.user_id, 'idea');
@@ -40,7 +43,11 @@ async function handleGet(context: ApiContext) {
       await dbService.getIdeaDeliverablesWithTasks(ideaId);
 
     if (!deliverablesWithTasks || deliverablesWithTasks.length === 0) {
-      return notFoundResponse('No deliverables found for this idea');
+      throw new AppError(
+        'No deliverables found for this idea',
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     // PERFORMANCE: Use a single pass over deliverables and tasks to calculate all stats
