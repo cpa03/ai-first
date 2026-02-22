@@ -154,6 +154,7 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 | 2026-02-22 | Security Audit Event Logging Added            | ✅ Implemented   | Added SecurityAuditLog module for structured security event logging |
 | 2026-02-22 | Cryptographic ID Generation Hardening        | ✅ Implemented   | Replaced Math.random() with crypto.randomUUID() for export and idea IDs |
 | 2026-02-22 | Attack Pattern Detection Enhanced            | ✅ Implemented   | Added NoSQL injection, prototype pollution, and Log4j-style attack patterns |
+| 2026-02-22 | Rate Limit Security Audit Logging            | ✅ Implemented   | Added SecurityAuditLog for rate limit violations in API handler |
 
 ## Current npm Audit Status (2026-02-18)
 
