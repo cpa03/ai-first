@@ -446,7 +446,12 @@ export default function DashboardPage() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-modal-title"
+          aria-describedby="delete-modal-description"
           onClick={(e) => {
+            if (e.target === e.currentTarget) closeDeleteModal();
+          }}
+          onTouchEnd={(e) => {
+            // Mobile touch support - close modal when tapping backdrop
             if (e.target === e.currentTarget) closeDeleteModal();
           }}
         >
@@ -476,7 +481,7 @@ export default function DashboardPage() {
               </h3>
             </div>
 
-            <p className="text-gray-600 mb-6">
+            <p id="delete-modal-description" className="text-gray-600 mb-6">
               Are you sure you want to delete &quot;{deleteModal.idea.title}
               &quot;? This action cannot be undone.
             </p>
