@@ -777,6 +777,9 @@ CREATE INDEX idx_risk_assessments_status_risk_score ON risk_assessments(status, 
 
 -- Composite index for analytics: user_id + deleted_at + status
 CREATE INDEX idx_ideas_user_deleted_status ON ideas(user_id, deleted_at, status);
+-- Composite index for ideas pagination: user_id + deleted_at + created_at DESC
+-- Optimizes getUserIdeasPaginated() and getUserIdeas() queries
+CREATE INDEX idx_ideas_user_deleted_created ON ideas(user_id, deleted_at, created_at DESC);
 
 -- Composite index for deliverables analytics: idea_id + deleted_at
 CREATE INDEX idx_deliverables_idea_deleted ON deliverables(idea_id, deleted_at);
