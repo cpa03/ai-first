@@ -69,9 +69,17 @@ export const MOCK_SECRETS = {
   /** Mock password for testing */
   PASSWORD: 'MOCK_TEST_PASSWORD_NOT_REAL_123!',
 
+
   /** Generic mock API key for testing */
   API_KEY: 'MOCK_TEST_API_KEY_NOT_REAL',
+
+  /** Mock Notion parent page ID for testing */
+  NOTION_PARENT_PAGE_ID: 'MOCK_TEST_NOTION_PAGE_ID_NOT_REAL',
+
+  /** Mock Supabase service role key with minimum length for validation tests */
+  SUPABASE_SERVICE_ROLE_KEY_MIN_LENGTH: 'MOCK_TEST_SUPABASE_SERVICE_KEY_MIN_LENGTH_32_CHARS',
 } as const;
+
 
 /**
  * Helper to set mock environment variables for a test

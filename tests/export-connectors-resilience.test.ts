@@ -27,7 +27,7 @@ describe('Export Connector Resilience Integration', () => {
       mockResilienceManager.execute = mockExecute;
 
       process.env.NOTION_API_KEY = TEST_NOTION_API_KEY;
-      process.env.NOTION_PARENT_PAGE_ID = 'test-page-id';
+      process.env.NOTION_PARENT_PAGE_ID = MOCK_SECRETS.NOTION_PARENT_PAGE_ID;
     });
 
     afterEach(() => {
