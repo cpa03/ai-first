@@ -475,6 +475,28 @@ Before deploying API changes:
 
 ## Changelog
 
+### 2026-02-22 - API Handler Helper Functions Deprecation Notices
+
+- **Improvement**: Added JSDoc `@deprecated` notices to legacy helper functions in `api-handler.ts`
+- **Changes**:
+  - Added comprehensive JSDoc deprecation notice to `notFoundResponse()` function
+  - Added comprehensive JSDoc deprecation notice to `badRequestResponse()` function
+  - Both functions now include `@example` showing recommended `AppError`/`ValidationError` usage
+- **Rationale**:
+  - Guides developers toward consistent error handling patterns
+  - Documents the recommended approach inline with the code
+  - IDEs will show deprecation warnings when these functions are used
+- **Recommended Migration**:
+  - `notFoundResponse('msg')` → `throw new AppError('msg', ErrorCode.NOT_FOUND, 404)`
+  - `badRequestResponse('msg', details)` → `throw new ValidationError(details)`
+- **Location**: `src/lib/api-handler.ts`
+- **Build**: Passing
+- **Lint**: Passing (0 warnings)
+- **Type-check**: Passing (0 errors)
+- **Documentation**: Updated this guide
+
+---
+
 ### 2026-02-22 - Tasks API Error Handling Standardization
 
 - **Fix**: Standardized error handling in Tasks API endpoints

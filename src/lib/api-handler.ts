@@ -226,6 +226,24 @@ export function successResponse<T>(
   return response;
 }
 
+/**
+ * Creates a 404 Not Found response.
+ *
+ * @deprecated Use `throw new AppError(message, ErrorCode.NOT_FOUND, STATUS_CODES.NOT_FOUND)` instead.
+ * Throwing AppError ensures consistent error response format with `error`, `code`, `fingerprint`,
+ * `details`, `timestamp`, `requestId`, `retryable`, and `suggestions` fields.
+ *
+ * @example
+ * // Instead of:
+ * // return notFoundResponse('Task not found');
+ *
+ * // Use:
+ * throw new AppError('Task not found', ErrorCode.NOT_FOUND, STATUS_CODES.NOT_FOUND);
+ *
+ * @param message - Error message to include
+ * @param rateLimit - Rate limit info for headers
+ * @returns NextResponse with 404 status
+ */
 export function notFoundResponse(
   message: string = 'Resource not found',
   rateLimit?: RateLimitInfo
@@ -247,6 +265,25 @@ export function notFoundResponse(
   return response;
 }
 
+/**
+ * Creates a 400 Bad Request response.
+ *
+ * @deprecated Use `throw new ValidationError(details)` instead.
+ * Throwing ValidationError ensures consistent error response format with `error`, `code`,
+ * `fingerprint`, `details`, `timestamp`, `requestId`, `retryable`, and `suggestions` fields.
+ *
+ * @example
+ * // Instead of:
+ * // return badRequestResponse('Invalid input', [{ field: 'name', message: 'Name is required' }]);
+ *
+ * // Use:
+ * throw new ValidationError([{ field: 'name', message: 'Name is required' }]);
+ *
+ * @param message - Error message to include
+ * @param details - Array of validation error details
+ * @param rateLimit - Rate limit info for headers
+ * @returns NextResponse with 400 status
+ */
 export function badRequestResponse(
   message: string,
   details?: ErrorDetail[],
