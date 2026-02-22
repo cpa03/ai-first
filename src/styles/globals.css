@@ -26,6 +26,13 @@
     --gradient-feature-start: rgb(var(--color-primary-500));
     --gradient-feature-mid: rgb(var(--color-violet-500));
     --gradient-feature-end: rgb(var(--color-pink-500));
+
+    /* Toast notification colors - matches Tailwind palette for theming support */
+    /* Issue #1028, #1166: Design system alignment for toast icon colors */
+    --toast-success-icon: 22 163 74; /* green-600 #16a34a */
+    --toast-error-icon: 220 38 38; /* red-600 #dc2626 */
+    --toast-warning-icon: 202 138 4; /* yellow-600 #ca8a04 */
+    --toast-info-icon: 37 99 235; /* blue-600 #2563eb */
   }
 
   html {
