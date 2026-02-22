@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import IdeaInput from '@/components/IdeaInput';
@@ -37,14 +37,19 @@ export default function HomePageClient() {
   const [idea, setIdea] = useState('');
   const [ideaId, setIdeaId] = useState('');
 
-  const handleIdeaSubmit = (submittedIdea: string, submittedIdeaId: string) => {
-    setIdea(submittedIdea);
-    setIdeaId(submittedIdeaId);
+  // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of IdeaInput
+  // which receives this function as a prop
+  const handleIdeaSubmit = useCallback(
+    (submittedIdea: string, submittedIdeaId: string) => {
+      setIdea(submittedIdea);
+      setIdeaId(submittedIdeaId);
 
-    router.push(
-      `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`
-    );
-  };
+      router.push(
+        `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`
+      );
+    },
+    [router]
+  );
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

@@ -314,6 +314,12 @@ npm install eslint-plugin-react-hooks@latest --save-dev
     - **File**: `src/components/KeyboardShortcutsProvider.tsx`
     - **Impact**: Prevents re-renders of keyboard shortcuts button during parent state changes
 
+23. **Fixed**: HomePageClient handler memoization
+    - **Problem**: `handleIdeaSubmit` function in HomePageClient was recreated on every render, causing unnecessary re-renders of IdeaInput component which receives this function as a prop
+    - **Solution**: Wrapped `handleIdeaSubmit` with `useCallback` to maintain stable function reference across renders
+    - **File**: `src/app/HomePageClient.tsx`
+    - **Impact**: Prevents re-renders of IdeaInput component when unrelated parent state changes
+
 ### Verified Issues (Already Resolved)
 
 The following issues from the performance audit (#962) have been verified as resolved:
