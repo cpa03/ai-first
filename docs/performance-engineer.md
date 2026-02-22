@@ -302,6 +302,18 @@ npm install eslint-plugin-react-hooks@latest --save-dev
     - **File**: `src/components/InputWithValidation.tsx`
     - **Impact**: Prevents re-renders of form inputs during parent state changes, stable handler references
 
+21. **Fixed**: KeyboardShortcutsProvider context value memoization
+    - **Problem**: Context value object `{ openHelp, closeHelp }` was recreated on every render, causing all consumers of the context to re-render unnecessarily
+    - **Solution**: Wrapped context value with `useMemo(() => ({ openHelp, closeHelp }), [openHelp, closeHelp])`
+    - **File**: `src/components/KeyboardShortcutsProvider.tsx`
+    - **Impact**: Prevents cascading re-renders of all keyboard shortcut consumers on any parent update
+
+22. **Fixed**: KeyboardShortcutsButton component memoization
+    - **Problem**: KeyboardShortcutsButton was not wrapped in React.memo, causing unnecessary re-renders when parent components (typically layout/header) update
+    - **Solution**: Extracted to `KeyboardShortcutsButtonComponent` and wrapped with `memo()`
+    - **File**: `src/components/KeyboardShortcutsProvider.tsx`
+    - **Impact**: Prevents re-renders of keyboard shortcuts button during parent state changes
+
 ### Verified Issues (Already Resolved)
 
 The following issues from the performance audit (#962) have been verified as resolved:
