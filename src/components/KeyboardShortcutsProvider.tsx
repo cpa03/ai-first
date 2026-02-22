@@ -4,7 +4,15 @@ import KeyboardShortcutsHelp, {
   useKeyboardShortcutsHelp,
 } from '@/components/KeyboardShortcutsHelp';
 import Tooltip from '@/components/Tooltip';
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useState,
+  useEffect,
+  useMemo,
+  memo,
+} from 'react';
 
 interface KeyboardShortcutsContextValue {
   openHelp: () => void;
@@ -34,15 +42,20 @@ export function KeyboardShortcutsProvider({
 }: KeyboardShortcutsProviderProps) {
   const { isOpen, openHelp, closeHelp } = useKeyboardShortcutsHelp();
 
+  // PERFORMANCE: Memoize context value to prevent unnecessary re-renders of consumers
+  // Without this, the context value object is recreated on every render,
+  // causing all consumers to re-render even when openHelp/closeHelp haven't changed
+  const value = useMemo(() => ({ openHelp, closeHelp }), [openHelp, closeHelp]);
+
   return (
-    <KeyboardShortcutsContext.Provider value={{ openHelp, closeHelp }}>
+    <KeyboardShortcutsContext.Provider value={value}>
       {children}
       <KeyboardShortcutsHelp isOpen={isOpen} onClose={closeHelp} />
     </KeyboardShortcutsContext.Provider>
   );
 }
 
-export function KeyboardShortcutsButton() {
+function KeyboardShortcutsButtonComponent() {
   const { openHelp } = useKeyboardShortcuts();
   const [isMac, setIsMac] = useState(false);
 
@@ -80,3 +93,7 @@ export function KeyboardShortcutsButton() {
     </Tooltip>
   );
 }
+
+// PERFORMANCE: Memoize to prevent re-renders when parent components update
+// This component is often used in layout/header and should not re-render unnecessarily
+export const KeyboardShortcutsButton = memo(KeyboardShortcutsButtonComponent);
