@@ -823,6 +823,137 @@ Object.entries(states).forEach(([service, status]) => {
 });
 ```
 
+## CI/CD Security Scanning
+
+### 2026-02-22: Automated Security Scan Workflow (Pending Manual Application)
+
+**Issue:** No automated security scanning workflow existed (Issue #871)
+
+**Status:** ⚠️ PENDING MANUAL APPLICATION - GitHub App lacks `workflows` permission.
+
+**Recommended Solution:** Add `.github/workflows/security-scan.yml` with the following content:
+
+```yaml
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: '0 6 * * 1'  # Weekly scan on Monday at 6 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  security-events: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  security-audit:
+    name: Dependency Security Audit
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        id: audit
+        run: |
+          echo "## Security Audit Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          set +e
+          npm audit --audit-level=high > audit-output.txt 2>&1
+          AUDIT_EXIT_CODE=$?
+          set -e
+          cat audit-output.txt
+          if [ $AUDIT_EXIT_CODE -ne 0 ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Security vulnerabilities detected!**" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            cat audit-output.txt >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "Run \`npm audit fix\` to address non-breaking issues." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ No high-severity vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+          fi
+          rm audit-output.txt
+          exit $AUDIT_EXIT_CODE
+
+      - name: Check for outdated dependencies
+        run: npm outdated || true
+        continue-on-error: true
+
+  code-security:
+    name: Code Security Analysis
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run security check script
+        run: npm run security:check
+        continue-on-error: true
+
+      - name: Scan for secrets patterns
+        run: |
+          if grep -r --include="*.ts" --include="*.tsx" --include="*.js" --include="*.jsx" \
+            -E "(api[_-]?key|secret[_-]?key|password|token)\s*[=:]\s*['\"]][^'\"]+['\"]" \
+            src/ 2>/dev/null; then
+            echo "⚠️ Potential hardcoded secrets found. Please review."
+          else
+            echo "✅ No obvious hardcoded secrets detected."
+          fi
+        continue-on-error: true
+```
+
+**Triggers:**
+- On push to `main` branch
+- On pull requests
+- Weekly scheduled scan (Monday 6 AM UTC)
+- Manual dispatch
+
+**Features:**
+- Uses npm caching for faster runs
+- Generates GitHub Actions summary with detailed results
+- Provides actionable remediation steps
+- Non-blocking informational checks for outdated dependencies
+
+**Integration with Issue #871:**
+
+This workflow addresses the dependency security scanning recommendation:
+- ✅ Automated dependency scanning via npm audit
+- ✅ Outdated dependency checking
+- ✅ Secret pattern detection
+- ✅ Weekly scheduled scans
+
 ## References
 
 - [Integration Hardening](./integration-hardening.md) - Detailed resilience patterns
