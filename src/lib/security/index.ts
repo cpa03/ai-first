@@ -32,3 +32,14 @@ export {
   type EnvironmentEventDetails,
   type InputValidationEventDetails,
 } from './audit-log';
+
+
+// Suspicious Request Pattern Detection
+export {
+  detectSuspiciousPatterns,
+  hasSuspiciousPatterns,
+  getPatternDefinitions,
+  type SuspiciousPatternCategory,
+  type SuspiciousPatternDetail,
+  type SuspiciousPatternResult,
+} from './suspicious-patterns';
