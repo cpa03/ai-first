@@ -20,6 +20,7 @@ interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
+  isCopied: boolean;
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
@@ -28,10 +29,10 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    this.state = { hasError: false, error: null, errorInfo: null, isCopied: false };
   }
 
-  static getDerivedStateFromError(error: Error): State {
+  static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error, errorInfo: null };
   }
 
@@ -54,7 +55,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
+    this.setState({ hasError: false, error: null, errorInfo: null, isCopied: false });
   };
 
   render() {
@@ -126,17 +127,16 @@ export default class ErrorBoundary extends Component<Props, State> {
                       onClick={() => {
                         const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || MESSAGES.ERROR_BOUNDARY.NO_STACK_TRACE}`;
                         navigator.clipboard.writeText(errorText);
-                        const btn = document.activeElement as HTMLButtonElement;
-                        const originalText = btn?.textContent || '';
-                        if (btn)
-                          btn.textContent = MESSAGES.BLUEPRINT.COPIED_BUTTON;
+                        this.setState({ isCopied: true });
                         setTimeout(() => {
-                          if (btn) btn.textContent = originalText;
+                          this.setState({ isCopied: false });
                         }, UI_CONFIG.FEEDBACK.COPY_FEEDBACK_DURATION_MS);
                       }}
                       aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.CLOSE_ERROR}
                     >
-                      {MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
+                      {this.state.isCopied
+                        ? MESSAGES.BLUEPRINT.COPIED_BUTTON
+                        : MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
                     </Button>
                   </div>
                 </details>
