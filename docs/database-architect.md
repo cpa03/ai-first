@@ -1062,6 +1062,28 @@ Supabase handles connection pooling automatically. For high-traffic applications
 
 ## Changelog
 
+### 2026-02-22 - Deliverables Composite Priority Index
+
+#### Performance Enhancement
+
+1. **Added composite indexes for deliverables query optimization**
+   - Migration `20260222_add_deliverables_composite_priority_index.sql`
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_deliverables_idea_deleted_priority` - Composite index for idea_id + deleted_at + priority DESC
+   - `idx_deliverables_idea_milestone_priority` - Partial index for milestone-filtered queries
+
+2. **Performance improvements**
+   - Optimizes the common query pattern in `getIdeaDeliverablesWithTasks`
+   - Before: Uses `idx_deliverables_idea_priority` then filters deleted records in memory
+   - After: Uses composite index to filter both idea_id AND deleted_at, then orders by priority
+   - Estimated 30-50% faster for deliverables list queries on large datasets
+
+3. **Down migration included**
+   - `20260222_add_deliverables_composite_priority_index.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definitions to deliverables section
+
 ### 2026-02-22 - Risk Assessments Status Score Composite Index
 
 #### Performance Enhancement
