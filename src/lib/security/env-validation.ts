@@ -42,7 +42,6 @@ const SENSITIVE_VAR_PATTERNS = [
   'PWD',
   'DATABASE',
   'CONNECTION',
-  'DB_', // Database identifiers
   'CERT',
   'SIGNATURE',
   'PRIVATE',
@@ -68,8 +67,6 @@ const SENSITIVE_VAR_PATTERNS = [
   'TAXID', // Tax identification numbers
   'NINO', // National Insurance numbers
   'PASSPORT', // Passport numbers
-  'LICENSE', // License numbers
-  'LICENCE', // License numbers (UK)
   // Security improvement: Added 2026-02-21
   'PEM', // Certificate files
   'KEYSTORE', // Java keystores

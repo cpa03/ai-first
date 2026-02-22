@@ -1,3 +1,5 @@
+export const runtime = "experimental-edge";
+
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import {
@@ -33,14 +35,8 @@ const PUBLIC_PATHS = [
 const AUTH_PATHS = ['/login', '/signup'];
 
 function generateNonce(): string {
-  const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
-  // Web-standard base64 encoding without Node.js Buffer for Edge compatibility
-  let binary = '';
-  for (let i = 0; i < array.length; i++) {
-    binary += String.fromCharCode(array[i]);
-  }
-  return btoa(binary);
+  // Uses web-standard crypto for Edge compatibility
+  return crypto.randomUUID();
 }
 
 function buildCSPHeader(nonce: string): string {
