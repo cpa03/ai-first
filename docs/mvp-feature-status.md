@@ -14,7 +14,7 @@
 
 | Metric                   | Status      |
 | ------------------------ | ----------- |
-| **P0 Features Complete** | 3/9 (33%)   |
+| **P0 Features Complete** | 2/9 (22%)   |
 | **P1 Features Complete** | 1/8 (12.5%) |
 | **Overall MVP Progress** | ~55%        |
 | **On Track for Launch**  | ⚠️ AT RISK  |
