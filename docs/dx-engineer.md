@@ -113,7 +113,11 @@ npm run env:check -- --ci
 | `npm run test:changed` | Run only changed tests          | ~5 sec  |
 | `npm run test:ci`      | CI mode tests with coverage     | ~30 sec |
 | `npm run check`        | All checks (lint + type + test) | ~40 sec |
-| `npm run env:check`    | Validate environment variables  | ~1 sec  |
+| `npm run env:check`      | Validate environment variables  | ~1 sec  |
+| `npm run docs:check-links` | Validate documentation links  | ~2 sec  |
+| `npm run security:check` | Run security audit script       | ~5 sec  |
+| `npm run scan:console`   | Scan for console statements     | ~2 sec  |
+| `npm run analyze`        | Bundle analysis with webpack    | ~60 sec |
 
 ### Pre-Commit Workflow
 
