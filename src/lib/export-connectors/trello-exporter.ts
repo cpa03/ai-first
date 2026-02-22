@@ -123,6 +123,54 @@ export class TrelloExporter extends ExportConnector {
     }
   }
 
+  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+    const startTime = Date.now();
+    const checkedAt = new Date().toISOString();
+
+    try {
+      const apiKey = process.env.TRELLO_API_KEY;
+      const token = process.env.TRELLO_TOKEN;
+
+      if (!apiKey || !token) {
+        return {
+          available: false,
+          error: 'Trello API key and token not configured',
+          checkedAt,
+        };
+      }
+
+      // Make a lightweight API call to verify service availability
+      const response = await fetch(
+        `${this.API_BASE}/members/me?key=${apiKey}&token=${token}`
+      );
+
+      const latencyMs = Date.now() - startTime;
+
+      if (!response.ok) {
+        return {
+          available: false,
+          latencyMs,
+          error: `Trello API returned ${response.status}: ${response.statusText}`,
+          checkedAt,
+        };
+      }
+
+      return {
+        available: true,
+        latencyMs,
+        checkedAt,
+      };
+    } catch (error) {
+      const latencyMs = Date.now() - startTime;
+      return {
+        available: false,
+        latencyMs,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        checkedAt,
+      };
+    }
+  }
+
   async getAuthUrl(): Promise<string> {
     const apiKey = process.env.TRELLO_API_KEY;
     const appName = TRELLO_CONFIG.APP.NAME;

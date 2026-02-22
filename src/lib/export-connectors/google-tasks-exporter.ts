@@ -22,6 +22,30 @@ export class GoogleTasksExporter extends ExportConnector {
     return !!(clientId && clientSecret);
   }
 
+  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+    const startTime = Date.now();
+    const checkedAt = new Date().toISOString();
+
+    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      return {
+        available: false,
+        error: 'Google Tasks OAuth credentials not configured',
+        checkedAt,
+      };
+    }
+
+    // Note: Google Tasks requires OAuth flow, so we can only verify credentials are configured
+    // A full health check would require valid OAuth tokens
+    return {
+      available: true,
+      latencyMs: Date.now() - startTime,
+      checkedAt,
+    };
+  }
+
   async getAuthUrl(): Promise<string> {
     const clientId = process.env.GOOGLE_CLIENT_ID;
     const redirectUri =

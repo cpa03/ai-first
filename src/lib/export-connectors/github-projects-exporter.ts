@@ -168,6 +168,53 @@ export class GitHubProjectsExporter extends ExportConnector {
     }
   }
 
+  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+    const startTime = Date.now();
+    const checkedAt = new Date().toISOString();
+
+    try {
+      const token = process.env.GITHUB_TOKEN;
+
+      if (!token) {
+        return {
+          available: false,
+          error: 'GitHub token not configured',
+          checkedAt,
+        };
+      }
+
+      // Make a lightweight API call to verify service availability
+      const response = await fetch(`${this.API_BASE}/user`, {
+        headers: this.getHeaders(token),
+      });
+
+      const latencyMs = Date.now() - startTime;
+
+      if (!response.ok) {
+        return {
+          available: false,
+          latencyMs,
+          error: `GitHub API returned ${response.status}: ${response.statusText}`,
+          checkedAt,
+        };
+      }
+
+      return {
+        available: true,
+        latencyMs,
+        checkedAt,
+      };
+    } catch (error) {
+      const latencyMs = Date.now() - startTime;
+      return {
+        available: false,
+        latencyMs,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        checkedAt,
+      };
+    }
+  }
+
   async getAuthUrl(): Promise<string> {
     const clientId = process.env.GITHUB_CLIENT_ID;
     const redirectUri =
