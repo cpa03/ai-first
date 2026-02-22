@@ -50,4 +50,20 @@ export const resilienceManager = {
   resetCircuitBreaker(name: string): void {
     cbManager.reset(name);
   },
+
+  /**
+   * Reset all circuit breakers to closed state
+   * Useful for admin operations and testing
+   */
+  resetAllCircuitBreakers(): void {
+    cbManager.resetAll();
+  },
+
+  /**
+   * Get all circuit breaker names
+   * Useful for monitoring and debugging
+   */
+  getCircuitBreakerNames(): string[] {
+    return cbManager.getNames();
+  }, 
 };

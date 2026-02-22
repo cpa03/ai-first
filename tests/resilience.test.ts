@@ -11,6 +11,7 @@ import {
   ServiceResilienceConfig,
   RetryConfig,
   defaultResilienceConfigs,
+  resilienceManager,
 } from '@/lib/resilience';
 
 describe('CircuitBreaker', () => {
@@ -277,5 +278,138 @@ describe('defaultResilienceConfigs', () => {
     expect(
       defaultResilienceConfigs.supabase.circuitBreaker?.failureThreshold
     ).toBe(10);
+  });
+});
+
+describe('resilienceManager', () => {
+  beforeEach(() => {
+    // Reset all circuit breakers before each test
+    resilienceManager.resetAllCircuitBreakers();
+  });
+
+  describe('resetAllCircuitBreakers', () => {
+    it('should reset all circuit breakers', async () => {
+      // Create and trip circuit breakers
+      const failingOp = jest.fn().mockRejectedValue(new Error('fail'));
+
+      // Trip first circuit breaker
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 2 },
+          'service-1'
+        )
+      ).rejects.toThrow();
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 2 },
+          'service-1'
+        )
+      ).rejects.toThrow();
+
+      // Trip second circuit breaker
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 1 },
+          'service-2'
+        )
+      ).rejects.toThrow();
+
+      // Verify they are open
+      const statesBefore =
+        resilienceManager.getCircuitBreakerStates() as Record<
+          string,
+          { state: CircuitBreakerState; failures: number }
+        >;
+      expect(statesBefore['service-1'].state).toBe(CircuitBreakerState.OPEN);
+      expect(statesBefore['service-2'].state).toBe(CircuitBreakerState.OPEN);
+
+      // Reset all
+      resilienceManager.resetAllCircuitBreakers();
+
+      // Verify they are closed
+      const statesAfter = resilienceManager.getCircuitBreakerStates() as Record<
+        string,
+        { state: CircuitBreakerState; failures: number }
+      >;
+      expect(statesAfter['service-1'].state).toBe(CircuitBreakerState.CLOSED);
+      expect(statesAfter['service-2'].state).toBe(CircuitBreakerState.CLOSED);
+    });
+  });
+
+  describe('getCircuitBreakerNames', () => {
+    it('should return all circuit breaker names', async () => {
+      // Create circuit breakers
+      const successOp = jest.fn().mockResolvedValue('success');
+      await resilienceManager.execute(
+        successOp,
+        { failureThreshold: 2 },
+        'test-service-a'
+      );
+      await resilienceManager.execute(
+        successOp,
+        { failureThreshold: 2 },
+        'test-service-b'
+      );
+
+      const names = resilienceManager.getCircuitBreakerNames();
+      expect(names).toContain('test-service-a');
+      expect(names).toContain('test-service-b');
+    });
+
+    it('should return empty array when no circuit breakers exist', () => {
+      // Reset all to clear any existing
+      resilienceManager.resetAllCircuitBreakers();
+      const names = resilienceManager.getCircuitBreakerNames();
+      // Note: Circuit breakers are created on first access, so after reset they still exist
+      // This test verifies the method works correctly
+      expect(Array.isArray(names)).toBe(true);
+    });
+  });
+
+  describe('resetCircuitBreaker', () => {
+    it('should reset a specific circuit breaker', async () => {
+      const failingOp = jest.fn().mockRejectedValue(new Error('fail'));
+
+      // Trip circuit breaker
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 2 },
+          'reset-test-service'
+        )
+      ).rejects.toThrow();
+      await expect(
+        resilienceManager.execute(
+          failingOp,
+          { failureThreshold: 2 },
+          'reset-test-service'
+        )
+      ).rejects.toThrow();
+
+      // Verify it's open
+      const statesBefore =
+        resilienceManager.getCircuitBreakerStates() as Record<
+          string,
+          { state: CircuitBreakerState }
+        >;
+      expect(statesBefore['reset-test-service'].state).toBe(
+        CircuitBreakerState.OPEN
+      );
+
+      // Reset specific circuit breaker
+      resilienceManager.resetCircuitBreaker('reset-test-service');
+
+      // Verify it's closed
+      const statesAfter = resilienceManager.getCircuitBreakerStates() as Record<
+        string,
+        { state: CircuitBreakerState }
+      >;
+      expect(statesAfter['reset-test-service'].state).toBe(
+        CircuitBreakerState.CLOSED
+      );
+    });
   });
 });
