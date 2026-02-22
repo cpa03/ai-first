@@ -372,6 +372,13 @@ export const exportUtils = {
   },
 
   generateExportId(): string {
-    return `export_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
+    try {
+      return `export_${crypto.randomUUID()}`;
+    } catch {
+      // Fallback for environments without crypto.randomUUID support
+      return `export_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    }
   },
 };
