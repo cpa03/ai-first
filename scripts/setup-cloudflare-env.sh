@@ -1,10 +1,19 @@
-#!/bin/bash
-
+#!/usr/bin/env bash
 # Cloudflare Environment Variables Setup Script
 # This script helps configure Cloudflare Workers environment variables
 # This script should be run locally and provides instructions for Cloudflare dashboard setup
-
-set -e
+#
+# Security Best Practices:
+# - Uses printf instead of echo for secrets (handles special characters)
+# - Validates wrangler authentication before operations
+# - Supports non-interactive mode for CI/CD pipelines
+#
+# Usage:
+#   Interactive:     ./setup-cloudflare-env.sh
+#   Non-interactive: CF_ENV=production ./setup-cloudflare-env.sh --non-interactive
+#
+# Strict mode for better error handling
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -53,7 +62,7 @@ if ! command -v wrangler &> /dev/null; then
     print_status "OK" "Wrangler CLI installed"
 fi
 
-# Authenticate with Cloudflare
+# Pre-flight authentication check
 echo
 print_status "STEP" "Step 1: Authenticate with Cloudflare"
 print_status "INFO" "If not already authenticated, wrangler will open a browser for authentication"
@@ -150,38 +159,51 @@ if [ $missing_vars -gt 0 ]; then
     exit 1
 fi
 
-echo
-print_status "STEP" "Step 3: Configure Cloudflare Environment Variables"
-echo
-print_status "INFO" "Choose environment to configure:"
-echo
-echo "  1) Production"
-echo "  2) Preview"
-echo "  3) Both"
-echo
-read -p "Enter choice (1-3): " env_choice
-
-case $env_choice in
-    1)
-        ENVIRONMENTS="production"
-        ;;
-    2)
-        ENVIRONMENTS="preview"
-        ;;
-    3)
-        ENVIRONMENTS="production preview"
-        ;;
-    *)
-        print_status "ERROR" "Invalid choice"
+# Support non-interactive mode for CI/CD pipelines
+# Usage: CF_ENV=production ./setup-cloudflare-env.sh --non-interactive
+if [ "${1:-}" = "--non-interactive" ]; then
+    if [ -z "${CF_ENV:-}" ]; then
+        print_status "ERROR" "CF_ENV environment variable must be set for non-interactive mode"
+        print_status "INFO" "Set CF_ENV to 'production', 'preview', or 'production preview'"
         exit 1
-        ;;
-esac
+    fi
+    ENVIRONMENTS="$CF_ENV"
+    print_status "INFO" "Non-interactive mode: configuring $ENVIRONMENTS"
+else
+    echo
+    print_status "STEP" "Step 3: Configure Cloudflare Environment Variables"
+    echo
+    print_status "INFO" "Choose environment to configure:"
+    echo
+    echo "  1) Production"
+    echo "  2) Preview"
+    echo "  3) Both"
+    echo
+    read -p "Enter choice (1-3): " env_choice
+
+    case $env_choice in
+        1)
+            ENVIRONMENTS="production"
+            ;;
+        2)
+            ENVIRONMENTS="preview"
+            ;;
+        3)
+            ENVIRONMENTS="production preview"
+            ;;
+        *)
+            print_status "ERROR" "Invalid choice"
+            exit 1
+            ;;
+    esac
+fi
 
 echo
 print_status "INFO" "Configuring environment variables for: $ENVIRONMENTS"
 echo
 
 # Function to set secret in Cloudflare
+# Uses printf instead of echo to safely handle special characters in secrets
 set_cloudflare_secret() {
     local var_name=$1
     local var_value=$2
@@ -189,7 +211,9 @@ set_cloudflare_secret() {
     
     for env in $environments; do
         print_status "INFO" "Setting $var_name in $env..."
-        if echo "$var_value" | wrangler secret put "$var_name" --env "$env"; then
+        # Use printf to safely handle special characters in secrets
+        # The '%s\n' format ensures the value is passed literally
+        if printf '%s\n' "$var_value" | wrangler secret put "$var_name" --env "$env"; then
             print_status "OK" "$var_name set in $env"
         else
             print_status "ERROR" "Failed to set $var_name in $env"
