@@ -850,3 +850,25 @@ For API-related issues:
 ---
 
 _This documentation is maintained by the API Specialist. Last updated: 2026-02-22_
+
+
+
+---
+
+### 2026-02-22 - OpenAPI API Description Enhancement
+
+- **Improvement**: Added response headers documentation to OpenAPI spec info description
+- **Changes**:
+  - Added comprehensive response headers table to API description section
+  - Documents all standard headers: X-Request-ID, X-Correlation-ID, X-RateLimit-*, X-Response-Time, X-API-Version
+  - Added note about error response headers (X-Error-Code, X-Retryable)
+  - References CommonResponseHeaders and ErrorResponseHeaders schemas for details
+- **Rationale**:
+  - Makes API response headers discoverable at the top of the OpenAPI spec
+  - Improves developer experience for API consumers using Swagger UI or similar tools
+  - Provides quick reference without needing to scroll to schema definitions
+- **Location**: `docs/api/openapi.yaml` (info.description section)
+- **Build**: Passing
+- **Lint**: Passing (0 warnings)
+- **Type-check**: Passing (0 errors)
+- **Documentation**: Updated OpenAPI spec

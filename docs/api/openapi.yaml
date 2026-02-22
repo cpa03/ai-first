@@ -1,7 +1,25 @@
 openapi: 3.0.3
 info:
   title: IdeaFlow API
-  description: API for turning raw ideas into production-ready plans with AI-powered clarification and breakdown
+  description: |
+    API for turning raw ideas into production-ready plans with AI-powered clarification and breakdown.
+    
+    ## Response Headers
+    
+    All API responses include standard headers for tracing, rate limiting, and performance monitoring:
+    
+    | Header | Description |
+    |--------|-------------|
+    | `X-Request-ID` | Unique identifier for each request (useful for debugging) |
+    | `X-Correlation-ID` | Correlation ID for tracing requests across services |
+    | `X-RateLimit-Limit` | Maximum requests allowed per window |
+    | `X-RateLimit-Remaining` | Requests remaining in current window |
+    | `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit resets |
+    | `X-Response-Time` | Request processing time in milliseconds |
+    | `X-API-Version` | Current API version (semantic versioning) |
+    
+    Error responses additionally include `X-Error-Code` and `X-Retryable` headers.
+    See the `CommonResponseHeaders` and `ErrorResponseHeaders` schemas for details.
   version: 1.0.0
   contact:
     name: IdeaFlow Team
