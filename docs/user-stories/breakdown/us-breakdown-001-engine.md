@@ -3,6 +3,7 @@
 ## Story Metadata
 
 - **Story ID**: US-BREAKDOWN-001
+- **Status**: In Progress (70%)
 - **Title**: Automatic Idea Breakdown into Tasks
 - **Priority**: P0 (Must Have)
 - **Story Points**: 8

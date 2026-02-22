@@ -3,6 +3,7 @@
 ## Story Metadata
 
 - **Story ID**: US-AUTH-003
+- **Status**: Ready
 - **Title**: Self-Service Password Reset
 - **Priority**: P1 (Should Have)
 - **Story Points**: 2
