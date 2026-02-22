@@ -40,7 +40,17 @@ export type SuspiciousPatternCategory =
   | 'command_injection'
   | 'ssrf'
   | 'header_injection'
-  | 'encoding_attack';
+  | 'encoding_attack'
+  | 'nosql_injection'
+  | 'prototype_pollution'
+  | 'log_injection';
+
+
+
+
+
+
+
 
 /**
  * Details about a detected suspicious pattern
@@ -352,7 +362,115 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'HTML numeric entity',
     },
   ],
+
+  // NoSQL Injection patterns (MongoDB, Redis, etc.)
+  nosql_injection: [
+    // High severity - NoSQL operator injection
+    {
+      pattern: /\$where\s*:/i,
+      severity: 3,
+      description: 'MongoDB $where injection',
+    },
+    {
+      pattern: /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+      severity: 2,
+      description: 'MongoDB operator injection',
+    },
+    {
+      pattern: /\$javascript/i,
+      severity: 3,
+      description: 'MongoDB JavaScript injection',
+    },
+    // Medium severity
+    {
+      pattern: /{\s*\$.*?:/i,
+      severity: 2,
+      description: 'NoSQL query operator pattern',
+    },
+    {
+      pattern: /\$or\s*:\s*\[/i,
+      severity: 2,
+      description: 'MongoDB $or array injection',
+    },
+    // Low severity
+    {
+      pattern: /ObjectId\s*\(/i,
+      severity: 1,
+      description: 'MongoDB ObjectId reference',
+    },
+  ],
+
+  // Prototype Pollution patterns
+  prototype_pollution: [
+    // High severity - direct prototype manipulation
+    {
+      pattern: /__proto__\s*[\[.]/i,
+      severity: 3,
+      description: 'Prototype pollution via __proto__',
+    },
+    {
+      pattern: /constructor\s*[\[.]\s*prototype/i,
+      severity: 3,
+      description: 'Prototype pollution via constructor',
+    },
+    {
+      pattern: /prototype\s*[\[.]\s*\w+\s*=/i,
+      severity: 3,
+      description: 'Direct prototype modification',
+    },
+    // Medium severity
+    {
+      pattern: /Object\s*\.\s*assign\s*\(\s*\w+\s*,/i,
+      severity: 2,
+      description: 'Object.assign potential pollution',
+    },
+    {
+      pattern: /Object\s*\.\s*defineProperty/i,
+      severity: 2,
+      description: 'Object.defineProperty usage',
+    },
+    // Low severity
+    {
+      pattern: /\[\s*['"]__proto__['"]\s*\]/i,
+      severity: 2,
+      description: 'Bracket notation __proto__ access',
+    },
+  ],
+
+  // Log Injection patterns (Log4j-style attacks)
+  log_injection: [
+    // High severity - JNDI/LDAP injection (Log4j style)
+    {
+      pattern: /\$\{\s*(jndi|ldap|dns|rmi)\s*:/gi,
+      severity: 3,
+      description: 'JNDI/LDAP injection attempt',
+    },
+    {
+      pattern: /\$\{\s*(lower|upper)\s*:/gi,
+      severity: 2,
+      description: 'Log4j variable manipulation',
+    },
+    // Medium severity
+    {
+      pattern: /\$\{[^}]+\}/,
+      severity: 2,
+      description: 'Variable interpolation pattern',
+    },
+    {
+      pattern: /%(\d+\$)?[sdif]/,
+      severity: 1,
+      description: 'Format string pattern',
+    },
+    // Low severity
+    {
+      pattern: /\n\s*(ERROR|WARN|INFO|DEBUG|FATAL)\s*[:\[]/i,
+      severity: 2,
+      description: 'Log level injection',
+    },
+  ],
 };
+
+/**
 
 /**
  * Scan a string for suspicious patterns
