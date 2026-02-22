@@ -18,23 +18,29 @@ Authorization: Bearer <your-supabase-token>
 ```
 
 ## Common Headers
-
 All API responses include these headers:
 
-- `X-Request-ID`: Unique identifier for the request (useful for debugging)
-- `X-RateLimit-Limit`: Total requests allowed per rate limit window
-- `X-RateLimit-Remaining`: Number of requests remaining in current window
-- `X-RateLimit-Reset`: ISO 8601 timestamp when rate limit window resets
-- `X-Error-Code`: Error code if the request failed
-- `X-Retryable`: Whether the error is retryable (`true`/`false`)
+| Header | Description | Example |
+| ------ | ----------- | ------- |
+| `X-Request-ID` | Unique identifier for the request (useful for debugging) | `req_1704625200000_abc123` |
+| `X-Correlation-ID` | Correlation ID for tracing requests across services | `corr_abc123def456` |
+| `X-RateLimit-Limit` | Total requests allowed per rate limit window | `60` |
+| `X-RateLimit-Remaining` | Number of requests remaining in current window | `57` |
+| `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit window resets | `2024-01-07T12:05:00Z` |
+| `X-Response-Time` | Request processing time in milliseconds | `45ms` |
+| `X-API-Version` | Current API version (semantic versioning) | `1.0.0` |
+| `X-Error-Code` | Error code if the request failed (errors only) | `VALIDATION_ERROR` |
+| `X-Retryable` | Whether the error is retryable (errors only) | `true` |
 
 **Example Headers:**
-
 ```http
-X-Request-ID: req_1234567890_abc123
-X-RateLimit-Limit: 50
-X-RateLimit-Remaining: 47
+X-Request-ID: req_1704625200000_abc123
+X-Correlation-ID: corr_abc123def456
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 57
 X-RateLimit-Reset: 2024-01-07T12:05:00Z
+X-Response-Time: 45ms
+X-API-Version: 1.0.0
 ```
 
 ## Error Response Format
