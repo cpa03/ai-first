@@ -1,15 +1,14 @@
 import {
   withApiHandler,
   standardSuccessResponse,
-  badRequestResponse,
-  notFoundResponse,
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
-import { AppError, ErrorCode } from '@/lib/errors';
+import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_CONFIG } from '@/lib/config';
 import { STATUS_CODES } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const VALID_STATUSES = [
   TASK_CONFIG.STATUSES.TODO,
@@ -29,26 +28,35 @@ async function handlePatch(context: ApiContext) {
   const taskId = segments.at(-2);
 
   if (!taskId) {
-    return badRequestResponse('Task ID is required');
+    throw new ValidationError([
+      { field: 'taskId', message: 'Task ID is required' },
+    ]);
   }
 
   let body: StatusUpdateBody;
   try {
     body = await request.json();
   } catch {
-    return badRequestResponse('Invalid JSON body');
+    throw new ValidationError([
+      { field: 'body', message: 'Invalid JSON body' },
+    ]);
   }
 
   // Validate required fields
   if (!body.status) {
-    return badRequestResponse('Status is required');
+    throw new ValidationError([
+      { field: 'status', message: 'Status is required' },
+    ]);
   }
 
   // Validate status
   if (!VALID_STATUSES.includes(body.status)) {
-    return badRequestResponse(
-      `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`
-    );
+    throw new ValidationError([
+      {
+        field: 'status',
+        message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+      },
+    ]);
   }
 
   try {
@@ -59,7 +67,11 @@ async function handlePatch(context: ApiContext) {
     const taskWithOwnership = await dbService.getTaskWithOwnership(taskId);
 
     if (!taskWithOwnership) {
-      return notFoundResponse('Task not found');
+      throw new AppError(
+        API_ERROR_MESSAGES.NOT_FOUND.TASK,
+        ErrorCode.NOT_FOUND,
+        STATUS_CODES.NOT_FOUND
+      );
     }
 
     // Verify ownership
