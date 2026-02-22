@@ -152,6 +152,7 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 | 2026-02-21 | Metrics Endpoint Authentication                | ✅ Implemented   | Added admin auth requirement for /api/metrics endpoint     |
 | 2026-02-21 | #1171 - Sensitive Variable Patterns Enhanced  | ✅ Implemented   | Added PEM, KEYSTORE, ENCRYPTION, DECRYPT, MFA, MNEMONIC, RECOVERY, BACKUP, SEED, JWK patterns |
 | 2026-02-22 | Security Audit Event Logging Added            | ✅ Implemented   | Added SecurityAuditLog module for structured security event logging |
+| 2026-02-22 | Cryptographic ID Generation Hardening        | ✅ Implemented   | Replaced Math.random() with crypto.randomUUID() for export and idea IDs |
 
 ## Current npm Audit Status (2026-02-18)
 
@@ -195,4 +196,4 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 
 ---
 
-_Last Updated: 2026-02-21_
+_Last Updated: 2026-02-22_
