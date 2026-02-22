@@ -533,5 +533,5 @@ gh pr create --title "fix(docs): [description]" --body "..."
 
 **Last Updated**: 2026-02-22
 **Agent**: Technical Writer
-**Version**: 1.2.8
+**Version**: 1.2.9
 **Verification Status**: ✅ All documentation verified against implementation
