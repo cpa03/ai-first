@@ -74,7 +74,7 @@ function buildCSPHeader(nonce: string): string {
 }
 
 function buildPermissionsPolicy(): string {
-  return CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
+  return (CSP_CONFIG.PERMISSIONS_POLICY as readonly string[]).join(', ');
 }
 
 function applySecurityHeaders(
