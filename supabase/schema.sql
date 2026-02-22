@@ -725,6 +725,7 @@ CREATE INDEX idx_agent_logs_agent_action_timestamp ON agent_logs(agent, action, 
 CREATE INDEX idx_idea_sessions_idea_id ON idea_sessions(idea_id);
 CREATE INDEX idx_idea_sessions_last_agent ON idea_sessions(last_agent);
 CREATE INDEX idx_idea_sessions_updated_at ON idea_sessions(updated_at);
+CREATE INDEX idx_idea_sessions_agent_updated ON idea_sessions(last_agent, updated_at DESC);
 
 CREATE INDEX idx_task_dependencies_predecessor ON task_dependencies(predecessor_task_id);
 CREATE INDEX idx_task_dependencies_successor ON task_dependencies(successor_task_id);

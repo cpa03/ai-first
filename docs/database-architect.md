@@ -1061,6 +1061,28 @@ Supabase handles connection pooling automatically. For high-traffic applications
 - Monitor retry success rates
 
 ## Changelog
+### 2026-02-22 - Idea Sessions Agent Updated Composite Index
+
+#### Performance Enhancement
+
+1. **Added composite index for idea_sessions(last_agent, updated_at DESC)**
+   - Migration `20260222_add_idea_sessions_agent_updated_index.sql`
+   - Addresses GitHub Issues #1189 and #1172 (Database schema quality)
+   - `idx_idea_sessions_agent_updated` - Composite index for agent + recency queries
+   - Optimizes the common query pattern: "show sessions for a specific agent ordered by recency"
+
+2. **Performance improvements**
+   - Before: Uses `idx_idea_sessions_last_agent` for filtering, then sorts by updated_at in memory
+   - After: Uses composite index for both filtering AND ordering (no sort needed)
+   - Estimated 30-50% faster for agent-filtered recency queries
+
+3. **Down migration included**
+   - `20260222_add_idea_sessions_agent_updated_index.down.sql` allows safe rollback
+
+4. **Updated schema.sql**
+   - Added new index definition to idea_sessions section
+
+### 2026-02-22 - Deliverables Composite Priority Index
 
 ### 2026-02-22 - Deliverables Composite Priority Index
 
