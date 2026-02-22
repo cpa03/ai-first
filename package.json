@@ -106,5 +106,18 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "bundlesize": [
+    {
+      "path": ".next/static/chunks/*.js",
+      "maxSize": "500 kB",
+      "comment": "Individual chunk size limit - prevents large bundles"
+    },
+    {
+      "path": ".next/static/**/*.css",
+      "maxSize": "100 kB",
+      "comment": "CSS bundle size limit"
+    }
+  ]
 }
+
