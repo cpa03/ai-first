@@ -8,15 +8,14 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { APP_CONFIG } from '@/lib/config';
-
+import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
 interface Idea {
   id: string;
   title: string;
-  status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  status: IdeaStatus;
   createdAt: string;
   updatedAt?: string;
 }
-
 interface Pagination {
   total: number;
   limit: number;
@@ -24,20 +23,9 @@ interface Pagination {
   hasMore: boolean;
 }
 
-const statusColors: Record<string, string> = {
-  draft: 'bg-gray-100 text-gray-800',
-  clarified: 'bg-blue-100 text-blue-800',
-  breakdown: 'bg-yellow-100 text-yellow-800',
-  completed: 'bg-green-100 text-green-800',
-};
-
-const statusLabels: Record<string, string> = {
-  draft: 'Draft',
-  clarified: 'Clarified',
-  breakdown: 'In Progress',
-  completed: 'Completed',
-};
-
+// Use centralized status configuration from constants.ts
+const statusColors = IDEA_STATUS_CONFIG.COLORS;
+const statusLabels = IDEA_STATUS_CONFIG.LABELS;
 const logger = createLogger('DashboardPage');
 
 // PERFORMANCE: Extract pure function outside component to prevent recreation on every render
