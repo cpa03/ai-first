@@ -636,9 +636,22 @@ export class DatabaseService {
     return data || [];
   }
 
+/**
+   * Get paginated ideas for a user with optional status filtering
+   *
+   * PERFORMANCE: Uses database-level pagination and filtering instead of
+   * in-memory operations. Supports filtering by status at the query level
+   * for optimal performance.
+   *
+   * @param userId - The user ID to get ideas for
+   * @param pagination - Pagination options (page, pageSize)
+   * @param filters - Optional filters (status)
+   * @returns Paginated result with ideas and metadata
+   */
   async getUserIdeasPaginated(
     userId: string,
-    pagination: PaginationOptions = {}
+    pagination: PaginationOptions = {},
+    filters?: { status?: Idea['status'] | 'all' }
   ): Promise<PaginatedResult<Idea>> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -649,21 +662,32 @@ export class DatabaseService {
     );
     const offset = (page - 1) * pageSize;
 
-    const { count, error: countError } = await this.client
+    // Build the base query with common filters
+    let countQuery = this.client
       .from('ideas')
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .is('deleted_at', null);
 
-    if (countError) throw countError;
-
-    const { data, error } = await this.client
+    let dataQuery = this.client
       .from('ideas')
       .select('*')
       .eq('user_id', userId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .range(offset, offset + pageSize - 1);
+
+    // Apply status filter if provided and not 'all'
+    if (filters?.status && filters.status !== 'all') {
+      countQuery = countQuery.eq('status', filters.status);
+      dataQuery = dataQuery.eq('status', filters.status);
+    }
+
+    const { count, error: countError } = await countQuery;
+
+    if (countError) throw countError;
+
+    const { data, error } = await dataQuery;
 
     if (error) throw error;
 
