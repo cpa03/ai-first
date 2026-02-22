@@ -1,6 +1,6 @@
 'use client';
 
-import React, { forwardRef, useState, useEffect, useCallback } from 'react';
+import React, { forwardRef, useState, useEffect, useCallback, memo } from 'react';
 import { cn } from '@/lib/utils';
 import {
   INPUT_STYLES,
@@ -29,7 +29,7 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
 
 const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
 
-const InputWithValidation = forwardRef<
+const InputWithValidationComponent = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputWithValidationProps
 >(
@@ -77,9 +77,9 @@ const InputWithValidation = forwardRef<
       }
     }, [currentValue, multiline, autoResize, adjustTextareaHeight]);
 
-    const handleBlur = () => {
+    const handleBlur = useCallback(() => {
       setTouched(true);
-    };
+    }, []);
 
     // Trigger shake animation when validation error appears
     useEffect(() => {
@@ -92,11 +92,12 @@ const InputWithValidation = forwardRef<
       }
     }, [isInvalid, error]);
 
-    const handleChange = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => {
-      onChange?.(e);
-    };
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        onChange?.(e);
+      },
+      [onChange]
+    );
 
     const handleClear = useCallback(() => {
       const emptyValueEvent = {
@@ -395,6 +396,6 @@ const InputWithValidation = forwardRef<
   }
 );
 
-InputWithValidation.displayName = 'InputWithValidation';
+InputWithValidationComponent.displayName = 'InputWithValidation';
 
-export default InputWithValidation;
+export default memo(InputWithValidationComponent);
