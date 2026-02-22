@@ -3,7 +3,7 @@ import { promptService } from '@/lib/prompt-service';
 import { safeJsonParse } from '@/lib/validation';
 import { isIdeaAnalysis } from '@/lib/type-guards';
 import { createLogger } from '@/lib/logger';
-import { IdeaAnalysis } from '../breakdown-engine';
+import type { IdeaAnalysis } from './types';
 import { AGENT_CONFIG } from '@/lib/config/constants';
 
 const logger = createLogger('IdeaAnalyzer');

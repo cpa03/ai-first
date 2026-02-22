@@ -1,11 +1,11 @@
 import { createLogger } from '@/lib/logger';
 import { TIMELINE_CONFIG } from '@/lib/config';
-import {
+import type {
   IdeaAnalysis,
   TaskDecomposition,
   DependencyGraph,
   Timeline,
-} from '../breakdown-engine';
+} from './types';
 
 const _logger = createLogger('TimelineGenerator');
 

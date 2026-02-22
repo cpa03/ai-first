@@ -4,7 +4,7 @@ import { safeJsonParse } from '@/lib/validation';
 import { isArrayOf, isTask } from '@/lib/type-guards';
 import { createLogger } from '@/lib/logger';
 import { TASK_CONFIG } from '@/lib/config';
-import { IdeaAnalysis, TaskDecomposition } from '../breakdown-engine';
+import type { IdeaAnalysis, TaskDecomposition } from './types';
 
 const logger = createLogger('TaskDecomposer');
 

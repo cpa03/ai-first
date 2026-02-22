@@ -1,5 +1,5 @@
 import { createLogger } from '@/lib/logger';
-import { TaskDecomposition, DependencyGraph } from '../breakdown-engine';
+import type { TaskDecomposition, DependencyGraph } from './types';
 
 const _logger = createLogger('DependencyAnalyzer');
 
