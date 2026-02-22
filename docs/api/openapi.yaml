@@ -2510,6 +2510,79 @@ components:
                   format: date-time
                   example: '2024-01-07T00:00:00Z'
 
+    # Common Response Headers
+    # These headers are included in all API responses
+    CommonResponseHeaders:
+      type: object
+      properties:
+        X-Request-ID:
+          type: string
+          description: Unique identifier for each API request. Use this for debugging and support.
+          example: req_1704625200000_abc123
+        X-Correlation-ID:
+          type: string
+          description: Correlation ID for tracing requests across services and microservices.
+          example: corr_abc123def456
+        X-RateLimit-Limit:
+          type: integer
+          description: Maximum number of requests allowed per rate limit window.
+          example: 60
+        X-RateLimit-Remaining:
+          type: integer
+          description: Number of requests remaining in the current rate limit window.
+          example: 57
+        X-RateLimit-Reset:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the rate limit window resets.
+          example: '2024-01-07T12:05:00Z'
+        X-Response-Time:
+          type: string
+          description: Request processing time in milliseconds.
+          example: 45ms
+        X-API-Version:
+          type: string
+          description: Current API version following semantic versioning (MAJOR.MINOR.PATCH).
+          example: 1.0.0
+
+    # Error Response Headers
+    # Additional headers included in error responses
+    ErrorResponseHeaders:
+      type: object
+      properties:
+        X-Error-Code:
+          type: string
+          description: Error code identifying the type of error. See error-codes.md for reference.
+          example: VALIDATION_ERROR
+        X-Retryable:
+          type: string
+          enum: ['true', 'false']
+          description: Whether the error is retryable with exponential backoff.
+          example: 'true'
+        Retry-After:
+          type: integer
+          description: Seconds to wait before retrying (only on rate limit errors).
+          example: 60
+
+    # Rate Limit Headers Only
+    # Headers for rate limit information
+    RateLimitHeaders:
+      type: object
+      properties:
+        X-RateLimit-Limit:
+          type: integer
+          description: Maximum requests allowed per window.
+          example: 60
+        X-RateLimit-Remaining:
+          type: integer
+          description: Requests remaining in current window.
+          example: 57
+        X-RateLimit-Reset:
+          type: string
+          format: date-time
+          description: When the rate limit window resets.
+          example: '2024-01-07T12:05:00Z'
+
   securitySchemes:
     BearerAuth:
       type: http
