@@ -720,6 +720,8 @@ CREATE INDEX idx_agent_logs_agent_timestamp ON agent_logs(agent, timestamp DESC)
 CREATE INDEX idx_agent_logs_action ON agent_logs(action);
 CREATE INDEX idx_agent_logs_action_timestamp ON agent_logs(action, timestamp DESC);
 
+CREATE INDEX idx_agent_logs_agent_action_timestamp ON agent_logs(agent, action, timestamp DESC);
+
 CREATE INDEX idx_idea_sessions_idea_id ON idea_sessions(idea_id);
 CREATE INDEX idx_idea_sessions_last_agent ON idea_sessions(last_agent);
 CREATE INDEX idx_idea_sessions_updated_at ON idea_sessions(updated_at);
