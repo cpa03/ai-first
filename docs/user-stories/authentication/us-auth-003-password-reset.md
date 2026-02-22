@@ -8,7 +8,7 @@
 - **Story Points**: 2
 - **Epic**: Authentication Flow
 - **Sprint**: Phase 1 MVP or Post-MVP
-- **Related Issues**: #1177, #1176
+- **Related Issues**: #1177 (Closed), #1176
 
 ## User Story
 
