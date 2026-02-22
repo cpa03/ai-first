@@ -75,7 +75,7 @@ export const NOTION_CONFIG = {
   },
 
   STATUS_OPTIONS: {
-    TODO: 'To Do',
+    BACKLOG: 'To Do',
     IN_PROGRESS: 'In Progress',
     DONE: 'Done',
   },
