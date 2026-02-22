@@ -1,5 +1,3 @@
-export const runtime = "experimental-edge";
-
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import {
@@ -9,12 +7,11 @@ import {
 } from '@/lib/config/constants';
 
 /**
- * Middleware for Next.js 16+ on Cloudflare Workers
- *
- * This file uses the standard middleware.ts convention to ensure compatibility
- * with Cloudflare Workers (OpenNext), which currently does not support the
- * Node.js-only proxy.ts convention.
+ * Middleware for Next.js on Cloudflare Workers
+ * Uses the standard middleware.ts convention for Edge Runtime compatibility.
  */
+
+export const runtime = 'experimental-edge';
 
 const PUBLIC_PATHS = [
   '/',
@@ -35,8 +32,12 @@ const PUBLIC_PATHS = [
 const AUTH_PATHS = ['/login', '/signup'];
 
 function generateNonce(): string {
-  // Uses web-standard crypto for Edge compatibility
-  return crypto.randomUUID();
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  // Hex string generation is safe in Edge environments
+  return Array.from(array)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 function buildCSPHeader(nonce: string): string {
@@ -78,7 +79,7 @@ function applySecurityHeaders(
     SECURITY_CONFIG.X_CONTENT_TYPE_OPTIONS
   );
   response.headers.set('Referrer-Policy', SECURITY_CONFIG.REFERRER_POLICY);
-  // SECURITY: Explicitly disable legacy XSS auditor
+  // SECURITY: Explicitly disable legacy XSS auditor (Defense in Depth)
   response.headers.set('X-XSS-Protection', SECURITY_CONFIG.X_XSS_PROTECTION);
   response.headers.set('Permissions-Policy', buildPermissionsPolicy());
   response.headers.set('Content-Security-Policy', buildCSPHeader(nonce));
