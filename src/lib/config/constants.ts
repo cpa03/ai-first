@@ -568,6 +568,11 @@ export const RATE_LIMIT_STORE_CONFIG = {
 } as const;
 
 /**
+ * Cache configuration defaults
+ * Now supports environment variable overrides
+ */
+
+/**
  * Content Security Policy configuration
  */
 export const CSP_CONFIG = {

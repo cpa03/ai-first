@@ -11,7 +11,7 @@ All errors follow this structure:
   "error": "Human-readable error message",
   "code": "ERROR_CODE",
   "details": [{ "field": "fieldName", "message": "Specific validation error" }],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
   "suggestions": [
@@ -77,7 +77,7 @@ Request validation failed. The request body or query parameters don't meet requi
       "message": "ideaText must be between 10 and 10000 characters"
     }
   ],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [
@@ -113,7 +113,7 @@ Request rate limit exceeded. Too many requests in a short period.
   "error": "Rate limit exceeded. Retry after 60 seconds",
   "code": "RATE_LIMIT_EXCEEDED",
   "details": [{ "message": "Limit: 50, Remaining: 0" }],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
   "suggestions": [
@@ -158,7 +158,7 @@ Unexpected internal server error. Something went wrong on the server.
 {
   "error": "An unexpected error occurred",
   "code": "INTERNAL_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [
@@ -193,7 +193,7 @@ External service (OpenAI, Notion, etc.) returned an error.
 {
   "error": "External service error: openai - Quota exceeded",
   "code": "EXTERNAL_SERVICE_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
   "suggestions": [
@@ -229,7 +229,7 @@ Operation exceeded time limit and was aborted.
 {
   "error": "Request timed out after 60000ms",
   "code": "TIMEOUT_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
   "suggestions": [
@@ -265,7 +265,7 @@ Authentication failed or missing.
 {
   "error": "Authentication required",
   "code": "AUTHENTICATION_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [
@@ -300,7 +300,7 @@ Insufficient permissions to access resource.
 {
   "error": "You don't have permission to access this resource",
   "code": "AUTHORIZATION_ERROR",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [
@@ -336,7 +336,7 @@ Requested resource not found.
 {
   "error": "Clarification session not found",
   "code": "NOT_FOUND",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [
@@ -371,7 +371,7 @@ Resource conflict or duplicate creation attempt.
 {
   "error": "Clarification session already exists for this idea",
   "code": "CONFLICT",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [
@@ -407,7 +407,7 @@ Service temporarily unavailable for maintenance or high load.
 {
   "error": "Service temporarily unavailable",
   "code": "SERVICE_UNAVAILABLE",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
   "suggestions": [
@@ -440,9 +440,9 @@ Circuit breaker is open due to repeated failures of external service.
 
 ```json
 {
-  "error": "Circuit breaker open for openai. Retry after 2024-01-07T12:01:00Z",
+  "error": "Circuit breaker open for openai. Retry after 2026-01-07T12:01:00Z",
   "code": "CIRCUIT_BREAKER_OPEN",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
   "suggestions": [
@@ -477,7 +477,7 @@ All retry attempts for an operation failed.
 {
   "error": "Failed after 3 attempts",
   "code": "RETRY_EXHAUSTED",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
   "suggestions": [

@@ -1,5 +1,7 @@
 # Architecture
 
+> **Architecture Decision Records**: Key architectural decisions are documented in [ADR/](./adr/). See [ADR-001](./adr/ADR-001-ai-abstraction-layer.md) for the AI abstraction layer decision.
+
 ## Project Structure
 
 The project follows a Next.js 16+ app router structure with Supabase integration and AI abstraction layer.
@@ -28,8 +30,12 @@ src/
 │   ├── api-handler.ts  # API request handler
 │   ├── api-client.ts   # API client utilities
 │   ├── cache.ts        # Caching layer
-│   ├── config/         # Configuration
-│   │   └── constants.ts # Constants and config
+│   ├── config/         # Configuration modules
+│   │   ├── constants.ts   # Core constants
+│   │   ├── environment.ts # Environment configuration
+│   │   ├── theme.ts       # Theme configuration
+│   │   ├── timeline.ts    # Timeline configuration
+│   │   └── ...            # Other config modules
 │   ├── prompts/        # AI prompt templates
 │   │   ├── clarifier/  # Clarification agent prompts
 │   │   └── breakdown/  # Breakdown agent prompts
@@ -148,7 +154,7 @@ All errors return consistent JSON:
   "error": "Error message",
   "code": "ERROR_CODE",
   "details": [{ "field": "fieldName", "message": "Validation message" }],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -251,7 +257,7 @@ if (!result.allowed) {
 {
   "error": "Rate limit exceeded. Retry after 60 seconds",
   "code": "RATE_LIMIT_EXCEEDED",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -297,7 +303,7 @@ if (!result.valid) {
       "message": "ideaText must be between 10 and 10000 characters"
     }
   ],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false
 }

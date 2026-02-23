@@ -160,7 +160,7 @@ All API errors now follow this structure:
   "error": "Error message",
   "code": "ERROR_CODE",
   "details": [{ "field": "email", "message": "Invalid format" }],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -173,7 +173,7 @@ Access detailed health at `/api/health/detailed`:
 ```json
 {
   "status": "degraded",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "version": "0.1.0",
   "uptime": 3600,
   "checks": {
@@ -185,7 +185,7 @@ Access detailed health at `/api/health/detailed`:
         "service": "trello",
         "state": "open",
         "failures": 5,
-        "nextAttemptTime": "2024-01-07T12:00:30Z"
+        "nextAttemptTime": "2026-01-07T12:00:30Z"
       }
     ]
   }
@@ -277,6 +277,6 @@ If issues arise:
 
 ---
 
-**Implementation Date**: 2024-01-07
+**Implementation Date**: 2026-01-07
 **Agent**: Integration Engineer
 **Task**: Integration Hardening (Priority 1)

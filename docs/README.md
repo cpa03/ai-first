@@ -46,6 +46,7 @@ Complete index of all IdeaFlow documentation.
 - [Blueprint](./blueprint.md) - Complete project blueprint and specifications
 - [API Reference](./api.md) - Complete API documentation with examples
 - [Agent Guidelines](./agent-guidelines.md) - AI agent behavior rules and guidelines
+- [Database Schema](./database-schema.md) - Database schema documentation with ERD diagram
 
 ## Development Guides
 

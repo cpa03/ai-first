@@ -4,6 +4,35 @@ Idea: "{refinedIdea}"
 User Responses: {userResponses}
 Options: {options}
 
+### EXAMPLE OUTPUT
+
+Input Idea: "Build a mobile app for tracking daily habits with streaks and social features"
+
+Output:
+```json
+{
+  "objectives": [
+    {"title": "Enable habit tracking", "description": "Users can create, edit, and track daily habits", "confidence": 0.95},
+    {"title": "Implement streak system", "description": "Track consecutive days of habit completion", "confidence": 0.9}
+  ],
+  "deliverables": [
+    {"title": "User authentication", "description": "Sign up, login, password reset", "priority": 1, "estimatedHours": 16, "confidence": 0.85},
+    {"title": "Habit CRUD", "description": "Create, read, update, delete habits", "priority": 1, "estimatedHours": 24, "confidence": 0.9},
+    {"title": "Streak tracking", "description": "Calculate and display streaks", "priority": 2, "estimatedHours": 16, "confidence": 0.85}
+  ],
+  "complexity": {"score": 5, "factors": ["Mobile development", "Real-time updates", "Social features"], "level": "medium"},
+  "scope": {"size": "medium", "estimatedWeeks": 8, "teamSize": 2},
+  "riskFactors": [
+    {"factor": "App store approval delays", "impact": "medium", "probability": 0.4},
+    {"factor": "User retention after first week", "impact": "high", "probability": 0.5}
+  ],
+  "successCriteria": ["1,000 active users in first month", "70% retention after 7 days"],
+  "overallConfidence": 0.82
+}
+```
+
+### YOUR TASK
+
 Provide a comprehensive analysis including:
 1. Main objectives (3-5 specific, measurable goals)
 2. Key deliverables (5-10 concrete outputs)

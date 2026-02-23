@@ -868,7 +868,7 @@ curl http://localhost:3000/api/health/detailed
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "version": "0.1.0",
   "checks": {
     "database": { "status": "up", "latency": 45 },

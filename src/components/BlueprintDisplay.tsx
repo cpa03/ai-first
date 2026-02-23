@@ -1,19 +1,14 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
-import { generateBlueprintTemplate } from '@/templates/blueprint-template';
-import { ToastOptions } from '@/components/ToastContainer';
-import { UI_CONFIG } from '@/lib/config/constants';
-import { ANIMATION_DELAYS, MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
-import { createLogger } from '@/lib/logger';
-
-const logger = createLogger('BlueprintDisplay');
+import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
+import { MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -24,92 +19,15 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   idea,
   answers,
 }: BlueprintDisplayProps) {
-  const [isGenerating, setIsGenerating] = useState(true);
-  const [blueprint, setBlueprint] = useState('');
-  const [copied, setCopied] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (copyTimeoutRef.current) {
-        clearTimeout(copyTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    let isCancelled = false;
-
-    const generateBlueprint = async () => {
-      await new Promise((resolve) =>
-        setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
-      );
-
-      // Prevent state updates if component unmounted during generation
-      if (isCancelled) return;
-
-      const generatedBlueprint = generateBlueprintTemplate(idea, answers);
-
-      setBlueprint(generatedBlueprint);
-      setIsGenerating(false);
-      setShowCelebration(true);
-    };
-
-    generateBlueprint();
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [idea, answers]);
-
-  const handleDownload = () => {
-    const blob = new Blob([blueprint], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'project-blueprint.md';
-    document.body.appendChild(a);
-
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, ANIMATION_DELAYS.CLEANUP);
-
-    a.click();
-  };
-
-  const handleCopy = async () => {
-    const win = window as unknown as Window & {
-      showToast?: (options: ToastOptions) => void;
-    };
-
-    try {
-      await navigator.clipboard.writeText(blueprint);
-      setCopied(true);
-      copyTimeoutRef.current = setTimeout(
-        () => setCopied(false),
-        UI_CONFIG.COPY_FEEDBACK_DURATION
-      );
-
-      if (typeof window !== 'undefined' && win.showToast) {
-        win.showToast({
-          type: 'success',
-          message: 'Blueprint copied to clipboard!',
-          duration: UI_CONFIG.TOAST_DURATION,
-        });
-      }
-    } catch (err) {
-      logger.error('Failed to copy blueprint', err);
-      if (typeof window !== 'undefined' && win.showToast) {
-        win.showToast({
-          type: 'error',
-          message: 'Failed to copy. Please try selecting and copying manually.',
-          duration: UI_CONFIG.TOAST_DURATION,
-        });
-      }
-    }
-  };
+  const {
+    isGenerating,
+    blueprint,
+    copied,
+    showCelebration,
+    handleDownload,
+    handleCopy,
+    dismissCelebration,
+  } = useBlueprintGeneration(idea, answers);
 
   if (isGenerating) {
     return (
@@ -266,7 +184,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
       <SuccessCelebration
         show={showCelebration}
-        onComplete={() => setShowCelebration(false)}
+        onComplete={dismissCelebration}
       />
     </div>
   );
