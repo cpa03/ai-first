@@ -6,6 +6,7 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Alert from '@/components/Alert';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
@@ -237,15 +238,14 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
-          <p className="text-red-800">{error}</p>
+        <Alert type="error" title="Error">
+          {error}
           <div className="mt-4">
             <Button onClick={fetchIdeas} variant="primary">
               Try Again
             </Button>
           </div>
-        </div>
+        </Alert>
       </div>
     );
   }
