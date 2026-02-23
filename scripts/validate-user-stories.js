@@ -6,7 +6,15 @@
  * Validates user story markdown files against the User Story Engineer best practices.
  * Checks for required sections, format compliance, and INVEST criteria hints.
  *
- * Usage: npm run user-stories:validate
+ * Usage:
+ *   npm run user-stories:validate           # Human-readable output
+ *   npm run user-stories:validate -- --json # JSON output for CI/CD
+ *   node scripts/validate-user-stories.js --json
+ *
+ * Exit codes:
+ *   0 - All stories valid (may have warnings)
+ *   1 - One or more stories have errors
+ *   2 - Configuration/directory error
  *
  * @see docs/user-story-engineer.md for best practices
  * @see docs/templates/user-story_template.md for template reference
@@ -175,68 +183,34 @@ function findUserStoryFiles(dir) {
 }
 
 /**
- * Main function
+ * Outputs human-readable validation report
+ * @param {Object[]} results - Validation results
+ * @param {number} totalErrors - Total error count
+ * @param {number} totalWarnings - Total warning count
  */
-function main() {
-  console.log(`${colors.cyan}🔍 Validating user stories...${colors.reset}\n`);
-
-  const storiesDir = path.join(process.cwd(), 'docs', 'user-stories');
-
-  if (!fs.existsSync(storiesDir)) {
-    console.error(
-      `${colors.red}Error: User stories directory not found: ${storiesDir}${colors.reset}`
-    );
-    process.exit(1);
-  }
-
-  const storyFiles = findUserStoryFiles(storiesDir);
-
-  if (storyFiles.length === 0) {
-    console.log(`${colors.yellow}No user story files found.${colors.reset}`);
-    process.exit(0);
-  }
-
-  let totalErrors = 0;
-  let totalWarnings = 0;
-  const results = [];
-
-  for (const file of storyFiles) {
-    const result = validateUserStory(file);
-    results.push(result);
-    totalErrors += result.errors.length;
-    totalWarnings += result.warnings.length;
-  }
-
-
+function outputHumanReport(results, totalErrors, totalWarnings) {
   for (const result of results) {
     const status =
       result.errors.length === 0
         ? `${colors.green}✓${colors.reset}`
         : `${colors.red}✗${colors.reset}`;
-
     console.log(`${status} ${colors.dim}${result.file}${colors.reset}`);
-
     if (result.extractedData.storyId) {
       console.log(
         `  ${colors.blue}ID:${colors.reset} ${result.extractedData.storyId} ${colors.blue}Priority:${colors.reset} ${result.extractedData.priority || 'N/A'} ${colors.blue}Points:${colors.reset} ${result.extractedData.storyPoints || 'N/A'}`
       );
     }
-
     for (const error of result.errors) {
       console.log(`  ${colors.red}✗ Error: ${error}${colors.reset}`);
     }
-
     for (const warning of result.warnings) {
       console.log(`  ${colors.yellow}⚠ Warning: ${warning}${colors.reset}`);
     }
-
     for (const info of result.info) {
       console.log(`  ${colors.blue}ℹ Info: ${info}${colors.reset}`);
     }
-
     console.log('');
   }
-
 
   console.log(
     `${colors.cyan}========================================${colors.reset}`
@@ -246,11 +220,12 @@ function main() {
     `${colors.cyan}========================================${colors.reset}\n`
   );
 
+  const validCount = results.filter((r) => r.errors.length === 0).length;
   console.log(
-    `${colors.blue}Files checked:${colors.reset}    ${storyFiles.length}`
+    `${colors.blue}Files checked:${colors.reset}    ${results.length}`
   );
   console.log(
-    `${colors.green}Valid stories:${colors.reset}    ${results.filter((r) => r.errors.length === 0).length}`
+    `${colors.green}Valid stories:${colors.reset}    ${validCount}`
   );
   console.log(`${colors.red}Errors:${colors.reset}           ${totalErrors}`);
   console.log(
@@ -260,21 +235,140 @@ function main() {
   console.log(
     `\n${colors.cyan}========================================${colors.reset}`
   );
-
   if (totalErrors > 0) {
     console.log(
       `${colors.red}❌ User story validation failed with ${totalErrors} error(s)${colors.reset}`
     );
-    process.exit(1);
   } else if (totalWarnings > 0) {
     console.log(
       `${colors.yellow}✅ User stories valid with ${totalWarnings} warning(s)${colors.reset}`
     );
-    process.exit(0);
   } else {
     console.log(`${colors.green}✅ All user stories are valid!${colors.reset}`);
-    process.exit(0);
   }
 }
 
+/**
+ * Outputs JSON validation report for CI/CD integration
+ * @param {Object[]} results - Validation results
+ * @param {number} totalErrors - Total error count
+ * @param {number} totalWarnings - Total warning count
+ * @param {string} storiesDir - Path to stories directory
+ */
+function outputJsonReport(results, totalErrors, totalWarnings, storiesDir) {
+  const validCount = results.filter((r) => r.errors.length === 0).length;
+
+  // Calculate summary statistics
+  const priorityDistribution = { P0: 0, P1: 0, P2: 0, P3: 0 };
+  const totalStoryPoints = results.reduce((sum, r) => {
+    const points = parseInt(r.extractedData.storyPoints) || 0;
+    if (r.extractedData.priority) {
+      priorityDistribution[r.extractedData.priority]++;
+    }
+    return sum + points;
+  }, 0);
+
+  const report = {
+    timestamp: new Date().toISOString(),
+    status: totalErrors > 0 ? 'failed' : 'passed',
+    summary: {
+      totalStories: results.length,
+      validStories: validCount,
+      invalidStories: results.length - validCount,
+      totalErrors,
+      totalWarnings,
+      totalStoryPoints,
+      priorityDistribution,
+    },
+    storiesDirectory: storiesDir,
+    results: results.map((r) => ({
+      file: r.file,
+      storyId: r.extractedData.storyId || null,
+      priority: r.extractedData.priority || null,
+      storyPoints: r.extractedData.storyPoints
+        ? parseInt(r.extractedData.storyPoints)
+        : null,
+      persona: r.extractedData.persona || null,
+      goal: r.extractedData.goal || null,
+      benefit: r.extractedData.benefit || null,
+      hasUserStoryFormat: r.hasUserStoryFormat,
+      errors: r.errors,
+      warnings: r.warnings,
+      info: r.info,
+    })),
+  };
+
+  console.log(JSON.stringify(report, null, 2));
+}
+
+/**
+ * Main function
+ */
+function main() {
+  // Parse command line arguments
+  const args = process.argv.slice(2);
+  const jsonOutput = args.includes('--json');
+  const quietMode = args.includes('--quiet');
+
+  if (!jsonOutput && !quietMode) {
+    console.log(`${colors.cyan}🔍 Validating user stories...${colors.reset}\n`);
+  }
+
+  const storiesDir = path.join(process.cwd(), 'docs', 'user-stories');
+  if (!fs.existsSync(storiesDir)) {
+    if (jsonOutput) {
+      console.log(
+        JSON.stringify({
+          status: 'error',
+          error: `User stories directory not found: ${storiesDir}`,
+          code: 2,
+        })
+      );
+    } else {
+      console.error(
+        `${colors.red}Error: User stories directory not found: ${storiesDir}${colors.reset}`
+      );
+    }
+    process.exit(2);
+  }
+
+  const storyFiles = findUserStoryFiles(storiesDir);
+  if (storyFiles.length === 0) {
+    if (jsonOutput) {
+      console.log(
+        JSON.stringify({
+          status: 'passed',
+          summary: {
+            totalStories: 0,
+            validStories: 0,
+            invalidStories: 0,
+            totalErrors: 0,
+            totalWarnings: 0,
+          },
+          results: [],
+        })
+      );
+    } else {
+      console.log(`${colors.yellow}No user story files found.${colors.reset}`);
+    }
+    process.exit(0);
+  }
+  let totalErrors = 0;
+  let totalWarnings = 0;
+  const results = [];
+  for (const file of storyFiles) {
+    const result = validateUserStory(file);
+    results.push(result);
+    totalErrors += result.errors.length;
+    totalWarnings += result.warnings.length;
+  }
+
+  if (jsonOutput) {
+    outputJsonReport(results, totalErrors, totalWarnings, storiesDir);
+  } else {
+    outputHumanReport(results, totalErrors, totalWarnings);
+  }
+
+  process.exit(totalErrors > 0 ? 1 : 0);
+}
 main();
