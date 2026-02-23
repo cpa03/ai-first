@@ -54,6 +54,8 @@ const InputWithValidationComponent = forwardRef<
   ) => {
     const [touched, setTouched] = useState(false);
     const [errorAnnounced, setErrorAnnounced] = useState(false);
+    const [successAnnounced, setSuccessAnnounced] = useState(false);
+    const [wasInvalid, setWasInvalid] = useState(false);
     const [shouldShake, setShouldShake] = useState(false);
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
@@ -166,6 +168,29 @@ const InputWithValidationComponent = forwardRef<
         }
       };
     }, [isInvalid]);
+
+    // Track wasInvalid state to detect invalid -> valid transitions
+    useEffect(() => {
+      if (isInvalid) {
+        setWasInvalid(true);
+      }
+    }, [isInvalid]);
+
+    // Announce success when transitioning from invalid to valid
+    useEffect(() => {
+      if (isValid && wasInvalid && !successAnnounced) {
+        const timeoutId = setTimeout(() => {
+          setSuccessAnnounced(true);
+        }, ANIMATION_DELAYS.IMMEDIATE);
+        return () => clearTimeout(timeoutId);
+      } else if (!isValid && successAnnounced) {
+        const timeoutId = setTimeout(() => {
+          setSuccessAnnounced(false);
+          setWasInvalid(false);
+        }, ANIMATION_DELAYS.IMMEDIATE);
+        return () => clearTimeout(timeoutId);
+      }
+    }, [isValid, wasInvalid, successAnnounced]);
 
     const setTextareaRef = (element: HTMLTextAreaElement | null) => {
       (
@@ -331,6 +356,12 @@ const InputWithValidationComponent = forwardRef<
                 <p id={`${props.id}-error`} className="text-sm text-red-600">
                   {error}
                 </p>
+              </div>
+            )}
+            {/* Success announcement for screen readers - announces when input transitions from invalid to valid */}
+            {isValid && wasInvalid && !successAnnounced && (
+              <div role="status" aria-live="polite" className="sr-only">
+                {label} is now valid
               </div>
             )}
           </div>
