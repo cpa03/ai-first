@@ -14,7 +14,36 @@ jest.mock('@/lib/config/constants', () => ({
     COPY_FEEDBACK_DURATION: 100,
     TOAST_DURATION: 3000,
   },
-}));
+  PII_REDACTION_CONFIG: {
+    REDACTION_LABELS: {
+      JWT: '[REDACTED_TOKEN]',
+      URL_WITH_CREDENTIALS: '[REDACTED_URL]',
+      EMAIL: '[REDACTED_EMAIL]',
+      PHONE: '[REDACTED_PHONE]',
+      SSN: '[REDACTED_SSN]',
+      CREDIT_CARD: '[REDACTED_CARD]',
+      IP_ADDRESS: '[REDACTED_IP]',
+      API_KEY: '[REDACTED_API_KEY]',
+      PASSPORT: '[REDACTED_PASSPORT]',
+      DRIVERS_LICENSE: '[REDACTED_LICENSE]',
+    },
+    PRIVATE_IP_RANGES: {
+      LOOPBACK: ['127'],
+      PRIVATE_CLASS_A: ['10'],
+      PRIVATE_CLASS_B: ['172'],
+      PRIVATE_CLASS_C: ['192', '168'],
+    },
+    API_KEY_PREFIXES: [
+      'api[-_ ]?key',
+      'apikey',
+      'secret',
+      'token',
+      'credential',
+    ],
+    SAFE_FIELDS: ['id', 'created_at', 'updated_at', 'status', 'priority', 'estimate_hours'],
+    MAX_RECURSION_DEPTH: 100,
+  },
+}))
 
 jest.mock('@/lib/config', () => ({
   ANIMATION_DELAYS: {
@@ -196,28 +225,6 @@ describe('useBlueprintGeneration', () => {
   });
 
   it('creates download link', async () => {
-    const mockClick = jest.fn();
-    const mockAnchor = {
-      href: '',
-      download: '',
-      click: mockClick,
-    };
-
-    const originalCreateElement = document.createElement.bind(document);
-    jest.spyOn(document, 'createElement').mockImplementation((tag) => {
-      if (tag === 'a') {
-        return mockAnchor as unknown as HTMLAnchorElement;
-      }
-      return originalCreateElement(tag);
-    });
-
-    const mockAppendChild = jest
-      .spyOn(document.body, 'appendChild')
-      .mockImplementation();
-    const mockRemoveChild = jest
-      .spyOn(document.body, 'removeChild')
-      .mockImplementation();
-
     const { result } = renderHook(() =>
       useBlueprintGeneration(mockIdea, mockAnswers)
     );
@@ -230,6 +237,31 @@ describe('useBlueprintGeneration', () => {
       expect(result.current.isGenerating).toBe(false);
     });
 
+    // Set up DOM mocks AFTER renderHook to avoid interfering with test container
+    const mockClick = jest.fn();
+    const mockAnchor = {
+      href: '',
+      download: '',
+      click: mockClick,
+    };
+
+    const originalCreateElement = document.createElement.bind(document);
+    const createElementSpy = jest
+      .spyOn(document, 'createElement')
+      .mockImplementation((tag) => {
+        if (tag === 'a') {
+          return mockAnchor as unknown as HTMLAnchorElement;
+        }
+        return originalCreateElement(tag);
+      });
+
+    const mockAppendChild = jest
+      .spyOn(document.body, 'appendChild')
+      .mockImplementation(() => mockAnchor as unknown as Node);
+    const mockRemoveChild = jest
+      .spyOn(document.body, 'removeChild')
+      .mockImplementation(() => mockAnchor as unknown as Node);
+
     act(() => {
       result.current.handleDownload();
     });
@@ -237,9 +269,16 @@ describe('useBlueprintGeneration', () => {
     expect(mockAnchor.download).toBe('project-blueprint.md');
     expect(mockClick).toHaveBeenCalled();
 
+    // Run the cleanup timer to ensure removeChild is called while mocks are active
+    act(() => {
+      jest.runOnlyPendingTimers();
+    });
+
+    createElementSpy.mockRestore();
     mockAppendChild.mockRestore();
     mockRemoveChild.mockRestore();
   });
+
 
   it('regenerates blueprint when inputs change', async () => {
     const { result, rerender } = renderHook(
