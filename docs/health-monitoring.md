@@ -58,7 +58,7 @@ Basic health check that validates environment configuration and required service
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "environment": "development",
   "checks": {
     "NEXT_PUBLIC_SUPABASE_URL": {
@@ -111,7 +111,7 @@ Comprehensive health check with all services, latencies, and circuit breaker sta
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "version": "0.1.0",
   "uptime": 3600,
   "reliabilityScore": 95,
@@ -119,17 +119,17 @@ Comprehensive health check with all services, latencies, and circuit breaker sta
     "database": {
       "status": "up",
       "latency": 45,
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "ai": {
       "status": "up",
       "latency": 234,
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "exports": {
       "status": "degraded",
       "error": "2/5 connectors",
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     }
   },
   "memory": {
@@ -155,7 +155,7 @@ Comprehensive health check with all services, latencies, and circuit breaker sta
       "service": "trello",
       "state": "open",
       "failures": 5,
-      "nextAttemptTime": "2024-01-07T12:01:00Z"
+      "nextAttemptTime": "2026-01-07T12:01:00Z"
     }
   ]
 }
@@ -205,7 +205,7 @@ Database-specific health check.
 {
   "status": "healthy",
   "service": "database",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "environment": "development"
 }
 ```
@@ -315,7 +315,7 @@ curl http://localhost:3000/api/health/detailed | jq '.checks.circuitBreakers'
     "service": "trello",
     "state": "open",
     "failures": 5,
-    "nextAttemptTime": "2024-01-07T12:01:00Z"
+    "nextAttemptTime": "2026-01-07T12:01:00Z"
   }
 ]
 ```

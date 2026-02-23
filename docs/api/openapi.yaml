@@ -1047,7 +1047,7 @@ components:
         timestamp:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
 
     Idea:
       type: object
@@ -1071,11 +1071,11 @@ components:
         created_at:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
         updated_at:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
         deleted_at:
           type: string
           format: date-time
@@ -1114,7 +1114,7 @@ components:
                 createdAt:
                   type: string
                   format: date-time
-                  example: '2024-01-07T00:00:00Z'
+                  example: '2026-01-07T00:00:00Z'
 
     ListIdeasResponse:
       allOf:
@@ -1923,7 +1923,7 @@ components:
             timestamp:
               type: string
               format: date-time
-              example: '2024-01-07T00:00:00Z'
+              example: '2026-01-07T00:00:00Z'
             environment:
               type: string
               example: production
@@ -1988,7 +1988,7 @@ components:
             timestamp:
               type: string
               format: date-time
-              example: '2024-01-07T00:00:00Z'
+              example: '2026-01-07T00:00:00Z'
             environment:
               type: string
               example: production
@@ -2028,7 +2028,7 @@ components:
             timestamp:
               type: string
               format: date-time
-              example: '2024-01-07T00:00:00Z'
+              example: '2026-01-07T00:00:00Z'
             version:
               type: string
               example: 1.0.0
@@ -2079,7 +2079,7 @@ components:
         lastChecked:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
 
     CircuitBreakerHealth:
       type: object
@@ -2101,7 +2101,7 @@ components:
         nextAttemptTime:
           type: string
           format: date-time
-          example: '2024-01-07T00:05:00Z'
+          example: '2026-01-07T00:05:00Z'
 
     IntegrationsHealthResponse:
       type: object
@@ -2129,7 +2129,7 @@ components:
             timestamp:
               type: string
               format: date-time
-              example: '2024-01-07T00:00:00Z'
+              example: '2026-01-07T00:00:00Z'
             version:
               type: string
               description: API version
@@ -2203,7 +2203,7 @@ components:
           type: string
           format: date-time
           description: Timestamp of last health check
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
 
     ErrorResponse:
       type: object
@@ -2250,7 +2250,7 @@ components:
         timestamp:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
         requestId:
           type: string
           example: req_1704625200000_abc123def
@@ -2292,11 +2292,11 @@ components:
         createdAt:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
         updatedAt:
           type: string
           format: date-time
-          example: '2024-01-07T00:00:00Z'
+          example: '2026-01-07T00:00:00Z'
 
     GetIdeaTasksResponse:
       allOf:
@@ -2444,7 +2444,7 @@ components:
                 timestamp:
                   type: string
                   format: date-time
-                  example: '2024-01-07T00:00:00Z'
+                  example: '2026-01-07T00:00:00Z'
                 totalEntries:
                   type: integer
                   description: Total number of rate limit entries
@@ -2526,7 +2526,7 @@ components:
                 timestamp:
                   type: string
                   format: date-time
-                  example: '2024-01-07T00:00:00Z'
+                  example: '2026-01-07T00:00:00Z'
 
     # Common Response Headers
     # These headers are included in all API responses
@@ -2553,7 +2553,7 @@ components:
           type: string
           format: date-time
           description: ISO 8601 timestamp when the rate limit window resets.
-          example: '2024-01-07T12:05:00Z'
+          example: '2026-01-07T12:05:00Z'
         X-Response-Time:
           type: string
           description: Request processing time in milliseconds.
@@ -2599,7 +2599,7 @@ components:
           type: string
           format: date-time
           description: When the rate limit window resets.
-          example: '2024-01-07T12:05:00Z'
+          example: '2026-01-07T12:05:00Z'
 
   securitySchemes:
     BearerAuth:

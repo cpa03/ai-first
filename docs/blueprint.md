@@ -90,7 +90,7 @@ All successful responses follow this pattern:
   "success": true,
   "data": { ... },
   "requestId": "req_1234567890_abc123",
-  "timestamp": "2024-01-07T12:00:00Z"
+  "timestamp": "2026-01-07T12:00:00Z"
 }
 ```
 
@@ -105,7 +105,7 @@ All errors follow this pattern:
   "details": [
     { "field": "fieldName", "message": "Validation message" }
   ],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -361,7 +361,7 @@ X-RateLimit-Reset: 1704614400
 {
   "error": "Rate limit exceeded. Retry after 60 seconds",
   "code": "RATE_LIMIT_EXCEEDED",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -425,8 +425,8 @@ const states = resilienceManager.getCircuitBreakerStates();
   "github": {
     "state": "open",
     "failures": 5,
-    "lastFailure": "2024-01-07T12:00:00Z",
-    "nextAttemptTime": "2024-01-07T12:01:00Z"
+    "lastFailure": "2026-01-07T12:00:00Z",
+    "nextAttemptTime": "2026-01-07T12:01:00Z"
   }
 }
 ```
@@ -605,7 +605,7 @@ export async function executeWithTimeout<T>(
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "environment": "development"
 }
 ```
@@ -617,24 +617,24 @@ export async function executeWithTimeout<T>(
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "version": "0.1.0",
   "uptime": 3600,
   "checks": {
     "database": {
       "status": "up",
       "latency": 45,
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "ai": {
       "status": "up",
       "latency": 234,
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "exports": {
       "status": "degraded",
       "error": "2/5 connectors",
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "circuitBreakers": [
       {
@@ -646,7 +646,7 @@ export async function executeWithTimeout<T>(
         "service": "trello",
         "state": "open",
         "failures": 5,
-        "nextAttemptTime": "2024-01-07T12:01:00Z"
+        "nextAttemptTime": "2026-01-07T12:01:00Z"
       }
     ]
   }
@@ -661,7 +661,7 @@ export async function executeWithTimeout<T>(
 {
   "status": "healthy",
   "service": "database",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "environment": "development"
 }
 ```
@@ -2026,7 +2026,7 @@ curl https://api.example.com/api/health/database
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-08T12:00:00Z",
+  "timestamp": "2026-01-08T12:00:00Z",
   "version": "0.1.0",
   "checks": {
     "database": { "status": "up", "latency": 45 },

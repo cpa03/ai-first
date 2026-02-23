@@ -29,9 +29,9 @@ agent/<agent-name>-YYYYMMDD-HHMM
 
 Examples:
 
-- `agent/clarifier-20240107-1200`
-- `agent/breakdown-20240107-1430`
-- `agent/security-20240107-1600`
+- `agent/clarifier-20260107-1200`
+- `agent/breakdown-20260107-1430`
+- `agent/security-20260107-1600`
 
 ### Branch Operations
 
