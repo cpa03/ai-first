@@ -79,6 +79,8 @@ export const API_ERROR_MESSAGES = {
   SERVICE: {
     AI_UNAVAILABLE: 'AI service is temporarily unavailable',
     DATABASE_ERROR: 'Database operation failed',
+    DATABASE_TIMEOUT: 'Database operation timed out',
+    DATABASE_CONNECTION_FAILED: 'Failed to connect to database',
     EXPORT_FAILED: 'Export operation failed',
     EXTERNAL_SERVICE_TIMEOUT: 'External service request timed out',
     EXTERNAL_SERVICE_ERROR: 'External service returned an error',
