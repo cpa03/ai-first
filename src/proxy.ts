@@ -7,7 +7,7 @@ import {
 } from '@/lib/config/constants';
 
 /**
- * Middleware for Next.js
+ * Proxy for Next.js (formerly middleware)
  *
  * Features:
  * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
@@ -20,7 +20,8 @@ import {
  * - cf-connecting-ip: Original client IP
  * - cf-visitor: HTTPS info
  *
- * See: https://nextjs.org/docs/messages/middleware-to-proxy
+ * Migration: Renamed from middleware.ts to proxy.ts per Next.js 16 convention.
+ * @see https://nextjs.org/docs/messages/middleware-to-proxy
  */
 
 const PUBLIC_PATHS = [
@@ -154,8 +155,8 @@ function applyCloudflareHeaders(
 
     // Extract and expose geographic information
     // cf-country: ISO 3166-1 Alpha 2 country code (e.g., "US", "GB", "JP")
-    const cfCountry = request.headers.get('cf-country') ||
-                       request.headers.get('cf-ipcountry');
+    const cfCountry =
+      request.headers.get('cf-country') || request.headers.get('cf-ipcountry');
     if (cfCountry) {
       response.headers.set('x-user-country', cfCountry);
     }
@@ -185,7 +186,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
