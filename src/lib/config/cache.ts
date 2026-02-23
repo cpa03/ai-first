@@ -111,6 +111,12 @@ export const CACHE_CONFIG = {
   } as const,
 
   /**
+   * Default cache size for general purpose caching
+   * Env: CACHE_SIZE_MAXIMUM (default: 1000)
+   */
+  DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
+
+  /**
    * Service-specific cache configurations
    * All values support environment variable overrides
    */

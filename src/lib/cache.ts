@@ -10,7 +10,7 @@ export interface CacheOptions {
   onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
 }
 
-import { CACHE_CONFIG } from './config/constants';
+import { CACHE_CONFIG } from './config/cache';
 
 export class Cache<T = unknown> {
   private cache: Map<string, CacheEntry<T>>;
@@ -36,7 +36,7 @@ export class Cache<T = unknown> {
     // PERFORMANCE: Throttle proactive cleanup to avoid O(N) scans on every set() call.
     // Expired entries are still handled on-access in get() and has() methods.
     const now = Date.now();
-    if (now - this.lastCleanup > CACHE_CONFIG.CLEANUP_INTERVAL_MS) {
+    if (now - this.lastCleanup > CACHE_CONFIG.CLEANUP.INTERVAL_MS) {
       this.evictExpiredEntries();
       this.lastCleanup = now;
     }
