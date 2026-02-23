@@ -16,23 +16,28 @@ This repository uses a sophisticated multi-agent system powered by OpenCode CLI 
 
 ### Specialized Agents (via OhMyOpenCode)
 
-| Agent              | Model                      | Purpose                                    |
-| ------------------ | -------------------------- | ------------------------------------------ |
-| **Sisyphus**       | opencode/kimi-k2.5-free    | Main orchestrator, relentless execution    |
-| **Hephaestus**     | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented      |
-| **Oracle**         | opencode/kimi-k2.5-free    | Architecture, debugging, complex reasoning |
-| **Librarian**      | opencode/glm-4.7-free      | Documentation, codebase exploration        |
-| **Explore**        | opencode/glm-4.7-free      | Fast codebase search                       |
-| **Frontend UI/UX** | opencode/glm-4.7-free      | Frontend development                       |
-| **Minimax Agent**  | opencode/minimax-m2.1-free | Balanced performance tasks                 |
+| Agent                 | Model                      | Purpose                                     |
+| --------------------- | -------------------------- | ------------------------------------------- |
+| **Sisyphus**          | opencode/kimi-k2.5-free    | Main orchestrator, relentless execution     |
+| **Hephaestus**        | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented       |
+| **Oracle**            | opencode/kimi-k2.5-free    | Architecture, debugging, complex reasoning  |
+| **Librarian**         | opencode/glm-4.7-free      | Documentation, codebase exploration         |
+| **Explore**           | opencode/glm-4.7-free      | Fast codebase search                        |
+| **Frontend UI/UX**    | opencode/glm-4.7-free      | Frontend development                        |
+| **Minimax Agent**     | opencode/minimax-m2.1-free | Balanced performance tasks                  |
+| **Multimodal Looker** | opencode/glm-4.7-free      | Media file analysis, multimodal processing  |
+| **Prometheus**        | opencode/kimi-k2.5-free    | Planning agent, work breakdowns             |
+| **Metis**             | opencode/kimi-k2.5-free    | Strategic planning and coordination         |
+| **Momus**             | opencode/kimi-k2.5-free    | Critical analysis and review                |
+| **Atlas**             | opencode/kimi-k2.5-free    | Knowledge mapping, information architecture |
 
 ## Model Configuration
 
 All agents use free-tier OpenCode models:
 
-- **opencode/kimi-k2.5-free**: High reasoning capability (Sisyphus, Oracle, CMZ)
-- **opencode/glm-4.7-free**: Fast, efficient (Hephaestus, Librarian, Explore)
-- **opencode/minimax-m2.1-free**: Balanced performance (quick tasks)
+- **opencode/kimi-k2.5-free**: High reasoning capability (Sisyphus, Oracle, Prometheus, Metis, Momus, Atlas, CMZ)
+- **opencode/glm-4.7-free**: Fast, efficient (Hephaestus, Librarian, Explore, Frontend UI/UX, Multimodal Looker)
+- **opencode/minimax-m2.1-free**: Balanced performance (Minimax Agent)
 
 ## Task Delegation Rules
 
@@ -44,6 +49,8 @@ CMZ automatically delegates based on task type:
 - **Git Operations** → Git Master skill
 - **Debugging** → Systematic Debugging skill
 - **Documentation** → Librarian
+- **Planning** → Prometheus
+- **Media Analysis** → Multimodal Looker
 
 ## Skills Library
 
@@ -56,6 +63,7 @@ CMZ automatically delegates based on task type:
 - `superpowers-executing-plans` - Plan execution
 - `superpowers-tdd` - Test-driven development
 - `systematic-debugging` - Root cause analysis
+- `superpowers-debugging` - Debugging workflow
 - `superpowers-using` - How to access and use skills
 
 ### Development Skills
@@ -98,6 +106,7 @@ CMZ automatically delegates based on task type:
 ### Tools & Integration Skills
 
 - `moai-adk-tool` / `adk-moai-tool` - OpenCode ADK tool references
+- `ai-agents-git-commit` - AI agents git commit automation
 
 ## Usage
 

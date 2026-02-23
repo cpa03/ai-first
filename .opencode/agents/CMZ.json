@@ -47,6 +47,40 @@
       "model": "opencode/minimax-m2.1-free",
       "description": "Balanced performance for quick tasks",
       "capabilities": ["general"]
+    },
+    "multimodal_looker": {
+      "name": "Multimodal Looker",
+      "model": "opencode/glm-4.7-free",
+      "description": "Media file analysis and multimodal processing",
+      "capabilities": ["image_analysis", "pdf_processing", "multimodal"]
+    },
+    "prometheus": {
+      "name": "Prometheus",
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Planning agent for creating work breakdowns",
+      "category": "ultrabrain",
+      "capabilities": ["planning", "task_breakdown", "work_organization"]
+    },
+    "metis": {
+      "name": "Metis",
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Strategic planning and coordination",
+      "category": "ultrabrain",
+      "capabilities": ["strategy", "coordination", "planning"]
+    },
+    "momus": {
+      "name": "Momus",
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Critical analysis and review",
+      "category": "ultrabrain",
+      "capabilities": ["critique", "review", "analysis"]
+    },
+    "atlas": {
+      "name": "Atlas",
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Knowledge mapping and information architecture",
+      "category": "ultrabrain",
+      "capabilities": ["knowledge_mapping", "architecture", "documentation"]
     }
   },
   "integrations": {
@@ -74,14 +108,35 @@
     }
   },
   "skills": {
-    "total_available": 35,
+    "total_available": 32,
     "categories": {
-      "process": ["superpowers-brainstorming", "superpowers-writing-plans", "superpowers-executing-plans", "superpowers-tdd", "systematic-debugging"],
-      "development": ["superpowers-subagent-dev", "superpowers-git-worktrees", "superpowers-verification", "superpowers-finishing-branch"],
-      "collaboration": ["superpowers-requesting-review", "superpowers-receiving-review", "superpowers-parallel-agents"],
-      "domain": ["github-workflow-automation", "planning", "git-master", "skill-creator", "skill-builder"],
+      "process": [
+        "superpowers-brainstorming",
+        "superpowers-writing-plans",
+        "superpowers-executing-plans",
+        "superpowers-tdd",
+        "systematic-debugging",
+        "superpowers-debugging",
+        "superpowers-using"
+      ],
+      "development": [
+        "superpowers-subagent-dev",
+        "superpowers-git-worktrees",
+        "superpowers-verification",
+        "superpowers-finishing-branch"
+      ],
+      "collaboration": [
+        "superpowers-requesting-review",
+        "superpowers-receiving-review",
+        "superpowers-parallel-agents"
+      ],
+      "domain": ["planning", "git-master", "skill-creator", "skill-builder"],
       "context": ["context-memory-systems", "context-engineering-memory"],
-      "github": ["github-issue-triage", "github-pr-triage", "git-commit-message"],
+      "github": [
+        "github-issue-triage",
+        "github-pr-triage",
+        "git-commit-message"
+      ],
       "backend": ["codepro-backend-standards", "claude-codepro-backend"],
       "debugging": ["claude-code-debugging", "debugging-strategies"],
       "testing": ["proffesor-testing-qe"],
