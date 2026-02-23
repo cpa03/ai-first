@@ -67,6 +67,28 @@ const SENSITIVE_VAR_PATTERNS = [
   'BACKUP', // Backup keys/codes
   'SEED', // Seed phrases/values
   'JWK', // JSON Web Keys
+  'CSRF', // Anti-CSRF tokens
+  'XSRF', // Anti-XSRF tokens
+  'COOKIE', // Session cookies
+  'OTP', // One-time passwords
+  'NONCE', // Cryptographic nonces
+  'CVV', // Credit card security codes
+  'CVC', // Credit card security codes
+  'PIN', // Personal identification numbers
+  'SWIFT', // Banking SWIFT codes
+  'BIC', // Banking BIC codes
+  'TAXID', // Tax identification numbers
+  'NINO', // National Insurance numbers
+  'PASSPORT', // Passport numbers
+  'LICENSE', // Driver's license numbers
+  'LICENCE', // Driver's license numbers (alternative spelling)
+  'DB_', // Database connection secrets
+  'EMAIL', // Email addresses
+  'PHONE', // Phone numbers
+  'CARD', // Credit card numbers
+  'IP_ADDRESS', // IP addresses
+  'BEARER', // Bearer tokens
+  'STACK', // Stack traces
 ] as const;
 
 /**
