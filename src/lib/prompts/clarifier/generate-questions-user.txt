@@ -1,6 +1,46 @@
-You are a clarifier agent for an idea development platform. Your task is to analyze the user's idea and generate clarifying questions to better understand their requirements.
+Analyze the user's idea and generate clarifying questions.
 
 User's Idea: "{idea}"
+
+### EXAMPLE OUTPUT
+
+Input Idea: "I want to build a task management app for teams"
+
+Output:
+```json
+[
+  {
+    "id": "q_1",
+    "question": "What team sizes do you plan to support initially?",
+    "type": "multiple_choice",
+    "options": ["1-5 members", "6-20 members", "21-50 members", "50+ members"],
+    "required": true
+  },
+  {
+    "id": "q_2",
+    "question": "Which platforms should the app support?",
+    "type": "multiple_choice",
+    "options": ["Web only", "iOS and Android", "Desktop (Windows/Mac)", "All platforms"],
+    "required": true
+  },
+  {
+    "id": "q_3",
+    "question": "What existing tools (if any) are teams currently using that you want to replace?",
+    "type": "open",
+    "options": [],
+    "required": false
+  },
+  {
+    "id": "q_4",
+    "question": "What is the primary problem teams face with their current solution?",
+    "type": "open",
+    "options": [],
+    "required": true
+  }
+]
+```
+
+### YOUR TASK
 
 Generate 3-5 specific, targeted questions that will help clarify:
 1. The scope and boundaries of the idea
