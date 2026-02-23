@@ -74,7 +74,7 @@ const SENSITIVE_VAR_PATTERNS = [
   'NONCE', // Cryptographic nonces
   'CVV', // Credit card security codes
   'CVC', // Credit card security codes
-  'PIN', // Personal identification numbers
+  '_PIN', // Personal identification numbers (prefixed to avoid false positives)
   'SWIFT', // Banking SWIFT codes
   'BIC', // Banking BIC codes
   'TAXID', // Tax identification numbers
@@ -82,13 +82,13 @@ const SENSITIVE_VAR_PATTERNS = [
   'PASSPORT', // Passport numbers
   'LICENSE', // Driver's license numbers
   'LICENCE', // Driver's license numbers (alternative spelling)
-  'DB_', // Database connection secrets
-  'EMAIL', // Email addresses
-  'PHONE', // Phone numbers
-  'CARD', // Credit card numbers
+  'DB_URL', // Database connection URLs
+  '_EMAIL', // Email addresses (prefixed to avoid false positives)
+  '_PHONE', // Phone numbers (prefixed to avoid false positives)
+  'CREDIT_CARD', // Credit card numbers
   'IP_ADDRESS', // IP addresses
   'BEARER', // Bearer tokens
-  'STACK', // Stack traces
+  'STACK_TRACE', // Error stack traces
 ] as const;
 
 /**
