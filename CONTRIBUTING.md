@@ -57,6 +57,24 @@ This project uses **npm** as its package manager. Please use npm for all depende
 - ✅ `npm run <script>` - Run npm scripts
 - ❌ Do not use yarn or pnpm (to avoid lock file conflicts)
 
+### Pre-commit Hooks
+
+This project uses pre-commit hooks to ensure code quality. After running `npm install`, the hooks are automatically set up via Husky.
+
+**What runs automatically on commit:**
+
+- **ESLint**: Lints and fixes TypeScript/TSX files
+- **Prettier**: Formats code style
+- **Commitlint**: Validates commit messages follow Conventional Commits
+
+**Bypassing hooks (not recommended):**
+
+```bash
+git commit --no-verify -m "your message"
+```
+
+Only use `--no-verify` in exceptional circumstances (e.g., WIP commits).
+
 ## Project Structure
 
 ```
