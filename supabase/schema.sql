@@ -713,6 +713,8 @@ CREATE INDEX idx_vectors_type ON vectors(reference_type);
 CREATE INDEX idx_vectors_idea_type ON vectors(idea_id, reference_type);
 CREATE INDEX idx_vectors_embedding_cosine ON vectors USING ivfflat (embedding vector_cosine_ops) WITH (lists = 100);
 CREATE INDEX idx_vectors_embedding_l2 ON vectors USING ivfflat (embedding vector_l2_ops) WITH (lists = 100);
+CREATE INDEX idx_vectors_idea_created ON vectors(idea_id, created_at DESC);
+CREATE INDEX idx_vectors_idea_type_created ON vectors(idea_id, reference_type, created_at DESC);
 
 CREATE INDEX idx_agent_logs_timestamp ON agent_logs(timestamp DESC);
 CREATE INDEX idx_agent_logs_agent ON agent_logs(agent);
