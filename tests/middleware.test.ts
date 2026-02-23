@@ -1,3 +1,5 @@
+import { TEST_CONFIG } from './config/test-config';
+
 describe('middleware - unit tests for internal logic', () => {
   describe('CSP header construction', () => {
     it('should build CSP with correct directives', () => {
@@ -24,21 +26,20 @@ describe('middleware - unit tests for internal logic', () => {
 
   describe('Allowed origins parsing', () => {
     it('should parse comma-separated origins', () => {
-      const allowedOrigins =
-        'http://localhost:3000,https://example.com,https://www.example.com';
+      const allowedOrigins = `${TEST_CONFIG.VALUES.LOCALHOST_ORIGIN},https://example.com,https://www.example.com`;
       const origins = allowedOrigins.split(',').map((o) => o.trim());
 
       expect(origins).toHaveLength(3);
-      expect(origins[0]).toBe('http://localhost:3000');
+      expect(origins[0]).toBe(TEST_CONFIG.VALUES.LOCALHOST_ORIGIN);
       expect(origins[1]).toBe('https://example.com');
       expect(origins[2]).toBe('https://www.example.com');
     });
 
     it('should trim whitespace from origins', () => {
-      const allowedOrigins = 'http://localhost:3000 , https://example.com ';
+      const allowedOrigins = `${TEST_CONFIG.VALUES.LOCALHOST_ORIGIN} , https://example.com `;
       const origins = allowedOrigins.split(',').map((o) => o.trim());
 
-      expect(origins[0]).toBe('http://localhost:3000');
+      expect(origins[0]).toBe(TEST_CONFIG.VALUES.LOCALHOST_ORIGIN);
       expect(origins[1]).toBe('https://example.com');
     });
 
@@ -46,9 +47,9 @@ describe('middleware - unit tests for internal logic', () => {
       const allowedOrigins = undefined;
       const origins = allowedOrigins
         ? (allowedOrigins as string).split(',').map((o) => o.trim())
-        : ['http://localhost:3000'];
+        : [TEST_CONFIG.VALUES.LOCALHOST_ORIGIN];
 
-      expect(origins).toEqual(['http://localhost:3000']);
+      expect(origins).toEqual([TEST_CONFIG.VALUES.LOCALHOST_ORIGIN]);
     });
   });
 
