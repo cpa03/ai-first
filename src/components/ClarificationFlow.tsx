@@ -1,8 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, useRef, memo } from 'react';
-import { fetchWithTimeout } from '@/lib/api-client';
-import { createLogger } from '@/lib/logger';
+import { memo } from 'react';
 import {
   MIN_ANSWER_LENGTH,
   MAX_ANSWER_LENGTH,
@@ -10,15 +8,12 @@ import {
   MAX_SHORT_ANSWER_LENGTH,
 } from '@/lib/validation';
 import {
-  UI_CONFIG,
-  LABELS,
-  CLARIFIER_CONFIG,
   MESSAGES,
   PLACEHOLDERS,
   INPUT_STYLES,
-  ANIMATION_DELAYS,
   TEXT_COLORS,
   COMPONENT_DEFAULTS,
+  LABELS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -28,233 +23,39 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
-
-interface Question {
-  id: string;
-  question: string;
-  type: 'text' | 'textarea' | 'select';
-  options?: string[];
-}
-
-interface APIQuestion {
-  id: string;
-  question: string;
-  type: 'open' | 'multiple_choice' | 'yes_no';
-  options?: string[];
-  required: boolean;
-}
+import { useClarificationSession } from '@/hooks/useClarificationSession';
 
 interface ClarificationFlowProps {
   idea: string;
   ideaId?: string;
-  onComplete: (answers: Record<string, string>) => void;
+  onComplete: (answers: Record<string, string>) => Promise<void>;
 }
-
-const FALLBACK_QUESTIONS: Question[] = CLARIFIER_CONFIG.FALLBACK_QUESTIONS.map(
-  (q): Question => ({
-    id: q.id,
-    question: q.question,
-    type:
-      q.type === 'multiple_choice'
-        ? 'select'
-        : q.type === 'open'
-          ? 'textarea'
-          : 'text',
-    ...('options' in q && q.options && { options: [...q.options] }),
-  })
-);
 
 function ClarificationFlow({
   idea,
   ideaId,
   onComplete,
 }: ClarificationFlowProps) {
-  const logger = useMemo(() => createLogger('ClarificationFlow'), []);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [currentAnswer, setCurrentAnswer] = useState('');
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [showCelebration, setShowCelebration] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const textInputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const selectRef = useRef<HTMLSelectElement>(null);
-  const stepTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
-  const isMac = useMemo(
-    () => typeof window !== 'undefined' && navigator.platform.includes('Mac'),
-    []
-  );
-
-  const currentQuestion = useMemo(
-    () => questions[currentStep],
-    [questions, currentStep]
-  );
-  const progress = useMemo(
-    () => ((currentStep + 1) / questions.length) * 100,
-    [currentStep, questions.length]
-  );
-  const steps = useMemo(
-    () =>
-      questions.map((q, index) => ({
-        id: q.id,
-        label: LABELS.QUESTION(index),
-        completed: index < currentStep,
-        current: index === currentStep,
-      })),
-    [questions, currentStep]
-  );
-
-  const handleNext = useCallback(async () => {
-    if (showCelebration || isSubmitting || !currentAnswer.trim()) return;
-    if (!currentQuestion?.id) return;
-
-    const newAnswers = {
-      ...answers,
-      [currentQuestion.id]: currentAnswer.trim(),
-    };
-    setAnswers(newAnswers);
-
-    if (currentStep < questions.length - 1) {
-      const nextStep = currentStep + 1;
-      setShowCelebration(true);
-      stepTransitionTimeoutRef.current = setTimeout(() => {
-        setCurrentStep(nextStep);
-        setCurrentAnswer('');
-      }, ANIMATION_DELAYS.STEP_TRANSITION);
-    } else {
-      setIsSubmitting(true);
-      try {
-        await onComplete(newAnswers);
-      } finally {
-        setIsSubmitting(false);
-      }
-    }
-  }, [
+  const {
+    loading,
+    error,
+    questions,
+    currentStep,
+    currentQuestion,
+    progress,
+    steps,
+    currentAnswer,
     showCelebration,
     isSubmitting,
-    currentAnswer,
-    answers,
-    currentQuestion?.id,
-    currentStep,
-    questions,
-    onComplete,
-  ]);
-
-  const handlePrevious = useCallback(() => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
-      const previousQuestion = questions[currentStep - 1];
-      setCurrentAnswer(answers[previousQuestion.id] || '');
-    }
-  }, [currentStep, questions, answers]);
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (
-        (e.metaKey || e.ctrlKey) &&
-        e.key === 'Enter' &&
-        currentAnswer.trim()
-      ) {
-        e.preventDefault();
-        handleNext();
-      }
-    },
-    [currentAnswer, handleNext]
-  );
-
-  useEffect(() => {
-    if (!currentQuestion || questions.length === 0) return;
-
-    const timeoutId = setTimeout(() => {
-      const ref =
-        currentQuestion.type === 'textarea'
-          ? textareaRef
-          : currentQuestion.type === 'select'
-            ? selectRef
-            : textInputRef;
-      ref.current?.focus();
-    }, UI_CONFIG.FOCUS.DELAY_MS);
-
-    return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentStep]);
-
-  useEffect(() => {
-    return () => {
-      if (stepTransitionTimeoutRef.current) {
-        clearTimeout(stepTransitionTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        setLoading(true);
-        const response = await fetchWithTimeout('/api/clarify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ idea, ideaId }),
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(
-            errorData.error || MESSAGES.CLARIFICATION.ERROR_FETCH_QUESTIONS
-          );
-        }
-
-        const data = await response.json();
-        // Validate and extract questions with runtime type checking
-        const rawQuestions = data?.data?.questions ?? data?.questions;
-        const questionsData = Array.isArray(rawQuestions) ? rawQuestions : [];
-
-        const formattedQuestions: Question[] = questionsData.map(
-          (q: APIQuestion, index: number) => ({
-            id: q.id || `question_${index}`,
-            question: q.question,
-            type:
-              q.type === 'open'
-                ? 'textarea'
-                : q.type === 'multiple_choice'
-                  ? 'select'
-                  : 'text',
-            options: q.options,
-          })
-        );
-
-        if (formattedQuestions.length === 0) {
-          formattedQuestions.push(...FALLBACK_QUESTIONS);
-        }
-
-        setQuestions(formattedQuestions);
-      } catch (err) {
-        logger.errorWithContext('Failed to fetch clarifying questions', {
-          component: 'ClarificationFlow',
-          action: 'fetchQuestions',
-          metadata: {
-            ideaId,
-            ideaLength: idea.length,
-            error: err instanceof Error ? err.message : 'Unknown error',
-          },
-        });
-        setError(
-          err instanceof Error ? err.message : MESSAGES.ERRORS.UNKNOWN_ERROR
-        );
-
-        setQuestions(FALLBACK_QUESTIONS);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchQuestions();
-  }, [idea, ideaId, logger]);
+    isMac,
+    textInputRef,
+    textareaRef,
+    selectRef,
+    setCurrentAnswer,
+    handleNext,
+    handlePrevious,
+    handleKeyDown,
+  } = useClarificationSession(idea, ideaId, onComplete);
 
   if (loading) {
     return (
@@ -317,7 +118,7 @@ function ClarificationFlow({
         stepNumber={currentStep}
         totalSteps={questions.length}
         show={showCelebration}
-        onComplete={() => setShowCelebration(false)}
+        onComplete={() => {}}
       />
 
       {error && (
