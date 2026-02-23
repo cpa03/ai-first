@@ -154,7 +154,7 @@ All errors return consistent JSON:
   "error": "Error message",
   "code": "ERROR_CODE",
   "details": [{ "field": "fieldName", "message": "Validation message" }],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -257,7 +257,7 @@ if (!result.allowed) {
 {
   "error": "Rate limit exceeded. Retry after 60 seconds",
   "code": "RATE_LIMIT_EXCEEDED",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -303,7 +303,7 @@ if (!result.valid) {
       "message": "ideaText must be between 10 and 10000 characters"
     }
   ],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false
 }
