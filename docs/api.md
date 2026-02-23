@@ -26,7 +26,7 @@ All API responses include these headers:
 | `X-Correlation-ID` | Correlation ID for tracing requests across services | `corr_abc123def456` |
 | `X-RateLimit-Limit` | Total requests allowed per rate limit window | `60` |
 | `X-RateLimit-Remaining` | Number of requests remaining in current window | `57` |
-| `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit window resets | `2024-01-07T12:05:00Z` |
+| `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit window resets | `2026-01-07T12:05:00Z` |
 | `X-Response-Time` | Request processing time in milliseconds | `45ms` |
 | `X-API-Version` | Current API version (semantic versioning) | `1.0.0` |
 | `X-Error-Code` | Error code if the request failed (errors only) | `VALIDATION_ERROR` |
@@ -38,7 +38,7 @@ X-Request-ID: req_1704625200000_abc123
 X-Correlation-ID: corr_abc123def456
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 57
-X-RateLimit-Reset: 2024-01-07T12:05:00Z
+X-RateLimit-Reset: 2026-01-07T12:05:00Z
 X-Response-Time: 45ms
 X-API-Version: 1.0.0
 ```
@@ -52,7 +52,7 @@ All errors follow a consistent format:
   "error": "Error message",
   "code": "ERROR_CODE",
   "details": [{ "field": "fieldName", "message": "Validation message" }],
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -226,7 +226,7 @@ Basic health check endpoint that verifies environment configuration.
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "environment": "development",
   "checks": {
     "NEXT_PUBLIC_SUPABASE_URL": { "present": true, "required": true },
@@ -257,24 +257,24 @@ Comprehensive health check including database, AI services, export connectors, a
 ```json
 {
   "status": "healthy",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "version": "0.1.0",
   "uptime": 3600,
   "checks": {
     "database": {
       "status": "up",
       "latency": 45,
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "ai": {
       "status": "up",
       "latency": 234,
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "exports": {
       "status": "degraded",
       "error": "2/5 connectors",
-      "lastChecked": "2024-01-07T12:00:00Z"
+      "lastChecked": "2026-01-07T12:00:00Z"
     },
     "circuitBreakers": [
       {
@@ -310,7 +310,7 @@ Check database health specifically.
 {
   "status": "healthy",
   "service": "database",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "environment": "development"
 }
 ```
@@ -377,13 +377,13 @@ All fields in the `options` object are optional:
       }
     ],
     "timeline": {
-      "startDate": "2024-01-15",
-      "endDate": "2024-04-15",
+      "startDate": "2026-01-15",
+      "endDate": "2026-04-15",
       "phases": [
         {
           "name": "Phase 1: Foundation",
-          "startDate": "2024-01-15",
-          "endDate": "2024-02-15",
+          "startDate": "2026-01-15",
+          "endDate": "2026-02-15",
           "deliverables": ["del_1"]
         }
       ],
@@ -392,7 +392,7 @@ All fields in the `options` object are optional:
     "confidenceScore": 0.85,
     "estimatedTotalHours": 320,
     "aiModel": "gpt-4",
-    "createdAt": "2024-01-07T12:00:00Z"
+    "createdAt": "2026-01-07T12:00:00Z"
   },
   "requestId": "req_1234567890_abc123"
 }
@@ -478,7 +478,7 @@ The system supports tiered rate limiting based on user roles (when authenticatio
 ```http
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 57
-X-RateLimit-Reset: 2024-01-07T12:05:00Z
+X-RateLimit-Reset: 2026-01-07T12:05:00Z
 ```
 
 - `X-RateLimit-Limit`: Your rate limit for this endpoint
@@ -491,7 +491,7 @@ When rate limit is exceeded:
 {
   "error": "Too many requests",
   "code": "RATE_LIMIT_EXCEEDED",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true
 }
@@ -595,8 +595,8 @@ Authorization: Bearer <your-supabase-token>
         "id": "550e8400-e29b-41d4-a716-446655440000",
         "title": "Build a fitness tracking app",
         "status": "draft",
-        "createdAt": "2024-01-07T12:00:00Z",
-        "updatedAt": "2024-01-07T12:00:00Z"
+        "createdAt": "2026-01-07T12:00:00Z",
+        "updatedAt": "2026-01-07T12:00:00Z"
       }
     ],
     "pagination": {
@@ -641,7 +641,7 @@ Create a new idea.
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "title": "I want to build a mobile app for tracking fitness goals...",
     "status": "draft",
-    "createdAt": "2024-01-07T12:00:00Z"
+    "createdAt": "2026-01-07T12:00:00Z"
   },
   "requestId": "req_1234567890_abc123"
 }
@@ -680,8 +680,8 @@ Authorization: Bearer <your-supabase-token>
     "title": "Build a fitness tracking app",
     "raw_text": "I want to build a mobile app for tracking fitness goals...",
     "status": "draft",
-    "created_at": "2024-01-07T12:00:00Z",
-    "updated_at": "2024-01-07T12:00:00Z"
+    "created_at": "2026-01-07T12:00:00Z",
+    "updated_at": "2026-01-07T12:00:00Z"
   },
   "requestId": "req_1234567890_abc123"
 }
@@ -721,8 +721,8 @@ Update an existing idea.
     "id": "550e8400-e29b-41d4-a716-446655440000",
     "title": "Updated Fitness App Idea",
     "status": "clarified",
-    "createdAt": "2024-01-07T12:00:00Z",
-    "updatedAt": "2024-01-07T14:00:00Z"
+    "createdAt": "2026-01-07T12:00:00Z",
+    "updatedAt": "2026-01-07T14:00:00Z"
   },
   "requestId": "req_1234567890_abc123"
 }
@@ -814,7 +814,7 @@ Authorization: Bearer <your-supabase-token>
       "complexity_score": 3,
       "risk_level": "low",
       "tags": ["design", "ui"],
-      "created_at": "2024-01-07T12:00:00Z"
+      "created_at": "2026-01-07T12:00:00Z"
     }
   },
   "requestId": "req_1234567890_abc123"
@@ -1058,7 +1058,7 @@ Liveness probe - checks if the application process is running.
 ```json
 {
   "status": "ok",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "service": "liveness",
   "environment": "production"
 }
@@ -1085,7 +1085,7 @@ Readiness probe - checks if all dependencies are ready.
 ```json
 {
   "status": "ready",
-  "timestamp": "2024-01-07T12:00:00Z",
+  "timestamp": "2026-01-07T12:00:00Z",
   "service": "readiness",
   "environment": "production",
   "checks": {
