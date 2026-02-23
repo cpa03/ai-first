@@ -75,7 +75,7 @@ jobs:
           SYSTEM TARGET:
           Fullstack serverless production-grade application.
 
-          YOU LEAD:
+          YOU LEAD AI AGENT TEAM:
           RnD, Product-Architect, ai-agent-engineer,
           backend-engineer, frontend-engineer, ui-ux-engineer,
           platform-engineer, security-engineer,
@@ -113,8 +113,10 @@ jobs:
           Impact:
           Priority: High | Medium | Low
 
+          Never create duplicate issues.
           Never create vague issues.
           Never overlap responsibility.
+          One issue per agent.
           Optimize for long-term maintainability.
           " \
           --model opencode/glm-5-free \
@@ -175,6 +177,13 @@ jobs:
 
       - name: Execute Specialist Work
         timeout-minutes: 30
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           echo "🚀 Specialist ${{ matrix.role }} executing"
 
@@ -240,6 +249,13 @@ jobs:
 
       - name: Audit & Fix PRs
         timeout-minutes: 60
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           opencode run /ulw-loop "
           You are Autonomous PR Fixer.
@@ -286,6 +302,13 @@ jobs:
 
       - name: Merge Qualified PRs
         timeout-minutes: 60
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           opencode run /ulw-loop "
           You are PR-Handler.
