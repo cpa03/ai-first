@@ -1543,10 +1543,6 @@ export const PROXY_CONFIG = {
 /**
  * Health Monitoring Constants (re-exported from health.ts for modularity)
  * @see {@link ./health.ts} for implementation
-
-/**
- * Health Monitoring Constants (re-exported from health.ts for modularity)
- * @see {@link ./health.ts} for implementation
  */
 export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
 
