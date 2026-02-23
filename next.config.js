@@ -86,7 +86,8 @@ const nextConfig = {
           // Fonts: self + data URIs
           "font-src 'self' data:",
           // Connect: self + API endpoints
-          "connect-src 'self' https://*.supabase.co https://api.openai.com https://api.anthropic.com wss://*.supabase.co",
+          // Aligned with public/_headers for consistency across deployment platforms
+          "connect-src 'self' https://*.supabase.co https://api.openai.com https://api.anthropic.com wss://*.supabase.co https://api.notion.com https://api.trello.com https://api.github.com",
           // Frame: deny all framing
           "frame-src 'none'",
           // Object/embed: deny
@@ -159,9 +160,9 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
     minimumCacheTTL: 60,
   },
-  experimental: {
-    optimizePackageImports: ['@supabase/supabase-js', 'googleapis', 'openai'],
-  },
+  // optimizePackageImports is stable in Next.js 15+
+  // Reduces bundle size by only importing used exports from large packages
+  optimizePackageImports: ['@supabase/supabase-js', 'googleapis', 'openai'],
   compiler: {
     removeConsole:
       process.env.NODE_ENV === 'production'
