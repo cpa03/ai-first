@@ -7,7 +7,7 @@
  * @module lib/config/http
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * HTTP Status Codes

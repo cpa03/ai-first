@@ -3,7 +3,7 @@
  * Centralizes UI constants, styling, and component defaults
  * Now supports environment variable overrides via EnvLoader for timing values
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const UI_CONFIG = {
   FOCUS: {

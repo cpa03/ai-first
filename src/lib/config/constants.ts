@@ -3,7 +3,7 @@
  * All timeout values are in milliseconds
  * Now supports environment variable overrides
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const TIMEOUT_CONFIG = {
   /**

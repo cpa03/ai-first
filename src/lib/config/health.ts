@@ -7,7 +7,7 @@
  * @module lib/config/health
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Health Check Configuration

@@ -1,4 +1,4 @@
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Export Connectors Configuration

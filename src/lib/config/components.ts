@@ -3,7 +3,7 @@
  * Centralizes hardcoded values for React components
  * Now supports environment variable overrides via EnvLoader for timing values
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const COMPONENT_CONFIG = {
   /**

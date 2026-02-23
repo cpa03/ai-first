@@ -4,7 +4,7 @@
  * Supports environment variable overrides for containerized deployments
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const CLEANUP_CONFIG = {
   RESOURCE_MANAGER: {

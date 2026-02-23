@@ -5,7 +5,7 @@
  * Supports environment variable overrides for timing values
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 /**
  * Focus ring shadow utilities for form inputs

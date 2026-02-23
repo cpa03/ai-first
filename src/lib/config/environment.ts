@@ -7,89 +7,8 @@
  * with the logger module (logger → pii-redaction → config/constants).
  */
 
-/**
- * Type-safe environment variable loader
- */
-export class EnvLoader {
-  /**
-   * Get string value from environment variable
-   */
-  static string(key: string, defaultValue: string): string {
-    const value = process.env[key];
-    return value !== undefined ? value : defaultValue;
-  }
-
-  /**
-   * Get number value from environment variable
-   */
-  static number(
-    key: string,
-    defaultValue: number,
-    min?: number,
-    max?: number
-  ): number {
-    const value = process.env[key];
-    if (value === undefined) return defaultValue;
-
-    const parsed = parseInt(value, 10);
-    if (isNaN(parsed)) {
-      console.warn(
-        `Invalid number value for ${key}: "${value}". Using default: ${defaultValue}`
-      );
-      return defaultValue;
-    }
-
-    if (min !== undefined && parsed < min) {
-      console.warn(
-        `${key} value ${parsed} is below minimum ${min}. Using minimum.`
-      );
-      return min;
-    }
-
-    if (max !== undefined && parsed > max) {
-      console.warn(
-        `${key} value ${parsed} is above maximum ${max}. Using maximum.`
-      );
-      return max;
-    }
-
-    return parsed;
-  }
-
-  /**
-   * Get boolean value from environment variable
-   */
-  static boolean(key: string, defaultValue: boolean): boolean {
-    const value = process.env[key];
-    if (value === undefined) return defaultValue;
-
-    const normalized = value.toLowerCase().trim();
-    if (['true', '1', 'yes', 'on'].includes(normalized)) return true;
-    if (['false', '0', 'no', 'off'].includes(normalized)) return false;
-
-    console.warn(
-      `Invalid boolean value for ${key}: "${value}". Using default: ${defaultValue}`
-    );
-    return defaultValue;
-  }
-
-  /**
-   * Get array value from comma-separated environment variable
-   */
-  static array<T>(
-    key: string,
-    defaultValue: T[],
-    parser: (item: string) => T
-  ): T[] {
-    const value = process.env[key];
-    if (value === undefined || value.trim() === '') return defaultValue;
-
-    return value
-      .split(',')
-      .map((item) => parser(item.trim()))
-      .filter((item) => item !== undefined);
-  }
-}
+import { EnvLoader } from './env-loader';
+export { EnvLoader };
 
 /**
  * API Timeout Configuration
@@ -228,65 +147,7 @@ export const RETRY_CONFIG = {
   ENABLE_JITTER: EnvLoader.boolean('RETRY_ENABLE_JITTER', true),
 } as const;
 
-/**
- * Cache Configuration
- */
-export const CACHE_CONFIG = {
-  TTL: {
-    /** Short-lived cache entries (ms) - Default: 60000 */
-    SHORT: EnvLoader.number('CACHE_TTL_SHORT', 60 * 1000, 1000, 600000),
-    /** Standard cache entries (ms) - Default: 300000 */
-    STANDARD: EnvLoader.number(
-      'CACHE_TTL_STANDARD',
-      5 * 60 * 1000,
-      1000,
-      3600000
-    ),
-    /** Medium-lived cache entries (ms) - Default: 600000 */
-    MEDIUM: EnvLoader.number('CACHE_TTL_MEDIUM', 10 * 60 * 1000, 1000, 7200000),
-    /** Long-lived cache entries (ms) - Default: 3600000 */
-    LONG: EnvLoader.number('CACHE_TTL_LONG', 60 * 60 * 1000, 1000, 86400000),
-    /** AI response cache (ms) - Default: 300000 */
-    AI_RESPONSE: EnvLoader.number(
-      'CACHE_TTL_AI_RESPONSE',
-      5 * 60 * 1000,
-      1000,
-      3600000
-    ),
-    /** Cost tracking cache (ms) - Default: 60000 */
-    COST_TRACKING: EnvLoader.number(
-      'CACHE_TTL_COST_TRACKING',
-      60 * 1000,
-      1000,
-      600000
-    ),
-  },
-
-  SIZE: {
-    /** Small cache size - Default: 50 */
-    SMALL: EnvLoader.number('CACHE_SIZE_SMALL', 50, 10, 1000),
-    /** Standard cache size - Default: 100 */
-    STANDARD: EnvLoader.number('CACHE_SIZE_STANDARD', 100, 10, 1000),
-    /** Medium cache size - Default: 200 */
-    MEDIUM: EnvLoader.number('CACHE_SIZE_MEDIUM', 200, 10, 2000),
-    /** Large cache size - Default: 1000 */
-    LARGE: EnvLoader.number('CACHE_SIZE_LARGE', 1000, 100, 10000),
-    /** Maximum cache size - Default: 10000 */
-    MAXIMUM: EnvLoader.number('CACHE_SIZE_MAXIMUM', 10000, 1000, 100000),
-  },
-
-  CLEANUP: {
-    /** Cleanup interval (ms) - Default: 60000 */
-    INTERVAL_MS: EnvLoader.number(
-      'CACHE_CLEANUP_INTERVAL',
-      60 * 1000,
-      5000,
-      300000
-    ),
-    /** Trim percentage when at capacity - Default: 0.2 */
-    TRIM_PERCENTAGE: EnvLoader.number('CACHE_TRIM_PERCENTAGE', 20, 5, 50) / 100,
-  },
-} as const;
+import { CACHE_CONFIG } from './cache';
 
 /**
  * UI Timing Configuration
