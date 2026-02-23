@@ -11,7 +11,7 @@ This document tracks all features in the IdeaFlow system, their user stories, ac
 
 ### User Story
 
-As a user, I want to answer clarifying questions about my idea, so that the system understands my goals and requirements better.
+As a startup founder, I want to answer clarifying questions about my idea, so that the system understands my goals and requirements better.
 
 ### Acceptance Criteria
 
@@ -29,7 +29,7 @@ As a user, I want to answer clarifying questions about my idea, so that the syst
 
 ### User Story
 
-As a user, I want to download my idea as a blueprint markdown file, so that I can share it or use it offline.
+As a startup founder, I want to download my idea as a blueprint markdown file, so that I can share it or use it offline.
 
 ### Acceptance Criteria
 
@@ -47,7 +47,7 @@ As a user, I want to download my idea as a blueprint markdown file, so that I ca
 
 ### User Story
 
-As a user, I want my idea automatically broken down into deliverables and tasks, so that I don't have to manually plan everything.
+As a startup founder, I want my idea automatically broken down into deliverables and tasks, so that I don't have to manually plan everything.
 
 ### Acceptance Criteria
 
@@ -65,7 +65,7 @@ As a user, I want my idea automatically broken down into deliverables and tasks,
 
 ### User Story
 
-As a user, I want to see a timeline for my project with key phases and milestones, so that I can plan my work.
+As a startup founder, I want to see a timeline for my project with key phases and milestones, so that I can plan my work.
 
 ### Acceptance Criteria
 
@@ -279,7 +279,7 @@ As a developer, I want automated deployment setup, so that I can deploy easily.
 
 ### User Story
 
-As a user, I want a web interface to manage my ideas, so that I can use the system without API calls.
+As a startup founder, I want a web interface to manage my ideas, so that I can use the system without API calls.
 
 ### Acceptance Criteria
 
@@ -299,7 +299,7 @@ As a user, I want a web interface to manage my ideas, so that I can use the syst
 
 ### User Story
 
-As a user, I want to sign up and log in, so that my ideas are saved to my account.
+As a startup founder, I want to sign up and log in, so that my ideas are saved to my account.
 
 ### Acceptance Criteria
 
@@ -319,7 +319,7 @@ As a user, I want to sign up and log in, so that my ideas are saved to my accoun
 
 ### User Story
 
-As a user, I want a dashboard showing all my ideas and their status, so that I can track my projects.
+As a startup founder, I want a dashboard showing all my ideas and their status, so that I can track my projects.
 
 ### Acceptance Criteria
 
@@ -339,7 +339,7 @@ As a user, I want a dashboard showing all my ideas and their status, so that I c
 
 ### User Story
 
-As a user, I want to manage tasks within each idea, so that I can track progress.
+As a startup founder, I want to manage tasks within each idea, so that I can track progress.
 
 ### Acceptance Criteria
 
@@ -359,7 +359,7 @@ As a user, I want to manage tasks within each idea, so that I can track progress
 
 ### User Story
 
-As a user, I want a detailed Gantt chart timeline, so that I can see the full project schedule.
+As a product manager, I want a detailed Gantt chart timeline, so that I can see the full project schedule.
 
 ### Acceptance Criteria
 
@@ -379,7 +379,7 @@ As a user, I want a detailed Gantt chart timeline, so that I can see the full pr
 
 ### User Story
 
-As a user, I want to collaborate with team members, so that we can work on ideas together.
+As a product manager, I want to collaborate with team members, so that we can work on ideas together.
 
 ### Acceptance Criteria
 
@@ -399,7 +399,7 @@ As a user, I want to collaborate with team members, so that we can work on ideas
 
 ### User Story
 
-As a user, I want analytics on my projects, so that I can understand progress and performance.
+As a product manager, I want analytics on my projects, so that I can understand progress and performance.
 
 ### Acceptance Criteria
 
@@ -419,7 +419,7 @@ As a user, I want analytics on my projects, so that I can understand progress an
 
 ### User Story
 
-As a user, I want to create custom idea templates, so that I can reuse common project structures.
+As a product manager, I want to create custom idea templates, so that I can reuse common project structures.
 
 ### Acceptance Criteria
 
@@ -438,7 +438,7 @@ As a user, I want to create custom idea templates, so that I can reuse common pr
 
 ### User Story
 
-As a user, I want to export ideas to popular productivity tools, so that I can integrate IdeaFlow with my existing workflows.
+As a product manager, I want to export ideas to popular productivity tools, so that I can integrate IdeaFlow with my existing workflows.
 
 ### Acceptance Criteria
 
@@ -478,7 +478,7 @@ As a system, I want to support multiple AI providers, so that we can optimize fo
 
 ### User Story
 
-As a user, I want real-time updates on idea changes, so that my team stays in sync.
+As a product manager, I want real-time updates on idea changes, so that my team stays in sync.
 
 ### Acceptance Criteria
 
@@ -498,7 +498,7 @@ As a user, I want real-time updates on idea changes, so that my team stays in sy
 
 ### User Story
 
-As a user, I want a mobile app, so that I can manage ideas on the go.
+As a startup founder, I want a mobile app, so that I can manage ideas on the go.
 
 ### Acceptance Criteria
 
@@ -518,7 +518,7 @@ As a user, I want a mobile app, so that I can manage ideas on the go.
 
 ### User Story
 
-As a user, I want to integrate with more tools, so that IdeaFlow fits into my workflow.
+As a product manager, I want to integrate with more tools, so that IdeaFlow fits into my workflow.
 
 ### Acceptance Criteria
 
@@ -537,7 +537,7 @@ As a user, I want to integrate with more tools, so that IdeaFlow fits into my wo
 
 ### User Story
 
-As a user, I want advanced AI assistance, so that I can get better insights.
+As a product manager, I want advanced AI assistance, so that I can get better insights.
 
 ### Acceptance Criteria
 
@@ -577,7 +577,7 @@ As a system, I want to optimize AI API costs, so that the service remains afford
 
 ### User Story
 
-As a user, I want to use IdeaFlow in my language, so that it's accessible globally.
+As a startup founder, I want to use IdeaFlow in my language, so that it's accessible globally.
 
 ### Acceptance Criteria
 
@@ -597,7 +597,7 @@ As a user, I want to use IdeaFlow in my language, so that it's accessible global
 
 ### User Story
 
-As a user, I want to export all my data, so that I can back it up or migrate to other tools.
+As a startup founder, I want to export all my data, so that I can back it up or migrate to other tools.
 
 ### Acceptance Criteria
 
@@ -638,7 +638,7 @@ As a developer, I want a REST API, so that I can build custom integrations.
 
 ### User Story
 
-As a user, I want fast page loads and responsive UI, so that the app feels snappy.
+As a startup founder, I want fast page loads and responsive UI, so that the app feels snappy.
 
 ### Acceptance Criteria
 
@@ -824,7 +824,7 @@ As a developer, I want a system to manage AI prompts, so that prompts can be ver
 
 ### User Story
 
-As a user, I want to share ideas with the community, so that I can get feedback and inspiration.
+As a startup founder, I want to share ideas with the community, so that I can get feedback and inspiration.
 
 ### Acceptance Criteria
 
@@ -845,7 +845,7 @@ As a user, I want to share ideas with the community, so that I can get feedback 
 
 ### User Story
 
-As a user, I want to customize the UI appearance, so that I'm comfortable using the app.
+As a startup founder, I want to customize the UI appearance, so that I'm comfortable using the app.
 
 ### Acceptance Criteria
 
@@ -865,7 +865,7 @@ As a user, I want to customize the UI appearance, so that I'm comfortable using 
 
 ### User Story
 
-As a user, I want to search my ideas and content, so that I can find information quickly.
+As a startup founder, I want to search my ideas and content, so that I can find information quickly.
 
 ### Acceptance Criteria
 
@@ -886,7 +886,7 @@ As a user, I want to search my ideas and content, so that I can find information
 
 ### User Story
 
-As a user, I want a great experience on mobile devices, so that I can use IdeaFlow anywhere.
+As a startup founder, I want a great experience on mobile devices, so that I can use IdeaFlow anywhere.
 
 ### Acceptance Criteria
 
@@ -927,7 +927,7 @@ As a new user, I want guided onboarding, so that I can quickly understand how to
 
 ### User Story
 
-As a user, I want to import data from other tools, so that I can migrate to IdeaFlow easily.
+As a product manager, I want to import data from other tools, so that I can migrate to IdeaFlow easily.
 
 ### Acceptance Criteria
 
@@ -948,7 +948,7 @@ As a user, I want to import data from other tools, so that I can migrate to Idea
 
 ### User Story
 
-As a user, I want to automate repetitive tasks, so that I can save time.
+As a product manager, I want to automate repetitive tasks, so that I can save time.
 
 ### Acceptance Criteria
 
@@ -968,7 +968,7 @@ As a user, I want to automate repetitive tasks, so that I can save time.
 
 ### User Story
 
-As a user, I want deep insights into my projects, so that I can make better decisions.
+As a product manager, I want deep insights into my projects, so that I can make better decisions.
 
 ### Acceptance Criteria
 
