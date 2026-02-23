@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
@@ -116,7 +116,17 @@ function ResultsContent() {
     fetchResults();
   }, [router, searchParams, authLoading, isAuthenticated]);
 
-  const handleExport = async (format: 'markdown' | 'json') => {
+// PERFORMANCE: Memoize handlers to prevent unnecessary re-renders of Button components
+  // which are wrapped in React.memo but receive new function references on each render
+  const handleGoBack = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  const handleGoHome = useCallback(() => {
+    router.push('/');
+  }, [router]);
+
+  const handleExport = useCallback(async (format: 'markdown' | 'json') => {
     if (!idea) return;
 
     setExportLoading(true);
@@ -165,7 +175,15 @@ function ResultsContent() {
     } finally {
       setExportLoading(false);
     }
-  };
+  }, [idea, session]);
+
+  const handleExportMarkdown = useCallback(() => {
+    handleExport('markdown');
+  }, [handleExport]);
+
+  const handleExportJson = useCallback(() => {
+    handleExport('json');
+  }, [handleExport]);
 
   if (loading) {
     return (
@@ -188,7 +206,7 @@ function ResultsContent() {
         <Alert type="error" title="Error">
           {error}
           <div className="mt-4">
-            <Button onClick={() => router.back()} variant="primary">
+            <Button onClick={handleGoBack} variant="primary">
               Go Back
             </Button>
           </div>
@@ -203,7 +221,7 @@ function ResultsContent() {
         <Alert type="warning" title="No Idea Found">
           The idea you&apos;re looking for doesn&apos;t exist.
           <div className="mt-4">
-            <Button onClick={() => router.push('/')} variant="primary">
+            <Button onClick={handleGoHome} variant="primary">
               Go Home
             </Button>
           </div>
@@ -219,7 +237,7 @@ function ResultsContent() {
         <h1 className="text-3xl font-bold text-gray-900">Project Blueprint</h1>
         <Button
           variant="secondary"
-          onClick={() => router.back()}
+          onClick={handleGoBack}
           aria-label="Return to previous page"
         >
           ← Back
@@ -254,7 +272,7 @@ function ResultsContent() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Button
             variant="primary"
-            onClick={() => handleExport('markdown')}
+            onClick={handleExportMarkdown}
             disabled={exportLoading}
             aria-label="Download project blueprint as Markdown file"
           >
@@ -263,7 +281,7 @@ function ResultsContent() {
 
           <Button
             variant="secondary"
-            onClick={() => handleExport('json')}
+            onClick={handleExportJson}
             disabled={exportLoading}
             aria-label="Export project blueprint as JSON data"
           >

@@ -326,6 +326,12 @@ npm install eslint-plugin-react-hooks@latest --save-dev
     - **File**: `src/app/clarify/page.tsx`
     - **Impact**: Prevents re-renders of ClarificationFlow component when unrelated parent state changes
 
+
+25. **Fixed**: Results page handler memoization
+    - **Problem**: Multiple inline arrow functions in `onClick` handlers (`router.back()`, `router.push('/')`, `handleExport()`) created new function references on every render, causing unnecessary re-renders of memoized Button components
+    - **Solution**: Wrapped navigation and export handlers with `useCallback` - `handleGoBack`, `handleGoHome`, `handleExport`, `handleExportMarkdown`, and `handleExportJson` with proper dependency arrays
+    - **File**: `src/app/results/page.tsx`
+    - **Impact**: Prevents re-renders of Button components when unrelated parent state changes, maintains stable function references across renders
 ### Verified Issues (Already Resolved)
 
 The following issues from the performance audit (#962) have been verified as resolved:
@@ -345,5 +351,5 @@ The following issues from the performance audit (#962) have been verified as res
 
 ---
 
-Last Updated: 2026-02-22
+Last Updated: 2026-02-23
 Performance Engineer: CMZ Agent
