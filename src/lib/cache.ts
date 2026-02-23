@@ -19,6 +19,7 @@ export class Cache<T = unknown> {
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
   private totalHits: number;
+  private lastCleanup: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
@@ -28,10 +29,17 @@ export class Cache<T = unknown> {
     this.onEvict = options.onEvict;
     this.misses = 0;
     this.totalHits = 0;
+    this.lastCleanup = Date.now();
   }
 
   set(key: string, value: T): void {
-    this.evictExpiredEntries();
+    // PERFORMANCE: Throttle proactive cleanup to avoid O(N) scans on every set() call.
+    // Expired entries are still handled on-access in get() and has() methods.
+    const now = Date.now();
+    if (now - this.lastCleanup > CACHE_CONFIG.CLEANUP_INTERVAL_MS) {
+      this.evictExpiredEntries();
+      this.lastCleanup = now;
+    }
 
     const existingEntry = this.cache.get(key);
 
@@ -133,17 +141,12 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const keysToDelete: string[] = [];
 
+    // PERFORMANCE: Delete expired entries directly during iteration to avoid O(N) allocation
+    // and the overhead of a second loop. In JavaScript, it is safe to delete keys
+    // from a Map while iterating over its entries.
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
-        keysToDelete.push(key);
-      }
-    }
-
-    for (const key of keysToDelete) {
-      const entry = this.cache.get(key);
-      if (entry) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }

@@ -573,6 +573,17 @@ export const RATE_LIMIT_STORE_CONFIG = {
  */
 export const CACHE_CONFIG = {
   DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
+  /**
+   * Proactive cleanup interval in milliseconds
+   * Prevents frequent O(N) scans on every set() call
+   * Env: CACHE_CLEANUP_INTERVAL_MS (default: 60000 = 1 minute)
+   */
+  CLEANUP_INTERVAL_MS: EnvLoader.number(
+    'CACHE_CLEANUP_INTERVAL_MS',
+    60000,
+    5000,
+    300000
+  ),
 } as const;
 
 /**
