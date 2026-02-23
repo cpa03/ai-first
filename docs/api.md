@@ -49,12 +49,16 @@ All errors follow a consistent format:
 
 ```json
 {
-  "error": "Error message",
+  "error": "Human-readable error message",
   "code": "ERROR_CODE",
-  "details": [{ "field": "fieldName", "message": "Validation message" }],
+  "details": [{ "field": "fieldName", "message": "Specific validation error" }],
   "timestamp": "2024-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
-  "retryable": true
+  "retryable": true,
+  "suggestions": [
+    "Actionable recovery suggestion 1",
+    "Actionable recovery suggestion 2"
+  ]
 }
 ```
 

@@ -1,4 +1,5 @@
 # Environment Configuration Setup
+
 ## Quick Start
 
 Get up and running in under 5 minutes:
@@ -112,7 +113,36 @@ npm install -g @supabase/cli
 npm run db:migrate
 ```
 
-### 5. Verify Setup
+### 5. OpenCode CLI Setup (For Agent Development)
+
+The project uses OpenCode CLI for AI-powered agent automation. This is required if you want to use the agent workflow:
+
+1. Install OpenCode CLI:
+
+```bash
+# Using npm
+npm install -g opencode
+
+# Or using the official installer
+curl -fsSL https://opencode.ai/install | sh
+```
+
+2. Verify installation:
+
+```bash
+opencode --version
+```
+
+3. Configure agents (optional):
+
+The project includes pre-configured agents in `.opencode/agents/`. See [AGENTS.md](../AGENTS.md) for agent documentation.
+
+For more information on OpenCode CLI:
+
+- Documentation: https://opencode.ai/docs
+- Agent Configuration: See `.opencode/oh-my-opencode.json`
+
+### 6. Verify Setup
 
 1. Start development server:
 
@@ -126,7 +156,7 @@ npm run dev
 curl http://localhost:3000/api/health
 ```
 
-### 6. Validation Checklist
+### 7. Validation Checklist
 
 Use this checklist to verify your environment is correctly configured:
 
