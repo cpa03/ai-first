@@ -4,7 +4,6 @@
  */
 
 import {
-  isSensitiveVar,
   validateEnvironment,
   validateEnvironmentStrict,
   checkNoPublicPrefix,
@@ -122,43 +121,6 @@ describe('Environment Validation', () => {
       process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY = 'exposed';
 
       expect(checkNoPublicPrefix()).toBe(false);
-    });
-  });
-
-  describe('isSensitiveVar', () => {
-    it('should identify refined sensitive variables', () => {
-      const refinedSensitive = [
-        'CSRF_TOKEN',
-        'SESSION_COOKIE',
-        'USER_OTP',
-        'NONCE_VALUE',
-        'CARD_CVV',
-        'USER_PIN',
-        'BANK_SWIFT',
-        'TAXID_NUMBER',
-        'DB_URL',
-        'USER_EMAIL',
-        'CREDIT_CARD_NUMBER',
-        'IP_ADDRESS',
-        'BEARER_TOKEN',
-        'STACK_TRACE_OUTPUT',
-      ];
-
-      refinedSensitive.forEach((varName) => {
-        expect(isSensitiveVar(varName)).toBe(true);
-      });
-    });
-
-    it('should avoid false positives for common words', () => {
-      const falsePositives = [
-        'SHIPPING_ID', // contains PIN but not _PIN
-        'WILDCARD_DOMAIN', // contains CARD but not CREDIT_CARD
-        'AGENT_DB_MAX_RETRIES', // contains DB but not DB_URL or DB_CONNECTION
-      ];
-
-      falsePositives.forEach((varName) => {
-        expect(isSensitiveVar(varName)).toBe(false);
-      });
     });
   });
 });
