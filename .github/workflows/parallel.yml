@@ -3,9 +3,9 @@ name: parallel
 on:
   push:
     branches:
-      - main # Architect runs on main changes
+      - main
   schedule:
-    - cron: "0 */4 * * *" # Routine check every 4 hours
+    - cron: "0 */4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -13,29 +13,35 @@ permissions:
   issues: write
   pull-requests: write
   actions: write
+  id-token: write
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  # ------------------------------------------------------------------
-  # STAGE 1: THE BRAIN (Architect & Manager)
-  # ------------------------------------------------------------------
+
+  # ================================================================
+  # STAGE 1 — ARCHITECT (THE BRAIN)
+  # ================================================================
   architect:
     name: "Architect: Strategy & Triage"
     runs-on: ubuntu-24.04-arm
+
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Setup Cache
-        uses: actions/cache@v5
+
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.opencode
@@ -43,182 +49,259 @@ jobs:
           key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
           restore-keys: |
             opencode-${{ runner.os }}-v1
-            opencode-${{ runner.os }}-
+
       - name: Configure Git
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
-      - name: Install Node.js
-        continue-on-error: true
-        uses: actions/setup-node@v4
+
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
-        run: npm ci
-      - name: Install OpenCode CLI
+
+      - run: npm ci || true
+
+      - name: Install OpenCode
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: arsitek
-        timeout-minutes: 20
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Architect Intelligence Cycle
+        timeout-minutes: 30
         run: |
-          max_retries=2
-          retry_count=0
-          echo "🏗️ Starting Architect Intelligence Cycle"
-          while [ $retry_count -lt $max_retries ]; do
-            echo "Attempt $((retry_count + 1)) of $max_retries"
-            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, sementara dan tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. ketika build/lint, jika ada errors atau warnings (pre, existing atau potensial) walaupun hanya 1, maka anda gagal besar." \
-              --agent RepoKeeper \
-              --model opencode/kimi-k2.5-free \
-              --share false; then
-              echo "✅ Architect work completed successfully"
-              break
-            else
-              retry_count=$((retry_count + 1))
-              echo "❌ Architect execution failed, retrying in 30 seconds..."
-              sleep 30
-              if [ $retry_count -eq $max_retries ]; then
-                echo "❌ All retry attempts failed"
-                exit 1
-              fi
-            fi
-          done
-            
-  # ------------------------------------------------------------------
-  # STAGE 2: THE MUSCLE (Specialist Executors)
-  # ------------------------------------------------------------------
+          opencode run /ulw-loop "
+          You are a Fully Autonomous System Orchestrator.
+
+          SYSTEM TARGET:
+          Fullstack serverless production-grade application.
+
+          YOU LEAD:
+          RnD, Product-Architect, ai-agent-engineer,
+          backend-engineer, frontend-engineer, ui-ux-engineer,
+          platform-engineer, security-engineer,
+          quality-assurance, DX-engineer,
+          technical-writer, user-story-engineer.
+
+          OBJECTIVE:
+          Continuously improve architecture, frontend, backend,
+          infrastructure, testing, documentation, flows, and DX.
+
+          PRIMARY TASK:
+          1. Deep full-repository audit.
+          2. Detect inefficiencies, architectural drift, tech debt,
+             missing tests, security gaps, DX friction.
+          3. Create atomic, non-overlapping GitHub Issues.
+
+          WORK PRINCIPLES:
+          - Production-grade discipline
+          - Zero redundancy
+          - Clean architecture boundaries
+          - Security-first mindset
+          - Test-first validation
+          - Performance-aware design
+          - Avoid overengineering
+
+          STRICT PHASE:
+          ANALYZE → PLAN → DESIGN → REVIEW → VERIFY → DELIVER
+
+          ISSUE FORMAT:
+          Title:
+          Label:
+          Problem Statement:
+          Proposed Solution:
+          Acceptance Criteria:
+          Impact:
+          Priority: High | Medium | Low
+
+          Never create vague issues.
+          Never overlap responsibility.
+          Optimize for long-term maintainability.
+          " \
+          --model opencode/glm-5-free \
+          --share false
+
+  # ================================================================
+  # STAGE 2 — SPECIALISTS (THE MUSCLE)
+  # ================================================================
   specialists:
     name: "Specialist: ${{ matrix.role }}"
-    continue-on-error: true
     needs: architect
     runs-on: ubuntu-24.04-arm
+    continue-on-error: true
+
     strategy:
       fail-fast: false
       matrix:
         role:
-          - frontend-engineer
+          - RnD
+          - Product-Architect
+          - ai-agent-engineer
           - backend-engineer
-          - api-specialist
-          - DX-engineer
+          - frontend-engineer
+          - ui-ux-engineer
+          - platform-engineer
           - security-engineer
           - quality-assurance
-          - performance-engineer
-          - database-architect
-          - devops-engineer
-          - ui-ux-engineer
+          - DX-engineer
           - technical-writer
-          - reliability-engineer
-          - integration-engineer
-          - product-manager
           - user-story-engineer
-          - modularity-engineer
-          - hardcoded-eliminator
-          - cloudflare-expert
-    steps:
-      - uses: actions/checkout@v5
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "${{ matrix.role }}"
-          git config --global user.email "${{ matrix.role }}@bank-sampah.sulhi.workers.dev"
-      - name: Setup Node & OpenCode
-        continue-on-error: true
-        uses: actions/setup-node@v5
-        with:
-          node-version: "20"
-      - name: Install OpenCode CLI
-        run: |
-          curl -fsSL https://opencode.ai/install | bash
-          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Execute Work (Active or Proactive)
-        timeout-minutes: 30
-        continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skip if Open PR Exists
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Specialist runs unconditionally:
-          # 1. Finds Issue -> Fixes it
-          # 2. No Issue -> Proactive Scan -> findings.md
-          echo "Starting specialist work for ${{ matrix.role }}"
-          
-          if opencode run /ulw-loop \
-            "You are ${{ matrix.role }} specialist. You always do ${{ matrix.role }} best practice. you read documentations (*.md), check all open pr and open issues. your goal is to make small improvement within ${{ matrix.role }}. confirm: build/lint/test success without warnings/errors. create/update pull request after your task done, ensure up to date with default branch before create/update pr to minimaze conflicts." \
-            --model opencode/glm-5-free \
-            --share false; then
-            echo "✅ Specialist work completed successfully for ${{ matrix.role }}"
-          else
-            echo "❌ Specialist work failed or timed out for ${{ matrix.role }}"
-            echo "This may be expected if no issues were found or work took longer than timeout"
-            exit 0  # Don't fail the workflow, just log the issue
+          COUNT=$(gh pr list --state open --json number --jq length)
+          if [ "$COUNT" -gt 0 ]; then
+            echo "🚫 Open PR exists. Skipping."
+            exit 0
           fi
-  # ------------------------------------------------------------------
-  # STAGE 3: ISSUE MANAGER
-  # ------------------------------------------------------------------
-  PR-Handler:
-    name: "PR-Handler"
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install OpenCode
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+
+      - name: Execute Specialist Work
+        timeout-minutes: 30
+        run: |
+          echo "🚀 Specialist ${{ matrix.role }} executing"
+
+          opencode run /ulw-loop "
+          You are Autonomous ${{ matrix.role }} Specialist.
+
+          DOMAIN: ${{ matrix.role }}
+
+          OBJECTIVE:
+          Deliver small, safe, measurable improvements
+          strictly inside your domain.
+
+          EXECUTION MODE:
+          - If Issue exists with label ${{ matrix.role }} → execute.
+          - If none → proactive scan limited to domain.
+          - If nothing valuable → exit safely.
+
+          STRICT PHASE:
+          RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
+
+          PR REQUIREMENTS:
+          - Label: ${{ matrix.role }}
+          - Linked to issue
+          - Up to date with default branch
+          - No conflict
+          - Build/lint/test success
+          - ZERO warnings
+          - Small atomic diff
+
+          Never refactor unrelated modules.
+          Never introduce unnecessary abstraction.
+          " \
+          --model opencode/glm-5-free \
+          --agent ${{ matrix.role }} \
+          --share false
+
+  # ================================================================
+  # STAGE 3 — FIXER
+  # ================================================================
+  Fixer:
+    name: "Fixer"
     needs: specialists
     runs-on: ubuntu-24.04-arm
+
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: Configure Git
         run: |
-          git config --global user.name "PR-Handler"
-          git config --global user.email "PR-Handler@bank-sampah.sulhi.workers.dev"
-      - name: Setup Node & OpenCode
-        uses: actions/setup-node@v4
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Install OpenCode CLI
+
+      - run: npm ci || true
+
+      - name: Install OpenCode
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Process Pull Requests
+
+      - name: Audit & Fix PRs
         timeout-minutes: 60
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          opencode run /ulw-loop \
-            "You are **PR-Handler**, github PR manager work on this repository. **PR-Handler** love to manage PR, he work from latest open pr. **PR-Handler** Goal: manage ALL open pr begun from latest, merge without conflict, warnings, errors. If conflicts, close pr. confirm: build/lint/test/check success without warnings, up to date with default branch. remember, no errors or warnings." \
-            --model opencode/glm-5-free \
-            --share false
-  # ------------------------------------------------------------------
-  # STAGE 4: THE GATEKEEPER (Integrator)
-  # ------------------------------------------------------------------
-  integrator:
-    name: "Fixer"
-    needs: PR-Handler
+          opencode run /ulw-loop "
+          You are Autonomous PR Fixer.
+
+          Audit ALL non-merged PRs.
+          For each PR:
+          - Ensure up to date
+          - No conflicts
+          - Build/lint/test success
+          - ZERO warnings
+          - All CI green
+
+          Fix minor issues automatically.
+          Add detailed technical comments.
+          DO NOT merge PR.
+          " \
+          --model opencode/glm-5-free \
+          --share false
+
+  # ================================================================
+  # STAGE 4 — PR HANDLER
+  # ================================================================
+  PR-Handler:
+    name: "PR-Handler"
+    needs: Fixer
     runs-on: ubuntu-24.04-arm
+
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
       - name: Configure Git
         run: |
-          git config --global user.name "Fixer"
-          git config --global user.email "fixer@bank-sampah.sulhi.workers.dev"
-      - name: Setup Node & OpenCode
-        uses: actions/setup-node@v4
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+
+      - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Install Dependencies
-        continue-on-error: true
-        run: npm ci
-      - name: Install OpenCode CLI
+
+      - name: Install OpenCode
         run: |
           curl -fsSL https://opencode.ai/install | bash
           echo "$HOME/.opencode/bin" >> $GITHUB_PATH
-      - name: Process Pull Requests
+
+      - name: Merge Qualified PRs
         timeout-minutes: 60
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          opencode run /ulw-loop \
-            "Check all open pr, Select based created time, for each open pr: fix - verify- ensure build/lint success without errors/warnings - create/update pr linked to issues, ensure up to date with main before create/update pr - monitor comments and check status on pr - if all green, merge. if red, fix until green. merge only if build/lint success without error/warning. if any error/warning while build/lint, its big failure." \
-            --model opencode/glm-5-free \
-            --share false
+          opencode run /ulw-loop "
+          You are PR-Handler.
+
+          Process ALL open PR from latest.
+
+          Merge ONLY IF:
+          - Up to date
+          - No conflict
+          - Build/lint/test success
+          - ZERO warnings
+          - All CI green
+
+          If conflict → close with explanation.
+          Never merge risky PR.
+          Never bypass CI.
+          " \
+          --model opencode/glm-5-free \
+          --share false
