@@ -291,9 +291,9 @@ jobs:
           strictly inside your domain.
           EXECUTION MODE:
           - If open pr with label ${{ matrix.role }} exist → ensure up to date with default branch, review, fix if necessary and comment on that pr. skip other job.
-          - If Issue exists → execute.
-          - If none → proactive scan limited to domain.
-          - If nothing valuable → exit safely.
+          - If Issue exists → execute → create/update pr.
+          - If none → proactive scan limited to domain → create/update pr.
+          - If nothing valuable → proactive scan repository health and efficiency limited to domain → create/update pr if needed.
 
           STRICT PHASE:
           RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
