@@ -92,9 +92,9 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   // US Passport: 9 characters (alphanumeric, starting with letter for newer formats)
   // Pattern 1: With "passport" prefix or "passport #" context
   // Pattern 2: 1-2 letters followed by 7-9 digits (common format)
-  // Pattern 3: Exactly 9-10 characters with at least 2 digits
+  // Pattern 3: Exactly 9 characters with at least 2 digits (look-ahead only checks within the word)
   passport:
-    /\b(?:passport[:\s]{1,10}|passport\s*#\s*)[A-Z0-9]{6,10}\b|\b[A-Z]{1,2}[0-9]{7,9}\b/gi,
+    /\b(?:passport[:\s]{1,10}|passport\s*#\s*)[A-Z0-9]{6,9}\b|\b[A-Z]{1,2}[0-9]{7,9}\b|\b(?=[A-Z0-9]{0,20}[0-9][A-Z0-9]{0,20}[0-9])[A-Z0-9]{9}\b/gi,
   // Driver's License: Alphanumeric, typically 6-14 characters, various formats
   driversLicense:
     /\b(?:dl|driver[\s_-]?license|license[:\s]{1,10})[\s]{0,10}[:#]?\s{0,10}([A-Za-z0-9*-]{6,14})\b|\b[A-Z]{1,2}[0-9]{6,10}[A-Z]{0,2}\b/gi,

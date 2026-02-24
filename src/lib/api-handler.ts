@@ -105,17 +105,16 @@ export function withApiHandler(
         patterns: suspiciousResult.patterns.map((p) => p.category),
       });
 
-      return new Response(
-        JSON.stringify({
+      return NextResponse.json(
+        {
           error: 'Forbidden: Security policy violation',
           code: 'SECURITY_BLOCK',
           timestamp: new Date().toISOString(),
           requestId,
-        }),
+        },
         {
           status: 403,
           headers: {
-            'Content-Type': 'application/json',
             'X-Request-ID': requestId,
           },
         }
