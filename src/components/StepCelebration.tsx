@@ -8,6 +8,7 @@ import {
   SVG_ANIMATION,
   ANIMATION_DELAYS,
 } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/haptics';
 
 interface StepCelebrationProps {
   stepNumber: number;
@@ -64,6 +65,7 @@ function StepCelebrationComponent({
       setParticles(generateParticles());
       setIsVisible(true);
       setIsExiting(false);
+      triggerHapticFeedback();
 
       const timer = setTimeout(() => {
         setIsExiting(true);

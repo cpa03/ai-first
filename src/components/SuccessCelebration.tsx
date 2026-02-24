@@ -7,6 +7,7 @@ import {
   COMPONENT_DEFAULTS,
   SVG_ANIMATION,
 } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/haptics';
 
 interface Particle {
   id: number;
@@ -75,6 +76,7 @@ function SuccessCelebrationComponent({
     if (show && shouldAnimate) {
       setParticles(generateParticles());
       setIsVisible(true);
+      triggerHapticFeedback();
 
       const timer = setTimeout(() => {
         setIsVisible(false);
