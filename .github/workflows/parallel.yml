@@ -287,22 +287,26 @@ jobs:
 
           DOMAIN: ${{ matrix.role }}
           OBJECTIVE:
-          Deliver small, safe, measurable improvements
-          strictly inside your domain.
-          EXECUTION MODE:
+          Deliver small, safe, measurable improvements strictly inside your domain.
+          
+          STRICT PHASE:
+          1. INITIATE → 2. PLAN → 3. IMPLEMENT → 4. VERIFY → 5. SELF-REVIEW → 6. SELF EVOLVE → 7. DELIVER (PR)
+          
+          INITIATE:
           - If open pr with label ${{ matrix.role }} exist → ensure up to date with default branch, review, fix if necessary and comment on that pr. skip other job.
           - If Issue exists → execute → create/update pr.
-          - If none → proactive scan limited to domain → create/update pr.
+          - If none issue or pr → proactive scan limited to domain → create/update pr.
           - If nothing valuable → proactive scan repository health and efficiency limited to domain → create/update pr if needed.
 
-          STRICT PHASE:
-          RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
+          SELF-REVIEW:
+          - Watch and learn from your process
+          - Can move to step 2 (re-planning) if needed
 
-          SELF REVIEW REQUIREMENTS
-          - Maintain docs/${{ matrix.role }}.md as your longtime memory
-          - You can create if docs/${{ matrix.role }}.md not exist
+          SELF EVOLVE:
           - Quick check other agents long time memory to improve teammate and work more efficient
-          
+          - You improve and evolve over time, from your self review and self evolve step
+          - Maintain docs/${{ matrix.role }}.md as your longtime memory
+
           PR REQUIREMENTS:
           - Label: ${{ matrix.role }}
           - Linked to issue
