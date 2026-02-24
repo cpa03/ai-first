@@ -601,36 +601,6 @@ export const SECURITY_CONFIG = {
 
   /** HSTS preload directive - Default: true */
   HSTS_PRELOAD: EnvLoader.boolean('SECURITY_HSTS_PRELOAD', true),
-
-  /** XSS Protection header - Default: '0' */
-  X_XSS_PROTECTION: EnvLoader.string('SECURITY_X_XSS_PROTECTION', '0'),
-
-  /** Cross-Origin-Resource-Policy header - Default: 'same-origin' */
-  CROSS_ORIGIN_RESOURCE_POLICY: EnvLoader.string(
-    'SECURITY_CORP',
-    'same-origin'
-  ),
-
-  /** Cross-Origin-Opener-Policy header - Default: 'same-origin-allow-popups' */
-  CROSS_ORIGIN_OPENER_POLICY: EnvLoader.string(
-    'SECURITY_COOP',
-    'same-origin-allow-popups'
-  ),
-
-  /** X-Frame-Options header - Default: 'DENY' */
-  X_FRAME_OPTIONS: EnvLoader.string('SECURITY_X_FRAME_OPTIONS', 'DENY'),
-
-  /** X-Content-Type-Options header - Default: 'nosniff' */
-  X_CONTENT_TYPE_OPTIONS: EnvLoader.string(
-    'SECURITY_X_CONTENT_TYPE_OPTIONS',
-    'nosniff'
-  ),
-
-  /** Referrer-Policy header - Default: 'strict-origin-when-cross-origin' */
-  REFERRER_POLICY: EnvLoader.string(
-    'SECURITY_REFERRER_POLICY',
-    'strict-origin-when-cross-origin'
-  ),
 } as const;
 
 /**

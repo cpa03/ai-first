@@ -27,7 +27,8 @@ import {
   httpRequestTotal,
 } from '@/app/api/metrics/route';
 import { APP_CONFIG } from '@/lib/config/app';
-import { detectSuspiciousPatterns, SecurityAuditLog } from '@/lib/security';
+import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
+import { SecurityAuditLog } from '@/lib/security/audit-log';
 
 /**
  * API Version for all responses
@@ -104,16 +105,17 @@ export function withApiHandler(
         patterns: suspiciousResult.patterns.map((p) => p.category),
       });
 
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: 'Forbidden: Security policy violation',
           code: 'SECURITY_BLOCK',
           timestamp: new Date().toISOString(),
           requestId,
-        },
+        }),
         {
           status: 403,
           headers: {
+            'Content-Type': 'application/json',
             'X-Request-ID': requestId,
           },
         }
