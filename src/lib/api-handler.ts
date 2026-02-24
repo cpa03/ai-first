@@ -89,11 +89,37 @@ export function withApiHandler(
     // SECURITY: Detect suspicious patterns in the request for security monitoring
     // This integrates the suspicious-patterns module that was previously unused
     // Patterns are logged via SecurityAuditLog for incident response
-    detectSuspiciousPatterns(request, {
+    const suspiciousResult = detectSuspiciousPatterns(request, {
       scanBody: false, // Performance: skip body scanning by default
       minSeverity: 2, // Only log medium+ severity patterns (avoid noise)
       logDetected: true,
     });
+
+    // SECURITY: Actively block high-severity suspicious patterns (Severity 3)
+    // This provides active protection against SQLi, XSS, and other common attacks.
+    // We return 403 Forbidden with a generic message to avoid leaking detection logic.
+    if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
+      logger.warnWithContext('Blocking suspicious request', logContext, {
+        maxSeverity: suspiciousResult.maxSeverity,
+        patterns: suspiciousResult.patterns.map((p) => p.category),
+      });
+
+      return new Response(
+        JSON.stringify({
+          error: 'Forbidden: Security policy violation',
+          code: 'SECURITY_BLOCK',
+          timestamp: new Date().toISOString(),
+          requestId,
+        }),
+        {
+          status: 403,
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Request-ID': requestId,
+          },
+        }
+      );
+    }
 
     try {
       const rateLimitResult = checkRateLimit(

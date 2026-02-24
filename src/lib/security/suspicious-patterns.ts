@@ -97,12 +97,12 @@ const SUSPICIOUS_PATTERNS: Record<
     // High severity - clear SQL injection attempts
     {
       pattern:
-        /(\b(union|select|insert|update|delete|drop|create|alter|truncate)\b.*\b(from|into|table|database|set|where)\b)/is,
+        /(\b(union|select|insert|update|delete|drop|create|alter|truncate)\b.{1,100}\b(from|into|table|database|set|where)\b)/is,
       severity: 3,
       description: 'SQL keyword combination',
     },
     {
-      pattern: /(--\s*$|;\s*--|\/\*.*\*\/)/s,
+      pattern: /(--\s*$|;\s*--|\/\*.{1,100}\*\/)/s,
       severity: 3,
       description: 'SQL comment injection',
     },
