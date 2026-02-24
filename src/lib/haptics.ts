@@ -5,15 +5,20 @@ import { ANIMATION_DELAYS } from './config';
  * Provides a tactile confirmation for user actions like copying,
  * completing tasks, or reaching milestones.
  *
- * @param duration - Duration of the vibration in milliseconds. Defaults to ANIMATION_DELAYS.MICRO.
+ * @param duration - Duration of the vibration in milliseconds. Defaults to 50ms.
  */
-export const triggerHapticFeedback = (
-  duration: number = ANIMATION_DELAYS.MICRO
-): void => {
-  if (typeof navigator !== 'undefined' && navigator.vibrate) {
-    // navigator.vibrate returns true if vibration was successful, false otherwise
-    // We ignore the return value as failure is typically due to browser policy
-    // or hardware limitations and doesn't require application-level handling.
-    navigator.vibrate(duration);
+export const triggerHapticFeedback = (duration: number = 50): void => {
+  // Robust guard against non-browser environments (SSR/Edge Runtime)
+  if (
+    typeof window !== 'undefined' &&
+    typeof window.navigator !== 'undefined' &&
+    typeof window.navigator.vibrate === 'function'
+  ) {
+    try {
+      // navigator.vibrate returns true if vibration was successful, false otherwise
+      window.navigator.vibrate(duration);
+    } catch {
+      // Ignore errors in environments where vibrate might throw
+    }
   }
 };
