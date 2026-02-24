@@ -10,7 +10,7 @@ export interface CacheOptions {
   onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
 }
 
-import { CACHE_CONFIG } from './config/constants';
+import { CACHE_CONFIG } from '@/lib/config';
 
 export class Cache<T = unknown> {
   private cache: Map<string, CacheEntry<T>>;
@@ -19,6 +19,7 @@ export class Cache<T = unknown> {
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
   private totalHits: number;
+  private lastCleanupTime: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
@@ -28,6 +29,7 @@ export class Cache<T = unknown> {
     this.onEvict = options.onEvict;
     this.misses = 0;
     this.totalHits = 0;
+    this.lastCleanupTime = 0;
   }
 
   set(key: string, value: T): void {
@@ -72,6 +74,9 @@ export class Cache<T = unknown> {
     }
 
     // Update access order for LRU: delete and re-insert to move to end
+    // PERFORMANCE: Refresh timestamp for sliding expiration to maintain
+    // chronological order for O(k) TTL eviction.
+    entry.timestamp = Date.now();
     this.cache.delete(key);
     this.cache.set(key, entry);
 
@@ -96,6 +101,9 @@ export class Cache<T = unknown> {
     }
 
     // Update access order for LRU: delete and re-insert to move to end
+    // PERFORMANCE: Refresh timestamp for sliding expiration to maintain
+    // chronological order for O(k) TTL eviction.
+    entry.timestamp = Date.now();
     this.cache.delete(key);
     this.cache.set(key, entry);
 
@@ -133,11 +141,26 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
+
+    // PERFORMANCE: Throttle proactive cleanup to avoid O(N) scan on every set()
+    // This converts O(N) amortized cost to O(1) for high-throughput paths.
+    if (now - this.lastCleanupTime < CACHE_CONFIG.CLEANUP.INTERVAL_MS) {
+      return;
+    }
+    this.lastCleanupTime = now;
+
     const keysToDelete: string[] = [];
 
+    // PERFORMANCE: Since Map preserves insertion order and we move entries to the end
+    // on every access, entries are naturally sorted by timestamp chronologically.
+    // This allows O(k) eviction where k is the number of expired entries,
+    // rather than O(N) by scanning the entire cache.
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
         keysToDelete.push(key);
+      } else {
+        // Optimization: stop scanning as soon as we find a non-expired entry
+        break;
       }
     }
 
