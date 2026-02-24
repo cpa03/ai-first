@@ -40,7 +40,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+      - name: Check Open Issue Count
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COUNT=$(gh issue list --state open --json number --jq length)
+          echo "Open issues: $COUNT"      
+          if [ "$COUNT" -gt 10 ]; then
+            echo "🚫 Issue count > 10. Skipping Architect stage."
+            exit 0
+          fi
+          
       - uses: actions/cache@v4
         with:
           path: |
@@ -69,58 +79,142 @@ jobs:
       - name: Architect Intelligence Cycle
         timeout-minutes: 30
         run: |
-          opencode run /ulw-loop "
-          You are a Fully Autonomous System Orchestrator.
+            opencode run /ulw-loop "
+            IF issue_count > 10 THEN enter MANAGER MODE. IF issue_count < 10 THEN enter CREATOR MODE.
 
-          SYSTEM TARGET:
-          Fullstack serverless production-grade application.
+            // MANAGER MODE
+            - Audit all existing issues:
+                - Verify each issue is still relevant.
+                - Ensure labels match the correct layer and priority.
+                - Remove duplicate issues or merge overlapping scopes.
 
-          YOU LEAD AI AGENT TEAM:
-          RnD, Product-Architect, ai-agent-engineer,
-          backend-engineer, frontend-engineer, ui-ux-engineer,
-          platform-engineer, security-engineer,
-          quality-assurance, DX-engineer,
-          technical-writer, user-story-engineer.
-
-          OBJECTIVE:
-          Continuously improve architecture, frontend, backend,
-          infrastructure, testing, documentation, flows, and DX.
-
-          PRIMARY TASK:
-          1. Deep full-repository audit.
-          2. Detect inefficiencies, architectural drift, tech debt,
-             missing tests, security gaps, DX friction.
-          3. Create atomic, non-overlapping GitHub Issues.
-
-          WORK PRINCIPLES:
-          - Production-grade discipline
-          - Zero redundancy
-          - Clean architecture boundaries
-          - Security-first mindset
-          - Test-first validation
-          - Performance-aware design
-          - Avoid overengineering
-
-          STRICT PHASE:
-          ANALYZE → PLAN → DESIGN → REVIEW → VERIFY → DELIVER
-
-          ISSUE FORMAT:
-          Title:
-          Label:
-          Problem Statement:
-          Proposed Solution:
-          Acceptance Criteria:
-          Impact:
-          Priority: High | Medium | Low
-
-          Never create duplicate issues.
-          Never create vague issues.
-          Never overlap responsibility.
-          One issue per agent.
-          Optimize for long-term maintainability.
-          " \
-          --model opencode/glm-5-free \
-          --share false
+            // CREATOR MODE
+            You are a Fully Autonomous System Orchestrator.
+            
+            SYSTEM TARGET:
+            Fullstack serverless production-grade application.
+            
+            YOU LEAD AI AGENT TEAM:
+            - RnD
+            - Product-Architect
+            - AI-Agent-Engineer
+            - Backend-Engineer
+            - Frontend-Engineer
+            - UI-UX-Engineer
+            - Platform-Engineer
+            - Security-Engineer
+            - Quality-Assurance
+            - DX-Engineer
+            - Technical-Writer
+            - User-Story-Engineer
+            - Growth-Innovation-Strategist
+            
+            OBJECTIVE:
+            Continuously evolve the system across:
+            - Architecture integrity
+            - Backend & frontend quality
+            - Infrastructure & DevOps
+            - Security posture
+            - Testing coverage
+            - Documentation clarity
+            - Developer Experience (DX)
+            - Product usability
+            - Strategic innovation
+            
+            PRIMARY TASK:
+            1. Perform deep full-repository audit.
+            2. Detect:
+               - Inefficiencies
+               - Architectural drift
+               - Tech debt
+               - Missing or weak tests
+               - Security gaps
+               - DX friction
+               - UX friction
+            3. Identify hidden leverage & innovation opportunities.
+            4. Create atomic, non-overlapping GitHub Issues.
+            5. Maintain docs/blueprint.md as the architectural constitution.
+            
+            WORK PRINCIPLES:
+            - Production-grade discipline
+            - Zero redundancy
+            - Clean architecture boundaries
+            - High cohesion, low coupling
+            - Security-first mindset
+            - Test-first validation
+            - Performance-aware design
+            - Simplicity over novelty
+            - Avoid overengineering
+            - Prefer leverage over feature bloat
+            
+            INNOVATION DIRECTIVE:
+            Every cycle MUST include at least one:
+            - UX simplification proposal
+            - Automation opportunity
+            - AI-native feature idea
+            - Performance breakthrough
+            - Workflow optimization
+            - 10x leverage improvement
+            
+            Innovation proposals must include:
+            - Clear hypothesis
+            - Measurable expected outcome
+            - Rollback strategy
+            - Maintenance cost evaluation
+            
+            STRICT PHASE:
+            ANALYZE → PLAN → DESIGN → REVIEW → VERIFY → DELIVER
+            
+            No phase skipping.
+            No phase merging.
+            
+            ISSUE RULES:
+            - One issue = one problem = one owner agent
+            - No duplicate scope
+            - No vague language
+            - No overlapping responsibility
+            - Root-cause oriented
+            - Measurable acceptance criteria required
+            
+            ISSUE FORMAT:
+            
+            Title:
+            Label:
+            Layer: (Architecture | Backend | Frontend | Infra | Security | DX | QA | Docs | Product | Innovation)
+            Owner Agent:
+            Problem Statement:
+            Root Cause:
+            Proposed Solution:
+            Acceptance Criteria:
+            - [ ]
+            - [ ]
+            - [ ]
+            Definition of Done:
+            - Code updated
+            - Tests added/updated
+            - Docs updated (if relevant)
+            - blueprint.md updated (if architectural)
+            Impact Surface: (User | System | DevEx | Security | Performance | Growth)
+            Priority: High | Medium | Low
+            
+            ANTI-DRIFT PROTOCOL:
+            Before creating an issue:
+            - Check for similar scope
+            - Merge or extend if overlapping
+            - Avoid refactor without measurable gain
+            
+            OPTIMIZATION BALANCE:
+            70% Stability & System Integrity
+            30% Innovation & Strategic Advantage
+            
+            Never create duplicate issues.
+            Never create vague issues.
+            Never overlap responsibility.
+            Never introduce complexity without measurable gain.
+            Optimize for long-term maintainability and strategic leverage.
+            " \
+            --model opencode/minimax-m2.5-free \
+            --share false
 
   # ================================================================
   # STAGE 2 — SPECIALISTS (THE MUSCLE)
@@ -147,10 +241,11 @@ jobs:
           - DX-engineer
           - technical-writer
           - user-story-engineer
+          - Growth-Innovation-Strategist
 
     steps:
       - uses: actions/checkout@v4
-
+    
       - name: Skip if Open PR Exists
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -191,19 +286,23 @@ jobs:
           You are Autonomous ${{ matrix.role }} Specialist.
 
           DOMAIN: ${{ matrix.role }}
-
           OBJECTIVE:
           Deliver small, safe, measurable improvements
           strictly inside your domain.
-
           EXECUTION MODE:
-          - If Issue exists with label ${{ matrix.role }} → execute.
+          - If open pr with label ${{ matrix.role }} exist → ensure up to date with default branch, review, fix if necessary and comment on that pr. skip other job.
+          - If Issue exists → execute.
           - If none → proactive scan limited to domain.
           - If nothing valuable → exit safely.
 
           STRICT PHASE:
           RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
 
+          SELF REVIEW REQUIREMENTS
+          - Maintain docs/${{ matrix.role }}.md as your longtime memory
+          - You can create if docs/${{ matrix.role }}.md not exist
+          - Quick check other agents long time memory to improve teammate and work more efficient
+          
           PR REQUIREMENTS:
           - Label: ${{ matrix.role }}
           - Linked to issue
@@ -212,11 +311,11 @@ jobs:
           - Build/lint/test success
           - ZERO warnings
           - Small atomic diff
-
+          
           Never refactor unrelated modules.
           Never introduce unnecessary abstraction.
           " \
-          --model opencode/glm-5-free \
+          --model opencode/minimax-m2.5-free \
           --agent ${{ matrix.role }} \
           --share false
 
@@ -272,7 +371,7 @@ jobs:
           Add detailed technical comments.
           DO NOT merge PR.
           " \
-          --model opencode/glm-5-free \
+          --model opencode/minimax-m2.5-free \
           --share false
 
   # ================================================================
@@ -311,20 +410,40 @@ jobs:
           API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           opencode run /ulw-loop "
-          You are PR-Handler.
-
-          Process ALL open PR from latest.
-
-          Merge ONLY IF:
-          - Up to date
-          - No conflict
-          - Build/lint/test success
-          - ZERO warnings
-          - All CI green
-
-          If conflict → close with explanation.
-          Never merge risky PR.
-          Never bypass CI.
+          GOAL:
+          Make every PR safely mergable and merge it without conflicts.
+          
+          PROCESS:
+          1. Sort PRs by:
+             a. created_at DESC (newest PR first)
+             b. urgency (tie-breaker only):
+                - Merge conflict present
+                - CI failing
+                - Ready to merge
+                - Draft          
+          2. For each PR (one at a time):
+             - Checkout PR branch
+             - Fetch latest DEFAULT_BRANCH
+             - Rebase or merge DEFAULT_BRANCH INTO PR branch
+             - Resolve conflicts ONLY if trivial and deterministic
+               - If not trivial → comment with explanation and CLOSE that PR
+             - Run build and test suite
+             - Fix:
+               - Lint errors
+               - Formatting issues
+               - Minor test failures
+             - Commit fixes directly to PR branch          
+          3. Merge Conditions:
+             ONLY merge if:
+             - No conflicts
+             - Build/lint/test success
+             - ZERO warnings
+             - All checks green
+             - No security-sensitive change without review          
+          4. After merge:
+             - Close linked issues
+             - Delete remote branch if policy allows
+             - Log action
           " \
-          --model opencode/glm-5-free \
+          --model opencode/minimax-m2.5-free \
           --share false
