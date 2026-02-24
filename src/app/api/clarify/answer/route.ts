@@ -8,7 +8,7 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { dbService } from '@/lib/db';
-import { VALIDATION_CONFIG, STATUS_CODES } from '@/lib/config/constants';
+import { VALIDATION_LEGACY_CONFIG as VALIDATION_CONFIG, STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 async function handlePost(context: ApiContext) {

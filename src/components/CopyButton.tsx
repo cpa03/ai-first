@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
-import { UI_CONFIG } from '@/lib/config/constants';
+import { UI_LEGACY_CONFIG as UI_CONFIG } from '@/lib/config/constants';
 import { ANIMATION_DELAYS } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';

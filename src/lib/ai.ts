@@ -11,7 +11,7 @@ import {
   type ServiceResilienceConfig,
   type ResilienceConfig,
 } from './resilience';
-import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
+import { AI_SERVICE_CONFIG as AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
 import { resourceCleanupManager } from './resource-cleanup';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {

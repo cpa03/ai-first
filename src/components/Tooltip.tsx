@@ -9,7 +9,7 @@ import React, {
   memo,
   useSyncExternalStore,
 } from 'react';
-import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
+import { ANIMATION_CONFIG, UI_LEGACY_CONFIG as UI_CONFIG } from '@/lib/config/constants';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 

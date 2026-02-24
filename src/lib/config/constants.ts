@@ -235,9 +235,9 @@ export const RETRY_CONFIG = {
 } as const;
 
 /**
- * UI configuration
+ * UI legacy timing configuration
  */
-export const UI_CONFIG = {
+export const UI_LEGACY_CONFIG = {
   /**
    * Character count warning threshold (0.0 - 1.0)
    * Shows warning color when character count reaches this percentage of max
@@ -348,7 +348,7 @@ export const UI_CONFIG = {
  * API validation configuration
  * Now supports environment variable overrides
  */
-export const VALIDATION_CONFIG = {
+export const VALIDATION_LEGACY_CONFIG = {
   MAX_ANSWER_LENGTH: EnvLoader.number(
     'VALIDATION_MAX_ANSWER_LENGTH',
     5000,
@@ -480,7 +480,7 @@ export const RETRY_DELAY_CONFIG = {
  * AI Service configuration
  * Now supports environment variable overrides
  */
-export const AI_CONFIG = {
+export const AI_SERVICE_CONFIG = {
   DEFAULT_MAX_TOKENS: EnvLoader.number(
     'AI_DEFAULT_MAX_TOKENS',
     4000,
@@ -695,7 +695,7 @@ export const PII_REDACTION_CONFIG = {
  * Now supports environment variable overrides
  */
 export const VALIDATION_LIMITS_CONFIG = {
-  MAX_USER_RESPONSE_SIZE: VALIDATION_CONFIG.MAX_ANSWER_LENGTH,
+  MAX_USER_RESPONSE_SIZE: VALIDATION_LEGACY_CONFIG.MAX_ANSWER_LENGTH,
   MAX_RESPONSE_KEY_LENGTH: EnvLoader.number(
     'VALIDATION_MAX_RESPONSE_KEY_LENGTH',
     100,
@@ -708,7 +708,7 @@ export const VALIDATION_LIMITS_CONFIG = {
     100,
     5000
   ),
-  DEFAULT_MAX_REQUEST_SIZE_BYTES: VALIDATION_CONFIG.MAX_REQUEST_BODY_SIZE,
+  DEFAULT_MAX_REQUEST_SIZE_BYTES: VALIDATION_LEGACY_CONFIG.MAX_REQUEST_BODY_SIZE,
 } as const;
 
 /**
@@ -1026,9 +1026,9 @@ export const RESILIENCE_CONFIG = {
  */
 export const VALIDATION_LIMITS = {
   IDEA: {
-    MIN_LENGTH: VALIDATION_CONFIG.MIN_IDEA_LENGTH,
-    MAX_LENGTH: VALIDATION_CONFIG.MAX_IDEA_LENGTH,
-    MAX_ID_LENGTH: VALIDATION_CONFIG.MAX_IDEA_ID_LENGTH,
+    MIN_LENGTH: VALIDATION_LEGACY_CONFIG.MIN_IDEA_LENGTH,
+    MAX_LENGTH: VALIDATION_LEGACY_CONFIG.MAX_IDEA_LENGTH,
+    MAX_ID_LENGTH: VALIDATION_LEGACY_CONFIG.MAX_IDEA_ID_LENGTH,
   } as const,
 
   TITLE: {
@@ -1053,8 +1053,8 @@ export const VALIDATION_LIMITS = {
   } as const,
 
   PAGINATION: {
-    DEFAULT_LIMIT: VALIDATION_CONFIG.DEFAULT_PAGINATION_LIMIT,
-    MAX_LIMIT: VALIDATION_CONFIG.MAX_PAGINATION_LIMIT,
+    DEFAULT_LIMIT: VALIDATION_LEGACY_CONFIG.DEFAULT_PAGINATION_LIMIT,
+    MAX_LIMIT: VALIDATION_LEGACY_CONFIG.MAX_PAGINATION_LIMIT,
     AGENT_LOGS_DEFAULT: EnvLoader.number(
       'VALIDATION_AGENT_LOGS_DEFAULT',
       100,
@@ -1103,7 +1103,7 @@ export { STATUS_CODES, HTTP_HEADERS, AUTH_CONFIG } from './http';
  * Now supports environment variable overrides
  */
 export const AI_SERVICE_LIMITS = {
-  MAX_COST_TRACKERS: AI_CONFIG.RESPONSE_CACHE_MAX_SIZE * 100,
+  MAX_COST_TRACKERS: AI_SERVICE_CONFIG.RESPONSE_CACHE_MAX_SIZE * 100,
   MAX_COST_TRACKER_AGE_MS: EnvLoader.number(
     'AI_MAX_COST_TRACKER_AGE_MS',
     24 * 60 * 60 * 1000,
@@ -1111,7 +1111,7 @@ export const AI_SERVICE_LIMITS = {
     168 * 60 * 60 * 1000
   ),
   CLEANUP_PERCENTAGE: RATE_LIMIT_STORE_CONFIG.CLEANUP_PERCENTAGE,
-  CACHE_KEY_HASH_LENGTH: AI_CONFIG.CACHE_KEY_HASH_LENGTH,
+  CACHE_KEY_HASH_LENGTH: AI_SERVICE_CONFIG.CACHE_KEY_HASH_LENGTH,
 } as const;
 
 /**

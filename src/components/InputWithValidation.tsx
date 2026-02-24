@@ -10,7 +10,7 @@ import {
   SVG_ANIMATION,
   ANIMATION_DELAYS,
 } from '@/lib/config';
-import { UI_CONFIG } from '@/lib/config/constants';
+import { UI_LEGACY_CONFIG as UI_CONFIG } from '@/lib/config/constants';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
   HTMLInputElement | HTMLTextAreaElement
