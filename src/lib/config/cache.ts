@@ -105,16 +105,16 @@ export const CACHE_CONFIG = {
 
     /**
      * Maximum cache size to prevent memory leaks
-     * Env: CACHE_SIZE_MAXIMUM (default: 10000)
+     * Env: CACHE_SIZE_MAXIMUM (default: 1000)
      */
-    MAXIMUM: EnvLoader.number('CACHE_SIZE_MAXIMUM', 10000, 1000, 100000),
+    MAXIMUM: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
   } as const,
 
   /**
    * Default maximum size for general purpose caches
    * Aliased for backward compatibility with src/lib/cache.ts
    */
-  DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 10000, 1000, 100000),
+  DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
 
   /**
    * Service-specific cache configurations

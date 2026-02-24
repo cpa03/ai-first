@@ -230,8 +230,9 @@ export const RETRY_CONFIG = {
 
 /**
  * Cache Configuration
+ * @internal Used for ENV_CONFIG aggregation. Use CACHE_CONFIG from '@/lib/config' instead.
  */
-export const CACHE_CONFIG = {
+const ENV_CACHE_CONFIG = {
   TTL: {
     /** Short-lived cache entries (ms) - Default: 60000 */
     SHORT: EnvLoader.number('CACHE_TTL_SHORT', 60 * 1000, 1000, 600000),
@@ -610,7 +611,7 @@ export const ENV_CONFIG = {
   TIMEOUT: TIMEOUT_CONFIG,
   RATE_LIMIT: RATE_LIMIT_CONFIG,
   RETRY: RETRY_CONFIG,
-  CACHE: CACHE_CONFIG,
+  CACHE: ENV_CACHE_CONFIG,
   UI: UI_CONFIG,
   VALIDATION: VALIDATION_CONFIG,
   AI: AI_CONFIG,
