@@ -4,7 +4,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { ToastOptions } from '@/components/ToastContainer';
-import { triggerHapticFeedback } from '@/lib/haptics';
+import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 
 export interface CopyButtonProps {

@@ -7,7 +7,7 @@ import {
   COMPONENT_DEFAULTS,
   SVG_ANIMATION,
 } from '@/lib/config';
-import { triggerHapticFeedback } from '@/lib/haptics';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface Particle {
   id: number;

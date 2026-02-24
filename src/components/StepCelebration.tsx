@@ -8,7 +8,7 @@ import {
   SVG_ANIMATION,
   ANIMATION_DELAYS,
 } from '@/lib/config';
-import { triggerHapticFeedback } from '@/lib/haptics';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface StepCelebrationProps {
   stepNumber: number;
