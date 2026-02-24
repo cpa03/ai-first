@@ -519,7 +519,7 @@ export function detectSuspiciousPatterns(
     logDetected?: boolean;
   } = {}
 ): SuspiciousPatternResult {
-  const { scanBody: _scanBody = false, minSeverity = 2, logDetected = true } = options;
+  const { scanBody = false, minSeverity = 2, logDetected = true } = options;
 
   const patterns: SuspiciousPatternDetail[] = [];
   // Safety check: Handle undefined/invalid URL gracefully
@@ -542,6 +542,12 @@ export function detectSuspiciousPatterns(
       const queryFindings = scanString(value, 'query', key);
       patterns.push(...queryFindings);
     }
+  }
+
+  // NOTE: Body scanning is currently not implemented to avoid consuming the stream
+  // which can only be read once in many environments (like Cloudflare Workers).
+  if (scanBody) {
+    logger.warn('Body scanning requested but not yet implemented');
   }
 
 
