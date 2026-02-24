@@ -59,6 +59,10 @@ function ResultsContent() {
   const [error, setError] = useState<string | null>(null);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportUrl, setExportUrl] = useState<string | null>(null);
+  const [exportingFormat, setExportingFormat] = useState<string | null>(null);
+  const [connectorHealth, setConnectorHealth] = useState<
+    Record<string, { configured: boolean; name: string }>
+  >({});
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
 
   useEffect(() => {
@@ -116,10 +120,33 @@ function ResultsContent() {
     fetchResults();
   }, [router, searchParams, authLoading, isAuthenticated]);
 
-  const handleExport = async (format: 'markdown' | 'json') => {
+  // Check connector health on mount
+  useEffect(() => {
+    const checkConnectorHealth = async () => {
+      try {
+        const health = await exportManager.getConnectorsHealth();
+        setConnectorHealth(health);
+      } catch (error) {
+        logger.error('Error checking connector health:', error);
+      }
+    };
+
+    checkConnectorHealth();
+  }, []);
+
+  const handleExport = async (
+    format:
+      | 'markdown'
+      | 'json'
+      | 'notion'
+      | 'trello'
+      | 'google-tasks'
+      | 'github-projects'
+  ) => {
     if (!idea) return;
 
     setExportLoading(true);
+    setExportingFormat(format);
 
     try {
       // Prepare data for export
@@ -164,6 +191,7 @@ function ResultsContent() {
       setError(err instanceof Error ? err.message : 'Export failed');
     } finally {
       setExportLoading(false);
+      setExportingFormat(null);
     }
   };
 
@@ -251,40 +279,148 @@ function ResultsContent() {
           Export Your Blueprint
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Markdown Export */}
           <Button
             variant="primary"
             onClick={() => handleExport('markdown')}
             disabled={exportLoading}
             aria-label="Download project blueprint as Markdown file"
           >
-            {exportLoading ? 'Exporting...' : 'Download Markdown'}
+            {exportingFormat === 'markdown'
+              ? 'Exporting...'
+              : 'Download Markdown'}
           </Button>
 
+          {/* JSON Export */}
           <Button
             variant="secondary"
             onClick={() => handleExport('json')}
             disabled={exportLoading}
             aria-label="Export project blueprint as JSON data"
           >
-            {exportLoading ? 'Exporting...' : 'Export JSON'}
+            {exportingFormat === 'json' ? 'Exporting...' : 'Export JSON'}
           </Button>
 
-          <Tooltip
-            content="Notion export is coming soon! This feature is currently in development."
-            position="top"
-          >
+          {/* Notion Export */}
+          {connectorHealth.notion?.configured ? (
             <Button
               variant="outline"
-              disabled={true}
-              aria-label="Export to Notion - Coming soon, this feature is not yet available"
+              onClick={() => handleExport('notion')}
+              disabled={exportLoading}
+              aria-label="Export project to Notion"
             >
-              Export to Notion
-              <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
-                Coming Soon
-              </span>
+              {exportingFormat === 'notion'
+                ? 'Exporting...'
+                : 'Export to Notion'}
             </Button>
-          </Tooltip>
+          ) : (
+            <Tooltip
+              content="Configure NOTION_API_KEY in environment to enable Notion export"
+              position="top"
+            >
+              <Button
+                variant="outline"
+                disabled={true}
+                aria-label="Export to Notion - requires API configuration"
+              >
+                Export to Notion
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  Setup Required
+                </span>
+              </Button>
+            </Tooltip>
+          )}
+
+          {/* Trello Export */}
+          {connectorHealth.trello?.configured ? (
+            <Button
+              variant="outline"
+              onClick={() => handleExport('trello')}
+              disabled={exportLoading}
+              aria-label="Export project to Trello"
+            >
+              {exportingFormat === 'trello'
+                ? 'Exporting...'
+                : 'Export to Trello'}
+            </Button>
+          ) : (
+            <Tooltip
+              content="Configure TRELLO_API_KEY in environment to enable Trello export"
+              position="top"
+            >
+              <Button
+                variant="outline"
+                disabled={true}
+                aria-label="Export to Trello - requires API configuration"
+              >
+                Export to Trello
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  Setup Required
+                </span>
+              </Button>
+            </Tooltip>
+          )}
+
+          {/* Google Tasks Export */}
+          {connectorHealth['google-tasks']?.configured ? (
+            <Button
+              variant="outline"
+              onClick={() => handleExport('google-tasks')}
+              disabled={exportLoading}
+              aria-label="Export tasks to Google Tasks"
+            >
+              {exportingFormat === 'google-tasks'
+                ? 'Exporting...'
+                : 'Export to Google Tasks'}
+            </Button>
+          ) : (
+            <Tooltip
+              content="Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in environment to enable Google Tasks export"
+              position="top"
+            >
+              <Button
+                variant="outline"
+                disabled={true}
+                aria-label="Export to Google Tasks - requires API configuration"
+              >
+                Export to Google Tasks
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  Setup Required
+                </span>
+              </Button>
+            </Tooltip>
+          )}
+
+          {/* GitHub Projects Export */}
+          {connectorHealth['github-projects']?.configured ? (
+            <Button
+              variant="outline"
+              onClick={() => handleExport('github-projects')}
+              disabled={exportLoading}
+              aria-label="Export tasks to GitHub Projects"
+            >
+              {exportingFormat === 'github-projects'
+                ? 'Exporting...'
+                : 'Export to GitHub Projects'}
+            </Button>
+          ) : (
+            <Tooltip
+              content="Configure GITHUB_TOKEN in environment to enable GitHub Projects export"
+              position="top"
+            >
+              <Button
+                variant="outline"
+                disabled={true}
+                aria-label="Export to GitHub Projects - requires API configuration"
+              >
+                Export to GitHub Projects
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  Setup Required
+                </span>
+              </Button>
+            </Tooltip>
+          )}
         </div>
 
         {exportUrl && (
