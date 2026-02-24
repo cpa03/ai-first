@@ -1,4 +1,4 @@
-import { ANIMATION_DELAYS } from './config';
+import { ANIMATION_DELAYS } from '@/lib/config';
 
 /**
  * Utility to trigger haptic feedback on devices that support it.
