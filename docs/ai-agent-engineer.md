@@ -138,4 +138,19 @@ The ai-agent-engineer job specifically focuses on:
 - Workflow CI enhancements
 - Self-\* capability implementations
 
+### GitHub App Token Limitations (2026-02-25)
 
+When pushing workflow file changes, the GitHub App token may fail with:
+`refusing to allow a GitHub App to create or update workflow .github/workflows/xxx without workflows permission`
+
+**Workarounds:**
+
+1. Use a GitHub PAT with `workflows` permission instead of GitHub App token
+2. Create PR with non-workflow changes first, then add workflow via follow-up
+3. Use GitHub API with proper token to upload workflow files
+4. Have maintainer with proper permissions merge workflow changes
+
+**Prevention:**
+
+- Document workflow changes in PR comments for manual addition
+- Split changes into docs-only + workflow when token is limited
