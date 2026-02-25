@@ -283,8 +283,20 @@ main() {
         if [ "$CI_MODE" = true ]; then
             print_status "WARN" ".env.local not found (CI may use secrets)"
         else
-            print_status "WARN" ".env.local file not found"
-            print_status "INFO" "Create .env.local from config/.env.example"
+            # Auto-create .env.local from .env.example for better DX
+            if [ -f "config/.env.example" ]; then
+                print_status "INFO" ".env.local not found, creating from template..."
+                cp config/.env.example .env.local
+                print_status "INFO" "Created .env.local from config/.env.example"
+                print_status "INFO" "Please edit .env.local with your actual values"
+                # Load the newly created file
+                set -a
+                source <(grep -v '^#' .env.local | grep -v '^\s*$')
+                set +a
+            else
+                print_status "WARN" ".env.local file not found"
+                print_status "INFO" "Create .env.local from config/.env.example"
+            fi
         fi
     fi
     
