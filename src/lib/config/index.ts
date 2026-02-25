@@ -127,6 +127,12 @@ export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
 // ENV_CONFIG contains runtime environment metadata
 export { EnvLoader, ENV_CONFIG } from './environment';
 
+// External API Versions Configuration (extracted from constants.ts)
+export {
+  EXTERNAL_API_VERSIONS,
+  type ExternalApiVersionInfo,
+} from './external-api-versions';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 
