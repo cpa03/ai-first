@@ -243,7 +243,7 @@ const InputWithValidationComponent = forwardRef<
               className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
             >
               <svg
-                className="w-5 h-5 text-green-500 animate-in fade-in duration-200 animate-draw-check"
+                className="w-5 h-5 text-green-700 animate-in fade-in duration-200 animate-draw-check"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -268,7 +268,7 @@ const InputWithValidationComponent = forwardRef<
               className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
             >
               <svg
-                className="w-5 h-5 text-red-500 animate-in fade-in duration-200"
+                className="w-5 h-5 text-red-600 animate-in fade-in duration-200"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

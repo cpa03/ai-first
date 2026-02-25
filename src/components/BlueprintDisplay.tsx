@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useSyncExternalStore } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
@@ -9,6 +9,24 @@ import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
 import { MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
+
+const subscribe = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getServerSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -28,6 +46,10 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     handleCopy,
     dismissCelebration,
   } = useBlueprintGeneration(idea, answers);
+
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const comingSoonBadgeClass = prefersReducedMotion ? '' : 'animate-coming-soon-badge';
 
   if (isGenerating) {
     return (
@@ -156,7 +178,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
-                  <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
+                  <span className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}>
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
@@ -172,7 +194,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
-                  <span className="ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full animate-coming-soon-badge">
+                  <span className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}>
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
