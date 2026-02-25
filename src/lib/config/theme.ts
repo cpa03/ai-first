@@ -489,6 +489,7 @@ export const ALERT_STYLES = {
     titleColor: 'text-red-900',
     textColor: 'text-red-800',
     subtextColor: 'text-red-600',
+    closeButtonFocus: 'focus:ring-red-500',
   },
   warning: {
     container: 'bg-yellow-50 border-yellow-200',
@@ -496,6 +497,7 @@ export const ALERT_STYLES = {
     titleColor: 'text-yellow-900',
     textColor: 'text-yellow-800',
     subtextColor: 'text-yellow-600',
+    closeButtonFocus: 'focus:ring-yellow-500',
   },
   info: {
     container: 'bg-blue-50 border-blue-200',
@@ -503,6 +505,7 @@ export const ALERT_STYLES = {
     titleColor: 'text-blue-900',
     textColor: 'text-blue-800',
     subtextColor: 'text-blue-600',
+    closeButtonFocus: 'focus:ring-blue-500',
   },
   success: {
     container: 'bg-green-50 border-green-200',
@@ -510,6 +513,7 @@ export const ALERT_STYLES = {
     titleColor: 'text-green-900',
     textColor: 'text-green-800',
     subtextColor: 'text-green-600',
+    closeButtonFocus: 'focus:ring-green-500',
   },
 } as const;
 

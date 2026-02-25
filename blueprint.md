@@ -590,7 +590,7 @@ HTTP/1.1 200 OK
 X-Request-ID: req_1234567890_abc123
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 57
-X-RateLimit-Reset: 2024-01-07T12:05:00Z
+X-RateLimit-Reset: 2026-01-07T12:05:00Z
 ```
 
 **Rate Limit Types:**

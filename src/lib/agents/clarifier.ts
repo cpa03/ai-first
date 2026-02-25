@@ -12,6 +12,7 @@ import type {
   ClarificationSession,
   ClarifierQuestion,
 } from './clarifier-engine';
+import { eventBus } from './events';
 
 export interface ClarifierConfig extends AgentConfig {
   functions: Array<{
@@ -58,6 +59,18 @@ export class ClarifierAgent {
     ideaText: string
   ): Promise<ClarificationSession> {
     try {
+      // Emit ClarificationStarted event
+      await eventBus.emit({
+        type: 'ClarificationStarted',
+        payload: {
+          ideaId,
+          ideaText,
+          sessionId: `clar_${Date.now()}`,
+        },
+        timestamp: new Date(),
+        source: 'clarifier',
+      });
+
       await dbService.logAgentAction('clarifier', 'start-clarification', {
         ideaId,
         ideaText:
@@ -81,6 +94,19 @@ export class ClarifierAgent {
 
       return session;
     } catch (error) {
+      // Emit error event
+      await eventBus.emit({
+        type: 'AgentError',
+        payload: {
+          ideaId,
+          agent: 'clarifier',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          context: { method: 'startClarification' },
+        },
+        timestamp: new Date(),
+        source: 'clarifier',
+      });
+
       await dbService.logAgentAction('clarifier', 'start-clarification-error', {
         ideaId,
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -111,6 +137,19 @@ export class ClarifierAgent {
 
       await this.sessionManager!.store(session);
 
+      // Emit ClarificationAnswerSubmitted event
+      await eventBus.emit({
+        type: 'ClarificationAnswerSubmitted',
+        payload: {
+          ideaId,
+          questionId,
+          answer,
+          sessionId: session.ideaId,
+        },
+        timestamp: new Date(),
+        source: 'clarifier',
+      });
+
       await dbService.logAgentAction('clarifier', 'answer-submitted', {
         ideaId,
         questionId,
@@ -119,6 +158,19 @@ export class ClarifierAgent {
 
       return session;
     } catch (error) {
+      // Emit error event
+      await eventBus.emit({
+        type: 'AgentError',
+        payload: {
+          ideaId,
+          agent: 'clarifier',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          context: { method: 'submitAnswer', questionId },
+        },
+        timestamp: new Date(),
+        source: 'clarifier',
+      });
+
       await dbService.logAgentAction('clarifier', 'answer-submitted-error', {
         ideaId,
         questionId,
@@ -158,6 +210,20 @@ export class ClarifierAgent {
 
       await dbService.updateIdea(ideaId, { status: 'clarified' });
 
+      // Emit ClarificationCompleted event
+      await eventBus.emit({
+        type: 'ClarificationCompleted',
+        payload: {
+          ideaId,
+          refinedIdea,
+          questionsAnswered: Object.keys(session.answers).length,
+          confidence: session.confidence,
+          sessionId: session.ideaId,
+        },
+        timestamp: new Date(),
+        source: 'clarifier',
+      });
+
       await dbService.logAgentAction('clarifier', 'clarification-completed', {
         ideaId,
         questionsAnswered: Object.keys(session.answers).length,
@@ -166,6 +232,19 @@ export class ClarifierAgent {
 
       return { ...session, refinedIdea };
     } catch (error) {
+      // Emit error event
+      await eventBus.emit({
+        type: 'AgentError',
+        payload: {
+          ideaId,
+          agent: 'clarifier',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          context: { method: 'completeClarification' },
+        },
+        timestamp: new Date(),
+        source: 'clarifier',
+      });
+
       await dbService.logAgentAction(
         'clarifier',
         'clarification-completed-error',

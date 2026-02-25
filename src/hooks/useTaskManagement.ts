@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
-import { Task, Deliverable } from '@/lib/db';
+import type { Task, Deliverable } from '@/lib/db';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -141,6 +142,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
         // Show success toast when task is completed
         if (newStatus === 'completed' && typeof window !== 'undefined') {
+          triggerHapticFeedback();
           const task = dataRef.current?.deliverables
             .flatMap((d) => d.tasks)
             .find((t) => t.id === taskId);
