@@ -4,6 +4,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
+import { AI_CONFIG } from './config/constants';
+import {
+  validateModelTemperature,
+  validateModelMaxTokens,
+  validateModelName,
+} from './validation';
 
 interface AgentConfig {
   name: string;
@@ -87,11 +93,30 @@ class ConfigurationService {
   async loadAIModelConfig(agentName: string): Promise<AIModelConfig> {
     const agentConfig = await this.loadAgentConfig(agentName);
 
+    // Apply security defaults to ensure safe configuration
+    const { VALIDATION } = AI_CONFIG;
+
+    // Validate and sanitize temperature
+    const tempValidation = validateModelTemperature(agentConfig.temperature);
+    const safeTemperature = tempValidation.valid
+      ? agentConfig.temperature
+      : VALIDATION.TEMPERATURE_DEFAULT;
+
+    // Validate and sanitize maxTokens
+    const tokensValidation = validateModelMaxTokens(agentConfig.max_tokens);
+    const safeMaxTokens = tokensValidation.valid
+      ? agentConfig.max_tokens
+      : VALIDATION.MAX_TOKENS_DEFAULT;
+
+    // Validate model name
+    const modelValidation = validateModelName(agentConfig.model);
+    const safeModel = modelValidation.valid ? agentConfig.model : 'gpt-4';
+
     return {
       provider: 'openai',
-      model: agentConfig.model,
-      maxTokens: agentConfig.max_tokens,
-      temperature: agentConfig.temperature,
+      model: safeModel,
+      maxTokens: safeMaxTokens,
+      temperature: safeTemperature,
     };
   }
 

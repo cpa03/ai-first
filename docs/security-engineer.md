@@ -635,7 +635,42 @@ curl -I https://your-domain.com | grep -i "content-security-policy"
 - **Emergency**: Contact team lead immediately
 
 ---
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm test            # ✓ All tests pass
+```
 
+### 2026-02-25: AI Model Parameter Validation
+
+**Issue**: AI model parameters (temperature, maxTokens, model name) were passed directly to the AI API without validation, potentially allowing extreme values or injection attacks.
+
+**Risk**: Without proper validation, malicious configuration could cause unexpected AI behavior, resource exhaustion, or model injection.
+
+**Fix Applied**:
+
+- Added `VALIDATION` object to `AI_CONFIG` with limits for temperature (0-2.0), maxTokens (1-32000), and model name whitelist
+- Created validation functions: `validateModelTemperature()`, `validateModelMaxTokens()`, `validateModelName()`, `validateAIModelConfig()`
+- Applied validation in config-service.ts when loading YAML config
+- Added defense-in-depth validation in ai.ts before API calls
+
+**Files Modified**:
+
+- `src/lib/config/constants.ts` - Added VALIDATION limits
+- `src/lib/validation.ts` - Added validation functions
+- `src/lib/config-service.ts` - Applied validation on config load
+- `src/lib/ai.ts` - Added validation before API calls
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ 1400 tests pass
+```
+
+---
+
+## References
 ## References
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)

@@ -13,6 +13,7 @@ import {
 } from './resilience';
 import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
 import { resourceCleanupManager } from './resource-cleanup';
+import { validateAIModelConfig } from './validation';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -170,6 +171,23 @@ class AIService {
     messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>,
     config: AIModelConfig
   ): Promise<string> {
+    // SECURITY: Validate AI model configuration before making API call
+    // Defense-in-depth: validation also happens in config-service
+    const validationResult = validateAIModelConfig(config);
+    if (!validationResult.valid) {
+      const { AppError, ErrorCode } = await import('./errors');
+      const errorDetails = validationResult.errors
+        .map((e) => e.field + ': ' + e.message)
+        .join('; ');
+      throw new AppError(
+        'Invalid AI model configuration: ' + errorDetails,
+        ErrorCode.VALIDATION_ERROR,
+        STATUS_CODES.BAD_REQUEST,
+        undefined,
+        false
+      );
+    }
+
     const startTime = Date.now();
 
     const cacheKey = await this.generateCacheKey(messages, config);
