@@ -154,6 +154,14 @@ interface BlueprintDisplayProps {
 - Markdown download functionality
 - Clipboard copy with toast notification
 - Responsive layout
+- Reduced motion support for badge animations
+
+**Known Issues:**
+
+- Skeleton loading state during generation
+- Markdown download functionality
+- Clipboard copy with toast notification
+- Responsive layout
 
 **Known Issues:**
 
@@ -542,6 +550,13 @@ interface SkeletonProps {
 - Three shape variants
 - Pulse animation
 - aria-hidden (decorative only)
+- Reduced motion support via `prefers-reduced-motion` media query
+
+**Known Issues:** None
+
+- Three shape variants
+- Pulse animation
+- aria-hidden (decorative only)
 
 **Known Issues:** None
 
@@ -916,6 +931,8 @@ className = 'w-full sm:w-auto';
    - Ensure focus returns to trigger element after modal close
 
 2. **Color Contrast:**
+   - ✅ Fixed validation icons in InputWithValidation (green-700, red-600)
+   - Review other UI elements periodically
    - Verify all text meets WCAG AA standards (4.5:1 for normal text)
    - Some placeholder text may need darker color
 
@@ -932,7 +949,7 @@ className = 'w-full sm:w-auto';
 | ---------------------------- | --------- | ---------------------------------------- |
 | 1.1.1 Non-text Content       | ✅ Pass   | All images have alt text or aria-hidden  |
 | 1.3.1 Info and Relationships | ✅ Pass   | Semantic HTML used throughout            |
-| 1.4.3 Contrast (Minimum)     | ⚠️ Review | Check placeholder text contrast          |
+| 1.4.3 Contrast (Minimum)     | ✅ Pass   | Fixed validation icon colors (green-700, red-600)    |
 | 2.1.1 Keyboard               | ✅ Pass   | All functionality available via keyboard |
 | 2.4.3 Focus Order            | ✅ Pass   | Logical tab order                        |
 | 2.4.6 Headings and Labels    | ✅ Pass   | Descriptive headings and labels          |
