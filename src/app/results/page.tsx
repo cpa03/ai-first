@@ -10,7 +10,24 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Alert from '@/components/Alert';
 import Tooltip from '@/components/Tooltip';
 import dynamic from 'next/dynamic';
-import TaskManagement from '@/components/TaskManagement';
+
+// Lazy load TaskManagement component with loading skeleton
+const TaskManagement = dynamic(
+  () => import('@/components/TaskManagement'),
+  {
+    loading: () => (
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <LoadingSpinner
+          size="md"
+          className="mb-4"
+          ariaLabel="Loading task management"
+        />
+        <p className="text-gray-600">Loading tasks...</p>
+      </div>
+    ),
+  }
+);
+
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 interface Idea {
