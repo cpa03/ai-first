@@ -83,13 +83,13 @@ export const TEXT_COLORS = {
   SECONDARY: 'text-gray-600',
 
   /** Error text */
-  ERROR: 'text-red-600',
+  ERROR: 'text-red-700',
 
   /** Success text */
-  SUCCESS: 'text-green-600',
+  SUCCESS: 'text-green-800',
 
   /** Warning text */
-  WARNING: 'text-amber-600',
+  WARNING: 'text-amber-700',
 
   /** Brand primary text */
   BRAND: 'text-primary-600',
@@ -103,10 +103,10 @@ export const BG_COLORS = {
   DEFAULT: 'bg-white',
 
   /** Success background */
-  SUCCESS: 'bg-green-500',
+  SUCCESS: 'bg-green-600',
 
   /** Warning background */
-  WARNING: 'bg-amber-500',
+  WARNING: 'bg-amber-600',
 
   /** Error background */
   ERROR: 'bg-red-500',
