@@ -27,9 +27,9 @@ try {
   // Run madge with circular dependency detection
   // --circular: detect circular dependencies
   // --extensions ts,tsx: TypeScript files
-  // --warning: show warnings for potential issues
+  // --ts-config: use TypeScript config to resolve path aliases (@/...)
   const result = execSync(
-    `npx madge --circular --extensions ts,tsx "${SRC_DIR}"`,
+    `npx madge --circular --extensions ts,tsx --ts-config tsconfig.json "${SRC_DIR}"`,
     {
       encoding: 'utf-8',
       cwd: ROOT_DIR,
@@ -42,7 +42,6 @@ try {
 
   // Check for actual circular dependencies in the output
   // The output "No circular dependency found!" or empty means success
-  // Warnings like "(56 warnings)" are NOT circular dependencies
   if (
     output === '' ||
     output.includes('No circular dependency found') ||
@@ -53,9 +52,9 @@ try {
   }
 
   // Check if the output actually contains circular dependency chains
-  // Circular deps are shown with arrows (→) or "Circular dependency found" message
+  // Circular deps are shown with arrows (>) or "Circular dependency found" message
   const hasCircularDeps =
-    output.includes('→') || output.includes('Circular dependency found');
+    output.includes('>') || output.includes('Circular dependency found');
 
   if (!hasCircularDeps) {
     // No actual circular deps - just warnings or other output
@@ -92,7 +91,7 @@ try {
 
   // Check if there are actual circular dependencies
   const hasCircularDeps =
-    output.includes('→') || output.includes('Circular dependency found');
+    output.includes('>') || output.includes('Circular dependency found');
 
   if (hasCircularDeps) {
     console.log('❌ Circular dependencies detected:\n');

@@ -76,7 +76,16 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
     #BS| - ESLint and Prettier run on staged files before commit
     #XX| #BS| - ESLint and Prettier run on staged files before commit
     #NM|
-    #QW|- PR #XXXX: feat(ci): optimize CI workflow caching for faster builds
+    #MM| #ZT| #MB| - Removed duplicate Install Node.js steps
+    #PV| #MM| - Expected savings: 40-60% reduction in CI time
+    #QQ|
+    #NP|- PR #XXXX: fix(platform): improve circular dependency detection accuracy
+    #JM| - Addresses issue #1846
+    #QM| - Added --ts-config tsconfig.json to madge for proper path alias resolution
+    #NM| - Fixed false negative: script now correctly detects 5 circular dependencies
+    #KM| - Changed arrow check from Unicode → to ASCII > for proper detection
+    #JB| - Eliminated 63 parse warnings by properly resolving TypeScript config
+    #BD| - WARNING: CI will now fail until existing circular deps are fixed
     #QT| - Addresses issue #1828
     #NM| - Added npm caching using actions/setup-node built-in cache
     #JB| - Added Next.js build cache (.next/cache) for all 5 jobs
