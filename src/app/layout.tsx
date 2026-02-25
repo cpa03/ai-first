@@ -72,6 +72,7 @@ export const metadata: Metadata = {
     ],
     shortcut: '/favicon.ico',
   },
+  manifest: '/manifest.json',
 };
 
 export default async function RootLayout({
@@ -79,6 +80,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   const headersList = await headers();
   const nonce = headersList.get('x-nonce') || undefined;
 
