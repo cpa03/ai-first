@@ -35,6 +35,7 @@ export {
   MESSAGES,
   COMPONENT_DEFAULTS,
 } from './ui';
+export { ANIMATION_CONFIG } from './animation';
 
 // SEO Configuration
 export { SEO_CONFIG, FONT_CONFIG } from './seo';
@@ -152,6 +153,8 @@ export type { AppConfig } from './app';
 export type { ExportConnectorConfig } from './export-connectors';
 export type { TimelineConfig, TaskConfig, IdeaConfig } from './timeline';
 export type { UiConfig, ToastConfig, MessagesConfig } from './ui';
+export type { AnimationConfig } from './animation';
+
 export type { SeoConfig, FontConfig } from './seo';
 export type { ComponentDefaults } from './ui';
 export type {
