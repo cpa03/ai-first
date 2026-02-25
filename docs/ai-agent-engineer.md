@@ -116,4 +116,26 @@ All agents should emit typed events for:
 - Completion of operation
 - Errors
 
-This enables loose coupling and easy extensibility.
+#JY|This enables loose coupling and easy extensibility.
+
+## CI Workflow Jobs
+
+The iterate.yml workflow (`.github/workflows/iterate.yml`) runs 6 agent jobs:
+
+| Job Name           | Agent              | Purpose                                      |
+| ------------------ | ------------------ | -------------------------------------------- |
+| architect          | RepoKeeper         | Strategy & Triage                            |
+| bugfix             | RepoKeeper         | Bug fixing                                   |
+| palette            | RepoKeeper         | UX improvements                              |
+| flexy              | RepoKeeper         | Modularity improvements                      |
+| brocula            | RepoKeeper         | Browser console fixes                        |
+| ai-agent-engineer  | ai-agent-engineer  | Agent system maintenance (NEW)               |
+
+The ai-agent-engineer job specifically focuses on:
+
+- Agent configuration improvements (CMZ.json, oh-my-opencode.json)
+- Skill maintenance and creation
+- Workflow CI enhancements
+- Self-* capability implementations
+
+Runs on schedule every 4 hours and on main branch changes.
