@@ -3,6 +3,13 @@ import { dbService, type Idea } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
 import { CLARIFIER_VALUES } from '@/lib/config/constants';
 import {
+  getEventBus,
+  generateEventId,
+  type ClarificationStartedEvent,
+  type ClarificationAnswerSubmittedEvent,
+  type ClarificationCompletedEvent,
+} from '@/lib/events';
+import {
   QuestionGenerator,
   IdeaRefiner,
   SessionManager,
@@ -32,6 +39,7 @@ export class ClarifierAgent {
   private sessionManager: SessionManager | null = null;
   private confidenceCalculator: ConfidenceCalculator | null = null;
   private injectedAiService: typeof aiService | null = null;
+  private eventBus = getEventBus();
 
   async initialize(): Promise<void> {
     this.config =
@@ -79,6 +87,19 @@ export class ClarifierAgent {
 
       await this.sessionManager!.store(session);
 
+      // Emit event for event-driven architecture
+      const event: ClarificationStartedEvent = {
+        eventId: generateEventId(),
+        timestamp: new Date(),
+        type: 'clarification.started',
+        ideaId,
+        payload: {
+          originalIdea: ideaText,
+          questionCount: questions.length,
+        },
+      };
+      await this.eventBus.emit(event);
+
       return session;
     } catch (error) {
       await dbService.logAgentAction('clarifier', 'start-clarification-error', {
@@ -116,6 +137,20 @@ export class ClarifierAgent {
         questionId,
         answerLength: answer.length,
       });
+
+      // Emit event for event-driven architecture
+      const event: ClarificationAnswerSubmittedEvent = {
+        eventId: generateEventId(),
+        timestamp: new Date(),
+        type: 'clarification.answer-submitted',
+        ideaId,
+        payload: {
+          questionId,
+          answerLength: answer.length,
+          confidence: session.confidence,
+        },
+      };
+      await this.eventBus.emit(event);
 
       return session;
     } catch (error) {
@@ -163,6 +198,20 @@ export class ClarifierAgent {
         questionsAnswered: Object.keys(session.answers).length,
         confidence: session.confidence,
       });
+
+      // Emit event for event-driven architecture
+      const event: ClarificationCompletedEvent = {
+        eventId: generateEventId(),
+        timestamp: new Date(),
+        type: 'clarification.completed',
+        ideaId,
+        payload: {
+          refinedIdea,
+          questionsAnswered: Object.keys(session.answers).length,
+          confidence: session.confidence,
+        },
+      };
+      await this.eventBus.emit(event);
 
       return { ...session, refinedIdea };
     } catch (error) {
