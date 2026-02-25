@@ -57,7 +57,7 @@
 
 ## 📁 Project Structure
 
-```
+````text
 /README.md                    ← This file
 /blueprint.md                  ← Project blueprint and architecture
 /docs/                        ← Documentation
@@ -166,7 +166,7 @@
   /utils/                   ← Test utilities
   /fixtures/                ← Test data and mocks
 /.github/workflows/          ← GitHub Actions automation
-```
+```text
 
 ## 🤖 How the Agent System Works
 
@@ -219,7 +219,7 @@ npm run env:check
 
 # Deploy to Vercel
 vercel --prod
-```
+```bash
 
 ## 🏗️ Architecture Summary
 
@@ -233,11 +233,7 @@ vercel --prod
 
 ### Component Interaction
 
-```
-User Input → Clarification Agent → Breakdown Engine → Timeline Generator → Export System
-     ↓              ↓                    ↓                    ↓              ↓
-   Supabase ← Vector Store ← AI Models ← Task Database ← External APIs
-```
+```text
 
 ### Phase 0 Current Capabilities
 
@@ -325,3 +321,4 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ---
 
 **Built with ❤️ by the IdeaFlow team**
+````
