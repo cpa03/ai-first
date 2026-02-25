@@ -8,6 +8,7 @@ import {
   validateConfigurationOrThrow,
   isConfigurationHealthy,
 } from '@/lib/config/config-validator';
+import { setProcessEnv } from './utils/_testHelpers';
 
 // Mock dependencies
 jest.mock('@/lib/config/app', () => ({
@@ -129,24 +130,22 @@ describe('ConfigValidator', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
+      const originalEnv = setProcessEnv('NODE_ENV', 'production');
 
       expect(() => validateConfigurationOrThrow()).toThrow();
 
-      process.env.NODE_ENV = originalEnv;
+      setProcessEnv('NODE_ENV', originalEnv);
     });
 
     it('should not throw in non-production when configuration is invalid', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
+      const originalEnv = setProcessEnv('NODE_ENV', 'development');
 
       expect(() => validateConfigurationOrThrow()).not.toThrow();
 
-      process.env.NODE_ENV = originalEnv;
+      setProcessEnv('NODE_ENV', originalEnv);
     });
   });
 

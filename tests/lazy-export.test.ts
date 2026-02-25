@@ -84,6 +84,7 @@ describe('Lazy Export Connectors', () => {
       raw_text: 'This is a test idea',
       status: 'draft',
       created_at: '2024-01-01T00:00:00Z',
+      deleted_at: null,
     },
     deliverables: [
       {

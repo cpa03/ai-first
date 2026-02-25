@@ -13,6 +13,7 @@ import {
   MIN_TIMESTAMP_TOLERANCE_MS,
   MAX_TIMESTAMP_TOLERANCE_MS,
 } from '@/lib/security/request-signer';
+import { setProcessEnv } from './utils/_testHelpers';
 
 // Mock the environment for testing
 const mockSecret = 'test-internal-api-secret-do-not-use-in-production-32chars';
@@ -20,7 +21,7 @@ const mockSecret = 'test-internal-api-secret-do-not-use-in-production-32chars';
 describe('Request Signer', () => {
   beforeEach(() => {
     // Set test environment
-    process.env.NODE_ENV = 'test';
+    setProcessEnv('NODE_ENV', 'test');
     process.env.INTERNAL_API_SECRET = mockSecret;
   });
 
@@ -236,8 +237,11 @@ describe('Request Signer', () => {
       // Create URL and manually corrupt the signature
       const signedUrl = createSignedUrl(baseUrl);
       const urlObj = new URL(signedUrl);
-      urlObj.searchParams.set('_sig', 'invalid0000000000000000000000000000000000000000000000000000000000000000');
-      
+      urlObj.searchParams.set(
+        '_sig',
+        'invalid0000000000000000000000000000000000000000000000000000000000000000'
+      );
+
       const result = verifySignedUrl(urlObj.toString());
 
       expect(result.valid).toBe(false);
@@ -288,7 +292,11 @@ describe('Request Signer', () => {
       const request = new Request('http://localhost/api/internal', {
         method: 'POST',
         headers: {
-          'X-Internal-Signature': createSignatureHeader(timestamp, signature, nonce),
+          'X-Internal-Signature': createSignatureHeader(
+            timestamp,
+            signature,
+            nonce
+          ),
           'X-Request-Timestamp': String(timestamp),
         },
         body: bodyStr,
@@ -336,12 +344,14 @@ describe('Request Signer', () => {
     });
 
     it('should allow development mode when enabled', async () => {
-      process.env.NODE_ENV = 'development';
+      const originalEnv = setProcessEnv('NODE_ENV', 'development');
       const request = createMockRequest({}, '{"test":"data"}');
 
       const result = await verifyInternalRequest(request, {
         allowDevelopment: true,
       });
+
+      setProcessEnv('NODE_ENV', originalEnv);
 
       expect(result.verified).toBe(true);
     });

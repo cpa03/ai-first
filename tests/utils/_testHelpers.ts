@@ -1,3 +1,12 @@
+// Helper to safely set process.env values (avoids read-only property errors)
+export const setProcessEnv = (
+  key: string,
+  value: string | undefined
+): string | undefined => {
+  const original = process.env[key];
+  (process.env as Record<string, string | undefined>)[key] = value;
+  return original;
+};
 /**
  * Mock utilities for consistent test environment setup
  */
