@@ -685,15 +685,32 @@ HY|All frontend-engineer labeled issues have been verified and resolved.
 
 ## Recent Improvements (2026-02-25)
 
+### Fix: Clarify Page Navigation Missing ideaId
+
+**Bug:** When user completed clarification flow and clicked "Generate Blueprint", the page navigated to `/results` without passing the `ideaId` query parameter.
+
+**Impact:**
+- Results page couldn't fetch the idea data
+- User would see an empty/error state instead of their blueprint
+
+**Fix:** Added `?ideaId=${ideaId}` to the router.push() call in `src/app/clarify/page.tsx`
+
+**Verification:**
+- ✅ TypeScript: No errors
+- ✅ ESLint: 0 warnings
+- ✅ Build: Successful
+
+---
+
 ### Code Splitting for TaskManagement Component
 
 **Issue:** #1752 - Implement code splitting and lazy loading for React components
 
 **Change:** Converted TaskManagement component from static import to dynamic import in `src/app/results/page.tsx`
 
-| Before | After |
-| ------ |-------|
-| `import TaskManagement from '@/components/TaskManagement';` | `const TaskManagement = dynamic(() => import('@/components/TaskManagement')...)` |
+|| Before | After |
+|| ------ |-------|
+|| `import TaskManagement from '@/components/TaskManagement';` | `const TaskManagement = dynamic(() => import('@/components/TaskManagement')...)` |
 
 **Impact:**
 - TaskManagement is now lazy loaded with a skeleton UI
