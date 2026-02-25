@@ -38,7 +38,8 @@
     "deploy:cloudflare:staging": "opennextjs-cloudflare deploy --env staging",
     "docs:check-links": "node scripts/docs-link-validator.js",
     "user-stories:validate": "node scripts/validate-user-stories.js",
-    "check:circular": "node scripts/check-circular-deps.js"
+    "check:circular": "node scripts/check-circular-deps.js",
+    "prepare": "husky"
   },
   "dependencies": {
     "@notionhq/client": "^5.9.0",
@@ -74,9 +75,11 @@
     "eslint-config-next": "^15.5.12",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "lighthouse": "^12.8.2",
+    "lint-staged": "^16.2.7",
     "madge": "^8.0.0",
     "oh-my-opencode": "^3.8.0",
     "playwright": "^1.58.2",
@@ -121,5 +124,14 @@
       "maxSize": "100 kB",
       "comment": "CSS bundle size limit"
     }
-  ]
+  ],
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml,css}": [
+      "prettier --write"
+    ]
+  }
 }
