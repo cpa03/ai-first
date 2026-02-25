@@ -16,6 +16,8 @@ export interface CopyButtonProps {
   variant?: 'default' | 'subtle' | 'icon-only';
   showToast?: boolean;
   toastMessage?: string;
+  /** Callback fired after successful copy - useful for analytics tracking */
+  onCopy?: () => void;
 }
 
 const logger = createLogger('CopyButton');
@@ -29,6 +31,7 @@ const CopyButtonComponent = function CopyButton({
   variant = 'default',
   showToast = true,
   toastMessage = 'Copied to clipboard!',
+  onCopy,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -63,6 +66,11 @@ const CopyButtonComponent = function CopyButton({
         });
       }
 
+      // Growth: Fire onCopy callback for analytics
+      if (onCopy) {
+        onCopy();
+      }
+
       logger.debug('Successfully copied text to clipboard', {
         textLength: textToCopy.length,
       });
@@ -77,7 +85,7 @@ const CopyButtonComponent = function CopyButton({
         });
       }
     }
-  }, [textToCopy, showToast, toastMessage]);
+  }, [textToCopy, showToast, toastMessage, onCopy]);
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2

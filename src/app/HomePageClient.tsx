@@ -1,11 +1,18 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import IdeaInput from '@/components/IdeaInput';
 import CopyButton from '@/components/CopyButton';
 import ShareButton from '@/components/ShareButton';
+import {
+  trackEvent,
+  trackPageView,
+  ANALYTICS_EVENTS,
+  trackIdeaSubmit,
+  trackCopyAction,
+} from '@/lib/analytics';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
@@ -38,12 +45,29 @@ export default function HomePageClient() {
   const [idea, setIdea] = useState('');
   const [ideaId, setIdeaId] = useState('');
 
+  // Growth: Track page view on mount
+  useEffect(() => {
+    trackPageView();
+
+    // Flush events before page unload
+    const handleBeforeUnload = () => {
+      // Import flush dynamically to avoid issues
+      import('@/lib/analytics').then(({ flush }) => flush());
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of IdeaInput
   // which receives this function as a prop
+  // Growth: Track idea submission event
   const handleIdeaSubmit = useCallback(
     (submittedIdea: string, submittedIdeaId: string) => {
       setIdea(submittedIdea);
       setIdeaId(submittedIdeaId);
+
+      // Growth: Track idea submission
+      trackIdeaSubmit(submittedIdeaId);
 
       router.push(
         `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`
@@ -70,6 +94,11 @@ export default function HomePageClient() {
             shareText="Transform your ideas into structured projects with AI-powered planning, task breakdown, and export to your favorite tools."
             label="Share IdeaFlow"
             ariaLabel="Share IdeaFlow with friends"
+            onShare={() =>
+              trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE_CLICK, {
+                share_platform: 'web_share_api',
+              })
+            }
           />
         </div>
       </section>
@@ -111,6 +140,7 @@ export default function HomePageClient() {
               ariaLabel="Copy idea ID to clipboard"
               variant="default"
               toastMessage="Idea ID copied to clipboard!"
+              onCopy={() => trackCopyAction('idea_id')}
             />
           </div>
           <p className="text-sm text-blue-600 mt-3">
