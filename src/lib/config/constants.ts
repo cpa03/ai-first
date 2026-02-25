@@ -594,7 +594,12 @@ export const CSP_CONFIG = {
     'form-action': ["'self'"],
     'frame-ancestors': ["'none'"],
     'upgrade-insecure-requests': [],
-    'connect-src': ["'self'", 'https://*.supabase.co', 'https://api.openai.com', 'https://api.anthropic.com'],
+    'connect-src': [
+      "'self'",
+      'https://*.supabase.co',
+      'https://api.openai.com',
+      'https://api.anthropic.com',
+    ],
     'worker-src': ["'self'"],
     'manifest-src': ["'self'"],
   } as const,
@@ -1145,7 +1150,7 @@ export const API_CACHE_CONFIG = {
     'API_CACHE_IDEAS_LIST_TTL_SECONDS',
     10,
     0,
-    SH|    300
+    300
   ),
 } as const;
 
@@ -1158,7 +1163,10 @@ export const API_CACHE_CONFIG = {
  * Extracted to dedicated module for better modularity
  * @see {@link ./external-api-versions.ts}
  */
-export { EXTERNAL_API_VERSIONS, type ExternalApiVersionInfo } from './external-api-versions';
+export {
+  EXTERNAL_API_VERSIONS,
+  type ExternalApiVersionInfo,
+} from './external-api-versions';
 
 /**
  * Retry Configuration - Additional
