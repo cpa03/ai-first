@@ -594,7 +594,7 @@ export const CSP_CONFIG = {
     'form-action': ["'self'"],
     'frame-ancestors': ["'none'"],
     'upgrade-insecure-requests': [],
-    'connect-src': ["'self'", 'https://*.supabase.co'],
+    'connect-src': ["'self'", 'https://*.supabase.co', 'https://api.openai.com', 'https://api.anthropic.com'],
     'worker-src': ["'self'"],
     'manifest-src': ["'self'"],
   } as const,
