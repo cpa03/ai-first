@@ -100,6 +100,13 @@ export const metadata: Metadata = {
     ],
     shortcut: '/favicon.ico',
   },
+  other: {
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'default',
+    'apple-mobile-web-app-title': APP_CONFIG.NAME,
+    'msapplication-TileColor': '#2563eb',
+    'theme-color': '#2563eb',
+  },
 };
 
 export default async function RootLayout({
