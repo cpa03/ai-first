@@ -65,9 +65,19 @@ async function handlePut(context: ApiContext) {
 
   // Authenticate user
   const user = await requireAuth(request);
+  let body: Record<string, unknown>;
+  try {
+    body = await request.json();
+  } catch {
+    throw new ValidationError([
+      { field: 'body', message: 'Invalid JSON body' },
+    ]);
+  }
+  const { title, status } = body as { title?: unknown; status?: unknown };
 
-  const body = await request.json();
-  const { title, status } = body;
+  // Handle potential null/undefined values gracefully
+  const safeTitle = title === null ? undefined : title;
+  const safeStatus = status === null ? undefined : status;
 
   const existingIdea = await dbService.getIdea(ideaId!);
   if (!existingIdea) {
@@ -89,16 +99,17 @@ async function handlePut(context: ApiContext) {
     updated_at: new Date().toISOString(),
   };
 
-  if (title !== undefined) {
-    updates.title = sanitizeHtml(title).substring(
+  if (safeTitle !== undefined) {
+    const titleStr = typeof safeTitle === 'string' ? safeTitle : String(safeTitle ?? '');
+    updates.title = sanitizeHtml(titleStr).substring(
       0,
       IDEA_CONFIG.VALIDATION.MAX_TITLE_LENGTH
     );
   }
 
-  if (status !== undefined && typeof status === 'string') {
-    if (isValidStatus(status)) {
-      updates.status = status;
+  if (safeStatus !== undefined && typeof safeStatus === 'string') {
+    if (isValidStatus(safeStatus)) {
+      updates.status = safeStatus;
     }
   }
 
