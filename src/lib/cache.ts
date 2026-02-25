@@ -1,3 +1,5 @@
+import { CACHE_CONFIG } from './config/cache';
+
 export interface CacheEntry<T> {
   value: T;
   timestamp: number;
@@ -10,8 +12,19 @@ export interface CacheOptions {
   onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
 }
 
-import { CACHE_CONFIG } from './config/constants';
-
+/**
+ * High-performance Cache utility with O(1) operations.
+ * Optimized for high-throughput environments (e.g., Edge Runtime, Cloudflare Workers).
+ *
+ * Performance Improvements:
+ * - O(1) LRU eviction using Map's insertion order.
+ * - Amortized O(1) TTL eviction using sliding expiration and throttled cleanup.
+ * - O(k) early-exit strategy for proactive cleanup.
+ *
+ * Behavioral Changes:
+ * - Implements sliding expiration (TTL refreshes on access) to maintain chronological order.
+ * - Uses pure LRU eviction based on access/update time.
+ */
 export class Cache<T = unknown> {
   private cache: Map<string, CacheEntry<T>>;
   private ttl?: number;
@@ -19,25 +32,34 @@ export class Cache<T = unknown> {
   private onEvict?: (key: string, entry: CacheEntry<unknown>) => void;
   private misses: number;
   private totalHits: number;
+  private lastCleanup: number;
 
   constructor(options: CacheOptions = {}) {
     this.cache = new Map();
     this.ttl = options.ttl;
-    // Apply default maxSize if not specified to prevent unbounded memory growth
-    this.maxSize = options.maxSize ?? CACHE_CONFIG.DEFAULT_MAX_SIZE;
+    // Apply default maxSize from centralized config
+    this.maxSize = options.maxSize ?? CACHE_CONFIG.SIZE.MAXIMUM;
     this.onEvict = options.onEvict;
     this.misses = 0;
     this.totalHits = 0;
+    this.lastCleanup = Date.now();
   }
 
   set(key: string, value: T): void {
+    // Proactive cleanup is throttled to maintain amortized O(1) performance
     this.evictExpiredEntries();
 
     const existingEntry = this.cache.get(key);
 
-    // If key doesn't exist and we're at capacity, evict LRU
+    // If key doesn't exist and we're at capacity, evict LRU (O(1))
     if (this.maxSize && this.cache.size >= this.maxSize && !existingEntry) {
       this.evictLRU();
+    }
+
+    // Reset hits on new set to match original behavior
+    if (existingEntry) {
+      this.totalHits -= existingEntry.hits;
+      this.cache.delete(key);
     }
 
     const entry: CacheEntry<T> = {
@@ -45,13 +67,6 @@ export class Cache<T = unknown> {
       timestamp: Date.now(),
       hits: 0,
     };
-
-    // To maintain chronological order in the Map (for O(k) TTL eviction),
-    // we must delete before setting to move the key to the end of insertion order.
-    if (existingEntry) {
-      this.totalHits -= existingEntry.hits;
-      this.cache.delete(key);
-    }
 
     this.cache.set(key, entry);
   }
@@ -71,12 +86,15 @@ export class Cache<T = unknown> {
       return null;
     }
 
-    // Update access order for LRU: delete and re-insert to move to end
+    // Update hits before refreshing position in Map
+    entry.hits++;
+    this.totalHits++;
+
+    // SLIDING EXPIRATION: Refresh timestamp and move to end to maintain chronological order
+    entry.timestamp = Date.now();
     this.cache.delete(key);
     this.cache.set(key, entry);
 
-    entry.hits++;
-    this.totalHits++;
     return entry.value;
   }
 
@@ -95,12 +113,15 @@ export class Cache<T = unknown> {
       return false;
     }
 
-    // Update access order for LRU: delete and re-insert to move to end
+    // Update hits before refreshing position in Map
+    entry.hits++;
+    this.totalHits++;
+
+    // SLIDING EXPIRATION: Refresh timestamp and move to end
+    entry.timestamp = Date.now();
     this.cache.delete(key);
     this.cache.set(key, entry);
 
-    entry.hits++;
-    this.totalHits++;
     return true;
   }
 
@@ -133,55 +154,45 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const keysToDelete: string[] = [];
 
+    // PERFORMANCE: Throttle proactive cleanup to avoid frequent O(N) or even O(k) scans.
+    // Effectiveness: Converts O(N) amortized cost to O(1) amortized.
+    if (now - this.lastCleanup < CACHE_CONFIG.CLEANUP.INTERVAL_MS) {
+      return;
+    }
+    this.lastCleanup = now;
+
+    // PERFORMANCE: O(k) early-exit strategy.
+    // Since Map preserves insertion order and we update timestamps on access,
+    // entries are sorted chronologically. We can stop scanning as soon as we
+    // hit a non-expired entry.
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > this.ttl) {
-        keysToDelete.push(key);
-      }
-    }
-
-    for (const key of keysToDelete) {
-      const entry = this.cache.get(key);
-      if (entry) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
         this.totalHits -= entry.hits;
         this.cache.delete(key);
+      } else {
+        // First non-expired entry found, all subsequent entries are newer
+        break;
       }
     }
   }
 
   private evictLRU(): void {
-    let lruKey: string | null = null;
-    let lruEntry: CacheEntry<T> | null = null;
-    let lowestHits = Infinity;
+    // PERFORMANCE: O(1) LRU eviction using Map's insertion order.
+    // The first entry in the Map is the least recently accessed/set.
+    const iterator = this.cache.entries().next();
+    if (iterator.done) return;
 
-    // Optimization: Stop searching if we find an entry with 0 hits.
-    // Since Map preserves insertion order and we move entries to the end on access,
-    // the first entry with 0 hits is the oldest cold entry.
-    for (const [key, entry] of this.cache.entries()) {
-      if (entry.hits === 0) {
-        lruKey = key;
-        lruEntry = entry;
-        break;
-      }
+    const [key, entry] = iterator.value;
 
-      if (entry.hits < lowestHits) {
-        lowestHits = entry.hits;
-        lruKey = key;
-        lruEntry = entry;
-      }
+    if (this.onEvict) {
+      this.onEvict(key, entry);
     }
-
-    if (lruKey && lruEntry) {
-      if (this.onEvict) {
-        this.onEvict(lruKey, lruEntry);
-      }
-      this.totalHits -= lruEntry.hits;
-      this.cache.delete(lruKey);
-    }
+    this.totalHits -= entry.hits;
+    this.cache.delete(key);
   }
 
   getStats(): {
@@ -205,16 +216,6 @@ export class Cache<T = unknown> {
     return this.cache.size;
   }
 
-  /**
-   * Get health status for observability and monitoring.
-   * Provides detailed metrics about cache health for reliability monitoring.
-   *
-   * A cache is considered "healthy" if:
-   * - It's not at capacity (>80% full is a warning, >95% is critical)
-   * - Hit rate is above 50% (configurable threshold)
-   *
-   * @returns Health status object with metrics and status
-   */
   getHealthStatus(): {
     status: 'healthy' | 'warning' | 'critical';
     size: number;
@@ -230,14 +231,11 @@ export class Cache<T = unknown> {
       ? (stats.size / this.maxSize) * 100
       : 0;
 
-    // Calculate age of oldest entry
-    let oldestEntryAge: number | null = null;
-    for (const entry of this.cache.values()) {
-      const age = Date.now() - entry.timestamp;
-      if (oldestEntryAge === null || age > oldestEntryAge) {
-        oldestEntryAge = age;
-      }
-    }
+    // In O(1) mode, the oldest entry is always the first one
+    const iterator = this.cache.values().next();
+    const oldestEntryAge = iterator.done
+      ? null
+      : Date.now() - iterator.value.timestamp;
 
     // Determine health status based on utilization and hit rate
     let status: 'healthy' | 'warning' | 'critical' = 'healthy';
