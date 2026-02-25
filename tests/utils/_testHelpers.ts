@@ -265,3 +265,78 @@ export const mockConsole = () => {
 
   return mockConsole;
 };
+
+// =============================================================================
+// Typed Mock Helpers - Reduce 'as any' usage in test files
+// =============================================================================
+
+import type { ApiContext } from '@/lib/api-handler';
+
+/**
+ * Creates a properly typed mock ApiHandler for use in tests.
+ * This eliminates the need for 'as any' when passing handlers to withApiHandler.
+ *
+ * @param response - The response the handler should return
+ * @returns A jest.fn() typed as ApiHandler
+ */
+export const createMockApiHandler = (
+  response: Response
+): jest.Mock<Promise<Response>, [ApiContext]> => {
+  return jest.fn<Promise<Response>, [ApiContext]>().mockResolvedValue(response);
+};
+
+/**
+ * Creates a mock ApiHandler that can be configured with custom behavior.
+ *
+ * @param impl - Optional implementation function
+ * @returns A jest.fn() typed as ApiHandler
+ */
+export const createTypedMockHandler = (
+  impl?: (context: ApiContext) => Promise<Response>
+): jest.Mock<Promise<Response>, [ApiContext]> => {
+  return jest.fn<Promise<Response>, [ApiContext]>(impl);
+};
+
+/**
+ * Type-safe way to create partial mock objects for database operations.
+ * Use this instead of '{} as any' for mock return values.
+ *
+ * @example
+ * const mockResult = createPartialMock<DbResult>({ id: 'test-1' });
+ */
+export function createPartialMock<T>(partial: Partial<T>): Partial<T> {
+  return partial;
+}
+
+/**
+ * Type-safe way to test invalid inputs in validation functions.
+ * This allows passing values that would normally be rejected by TypeScript
+ * while maintaining type safety in the test file itself.
+ *
+ * @example
+ * const result = validateIdea(asInvalidInput(null));
+ * const result = validateIdea(asInvalidInput(undefined));
+ */
+export function asInvalidInput<T>(value: unknown): T {
+  return value as T;
+}
+
+/**
+ * Helper to set multiple process.env values and get a cleanup function.
+ * More convenient than calling setProcessEnv multiple times.
+ */
+export const setProcessEnvVars = (
+  vars: Record<string, string | undefined>
+): (() => void) => {
+  const originals: Record<string, string | undefined> = {};
+
+  Object.entries(vars).forEach(([key, value]) => {
+    originals[key] = setProcessEnv(key, value);
+  });
+
+  return () => {
+    Object.entries(originals).forEach(([key, value]) => {
+      setProcessEnv(key, value);
+    });
+  };
+};
