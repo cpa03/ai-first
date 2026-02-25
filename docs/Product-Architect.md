@@ -108,3 +108,14 @@ WR|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
 NK|- **PR**: https://github.com/cpa03/ai-first/pull/1819
 
 - **PR**: https://github.com/cpa03/ai-first/pull/1790
+
+### 2026-02-25: CLARIFIER_VALUES Modularization
+
+- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+- **Action**: Extracted CLARIFIER_VALUES into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/clarifier-config.ts`
+  - Modified: `src/lib/config/index.ts` (export)
+  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+- **Verification**: TypeScript type-check ✓
+- **Impact**: Enables cleaner imports via `@/lib/config/clarifier-config` or main config index

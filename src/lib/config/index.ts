@@ -49,9 +49,10 @@ export {
 
 // Agent Configuration
 export { CLARIFIER_CONFIG, AGENT_PROMPTS, AI_CONFIG } from './agents';
+// Clarifier Configuration (extracted from constants.ts)
+export { CLARIFIER_VALUES } from './clarifier-config';
 
 // Cache Configuration
-export { CACHE_CONFIG } from './cache';
 
 // Component Configuration
 export { COMPONENT_CONFIG } from './components';
