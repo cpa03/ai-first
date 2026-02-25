@@ -23,7 +23,7 @@ const eslintConfig = [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'error',
       'react-hooks/set-state-in-effect': 'off',
     },
   },
