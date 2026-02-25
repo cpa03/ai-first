@@ -143,9 +143,6 @@ export {
   PII_REDACTION_CONFIG,
 } from './constants';
 
-// PII Redaction Configuration (extracted from constants.ts)
-export { PII_REDACTION_CONFIG } from './pii-redaction-config';
-
 // Configuration Validator
 export {
   validateConfiguration,
