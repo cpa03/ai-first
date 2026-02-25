@@ -3,7 +3,7 @@
 import { memo, useCallback, useMemo } from 'react';
 import type { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
-import { TaskStatus } from '@/hooks/useTaskManagement';
+import type { TaskStatus } from '@/types/task';
 import {
   DELIVERABLE_STYLES,
   DELIVERABLE_CARD_STYLES,

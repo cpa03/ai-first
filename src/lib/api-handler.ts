@@ -25,7 +25,7 @@ import {
   httpRequestDuration,
   httpRequestErrors,
   httpRequestTotal,
-} from '@/app/api/metrics/route';
+} from '@/lib/metrics';
 import { APP_CONFIG } from '@/lib/config/app';
 import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { SecurityAuditLog } from '@/lib/security/audit-log';

@@ -18,3 +18,5 @@ export type {
   ApiRequestHeaders,
 } from './api';
 export { ErrorCode } from './api';
+
+export type { TaskStatus, TaskWithStatus } from './task';

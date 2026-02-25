@@ -31,6 +31,20 @@
 
 #### 2026-02-25
 
+- **Issue Executed**: #1846 - Fix circular dependencies in src/
+- **Changes**:
+  - Moved `TaskStatus` type to shared `src/types/task.ts` to break config/hook cycle
+  - Extracted HTTP metrics to shared `src/lib/metrics.ts` to break api-handler/route cycle
+  - Updated imports in task-management.ts, useTaskManagement.ts, api-handler.ts, and metrics/route.ts
+- **Verification**:
+  - Circular dependencies reduced from 5 to 0 (100% reduction)
+  - Remaining 17 parse warnings are from external libraries (react, next, supabase) - expected
+- **PR**: #1867 - https://github.com/cpa03/ai-first/pull/1867
+- **Status**: Open
+
+
+#### 2026-02-25
+
 - **Issue Executed**: #1815 - Auto-create .env.local for better developer onboarding
 - **Changes**:
   - Modified scripts/validate-env.sh to auto-create .env.local from config/.env.example
