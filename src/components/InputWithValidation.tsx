@@ -1,6 +1,12 @@
 'use client';
 
-import React, { forwardRef, useState, useEffect, useCallback, memo } from 'react';
+import React, {
+  forwardRef,
+  useState,
+  useEffect,
+  useCallback,
+  memo,
+} from 'react';
 import { cn } from '@/lib/utils';
 import {
   INPUT_STYLES,
@@ -55,6 +61,7 @@ const InputWithValidationComponent = forwardRef<
     const [touched, setTouched] = useState(false);
     const [errorAnnounced, setErrorAnnounced] = useState(false);
     const [shouldShake, setShouldShake] = useState(false);
+    const [successAnnounced, setSuccessAnnounced] = useState(false);
     const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
@@ -140,10 +147,15 @@ const InputWithValidationComponent = forwardRef<
     );
 
     const errorAnnouncedRef = React.useRef(errorAnnounced);
+    const successAnnouncedRef = React.useRef(successAnnounced);
 
     useEffect(() => {
       errorAnnouncedRef.current = errorAnnounced;
     }, [errorAnnounced]);
+
+    useEffect(() => {
+      successAnnouncedRef.current = successAnnounced;
+    }, [successAnnounced]);
 
     useEffect(() => {
       let timeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -166,6 +178,28 @@ const InputWithValidationComponent = forwardRef<
         }
       };
     }, [isInvalid]);
+
+    useEffect(() => {
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+      if (isValid && !successAnnouncedRef.current && charCount > 0) {
+        timeoutId = setTimeout(
+          () => setSuccessAnnounced(true),
+          ANIMATION_DELAYS.IMMEDIATE
+        );
+      } else if (!isValid && successAnnouncedRef.current) {
+        timeoutId = setTimeout(
+          () => setSuccessAnnounced(false),
+          ANIMATION_DELAYS.IMMEDIATE
+        );
+      }
+
+      return () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      };
+    }, [isValid, charCount]);
 
     const setTextareaRef = (element: HTMLTextAreaElement | null) => {
       (
@@ -325,6 +359,13 @@ const InputWithValidationComponent = forwardRef<
               <p id={`${props.id}-help`} className="text-sm text-gray-600">
                 {helpText}
               </p>
+            )}
+            {isValid && successAnnounced && charCount > 0 && (
+              <div role="status" aria-live="polite">
+                <p id={`${props.id}-success`} className="sr-only">
+                  {label} is valid
+                </p>
+              </div>
             )}
             {isInvalid && (
               <div role="alert" aria-live="assertive">
