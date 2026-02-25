@@ -197,7 +197,7 @@ function ClarifyPageContent() {
                 </div>
               ))}
             </div>
-            <Button onClick={() => router.push('/results')} variant="primary">
+            <Button onClick={() => router.push(`/results?ideaId=${ideaId}`)} variant="primary">
               Generate Blueprint
             </Button>
           </Alert>
