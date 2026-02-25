@@ -1,6 +1,7 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { buildApiUrl } from './config/test-config';
 import { MOCK_SECRETS } from './utils/test-secrets';
+import { setProcessEnv } from './utils/_testHelpers';
 
 describe('auth', () => {
   let originalNodeEnv: string | undefined;
@@ -14,7 +15,7 @@ describe('auth', () => {
   });
 
   afterEach(() => {
-    (process.env as any).NODE_ENV = originalNodeEnv;
+    setProcessEnv('NODE_ENV', originalNodeEnv);
     if (originalApiKey === undefined) {
       delete process.env.ADMIN_API_KEY;
     } else {
@@ -26,7 +27,7 @@ describe('auth', () => {
   describe('isAdminAuthenticated', () => {
     describe('development mode', () => {
       beforeEach(() => {
-        (process.env as any).NODE_ENV = 'development';
+        setProcessEnv('NODE_ENV', 'development');
         delete process.env.ADMIN_API_KEY;
       });
 
@@ -49,7 +50,7 @@ describe('auth', () => {
 
     describe('production mode', () => {
       beforeEach(() => {
-        (process.env as any).NODE_ENV = 'production';
+        setProcessEnv('NODE_ENV', 'production');
         process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY;
       });
 
@@ -165,7 +166,7 @@ describe('auth', () => {
 
     describe('edge cases', () => {
       beforeEach(() => {
-        (process.env as any).NODE_ENV = 'production';
+        setProcessEnv('NODE_ENV', 'production');
         process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY_SPECIAL_CHARS;
       });
 
@@ -185,7 +186,7 @@ describe('auth', () => {
 
   describe('requireAdminAuth', () => {
     beforeEach(() => {
-      (process.env as any).NODE_ENV = 'production';
+        setProcessEnv('NODE_ENV', 'production');
       process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY;
     });
 
@@ -244,7 +245,7 @@ describe('auth', () => {
 
   describe('development mode bypass', () => {
     beforeEach(() => {
-      (process.env as any).NODE_ENV = 'development';
+        setProcessEnv('NODE_ENV', 'development');
       delete process.env.ADMIN_API_KEY;
     });
 
