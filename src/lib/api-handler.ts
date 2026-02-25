@@ -29,6 +29,9 @@ import {
 import { APP_CONFIG } from '@/lib/config/app';
 import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
+import { TimeoutManager } from '@/lib/resilience/timeout-manager';
+import { TIMEOUT_CONFIG } from '@/lib/config/constants';
+import { TimeoutError } from '@/lib/errors';
 
 /**
  * API Version for all responses
@@ -52,6 +55,8 @@ export interface ApiHandlerOptions {
   validateSize?: boolean;
   cacheTtlSeconds?: number;
   cacheScope?: 'public' | 'private';
+  /** Timeout in milliseconds for the API request. Uses TIMEOUT_CONFIG.DEFAULT if not specified. */
+  timeoutMs?: number;
 }
 
 export interface ApiContext {
@@ -131,19 +136,20 @@ export function withApiHandler(
         logger.warnWithContext('Rate limit exceeded', logContext, {
           limit: rateLimitResult.info.limit,
         });
-        
+
         // SECURITY: Log rate limit violation to security audit for incident response
         SecurityAuditLog.logRateLimit({
           blocked: true,
           config: options.rateLimit || 'lenient',
-          requestCount: rateLimitResult.info.limit - rateLimitResult.info.remaining,
+          requestCount:
+            rateLimitResult.info.limit - rateLimitResult.info.remaining,
           limit: rateLimitResult.info.limit,
           windowMs: rateLimitConfig.windowMs,
           clientIdentifier: getClientIdentifier(request),
           endpoint: request.url ? new URL(request.url).pathname : undefined,
           requestId,
         });
-        
+
         return rateLimitResponse(rateLimitResult.info, requestId);
       }
 
@@ -165,7 +171,64 @@ export function withApiHandler(
         }
       }
 
-      const response = await handler(context);
+      // Apply timeout if specified
+      const timeoutMs = options.timeoutMs ?? TIMEOUT_CONFIG.DEFAULT;
+      let response: Response;
+
+      if (timeoutMs > 0) {
+        try {
+          response = await TimeoutManager.withTimeout(() => handler(context), {
+            timeoutMs,
+            onTimeout: () => {
+              logger.warnWithContext('API request timed out', logContext, {
+                timeoutMs,
+              });
+            },
+          });
+        } catch (error) {
+          if (error instanceof TimeoutError) {
+            const duration = Date.now() - requestStartTime;
+            const route = request.url
+              ? new URL(request.url).pathname
+              : '/unknown';
+
+            httpRequestDuration.observe(
+              { method: request.method, route, status_code: '504' },
+              duration / 1000
+            );
+            httpRequestErrors.inc({
+              method: request.method,
+              route,
+              status_code: '504',
+            });
+            httpRequestTotal.inc({
+              method: request.method,
+              route,
+              status_code: '504',
+            });
+
+            return NextResponse.json(
+              {
+                error: 'Gateway Timeout',
+                code: 'TIMEOUT',
+                message: 'Request timed out after ' + timeoutMs + 'ms',
+                timestamp: new Date().toISOString(),
+                requestId,
+              },
+              {
+                status: 504,
+                headers: {
+                  'X-Request-ID': requestId,
+                  'X-Response-Time': duration + 'ms',
+                },
+              }
+            );
+          }
+          throw error;
+        }
+      } else {
+        response = await handler(context);
+      }
 
       if (!response.headers.has('X-Request-ID')) {
         response.headers.set('X-Request-ID', requestId);
