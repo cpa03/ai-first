@@ -29,16 +29,11 @@ import {
 import { APP_CONFIG } from '@/lib/config/app';
 import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
+import { validateCSRF } from '@/lib/security/csrf';
 import { TimeoutManager } from '@/lib/resilience/timeout-manager';
 import { TIMEOUT_CONFIG } from '@/lib/config/constants';
 import { TimeoutError } from '@/lib/errors';
 
-/**
- * API Version for all responses
- * Uses centralized APP_CONFIG.VERSION for single source of truth
- * Follows semantic versioning (MAJOR.MINOR.PATCH)
- * Increment MAJOR for breaking changes, MINOR for new features, PATCH for bug fixes
- */
 const API_VERSION = APP_CONFIG.VERSION;
 
 const logger = createLogger('ApiHandler');
@@ -55,8 +50,8 @@ export interface ApiHandlerOptions {
   validateSize?: boolean;
   cacheTtlSeconds?: number;
   cacheScope?: 'public' | 'private';
-  /** Timeout in milliseconds for the API request. Uses TIMEOUT_CONFIG.DEFAULT if not specified. */
   timeoutMs?: number;
+  skipCSRF?: boolean;
 }
 
 export interface ApiContext {
@@ -92,18 +87,12 @@ export function withApiHandler(
     };
 
     logger.infoWithContext('API request started', logContext);
-    // SECURITY: Detect suspicious patterns in the request for security monitoring
-    // This integrates the suspicious-patterns module that was previously unused
-    // Patterns are logged via SecurityAuditLog for incident response
     const suspiciousResult = detectSuspiciousPatterns(request, {
-      scanBody: false, // Performance: skip body scanning by default
-      minSeverity: 2, // Only log medium+ severity patterns (avoid noise)
+      scanBody: false,
+      minSeverity: 2,
       logDetected: true,
     });
 
-    // SECURITY: Actively block high-severity suspicious patterns (Severity 3)
-    // This provides active protection against SQLi, XSS, and other common attacks.
-    // We return 403 Forbidden with a generic message to avoid leaking detection logic.
     if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
       logger.warnWithContext('Blocking suspicious request', logContext, {
         maxSeverity: suspiciousResult.maxSeverity,
@@ -126,6 +115,30 @@ export function withApiHandler(
       );
     }
 
+    if (!options.skipCSRF) {
+      const csrfResult = validateCSRF(request);
+      if (!csrfResult.valid) {
+        logger.warnWithContext('CSRF validation failed', logContext, {
+          origin: csrfResult.origin,
+        });
+
+        return NextResponse.json(
+          {
+            error: 'Forbidden: Invalid origin header',
+            code: 'CSRF_VALIDATION_FAILED',
+            timestamp: new Date().toISOString(),
+            requestId,
+          },
+          {
+            status: 403,
+            headers: {
+              'X-Request-ID': requestId,
+            },
+          }
+        );
+      }
+    }
+
     try {
       const rateLimitResult = checkRateLimit(
         getClientIdentifier(request),
@@ -137,7 +150,6 @@ export function withApiHandler(
           limit: rateLimitResult.info.limit,
         });
 
-        // SECURITY: Log rate limit violation to security audit for incident response
         SecurityAuditLog.logRateLimit({
           blocked: true,
           config: options.rateLimit || 'lenient',
@@ -171,7 +183,6 @@ export function withApiHandler(
         }
       }
 
-      // Apply timeout if specified
       const timeoutMs = options.timeoutMs ?? TIMEOUT_CONFIG.DEFAULT;
       let response: Response;
 
@@ -337,24 +348,6 @@ export function successResponse<T>(
   return response;
 }
 
-/**
- * Creates a 404 Not Found response.
- *
- * @deprecated Use `throw new AppError(message, ErrorCode.NOT_FOUND, STATUS_CODES.NOT_FOUND)` instead.
- * Throwing AppError ensures consistent error response format with `error`, `code`, `fingerprint`,
- * `details`, `timestamp`, `requestId`, `retryable`, and `suggestions` fields.
- *
- * @example
- * // Instead of:
- * // return notFoundResponse('Task not found');
- *
- * // Use:
- * throw new AppError('Task not found', ErrorCode.NOT_FOUND, STATUS_CODES.NOT_FOUND);
- *
- * @param message - Error message to include
- * @param rateLimit - Rate limit info for headers
- * @returns NextResponse with 404 status
- */
 export function notFoundResponse(
   message: string = 'Resource not found',
   rateLimit?: RateLimitInfo
@@ -376,25 +369,6 @@ export function notFoundResponse(
   return response;
 }
 
-/**
- * Creates a 400 Bad Request response.
- *
- * @deprecated Use `throw new ValidationError(details)` instead.
- * Throwing ValidationError ensures consistent error response format with `error`, `code`,
- * `fingerprint`, `details`, `timestamp`, `requestId`, `retryable`, and `suggestions` fields.
- *
- * @example
- * // Instead of:
- * // return badRequestResponse('Invalid input', [{ field: 'name', message: 'Name is required' }]);
- *
- * // Use:
- * throw new ValidationError([{ field: 'name', message: 'Name is required' }]);
- *
- * @param message - Error message to include
- * @param details - Array of validation error details
- * @param rateLimit - Rate limit info for headers
- * @returns NextResponse with 400 status
- */
 export function badRequestResponse(
   message: string,
   details?: ErrorDetail[],
