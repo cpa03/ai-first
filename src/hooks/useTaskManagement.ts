@@ -5,6 +5,7 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import type { Task, Deliverable } from '@/lib/db';
 import { triggerHapticFeedback } from '@/lib/utils';
+import type { TaskStatus } from '@/types/task';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -28,7 +29,7 @@ interface TasksResponse {
   };
 }
 
-export type TaskStatus = 'todo' | 'in_progress' | 'completed';
+
 
 interface UseTaskManagementReturn {
   loading: boolean;

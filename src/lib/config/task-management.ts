@@ -4,7 +4,7 @@
  * Eliminates hardcoded Tailwind classes and magic values
  */
 
-import { TaskStatus } from '@/hooks/useTaskManagement';
+import { TaskStatus } from '@/types/task';
 
 /**
  * Task status configuration
