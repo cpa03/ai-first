@@ -138,20 +138,4 @@ The ai-agent-engineer job specifically focuses on:
 - Workflow CI enhancements
 - Self-\* capability implementations
 
-## CI Workflow Jobs
 
-The iterate.yml workflow (`.github/workflows/iterate.yml`) runs 5 agent jobs:
-
-| Job Name  | Agent      | Purpose                 |
-| --------- | ---------- | ----------------------- |
-| architect | RepoKeeper | Strategy & Triage       |
-| bugfix    | RepoKeeper | Bug fixing              |
-| palette   | RepoKeeper | UX improvements         |
-| flexy     | RepoKeeper | Modularity improvements |
-| brocula   | RepoKeeper | Browser console fixes   |
-
-**Note**: The ai-agent-engineer job is not yet implemented in the CI workflow.
-The ai-agent-engineer agent can be triggered manually or via separate workflows
-for agent system maintenance, configuration improvements, and skill maintenance.
-
-Runs on schedule every 4 hours and on main branch changes.
