@@ -33,7 +33,6 @@ export {
   type InputValidationEventDetails,
 } from './audit-log';
 
-
 // Suspicious Request Pattern Detection
 export {
   detectSuspiciousPatterns,
@@ -43,7 +42,6 @@ export {
   type SuspiciousPatternDetail,
   type SuspiciousPatternResult,
 } from './suspicious-patterns';
-
 
 // Request Signing for Internal API Communication
 export {
@@ -66,3 +64,11 @@ export {
   type VerificationResult,
   type InternalApiSignatureHeader,
 } from './request-signer';
+
+// CSRF Protection
+export {
+  validateCSRF,
+  requireCSRF,
+  CSRF_CONFIG,
+  type CSRFValidationResult,
+} from './csrf';
