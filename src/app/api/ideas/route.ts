@@ -29,12 +29,50 @@ async function handleGet(context: ApiContext) {
   const url = new URL(request.url);
 
   const status = url.searchParams.get('status');
-  const limit = parseInt(
-    url.searchParams.get('limit') ||
-      String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT),
-    10
-  );
-  const page = parseInt(url.searchParams.get('page') || '1', 10);
+  const limitRaw = url.searchParams.get('limit');
+  const pageRaw = url.searchParams.get('page');
+
+  // Validate pagination parameters to prevent DoS attacks
+  // Validate limit
+  let limit: number;
+  if (limitRaw !== null) {
+    limit = parseInt(limitRaw, 10);
+    if (isNaN(limit) || !isFinite(limit)) {
+      throw new ValidationError([
+        { field: 'limit', message: `Invalid limit parameter: '${limitRaw}' is not a valid number` },
+      ]);
+    }
+    if (limit < APP_CONFIG.PAGINATION.MIN_LIMIT) {
+      throw new ValidationError([
+        { field: 'limit', message: `Limit must be at least ${APP_CONFIG.PAGINATION.MIN_LIMIT}` },
+      ]);
+    }
+    if (limit > APP_CONFIG.PAGINATION.MAX_LIMIT) {
+      throw new ValidationError([
+        { field: 'limit', message: `Limit cannot exceed ${APP_CONFIG.PAGINATION.MAX_LIMIT}` },
+      ]);
+    }
+  } else {
+    limit = APP_CONFIG.PAGINATION.DEFAULT_LIMIT;
+  }
+
+  // Validate page
+  let page: number;
+  if (pageRaw !== null) {
+    page = parseInt(pageRaw, 10);
+    if (isNaN(page) || !isFinite(page)) {
+      throw new ValidationError([
+        { field: 'page', message: `Invalid page parameter: '${pageRaw}' is not a valid number` },
+      ]);
+    }
+    if (page < 1) {
+      throw new ValidationError([
+        { field: 'page', message: 'Page must be at least 1' },
+      ]);
+    }
+  } else {
+    page = 1;
+  }
 
   // Authenticate user
   const user = await requireAuth(request);
