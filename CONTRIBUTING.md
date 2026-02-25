@@ -20,7 +20,7 @@ Thank you for your interest in contributing to IdeaFlow! This document provides 
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/ai-first.git`
 3. Install dependencies: `npm install`
-4. Copy `.env.example` to `.env.local` and configure environment variables
+4. Copy `config/.env.example` to `.env.local` and configure environment variables
 5. Start development server: `npm run dev`
 
 ## Development Setup
