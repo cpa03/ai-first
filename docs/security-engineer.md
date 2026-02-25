@@ -41,6 +41,33 @@ This document provides security-focused guidelines, findings, and best practices
 ---
 
 ## Security Fixes Log
+### 2026-02-25: CSP AI API Domains Addition (Issue #665)
+
+**Issue**: The CSP_CONFIG in `constants.ts` did not include AI API domains (`api.openai.com`, `api.anthropic.com`) in the connect-src directive, while the static CSP in `next.config.js` correctly included them. This created an inconsistency where the runtime CSP (from middleware) wouldn't properly restrict AI API connections.
+
+**Risk**: Without proper AI API domain restrictions in runtime CSP:
+
+- Malicious scripts could potentially exfiltrate data to unauthorized AI API endpoints
+- Inconsistent CSP configuration could confuse security auditors
+- Defense-in-depth principle is violated
+
+**Fix Applied**:
+
+- Added `https://api.openai.com` to CSP_CONFIG connect-src
+- Added `https://api.anthropic.com` to CSP_CONFIG connect-src
+- Ensures runtime CSP (middleware.ts) matches static CSP (next.config.js)
+
+**Files Modified**:
+
+- `src/lib/config/constants.ts` - Added AI API domains to CSP connect-src
+
+**Verification**:
+
+```bash
+git diff                                    # ✓ Single line change
+```
+
+---
 
 ### 2026-02-21: Sensitive Variable Pattern Enhancement
 
