@@ -128,6 +128,8 @@ export * from './constants';
 
 // Domain-specific config modules (extracted from constants.ts)
 export { USER_STORY_CONFIG } from './user-story-config';
+export { IDEA_STATUS_CONFIG } from './idea-status-config';
+export { USER_STORY_CONFIG } from './user-story-config';
 
 export {
   STATUS_CODES,
@@ -190,4 +192,8 @@ export type { APIErrorMessages } from './error-messages';
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 
 // Health Monitoring Types
+export type { HealthConfig, MemoryConfig } from './health';
+
+// Idea Status Types
+export type { IdeaStatus } from './idea-status-config';
 export type { HealthConfig, MemoryConfig } from './health';
