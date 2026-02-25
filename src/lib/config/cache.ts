@@ -4,7 +4,7 @@
  * Eliminates hardcoded cache values scattered throughout the codebase
  * Now supports environment variable overrides via EnvLoader
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const CACHE_CONFIG = {
   /**
