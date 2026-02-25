@@ -14,42 +14,20 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 
 | Date       | PR    | Description                              | Impact                |
 | ---------- | ----- | ---------------------------------------- | --------------------- |
+| 2026-02-25 | #1837 | Add analytics event tracking foundation  | Growth measurement    |
 | 2026-02-25 | #1823 | Add PWA web app manifest for mobile      | Mobile installability |
 | 2026-02-25 | #1770 | Add OG image and JSON-LD structured data | SEO + Social sharing  |
 | 2026-02-25 | #PR   | Add social sharing with Web Share API    | Viral growth loops    |
 
 ### Identified Opportunities
 
-1. **Analytics/Event Tracking** - Missing foundational growth measurement
-2. ~~PWA Manifest~~ - Implemented with manifest.json
+1. ~~Analytics/Event Tracking~~ - Implemented with #1837
+2. ~~PWA Manifest~~ - Implemented with #1823
 3. **User Onboarding** - No welcome emails, tutorials, or guided tours
 4. ~~Social Sharing~~ - Implemented with Web Share API
 5. **Referral System** - Missing viral growth loops
 6. **Push Notifications** - Missing engagement hooks
 7. **A/B Testing** - Can't experiment with growth strategies
-
-### Completed Improvements
-
-| Date       | PR    | Description                              | Impact               |
-| ---------- | ----- | ---------------------------------------- | -------------------- |
-| 2026-02-25 | #1770 | Add OG image and JSON-LD structured data | SEO + Social sharing |
-| 2026-02-25 | #PR   | Add social sharing with Web Share API    | Viral growth loops   |
-
-| Date       | PR    | Description                              | Impact               |
-| ---------- | ----- | ---------------------------------------- | -------------------- |
-| 2026-02-25 | #1770 | Add OG image and JSON-LD structured data | SEO + Social sharing |
-
-### Identified Opportunities
-
-1. **Analytics/Event Tracking** - Missing foundational growth measurement
-2. **User Onboarding** - No welcome emails, tutorials, or guided tours
-3. ~~Social Sharing~~ - Implemented with Web Share API
-4. **Referral System** - Missing viral growth loops
-5. **User Onboarding** - No welcome emails, tutorials, or guided tours
-6. **Social Sharing** - No share to social media functionality
-7. **Referral System** - Missing viral growth loops
-8. **Push Notifications** - Missing engagement hooks
-9. **A/B Testing** - Can't experiment with growth strategies
 
 ## Workflow
 
