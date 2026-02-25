@@ -566,6 +566,22 @@ export const AI_CONFIG = {
    * NOTE: Not environment-configurable
    */
   DEFAULT_PRICING_PER_TOKEN: 0.00001,
+
+  /**
+   * AI Model Parameter Validation Limits
+   * SECURITY: These limits prevent malicious or accidental misconfiguration
+   * of AI model parameters that could lead to unexpected behavior or resource exhaustion
+   */
+  VALIDATION: {
+    TEMPERATURE_MIN: 0,
+    TEMPERATURE_MAX: 2.0,
+    TEMPERATURE_DEFAULT: 0.7,
+    MAX_TOKENS_MIN: 1,
+    MAX_TOKENS_MAX: 32000,
+    MAX_TOKENS_DEFAULT: 4000,
+    MODEL_NAME_PATTERN: /^[a-zA-Z0-9._-]+$/,
+    ALLOWED_MODEL_PREFIXES: ['gpt-', 'claude-', 'o1-', 'o3-'],
+  } as const,
 } as const;
 
 /**

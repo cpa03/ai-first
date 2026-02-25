@@ -3,6 +3,7 @@ import {
   VALIDATION_LIMITS,
   STATUS_CODES,
   HTTP_HEADERS,
+  AI_CONFIG,
 } from './config/constants';
 import { USER_STORY_CONFIG } from './config/user-story-config';
 import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config';
@@ -418,4 +419,113 @@ export function validateIdeaWithUserStory(
     suggestions: userStoryResult.suggestions,
     isPartial: userStoryResult.isPartial,
   };
+}
+
+
+/**
+ * Validate AI model temperature parameter
+ * SECURITY: Prevents extreme temperature values
+ */
+export function validateModelTemperature(temperature: unknown): ValidationResult {
+  const errors: ValidationError[] = [];
+  const { VALIDATION } = AI_CONFIG;
+
+  if (temperature === undefined || temperature === null) {
+    return { valid: true, errors: [] };
+  }
+
+  if (typeof temperature !== 'number' || isNaN(temperature)) {
+    errors.push({ field: 'temperature', message: 'temperature must be a valid number' });
+    return { valid: false, errors };
+  }
+
+  if (temperature < VALIDATION.TEMPERATURE_MIN) {
+    errors.push({ field: 'temperature', message: 'temperature must be at least ' + VALIDATION.TEMPERATURE_MIN });
+  }
+
+  if (temperature > VALIDATION.TEMPERATURE_MAX) {
+    errors.push({ field: 'temperature', message: 'temperature must not exceed ' + VALIDATION.TEMPERATURE_MAX });
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate AI model maxTokens parameter
+ */
+export function validateModelMaxTokens(maxTokens: unknown): ValidationResult {
+  const errors: ValidationError[] = [];
+  const { VALIDATION } = AI_CONFIG;
+
+  if (maxTokens === undefined || maxTokens === null) {
+    return { valid: true, errors: [] };
+  }
+
+  if (typeof maxTokens !== 'number' || isNaN(maxTokens)) {
+    errors.push({ field: 'maxTokens', message: 'maxTokens must be a valid number' });
+    return { valid: false, errors };
+  }
+
+  if (!Number.isInteger(maxTokens)) {
+    errors.push({ field: 'maxTokens', message: 'maxTokens must be an integer' });
+  }
+
+  if (maxTokens < VALIDATION.MAX_TOKENS_MIN) {
+    errors.push({ field: 'maxTokens', message: 'maxTokens must be at least ' + VALIDATION.MAX_TOKENS_MIN });
+  }
+
+  if (maxTokens > VALIDATION.MAX_TOKENS_MAX) {
+    errors.push({ field: 'maxTokens', message: 'maxTokens must not exceed ' + VALIDATION.MAX_TOKENS_MAX });
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate AI model name
+ */
+export function validateModelName(model: unknown): ValidationResult {
+  const errors: ValidationError[] = [];
+  const { VALIDATION } = AI_CONFIG;
+
+  if (!model || typeof model !== 'string') {
+    errors.push({ field: 'model', message: 'model is required and must be a string' });
+    return { valid: false, errors };
+  }
+
+  const trimmed = model.trim();
+  if (trimmed.length === 0) {
+    errors.push({ field: 'model', message: 'model cannot be empty' });
+    return { valid: false, errors };
+  }
+
+  if (!VALIDATION.MODEL_NAME_PATTERN.test(trimmed)) {
+    errors.push({ field: 'model', message: 'model must contain only alphanumeric characters, dashes, and dots' });
+  }
+
+  const hasAllowedPrefix = VALIDATION.ALLOWED_MODEL_PREFIXES.some(prefix => trimmed.toLowerCase().startsWith(prefix));
+  if (!hasAllowedPrefix) {
+    errors.push({ field: 'model', message: 'model must start with one of: ' + VALIDATION.ALLOWED_MODEL_PREFIXES.join(', ') });
+  }
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Validate complete AI model configuration
+ */
+export function validateAIModelConfig(config: unknown): ValidationResult {
+  const errors: ValidationError[] = [];
+
+  if (!config || typeof config !== 'object') {
+    errors.push({ field: 'config', message: 'AI model config must be an object' });
+    return { valid: false, errors };
+  }
+
+  const cfg = config as Record<string, unknown>;
+  errors.push(...validateModelName(cfg.model).errors);
+  errors.push(...validateModelTemperature(cfg.temperature).errors);
+  errors.push(...validateModelMaxTokens(cfg.maxTokens).errors);
+
+  return { valid: errors.length === 0, errors };
 }
