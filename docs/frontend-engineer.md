@@ -802,6 +802,40 @@ TT|- ✅ ESLint: 0 warnings
 
 **PR:** #1832
 
+## Recent Improvements (2026-02-25)
+
+### Fix: InputWithValidation useRef Import Consistency
+
+**Issue:** #704 - Inconsistent React hook imports in InputWithValidation.tsx
+
+**Problem:**
+
+- Component used `React.useRef` while other hooks were imported via destructuring
+- Created inconsistency and code confusion
+
+**Fix Applied:**
+
+- Added `useRef` to destructured React imports
+- Replaced all `React.useRef` calls with direct `useRef` calls
+
+**Changes:**
+
+|| File | Change |
+||------|--------|
+|| `src/components/InputWithValidation.tsx` | Added `useRef` to imports (line 8) |
+|| `src/components/InputWithValidation.tsx` | Changed `React.useRef<HTMLTextAreaElement>` to `useRef<HTMLTextAreaElement>` (line 66) |
+|| `src/components/InputWithValidation.tsx` | Changed `React.useRef(errorAnnounced)` to `useRef(errorAnnounced)` (line 150) |
+|| `src/components/InputWithValidation.tsx` | Changed `React.useRef(successAnnounced)` to `useRef(successAnnounced)` (line 151) |
+
+**Verification:**
+
+- ✅ TypeScript: No errors
+- ✅ No React.useRef remaining in file
+
+**PR:** #1847
+
 ---
+
+**Last Updated:** 2026-02-25
 
 **Last Updated:** 2026-02-25
