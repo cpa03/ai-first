@@ -41,6 +41,7 @@
     "check:circular": "node scripts/check-circular-deps.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@notionhq/client": "^5.9.0",
     "@supabase/supabase-js": "^2.95.3",
     "@types/js-yaml": "^4.0.9",

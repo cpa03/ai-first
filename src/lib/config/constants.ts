@@ -548,6 +548,17 @@ export const AI_CONFIG = {
     'gpt-3.5-turbo': 0.000002,
     'gpt-4': 0.00003,
     'gpt-4-turbo': 0.00001,
+    'claude-3-5-sonnet-20241022': 0.000015,
+    'claude-3-opus-20240229': 0.000075,
+    'claude-3-sonnet-20240229': 0.000015,
+    'claude-3-haiku-20240307': 0.0000025,
+  } as const,
+
+  /**
+   * Default pricing fallback
+    'gpt-3.5-turbo': 0.000002,
+    'gpt-4': 0.00003,
+    'gpt-4-turbo': 0.00001,
   } as const,
 
   /**
