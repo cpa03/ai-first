@@ -1,6 +1,24 @@
 'use client';
 
-import React, { memo } from 'react';
+import React, { memo, useSyncExternalStore } from 'react';
+
+const subscribe = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getServerSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
 
 interface SkeletonProps {
   className?: string;
@@ -13,8 +31,11 @@ function SkeletonComponent({
   className = '',
   variant = 'rect',
 }: SkeletonProps) {
-  const baseClasses =
-    'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]';
+  const prefersReducedMotion = usePrefersReducedMotion();
+
+  const baseClasses = prefersReducedMotion
+    ? 'bg-gray-200'
+    : 'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]';
 
   const variantClasses = {
     rect: '',
