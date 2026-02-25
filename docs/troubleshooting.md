@@ -6,7 +6,7 @@ This guide helps you diagnose and resolve common issues with IdeaFlow.
 
 Start here when something goes wrong:
 
-```bash
+````bash
 # 1. Check environment setup
 npm run env:check
 
@@ -18,7 +18,7 @@ curl http://localhost:3000/api/health/detailed
 
 # 4. Check database connection
 curl http://localhost:3000/api/health/database
-```
+```bash
 
 ---
 
@@ -40,7 +40,7 @@ ls -la .env.local
 
 # Check environment variables
 npm run env:check
-```
+```bash
 
 **Solutions:**
 
@@ -48,7 +48,7 @@ npm run env:check
 
    ```bash
    cp config/.env.example .env.local
-   ```
+````
 
 2. **Verify required variables are set:**
 
@@ -106,13 +106,13 @@ curl http://localhost:3000/api/health/detailed
 
 **Diagnosis:**
 
-```bash
+````bash
 # Check if AI key is set
 echo $OPENAI_API_KEY
 
 # Test health endpoint for AI status
 curl http://localhost:3000/api/health/detailed
-```
+```bash
 
 **Solutions:**
 
@@ -150,7 +150,7 @@ curl http://localhost:3000/api/health/detailed
 ```bash
 # Run type check
 npm run type-check
-```
+````
 
 **Solutions:**
 
@@ -218,14 +218,14 @@ npm run lint
 
 **Diagnosis:**
 
-```bash
+````bash
 # Check if port is in use
 lsof -i :3000  # macOS/Linux
 netstat -ano | findstr :3000  # Windows
 
 # Check for module errors
 npm run dev 2>&1 | head -50
-```
+```bash
 
 **Solutions:**
 
@@ -237,7 +237,7 @@ npm run dev 2>&1 | head -50
 
    # Windows
    taskkill /PID <PID> /F
-   ```
+````
 
 2. **Clear cache and reinstall:**
 
@@ -266,13 +266,13 @@ npm run dev 2>&1 | head -50
 
 **Diagnosis:**
 
-```bash
+````bash
 # Make test request and see full error
 curl -X POST http://localhost:3000/api/clarify/start \
   -H "Content-Type: application/json" \
   -d '{"ideaId": "test", "ideaText": "too short"}' \
   -v
-```
+```bash
 
 **Solutions:**
 
@@ -298,7 +298,7 @@ curl -X POST http://localhost:3000/api/clarify/start \
        }
      ]
    }
-   ```
+````
 
 ### Rate limit exceeded (429)
 
@@ -380,13 +380,13 @@ curl http://localhost:3000/api/health/detailed | jq '.checks.circuitBreakers'
 
 **Diagnosis:**
 
-```bash
+````bash
 # Check database health
 curl http://localhost:3000/api/health/database
 
 # Check database connection directly
 psql $DATABASE_URL -c "SELECT 1"
-```
+```bash
 
 **Solutions:**
 
@@ -399,7 +399,7 @@ psql $DATABASE_URL -c "SELECT 1"
 
    ```bash
    npm run db:migrate
-   ```
+````
 
 3. **Reset database (development only):**
    ```bash
@@ -416,13 +416,13 @@ psql $DATABASE_URL -c "SELECT 1"
 
 **Diagnosis:**
 
-```bash
+````bash
 # Check schema migration status
 npm run db:migrate
 
 # Verify migration files exist
 ls -la supabase/migrations/
-```
+```bash
 
 **Solutions:**
 
@@ -430,7 +430,7 @@ ls -la supabase/migrations/
 
    ```bash
    npm run db:migrate
-   ```
+````
 
 2. **Reset to latest schema (development):**
 
@@ -457,13 +457,13 @@ ls -la supabase/migrations/
 
 **Diagnosis:**
 
-```bash
+````bash
 # Check AI service health
 curl http://localhost:3000/api/health/detailed | jq '.checks.ai'
 
 # Check application logs in browser console (for client-side errors)
 # Or check server logs in terminal where 'npm run dev' is running
-```
+```bash
 
 **Solutions:**
 
@@ -476,7 +476,7 @@ curl http://localhost:3000/api/health/detailed | jq '.checks.ai'
 
    ```bash
    cat ai/agent-configs/clarifier.yml
-   ```
+````
 
 3. **Restart development server:**
    ```bash
@@ -598,7 +598,7 @@ npm run build:check
 
 **Diagnosis:**
 
-```bash
+````bash
 # Measure response time
 time curl http://localhost:3000/api/clarify/start \
   -H "Content-Type: application/json" \
@@ -606,7 +606,7 @@ time curl http://localhost:3000/api/clarify/start \
 
 # Check health endpoint for latency
 curl http://localhost:3000/api/health/detailed | jq '.checks.ai.latency'
-```
+```bash
 
 **Solutions:**
 
@@ -650,7 +650,7 @@ This section covers issues specific to production deployments.
    ```bash
    # Configure cron job to ping health endpoint every 5 minutes
    */5 * * * * curl -s https://your-domain.vercel.app/api/health/live > /dev/null
-   ```
+````
 
 2. **Optimize bundle size:**
 
@@ -978,7 +978,7 @@ For production, set up proper monitoring:
 
 Include the following information:
 
-```markdown
+````markdown
 ## Environment
 
 - OS: [e.g., macOS, Ubuntu 20.04]
@@ -996,18 +996,15 @@ Include the following information:
 3. Step three
 
 ## Error Messages
-```
 
-[Paste full error messages here]
-
-```
+````text
 
 ## Request ID
 [Paste the X-Request-ID from API response]
 
 ## What You've Tried
 [List steps you've already taken to resolve the issue]
-```
+```text
 
 ### Useful Resources:
 
@@ -1034,3 +1031,5 @@ Include the following information:
 ---
 
 **Still stuck?** [Create an issue](https://github.com/cpa03/ai-first/issues) and include your diagnostic information.
+````
+````
