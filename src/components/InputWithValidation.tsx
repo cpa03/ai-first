@@ -5,6 +5,7 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
   memo,
 } from 'react';
 import { cn } from '@/lib/utils';
@@ -62,7 +63,7 @@ const InputWithValidationComponent = forwardRef<
     const [errorAnnounced, setErrorAnnounced] = useState(false);
     const [shouldShake, setShouldShake] = useState(false);
     const [successAnnounced, setSuccessAnnounced] = useState(false);
-    const internalTextareaRef = React.useRef<HTMLTextAreaElement>(null);
+    const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
     const isValid = !error && touched;
@@ -146,8 +147,8 @@ const InputWithValidationComponent = forwardRef<
       className
     );
 
-    const errorAnnouncedRef = React.useRef(errorAnnounced);
-    const successAnnouncedRef = React.useRef(successAnnounced);
+    const errorAnnouncedRef = useRef(errorAnnounced);
+    const successAnnouncedRef = useRef(successAnnounced);
 
     useEffect(() => {
       errorAnnouncedRef.current = errorAnnounced;
