@@ -127,19 +127,8 @@ export { EnvLoader, ENV_CONFIG } from './environment';
 export * from './constants';
 
 // Domain-specific config modules (extracted from constants.ts)
-export { USER_STORY_CONFIG } from './user-story-config';
-export { IDEA_STATUS_CONFIG } from './idea-status-config';
+// Note: USER_STORY_CONFIG and IDEA_STATUS_CONFIG are already exported via constants.ts
 
-export {
-  STATUS_CODES,
-  AI_SERVICE_LIMITS,
-  RATE_LIMIT_VALUES,
-  CLARIFIER_VALUES,
-  TASK_VALIDATION,
-  RETRY_VALUES,
-  HTTP_HEADERS,
-  AUTH_CONFIG,
-} from './constants';
 
 // Configuration Validator
 export {
