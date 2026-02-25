@@ -1,11 +1,4 @@
-import {
-  httpRequestDuration,
-  httpRequestErrors,
-  httpRequestTotal,
-  circuitBreakerState,
-  rateLimiterHits,
-  register,
-} from '@/lib/metrics';
+import { register } from '@/lib/metrics';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES } from '@/lib/config';

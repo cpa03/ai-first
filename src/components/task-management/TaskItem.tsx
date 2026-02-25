@@ -2,7 +2,7 @@
 
 import { memo, useCallback, useMemo } from 'react';
 import type { Task } from '@/lib/db';
-import { TaskStatus } from '@/hooks/useTaskManagement';
+import type { TaskStatus } from '@/types/task';
 import {
   SVG_ANIMATION,
   TASK_STATUS_CONFIG,
