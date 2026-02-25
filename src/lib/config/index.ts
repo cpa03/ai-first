@@ -13,6 +13,7 @@
 // Application Configuration
 export { APP_CONFIG } from './app';
 
+// Export Connectors Configuration
 export {
   TRELLO_CONFIG,
   NOTION_CONFIG,
@@ -72,6 +73,7 @@ export {
 // Cleanup Configuration
 export { CLEANUP_CONFIG } from './cleanup';
 
+// Theme Configuration
 export {
   FOCUS_SHADOWS,
   BORDER_COLORS,
@@ -94,6 +96,7 @@ export {
   OAUTH_PROVIDER_COLORS,
 } from './theme';
 
+// Page Configuration
 export {
   PAGE_CONFIG,
   RESULTS_PAGE_CONFIG,
@@ -128,7 +131,6 @@ export { EnvLoader, ENV_CONFIG } from './environment';
 export * from './constants';
 
 // Domain-specific config modules (extracted from constants.ts)
-
 export {
   STATUS_CODES,
   AI_SERVICE_LIMITS,
@@ -138,6 +140,7 @@ export {
   RETRY_VALUES,
   HTTP_HEADERS,
   AUTH_CONFIG,
+  PII_REDACTION_CONFIG,
 } from './constants';
 
 // Configuration Validator
@@ -192,3 +195,7 @@ export type { APIErrorMessages } from './error-messages';
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 
 // Health Monitoring Types
+export type { HealthConfig, MemoryConfig } from './health';
+
+// PII Redaction Config Type
+export type { PIIRedactionConfig } from './pii-redaction-config';
