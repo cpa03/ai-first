@@ -387,31 +387,7 @@ export const VALIDATION_CONFIG = {
     10485760
   ),
 } as const;
-
-/**
- * Animation timing configuration
- * All duration values are in milliseconds
- * Now supports environment variable overrides
- */
-export const ANIMATION_CONFIG = {
-  FAST: EnvLoader.number('UI_ANIMATION_FAST', 200, 50, 1000),
-  STANDARD: EnvLoader.number('UI_ANIMATION_STANDARD', 300, 50, 2000),
-  SLOW: EnvLoader.number('UI_ANIMATION_SLOW', 500, 100, 5000),
-  TOAST_EXIT: EnvLoader.number('UI_ANIMATION_TOAST_EXIT', 300, 50, 2000),
-  INPUT_FOCUS_DELAY: EnvLoader.number(
-    'UI_ANIMATION_INPUT_FOCUS_DELAY',
-    50,
-    10,
-    500
-  ),
-  ERROR_RELOAD_DELAY: EnvLoader.number(
-    'UI_ANIMATION_ERROR_RELOAD_DELAY',
-    3000,
-    1000,
-    30000
-  ),
-  ALERT_EXIT: EnvLoader.number('UI_ANIMATION_ALERT_EXIT', 200, 50, 1000),
-} as const;
+export { ANIMATION_CONFIG } from './animation';
 
 /**
  * Rate limit cleanup configuration
@@ -1485,10 +1461,7 @@ export const PROXY_CONFIG = {
    * CSP Report endpoint path
    * Env: PROXY_CSP_REPORT_PATH (default: '/api/csp-report')
    */
-  CSP_REPORT_PATH: EnvLoader.string(
-    'PROXY_CSP_REPORT_PATH',
-    '/api/csp-report'
-  ),
+  CSP_REPORT_PATH: EnvLoader.string('PROXY_CSP_REPORT_PATH', '/api/csp-report'),
 } as const;
 
 /**
@@ -1496,7 +1469,6 @@ export const PROXY_CONFIG = {
  * @see {@link ./health.ts} for implementation
  */
 export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
-
 
 /**
  * Idea Status Configuration (re-exported from idea-status-config.ts for modularity)
