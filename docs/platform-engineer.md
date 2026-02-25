@@ -68,4 +68,9 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
 
 - PR #1789: feat(ci): integrate circular dependency check into CI pipeline
   - Addresses issue #1779
-  - Note: workflow file needs manual addition due to GitHub App permission restriction
+    WP| - Note: workflow file needs manual addition due to GitHub App permission restriction
+    #HB|
+    #BM|- PR #1797: feat(ci): implement pre-commit hooks for code quality enforcement
+    #JM| - Addresses issue #1778
+    #QM| - Added husky and lint-staged for pre-commit hooks
+    #BS| - ESLint and Prettier run on staged files before commit
