@@ -1,0 +1,515 @@
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { fetchWithTimeout } from '@/lib/api-client';
+import dynamic from 'next/dynamic';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
+// Lazy load Button and LoadingSpinner for code splitting
+const Button = dynamic(() => import('@/components/Button'), {
+  loading: () => (
+    <button className="px-4 py-2 bg-gray-200 rounded-md text-gray-600" disabled>
+      Loading...
+    </button>
+  ),
+});
+
+const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
+  loading: () => (
+    <div className="flex justify-center items-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+    </div>
+  ),
+});
+import { createLogger } from '@/lib/logger';
+import Link from 'next/link';
+import { APP_CONFIG } from '@/lib/config';
+import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
+interface Idea {
+  id: string;
+  title: string;
+  status: IdeaStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+interface Pagination {
+  total: number;
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+}
+
+// Use centralized status configuration from constants.ts
+const statusColors = IDEA_STATUS_CONFIG.COLORS;
+const statusLabels = IDEA_STATUS_CONFIG.LABELS;
+const logger = createLogger('DashboardPage');
+
+// PERFORMANCE: Extract pure function outside component to prevent recreation on every render
+const formatDate = (dateString: string): string => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+export default function DashboardPage() {
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('all');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    idea: Idea | null;
+  }>({
+    isOpen: false,
+    idea: null,
+  });
+  const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
+
+  const fetchIdeas = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      if (filter !== 'all') {
+        params.set('status', filter);
+      }
+      params.set('limit', String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT));
+
+      const queryString = params.toString();
+      const response = await fetchWithTimeout(
+        `/api/ideas${queryString ? `?${queryString}` : ''}`
+      );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError('Please sign in to view your ideas');
+          setIdeas([]);
+          setPagination(null);
+          return;
+        }
+        throw new Error('Failed to fetch ideas');
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch ideas');
+      }
+
+      setIdeas(data.data.ideas);
+      setPagination(data.data.pagination);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'An unknown error occurred';
+      if (!errorMessage.includes('sign in')) {
+        logger.error('Error fetching ideas:', err);
+      }
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      setLoading(false);
+      setError('Please sign in to view your ideas');
+      return;
+    }
+
+    if (!authLoading && isAuthenticated) {
+      fetchIdeas();
+    }
+  }, [fetchIdeas, authLoading, isAuthenticated]);
+
+  // PERFORMANCE: Memoize event handlers to prevent unnecessary re-renders
+  const openDeleteModal = useCallback((idea: Idea) => {
+    setDeleteModal({ isOpen: true, idea });
+  }, []);
+
+  const closeDeleteModal = useCallback(() => {
+    setDeleteModal({ isOpen: false, idea: null });
+  }, []);
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteModal.idea) return;
+
+    const id = deleteModal.idea.id;
+
+    try {
+      setDeletingId(id);
+
+      const response = await fetchWithTimeout(`/api/ideas/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete idea');
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to delete idea');
+      }
+
+      setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+      closeDeleteModal();
+    } catch (err) {
+      logger.error('Error deleting idea:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete idea');
+    } finally {
+      setDeletingId(null);
+    }
+  }, [deleteModal.idea, closeDeleteModal]);
+
+  // Refs for focus management
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Handle focus when modal opens/closes
+  useEffect(() => {
+    let focusTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    if (deleteModal.isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      focusTimeoutId = setTimeout(() => {
+        cancelButtonRef.current?.focus();
+      }, 0);
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+    }
+
+    return () => {
+      if (focusTimeoutId) {
+        clearTimeout(focusTimeoutId);
+      }
+    };
+  }, [deleteModal.isOpen]);
+
+  // Handle keyboard events for focus trap and escape
+  useEffect(() => {
+    if (!deleteModal.isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeDeleteModal();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [deleteModal.isOpen, closeDeleteModal]);
+
+  if (loading) {
+    return (
+      <div
+        className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <LoadingSpinner
+            size="md"
+            className="mb-4 mx-auto"
+            ariaLabel="Loading your ideas"
+          />
+          <p className="text-gray-600">Loading your ideas...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-red-900 mb-4">Error</h2>
+          <p className="text-red-800">{error}</p>
+          <div className="mt-4">
+            <Button onClick={fetchIdeas} variant="primary">
+              Try Again
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Your Ideas</h1>
+          <p className="text-gray-600 mt-1">
+            {pagination?.total || 0} idea{pagination?.total !== 1 ? 's' : ''}{' '}
+            total
+          </p>
+        </div>
+        <Link href="/">
+          <Button variant="primary">+ New Idea</Button>
+        </Link>
+      </div>
+
+      {/* Filter */}
+      <div className="mb-6">
+        <label htmlFor="status-filter" className="sr-only">
+          Filter by status
+        </label>
+        <select
+          id="status-filter"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          aria-label="Filter ideas by status"
+        >
+          <option value="all">All Statuses</option>
+          <option value="draft">Draft</option>
+          <option value="clarified">Clarified</option>
+          <option value="breakdown">In Progress</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      {/* Ideas List */}
+      {ideas.length === 0 ? (
+        <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-primary-50 rounded-full">
+            <svg
+              className="w-10 h-10 text-primary-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            No ideas yet
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Start by creating your first idea to get AI-powered project
+            planning.
+          </p>
+          <Link href="/">
+            <Button variant="primary">Create Your First Idea</Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table
+              className="min-w-full divide-y divide-gray-200"
+              role="table"
+              aria-label="List of your ideas"
+            >
+              <thead className="bg-gray-50">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Title
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Status
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Created
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {ideas.map((idea) => (
+                  <tr key={idea.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-gray-900">
+                        {idea.title}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span
+                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[idea.status]}`}
+                      >
+                        {statusLabels[idea.status]}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {formatDate(idea.createdAt)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end gap-2">
+                        <Link
+                          href={`/clarify?ideaId=${idea.id}`}
+                          className="text-indigo-600 hover:text-indigo-900 px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
+                          aria-label={`Continue working on ${idea.title}`}
+                        >
+                          Continue
+                        </Link>
+                        <Link
+                          href={`/results?ideaId=${idea.id}`}
+                          className="text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50 transition-colors"
+                          aria-label={`View blueprint for ${idea.title}`}
+                        >
+                          View
+                        </Link>
+                        <button
+                          onClick={() => openDeleteModal(idea)}
+                          disabled={deletingId === idea.id}
+                          className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-50 inline-flex items-center gap-1"
+                          aria-label={`Delete ${idea.title}`}
+                        >
+                          {deletingId === idea.id && (
+                            <svg
+                              className="animate-spin h-3 w-3"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              />
+                            </svg>
+                          )}
+                          {deletingId === idea.id ? 'Deleting...' : 'Delete'}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.isOpen && deleteModal.idea && (
+        <div
+          ref={modalRef}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="delete-modal-title"
+          aria-describedby="delete-modal-description"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) closeDeleteModal();
+          }}
+          onTouchEnd={(e) => {
+            // Mobile touch support - close modal when tapping backdrop
+            if (e.target === e.currentTarget) closeDeleteModal();
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 transform transition-all">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <h3
+                id="delete-modal-title"
+                className="text-lg font-semibold text-gray-900"
+              >
+                Delete Idea
+              </h3>
+            </div>
+
+            <p id="delete-modal-description" className="text-gray-600 mb-6">
+              Are you sure you want to delete &quot;{deleteModal.idea.title}
+              &quot;? This action cannot be undone.
+            </p>
+
+            <div className="flex gap-3 justify-end">
+              <Button
+                ref={cancelButtonRef}
+                variant="outline"
+                onClick={closeDeleteModal}
+                disabled={!!deletingId}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                onClick={handleDelete}
+                loading={!!deletingId}
+                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
+              >
+                Delete Idea
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

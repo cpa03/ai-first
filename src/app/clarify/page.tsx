@@ -1,0 +1,254 @@
+'use client';
+
+import { useState, useRef, useLayoutEffect, useCallback, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
+import { createLogger } from '@/lib/logger';
+import { fetchWithTimeout } from '@/lib/api-client';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
+
+const Button = dynamic(() => import('@/components/Button'), {
+  loading: () => (
+    <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
+      Loading...
+    </div>
+  ),
+});
+
+const Alert = dynamic(() => import('@/components/Alert'), {
+  loading: () => <div className="bg-gray-100 p-4">Loading...</div>,
+});
+
+const DynamicClarificationFlow = dynamic(
+  () => import('@/components/ClarificationFlow').then((mod) => mod.default),
+  {
+    loading: () => (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <LoadingSpinner
+            size="md"
+            className="mb-4"
+            ariaLabel="Loading clarification flow"
+          />
+          <p className="text-gray-600">Loading clarification flow...</p>
+        </div>
+      </div>
+    ),
+  }
+);
+
+// Loading fallback for Suspense
+function ClarifyPageLoading() {
+  return (
+    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+        <LoadingSpinner
+          size="md"
+          className="mb-4"
+          ariaLabel="Loading clarification flow"
+        />
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    </div>
+  );
+}
+
+// Inner component that uses URL search params
+function ClarifyPageContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [answers, setAnswers] = useState<Record<string, string> | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
+
+  // Read URL params safely - useSearchParams returns null on initial server render
+  // We use a ref to track if we've hydrated to avoid hydration mismatches
+  const hasHydratedRef = useRef(false);
+  const [params, setParams] = useState({
+    idea: '',
+    ideaId: '',
+    hasLoaded: false,
+  });
+  const logger = createLogger('ClarifyPage');
+
+  // Use useLayoutEffect to safely read params after hydration
+  // This is necessary to avoid hydration mismatches when reading URL params
+  useLayoutEffect(() => {
+    if (hasHydratedRef.current) return;
+    hasHydratedRef.current = true;
+
+    const ideaFromUrl = searchParams?.get('idea');
+    const ideaIdFromUrl = searchParams?.get('ideaId');
+
+    setParams({
+      idea: ideaFromUrl ? decodeURIComponent(ideaFromUrl) : '',
+      ideaId: ideaIdFromUrl || '',
+      hasLoaded: true,
+    });
+  }, [searchParams]);
+
+  const { idea, ideaId, hasLoaded } = params;
+
+  // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of ClarificationFlow
+  // which receives this function as a prop
+  const handleClarificationComplete = useCallback(async (
+    completedAnswers: Record<string, string>
+  ) => {
+    try {
+      if (ideaId) {
+        const response = await fetchWithTimeout(`/api/ideas/${ideaId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'clarified' }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(
+            errorData.error || `Failed to update idea: ${response.status}`
+          );
+        }
+      }
+
+      setAnswers(completedAnswers);
+
+      // In a real app, this would navigate to results page
+      // For now, we'll just show the completion message
+    } catch (err) {
+      logger.errorWithContext('Failed to save clarification answers', {
+        component: 'ClarifyPage',
+        action: 'handleClarificationComplete',
+        metadata: {
+          ideaId,
+          error: err instanceof Error ? err.message : 'Unknown error',
+        },
+      });
+      setError('Failed to save your answers. Please try again.');
+    }
+  }, [ideaId, logger]);
+
+  if (authLoading || !hasLoaded) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+          <LoadingSpinner
+            size="md"
+            className="mb-4"
+            ariaLabel="Loading clarification flow"
+          />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
+          <h2 className="text-xl font-semibold text-red-900 mb-4">
+            Sign In Required
+          </h2>
+          <p className="text-red-800">Please sign in to clarify your ideas.</p>
+          <div className="mt-4">
+            <Button onClick={() => router.push('/')} variant="primary">
+              Go Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="slide-up">
+          <Alert type="error" title="Error">
+            <p className="mb-4">{error}</p>
+            <Button onClick={() => router.back()} variant="primary">
+              Go Back
+            </Button>
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
+  if (answers) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="slide-up">
+          <Alert type="success" title="Clarification Complete!">
+            <p className="mb-4">
+              Your answers have been collected. Ready to generate your
+              blueprint?
+            </p>
+            <div className="bg-white border border-gray-200 rounded-md p-4 mb-4 space-y-2">
+              {Object.entries(answers).map(([key, value]) => (
+                <div key={key} className="text-sm">
+                  <span className="font-medium text-gray-700">
+                    {key.replace(/_/g, ' ')}:
+                  </span>{' '}
+                  <span className="text-gray-600">{value}</span>
+                </div>
+              ))}
+            </div>
+            <Button onClick={() => router.push(`/results?ideaId=${ideaId}`)} variant="primary">
+              Generate Blueprint
+            </Button>
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
+  if (!idea) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="slide-up">
+          <Alert type="warning" title="No Idea Provided">
+            <p className="mb-4">Please provide an idea to clarify.</p>
+            <Button onClick={() => router.push('/')} variant="primary">
+              Go to Home
+            </Button>
+          </Alert>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="py-12">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            Let&apos;s Clarify Your Idea
+          </h1>
+          <p className="text-lg text-gray-600">
+            Answer a few questions to help us create the perfect action plan for
+            your project.
+          </p>
+        </div>
+      </div>
+
+      <DynamicClarificationFlow
+        idea={idea}
+        ideaId={ideaId}
+        onComplete={handleClarificationComplete}
+      />
+    </div>
+  );
+}
+
+// Main page component wrapped in Suspense
+export default function ClarifyPage() {
+  return (
+    <Suspense fallback={<ClarifyPageLoading />}>
+      <ClarifyPageContent />
+    </Suspense>
+  );
+}

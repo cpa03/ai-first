@@ -1,0 +1,82 @@
+/**
+ * Time Units Configuration
+ * Centralizes all time-based calculations to eliminate magic numbers
+ */
+
+export const TIME_UNITS = {
+  MILLISECOND: 1,
+  SECOND: 1000,
+  MINUTE: 60 * 1000,
+  HOUR: 60 * 60 * 1000,
+  DAY: 24 * 60 * 60 * 1000,
+  WEEK: 7 * 24 * 60 * 60 * 1000,
+  MONTH: 30 * 24 * 60 * 60 * 1000, // Approximate
+  YEAR: 365 * 24 * 60 * 60 * 1000, // Approximate
+} as const;
+
+export const CACHE_TTL = {
+  SHORT: TIME_UNITS.MINUTE,
+  STANDARD: 5 * TIME_UNITS.MINUTE,
+  MEDIUM: 10 * TIME_UNITS.MINUTE,
+  LONG: TIME_UNITS.HOUR,
+  EXTENDED: TIME_UNITS.DAY,
+  WEEKLY: TIME_UNITS.WEEK,
+  AI_RESPONSE: 5 * TIME_UNITS.MINUTE,
+  COST_TRACKING: TIME_UNITS.MINUTE,
+} as const;
+
+export const RATE_LIMIT_WINDOWS = {
+  DEFAULT: TIME_UNITS.MINUTE,
+  SHORT: 5 * TIME_UNITS.SECOND,
+  STANDARD: TIME_UNITS.MINUTE,
+  LONG: TIME_UNITS.HOUR,
+} as const;
+
+export const RETRY_DELAYS = {
+  INITIAL: TIME_UNITS.SECOND,
+  MAX: 10 * TIME_UNITS.SECOND,
+  POLLING: 100, // milliseconds
+} as const;
+
+export const UI_DURATIONS = {
+  FAST: 150,
+  NORMAL: 300,
+  SLOW: 500,
+  TOAST: 3000,
+  TOOLTIP: 300,
+  COPY_FEEDBACK: 2000,
+  BLUEPRINT_GENERATION: 2000,
+  ALERT_EXIT: 200,
+  ERROR_RELOAD: 3000,
+} as const;
+
+export const CIRCUIT_BREAKER_TIMES = {
+  DEFAULT_RESET: TIME_UNITS.MINUTE,
+  MONITORING_PERIOD: 10 * TIME_UNITS.SECOND,
+  OPENAI_RESET: TIME_UNITS.MINUTE,
+  GITHUB_RESET: 30 * TIME_UNITS.SECOND,
+  NOTION_RESET: 30 * TIME_UNITS.SECOND,
+  TRELLO_RESET: 20 * TIME_UNITS.SECOND,
+  SUPABASE_RESET: TIME_UNITS.MINUTE,
+} as const;
+
+export const API_TIMEOUTS = {
+  QUICK: 5 * TIME_UNITS.SECOND,
+  STANDARD: 10 * TIME_UNITS.SECOND,
+  DEFAULT: 30 * TIME_UNITS.SECOND,
+  LONG: 30 * TIME_UNITS.SECOND,
+  EXTENDED: TIME_UNITS.MINUTE,
+  OPENAI: TIME_UNITS.MINUTE,
+  NOTION: 30 * TIME_UNITS.SECOND,
+  TRELLO: 15 * TIME_UNITS.SECOND,
+  GITHUB: 30 * TIME_UNITS.SECOND,
+  DATABASE: 10 * TIME_UNITS.SECOND,
+} as const;
+
+export type TimeUnits = typeof TIME_UNITS;
+export type CacheTTL = typeof CACHE_TTL;
+export type RateLimitWindows = typeof RATE_LIMIT_WINDOWS;
+export type RetryDelays = typeof RETRY_DELAYS;
+export type UIDurations = typeof UI_DURATIONS;
+export type CircuitBreakerTimes = typeof CIRCUIT_BREAKER_TIMES;
+export type APITimeouts = typeof API_TIMEOUTS;

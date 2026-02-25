@@ -1,0 +1,83 @@
+# Composite Action: Install OpenCode CLI
+# Purpose: Centralized OpenCode CLI installation to avoid hardcoded URLs
+# Related: Issue #1170 - CI/CD Workflow Reliability
+# Maintainer: DevOps Engineer
+
+name: 'Install OpenCode CLI'
+description: 'Install OpenCode CLI with configurable version and proper error handling'
+
+inputs:
+  version:
+    description: 'OpenCode CLI version to install (default: latest)'
+    required: false
+    default: 'latest'
+  install-url:
+    description: 'URL for OpenCode CLI installation script'
+    required: false
+    default: 'https://opencode.ai/install'
+  cache-key:
+    description: 'Cache key suffix for OpenCode installation'
+    required: false
+    default: 'opencode-cli'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Check if OpenCode is already installed
+      id: check-opencode
+      shell: bash
+      run: |
+        if command -v opencode &> /dev/null; then
+          echo "already-installed=true" >> $GITHUB_OUTPUT
+          echo "✅ OpenCode CLI already installed: $(opencode --version 2>/dev/null || echo 'version unknown')"
+        else
+          echo "already-installed=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Restore OpenCode from cache
+      if: steps.check-opencode.outputs.already-installed != 'true'
+      id: cache-opencode
+      uses: actions/cache@v5
+      with:
+        path: |
+          ~/.opencode
+        key: ${{ inputs.cache-key }}-${{ runner.os }}-${{ inputs.version }}
+        restore-keys: |
+          ${{ inputs.cache-key }}-${{ runner.os }}-
+
+    - name: Install OpenCode CLI
+      if: |
+        steps.check-opencode.outputs.already-installed != 'true' &&
+        steps.cache-opencode.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        echo "📦 Installing OpenCode CLI..."
+        echo "   Version: ${{ inputs.version }}"
+        echo "   Install URL: ${{ inputs.install-url }}"
+
+        # Download and execute installation script
+        curl -fsSL "${{ inputs.install-url }}" | bash
+
+        # Verify installation
+        if ! command -v opencode &> /dev/null; then
+          echo "❌ OpenCode CLI installation failed"
+          exit 1
+        fi
+
+        echo "✅ OpenCode CLI installed successfully"
+        opencode --version 2>/dev/null || echo "Version check skipped"
+
+    - name: Add OpenCode to PATH
+      if: steps.check-opencode.outputs.already-installed != 'true'
+      shell: bash
+      run: |
+        echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+        echo "✅ OpenCode CLI added to PATH"
+
+    - name: Verify OpenCode installation
+      shell: bash
+      run: |
+        opencode --version || echo "⚠️ Version check failed but CLI is available"
+        echo "📍 OpenCode location: $(which opencode 2>/dev/null || echo 'in PATH')"

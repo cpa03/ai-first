@@ -1,0 +1,181 @@
+import { EnvLoader } from './environment';
+
+/**
+ * Export Connectors Configuration
+ * Centralizes all third-party API configurations
+ * Supports environment variable overrides for API URLs
+ */
+
+export const TRELLO_CONFIG = {
+  API: {
+    BASE_URL: EnvLoader.string(
+      'TRELLO_API_BASE_URL',
+      'https://api.trello.com/1'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'TRELLO_AUTH_URL',
+      'https://trello.com/1/authorize'
+    ),
+    /**
+     * Trello API version
+     * Currently at v1 - no breaking changes announced
+     * Env: TRELLO_API_VERSION (default: '1')
+     */
+    VERSION: EnvLoader.string('TRELLO_API_VERSION', '1'),
+  },
+
+  DEFAULTS: {
+    LIST_NAMES: ['To Do', 'In Progress', 'Done'] as const,
+    PROJECT_CARD_TITLE: '📋 Project Overview',
+    BOARD_NAME_TEMPLATE: 'IdeaFlow: {title}',
+  },
+
+  PRIORITY: {
+    /** High priority threshold (1-5) - Env: TRELLO_PRIORITY_HIGH_THRESHOLD (default: 4) */
+    HIGH_THRESHOLD: EnvLoader.number('TRELLO_PRIORITY_HIGH_THRESHOLD', 4, 1, 5),
+    /** Medium priority threshold (1-5) - Env: TRELLO_PRIORITY_MEDIUM_THRESHOLD (default: 2) */
+    MEDIUM_THRESHOLD: EnvLoader.number('TRELLO_PRIORITY_MEDIUM_THRESHOLD', 2, 1, 5),
+    LABELS: {
+      HIGH: 'High Priority',
+      MEDIUM: 'Medium Priority',
+      LOW: 'Low Priority',
+    },
+  },
+
+  APP: {
+    /** Application name for Trello OAuth - Env: TRELLO_APP_NAME (default: 'IdeaFlow') */
+    NAME: EnvLoader.string('TRELLO_APP_NAME', 'IdeaFlow'),
+    EXPIRATION: 'never',
+    RESPONSE_TYPE: 'token',
+    SCOPE: 'read,write',
+  },
+} as const;
+
+export const NOTION_CONFIG = {
+  API: {
+    BASE_URL: EnvLoader.string(
+      'NOTION_API_BASE_URL',
+      'https://api.notion.com/v1'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'NOTION_AUTH_URL',
+      'https://api.notion.com/v1/oauth/authorize'
+    ),
+    VERSION: EnvLoader.string('NOTION_API_VERSION', '2022-06-28'),
+  },
+
+  DEFAULTS: {
+    SCOPE: 'read,write',
+    PAGE_TITLE_TEMPLATE: 'Project: {title}',
+    DATABASE_TITLE: 'Tasks',
+  },
+
+  PROPERTIES: {
+    TASK_NAME: 'Name',
+    STATUS: 'Status',
+    PRIORITY: 'Priority',
+    DESCRIPTION: 'Description',
+  },
+
+  STATUS_OPTIONS: {
+    BACKLOG: 'To Do',
+    IN_PROGRESS: 'In Progress',
+    DONE: 'Done',
+  },
+} as const;
+
+export const GITHUB_CONFIG = {
+  API: {
+    BASE_URL: EnvLoader.string('GITHUB_API_BASE_URL', 'https://api.github.com'),
+    AUTH_URL: EnvLoader.string(
+      'GITHUB_AUTH_URL',
+      'https://github.com/login/oauth/authorize'
+    ),
+    /**
+     * GitHub REST API version for X-GitHub-Api-Version header
+     * See: https://docs.github.com/rest/about-the-rest-api/api-versions
+     * Env: GITHUB_API_VERSION (default: '2022-11-28')
+     */
+    VERSION: EnvLoader.string('GITHUB_API_VERSION', '2022-11-28'),
+  },
+
+  DEFAULTS: {
+    REPO_NAME_TEMPLATE: 'ideaflow-{title}',
+    ISSUE_LABEL: 'ideaflow',
+  },
+} as const;
+
+export const LINEAR_CONFIG = {
+  API: {
+    BASE_URL: EnvLoader.string(
+      'LINEAR_API_BASE_URL',
+      'https://api.linear.app/graphql'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'LINEAR_AUTH_URL',
+      'https://linear.app/oauth/authorize'
+    ),
+  },
+
+  DEFAULTS: {
+    PROJECT_NAME_TEMPLATE: 'IdeaFlow: {title}',
+    ISSUE_STATE_TODO: 'Backlog',
+    ISSUE_STATE_IN_PROGRESS: 'In Progress',
+    ISSUE_STATE_DONE: 'Done',
+  },
+} as const;
+
+export const ASANA_CONFIG = {
+  API: {
+    BASE_URL: EnvLoader.string(
+      'ASANA_API_BASE_URL',
+      'https://app.asana.com/api/1.0'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'ASANA_AUTH_URL',
+      'https://app.asana.com/-/oauth_authorize'
+    ),
+  },
+
+  DEFAULTS: {
+    PROJECT_NAME_TEMPLATE: 'IdeaFlow: {title}',
+    TASK_SECTIONS: ['To Do', 'In Progress', 'Done'],
+  },
+} as const;
+
+export const GOOGLE_TASKS_CONFIG = {
+  API: {
+    BASE_URL: EnvLoader.string(
+      'GOOGLE_TASKS_API_BASE_URL',
+      'https://www.googleapis.com/tasks/v1'
+    ),
+    AUTH_URL: EnvLoader.string(
+      'GOOGLE_AUTH_URL',
+      'https://accounts.google.com/o/oauth2/v2/auth'
+    ),
+    TOKEN_URL: EnvLoader.string(
+      'GOOGLE_TOKEN_URL',
+      'https://oauth2.googleapis.com/token'
+    ),
+    SCOPE: EnvLoader.string(
+      'GOOGLE_TASKS_SCOPE',
+      'https://www.googleapis.com/auth/tasks'
+    ),
+  },
+
+  DEFAULTS: {
+    TASK_LIST_TITLE: 'IdeaFlow Tasks',
+    ACCESS_TYPE: 'offline',
+    PROMPT: 'consent',
+    INCLUDE_GRANTED_SCOPES: 'true',
+  },
+} as const;
+
+export type ExportConnectorConfig = {
+  trello: typeof TRELLO_CONFIG;
+  notion: typeof NOTION_CONFIG;
+  github: typeof GITHUB_CONFIG;
+  linear: typeof LINEAR_CONFIG;
+  asana: typeof ASANA_CONFIG;
+  googleTasks: typeof GOOGLE_TASKS_CONFIG;
+};

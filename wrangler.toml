@@ -1,0 +1,172 @@
+# ============================================================
+# Cloudflare Workers Configuration for OpenNext
+# ============================================================
+# This project uses @opennextjs/cloudflare (recommended) instead of
+# the deprecated @cloudflare/next-on-pages package.
+#
+# @see https://opennext.js.org/cloudflare
+# @see https://developers.cloudflare.com/workers/wrangler/configuration/
+#
+# Best Practices Applied:
+# - nodejs_compat: Enables Node.js APIs in Workers
+# - nodejs_als: Enables Node.js AsyncLocalStorage for Next.js
+# - global_fetch_strictly_public: Security flag for fetch requests
+# - upload_source_maps: Enables source maps for production debugging
+# - minify: Reduces bundle size for faster cold starts
+# - Static assets served via Workers with proper caching (_headers)
+# - CPU limits: Configured for optimal free tier usage
+# - Smart placement: Optimizes worker location for performance
+# - send_metrics: Disabled for privacy (no anonymous usage data)
+# - Observability: Enabled for production debugging
+# ============================================================
+
+name = "ai-first"
+compatibility_date = "2026-02-19"
+compatibility_flags = ["nodejs_compat", "nodejs_als", "global_fetch_strictly_public"]
+
+# Source maps for production debugging
+# Uploads source maps to enable readable stack traces in logs
+# @see https://developers.cloudflare.com/workers/configuration/smart-placement/#source-maps
+upload_source_maps = true
+
+# Minify output for smaller bundle sizes and faster cold starts
+# @see https://developers.cloudflare.com/workers/wrangler/configuration/#minify
+minify = true
+
+# Privacy: Disable anonymous usage metrics collection
+# @see https://developers.cloudflare.com/workers/wrangler/configuration/#send_metrics
+send_metrics = false
+
+# CPU limit for Workers (milliseconds)
+# Free tier: 10ms, Paid: 50ms (bundled), 900s (unbound)
+# Setting this helps catch performance issues early
+[limits]
+cpu_ms = 50
+
+# Smart placement optimizes worker location for better performance
+# @see https://developers.cloudflare.com/workers/configuration/smart-placement/
+[placement]
+mode = "smart"
+
+# OpenNext outputs the worker to .open-next/worker.js
+main = ".open-next/worker.js"
+
+# Assets binding for static files served by Cloudflare
+[assets]
+directory = ".open-next/assets"
+binding = "ASSETS"
+
+# ============================================================
+# Production Environment
+# ============================================================
+[env.production]
+name = "ai-first"
+
+# Observability for production debugging
+# @see https://developers.cloudflare.com/workers/observability/
+[env.production.observability]
+enabled = true
+head_sampling_rate = 0.1
+
+# Logpush for production logs (requires Cloudflare paid plan)
+# Sends logs to external destinations (S3, R2, etc.)
+# @see https://developers.cloudflare.com/workers/observability/logpush/
+# [env.production.logpush]
+# enabled = true
+# destination = "your-logpush-destination"
+
+# Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
+# DO NOT hardcode sensitive values here
+[env.production.vars]
+# NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
+
+# Route configuration for custom domain (optional)
+# Uncomment and configure when ready to deploy to custom domain
+# @see https://developers.cloudflare.com/workers/configuration/routing/routes/
+# [[env.production.routes]]
+# pattern = "ideaflow.ai/*"
+# zone_name = "ideaflow.ai"
+
+# ============================================================
+# Staging Environment
+# ============================================================
+[env.staging]
+name = "ai-first-staging"
+
+# Observability for staging - full sampling for debugging
+[env.staging.observability]
+enabled = true
+head_sampling_rate = 1.0  # 100% sampling in staging
+
+[env.staging.vars]
+# NEXT_PUBLIC_APP_URL = "https://staging.ideaflow.ai"
+
+# ============================================================
+# Preview Environment (for PR deployments)
+# ============================================================
+[env.preview]
+name = "ai-first-preview"
+
+# Observability for preview - moderate sampling
+[env.preview.observability]
+enabled = true
+head_sampling_rate = 0.5  # 50% sampling for debugging with cost control
+
+[env.preview.vars]
+# NEXT_PUBLIC_APP_URL = "https://preview.ai-first.pages.dev"
+
+# ============================================================
+# Cloudflare AI Binding (Optional)
+# ============================================================
+# Uncomment to enable Cloudflare AI for local inference
+# @see https://developers.cloudflare.com/workers-ai/
+# [ai]
+# binding = "AI"
+
+# ============================================================
+# Cloudflare D1 Database Binding (Optional)
+# ============================================================
+# D1 is Cloudflare's serverless SQL database at the edge.
+# Useful for: session storage, user preferences, edge-optimized data.
+# To enable:
+# 1. Create D1 database: wrangler d1 create ai-first-db
+# 2. Copy the database_id and uncomment below
+# @see https://developers.cloudflare.com/d1/
+# [[d1_databases]]
+# binding = "DB"
+# database_name = "ai-first-db"
+# database_id = "your-database-id"
+# migrations_dir = "migrations"
+
+# ============================================================
+# Cloudflare KV Namespace Binding (Optional)
+# ============================================================
+# KV provides edge key-value storage for caching.
+# Useful for: session caching, API response caching, feature flags.
+# To enable:
+# 1. Create KV namespace: wrangler kv:namespace create "CACHE_KV"
+# 2. Copy the ID and uncomment below
+# @see https://developers.cloudflare.com/kv/
+# [[kv_namespaces]]
+# binding = "CACHE_KV"
+# id = "your-kv-namespace-id"
+
+# ============================================================
+# Deployment Notes
+# ============================================================
+# Build command: npm run build:cloudflare
+# Deploy command: npm run deploy:cloudflare
+# Preview locally: npm run preview:cloudflare
+#
+# Environment Variable Management:
+# - Use `wrangler secret put` for secure runtime variables
+# - Or use scripts/setup-cloudflare-env.sh for automated setup
+# - This is a Workers deployment (not Pages), so use Workers secrets API
+#
+# Required environment variables in Cloudflare dashboard:
+# - NEXT_PUBLIC_SUPABASE_URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY
+# - SUPABASE_SERVICE_ROLE_KEY
+# - OPENAI_API_KEY (or ANTHROPIC_API_KEY)
+# - COST_LIMIT_DAILY
+# - NEXT_PUBLIC_APP_URL

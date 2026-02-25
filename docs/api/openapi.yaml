@@ -1,0 +1,2616 @@
+openapi: 3.0.3
+info:
+  title: IdeaFlow API
+  description: |
+    API for turning raw ideas into production-ready plans with AI-powered clarification and breakdown.
+    
+    ## Response Headers
+    
+    All API responses include standard headers for tracing, rate limiting, and performance monitoring:
+    
+    | Header | Description |
+    |--------|-------------|
+    | `X-Request-ID` | Unique identifier for each request (useful for debugging) |
+    | `X-Correlation-ID` | Correlation ID for tracing requests across services |
+    | `X-RateLimit-Limit` | Maximum requests allowed per window |
+    | `X-RateLimit-Remaining` | Requests remaining in current window |
+    | `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit resets |
+    | `X-Response-Time` | Request processing time in milliseconds |
+    | `X-API-Version` | Current API version (semantic versioning) |
+    
+    Error responses additionally include `X-Error-Code` and `X-Retryable` headers.
+    See the `CommonResponseHeaders` and `ErrorResponseHeaders` schemas for details.
+  version: 1.0.0
+  contact:
+    name: IdeaFlow Team
+    url: https://github.com/cpa03/ai-first
+  license:
+    name: MIT
+
+servers:
+  - url: http://localhost:3000
+    description: |
+      Local development server (default).
+
+      **Configuration:** Set via `BASE_URL` or `NEXT_PUBLIC_APP_URL` environment variable.
+      See `config/.env.example` for all available options.
+
+      Example: `BASE_URL=http://localhost:3000 npm run dev`
+  - url: https://{environment}.vercel.app
+    description: Vercel preview deployment
+    variables:
+      environment:
+        description: Vercel deployment URL (e.g., your-app-git-main-username)
+        default: your-app
+  - url: https://{domain}
+    description: |
+      Production server.
+
+      **Configuration:** Set via `NEXT_PUBLIC_APP_URL` environment variable.
+      Example: `NEXT_PUBLIC_APP_URL=https://ideaflow.ai`
+    variables:
+      domain:
+        description: Production domain (e.g., ideaflow.ai)
+        default: ideaflow.ai
+
+tags:
+  - name: Clarification
+    description: AI-powered idea clarification and question generation
+  - name: Breakdown
+    description: Automatic idea decomposition into tasks and deliverables
+  - name: Health
+    description: System health monitoring and status checks
+  - name: Ideas
+    description: Ideas management and CRUD operations
+  - name: Tasks
+    description: Task management within deliverables
+  - name: Deliverables
+    description: Deliverable management and task creation
+  - name: Metrics
+    description: Prometheus metrics for monitoring
+  - name: Security
+    description: Security-related endpoints (CSP reporting)
+  - name: Admin
+    description: Administrative endpoints requiring elevated privileges
+
+paths:
+  /api/clarify:
+    post:
+      tags:
+        - Clarification
+      summary: Start clarification with generated questions
+      description: Generates clarifying questions based on the provided idea
+      operationId: startClarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartClarificationRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartClarificationResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/clarify/start:
+    post:
+      tags:
+        - Clarification
+      summary: Start clarification session
+      description: Alternative endpoint to start a clarification session
+      operationId: startClarificationSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartClarificationSessionRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartClarificationSessionResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Clarification
+      summary: Get clarification session
+      description: Retrieve an existing clarification session by idea ID
+      operationId: getClarificationSession
+      parameters:
+        - name: ideaId
+          in: query
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetClarificationSessionResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/clarify/answer:
+    post:
+      tags:
+        - Clarification
+      summary: Submit answer to question
+      description: Submit user's answer to a specific clarifying question
+      operationId: submitAnswer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubmitAnswerRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubmitAnswerResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/clarify/complete:
+    post:
+      tags:
+        - Clarification
+      summary: Complete clarification
+      description: Complete the clarification process and generate refined idea
+      operationId: completeClarification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompleteClarificationRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompleteClarificationResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/breakdown:
+    post:
+      tags:
+        - Breakdown
+      summary: Start idea breakdown
+      description: Decompose an idea into sub-ideas, deliverables, and tasks
+      operationId: startBreakdown
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StartBreakdownRequest'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartBreakdownResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - Breakdown
+      summary: Get breakdown session
+      description: Retrieve an existing breakdown session by idea ID
+      operationId: getBreakdownSession
+      parameters:
+        - name: ideaId
+          in: query
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetBreakdownSessionResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/health:
+    get:
+      tags:
+        - Health
+      summary: Environment health check
+      description: Check environment configuration and required variables
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+
+  /api/health/database:
+    get:
+      tags:
+        - Health
+      summary: Database health check
+      description: Check database connectivity and performance
+      operationId: databaseHealthCheck
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatabaseHealthCheckResponse'
+
+  /api/health/detailed:
+    get:
+      tags:
+        - Health
+      summary: Comprehensive health check
+      description: Check all system components and services
+      operationId: detailedHealthCheck
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedHealthCheckResponse'
+        '503':
+          description: System is unhealthy or degraded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DetailedHealthCheckResponse'
+
+  /api/health/live:
+    get:
+      tags:
+        - Health
+      summary: Liveness probe
+      description: Kubernetes liveness probe - checks if the container should be restarted
+      operationId: livenessProbe
+      responses:
+        '200':
+          description: Application is alive
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LivenessProbeResponse'
+
+  /api/health/ready:
+    get:
+      tags:
+        - Health
+      summary: Readiness probe
+      description: Kubernetes readiness probe - checks if the container can receive traffic
+      operationId: readinessProbe
+      responses:
+        '200':
+          description: Application is ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessProbeResponse'
+        '503':
+          description: Application is not ready
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadinessProbeResponse'
+
+  /api/health/integrations:
+    get:
+      tags:
+        - Health
+      summary: Integrations health check
+      description: |
+        Check the health status of all external integrations and services.
+        Returns the status of circuit breakers, export connectors, and external APIs.
+        Useful for monitoring external service dependencies.
+      operationId: integrationsHealthCheck
+      responses:
+        '200':
+          description: Integrations health check successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationsHealthResponse'
+        '503':
+          description: One or more integrations are unhealthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntegrationsHealthResponse'
+
+  /api/ideas:
+    get:
+      tags:
+        - Ideas
+      summary: List ideas
+      description: Retrieve a paginated list of ideas for the authenticated user
+      operationId: listIdeas
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          description: Filter by idea status
+          schema:
+            type: string
+            enum: [draft, clarified, breakdown, completed, all]
+            example: draft
+        - name: limit
+          in: query
+          description: Maximum number of results to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+            example: 10
+        - name: offset
+          in: query
+          description: Number of results to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+            example: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListIdeasResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - Ideas
+      summary: Create idea
+      description: Create a new idea for the authenticated user
+      operationId: createIdea
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateIdeaRequest'
+      responses:
+        '201':
+          description: Idea created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateIdeaResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/ideas/{id}:
+    get:
+      tags:
+        - Ideas
+      summary: Get idea
+      description: Retrieve a specific idea by ID
+      operationId: getIdea
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIdeaResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Ideas
+      summary: Update idea
+      description: Update an existing idea
+      operationId: updateIdea
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateIdeaRequest'
+      responses:
+        '200':
+          description: Idea updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateIdeaResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Ideas
+      summary: Delete idea
+      description: Soft delete an idea
+      operationId: deleteIdea
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Idea deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteIdeaResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tasks/{id}:
+    get:
+      tags:
+        - Tasks
+      summary: Get task
+      description: Retrieve a specific task by ID with ownership information
+      operationId: getTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the task
+          schema:
+            type: string
+            example: task_123
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetTaskResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Tasks
+      summary: Update task
+      description: Update an existing task
+      operationId: updateTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the task
+          schema:
+            type: string
+            example: task_123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTaskResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Tasks
+      summary: Delete task
+      description: Soft delete a task
+      operationId: deleteTask
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the task
+          schema:
+            type: string
+            example: task_123
+      responses:
+        '200':
+          description: Task deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteTaskResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/tasks/{id}/status:
+    patch:
+      tags:
+        - Tasks
+      summary: Update task status
+      description: Update only the status of a task
+      operationId: updateTaskStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the task
+          schema:
+            type: string
+            example: task_123
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTaskStatusRequest'
+      responses:
+        '200':
+          description: Task status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateTaskStatusResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/deliverables/{id}/tasks:
+    post:
+      tags:
+        - Deliverables
+      summary: Create task in deliverable
+      description: Create a new task within a deliverable
+      operationId: createTaskInDeliverable
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the deliverable
+          schema:
+            type: string
+            example: deliverable_1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateTaskResponse'
+        '400':
+          description: Bad request - validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Deliverable not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/metrics:
+    get:
+      tags:
+        - Metrics
+      summary: Prometheus metrics
+      description: Get Prometheus-compatible metrics for monitoring
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Prometheus metrics in text format
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: |
+                  # HELP http_request_duration_seconds Duration of HTTP requests in seconds
+                  # TYPE http_request_duration_seconds histogram
+                  http_request_duration_seconds_bucket{method="GET",route="/api/health",status_code="200",le="0.001"} 15
+                  http_request_duration_seconds_bucket{method="GET",route="/api/health",status_code="200",le="0.005"} 42
+
+  /api/ideas/{id}/session:
+    get:
+      tags:
+        - Ideas
+      summary: Get idea session
+      description: Retrieve the clarification/breakdown session associated with an idea
+      operationId: getIdeaSession
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Session retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIdeaSessionResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea or session not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/ideas/{id}/tasks:
+    get:
+      tags:
+        - Ideas
+      summary: Get idea tasks
+      description: Retrieve all tasks for an idea with deliverables and progress summary
+      operationId: getIdeaTasks
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Unique identifier for the idea
+          schema:
+            type: string
+            example: idea_1704625200000_abc123def
+      responses:
+        '200':
+          description: Tasks retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetIdeaTasksResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Idea or deliverables not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/csp-report:
+    post:
+      tags:
+        - Security
+      summary: CSP violation report
+      description: |
+        Content Security Policy violation report endpoint.
+        Browsers automatically send reports to this endpoint when CSP violations occur.
+        Used for security monitoring and incident response.
+      operationId: reportCspViolation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CspReportRequest'
+          application/csp-report:
+            schema:
+              $ref: '#/components/schemas/CspReportRequest'
+      responses:
+        '204':
+          description: Report received (no content returned)
+    options:
+      tags:
+        - Security
+      summary: CSP report CORS preflight
+      description: CORS preflight handler for CSP report endpoint
+      operationId: cspReportPreflight
+      responses:
+        '204':
+          description: CORS preflight successful
+
+  /api/admin/rate-limit:
+    get:
+      tags:
+        - Admin
+      summary: Get rate limit statistics
+      description: |
+        Retrieve current rate limiting statistics including total entries,
+        top users, and configuration details. Requires admin authentication.
+      operationId: getRateLimitStats
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Rate limit statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RateLimitStatsResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Admin
+      summary: Clear rate limit store
+      description: |
+        Clear all rate limit entries from the store.
+        Use with caution - this resets all rate limiting state.
+        Requires admin authentication.
+      operationId: clearRateLimitStore
+      security:
+        - ApiKeyAuth: []
+      responses:
+        '200':
+          description: Rate limit store cleared successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClearRateLimitResponse'
+        '401':
+          description: Unauthorized - Admin access required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    ApiResponse:
+      type: object
+      required:
+        - success
+        - data
+        - requestId
+        - timestamp
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+
+    Idea:
+      type: object
+      properties:
+        id:
+          type: string
+          example: idea_1704625200000_abc123def
+        user_id:
+          type: string
+          example: user_123
+        title:
+          type: string
+          example: My New SaaS Product
+        raw_text:
+          type: string
+          example: I want to build a landing page for my new SaaS product
+        status:
+          type: string
+          enum: [draft, clarified, breakdown, completed]
+          example: draft
+        created_at:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+        deleted_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: null
+
+    CreateIdeaRequest:
+      type: object
+      required:
+        - idea
+      properties:
+        idea:
+          type: string
+          description: Raw idea text (10-10000 characters)
+          minLength: 10
+          maxLength: 10000
+          example: I want to build a landing page for my new SaaS product
+
+    CreateIdeaResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id:
+                  type: string
+                  example: idea_1704625200000_abc123def
+                title:
+                  type: string
+                  example: My New SaaS Product
+                status:
+                  type: string
+                  example: draft
+                createdAt:
+                  type: string
+                  format: date-time
+                  example: '2026-01-07T00:00:00Z'
+
+    ListIdeasResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                ideas:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      title:
+                        type: string
+                      status:
+                        type: string
+                        enum: [draft, clarified, breakdown, completed]
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+                pagination:
+                  type: object
+                  properties:
+                    total:
+                      type: integer
+                      example: 42
+                    limit:
+                      type: integer
+                      example: 20
+                    offset:
+                      type: integer
+                      example: 0
+                    hasMore:
+                      type: boolean
+                      example: true
+
+    GetIdeaResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Idea'
+
+    UpdateIdeaRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: New title for the idea
+          maxLength: 255
+          example: Updated SaaS Landing Page
+        status:
+          type: string
+          enum: [draft, clarified, breakdown, completed]
+          description: New status for the idea
+          example: clarified
+
+    UpdateIdeaResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                status:
+                  type: string
+                createdAt:
+                  type: string
+                  format: date-time
+                updatedAt:
+                  type: string
+                  format: date-time
+
+    DeleteIdeaResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Idea deleted successfully
+                id:
+                  type: string
+                  example: idea_1704625200000_abc123def
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: task_123
+        deliverable_id:
+          type: string
+          example: deliverable_1
+        title:
+          type: string
+          example: Design Hero Section
+        description:
+          type: string
+          example: Create the main hero section with CTA
+        status:
+          type: string
+          enum: [todo, in_progress, completed]
+          example: todo
+        assignee:
+          type: string
+          nullable: true
+          example: user_123
+        estimate:
+          type: number
+          example: 8
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        actual_hours:
+          type: number
+          nullable: true
+        completion_percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 0
+        priority_score:
+          type: number
+        complexity_score:
+          type: number
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+          example: low
+        tags:
+          type: array
+          items:
+            type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    TaskWithOwnership:
+      allOf:
+        - $ref: '#/components/schemas/Task'
+        - type: object
+          properties:
+            idea:
+              type: object
+              properties:
+                user_id:
+                  type: string
+                  example: user_123
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: Updated Task Title
+        description:
+          type: string
+          example: Updated task description
+        status:
+          type: string
+          enum: [todo, in_progress, completed]
+          example: in_progress
+        assignee:
+          type: string
+          nullable: true
+        estimate:
+          type: number
+          minimum: 0
+          example: 12
+        start_date:
+          type: string
+          format: date-time
+          nullable: true
+        end_date:
+          type: string
+          format: date-time
+          nullable: true
+        actual_hours:
+          type: number
+          nullable: true
+        completion_percentage:
+          type: integer
+          minimum: 0
+          maximum: 100
+          example: 50
+        priority_score:
+          type: number
+        complexity_score:
+          type: number
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+        tags:
+          type: array
+          items:
+            type: string
+          nullable: true
+        custom_fields:
+          type: object
+          nullable: true
+        milestone_id:
+          type: string
+          nullable: true
+
+    UpdateTaskResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                task:
+                  $ref: '#/components/schemas/Task'
+
+    GetTaskResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                task:
+                  $ref: '#/components/schemas/TaskWithOwnership'
+
+    DeleteTaskResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                message:
+                  type: string
+                  example: Task deleted successfully
+                taskId:
+                  type: string
+                  example: task_123
+
+    UpdateTaskStatusRequest:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          enum: [todo, in_progress, completed]
+          description: New status for the task
+          example: completed
+
+    UpdateTaskStatusResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                task:
+                  $ref: '#/components/schemas/Task'
+                message:
+                  type: string
+                  example: Task status updated to completed
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          description: Title for the new task
+          maxLength: 255
+          example: Design Hero Section
+        description:
+          type: string
+          description: Optional task description
+          example: Create the main hero section with CTA
+        status:
+          type: string
+          enum: [todo, in_progress, completed]
+          default: todo
+          example: todo
+        assignee:
+          type: string
+          nullable: true
+          example: user_123
+        estimate:
+          type: number
+          minimum: 0
+          description: Estimated hours for the task
+          example: 8
+        risk_level:
+          type: string
+          enum: [low, medium, high]
+          default: low
+          example: low
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['design', 'frontend']
+
+    CreateTaskResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                task:
+                  $ref: '#/components/schemas/Task'
+                message:
+                  type: string
+                  example: Task created successfully
+
+    LivenessProbeResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: ok
+                timestamp:
+                  type: string
+                  format: date-time
+                service:
+                  type: string
+                  example: liveness
+                environment:
+                  type: string
+                  example: production
+
+    ReadinessProbeResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [ready, not_ready]
+                  example: ready
+                timestamp:
+                  type: string
+                  format: date-time
+                service:
+                  type: string
+                  example: readiness
+                environment:
+                  type: string
+                  example: production
+                checks:
+                  type: object
+                  properties:
+                    database:
+                      type: object
+                      properties:
+                        status:
+                          type: string
+                          enum: [ready, not_ready]
+                        responseTime:
+                          type: integer
+                          description: Response time in milliseconds
+                        error:
+                          type: string
+                          nullable: true
+
+    StartClarificationRequest:
+      type: object
+      required:
+        - idea
+      properties:
+        idea:
+          type: string
+          description: Raw idea text (10-10000 characters)
+          minLength: 10
+          maxLength: 10000
+          example: I want to build a landing page for my new SaaS product
+        ideaId:
+          type: string
+          description: Optional unique identifier (auto-generated if not provided)
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+
+    StartClarificationResponse:
+      type: object
+      required:
+        - success
+        - questions
+        - ideaId
+        - status
+        - confidence
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        status:
+          type: string
+          enum: [in_progress, completed]
+          example: in_progress
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.85
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    Question:
+      type: object
+      required:
+        - id
+        - question
+        - type
+      properties:
+        id:
+          type: string
+          example: target_audience
+        question:
+          type: string
+          example: Who is your target audience?
+        type:
+          type: string
+          enum: [text, textarea, select, multiselect]
+          example: select
+        options:
+          type: array
+          items:
+            type: string
+          example: ['Developers', 'Marketers', 'Small Business Owners']
+
+    StartClarificationSessionRequest:
+      type: object
+      required:
+        - ideaId
+        - ideaText
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+        ideaText:
+          type: string
+          description: Raw idea text (10-10000 characters)
+          minLength: 10
+          maxLength: 10000
+          example: I want to build a landing page for my new SaaS product
+
+    StartClarificationSessionResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/ClarificationSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    ClarificationSession:
+      type: object
+      required:
+        - ideaId
+        - ideaText
+        - status
+        - questions
+        - answers
+      properties:
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        ideaText:
+          type: string
+          example: I want to build a landing page for my new SaaS product
+        status:
+          type: string
+          enum: [in_progress, completed]
+          example: in_progress
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+        answers:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            target_audience: Developers
+
+    GetClarificationSessionResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/ClarificationSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    SubmitAnswerRequest:
+      type: object
+      required:
+        - ideaId
+        - questionId
+        - answer
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+        questionId:
+          type: string
+          description: Unique identifier for the question
+          example: target_audience
+        answer:
+          type: string
+          description: User's answer to the question (max 5000 characters)
+          maxLength: 5000
+          example: Developers and technical teams
+
+    SubmitAnswerResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/ClarificationSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    CompleteClarificationRequest:
+      type: object
+      required:
+        - ideaId
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+
+    CompleteClarificationResponse:
+      type: object
+      required:
+        - success
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        refinedIdea:
+          type: string
+          description: Refined idea based on user responses
+          example: A modern landing page for SaaS product targeting developers
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.92
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    StartBreakdownRequest:
+      type: object
+      required:
+        - ideaId
+        - refinedIdea
+      properties:
+        ideaId:
+          type: string
+          description: Unique identifier for the idea
+          pattern: '^[a-zA-Z0-9_-]+$'
+          maxLength: 100
+          example: idea_1704625200000_abc123def
+        refinedIdea:
+          type: string
+          description: Refined idea from clarification process
+          minLength: 10
+          maxLength: 10000
+          example: A modern landing page for SaaS product targeting developers
+        userResponses:
+          type: object
+          description: User's responses to clarification questions
+          additionalProperties:
+            type: string
+          example:
+            target_audience: Developers
+            timeline: 4 weeks
+        options:
+          type: object
+          description: Additional options for breakdown
+          properties:
+            complexity:
+              type: string
+              enum: ['simple', 'medium', 'complex']
+              description: Complexity level for the breakdown
+              example: 'medium'
+            teamSize:
+              type: number
+              description: Number of team members available for the project
+              example: 4
+            timelineWeeks:
+              type: number
+              description: Desired timeline in weeks
+              example: 12
+            constraints:
+              type: array
+              description: Array of project constraints or requirements
+              items:
+                type: string
+              example: ['Must use TypeScript', 'Mobile-first design']
+
+    StartBreakdownResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/BreakdownSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    BreakdownSession:
+      type: object
+      required:
+        - ideaId
+        - refinedIdea
+        - status
+      properties:
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        refinedIdea:
+          type: string
+          example: A modern landing page for SaaS product targeting developers
+        status:
+          type: string
+          enum: [in_progress, completed]
+          example: in_progress
+        subIdeas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubIdea'
+        deliverables:
+          type: array
+          items:
+            $ref: '#/components/schemas/Deliverable'
+
+    SubIdea:
+      type: object
+      required:
+        - id
+        - title
+        - description
+      properties:
+        id:
+          type: string
+          example: subidea_1
+        title:
+          type: string
+          example: Design System
+        description:
+          type: string
+          example: Create a consistent design system for the landing page
+
+    Deliverable:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - priority
+        - estimateHours
+      properties:
+        id:
+          type: string
+          example: deliverable_1
+        title:
+          type: string
+          example: Hero Section Design
+        description:
+          type: string
+          example: Design the main hero section with CTA
+        priority:
+          type: string
+          enum: [high, medium, low]
+          example: high
+        estimateHours:
+          type: number
+          example: 8
+
+    GetBreakdownSessionResponse:
+      type: object
+      required:
+        - success
+        - session
+        - requestId
+      properties:
+        success:
+          type: boolean
+          example: true
+        session:
+          $ref: '#/components/schemas/BreakdownSession'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    HealthCheckResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - timestamp
+            - environment
+            - checks
+          properties:
+            status:
+              type: string
+              enum: [healthy, unhealthy, warning]
+              example: healthy
+            timestamp:
+              type: string
+              format: date-time
+              example: '2026-01-07T00:00:00Z'
+            environment:
+              type: string
+              example: production
+            checks:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  present:
+                    type: boolean
+                  required:
+                    type: boolean
+            summary:
+              type: object
+              properties:
+                requiredVarsSet:
+                  type: integer
+                  example: 5
+                totalRequiredVars:
+                  type: integer
+                  example: 5
+                hasAIProvider:
+                  type: boolean
+                  example: true
+                environment:
+                  type: string
+                  example: production
+            error:
+              type: string
+              example: Missing required environment variables
+            warning:
+              type: string
+              example: No AI provider configured
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    DatabaseHealthCheckResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - service
+            - timestamp
+            - environment
+          properties:
+            status:
+              type: string
+              enum: [healthy, unhealthy]
+              example: healthy
+            service:
+              type: string
+              example: database
+            timestamp:
+              type: string
+              format: date-time
+              example: '2026-01-07T00:00:00Z'
+            environment:
+              type: string
+              example: production
+            latency:
+              type: integer
+              description: Response time in milliseconds
+              example: 15
+            error:
+              type: string
+              example: Connection timeout
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    DetailedHealthCheckResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - timestamp
+            - version
+            - uptime
+            - checks
+          properties:
+            status:
+              type: string
+              enum: [healthy, degraded, unhealthy]
+              example: healthy
+            timestamp:
+              type: string
+              format: date-time
+              example: '2026-01-07T00:00:00Z'
+            version:
+              type: string
+              example: 1.0.0
+            uptime:
+              type: number
+              format: float
+              description: Server uptime in seconds
+              example: 86400.5
+            checks:
+              type: object
+              required:
+                - database
+                - ai
+                - exports
+                - circuitBreakers
+              properties:
+                database:
+                  $ref: '#/components/schemas/ServiceHealth'
+                ai:
+                  $ref: '#/components/schemas/ServiceHealth'
+                exports:
+                  $ref: '#/components/schemas/ServiceHealth'
+                circuitBreakers:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/CircuitBreakerHealth'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    ServiceHealth:
+      type: object
+      required:
+        - status
+        - lastChecked
+      properties:
+        status:
+          type: string
+          enum: [up, down, degraded]
+          example: up
+        latency:
+          type: integer
+          description: Response time in milliseconds
+          example: 45
+        error:
+          type: string
+          example: Connection timeout
+        lastChecked:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+
+    CircuitBreakerHealth:
+      type: object
+      required:
+        - service
+        - state
+        - failures
+      properties:
+        service:
+          type: string
+          example: openai
+        state:
+          type: string
+          enum: [closed, open, half-open]
+          example: closed
+        failures:
+          type: integer
+          example: 2
+        nextAttemptTime:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:05:00Z'
+
+    IntegrationsHealthResponse:
+      type: object
+      required:
+        - success
+        - data
+      properties:
+        success:
+          type: boolean
+          example: true
+        data:
+          type: object
+          required:
+            - status
+            - timestamp
+            - version
+            - integrations
+            - summary
+          properties:
+            status:
+              type: string
+              enum: [healthy, degraded, unhealthy]
+              description: Overall health status based on all integrations
+              example: healthy
+            timestamp:
+              type: string
+              format: date-time
+              example: '2026-01-07T00:00:00Z'
+            version:
+              type: string
+              description: API version
+              example: 1.0.0
+            integrations:
+              type: array
+              description: List of all integration statuses
+              items:
+                $ref: '#/components/schemas/IntegrationStatus'
+            summary:
+              type: object
+              description: Summary counts of integration statuses
+              required:
+                - total
+                - healthy
+                - degraded
+                - unhealthy
+                - unknown
+              properties:
+                total:
+                  type: integer
+                  description: Total number of integrations
+                  example: 8
+                healthy:
+                  type: integer
+                  description: Number of healthy integrations
+                  example: 6
+                degraded:
+                  type: integer
+                  description: Number of degraded integrations
+                  example: 1
+                unhealthy:
+                  type: integer
+                  description: Number of unhealthy integrations
+                  example: 1
+                unknown:
+                  type: integer
+                  description: Number of integrations with unknown status
+                  example: 0
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+
+    IntegrationStatus:
+      type: object
+      required:
+        - service
+        - status
+        - configured
+        - lastChecked
+      properties:
+        service:
+          type: string
+          description: Name of the integration service
+          example: openai
+        status:
+          type: string
+          enum: [healthy, degraded, unhealthy, unknown]
+          description: Health status of the integration
+          example: healthy
+        state:
+          type: string
+          enum: [closed, open, half-open]
+          description: Circuit breaker state (if applicable)
+          example: closed
+        configured:
+          type: boolean
+          description: Whether the integration is configured
+          example: true
+        lastChecked:
+          type: string
+          format: date-time
+          description: Timestamp of last health check
+          example: '2026-01-07T00:00:00Z'
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - code
+        - timestamp
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          example: Request validation failed
+        code:
+          type: string
+          description: Machine-readable error code
+          example: VALIDATION_ERROR
+          enum:
+            - VALIDATION_ERROR
+            - RATE_LIMIT_EXCEEDED
+            - INTERNAL_ERROR
+            - EXTERNAL_SERVICE_ERROR
+            - TIMEOUT_ERROR
+            - AUTHENTICATION_ERROR
+            - AUTHORIZATION_ERROR
+            - NOT_FOUND
+            - CONFLICT
+            - SERVICE_UNAVAILABLE
+            - CIRCUIT_BREAKER_OPEN
+            - RETRY_EXHAUSTED
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: idea
+              message:
+                type: string
+                example: Idea is required and must be a string
+              code:
+                type: string
+                example: REQUIRED_FIELD
+        timestamp:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+        requestId:
+          type: string
+          example: req_1704625200000_abc123def
+        retryable:
+          type: boolean
+          description: Whether the request can be retried
+          example: false
+
+    GetIdeaSessionResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/IdeaSession'
+              nullable: true
+
+    IdeaSession:
+      type: object
+      description: Clarification or breakdown session associated with an idea
+      properties:
+        id:
+          type: string
+          example: session_1704625200000_abc123
+        ideaId:
+          type: string
+          example: idea_1704625200000_abc123def
+        type:
+          type: string
+          enum: [clarification, breakdown]
+          example: clarification
+        status:
+          type: string
+          enum: [in_progress, completed, abandoned]
+          example: in_progress
+        data:
+          type: object
+          description: Session-specific data (questions, answers, deliverables, etc.)
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          example: '2026-01-07T00:00:00Z'
+
+    GetIdeaTasksResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - ideaId
+                - deliverables
+                - summary
+              properties:
+                ideaId:
+                  type: string
+                  example: idea_1704625200000_abc123def
+                deliverables:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/DeliverableWithTasks'
+                summary:
+                  $ref: '#/components/schemas/TasksSummary'
+
+    DeliverableWithTasks:
+      allOf:
+        - $ref: '#/components/schemas/Deliverable'
+        - type: object
+          properties:
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+            progress:
+              type: integer
+              minimum: 0
+              maximum: 100
+              description: Completion percentage for this deliverable
+              example: 45
+            completedCount:
+              type: integer
+              example: 3
+            totalCount:
+              type: integer
+              example: 7
+            totalHours:
+              type: number
+              example: 32.5
+            completedHours:
+              type: number
+              example: 12.0
+
+    TasksSummary:
+      type: object
+      properties:
+        totalDeliverables:
+          type: integer
+          example: 3
+        totalTasks:
+          type: integer
+          example: 15
+        completedTasks:
+          type: integer
+          example: 5
+        totalHours:
+          type: number
+          description: Total estimated hours across all tasks
+          example: 120.5
+        completedHours:
+          type: number
+          description: Estimated hours for completed tasks
+          example: 40.0
+        overallProgress:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: Overall completion percentage
+          example: 33
+
+    CspReportRequest:
+      type: object
+      required:
+        - csp-report
+      properties:
+        csp-report:
+          type: object
+          required:
+            - document-uri
+            - violated-directive
+          properties:
+            document-uri:
+              type: string
+              description: The URI of the document where the violation occurred
+              example: https://example.com/page
+            referrer:
+              type: string
+              description: The referrer of the request
+              example: https://example.com/
+            violated-directive:
+              type: string
+              description: The CSP directive that was violated
+              example: script-src
+            effective-directive:
+              type: string
+              description: The directive that actually enforced the policy
+              example: script-src-elem
+            original-policy:
+              type: string
+              description: The complete CSP policy
+            blocked-uri:
+              type: string
+              description: The URI of the resource that was blocked
+              example: https://evil.com/malware.js
+            status-code:
+              type: integer
+              description: HTTP status code of the request
+              example: 200
+            script-sample:
+              type: string
+              description: First 40 characters of the inline script
+            source-file:
+              type: string
+              description: URL of the file where the violation occurred
+            line-number:
+              type: integer
+              description: Line number in the source file
+            column-number:
+              type: integer
+              description: Column number in the source file
+
+    RateLimitStatsResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - timestamp
+                - totalEntries
+                - expiredEntries
+                - topUsers
+                - rateLimitConfigs
+                - tieredRateLimits
+              properties:
+                timestamp:
+                  type: string
+                  format: date-time
+                  example: '2026-01-07T00:00:00Z'
+                totalEntries:
+                  type: integer
+                  description: Total number of rate limit entries
+                  example: 150
+                expiredEntries:
+                  type: integer
+                  description: Number of expired entries pending cleanup
+                  example: 12
+                entriesByRole:
+                  type: object
+                  additionalProperties:
+                    type: integer
+                  description: Count of entries by user role
+                  example:
+                    anonymous: 50
+                    authenticated: 80
+                    premium: 20
+                topUsers:
+                  type: array
+                  description: Top users by request count
+                  items:
+                    type: object
+                    properties:
+                      identifier:
+                        type: string
+                        example: 192.168.1.1
+                      count:
+                        type: integer
+                        example: 45
+                rateLimitConfigs:
+                  type: object
+                  description: Active rate limit configurations
+                  additionalProperties:
+                    type: object
+                    properties:
+                      windowMs:
+                        type: integer
+                        example: 60000
+                      maxRequests:
+                        type: integer
+                        example: 30
+                  example:
+                    strict:
+                      windowMs: 60000
+                      maxRequests: 10
+                    moderate:
+                      windowMs: 60000
+                      maxRequests: 30
+                    lenient:
+                      windowMs: 60000
+                      maxRequests: 60
+                tieredRateLimits:
+                  type: object
+                  description: Rate limits by user tier
+                  additionalProperties:
+                    type: object
+                    properties:
+                      windowMs:
+                        type: integer
+                        example: 60000
+                      maxRequests:
+                        type: integer
+                        example: 60
+
+    ClearRateLimitResponse:
+      allOf:
+        - $ref: '#/components/schemas/ApiResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - message
+                - timestamp
+              properties:
+                message:
+                  type: string
+                  example: Rate limit store cleared successfully
+                timestamp:
+                  type: string
+                  format: date-time
+                  example: '2026-01-07T00:00:00Z'
+
+    # Common Response Headers
+    # These headers are included in all API responses
+    CommonResponseHeaders:
+      type: object
+      properties:
+        X-Request-ID:
+          type: string
+          description: Unique identifier for each API request. Use this for debugging and support.
+          example: req_1704625200000_abc123
+        X-Correlation-ID:
+          type: string
+          description: Correlation ID for tracing requests across services and microservices.
+          example: corr_abc123def456
+        X-RateLimit-Limit:
+          type: integer
+          description: Maximum number of requests allowed per rate limit window.
+          example: 60
+        X-RateLimit-Remaining:
+          type: integer
+          description: Number of requests remaining in the current rate limit window.
+          example: 57
+        X-RateLimit-Reset:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp when the rate limit window resets.
+          example: '2026-01-07T12:05:00Z'
+        X-Response-Time:
+          type: string
+          description: Request processing time in milliseconds.
+          example: 45ms
+        X-API-Version:
+          type: string
+          description: Current API version following semantic versioning (MAJOR.MINOR.PATCH).
+          example: 1.0.0
+
+    # Error Response Headers
+    # Additional headers included in error responses
+    ErrorResponseHeaders:
+      type: object
+      properties:
+        X-Error-Code:
+          type: string
+          description: Error code identifying the type of error. See error-codes.md for reference.
+          example: VALIDATION_ERROR
+        X-Retryable:
+          type: string
+          enum: ['true', 'false']
+          description: Whether the error is retryable with exponential backoff.
+          example: 'true'
+        Retry-After:
+          type: integer
+          description: Seconds to wait before retrying (only on rate limit errors).
+          example: 60
+
+    # Rate Limit Headers Only
+    # Headers for rate limit information
+    RateLimitHeaders:
+      type: object
+      properties:
+        X-RateLimit-Limit:
+          type: integer
+          description: Maximum requests allowed per window.
+          example: 60
+        X-RateLimit-Remaining:
+          type: integer
+          description: Requests remaining in current window.
+          example: 57
+        X-RateLimit-Reset:
+          type: string
+          format: date-time
+          description: When the rate limit window resets.
+          example: '2026-01-07T12:05:00Z'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase JWT authentication. Include the access token in the Authorization header.
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key authentication (admin routes only)
+
+  security: []

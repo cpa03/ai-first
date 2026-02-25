@@ -1,0 +1,106 @@
+{
+  // Editor Settings
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "never"
+  },
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": true,
+  "editor.rulers": [100],
+  "editor.wordWrap": "off",
+
+  // TypeScript Settings
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+
+  // JavaScript Settings
+  "javascript.preferences.importModuleSpecifier": "non-relative",
+  "javascript.suggest.autoImports": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+
+  // ESLint Settings
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.run": "onSave",
+
+  // Tailwind CSS Settings
+  "tailwindCSS.experimental.classRegex": [
+    ["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ],
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+
+  // File Settings
+  "files.associations": {
+    "*.css": "tailwindcss",
+    ".env.local": "dotenv",
+    ".env.example": "dotenv"
+  },
+  "files.exclude": {
+    "**/.git": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.next": true,
+    "**/.swc": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/.swc/**": true
+  },
+
+  // Search Settings
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/.swc": true,
+    "**/dist": true,
+    "**/coverage": true,
+    "**/.git": true,
+    "**/package-lock.json": true
+  },
+
+  // Emmet Settings
+  "emmet.includeLanguages": {
+    "typescript": "html",
+    "typescriptreact": "html"
+  },
+
+  // Prettier Settings
+  "prettier.requireConfig": true,
+
+  // Git Settings
+  "git.autofetch": true,
+  "git.branchProtection": ["main"],
+  "git.branchProtectionPrompt": "warn",
+
+  // Testing
+  "testing.openTesting": "openOnTestFailure",
+
+  // Path Aliases - Help VS Code understand @/ imports
+  "path-intellisense.extensionOnImport": false,
+  "path-intellisense.showHiddenFiles": true,
+
+  // JSON Settings
+  "json.schemas": [
+    {
+      "fileMatch": [".vscode/settings.json"],
+      "url": "https://json.schemastore.org/vscode-settings.json"
+    }
+  ]
+}

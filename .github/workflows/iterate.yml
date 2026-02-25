@@ -1,0 +1,349 @@
+name: iterate
+
+on:
+  push:
+    branches:
+      - main # Architect runs on main changes
+  schedule:
+    - cron: "0 */4 * * *" # Routine check every 4 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # ------------------------------------------------------------------
+  # STAGE 1: THE BRAIN (Architect & Manager)
+  # ------------------------------------------------------------------
+  architect:
+    name: "Architect: Strategy & Triage"
+    runs-on: ubuntu-24.04-arm
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.opencode
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+          restore-keys: |
+            opencode-${{ runner.os }}-v1
+            opencode-${{ runner.os }}-
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Install Node.js
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: arsitek
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Architect Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, file/folder sementara dan file/folder yang tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
+              --share false; then
+              echo "✅ Architect work completed successfully"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "❌ Architect execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "❌ All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+  bugfix:
+    name: "BugFixer"
+    runs-on: ubuntu-24.04-arm
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.opencode
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+          restore-keys: |
+            opencode-${{ runner.os }}-v1
+            opencode-${{ runner.os }}-
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Install Node.js
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: BugFixer
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Architect Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "Anda adalah BugFixer. Tugas anda adalah menjaga repositori bebas bug atau error. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
+              --share false; then
+              echo "✅ Architect work completed successfully"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "❌ Architect execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "❌ All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+  Palette:
+    name: "Palette"
+    runs-on: ubuntu-24.04-arm
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.opencode
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+          restore-keys: |
+            opencode-${{ runner.os }}-v1
+            opencode-${{ runner.os }}-
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Install Node.js
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Palette
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Architect Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "Act as **Pallete**. You are "Palette" 🎨 - a UX-focused agent who adds small touches of delight and accessibility to the user interface. Your mission is to find and implement ONE micro-UX improvement that makes the interface more intuitive, accessible, or pleasant to use. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
+              --share false; then
+              echo "✅ Architect work completed successfully"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "❌ Architect execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "❌ All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+  Flexy:
+    name: "Flexy"
+    runs-on: ubuntu-24.04-arm
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.opencode
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+          restore-keys: |
+            opencode-${{ runner.os }}-v1
+            opencode-${{ runner.os }}-
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Install Node.js
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Flexy
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Architect Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "Act as **Flexy**. **Flexy** love modularity and hate hardcoded. **Flexy** mission is to eliminate hardcoded and make modular system. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
+              --share false; then
+              echo "✅ Architect work completed successfully"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "❌ Architect execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "❌ All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done
+  Brocula:
+    name: "Brocula"
+    runs-on: ubuntu-24.04-arm
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      IFLOW_API_KEY: ${{ secrets.IFLOW_API_KEY }}    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Cache
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.opencode
+            ~/.npm
+          key: opencode-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}-v1
+          restore-keys: |
+            opencode-${{ runner.os }}-v1
+            opencode-${{ runner.os }}-
+      - name: Configure Git
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor_id }}+${{ github.actor }}@users.noreply.github.com"
+      - name: Install Node.js
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install Dependencies
+        continue-on-error: true
+        run: npm ci
+      - name: Install OpenCode CLI
+        run: |
+          curl -fsSL https://opencode.ai/install | bash
+          echo "$HOME/.opencode/bin" >> $GITHUB_PATH
+      - name: Brocula
+        timeout-minutes: 20
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Architect Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "Act as **BroCula**. BroCula love to work on browser console using mcp tool 'playwright' or 'chrome devtools'. He work on strict workflows: 1. find browser console errors/warnings, fix immediately. 2. find lighthouse optimization oportunity, optimize code based on it. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
+              --agent RepoKeeper \
+              --model opencode/kimi-k2.5-free \
+              --share false; then
+              echo "✅ Architect work completed successfully"
+              break
+            else
+              retry_count=$((retry_count + 1))
+              echo "❌ Architect execution failed, retrying in 30 seconds..."
+              sleep 30
+              if [ $retry_count -eq $max_retries ]; then
+                echo "❌ All retry attempts failed"
+                exit 1
+              fi
+            fi
+          done

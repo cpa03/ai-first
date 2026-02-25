@@ -1,0 +1,206 @@
+import { TIMEOUT_CONFIG } from '../config/constants';
+import {
+  resilienceManager,
+  defaultResilienceConfigs,
+  DEFAULT_RESILIENCE_CONFIG,
+  ResilienceConfig,
+  type ServiceResilienceConfig,
+} from '../resilience';
+import {
+  shouldThrottleRequest,
+  captureRateLimit,
+  type ExternalRateLimitInfo,
+} from '../external-rate-limit';
+import { createLogger } from '../logger';
+import { Idea, Deliverable, Task } from '../db';
+
+function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
+  return {
+    timeoutMs: config.timeout.timeoutMs,
+    maxRetries: config.retry.maxRetries,
+    baseDelayMs: config.retry.baseDelayMs,
+    maxDelayMs: config.retry.maxDelayMs,
+    failureThreshold: config.circuitBreaker.failureThreshold,
+    resetTimeoutMs: config.circuitBreaker.resetTimeoutMs,
+  };
+}
+
+const logger = createLogger('ExportConnector');
+
+export interface ExportData {
+  idea: Omit<Idea, 'user_id'>;
+  deliverables?: Deliverable[];
+  tasks?: Task[];
+  goals?: string[];
+  target_audience?: string;
+  roadmap?: Array<{
+    phase: string;
+    start: string;
+    end: string;
+    deliverables: string[];
+  }>;
+  metadata?: {
+    exported_at: string;
+    version: string;
+  };
+}
+
+export interface ExportFormat {
+  type:
+    | 'markdown'
+    | 'json'
+    | 'notion'
+    | 'trello'
+    | 'google-tasks'
+    | 'github-projects';
+  data: ExportData;
+  metadata?: Record<string, unknown>;
+}
+
+export interface ExportResult {
+  success: boolean;
+  url?: string;
+  id?: string;
+  content?: string;
+  error?: string;
+}
+
+/**
+ * Result of an external service health check
+ */
+export interface ServiceHealthResult {
+  /** Whether the service is reachable and responding */
+  available: boolean;
+  /** Response latency in milliseconds */
+  latencyMs?: number;
+  /** Error message if service is unavailable */
+  error?: string;
+  /** Timestamp when the check was performed */
+  checkedAt: string;
+}
+
+export interface SyncStatus {
+  lastSync?: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  error?: string;
+}
+
+export interface AuthConfig {
+  clientId?: string;
+  clientSecret?: string;
+  redirectUri?: string;
+  scopes?: string[];
+}
+
+export abstract class ExportConnector {
+  abstract readonly type: string;
+  abstract readonly name: string;
+
+  abstract export(
+    data: ExportData,
+    options?: Record<string, unknown>
+  ): Promise<ExportResult>;
+  abstract validateConfig(): Promise<boolean>;
+  abstract getAuthUrl?(): Promise<string>;
+  abstract handleAuthCallback?(code: string): Promise<void>;
+  /**
+   * Optional method to check external service health/availability.
+   * This performs a lightweight probe to verify the external service is reachable.
+   * Returns null if not implemented or not applicable.
+   * 
+   * @returns Health check result with status, latency, and optional error message
+   */
+  async checkServiceHealth?(): Promise<ServiceHealthResult | null>;
+
+  protected getResilienceConfig(): ResilienceConfig {
+    const type = this.type;
+    if (type === 'notion') {
+      return toResilienceConfig(defaultResilienceConfigs.notion);
+    }
+    if (type === 'trello') {
+      return toResilienceConfig(defaultResilienceConfigs.trello);
+    }
+    if (type === 'github-projects') {
+      return toResilienceConfig(defaultResilienceConfigs.github);
+    }
+    // Google Tasks and other connectors use default resilience config
+    return DEFAULT_RESILIENCE_CONFIG;
+  }
+
+  protected async executeWithResilience<T>(
+    operation: () => Promise<T>,
+    context?: string
+  ): Promise<T> {
+    const config = this.getResilienceConfig();
+    return resilienceManager.execute(
+      operation,
+      config,
+      `${this.type}-${context || 'operation'}`
+    );
+  }
+
+  /**
+   * Check if we should throttle requests to this service
+   * Returns the wait time in milliseconds if throttling is needed
+   */
+  protected checkRateLimit(): { throttle: boolean; waitTimeMs: number } {
+    const result = shouldThrottleRequest(this.type);
+    return {
+      throttle: result.throttle,
+      waitTimeMs: result.waitTimeMs,
+    };
+  }
+
+  /**
+   * Capture rate limit info from response headers
+   * Call this after receiving a response from an external API
+   */
+  protected captureRateLimit(
+    headers: Headers | Record<string, string | undefined>
+  ): ExternalRateLimitInfo | null {
+    return captureRateLimit(this.type, headers);
+  }
+
+  protected async executeWithRateLimitAndResilience<T>(
+    operation: () => Promise<T & { headers?: Headers }>,
+    context?: string
+  ): Promise<T> {
+    const { throttle, waitTimeMs } = this.checkRateLimit();
+    if (throttle && waitTimeMs > 0) {
+      logger.info(
+        `[${this.type}] Rate limit approaching, waiting ${waitTimeMs}ms before ${context || 'operation'}`
+      );
+      await new Promise((resolve) => setTimeout(resolve, waitTimeMs));
+    }
+
+    const result = await this.executeWithResilience(operation, context);
+
+    const hasHeaders =
+      result && typeof result === 'object' && 'headers' in result;
+    if (hasHeaders) {
+      this.captureRateLimit(result.headers as Headers);
+    }
+
+    return result;
+  }
+
+  protected async executeWithTimeout<T>(
+    operation: () => Promise<T>,
+    timeoutMs: number = TIMEOUT_CONFIG.DEFAULT
+  ): Promise<T> {
+    logger.warn(
+      `[DEPRECATED] executeWithTimeout is deprecated. Use executeWithResilience instead.`
+    );
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const result = await operation();
+      clearTimeout(timeoutId);
+      return result;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      throw error;
+    }
+  }
+}

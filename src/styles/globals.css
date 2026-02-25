@@ -1,0 +1,750 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Design System Color Tokens - matches Tailwind theme */
+    --color-primary-500: 59 130 246; /* #3b82f6 */
+    --color-primary-600: 37 99 235; /* #2563eb */
+    --color-primary-700: 29 78 216; /* #1d4ed8 */
+    --color-violet-500: 139 92 246; /* #8b5cf6 */
+    --color-pink-500: 236 72 153; /* #ec4899 */
+    --color-amber-500: 245 158 11; /* #f59e0b */
+    --color-green-500: 34 197 94; /* #22c55e */
+
+    /* Shadow color tokens for consistent elevation effects */
+    --shadow-primary-light: rgb(var(--color-primary-500) / 0.2);
+    --shadow-primary-medium: rgb(var(--color-primary-500) / 0.3);
+    --shadow-primary-strong: rgb(var(--color-primary-500) / 0.5);
+    --shadow-primary-600-light: rgb(var(--color-primary-600) / 0.2);
+    --shadow-primary-600-medium: rgb(var(--color-primary-600) / 0.4);
+    --shadow-amber-light: rgb(var(--color-amber-500) / 0.3);
+    --shadow-amber-medium: rgb(var(--color-amber-500) / 0.4);
+
+    /* Gradient stops for feature card borders */
+    --gradient-feature-start: rgb(var(--color-primary-500));
+    --gradient-feature-mid: rgb(var(--color-violet-500));
+    --gradient-feature-end: rgb(var(--color-pink-500));
+
+    /* Toast notification colors - matches Tailwind palette for theming support */
+    /* Issue #1028, #1166: Design system alignment for toast icon colors */
+    --toast-success-icon: 22 163 74; /* green-600 #16a34a */
+    --toast-error-icon: 220 38 38; /* red-600 #dc2626 */
+    --toast-warning-icon: 202 138 4; /* yellow-600 #ca8a04 */
+    --toast-info-icon: 37 99 235; /* blue-600 #2563eb */
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500;
+  }
+
+  .input {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500;
+  }
+
+  .textarea {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 resize-y;
+  }
+}
+
+@layer utilities {
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  .not-sr-only {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  .focus-visible-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.primary.600');
+    outline-offset: 2px;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+
+    .fade-in,
+    .slide-up,
+    .scale-in {
+      animation: none;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes drawCheck {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-draw-check {
+  animation: drawCheck 0.3s ease-out forwards;
+}
+
+/* Shimmer loading animation - adds life to skeleton screens */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+/* Reduced motion support for shimmer */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer {
+    animation: none;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.animate-ripple {
+  animation: ripple 0.6s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ripple {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Shake animation for validation errors - draws attention to invalid fields */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-4px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(4px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Reduced motion support for shake */
+@media (prefers-reduced-motion: reduce) {
+  .animate-shake {
+    animation: none;
+  }
+}
+
+@keyframes success-pop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes success-check {
+  0% {
+    stroke-dashoffset: 24;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes ripple-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.animate-success-pop {
+  animation: success-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.animate-success-check {
+  animation: success-check 0.5s ease-out forwards;
+}
+
+.animate-ripple-ring-1 {
+  animation: ripple-ring 0.8s ease-out forwards;
+}
+
+.animate-ripple-ring-2 {
+  animation: ripple-ring 0.8s ease-out 0.2s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-success-pop,
+  .animate-success-check,
+  .animate-ripple-ring-1,
+  .animate-ripple-ring-2 {
+    animation: none;
+  }
+}
+
+/* FeatureGrid staggered entrance animations */
+@keyframes staggerFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-stagger-1 {
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-stagger-2 {
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  opacity: 0;
+}
+
+.animate-stagger-3 {
+  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+/* Gradient border animation for FeatureGrid cards */
+@keyframes gradientRotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-border-hover {
+  position: relative;
+  background:
+    linear-gradient(white, white) padding-box,
+    linear-gradient(
+        90deg,
+        var(--gradient-feature-start),
+        var(--gradient-feature-mid),
+        var(--gradient-feature-end),
+        var(--gradient-feature-start)
+      )
+      border-box;
+  background-size: 300% 100%;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.gradient-border-hover:hover,
+.gradient-border-hover:focus-visible {
+  background-position: 100% 0;
+  animation: gradientRotate 3s ease infinite;
+  box-shadow: 0 10px 40px -10px var(--shadow-primary-medium);
+}
+
+/* Enhanced focus indicator for keyboard navigation */
+.feature-card-focus:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--shadow-primary-strong),
+    0 0 0 6px var(--shadow-primary-light);
+}
+
+/* Card lift effect */
+.card-lift {
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
+}
+
+.card-lift:hover,
+.card-lift:focus-visible {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+}
+
+/* Number badge pulse on card hover */
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.group:hover .badge-animate,
+.group:focus-visible .badge-animate {
+  animation: badgePulse 0.6s ease-in-out;
+}
+
+/* Gentle pulse animation for current step indicator in ProgressStepper */
+/* Draws subtle attention to user's current position without being distracting */
+@keyframes gentlePulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--shadow-primary-600-medium);
+  }
+  50% {
+    box-shadow: 0 0 0 4px var(--shadow-primary-600-light);
+  }
+}
+
+.animate-gentle-pulse {
+  animation: gentlePulse 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for gentle pulse */
+@media (prefers-reduced-motion: reduce) {
+  .animate-gentle-pulse {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
+  }
+}
+
+/* Button glow pulse animation - adds delightful hover effect to primary CTAs */
+/* Creates a soft breathing glow that draws attention and adds modern polish */
+@keyframes glowPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 var(--shadow-primary-600-medium),
+      0 0 20px -5px var(--shadow-primary-medium);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--shadow-primary-600-light),
+      0 0 30px -5px var(--shadow-primary-strong);
+  }
+}
+
+.btn-glow-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glow-hover:hover:not(:disabled) {
+  animation: glowPulse 2s ease-in-out infinite;
+  transform: translateY(-1px);
+}
+
+.btn-glow-hover:focus-visible:not(:disabled) {
+  animation: glowPulse 2s ease-in-out infinite;
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--shadow-primary-strong),
+    0 0 20px -5px var(--shadow-primary-medium);
+}
+
+/* Reduced motion support for button glow */
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow-hover:hover:not(:disabled),
+  .btn-glow-hover:focus-visible:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
+    transform: none;
+  }
+}
+
+/* Attention Pulse Animation - Subtle guidance for ready-to-submit state */
+/* Draws gentle attention to primary CTAs when form becomes valid */
+@keyframes attentionPulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 0 var(--shadow-primary-600-medium),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1);
+  }
+  25% {
+    box-shadow:
+      0 0 0 6px var(--shadow-primary-600-light),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02);
+  }
+  50% {
+    box-shadow:
+      0 0 0 3px var(--shadow-primary-600-medium),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1.01);
+  }
+  75% {
+    box-shadow:
+      0 0 0 5px var(--shadow-primary-600-light),
+      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transform: scale(1.015);
+  }
+}
+
+.btn-attention-pulse {
+  animation: attentionPulse 2s ease-in-out infinite;
+}
+
+/* Ensure attention pulse doesn't conflict with hover states */
+.btn-attention-pulse:hover:not(:disabled) {
+  animation: glowPulse 2s ease-in-out infinite;
+  transform: translateY(-1px);
+}
+
+/* Reduced motion support for attention pulse */
+@media (prefers-reduced-motion: reduce) {
+  .btn-attention-pulse {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
+  }
+
+  .btn-attention-pulse:hover:not(:disabled) {
+    animation: none;
+    box-shadow: 0 0 0 2px var(--shadow-primary-600-light);
+    transform: none;
+  }
+}
+
+/* Button disabled state - ensures no hover/active effects when disabled */
+/* This addresses GitHub issue #1178: hover scale effects on disabled buttons */
+button:disabled,
+button[aria-disabled='true'],
+.btn-disabled {
+  pointer-events: none;
+}
+
+button:disabled:hover,
+button:disabled:active,
+button[aria-disabled='true']:hover,
+button[aria-disabled='true']:active {
+  transform: none !important;
+  box-shadow: inherit !important;
+  background-color: inherit !important;
+  border-color: inherit !important;
+}
+
+/* Override btn-glow-hover for disabled buttons */
+button:disabled.btn-glow-hover,
+button[aria-disabled='true'].btn-glow-hover {
+  animation: none !important;
+}
+
+/* Skip to Content Link - Enhanced Accessibility */
+/* Provides keyboard users with an elegant way to skip navigation */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--color-primary-600)) 0%,
+    rgb(var(--color-primary-700)) 100%
+  );
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-decoration: none;
+  outline: none;
+}
+
+.skip-link:focus {
+  position: fixed;
+  top: 1rem;
+  opacity: 1;
+  transform: translateY(0);
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 3px rgb(var(--color-primary-500) / 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.skip-link:focus-visible {
+  outline: 3px solid rgb(var(--color-primary-500));
+  outline-offset: 3px;
+}
+
+.skip-link:hover {
+  transform: translateY(0) scale(1.02);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgb(var(--color-primary-500) / 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+/* Reduced motion support for skip link */
+@media (prefers-reduced-motion: reduce) {
+  .skip-link {
+    transition: none;
+    transform: none;
+  }
+
+  .skip-link:focus {
+    transform: none;
+  }
+
+  .skip-link:hover {
+    transform: none;
+  }
+}
+
+/* Reduced motion support for FeatureGrid animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-stagger-1,
+  .animate-stagger-2,
+  .animate-stagger-3 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .gradient-border-hover:hover,
+  .gradient-border-hover:focus-visible {
+    animation: none;
+  }
+
+  .card-lift:hover,
+  .card-lift:focus-visible {
+    transform: none;
+  }
+}
+
+/* Character counter pulse animation - draws attention when nearing limit */
+/* Creates a subtle breathing effect that intensifies as user approaches maximum */
+@keyframes counterPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-counter-pulse {
+  animation: counterPulse 1.5s ease-in-out infinite;
+}
+
+/* Character counter glow animation - adds emphasis at warning threshold */
+/* Soft glow that makes the progress indicator more noticeable */
+@keyframes counterGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 var(--shadow-amber-medium);
+  }
+  50% {
+    box-shadow: 0 0 8px 2px var(--shadow-amber-light);
+  }
+}
+
+.animate-counter-glow {
+  animation: counterGlow 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for character counter animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-counter-pulse,
+  .animate-counter-glow {
+    animation: none;
+    transform: none;
+    opacity: 1;
+    box-shadow: none;
+  }
+}
+
+/* Coming Soon Badge Animation - Subtle pulse for feature announcements */
+/* Draws gentle attention to upcoming features without being distracting */
+@keyframes comingSoonPulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-coming-soon-badge {
+  animation: comingSoonPulse 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for coming soon badge */
+@media (prefers-reduced-motion: reduce) {
+  .animate-coming-soon-badge {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Loading Spinner Pulse Animation - Creates a soft pulsing ring effect */
+/* Used in LoadingSpinner component for visual feedback during loading states */
+@keyframes pingSlow {
+  0% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.5;
+  }
+  75%,
+  100% {
+    transform: translateX(-50%) scale(1.4);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: pingSlow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* Reduced motion support for ping-slow */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ping-slow {
+    animation: none;
+    opacity: 0;
+  }
+}

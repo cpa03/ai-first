@@ -1,0 +1,129 @@
+# Documentation Index
+
+Complete index of all IdeaFlow documentation.
+
+## 🚀 Quick Reference
+
+### Common Commands
+
+| Command                | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| `npm run dev`          | Start development server                     |
+| `npm run dev:check`    | Start dev server with environment validation |
+| `npm run build`        | Build for production                         |
+| `npm run lint`         | Run ESLint with 0 warnings allowed           |
+| `npm run lint:fix`     | Run ESLint with auto-fix                     |
+| `npm run type-check`   | Run TypeScript type checking                 |
+| `npm test`             | Run all tests                                |
+| `npm run test:watch`   | Run tests in watch mode                      |
+| `npm run test:changed` | Run only tests for changed files             |
+| `npm run check`        | Run lint + type-check + tests                |
+| `npm run env:check`    | Validate environment variables               |
+| `npm run db:migrate`   | Run database migrations                      |
+
+### Quick Start for New Developers
+
+1. **Setup Environment**: See [Environment Setup](./environment-setup.md)
+2. **Run Development Server**: `npm run dev:check`
+3. **Check Health**: `curl http://localhost:3000/api/health`
+4. **Run All Checks**: `npm run check`
+
+### Architecture at a Glance
+
+| Layer    | Technology                       |
+| -------- | -------------------------------- |
+| Frontend | Next.js 16+ (App Router)         |
+| Backend  | Supabase (PostgreSQL + Auth)     |
+| AI       | OpenAI/Anthropic via abstraction |
+| Hosting  | Vercel / Cloudflare              |
+| CI/CD    | GitHub Actions                   |
+
+---
+
+## Core Documentation
+
+- [Architecture](./architecture.md) - Technical architecture and system design
+- [Blueprint](./blueprint.md) - Complete project blueprint and specifications
+- [API Reference](./api.md) - Complete API documentation with examples
+- [Agent Guidelines](./agent-guidelines.md) - AI agent behavior rules and guidelines
+- [Database Schema](./database-schema.md) - Database schema documentation with ERD diagram
+
+## Development Guides
+
+- [Error Codes](./error-codes.md) - Complete error code reference
+- [Health Monitoring](./health-monitoring.md) - Health check and monitoring guide
+- [Deployment](./deploy.md) - Production deployment instructions
+- [Troubleshooting](./troubleshooting.md) - Common issues and solutions
+- [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
+- [Environment Setup](./environment-setup.md) - Development environment setup
+- [FAQ](./faq.md) - Frequently asked questions
+
+## Specialist Guides
+
+### Engineering
+
+- [Backend Engineer](./backend-engineer.md) - Backend development guide
+- [Frontend Engineer](./frontend-engineer.md) - Frontend development guide
+- [Database Architect](./database-architect.md) - Database design and optimization
+- [DevOps Engineer](./devops-engineer.md) - DevOps and infrastructure
+- [DX Engineer](./dx-engineer.md) - Developer experience and tooling
+- [Integration Engineer](./integration-engineer.md) - Integration patterns
+- [API Specialist](./api-specialist.md) - API design and implementation
+
+### Quality & Security
+
+- [Security Engineer](./security-engineer.md) - Security best practices
+- [Security Assessment](./security-assessment.md) - Security audit guidelines
+- [Security Headers](./security-headers.md) - HTTP security headers reference
+- [Security Sentinel](./security/sentinel.md) - Security vulnerability log and lessons learned
+- [Security Validation](./SECURITY_VALIDATION.md) - Credential exposure prevention and validation
+- [Quality Assurance](./quality-assurance.md) - Testing and quality standards
+- [Performance Engineer](./performance-engineer.md) - Performance optimization
+- [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
+- [Reliability Engineer](./reliability-engineer.md) - System reliability patterns
+- [Memory Management](./memory-management.md) - Memory leak prevention and bounded cache configurations
+
+### Design & UX
+
+- [UI/UX Engineer](./ui-ux-engineer.md) - User interface guidelines
+- [Technical Writer](./technical-writer.md) - Documentation standards
+
+## Project Management
+
+- [Roadmap](./roadmap.md) - Project roadmap and milestones
+- [MVP Feature Status](./mvp-feature-status.md) - Current MVP progress dashboard
+- [Launch Readiness Checklist](./launch-readiness-checklist.md) - MVP launch go/no-go criteria
+- [Phase 1 Implementation Plan](./phase-1-implementation-plan.md) - Phase 1 detailed plan
+- [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
+- [User Story Engineer](./user-story-engineer.md) - User story writing best practices
+- [User Personas](./user-stories/personas.md) - Primary user personas for writing user stories
+
+## Operations
+
+- [Cloudflare Deployment](./cloudflare-deploy.md) - Cloudflare-specific deployment
+- [Code Reviewer](./code-reviewer.md) - Code review guidelines
+
+## Task Management
+
+- [Task Guide](./task.md) - Task creation and management
+- [Task Security](./task-security.md) - Security considerations for tasks
+- [Bug Guide](./bug.md) - Bug reporting guidelines
+- [Feature Guide](./feature.md) - Feature request guidelines
+
+## Maintenance
+
+- [Branch Cleanup Registry](./BRANCH_CLEANUP.md) - Branch cleanup history and recommendations
+
+## Project Meta
+
+- [Changelog](../CHANGELOG.md) - Project changelog and version history
+
+## Subdirectories
+
+- [API Specifications](./api/) - OpenAPI specifications
+- [Security](./security/) - Security documentation and logs
+- [Templates](./templates/) - User-downloadable templates
+
+---
+
+_This index is maintained by RepoKeeper to ensure documentation discoverability._
