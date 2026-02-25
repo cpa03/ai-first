@@ -1,7 +1,34 @@
-# API Reference
-
-This document provides comprehensive API documentation for the IdeaFlow application. All endpoints return JSON responses and include request IDs for tracing.
-
+#QQ|# API Reference
+#KM|
+#KT|This document provides comprehensive API documentation for the IdeaFlow application. All endpoints return JSON responses and include request IDs for tracing.
+#RW|
+#RN|## User Story Context
+#SY|
+#KM|The IdeaFlow API serves specific user needs. This section maps API endpoints to user stories, ensuring every feature delivers user value.
+#XS|
+#RT|### User Story to API Mapping
+#SY|
+#KM|User Story | API Endpoints | User Value
+#KM|---------- | ------------- | ----------
+#KM|Submit idea and get instant breakdown | `POST /api/ideas`, `POST /api/breakdown` | Users can quickly turn ideas into actionable tasks
+#KM|View and manage ideas on dashboard | `GET /api/ideas`, `GET /api/ideas/[id]`, `DELETE /api/ideas/[id]` | Users can track all their projects in one place
+#KM|Authenticate securely | `POST /api/auth/callback`, Supabase Auth | Users trust their ideas are protected
+#KM|Export plans to other tools | `GET /api/deliverables/export`, Notion/Trello/GitHub connectors | Users can work in their preferred tools
+#KM|Manage tasks and track progress | `GET /api/tasks`, `PATCH /api/tasks/[id]` | Users can stay organized and on track
+#KM|Collaborate with team | Team endpoints (Phase 2) | Teams can plan together
+#XS|
+#RT|### User Journey Mapping
+#SY|
+#KM|1. **Discovery**: User visits IdeaFlow → `GET /api/health`
+#KM|2. **Sign Up**: User registers → Supabase Auth
+#KM|3. **Idea Submission**: User submits idea → `POST /api/ideas`
+#KM|4. **Clarification**: AI asks questions → `POST /api/clarify`
+#KM|5. **Breakdown**: AI generates tasks → `POST /api/breakdown`
+#KM|6. **Review**: User views breakdown → `GET /api/ideas/[id]`, `GET /api/tasks`
+#KM|7. **Export**: User exports plan → `GET /api/deliverables/export`
+#KM|8. **Track**: User updates task status → `PATCH /api/tasks/[id]`
+#XS|
+#RW|## Base URL
 ## Base URL
 
 ```text
@@ -327,9 +354,13 @@ Check database health specifically.
 ---
 
 ## Clarification API
-
-The Clarification API helps refine raw ideas by asking targeted questions.
-
+#SW|
+#XX|The Clarification API helps refine raw ideas by asking targeted questions.
+#QR|
+#RT|**User Story Context:** Supports US-IDEA-001 (clarify idea before breakdown)
+#RQ|
+#RT|**User Value:** Users get better task breakdowns when their ideas are clarified with targeted questions.
+#QR|
 ### POST /api/clarify/start
 
 Start a new clarification session for an idea.
@@ -766,9 +797,13 @@ console.log(data);
 ---
 
 ## Ideas API
-
-The Ideas API provides CRUD operations for managing user ideas.
-
+#VW|
+#WP|The Ideas API provides CRUD operations for managing user ideas.
+#PH|
+#RT|**User Story Context:** Supports US-IDEA-001 (submit idea), US-IDEA-002 (view dashboard), US-AUTH-001 (secure access)
+#RQ|
+#RT|**User Value:** Users can submit, view, edit, and delete their project ideas. Secure authentication ensures ideas are protected.
+#PH|
 ### GET /api/ideas
 
 Retrieve all ideas for the authenticated user with pagination and filtering.
@@ -980,9 +1015,13 @@ Authorization: Bearer <your-supabase-token>
 ---
 
 ## Tasks API
-
-The Tasks API provides operations for managing tasks within deliverables.
-
+#JM|
+#RK|The Tasks API provides operations for managing tasks within deliverables.
+#SK|
+#RT|**User Story Context:** Supports US-BREAKDOWN-001 (prioritized tasks), US-TASK-001 (manage tasks)
+#RQ|
+#RT|**User Value:** Users can view, update, and track individual tasks. Task dependencies help users understand the execution path.
+#SK|
 ### GET /api/tasks/[id]
 
 Retrieve a specific task by ID.
@@ -1136,8 +1175,11 @@ Authorization: Bearer <your-supabase-token>
 ---
 
 ## Deliverables API
-
-### POST /api/deliverables/[id]/tasks
+#WM|
+#RT|**User Story Context:** Supports US-EXPORT-001 (export plans), US-BREAKDOWN-001 (task breakdown)
+#RQ|
+#RT|**User Value:** Users can view deliverables, export plans to Markdown/Notion/Trello, and manage tasks within deliverables.
+#WM|
 
 Create a new task within a deliverable.
 
