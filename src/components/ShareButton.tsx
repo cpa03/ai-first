@@ -19,6 +19,8 @@ export interface ShareButtonProps {
   variant?: 'default' | 'icon-only';
   showToast?: boolean;
   toastMessage?: string;
+  /** Callback fired after successful share - useful for analytics tracking */
+  onShare?: () => void;
 }
 
 const logger = createLogger('ShareButton');
@@ -42,6 +44,7 @@ const ShareButtonComponent = function ShareButton({
   variant = 'default',
   showToast = true,
   toastMessage = 'Link copied to clipboard!',
+  onShare,
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
 
@@ -99,6 +102,11 @@ const ShareButtonComponent = function ShareButton({
 
         setTimeout(() => setShared(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
         showSuccessToast('Thanks for sharing!');
+
+        // Growth: Fire onShare callback for analytics
+        if (onShare) {
+          onShare();
+        }
       } catch (err) {
         // User cancelled or error - not necessarily an error
         if ((err as Error).name !== 'AbortError') {
@@ -118,6 +126,11 @@ const ShareButtonComponent = function ShareButton({
 
         setTimeout(() => setShared(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
         showSuccessToast(toastMessage);
+
+        // Growth: Fire onShare callback for analytics (clipboard fallback)
+        if (onShare) {
+          onShare();
+        }
       } catch (clipboardErr) {
         logger.error('Failed to copy share URL', clipboardErr);
         showErrorToast('Failed to copy link. Please try again.');
@@ -130,6 +143,7 @@ const ShareButtonComponent = function ShareButton({
     toastMessage,
     showSuccessToast,
     showErrorToast,
+    onShare,
   ]);
 
   const baseClasses = `
