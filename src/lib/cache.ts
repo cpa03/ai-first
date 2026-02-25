@@ -1,4 +1,4 @@
-import { CACHE_CONFIG } from './config/cache';
+import { CACHE_CONFIG } from './config';
 
 export interface CacheEntry<T> {
   value: T;
