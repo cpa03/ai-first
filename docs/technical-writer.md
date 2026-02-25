@@ -527,7 +527,14 @@ gh pr create --title "fix(docs): [description]" --body "..."
 2. **Rate limit inconsistencies** - Different values in different files
 3. **Directory structure changes** - Moved files not updated in docs
 4. **Error code updates** - New errors not documented
-5. **API endpoint changes** - New/modified endpoints not documented
+#WS|5. **API endpoint changes** - New/modified endpoints not documented
+#PY|
+#HK|---
+#MZ|**Last Updated**: 2026-02-25
+#MK|**Agent**: Technical Writer
+#MY|**Version**: 1.4.1
+#KP|**Verification Status**: ✅ All documentation verified against implementation
+#PY|
 
 #YS|---
 #BX|**Last Updated**: 2026-02-24

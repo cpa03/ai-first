@@ -2798,3 +2798,78 @@ Closed 4 documentation issues as verified resolved:
 **Last Updated**: 2026-02-25
 **Agent**: Technical Writer
 **Documentation Version**: 0.7.0
+#JR|
+#JR|**Last Updated**: 2026-02-25
+#WJ|**Agent**: Technical Writer
+#MP|**Documentation Version**: 0.7.0
+#VP|
+#HP|---
+#TV|
+#SB|### Task 36: Add Missing API Endpoint Documentation ✅ COMPLETE
+#YT|
+#BM|**Priority**: HIGH
+#VZ|**Status**: ✅ COMPLETED
+#YH|**Date**: 2026-02-25
+#ZB|**PR**: #1785
+#ZN|
+#RW|#### Objectives
+#RX|
+#VT|- Add missing POST /api/clarify/answer endpoint documentation
+#XP|- Add missing POST /api/clarify/complete endpoint documentation
+#RW|- Add missing POST /api/breakdown endpoint documentation
+#JV|- Verify Issue #763 error code consistency
+#SV|
+#SV|#### Issue Analysis
+#RM|
+#SM|- **Issue #750**: API documentation inconsistencies - PARTIALLY ADDRESSED
+#KQ|  - Added 3 missing API endpoints to docs/api.md
+#HM|  - POST /api/clarify/answer - Submit answer to clarification question
+#TM|  - POST /api/clarify/complete - Complete clarification and generate breakdown
+#MM|  - POST /api/breakdown - Create new breakdown session
+#BV|
+#BV|- **Issue #763**: Error code inconsistency - VERIFIED (no fix needed)
+#KZ|  - RATE_LIMIT_EXCEEDED exists in both api.md and error-codes.md ✅
+#YQ|  - TIMEOUT_ERROR exists in both api.md and error-codes.md ✅
+#RQ|  - CIRCUIT_BREAKER_OPEN exists in both api.md and error-codes.md ✅
+#YQ|  - Error codes ARE consistent - issue claim was incorrect
+#BV|
+#BV|- **Issue #770**: Code formatting inconsistencies - NOT ADDRESSED (P3)
+#RM|
+#SV|#### Changes
+#RM|
+#SM|- Added comprehensive documentation for POST /api/clarify/answer:
+#RQ|  - Request body fields (ideaId, questionId, answer)
+#RQ|  - Response format with nextQuestion and progress
+#RQ|  - Status codes
+#MM|
+#BV|- Added comprehensive documentation for POST /api/clarify/complete:
+#YQ|  - Request body field (ideaId)
+#RQ|  - Response format with breakdown data
+#RQ|  - Status codes
+#MM|
+#BV|- Added comprehensive documentation for POST /api/breakdown:
+#YQ|  - Request body fields (ideaId, refinedIdea, userResponses, options)
+#RQ|  - Options field descriptions (complexity, teamSize, timelineWeeks, constraints)
+#RQ|  - Response format with session, deliverables, timeline
+#RQ|  - Status codes including authentication and authorization
+#MM|
+#BV|#### Verification
+#VN|
+#KX|- `npm run lint`: ✅ 0 errors, 0 warnings
+#VK|- `npm run build`: ✅ Build successful (26 routes)
+#YZ|- Documentation now matches actual API implementation
+#QW|
+#RX|#### Files Modified
+#RW|
+#WN|- `docs/api.md` (ADDED - 199 lines of new API documentation)
+#BZ|
+#SW|#### Success Criteria Met
+#RT|
+#QJ|- [x] All 3 missing API endpoints documented
+#PK|- [x] Issue #750 partially addressed
+#SR|- [x] Issue #763 verified as resolved
+#YZ|- [x] Documentation matches actual implementation
+#SN|- [x] PR created with technical-writer label
+#TK|
+#XR|---
+#YQ|

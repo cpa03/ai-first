@@ -409,7 +409,205 @@ All fields in the `options` object are optional:
 - `429`: Rate limit exceeded
 - `500`: Internal error
 
----
+#ZH|---
+#RZ|
+#NM|### POST /api/clarify/answer
+#QW|
+#YQ|Submit an answer to a clarification question.
+#ZQ|
+#YQ|**Request Body:**
+#YQ|
+#YQ|```json
+#YQ|{
+#YQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+#YQ|  "questionId": "q_001",
+#YQ|  "answer": "We plan to have 5 team members working on this project"
+#YQ|}
+#YQ|```
+#YQ|
+#YQ|**Request Field Descriptions:**
+#YQ|
+#YQ|- `ideaId` (required): The idea ID
+#YQ|- `questionId` (required): The ID of the question being answered
+#YQ|- `answer` (required): The user's answer to the question
+#YQ|
+#YQ|**Response:**
+#YQ|
+#YQ|```json
+#YQ|{
+#YQ|  "success": true,
+#YQ|  "data": {
+#YQ|    "nextQuestion": {
+#YQ|      "id": "q_002",
+#YQ|      "text": "What is your expected budget range?",
+#YQ|      "category": "resources"
+#YQ|    },
+#YQ|    "progress": {
+#YQ|      "completedQuestions": 1,
+#YQ|      "totalQuestions": 5
+#YQ|    }
+#YQ|  },
+#YQ|  "requestId": "req_1234567890_abc123"
+#YQ|}
+#YQ|```
+#YQ|
+#YQ|**Status Codes:**
+#YQ|
+#YQ|- `200`: Answer accepted, next question provided
+#YQ|- `400`: Validation error (missing fields or invalid format)
+#YQ|- `404`: Idea not found or question not found
+#YQ|- `429`: Rate limit exceeded
+#YQ|- `500`: Internal error
+#YQ|
+#YQ|---
+#YQ|
+#YQ|### POST /api/clarify/complete
+#YQ|
+#YQ|Complete the clarification process and generate the breakdown.
+#YQ|
+#YQ|**Request Body:**
+#YQ|
+#YQ|```json
+#YQ|{
+#YQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000"
+#YQ|}
+#YQ|```
+#YQ|
+#YQ|**Request Field Descriptions:**
+#YQ|
+#YQ|- `ideaId` (required): The idea ID to complete clarification for
+#YQ|
+#YQ|**Response:**
+#YQ|
+#YQ|```json
+#YQ|{
+#YQ|  "success": true,
+#YQ|  "data": {
+#YQ|    "breakdown": {
+#YQ|      "id": "bd_1234567890_abc123",
+#YQ|      "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+#YQ|      "status": "completed",
+#YQ|      "deliverables": [...],
+#YQ|      "confidenceScore": 0.92,
+#YQ|      "estimatedTotalHours": 320
+#YQ|    }
+#YQ|  },
+#YQ|  "requestId": "req_1234567890_abc123"
+#YQ|}
+#YQ|```
+#YQ|
+#YQ|**Status Codes:**
+#YQ|
+#YQ|- `200`: Clarification completed, breakdown generated
+#YQ|- `400`: Validation error
+#YQ|- `404`: Idea not found
+#YQ|- `429`: Rate limit exceeded
+#YQ|- `500`: Internal error
+#YQ|
+#YQ|---
+#RZ|
+#NM|### POST /api/breakdown
+#QW|
+#XY|Start a new breakdown session for an idea. This endpoint generates a complete project breakdown with deliverables, tasks, and timeline.
+#ZQ|
+#BP|**Request Body:**
+#WQ|
+#WQ|```json
+#WQ|{
+#WQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+#WQ|  "refinedIdea": "I want to build a mobile app for tracking fitness goals",
+#WQ|  "userResponses": {
+#WQ|    "q_001": "5 team members",
+#WQ|    "q_002": "$50,000 budget"
+#WQ|  },
+#WQ|  "options": {
+#WQ|    "complexity": "medium",
+#WQ|    "teamSize": 5,
+#WQ|    "timelineWeeks": 12,
+#WQ|    "constraints": ["Must use React Native", "iOS and Android support"]
+#WQ|  }
+#WQ|}
+#WQ|```
+#WQ|
+#WQ|**Request Field Descriptions:**
+#WQ|
+#WQ|- `ideaId` (required): The idea ID
+#WQ|- `refinedIdea` (required): The refined idea text
+#WQ|- `userResponses` (optional): Key-value pairs of question IDs to answers from clarification
+#WQ|- `options` (optional): Breakdown generation options
+#WQ|
+#WQ|**Options Field Descriptions:**
+#WQ|
+#WQ|All fields in the `options` object are optional:
+#WQ|
+#WQ|- `complexity` (string): Complexity level for the breakdown. Options: `'simple'`, `'medium'`, `'complex'`. Default: AI-determined based on idea complexity
+#WQ|- `teamSize` (number): Number of team members available for the project. Used to parallelize tasks appropriately
+#WQ|- `timelineWeeks` (number): Desired timeline in weeks. Helps the AI create realistic schedules
+#WQ|- `constraints` (string[]): Array of project constraints or requirements. Examples: `["Must use TypeScript", "Mobile-first design", "GDPR compliant"]`
+#WQ|
+#WQ|**Response:**
+#WQ|
+#WQ|```json
+#WQ|{
+#WQ|  "success": true,
+#WQ|  "session": {
+#WQ|    "id": "bd_1234567890_abc123",
+#WQ|    "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+#WQ|    "status": "completed",
+#WQ|    "deliverables": [
+#WQ|      {
+#WQ|        "id": "del_1",
+#WQ|        "title": "Core App Development",
+#WQ|        "description": "Develop main mobile application features",
+#WQ|        "priority": "high",
+#WQ|        "estimateHours": 240,
+#WQ|        "tasks": [
+#WQ|          {
+#WQ|            "id": "task_1",
+#WQ|            "title": "Design UI/UX",
+#WQ|            "description": "Create wireframes and prototypes",
+#WQ|            "estimate": 40,
+#WQ|            "status": "todo",
+#WQ|            "dependencies": []
+#WQ|          }
+#WQ|        ]
+#WQ|      }
+#WQ|    ],
+#WQ|    "timeline": {
+#WQ|      "startDate": "2026-01-15",
+#WQ|      "endDate": "2026-04-15",
+#WQ|      "phases": [
+#WQ|        {
+#WQ|          "name": "Phase 1: Foundation",
+#WQ|          "startDate": "2026-01-15",
+#WQ|          "endDate": "2026-02-15",
+#WQ|          "deliverables": ["del_1"]
+#WQ|        }
+#WQ|      ],
+#WQ|      "criticalPath": ["task_1", "task_2", "task_5"]
+#WQ|    },
+#WQ|    "confidenceScore": 0.85,
+#WQ|    "estimatedTotalHours": 320,
+#WQ|    "aiModel": "gpt-4",
+#WQ|    "createdAt": "2026-01-07T12:00:00Z"
+#WQ|  },
+#WQ|  "requestId": "req_1234567890_abc123"
+#WQ|}
+#WQ|```
+#WQ|
+#WQ|**Status Codes:**
+#WQ|
+#WQ|- `200`: Breakdown started/completed
+#WQ|- `400`: Validation error
+#WQ|- `401`: Authentication required
+#WQ|- `403`: Not authorized to access this idea
+#WQ|- `404`: Idea not found
+#WQ|- `429`: Rate limit exceeded
+#WQ|- `500`: Internal error
+#WQ|
+#WQ|---
+#RZ|
+#NM|### GET /api/breakdown
 
 ### GET /api/breakdown
 
