@@ -75,6 +75,7 @@ Then [expected outcome]
 ### Templates
 
 - [User Story Template](./templates/user-story_template.md)
+- [Specialist User Story Template](./templates/specialist-user-story_template.md)
 - [User Personas](./user-stories/personas.md)
 
 ---
