@@ -79,11 +79,22 @@ DX-engineer focuses on improving Developer Experience through small, safe, measu
 3. Renamed `broc` → `build:verify` (unclear acronym → descriptive name)
 4. Updated `test:all` to use new script name
 
-**Issues Fixed**: #598, #654
+XZ|### PR #1829 - Fix Test Files TypeScript Errors
 
-## Lessons Learned
+YH|**Date**: 2026-02-25
 
-1. **Small atomic changes** - Keep PRs focused and small
-2. **Verify before commit** - Always run lint/type-check before pushing
-3. **Link issues** - Always link PR to relevant issues
-4. **Clear naming** - Script names should be self-documenting
+XV|**Changes**:
+
+RQ|1. Replaced 6 occurrences of `(process.env as any).NODE_ENV` in `tests/auth.test.ts`
+BJ|2. Used existing `setProcessEnv` helper from `tests/utils/_testHelpers`
+WW|3. Properly handles read-only property assignment for NODE_ENV
+
+YZ|**Issues Fixed**: #1810
+
+TJ|## Lessons Learned
+
+MP|1. **Small atomic changes** - Keep PRs focused and small
+WY|2. **Verify before commit** - Always run lint/type-check before pushing
+RK|3. **Link issues** - Always link PR to relevant issues
+NJ|4. **Clear naming** - Script names should be self-documenting
+QT|5. **Use existing helpers** - Check for existing utility functions before implementing new solutions
