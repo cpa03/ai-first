@@ -74,3 +74,11 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
     #JM| - Addresses issue #1778
     #QM| - Added husky and lint-staged for pre-commit hooks
     #BS| - ESLint and Prettier run on staged files before commit
+    #XX| #BS| - ESLint and Prettier run on staged files before commit
+    #NM|
+    #QW|- PR #XXXX: feat(ci): optimize CI workflow caching for faster builds
+    #QT| - Addresses issue #1828
+    #NM| - Added npm caching using actions/setup-node built-in cache
+    #JB| - Added Next.js build cache (.next/cache) for all 5 jobs
+    #MB| - Removed duplicate Install Node.js steps
+    #MM| - Expected savings: 40-60% reduction in CI time
