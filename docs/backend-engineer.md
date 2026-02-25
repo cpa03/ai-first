@@ -342,6 +342,23 @@ curl -X POST http://localhost:3000/api/clarify/start \
 
 ## Recent Changes
 
+### New Features
+
+1. **Global API Timeout Middleware**: Added timeout support to `withApiHandler` in `src/lib/api-handler.ts`
+   - New `timeoutMs` option in `ApiHandlerOptions`
+   - Uses existing `TimeoutManager` from resilience module
+   - Returns 504 Gateway Timeout when request exceeds timeout
+   - Defaults to `TIMEOUT_CONFIG.DEFAULT` (30s) if not specified
+   - Logs timeout events and tracks metrics for 504 responses
+
+### Fixed Issues
+
+1. **Markdown Exporter**: Added `content` property to export result
+2. **Export Manager**: Removed window check to always register all connectors
+3. **Database Service**: Added test helpers (`reinitializeClients`, `resetInstance`)
+4. **TypeScript**: Fixed Supabase type errors with proper type assertions
+5. **Database Service Consistency**: Fixed `softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`, and `getIdeaDeliverablesWithTasks` methods to use instance properties (`this.admin`, `this.client`) instead of global variables (`supabaseAdmin`, `supabaseClient`) for consistency and better testability
+
 ### Fixed Issues
 
 1. **Markdown Exporter**: Added `content` property to export result
