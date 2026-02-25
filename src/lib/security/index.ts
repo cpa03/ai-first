@@ -34,7 +34,6 @@ export {
 } from './audit-log';
 
 
-// Suspicious Request Pattern Detection
 export {
   detectSuspiciousPatterns,
   hasSuspiciousPatterns,
@@ -43,3 +42,18 @@ export {
   type SuspiciousPatternDetail,
   type SuspiciousPatternResult,
 } from './suspicious-patterns';
+
+// Request Signing for Internal API Communication
+
+// Request Signing for Internal API Communication
+export {
+  signRequest,
+  verifySignature,
+  createSignedHeaders,
+  extractAndVerifySignature,
+  createSignatureVerifier,
+  isSigningEnabled,
+  getSigningConfig,
+  REQUEST_SIGNER_CONFIG,
+  type SignatureVerificationResult,
+} from './request-signer';
