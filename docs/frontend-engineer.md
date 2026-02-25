@@ -755,4 +755,53 @@ TT|- ✅ ESLint: 0 warnings
 
 ---
 
-B|**Last Updated:** 2026-02-25
+## Recent Improvements (2026-02-25)
+
+### Per-Route ErrorBoundary Coverage
+
+**Issue:** #1826 - Add per-route ErrorBoundary coverage
+
+**Change:** Implemented route-level ErrorBoundaries for better error isolation:
+
+| Route      | File                           | Fallback UI                 |
+| ---------- | ------------------------------ | --------------------------- |
+| /clarify   | `src/app/clarify/layout.tsx`   | "Clarification Unavailable" |
+| /results   | `src/app/results/layout.tsx`   | "Results Unavailable"       |
+| /dashboard | `src/app/dashboard/layout.tsx` | "Dashboard Unavailable"     |
+
+**Technical Changes:**
+
+1. **ErrorBoundary Component** (`src/components/ErrorBoundary.tsx`)
+   - Added optional `fallback` prop to support custom error UI
+   - When fallback is provided, renders it instead of default error UI
+
+2. **Route Layouts** - Each major route now has an ErrorBoundary:
+   - `clarify/layout.tsx` - ErrorBoundary with clarification-specific fallback
+   - `results/layout.tsx` - ErrorBoundary with results-specific fallback
+   - `dashboard/layout.tsx` - ErrorBoundary with dashboard-specific fallback
+
+**Acceptance Criteria Met:**
+
+- ✅ ErrorBoundary wrapping each major route segment
+- ✅ Error recovery preserves navigation state (Try Again / Back to Home buttons)
+- ✅ User-friendly error messages per feature
+- ✅ Error logging with context (existing ErrorBoundary functionality)
+- ✅ "Try again" functionality in fallbacks
+
+**Impact:**
+
+- Errors in one route no longer bring down the entire app
+- Each route has context-specific error messaging
+- Users can easily navigate back home or retry
+
+**Verification:**
+
+- ✅ TypeScript: No errors
+- ✅ ESLint: 0 warnings
+- ✅ Build: Successful
+
+**PR:** #1832
+
+---
+
+**Last Updated:** 2026-02-25
