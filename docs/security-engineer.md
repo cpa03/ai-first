@@ -1,8 +1,8 @@
-# Security Engineer Guide
-
-**Role**: Security Engineer Specialist
-**Last Updated**: 2026-02-21
-**Status**: ✅ Active
+#PH|# Security Engineer Guide
+KM|
+WK|**Role**: Security Engineer Specialist
+YK|**Last Updated**: 2026-02-25
+YH|**Status**: ✅ Active
 
 ---
 
@@ -316,8 +316,73 @@ npm run lint        # ✓ Pass
 npm run type-check  # ✓ Pass
 npm test            # ✓ All tests pass
 ```
+BQ|
+### 2026-02-25: Request Signing for Internal API Communication
+
+**Issue**: Internal API routes communicated without authentication verification, potentially allowing unauthorized internal API access, request spoofing in multi-service deployments, and lack of audit trail for internal operations.
+
+**Risk**: Without request signing:
+
+- Unauthorized internal API access could occur
+- Request spoofing in multi-service deployments
+- No audit trail for internal operations
+- Background jobs and webhooks could be impersonated
+
+**Fix Applied**:
+
+- Created `src/lib/security/request-signer.ts` with cryptographic request signing utilities:
+  - `signRequest()` - HMAC-SHA256 signature generation
+  - `verifySignature()` - Timing-safe signature verification
+  - `generateNonce()` - Cryptographically secure nonce generation
+  - `verifyInternalRequest()` - Middleware helper for API route verification
+  - `createSignedUrl()` / `verifySignedUrl()` - Signed URL generation
+
+- Key security features:
+  - Timestamp validation with configurable tolerance (default 5 minutes)
+  - Nonce support for replay attack prevention
+  - Timing-safe signature comparison to prevent timing attacks
+  - Method and path inclusion in signature for request integrity
+  - Development mode bypass for testing
+
+**Files Modified**:
+
+- `src/lib/security/request-signer.ts` - New request signing utilities
+- `src/lib/security/index.ts` - Export new utilities
+- `tests/security-request-signer.test.ts` - Unit tests (33 tests)
+
+**Usage Example**:
+
+```typescript
+import { signRequest, verifyInternalRequest } from '@/lib/security';
+
+// Server-side: Sign a request
+const timestamp = Date.now();
+const { signature, nonce } = signRequest(
+  JSON.stringify(payload),
+  timestamp,
+  { method: 'POST', path: '/api/internal/endpoint' }
+);
+
+// Include headers in fetch
+const response = await fetch('/api/internal/endpoint', {
+  method: 'POST',
+  headers: {
+    'X-Internal-Signature': `t=${timestamp},nonce=${nonce},sig=${signature}`,
+    'X-Request-Timestamp': String(timestamp),
+  },
+  body: JSON.stringify(payload),
+});
+```
+
+**Verification**:
+
+```bash
+npm test -- --testPathPattern="security-request-signer"  # ✓ 33 tests pass
+```
 
 ---
+
+## Security Architecture
 
 ## Security Architecture
 

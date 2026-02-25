@@ -43,3 +43,26 @@ export {
   type SuspiciousPatternDetail,
   type SuspiciousPatternResult,
 } from './suspicious-patterns';
+
+
+// Request Signing for Internal API Communication
+export {
+  signRequest,
+  verifySignature,
+  generateNonce,
+  createTimestamp,
+  isTimestampValid,
+  parseSignatureHeader,
+  createSignatureHeader,
+  createSignedRequest,
+  verifyInternalRequest,
+  createSignedUrl,
+  verifySignedUrl,
+  DEFAULT_TIMESTAMP_TOLERANCE_MS,
+  MIN_TIMESTAMP_TOLERANCE_MS,
+  MAX_TIMESTAMP_TOLERANCE_MS,
+  type SignedRequestOptions,
+  type SignatureResult,
+  type VerificationResult,
+  type InternalApiSignatureHeader,
+} from './request-signer';
