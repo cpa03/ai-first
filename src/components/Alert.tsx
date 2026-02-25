@@ -111,7 +111,7 @@ const AlertComponent = function Alert({
       {onClose && (
         <button
           onClick={handleClose}
-          className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor}`}
+          className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor} ${styles.focusRing}`}
           aria-label="Dismiss alert"
           type="button"
         >
