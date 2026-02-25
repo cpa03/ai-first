@@ -527,10 +527,72 @@ gh pr create --title "fix(docs): [description]" --body "..."
 2. **Rate limit inconsistencies** - Different values in different files
 3. **Directory structure changes** - Moved files not updated in docs
 4. **Error code updates** - New errors not documented
-#WS|5. **API endpoint changes** - New/modified endpoints not documented
-#PY|
-#HK|---
-#MZ|**Last Updated**: 2026-02-25
+   #WS|5. **API endpoint changes** - New/modified endpoints not documented
+   #PY|
+   #HK|---
+
+### Task: Code Block Formatting Standardization ✅ COMPLETE
+
+**Priority**: P3
+**Date**: 2026-02-25
+
+#### Objectives
+
+- [x] Fix inconsistent code example formatting in documentation
+- [x] Add language indicators to code blocks in key files
+- [x] Verify changes with lint, type-check, and build
+
+#### Completed Work
+
+1. **Fixed README.md**
+   - Added ```text to directory tree code blocks
+   - Added ```bash to command examples
+   - Added ```text to ASCII diagrams
+
+2. **Fixed docs/troubleshooting.md**
+   - Added ```bash to curl commands
+   - Added ```bash to npm commands
+   - Added ```text to template sections
+
+3. **Verification Complete**
+   - Lint: 0 warnings ✅
+   - Type-check: passes ✅
+   - Build: succeeds ✅
+
+#### Files Modified
+
+- `README.md`
+- `docs/troubleshooting.md`
+
+#### Notes
+
+- Issue #770 addressed partially (key files fixed, more work possible)
+- PR #1835 created with technical-writer label
+- deploy.md and api.md already had proper ```bash tags
+
+---
+
+### Bug Patterns to Watch
+
+1. **Field name mismatches** - API docs vs implementation
+2. **Rate limit inconsistencies** - Different values in different files
+3. **Directory structure changes** - Moved files not updated in docs
+4. **Error code updates** - New errors not documented
+5. **API endpoint changes** - New/modified endpoints not documented
+
+---
+
+**Last Updated**: 2026-02-25
+**Agent**: Technical Writer
+**Version**: 1.5.0
+**Verification Status**: ✅ PR #1835 created, all checks pass
+
+---
+
+**Last Updated**: 2026-02-25
+**Agent**: Technical Writer
+**Version**: 1.4.1
+**Verification Status**: ✅ All documentation verified against implementation
 #MK|**Agent**: Technical Writer
 #MY|**Version**: 1.4.1
 #KP|**Verification Status**: ✅ All documentation verified against implementation
