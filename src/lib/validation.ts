@@ -1,10 +1,10 @@
 import {
   VALIDATION_LIMITS_CONFIG,
   VALIDATION_LIMITS,
-  USER_STORY_CONFIG,
   STATUS_CODES,
   HTTP_HEADERS,
 } from './config/constants';
+import { USER_STORY_CONFIG } from './config/user-story-config';
 import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config';
 import { isString } from './type-guards';
 

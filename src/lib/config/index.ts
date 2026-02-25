@@ -126,6 +126,9 @@ export { EnvLoader, ENV_CONFIG } from './environment';
 // Legacy constants (backward compatibility)
 export * from './constants';
 
+// Domain-specific config modules (extracted from constants.ts)
+export { USER_STORY_CONFIG } from './user-story-config';
+
 export {
   STATUS_CODES,
   AI_SERVICE_LIMITS,
