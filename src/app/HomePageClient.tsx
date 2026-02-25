@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import IdeaInput from '@/components/IdeaInput';
 import CopyButton from '@/components/CopyButton';
+import ShareButton from '@/components/ShareButton';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
@@ -62,6 +63,15 @@ export default function HomePageClient() {
           automated task breakdown, realistic timelines, and comprehensive
           roadmaps in minutes.
         </p>
+        {/* Growth: Social sharing for viral loops */}
+        <div className="mt-6 flex justify-center gap-3">
+          <ShareButton
+            shareTitle="IdeaFlow - Turn Ideas into Action"
+            shareText="Transform your ideas into structured projects with AI-powered planning, task breakdown, and export to your favorite tools."
+            label="Share IdeaFlow"
+            ariaLabel="Share IdeaFlow with friends"
+          />
+        </div>
       </section>
 
       <section
