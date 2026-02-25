@@ -71,6 +71,18 @@ Deliver incremental architectural improvements that:
 
 ## History
 
+### 2026-02-25: IDEA_STATUS_CONFIG Modularization
+
+- **Action**: Extracted IDEA_STATUS_CONFIG into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/idea-status-config.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export)
+  - Modified: `src/lib/config/index.ts` (export)
+- **Verification**: TypeScript type-check passed
+- **PR**: https://github.com/cpa03/ai-first/pull/1799
+
+### 2026-02-25: USER_STORY_CONFIG Modularization
+
 ### 2026-02-25: USER_STORY_CONFIG Modularization
 
 - **Issue**: #1740 - "[arch] Split constants.ts into domain-specific configuration modules"
