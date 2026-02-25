@@ -115,22 +115,12 @@ export {
 // API Error Messages Configuration
 export { API_ERROR_MESSAGES } from './error-messages';
 
-// Health Monitoring Configuration (extracted from constants.ts for modularity)
-export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
-
 // Environment-based Configuration
-// EnvLoader provides type-safe environment variable loading
-// ENV_CONFIG contains runtime environment metadata
 export { EnvLoader, ENV_CONFIG } from './environment';
 
 // Legacy constants (backward compatibility)
-// Note: individual exports below are redundant if they are also in constants.ts
-// but we keep some for clarity while removing duplicates.
+// Note: Named exports above take precedence over export * from here.
 export * from './constants';
-
-// Domain-specific config modules (extracted from constants.ts)
-export { USER_STORY_CONFIG } from './user-story-config';
-export { IDEA_STATUS_CONFIG } from './idea-status-config';
 
 // Configuration Validator
 export {
@@ -180,9 +170,3 @@ export type {
 export type { APIErrorMessages } from './error-messages';
 
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
-
-// Health Monitoring Types
-export type { HealthConfig, MemoryConfig } from './health';
-
-// Idea Status Types
-export type { IdeaStatus } from './idea-status-config';

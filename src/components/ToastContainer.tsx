@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 import {
-  UI_CONFIG as UI_CONSTANTS,
+  UI_CONFIG as UI_CONFIG,
   ANIMATION_CONFIG,
 } from '@/lib/config/constants';
 import { TOAST_CONFIG } from '@/lib/config';
@@ -123,8 +123,8 @@ function ToastComponent({ toast, onClose }: ToastProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
-    const updateInterval = UI_CONSTANTS.TOAST_PROGRESS_INTERVAL;
+    const duration = toast.duration || UI_CONFIG.TOAST_DURATION;
+    const updateInterval = UI_CONFIG.TOAST_PROGRESS_INTERVAL;
     const totalSteps = duration / updateInterval;
     let currentStep = 0;
 
@@ -177,7 +177,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     setIsSwiping(false);
     const diff = touchCurrentXRef.current - touchStartXRef.current;
 
-    if (diff > UI_CONSTANTS.TOAST_SWIPE_DISMISS_THRESHOLD) {
+    if (diff > UI_CONFIG.TOAST_SWIPE_DISMISS_THRESHOLD) {
       setIsLeaving(true);
       setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
     } else {
@@ -263,7 +263,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           style={{
             opacity:
               Math.min(
-                swipeOffset / UI_CONSTANTS.TOAST_SWIPE_DISMISS_THRESHOLD,
+                swipeOffset / UI_CONFIG.TOAST_SWIPE_DISMISS_THRESHOLD,
                 1
               ) * 0.5,
           }}
@@ -277,7 +277,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           width: `${progress}%`,
           transitionDuration: isPaused
             ? '0ms'
-            : `${UI_CONSTANTS.TOAST_PROGRESS_TRANSITION_MS}ms`,
+            : `${UI_CONFIG.TOAST_PROGRESS_TRANSITION_MS}ms`,
         }}
         aria-hidden="true"
       />

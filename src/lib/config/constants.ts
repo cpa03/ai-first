@@ -3,7 +3,7 @@
  * All timeout values are in milliseconds
  * Now supports environment variable overrides
  */
-import { EnvLoader } from './environment';
+import { EnvLoader } from './env-loader';
 
 export const TIMEOUT_CONFIG = {
   /**
@@ -419,7 +419,7 @@ export const ANIMATION_CONFIG = {
  */
 export const RATE_LIMIT_CLEANUP_CONFIG = {
   CLEANUP_INTERVAL_MS: RATE_LIMIT_CONFIG.CLEANUP_INTERVAL_MS,
-  CLEANUP_WINDOW_MS: RATE_LIMIT_CONFIG.CLEANUP_WINDOW_MS,
+  CLEANUP_WINDOW_MS: RATE_LIMIT_CONFIG.DEFAULT_WINDOW,
 } as const;
 
 /**

@@ -16,7 +16,7 @@ export { EnvLoader };
  * API Timeout Configuration
  * All timeout values are in milliseconds
  */
-export const TIMEOUT_CONFIG = {
+const TIMEOUT_CONFIG = {
   /** Default timeout for API requests (ms) - Default: 30000 */
   DEFAULT: EnvLoader.number('API_TIMEOUT_DEFAULT', 30000, 1000, 300000),
 
@@ -69,7 +69,7 @@ export const TIMEOUT_CONFIG = {
 /**
  * Rate Limiting Configuration
  */
-export const RATE_LIMIT_CONFIG = {
+const RATE_LIMIT_CONFIG = {
   /** Default request rate (requests per window) - Default: 100 */
   DEFAULT_RATE: EnvLoader.number('RATE_LIMIT_DEFAULT_RATE', 100, 1, 10000),
 
@@ -132,7 +132,7 @@ export const RATE_LIMIT_CONFIG = {
 /**
  * Retry Configuration
  */
-export const RETRY_CONFIG = {
+const RETRY_CONFIG = {
   /** Default number of retry attempts - Default: 3 */
   DEFAULT_MAX_RETRIES: EnvLoader.number('RETRY_DEFAULT_MAX_RETRIES', 3, 0, 10),
 
@@ -152,7 +152,7 @@ export const RETRY_CONFIG = {
 /**
  * UI Timing Configuration
  */
-export const UI_CONFIG = {
+const UI_ENV_CONFIG = {
   /** Character count warning threshold (0.0 - 1.0) - Default: 0.8 */
   CHAR_COUNT_WARNING_THRESHOLD:
     EnvLoader.number('UI_CHAR_COUNT_WARNING_THRESHOLD', 80, 50, 95) / 100,
@@ -209,7 +209,7 @@ export const UI_CONFIG = {
 /**
  * Validation Configuration
  */
-export const VALIDATION_CONFIG = {
+const VALIDATION_ENV_CONFIG = {
   /** Maximum length for clarification answers (characters) - Default: 5000 */
   MAX_ANSWER_LENGTH: EnvLoader.number(
     'VALIDATION_MAX_ANSWER_LENGTH',
@@ -265,7 +265,7 @@ export const VALIDATION_CONFIG = {
 /**
  * AI Service Configuration
  */
-export const AI_CONFIG = {
+const AI_ENV_CONFIG = {
   /** Default max tokens for AI model calls - Default: 4000 */
   DEFAULT_MAX_TOKENS: EnvLoader.number(
     'AI_DEFAULT_MAX_TOKENS',
@@ -325,7 +325,7 @@ export const AI_CONFIG = {
  * Resilience Configuration
  * Circuit breakers, retries, and timeouts
  */
-export const RESILIENCE_CONFIG = {
+const RESILIENCE_ENV_CONFIG = {
   RETRY: {
     DEFAULT_MAX_RETRIES: EnvLoader.number(
       'RESILIENCE_RETRY_DEFAULT_MAX_RETRIES',
@@ -403,7 +403,7 @@ export const RESILIENCE_CONFIG = {
 /**
  * Agent Configuration
  */
-export const AGENT_CONFIG = {
+const AGENT_ENV_CONFIG = {
   BREAKDOWN_CONFIDENCE_WEIGHTS: {
     ANALYSIS:
       EnvLoader.number('AGENT_BREAKDOWN_WEIGHT_ANALYSIS', 30, 0, 100) / 100,
@@ -445,7 +445,7 @@ export const AGENT_CONFIG = {
 /**
  * Security Configuration
  */
-export const SECURITY_CONFIG = {
+const SECURITY_ENV_CONFIG = {
   /** HSTS max-age in seconds (1 year = 31536000 seconds) - Default: 31536000 */
   HSTS_MAX_AGE: EnvLoader.number(
     'SECURITY_HSTS_MAX_AGE',
@@ -502,12 +502,12 @@ export const ENV_CONFIG = {
   RATE_LIMIT: RATE_LIMIT_CONFIG,
   RETRY: RETRY_CONFIG,
   CACHE: CACHE_CONFIG,
-  UI: UI_CONFIG,
-  VALIDATION: VALIDATION_CONFIG,
-  AI: AI_CONFIG,
-  RESILIENCE: RESILIENCE_CONFIG,
-  AGENT: AGENT_CONFIG,
-  SECURITY: SECURITY_CONFIG,
+  UI: UI_ENV_CONFIG,
+  VALIDATION: VALIDATION_ENV_CONFIG,
+  AI: AI_ENV_CONFIG,
+  RESILIENCE: RESILIENCE_ENV_CONFIG,
+  AGENT: AGENT_ENV_CONFIG,
+  SECURITY: SECURITY_ENV_CONFIG,
 } as const;
 
 export type EnvironmentConfig = typeof ENV_CONFIG;
