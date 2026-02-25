@@ -76,110 +76,93 @@ jest.mock('@/lib/export-connectors/connectors', () => ({
   })),
 }));
 
-describe('Lazy Export Connectors', () => {
-  const mockExportData: ExportData = {
-    idea: {
-      id: 'idea-123',
-      title: 'Test Idea',
-      raw_text: 'This is a test idea',
-      status: 'draft',
+const mockExportData: ExportData = {
+  idea: {
+    id: 'idea-123',
+    title: 'Test Idea',
+    raw_text: 'This is a test idea',
+    status: 'draft',
+    created_at: '2024-01-01T00:00:00Z',
+    deleted_at: null,
+  },
+  tasks: [
+    {
+      id: 'task-1',
+      deliverable_id: 'deliv-1',
+      title: 'Task 1',
+      status: 'todo',
+      estimate: 4,
+      start_date: null,
+      end_date: null,
+      actual_hours: null,
+      completion_percentage: 0,
+      priority_score: 1,
+      complexity_score: 1,
+      risk_level: 'low',
+      tags: null,
+      custom_fields: null,
+      milestone_id: null,
       created_at: '2024-01-01T00:00:00Z',
     },
-    deliverables: [
-      {
-        id: 'deliv-1',
-        idea_id: 'idea-123',
-        title: 'Deliverable 1',
-        priority: 1,
-        estimate_hours: 8,
-        milestone_id: null,
-        completion_percentage: 0,
-        business_value: 10,
-        risk_factors: null,
-        acceptance_criteria: null,
-        deliverable_type: 'feature',
-        created_at: '2024-01-01T00:00:00Z',
-      },
-    ],
-    tasks: [
-      {
-        id: 'task-1',
-        deliverable_id: 'deliv-1',
-        title: 'Task 1',
-        status: 'todo',
-        estimate: 4,
-        start_date: null,
-        end_date: null,
-        actual_hours: null,
-        completion_percentage: 0,
-        priority_score: 1,
-        complexity_score: 1,
-        risk_level: 'low',
-        tags: null,
-        custom_fields: null,
-        milestone_id: null,
-        created_at: '2024-01-01T00:00:00Z',
-      },
-    ],
-    goals: ['Goal 1', 'Goal 2'],
-    target_audience: 'Developers',
-    metadata: {
-      exported_at: '2024-01-01T00:00:00Z',
-      version: '1.0.0',
-    },
-  };
+  ],
+  goals: ['Goal 1', 'Goal 2'],
+  target_audience: 'Developers',
+  metadata: {
+    exported_at: '2024-01-01T00:00:00Z',
+    version: '1.0.0',
+  },
+};
 
-  describe('lazyExportToMarkdown', () => {
-    it('should successfully export to markdown', async () => {
-      const result = await lazyExportToMarkdown(mockExportData);
+describe('lazyExportToMarkdown', () => {
+  it('should successfully export to markdown', async () => {
+    const result = await lazyExportToMarkdown(mockExportData);
 
-      expect(result.success).toBe(true);
-      expect(result.url).toBe('https://example.com/export.md');
-    });
+    expect(result.success).toBe(true);
+    expect(result.url).toBe('https://example.com/export.md');
   });
+});
 
-  describe('lazyExportToJSON', () => {
-    it('should successfully export to JSON', async () => {
-      const result = await lazyExportToJSON(mockExportData);
+describe('lazyExportToJSON', () => {
+  it('should successfully export to JSON', async () => {
+    const result = await lazyExportToJSON(mockExportData);
 
-      expect(result.success).toBe(true);
-      expect(result.url).toBe('https://example.com/export.json');
-    });
+    expect(result.success).toBe(true);
+    expect(result.url).toBe('https://example.com/export.json');
   });
+});
 
-  describe('lazyExportToNotion', () => {
-    it('should successfully export to Notion', async () => {
-      const result = await lazyExportToNotion(mockExportData);
+describe('lazyExportToNotion', () => {
+  it('should successfully export to Notion', async () => {
+    const result = await lazyExportToNotion(mockExportData);
 
-      expect(result.success).toBe(true);
-      expect(result.content).toBe('notion-page-123');
-    });
+    expect(result.success).toBe(true);
+    expect(result.content).toBe('notion-page-123');
   });
+});
 
-  describe('lazyExportToTrello', () => {
-    it('should successfully export to Trello', async () => {
-      const result = await lazyExportToTrello(mockExportData);
+describe('lazyExportToTrello', () => {
+  it('should successfully export to Trello', async () => {
+    const result = await lazyExportToTrello(mockExportData);
 
-      expect(result.success).toBe(true);
-      expect(result.content).toBe('board-123');
-    });
+    expect(result.success).toBe(true);
+    expect(result.content).toBe('board-123');
   });
+});
 
-  describe('lazyExportToGoogleTasks', () => {
-    it('should successfully export to Google Tasks', async () => {
-      const result = await lazyExportToGoogleTasks(mockExportData);
+describe('lazyExportToGoogleTasks', () => {
+  it('should successfully export to Google Tasks', async () => {
+    const result = await lazyExportToGoogleTasks(mockExportData);
 
-      expect(result.success).toBe(true);
-      expect(result.url).toBe('https://tasksboard.com/list');
-    });
+    expect(result.success).toBe(true);
+    expect(result.url).toBe('https://tasksboard.com/list');
   });
+});
 
-  describe('lazyExportToGitHubProjects', () => {
-    it('should successfully export to GitHub Projects', async () => {
-      const result = await lazyExportToGitHubProjects(mockExportData);
+describe('lazyExportToGitHubProjects', () => {
+  it('should successfully export to GitHub Projects', async () => {
+    const result = await lazyExportToGitHubProjects(mockExportData);
 
-      expect(result.success).toBe(true);
-      expect(result.url).toBe('https://github.com/users/test/projects/1');
-    });
+    expect(result.success).toBe(true);
+    expect(result.url).toBe('https://github.com/users/test/projects/1');
   });
 });

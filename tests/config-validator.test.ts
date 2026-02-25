@@ -129,24 +129,20 @@ describe('ConfigValidator', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
-
+      const originalEnv = (process.env as any).NODE_ENV;
+      (process.env as any).NODE_ENV = 'production';
       expect(() => validateConfigurationOrThrow()).toThrow();
-
-      process.env.NODE_ENV = originalEnv;
+      (process.env as any).NODE_ENV = originalEnv;
     });
 
     it('should not throw in non-production when configuration is invalid', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
-
+      const originalEnv = (process.env as any).NODE_ENV;
+      (process.env as any).NODE_ENV = 'development';
       expect(() => validateConfigurationOrThrow()).not.toThrow();
-
-      process.env.NODE_ENV = originalEnv;
+      (process.env as any).NODE_ENV = originalEnv;
     });
   });
 
