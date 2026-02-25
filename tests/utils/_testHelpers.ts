@@ -256,3 +256,19 @@ export const mockConsole = () => {
 
   return mockConsole;
 };
+
+// Helper to safely set process.env values for testing
+export const setProcessEnv = (
+  key: string,
+  value: string | undefined
+): (() => void) => {
+  const originalValue = process.env[key];
+  process.env[key] = value;
+  return () => {
+    if (originalValue === undefined) {
+      delete process.env[key];
+    } else {
+      process.env[key] = originalValue;
+    }
+  };
+};
