@@ -11,7 +11,7 @@
  * - Handling of frozen objects and special object types
  */
 
-import { PII_REDACTION_CONFIG } from './config/constants';
+import { PII_REDACTION_CONFIG } from './config/pii-redaction-config';
 
 // ============================================================================
 // TYPE DEFINITIONS

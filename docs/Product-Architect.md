@@ -71,8 +71,21 @@ Deliver incremental architectural improvements that:
 
 ## History
 
+### 2026-02-25: PII_REDACTION_CONFIG Modularization
+
+- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+- **Action**: Extracted PII_REDACTION_CONFIG into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/pii-redaction-config.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+  - Modified: `src/lib/config/index.ts` (export)
+  - Modified: `src/lib/pii-redaction.ts` (updated import)
+- **Result**: Reduced constants.ts from 1477 to 1392 lines (-85 lines)
+- **Verification**: ESLint and TypeScript checks pass
+
 ### 2026-02-25: IDEA_STATUS_CONFIG Modularization
 
+- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
 - **Action**: Extracted IDEA_STATUS_CONFIG into dedicated module
 - **Files Changed**:
   - Created: `src/lib/config/idea-status-config.ts`
@@ -80,8 +93,6 @@ Deliver incremental architectural improvements that:
   - Modified: `src/lib/config/index.ts` (export)
 - **Verification**: TypeScript type-check passed
 - **PR**: https://github.com/cpa03/ai-first/pull/1799
-
-### 2026-02-25: USER_STORY_CONFIG Modularization
 
 ### 2026-02-25: USER_STORY_CONFIG Modularization
 
@@ -93,18 +104,26 @@ Deliver incremental architectural improvements that:
   - Modified: `src/lib/config/index.ts` (export)
   - Modified: `src/lib/validation.ts` (import)
 - **Verification**: TypeScript type-check ✓, ESLint ✓
-  BS|- **Verification**: TypeScript type-check ✓, ESLint ✓
-  MQ|- **PR**: https://github.com/cpa03/ai-first/pull/1790
+- **PR**: https://github.com/cpa03/ai-first/pull/1790
 
 ### 2026-02-25: ANIMATION_CONFIG Modularization
 
-MV|- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
-JK|- **Action**: Extracted ANIMATION_CONFIG into dedicated module
-QW|- **Files Changed**:
-YQ| - Created: `src/lib/config/animation.ts`
-QM| - Modified: `src/lib/config/constants.ts` (re-export)
-XW| - Modified: `src/lib/config/index.ts` (export)
-WR|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
-NK|- **PR**: https://github.com/cpa03/ai-first/pull/1819
+- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+- **Action**: Extracted ANIMATION_CONFIG into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/animation.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export)
+  - Modified: `src/lib/config/index.ts` (export)
+- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
+- **PR**: https://github.com/cpa03/ai-first/pull/1819
 
-- **PR**: https://github.com/cpa03/ai-first/pull/1790
+### 2026-02-25: CLARIFIER_VALUES Modularization
+
+- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+- **Action**: Extracted CLARIFIER_VALUES into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/clarifier-config.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export)
+  - Modified: `src/lib/config/index.ts` (export)
+- **Verification**: TypeScript type-check passed
+- **PR**: https://github.com/cpa03/ai-first/pull/1831
