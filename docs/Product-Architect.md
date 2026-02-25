@@ -127,3 +127,15 @@ Deliver incremental architectural improvements that:
   - Modified: `src/lib/config/index.ts` (export)
 - **Verification**: TypeScript type-check passed
 - **PR**: https://github.com/cpa03/ai-first/pull/1831
+BY|- **PR**: https://github.com/cpa03/ai-first/pull/1831
+
+### 2026-02-25: EXTERNAL_API_VERSIONS Modularization
+
+- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+- **Action**: Extracted EXTERNAL_API_VERSIONS into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/external-api-versions.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+  - Modified: `src/lib/config/index.ts` (export)
+- **Result**: Reduced constants.ts from 1392 to 1271 lines (-121 lines)
+- **Verification**: TypeScript type-check passed (pre-existing type def issues unrelated)

@@ -9,8 +9,10 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Alert from '@/components/Alert';
 import Tooltip from '@/components/Tooltip';
-import dynamic from 'next/dynamic';
+import ShareButton from '@/components/ShareButton';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
+import dynamic from 'next/dynamic';
 
 interface Idea {
   id: string;
@@ -445,6 +447,33 @@ function ResultsContent() {
             </Alert>
           </div>
         )}
+      </div>
+
+      {/* Share Options - Growth: Viral sharing for user acquisition */}
+      <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          Share Your Blueprint
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Love your project blueprint? Share it with your network to inspire
+          others!
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <ShareButton
+            shareTitle={`Check out my project blueprint on IdeaFlow!`}
+            shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
+            label="Share Blueprint"
+            successLabel="Shared!"
+            ariaLabel="Share your project blueprint"
+            onShare={() => {
+              // Growth: Track social share event
+              trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
+                share_platform: 'web_share',
+                idea_id: idea.id,
+              });
+            }}
+          />
+        </div>
       </div>
     </div>
   );
