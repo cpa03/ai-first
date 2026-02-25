@@ -138,20 +138,19 @@ The ai-agent-engineer job specifically focuses on:
 - Workflow CI enhancements
 - Self-\* capability implementations
 
-## CI Workflow Jobs
+### GitHub App Token Limitations (2026-02-25)
 
-The iterate.yml workflow (`.github/workflows/iterate.yml`) runs 5 agent jobs:
+When pushing workflow file changes, the GitHub App token may fail with:
+`refusing to allow a GitHub App to create or update workflow .github/workflows/xxx without workflows permission`
 
-| Job Name  | Agent      | Purpose                 |
-| --------- | ---------- | ----------------------- |
-| architect | RepoKeeper | Strategy & Triage       |
-| bugfix    | RepoKeeper | Bug fixing              |
-| palette   | RepoKeeper | UX improvements         |
-| flexy     | RepoKeeper | Modularity improvements |
-| brocula   | RepoKeeper | Browser console fixes   |
+**Workarounds:**
 
-**Note**: The ai-agent-engineer job is not yet implemented in the CI workflow.
-The ai-agent-engineer agent can be triggered manually or via separate workflows
-for agent system maintenance, configuration improvements, and skill maintenance.
+1. Use a GitHub PAT with `workflows` permission instead of GitHub App token
+2. Create PR with non-workflow changes first, then add workflow via follow-up
+3. Use GitHub API with proper token to upload workflow files
+4. Have maintainer with proper permissions merge workflow changes
 
-Runs on schedule every 4 hours and on main branch changes.
+**Prevention:**
+
+- Document workflow changes in PR comments for manual addition
+- Split changes into docs-only + workflow when token is limited
