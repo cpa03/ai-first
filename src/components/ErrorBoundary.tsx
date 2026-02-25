@@ -14,6 +14,7 @@ import {
 
 interface Props {
   children: ReactNode;
+  fallback?: ReactNode;
 }
 
 interface State {
@@ -29,7 +30,12 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null, isCopied: false };
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      isCopied: false,
+    };
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
@@ -55,11 +61,22 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   handleReset = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null, isCopied: false });
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      isCopied: false,
+    });
   };
 
   render() {
     if (this.state.hasError) {
+      // If custom fallback is provided, use it
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+
+      // Default error UI
       return (
         <>
           <a
