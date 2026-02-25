@@ -14,6 +14,34 @@ import {
   KeyboardShortcutsButton,
 } from '@/components/KeyboardShortcutsProvider';
 
+// JSON-LD Structured Data for SEO - Growth: Better search visibility
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'IdeaFlow',
+  description: APP_CONFIG.DESCRIPTION,
+  url: APP_CONFIG.URLS.BASE,
+  applicationCategory: 'ProductivityApplication',
+  operatingSystem: 'Web Browser',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    availability: 'https://schema.org/InStock',
+  },
+  creator: {
+    '@type': 'Organization',
+    name: 'IdeaFlow',
+    url: APP_CONFIG.URLS.BASE,
+  },
+  featureList: [
+    'AI-powered idea clarification',
+    'Automatic task breakdown',
+    'Project roadmap generation',
+    'Export to popular tools',
+  ],
+};
+
 const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
@@ -92,6 +120,12 @@ export default async function RootLayout({
       className={`${inter.variable} ${jetBrainsMono.variable}`}
       data-scroll-behavior="smooth"
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-screen bg-gray-50 font-sans">
         <ErrorBoundary>
           <GlobalErrorHandler />

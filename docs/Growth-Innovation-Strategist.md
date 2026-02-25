@@ -119,6 +119,13 @@ INITIATE → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → SELF EVOLVE → D
 
 ## Past Improvements
 
+### Completed Improvements
+
+| Date       | PR    | Description                                   | Impact                           |
+| ---------- | ----- | --------------------------------------------- | -------------------------------- |
+| 2026-02-25 | #1770 | Add OG image and JSON-LD structured data      | SEO + Social sharing             |
+| 2026-02-25 | #1786 | Add PWA manifest for better mobile experience | PWA capabilities, SEO, mobile UX |
+
 ### 2026-02-25: PWA Manifest Implementation
 
 - **Issue**: Missing manifest.json for PWA capabilities
@@ -153,3 +160,12 @@ INITIATE → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → SELF EVOLVE → D
 - Coordinate with other agents if changes affect their domains
 - Don't hesitate to ask for clarification if scope is unclear
 - Focus on "done" over "perfect"
+
+## Identified Opportunities
+
+1. **Analytics/Event Tracking** - Missing foundational growth measurement
+2. **User Onboarding** - No welcome emails, tutorials, or guided tours
+3. **Social Sharing** - No share to social media functionality
+4. **Referral System** - Missing viral growth loops
+5. **Push Notifications** - Missing engagement hooks
+6. **A/B Testing** - Can't experiment with growth strategies
