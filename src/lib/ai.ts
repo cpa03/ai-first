@@ -1,5 +1,6 @@
 import 'openai/shims/node';
 import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Cache } from './cache';
 import { createLogger } from './logger';
@@ -58,6 +59,7 @@ export interface ContextWindow {
 
 class AIService {
   private openai: OpenAI | null = null;
+  private anthropic: Anthropic | null = null;
   // SECURITY: Lazy-loaded Supabase client to prevent service role key exposure in client bundle
   // The client is only initialized when explicitly needed in server-side contexts
   private _supabase: SupabaseClient | null = null;
@@ -84,6 +86,13 @@ class AIService {
     if (process.env.OPENAI_API_KEY) {
       this.openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
+        timeout: DEFAULT_TIMEOUTS.openai,
+      });
+    }
+
+    if (process.env.ANTHROPIC_API_KEY) {
+      this.anthropic = new Anthropic({
+        apiKey: process.env.ANTHROPIC_API_KEY,
         timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
@@ -157,6 +166,10 @@ class AIService {
     // Validate API keys and configuration
     if (config.provider === 'openai' && !this.openai) {
       throw new Error('OpenAI API key not configured');
+    }
+
+    if (config.provider === 'anthropic' && !this.anthropic) {
+      throw new Error('Anthropic API key not configured');
     }
 
     // Log initialization for audit
@@ -238,6 +251,75 @@ class AIService {
           }
 
           return response;
+        } else if (config.provider === 'anthropic') {
+          if (!this.anthropic) {
+            const { AppError, ErrorCode } = await import('./errors');
+            throw new AppError(
+              'Anthropic client not initialized. Check ANTHROPIC_API_KEY environment variable.',
+              ErrorCode.SERVICE_UNAVAILABLE,
+              STATUS_CODES.SERVICE_UNAVAILABLE,
+              undefined,
+              false,
+              [
+                'Ensure ANTHROPIC_API_KEY is set in environment variables',
+                'Verify the API key is valid and has not expired',
+              ]
+            );
+          }
+
+          // Convert OpenAI-style messages to Anthropic format
+          const systemMessage = messages.find((m) => m.role === 'system');
+          const otherMessages = messages.filter((m) => m.role !== 'system');
+
+          const anthropicMessages: Anthropic.MessageParam[] = otherMessages.map(
+            (m) => ({
+              role: m.role as 'user' | 'assistant',
+              content: m.content,
+            })
+          );
+
+          const response = await this.anthropic.messages.create({
+            model: config.model,
+            max_tokens: config.maxTokens,
+            temperature: config.temperature,
+            system: systemMessage?.content,
+            messages: anthropicMessages,
+          });
+
+          if (!response || !response.content || response.content.length === 0) {
+            const { AppError, ErrorCode } = await import('./errors');
+            throw new AppError(
+              'Invalid response from Anthropic: no content returned',
+              ErrorCode.EXTERNAL_SERVICE_ERROR,
+              STATUS_CODES.BAD_GATEWAY,
+              undefined,
+              true
+            );
+          }
+
+          const textContent = response.content[0];
+          if (textContent.type !== 'text') {
+            const { AppError, ErrorCode } = await import('./errors');
+            throw new AppError(
+              'Invalid response from Anthropic: expected text content',
+              ErrorCode.EXTERNAL_SERVICE_ERROR,
+              STATUS_CODES.BAD_GATEWAY,
+              undefined,
+              true
+            );
+          }
+
+          const anthropicResponse = textContent.text;
+
+          // Track usage for Anthropic (uses input_tokens and output_tokens)
+          if (response.usage) {
+            const totalTokens =
+              (response.usage.input_tokens || 0) +
+              (response.usage.output_tokens || 0);
+            await this.trackCost(totalTokens, config.model);
+          }
+
+          return anthropicResponse;
         } else {
           const { AppError, ErrorCode } = await import('./errors');
           throw new AppError(
@@ -247,7 +329,7 @@ class AIService {
             undefined,
             false,
             [
-              'Use "openai" as the provider',
+              'Use "openai" or "anthropic" as the provider',
               'Check documentation for supported providers',
             ]
           );
@@ -319,7 +401,13 @@ class AIService {
     const { resilienceManager, defaultResilienceConfigs } =
       await import('@/lib/resilience');
 
-    const serviceKey = config.provider === 'openai' ? 'openai' : 'default';
+    // Use 'anthropic' key if provider is anthropic, otherwise use provider name or fall back to default
+    const serviceKey =
+      config.provider === 'openai'
+        ? 'openai'
+        : config.provider === 'anthropic'
+          ? 'anthropic'
+          : 'default';
 
     try {
       return await resilienceManager.execute(
@@ -678,6 +766,28 @@ class AIService {
         providers.push('openai');
       } catch (error) {
         logger.error('OpenAI health check failed:', error);
+      }
+    }
+
+    if (this.anthropic) {
+      try {
+        await withTimeout(
+          async () => {
+            // Anthropic doesn't have a simple list models endpoint,
+            // so we use the messages API with a minimal request
+            await this.anthropic!.messages.create({
+              model: 'claude-3-haiku-20240307',
+              max_tokens: 1,
+              messages: [{ role: 'user', content: 'ping' }],
+            });
+          },
+          {
+            timeoutMs: (DEFAULT_TIMEOUTS.openai ?? 60000) / 2,
+          }
+        );
+        providers.push('anthropic');
+      } catch {
+        // Don't log error for Anthropic as it may fail due to API key issues
       }
     }
 
