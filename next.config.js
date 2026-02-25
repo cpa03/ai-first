@@ -75,10 +75,8 @@ const nextConfig = {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          // Scripts: self + inline (needed for Next.js)
-          // Note: 'unsafe-eval' removed - codebase doesn't use eval() or new Function()
-          // This hardens CSP against potential XSS attacks via eval-based injection
-          "script-src 'self' 'unsafe-inline'",
+          // Scripts: self + nonce-placeholder (replaced by middleware at runtime)
+          "script-src 'self' 'nonce-placeholder'",
           // Styles: self + inline (needed for Tailwind/CSS-in-JS)
           "style-src 'self' 'unsafe-inline'",
           // Images: self + data URIs + HTTPS sources

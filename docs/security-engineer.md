@@ -42,7 +42,7 @@ ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
 ### Areas for Improvement
 
 - ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
-- ⚠️ **CSP uses 'unsafe-inline'** (necessary for Next.js, but could be enhanced with nonces in future)
+- ✅ **CSP nonces** implemented (2026-02-25 - runtime CSP uses per-request nonces)
 - ✅ **CSP 'unsafe-eval' removed** (2026-02-21 - codebase doesn't use eval)
 - ⚠️ **Admin authentication** is basic API key only
 - ⚠️ **npm audit** shows 33 vulnerabilities in devDependencies:
@@ -86,7 +86,32 @@ JM|npm run lint # ✓ Pass
 YS|npm run type-check # ✓ Pass
 KT|npm test # ✓ api-handler tests pass
 XZ|
-XW|---
+VV|XW|---
+VZ|XQ|### 2026-02-25: CSP Nonce Consistency Fix (Issue #1741)
+RT|
+QT|**Issue**: The static CSP in `next.config.js` used `'unsafe-inline'` for script-src while the runtime CSP in `middleware.ts` correctly used per-request nonces. This inconsistency reduced the security benefits of CSP.
+ZT|
+WK|**Risk**: Without consistent nonce-based CSP:
+BK|
+JN|- Static CSP fallback could allow inline script execution
+NZ|- Defense-in-depth weakened by inconsistent configuration
+YS|
+XY|**Fix Applied**:
+VS|
+HH|- Updated `next.config.js` script-src from `'unsafe-inline'` to `'nonce-placeholder'`
+VM|- Middleware already replaces placeholder with actual nonce at runtime
+ZY|- Static CSP now consistent with runtime CSP approach
+BP|
+VP|**Files Modified**:
+YX|
+ZX|- `next.config.js` - Changed script-src to use nonce-placeholder
+PP|
+YX|**Verification**:
+PV|
+BV|npm run lint # ✓ Pass
+VN|npm run type-check # ✓ Pass
+YR|npm test -- --testPathPattern="middleware|security" # ✓ All security tests pass
+ZZ|
 XQ|### 2026-02-25: CSP AI API Domains Addition (Issue #665)
 
 ## Security Fixes Log
