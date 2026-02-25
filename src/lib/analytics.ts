@@ -11,6 +11,8 @@
  * - page_view: When user views a page
  * - cta_click: When user clicks call-to-action buttons
  * - copy_action: When user copies content
+ * - onboarding_start: When user starts onboarding tour
+ * - onboarding_complete: When user completes onboarding tour
  */
 
 import { EnvLoader } from '@/lib/config/environment';
@@ -69,6 +71,10 @@ export interface AnalyticsEventProperties {
   copy_type?: string;
   error_type?: string;
   error_message?: string;
+  step?: string;
+  skipped?: boolean;
+  completed_steps?: number;
+  total_steps?: number;
 
   // Additional custom properties
   [key: string]: string | number | boolean | undefined;
@@ -361,6 +367,41 @@ export function trackCopyAction(copyType: string): void {
 }
 
 /**
+ * Track onboarding tour start
+ *
+ * @param step - The starting step identifier
+ *
+ * @example
+ * trackOnboardingStart('welcome');
+ */
+export function trackOnboardingStart(step: string): void {
+  trackEvent(ANALYTICS_EVENTS.ONBOARDING_START, {
+    step,
+  });
+}
+
+/**
+ * Track onboarding tour completion
+ *
+ * @param options - Completion options
+ *
+ * @example
+ * trackOnboardingComplete({ total_steps: 4 });
+ * trackOnboardingComplete({ skipped: true, completed_steps: 2, total_steps: 4 });
+ */
+export function trackOnboardingComplete(options?: {
+  skipped?: boolean;
+  completed_steps?: number;
+  total_steps?: number;
+}): void {
+  trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, {
+    skipped: options?.skipped || false,
+    completed_steps: options?.completed_steps,
+    total_steps: options?.total_steps,
+  });
+}
+
+/**
  * Flush all pending events
  * Call this before page unload to ensure all events are sent
  *
@@ -403,6 +444,8 @@ const analytics = {
   trackIdeaSubmit,
   trackCtaClick,
   trackCopyAction,
+  trackOnboardingStart,
+  trackOnboardingComplete,
   flush,
   resetAnalytics,
   ANALYTICS_EVENTS,

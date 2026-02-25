@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import IdeaInput from '@/components/IdeaInput';
 import CopyButton from '@/components/CopyButton';
 import ShareButton from '@/components/ShareButton';
+import UserOnboarding from '@/components/UserOnboarding';
 import {
   trackEvent,
   trackPageView,
@@ -162,6 +163,9 @@ export default function HomePageClient() {
         </h2>
         <WhyChooseSection />
       </section>
+
+      {/* Growth: User onboarding guided tour */}
+      <UserOnboarding />
     </div>
   );
 }
