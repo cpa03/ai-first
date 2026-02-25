@@ -31,7 +31,7 @@ export const APP_CONFIG = {
     get COPYRIGHT() {
       return `© ${new Date().getFullYear()} IdeaFlow. Turn ideas into action.`;
     },
-    OG_IMAGE_PATH: '/og-image.jpg',
+    OG_IMAGE_PATH: '/og-image.svg',
     FAVICON_PATH: '/favicon.ico',
   },
 
