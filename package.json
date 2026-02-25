@@ -20,6 +20,7 @@
     "test:comprehensive": "jest --forceExit --testPathPattern='tests/(backend-comprehensive|frontend-comprehensive)'",
     "test:integration": "jest --forceExit --testPathPattern='tests/integration-comprehensive'",
     "test:e2e": "jest --forceExit --testPathPattern='tests/e2e-comprehensive'",
+    "test:a11y": "jest --forceExit --testPathPattern='tests/accessibility'",
     "test:all": "npm run test:comprehensive && npm run test:integration && npm run test:e2e",
     "env:check": "bash scripts/validate-env.sh",
     "setup": "node scripts/setup.js",
@@ -58,6 +59,8 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@axe-core/react": "^4.11.1",
     "@eslint/eslintrc": "^3.3.3",
     "@next/bundle-analyzer": "^16.1.6",
     "@opennextjs/cloudflare": "^1.16.5",
@@ -72,6 +75,7 @@
     "@typescript-eslint/eslint-plugin": "^8.56.0",
     "@typescript-eslint/parser": "^8.56.0",
     "autoprefixer": "^10.4.24",
+    "axe-core": "^4.11.1",
     "eslint": "^9.39.3",
     "eslint-config-next": "^15.5.12",
     "eslint-plugin-react": "^7.37.5",
