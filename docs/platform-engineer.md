@@ -70,7 +70,10 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - Addresses issue #1779
     WP| - Note: workflow file needs manual addition due to GitHub App permission restriction
     #HB|
-    #BM|- PR #1797: feat(ci): implement pre-commit hooks for code quality enforcement
-    #JM| - Addresses issue #1778
-    #QM| - Added husky and lint-staged for pre-commit hooks
-    #BS| - ESLint and Prettier run on staged files before commit
+    XX| #BS| - ESLint and Prettier run on staged files before commit
+    #QM|
+    #NV|- PR #1824: fix(platform): resolve TypeScript compilation errors
+    #QM| - Addresses issues #1809, #1810, #1812
+    #BR| - Fixed duplicate exports in src/lib/config/index.ts
+    #BR| - Fixed NODE_ENV assignment in test files using type assertion
+    #BR| - Added missing deleted_at property to test mocks
