@@ -11,6 +11,8 @@ import {
   ConfidenceCalculator,
 } from './breakdown-engine/index';
 
+import { eventBus } from './events';
+
 export type {
   BreakdownConfig,
   IdeaAnalysis,
@@ -46,10 +48,6 @@ class BreakdownEngine {
     this.aiConfig =
       await configurationService.loadAIModelConfig('breakdown-engine');
 
-    if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
-    }
-    await aiService.initialize(this.aiConfig);
     if (!this.aiConfig) {
       throw new Error('AI configuration not loaded');
     }
@@ -96,6 +94,19 @@ class BreakdownEngine {
     }
 
     try {
+      // Emit BreakdownStarted event
+      await eventBus.emit({
+        type: 'BreakdownStarted',
+        payload: {
+          ideaId,
+          refinedIdea,
+          userResponses,
+          options,
+        },
+        timestamp: new Date(),
+        source: 'breakdown-engine',
+      });
+
       await dbService.logAgentAction('breakdown-engine', 'start-breakdown', {
         ideaId,
         options,
@@ -129,20 +140,38 @@ class BreakdownEngine {
       session.tasks = await this.taskDecomposer.decomposeTasks(
         session.analysis
       );
+
+      // Emit events for each generated task
+      if (session.tasks && session.tasks.tasks) {
+        for (const task of session.tasks.tasks) {
+          await eventBus.emit({
+            type: 'BreakdownTaskGenerated',
+            payload: {
+              ideaId,
+              taskId: task.id,
+              taskTitle: task.title,
+              sessionId: session.id,
+            },
+            timestamp: new Date(),
+            source: 'breakdown-engine',
+          });
+        }
+      }
+
       session.status = 'scheduling';
       session.updatedAt = new Date();
       await this.sessionManager.storeSession(session);
 
       session.dependencies = await this.dependencyAnalyzer.analyzeDependencies(
-        session.tasks
+        session.tasks!
       );
       session.updatedAt = new Date();
       await this.sessionManager.storeSession(session);
 
       session.timeline = await this.timelineGenerator.generateTimeline(
-        session.analysis,
-        session.tasks,
-        session.dependencies,
+        session.analysis!,
+        session.tasks!,
+        session.dependencies!,
         options
       );
       session.status = 'completed';
@@ -153,6 +182,20 @@ class BreakdownEngine {
       await this.sessionManager.storeSession(session);
 
       await this.sessionManager.persistResults(session);
+
+      // Emit BreakdownCompleted event
+      await eventBus.emit({
+        type: 'BreakdownCompleted',
+        payload: {
+          ideaId,
+          sessionId: session.id,
+          taskCount: session.tasks?.tasks?.length ?? 0,
+          confidence: session.confidence,
+          processingTime: session.processingTime,
+        },
+        timestamp: new Date(),
+        source: 'breakdown-engine',
+      });
 
       await dbService.logAgentAction(
         'breakdown-engine',
@@ -167,6 +210,19 @@ class BreakdownEngine {
 
       return session;
     } catch (error) {
+      // Emit error event
+      await eventBus.emit({
+        type: 'AgentError',
+        payload: {
+          ideaId,
+          agent: 'breakdown-engine',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          context: { method: 'startBreakdown', options },
+        },
+        timestamp: new Date(),
+        source: 'breakdown-engine',
+      });
+
       await dbService.logAgentAction('breakdown-engine', 'breakdown-error', {
         ideaId,
         error: error instanceof Error ? error.message : 'Unknown error',
