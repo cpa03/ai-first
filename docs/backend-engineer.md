@@ -355,6 +355,101 @@ curl -X POST http://localhost:3000/api/clarify/start \
 - Export resilience integration tests have mocking issues (core functionality works)
 - Some ESLint warnings in test files (non-critical)
 
+## User Stories for Backend Engineers
+
+This section provides user story templates and examples specific to backend development work. All backend tasks should connect back to user needs.
+
+### User Story Template
+
+Use this template when creating or reviewing backend tasks:
+
+```markdown
+As a [backend engineer/developer],
+I want [implement/improve/fix] [specific backend component or feature],
+So that [user or system benefit].
+
+## Acceptance Criteria
+
+- [ ] [Technical requirement 1]
+- [ ] [Technical requirement 2]
+- [ ] Performance criteria met (e.g., response time < Xms)
+- [ ] Error handling in place for edge cases
+- [ ] Unit tests cover core functionality
+```
+
+### Example User Stories
+
+#### Example 1: API Performance
+
+```markdown
+As a frontend developer,
+I want API endpoints to respond within 200ms for 95% of requests,
+So that users experience fast, responsive interfaces.
+
+## Acceptance Criteria
+
+- [ ] GET /api/ideas responds in < 200ms for cached data
+- [ ] Database queries optimized with proper indexes
+- [ ] Response caching implemented where appropriate
+- [ ] Performance monitoring in place
+```
+
+#### Example 2: Error Handling
+
+```markdown
+As a user,
+I want clear error messages when API calls fail,
+So that I understand what went wrong and can take appropriate action.
+
+## Acceptance Criteria
+
+- [ ] All API errors return consistent error format
+- [ ] Error messages are user-friendly (not technical jargon)
+- [ ] Error codes map to actionable guidance
+- [ ] Critical errors trigger appropriate alerts
+```
+
+#### Example 3: Data Integrity
+
+```markdown
+As a product owner,
+I want data validation at both API and database layers,
+So that data integrity is maintained even if client-side validation is bypassed.
+
+## Acceptance Criteria
+
+- [ ] Input validation on all API endpoints
+- [ ] Database constraints enforce data integrity
+- [ ] Soft-delete implemented for critical entities
+- [ ] Audit logging for data modifications
+```
+
+#### Example 4: External Service Resilience
+
+```markdown
+As a user,
+I want the application to continue functioning when external services are unavailable,
+So that I can still access cached or locally available data.
+
+## Acceptance Criteria
+
+- [ ] Circuit breaker prevents cascading failures
+- [ ] Graceful degradation when AI service is down
+- [ ] User-facing error messages explain current limitations
+- [ ] Recovery is automatic when external service returns
+```
+
+### User Story Checklist for Backend Work
+
+Before starting a backend task, confirm:
+
+- [ ] User story follows standard format (As a... I want... So that...)
+- [ ] Acceptance criteria are specific and measurable
+- [ ] Technical requirements connect to user benefits
+- [ ] Performance criteria are defined where applicable
+- [ ] Error scenarios are considered
+- [ ] Test strategy is outlined
+
 ## Resources
 
 - [Architecture Documentation](./architecture.md)

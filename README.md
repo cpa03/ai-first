@@ -278,7 +278,7 @@ All automated work follows this pattern:
 
 ## 📚 Documentation
 
-- [Blueprint](./docs/blueprint.md) - Complete project architecture
+- [Blueprint](./blueprint.md) - Complete project architecture
 - [Architecture](./docs/architecture.md) - Technical deep-dive
 - [API Reference](./docs/api.md) - Complete API documentation with examples
 - [Error Codes](./docs/error-codes.md) - Error code reference

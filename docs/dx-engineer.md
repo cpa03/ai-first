@@ -326,6 +326,37 @@ npm run audit:lighthouse
 npm run broc
 ```
 
+### 6. Add GitHub PR Templates
+
+**Problem:** Inconsistent PR descriptions make code review difficult
+
+**Solution:** Add PR template in `.github/PULL_REQUEST_TEMPLATE.md`:
+
+```yaml
+---
+name: Pull Request Template
+about: Standard PR template for the IdeaFlow repository
+title: ''
+labels: ''
+assignees: ''
+---
+
+## Summary
+<!-- Brief description of changes -->
+
+## Type of Change
+- [ ] feat - New feature
+- [ ] fix - Bug fix
+- [ ] docs - Documentation changes
+- [ ] refactor - Code refactoring
+- [ ] test - Adding tests
+
+## Testing Performed
+- [ ] Unit tests pass
+- [ ] Lint passes
+- [ ] Type-check passes
+```
+
 ---
 
 ## Troubleshooting

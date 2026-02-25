@@ -452,6 +452,7 @@ export const SECURITY_CONFIG = {
     'SECURITY_X_CONTENT_TYPE_OPTIONS',
     'nosniff'
   ),
+  X_XSS_PROTECTION: EnvLoader.string('SECURITY_X_XSS_PROTECTION', '0'),
   REFERRER_POLICY: EnvLoader.string(
     'SECURITY_REFERRER_POLICY',
     'strict-origin-when-cross-origin'
