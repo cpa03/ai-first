@@ -209,7 +209,7 @@ describe('AIService', () => {
       expect(result).toBe('');
     });
 
-    it('should throw error for unimplemented provider', async () => {
+    it('should throw error for uninitialized Anthropic client', async () => {
       const anthropicConfig: AIModelConfig = {
         provider: 'anthropic',
         model: 'claude-3',
@@ -219,7 +219,7 @@ describe('AIService', () => {
 
       await expect(
         aiService.callModel(mockMessages, anthropicConfig)
-      ).rejects.toThrow('Provider anthropic not yet implemented');
+      ).rejects.toThrow('Anthropic client not initialized');
     });
 
     it('should track cost when usage data is available', async () => {
