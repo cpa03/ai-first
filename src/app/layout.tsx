@@ -100,6 +100,7 @@ export const metadata: Metadata = {
     ],
     shortcut: '/favicon.ico',
   },
+  manifest: '/manifest.json',
   other: {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
