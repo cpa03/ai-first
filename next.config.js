@@ -70,46 +70,7 @@ const nextConfig = {
         key: 'Cross-Origin-Opener-Policy',
         value: 'same-origin-allow-popups',
       },
-      // Content Security Policy - comprehensive protection against XSS
-      {
-        key: 'Content-Security-Policy',
-        value: [
-          "default-src 'self'",
-          // Scripts: self + inline (needed for Next.js)
-          // Note: 'unsafe-eval' removed - codebase doesn't use eval() or new Function()
-          // This hardens CSP against potential XSS attacks via eval-based injection
-          "script-src 'self' 'unsafe-inline'",
-          // Styles: self + inline (needed for Tailwind/CSS-in-JS)
-          "style-src 'self' 'unsafe-inline'",
-          // Images: self + data URIs + HTTPS sources
-          "img-src 'self' data: https: blob:",
-          // Fonts: self + data URIs
-          "font-src 'self' data:",
-          // Connect: self + API endpoints
-          "connect-src 'self' https://*.supabase.co https://api.openai.com https://api.anthropic.com wss://*.supabase.co",
-          // Frame: deny all framing
-          "frame-src 'none'",
-          // Object/embed: deny
-          "object-src 'none'",
-          // Worker sources: restrict web worker scripts (security hardening)
-          "worker-src 'self'",
-          // Manifest sources: restrict web app manifests (security hardening)
-          "manifest-src 'self'",
-          // Base URI: self only
-          "base-uri 'self'",
-          // Form action: self only
-          "form-action 'self'",
-          // Report URI: CSP violation reporting endpoint (Issue #891)
-          'report-uri /api/csp-report',
-          // Upgrade insecure requests in production
-          process.env.NODE_ENV === 'production'
-            ? 'upgrade-insecure-requests'
-            : '',
-        ]
-          .filter(Boolean)
-          .join('; '),
-      },
-    ];
+
 
     // Add HSTS only in production (requires HTTPS)
     // Values are configurable via environment variables (see SECURITY_CONFIG in constants.ts)
