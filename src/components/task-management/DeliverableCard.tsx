@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useCallback, useMemo } from 'react';
-import { Task } from '@/lib/db';
+import type { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import { TaskStatus } from '@/hooks/useTaskManagement';
 import {
