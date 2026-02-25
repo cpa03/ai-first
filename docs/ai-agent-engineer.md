@@ -85,3 +85,35 @@ await eventBus.emit({
 - [Agent Configuration](./agent-config.md)
 - [Skills Library](../.opencode/skills/)
 - [CMZ Agent Configuration](../.opencode/agents/CMZ.json)
+
+## Lessons Learned
+
+### Issue Resolution Process (2026-02-25)
+
+When handling ai-agent-engineer labeled issues:
+
+1. **Check existing PRs**: Use `gh pr list --label "ai-agent-engineer" --state all`
+2. **Check existing issues**: Use `gh issue list --label "ai-agent-engineer" --state all`
+3. **Explore codebase**: Use glob/grep to find relevant implementations
+4. **Verify implementation**: Check if acceptance criteria are already met
+5. **If complete**: Add comment with implementation summary and close issue
+6. **If incomplete**: Create branch and implement
+
+### Key Pattern: Event-Driven Architecture
+
+The event-driven architecture was implemented to solve tight coupling. Key files:
+
+- `src/lib/agents/events/types.ts` - Event type definitions
+- `src/lib/agents/events/event-bus.ts` - Pub/sub implementation
+- `src/lib/agents/events/handlers.ts` - Side effect handlers
+- `src/lib/agents/events/index.ts` - Public exports
+- `docs/events.md` - Full documentation
+
+All agents should emit typed events for:
+
+- Start of operation
+- Progress/completion of subtasks
+- Completion of operation
+- Errors
+
+This enables loose coupling and easy extensibility.
