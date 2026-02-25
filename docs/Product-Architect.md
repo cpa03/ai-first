@@ -93,4 +93,18 @@ Deliver incremental architectural improvements that:
   - Modified: `src/lib/config/index.ts` (export)
   - Modified: `src/lib/validation.ts` (import)
 - **Verification**: TypeScript type-check ✓, ESLint ✓
+  BS|- **Verification**: TypeScript type-check ✓, ESLint ✓
+  MQ|- **PR**: https://github.com/cpa03/ai-first/pull/1790
+
+### 2026-02-25: ANIMATION_CONFIG Modularization
+
+MV|- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+JK|- **Action**: Extracted ANIMATION_CONFIG into dedicated module
+QW|- **Files Changed**:
+YQ| - Created: `src/lib/config/animation.ts`
+QM| - Modified: `src/lib/config/constants.ts` (re-export)
+XW| - Modified: `src/lib/config/index.ts` (export)
+WR|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
+NK|- **PR**: https://github.com/cpa03/ai-first/pull/1819
+
 - **PR**: https://github.com/cpa03/ai-first/pull/1790
