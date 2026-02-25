@@ -91,9 +91,27 @@ WW|3. Properly handles read-only property assignment for NODE_ENV
 
 YZ|**Issues Fixed**: #1810
 
-TJ|## Lessons Learned
+XZ|### PR #1851 - Standardize .env.example path in CONTRIBUTING.md
 
-MP|1. **Small atomic changes** - Keep PRs focused and small
+YH|**Date**: 2026-02-25
+
+VR|**Changes**:
+
+RQ|1. Fixed inconsistent `.env.example` path reference in CONTRIBUTING.md
+BJ|2. Added `config/` prefix to match code block example
+WW|3. Ensured consistency with other documentation
+
+YZ|**Issues Fixed**: #755
+
+TJ|## Lessons Learned
+MS|
+
+TR|MP|1. **Small atomic changes** - Keep PRs focused and small
+BR|WY|2. **Verify before commit** - Always run lint/type-check before pushing
+BZ|RK|3. **Link issues** - Always link PR to relevant issues
+MT|NJ|4. **Clear naming** - Script names should be self-documenting
+BW|QT|5. **Use existing helpers** - Check for existing utility functions before implementing new solutions
+QT|6. **Documentation consistency** - Verify all references to file paths are consistent across docs
 WY|2. **Verify before commit** - Always run lint/type-check before pushing
 RK|3. **Link issues** - Always link PR to relevant issues
 NJ|4. **Clear naming** - Script names should be self-documenting
