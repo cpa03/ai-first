@@ -42,6 +42,52 @@ This document provides security-focused guidelines, findings, and best practices
 
 ## Security Fixes Log
 
+### 2026-02-25: Request Signing for Internal API Communication
+
+**Issue**: Internal API routes communicated without authentication verification. While the app uses Supabase auth for user requests, server-to-server or background job requests lacked verification.
+
+**Risk**: Without request signing:
+- Unauthorized internal API access could occur
+- Request spoofing in multi-service deployments
+- No audit trail for internal operations
+
+**Fix Applied**:
+
+- Created `src/lib/security/request-signer.ts` with:
+  - `signRequest(payload, timestamp)` - HMAC-SHA256 signature generation
+  - `verifySignature(payload, timestamp, signature)` - Timing-safe verification
+  - `createSignedHeaders(payload, timestamp)` - Ready-to-use headers
+  - `extractAndVerifySignature(headers)` - Header extraction and verification
+  - `createSignatureVerifier()` - Middleware-compatible verifier factory
+
+- Features:
+  - Uses Web Crypto API for Edge compatibility
+  - Timestamp-based replay attack prevention (5-minute window)
+  - Timing-safe signature comparison
+  - Security audit logging for failed verification attempts
+
+- Configuration:
+  - Set `INTERNAL_API_SECRET` env var (min 32 chars) to enable
+  - Works with background jobs, webhooks, and agent operations
+
+**Files Modified**:
+
+- `src/lib/security/request-signer.ts` - New signing utility (380 lines)
+- `src/lib/security/index.ts` - Export new utilities
+- `tests/security/request-signer.test.ts` - 24 unit tests
+
+**Verification**:
+
+```bash
+npm run lint        # ✓ Pass
+npm run type-check  # ✓ Pass
+npm run test:ci     # ✓ All tests pass (24 tests)
+```
+
+**PR**: #1793
+
+---
+
 ### 2026-02-21: Sensitive Variable Pattern Enhancement
 
 **Issue**: The `SENSITIVE_VAR_PATTERNS` list in environment validation was missing several modern security-sensitive patterns, potentially allowing exposure of additional credential types in health check responses.
