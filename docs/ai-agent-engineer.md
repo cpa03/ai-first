@@ -99,6 +99,21 @@ When handling ai-agent-engineer labeled issues:
 5. **If complete**: Add comment with implementation summary and close issue
 6. **If incomplete**: Create branch and implement
 
+### Documentation Verification (2026-02-26)
+
+When maintaining agent documentation:
+
+1. **Verify against actual code**: Always cross-reference documentation claims with actual implementation
+2. **Check iterate.yml job count**: Use grep to find job definitions and verify accuracy
+3. **Proactive scanning**: When no issues exist, scan for documentation inconsistencies
+4. **Small fixes**: Documentation fixes are valid ai-agent-engineer domain improvements
+
+Example verification command:
+
+```bash
+grep -E "^\s{2}[a-z]+:" .github/workflows/iterate.yml | wc -l
+```
+
 ### Key Pattern: Event-Driven Architecture
 
 The event-driven architecture was implemented to solve tight coupling. Key files:
@@ -120,18 +135,17 @@ All agents should emit typed events for:
 
 ## CI Workflow Jobs
 
-The iterate.yml workflow (`.github/workflows/iterate.yml`) runs 6 agent jobs:
+The iterate.yml workflow (`.github/workflows/iterate.yml`) runs 5 agent jobs:
 
-| Job Name          | Agent             | Purpose                        |
-| ----------------- | ----------------- | ------------------------------ |
-| architect         | RepoKeeper        | Strategy & Triage              |
-| bugfix            | RepoKeeper        | Bug fixing                     |
-| palette           | RepoKeeper        | UX improvements                |
-| flexy             | RepoKeeper        | Modularity improvements        |
-| brocula           | RepoKeeper        | Browser console fixes          |
-| ai-agent-engineer | ai-agent-engineer | Agent system maintenance (NEW) |
+| Job Name  | Agent      | Purpose                 |
+| --------- | ---------- | ----------------------- |
+| architect | RepoKeeper | Strategy & Triage       |
+| bugfix    | RepoKeeper | Bug fixing              |
+| palette   | RepoKeeper | UX improvements         |
+| flexy     | RepoKeeper | Modularity improvements |
+| brocula   | RepoKeeper | Browser console fixes   |
 
-The ai-agent-engineer job specifically focuses on:
+The ai-agent-engineer job (planned for iterate.yml) will focus on:
 
 - Agent configuration improvements (CMZ.json, oh-my-opencode.json)
 - Skill maintenance and creation
