@@ -27,6 +27,26 @@
 #NW|- Small atomic diff
 #HQ|
 
+
+#### 2026-02-26
+
+- **Issue Executed**: #1927 - Optimize database queries in getIdeaStats for large datasets
+- **Changes**:
+  - Replaced N+1 query pattern with 4 efficient SQL queries using `.in()` filters
+  - OLD: 1 + N + N*M queries (potentially 1000+ for active users)
+  - NEW: 4 constant queries regardless of data size
+  - Query reduction: ~99.6% decrease in database round trips
+- **Technical Details**:
+  - Use `.in()` filter for batched idea ID lookups
+  - Use COUNT with head:true for efficient counting
+  - Uses proper column references (idea_id, deliverable_id, not user_id)
+- **Verification**:
+  - TypeScript compiles (pre-existing test type definition issues unrelated)
+  - Changes isolated to single method in src/lib/db.ts
+  - Method signature unchanged (backward compatible)
+- **PR**: #1938 - https://github.com/cpa03/ai-first/pull/1938
+- **Status**: Open
+
 ### Work History
 
 #### 2026-02-25
