@@ -198,10 +198,18 @@ export type {
 } from './time';
 export type { APIErrorMessages } from './error-messages';
 
+// Timeout Configuration (extracted from constants.ts)
+export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
+
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 
 // Health Monitoring Types
 export type { HealthConfig, MemoryConfig } from './health';
 
 // Error Configuration (extracted from constants.ts)
-export { ERROR_CONFIG, REQUEST_ID_CONFIG, RATE_LIMIT_ERROR_CONFIG, type ErrorConfig } from './error-config';
+export {
+  ERROR_CONFIG,
+  REQUEST_ID_CONFIG,
+  RATE_LIMIT_ERROR_CONFIG,
+  type ErrorConfig,
+} from './error-config';
