@@ -214,15 +214,7 @@ function flushEvents(): void {
     console.log('[Analytics] Flushing events:', eventsToSend);
   }
 
-  // TODO: Add analytics provider integration here
-  // Examples:
-  // - posthog.capture_batch(eventsToSend);
-  // - mixpanel.track_batch(eventsToSend);
-  // - gtag('event', 'batch', { events: eventsToSend });
-
-  // For now, events are logged to console in debug mode
-  // In production, you would send to your analytics backend
-
+  // Analytics provider integration tracked in Issue #1858
   if (flushTimeout) {
     clearTimeout(flushTimeout);
     flushTimeout = null;
