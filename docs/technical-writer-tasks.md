@@ -2926,4 +2926,77 @@ Closed 4 documentation issues as verified resolved:
 
 ### Task 34: Package Count Documentation Accuracy Fix ✅ COMPLETE
 
-#YQ|
+WT|#YQ|
+
+---
+
+### Task 35: Documentation Index Update and Type Errors Fix ✅ COMPLETE
+
+BM|**Priority**: MEDIUM
+VZ|**Status**: ✅ COMPLETED
+YK|**Date**: 2026-02-26
+
+RW|#### Objectives
+
+NH|- Add missing subdirectories to docs/README.md index
+HB|- Fix type errors blocking type-check in test files
+XZ|- Address issue #1845 (investigate duplicate docs claim)
+
+XP|#### Issues Found
+
+QT|1. **Missing Subdirectories**: docs/README.md didn't list:
+
+- adr/ - Architecture Decision Records
+- plans/ - Implementation plans
+- user-stories/ - User story documentation
+
+JX|2. **Type Errors**: tests/accessibility.test.tsx had 6 TypeScript errors:
+
+- ProgressStepper expects Step[] but test used string[]
+- Step interface requires {id, label, completed, current}
+
+MB|3. **Issue #1845 Investigation**:
+
+- Claimed DX-engineer.md and dx-engineer.md were duplicates
+- Actually different files: DX-engineer.md (118 lines, long-term memory) vs dx-engineer.md (491 lines, comprehensive guide)
+- Commented on issue explaining findings
+
+MX|#### Completed Work
+
+NV|1. **Updated docs/README.md**
+
+- Added [ADR](./adr/) - Architecture Decision Records
+- Added [Plans](./plans/) - Implementation plans
+- Added [User Stories](./user-stories/) - User story documentation
+
+JH|2. **Fixed tests/accessibility.test.tsx**
+
+- Changed `steps` from string[] to proper Step[] objects
+- Added id, label, completed, current properties to each step
+
+XP|3. **Commented on Issue #1845**
+
+- Explained DX-engineer.md vs dx-engineer.md are different purpose files
+- Not duplicates - both needed
+
+BV|#### Verification
+
+MV|- `npm run lint`: ✅ 0 errors, 0 warnings
+RV|- `npm run type-check`: ✅ 0 errors
+XH|- `npm run build`: ✅ Build successful
+
+RX|#### Files Modified
+
+NS|- `docs/README.md` (ADDED - 3 missing subdirectories)
+BM|- `tests/accessibility.test.tsx` (FIXED - type errors)
+
+SW|#### Success Criteria Met
+
+YN|- [x] Missing subdirectories added to docs/README.md
+VM|- [x] Type-check passes (0 errors)
+KB|- [x] Lint passes (0 errors)
+NJ|- [x] Build succeeds
+HB|- [x] PR created with technical-writer label
+RM|- [x] Issue #1845 addressed with explanation
+
+WT|---
