@@ -203,5 +203,5 @@ export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 // Health Monitoring Types
 export type { HealthConfig, MemoryConfig } from './health';
 
-// PII Redaction Config Type
-export type { PIIRedactionConfig } from './pii-redaction-config';
+// Error Configuration (extracted from constants.ts)
+export { ERROR_CONFIG, REQUEST_ID_CONFIG, RATE_LIMIT_ERROR_CONFIG, type ErrorConfig } from './error-config';

@@ -137,5 +137,14 @@ BY|- **PR**: https://github.com/cpa03/ai-first/pull/1831
   - Created: `src/lib/config/external-api-versions.ts`
   - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
   - Modified: `src/lib/config/index.ts` (export)
-- **Result**: Reduced constants.ts from 1392 to 1271 lines (-121 lines)
-- **Verification**: TypeScript type-check passed (pre-existing type def issues unrelated)
+### 2026-02-26: ERROR_CONFIG Modularization
+
+VS|- **Issue**: #1811 - "Refactor constants.ts - File Too Large (1504 lines)"
+BM|- **Action**: Extracted ERROR_CONFIG into dedicated module
+TB|- **Files Changed**:
+YZ|  - Created: `src/lib/config/error-config.ts`
+XY|  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+RK|  - Modified: `src/lib/config/index.ts` (export)
+VQ|- **Result**: Reduced constants.ts by 21 lines
+RK|- **Verification**: Backward compatibility maintained via re-export
+WP|- **PR**: https://github.com/cpa03/ai-first/pull/1872
