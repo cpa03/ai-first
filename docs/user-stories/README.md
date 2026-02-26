@@ -12,9 +12,6 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | **P0 (Must Have)**   | 5     |
 | **P1 (Should Have)** | 2     |
 | **P2 (Could Have)**  | 2     |
-| **P0 (Must Have)**   | 5     |
-| **P1 (Should Have)** | 2     |
-| **P2 (Could Have)**  | 0     |
 | **P3 (Won't Have)**  | 0     |
 
 ### Story Points Summary
@@ -23,19 +20,16 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | ----------------- | ------------ | ---------------------------------------------------------------------------------------- |
 | **MVP (P0)**      | 23           | US-AUTH-001 (3), US-AUTH-002 (2), US-IDEA-001 (5), US-IDEA-002 (5), US-BREAKDOWN-001 (8) |
 | **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                                       |
-| **Growth (P2)**    | 5            | US-GROWTH-001 (2), US-GROWTH-002 (3)                                                    |
+| **Growth (P2)**   | 5            | US-GROWTH-001 (2), US-GROWTH-002 (3)                                                     |
 | **Total**         | **33**       | All stories                                                                              |
-| **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                                       |
-| **Total**         | **28**       | All stories                                                                              |
 
 ### Estimated Effort (Based on Story Points)
 
-| Points | Time Estimate | MVP Stories                                       | Post-MVP Stories  |
-| ------ | ------------- | ------------------------------------------------- | ----------------- |
-| 1-2    | < 2 hours     | US-AUTH-002 (2)                                   | US-AUTH-003 (2), US-GROWTH-001 (2) |
-| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5), US-IDEA-002 (5) | US-EXPORT-001 (3), US-GROWTH-002 (3) |
-| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5), US-IDEA-002 (5) | US-EXPORT-001 (3) |
-| 8+     | 1-2+ days     | US-BREAKDOWN-001 (8)                              | -                 |
+| Points | Time Estimate | MVP Stories                                       | Post-MVP Stories                                      |
+| ------ | ------------- | ------------------------------------------------- | ----------------------------------------------------- |
+| 1-2    | < 2 hours     | US-AUTH-002 (2)                                   | US-AUTH-003 (2), US-GROWTH-001 (2)                    |
+| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5), US-IDEA-002 (5) | US-AUTH-003 (2), US-EXPORT-001 (3), US-GROWTH-002 (3) |
+| 8+     | 1-2+ days     | US-BREAKDOWN-001 (8)                              | -                                                     |
 
 **MVP Estimated Effort**: ~4-5 development days (based on 23 story points)
 **Total Estimated Effort**: ~5-6 development days (based on 28 story points)
@@ -43,19 +37,19 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 ### Status Overview
 
-| Status      | Count | Stories                                                                                          |
-| ----------- | ----- | ------------------------------------------------------------------------------------------------ |
-| Ready       | 4     | US-AUTH-003, US-EXPORT-001, US-GROWTH-001, US-GROWTH-002                                        |
-| In Progress | 3     | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001                                                       |
-| Done        | 2     | US-AUTH-001, US-AUTH-002                                                                         |
-| Released    | 0     | -                                                                                                |
+| Status      | Count | Stories                                                  |
+| ----------- | ----- | -------------------------------------------------------- |
+| Ready       | 4     | US-AUTH-003, US-EXPORT-001, US-GROWTH-001, US-GROWTH-002 |
+| In Progress | 3     | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001               |
+| Done        | 2     | US-AUTH-001, US-AUTH-002                                 |
+| Released    | 0     | -                                                        |
 
 ### Issue-to-Story Cross-Reference
 
-| Issue | Title                        | Related Stories                                    | Priority | Status   |
-| ----- | ---------------------------- | -------------------------------------------------- | -------- | -------- |
-| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003              | P1       | Closed   |
-| #1176 | MVP launch timeline at risk  | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001, All P0 | P1       | Open     |
+| Issue | Title                        | Related Stories                                    | Priority | Status |
+| ----- | ---------------------------- | -------------------------------------------------- | -------- | ------ |
+| #1177 | Authentication blocking MVP  | US-AUTH-001, US-AUTH-002, US-AUTH-003              | P1       | Closed |
+| #1176 | MVP launch timeline at risk  | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001, All P0 | P1       | Open   |
 | #205  | Export functionality         | US-IDEA-001, US-IDEA-002, US-EXPORT-001            | -        | Open   |
 | #219  | Plan generation              | US-IDEA-001, US-IDEA-002, US-EXPORT-001            | -        | Open   |
 | #638  | Idea submission improvements | US-IDEA-001, US-IDEA-002                           | -        | Open   |
@@ -66,13 +60,13 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 **Target: Phase 1 MVP**
 
-| P0 Story         | Title            | Status      | Implementation | Blocking Issues | Ready for Dev |
-| ---------------- | ---------------- | ----------- | ------------- | --------------- | ------------- |
-| US-AUTH-001      | User Signup      | Done        | 100%          | -               | ✅ Complete    |
-| US-AUTH-002      | User Login       | Done        | 100%          | -               | ✅ Complete    |
-| US-IDEA-001      | Idea Submission  | In Progress | 85%           | -               | 🚧 In Progress |
-| US-IDEA-002      | Idea Dashboard   | In Progress | 90%           | -               | 🚧 In Progress |
-| US-BREAKDOWN-001 | Breakdown Engine | In Progress | 70%           | -               | 🚧 In Progress |
+| P0 Story         | Title            | Status      | Implementation | Blocking Issues | Ready for Dev  |
+| ---------------- | ---------------- | ----------- | -------------- | --------------- | -------------- |
+| US-AUTH-001      | User Signup      | Done        | 100%           | -               | ✅ Complete    |
+| US-AUTH-002      | User Login       | Done        | 100%           | -               | ✅ Complete    |
+| US-IDEA-001      | Idea Submission  | In Progress | 85%            | -               | 🚧 In Progress |
+| US-IDEA-002      | Idea Dashboard   | In Progress | 90%            | -               | 🚧 In Progress |
+| US-BREAKDOWN-001 | Breakdown Engine | In Progress | 70%            | -               | 🚧 In Progress |
 
 **MVP Completion: 69% (average of P0 story implementation progress)**
 
@@ -86,10 +80,6 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | Export          | 0     | 1     | 0     | 0     | 1     |
 | Growth          | 0     | 0     | 2     | 0     | 2     |
 | **Total**       | **5** | **2** | **2** | **0** | **9** |
-| Idea Management | 2     | 0     | 0     | 0     | 2     |
-| Breakdown       | 1     | 0     | 0     | 0     | 1     |
-| Export          | 0     | 1     | 0     | 0     | 1     |
-| **Total**       | **5** | **2** | **0** | **0** | **7** |
 
 ---
 
@@ -113,19 +103,6 @@ user-stories/
 └── growth/                      # Growth & viral loops feature stories
     ├── us-growth-001-share.md   # Share results page
     └── us-growth-002-referral.md # Referral link for viral growth
-├── README.md                    # This file
-├── personas.md                  # User personas reference
-├── authentication/              # Authentication feature stories
-│   ├── us-auth-001-signup.md    # User signup with email verification
-│   ├── us-auth-002-login.md     # User login with error handling
-│   └── us-auth-003-password-reset.md # Self-service password reset
-├── idea-management/             # Idea management feature stories
-│   ├── us-idea-001-submission.md # Idea submission with clarification
-│   └── us-idea-002-dashboard.md  # Idea dashboard for viewing and managing ideas
-├── breakdown/                   # Breakdown system feature stories
-│   └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
-└── export/                      # Export & integration feature stories
-    └── us-export-001-markdown.md # Export plan to Markdown format
 ```
 
 ## User Story Index
@@ -134,16 +111,16 @@ user-stories/
 
 | Story ID                                                      | Title          | Priority | Status | Persona         |
 | ------------------------------------------------------------- | -------------- | -------- | ------ | --------------- |
-| [US-AUTH-001](./authentication/us-auth-001-signup.md)         | User Signup    | P0       | Done        | Startup Founder |
-| [US-AUTH-002](./authentication/us-auth-002-login.md)          | User Login     | P0       | Done        | Startup Founder |
+| [US-AUTH-001](./authentication/us-auth-001-signup.md)         | User Signup    | P0       | Done   | Startup Founder |
+| [US-AUTH-002](./authentication/us-auth-002-login.md)          | User Login     | P0       | Done   | Startup Founder |
 | [US-AUTH-003](./authentication/us-auth-003-password-reset.md) | Password Reset | P1       | Ready  | Startup Founder |
 
 **Related Issues**: #1177 (Closed), #1176
 
 ### Idea Management
 
-| Story ID                                                   | Title           | Priority | Status | Persona         |
-| ---------------------------------------------------------- | --------------- | -------- | ------ | --------------- |
+| Story ID                                                   | Title           | Priority | Status      | Persona         |
+| ---------------------------------------------------------- | --------------- | -------- | ----------- | --------------- |
 | [US-IDEA-001](./idea-management/us-idea-001-submission.md) | Idea Submission | P0       | In Progress | Startup Founder |
 | [US-IDEA-002](./idea-management/us-idea-002-dashboard.md)  | Idea Dashboard  | P0       | In Progress | Startup Founder |
 
@@ -151,8 +128,8 @@ user-stories/
 
 ### Breakdown System
 
-| Story ID                                                   | Title                      | Priority | Status | Persona         |
-| ---------------------------------------------------------- | -------------------------- | -------- | ------ | --------------- |
+| Story ID                                                   | Title                      | Priority | Status      | Persona         |
+| ---------------------------------------------------------- | -------------------------- | -------- | ----------- | --------------- |
 | [US-BREAKDOWN-001](./breakdown/us-breakdown-001-engine.md) | Automatic Breakdown Engine | P0       | In Progress | Startup Founder |
 
 **Related Issues**: #721, #747
@@ -167,10 +144,10 @@ user-stories/
 
 ### Growth & Viral Loops
 
-| Story ID                                                   | Title                    | Priority | Status | Persona         |
-| ---------------------------------------------------------- | ------------------------ | -------- | ------ | --------------- |
-| [US-GROWTH-001](./growth/us-growth-001-share.md)          | Share Results Page       | P2       | Ready  | Startup Founder |
-| [US-GROWTH-002](./growth/us-growth-002-referral.md)        | Referral Link for Viral | P2       | Ready  | Startup Founder |
+| Story ID                                            | Title                   | Priority | Status | Persona         |
+| --------------------------------------------------- | ----------------------- | -------- | ------ | --------------- |
+| [US-GROWTH-001](./growth/us-growth-001-share.md)    | Share Results Page      | P2       | Ready  | Startup Founder |
+| [US-GROWTH-002](./growth/us-growth-002-referral.md) | Referral Link for Viral | P2       | Ready  | Startup Founder |
 
 **Related Issues**: #1870, #1883
 
