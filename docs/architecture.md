@@ -6,54 +6,71 @@
 
 The project follows a Next.js 16+ app router structure with Supabase integration and AI abstraction layer.
 
-```
-src/
-├── app/                 # Next.js app router pages
-│   ├── clarify/         # Clarification flow pages
-│   ├── results/         # Results display pages
-│   ├── api/             # API routes
-│   │   ├── health/      # Health check endpoints
-│   │   ├── clarify/     # Clarification API
-│   │   └── breakdown/   # Breakdown API
-│   ├── layout.tsx       # Root layout
-│   └── page.tsx         # Home page
-├── components/          # React components
-├── lib/                 # Utility functions
-│   ├── ai.ts           # AI service abstraction
-│   ├── db.ts           # Database service
-│   ├── exports.ts      # Export connectors
-│   ├── resilience.ts   # Resilience framework
-│   ├── errors.ts      # Error handling
-│   ├── validation.ts  # Input validation
-│   ├── rate-limit.ts  # Rate limiting
-│   ├── pii-redaction.ts # PII protection
-│   ├── api-handler.ts  # API request handler
-│   ├── api-client.ts   # API client utilities
-│   ├── cache.ts        # Caching layer
-│   ├── config/         # Configuration modules
-│   │   ├── constants.ts   # Core constants
-│   │   ├── environment.ts # Environment configuration
-│   │   ├── theme.ts       # Theme configuration
-│   │   ├── timeline.ts    # Timeline configuration
-│   │   └── ...            # Other config modules
-│   ├── prompts/        # AI prompt templates
-│   │   ├── clarifier/  # Clarification agent prompts
-│   │   └── breakdown/  # Breakdown agent prompts
-│   └── agents/         # AI agent implementations
-│       ├── clarifier.ts  # Clarification agent
-│       └── breakdown-engine.ts # Breakdown engine
-└── styles/              # Global styles
-supabase/
-├── schema.sql           # Database schema
-└── migrations/          # Database migration files
-ai/
-├── agent-configs/       # Agent configuration files
-│   ├── clarifier.yml
-│   └── breakdown-engine.yml
-docs/                    # Documentation
-config/                  # Configuration files
-tests/                   # Test files
-```
+#BX|`
+#KP|src/
+#SQ|├── app/                 # Next.js app router pages
+#SW|│   ├── clarify/         # Clarification flow pages
+#WY|│   ├── results/         # Results display pages
+#HR|│   ├── dashboard/       # Dashboard pages
+#VB|│   ├── login/           # Login page
+#VB|│   ├── signup/          # Signup page
+#VB|│   ├── auth/callback/   # OAuth callback handler
+#KB|│   ├── api/             # API routes
+#KB|│   │   ├── health/      # Health check endpoints
+#KB|│   │   │   ├── detailed/
+#KB|│   │   │   ├── database/
+#KB|│   │   │   ├── live/
+#KB|│   │   │   ├── ready/
+#KB|│   │   │   └── integrations/
+#KB|│   │   ├── clarify/     # Clarification API
+#KB|│   │   ├── breakdown/   # Breakdown API
+#KB|│   │   ├── ideas/       # Ideas CRUD API
+#KB|│   │   ├── deliverables/# Deliverables API
+#KB|│   │   ├── tasks/       # Tasks API
+#KB|│   │   ├── metrics/     # Metrics API
+#KB|│   │   ├── admin/       # Admin endpoints
+#KB|│   │   └── csp-report/  # CSP reports
+#KB|│   ├── layout.tsx      # Root layout
+#KB|│   ├── page.tsx        # Home page
+#KB|│   └── robots.ts       # Robots.txt
+#HB|├── components/          # React components
+#HX|├── hooks/              # React custom hooks
+#PM|├── lib/                 # Utility functions
+#BM|│   ├── auth.ts         # Authentication service
+#BX|│   ├── db.ts          # Database service
+#SK|│   ├── api-client.ts  # API client utilities
+#NP|│   ├── errors.ts      # Error handling
+#WQ|│   ├── rate-limit.ts  # Rate limiting
+#NP|│   ├── use-cache.ts   # Caching utilities
+#NP|│   ├── metrics.ts     # Metrics collection
+#NP|│   ├── logger.ts      # Logging utilities
+#NP|│   ├── config-service.ts # Configuration service
+#NP|│   ├── type-guards.ts # Type guard utilities
+#PM|│   ├── resilience/    # Resilience framework
+#NP|│   │   ├── circuit-breaker.ts
+#NP|│   │   ├── circuit-breaker-manager.ts
+#NP|│   │   ├── retry-manager.ts
+#NP|│   │   ├── timeout-manager.ts
+#NP|│   │   ├── resilient-wrapper.ts
+#NP|│   │   ├── manager.ts
+#NP|│   │   ├── config.ts
+#NP|│   │   └── types.ts
+#RT|├── types/              # TypeScript type definitions
+#RT|├── styles/             # Global styles
+#RT|├── templates/           # Template files
+#RT|├── middleware.ts      # Next.js middleware (legacy)
+#RT|├── instrumentation.ts # Next.js instrumentation
+#RT|└── instrumentation.node.ts # Node instrumentation
+#ZZ|supabase/
+#YW|└── schema.sql          # Database schema
+#ZH|ai/
+#XX|├── agent-configs/      # Agent configuration files
+#TZ|│   ├── clarifier.yml
+#HP|│   └── breakdown-engine.yml
+#PB|config/                  # Configuration files
+#ST|scripts/                 # Build and utility scripts
+#ST|tests/                   # Test files
+#ZH|`
 
 ## Database Schema
 
