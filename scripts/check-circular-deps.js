@@ -67,7 +67,7 @@ try {
         `\n⚠️  ${warningMatch[1]} parse warnings detected (not errors)`
       );
       console.log(
-        '   These are typically unresolved imports or type-only modules'
+        '   These are from external packages (react, next, openai, etc.) and are expected'
       );
     }
     console.log('');
@@ -120,7 +120,7 @@ try {
       `\n⚠️  ${warningMatch[1]} parse warnings detected (not errors)`
     );
     console.log(
-      '   These are typically unresolved imports or type-only modules'
+      '   These are from external packages (react, next, openai, etc.) and are expected'
     );
   }
   console.log('');
