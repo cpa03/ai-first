@@ -175,4 +175,16 @@ TB|- **Files Changed**:
 - Modified: `src/lib/config/index.ts` (export)
   VJ|- **Result**: Reduced constants.ts by ~70 lines
   WP|- **Verification**: ESLint ✓ (0 warnings), Build ✓
-  PR|- **PR**: https://github.com/cpa03/ai-first/pull/1911
+  HX| PR|- **PR**: https://github.com/cpa03/ai-first/pull/1911
+  #HM|
+  #HM|### 2026-02-26: RATE_LIMIT_CONFIG Modularization
+  #HM|
+  #HM|- **Issue**: #715 - "Giant centralized constants module mixes unrelated configuration domains"
+  #HM|- **Action**: Extracted RATE_LIMIT_CONFIG into dedicated module
+  #HM|- **Files Changed**:
+  #HM| - Created: `src/lib/config/rate-limit-config.ts`
+  #HM| - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+  #HM| - Modified: `src/lib/config/index.ts` (export)
+  #HM|- **Result**: Reduced constants.ts from 1195 to 1076 lines (-119 lines)
+  #HM|- **Verification**: ESLint ✓ (0 warnings), Tests ✓ (76 passed)
+  #HM|- **Backward Compatibility**: Maintained via re-export in original file
