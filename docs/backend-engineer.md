@@ -359,13 +359,16 @@ curl -X POST http://localhost:3000/api/clarify/start \
 4. **TypeScript**: Fixed Supabase type errors with proper type assertions
 5. **Database Service Consistency**: Fixed `softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`, and `getIdeaDeliverablesWithTasks` methods to use instance properties (`this.admin`, `this.client`) instead of global variables (`supabaseAdmin`, `supabaseClient`) for consistency and better testability
 
-### Fixed Issues
+6. **Database Service Consistency**: Fixed `softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`, and `getIdeaDeliverablesWithTasks` methods to use instance properties (`this.admin`, `this.client`) instead of global variables (`supabaseAdmin`, `supabaseClient`) for consistency and better testability
 
-1. **Markdown Exporter**: Added `content` property to export result
-2. **Export Manager**: Removed window check to always register all connectors
-3. **Database Service**: Added test helpers (`reinitializeClients`, `resetInstance`)
-4. **TypeScript**: Fixed Supabase type errors with proper type assertions
-5. **Database Service Consistency**: Fixed `softDeleteIdea`, `softDeleteDeliverable`, `softDeleteTask`, and `getIdeaDeliverablesWithTasks` methods to use instance properties (`this.admin`, `this.client`) instead of global variables (`supabaseAdmin`, `supabaseClient`) for consistency and better testability
+### Session Notes
+
+1. **2026-02-26**: Fixed pagination parameter validation in `/api/ideas` GET endpoint
+   - Added validation for `limit` parameter (checks for NaN/Infinity, enforces MIN_LIMIT=10, MAX_LIMIT=100)
+   - Added validation for `page` parameter (validates positive number)
+   - Returns ValidationError with field-specific messages
+   - Addresses security issue #693 (DoS via large limit values)
+   - PR #1874 created
 
 ### Known Issues
 
