@@ -2,30 +2,29 @@
 
 ## Autonomous RnD Specialist - Long-term Memory
 
-#KH|Last Updated: 2026-02-26
-#SY|
-#RB|### Mission
-#XW|
-#NX|Deliver small, safe, measurable improvements strictly inside the RnD domain.
-#SK|
-#XP|### Execution Rules
-#TX|
-#XW|- RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
-#VW|- If PR with RnD label exists → review, update, comment, skip other jobs
-#MR|- If Issue exists → execute
-#XV|- If none → proactive scan limited to domain
-#PQ|- If nothing valuable → exit safely
-#KS|
-#RN|### PR Requirements
-#YQ|
-#SM|- Label: RnD
-#TT|- Linked to issue
-#RT|- Up to date with default branch
-#ZY|- No conflict
-#XB|- Build/lint/test success
-#KT|- ZERO warnings
-#NW|- Small atomic diff
-#HQ|
+Last Updated: 2026-02-26
+
+### Mission
+
+Deliver small, safe, measurable improvements strictly inside the RnD domain.
+
+### Execution Rules
+
+- RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
+- If PR with RnD label exists → review, update, comment, skip other jobs
+- If Issue exists → execute
+- If none → proactive scan limited to domain
+- If nothing valuable → exit safely
+
+### PR Requirements
+
+- Label: RnD
+- Linked to issue
+- Up to date with default branch
+- No conflict
+- Build/lint/test success
+- ZERO warnings
+- Small atomic diff
 
 
 #### 2026-02-26
@@ -48,6 +47,66 @@
 - **Status**: Open
 
 ### Work History
+
+#### 2026-02-26
+
+- **Issue Analyzed**: #1902 - Add Debug Mode Control to Analytics Module
+- **Status**: RESOLVED (no code changes needed)
+- **Findings**:
+  - Issue claimed analytics.ts had uncontrolled console.log statements
+  - Verified: All debug statements use logger.debug() and are controlled by ANALYTICS_CONFIG.DEBUG
+  - DEBUG config exists at line 111-114, defaults to true in dev, false in prod
+  - All console.warn/console.error in analytics.ts are guarded by DEBUG flag
+- **Action**: Issue can be closed as already implemented
+
+#### 2026-02-26
+
+- **Issue Analyzed**: #1861 - Add API route test coverage
+- **Status**: INVESTIGATED (complex)
+- **Findings**:
+  - tests/api/ directory contains 4 test files for clarify endpoints
+  - These tests exist but are currently IGNORED in jest.config.js
+  - When enabled, tests fail due to OpenAI mocking issues
+  - Issue #1903 covers similar mocking problems
+- **Action**: Requires fixing mocking issues in test files before enabling
+
+#### 2026-02-26
+
+- **Issue Analyzed**: #1903 - Investigate and Enable Skipped Tests
+- **Status**: INVESTIGATED (complex)
+- **Findings**:
+  - 29 skipped tests found across 4 test files
+  - Most common reason: "BUG: mocking issue" in export connector tests
+  - security-request-signer.test.ts has 1 skip (valid - Jest Request mock lacks body)
+  - export-connectors-resilience.test.ts has 14 skips (mocking issues)
+- **Action**: Fixing mocks requires deep understanding of test mocking patterns
+
+#### 2026-02-26
+
+- **Issue Executed**: #1884 - Remove TODO/FIXME/HACK comments across codebase
+- **Changes**:
+  - Removed TODO comment placeholder in src/lib/analytics.ts flushEvents() function
+  - Added reference to Issue #1858 which tracks analytics provider integration
+  - No FIXME or HACK comments found in src/ (issue reported 11, only 1 actual TODO)
+- **Verification**:
+  - npm run lint passes (0 warnings)
+  - npm run type-check passes
+  - No TODO/FIXME/HACK comment patterns detected in src/
+- **PR**: #1888 - https://github.com/cpa03/ai-first/pull/1888
+- **Status**: Open
+
+#### 2026-02-26
+
+- **Issue Executed**: #1845 - Remove duplicate documentation files in docs/
+- **Changes**:
+  - Removed docs/DX-engineer.md (duplicate of dx-engineer.md)
+  - dx-engineer.md is the main guide (referenced in docs/README.md)
+- **Notes**:
+  - Issue mentioned "Product-ArArchitect.md" typo but file doesn't exist (already fixed)
+  - docs/archive/README.md is valid archive guidelines, not a duplicate
+- **Verification**:
+  - npm run lint passes (0 warnings)
+  - No broken references to removed file
 
 #### 2026-02-25
 
@@ -81,79 +140,16 @@
 #### 2026-02-25
 
 - **Issue Executed**: #1739 - Update ESLint and Jest dependencies to fix minimatch vulnerability
-  #ZM|
-  #WB|#### 2026-02-25
-  #JQ|
-  #VV|- **Issue Executed**: #1739 - Update ESLint and Jest dependencies to fix minimatch vulnerability
-  #ZB|- **Changes**:
-  #PQ| - npm audit now shows 0 vulnerabilities (was 1 high, 1 moderate)
-  #YP| - Vulnerability was in transitive dependency minimatch (ReDoS via repeated wildcards)
-  #BN| - Resolved automatically via npm install dependency resolution
-  #XY|- **Verification**:
-  #YQ| - npm audit --audit-level=high returns 0 vulnerabilities
-  #TT| - Lint passes
-  #RT| - Tests pass (1 pre-existing flaky test unrelated to change)
-  #ZY|- **PR**: #1804 - https://github.com/cpa03/ai-first/pull/1804
-  #XB|- **Status**: Open
-  #ZK|
-  #WB|#### 2026-02-24
-  #JQ|
-  #VV|- **Issue Executed**: #1745 - Add GitHub Pull Request template for standardized workflows
-  #ZB|- **Changes**:
-  #PQ| - Created docs/RnD.md (this file) for long-time memory
-  #YP| - Created .github/PULL_REQUEST_TEMPLATE.md with machine-readable metadata format
-  #BN|- **Format Source**: docs/agent-guidelines.md (lines 112-148)
-  #XY|- **PR**: Created with proper labeling and issue linking
-  #JQ|- **Status**: Pending review
-  #NT|#ZK|
-  #NW|#WB|#### 2026-02-25
-  #RP|#JQ|
-  #SB|#VV|- **Issue Executed**: #1748 - Reduce TypeScript 'any' usage in source code
-  #TR|#ZB|- **Changes**:
-  #BK|#PQ| - Changed ESLint rule `@typescript-eslint/no-explicit-any` from 'warn' to 'error'
-  #HK|#YP| - Prevents new 'any' type usage in source code at compile time
-  #KY|#BN| - Existing legitimate uses in src/lib/db.ts are documented with eslint-disable comments
-  #BH|#XY|- **PR**: #1787 - https://github.com/cpa03/ai-first/pull/1787
-  #BQ|#JQ|- **Status**: Merged
-  #NT|#ZK|
-  #RS|#WB|#### 2026-02-25 (Blocked)
-  #RP|#JQ|
-  #VP|#VV|- **Issue Attempted**: #1779 - Integrate circular dependency check into CI pipeline
-  #TR|#ZB|- **Changes**:
-  #XB|#PQ| - Created .github/workflows/ci-code-quality.yml with circular dependency check
-  #SQ|#YP| - Script already exists (npm run check:circular), just needed CI integration
-  #KX|#BN|- **Blocked By**: GitHub App token lacks 'workflows' permission
-  #TT|#XY|- **Status**: Blocked - requires manual push or GitHub App permission update
-  #VT|#ZK|- **Solution Ready**: File created locally, can be pushed manually
-  #ZB|### Notes
-  #RJ|
-  #KK|- Project: IdeaFlow - turns ideas into actionable plans
-  #BH|- Tech stack: Next.js, Supabase, TypeScript, GitHub Actions
-  #XT|- All PRs must include machine-readable metadata per agent-guidelines.md
-
-### Mission
-
-Deliver small, safe, measurable improvements strictly inside the RnD domain.
-
-### Execution Rules
-
-- RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
-- If PR with RnD label exists → review, update, comment, skip other jobs
-- If Issue exists → execute
-- If none → proactive scan limited to domain
-- If nothing valuable → exit safely
-
-### PR Requirements
-
-- Label: RnD
-- Linked to issue
-- Up to date with default branch
-- No conflict
-- Build/lint/test success
-- ZERO warnings
-- Small atomic diff
-
-### Work History
+- **Changes**:
+  - npm audit now shows 0 vulnerabilities (was 1 high, 1 moderate)
+  - Vulnerability was in transitive dependency minimatch (ReDoS via repeated wildcards)
+  - Resolved automatically via npm install dependency resolution
+- **Verification**:
+  - npm audit --audit-level=high returns 0 vulnerabilities
+  - Lint passes
+  - Tests pass (1 pre-existing flaky test unrelated to change)
+- **PR**: #1804 - https://github.com/cpa03/ai-first/pull/1804
+- **Status**: Open
 
 #### 2026-02-24
 
@@ -162,71 +158,10 @@ Deliver small, safe, measurable improvements strictly inside the RnD domain.
   - Created docs/RnD.md (this file) for long-time memory
   - Created .github/PULL_REQUEST_TEMPLATE.md with machine-readable metadata format
 - **Format Source**: docs/agent-guidelines.md (lines 112-148)
-- **PR**: Created with proper labeling and issue linking
-- **Status**: Pending review
-  JQ|- **Status**: Pending review
-  #ZK|
-  #WB|#### 2026-02-25
-  #JQ|
-  #VV|- **Issue Executed**: #1748 - Reduce TypeScript 'any' usage in source code
-  #ZB|- **Changes**:
-  #PQ| - Changed ESLint rule `@typescript-eslint/no-explicit-any` from 'warn' to 'error'
-  #YP| - Prevents new 'any' type usage in source code at compile time
-  #BN| - Existing legitimate uses in src/lib/db.ts are documented with eslint-disable comments
-  #XY|- **PR**: #1787 - https://github.com/cpa03/ai-first/pull/1787
-  #JQ|- **Status**: Open
-  #ZK|
-  #WB|#### 2026-02-25 (Blocked)
-  #JQ|
-  #VV|- **Issue Attempted**: #1779 - Integrate circular dependency check into CI pipeline
-  #ZB|- **Changes**:
-  #PQ| - Created .github/workflows/ci-code-quality.yml with circular dependency check
-  #YP| - Script already exists (npm run check:circular), just needed CI integration
-  #BN|- **Blocked By**: GitHub App token lacks 'workflows' permission
-  #XY|- **Status**: Blocked - requires manual push or GitHub App permission update
-  #ZK|- **Solution Ready**: File created locally, can be pushed manually
-  #PN|
-  #QH|#### 2026-02-26
-  #QY|
-  #QH|- **Issue Executed**: #1845 - Remove duplicate documentation files in docs/
-  #ZB|- **Changes**:
-  #VJ| - Removed docs/DX-engineer.md (duplicate of dx-engineer.md)
-  #JV| - dx-engineer.md is the main guide (referenced in docs/README.md)
-  #TH| - DX-engineer.md was smaller (3,477 bytes) vs dx-engineer.md (12,274 bytes)
-  #YK|- **Notes**:
-  #PR| - Issue mentioned "Product-ArArchitect.md" typo but file doesn't exist (already fixed)
-  #YZ| - docs/archive/README.md is valid archive guidelines, not a duplicate
-  #YH|- **Verification**:
-  #HJ| - npm run lint passes (0 warnings)
-  #PB| - No broken references to removed file
-  #KT| - Type-check has pre-existing errors in tests/accessibility.test.tsx (unrelated)
-  #VB|
-  #QH|#### 2026-02-26
-  #QY|
-  #QH|- **Issue Executed**: #1884 - Remove TODO/FIXME/HACK comments across codebase
-  #ZB|- **Changes**:
-  #VJ| - Removed TODO comment placeholder in src/lib/analytics.ts flushEvents() function
-  #JV| - Added reference to Issue #1858 which tracks analytics provider integration
-  #TH| - No FIXME or HACK comments found in src/ (issue reported 11, only 1 actual TODO)
-  #YK|- **Verification**:
-  #PR| - npm run lint passes (0 warnings)
-  #YZ| - npm run type-check passes
-  #YH| - No TODO/FIXME/HACK comment patterns detected in src/
-  #PB|- **PR**: #1888 - https://github.com/cpa03/ai-first/pull/1888
-  #YH|- **Status**: Open
+- **Status**: Merged
 
-#XT|- All PRs must include machine-readable metadata per agent-guidelines.md
-#ZK|
-#QH|#### 2026-02-26
-#QY|
-#QH|- **Issue Executed**: #1884 - Remove TODO/FIXME/HACK comments across codebase
-#ZB|- **Changes**:
-#VJ| - Removed TODO comment placeholder in src/lib/analytics.ts flushEvents() function
-#JV| - Added reference to Issue #1858 which tracks analytics provider integration
-#TH| - No FIXME or HACK comments found in src/ (issue reported 11, only 1 actual TODO)
-#YK|- **Verification**:
-#PR| - npm run lint passes (0 warnings)
-#YZ| - npm run type-check passes
-#YH| - No TODO/FIXME/HACK comment patterns detected in src/
-#PB|- **PR**: #1888 - https://github.com/cpa03/ai-first/pull/1888
-#YH|- **Status**: Open
+### Notes
+
+- Project: IdeaFlow - turns ideas into actionable plans
+- Tech stack: Next.js, Supabase, TypeScript, GitHub Actions
+- All PRs must include machine-readable metadata per agent-guidelines.md
