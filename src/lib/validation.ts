@@ -6,7 +6,7 @@ import {
   AI_CONFIG,
 } from './config/constants';
 import { USER_STORY_CONFIG } from './config/user-story-config';
-import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config';
+import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config/validation';
 import { isString } from './type-guards';
 
 export interface ValidationError {

@@ -5,7 +5,7 @@
  * and ensuring proper cleanup of async operations.
  */
 
-import { CLEANUP_CONFIG } from './config';
+import { CLEANUP_CONFIG } from './config/cleanup';
 import { createLogger } from './logger';
 
 const logger = createLogger('ResourceCleanupManager');

@@ -1,7 +1,7 @@
 import { register } from '@/lib/metrics';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { AppError, ErrorCode } from '@/lib/errors';
-import { STATUS_CODES } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/http';
 import { createLogger } from '@/lib/logger';
 import { isAdminAuthenticated } from '@/lib/auth';
 

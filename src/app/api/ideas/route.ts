@@ -7,7 +7,8 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { requireAuth } from '@/lib/auth';
-import { APP_CONFIG, STATUS_CODES } from '@/lib/config';
+import { APP_CONFIG } from '@/lib/config/app';
+import { STATUS_CODES } from '@/lib/config/http';
 
 /**
  * GET /api/ideas
