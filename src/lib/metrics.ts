@@ -7,13 +7,25 @@
  * Safe for both Node.js and Edge runtimes.
  */
 
-let register: unknown;
-let httpRequestDuration: unknown;
-let httpRequestErrors: unknown;
-let httpRequestTotal: unknown;
-let circuitBreakerState: unknown;
-let rateLimiterHits: unknown;
+interface Register {
+  metrics: () => Promise<string>;
+  contentType: string;
+  clear: () => void;
+}
 
+interface Metric {
+  inc: (labels?: Record<string, string | number>) => void;
+  observe: (labels: Record<string, string | number>, value: number) => void;
+  set: (labels?: Record<string, string | number>, value?: number) => void;
+  labels: (labels: Record<string, string>) => Metric;
+}
+
+let register: Register;
+let httpRequestDuration: Metric;
+let httpRequestErrors: Metric;
+let httpRequestTotal: Metric;
+let circuitBreakerState: Metric;
+let rateLimiterHits: Metric;
 // Detect runtime
 const isEdge =
   typeof process !== 'undefined' &&
