@@ -17,6 +17,14 @@ import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import InputWithValidation from '@/components/InputWithValidation';
 import ProgressStepper from '@/components/ProgressStepper';
+
+// Step type definition (matching ProgressStepper component)
+interface Step {
+  id: string;
+  label: string;
+  completed: boolean;
+  current: boolean;
+}
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Tooltip from '@/components/Tooltip';
 import CopyButton from '@/components/CopyButton';
@@ -168,7 +176,11 @@ describe('Accessibility Tests - WCAG 2.1 Compliance', () => {
   });
 
   describe('ProgressStepper Component', () => {
-    const steps = ['Step 1', 'Step 2', 'Step 3'];
+    const steps: Step[] = [
+      { id: '1', label: 'Step 1', completed: true, current: false },
+      { id: '2', label: 'Step 2', completed: false, current: true },
+      { id: '3', label: 'Step 3', completed: false, current: false },
+    ];
 
     it('should render with navigation role', () => {
       render(<ProgressStepper steps={steps} currentStep={1} />);
@@ -275,7 +287,15 @@ describe('Accessibility Tests - WCAG 2.1 Compliance', () => {
     });
 
     it('ProgressStepper should have navigation role', () => {
-      render(<ProgressStepper steps={['A', 'B']} currentStep={1} />);
+      render(
+        <ProgressStepper
+          steps={[
+            { id: '1', label: 'A', completed: false, current: true },
+            { id: '2', label: 'B', completed: false, current: false },
+          ]}
+          currentStep={1}
+        />
+      );
       expect(screen.getByRole('navigation')).toBeInTheDocument();
     });
 
