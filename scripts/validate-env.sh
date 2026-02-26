@@ -110,10 +110,13 @@ load_env_file() {
                 local value="${BASH_REMATCH[2]}"
                 
                 # Remove surrounding quotes (single and double)
-                value="${value%\"}"
-                value="${value#\"}"
-                value="${value%\'}"
-                value="${value#\'}"
+                # Use substring removal - works correctly in bash
+                if [[ "$value" == \"*\" ]]; then
+                    value="${value:1:-1}"
+                fi
+                if [[ "$value" == \'*\' ]]; then
+                    value="${value:1:-1}"
+                fi
                 
                 export "$key"="$value"
             fi
