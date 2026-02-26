@@ -93,7 +93,8 @@
   .focus-visible-ring {
     @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white;
   }
-
+  /* Global focus styles removed - components handle their own focus rings using Tailwind focus-visible utilities
+  This prevents conflicts between global focus styles and component-specific focus management (Issue #620) */
   :focus-visible {
     outline: 2px solid theme('colors.primary.600');
     outline-offset: 2px;
