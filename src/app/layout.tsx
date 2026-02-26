@@ -9,7 +9,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
-import { safeJsonLd } from '@/lib/security';
+import { safeJsonLd } from '@/lib/security/json-ld';
 import {
   KeyboardShortcutsProvider,
   KeyboardShortcutsButton,
