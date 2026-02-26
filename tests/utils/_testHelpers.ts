@@ -7,6 +7,7 @@ export const setProcessEnv = (
   (process.env as Record<string, string | undefined>)[key] = value;
   return original;
 };
+
 /**
  * Mock utilities for consistent test environment setup
  */
@@ -271,6 +272,7 @@ export const mockConsole = () => {
 // =============================================================================
 
 import type { ApiContext } from '@/lib/api-handler';
+import type { Vector } from '@/lib/db';
 
 /**
  * Creates a properly typed mock ApiHandler for use in tests.
@@ -340,3 +342,66 @@ export const setProcessEnvVars = (
     });
   };
 };
+
+/**
+ * Creates a typed mock Vector for testing.
+ * Use this instead of '{} as any' when mocking vector operations.
+ *
+ * @param overrides - Partial Vector properties to override
+ * @returns A properly typed Vector object
+ */
+export const createMockVector = (overrides: Partial<Vector> = {}): Vector => ({
+  id: 'test-vector-id',
+  idea_id: 'test-idea-id',
+  vector_data: { test: 'data' },
+  reference_type: 'clarification_session',
+  reference_id: 'test-ref-id',
+  created_at: new Date().toISOString(),
+  embedding: [0.1, 0.2, 0.3],
+  ...overrides,
+});
+
+/**
+ * Creates a typed mock Vector array for getVectors mock responses.
+ * Use this instead of '[] as any' when mocking vector queries.
+ *
+ * @param count - Number of vectors to create
+ * @param overrides - Properties to apply to all vectors
+ * @returns An array of properly typed Vector objects
+ */
+export const createMockVectorArray = (
+  count: number = 1,
+  overrides: Partial<Vector> = {}
+): Vector[] =>
+  Array.from({ length: count }, (_, i) =>
+    createMockVector({
+      id: `test-vector-${i + 1}`,
+      idea_id: `test-idea-${i + 1}`,
+      ...overrides,
+    })
+  );
+
+/**
+ * Creates a mock for database operations that return void/success.
+ * Use this instead of 'mockResolvedValue({} as any)' for db operations.
+ *
+ * @returns A promise that resolves to undefined
+ */
+export const createMockDbSuccess = (): Promise<void> =>
+  Promise.resolve(undefined);
+
+/**
+ * Creates a typed mock for database create operations.
+ * Use this instead of 'mockResolvedValue({ id: "xxx" } as any)'.
+ *
+ * @param id - The ID to return
+ * @returns A promise resolving to an object with the given ID
+ */
+export const createMockDbCreate = <T extends { id: string }>(
+  id: string,
+  additionalFields: Partial<T> = {}
+): Promise<T> =>
+  Promise.resolve({
+    id,
+    ...additionalFields,
+  } as T);
