@@ -844,3 +844,58 @@ TT|- ✅ ESLint: 0 warnings
 ---
 
 **Last Updated:** 2026-02-26
+
+
+---
+
+## Recent Improvements (2026-02-26)
+
+### Optimistic UI Updates for Task Toggles
+
+**Issue:** #1749 - Implement optimistic UI updates for better UX
+
+**Problem:**
+- Task toggles waited for API response before updating UI
+- Caused perceived latency in user interactions
+- Poor experience on slow connections
+
+**Changes:**
+
+|||| File | Change |
+|| -- | -- | -- |
+|| `src/hooks/useOptimisticMutation.ts` | New hook for optimistic updates |
+|| `src/hooks/useTaskManagement.ts` | Apply UI changes immediately |
+
+**Technical Implementation:**
+
+1. **New hook** `useOptimisticMutation`:
+   - Immediate UI updates before API call
+   - Automatic rollback on error
+   - Retry with exponential backoff
+   - Callbacks: onOptimistic, onRollback, onSuccess, onError
+
+2. **Updated task toggle logic**:
+   - Store previous state for potential rollback
+   - Apply optimistic update immediately
+   - On API error: restore previous state + show error toast
+   - On API success: UI is already updated (no additional work)
+
+**User Experience:**
+- ✅ Immediate feedback when toggling tasks
+- ✅ Error handling with automatic rollback
+- ✅ Visual feedback via loading spinner during sync
+- ✅ Toast notifications for success/error
+
+**Verification:**
+
+|| Check | Status |
+|| -- | -- |
+|| TypeScript | ✅ No errors |
+|| Build | ✅ Pass |
+|| Pattern | ✅ Reusable for other mutations |
+
+**PR:** #1886
+
+---
+
+**Last Updated:** 2026-02-26
