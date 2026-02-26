@@ -27,9 +27,12 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 3. ~~User Onboarding~~ - Implemented with #1855
 4. ~~Social Sharing~~ - Implemented with Web Share API (homepage + results page)
 5. ~~Referral System~~ - Implemented with #1883
-6. **Push Notifications** - Missing engagement hooks
-7. **A/B Testing** - Can't experiment with growth strategies
-8. **Email "Send to Self"** - Allow users to email themselves their plans
+6. ~~Email "Send to Self"~~ - Implemented with #1892
+7. **Push Notifications** - Missing engagement hooks
+8. **A/B Testing** - Can't experiment with growth strategies
+9. **Push Notifications** - Missing engagement hooks
+10. **A/B Testing** - Can't experiment with growth strategies
+11. **Email "Send to Self"** - Allow users to email themselves their plans
 
 ### Completed PRs
 
@@ -48,8 +51,11 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 3. ~~User Onboarding~~ - No welcome emails, tutorials, or guided tours
 4. ~~Social Sharing~~ - Implemented with Web Share API
 5. ~~Referral System~~ - Implemented with #1883
-6. **Push Notifications** - Missing engagement hooks
-7. **A/B Testing** - Can't experiment with growth strategies
+6. ~~Email "Send to Self"~~ - Implemented with #1892
+7. **Push Notifications** - Missing engagement hooks
+8. **A/B Testing** - Can't experiment with growth strategies
+9. **Push Notifications** - Missing engagement hooks
+10. **A/B Testing** - Can't experiment with growth strategies
 
 ## Workflow
 
