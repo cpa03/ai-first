@@ -7,12 +7,14 @@
  * Safe for both Node.js and Edge runtimes.
  */
 
-let register: unknown;
-let httpRequestDuration: unknown;
-let httpRequestErrors: unknown;
-let httpRequestTotal: unknown;
-let circuitBreakerState: unknown;
-let rateLimiterHits: unknown;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+let register: any;
+let httpRequestDuration: any;
+let httpRequestErrors: any;
+let httpRequestTotal: any;
+let circuitBreakerState: any;
+let rateLimiterHits: any;
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 // Detect runtime
 const isEdge =
