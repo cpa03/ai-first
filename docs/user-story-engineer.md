@@ -721,10 +721,22 @@ testStories.forEach(story => {
 - [Feature Guide](./feature.md) - For feature requests
 - [Bug Guide](./bug.md) - For bug reports
 #QB|
-#MS|MS|## Recent Activity
-#QH|#VX|HV|
-#WR|#VQ|NR|This section documents recent work completed by the User Story Engineer specialist.
-#TQ|#XN|SY|
+#NM|#TQ|#XN|SY|
+#ZK|#ZR|NR|### 2026-02-26: PR #1891 - UserOnboarding Tour Content Update
+#NM|#TQ|#XN|SY|
+#ZW|#SZ|NR|Updated UserOnboarding component to match issue #1859 acceptance criteria:
+#NK|#MP|RT|
+#SB|#QB|NR|1. **Issue**: Tour content didn't match 'idea submission → clarification → breakdown → export' criteria
+#WM|#MH|XZ|2. **Solution**: Updated tour step content to better explain the workflow:
+#TN|#BR|XZ|   - Step 2: Added mention of AI clarification
+#ZS|#YR|XZ|   - Step 3: Renamed to 'Get Your Project Plan', explains task breakdown & timeline
+#JP|#XJ|XZ|   - Step 4: Renamed to 'Export or Share', lists export options (Markdown, Notion, Trello)
+#MM|#MV|#BP|NR|3. **Verification**: Build passes, minimal change (+6/-6 lines)
+#QP|#NK|#MP|RT|
+#YT|#NJ|#QB|NR|PR: #1891 - Small UX improvement aligning onboarding with user workflow
+#VB|#WQ|#XZ|NR|---
+#NM|#TQ|#XN|SY|
+#KZ|#ZK|#ZR|NR|### 2026-02-26: PR #1871 - UX Improvement: Tooltip for Clear Button
 #ZK|#ZR|NR|### 2026-02-26: PR #1871 - UX Improvement: Tooltip for Clear Button
 #TQ|#XN|SY|
 #ZW|#SZ|NR|Verified and labeled existing PR #1871 which adds a tooltip to the icon-only clear button in InputWithValidation component:
