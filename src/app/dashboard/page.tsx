@@ -20,6 +20,11 @@ const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
     </div>
   ),
 });
+
+// Growth: Lazy load ReferralLink for code splitting
+const ReferralLink = dynamic(() => import('@/components/ReferralLink'), {
+  ssr: false,
+});
 import { createLogger } from '@/lib/logger';
 import Link from 'next/link';
 import { APP_CONFIG } from '@/lib/config';
@@ -66,7 +71,10 @@ export default function DashboardPage() {
     isOpen: false,
     idea: null,
   });
-  const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
+  const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
+
+  // Growth: Generate referral code from user ID (first 8 chars)
+  const referralCode = userId ? userId.slice(0, 8).toLowerCase() : '';
 
   const fetchIdeas = useCallback(async () => {
     try {
@@ -279,7 +287,13 @@ export default function DashboardPage() {
           <Button variant="primary">+ New Idea</Button>
         </Link>
       </div>
-
+      {/* Growth: Referral Link - Viral Growth Loop */}
+      {isAuthenticated && referralCode && (
+        <div className="mb-8">
+          <ReferralLink referralCode={referralCode} />
+        </div>
+      )}
+      BV| {/* Filter */}
       {/* Filter */}
       <div className="mb-6">
         <label htmlFor="status-filter" className="sr-only">
@@ -299,7 +313,6 @@ export default function DashboardPage() {
           <option value="completed">Completed</option>
         </select>
       </div>
-
       {/* Ideas List */}
       {ideas.length === 0 ? (
         <div className="bg-white rounded-lg shadow-lg p-12 text-center">
@@ -440,7 +453,6 @@ export default function DashboardPage() {
           </div>
         </div>
       )}
-
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && deleteModal.idea && (
         <div
