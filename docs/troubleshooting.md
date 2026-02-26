@@ -497,7 +497,7 @@ curl http://localhost:3000/api/health/detailed | jq '.checks.ai'
 1. **Check prompt templates:**
 
    ```bash
-   cat ai/prompts/clarifier/*.yml
+   cat src/lib/prompts/clarifier/*.txt
    ```
 
 2. **Refine prompts:**
@@ -978,7 +978,7 @@ For production, set up proper monitoring:
 
 Include the following information:
 
-````markdown
+`````markdown
 ## Environment
 
 - OS: [e.g., macOS, Ubuntu 20.04]
@@ -1032,4 +1032,8 @@ Include the following information:
 
 **Still stuck?** [Create an issue](https://github.com/cpa03/ai-first/issues) and include your diagnostic information.
 ````
-````
+`````
+
+```
+
+```
