@@ -203,9 +203,10 @@ export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
 
 // Rate Limit Configuration (extracted from constants.ts)
 export { RATE_LIMIT_CONFIG } from './rate-limit-config';
-export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
 
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
+
+// Health Monitoring Types
 
 // Health Monitoring Types
 export type { HealthConfig, MemoryConfig } from './health';

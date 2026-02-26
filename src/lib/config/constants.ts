@@ -4,8 +4,6 @@ export { RATE_LIMIT_CONFIG } from './rate-limit-config';
 // Import for local use within this file
 import { RATE_LIMIT_CONFIG } from './rate-limit-config';
 import { EnvLoader } from './environment';
-export { RATE_LIMIT_CONFIG } from './rate-limit-config';
-import { EnvLoader } from './environment';
 
 /**
  * Rate limiting configuration
