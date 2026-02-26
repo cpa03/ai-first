@@ -16,6 +16,9 @@
  */
 
 import { EnvLoader } from '@/lib/config/environment';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('Analytics');
 
 /**
  * Event categories for analytics
@@ -253,7 +256,9 @@ function flushEvents(): void {
 
   // Debug logging
   if (ANALYTICS_CONFIG.DEBUG) {
-    console.log('[Analytics] Flushing events:', eventsToSend);
+    logger.debug('[Analytics] Flushing events:', {
+      eventsCount: eventsToSend.length,
+    });
   }
 
   // Send to PostHog if configured
@@ -266,7 +271,7 @@ function flushEvents(): void {
     ANALYTICS_CONFIG.PROVIDER === ANALYTICS_PROVIDERS.CONSOLE ||
     ANALYTICS_CONFIG.DEBUG
   ) {
-    console.log('[Analytics] Events:', JSON.stringify(eventsToSend, null, 2));
+    logger.debug('[Analytics] Events batch', { events: eventsToSend });
   }
 
   if (flushTimeout) {
@@ -298,7 +303,7 @@ function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
 
   if (!apiKey) {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.warn('[Analytics] PostHog API key not configured');
+      logger.warn('[Analytics] PostHog API key not configured');
     }
     return;
   }
@@ -326,7 +331,7 @@ function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
     body: JSON.stringify(posthogEvents),
   }).catch((error) => {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.error('[Analytics] Failed to send events to PostHog:', error);
+      logger.error('[Analytics] Failed to send events to PostHog', error);
     }
   });
 }
@@ -340,7 +345,7 @@ function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
 
   if (!apiKey) {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.warn('[Analytics] PostHog API key not configured');
+      logger.warn('[Analytics] PostHog API key not configured');
     }
     return;
   }
@@ -368,7 +373,7 @@ function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
     credentials: 'omit' as RequestCredentials,
   }).catch((error) => {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.error('[Analytics] Failed to send events to PostHog:', error);
+      logger.error('[Analytics] Failed to send events to PostHog', error);
     }
   });
 }
@@ -425,7 +430,7 @@ export function trackEvent(
 
   // Debug logging
   if (ANALYTICS_CONFIG.DEBUG) {
-    console.log('[Analytics] Track event:', fullEvent);
+    logger.debug('[Analytics] Track event', fullEvent);
   }
 
   // Queue for batch sending
