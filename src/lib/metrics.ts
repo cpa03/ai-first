@@ -7,20 +7,12 @@
  * Safe for both Node.js and Edge runtimes.
  */
 
-// Use type-only imports to avoid pulling in prom-client in Edge
-import type {
-  Registry as RegistryType,
-  Counter as CounterType,
-  Histogram as HistogramType,
-  Gauge as GaugeType,
-} from 'prom-client';
-
-let register: any;
-let httpRequestDuration: any;
-let httpRequestErrors: any;
-let httpRequestTotal: any;
-let circuitBreakerState: any;
-let rateLimiterHits: any;
+let register: unknown;
+let httpRequestDuration: unknown;
+let httpRequestErrors: unknown;
+let httpRequestTotal: unknown;
+let circuitBreakerState: unknown;
+let rateLimiterHits: unknown;
 
 // Detect runtime
 const isEdge =
@@ -28,8 +20,6 @@ const isEdge =
   (process.env.NEXT_RUNTIME === 'edge' ||
     process.env.CF_PAGES === 'true' ||
     process.env.CF_WORKER === 'true');
-
-// No-op implementation for Edge or when prom-client is unavailable
 const createNoOpMetric = () => ({
   inc: () => {},
   observe: () => {},
@@ -92,7 +82,7 @@ if (isEdge) {
       labelNames: ['method', 'route'],
       registers: [register],
     });
-  } catch (e) {
+  } catch {
     // Fallback to no-op
     register = {
       metrics: async () => '',
