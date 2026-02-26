@@ -642,29 +642,8 @@ export const VALIDATION_LIMITS_CONFIG = {
   ),
   DEFAULT_MAX_REQUEST_SIZE_BYTES: VALIDATION_CONFIG.MAX_REQUEST_BODY_SIZE,
 } as const;
-
-/**
- * Error message configuration
- */
-export const ERROR_CONFIG = {
-  /**
-   * Request ID generation configuration
-   */
-  REQUEST_ID: {
-    PREFIX: 'req_',
-    RANDOM_LENGTH: 9,
-    RADIX: 36,
-  } as const,
-
-  /**
-   * Rate limit response configuration
-   */
-  RATE_LIMIT: {
-    ERROR_CODE: 'RATE_LIMIT_EXCEEDED',
-    STATUS_CODE: 429,
-  } as const,
-} as const;
-
+// Re-export ERROR_CONFIG from error-config module for backward compatibility
+export { ERROR_CONFIG, REQUEST_ID_CONFIG, RATE_LIMIT_ERROR_CONFIG } from './error-config';
 /**
  * Agent configuration for breakdown engine and clarifier
  */
