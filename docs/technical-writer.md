@@ -584,9 +584,8 @@ gh pr create --title "fix(docs): [description]" --body "..."
 
 **Last Updated**: 2026-02-26
 **Agent**: Technical Writer
-**Version**: 1.5.1
-**Verification Status**: ✅ PR #1905 created, all checks pass
-
+**Version**: 1.5.2
+**Verification Status**: ✅ PR #1923 reviewed and verified, ready to merge
 ---
 
 **Last Updated**: 2026-02-25
