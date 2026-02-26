@@ -29,8 +29,6 @@ interface TasksResponse {
   };
 }
 
-
-
 interface UseTaskManagementReturn {
   loading: boolean;
   error: string | null;
@@ -55,6 +53,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const [expandedDeliverables, setExpandedDeliverables] = useState<Set<string>>(
     new Set()
   );
+
+  // Track previous data for rollback on error
+  const previousDataRef = useRef<TasksResponse | null>(null);
 
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
   // re-creations of callbacks that depend on it.
@@ -113,15 +114,127 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     }
   }, [ideaId, logger]);
 
-  // Toggle task status
+  // Helper function to apply task status update to state
+  const applyTaskStatusUpdate = useCallback(
+    (
+      prevData: TasksResponse | null,
+      taskId: string,
+      newStatus: TaskStatus
+    ): TasksResponse | null => {
+      if (!prevData) return null;
+
+      const dIndex = prevData.deliverables.findIndex((d) =>
+        d.tasks.some((t) => t.id === taskId)
+      );
+      if (dIndex === -1) return prevData;
+
+      const deliverable = prevData.deliverables[dIndex];
+      const taskIndex = deliverable.tasks.findIndex((t) => t.id === taskId);
+      const task = deliverable.tasks[taskIndex];
+      const est = Number(task.estimate) || 0;
+
+      let deltaTasks = 0;
+      let deltaHours = 0;
+
+      if (newStatus === 'completed' && task.status !== 'completed') {
+        deltaTasks = 1;
+        deltaHours = est;
+      } else if (newStatus !== 'completed' && task.status === 'completed') {
+        deltaTasks = -1;
+        deltaHours = -est;
+      }
+
+      if (deltaTasks === 0) return prevData;
+
+      const updatedTasks = [...deliverable.tasks];
+      updatedTasks[taskIndex] = {
+        ...task,
+        status: newStatus,
+        completion_percentage: newStatus === 'completed' ? 100 : 0,
+      };
+
+      const newCompletedCount = deliverable.completedCount + deltaTasks;
+      const newCompletedHours =
+        Math.round((deliverable.completedHours + deltaHours) * 10) / 10;
+
+      const updatedDeliverable = {
+        ...deliverable,
+        tasks: updatedTasks,
+        completedCount: newCompletedCount,
+        completedHours: newCompletedHours,
+        progress: Math.round(
+          updatedTasks.length > 0
+            ? (newCompletedCount / updatedTasks.length) * 100
+            : 0
+        ),
+      };
+
+      const updatedDeliverables = [...prevData.deliverables];
+      updatedDeliverables[dIndex] = updatedDeliverable;
+
+      const { summary } = prevData;
+      const newOverallCompletedTasks = summary.completedTasks + deltaTasks;
+      const newOverallCompletedHours =
+        Math.round((summary.completedHours + deltaHours) * 10) / 10;
+
+      return {
+        ...prevData,
+        deliverables: updatedDeliverables,
+        summary: {
+          ...summary,
+          completedTasks: newOverallCompletedTasks,
+          completedHours: newOverallCompletedHours,
+          overallProgress: Math.round(
+            summary.totalTasks > 0
+              ? (newOverallCompletedTasks / summary.totalTasks) * 100
+              : 0
+          ),
+        },
+      };
+    },
+    []
+  );
+
+  // Toggle task status with OPTIMISTIC updates
   const handleToggleTaskStatus = useCallback(
     async (taskId: string, currentStatus: TaskStatus) => {
       const newStatus: TaskStatus =
         currentStatus === 'completed' ? 'todo' : 'completed';
 
+      // Store previous state for potential rollback
+      previousDataRef.current = data;
+
+      // Find the task for toast message BEFORE making changes
+      const findTask = () => {
+        return data?.deliverables
+          .flatMap((d) => d.tasks)
+          .find((t) => t.id === taskId);
+      };
+
       try {
         setUpdatingTaskId(taskId);
 
+        // STEP 1: Apply OPTIMISTIC update immediately (before API call)
+        setData((prevData) =>
+          applyTaskStatusUpdate(prevData, taskId, newStatus)
+        );
+
+        // Show haptic feedback for completion
+        if (newStatus === 'completed' && typeof window !== 'undefined') {
+          triggerHapticFeedback();
+          const task = findTask();
+          if (task) {
+            const win = window as unknown as {
+              showToast?: (options: { type: string; message: string }) => void;
+            };
+            win.showToast?.({
+              type: 'success',
+              message: `Nicely done! "${task.title}" is complete.`,
+            });
+          }
+        }
+
+        // STEP 2: Make API call
         const response = await fetchWithTimeout(`/api/tasks/${taskId}/status`, {
           method: 'PATCH',
           headers: {
@@ -141,97 +254,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           throw new Error('Invalid response from server');
         }
 
-        // Show success toast when task is completed
-        if (newStatus === 'completed' && typeof window !== 'undefined') {
-          triggerHapticFeedback();
-          const task = dataRef.current?.deliverables
-            .flatMap((d) => d.tasks)
-            .find((t) => t.id === taskId);
-          if (task) {
-            const win = window as unknown as {
-              showToast?: (options: { type: string; message: string }) => void;
-            };
-            win.showToast?.({
-              type: 'success',
-              message: `Nicely done! "${task.title}" is complete.`,
-            });
-          }
-        }
-
-        // PERFORMANCE: Use incremental updates
-        setData((prevData) => {
-          if (!prevData) return null;
-
-          const dIndex = prevData.deliverables.findIndex((d) =>
-            d.tasks.some((t) => t.id === taskId)
-          );
-          if (dIndex === -1) return prevData;
-
-          const deliverable = prevData.deliverables[dIndex];
-          const taskIndex = deliverable.tasks.findIndex((t) => t.id === taskId);
-          const task = deliverable.tasks[taskIndex];
-          const est = Number(task.estimate) || 0;
-
-          let deltaTasks = 0;
-          let deltaHours = 0;
-
-          if (newStatus === 'completed' && task.status !== 'completed') {
-            deltaTasks = 1;
-            deltaHours = est;
-          } else if (newStatus !== 'completed' && task.status === 'completed') {
-            deltaTasks = -1;
-            deltaHours = -est;
-          }
-
-          if (deltaTasks === 0) return prevData;
-
-          const updatedTasks = [...deliverable.tasks];
-          updatedTasks[taskIndex] = {
-            ...task,
-            status: newStatus,
-            completion_percentage: newStatus === 'completed' ? 100 : 0,
-          };
-
-          const newCompletedCount = deliverable.completedCount + deltaTasks;
-          const newCompletedHours =
-            Math.round((deliverable.completedHours + deltaHours) * 10) / 10;
-
-          const updatedDeliverable = {
-            ...deliverable,
-            tasks: updatedTasks,
-            completedCount: newCompletedCount,
-            completedHours: newCompletedHours,
-            progress: Math.round(
-              updatedTasks.length > 0
-                ? (newCompletedCount / updatedTasks.length) * 100
-                : 0
-            ),
-          };
-
-          const updatedDeliverables = [...prevData.deliverables];
-          updatedDeliverables[dIndex] = updatedDeliverable;
-
-          const { summary } = prevData;
-          const newOverallCompletedTasks = summary.completedTasks + deltaTasks;
-          const newOverallCompletedHours =
-            Math.round((summary.completedHours + deltaHours) * 10) / 10;
-
-          return {
-            ...prevData,
-            deliverables: updatedDeliverables,
-            summary: {
-              ...summary,
-              completedTasks: newOverallCompletedTasks,
-              completedHours: newOverallCompletedHours,
-              overallProgress: Math.round(
-                summary.totalTasks > 0
-                  ? (newOverallCompletedTasks / summary.totalTasks) * 100
-                  : 0
-              ),
-            },
-          };
-        });
+        // STEP 3: Success - optimistic update is already applied
+        logger.info('Task status updated successfully', { taskId, newStatus });
       } catch (err) {
+        // STEP 4: Failure - ROLLBACK to previous state
         logger.errorWithContext('Failed to update task status', {
           component: 'TaskManagement',
           action: 'handleToggleTaskStatus',
@@ -242,6 +268,24 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
             error: err instanceof Error ? err.message : 'Unknown error',
           },
         });
+
+        // Rollback to previous state
+        if (previousDataRef.current) {
+          setData(previousDataRef.current);
+        }
+
+        // Show error toast
+        if (typeof window !== 'undefined') {
+          const win = window as unknown as {
+            showToast?: (options: { type: string; message: string }) => void;
+          };
+          win.showToast?.({
+            type: 'error',
+            message:
+              err instanceof Error ? err.message : 'Failed to update task',
+          });
+        }
+
         setError(
           err instanceof Error ? err.message : 'Failed to update task status'
         );
@@ -249,7 +293,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [logger]
+    [data, logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
