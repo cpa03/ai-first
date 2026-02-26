@@ -114,7 +114,8 @@
 #SJ|    /BlueprintDisplay.tsx   ← Blueprint display UI
 #VH|    /Button.tsx            ← Reusable button component
 #ZH|    /ClarificationFlow.tsx  ← Clarification workflow UI
-#VS|    /CopyButton.tsx         ← Copy to clipboard button
+    /CopyButton.tsx         ← Copy to clipboard button
+    /EmailButton.tsx         ← Email send-to-self button
 #JS|    /ErrorBoundary.tsx      ← Error boundary component
 #QM|    /FeatureGrid.tsx        ← Feature showcase grid
 #HB|    /GlobalErrorHandler.tsx  ← Global error handling
