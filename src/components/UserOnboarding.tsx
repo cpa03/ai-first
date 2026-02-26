@@ -33,22 +33,22 @@ const TOUR_STEPS: TourStep[] = [
     id: 'idea-input',
     title: '1. Share Your Idea',
     content:
-      'Enter your project idea in natural language. No technical knowledge needed!',
+      'Enter your project idea in natural language. Our AI will help clarify details.',
     targetSelector: '[aria-labelledby="idea-input-heading"]',
     position: 'top',
   },
   {
-    id: 'how-it-works',
-    title: '2. How It Works',
+    id: 'breakdown',
+    title: '2. Get Your Project Plan',
     content:
-      'We analyze your idea, break it into tasks, and create a comprehensive plan.',
+      'We break down your idea into tasks, estimate effort, and create a realistic timeline.',
     targetSelector: '[aria-labelledby="how-it-works-heading"]',
     position: 'top',
   },
   {
     id: 'share',
-    title: '3. Share with Friends',
-    content: 'Love IdeaFlow? Share it with your network to spread the word!',
+    title: '3. Export or Share',
+    content: 'Export to Markdown, Notion, Trello, or share with your team!',
     targetSelector: '[aria-label*="Share IdeaFlow"]',
     position: 'left',
   },
