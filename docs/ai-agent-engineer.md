@@ -184,3 +184,14 @@ When pushing workflow file changes, the GitHub App token may fail with:
 
 - Document workflow changes in PR comments for manual addition
 - Split changes into docs-only + workflow when token is limited
+
+## Proactive Scanning (2026-02-26)
+
+When no ai-agent-engineer labeled issues exist:
+
+1. **Verify existing docs**: Check if domain documentation is accurate
+2. **Cross-reference**: Compare AGENTS.md vs iterate.yml for consistency
+3. **Check actual files**: Always verify against actual code/config
+4. **Small fixes count**: Documentation fixes are valid domain improvements
+
+Lesson learned: docs/ai-agent-engineer.md already had correct iterate.yml info (5 jobs), but AGENTS.md incorrectly listed 8 phases. Always verify against actual implementation.
