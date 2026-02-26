@@ -13,9 +13,9 @@ Expert guidance for engineering and improving AI agents in the IdeaFlow multi-ag
 This skill covers the ai-agent-engineer domain within IdeaFlow:
 
 | Area                | Files                                                        | Purpose                                 |
-| ------------------- | ------------------------------------------------------------ | --------------------------------------- |
+| ------------------- | ------------------------------------------------------------ | --------------------------------------- | ----------------------------- | --------------------- |
 | Agent Configuration | `.opencode/agents/CMZ.json`, `.opencode/oh-my-opencode.json` | Agent definitions, models, capabilities |
-| Skills Library      | `.opencode/skills/*/SKILL.md`                                | 32+ specialized skills                  |
+| YH                  |                                                              | Skills Library                          | `.opencode/skills/*/SKILL.md` | 33 specialized skills |
 | Agent Guidelines    | `docs/agent-guidelines.md`                                   | 10 core principles, workflows           |
 | System Integration  | `opencode.json`, `AGENTS.md`                                 | CLI config, documentation               |
 

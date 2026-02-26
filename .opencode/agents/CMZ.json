@@ -74,14 +74,33 @@
     }
   },
   "skills": {
-    "total_available": 35,
+    "total_available": 33,
     "categories": {
-      "process": ["superpowers-brainstorming", "superpowers-writing-plans", "superpowers-executing-plans", "superpowers-tdd", "systematic-debugging"],
-      "development": ["superpowers-subagent-dev", "superpowers-git-worktrees", "superpowers-verification", "superpowers-finishing-branch"],
-      "collaboration": ["superpowers-requesting-review", "superpowers-receiving-review", "superpowers-parallel-agents"],
-      "domain": ["github-workflow-automation", "planning", "git-master", "skill-creator", "skill-builder"],
+      "process": [
+        "superpowers-brainstorming",
+        "superpowers-writing-plans",
+        "superpowers-executing-plans",
+        "superpowers-tdd",
+        "systematic-debugging"
+      ],
+      "development": [
+        "superpowers-subagent-dev",
+        "superpowers-git-worktrees",
+        "superpowers-verification",
+        "superpowers-finishing-branch"
+      ],
+      "collaboration": [
+        "superpowers-requesting-review",
+        "superpowers-receiving-review",
+        "superpowers-parallel-agents"
+      ],
+      "domain": ["planning", "git-master", "skill-creator", "skill-builder"],
       "context": ["context-memory-systems", "context-engineering-memory"],
-      "github": ["github-issue-triage", "github-pr-triage", "git-commit-message"],
+      "github": [
+        "github-issue-triage",
+        "github-pr-triage",
+        "git-commit-message"
+      ],
       "backend": ["codepro-backend-standards", "claude-codepro-backend"],
       "debugging": ["claude-code-debugging", "debugging-strategies"],
       "testing": ["proffesor-testing-qe"],
