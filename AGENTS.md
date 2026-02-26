@@ -123,18 +123,14 @@ To delegate a specific task:
 2. CMZ will route to the appropriate agent
 3. Monitor progress in real-time
 
-### GitHub Actions Integration
+The `iterate.yml` workflow runs continuously with 5 agent jobs:
 
-The `iterate.yml` workflow runs continuously with 8 phases:
-
-1. **BugLover** - Find and fix bugs
-2. **Pallete** - UX improvements
-3. **Flexy** - Modularity improvements
-4. **TestGuard** - Test optimization
-5. **StorX** - Feature consolidation
-6. **CodeKeep** - Code quality review
-7. **BroCula** - Browser console fixes
-8. **Git Management** - PR and merge
+| Job Name  | Agent      | Purpose                 |
+| --------- | ---------- | ----------------------- |
+| architect | RepoKeeper | Strategy & Triage       |
+| bugfix    | RepoKeeper | Bug fixing              |
+| Palette   | RepoKeeper | UX improvements         |
+| Flexy     | RepoKeeper | Modularity improvements |
 
 ## Configuration Files
 
