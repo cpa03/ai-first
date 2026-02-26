@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useSyncExternalStore } from 'react';
+import React, { useSyncExternalStore, useRef, useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
@@ -48,8 +48,37 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   } = useBlueprintGeneration(idea, answers);
 
   const prefersReducedMotion = usePrefersReducedMotion();
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const wasGeneratingRef = useRef(isGenerating);
 
-  const comingSoonBadgeClass = prefersReducedMotion ? '' : 'animate-coming-soon-badge';
+  // Focus management: Set focus to heading when blueprint generation completes (Issue #723)
+  useEffect(() => {
+    // When generation completes (was generating, now not)
+    if (wasGeneratingRef.current && !isGenerating && headingRef.current) {
+      // Store previous focus
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      // Move focus to heading for screen readers and keyboard users
+      headingRef.current.focus();
+    }
+    // Update ref for next render
+    wasGeneratingRef.current = isGenerating;
+  }, [isGenerating]);
+
+  // Restore focus after copy/download actions
+  const handleCopyWithFocus = () => {
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    handleCopy();
+  };
+
+  const handleDownloadWithFocus = () => {
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    handleDownload();
+  };
+
+  const comingSoonBadgeClass = prefersReducedMotion
+    ? ''
+    : 'animate-coming-soon-badge';
 
   if (isGenerating) {
     return (
@@ -123,23 +152,30 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2
               id="blueprint-heading"
+              ref={headingRef}
               className="text-xl sm:text-2xl font-semibold text-gray-900"
+              tabIndex={-1}
+              aria-live="polite"
             >
               {MESSAGES.BLUEPRINT.PAGE_TITLE}
             </h2>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
-                onClick={handleCopy}
+                onClick={handleCopyWithFocus}
                 variant="outline"
                 fullWidth={false}
-                aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.COPY_BLUEPRINT}
+                aria-label={
+                  copied
+                    ? MESSAGES.BLUEPRINT.COPIED_BUTTON
+                    : COMPONENT_DEFAULTS.ARIA_LABELS.COPY_BLUEPRINT
+                }
               >
                 {copied
                   ? MESSAGES.BLUEPRINT.COPIED_BUTTON
                   : MESSAGES.BLUEPRINT.COPY_BUTTON}
               </Button>
               <Button
-                onClick={handleDownload}
+                onClick={handleDownloadWithFocus}
                 variant="primary"
                 fullWidth={false}
                 aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.DOWNLOAD_BLUEPRINT}
@@ -178,7 +214,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
-                  <span className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}>
+                  <span
+                    className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
+                  >
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>
@@ -194,7 +232,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   disabled
                 >
                   {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
-                  <span className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}>
+                  <span
+                    className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
+                  >
                     {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                   </span>
                 </Button>

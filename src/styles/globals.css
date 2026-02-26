@@ -94,10 +94,8 @@
     @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-white;
   }
 
-  :focus-visible {
-    outline: 2px solid theme('colors.primary.600');
-    outline-offset: 2px;
-  }
+  /* Global :focus-visible removed - components handle their own focus rings
+   Using Tailwind's focus-visible utilities prevents conflicts (Issue #620) */
 
   .fade-in {
     animation: fadeIn 0.3s ease-in-out;
