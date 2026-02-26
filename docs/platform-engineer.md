@@ -66,28 +66,30 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
 
 ## Recent Work
 
+- PR #1873: feat(platform): update Node.js engine requirement to >=20.0.0
+  - Aligns package.json engines field with CI pipeline (Node 20)
+  - Matches .nvmrc file for local development consistency
+  - Prevents developers from using Node 18 which may have compatibility issues
+
 - PR #1789: feat(ci): integrate circular dependency check into CI pipeline
   - Addresses issue #1779
-    WP| - Note: workflow file needs manual addition due to GitHub App permission restriction
-    #HB|
-    #BM|- PR #1797: feat(ci): implement pre-commit hooks for code quality enforcement
-    #JM| - Addresses issue #1778
-    #QM| - Added husky and lint-staged for pre-commit hooks
-    #BS| - ESLint and Prettier run on staged files before commit
-    #XX| #BS| - ESLint and Prettier run on staged files before commit
-    #NM|
-    #MM| #ZT| #MB| - Removed duplicate Install Node.js steps
-    #PV| #MM| - Expected savings: 40-60% reduction in CI time
-    #QQ|
-    #NP|- PR #XXXX: fix(platform): improve circular dependency detection accuracy
-    #JM| - Addresses issue #1846
-    #QM| - Added --ts-config tsconfig.json to madge for proper path alias resolution
-    #NM| - Fixed false negative: script now correctly detects 5 circular dependencies
-    #KM| - Changed arrow check from Unicode → to ASCII > for proper detection
-    #JB| - Eliminated 63 parse warnings by properly resolving TypeScript config
-    #BD| - WARNING: CI will now fail until existing circular deps are fixed
-    #QT| - Addresses issue #1828
-    #NM| - Added npm caching using actions/setup-node built-in cache
-    #JB| - Added Next.js build cache (.next/cache) for all 5 jobs
-    #MB| - Removed duplicate Install Node.js steps
-    #MM| - Expected savings: 40-60% reduction in CI time
+  - Note: workflow file needs manual addition due to GitHub App permission restriction
+
+- PR #1797: feat(ci): implement pre-commit hooks for code quality enforcement
+  - Addresses issue #1778
+  - Added husky and lint-staged for pre-commit hooks
+  - ESLint and Prettier run on staged files before commit
+
+- CI Optimization (issue #1828):
+  - Added npm caching using actions/setup-node built-in cache
+  - Added Next.js build cache (.next/cache) for all 5 jobs
+  - Removed duplicate Install Node.js steps
+  - Expected savings: 40-60% reduction in CI time
+
+- PR #XXXX: fix(platform): improve circular dependency detection accuracy
+  - Addresses issue #1846
+  - Added --ts-config tsconfig.json to madge for proper path alias resolution
+  - Fixed false negative: script now correctly detects 5 circular dependencies
+  - Changed arrow check from Unicode → to ASCII > for proper detection
+  - Eliminated 63 parse warnings by properly resolving TypeScript config
+  - WARNING: CI will now fail until existing circular deps are fixed
