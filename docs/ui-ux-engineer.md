@@ -109,7 +109,7 @@ interface AlertProps {
 </Alert>
 ```
 
-**Known Issues:** None
+BM|**Known Issues:** Fixed - Focus ring now uses type-specific colors (PR #1889)
 
 ---
 
@@ -984,18 +984,18 @@ className = 'w-full sm:w-auto';
 
 ### WCAG Compliance Status
 
-| Criterion                    | Status    | Notes                                    |
-| ---------------------------- | --------- | ---------------------------------------- |
-| 1.1.1 Non-text Content       | ✅ Pass   | All images have alt text or aria-hidden  |
-| 1.3.1 Info and Relationships | ✅ Pass   | Semantic HTML used throughout            |
-| 1.4.3 Contrast (Minimum)     | ✅ Pass   | Fixed validation icon colors (green-700, red-600)    |
-| 2.1.1 Keyboard               | ✅ Pass   | All functionality available via keyboard |
-| 2.4.3 Focus Order            | ✅ Pass   | Logical tab order                        |
-| 2.4.1 Bypass Blocks        | ✅ Pass   | Skip-to-content link in layout.tsx      |
-| 2.4.6 Headings and Labels    | ✅ Pass   | Descriptive headings and labels          
-| 2.4.7 Focus Visible          | ✅ Pass   | Focus rings on all interactive elements  |
-| 3.3.1 Error Identification   | ✅ Pass   | Errors identified and described          |
-| 4.1.2 Name, Role, Value      | ✅ Pass   | ARIA attributes used appropriately       |
+| Criterion                    | Status  | Notes                                             |
+| ---------------------------- | ------- | ------------------------------------------------- |
+| 1.1.1 Non-text Content       | ✅ Pass | All images have alt text or aria-hidden           |
+| 1.3.1 Info and Relationships | ✅ Pass | Semantic HTML used throughout                     |
+| 1.4.3 Contrast (Minimum)     | ✅ Pass | Fixed validation icon colors (green-700, red-600) |
+| 2.1.1 Keyboard               | ✅ Pass | All functionality available via keyboard          |
+| 2.4.3 Focus Order            | ✅ Pass | Logical tab order                                 |
+| 2.4.1 Bypass Blocks          | ✅ Pass | Skip-to-content link in layout.tsx                |
+| 2.4.6 Headings and Labels    | ✅ Pass | Descriptive headings and labels                   |
+| 2.4.7 Focus Visible          | ✅ Pass | Focus rings on all interactive elements           |
+| 3.3.1 Error Identification   | ✅ Pass | Errors identified and described                   |
+| 4.1.2 Name, Role, Value      | ✅ Pass | ARIA attributes used appropriately                |
 
 ---
 
