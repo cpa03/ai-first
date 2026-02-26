@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useRef, useLayoutEffect, useCallback, Suspense } from 'react';
+import {
+  useState,
+  useRef,
+  useLayoutEffect,
+  useCallback,
+  Suspense,
+} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
@@ -9,6 +15,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 const Button = dynamic(() => import('@/components/Button'), {
+  ssr: false,
   loading: () => (
     <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
       Loading...
@@ -17,12 +24,14 @@ const Button = dynamic(() => import('@/components/Button'), {
 });
 
 const Alert = dynamic(() => import('@/components/Alert'), {
+  ssr: false,
   loading: () => <div className="bg-gray-100 p-4">Loading...</div>,
 });
 
 const DynamicClarificationFlow = dynamic(
   () => import('@/components/ClarificationFlow').then((mod) => mod.default),
   {
+    ssr: false,
     loading: () => (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
@@ -92,43 +101,44 @@ function ClarifyPageContent() {
 
   // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of ClarificationFlow
   // which receives this function as a prop
-  const handleClarificationComplete = useCallback(async (
-    completedAnswers: Record<string, string>
-  ) => {
-    try {
-      if (ideaId) {
-        const response = await fetchWithTimeout(`/api/ideas/${ideaId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: 'clarified' }),
-        });
+  const handleClarificationComplete = useCallback(
+    async (completedAnswers: Record<string, string>) => {
+      try {
+        if (ideaId) {
+          const response = await fetchWithTimeout(`/api/ideas/${ideaId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: 'clarified' }),
+          });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(
-            errorData.error || `Failed to update idea: ${response.status}`
-          );
+          if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(
+              errorData.error || `Failed to update idea: ${response.status}`
+            );
+          }
         }
+
+        setAnswers(completedAnswers);
+
+        // In a real app, this would navigate to results page
+        // For now, we'll just show the completion message
+      } catch (err) {
+        logger.errorWithContext('Failed to save clarification answers', {
+          component: 'ClarifyPage',
+          action: 'handleClarificationComplete',
+          metadata: {
+            ideaId,
+            error: err instanceof Error ? err.message : 'Unknown error',
+          },
+        });
+        setError('Failed to save your answers. Please try again.');
       }
-
-      setAnswers(completedAnswers);
-
-      // In a real app, this would navigate to results page
-      // For now, we'll just show the completion message
-    } catch (err) {
-      logger.errorWithContext('Failed to save clarification answers', {
-        component: 'ClarifyPage',
-        action: 'handleClarificationComplete',
-        metadata: {
-          ideaId,
-          error: err instanceof Error ? err.message : 'Unknown error',
-        },
-      });
-      setError('Failed to save your answers. Please try again.');
-    }
-  }, [ideaId, logger]);
+    },
+    [ideaId, logger]
+  );
 
   if (authLoading || !hasLoaded) {
     return (
@@ -197,7 +207,10 @@ function ClarifyPageContent() {
                 </div>
               ))}
             </div>
-            <Button onClick={() => router.push(`/results?ideaId=${ideaId}`)} variant="primary">
+            <Button
+              onClick={() => router.push(`/results?ideaId=${ideaId}`)}
+              variant="primary"
+            >
               Generate Blueprint
             </Button>
           </Alert>
