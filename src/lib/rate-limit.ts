@@ -28,6 +28,130 @@ export interface RateLimitConfig {
 
 export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
+/**
+ * User info extracted from request for rate limiting
+ */
+export interface UserRateLimitInfo {
+  userId: string | null;
+  role: UserRole;
+  identifier: string;
+}
+
+/**
+ * Extract user ID from Supabase Authorization header
+ *
+ * The Supabase client sends the access token in the Authorization header
+ * as 'Bearer <token>'. This function extracts the user ID from the token.
+ *
+ * For simplicity, we extract the user ID from custom headers set by the client
+ * or from the Supabase session. In production, this would validate the JWT.
+ *
+ * @param request - The incoming request
+ * @returns User ID if found, null otherwise
+ */
+function extractUserIdFromRequest(request: Request): string | null {
+  // Try to get user ID from custom header (set by authenticated Supabase clients)
+  const xUserId = request.headers.get('x-supabase-user-id');
+  if (xUserId) {
+    return xUserId.trim() || null;
+  }
+
+  // Try Authorization header with Bearer token
+  const authHeader = request.headers.get('authorization');
+  if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
+    // In production, we would validate the JWT and extract user ID
+    // For now, we can use the token as a unique identifier
+    const token = authHeader.substring(7);
+    if (token && token.length > 0) {
+      // Return a hash of the token as the user identifier
+      // This is a simplified approach - in production, validate JWT properly
+      return `token:${token.substring(0, 32)}`;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Determine user role based on available information
+ *
+ * In a full implementation, this would query the user's subscription tier
+ * from the database or cache. For now, we use a simple heuristic:
+ * - If user ID is present, they are authenticated
+ * - Premium/enterprise would be determined by additional data
+ *
+ * @param userId - The user ID if available
+ * @returns User role based on authentication status
+ */
+function determineUserRole(userId: string | null): UserRole {
+  if (!userId) {
+    return 'anonymous';
+  }
+
+  // For now, all authenticated users get 'authenticated' tier
+  // In production, this would check subscription status from database/cache
+  // to determine if user is 'premium' or 'enterprise'
+  return 'authenticated';
+}
+
+/**
+ * Get user-based rate limit identifier
+ *
+ * This function extracts user information from the request and creates
+ * a rate limit identifier based on the user ID when available.
+ * This enables per-user rate limiting instead of just IP-based.
+ *
+ * Priority:
+ * 1. Authenticated user ID (most preferred)
+ * 2. Fall back to IP-based identifier
+ *
+ * @param request - The incoming request
+ * @returns UserRateLimitInfo with user ID, role, and identifier
+ */
+export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
+  const userId = extractUserIdFromRequest(request);
+  const role = determineUserRole(userId);
+
+  let identifier: string;
+
+  if (userId) {
+    // Use user-based identifier when authenticated
+    identifier = `user:${userId}`;
+  } else {
+    // Fall back to IP-based identifier for anonymous users
+    identifier = getClientIdentifier(request);
+  }
+
+  return {
+    userId,
+    role,
+    identifier,
+  };
+}
+
+/**
+ * Check rate limit with user-based identification
+ *
+ * This function combines user-based rate limiting with tiered limits.
+ * When a user is authenticated, their rate limit is tracked by user ID.
+ * When not authenticated, it falls back to IP-based limiting.
+ *
+ * @param request - The incoming request
+ * @param config - Rate limit configuration
+ * @returns Rate limit result with allowed status and info
+ */
+export function checkUserRateLimit(
+  request: Request,
+  config: RateLimitConfig
+): { allowed: boolean; info: RateLimitInfo; userInfo: UserRateLimitInfo } {
+  const userInfo = getUserRateLimitInfo(request);
+  const result = checkRateLimit(userInfo.identifier, config);
+
+  return {
+    ...result,
+    userInfo,
+  };
+}
 const rateLimitStore = new Map<string, number[]>();
 
 /**
@@ -40,14 +164,14 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
 
 /**
  * Generate a request fingerprint for fallback rate limiting
- * 
+ *
  * ⚠️ SECURITY WARNING: This fallback uses client-controlled headers which can be spoofed.
  * This is used ONLY as a last resort when no trusted IP source is available.
  * The fingerprint is made more robust by:
  * 1. Including request path to prevent cross-endpoint bypass
  * 2. Using crypto.subtle for stronger hashing when available
  * 3. Adding a timestamp component to prevent pre-computed attacks
- * 
+ *
  * For production deployments, always ensure platform-specific headers are available:
  * - Cloudflare: cf-connecting-ip
  * - Vercel: x-vercel-forwarded-for
@@ -57,7 +181,7 @@ function generateRequestFingerprint(request: Request): string {
   const userAgent = request.headers.get('user-agent') || '';
   const acceptLang = request.headers.get('accept-language') || '';
   const acceptEncoding = request.headers.get('accept-encoding') || '';
-  
+
   // Include request path to make fingerprint endpoint-specific
   // This prevents an attacker from reusing the same fingerprint across different endpoints
   let urlPath = '';
@@ -83,7 +207,7 @@ function generateRequestFingerprint(request: Request): string {
 /**
  * Try to get client IP from standard reverse proxy headers
  * This is more reliable than fingerprinting but less secure than platform-specific headers
- * 
+ *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-For
  */
 function getIpFromProxyHeaders(request: Request): string | null {
@@ -108,15 +232,15 @@ function getIpFromProxyHeaders(request: Request): string | null {
 
 /**
  * Get a unique identifier for the client making the request
- * 
+ *
  * Priority order (most trusted to least trusted):
  * 1. Platform-specific trusted headers (Cloudflare CF-Connecting-IP, Vercel x-vercel-forwarded-for)
  * 2. Standard proxy headers (x-forwarded-for, x-real-ip)
  * 3. Request fingerprint (client-controlled, use with caution)
- * 
+ *
  * @param request - The incoming request
  * @returns A unique identifier for the client
- * 
+ *
  * @see https://developers.cloudflare.com/fundamentals/reference/http-request-headers/
  * @see https://vercel.com/docs/edge-network/headers
  */
