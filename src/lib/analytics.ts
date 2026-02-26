@@ -15,6 +15,7 @@
  * - onboarding_complete: When user completes onboarding tour
  */
 
+import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 
 /**
@@ -172,6 +173,11 @@ export const ANALYTICS_CONFIG = {
 } as const;
 
 /**
+ * Logger instance for analytics module
+ */
+const logger = createLogger('Analytics');
+
+/**
  * Check if PostHog is properly configured
  */
 function isPostHogConfigured(): boolean {
@@ -253,7 +259,7 @@ function flushEvents(): void {
 
   // Debug logging
   if (ANALYTICS_CONFIG.DEBUG) {
-    console.log('[Analytics] Flushing events:', eventsToSend);
+    logger.debug('[Analytics] Flushing events:', eventsToSend);
   }
 
   // Send to PostHog if configured
@@ -266,7 +272,7 @@ function flushEvents(): void {
     ANALYTICS_CONFIG.PROVIDER === ANALYTICS_PROVIDERS.CONSOLE ||
     ANALYTICS_CONFIG.DEBUG
   ) {
-    console.log('[Analytics] Events:', JSON.stringify(eventsToSend, null, 2));
+    logger.debug('[Analytics] Events:', JSON.stringify(eventsToSend, null, 2));
   }
 
   if (flushTimeout) {
@@ -425,7 +431,7 @@ export function trackEvent(
 
   // Debug logging
   if (ANALYTICS_CONFIG.DEBUG) {
-    console.log('[Analytics] Track event:', fullEvent);
+    logger.debug('[Analytics] Track event:', fullEvent);
   }
 
   // Queue for batch sending
