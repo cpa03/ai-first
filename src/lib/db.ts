@@ -636,7 +636,7 @@ export class DatabaseService {
     return data || [];
   }
 
-/**
+  /**
    * Get paginated ideas for a user with optional status filtering
    *
    * PERFORMANCE: Uses database-level pagination and filtering instead of
@@ -1401,35 +1401,7 @@ export class DatabaseService {
    * @param userId - The user ID to get stats for
    * @returns Aggregated stats object with counts
    */
-   * Get aggregated statistics for a user's ideas, deliverables, and tasks.
-   *
-   * PERFORMANCE OPTIMIZATION (Issue #1927 - N+1 Query Resolution):
-   * ===========================================================================
-   * This method uses 3 efficient SQL queries instead of the previous N+1 pattern:
-   *
-   * OLD (N+1):
-   * - 1 query for ideas
-   * - N queries for deliverables (iterative per idea chunk)
-   * - N*M queries for tasks (iterative per deliverable chunk)
-   * - Total: 1 + N + N*M queries (potentially 1000+ for active users)
-   *
-   * NEW (Optimized):
-   * - 1 query for ideas with IDs
-   * - 1 query for total deliverables using .in() filter
-   * - 1 query for total tasks using .in() filter
-   * - Total: 3 queries (constant, regardless of data size)
-   *
-   * Performance Characteristics:
-   * - Old: O(N*M) queries where N=ideas, M=deliverables per idea
-   * - New: O(1) = 3 queries constant time
-   * - For 100 ideas with 10 deliverables each: 1000+ queries → 3 queries
-   *
-   * @param userId - The user ID to get stats for
-   * @returns Aggregated stats object with counts
-   */
-  async getIdeaStats(
-    userId: string
-  ): Promise<{
+  async getIdeaStats(userId: string): Promise<{
     totalIdeas: number;
     ideasByStatus: Record<string, number>;
     totalDeliverables: number;
@@ -1447,7 +1419,8 @@ export class DatabaseService {
 
     if (ideasError) throw ideasError;
 
-    const typedIdeas = (ideasData as { id: string; status: string }[] | null) ?? [];
+    const typedIdeas =
+      (ideasData as { id: string; status: string }[] | null) ?? [];
     const totalIdeas = typedIdeas.length;
 
     // Count ideas by status in JavaScript (fast for small result sets)
@@ -1493,9 +1466,8 @@ export class DatabaseService {
 
     if (deliverablesFetchError) throw deliverablesFetchError;
 
-    const deliverableIds = (deliverablesData as { id: string }[] | null)?.map(
-      (d) => d.id
-    ) ?? [];
+    const deliverableIds =
+      (deliverablesData as { id: string }[] | null)?.map((d) => d.id) ?? [];
 
     let totalTasks = 0;
 
