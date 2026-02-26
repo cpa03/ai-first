@@ -65,10 +65,32 @@ This document serves as both a QA activity report and a comprehensive quality as
   - `asInvalidInput<T>()` - Type-safe way to test invalid inputs
   - `setProcessEnvVars()` - Helper to set multiple env vars with cleanup
 
-- **Impact**:
-  - Reduced `as any` instances from 153 to 139 (14 fixed)
-  - Improved type safety in api-handler tests
-  - Reusable helpers for future test improvements
+ZK|- **Impact**:
+VP| - Reduced `as any` instances from 153 to 139 (14 fixed)
+HH| - Improved type safety in api-handler tests
+HM| - Reusable helpers for future test improvements
+SV|
+WJ|- **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
+HQ|
+
+#### TypeScript Type Safety Improvements (2026-02-26)
+
+BK|
+QN|- **Files Modified**:
+WH| - `tests/clarifier.test.ts` - Removed 8 `as any` casts
+HQ|
+BK|- **Changes**:
+TH| - Replaced `{} as any` with `undefined` for mockResolvedValue calls
+JK| - Removed `as any` from vector_data mock objects
+BK|
+ZK|- **Impact**:
+VP| - Reduced `as any` instances from 127 to 119 in test files (8 fixed)
+HH| - All 12 clarifier tests pass
+SQ| - Related to issue #1795
+
+- Reduced `as any` instances from 153 to 139 (14 fixed)
+- Improved type safety in api-handler tests
+- Reusable helpers for future test improvements
 
 - **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
 
@@ -1549,20 +1571,20 @@ All items from consolidated issue #1181 were verified as resolved:
 
 #### Verification Results
 
-| Check | Status | Details |
-| ----- | ------ | ------- |
-| **ESLint** | ✅ PASS | 0 errors, 0 warnings |
-| **TypeScript** | ✅ PASS | 0 type errors |
-| **Build** | ✅ PASS | Next.js 16.1.6 compiled successfully |
-| **Tests** | ✅ PASS | 32 accessibility tests passing |
+| Check          | Status  | Details                              |
+| -------------- | ------- | ------------------------------------ |
+| **ESLint**     | ✅ PASS | 0 errors, 0 warnings                 |
+| **TypeScript** | ✅ PASS | 0 type errors                        |
+| **Build**      | ✅ PASS | Next.js 16.1.6 compiled successfully |
+| **Tests**      | ✅ PASS | 32 accessibility tests passing       |
 
 #### QA Improvements Made
 
-| Improvement | Files | Description |
-| ----------- | ----- | ----------- |
-| Accessibility Test Suite | `tests/accessibility.test.tsx` | Added 32 WCAG 2.1 compliance tests |
-| a11y Script | `package.json` | Added `npm run test:a11y` script |
-| @axe-core/react | `package.json` | Installed for accessibility testing |
+| Improvement              | Files                          | Description                         |
+| ------------------------ | ------------------------------ | ----------------------------------- |
+| Accessibility Test Suite | `tests/accessibility.test.tsx` | Added 32 WCAG 2.1 compliance tests  |
+| a11y Script              | `package.json`                 | Added `npm run test:a11y` script    |
+| @axe-core/react          | `package.json`                 | Installed for accessibility testing |
 
 #### Changes Applied
 
@@ -1577,12 +1599,14 @@ All items from consolidated issue #1181 were verified as resolved:
 - Tests validate: ARIA roles, keyboard navigation, form labels, focus management
 
 #### Test Results
+
 ```
 Test Suites: 1 passed
 Tests:       32 passed
 ```
 
 #### PR Created
+
 - **PR #1869**: test: add accessibility testing suite (WCAG 2.1)
 - Labels: quality-assurance
 - Linked Issue: #1827
