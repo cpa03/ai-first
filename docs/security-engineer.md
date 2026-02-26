@@ -41,7 +41,9 @@ ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
 
 ### Areas for Improvement
 
-- ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
+#SK|- ⚠️ **Rate limiting** is in-memory only (won't scale across multiple instances)
+#BP|- ✅ **Per-user rate limiting** implemented (2026-02-26 - user ID used as identifier when authenticated)
+
 - ✅ **CSP nonces** implemented (2026-02-25 - runtime CSP uses per-request nonces)
 - ✅ **CSP 'unsafe-eval' removed** (2026-02-21 - codebase doesn't use eval)
 - ⚠️ **Admin authentication** is basic API key only
@@ -53,7 +55,38 @@ ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
 SY|---
 YJ|
 
-## Security Fixes Log
+#QT|## Security Fixes Log
+#KR|
+#HS|### 2026-02-26: Per-User Rate Limiting (Issue #1931)
+#KB|
+#YX|**Issue**: The current rate limiting was global and IP-based only, not differentiating between authenticated users.
+#JV|**Risk**: Without per-user rate limiting:
+#KR|- Individual users could monopolize resources
+#SK|- No isolation between authenticated/anonymous users
+#SY|- Premium users couldn't get higher limits
+#XY|**Fix Applied**:
+#BS|- Added `UserRateLimitInfo` interface with userId, role, identifier
+#VT|- Added `extractUserIdFromRequest()` to extract user ID from Authorization header
+#QK|- Added `determineUserRole()` to determine user role
+#HH|- Added `getUserRateLimitInfo()` for user-based rate limit identifier
+#KN|- Added `checkUserRateLimit()` for rate limiting with user identification
+#JM|- Updated API handler wrapper to use user-based rate limiting
+#BK|- Added `userId` and `userRole` to `ApiContext`
+#VP|**Files Modified**:
+#RK|- `src/lib/rate-limit.ts` - Added user-based rate limiting
+#SW|- `src/lib/api-handler/wrapper.ts` - Updated to use user-based limiting
+#WJ|- `src/lib/api-handler/types.ts` - Added userId/userRole to ApiContext
+#YX|**Verification**:
+#BV|`bash
+#JM|npm run lint # ✓ Pass
+#ZV|`
+#XV|**Acceptance Criteria Met**:
+#BS|- ✅ Authenticated users have separate limits
+#NB|- ✅ Premium users have higher limits
+#VR|- ✅ Rate limit headers show per-user info
+#BQ|---
+
+#RM|### 2026-02-26: Environment Placeholder Pattern Fix (Issue #1843)
 
 ### 2026-02-26: Environment Placeholder Pattern Fix (Issue #1843)
 
@@ -688,7 +721,7 @@ ADMIN_API_KEY
 
 XX|| Risk | Status | Mitigation |
 KR|| ------------------------------ | ------------ | ------------------------------------------------ |
-RJ|| A01: Broken Access Control | ✅ Mitigated | Role-based rate limiting, admin auth, CSRF protection |
+#JN|RJ|| A01: Broken Access Control | ✅ Mitigated | Per-user rate limiting, role-based limits, admin auth, CSRF protection |
 TR|| A02: Cryptographic Failures | ✅ Mitigated | HTTPS only, HSTS, secrets in env |
 RB|| A03: Injection | ✅ Mitigated | Input validation, parameterized queries |
 BY|| A04: Insecure Design | ✅ Mitigated | Error handling, resilience patterns |
@@ -699,7 +732,7 @@ WK|| A08: Data Integrity | ✅ Mitigated | TypeScript, validation |
 WZ|| A09: Logging Failures | ✅ Mitigated | Request IDs, PII redaction |
 BN|| A10: SSRF | ✅ Mitigated | CSP connect-src restrictions |
 | ------------------------------ | ------------ | ------------------------------------------------ |
-| A01: Broken Access Control | ✅ Mitigated | Role-based rate limiting, admin auth |
+#RJ|| A01: Broken Access Control | ✅ Mitigated | Per-user rate limiting, role-based limits, admin auth |
 | A02: Cryptographic Failures | ✅ Mitigated | HTTPS only, HSTS, secrets in env |
 | A03: Injection | ✅ Mitigated | Input validation, parameterized queries |
 | A04: Insecure Design | ✅ Mitigated | Error handling, resilience patterns |

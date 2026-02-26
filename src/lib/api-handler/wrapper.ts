@@ -7,10 +7,9 @@ import {
 } from '@/lib/errors';
 import { validateRequestSize } from '@/lib/validation';
 import {
-  checkRateLimit,
+  checkUserRateLimit,
   rateLimitConfigs,
   rateLimitResponse,
-  getClientIdentifier,
 } from '@/lib/rate-limit';
 import {
   createLogger,
@@ -130,35 +129,40 @@ export function withApiHandler(
     }
 
     try {
-      const rateLimitResult = checkRateLimit(
-        getClientIdentifier(request),
-        rateLimitConfig
-      );
+      // Use user-based rate limiting when available, falls back to IP-based
+      const {
+        userInfo,
+        info: rateLimitInfo,
+        allowed,
+      } = checkUserRateLimit(request, rateLimitConfig);
 
-      if (!rateLimitResult.allowed) {
+      if (!allowed) {
         logger.warnWithContext('Rate limit exceeded', logContext, {
-          limit: rateLimitResult.info.limit,
+          limit: rateLimitInfo.limit,
+          userId: userInfo.userId,
+          role: userInfo.role,
         });
 
         SecurityAuditLog.logRateLimit({
           blocked: true,
           config: options.rateLimit || 'lenient',
-          requestCount:
-            rateLimitResult.info.limit - rateLimitResult.info.remaining,
-          limit: rateLimitResult.info.limit,
+          requestCount: rateLimitInfo.limit - rateLimitInfo.remaining,
+          limit: rateLimitInfo.limit,
           windowMs: rateLimitConfig.windowMs,
-          clientIdentifier: getClientIdentifier(request),
+          clientIdentifier: userInfo.identifier,
           endpoint: request.url ? new URL(request.url).pathname : undefined,
           requestId,
         });
 
-        return rateLimitResponse(rateLimitResult.info, requestId);
+        return rateLimitResponse(rateLimitInfo, requestId);
       }
 
       const context: ApiContext = {
         requestId,
         request,
-        rateLimit: rateLimitResult.info,
+        rateLimit: rateLimitInfo,
+        userId: userInfo.userId,
+        userRole: userInfo.role,
       };
 
       if (options.validateSize !== false) {

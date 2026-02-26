@@ -1,5 +1,5 @@
 import type { NextRequest } from 'next/server';
-import type { RateLimitInfo } from '@/lib/rate-limit';
+import type { RateLimitInfo, UserRole } from '@/lib/rate-limit';
 
 /**
  * Standard API response format
@@ -30,6 +30,14 @@ export interface ApiContext {
   requestId: string;
   request: NextRequest;
   rateLimit: RateLimitInfo;
+  /**
+   * User ID if authenticated, null for anonymous requests
+   */
+  userId: string | null;
+  /**
+   * User role for tiered rate limiting
+   */
+  userRole: UserRole;
 }
 
 /**
