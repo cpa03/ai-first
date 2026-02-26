@@ -95,6 +95,32 @@ check_env_var() {
     fi
 }
 
+# Function to properly load .env file with correct variable parsing
+load_env_file() {
+    local env_file="$1"
+    if [[ -f "$env_file" ]]; then
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            # Skip comments and empty lines
+            [[ $line =~ ^[[:space:]]*# ]] && continue
+            [[ -z "${line// }" ]] && continue
+            
+            # Parse KEY=VALUE format - allow spaces around =
+            if [[ $line =~ ^[[:space:]]*([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*(.*)[[:space:]]*$ ]]; then
+                local key="${BASH_REMATCH[1]}"
+                local value="${BASH_REMATCH[2]}"
+                
+                # Remove surrounding quotes (single and double)
+                value="${value%\"}"
+                value="${value#\"}"
+                value="${value%\'}"
+                value="${value#\'}"
+                
+                export "$key"="$value"
+            fi
+        done < "$env_file"
+    fi
+}
+
 # Function to check for placeholder values in sensitive variables
 check_placeholder_value() {
     local var_name=$1
@@ -276,9 +302,7 @@ main() {
     # Load environment from .env.local if it exists
     if [ -f ".env.local" ]; then
         print_status "INFO" "Loading environment from .env.local"
-        set -a
-        source <(grep -v '^#' .env.local | grep -v '^\s*$')
-        set +a
+        load_env_file ".env.local"
     else
         if [ "$CI_MODE" = true ]; then
             print_status "WARN" ".env.local not found (CI may use secrets)"
@@ -290,9 +314,7 @@ main() {
                 print_status "INFO" "Created .env.local from config/.env.example"
                 print_status "INFO" "Please edit .env.local with your actual values"
                 # Load the newly created file
-                set -a
-                source <(grep -v '^#' .env.local | grep -v '^\s*$')
-                set +a
+                load_env_file ".env.local"
             else
                 print_status "WARN" ".env.local file not found"
                 print_status "INFO" "Create .env.local from config/.env.example"
