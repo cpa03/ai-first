@@ -125,16 +125,13 @@ To delegate a specific task:
 
 ### GitHub Actions Integration
 
-The `iterate.yml` workflow runs continuously with 8 phases:
+The `iterate.yml` workflow runs continuously with 5 jobs:
 
-1. **BugLover** - Find and fix bugs
-2. **Pallete** - UX improvements
-3. **Flexy** - Modularity improvements
-4. **TestGuard** - Test optimization
-5. **StorX** - Feature consolidation
-6. **CodeKeep** - Code quality review
-7. **BroCula** - Browser console fixes
-8. **Git Management** - PR and merge
+1. **Architect** - Strategy & Triage
+2. **BugFixer** - Bug fixing
+3. **Palette** - UX improvements
+4. **Flexy** - Modularity improvements
+5. **Brocula** - Browser console fixes
 
 ## Configuration Files
 

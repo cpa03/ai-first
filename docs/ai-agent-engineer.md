@@ -114,6 +114,21 @@ Example verification command:
 grep -E "^\s{2}[a-z]+:" .github/workflows/iterate.yml | wc -l
 ```
 
+### Documentation Consistency Fix (2026-02-26)
+
+Fixed AGENTS.md to match actual iterate.yml:
+
+- **Before**: Claimed 8 workflow phases (BugLover, Pallete, Flexy, TestGuard, StorX, CodeKeep, BroCula, Git Management)
+- **After**: Correct 5 jobs (Architect, BugFixer, Palette, Flexy, Brocula)
+
+This is a valid ai-agent-engineer domain improvement: documentation must match actual code.
+
+Verification command:
+
+```bash
+grep -E "^\s{2}[a-zA-Z]+:" .github/workflows/iterate.yml | grep -v "push:\|schedule:\|contents:\|issues:\|actions:\|group:"
+```
+
 ### Key Pattern: Event-Driven Architecture
 
 The event-driven architecture was implemented to solve tight coupling. Key files:
@@ -131,7 +146,7 @@ All agents should emit typed events for:
 - Completion of operation
 - Errors
 
-#JY|This enables loose coupling and easy extensibility.
+This enables loose coupling and easy extensibility.
 
 ## CI Workflow Jobs
 
