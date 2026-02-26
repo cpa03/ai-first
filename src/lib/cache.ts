@@ -31,6 +31,9 @@ export class Cache<T = unknown> {
   }
 
   set(key: string, value: T): void {
+    // PERFORMANCE: Optimized O(K) early-stop cleanup on every set operation.
+    // Since we use sliding expiration (updating timestamp on get/set), the Map
+    // remains sorted by expiration time, allowing O(K) instead of O(N) scans.
     this.evictExpiredEntries();
 
     const existingEntry = this.cache.get(key);
@@ -71,7 +74,9 @@ export class Cache<T = unknown> {
       return null;
     }
 
-    // Update access order for LRU: delete and re-insert to move to end
+    // PERFORMANCE: Sliding expiration - update timestamp and move to end of Map.
+    // This keeps the Map sorted by expiration time for O(K) cleanup.
+    entry.timestamp = Date.now();
     this.cache.delete(key);
     this.cache.set(key, entry);
 
@@ -95,7 +100,9 @@ export class Cache<T = unknown> {
       return false;
     }
 
-    // Update access order for LRU: delete and re-insert to move to end
+    // PERFORMANCE: Sliding expiration - update timestamp and move to end of Map.
+    // This keeps the Map sorted by expiration time for O(K) cleanup.
+    entry.timestamp = Date.now();
     this.cache.delete(key);
     this.cache.set(key, entry);
 
@@ -133,54 +140,43 @@ export class Cache<T = unknown> {
     }
 
     const now = Date.now();
-    const keysToDelete: string[] = [];
+    const iterator = this.cache.entries();
 
-    for (const [key, entry] of this.cache.entries()) {
+    // PERFORMANCE: Since we maintain chronological order in the Map
+    // (by deleting and re-inserting on every access), the first entries
+    // are always the oldest. We can stop as soon as we find a non-expired entry.
+    // This converts O(N) scan to O(K) where K is number of expired entries.
+    while (true) {
+      const { value, done } = iterator.next();
+      if (done) break;
+
+      const [key, entry] = value;
       if (now - entry.timestamp > this.ttl) {
-        keysToDelete.push(key);
-      }
-    }
-
-    for (const key of keysToDelete) {
-      const entry = this.cache.get(key);
-      if (entry) {
         if (this.onEvict) {
           this.onEvict(key, entry);
         }
         this.totalHits -= entry.hits;
         this.cache.delete(key);
+      } else {
+        // First non-expired entry found, stop searching
+        break;
       }
     }
   }
 
   private evictLRU(): void {
-    let lruKey: string | null = null;
-    let lruEntry: CacheEntry<T> | null = null;
-    let lowestHits = Infinity;
+    // PERFORMANCE: Map preserves insertion order. The first entry is the
+    // Least Recently Used (LRU) because we move entries to the end on every access.
+    // This provides O(1) eviction instead of the previous O(N) frequency-based search.
+    const firstEntry = this.cache.entries().next();
 
-    // Optimization: Stop searching if we find an entry with 0 hits.
-    // Since Map preserves insertion order and we move entries to the end on access,
-    // the first entry with 0 hits is the oldest cold entry.
-    for (const [key, entry] of this.cache.entries()) {
-      if (entry.hits === 0) {
-        lruKey = key;
-        lruEntry = entry;
-        break;
-      }
-
-      if (entry.hits < lowestHits) {
-        lowestHits = entry.hits;
-        lruKey = key;
-        lruEntry = entry;
-      }
-    }
-
-    if (lruKey && lruEntry) {
+    if (!firstEntry.done) {
+      const [key, entry] = firstEntry.value;
       if (this.onEvict) {
-        this.onEvict(lruKey, lruEntry);
+        this.onEvict(key, entry);
       }
-      this.totalHits -= lruEntry.hits;
-      this.cache.delete(lruKey);
+      this.totalHits -= entry.hits;
+      this.cache.delete(key);
     }
   }
 
@@ -230,13 +226,11 @@ export class Cache<T = unknown> {
       ? (stats.size / this.maxSize) * 100
       : 0;
 
-    // Calculate age of oldest entry
+    // PERFORMANCE: Get age of oldest entry in O(1) from the first Map entry.
     let oldestEntryAge: number | null = null;
-    for (const entry of this.cache.values()) {
-      const age = Date.now() - entry.timestamp;
-      if (oldestEntryAge === null || age > oldestEntryAge) {
-        oldestEntryAge = age;
-      }
+    const firstValue = this.cache.values().next();
+    if (!firstValue.done) {
+      oldestEntryAge = Date.now() - firstValue.value.timestamp;
     }
 
     // Determine health status based on utilization and hit rate
