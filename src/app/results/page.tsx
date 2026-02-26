@@ -36,6 +36,7 @@ interface IdeaSession {
 const BlueprintDisplay = dynamic(
   () => import('@/components/BlueprintDisplay').then((mod) => mod.default),
   {
+    ssr: false,
     loading: () => (
       <div className="bg-white rounded-lg shadow-lg p-8 text-center">
         <LoadingSpinner
@@ -52,6 +53,7 @@ const BlueprintDisplay = dynamic(
 const TaskManagement = dynamic(
   () => import('@/components/TaskManagement').then((mod) => mod.default),
   {
+    ssr: false,
     loading: () => (
       <div className="bg-white rounded-lg shadow-lg p-8 animate-pulse">
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>

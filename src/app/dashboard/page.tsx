@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
+  ssr: false,
   loading: () => (
     <button className="px-4 py-2 bg-gray-200 rounded-md text-gray-600" disabled>
       Loading...
@@ -14,6 +15,7 @@ const Button = dynamic(() => import('@/components/Button'), {
 });
 
 const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
+  ssr: false,
   loading: () => (
     <div className="flex justify-center items-center">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
