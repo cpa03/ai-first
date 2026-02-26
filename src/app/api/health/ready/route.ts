@@ -6,7 +6,8 @@ import {
 } from '@/lib/api-handler';
 import { createLogger } from '@/lib/logger';
 import { NextResponse } from 'next/server';
-import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/http';
+import { API_CACHE_CONFIG } from '@/lib/config/constants';
 
 const logger = createLogger('readiness');
 

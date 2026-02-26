@@ -8,7 +8,7 @@
  * @module lib/security/request-signer
  */
 
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */

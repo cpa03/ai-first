@@ -9,6 +9,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
+import { safeJsonLd } from '@/lib/security/json-ld';
 import {
   KeyboardShortcutsProvider,
   KeyboardShortcutsButton,
@@ -129,7 +130,7 @@ export default async function RootLayout({
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
       </head>
       <body className="min-h-screen bg-gray-50 font-sans">

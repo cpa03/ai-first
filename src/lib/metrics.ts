@@ -3,54 +3,105 @@
  *
  * Prometheus metrics for HTTP request monitoring.
  * Shared between route handlers and API utilities.
+ *
+ * Safe for both Node.js and Edge runtimes.
  */
 
-import {
-  Registry,
-  collectDefaultMetrics,
-  Counter,
-  Histogram,
-  Gauge,
-} from 'prom-client';
+let register: unknown;
+let httpRequestDuration: unknown;
+let httpRequestErrors: unknown;
+let httpRequestTotal: unknown;
+let circuitBreakerState: unknown;
+let rateLimiterHits: unknown;
 
-const register = new Registry();
-
-collectDefaultMetrics({ register });
-
-export const httpRequestDuration = new Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'route', 'status_code'],
-  buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5],
-  registers: [register],
+// Detect runtime
+const isEdge =
+  typeof process !== 'undefined' &&
+  (process.env.NEXT_RUNTIME === 'edge' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.CF_WORKER === 'true');
+const createNoOpMetric = () => ({
+  inc: () => {},
+  observe: () => {},
+  set: () => {},
+  labels: () => createNoOpMetric(),
 });
 
-export const httpRequestErrors = new Counter({
-  name: 'http_request_errors_total',
-  help: 'Total number of HTTP request errors',
-  labelNames: ['method', 'route', 'status_code'],
-  registers: [register],
-});
+if (isEdge) {
+  register = {
+    metrics: async () => '',
+    contentType: 'text/plain',
+    clear: () => {},
+  };
+  httpRequestDuration = createNoOpMetric();
+  httpRequestErrors = createNoOpMetric();
+  httpRequestTotal = createNoOpMetric();
+  circuitBreakerState = createNoOpMetric();
+  rateLimiterHits = createNoOpMetric();
+} else {
+  try {
+    // Dynamic require to avoid bundling issues in Edge
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const promClient = require('prom-client');
 
-export const httpRequestTotal = new Counter({
-  name: 'http_requests_total',
-  help: 'Total number of HTTP requests',
-  labelNames: ['method', 'route', 'status_code'],
-  registers: [register],
-});
+    register = new promClient.Registry();
+    promClient.collectDefaultMetrics({ register });
 
-export const circuitBreakerState = new Gauge({
-  name: 'circuit_breaker_state',
-  help: 'Circuit breaker state (0=closed, 1=half-open, 2=open)',
-  labelNames: ['name'],
-  registers: [register],
-});
+    httpRequestDuration = new promClient.Histogram({
+      name: 'http_request_duration_seconds',
+      help: 'Duration of HTTP requests in seconds',
+      labelNames: ['method', 'route', 'status_code'],
+      buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5],
+      registers: [register],
+    });
 
-export const rateLimiterHits = new Counter({
-  name: 'rate_limiter_hits_total',
-  help: 'Total number of rate limiter hits',
-  labelNames: ['method', 'route'],
-  registers: [register],
-});
+    httpRequestErrors = new promClient.Counter({
+      name: 'http_request_errors_total',
+      help: 'Total number of HTTP request errors',
+      labelNames: ['method', 'route', 'status_code'],
+      registers: [register],
+    });
 
-export { register };
+    httpRequestTotal = new promClient.Counter({
+      name: 'http_requests_total',
+      help: 'Total number of HTTP requests',
+      labelNames: ['method', 'route', 'status_code'],
+      registers: [register],
+    });
+
+    circuitBreakerState = new promClient.Gauge({
+      name: 'circuit_breaker_state',
+      help: 'Circuit breaker state (0=closed, 1=half-open, 2=open)',
+      labelNames: ['name'],
+      registers: [register],
+    });
+
+    rateLimiterHits = new promClient.Counter({
+      name: 'rate_limiter_hits_total',
+      help: 'Total number of rate limiter hits',
+      labelNames: ['method', 'route'],
+      registers: [register],
+    });
+  } catch {
+    // Fallback to no-op
+    register = {
+      metrics: async () => '',
+      contentType: 'text/plain',
+      clear: () => {},
+    };
+    httpRequestDuration = createNoOpMetric();
+    httpRequestErrors = createNoOpMetric();
+    httpRequestTotal = createNoOpMetric();
+    circuitBreakerState = createNoOpMetric();
+    rateLimiterHits = createNoOpMetric();
+  }
+}
+
+export {
+  register,
+  httpRequestDuration,
+  httpRequestErrors,
+  httpRequestTotal,
+  circuitBreakerState,
+  rateLimiterHits,
+};

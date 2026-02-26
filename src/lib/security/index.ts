@@ -65,6 +65,9 @@ export {
   type InternalApiSignatureHeader,
 } from './request-signer';
 
+// JSON-LD Security
+export { safeJsonLd } from './json-ld';
+
 // CSRF Protection
 export {
   validateCSRF,

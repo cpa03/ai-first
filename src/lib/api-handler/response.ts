@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { STATUS_CODES } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/http';
 import type { RateLimitInfo } from '@/lib/rate-limit';
 import type { ApiResponse } from './types';
 

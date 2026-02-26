@@ -18,7 +18,7 @@ import {
   setCorrelationId,
   type LogContext,
 } from '@/lib/logger';
-import { STATUS_CODES } from '@/lib/config';
+import { STATUS_CODES } from '@/lib/config/http';
 import {
   httpRequestDuration,
   httpRequestErrors,
