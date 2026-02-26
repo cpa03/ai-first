@@ -16,6 +16,9 @@
  */
 
 import { EnvLoader } from '@/lib/config/environment';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('Analytics');
 
 /**
  * Event categories for analytics
@@ -253,7 +256,7 @@ function flushEvents(): void {
 
   // Debug logging
   if (ANALYTICS_CONFIG.DEBUG) {
-    console.log('[Analytics] Flushing events:', eventsToSend);
+    logger.debug('Flushing events:', { events: eventsToSend });
   }
 
   // Send to PostHog if configured
@@ -266,7 +269,7 @@ function flushEvents(): void {
     ANALYTICS_CONFIG.PROVIDER === ANALYTICS_PROVIDERS.CONSOLE ||
     ANALYTICS_CONFIG.DEBUG
   ) {
-    console.log('[Analytics] Events:', JSON.stringify(eventsToSend, null, 2));
+    logger.debug('Events:', { events: eventsToSend });
   }
 
   if (flushTimeout) {
@@ -425,7 +428,7 @@ export function trackEvent(
 
   // Debug logging
   if (ANALYTICS_CONFIG.DEBUG) {
-    console.log('[Analytics] Track event:', fullEvent);
+    logger.debug('Track event:', fullEvent);
   }
 
   // Queue for batch sending
