@@ -805,7 +805,28 @@ All issues were previously addressed in PR #1803 but not closed. Verified docume
 - User story validation in docs/feature.md with guidelines
 - Specialist templates in docs/templates/specialist-user-story_template.md
 
----
+KB|---
+
+### 2026-02-26: Proactive User Story Documentation - Share and Referral Features
+
+Added user stories for recently merged growth features:
+
+1. **US-GROWTH-001**: Share Results Page (P2, 2 points)
+   - Created: `docs/user-stories/growth/us-growth-001-share.md`
+   - Documents share button functionality (PR #1870)
+   - Includes mobile Web Share API and desktop clipboard fallback scenarios
+
+2. **US-GROWTH-002**: Referral Link for Viral Growth (P2, 3 points)
+   - Created: `docs/user-stories/growth/us-growth-002-referral.md`
+   - Documents referral link feature (PR #1883)
+   - Includes referral code generation, copy functionality, and analytics tracking
+
+3. **Updated**: `docs/user-stories/README.md`
+   - Added Growth & Viral Loops section to directory structure
+   - Updated summary statistics (Total: 9 stories, P2: 2)
+   - Added entries to user story index
+
+**Verification**: Small atomic changes - 2 new files (+343 lines), 1 updated file (+16/-3 lines)
 
 
 #PN|_Maintained by the User Story Engineer specialist._

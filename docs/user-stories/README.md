@@ -8,7 +8,10 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 | Metric               | Count |
 | -------------------- | ----- |
-| **Total Stories**    | 7     |
+| **Total Stories**    | 9     |
+| **P0 (Must Have)**   | 5     |
+| **P1 (Should Have)** | 2     |
+| **P2 (Could Have)**  | 2     |
 | **P0 (Must Have)**   | 5     |
 | **P1 (Should Have)** | 2     |
 | **P2 (Could Have)**  | 0     |
@@ -20,24 +23,29 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | ----------------- | ------------ | ---------------------------------------------------------------------------------------- |
 | **MVP (P0)**      | 23           | US-AUTH-001 (3), US-AUTH-002 (2), US-IDEA-001 (5), US-IDEA-002 (5), US-BREAKDOWN-001 (8) |
 | **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                                       |
+| **Growth (P2)**    | 5            | US-GROWTH-001 (2), US-GROWTH-002 (3)                                                    |
+| **Total**         | **33**       | All stories                                                                              |
+| **Post-MVP (P1)** | 5            | US-AUTH-003 (2), US-EXPORT-001 (3)                                                       |
 | **Total**         | **28**       | All stories                                                                              |
 
 ### Estimated Effort (Based on Story Points)
 
 | Points | Time Estimate | MVP Stories                                       | Post-MVP Stories  |
 | ------ | ------------- | ------------------------------------------------- | ----------------- |
-| 1-2    | < 2 hours     | US-AUTH-002 (2)                                   | US-AUTH-003 (2)   |
+| 1-2    | < 2 hours     | US-AUTH-002 (2)                                   | US-AUTH-003 (2), US-GROWTH-001 (2) |
+| 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5), US-IDEA-002 (5) | US-EXPORT-001 (3), US-GROWTH-002 (3) |
 | 3-5    | 2-8 hours     | US-AUTH-001 (3), US-IDEA-001 (5), US-IDEA-002 (5) | US-EXPORT-001 (3) |
 | 8+     | 1-2+ days     | US-BREAKDOWN-001 (8)                              | -                 |
 
 **MVP Estimated Effort**: ~4-5 development days (based on 23 story points)
 **Total Estimated Effort**: ~5-6 development days (based on 28 story points)
+**Total with Growth**: ~6-7 development days (based on 33 story points)
 
 ### Status Overview
 
 | Status      | Count | Stories                                                                                          |
 | ----------- | ----- | ------------------------------------------------------------------------------------------------ |
-| Ready       | 2     | US-AUTH-003, US-EXPORT-001                                                                       |
+| Ready       | 4     | US-AUTH-003, US-EXPORT-001, US-GROWTH-001, US-GROWTH-002                                        |
 | In Progress | 3     | US-IDEA-001, US-IDEA-002, US-BREAKDOWN-001                                                       |
 | Done        | 2     | US-AUTH-001, US-AUTH-002                                                                         |
 | Released    | 0     | -                                                                                                |
@@ -76,6 +84,11 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 | Idea Management | 2     | 0     | 0     | 0     | 2     |
 | Breakdown       | 1     | 0     | 0     | 0     | 1     |
 | Export          | 0     | 1     | 0     | 0     | 1     |
+| Growth          | 0     | 0     | 2     | 0     | 2     |
+| **Total**       | **5** | **2** | **2** | **0** | **9** |
+| Idea Management | 2     | 0     | 0     | 0     | 2     |
+| Breakdown       | 1     | 0     | 0     | 0     | 1     |
+| Export          | 0     | 1     | 0     | 0     | 1     |
 | **Total**       | **5** | **2** | **0** | **0** | **7** |
 
 ---
@@ -84,6 +97,22 @@ This directory contains all user stories for the IdeaFlow project, organized by 
 
 ```
 user-stories/
+├── README.md                    # This file
+├── personas.md                  # User personas reference
+├── authentication/              # Authentication feature stories
+│   ├── us-auth-001-signup.md    # User signup with email verification
+│   ├── us-auth-002-login.md     # User login with error handling
+│   └── us-auth-003-password-reset.md # Self-service password reset
+├── idea-management/             # Idea management feature stories
+│   ├── us-idea-001-submission.md # Idea submission with clarification
+│   └── us-idea-002-dashboard.md  # Idea dashboard for viewing and managing ideas
+├── breakdown/                   # Breakdown system feature stories
+│   └── us-breakdown-001-engine.md # Automatic idea breakdown into tasks
+├── export/                      # Export & integration feature stories
+│   └── us-export-001-markdown.md # Export plan to Markdown format
+└── growth/                      # Growth & viral loops feature stories
+    ├── us-growth-001-share.md   # Share results page
+    └── us-growth-002-referral.md # Referral link for viral growth
 ├── README.md                    # This file
 ├── personas.md                  # User personas reference
 ├── authentication/              # Authentication feature stories
@@ -135,6 +164,15 @@ user-stories/
 | [US-EXPORT-001](./export/us-export-001-markdown.md) | Export Plan to Markdown | P1       | Ready  | Startup Founder |
 
 **Related Issues**: #205, #219
+
+### Growth & Viral Loops
+
+| Story ID                                                   | Title                    | Priority | Status | Persona         |
+| ---------------------------------------------------------- | ------------------------ | -------- | ------ | --------------- |
+| [US-GROWTH-001](./growth/us-growth-001-share.md)          | Share Results Page       | P2       | Ready  | Startup Founder |
+| [US-GROWTH-002](./growth/us-growth-002-referral.md)        | Referral Link for Viral | P2       | Ready  | Startup Founder |
+
+**Related Issues**: #1870, #1883
 
 ## How to Use This Directory
 
@@ -230,4 +268,4 @@ When adding new user stories:
 
 ---
 
-_Maintained by the User Story Engineer specialist. Last updated: February 22, 2026 (Updated MVP progress tracking to align with roadmap implementation status)._
+_Maintained by the User Story Engineer specialist. Last updated: February 26, 2026 (Added US-GROWTH-001 and US-GROWTH-002 for Share and Referral features)._
