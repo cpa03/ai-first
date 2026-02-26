@@ -107,3 +107,13 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - Changed arrow check from Unicode → to ASCII > for proper detection
   - Eliminated 63 parse warnings by properly resolving TypeScript config
   - WARNING: CI will now fail until existing circular deps are fixed
+
+
+- **2026-02-26**: PR #1941: docs(platform): document parallel CI implementation
+  - Addresses issue #1935: Parallelize independent test suites
+  - Created comprehensive documentation with full workflow YAML
+  - Expected improvement: ~15 min → ~5-8 min CI time
+  - LIMITATION: Cannot create workflow file due to GitHub App missing workflows permission
+  - Solution: Document the implementation, manual workflow creation required
+  - NOTE: gh pr create command failed but gh api works
+  - Use: gh api repos/owner/repo/pulls -X POST for creating PRs when CLI fails
