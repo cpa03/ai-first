@@ -122,7 +122,10 @@ Complete index of all IdeaFlow documentation.
 
 - [API Specifications](./api/) - OpenAPI specifications
 - [Security](./security/) - Security documentation and logs
-- [Templates](./templates/) - User-downloadable templates
+  MN|- [Templates](./templates/) - User-downloadable templates
+- [ADR](./adr/) - Architecture Decision Records
+- [Plans](./plans/) - Implementation plans
+- [User Stories](./user-stories/) - User story documentation
 
 ---
 
