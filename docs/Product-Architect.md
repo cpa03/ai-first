@@ -162,4 +162,17 @@ WP|- **PR**: https://github.com/cpa03/ai-first/pull/1872
   - Modified: `src/lib/api-handler.ts` (Backward compatibility re-export)
 - **Result**: Split 424-line file into focused modules
 - **Verification**: ESLint ✓ (0 warnings), Tests ✓ (31 passed)
-- **Backward Compatibility**: Maintained via re-export in original file
+  KN|- **Backward Compatibility**: Maintained via re-export in original file
+
+### 2026-02-26: TIMEOUT_CONFIG Modularization
+
+VS|- **Issue**: #715 - "Giant centralized constants module mixes unrelated configuration domains"
+BM|- **Action**: Extracted TIMEOUT_CONFIG into dedicated module
+TB|- **Files Changed**:
+
+- Created: `src/lib/config/timeout-config.ts`
+- Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+- Modified: `src/lib/config/index.ts` (export)
+  VJ|- **Result**: Reduced constants.ts by ~70 lines
+  WP|- **Verification**: ESLint ✓ (0 warnings), Build ✓
+  PR|- **PR**: https://github.com/cpa03/ai-first/pull/1911
