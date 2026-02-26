@@ -36,6 +36,37 @@ async function handleGet(context: ApiContext) {
   );
   const page = parseInt(url.searchParams.get('page') || '1', 10);
 
+  // Validate pagination parameters to prevent DoS attacks
+  if (Number.isNaN(limit) || !Number.isFinite(limit)) {
+    throw new ValidationError([
+      {
+        field: 'limit',
+        message: 'Invalid limit parameter: must be a valid number',
+      },
+    ]);
+  }
+  if (limit < APP_CONFIG.PAGINATION.MIN_LIMIT) {
+    throw new ValidationError([
+      {
+        field: 'limit',
+        message: `Limit must be at least ${APP_CONFIG.PAGINATION.MIN_LIMIT}`,
+      },
+    ]);
+  }
+  if (limit > APP_CONFIG.PAGINATION.MAX_LIMIT) {
+    throw new ValidationError([
+      {
+        field: 'limit',
+        message: `Limit cannot exceed ${APP_CONFIG.PAGINATION.MAX_LIMIT}`,
+      },
+    ]);
+  }
+  if (Number.isNaN(page) || !Number.isFinite(page) || page < 1) {
+    throw new ValidationError([
+      { field: 'page', message: 'Page must be a valid positive number' },
+    ]);
+  }
+
   // Authenticate user
   const user = await requireAuth(request);
   const userId = user.id;
