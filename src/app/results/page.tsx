@@ -10,6 +10,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Alert from '@/components/Alert';
 import Tooltip from '@/components/Tooltip';
 import ShareButton from '@/components/ShareButton';
+import EmailButton from '@/components/EmailButton';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
 import dynamic from 'next/dynamic';
@@ -432,12 +433,35 @@ function ResultsContent() {
                 aria-label="Export to GitHub Projects - requires API configuration"
               >
                 Export to GitHub Projects
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  Setup Required
-                </span>
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"></span>
+                Setup Required
               </Button>
             </Tooltip>
           )}
+
+          {/* Email to Self - Growth: User retention and accessibility */}
+          <EmailButton
+            ideaTitle={idea.title}
+            ideaContent={idea.raw_text}
+            sessionAnswers={
+              session?.state.answers &&
+              typeof session.state.answers === 'object'
+                ? Object.fromEntries(
+                    Object.entries(session.state.answers).map(
+                      ([key, value]) => [key, String(value)]
+                    )
+                  )
+                : {}
+            }
+            onEmailSent={() => {
+              // Growth: Track email send event
+              trackEvent(ANALYTICS_EVENTS.CTA_CLICK, {
+                cta_name: 'email_send_to_self',
+                idea_id: idea.id,
+                page_path: '/results',
+              });
+            }}
+          />
         </div>
 
         {exportUrl && (
