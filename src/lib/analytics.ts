@@ -49,6 +49,16 @@ export type AnalyticsEventType =
   (typeof ANALYTICS_EVENTS)[keyof typeof ANALYTICS_EVENTS];
 
 /**
+ * Supported analytics providers
+ */
+export const ANALYTICS_PROVIDERS = {
+  POSTHOG: 'posthog',
+  CONSOLE: 'console',
+} as const;
+
+export type AnalyticsProviderType =
+  (typeof ANALYTICS_PROVIDERS)[keyof typeof ANALYTICS_PROVIDERS];
+/**
  * Analytics event properties
  */
 export interface AnalyticsEventProperties {
@@ -126,14 +136,50 @@ export const ANALYTICS_CONFIG = {
     60000
   ),
 
-  /**
-   * List of events to exclude from tracking
-   * Env: ANALYTICS_EXCLUDED_EVENTS (comma-separated)
-   */
   EXCLUDED_EVENTS: (EnvLoader.string('ANALYTICS_EXCLUDED_EVENTS', '') || '')
     .split(',')
     .filter(Boolean),
+
+  /**
+   * Analytics provider to use
+   * Env: ANALYTICS_PROVIDER (default: console in dev, posthog in prod)
+   */
+  PROVIDER: (EnvLoader.string('ANALYTICS_PROVIDER', '') ||
+    (process.env.NODE_ENV !== 'production'
+      ? 'console'
+      : 'posthog')) as AnalyticsProviderType,
+
+  /**
+   * PostHog project API key
+   * Env: POSTHOG_API_KEY
+   */
+  POSTHOG_API_KEY: EnvLoader.string('POSTHOG_API_KEY', ''),
+
+  /**
+   * PostHog host URL
+   * Env: POSTHOG_HOST (default: https://app.posthog.com)
+   */
+  POSTHOG_HOST: EnvLoader.string('POSTHOG_HOST', 'https://app.posthog.com'),
+
+  /**
+   * Whether to send events to PostHog (legacy flag, use PROVIDER instead)
+   * Env: NEXT_PUBLIC_ANALYTICS_POSTHOG_ENABLED
+   */
+  POSTHOG_ENABLED: EnvLoader.boolean(
+    'NEXT_PUBLIC_ANALYTICS_POSTHOG_ENABLED',
+    process.env.NODE_ENV === 'production'
+  ),
 } as const;
+
+/**
+ * Check if PostHog is properly configured
+ */
+function isPostHogConfigured(): boolean {
+  return (
+    ANALYTICS_CONFIG.PROVIDER === ANALYTICS_PROVIDERS.POSTHOG &&
+    !!ANALYTICS_CONFIG.POSTHOG_API_KEY
+  );
+}
 
 /**
  * Internal event queue
@@ -199,10 +245,6 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
   return true;
 }
 
-/**
- * Flush events to analytics provider(s)
- * This is where you would integrate with PostHog, Mixpanel, GA, etc.
- */
 function flushEvents(): void {
   if (eventQueue.length === 0) return;
 
@@ -214,19 +256,121 @@ function flushEvents(): void {
     console.log('[Analytics] Flushing events:', eventsToSend);
   }
 
-  // TODO: Add analytics provider integration here
-  // Examples:
-  // - posthog.capture_batch(eventsToSend);
-  // - mixpanel.track_batch(eventsToSend);
-  // - gtag('event', 'batch', { events: eventsToSend });
+  // Send to PostHog if configured
+  if (isPostHogConfigured() || ANALYTICS_CONFIG.POSTHOG_ENABLED) {
+    sendEventsToPostHog(eventsToSend);
+  }
 
-  // For now, events are logged to console in debug mode
-  // In production, you would send to your analytics backend
+  // Console logging (for development)
+  if (
+    ANALYTICS_CONFIG.PROVIDER === ANALYTICS_PROVIDERS.CONSOLE ||
+    ANALYTICS_CONFIG.DEBUG
+  ) {
+    console.log('[Analytics] Events:', JSON.stringify(eventsToSend, null, 2));
+  }
 
   if (flushTimeout) {
     clearTimeout(flushTimeout);
     flushTimeout = null;
   }
+}
+
+/**
+ * Send events to PostHog via batch API
+ * Uses the PostHog capture batch endpoint
+ */
+function sendEventsToPostHog(events: AnalyticsEventProperties[]): void {
+  if (typeof window === 'undefined') {
+    // Server-side: use fetch to send events
+    sendEventsToPostHogServer(events);
+  } else {
+    // Client-side: use PostHog JS library or fetch
+    sendEventsToPostHogClient(events);
+  }
+}
+
+/**
+ * Send events to PostHog from server-side
+ */
+function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
+  const apiKey = ANALYTICS_CONFIG.POSTHOG_API_KEY;
+  const host = ANALYTICS_CONFIG.POSTHOG_HOST;
+
+  if (!apiKey) {
+    if (ANALYTICS_CONFIG.DEBUG) {
+      console.warn('[Analytics] PostHog API key not configured');
+    }
+    return;
+  }
+
+  // Format events for PostHog batch API
+  const posthogEvents = events.map((event) => ({
+    api_key: apiKey,
+    event: event.event,
+    properties: {
+      ...event,
+      // PostHog-specific fields
+      $current_url: event.page_path,
+      $host: ANALYTICS_CONFIG.POSTHOG_HOST,
+    },
+    timestamp: new Date(event.timestamp).toISOString(),
+    distinct_id: event.session_id || event.user_id || 'anonymous',
+  }));
+
+  // Send to PostHog batch endpoint
+  fetch(`${host}/capture/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(posthogEvents),
+  }).catch((error) => {
+    if (ANALYTICS_CONFIG.DEBUG) {
+      console.error('[Analytics] Failed to send events to PostHog:', error);
+    }
+  });
+}
+
+/**
+ * Send events to PostHog from client-side
+ */
+function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
+  const apiKey = ANALYTICS_CONFIG.POSTHOG_API_KEY;
+  const host = ANALYTICS_CONFIG.POSTHOG_HOST;
+
+  if (!apiKey) {
+    if (ANALYTICS_CONFIG.DEBUG) {
+      console.warn('[Analytics] PostHog API key not configured');
+    }
+    return;
+  }
+
+  // Format events for PostHog batch API
+  const posthogEvents = events.map((event) => ({
+    api_key: apiKey,
+    event: event.event,
+    properties: {
+      ...event,
+      $current_url: event.page_path,
+      $host: ANALYTICS_CONFIG.POSTHOG_HOST,
+    },
+    timestamp: new Date(event.timestamp).toISOString(),
+    distinct_id: event.session_id || event.user_id || 'anonymous',
+  }));
+
+  // Send to PostHog using fetch
+  fetch(`${host}/capture/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(posthogEvents),
+    credentials: 'omit' as RequestCredentials,
+  }).catch((error) => {
+    if (ANALYTICS_CONFIG.DEBUG) {
+      console.error('[Analytics] Failed to send events to PostHog:', error);
+    }
+  });
 }
 
 /**
