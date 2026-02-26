@@ -175,4 +175,44 @@ TB|- **Files Changed**:
 - Modified: `src/lib/config/index.ts` (export)
   VJ|- **Result**: Reduced constants.ts by ~70 lines
   WP|- **Verification**: ESLint ✓ (0 warnings), Build ✓
-  PR|- **PR**: https://github.com/cpa03/ai-first/pull/1911
+  HX| PR|- **PR**: https://github.com/cpa03/ai-first/pull/1911
+
+### 2026-02-26: RATE_LIMIT_CONFIG Modularization
+
+- **Issue**: #715 - "Giant centralized constants module mixes unrelated configuration domains"
+- **Action**: Extracted RATE_LIMIT_CONFIG into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/rate-limit-config.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+  - Modified: `src/lib/config/index.ts` (export)
+- **Result**: Reduced constants.ts from 1195 to 1073 lines (-122 lines)
+- **Verification**: ESLint ✓ (0 warnings), TypeScript type-check ✓
+- **PR**: https://github.com/cpa03/ai-first/pull/1920
+
+### 2026-02-26: Fix Duplicate Exports in Config Modules
+
+- **Issue**: TypeScript errors due to duplicate exports in modularized config files
+- **Action**: Fixed duplicate RATE_LIMIT_CONFIG and TIMEOUT_CONFIG exports
+- **Files Changed**:
+  - Modified: `src/lib/config/constants.ts` (removed duplicate exports)
+  - Modified: `src/lib/config/index.ts` (removed duplicate exports)
+- **Verification**: ESLint ✓ (0 warnings), TypeScript type-check ✓ (config files)
+- **PR**: https://github.com/cpa03/ai-first/pull/1920
+
+## Lessons Learned
+
+1. **Pattern for Modularization**: When extracting configs:
+   - Create new module in `src/lib/config/[name].ts`
+   - Add re-export in `constants.ts` for backward compatibility: `export { NAME } from './name-config'`
+   - Add export in `src/lib/config/index.ts`
+   - DO NOT add duplicate imports/exports in the same file
+
+2. **Common Pitfall**: Previous modularization work introduced duplicate exports when:
+   - Adding both import and re-export for the same item in the same file
+   - Not removing the original definition from constants.ts when extracting
+   - Having duplicate entries in index.ts
+
+3. **Verification Checklist**:
+   - Run `npm run type-check` to catch duplicate identifier errors
+   - Run `npm run lint` to ensure code quality
+   - Verify backward compatibility by ensuring old imports still work
