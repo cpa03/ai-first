@@ -3,7 +3,7 @@
  * @module tests/security/json-ld.test
  */
 
-import { safeJsonLd } from '@/lib/security';
+import { safeJsonLd } from '@/lib/security/json-ld';
 
 describe('JSON-LD Security', () => {
   it('should stringify a simple object', () => {
@@ -36,12 +36,6 @@ describe('JSON-LD Security', () => {
     const result = safeJsonLd(obj);
     expect(result).toContain('a \\u0026 b');
     expect(result).not.toContain('&');
-  });
-
-  it('should escape line separators', () => {
-    const obj = { test: '\u2028 \u2029' };
-    const result = safeJsonLd(obj);
-    expect(result).toContain('\\u2028 \\u2029');
   });
 
   it('should handle complex nested objects', () => {

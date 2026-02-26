@@ -20,14 +20,6 @@
  *
  * @param obj - The object to stringify and escape
  * @returns A safe JSON string for use in dangerouslySetInnerHTML
- *
- * @example
- * ```tsx
- * <script
- *   type="application/ld+json"
- *   dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLdObject) }}
- * />
- * ```
  */
 export function safeJsonLd(obj: unknown): string {
   return JSON.stringify(obj)
