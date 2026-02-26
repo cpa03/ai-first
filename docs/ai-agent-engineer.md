@@ -114,6 +114,22 @@ Example verification command:
 grep -E "^\s{2}[a-z]+:" .github/workflows/iterate.yml | wc -l
 ```
 
+### Skills Count Verification (2026-02-26)
+
+When documenting skill counts:
+
+1. **Count actual skills**: Use glob to find all SKILL.md files
+2. **Check CMZ.json**: The `total_available` field should match actual count
+3. **Cross-reference**: Verify AGENTS.md matches CMZ.json
+
+Example verification command:
+
+```bash
+ls .opencode/skills/*/SKILL.md | wc -l
+```
+
+Note: CMZ.json shows 33 skills, ensure AGENTS.md reflects this.
+
 ### Key Pattern: Event-Driven Architecture
 
 The event-driven architecture was implemented to solve tight coupling. Key files:
