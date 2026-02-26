@@ -525,7 +525,7 @@ export const ALERT_BASE_STYLES = {
   visible: 'opacity-100 scale-100 translate-y-0',
   exiting: 'opacity-0 scale-[0.98] translate-y-[-8px]',
   closeButton:
-    'flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity',
+    'flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity',
 } as const;
 
 /**
