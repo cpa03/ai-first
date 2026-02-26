@@ -955,7 +955,40 @@ const Button = dynamic(() => import('@/components/Button'), {
 || ESLint | ✅ 0 warnings |
 || Build | ✅ Pass |
 
-**PR:** (to be created)
+### Fix: Replace console.log with Logger in ReferralLink
+
+**Issue:** console.log bypasses centralized logging with PII redaction and structured logging support.
+
+**Changes:**
+
+|     | File                              | Change                               |
+| --- | --------------------------------- | ------------------------------------ |
+|     | `src/components/ReferralLink.tsx` | Replace console.log with logger.info |
+
+**Technical Details:**
+
+1. Added import for `createLogger` from `@/lib/logger`
+2. Created logger instance with context `'ReferralLink'`
+3. Replaced `console.log('[Growth] Referral link viewed:', referralCode)` with structured `logger.info('Referral link viewed', { referralCode })`
+4. Same change for copy event
+
+**Benefits:**
+
+- PII redaction for referral codes in logs
+- Structured JSON logging support
+- Correlation ID tracking
+- Consistent logging across the codebase
+
+\*\*Verification:
+
+|     | Check               | Status               |
+| --- | ------------------- | -------------------- |
+|     | ESLint              | ✅ Pass (0 warnings) |
+|     | Console.log removed | ✅                   |
+
+---
+
+**Last Updated:** 2026-02-26
 
 ---
 

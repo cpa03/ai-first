@@ -2,6 +2,10 @@
 
 import React, { useMemo } from 'react';
 import CopyButton from './CopyButton';
+import { createLogger } from '@/lib/logger';
+
+// Logger for growth tracking events
+const logger = createLogger('ReferralLink');
 
 export interface ReferralLinkProps {
   /** The user's unique referral code */
@@ -43,7 +47,7 @@ export default function ReferralLink({
   React.useEffect(() => {
     // Growth: Track referral link view event (analytics integration point)
     if (typeof window !== 'undefined' && window.location) {
-      console.log('[Growth] Referral link viewed:', referralCode);
+      logger.info('Referral link viewed', { referralCode });
     }
     if (onView) {
       onView();
@@ -54,7 +58,7 @@ export default function ReferralLink({
   const handleCopy = () => {
     // Growth: Track referral link copy event (analytics integration point)
     if (typeof window !== 'undefined' && window.location) {
-      console.log('[Growth] Referral link copied:', referralCode);
+      logger.info('Referral link copied', { referralCode });
     }
     if (onCopy) {
       onCopy();
