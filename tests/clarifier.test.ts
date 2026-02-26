@@ -120,7 +120,7 @@ describe('ClarifierAgent', () => {
       );
 
       mockDbService.logAgentAction.mockResolvedValue(undefined);
-      mockDbService.storeVector.mockResolvedValue({} as any);
+      mockDbService.storeVector.mockResolvedValue(undefined);
 
       const session = await clarifierAgent.startClarification(
         'idea-123',
@@ -158,10 +158,10 @@ describe('ClarifierAgent', () => {
       mockDbService.getVectors.mockResolvedValue([
         {
           vector_data: mockSession,
-        } as any,
+        },
       ]);
 
-      mockDbService.storeVector.mockResolvedValue({} as any);
+      mockDbService.storeVector.mockResolvedValue(undefined);
       mockDbService.logAgentAction.mockResolvedValue(undefined);
 
       const updatedSession = await clarifierAgent.submitAnswer(
@@ -210,10 +210,10 @@ describe('ClarifierAgent', () => {
       mockDbService.getVectors.mockResolvedValue([
         {
           vector_data: mockSession,
-        } as any,
+        },
       ]);
-      mockDbService.storeVector.mockResolvedValue({} as any);
-      mockDbService.updateIdea.mockResolvedValue({} as any);
+      mockDbService.storeVector.mockResolvedValue(undefined);
+      mockDbService.updateIdea.mockResolvedValue(undefined);
       mockDbService.logAgentAction.mockResolvedValue(undefined);
 
       const result = await clarifierAgent.completeClarification('idea-123');
@@ -248,7 +248,7 @@ describe('ClarifierAgent', () => {
       mockDbService.getVectors.mockResolvedValue([
         {
           vector_data: mockSession,
-        } as any,
+        },
       ]);
 
       await expect(
@@ -337,7 +337,7 @@ describe('ClarifierAgent', () => {
       mockDbService.getVectors.mockResolvedValue([
         {
           vector_data: mockSessionData,
-        } as any,
+        },
       ]);
 
       const session = await clarifierAgent.getSession('idea-123');
