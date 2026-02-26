@@ -8,3 +8,7 @@
 ## 2026-02-24 - [System-wide Haptic Feedback for Success States]
 **Learning:** Adding tactile feedback to success events (copying, completing tasks, reaching milestones) significantly enhances the mobile user experience by providing a physical confirmation of digital actions. Centralizing this logic in a utility ensures consistency and makes it easy to apply to new interaction points.
 **Action:** Use the `triggerHapticFeedback` utility for key user success interactions to provide delightful tactile confirmation on supported devices.
+
+## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
+**Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
+**Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
