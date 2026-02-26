@@ -100,24 +100,24 @@ npm run env:check -- --ci
 
 ### Available Scripts
 
-| Script                 | Purpose                         | Time    |
-| ---------------------- | ------------------------------- | ------- |
-| `npm run dev`          | Start development server        | ~5 sec  |
-| `npm run dev:check`    | Dev server with env validation  | ~6 sec  |
-| `npm run build`        | Production build                | ~45 sec |
-| `npm run lint`         | ESLint (0 warnings allowed)     | ~3 sec  |
-| `npm run lint:fix`     | ESLint with auto-fix            | ~3 sec  |
-| `npm run type-check`   | TypeScript check                | ~5 sec  |
-| `npm test`             | Run tests                       | ~25 sec |
-| `npm run test:watch`   | Test watch mode                 | N/A     |
-| `npm run test:changed` | Run only changed tests          | ~5 sec  |
-| `npm run test:ci`      | CI mode tests with coverage     | ~30 sec |
-| `npm run check`        | All checks (lint + type + test) | ~40 sec |
-| `npm run env:check`      | Validate environment variables  | ~1 sec  |
-| `npm run docs:check-links` | Validate documentation links  | ~2 sec  |
-| `npm run security:check` | Run security audit script       | ~5 sec  |
-| `npm run scan:console`   | Scan for console statements     | ~2 sec  |
-| `npm run analyze`        | Bundle analysis with webpack    | ~60 sec |
+| Script                     | Purpose                         | Time    |
+| -------------------------- | ------------------------------- | ------- |
+| `npm run dev`              | Start development server        | ~5 sec  |
+| `npm run dev:check`        | Dev server with env validation  | ~6 sec  |
+| `npm run build`            | Production build                | ~45 sec |
+| `npm run lint`             | ESLint (0 warnings allowed)     | ~3 sec  |
+| `npm run lint:fix`         | ESLint with auto-fix            | ~3 sec  |
+| `npm run type-check`       | TypeScript check                | ~5 sec  |
+| `npm test`                 | Run tests                       | ~25 sec |
+| `npm run test:watch`       | Test watch mode                 | N/A     |
+| `npm run test:changed`     | Run only changed tests          | ~5 sec  |
+| `npm run test:ci`          | CI mode tests with coverage     | ~30 sec |
+| `npm run check`            | All checks (lint + type + test) | ~40 sec |
+| `npm run env:check`        | Validate environment variables  | ~1 sec  |
+| `npm run docs:check-links` | Validate documentation links    | ~2 sec  |
+| `npm run security:check`   | Run security audit script       | ~5 sec  |
+| `npm run scan:console`     | Scan for console statements     | ~2 sec  |
+| `npm run analyze`          | Bundle analysis with webpack    | ~60 sec |
 
 ### Pre-Commit Workflow
 
@@ -332,7 +332,7 @@ npm run broc
 
 **Solution:** Add PR template in `.github/PULL_REQUEST_TEMPLATE.md`:
 
-```yaml
+````yaml
 ---
 name: Pull Request Template
 about: Standard PR template for the IdeaFlow repository
@@ -355,7 +355,36 @@ assignees: ''
 - [ ] Unit tests pass
 - [ ] Lint passes
 - [ ] Type-check passes
-```
+#VM|```
+#QR|
+#NM|### 7. Use Consistent Logging Pattern
+#NM|
+#NM|**Problem:** Direct console.log statements can pollute production logs and aren't controlled by log levels
+#NM|
+#NM|**Solution:** Use the centralized logger service:
+#NM|
+#NM|```typescript
+#NM|// Bad - direct console.log
+#NM|console.log('[Analytics] Track event:', event);
+#NM|
+#NM|// Good - use logger service with config-based control
+#NM|import { createLogger } from '@/lib/logger';
+#NM|const logger = createLogger('ModuleName');
+#NM|
+#NM|// Controlled by ANALYTICS_CONFIG.DEBUG and LOG_LEVEL
+#NM|if (ANALYTICS_CONFIG.DEBUG) {
+#NM|  logger.debug('[Analytics] Track event:', event);
+#NM|}
+#NM|```
+#NM|
+#NM|**Benefits:**
+#NM|- Centralized log format
+#NM|- Respects LOG_LEVEL environment variable
+#NM|- Can be filtered/aggregated in production
+#NM|- PII redaction built-in
+#NM|- Consistent with codebase patterns
+#NM|```
+#QR|
 
 ---
 
@@ -369,7 +398,7 @@ assignees: ''
 # Clear caches and reinstall
 rm -rf node_modules package-lock.json .next
 npm install
-```
+````
 
 #### Type Errors After Pull
 

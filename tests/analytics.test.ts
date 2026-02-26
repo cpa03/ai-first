@@ -23,12 +23,26 @@ jest.mock('@/lib/config/environment', () => ({
   },
 }));
 
+// Mock logger - track debug calls
+export const mockLoggerDebug = jest.fn();
+jest.mock('@/lib/logger', () => ({
+  createLogger: jest.fn(() => ({
+    debug: (...args: unknown[]) => mockLoggerDebug(...args),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+  })),
+  setLogLevel: jest.fn(),
+  LogLevel: { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 },
+}));
+
 describe('Analytics', () => {
   beforeEach(() => {
     // Reset analytics state before each test
     resetAnalytics();
-    // Clear console logs
+    // Clear mocks
     jest.clearAllMocks();
+    mockLoggerDebug.mockClear();
   });
 
   afterAll(() => {
@@ -83,20 +97,18 @@ describe('Analytics', () => {
     });
 
     it('should track a basic event', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackEvent(ANALYTICS_EVENTS.PAGE_VIEW);
 
       // Flush events
       jest.advanceTimersByTime(ANALYTICS_CONFIG.FLUSH_INTERVAL_MS + 1);
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should include event properties', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackEvent(ANALYTICS_EVENTS.IDEA_SUBMIT, {
         idea_id: 'test-idea-123',
@@ -104,131 +116,109 @@ describe('Analytics', () => {
 
       jest.advanceTimersByTime(ANALYTICS_CONFIG.FLUSH_INTERVAL_MS + 1);
 
-      expect(consoleSpy).toHaveBeenCalled();
-      const logCall = consoleSpy.mock.calls.find(
-        (call) =>
-          call[0]?.includes?.('Track event') || call[0]?.includes?.('Events:')
+      expect(mockLoggerDebug).toHaveBeenCalled();
+      const logCall = mockLoggerDebug.mock.calls.find(
+        (call: unknown[]) =>
+          (call[0] as string)?.includes('Track event') ||
+          (call[0] as string)?.includes('Events:')
       );
       expect(logCall).toBeDefined();
-
-      consoleSpy.mockRestore();
     });
 
     it('should skip events when analytics is disabled', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
-
+      // Check logger.debug was called
       // Track should return early without logging when disabled
       // The exact behavior depends on ANALYTICS_CONFIG.ENABLED
-
-      consoleSpy.mockRestore();
     });
   });
 
   describe('trackPageView', () => {
     it('should track page view event', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackPageView('/test-page');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should use current path when no custom path provided', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackPageView();
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
   describe('trackSocialShare', () => {
     it('should track social share with platform', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackSocialShare('twitter', 'idea-123');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should track social share without idea ID', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackSocialShare('copy');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
   describe('trackIdeaSubmit', () => {
     it('should track idea submission with idea ID', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackIdeaSubmit('idea-abc-123');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
   describe('trackCtaClick', () => {
     it('should track CTA click with name', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackCtaClick('get_started');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
   describe('trackCopyAction', () => {
     it('should track copy action with type', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackCopyAction('blueprint');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
   describe('trackOnboardingStart', () => {
     it('should track onboarding start with step', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackOnboardingStart('welcome');
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
   describe('trackOnboardingComplete', () => {
     it('should track onboarding completion', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackOnboardingComplete({ total_steps: 4 });
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should track skipped onboarding', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackOnboardingComplete({
         skipped: true,
@@ -236,19 +226,15 @@ describe('Analytics', () => {
         total_steps: 4,
       });
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should handle no options', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackOnboardingComplete();
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 
@@ -258,14 +244,12 @@ describe('Analytics', () => {
     });
 
     it('should flush pending events', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackEvent(ANALYTICS_EVENTS.PAGE_VIEW);
       flush();
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should not error when queue is empty', () => {
@@ -275,7 +259,7 @@ describe('Analytics', () => {
 
   describe('resetAnalytics', () => {
     it('should reset the event queue', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       // Add some events
       trackEvent(ANALYTICS_EVENTS.PAGE_VIEW);
@@ -289,8 +273,6 @@ describe('Analytics', () => {
 
       // Should not have logged the events after reset
       // (exact behavior depends on implementation)
-
-      consoleSpy.mockRestore();
     });
 
     it('should not throw when called multiple times', () => {
@@ -308,27 +290,23 @@ describe('Analytics', () => {
     });
 
     it('should include timestamp in event', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackEvent(ANALYTICS_EVENTS.PAGE_VIEW);
 
       jest.advanceTimersByTime(ANALYTICS_CONFIG.FLUSH_INTERVAL_MS + 1);
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
 
     it('should include session_id in event', () => {
-      const consoleSpy = jest.spyOn(console, 'log').mockImplementation();
+      // Check logger.debug was called
 
       trackEvent(ANALYTICS_EVENTS.PAGE_VIEW);
 
       jest.advanceTimersByTime(ANALYTICS_CONFIG.FLUSH_INTERVAL_MS + 1);
 
-      expect(consoleSpy).toHaveBeenCalled();
-
-      consoleSpy.mockRestore();
+      expect(mockLoggerDebug).toHaveBeenCalled();
     });
   });
 });
