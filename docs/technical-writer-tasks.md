@@ -2978,8 +2978,6 @@ KB|- [x] Type-check passes (0 errors)
 NJ|- [x] Build succeeds
 HB|- [x] All changes committed with proper format
 
-
-
 ---
 
 ### Task 15: PR #1923 Review and Verification ✅ COMPLETE
@@ -3035,7 +3033,69 @@ None. PR #1923 is ready to merge.
 - [x] Verification comment added to PR
 - [x] Proactive documentation scan completed
 
+NX|---
+
+### Task 24: Add Missing Hooks to README Documentation ✅ COMPLETE
+
+RP|**Priority**: HIGH
+VZ|**Status**: ✅ COMPLETED
+YK|**Date**: 2026-02-27
+
+RW|#### Objectives
+
+NP|- Add missing hooks to README.md project structure
+HB|- Ensure all React hooks are documented
+TH|- Maintain single source of truth for project structure
+
+XP|#### Issues Found
+
+ZJ|1. **Missing useABTest.ts**: A/B testing hook exists but not documented in README
+
+- Provides variant assignments for experiments
+- Includes simplified variant getter (useABTestVariant)
+- Includes feature flag hook (useABTestFeatureFlag)
+
+YM|2. **Missing useOptimisticMutation.ts**: Optimistic mutation hook exists but not documented
+
+- Provides optimistic UI updates with automatic rollback
+- Supports retry with exponential backoff
+- Includes hook for managing multiple mutations (useOptimisticMutationSet)
+
+MX|#### Completed Work
+
+YJ|1. **Updated README.md**
+
+- Added useABTest.ts hook documentation (A/B test and feature flag hook)
+- Added useOptimisticMutation.ts hook documentation (Optimistic UI mutation hook)
+- Positioned in alphabetical order within hooks section
+
+BV|#### Verification
+
+NP|- `npm run lint`: ✅ 0 errors, 0 warnings
+RV|- `npm run type-check`: ✅ 0 errors
+PW|- `npm run build`: ✅ Build successful (28 routes)
+SQ|- Documentation now matches actual src/hooks/ directory
+
+RX|#### Files Modified
+
+JJ|- `README.md` (UPDATED - added missing hooks to project structure)
+
+SW|#### Success Criteria Met
+
+YJ|- [x] useABTest.ts hook documented in README
+TH|- [x] useOptimisticMutation.ts hook documented in README
+VM|- [x] Documentation matches actual implementation
+KB|- [x] Lint passes (0 errors)
+NJ|- [x] Type-check passes (0 errors)
+HB|- [x] Build succeeds
+
 ---
+
+NW|
+RQ|**Last Updated**: 2026-02-27
+WJ|**Agent**: Technical Writer
+PK|**Version**: 1.5.3
+RN|**Verification Status**: ✅ Documentation updated, ready for PR
 
 **Last Updated**: 2026-02-26
 **Agent**: Technical Writer
