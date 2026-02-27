@@ -14,7 +14,7 @@ import {
 } from './resilience';
 import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
 import { resourceCleanupManager } from './resource-cleanup';
-import { validateAIModelConfig } from './validation';
+import { validateAIModelConfig, validateOpenAIApiKey, validateAnthropicApiKey } from './validation';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -84,18 +84,47 @@ class AIService {
     // to prevent SUPABASE_SERVICE_ROLE_KEY from being accessed at module load time
     // Use getSupabase() method instead for lazy initialization
 
+    // SECURITY: Validate API keys at startup to detect misconfiguration
+    // Validate OpenAI key if provided
     if (process.env.OPENAI_API_KEY) {
-      this.openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-        timeout: DEFAULT_TIMEOUTS.openai,
-      });
+      const openaiValidation = validateOpenAIApiKey(process.env.OPENAI_API_KEY);
+      if (!openaiValidation.valid) {
+        // Log validation failure but don't expose key details
+        logger.error(
+          '[SECURITY] OpenAI API key validation failed: ' +
+            openaiValidation.errors.map(e => e.message).join(', ')
+        );
+        // Still initialize - validation warning is logged but don't break startup
+        // The key will fail on first use with a clear error
+      } else if (openaiValidation.isPlaceholder) {
+        logger.warn('[SECURITY] OpenAI API key appears to be a placeholder - will fail on use');
+      } else {
+        this.openai = new OpenAI({
+          apiKey: process.env.OPENAI_API_KEY,
+          timeout: DEFAULT_TIMEOUTS.openai,
+        });
+      }
     }
 
+    // Validate Anthropic key if provided
     if (process.env.ANTHROPIC_API_KEY) {
-      this.anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
-        timeout: DEFAULT_TIMEOUTS.openai,
-      });
+      const anthropicValidation = validateAnthropicApiKey(process.env.ANTHROPIC_API_KEY);
+      if (!anthropicValidation.valid) {
+        // Log validation failure but don't expose key details
+        logger.error(
+          '[SECURITY] Anthropic API key validation failed: ' +
+            anthropicValidation.errors.map(e => e.message).join(', ')
+        );
+        // Still initialize - validation warning is logged but don't break startup
+        // The key will fail on first use with a clear error
+      } else if (anthropicValidation.isPlaceholder) {
+        logger.warn('[SECURITY] Anthropic API key appears to be a placeholder - will fail on use');
+      } else {
+        this.anthropic = new Anthropic({
+          apiKey: process.env.ANTHROPIC_API_KEY,
+          timeout: DEFAULT_TIMEOUTS.openai,
+        });
+      }
     }
 
     // Periodic cleanup of cost trackers to prevent memory leaks

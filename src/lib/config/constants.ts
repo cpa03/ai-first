@@ -370,7 +370,39 @@ export const AI_CONFIG = {
     MODEL_NAME_PATTERN: /^[a-zA-Z0-9._-]+$/,
     ALLOWED_MODEL_PREFIXES: ['gpt-', 'claude-', 'o1-', 'o3-'],
   } as const,
+
+  /**
+   * API Key Validation Configuration
+   * SECURITY: Validates format of API keys at startup to detect misconfiguration
+   * or placeholder values that could lead to security issues
+   */
+  API_KEY_VALIDATION: {
+    OPENAI: {
+      PREFIX: 'sk-',
+      MIN_LENGTH: 51,
+      MAX_LENGTH: 60,
+      // OpenAI keys start with sk- and are base58-like alphanumeric
+      PATTERN: /^sk-[A-Za-z0-9_-]+$/,
+    },
+    ANTHROPIC: {
+      PREFIX: 'sk-ant-',
+      MIN_LENGTH: 99,
+      MAX_LENGTH: 110,
+      // Anthropic keys start with sk-ant- and are base58-like
+      PATTERN: /^sk-ant-[A-Za-z0-9_-]+$/,
+    },
+    // Known placeholder/weak patterns to reject
+    BLOCKED_PATTERNS: [
+      'sk-placeholder',
+      'sk-test',
+      'sk-your-',
+      'sk-xxx',
+      'sk-000',
+    ],
+  } as const,
+
 } as const;
+
 
 /**
  * Rate limiting store configuration

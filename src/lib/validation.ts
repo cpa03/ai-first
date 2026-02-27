@@ -529,3 +529,131 @@ export function validateAIModelConfig(config: unknown): ValidationResult {
 
   return { valid: errors.length === 0, errors };
 }
+
+/**
+ * API Key Validation Result
+ */
+export interface ApiKeyValidationResult extends ValidationResult {
+  provider?: 'openai' | 'anthropic';
+  isPlaceholder?: boolean;
+}
+
+/**
+ * Validate OpenAI API key format
+ * SECURITY: Checks that the key matches expected format to detect placeholders
+ * or misconfigured keys at startup rather than on first use
+ */
+export function validateOpenAIApiKey(apiKey: unknown): ApiKeyValidationResult {
+  const errors: ValidationError[] = [];
+  
+  if (!apiKey || typeof apiKey !== 'string') {
+    errors.push({ field: 'OPENAI_API_KEY', message: 'API key must be a non-empty string' });
+    return { valid: false, errors, provider: 'openai' };
+  }
+
+  const key = apiKey.trim();
+  const config = AI_CONFIG.API_KEY_VALIDATION.OPENAI;
+
+  // Check length
+  if (key.length < config.MIN_LENGTH || key.length > config.MAX_LENGTH) {
+    errors.push({ 
+      field: 'OPENAI_API_KEY', 
+      message: `API key must be between ${config.MIN_LENGTH} and ${config.MAX_LENGTH} characters` 
+    });
+  }
+
+  // Check prefix
+  if (!key.startsWith(config.PREFIX)) {
+    errors.push({ 
+      field: 'OPENAI_API_KEY', 
+      message: `API key must start with '${config.PREFIX}'` 
+    });
+  }
+
+  // Check pattern
+  if (!config.PATTERN.test(key)) {
+    errors.push({ 
+      field: 'OPENAI_API_KEY', 
+      message: 'API key contains invalid characters' 
+    });
+  }
+
+  // Check blocked patterns (placeholders)
+  const isPlaceholder = AI_CONFIG.API_KEY_VALIDATION.BLOCKED_PATTERNS.some(
+    pattern => key.toLowerCase().startsWith(pattern)
+  );
+
+  if (isPlaceholder) {
+    errors.push({ 
+      field: 'OPENAI_API_KEY', 
+      message: 'API key appears to be a placeholder or test key' 
+    });
+  }
+
+  return { 
+    valid: errors.length === 0, 
+    errors, 
+    provider: 'openai',
+    isPlaceholder 
+  };
+}
+
+/**
+ * Validate Anthropic API key format
+ * SECURITY: Checks that the key matches expected format to detect placeholders
+ * or misconfigured keys at startup rather than on first use
+ */
+export function validateAnthropicApiKey(apiKey: unknown): ApiKeyValidationResult {
+  const errors: ValidationError[] = [];
+  
+  if (!apiKey || typeof apiKey !== 'string') {
+    errors.push({ field: 'ANTHROPIC_API_KEY', message: 'API key must be a non-empty string' });
+    return { valid: false, errors, provider: 'anthropic' };
+  }
+
+  const key = apiKey.trim();
+  const config = AI_CONFIG.API_KEY_VALIDATION.ANTHROPIC;
+
+  // Check length
+  if (key.length < config.MIN_LENGTH || key.length > config.MAX_LENGTH) {
+    errors.push({ 
+      field: 'ANTHROPIC_API_KEY', 
+      message: `API key must be between ${config.MIN_LENGTH} and ${config.MAX_LENGTH} characters` 
+    });
+  }
+
+  // Check prefix
+  if (!key.startsWith(config.PREFIX)) {
+    errors.push({ 
+      field: 'ANTHROPIC_API_KEY', 
+      message: `API key must start with '${config.PREFIX}'` 
+    });
+  }
+
+  // Check pattern
+  if (!config.PATTERN.test(key)) {
+    errors.push({ 
+      field: 'ANTHROPIC_API_KEY', 
+      message: 'API key contains invalid characters' 
+    });
+  }
+
+  // Check blocked patterns (placeholders)
+  const isPlaceholder = AI_CONFIG.API_KEY_VALIDATION.BLOCKED_PATTERNS.some(
+    pattern => key.toLowerCase().startsWith(pattern)
+  );
+
+  if (isPlaceholder) {
+    errors.push({ 
+      field: 'ANTHROPIC_API_KEY', 
+      message: 'API key appears to be a placeholder or test key' 
+    });
+  }
+
+  return { 
+    valid: errors.length === 0, 
+    errors, 
+    provider: 'anthropic',
+    isPlaceholder 
+  };
+}
