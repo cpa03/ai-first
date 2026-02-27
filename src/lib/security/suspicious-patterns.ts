@@ -471,6 +471,60 @@ const SUSPICIOUS_PATTERNS: Record<
 };
 
 /**
+ * Internal interface for flattened patterns to avoid re-calculating on every request
+ */
+interface FlattenedPattern {
+  category: SuspiciousPatternCategory;
+  pattern: RegExp;
+  severity: 1 | 2 | 3;
+  description: string;
+}
+
+/**
+ * PERFORMANCE: Pre-flattened and pre-filtered pattern lists by minimum severity.
+ * This avoids iterating through the nested object structure and executing
+ * irrelevant regexes during request scanning.
+ */
+const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
+  0: [],
+  1: [],
+  2: [],
+  3: [],
+};
+
+// Initialize PATTERNS_BY_MIN_SEVERITY
+(function initializePatternCache() {
+  const allPatterns: FlattenedPattern[] = [];
+  for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
+    for (const p of patterns) {
+      allPatterns.push({
+        category: category as SuspiciousPatternCategory,
+        ...p,
+      });
+    }
+  }
+
+  for (let severity = 0; severity <= 3; severity++) {
+    PATTERNS_BY_MIN_SEVERITY[severity] = allPatterns.filter(
+      (p) => p.severity >= severity
+    );
+  }
+})();
+
+/**
+ * PERFORMANCE: Static set of headers to skip during scanning to avoid
+ * repeated Set allocations on every request.
+ */
+const SKIP_HEADERS = new Set([
+  'host',
+  'user-agent',
+  'accept',
+  'accept-language',
+  'accept-encoding',
+  'connection',
+  'content-type',
+  'content-length',
+]);
 
 /**
  * Scan a string for suspicious patterns
@@ -478,21 +532,29 @@ const SUSPICIOUS_PATTERNS: Record<
 function scanString(
   input: string,
   location: SuspiciousPatternDetail['location'],
+  minSeverity: number,
   field?: string
 ): SuspiciousPatternDetail[] {
-  const findings: SuspiciousPatternDetail[] = [];
+  // PERFORMANCE: Early return for empty input
+  if (!input) return [];
 
-  for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
-    for (const { pattern, severity, description } of patterns) {
-      if (pattern.test(input)) {
-        findings.push({
-          category: category as SuspiciousPatternCategory,
-          pattern: description,
-          location,
-          field,
-          severity,
-        });
-        // Reset regex lastIndex for global patterns
+  const findings: SuspiciousPatternDetail[] = [];
+  const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
+
+  // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
+  for (let i = 0; i < patterns.length; i++) {
+    const { category, pattern, severity, description } = patterns[i];
+    if (pattern.test(input)) {
+      findings.push({
+        category,
+        pattern: description,
+        location,
+        field,
+        severity,
+      });
+
+      // PERFORMANCE: Only reset lastIndex for global regexes to avoid unnecessary property access
+      if (pattern.global) {
         pattern.lastIndex = 0;
       }
     }
@@ -534,12 +596,12 @@ export function detectSuspiciousPatterns(
 
   if (url) {
     // Scan request path
-    const pathFindings = scanString(url.pathname, 'path');
+    const pathFindings = scanString(url.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
     // Scan query parameters
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', key);
+      const queryFindings = scanString(value, 'query', minSeverity, key);
       patterns.push(...queryFindings);
     }
   }
@@ -563,24 +625,12 @@ export function detectSuspiciousPatterns(
 
 
 
-  // Scan headers (skip standard headers that commonly trigger false positives)
-  const skipHeaders = new Set([
-    'host',
-    'user-agent',
-    'accept',
-    'accept-language',
-    'accept-encoding',
-    'connection',
-    'content-type',
-    'content-length',
-  ]);
-
   // Scan headers safely - handle cases where headers.entries() might not exist (test mocks)
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
-        if (!skipHeaders.has(key.toLowerCase())) {
-          const headerFindings = scanString(value, 'header', key);
+        if (!SKIP_HEADERS.has(key.toLowerCase())) {
+          const headerFindings = scanString(value, 'header', minSeverity, key);
           patterns.push(...headerFindings);
         }
       }
@@ -594,29 +644,27 @@ export function detectSuspiciousPatterns(
 
 
 
-  // Filter by minimum severity
-  const filteredPatterns = patterns.filter((p) => p.severity >= minSeverity);
+  // PERFORMANCE: patterns are already pre-filtered by scanString.
+  // We only need to calculate maxSeverity from the findings.
 
   // Calculate max severity
   let maxSeverity: 0 | 1 | 2 | 3 = 0;
-  for (const pattern of filteredPatterns) {
-    if (pattern.severity > maxSeverity) {
-      maxSeverity = pattern.severity as 0 | 1 | 2 | 3;
+  for (let i = 0; i < patterns.length; i++) {
+    if (patterns[i].severity > maxSeverity) {
+      maxSeverity = patterns[i].severity as 0 | 1 | 2 | 3;
     }
   }
 
   const result: SuspiciousPatternResult = {
-    detected: filteredPatterns.length > 0,
-    patterns: filteredPatterns,
+    detected: patterns.length > 0,
+    patterns,
     maxSeverity,
   };
 
   // Log detected patterns via SecurityAuditLog
   if (result.detected && logDetected) {
     const clientIdentifier = getClientIdentifier(request);
-    const categories = [
-      ...new Set(filteredPatterns.map((p) => p.category)),
-    ].join(', ');
+    const categories = [...new Set(patterns.map((p) => p.category))].join(', ');
 
     SecurityAuditLog.logEvent({
       timestamp: new Date().toISOString(),
@@ -626,10 +674,10 @@ export function detectSuspiciousPatterns(
       message: `Suspicious request patterns detected: ${categories}`,
       clientIdentifier,
       metadata: {
-        patternCount: filteredPatterns.length,
+        patternCount: patterns.length,
         categories,
         maxSeverity,
-        patterns: filteredPatterns.map((p) => ({
+        patterns: patterns.map((p) => ({
           category: p.category,
           location: p.location,
           field: p.field,
@@ -641,7 +689,7 @@ export function detectSuspiciousPatterns(
     });
 
     logger.debug('Suspicious patterns detected', {
-      patternCount: filteredPatterns.length,
+      patternCount: patterns.length,
       maxSeverity,
       categories,
     });
