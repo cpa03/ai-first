@@ -350,18 +350,19 @@ curl -X POST http://localhost:3000/api/clarify/start \
    - Uses MAX of endpoint config and tier config for more generous limits
    - Addresses issue #1931
 
-4. **API Timeout Middleware**: Global timeout support was already implemented in `withApiHandler` wrapper
+4. **API Timeout Middleware**: Enhanced with timeout presets for easy route configuration
    - Default timeout: 30 seconds (`TIMEOUT_CONFIG.DEFAULT`)
+   - Presets available: 'quick' (5s), 'standard' (10s), 'long' (30s)
+   - Routes can use: `{ timeout: 'quick' }` or `{ timeoutMs: 15000 }`
    - All API routes automatically get timeout protection
-   - Addresses issue #1825
+   - Logs timeout events and tracks metrics for 504 responses
+   - Addresses issue #1825 (PR #1988)
 
 5. **getIdeaStats Optimization**: Database queries already optimized with bulk `.in()` filter
    - Uses single query for ideas, single query for deliverables, single query for tasks
    - Addresses issue #1927
 
-- Logs timeout events and tracks metrics for 504 responses
-
-2. **Analytics Event Tracking Foundation**: Implemented PostHog integration in `src/lib/analytics.ts`
+6. **Analytics Event Tracking Foundation**: Implemented PostHog integration in `src/lib/analytics.ts`
    - Added `ANALYTICS_PROVIDERS` with PostHog and Console options
    - Added `PROVIDER`, `POSTHOG_API_KEY`, `POSTHOG_HOST`, and `POSTHOG_ENABLED` config options
    - Implemented `flushEvents()` to send events to PostHog batch API
