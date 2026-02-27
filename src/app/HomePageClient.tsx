@@ -7,6 +7,7 @@ import IdeaInput from '@/components/IdeaInput';
 import CopyButton from '@/components/CopyButton';
 import ShareButton from '@/components/ShareButton';
 import UserOnboarding from '@/components/UserOnboarding';
+import Skeleton from '@/components/Skeleton';
 import {
   trackEvent,
   trackPageView,
@@ -24,9 +25,9 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
           key={i}
           className="text-center p-6 rounded-xl bg-white border border-gray-100"
         >
-          <div className="bg-gray-200 rounded-full w-16 h-16 mx-auto mb-4 animate-pulse" />
-          <div className="h-6 bg-gray-200 rounded mx-auto mb-2 w-3/4 animate-pulse" />
-          <div className="h-4 bg-gray-100 rounded mx-auto w-full animate-pulse" />
+          <Skeleton variant="circle" className="w-16 h-16 mx-auto mb-4" />
+          <Skeleton variant="text" className="h-6 mx-auto mb-2 w-3/4" />
+          <Skeleton variant="text" className="h-4 mx-auto w-full" />
         </div>
       ))}
     </section>
@@ -38,17 +39,17 @@ const WhyChooseSection = dynamic(
   {
     loading: () => (
       <section aria-hidden="true" className="mt-16 bg-gray-50 rounded-lg p-8">
-        <div className="h-10 bg-gray-200 rounded mx-auto mb-6 w-3/4 animate-pulse" />
+        <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
               className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100"
             >
-              <div className="bg-gray-200 rounded-full w-6 h-6 flex-shrink-0 mt-1 animate-pulse" />
+              <Skeleton variant="circle" className="w-6 h-6 flex-shrink-0 mt-1" />
               <div className="flex-1">
-                <div className="h-5 bg-gray-200 rounded mb-2 w-1/2 animate-pulse" />
-                <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse" />
+                <Skeleton variant="text" className="h-5 mb-2 w-1/2" />
+                <Skeleton variant="text" className="h-4 w-3/4" />
               </div>
             </div>
           ))}
