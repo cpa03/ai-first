@@ -9,6 +9,8 @@ import {
 import { requireAuth } from '@/lib/auth';
 import { APP_CONFIG } from '@/lib/config/app';
 import { STATUS_CODES } from '@/lib/config/http';
+import { generateEmbedding } from '@/lib/embedding-service';
+import { storeIdeaEmbedding } from '@/lib/similarity-service';
 
 /**
  * GET /api/ideas
@@ -119,6 +121,7 @@ async function handleGet(context: ApiContext) {
  * POST /api/ideas
  *
  * Creates a new idea for the authenticated user.
+ * Also generates and stores vector embedding for similarity search.
  */
 async function handlePost(context: ApiContext) {
   const { request } = context;
@@ -151,6 +154,20 @@ async function handlePost(context: ApiContext) {
   };
 
   const savedIdea = await dbService.createIdea(newIdea);
+
+  // Generate and store embedding for similarity search (non-blocking)
+  generateEmbedding(validatedIdea)
+    .then((embeddingResult) =>
+      storeIdeaEmbedding(
+        savedIdea.id,
+        savedIdea.title,
+        validatedIdea,
+        embeddingResult
+      )
+    )
+    .catch((error) => {
+      console.error('Failed to generate embedding for idea:', error);
+    });
 
   return standardSuccessResponse(
     {

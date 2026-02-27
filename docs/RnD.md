@@ -2,6 +2,55 @@
 
 ## Autonomous RnD Specialist - Long-term Memory
 
+## Last Updated: 2026-02-27
+
+#### 2026-02-27
+
+### Mission
+
+Deliver small, safe, measurable improvements strictly inside the RnD domain.
+
+### Execution Rules
+
+- RESEARCH → PLAN → IMPLEMENT → VERIFY → SELF-REVIEW → DELIVER
+- If PR with RnD label exists → review, update, comment, skip other jobs
+- If Issue exists → execute
+- If none → proactive scan limited to domain
+- If nothing valuable → exit safely
+
+### PR Requirements
+
+- Label: RnD
+- Linked to issue
+- Up to date with default branch
+- No conflict
+- Build/lint/test success
+- ZERO warnings
+- Small atomic diff
+
+#### 2026-02-27
+
+- **Issue Executed**: #1932 - Add AI-powered idea similarity detection
+- **Changes**:
+  - Created `src/lib/embedding-service.ts` for OpenAI text embeddings (text-embedding-3-small)
+  - Created `src/lib/similarity-service.ts` for vector storage and similarity search
+  - Modified `src/app/api/ideas/route.ts` to generate/store embeddings on idea creation
+  - Added `src/app/api/ideas/[id]/similar/route.ts` endpoint for similarity search
+- **Technical Details**:
+  - Uses existing database infrastructure (vectors table + match_vectors function)
+  - Embedding generation is non-blocking (fails gracefully)
+  - Similarity search configurable via query params (limit, threshold)
+  - 4 files changed, 310 lines added
+- **Verification**:
+  - TypeScript compiles (pre-existing test lib errors unrelated to changes)
+  - Changes isolated to new services + minimal modification to existing route
+- **PR**: #1987 - https://github.com/cpa03/ai-first/pull/1987
+- **Status**: Open
+
+# RnD Memory
+
+## Autonomous RnD Specialist - Long-term Memory
+
 #KY|Last Updated: 2026-02-27
 
 #### 2026-02-27 (Continued)
