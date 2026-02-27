@@ -993,3 +993,60 @@ const Button = dynamic(() => import('@/components/Button'), {
 ---
 
 **Last Updated:** 2026-02-26
+
+---
+
+## Recent Improvements (2026-02-27)
+
+### Command Palette with Keyboard Shortcuts Enhancement
+
+**Issue:** #1928 - UX: Add keyboard navigation and shortcuts for power users
+
+**Changes:**
+
+|X|File|Change|
+|---|-----|-------|
+| |`src/components/KeyboardShortcutsHelp.tsx`|Complete rewrite with expanded features|
+
+**Technical Implementation:**
+
+1. **Expanded Shortcuts (19 total, exceeds "at least 10" requirement)**
+   - Added: Cmd+N (new idea), Cmd+S (save), Cmd+D (dashboard), Cmd+B (results)
+   - Added vim-style: g+d (dashboard), g+r (results), g+i (ideas), j/k (navigation)
+   - Added: ? for showing shortcuts
+
+2. **Command Palette Transformation**
+   - Added search input for filtering commands
+   - Changed title from "Keyboard Shortcuts" to "Command Palette"
+   - Real-time filtering as user types
+
+3. **Vim Mode Navigation**
+   - Toggle option to enable j/k for up/down navigation
+   - Visual selection highlighting when vim mode is enabled
+   - Enter key to select/execute action
+   - Preferences persisted to localStorage
+
+4. **Persistence**
+   - Added `useShortcutsPreferences` hook
+   - Uses localStorage key: `ideaflow-keyboard-shortcuts`
+   - Persists vimMode and shortcutsEnabled preferences
+
+**Acceptance Criteria Met:**
+
+- ✅ At least 10 keyboard shortcuts working (19 total)
+- ✅ Shortcuts configurable (vim mode toggle in palette)
+- ✅ Command palette functional (search + filter + select)
+
+**Verification:**
+
+|X|Check|Status|
+|---|------|------|
+| |TypeScript|✅ Pass|
+| |ESLint|✅ Pass (0 warnings)|
+| |Build|✅ Pass|
+
+**PR:** #1951
+
+---
+
+**Last Updated:** 2026-02-27
