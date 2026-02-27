@@ -12,6 +12,14 @@ export interface ApiResponse<T = unknown> {
 }
 
 /**
+ * Timeout preset for API routes
+ * - 'quick': 5 seconds (health checks, simple lookups)
+ * - 'standard': 10 seconds (most API operations)
+ * - 'long': 30 seconds (complex operations, large data)
+ */
+export type TimeoutPreset = 'quick' | 'standard' | 'long';
+
+/**
  * Options for configuring the API handler
  */
 export interface ApiHandlerOptions {
@@ -19,6 +27,18 @@ export interface ApiHandlerOptions {
   validateSize?: boolean;
   cacheTtlSeconds?: number;
   cacheScope?: 'public' | 'private';
+  /**
+   * Timeout preset for API routes
+   * - 'quick': 5 seconds (health checks, simple lookups)
+   * - 'standard': 10 seconds (most API operations)
+   * - 'long': 30 seconds (complex operations, large data)
+   * Takes precedence over timeoutMs if both are specified
+   */
+  timeout?: TimeoutPreset;
+  /**
+   * Timeout in milliseconds (explicit)
+   * Used when a specific timeout value is needed beyond presets
+   */
   timeoutMs?: number;
   skipCSRF?: boolean;
 }

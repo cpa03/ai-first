@@ -30,7 +30,12 @@ import { validateCSRF } from '@/lib/security/csrf';
 import { TimeoutManager } from '@/lib/resilience/timeout-manager';
 import { TIMEOUT_CONFIG } from '@/lib/config/constants';
 import { TimeoutError } from '@/lib/errors';
-import type { ApiHandlerOptions, ApiContext, ApiHandler } from './types';
+import type {
+  ApiHandlerOptions,
+  ApiContext,
+  ApiHandler,
+  TimeoutPreset,
+} from './types';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -176,8 +181,19 @@ export function withApiHandler(
           );
         }
       }
-
-      const timeoutMs = options.timeoutMs ?? TIMEOUT_CONFIG.DEFAULT;
+      // Resolve timeout: preset takes precedence over timeoutMs
+      let timeoutMs: number;
+      if (options.timeout) {
+        // Use preset-based timeout
+        const presetTimeoutMap: Record<TimeoutPreset, number> = {
+          quick: TIMEOUT_CONFIG.QUICK,
+          standard: TIMEOUT_CONFIG.STANDARD,
+          long: TIMEOUT_CONFIG.LONG,
+        };
+        timeoutMs = presetTimeoutMap[options.timeout];
+      } else {
+        timeoutMs = options.timeoutMs ?? TIMEOUT_CONFIG.DEFAULT;
+      }
       let response: Response;
 
       if (timeoutMs > 0) {
