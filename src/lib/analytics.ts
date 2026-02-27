@@ -44,6 +44,11 @@ export const ANALYTICS_EVENTS = {
 
   // Errors
   ERROR_OCCURRED: 'error_occurred',
+
+  // Funnel events - for conversion tracking
+  FUNNEL_STEP_COMPLETE: 'funnel_step_complete',
+  FUNNEL_DROPOFF: 'funnel_dropoff',
+  FUNNEL_COMPLETE: 'funnel_complete',
 } as const;
 
 export type AnalyticsEventType =
@@ -86,6 +91,15 @@ export interface AnalyticsEventProperties {
   skipped?: boolean;
   completed_steps?: number;
   total_steps?: number;
+
+  // Funnel-specific properties
+  funnel_name?: string;
+  funnel_step?: number;
+  funnel_total_steps?: number;
+  time_to_step?: number;
+  conversion_from_previous?: number;
+
+  // Additional custom properties
 
   // Additional custom properties
   [key: string]: string | number | boolean | undefined;
@@ -552,6 +566,66 @@ export function trackOnboardingComplete(options?: {
 }
 
 /**
+ * Track funnel step completion
+ *
+ * @param funnelName - The name of the funnel (e.g., 'idea_submission')
+ * @param step - The step number (1-indexed)
+ * @param totalSteps - Total number of steps in the funnel
+ * @param timeToStepMs - Time taken to reach this step from the previous step
+ *
+ * @example
+ * trackFunnelStep('idea_submission', 1, 3); // First step
+ * trackFunnelStep('idea_submission', 2, 3, 5000); // Second step, took 5s from step 1
+ * trackFunnelStep('idea_submission', 3, 3, 10000); // Completed!
+ */
+export function trackFunnelStep(
+  funnelName: string,
+  step: number,
+  totalSteps: number,
+  timeToStepMs?: number
+): void {
+  const isComplete = step === totalSteps;
+
+  trackEvent(
+    isComplete
+      ? ANALYTICS_EVENTS.FUNNEL_COMPLETE
+      : ANALYTICS_EVENTS.FUNNEL_STEP_COMPLETE,
+    {
+      funnel_name: funnelName,
+      funnel_step: step,
+      funnel_total_steps: totalSteps,
+      time_to_step: timeToStepMs,
+      completed_steps: step,
+      total_steps: totalSteps,
+    }
+  );
+}
+
+/**
+ * Track funnel drop-off (user abandoned the funnel)
+ *
+ * @param funnelName - The name of the funnel
+ * @param step - The step where user dropped off
+ * @param totalSteps - Total number of steps in the funnel
+ *
+ * @example
+ * trackFunnelDropoff('idea_submission', 2, 3);
+ */
+export function trackFunnelDropoff(
+  funnelName: string,
+  step: number,
+  totalSteps: number
+): void {
+  trackEvent(ANALYTICS_EVENTS.FUNNEL_DROPOFF, {
+    funnel_name: funnelName,
+    funnel_step: step,
+    funnel_total_steps: totalSteps,
+    completed_steps: step - 1,
+    total_steps: totalSteps,
+  });
+}
+
+/**
  * Flush all pending events
  * Call this before page unload to ensure all events are sent
  *
@@ -596,6 +670,8 @@ const analytics = {
   trackCopyAction,
   trackOnboardingStart,
   trackOnboardingComplete,
+  trackFunnelStep,
+  trackFunnelDropoff,
   flush,
   resetAnalytics,
   ANALYTICS_EVENTS,
