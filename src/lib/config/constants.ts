@@ -1,5 +1,6 @@
 export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
 export { RATE_LIMIT_CONFIG } from './rate-limit-config';
+export { CACHE_TTL_CONFIG } from './cache-ttl-config';
 
 // Import for local use within this file
 import { RATE_LIMIT_CONFIG } from './rate-limit-config';
@@ -752,19 +753,7 @@ export const VALIDATION_LIMITS = {
   } as const,
 } as const;
 
-/**
- * Cache TTL configuration
- * Now supports environment variable overrides
- */
-export const CACHE_TTL_CONFIG = {
-  DEFAULT_CACHE_TTL_MS: EnvLoader.number(
-    'CACHE_TTL_STANDARD',
-    5 * 60 * 1000,
-    1000,
-    3600000
-  ),
-  DEFAULT_STALE_WHILE_REVALIDATE: true,
-} as const;
+
 
 /**
  * Rate limit statistics configuration

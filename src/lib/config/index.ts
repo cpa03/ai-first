@@ -53,6 +53,7 @@ export { CLARIFIER_CONFIG, AGENT_PROMPTS, AI_CONFIG } from './agents';
 
 // Cache Configuration
 export { CACHE_CONFIG } from './cache';
+export { CACHE_TTL_CONFIG } from './cache-ttl-config';
 
 // Component Configuration
 export { COMPONENT_CONFIG } from './components';
