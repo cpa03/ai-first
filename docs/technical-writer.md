@@ -612,3 +612,69 @@ RN|**Verification Status**: ✅ Documentation updated - missing hooks added to R
 **Agent**: Technical Writer
 **Version**: 1.3.0
 **Verification Status**: ✅ All documentation verified against implementation
+
+---
+
+### Task: Add Architecture Decision Records (ADRs) - Issue #1933 ✅ COMPLETE
+
+**Priority**: P3
+**Date**: 2026-02-27
+
+#### Objectives
+
+- [x] Create 10+ ADRs documenting key architectural decisions
+- [x] Ensure new developers can understand architecture
+- [x] Maintain ADR template for future decisions
+
+#### Completed Work
+
+1. **Created 9 new ADRs**:
+   - ADR-002: Supabase for Database and Authentication
+   - ADR-003: Next.js App Router for Frontend
+   - ADR-004: Rate Limiting at API Level
+   - ADR-005: Circuit Breaker Pattern for External AI Services
+   - ADR-006: Standardized Error Response Format
+   - ADR-007: TypeScript Strict Mode for Type Safety
+   - ADR-008: Tailwind CSS for Styling
+   - ADR-009: Vercel for Primary Hosting
+   - ADR-010: GitHub Actions for CI/CD
+
+2. **Updated ADR index** in docs/adr/README.md
+
+3. **Verification complete**:
+   - Lint: 0 warnings ✅
+   - Type-check: passes ✅
+   - Build: succeeds ✅
+
+#### Files Modified
+
+- `docs/adr/README.md`
+- `docs/adr/ADR-002-supabase-database-auth.md`
+- `docs/adr/ADR-003-nextjs-app-router.md`
+- `docs/adr/ADR-004-rate-limiting.md`
+- `docs/adr/ADR-005-circuit-breaker.md`
+- `docs/adr/ADR-006-standardized-errors.md`
+- `docs/adr/ADR-007-typescript-strict-mode.md`
+- `docs/adr/ADR-008-tailwind-css.md`
+- `docs/adr/ADR-009-vercel-hosting.md`
+- `docs/adr/ADR-010-github-actions-ci-cd.md`
+
+#### Notes
+
+- Issue #1933 addressed fully
+- PR #1957 created with technical-writer label
+- All acceptance criteria met (10+ ADRs now exist)
+
+---
+
+**Last Updated**: 2026-02-27
+**Agent**: Technical Writer
+**Version**: 1.6.0
+**Verification Status**: ✅ PR #1957 created - addresses Issue #1933 completely
+
+---
+
+**Last Updated**: 2026-02-27
+**Agent**: Technical Writer
+**Version**: 1.5.3
+**Verification Status**: ✅ Documentation updated - missing hooks added to README
