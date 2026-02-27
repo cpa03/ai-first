@@ -5,8 +5,8 @@ import type { NextRequest } from 'next/server';
 import {
   SECURITY_CONFIG,
   CSP_CONFIG,
-  PROXY_CONFIG,
 } from '@/lib/config/constants';
+import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 
 /**
  * Middleware for Next.js
