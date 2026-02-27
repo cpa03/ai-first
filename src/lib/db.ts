@@ -212,6 +212,14 @@ export interface PaginatedResult<T> {
   nextCursor?: string;
 }
 
+/**
+ * Connection health status for both client and admin connections
+ */
+export interface ConnectionHealth {
+  client: boolean;
+  admin: boolean;
+}
+
 // Database service class
 export class DatabaseService {
   private _client: ReturnType<typeof createClient<Database>> | null = null;
@@ -510,67 +518,108 @@ export class DatabaseService {
   }
 
   // Connection health monitoring
-  async checkConnection(): Promise<boolean> {
+  async checkConnection(): Promise<ConnectionHealth> {
+    // Check client connection
+    let clientHealthy = false;
     try {
       if (!this.client) {
         this.connectionMetrics.failedConnections++;
         this.connectionMetrics.lastFailedConnection = new Date();
-        return false;
-      }
-
-      this.connectionMetrics.totalConnections++;
-
-      const healthCheckPromise = this.client
-        .from('ideas')
-        .select('id')
-        .limit(1);
-
-      const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
-        setTimeout(() => {
-          reject(new Error('Health check timeout'));
-        }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
-      });
-
-      const { error } = await Promise.race([
-        healthCheckPromise,
-        timeoutPromise
-          .then(() => ({ error: null }))
-          .catch((err) => ({
-            error: err,
-          })),
-      ]);
-
-      const timedOut =
-        error instanceof Error && error.message === 'Health check timeout';
-
-      if (timedOut) {
-        logger.warn(
-          `Database health check timed out after ${DATABASE.HEALTH_CHECK_TIMEOUT_MS}ms`
-        );
-        this.connectionHealthy = false;
-        this.connectionMetrics.failedConnections++;
-        this.connectionMetrics.lastFailedConnection = new Date();
-        this.lastHealthCheck = new Date();
-        return false;
-      }
-
-      this.connectionHealthy = !error;
-      this.lastHealthCheck = new Date();
-
-      if (error) {
-        this.connectionMetrics.failedConnections++;
-        this.connectionMetrics.lastFailedConnection = new Date();
       } else {
-        this.connectionMetrics.lastSuccessfulConnection = new Date();
-      }
+        this.connectionMetrics.totalConnections++;
 
-      return this.connectionHealthy;
+        const healthCheckPromise = this.client
+          .from('ideas')
+          .select('id')
+          .limit(1);
+
+        const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
+          setTimeout(() => {
+            reject(new Error('Health check timeout'));
+          }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
+        });
+
+        const { error } = await Promise.race([
+          healthCheckPromise,
+          timeoutPromise
+            .then(() => ({ error: null }))
+            .catch((err) => ({
+              error: err,
+            })),
+        ]);
+
+        const timedOut =
+          error instanceof Error && error.message === 'Health check timeout';
+
+        if (timedOut) {
+          logger.warn(
+            `Database client health check timed out after ${DATABASE.HEALTH_CHECK_TIMEOUT_MS}ms`
+          );
+        }
+
+        clientHealthy = !error && !timedOut;
+      }
     } catch {
-      this.connectionHealthy = false;
+      clientHealthy = false;
+    }
+
+    // Check admin connection
+    let adminHealthy = false;
+    try {
+      if (!this.admin) {
+        // Admin client not initialized - consider it unhealthy
+        adminHealthy = false;
+      } else {
+        // Test admin connection with a simple query
+        // Using agent_logs table which is commonly used for admin operations
+        const adminHealthCheckPromise = this.admin
+          .from('agent_logs')
+          .select('id')
+          .limit(1);
+
+        const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
+          setTimeout(() => {
+            reject(new Error('Admin health check timeout'));
+          }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
+        });
+
+        const { error } = await Promise.race([
+          adminHealthCheckPromise,
+          timeoutPromise
+            .then(() => ({ error: null }))
+            .catch((err) => ({
+              error: err,
+            })),
+        ]);
+
+        const timedOut =
+          error instanceof Error && error.message === 'Admin health check timeout';
+
+        if (timedOut) {
+          logger.warn(
+            `Database admin health check timed out after ${DATABASE.HEALTH_CHECK_TIMEOUT_MS}ms`
+          );
+        }
+
+        adminHealthy = !error && !timedOut;
+      }
+    } catch {
+      adminHealthy = false;
+    }
+
+    // Update connection metrics
+    const allHealthy = clientHealthy && adminHealthy;
+    this.connectionHealthy = allHealthy;
+    this.lastHealthCheck = new Date();
+
+    if (!allHealthy) {
       this.connectionMetrics.failedConnections++;
       this.connectionMetrics.lastFailedConnection = new Date();
-      return false;
+    } else {
+      this.connectionMetrics.lastSuccessfulConnection = new Date();
     }
+
+    return { client: clientHealthy, admin: adminHealthy };
   }
 
   isConnectionHealthy(): boolean {
@@ -1497,18 +1546,28 @@ export class DatabaseService {
     status: string;
     timestamp: string;
     metrics?: ReturnType<DatabaseService['getConnectionMetrics']>;
+    connections?: ConnectionHealth;
   }> {
     try {
-      if (!this.client) throw new Error('Supabase client not initialized');
+      // Check both client and admin connections for consistency
+      const connectionHealth = await this.checkConnection();
 
-      const { error } = await this.client.from('ideas').select('id').limit(1);
+      const allHealthy = connectionHealth.client && connectionHealth.admin;
 
-      if (error) throw error;
+      if (!allHealthy) {
+        return {
+          status: 'unhealthy',
+          timestamp: new Date().toISOString(),
+          metrics: this.getConnectionMetrics(),
+          connections: connectionHealth,
+        };
+      }
 
       return {
         status: 'healthy',
         timestamp: new Date().toISOString(),
         metrics: this.getConnectionMetrics(),
+        connections: connectionHealth,
       };
     } catch {
       return {
