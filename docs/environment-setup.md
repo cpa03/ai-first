@@ -24,6 +24,39 @@ npm run env:check && npm run dev
 # 5. Verify (open new terminal)
 curl http://localhost:3000/api/health
 ```
+## Prerequisites
+
+Before starting, verify your environment meets these requirements:
+
+| Tool | Version | Validation Command | Expected Result |
+|------|---------|-------------------|-----------------|
+| Node.js | 20+ | `node --version` | v20.0.0 or higher |
+| npm | 9+ | `npm --version` | 9.0.0 or higher |
+| Git | 2.x | `git --version` | git version 2.x.x |
+
+### Verify Your Setup
+
+Run these commands to validate your prerequisites:
+
+```bash
+# Node.js version check
+node --version  # Should be v20.0.0 or higher
+
+# npm version check (comes with Node.js)
+npm --version   # Should be 9.0.0 or higher
+
+# Git configuration check
+git --version
+git config --list --global  # Verify user.name and user.email are set
+```
+
+If any validation fails:
+
+- **Node.js**: Use [nvm](https://github.com/nvm-sh/nvm) to install: `nvm install 20 && nvm use 20`
+- **npm**: Comes with Node.js - reinstall Node.js if needed
+- **Git**: Install from https://git-scm.com or via package manager
+
+---
 
 ---
 
