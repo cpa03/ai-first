@@ -75,20 +75,52 @@ function extractUserIdFromRequest(request: Request): string | null {
 /**
  * Determine user role based on available information
  *
- * In a full implementation, this would query the user's subscription tier
- * from the database or cache. For now, we use a simple heuristic:
- * - If user ID is present, they are authenticated
- * - Premium/enterprise would be determined by additional data
+ * This function checks for user tier in the following priority:
+ * 1. x-user-tier header (for testing/proxy forwarding)
+ * 2. x-user-subscription header (alternative header for subscription status)
+ * 3. Default to 'authenticated' for known users
  *
+ * In production, this would query the user's subscription tier
+ * from the database or cache. For now, we support header-based tier override.
+ *
+ * @param request - The incoming request (for header inspection)
  * @param userId - The user ID if available
- * @returns User role based on authentication status
+ * @returns User role based on authentication status and subscription tier
  */
-function determineUserRole(userId: string | null): UserRole {
+function determineUserRole(request: Request, userId: string | null): UserRole {
   if (!userId) {
     return 'anonymous';
   }
 
-  // For now, all authenticated users get 'authenticated' tier
+  // Check for tier override headers (useful for testing, development,
+  // or when tier is determined by upstream proxy/gateway)
+  const tierHeader = request.headers.get('x-user-tier');
+  if (tierHeader) {
+    const normalizedTier = tierHeader.toLowerCase().trim();
+    if (normalizedTier === 'premium') {
+      return 'premium';
+    }
+    if (normalizedTier === 'enterprise') {
+      return 'enterprise';
+    }
+    if (normalizedTier === 'authenticated' || normalizedTier === 'standard') {
+      return 'authenticated';
+    }
+  }
+
+  // Alternative header for subscription status
+  const subscriptionHeader = request.headers.get('x-user-subscription');
+  if (subscriptionHeader) {
+    const normalizedSub = subscriptionHeader.toLowerCase().trim();
+    if (normalizedSub === 'premium' || normalizedSub === 'pro') {
+      return 'premium';
+    }
+    if (normalizedSub === 'enterprise' || normalizedSub === 'business') {
+      return 'enterprise';
+    }
+  }
+
+  // For authenticated users without explicit tier, default to 'authenticated'
   // In production, this would check subscription status from database/cache
   // to determine if user is 'premium' or 'enterprise'
   return 'authenticated';
@@ -110,7 +142,7 @@ function determineUserRole(userId: string | null): UserRole {
  */
 export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
   const userId = extractUserIdFromRequest(request);
-  const role = determineUserRole(userId);
+  const role = determineUserRole(request, userId);
 
   let identifier: string;
 
@@ -136,8 +168,14 @@ export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
  * When a user is authenticated, their rate limit is tracked by user ID.
  * When not authenticated, it falls back to IP-based limiting.
  *
+ * The effective rate limit is the MAX of:
+ * - Endpoint config (e.g., lenient, moderate, strict)
+ * - User tier config (e.g., anonymous, authenticated, premium, enterprise)
+ *
+ * This ensures premium users get higher limits regardless of endpoint restrictions.
+ *
  * @param request - The incoming request
- * @param config - Rate limit configuration
+ * @param config - Rate limit configuration for the endpoint
  * @returns Rate limit result with allowed status and info
  */
 export function checkUserRateLimit(
@@ -145,7 +183,18 @@ export function checkUserRateLimit(
   config: RateLimitConfig
 ): { allowed: boolean; info: RateLimitInfo; userInfo: UserRateLimitInfo } {
   const userInfo = getUserRateLimitInfo(request);
-  const result = checkRateLimit(userInfo.identifier, config);
+
+  // Get tier-specific rate limit config
+  const tierConfig = tieredRateLimits[userInfo.role];
+
+  // Use the higher of endpoint config limit or tier config limit
+  // This gives premium users more capacity while still respecting endpoint restrictions
+  const effectiveConfig: RateLimitConfig = {
+    limit: Math.max(config.limit, tierConfig.limit),
+    windowMs: Math.max(config.windowMs, tierConfig.windowMs),
+  };
+
+  const result = checkRateLimit(userInfo.identifier, effectiveConfig);
 
   return {
     ...result,

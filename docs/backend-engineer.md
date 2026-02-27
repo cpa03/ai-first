@@ -344,6 +344,21 @@ curl -X POST http://localhost:3000/api/clarify/start \
 
 ### New Features
 
+3. **Tiered Rate Limiting**: Implemented per-user rate limiting with tier support in `src/lib/rate-limit.ts`
+   - Enhanced `determineUserRole()` to detect user tier from request headers (`x-user-tier`, `x-user-subscription`)
+   - Updated `checkUserRateLimit()` to apply tier-based rate limits (premium: 120 req/min, enterprise: 300 req/min)
+   - Uses MAX of endpoint config and tier config for more generous limits
+   - Addresses issue #1931
+
+4. **API Timeout Middleware**: Global timeout support was already implemented in `withApiHandler` wrapper
+   - Default timeout: 30 seconds (`TIMEOUT_CONFIG.DEFAULT`)
+   - All API routes automatically get timeout protection
+   - Addresses issue #1825
+
+5. **getIdeaStats Optimization**: Database queries already optimized with bulk `.in()` filter
+   - Uses single query for ideas, single query for deliverables, single query for tasks
+   - Addresses issue #1927
+
 - Logs timeout events and tracks metrics for 504 responses
 
 2. **Analytics Event Tracking Foundation**: Implemented PostHog integration in `src/lib/analytics.ts`
