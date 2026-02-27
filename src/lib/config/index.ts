@@ -196,13 +196,8 @@ export type {
   CircuitBreakerTimes,
   APITimeouts,
 } from './time';
-export type { APIErrorMessages } from './error-messages';
 
-// Timeout Configuration (extracted from constants.ts)
-export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
 
-// Rate Limit Configuration (extracted from constants.ts)
-export { RATE_LIMIT_CONFIG } from './rate-limit-config';
 
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 
