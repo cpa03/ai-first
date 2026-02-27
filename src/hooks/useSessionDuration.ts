@@ -23,11 +23,6 @@ export function useSessionDuration() {
   const sessionStartTime = useRef<number>(0);
   const pageStartTime = useRef<number>(0);
   const isInitialized = useRef<boolean>(false);
-  const pageStartTime = useRef<number>(0);
-  const isInitialized = useRef<boolean>(false);
-  const sessionStartTime = { current: 0 };
-  const pageStartTime = { current: Date.now() };
-  const isInitialized = { current: false };
 
   // Track session start
   const initializeSession = useCallback(() => {
