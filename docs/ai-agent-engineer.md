@@ -221,8 +221,30 @@ YX|This was discovered during proactive scanning - docs/ai-agent-engineer.md had
 
 #YH|Key verification command:
 
-#QW|```bash
+#QW|`bash
 #YQ|ls .opencode/skills/*/SKILL.md | wc -l
-#MM|```
+#MM|`
 
 #QZ|Always verify referenced skills exist in `.opencode/skills/` directory.
+#YY|#QZ|Always verify referenced skills exist in `.opencode/skills/` directory.
+
+#NH|#TB|### RepoKeeper Agent Definition (2026-02-27)
+#YQ|#QT|During proactive scan of iterate.yml workflow:
+#QT|
+#QT|#QT|1. **Issue Found**: iterate.yml used `--agent RepoKeeper` but RepoKeeper was not defined in CMZ.json or oh-my-opencode.json
+#QT|#QT|2. **Impact**: Documentation inconsistency - agent referenced but not configured
+#QT|#QT|3. **Fix Applied**: Added repokeeper agent to both CMZ.json and oh-my-opencode.json
+#QT|#QT|4. **Verification**: JSON validation passed, lint passed with 0 warnings
+#QT|
+#QT|#YQ|Key verification commands:
+#QT|
+#QT|#QW|`bash
+#QT|#YQ|# Validate JSON files
+#QT|#YQ|node -e "JSON.parse(require('fs').readFileSync('.opencode/agents/CMZ.json'))"
+#QT|#YQ|node -e "JSON.parse(require('fs').readFileSync('.opencode/oh-my-opencode.json'))"
+#QT|#YQ|
+#QT|#YQ|# Run lint
+#QT|#YQ|npm run lint
+#QT|#QW|`
+#QT|
+#QT|#JM|Always verify agents referenced in iterate.yml are defined in configuration files.
