@@ -158,17 +158,14 @@ function ClarifyPageContent() {
   if (!isAuthenticated) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-red-900 mb-4">
-            Sign In Required
-          </h2>
-          <p className="text-red-800">Please sign in to clarify your ideas.</p>
+        <Alert type="warning" title="Sign In Required">
+          <p>Please sign in to clarify your ideas.</p>
           <div className="mt-4">
             <Button onClick={() => router.push('/')} variant="primary">
               Go Home
             </Button>
           </div>
-        </div>
+        </Alert>
       </div>
     );
   }
