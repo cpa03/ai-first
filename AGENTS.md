@@ -25,6 +25,7 @@ This repository uses a sophisticated multi-agent system powered by OpenCode CLI 
 | **Explore**        | opencode/glm-4.7-free      | Fast codebase search                       |
 | **Frontend UI/UX** | opencode/glm-4.7-free      | Frontend development                       |
 | **Minimax Agent**  | opencode/minimax-m2.1-free | Balanced performance tasks                 |
+| **RepoKeeper**     | opencode/kimi-k2.5-free    | Repository maintenance and cleanup agent   |
 
 ## Model Configuration
 
