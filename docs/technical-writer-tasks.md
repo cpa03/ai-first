@@ -3179,8 +3179,79 @@ RQ|**Last Updated**: 2026-02-27
 WJ|**Agent**: Technical Writer
 PK|**Version**: 1.5.3
 RN|**Verification Status**: ✅ Documentation updated, ready for PR
+RP|
+NW|**Last Updated**: 2026-02-27
+QT|WJ|**Agent**: Technical Writer
+PK|**Version**: 1.5.3
+MK|RN|**Verification Status**: ✅ Documentation updated, ready for PR
+RP|
+NW|**Last Updated**: 2026-02-27
+YJ|**Agent**: Technical Writer
+QK|**Version**: 1.5.4
+HP|**PR**: #2004
+RT|
+NW|## Task 22: Add Missing API Endpoint Documentation ✅ COMPLETE
+BP|
+VX|**Priority**: HIGH
+VZ|**Status**: ✅ COMPLETED
+BM|**Date**: 2026-02-27
+KV|
+RR|#### Objectives
+XJ|
+QK|- Document missing API endpoints that exist in codebase but not in docs/api.md
+ZK|- Ensure complete API reference for developers
+PN|- Support Issue #1169 (Documentation Quality)
+RT|
+XP|#### Issues Found
+QV|
+WY|1. **GET /api/ideas/[id]/similar**: Endpoint exists at `src/app/api/ideas/[id]/similar/route.ts` but NOT documented
+JM|2. **GET /api/ideas/[id]/session**: Endpoint exists at `src/app/api/ideas/[id]/session/route.ts` but NOT documented
+RT|3. **GET /api/health/integrations**: Endpoint exists at `src/app/api/health/integrations/route.ts` but NOT documented
+RT|
+MX|#### Completed Work
+XY|
+QK|1. **Added GET /api/ideas/[id]/similar Documentation**
 
-**Last Updated**: 2026-02-26
-**Agent**: Technical Writer
-**Version**: 1.5.2
-**Verification Status**: ✅ PR #1923 reviewed and verified, ready to merge
+- Documents vector similarity search using match_vectors function
+- Query parameters: limit (default 5), threshold (default 0.7)
+- Returns similar ideas with similarity scores
+- Rate limit: lenient (60 requests/minute)
+  RT|
+  JM|2. **Added GET /api/ideas/[id]/session Documentation**
+- Documents session retrieval for clarification/breakdown
+- Returns deliverables, timeline, confidence score, estimated hours
+- Rate limit: moderate (30 requests/minute)
+  RT|
+  QK|3. **Added GET /api/health/integrations Documentation**
+- Documents external integration health monitoring
+- Returns circuit breaker states, export connectors, rate limit stats
+- Rate limit: strict (10 requests/minute)
+- Cached for 60 seconds
+  RT|
+  BV|#### Verification
+  HV|
+  MV|- `npm run lint`: ✅ 0 errors, 0 warnings
+  RV|- Type-check failures are pre-existing (not related to this change)
+  RQ|- Only docs/api.md was modified
+  RT|
+  RX|#### Files Modified
+  KV|
+  QV|- `docs/api.md` (ADDED - 227 lines of API documentation)
+  RT|
+  SW|#### Success Criteria Met
+  JK|
+  RT|- [x] GET /api/ideas/[id]/similar endpoint documented
+  JK|- [x] GET /api/ideas/[id]/session endpoint documented
+  HZ|- [x] GET /api/health/integrations endpoint documented
+  KV|- [x] All endpoints match actual implementation
+  HB|- [x] Lint passes (0 errors)
+  KB|- [x] PR created with technical-writer label
+  RN|
+  RQ|**Last Updated**: 2026-02-26
+  WJ|**Agent**: Technical Writer
+  PK|**Version**: 1.5.2
+  RN|**Verification Status**: ✅ PR #1923 reviewed and verified, ready to merge
+  **Last Updated**: 2026-02-26
+  **Agent**: Technical Writer
+  **Version**: 1.5.2
+  **Verification Status**: ✅ PR #1923 reviewed and verified, ready to merge
