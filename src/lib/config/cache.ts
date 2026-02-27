@@ -101,14 +101,15 @@ export const CACHE_CONFIG = {
      * Use for: high-volume data, API responses
      * Env: CACHE_SIZE_LARGE (default: 1000)
      */
-    LARGE: EnvLoader.number('CACHE_SIZE_LARGE', 1000, 100, 10000),
-
-    /**
-     * Maximum cache size to prevent memory leaks
-     * Env: CACHE_SIZE_MAXIMUM (default: 10000)
-     */
     MAXIMUM: EnvLoader.number('CACHE_SIZE_MAXIMUM', 10000, 1000, 100000),
   } as const,
+
+  /**
+   * Default maximum cache size
+   * @deprecated Use SIZE.LARGE or SIZE.MAXIMUM instead for more specific sizing
+   * Env: CACHE_SIZE_MAXIMUM (default: 1000)
+   */
+  DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
 
   /**
    * Service-specific cache configurations
