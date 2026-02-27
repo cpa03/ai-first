@@ -194,4 +194,16 @@ When no ai-agent-engineer labeled issues exist:
 3. **Check actual files**: Always verify against actual code/config
 4. **Small fixes count**: Documentation fixes are valid domain improvements
 
-Lesson learned: docs/ai-agent-engineer.md already had correct iterate.yml info (5 jobs), but AGENTS.md incorrectly listed 8 phases. Always verify against actual implementation.
+Lesson learned: docs/ai-agent-engineer.md already had correct iterate.yml info (5 jobs), but AGENTS.md incorrectly listed only 4 jobs (missing Brocula). Always verify against actual implementation.
+
+### Documentation Cross-Check (2026-02-27)
+
+PM|Fixed AGENTS.md to include all 5 iterate.yml jobs:
+
+JX|- architect (Strategy & Triage)
+#QP|- bugfix (Bug fixing)
+#YQ|- Palette (UX improvements)
+#NQ|- Flexy (Modularity improvements)
+#HB|- Brocula (Browser console fixes) - **was missing**
+
+YX|This was discovered during proactive scanning - docs/ai-agent-engineer.md had correct info, but AGENTS.md was outdated.
