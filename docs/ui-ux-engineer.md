@@ -1291,12 +1291,21 @@ npm test -- --testNamePattern="loading"
    - **Fix:** Replaced hardcoded error divs with Alert component for consistency
    - **Status:** Resolved in PR #1963
 
-4. **Results Page Hardcoded Styles**
+4. **Results Page Hardcoded Styles (RESOLVED)**
+   - Some error states use hardcoded Tailwind classes instead of Alert component
+   - **File:** `src/app/results/page.tsx:169-178`
+   - **Status:** Resolved - error states now use Alert component consistently
+
+5. **Clarify Page Hardcoded Styles (RESOLVED)**
+   - Sign In Required message used hardcoded Tailwind classes instead of Alert component
+   - **File:** `src/app/clarify/page.tsx`
+   - **Fix:** Replaced hardcoded error div with Alert component for consistency
+   - **Status:** Resolved in PR #1972
    - Some error states use hardcoded Tailwind classes instead of Alert component
    - **File:** `src/app/results/page.tsx:169-178`
    - **Status:** Should be refactored for consistency
 
-5. **TypeScript Metrics Type Errors (RESOLVED)**
+6. **TypeScript Metrics Type Errors (RESOLVED)**
    - Metrics variables in `src/lib/metrics.ts` were typed as `unknown`
    - **Impact:** Blocked all production builds (Issue #1913)
    - **Fix:** Added proper Registry and NoOpMetric interfaces
