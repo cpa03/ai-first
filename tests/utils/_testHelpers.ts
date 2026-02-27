@@ -568,3 +568,187 @@ export const createMockDbDeleteResult = (
 ): Promise<{ data: null; error: Error | null }> => {
   return Promise.resolve({ data: null, error });
 };
+
+// =============================================================================
+// NEW: Additional Typed Mock Helpers for Issue #1795
+// Reduce 'as any' in various test scenarios
+// =============================================================================
+
+/**
+ * Creates a typed mock for database operations that return void (no data).
+ * Use this instead of 'mockResolvedValue({} as any)' for operations like:
+ * - storeVector()
+ * - updateIdea()
+ * - createTask() (when not returning created task)
+ *
+ * @example
+ * mockDbService.storeVector.mockResolvedValue(createMockDbVoidResult());
+ * mockDbService.updateIdea.mockResolvedValue(createMockDbVoidResult());
+ */
+export const createMockDbVoidResult = (): Promise<void> =>
+  Promise.resolve(undefined);
+
+/**
+ * Creates a typed mock for global.window in Node.js test environments.
+ * Use this instead of '(global as any).window' for browser API mocking.
+ *
+ * @example
+ * // In beforeEach
+ * const { cleanup } = createMockGlobalWindow();
+ *
+ * // In afterEach
+ * cleanup();
+ */
+export const createMockGlobalWindow = (): {
+  window: typeof globalThis.window;
+  cleanup: () => void;
+} => {
+  const originalWindow = (global as { window?: typeof globalThis.window })
+    .window;
+
+  const mockWindow = {
+    location: {
+      href: 'http://localhost/',
+      pathname: '/',
+      protocol: 'http:',
+      host: 'localhost',
+    },
+    localStorage: {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    },
+    sessionStorage: {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    },
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  };
+
+  // Set the mock window
+  (global as { window: typeof mockWindow }).window =
+    mockWindow as typeof globalThis.window;
+
+  return {
+    window: mockWindow as typeof globalThis.window,
+    cleanup: () => {
+      if (originalWindow !== undefined) {
+        (global as { window: typeof originalWindow }).window = originalWindow;
+      } else {
+        delete (global as { window?: typeof mockWindow }).window;
+      }
+    },
+  };
+};
+
+/**
+ * Creates a typed mock for localStorage in tests.
+ * Use this instead of 'localStorageMock as any' or '(localStorage as any).store'.
+ *
+ * @example
+ * const localStorageMock = createMockLocalStorage();
+ * global.localStorage = localStorageMock;
+ *
+ * // To pre-populate storage
+ * const storage = createMockLocalStorage({ key1: 'value1' });
+ */
+export const createMockLocalStorage = (
+  initialData: Record<string, string> = {}
+): {
+  getItem: jest.Mock<string | null, [string]>;
+  setItem: jest.Mock<void, [string, string]>;
+  removeItem: jest.Mock<void, [string]>;
+  clear: jest.Mock<void, []>;
+  key: jest.Mock<string | null, [number]>;
+  length: number;
+  store: Record<string, string>;
+} => {
+  const store = { ...initialData };
+
+  return {
+    getItem: jest.fn((key: string) => store[key] ?? null),
+    setItem: jest.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: jest.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: jest.fn(() => {
+      Object.keys(store).forEach((key) => delete store[key]);
+    }),
+    key: jest.fn((index: number) => Object.keys(store)[index] ?? null),
+    get length() {
+      return Object.keys(store).length;
+    },
+    store, // Direct access to store for tests that need it
+  };
+};
+
+/**
+ * Creates a typed mock Idea object for tests.
+ * Use this instead of 'mockIdea as any' when testing idea-related operations.
+ *
+ * @example
+ * const idea = createMockIdea({ title: 'My Idea' });
+ * mockDbService.createIdea.mockResolvedValue(idea);
+ */
+export interface MockIdea {
+  id: string;
+  title: string;
+  status: 'draft' | 'clarifying' | 'breakdown' | 'completed' | 'archived';
+  raw_text: string;
+  user_id: string;
+  created_at: string;
+  updated_at?: string;
+  deleted_at: string | null;
+}
+
+export const createMockIdea = (
+  overrides: Partial<MockIdea> = {}
+): MockIdea => ({
+  id: 'test-idea-id',
+  title: 'Test Idea',
+  status: 'draft' as const,
+  raw_text: 'This is a test idea for validation purposes',
+  user_id: 'test-user-id',
+  created_at: new Date().toISOString(),
+  deleted_at: null,
+  ...overrides,
+});
+
+/**
+ * Creates a typed mock API response for idea creation/retrieval.
+ * Use this instead of manually constructing API response objects.
+ *
+ * @example
+ * const ideaResponse = createMockIdeaApiResponse(idea);
+ * expect(ideaResponse.success).toBe(true);
+ */
+export const createMockIdeaApiResponse = (
+  idea: MockIdea
+): {
+  success: boolean;
+  data: {
+    id: string;
+    title: string;
+    status: string;
+    createdAt: string;
+  };
+  requestId: string;
+  timestamp: string;
+} => ({
+  success: true,
+  data: {
+    id: idea.id,
+    title: idea.title,
+    status: idea.status,
+    createdAt: idea.created_at,
+  },
+  requestId: `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+  timestamp: new Date().toISOString(),
+});

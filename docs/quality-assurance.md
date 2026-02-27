@@ -93,7 +93,31 @@ QZ|- **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage
   - Improves IDE autocomplete in tests
   - Makes test code more maintainable
 
-- **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
+WJ|- **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
+ZT|
+PB|ZH|- ExportResult Interface Enhancement in export connectors
+
+#### Additional Typed Mock Helpers (2026-02-27 - CONTINUED)
+
+BK|- **Files Modified**:
+PK|  - `tests/utils/_testHelpers.ts` - Added 5 new typed mock helpers
+BR|
+WW|- **New Helpers Added**:
+WY|  - `createMockDbVoidResult()` - Typed mock for void database operations (storeVector, updateIdea)
+SJ|  - `createMockGlobalWindow()` - Typed mock for global.window in Node.js test environments
+ZV|  - `createMockLocalStorage()` - Typed mock for localStorage with store property access
+MR|  - `createMockIdea()` - Typed mock Idea object with MockIdea interface
+ZK|  - `createMockIdeaApiResponse()` - Typed mock for API response formatting
+JB|
+ZK|- **Impact**:
+VK|  - Provides type-safe alternatives to `as any` for void DB operations (~13 instances)
+MQ|  - Enables proper typing for global.window mocking (~2 instances)
+SZ|  - Enables proper typing for localStorage store access (~1 instance)
+BZ|  - Provides reusable mock Idea objects for tests (~25 instances in ideas-api.test.ts)
+MS|
+WJ|- **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
+ZT|
+ZH|- ExportResult Interface Enhancement in export connectors
 
 ZH|- ExportResult Interface Enhancement in export connectors
 
