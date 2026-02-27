@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import {
   trackSessionStart,
   trackSessionEnd,
@@ -20,6 +20,11 @@ import {
  * const { getSessionDuration, getPageDuration } = useSessionDuration();
  */
 export function useSessionDuration() {
+  const sessionStartTime = useRef<number>(0);
+  const pageStartTime = useRef<number>(0);
+  const isInitialized = useRef<boolean>(false);
+  const pageStartTime = useRef<number>(0);
+  const isInitialized = useRef<boolean>(false);
   const sessionStartTime = { current: 0 };
   const pageStartTime = { current: Date.now() };
   const isInitialized = { current: false };
