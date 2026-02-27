@@ -138,7 +138,7 @@ Then the share event should be tracked for analytics
 
 ## Resources
 
-- [ShareButton Component](./src/components/ShareButton.tsx)
+- `src/components/ShareButton.tsx`
 - [Web Share API MDN](https://developer.mozilla.org/en-US/docs/Web/API/Web_Share_API)
 - [User Story Engineer Guide](../../user-story-engineer.md)
 - [User Personas](../personas.md)
