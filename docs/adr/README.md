@@ -23,9 +23,16 @@ Each ADR follows this structure:
 
 ## Index
 
-| ADR                                          | Title                         | Status   | Date       |
+| TK|| ADR | Title | Status | Date |
+| PT|| -------------------------------------------- | ----------------------------- | -------- | ---------- |
+| ZJ|| [ADR-000](./ADR-000-template.md) | ADR Template | Template | - |
+| HN|| [ADR-001](./ADR-001-ai-abstraction-layer.md) | AI Provider Abstraction Layer | Accepted | 2026-02-23 |
+| ZM|| [ADR-002](./ADR-002-supabase-database.md) | Supabase as Primary Database | Accepted | 2026-02-27 |
+| ZM|| [ADR-003](./ADR-003-rest-api-design.md) | REST API Design Patterns | Accepted | 2026-02-27 |
+| ZM|| [ADR-004](./ADR-004-resilience-patterns.md) | Resilience Patterns | Accepted | 2026-02-27 |
+| ZM|| [ADR-005](./ADR-005-supabase-auth.md) | Supabase Authentication | Accepted | 2026-02-27 |
 | -------------------------------------------- | ----------------------------- | -------- | ---------- |
-| [ADR-000](./ADR-000-template.md)             | ADR Template                  | Template | -          |
+| [ADR-000](./ADR-000-template.md) | ADR Template | Template | - |
 | [ADR-001](./ADR-001-ai-abstraction-layer.md) | AI Provider Abstraction Layer | Accepted | 2026-02-23 |
 
 ## Creating a New ADR

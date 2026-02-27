@@ -2,7 +2,7 @@
 
 ## Autonomous RnD Specialist - Long-term Memory
 
-Last Updated: 2026-02-26
+#KY|Last Updated: 2026-02-27
 
 ### Mission
 
@@ -26,13 +26,29 @@ Deliver small, safe, measurable improvements strictly inside the RnD domain.
 - ZERO warnings
 - Small atomic diff
 
+YQ|#### 2026-02-27
 
-#### 2026-02-26
+- **Issue Executed**: #1933 - Add architecture decision records (ADRs) for major decisions
+- **Changes**:
+  - ADR-002: Document Supabase as Primary Database and Backend Services
+  - ADR-003: Document REST API Design Patterns with Next.js App Router
+  - ADR-004: Document Resilience Patterns (Circuit Breaker, Retry, Timeout)
+  - ADR-005: Document Supabase Authentication approach
+  - Updated ADR index in README.md
+- **Technical Details**:
+  - Total ADRs increased from 2 to 6 (including template)
+  - ADRs capture key architectural decisions
+  - Follows Michael Nygard's ADR format
+- **Verification**:
+  - npm run lint passes (0 warnings)
+  - npm run type-check passes
+- **PR**: #1961 - https://github.com/cpa03/ai-first/pull/1961
+- **Status**: Open
 
 - **Issue Executed**: #1927 - Optimize database queries in getIdeaStats for large datasets
 - **Changes**:
   - Replaced N+1 query pattern with 4 efficient SQL queries using `.in()` filters
-  - OLD: 1 + N + N*M queries (potentially 1000+ for active users)
+  - OLD: 1 + N + N\*M queries (potentially 1000+ for active users)
   - NEW: 4 constant queries regardless of data size
   - Query reduction: ~99.6% decrease in database round trips
 - **Technical Details**:
