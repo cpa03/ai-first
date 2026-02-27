@@ -37,11 +37,6 @@ Each ADR follows this structure:
 | [ADR-009](./ADR-009-vercel-hosting.md)         | Use Vercel for Primary Hosting         | Accepted | 2026-02-27 |
 | [ADR-010](./ADR-010-github-actions-ci-cd.md)   | GitHub Actions for CI/CD               | Accepted | 2026-02-27 |
 
-| ADR                                          | Title                         | Status   | Date       |
-| -------------------------------------------- | ----------------------------- | -------- | ---------- |
-| [ADR-000](./ADR-000-template.md)             | ADR Template                  | Template | -          |
-| [ADR-001](./ADR-001-ai-abstraction-layer.md) | AI Provider Abstraction Layer | Accepted | 2026-02-23 |
-
 ## Creating a New ADR
 
 1. Copy `ADR-000-template.md` to `ADR-XXX-short-title.md` (increment XXX)
