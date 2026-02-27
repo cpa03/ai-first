@@ -1004,9 +1004,9 @@ const Button = dynamic(() => import('@/components/Button'), {
 
 **Changes:**
 
-|X|File|Change|
-|---|-----|-------|
-| |`src/components/KeyboardShortcutsHelp.tsx`|Complete rewrite with expanded features|
+| X   | File                                       | Change                                  |
+| --- | ------------------------------------------ | --------------------------------------- |
+|     | `src/components/KeyboardShortcutsHelp.tsx` | Complete rewrite with expanded features |
 
 **Technical Implementation:**
 
@@ -1039,13 +1039,61 @@ const Button = dynamic(() => import('@/components/Button'), {
 
 **Verification:**
 
-|X|Check|Status|
-|---|------|------|
-| |TypeScript|✅ Pass|
-| |ESLint|✅ Pass (0 warnings)|
-| |Build|✅ Pass|
+| X   | Check      | Status               |
+| --- | ---------- | -------------------- |
+|     | TypeScript | ✅ Pass              |
+|     | ESLint     | ✅ Pass (0 warnings) |
+|     | Build      | ✅ Pass              |
 
 **PR:** #1951
+
+---
+
+**Last Updated:** 2026-02-27
+
+---
+
+## Recent Improvements (2026-02-27)
+
+### Add SEO Metadata and ErrorBoundary to Login/Signup Pages
+
+**Issue:** Proactive scan found login and signup pages missing page-specific metadata for SEO.
+
+**Changes:**
+
+| X   | File                        | Change                                 |
+| --- | --------------------------- | -------------------------------------- |
+|     | `src/app/login/layout.tsx`  | New file with metadata + ErrorBoundary |
+|     | `src/app/signup/layout.tsx` | New file with metadata + ErrorBoundary |
+
+**Technical Implementation:**
+
+1. **Page-specific SEO metadata:**
+   - Login: title "Login | IdeaFlow", description for sign-in
+   - Signup: title "Sign Up | IdeaFlow", description for account creation
+   - Robots: noindex, nofollow for auth pages (prevents indexing of auth pages)
+
+2. **ErrorBoundary wrapping:**
+   - Consistent with other routes (clarify, dashboard, results)
+   - Provides user-friendly fallback UI on errors
+   - Allows retry or navigation to home
+
+**Acceptance Criteria Met:**
+
+- ✅ Page-specific metadata for login and signup
+- ✅ ErrorBoundary with fallback UI
+- ✅ Robots noindex/nofollow for auth pages
+- ✅ Consistent with existing layout pattern
+
+\*\*Verification:
+
+| X   | Check      | Status               |
+| --- | ---------- | -------------------- |
+|     | TypeScript | ✅ Pass              |
+|     | ESLint     | ✅ Pass (0 warnings) |
+|     | Build      | ✅ Pass              |
+
+**PR:** #1958
 
 ---
 
