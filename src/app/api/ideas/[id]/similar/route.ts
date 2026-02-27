@@ -17,13 +17,15 @@ import { findSimilarIdeas } from '@/lib/similarity-service';
  * - threshold: Minimum similarity threshold (0-1, default: 0.7)
  */
 async function handleGet(context: ApiContext) {
-  const { request, rateLimit, params } = context;
+  const { request, rateLimit } = context;
   const url = new URL(request.url);
 
   const limit = parseInt(url.searchParams.get('limit') || '5', 10);
   const threshold = parseFloat(url.searchParams.get('threshold') || '0.7');
 
-  const ideaId = params?.id;
+  // Extract idea ID from URL path: /api/ideas/[id]/similar
+  const segments = url.pathname.split('/').filter(Boolean);
+  const ideaId = segments.at(-2);
 
   if (!ideaId) {
     throw new Error('Idea ID is required');

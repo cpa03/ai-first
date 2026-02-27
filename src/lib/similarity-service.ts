@@ -95,7 +95,7 @@ export async function findSimilarIdeas(
     filteredResults.map(
       async (result: { idea_id: string; similarity: number }) => {
         try {
-          const idea = await dbService.getIdeaById(result.idea_id);
+          const idea = await dbService.getIdea(result.idea_id);
 
           // Only include ideas belonging to the user and not deleted
           if (idea && idea.user_id === userId && !idea.deleted_at) {
