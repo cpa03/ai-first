@@ -13,6 +13,7 @@ import {
   ANALYTICS_EVENTS,
   trackIdeaSubmit,
   trackCopyAction,
+  trackFunnelStep,
 } from '@/lib/analytics';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
@@ -85,6 +86,9 @@ export default function HomePageClient() {
 
       // Growth: Track idea submission
       trackIdeaSubmit(submittedIdeaId);
+
+      // Growth: Track funnel step - idea submission started (step 1 of 4)
+      trackFunnelStep('idea_submission', 1, 4);
 
       router.push(
         `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`

@@ -12,25 +12,18 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 
 ### Completed Improvements
 
-KB|| Date       | PR    | Description                                      | Impact                              |
-NB|| ---------- | ----- | ------------------------------------------------ | ----------------------------------- |
-NN|| 2026-02-27 | #1997 | Add session duration tracking for retention metrics | Growth - retention analytics foundation |
-NN|| 2026-02-27 | #1976 | Add idea search functionality to GET /api/ideas  | User experience - find ideas faster |
-NN|| 2026-02-27 | #1960 | Add user preferences persistence hook            | User retention & personalization    |
-TR|| 2026-02-27 | #1954 | Add push notification permission hooks           | User engagement                     |
-NB|| ---------- | ----- | ------------------------------------------------ | ----------------------------------- |
-NN|| 2026-02-27 | #1997 | Add session duration tracking for retention metrics | Growth - retention analytics foundation |
-NN|| 2026-02-27 | #1976 | Add idea search functionality to GET /api/ideas  | User experience - find ideas faster |
-| ---------- | ----- | ------------------------------------------------ | ----------------------------------- |
-| 2026-02-27 | #1976 | Add idea search functionality to GET /api/ideas  | User experience - find ideas faster |
-| 2026-02-27 | #1960 | Add user preferences persistence hook            | User retention & personalization    |
-| 2026-02-27 | #1954 | Add push notification permission hooks           | User engagement                     |
-| 2026-02-26 | #1924 | Add A/B testing framework for growth experiments | Growth experimentation              |
-| 2026-02-26 | #1883 | Add referral link feature for viral loops        | Viral growth                        |
-| 2026-02-25 | #1855 | Add user onboarding guided tour                  | User activation                     |
-| 2026-02-25 | #1837 | Add analytics event tracking foundation          | Growth measurement                  |
-| 2026-02-25 | #1823 | Add PWA web app manifest for mobile              | Mobile installability               |
-| 2026-02-25 | #1770 | Add OG image and JSON-LD structured data         | SEO + Social sharing                |
+HR|KB|| Date | PR | Description | Impact |
+KR|NB|| ---------- | ----- | ------------------------------------------------ | ----------------------------------- |
+ST|NN|| 2026-02-27 | #2008 | Add funnel analytics for conversion tracking | Growth - measure user conversion |
+ST|NN|| 2026-02-27 | #1997 | Add session duration tracking for retention metrics | Growth - retention analytics foundation |
+JP|NN|| 2026-02-27 | #1976 | Add idea search functionality to GET /api/ideas | User experience - find ideas faster |
+ZK|NN|| 2026-02-27 | #1960 | Add user preferences persistence hook | User retention & personalization |
+VN|TR|| 2026-02-27 | #1954 | Add push notification permission hooks | User engagement |
+XH|| 2026-02-26 | #1924 | Add A/B testing framework for growth experiments | Growth experimentation |
+TR|| 2026-02-26 | #1883 | Add referral link feature for viral loops | Viral growth |
+XZ|| 2026-02-25 | #1855 | Add user onboarding guided tour | User activation |
+XV|| 2026-02-25 | #1837 | Add analytics event tracking foundation | Growth measurement |
+TJ|| 2026-02-25 | #1823 | Add PWA web app manifest for mobile | Mobile installability |
 
 ### Identified Opportunities
 
@@ -42,11 +35,10 @@ NN|| 2026-02-27 | #1976 | Add idea search functionality to GET /api/ideas  | Use
 6. ~~Email "Send to Self"~~ - Implemented with #1892
 7. ~~User Preferences~~ - Implemented with #1960
 8. ~~Push Notifications~~ - Implemented with #1954
-VZ|9. ~~Idea Search~~ - Implemented with #1976
-XZ|10. ~~Session Duration Tracking~~ - Implemented with #1997
-VJ|11. Funnel Analytics - Track conversion through key user journeys (Future)
-10. Session Duration Tracking - Track time on page and session duration for retention metrics (Future)
-11. Funnel Analytics - Track conversion through key user journeys (Future)
+   VZ|9. ~~Idea Search~~ - Implemented with #1976
+   XZ|10. ~~Session Duration Tracking~~ - Implemented with #1997
+9. ~~Session Duration Tracking~~ - Implemented with #1997
+10. ~~Funnel Analytics~~ - Track conversion through key user journeys (Implemented)
 
 ## Workflow
 

@@ -6,7 +6,7 @@ import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
-import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
+import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import dynamic from 'next/dynamic';
 
 // Lazy load Button and LoadingSpinner for code splitting
@@ -163,6 +163,9 @@ function ResultsContent() {
 
         setIdea(ideaData.data);
         setSession(sessionData?.data || null);
+
+        // Growth: Track funnel completion - user reached results (step 4 of 4)
+        trackFunnelStep('idea_submission', 4, 4);
       } catch (err) {
         logger.error('Error fetching results:', err);
         setError(
