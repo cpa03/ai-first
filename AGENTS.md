@@ -131,6 +131,7 @@ The `iterate.yml` workflow runs continuously with 5 agent jobs:
 | bugfix    | RepoKeeper | Bug fixing              |
 | Palette   | RepoKeeper | UX improvements         |
 | Flexy     | RepoKeeper | Modularity improvements |
+| Brocula   | RepoKeeper | Browser console fixes   |
 
 ## Configuration Files
 
