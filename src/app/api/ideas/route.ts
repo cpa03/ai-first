@@ -11,6 +11,9 @@ import { APP_CONFIG } from '@/lib/config/app';
 import { STATUS_CODES } from '@/lib/config/http';
 import { generateEmbedding } from '@/lib/embedding-service';
 import { storeIdeaEmbedding } from '@/lib/similarity-service';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('IdeasAPI');
 
 /**
  * GET /api/ideas
@@ -166,7 +169,10 @@ async function handlePost(context: ApiContext) {
       )
     )
     .catch((error) => {
-      console.error('Failed to generate embedding for idea:', error);
+      logger.error('Failed to generate embedding for idea', {
+        ideaId: savedIdea.id,
+        error: error instanceof Error ? error.message : String(error),
+      });
     });
 
   return standardSuccessResponse(
