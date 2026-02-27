@@ -207,3 +207,22 @@ JX|- architect (Strategy & Triage)
 #HB|- Brocula (Browser console fixes) - **was missing**
 
 YX|This was discovered during proactive scanning - docs/ai-agent-engineer.md had correct info, but AGENTS.md was outdated.
+
+#TB|This was discovered during proactive scanning - docs/ai-agent-engineer.md had correct info, but AGENTS.md was outdated.
+
+#RH|### Missing Skill Discovery (2026-02-27)
+
+#QT|During proactive scan of agent configurations:
+
+#QT|1. **Issue Found**: CMZ.json and oh-my-opencode.json referenced a non-existent skill `frontend-ui-ux`
+#YQ|2. **Impact**: Agent configs had broken skill reference
+#JM|3. **Fix Applied**: Created `.opencode/skills/frontend-ui-ux/SKILL.md`
+#NH|4. **Verification**: Skills count increased from 33 to 34
+
+#YH|Key verification command:
+
+#QW|```bash
+#YQ|ls .opencode/skills/*/SKILL.md | wc -l
+#MM|```
+
+#QZ|Always verify referenced skills exist in `.opencode/skills/` directory.

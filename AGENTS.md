@@ -47,7 +47,7 @@ CMZ automatically delegates based on task type:
 
 ## Skills Library
 
-33 specialized skills available in `.opencode/skills/`:
+34 specialized skills available in `.opencode/skills/`:
 
 ### Process Skills
 
