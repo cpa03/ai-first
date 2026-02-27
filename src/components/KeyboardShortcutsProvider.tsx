@@ -4,6 +4,7 @@ import KeyboardShortcutsHelp, {
   useKeyboardShortcutsHelp,
 } from '@/components/KeyboardShortcutsHelp';
 import Tooltip from '@/components/Tooltip';
+import SessionTracker from '@/components/SessionTracker';
 import {
   createContext,
   useContext,
@@ -49,6 +50,7 @@ export function KeyboardShortcutsProvider({
 
   return (
     <KeyboardShortcutsContext.Provider value={value}>
+      <SessionTracker />
       {children}
       <KeyboardShortcutsHelp isOpen={isOpen} onClose={closeHelp} />
     </KeyboardShortcutsContext.Provider>
