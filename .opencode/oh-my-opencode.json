@@ -30,6 +30,9 @@
     },
     "atlas": {
       "model": "opencode/kimi-k2.5-free"
+    },
+    "repokeeper": {
+      "model": "opencode/kimi-k2.5-free"
     }
   },
   "categories": {
@@ -102,6 +105,11 @@
       "model": "opencode/minimax-m2.1-free",
       "category": "general",
       "description": "Agent using Minimax M2.1 model for balanced performance"
+    },
+    "repokeeper": {
+      "enabled": true,
+      "model": "opencode/kimi-k2.5-free",
+      "description": "Repository maintenance and cleanup agent"
     }
   },
   "mcp": {
