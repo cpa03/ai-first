@@ -10,7 +10,7 @@
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - Supabase account (free tier)
 - GitHub account (for repository automation)
 
