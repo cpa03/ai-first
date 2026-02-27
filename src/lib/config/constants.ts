@@ -384,46 +384,9 @@ export const RATE_LIMIT_STORE_CONFIG = {
 } as const;
 
 export { CACHE_CONFIG } from './cache';
-/**
- * Content Security Policy configuration
- */
-export const CSP_CONFIG = {
-  DIRECTIVES: {
-    'default-src': ["'self'"],
-    'script-src': ["'self'", "'nonce-placeholder'"],
-    'style-src': ["'self'", "'unsafe-inline'"],
-    'img-src': ["'self'", 'data:', 'https:', 'blob:'],
-    'font-src': ["'self'", 'data:'],
-    'object-src': ["'none'"],
-    'base-uri': ["'self'"],
-    'form-action': ["'self'"],
-    'frame-ancestors': ["'none'"],
-    'upgrade-insecure-requests': [],
-    'connect-src': [
-      "'self'",
-      'https://*.supabase.co',
-      'https://api.openai.com',
-      'https://api.anthropic.com',
-    ],
-    'worker-src': ["'self'"],
-    'manifest-src': ["'self'"],
-  } as const,
 
-  /**
-   * Permissions Policy directives
-   */
-  PERMISSIONS_POLICY: [
-    'camera=()',
-    'microphone=()',
-    'geolocation=()',
-    'browsing-topics=()',
-    'payment=()',
-    'usb=()',
-    'magnetometer=()',
-    'gyroscope=()',
-    'accelerometer=()',
-  ] as const,
-} as const;
+// Re-export CSP_CONFIG from csp-config module for backward compatibility
+export { CSP_CONFIG, type CspConfig } from './csp-config';
 
 export { PII_REDACTION_CONFIG } from './pii-redaction-config';
 

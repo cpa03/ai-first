@@ -199,8 +199,6 @@ export type {
   APITimeouts,
 } from './time';
 
-
-
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 export type { HealthConfig, MemoryConfig } from './health';
 
@@ -211,3 +209,6 @@ export {
   RATE_LIMIT_ERROR_CONFIG,
   type ErrorConfig,
 } from './error-config';
+
+// CSP Configuration (extracted from constants.ts for modularity)
+export { CSP_CONFIG, type CspConfig } from './csp-config';
