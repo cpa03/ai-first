@@ -10,6 +10,7 @@ This directory contains user-downloadable templates for project planning and man
 | [Roadmap Template](./roadmap_template.md)       | Project roadmap and milestone planning template |
 | [Tasks Template](./tasks_template.md)           | Task breakdown and management template          |
 | [User Story Template](./user-story_template.md) | User story writing template                     |
+| [Specialist User Story Template](./specialist-user-story_template.md) | User story template for specialist roles |
 
 ## Usage
 
