@@ -45,7 +45,7 @@ This guide provides comprehensive information for Developer Experience (DX) Engi
 
 | Tool    | Version | Installation                               |
 | ------- | ------- | ------------------------------------------ |
-| Node.js | 18+     | `nvm install 18 && nvm use 18`             |
+JT|| Node.js | 20+     | `nvm install 20 && nvm use 20`
 | npm     | 9+      | Comes with Node.js                         |
 | Git     | 2.x     | System package manager                     |
 | VS Code | Latest  | [Download](https://code.visualstudio.com/) |
@@ -459,7 +459,7 @@ DEBUG=eslint:* npm run lint
 
 For new developers:
 
-- [ ] Node.js 18+ installed
+- [ ] Node.js 20+ installed
 - [ ] Repository cloned
 - [ ] Dependencies installed (`npm install`)
 - [ ] Environment variables configured (`.env.local`)
