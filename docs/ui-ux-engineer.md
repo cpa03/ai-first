@@ -1324,7 +1324,32 @@ npm test -- --testNamePattern="loading"
    - **Fix:** Added 'danger' variant to Button component and updated dashboard to use it
    - **Status:** Resolved in this PR
 
+8. **Dashboard Action Buttons Hardcoded Styles (PENDING)**
+   - Continue, View, and Delete buttons in dashboard table use hardcoded Tailwind color classes
+   - **Files:** `src/app/dashboard/page.tsx` (lines 405, 412, 420)
+   - **Issue:** Uses `text-indigo-600`, `text-green-600`, `text-red-600` instead of Button component variants
+   - **Recommendation:** Refactor to use Button component with `variant="ghost"`, `variant="outline"`, `variant="danger"`
+   - **Status:** Pending - requires JSX refactoring
+
+9. **NotificationPreferences Button Hardcoded Styles (PENDING)**
+   - Browser notification enable/disable buttons use hardcoded Tailwind classes
+   - **File:** `src/components/NotificationPreferences.tsx` (lines 166, 175, 189)
+   - **Issue:** Uses `text-red-600`, `text-primary-600` instead of Button component variants
+   - **Recommendation:** Refactor to use Button component with appropriate variants
+   - **Status:** Pending - requires JSX refactoring
+   - Delete button in dashboard used hardcoded red Tailwind classes instead of Button variant
+   - **File:** `src/app/dashboard/page.tsx`
+   - **Fix:** Added 'danger' variant to Button component and updated dashboard to use it
+   - **Status:** Resolved in this PR
+
 ### Technical Debt
+
+4. **Hardcoded Button Colors in Table Actions**
+   - Table action buttons (Continue, View, Delete) use hardcoded Tailwind color classes
+   - **Files:** `src/app/dashboard/page.tsx`, `src/components/NotificationPreferences.tsx`
+   - **Action:** Replace with Button component variants for consistency and maintainability
+
+5. **TypeScript Metrics Type Errors (RESOLVED)**
 
 6. **TypeScript Metrics Type Errors (RESOLVED)**
    - Metrics variables in `src/lib/metrics.ts` were typed as `unknown`
