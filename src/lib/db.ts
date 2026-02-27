@@ -694,13 +694,13 @@ export class DatabaseService {
    *
    * @param userId - The user ID to get ideas for
    * @param pagination - Pagination options (page, pageSize)
-   * @param filters - Optional filters (status)
+   * @param filters - Optional filters (status, search)
    * @returns Paginated result with ideas and metadata
    */
   async getUserIdeasPaginated(
     userId: string,
     pagination: PaginationOptions = {},
-    filters?: { status?: Idea['status'] | 'all' }
+    filters?: { status?: Idea['status'] | 'all'; search?: string }
   ): Promise<PaginatedResult<Idea>> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
@@ -730,6 +730,18 @@ export class DatabaseService {
     if (filters?.status && filters.status !== 'all') {
       countQuery = countQuery.eq('status', filters.status);
       dataQuery = dataQuery.eq('status', filters.status);
+    }
+
+    // Apply search filter if provided (searches in title and raw_text)
+    if (filters?.search && filters.search.trim()) {
+      const searchTerm = `%${filters.search.trim().toLowerCase()}%`;
+      // Use OR filter for searching across multiple columns
+      countQuery = countQuery.or(
+        `title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`
+      );
+      dataQuery = dataQuery.or(
+        `title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`
+      );
     }
 
     const { count, error: countError } = await countQuery;
