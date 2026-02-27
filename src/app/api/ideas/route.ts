@@ -18,6 +18,7 @@ import { STATUS_CODES } from '@/lib/config/http';
  *
  * Query Parameters:
  * - status: Filter by status ('draft', 'clarified', 'breakdown', 'completed', 'all')
+ * - search: Search term to filter ideas by title or content
  * - limit: Number of items per page (default: from APP_CONFIG)
  * - page: Page number (1-indexed, default: 1)
  *
@@ -30,6 +31,7 @@ async function handleGet(context: ApiContext) {
   const url = new URL(request.url);
 
   const status = url.searchParams.get('status');
+  const search = url.searchParams.get('search');
   const limit = parseInt(
     url.searchParams.get('limit') ||
       String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT),
@@ -85,6 +87,7 @@ async function handleGet(context: ApiContext) {
         | 'completed'
         | 'all'
         | undefined,
+      search: search || undefined,
     }
   );
 
