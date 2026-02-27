@@ -295,7 +295,6 @@ export default function DashboardPage() {
           <ReferralLink referralCode={referralCode} />
         </div>
       )}
-      BV| {/* Filter */}
       {/* Filter */}
       <div className="mb-6">
         <label htmlFor="status-filter" className="sr-only">

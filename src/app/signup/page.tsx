@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
+import Alert from '@/components/Alert';
 import { OAUTH_PROVIDER_COLORS } from '@/lib/config';
 
 export default function SignupPage() {
@@ -166,9 +167,9 @@ export default function SignupPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-sm">
+            <Alert type="error" title="Sign Up Error">
               {error}
-            </div>
+            </Alert>
           )}
 
           <div className="space-y-4">
