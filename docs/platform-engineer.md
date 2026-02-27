@@ -126,3 +126,10 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
 #QT| - File should end at line 307 with: GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #QT| - ISSUE: Cannot push workflow changes due to GitHub App missing workflows permission
 #QP| - Status: BLOCKED - manual fix required
+
+- **2026-02-27**: PR #2009: fix(platform): remove duplicate variable declarations in useSessionDuration
+  - Fixed TypeScript compilation error in `src/hooks/useSessionDuration.ts`
+  - File had duplicate declarations for sessionStartTime, pageStartTime, isInitialized
+  - Lines 26-30 were duplicates of lines 23-25, using plain objects instead of useRef
+  - Caused 'Cannot redeclare block-scoped variable' TypeScript error
+  - Verified: type-check passes, lint passes with zero warnings, 1491 tests pass
