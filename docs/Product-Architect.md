@@ -269,14 +269,26 @@ SP|- **Verification Checklist**:
 #HV| - Add re-exports in legacy locations for backward compatibility
 #HV| - Verify all import paths still work
 
-### 2026-02-27: CSP_CONFIG Modularization
-
-- **Issue**: Ongoing config modularization effort (constants.ts reduction)
-- **Action**: Extracted CSP_CONFIG into dedicated module
-- **Files Changed**:
-  - Created: `src/lib/config/csp-config.ts`
-  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
-  - Modified: `src/lib/config/index.ts` (export)
-- **Result**: CSP configuration now has its own domain-specific module
-- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
-- **PR**: https://github.com/cpa03/ai-first/pull/1992
+VK|### 2026-02-27: CSP_CONFIG Modularization
+KQ|
+NV|- **Issue**: Ongoing config modularization effort (constants.ts reduction)
+QT|- **Action**: Extracted CSP_CONFIG into dedicated module
+TB|- **Files Changed**:
+TZ|  - Created: `src/lib/config/csp-config.ts`
+SX|  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+RK|  - Modified: `src/lib/config/index.ts` (export)
+KP|- **Result**: CSP configuration now has its own domain-specific module
+TX|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
+MX|- **PR**: https://github.com/cpa03/ai-first/pull/1992
+YQ|
+YZ|### 2026-02-27: CACHE_TTL_CONFIG Modularization
+YM|
+XZ|- **Issue**: Ongoing config modularization effort (constants.ts reduction)
+WR|- **Action**: Extracted CACHE_TTL_CONFIG into dedicated module
+TB|- **Files Changed**:
+YJ|  - Created: `src/lib/config/cache-ttl-config.ts`
+SX|  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+RK|  - Modified: `src/lib/config/index.ts` (export)
+JM|- **Result**: Reduced constants.ts from 999 to 988 lines (-11 lines)
+WR|- **Verification**: TypeScript type-check passes, backward compatibility maintained
+TH|- **PR**: https://github.com/cpa03/ai-first/pull/2010
