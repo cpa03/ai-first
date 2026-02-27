@@ -25,7 +25,12 @@ async function handleGet(context: ApiContext) {
 
   const checks: Record<
     string,
-    { status: 'ready' | 'not_ready'; responseTime?: number; error?: string }
+    {
+      status: 'ready' | 'not_ready';
+      responseTime?: number;
+      error?: string;
+      details?: unknown;
+    }
   > = {};
   let allReady = true;
 
