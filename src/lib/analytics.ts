@@ -204,7 +204,13 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // SECURITY: Use crypto.randomUUID() for cryptographically secure session IDs
+      // Falls back to timestamp-based ID if crypto is not available (rare edge case)
+      try {
+        sessionId = `session_${crypto.randomUUID()}`;
+      } catch {
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      }
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
