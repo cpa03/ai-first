@@ -32,10 +32,12 @@ async function handleGet(context: ApiContext) {
   // Check database connectivity
   const dbStartTime = Date.now();
   try {
-    const dbHealthy = await dbService.checkConnection();
+    const connectionHealth = await dbService.checkConnection();
+    const dbHealthy = connectionHealth.client && connectionHealth.admin;
     checks.database = {
       status: dbHealthy ? 'ready' : 'not_ready',
       responseTime: Date.now() - dbStartTime,
+      details: connectionHealth,
     };
     if (!dbHealthy) {
       allReady = false;
