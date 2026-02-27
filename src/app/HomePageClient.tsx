@@ -17,11 +17,18 @@ import {
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
-    <div className="mt-16 grid md:grid-cols-3 gap-8 animate-pulse">
+    <section aria-hidden="true" className="mt-16 grid md:grid-cols-3 gap-8">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-gray-100 h-32 rounded-lg"></div>
+        <div
+          key={i}
+          className="text-center p-6 rounded-xl bg-white border border-gray-100"
+        >
+          <div className="bg-gray-200 rounded-full w-16 h-16 mx-auto mb-4 animate-pulse" />
+          <div className="h-6 bg-gray-200 rounded mx-auto mb-2 w-3/4 animate-pulse" />
+          <div className="h-4 bg-gray-100 rounded mx-auto w-full animate-pulse" />
+        </div>
       ))}
-    </div>
+    </section>
   ),
 });
 
@@ -29,14 +36,23 @@ const WhyChooseSection = dynamic(
   () => import('@/components/WhyChooseSection'),
   {
     loading: () => (
-      <div className="mt-16 bg-gray-50 rounded-lg p-8 animate-pulse">
-        <div className="h-8 bg-gray-200 rounded mb-6"></div>
+      <section aria-hidden="true" className="mt-16 bg-gray-50 rounded-lg p-8">
+        <div className="h-10 bg-gray-200 rounded mx-auto mb-6 w-3/4 animate-pulse" />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-gray-200 h-20 rounded"></div>
+            <div
+              key={i}
+              className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100"
+            >
+              <div className="bg-gray-200 rounded-full w-6 h-6 flex-shrink-0 mt-1 animate-pulse" />
+              <div className="flex-1">
+                <div className="h-5 bg-gray-200 rounded mb-2 w-1/2 animate-pulse" />
+                <div className="h-4 bg-gray-100 rounded w-3/4 animate-pulse" />
+              </div>
+            </div>
           ))}
         </div>
-      </div>
+      </section>
     ),
   }
 );
