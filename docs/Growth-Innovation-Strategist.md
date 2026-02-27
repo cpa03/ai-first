@@ -12,16 +12,17 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 
 ### Completed Improvements
 
-| Date | PR  | Description | Impact     |
-| ---- | --- | ----------- | ---------- | ----------------------------------------- | ------------------------------------------------ | -------------------------------- |
-| ZJ   |     |             | 2026-02-27 | #1960                                     | Add user preferences persistence hook            | User retention & personalization |
-| XZ   |     | 2026-02-27  | #1954      | Add push notification permission hooks    | User engagement                                  |
-| BR   | ZJ  |             | 2026-02-26 | #1924                                     | Add A/B testing framework for growth experiments | Growth experimentation           |
-| TR   |     | 2026-02-26  | #1883      | Add referral link feature for viral loops | Viral growth                                     |
-| XZ   |     | 2026-02-25  | #1855      | Add user onboarding guided tour           | User activation                                  |
-| XV   |     | 2026-02-25  | #1837      | Add analytics event tracking foundation   | Growth measurement                               |
-| TJ   |     | 2026-02-25  | #1823      | Add PWA web app manifest for mobile       | Mobile installability                            |
-| HP   |     | 2026-02-25  | #1770      | Add OG image and JSON-LD structured data  | SEO + Social sharing                             |
+| Date       | PR    | Description                                      | Impact                              |
+| ---------- | ----- | ------------------------------------------------ | ----------------------------------- |
+| 2026-02-27 | #1976 | Add idea search functionality to GET /api/ideas  | User experience - find ideas faster |
+| 2026-02-27 | #1960 | Add user preferences persistence hook            | User retention & personalization    |
+| 2026-02-27 | #1954 | Add push notification permission hooks           | User engagement                     |
+| 2026-02-26 | #1924 | Add A/B testing framework for growth experiments | Growth experimentation              |
+| 2026-02-26 | #1883 | Add referral link feature for viral loops        | Viral growth                        |
+| 2026-02-25 | #1855 | Add user onboarding guided tour                  | User activation                     |
+| 2026-02-25 | #1837 | Add analytics event tracking foundation          | Growth measurement                  |
+| 2026-02-25 | #1823 | Add PWA web app manifest for mobile              | Mobile installability               |
+| 2026-02-25 | #1770 | Add OG image and JSON-LD structured data         | SEO + Social sharing                |
 
 ### Identified Opportunities
 
@@ -30,8 +31,10 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 3. ~~User Onboarding~~ - Implemented with #1855
 4. ~~Social Sharing~~ - Implemented with Web Share API
 5. ~~Referral System~~ - Implemented with #1883
-6. ~~Email "Send to Self"~~ - Implemented with #1892 8. ~~User Preferences~~ - Implemented with #1960
-   TQ|7. ~~Push Notifications~~ - Implemented with #1954
+6. ~~Email "Send to Self"~~ - Implemented with #1892
+7. ~~User Preferences~~ - Implemented with #1960
+8. ~~Push Notifications~~ - Implemented with #1954
+9. ~~Idea Search~~ - Implemented with #1976
 
 ## Workflow
 
