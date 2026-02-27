@@ -239,6 +239,7 @@ SP|- **Verification Checklist**:
 #HV|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings), Tests ✓ (76 passed)
 #TH|- **PR**: https://github.com/cpa03/ai-first/pull/1964
 #QV|
+
 ### 2026-02-27: PROXY_CONFIG Modularization
 
 - **Issue**: #1901 - "Refactor Large Files: Split db.ts and constants.ts"
@@ -252,6 +253,7 @@ SP|- **Verification Checklist**:
 - **Verification**: TypeScript type-check ✓ (pre-existing jest type issues not related to changes)
 
 ## Lessons Learned (Updated)
+
 #QZ|## Lessons Learned (Updated)
 #HV|
 #HV|4. **Check for Existing Modules**: Before adding new config definitions, search for existing domain-specific modules that may already have the config. Duplicates can cause confusion and maintenance issues.
@@ -266,3 +268,15 @@ SP|- **Verification Checklist**:
 #HV| - Ensure the primary module has all needed properties
 #HV| - Add re-exports in legacy locations for backward compatibility
 #HV| - Verify all import paths still work
+
+### 2026-02-27: CSP_CONFIG Modularization
+
+- **Issue**: Ongoing config modularization effort (constants.ts reduction)
+- **Action**: Extracted CSP_CONFIG into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/csp-config.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+  - Modified: `src/lib/config/index.ts` (export)
+- **Result**: CSP configuration now has its own domain-specific module
+- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
+- **PR**: https://github.com/cpa03/ai-first/pull/1992
