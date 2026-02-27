@@ -332,6 +332,14 @@ All automated work follows this pattern:
 - [Deployment](./docs/deploy.md) - Production deployment guide
 - [Integration Hardening](./docs/integration-hardening.md) - Resilience patterns
 - [Templates](./docs/templates/) - User-facing templates
+- [Cloudflare Deployment](./docs/cloudflare-deploy.md) - Cloudflare-specific deployment
+- [Environment Setup](./docs/environment-setup.md) - Development environment setup
+- [FAQ](./docs/faq.md) - Frequently asked questions
+- [Security Headers](./docs/security-headers.md) - HTTP security headers
+- [Technical Writer Guide](./docs/technical-writer.md) - Documentation standards
+- [Task Security](./docs/task-security.md) - Security considerations for tasks
+- [Phase 1 Implementation Plan](./docs/phase-1-implementation-plan.md) - Phase 1 detailed plan
+- [Integration Engineer](./docs/integration-engineer.md) - Integration patterns guide
 
 ## 🗺️ Roadmap
 
