@@ -248,3 +248,31 @@ YX|This was discovered during proactive scanning - docs/ai-agent-engineer.md had
 #QT|#QW|`
 #QT|
 #QT|#JM|Always verify agents referenced in iterate.yml are defined in configuration files.
+
+### TypeScript Build Failure Fix (2026-02-27)
+
+During proactive scan of the codebase:
+
+1. **Issue Found**: `src/hooks/useSessionDuration.ts` had duplicate variable declarations causing TypeScript errors
+2. **Impact**: Build failure - `npm run type-check` failed with 8 errors
+3. **Root Cause**: Lines 23-30 contained duplicated declarations:
+   - `sessionStartTime` declared 2x (useRef + object literal)
+   - `pageStartTime` declared 3x (useRef x2 + object literal)
+   - `isInitialized` declared 3x (useRef x2 + object literal)
+4. **Fix Applied**: Removed duplicate declarations, kept only useRef versions (lines 23-25)
+5. **Verification**: `npm run type-check` and `npm run lint` both pass with 0 errors
+
+Key verification commands:
+
+```bash
+# Check type errors
+npm run type-check
+
+# Check lint
+npm run lint
+
+# Run tests
+npm test
+```
+
+**Lesson**: Always run type-check and lint during proactive scans to catch build-breaking issues.
