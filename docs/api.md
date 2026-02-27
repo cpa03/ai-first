@@ -29,6 +29,7 @@
 #KM|8. **Track**: User updates task status → `PATCH /api/tasks/[id]`
 #XS|
 #RW|## Base URL
+
 ## Base URL
 
 ```text
@@ -45,21 +46,23 @@ Authorization: Bearer <your-supabase-token>
 ```
 
 ## Common Headers
+
 All API responses include these headers:
 
-| Header | Description | Example |
-| ------ | ----------- | ------- |
-| `X-Request-ID` | Unique identifier for the request (useful for debugging) | `req_1704625200000_abc123` |
-| `X-Correlation-ID` | Correlation ID for tracing requests across services | `corr_abc123def456` |
-| `X-RateLimit-Limit` | Total requests allowed per rate limit window | `60` |
-| `X-RateLimit-Remaining` | Number of requests remaining in current window | `57` |
-| `X-RateLimit-Reset` | ISO 8601 timestamp when rate limit window resets | `2026-01-07T12:05:00Z` |
-| `X-Response-Time` | Request processing time in milliseconds | `45ms` |
-| `X-API-Version` | Current API version (semantic versioning) | `1.0.0` |
-| `X-Error-Code` | Error code if the request failed (errors only) | `VALIDATION_ERROR` |
-| `X-Retryable` | Whether the error is retryable (errors only) | `true` |
+| Header                  | Description                                              | Example                    |
+| ----------------------- | -------------------------------------------------------- | -------------------------- |
+| `X-Request-ID`          | Unique identifier for the request (useful for debugging) | `req_1704625200000_abc123` |
+| `X-Correlation-ID`      | Correlation ID for tracing requests across services      | `corr_abc123def456`        |
+| `X-RateLimit-Limit`     | Total requests allowed per rate limit window             | `60`                       |
+| `X-RateLimit-Remaining` | Number of requests remaining in current window           | `57`                       |
+| `X-RateLimit-Reset`     | ISO 8601 timestamp when rate limit window resets         | `2026-01-07T12:05:00Z`     |
+| `X-Response-Time`       | Request processing time in milliseconds                  | `45ms`                     |
+| `X-API-Version`         | Current API version (semantic versioning)                | `1.0.0`                    |
+| `X-Error-Code`          | Error code if the request failed (errors only)           | `VALIDATION_ERROR`         |
+| `X-Retryable`           | Whether the error is retryable (errors only)             | `true`                     |
 
 **Example Headers:**
+
 ```http
 X-Request-ID: req_1704625200000_abc123
 X-Correlation-ID: corr_abc123def456
@@ -351,9 +354,95 @@ Check database health specifically.
 - `200`: Database is healthy
 - `500`: Database error
 
+ZT|---
+
+### GET /api/health/integrations
+
+Check health status of all external integrations including circuit breakers, export connectors, and rate limiters. This is useful for monitoring external service availability.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "status": "healthy",
+    "timestamp": "2026-01-07T12:00:00Z",
+    "version": "0.1.0",
+    "integrations": [
+      {
+        "service": "openai",
+        "status": "healthy",
+        "state": "closed",
+        "configured": true,
+        "lastChecked": "2026-01-07T12:00:00Z"
+      },
+      {
+        "service": "notion",
+        "status": "healthy",
+        "configured": true,
+        "lastChecked": "2026-01-07T12:00:00Z"
+      }
+    ],
+    "summary": {
+      "total": 5,
+      "healthy": 4,
+      "degraded": 0,
+      "unhealthy": 1,
+      "unknown": 0
+    },
+    "rateLimits": {
+      "servicesTracked": 3,
+      "services": [
+        {
+          "service": "openai",
+          "remaining": 150,
+          "limit": 500,
+          "approaching": false
+        }
+      ]
+    }
+  },
+  "requestId": "req_1234567890_abc123"
+}
+```
+
+**Field Descriptions:**
+
+- `status`: Overall integration health (`healthy`, `degraded`, `unhealthy`)
+- `integrations[]`: Array of individual integration statuses
+  - `service`: Service name (e.g., openai, anthropic, notion)
+  - `status`: Individual service health (`healthy`, `degraded`, `unhealthy`, `unknown`)
+  - `state`: Circuit breaker state (`closed`, `open`, `half-open`)
+  - `configured`: Whether the service is configured
+  - `lastChecked`: Timestamp of last health check
+- `summary`: Aggregated counts of all integrations
+- `rateLimits`: Current rate limit status for tracked services
+  - `approaching`: True if remaining quota is below 20%
+
+**Integration Status Values:**
+
+- `healthy`: Service is operational
+- `degraded`: Service is working but experiencing issues
+- `unhealthy`: Service is down or failing
+- `unknown`: Service status cannot be determined
+
+**Status Codes:**
+
+- `200`: Integrations are healthy
+- `503`: One or more integrations are unhealthy
+
+**Rate Limit:** `strict` (10 requests/minute)
+
+**Caching:** Results are cached for 60 seconds to reduce load on integration services.
+
 ---
 
+VP|## Clarification API
+ST|
+
 ## Clarification API
+
 #SW|
 #XX|The Clarification API helps refine raw ideas by asking targeted questions.
 #QR|
@@ -361,6 +450,7 @@ Check database health specifically.
 #RQ|
 #RT|**User Value:** Users get better task breakdowns when their ideas are clarified with targeted questions.
 #QR|
+
 ### POST /api/clarify/start
 
 Start a new clarification session for an idea.
@@ -448,13 +538,13 @@ All fields in the `options` object are optional:
 #ZQ|
 #YQ|**Request Body:**
 #YQ|
-#YQ|```json
+#YQ|`json
 #YQ|{
 #YQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
 #YQ|  "questionId": "q_001",
 #YQ|  "answer": "We plan to have 5 team members working on this project"
 #YQ|}
-#YQ|```
+#YQ|`
 #YQ|
 #YQ|**Request Field Descriptions:**
 #YQ|
@@ -464,7 +554,7 @@ All fields in the `options` object are optional:
 #YQ|
 #YQ|**Response:**
 #YQ|
-#YQ|```json
+#YQ|`json
 #YQ|{
 #YQ|  "success": true,
 #YQ|  "data": {
@@ -480,7 +570,7 @@ All fields in the `options` object are optional:
 #YQ|  },
 #YQ|  "requestId": "req_1234567890_abc123"
 #YQ|}
-#YQ|```
+#YQ|`
 #YQ|
 #YQ|**Status Codes:**
 #YQ|
@@ -498,11 +588,11 @@ All fields in the `options` object are optional:
 #YQ|
 #YQ|**Request Body:**
 #YQ|
-#YQ|```json
+#YQ|`json
 #YQ|{
 #YQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000"
 #YQ|}
-#YQ|```
+#YQ|`
 #YQ|
 #YQ|**Request Field Descriptions:**
 #YQ|
@@ -510,7 +600,7 @@ All fields in the `options` object are optional:
 #YQ|
 #YQ|**Response:**
 #YQ|
-#YQ|```json
+#YQ|`json
 #YQ|{
 #YQ|  "success": true,
 #YQ|  "data": {
@@ -525,7 +615,7 @@ All fields in the `options` object are optional:
 #YQ|  },
 #YQ|  "requestId": "req_1234567890_abc123"
 #YQ|}
-#YQ|```
+#YQ|`
 #YQ|
 #YQ|**Status Codes:**
 #YQ|
@@ -543,7 +633,7 @@ All fields in the `options` object are optional:
 #ZQ|
 #BP|**Request Body:**
 #WQ|
-#WQ|```json
+#WQ|`json
 #WQ|{
 #WQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
 #WQ|  "refinedIdea": "I want to build a mobile app for tracking fitness goals",
@@ -558,7 +648,7 @@ All fields in the `options` object are optional:
 #WQ|    "constraints": ["Must use React Native", "iOS and Android support"]
 #WQ|  }
 #WQ|}
-#WQ|```
+#WQ|`
 #WQ|
 #WQ|**Request Field Descriptions:**
 #WQ|
@@ -578,7 +668,7 @@ All fields in the `options` object are optional:
 #WQ|
 #WQ|**Response:**
 #WQ|
-#WQ|```json
+#WQ|`json
 #WQ|{
 #WQ|  "success": true,
 #WQ|  "session": {
@@ -624,7 +714,7 @@ All fields in the `options` object are optional:
 #WQ|  },
 #WQ|  "requestId": "req_1234567890_abc123"
 #WQ|}
-#WQ|```
+#WQ|`
 #WQ|
 #WQ|**Status Codes:**
 #WQ|
@@ -797,6 +887,7 @@ console.log(data);
 ---
 
 ## Ideas API
+
 #VW|
 #WP|The Ideas API provides CRUD operations for managing user ideas.
 #PH|
@@ -804,6 +895,7 @@ console.log(data);
 #RQ|
 #RT|**User Value:** Users can submit, view, edit, and delete their project ideas. Secure authentication ensures ideas are protected.
 #PH|
+
 ### GET /api/ideas
 
 Retrieve all ideas for the authenticated user with pagination and filtering.
@@ -1012,9 +1104,119 @@ Authorization: Bearer <your-supabase-token>
 
 **Rate Limit:** `moderate` (30 requests/minute)
 
+YR|---
+
+### GET /api/ideas/[id]/similar
+
+Find similar ideas based on vector embeddings. Uses the `match_vectors` database function for similarity search.
+
+**Query Parameters:**
+
+- `limit` (optional): Maximum number of similar ideas to return (default: 5)
+- `threshold` (optional): Minimum similarity threshold 0-1 (default: 0.7)
+
+**Request:**
+
+```http
+GET /api/ideas/550e8400-e29b-41d4-a716-446655440000/similar?limit=5&threshold=0.7
+Authorization: Bearer <your-supabase-token>
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "similarIdeas": [
+      {
+        "id": "660e8400-e29b-41d4-a716-446655440001",
+        "title": "Build a health tracking app",
+        "similarity": 0.85,
+        "status": "draft",
+        "createdAt": "2026-01-06T12:00:00Z"
+      }
+    ],
+    "count": 1
+  },
+  "requestId": "req_1234567890_abc123"
+}
+```
+
+**Field Descriptions:**
+
+- `similarity`: Score from 0-1 indicating how similar the idea is
+- `count`: Number of similar ideas returned
+
+**Status Codes:**
+
+- `200`: Similar ideas retrieved successfully
+- `401`: Authentication required
+- `403`: Not authorized to access this idea
+- `404`: Idea not found
+- `429`: Rate limit exceeded
+
+**Rate Limit:** `lenient` (60 requests/minute)
+
+---
+
+### GET /api/ideas/[id]/session
+
+Retrieve the clarification/breakdown session associated with an idea.
+
+**Request:**
+
+```http
+GET /api/ideas/550e8400-e29b-41d4-a716-446655440000/session
+Authorization: Bearer <your-supabase-token>
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "bd_1234567890_abc123",
+    "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "completed",
+    "deliverables": [
+      {
+        "id": "del_1",
+        "title": "Core App Development",
+        "description": "Develop main mobile application features",
+        "priority": "high",
+        "estimateHours": 240
+      }
+    ],
+    "timeline": {
+      "startDate": "2026-01-15",
+      "endDate": "2026-04-15",
+      "phases": []
+    },
+    "confidenceScore": 0.85,
+    "estimatedTotalHours": 320
+  },
+  "requestId": "req_1234567890_abc123"
+}
+```
+
+**Status Codes:**
+
+- `200`: Session retrieved successfully
+- `401`: Authentication required
+- `403`: Not authorized to access this idea
+- `404`: Idea not found
+- `429`: Rate limit exceeded
+
+**Rate Limit:** `moderate` (30 requests/minute)
+
 ---
 
 ## Tasks API
+
+## Tasks API
+
 #JM|
 #RK|The Tasks API provides operations for managing tasks within deliverables.
 #SK|
@@ -1022,6 +1224,7 @@ Authorization: Bearer <your-supabase-token>
 #RQ|
 #RT|**User Value:** Users can view, update, and track individual tasks. Task dependencies help users understand the execution path.
 #SK|
+
 ### GET /api/tasks/[id]
 
 Retrieve a specific task by ID.
@@ -1175,6 +1378,7 @@ Authorization: Bearer <your-supabase-token>
 ---
 
 ## Deliverables API
+
 #WM|
 #RT|**User Story Context:** Supports US-EXPORT-001 (export plans), US-BREAKDOWN-001 (task breakdown)
 #RQ|
