@@ -89,26 +89,21 @@ Repository must be strict and machine-actionable. Use below layout:
     ai.ts                ← abstraction layer for model calls
     db.ts
     exports.ts           ← export connectors (Notion/Trello/etc) placeholders
+    prompts/             ← agent prompts (clarifier, breakdown)
 /tests/
 /supabase/
   schema.sql
   migrations/
-  seeds/
-  vector-setup.md
 /ai/
   agent-configs/
     clarifier.yml
     breakdown.yml
     timeline.yml
-  prompts/
-    clarifier/
-    breakdown/
-/.workflows/            ← human-readable workflow docs for agents
 /.github/
   /workflows/
-    ai-agent-orchestrator.yml
-    deploy.yml
-    ci.yml
+    on-pull.yml           ← CI checks on pull requests
+    iterate.yml            ← Iteration processing
+    specialists-unified.yml ← Agent orchestration
   ISSUE_TEMPLATE.md
   PULL_REQUEST_TEMPLATE.md
 /config/
@@ -124,9 +119,9 @@ Repository must be strict and machine-actionable. Use below layout:
 - `README.md` (short badge + quick start)
 - `docs/agent-guidelines.md` (strict rules for agent behavior)
 - `src/app` minimal Next.js scaffold
-- `.github/workflows/ai-agent-orchestrator.yml` (skeleton)
+- `.github/workflows/iterate.yml` (skeleton)
 - `supabase/schema.sql` (minimal tables)
-- `ai/prompts/` (starter prompts)
+- `src/lib/prompts/` (starter prompts)
 - `docs/templates/*.md` (user-downloadable templates)
 
 ---
@@ -149,7 +144,7 @@ Add audit fields and role-based access.
 
 ## 9. AI data design (prompts, memory, safety)
 
-- **Prompts repository**: maintain canonical prompts in `ai/prompts/` as versioned files (yaml + examples). Agents must reference these prompts by ID, not raw string in code.
+- **Prompts repository**: maintain canonical prompts in `src/lib/prompts/` as versioned files (yaml + examples). Agents must reference these prompts by ID, not raw string in code.
 - **Context windowing**: implement strategy in `lib/ai.ts`: short-term context (session), long-term memory (vector store).
 - **Embeddings**: when generating or summarizing user inputs / outputs, store embeddings in `vectors` with metadata.
 - **Red-teaming & Safety**: agent must never leak user secrets; obfuscate PII in logs. See `docs/agent-guidelines.md`.
@@ -172,9 +167,9 @@ Agents will operate via predefined workflows. Rules (must be enforced by agent o
 
 **Workflows to include (skeleton)**
 
-- `ai-agent-orchestrator.yml`: listens to `/ai/` tasks comments, scheduled runs, and PR events to trigger agents.
-- `deploy.yml`: build & deploy to Vercel / Cloudflare.
-- `ci.yml`: runs lint, tests, and basic security checks.
+- `iterate.yml`: Listens to issue comments, scheduled runs, and PR events to trigger agents.
+- `on-pull.yml`: Runs lint, tests, type checks, and basic security checks on pull requests.
+- `specialists-unified.yml`: Unified workflow for all agent specialists.
 
 ---
 
@@ -283,7 +278,7 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 ## 18. Agent-Facing Guidance (short checklist agents must follow)
 
 - Read `agent-policy.md` before any action.
-- Use `ai/prompts/` canonical prompts.
+- Use `src/lib/prompts/` canonical prompts.
 - Create feature branch `agent/<agent>-YYYYMMDD-HHMM`.
 - Open PR with `AGENT=<agent>` in PR title and fill machine fields:
   - `agent_name:`
@@ -301,7 +296,7 @@ Search found multiple existing uses of “Ideaflow / IdeaFlow” (apps, companie
 **Milestone 0 — Repo & Docs** (this week)
 
 - [ ] Add this `blueprint.md` to repo root.
-- [ ] Create `.github/workflows/ai-agent-orchestrator.yml` skeleton.
+- [ ] Create `.github/workflows/iterate.yml` skeleton.
 - [ ] Create `README.md` quickstart.
 - [ ] Initialize Next.js app scaffold in `/src`.
 - [ ] Create Supabase `schema.sql` minimal and push to `supabase/`.
@@ -386,7 +381,7 @@ Each case should map to reusable prompts & templates.
 I will generate a ready-to-commit `blueprint.md` (this file) and a `README.md` starter with badges and a short quickstart. After you confirm, I can:
 
 - create `docs/agent-guidelines.md` (strict agent policies),
-- produce `.github/workflows/ai-agent-orchestrator.yml` skeleton,
+- produce `.github/workflows/iterate.yml` skeleton,
 - create `supabase/schema.sql` minimal.
   (You asked to proceed gradually; say which of the three you want next or I can start with `README.md` + `agent-guidelines.md`.)
 
