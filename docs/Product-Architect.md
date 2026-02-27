@@ -209,7 +209,6 @@ TB|- **Files Changed**:
 - **Verification**: TypeScript type-check passes (duplicate export errors resolved)
 - **PR**: https://github.com/cpa03/ai-first/pull/1945
 
-
 ## Lessons Learned
 
 1. **Pattern for Modularization**: When extracting configs:
@@ -223,7 +222,34 @@ TB|- **Files Changed**:
    - Not removing the original definition from constants.ts when extracting
    - Having duplicate entries in index.ts
 
-3. **Verification Checklist**:
-   - Run `npm run type-check` to catch duplicate identifier errors
-   - Run `npm run lint` to ensure code quality
-   - Verify backward compatibility by ensuring old imports still work
+SP|- **Verification Checklist**:
+
+- Run `npm run type-check` to catch duplicate identifier errors
+- Run `npm run lint` to ensure code quality
+- Verify backward compatibility by ensuring old imports still work
+
+#BQ|### 2026-02-27: CACHE_CONFIG Cleanup
+#QV|
+#QV|- **Issue**: Duplicate CACHE_CONFIG definitions in cache.ts and constants.ts
+#HV|- **Action**: Removed duplicate CACHE_CONFIG from constants.ts, added re-export from cache.ts
+#TB|- **Files Changed**:
+#VV| - Modified: `src/lib/config/constants.ts` (replaced duplicate with re-export from cache.ts)
+#RR| - Modified: `src/lib/config/cache.ts` (added DEFAULT_MAX_SIZE for backward compatibility)
+#YQ|- **Result**: Single source of truth for cache configuration
+#HV|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings), Tests ✓ (76 passed)
+#TH|- **PR**: https://github.com/cpa03/ai-first/pull/1964
+#QV|
+#QZ|## Lessons Learned (Updated)
+#HV|
+#HV|4. **Check for Existing Modules**: Before adding new config definitions, search for existing domain-specific modules that may already have the config. Duplicates can cause confusion and maintenance issues.
+#HV|
+#HV|5. **Backward Compatibility Strategy**: When cleaning up duplicates:
+#BM| - Add the needed property to the existing domain module (e.g., DEFAULT_MAX_SIZE in cache.ts)
+#BM| - Add re-export in constants.ts for backward compatibility
+#BM| - Use @deprecated JSDoc tag to guide future migrations
+#KV|
+#HV|6. **Pattern for Cleanup**: When removing duplicate configs:
+#HV| - Identify all usages of the config across codebase
+#HV| - Ensure the primary module has all needed properties
+#HV| - Add re-exports in legacy locations for backward compatibility
+#HV| - Verify all import paths still work
