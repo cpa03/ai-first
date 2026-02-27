@@ -405,3 +405,166 @@ export const createMockDbCreate = <T extends { id: string }>(
     id,
     ...additionalFields,
   } as T);
+
+// =============================================================================
+// Additional Typed Mock Helpers - Reduce 'as any' in API tests
+// =============================================================================
+
+/**
+ * Creates a mock Next.js Request object for API route testing.
+ * Use this instead of '{} as any' or 'request as any' when testing API routes.
+ *
+ * @example
+ * const request = createMockRequest({
+ *   json: async () => ({ idea: 'My idea' })
+ * });
+ * const response = await POST(request);
+ */
+export interface MockRequestOptions {
+  method?: string;
+  headers?: Record<string, string>;
+  json?: () => Promise<unknown>;
+  text?: () => Promise<string>;
+  body?: string | null;
+  url?: string;
+}
+
+export const createMockRequest = (
+  options: MockRequestOptions = {}
+): Request => {
+  const {
+    method = 'POST',
+    headers = {},
+    json = async () => ({}),
+    text = async () => '',
+    body = null,
+    url = 'http://localhost:3000/api/test',
+  } = options;
+
+  const mockRequest = {
+    method,
+    headers: new Headers(headers),
+    json,
+    text,
+    body,
+    url,
+    clone: function () {
+      return this;
+    },
+    cache: 'default' as RequestCache,
+    credentials: 'same-origin' as RequestCredentials,
+    destination: 'document' as RequestDestination,
+    integrity: '',
+    isHistoryNavigation: false,
+    isReload: false,
+    mode: 'cors' as RequestMode,
+    redirect: 'follow' as RequestRedirect,
+    referrer: '',
+    referrerPolicy: 'no-referrer' as ReferrerPolicy,
+    signal: new AbortSignal(),
+  };
+
+  return mockRequest as unknown as Request;
+};
+
+/**
+ * Creates a typed mock for a database query result.
+ * Use this instead of 'mockResolvedValue({} as any)' for db queries.
+ *
+ * @example
+ * const mockResult = createMockDbQueryResult([{ id: '1', name: 'Test' }]);
+ * mockDbService.getIdeas.mockResolvedValue(mockResult);
+ */
+export interface DbQueryResult<T> {
+  data: T[] | null;
+  error: Error | null;
+  count?: number;
+}
+
+export const createMockDbQueryResult = <T>(
+  data: T[],
+  options: { error?: Error | null; count?: number } = {}
+): Promise<{ data: T[]; error: null } | { data: null; error: Error }> => {
+  const { error = null, count } = options;
+
+  if (error) {
+    return Promise.resolve({ data: null, error });
+  }
+
+  const result: { data: T[]; error: null; count?: number } = { data, error };
+  if (count !== undefined) {
+    result.count = count;
+  }
+  return Promise.resolve(result);
+};
+
+/**
+ * Creates a typed mock for a database single result (e.g., from .single()).
+ * Use this instead of 'mockResolvedValue({} as any)' for db single results.
+ *
+ * @example
+ * const mockResult = createMockDbSingleResult({ id: '1', name: 'Test' });
+ * mockDbService.getIdeaById.mockResolvedValue(mockResult);
+ */
+export const createMockDbSingleResult = <T>(
+  data: T | null,
+  error: Error | null = null
+): Promise<{ data: T; error: null } | { data: null; error: Error }> => {
+  if (error || data === null) {
+    return Promise.resolve({
+      data: null,
+      error: error ?? new Error('No data found'),
+    });
+  }
+  return Promise.resolve({ data, error: null });
+};
+
+/**
+ * Creates a typed mock for a database insert result.
+ * Use this instead of 'mockResolvedValue({} as any)' for db inserts.
+ *
+ * @example
+ * const mockResult = createMockDbInsertResult({ id: 'new-1', name: 'New' });
+ * mockDbService.createIdea.mockResolvedValue(mockResult);
+ */
+export const createMockDbInsertResult = <T extends { id: string }>(
+  data: T,
+  error: Error | null = null
+): Promise<{ data: T; error: null } | { data: null; error: Error }> => {
+  if (error) {
+    return Promise.resolve({ data: null, error });
+  }
+  return Promise.resolve({ data, error: null });
+};
+
+/**
+ * Creates a typed mock for a database update result.
+ * Use this instead of 'mockResolvedValue({} as any)' for db updates.
+ *
+ * @example
+ * const mockResult = createMockDbUpdateResult({ id: '1', updated: true });
+ * mockDbService.updateIdea.mockResolvedValue(mockResult);
+ */
+export const createMockDbUpdateResult = <T>(
+  data: T,
+  error: Error | null = null
+): Promise<{ data: T; error: null } | { data: null; error: Error }> => {
+  if (error) {
+    return Promise.resolve({ data: null, error });
+  }
+  return Promise.resolve({ data, error: null });
+};
+
+/**
+ * Creates a typed mock for a database delete result.
+ * Use this instead of 'mockResolvedValue({} as any)' for db deletes.
+ *
+ * @example
+ * const mockResult = createMockDbDeleteResult();
+ * mockDbService.deleteIdea.mockResolvedValue(mockResult);
+ */
+export const createMockDbDeleteResult = (
+  error: Error | null = null
+): Promise<{ data: null; error: Error | null }> => {
+  return Promise.resolve({ data: null, error });
+};

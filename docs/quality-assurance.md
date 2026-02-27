@@ -70,7 +70,32 @@ This document serves as both a QA activity report and a comprehensive quality as
   - Improved type safety in api-handler tests
   - Reusable helpers for future test improvements
 
+QZ|- **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
+
+#### Extended Typed Mock Helpers (2026-02-27)
+
+- **Files Modified**:
+  - `tests/utils/_testHelpers.ts` - Added 8 new typed mock helpers
+
+- **New Helpers Added**:
+  - `createMockRequest()` - Creates properly typed mock Next.js Request objects
+  - `createMockDbQueryResult<T>()` - Typed mock for database query results
+  - `createMockDbSingleResult<T>()` - Typed mock for database single results (.single())
+  - `createMockDbInsertResult<T>()` - Typed mock for database insert results
+  - `createMockDbUpdateResult<T>()` - Typed mock for database update results
+  - `createMockDbDeleteResult()` - Typed mock for database delete results
+  - `MockRequestOptions` interface - Type-safe request configuration
+  - `DbQueryResult<T>` interface - Type-safe query result type
+
+- **Impact**:
+  - Provides type-safe alternatives to `as any` in API and database tests
+  - Reduces type safety issues in test files
+  - Improves IDE autocomplete in tests
+  - Makes test code more maintainable
+
 - **Related Issue**: #1795 (Type Safety: Eliminate excessive 'any' type usage in test files)
+
+ZH|- ExportResult Interface Enhancement in export connectors
 
 - ExportResult Interface Enhancement in export connectors
 - Test fixes in backend-comprehensive.test.ts
