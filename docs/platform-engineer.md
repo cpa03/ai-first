@@ -108,7 +108,6 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - Eliminated 63 parse warnings by properly resolving TypeScript config
   - WARNING: CI will now fail until existing circular deps are fixed
 
-
 - **2026-02-26**: PR #1941: docs(platform): document parallel CI implementation
   - Addresses issue #1935: Parallelize independent test suites
   - Created comprehensive documentation with full workflow YAML
@@ -117,3 +116,13 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - Solution: Document the implementation, manual workflow creation required
   - NOTE: gh pr create command failed but gh api works
   - Use: gh api repos/owner/repo/pulls -X POST for creating PRs when CLI fails
+
+#BR|
+#KM|- **2026-02-27**: RE-ISSUE: Corrupted YAML in test-unified-workflow still present
+#QT| - PR #1950 claimed to fix this but the corrupted content is STILL in the file
+#QT| - Lines 308-310 still contain: content>, <line_count>207</line_count>, </write_to_file>
+#QT| - Running `node scripts/validate-ci-config.js` shows 1 YAML parsing error
+#QT| - FIX: Remove lines 308-310 from `.github/workflows/test-unified-workflow.yml`
+#QT| - File should end at line 307 with: GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#QT| - ISSUE: Cannot push workflow changes due to GitHub App missing workflows permission
+#QP| - Status: BLOCKED - manual fix required
