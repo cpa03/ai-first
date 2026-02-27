@@ -383,14 +383,7 @@ export const RATE_LIMIT_STORE_CONFIG = {
   DEFAULT_WINDOW_MS: RATE_LIMIT_CONFIG.DEFAULT_WINDOW,
 } as const;
 
-/**
- * Cache configuration defaults
- * Now supports environment variable overrides
- */
-export const CACHE_CONFIG = {
-  DEFAULT_MAX_SIZE: EnvLoader.number('CACHE_SIZE_MAXIMUM', 1000, 100, 10000),
-} as const;
-
+export { CACHE_CONFIG } from './cache';
 /**
  * Content Security Policy configuration
  */
