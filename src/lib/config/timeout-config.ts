@@ -4,7 +4,34 @@
  * All timeout values are in milliseconds.
  * Supports environment variable overrides.
  *
- * Usage:
+ * ## Global API Timeout Middleware
+ *
+ * The timeout middleware is implemented via `withApiHandler` wrapper.
+ * Routes can use timeout presets or explicit millisecond values:
+ *
+ * ```typescript
+ * // Using preset (recommended)
+ * export const GET = withApiHandler(handleGet, { timeout: 'quick' });
+ *
+ * // Using explicit milliseconds
+ * export const POST = withApiHandler(handlePost, { timeoutMs: 15000 });
+ *
+ * // Using default (30 seconds)
+ * export const GET = withApiHandler(handleGet);
+ * ```
+ *
+ * ### Timeout Presets:
+ * - 'quick': 5 seconds (health checks, simple lookups)
+ * - 'standard': 10 seconds (most API operations)
+ * - 'long': 30 seconds (complex operations, large data)
+ *
+ * ### Behavior:
+ * - Timeout preset takes precedence over explicit timeoutMs
+ * - Default timeout is 30 seconds (TIMEOUT_CONFIG.DEFAULT)
+ * - When timeout occurs, returns 504 Gateway Timeout with requestId
+ * - All timeouts are logged with correlation ID for debugging
+ *
+ * ## Basic Usage:
  * ```typescript
  * import { TIMEOUT_CONFIG } from '@/lib/config';
  * const timeout = TIMEOUT_CONFIG.DEFAULT;
