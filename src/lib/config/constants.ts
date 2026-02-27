@@ -816,7 +816,14 @@ export const RATE_LIMIT_STATS_CONFIG = {
  * HTTP Constants (re-exported from http.ts for modularity)
  * @see {@link ./http.ts} for implementation
  */
-export { STATUS_CODES, HTTP_HEADERS, AUTH_CONFIG } from './http';
+export {
+  STATUS_CODES,
+  HTTP_HEADERS,
+  AUTH_CONFIG,
+  UserRole,
+  Permission,
+  RBAC_CONFIG,
+} from './http';
 
 /**
  * AI Service Limits

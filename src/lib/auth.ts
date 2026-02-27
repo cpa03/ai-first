@@ -1,7 +1,12 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import { AUTH_CONFIG } from '@/lib/config/constants';
+import {
+  AUTH_CONFIG,
+  UserRole,
+  Permission,
+  RBAC_CONFIG,
+} from '@/lib/config/constants';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
@@ -178,4 +183,78 @@ export function verifyResourceOwnership(
       403
     );
   }
+}
+
+/**
+ * Check if a user has a specific permission
+ * Issue #674: RBAC for sensitive AI operations
+ *
+ * @param user - The authenticated user
+ * @param permission - The permission to check
+ * @returns true if user has the permission, false otherwise
+ */
+export function hasPermission(
+  user: AuthenticatedUser | null,
+  permission: Permission
+): boolean {
+  if (!user) {
+    return false;
+  }
+
+  // Default to USER role if no role is set
+  const userRole = (user.role as UserRole) || UserRole.USER;
+
+  // Get permissions for the user's role
+  const rolePermissions = RBAC_CONFIG[userRole];
+
+  if (!rolePermissions) {
+    logger.warn(
+      `Unknown user role: ${userRole}, defaulting to USER permissions`
+    );
+    return RBAC_CONFIG[UserRole.USER].includes(permission);
+  }
+
+  // Admin with '*' has all permissions
+  if (rolePermissions.includes('*' as Permission)) {
+    return true;
+  }
+
+  return rolePermissions.includes(permission);
+}
+
+/**
+ * Require a specific permission for the request
+ * Throws AppError if user doesn't have the permission
+ *
+ * @param request - The incoming request
+ * @param permission - The required permission
+ */
+export async function requirePermission(
+  request: Request,
+  permission: Permission
+): Promise<AuthenticatedUser> {
+  const user = await verifyAuth(request);
+
+  if (!user) {
+    throw new AppError(
+      'Unauthorized. Valid authentication token required.',
+      ErrorCode.AUTHENTICATION_ERROR,
+      401
+    );
+  }
+
+  if (!hasPermission(user, permission)) {
+    SecurityAuditLog.logAuthAttempt({
+      success: false,
+      reason: 'insufficient_permissions',
+      method: 'rbac',
+    });
+    throw new AppError(
+      `Forbidden. Required permission: ${permission}`,
+      ErrorCode.AUTHORIZATION_ERROR,
+      403
+    );
+  }
+
+  return user;
 }

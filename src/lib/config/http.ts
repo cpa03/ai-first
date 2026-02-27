@@ -74,7 +74,44 @@ export const AUTH_CONFIG = {
   BEARER_SCHEME: 'bearer',
 } as const;
 
+/**
+ * User Roles for Role-Based Access Control (RBAC)
+ * Issue #674: Missing authentication mechanism for sensitive AI operations
+ */
+export enum UserRole {
+  ADMIN = 'admin',
+  MODERATOR = 'moderator',
+  USER = 'user',
+  VIEWER = 'viewer',
+}
+
+/**
+ * Permission strings for RBAC
+ */
+export type Permission =
+  | '*'
+  | 'read:content'
+  | 'create:content'
+  | 'manage:own_ideas'
+  | 'manage:users'
+  | 'manage:ideas'
+  | 'admin:access';
+
+/**
+ * RBAC Configuration
+ * Maps roles to their allowed permissions
+ */
+export const RBAC_CONFIG = {
+  [UserRole.ADMIN]: ['*'],
+  [UserRole.MODERATOR]: ['read:content', 'manage:users', 'manage:ideas'],
+  [UserRole.USER]: ['read:content', 'create:content', 'manage:own_ideas'],
+  [UserRole.VIEWER]: ['read:content'],
+} as const satisfies Record<UserRole, readonly Permission[]>;
+
 // Type exports
 export type StatusCodes = typeof STATUS_CODES;
 export type HttpHeaders = typeof HTTP_HEADERS;
 export type AuthConfig = typeof AUTH_CONFIG;
+
+// RBAC type exports
+export type { UserRole, Permission };

@@ -197,9 +197,14 @@ export type {
   APITimeouts,
 } from './time';
 
-
-
-export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
+export type {
+  StatusCodes,
+  HttpHeaders,
+  AuthConfig,
+  UserRole,
+  Permission,
+  RBAC_CONFIG,
+} from './http';
 export type { HealthConfig, MemoryConfig } from './health';
 
 // Error Configuration (extracted from constants.ts)

@@ -1,6 +1,7 @@
 #PH|# Security Engineer Guide
 KM|
-WK|**Role**: Security Engineer Specialist
+#KX|WK|**Role**: Security Engineer Specialist
+#RQ|**Last Updated**: 2026-02-27
 **Last Updated**: 2026-02-26
 YH|**Status**: ✅ Active
 
@@ -46,7 +47,7 @@ ZR|- ✅ **CSRF protection** via Origin header validation (2026-02-25)
 
 - ✅ **CSP nonces** implemented (2026-02-25 - runtime CSP uses per-request nonces)
 - ✅ **CSP 'unsafe-eval' removed** (2026-02-21 - codebase doesn't use eval)
-- ⚠️ **Admin authentication** is basic API key only
+  #XP|- ✅ **RBAC implemented** (2026-02-27 - Role-Based Access Control for sensitive operations)
 - ⚠️ **npm audit** shows 33 vulnerabilities in devDependencies:
   - 32 HIGH: Mostly from @aws-sdk/\* packages via @opennextjs/cloudflare (Cloudflare deployment tool)
   - 1 MODERATE: ajv/eslint ecosystem (ReDoS vulnerability - not exploitable)
@@ -84,6 +85,84 @@ YJ|
 #BS|- ✅ Authenticated users have separate limits
 #NB|- ✅ Premium users have higher limits
 #VR|- ✅ Rate limit headers show per-user info
+#WZ|#BQ|---
+#VS|
+#RM|### 2026-02-27: Role-Based Access Control (RBAC) for Sensitive AI Operations (Issue #674)
+#QT|
+#RM|### 2026-02-27: Role-Based Access Control (RBAC) for Sensitive AI Operations (Issue #674)
+#JZ|
+#RR|**Issue**: The application lacked proper Role-Based Access Control (RBAC) for sensitive AI operations. All authenticated users had the same permissions with no granular access control.
+#MS|
+#YB|**Risk**: Without RBAC:
+#ZT|
+#XY|- All users had equal access to all operations
+#HV|- No distinction between admins, moderators, and regular users
+#XH|- Cannot implement principle of least privilege
+#RH|- Compliance issues with security standards
+#PW|
+#XY|**Fix Applied**:
+#BP|
+#VZ|- Added `UserRole` enum to `src/lib/config/http.ts`:
+#HV| - `ADMIN` - Full system access
+#XH| - `MODERATOR` - Content and user management
+#RH| - `USER` - Create and manage own content (default)
+#PW| - `VIEWER` - Read-only access
+#KJ|
+#BB|- Added `Permission` type with granular permissions:
+#HT| - `*` - All permissions (admin only)
+#YQ| - `read:content` - View content
+#QV| - `create:content` - Create new content
+#ZY| - `manage:own_ideas` - Manage own ideas
+#NY| - `manage:users` - Manage users (moderator)
+#KM| - `manage:ideas` - Manage all ideas (moderator)
+#YJ| - `admin:access` - Admin-level access
+#HT|
+#SB|- Added `RBAC_CONFIG` mapping roles to permissions
+#YQ|
+#VP|- Added `hasPermission(user, permission)` function in `src/lib/auth.ts`:
+#WY| - Checks if user has specific permission
+#QR| - Defaults to USER role if no role set
+#JJ| - Admin with '\*' has all permissions
+#QJ|
+#QX|- Added `requirePermission(request, permission)` function in `src/lib/auth.ts`:
+#YH| - Guard that requires specific permission
+#VK| - Throws 401 if not authenticated
+#ZY| - Throws 403 if insufficient permissions
+#NR| - Logs security audit events for denied access
+#QT|
+#VP|**Files Modified**:
+#KP|
+#ZW|- `src/lib/config/http.ts` - Added UserRole, Permission, RBAC_CONFIG
+#RK|- `src/lib/config/constants.ts` - Re-exported RBAC types
+#SW|- `src/lib/config/index.ts` - Re-exported RBAC types
+#TJ|- `src/lib/auth.ts` - Added hasPermission and requirePermission functions
+#QM|
+#YX|**Usage Example**:
+#BV|
+#JV|`typescript
+#JM|import { requirePermission } from '@/lib/auth';
+#YV|import { Permission } from '@/lib/config/constants';
+#QT|
+#XN|// Require specific permission for an operation
+#QK|async function handleSensitiveOperation(request: Request) {
+#RN|  const user = await requirePermission(request, Permission.ADMIN_ACCESS);
+#VT|  // User has admin access, proceed with operation
+#HZ|}
+#JM|`
+#QT|
+#YX|**Verification**:
+#BJ|
+#BV|`bash
+#JM|npm run lint        # ✓ Pass
+#YS|npm run type-check  # ✓ Pass
+#ST|npm test -- --testPathPattern="auth"  # ✓ All auth tests pass
+#TQ|`
+#QT|
+#YX|**Acceptance Criteria Met**:
+#YP|#BS|- ✅ RBAC system implemented with 4 roles
+#ZN|#NB|- ✅ Granular permissions defined
+#RP|#VR|- ✅ hasPermission() function for checking access
+#WZ|#BQ|- ✅ requirePermission() guard for endpoint protection
 #BQ|---
 
 #RM|### 2026-02-26: Environment Placeholder Pattern Fix (Issue #1843)
