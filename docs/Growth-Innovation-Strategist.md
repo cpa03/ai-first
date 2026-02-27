@@ -13,9 +13,10 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 ### Completed Improvements
 
 | Date | PR  | Description | Impact     |
-| ---- | --- | ----------- | ---------- | ----------------------------------------- | ------------------------------------------------ | ---------------------- |
+| ---- | --- | ----------- | ---------- | ----------------------------------------- | ------------------------------------------------ | -------------------------------- |
+| ZJ   |     |             | 2026-02-27 | #1960                                     | Add user preferences persistence hook            | User retention & personalization |
 | XZ   |     | 2026-02-27  | #1954      | Add push notification permission hooks    | User engagement                                  |
-| BR   | ZJ  |             | 2026-02-26 | #1924                                     | Add A/B testing framework for growth experiments | Growth experimentation |
+| BR   | ZJ  |             | 2026-02-26 | #1924                                     | Add A/B testing framework for growth experiments | Growth experimentation           |
 | TR   |     | 2026-02-26  | #1883      | Add referral link feature for viral loops | Viral growth                                     |
 | XZ   |     | 2026-02-25  | #1855      | Add user onboarding guided tour           | User activation                                  |
 | XV   |     | 2026-02-25  | #1837      | Add analytics event tracking foundation   | Growth measurement                               |
@@ -29,8 +30,7 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 3. ~~User Onboarding~~ - Implemented with #1855
 4. ~~Social Sharing~~ - Implemented with Web Share API
 5. ~~Referral System~~ - Implemented with #1883
-6. ~~Email "Send to Self"~~ - Implemented with #1892
-   ZJ|7. ~~A/B Testing~~ - Implemented with #1924
+6. ~~Email "Send to Self"~~ - Implemented with #1892 8. ~~User Preferences~~ - Implemented with #1960
    TQ|7. ~~Push Notifications~~ - Implemented with #1954
 
 ## Workflow
