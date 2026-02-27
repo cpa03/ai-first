@@ -199,6 +199,17 @@ TB|- **Files Changed**:
 - **Verification**: ESLint ✓ (0 warnings), TypeScript type-check ✓ (config files)
 - **PR**: https://github.com/cpa03/ai-first/pull/1920
 
+### 2026-02-27: Fix Duplicate Config Exports
+
+- **Issue**: #1925 - "FIX: Unused exports in src/lib/config/index.ts causing TypeScript errors"
+- **Action**: Removed duplicate TIMEOUT_CONFIG and RATE_LIMIT_CONFIG exports from index.ts
+- **Files Changed**:
+  - Modified: `src/lib/config/index.ts` (removed duplicate exports at lines 201-205)
+- **Root Cause**: exports were duplicated because index.ts re-exports everything from constants.ts (via `export * from './constants'`), and constants.ts already re-exports TIMEOUT_CONFIG and RATE_LIMIT_CONFIG. The direct exports in index.ts were redundant.
+- **Verification**: TypeScript type-check passes (duplicate export errors resolved)
+- **PR**: https://github.com/cpa03/ai-first/pull/1945
+
+
 ## Lessons Learned
 
 1. **Pattern for Modularization**: When extracting configs:
