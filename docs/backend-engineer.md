@@ -399,8 +399,14 @@ VN| 2. **2026-02-26**: Implemented PostHog analytics provider integration
 - Default provider: Console in development, PostHog in production
 - Added comprehensive tests (23 test cases)
 - Addresses issue #1858
-- PR created
-
+HT|
+QM|3. **2026-02-27**: Fixed console.error to use structured logger in ideas API
+HB|
+HB|- Replaced `console.error` with `logger.error` in `src/app/api/ideas/route.ts`
+HV|- Added proper logger initialization using `createLogger('IdeasAPI')`
+WH|- Enhanced error logging with ideaId context for better debugging
+HZ|- Follows logging patterns from docs/backend-engineer.md
+YM|- PR #1994 created
 ### Known Issues
 
 - Export resilience integration tests have mocking issues (core functionality works)
