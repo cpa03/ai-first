@@ -287,6 +287,29 @@ validate_logging_config() {
     fi
     return 0
 }
+# Function to validate Node.js version meets engine requirements
+validate_node_version() {
+    # Get Node.js version from package.json engines field
+    local required_version="20.0.0"
+    
+    # Get current Node.js version (remove 'v' prefix if present)
+    local current_version=$(node --version 2>/dev/null | sed 's/^v//')
+    
+    if [ -z "$current_version" ]; then
+        print_status "ERROR" "Node.js is not installed or not found in PATH"
+        return 1
+    fi
+    
+    # Compare versions using sort -V (version sorting)
+    if [ "$(printf '%s\n' "$required_version" "$current_version" | sort -V | head -n1)" != "$required_version" ]; then
+        print_status "ERROR" "Node.js version $current_version is too old. Required: >=$required_version"
+        return 1
+    else
+        print_status "OK" "Node.js version $current_version meets requirement (>= $required_version)"
+        return 0
+    fi
+}
+
 
 # Main validation function
 main() {
@@ -374,6 +397,9 @@ main() {
     
     # Validate logging configuration
     validate_logging_config
+    
+    # Validate Node.js version
+    validate_node_version || ((errors++))
     
     # Skip optional integrations in CI mode
     if [ "$CI_MODE" = true ]; then
