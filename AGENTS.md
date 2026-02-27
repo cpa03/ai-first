@@ -57,6 +57,7 @@ CMZ automatically delegates based on task type:
 - `superpowers-tdd` - Test-driven development
 - `systematic-debugging` - Root cause analysis
 - `superpowers-using` - How to access and use skills
+- `superpowers-debugging` - Debugging strategies and approaches
 
 ### Development Skills
 
@@ -77,6 +78,7 @@ CMZ automatically delegates based on task type:
 - `codepro-backend-standards` - Backend standards
 - `claude-codepro-backend` - Enterprise backend development standards
 - `superpowers-writing-skills` - Creating and editing skills
+- `ai-agent-engineer` - AI agent engineering and configuration
 
 ### GitHub Skills
 
@@ -98,6 +100,7 @@ CMZ automatically delegates based on task type:
 ### Tools & Integration Skills
 
 - `moai-adk-tool` / `adk-moai-tool` - OpenCode ADK tool references
+- `ai-agents-git-commit` - AI-powered git commit automation
 
 ## Usage
 
