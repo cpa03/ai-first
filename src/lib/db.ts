@@ -1458,8 +1458,7 @@ export class DatabaseService {
   }> {
     if (!this.client) throw new Error('Supabase client not initialized');
 
-    // Query 1: Get all ideas with status and ID
-    // This single query replaces the old approach of fetching all ideas
+    // Query 1: Get all ideas with status (needed for ideasByStatus)
     const { data: ideasData, error: ideasError } = await this.client
       .from('ideas')
       .select('id, status')
@@ -1481,6 +1480,7 @@ export class DatabaseService {
       {} as Record<string, number>
     );
 
+    // Early return if no ideas
     if (totalIdeas === 0) {
       return {
         totalIdeas: 0,
@@ -1490,53 +1490,56 @@ export class DatabaseService {
       };
     }
 
-    // Extract idea IDs for subsequent queries
     const ideaIds = typedIdeas.map((i) => i.id);
 
-    // Query 2: Get total deliverables count using .in() filter
-    // Single query instead of N iterative queries per idea chunk
-    const { count: totalDeliverables, error: deliverableError } =
-      await this.client
-        .from('deliverables')
-        .select('*', { count: 'exact', head: true })
-        .in('idea_id', ideaIds)
-        .is('deleted_at', null);
-
-    if (deliverableError) throw deliverableError;
-
-    // Query 3: Get deliverable IDs to count tasks
-    // We need to get deliverable IDs first, then count tasks
-    const { data: deliverablesData, error: deliverablesFetchError } =
-      await this.client
-        .from('deliverables')
-        .select('id')
-        .in('idea_id', ideaIds)
-        .is('deleted_at', null);
-
-    if (deliverablesFetchError) throw deliverablesFetchError;
-
-    const deliverableIds =
-      (deliverablesData as { id: string }[] | null)?.map((d) => d.id) ?? [];
-
+    // Query 2: Single optimized query using RPC for all aggregations
+    // Falls back to two queries if RPC doesn't exist
+    let totalDeliverables = 0;
     let totalTasks = 0;
 
-    // Query 4: Get total tasks count using .in() filter
-    // Only run if we have deliverable IDs
-    if (deliverableIds.length > 0) {
-      const { count: taskCount, error: taskError } = await this.client
-        .from('tasks')
-        .select('*', { count: 'exact', head: true })
-        .in('deliverable_id', deliverableIds)
-        .is('deleted_at', null);
+    // Try to use RPC for efficient single-query aggregation
+    const { data: statsData, error: statsError } = await this.client.rpc(
+      'get_user_idea_stats',
+      { p_user_id: userId } as never
+    );
 
-      if (taskError) throw taskError;
-      totalTasks = taskCount || 0;
+    if (!statsError && statsData) {
+      // RPC returned result - use it
+      totalDeliverables =
+        (statsData as { total_deliverables: number }).total_deliverables ?? 0;
+      totalTasks = (statsData as { total_tasks: number }).total_tasks ?? 0;
+    } else {
+      // Fallback: Use optimized two-query approach
+      // Query 2a: Get deliverable count and IDs in single query using count + select
+      const { data: deliverablesData, error: deliverablesError } =
+        await this.client
+          .from('deliverables')
+          .select('id', { count: 'exact', head: false })
+          .in('idea_id', ideaIds)
+          .is('deleted_at', null);
+
+      if (deliverablesError) throw deliverablesError;
+      const deliverables = (deliverablesData as { id: string }[] | null) ?? [];
+      totalDeliverables = deliverables.length;
+
+      // Query 2b: Get task count directly using deliverable IDs (only if needed)
+      if (deliverables.length > 0) {
+        const deliverableIds = deliverables.map((d) => d.id);
+        const { count: taskCount, error: taskError } = await this.client
+          .from('tasks')
+          .select('*', { count: 'exact', head: true })
+          .in('deliverable_id', deliverableIds)
+          .is('deleted_at', null);
+
+        if (taskError) throw taskError;
+        totalTasks = taskCount || 0;
+      }
     }
 
     return {
       totalIdeas,
       ideasByStatus,
-      totalDeliverables: totalDeliverables || 0,
+      totalDeliverables,
       totalTasks,
     };
   }
