@@ -512,10 +512,9 @@ export default function DashboardPage() {
                 Cancel
               </Button>
               <Button
-                variant="primary"
+                variant="danger"
                 onClick={handleDelete}
                 loading={!!deletingId}
-                className="bg-red-600 hover:bg-red-700 focus:ring-red-500"
               >
                 Delete Idea
               </Button>

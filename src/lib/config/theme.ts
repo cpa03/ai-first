@@ -448,6 +448,8 @@ export const BUTTON_STYLES = {
       'border-2 border-gray-700 text-gray-700 hover:bg-gray-50 disabled:hover:bg-transparent shadow-sm hover:shadow-md active:shadow-sm disabled:hover:shadow-sm disabled:active:shadow-sm hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0 hover:border-gray-900 disabled:hover:border-gray-700',
     ghost:
       'text-gray-700 hover:bg-gray-100 disabled:hover:bg-transparent hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0',
+    danger:
+      'bg-red-600 text-white hover:bg-red-700 disabled:hover:bg-red-600 btn-glow-hover shadow-md hover:shadow-lg active:shadow-sm disabled:hover:shadow-md disabled:active:shadow-md hover:-translate-y-0.5 active:translate-y-0 disabled:hover:translate-y-0 disabled:active:translate-y-0',
   } as const,
 
   /** Focus ring classes per variant */
@@ -456,6 +458,7 @@ export const BUTTON_STYLES = {
     secondary: 'focus-visible:ring-gray-500',
     outline: 'focus-visible:ring-gray-500',
     ghost: 'focus-visible:ring-gray-500',
+    danger: 'focus-visible:ring-red-500',
   } as const,
 
   /** Size classes for button dimensions */
