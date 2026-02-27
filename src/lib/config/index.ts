@@ -56,6 +56,8 @@ export { CACHE_CONFIG } from './cache';
 
 // Component Configuration
 export { COMPONENT_CONFIG } from './components';
+// Proxy/Middleware Configuration
+export { PROXY_CONFIG } from './proxy-config';
 
 // Task Management Configuration
 export {

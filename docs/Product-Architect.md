@@ -239,6 +239,19 @@ SP|- **Verification Checklist**:
 #HV|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings), Tests ✓ (76 passed)
 #TH|- **PR**: https://github.com/cpa03/ai-first/pull/1964
 #QV|
+### 2026-02-27: PROXY_CONFIG Modularization
+
+- **Issue**: #1901 - "Refactor Large Files: Split db.ts and constants.ts"
+- **Action**: Extracted PROXY_CONFIG into dedicated module
+- **Files Changed**:
+  - Created: `src/lib/config/proxy-config.ts`
+  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+  - Modified: `src/lib/config/index.ts` (export)
+  - Modified: `src/middleware.ts` (updated import path)
+- **Result**: Reduced constants.ts from 1067 to ~1015 lines (-52 lines)
+- **Verification**: TypeScript type-check ✓ (pre-existing jest type issues not related to changes)
+
+## Lessons Learned (Updated)
 #QZ|## Lessons Learned (Updated)
 #HV|
 #HV|4. **Check for Existing Modules**: Before adding new config definitions, search for existing domain-specific modules that may already have the config. Duplicates can cause confusion and maintenance issues.
