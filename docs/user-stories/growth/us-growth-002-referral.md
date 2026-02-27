@@ -141,7 +141,7 @@ Then the display should show:
 
 ## Resources
 
-- [ReferralLink Component](./src/components/ReferralLink.tsx)
+- `src/components/ReferralLink.tsx`
 - [User Story Engineer Guide](../../user-story-engineer.md)
 - [User Personas](../personas.md)
 
