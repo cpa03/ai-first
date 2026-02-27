@@ -23,16 +23,23 @@ Each ADR follows this structure:
 
 ## Index
 
-| TK|| ADR | Title | Status | Date |
-| PT|| -------------------------------------------- | ----------------------------- | -------- | ---------- |
-| ZJ|| [ADR-000](./ADR-000-template.md) | ADR Template | Template | - |
-| HN|| [ADR-001](./ADR-001-ai-abstraction-layer.md) | AI Provider Abstraction Layer | Accepted | 2026-02-23 |
-| ZM|| [ADR-002](./ADR-002-supabase-database.md) | Supabase as Primary Database | Accepted | 2026-02-27 |
-| ZM|| [ADR-003](./ADR-003-rest-api-design.md) | REST API Design Patterns | Accepted | 2026-02-27 |
-| ZM|| [ADR-004](./ADR-004-resilience-patterns.md) | Resilience Patterns | Accepted | 2026-02-27 |
-| ZM|| [ADR-005](./ADR-005-supabase-auth.md) | Supabase Authentication | Accepted | 2026-02-27 |
+| ADR                                            | Title                                  | Status   | Date       |
+| ---------------------------------------------- | -------------------------------------- | -------- | ---------- |
+| [ADR-000](./ADR-000-template.md)               | ADR Template                           | Template | -          |
+| [ADR-001](./ADR-001-ai-abstraction-layer.md)   | AI Provider Abstraction Layer          | Accepted | 2026-02-23 |
+| [ADR-002](./ADR-002-supabase-database-auth.md) | Use Supabase for Database and Auth     | Accepted | 2026-02-27 |
+| [ADR-003](./ADR-003-nextjs-app-router.md)      | Use Next.js App Router for Frontend    | Accepted | 2026-02-27 |
+| [ADR-004](./ADR-004-rate-limiting.md)          | Implement Rate Limiting at API Level   | Accepted | 2026-02-27 |
+| [ADR-005](./ADR-005-circuit-breaker.md)        | Use Circuit Breaker Pattern for AI     | Accepted | 2026-02-27 |
+| [ADR-006](./ADR-006-standardized-errors.md)    | Standardized Error Response Format     | Accepted | 2026-02-27 |
+| [ADR-007](./ADR-007-typescript-strict-mode.md) | TypeScript Strict Mode for Type Safety | Accepted | 2026-02-27 |
+| [ADR-008](./ADR-008-tailwind-css.md)           | Use Tailwind CSS for Styling           | Accepted | 2026-02-27 |
+| [ADR-009](./ADR-009-vercel-hosting.md)         | Use Vercel for Primary Hosting         | Accepted | 2026-02-27 |
+| [ADR-010](./ADR-010-github-actions-ci-cd.md)   | GitHub Actions for CI/CD               | Accepted | 2026-02-27 |
+
+| ADR                                          | Title                         | Status   | Date       |
 | -------------------------------------------- | ----------------------------- | -------- | ---------- |
-| [ADR-000](./ADR-000-template.md) | ADR Template | Template | - |
+| [ADR-000](./ADR-000-template.md)             | ADR Template                  | Template | -          |
 | [ADR-001](./ADR-001-ai-abstraction-layer.md) | AI Provider Abstraction Layer | Accepted | 2026-02-23 |
 
 ## Creating a New ADR
