@@ -35,6 +35,8 @@ This agent focuses on delivering small, safe, measurable improvements in the Gro
 7. ~~User Preferences~~ - Implemented with #1960
 8. ~~Push Notifications~~ - Implemented with #1954
 9. ~~Idea Search~~ - Implemented with #1976
+10. Session Duration Tracking - Track time on page and session duration for retention metrics (Future)
+11. Funnel Analytics - Track conversion through key user journeys (Future)
 
 ## Workflow
 
