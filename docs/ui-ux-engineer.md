@@ -123,6 +123,7 @@ Purpose: Primary action component with multiple variants and loading states.
 
 ```typescript
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
@@ -133,7 +134,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 **Usage Example:**
 
-```tsx
+````tsx
 <Button variant="primary" size="md" onClick={handleSubmit}>
   Submit
 </Button>
@@ -141,11 +142,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 <Button variant="secondary" loading={isLoading} disabled={!isValid}>
   Save Changes
 </Button>
+VS|<Button variant="outline" fullWidth>
+TR|  Cancel
+YN|</Button>
 
+XB|<Button variant="danger" onClick={handleDelete}>
+NM|  Delete
+YN|</Button>
+NN|```
 <Button variant="outline" fullWidth>
   Cancel
 </Button>
-```
+````
 
 **Features:**
 
@@ -1304,6 +1312,19 @@ npm test -- --testNamePattern="loading"
    - Some error states use hardcoded Tailwind classes instead of Alert component
    - **File:** `src/app/results/page.tsx:169-178`
    - **Status:** Should be refactored for consistency
+6. **TypeScript Metrics Type Errors (RESOLVED)**
+   - Metrics variables in `src/lib/metrics.ts` were typed as `unknown`
+   - **Impact:** Blocked all production builds (Issue #1913)
+   - **Fix:** Added proper Registry and NoOpMetric interfaces
+   - **Status:** Resolved in PR #1918
+
+7. **Dashboard Delete Button Hardcoded Styles (RESOLVED)**
+   - Delete button in dashboard used hardcoded red Tailwind classes instead of Button variant
+   - **File:** `src/app/dashboard/page.tsx`
+   - **Fix:** Added 'danger' variant to Button component and updated dashboard to use it
+   - **Status:** Resolved in this PR
+
+### Technical Debt
 
 6. **TypeScript Metrics Type Errors (RESOLVED)**
    - Metrics variables in `src/lib/metrics.ts` were typed as `unknown`
