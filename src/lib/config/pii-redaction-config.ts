@@ -81,6 +81,20 @@ export const PII_REDACTION_CONFIG = {
     'status',
     'priority',
     'estimate_hours',
+    // Common logging and API metadata fields (Issue #1171 performance optimization)
+    'path',
+    'requestId',
+    'correlationId',
+    'method',
+    'duration',
+    'timestamp',
+    'level',
+    'context',
+    'environment',
+    'action',
+    'component',
+    'version',
+    'success',
   ] as const,
 
   /**

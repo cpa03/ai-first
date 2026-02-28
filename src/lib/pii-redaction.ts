@@ -108,6 +108,11 @@ export function redactPII(text: string): string {
   if (typeof text !== 'string') return text;
   if (!text) return text;
 
+  // PERFORMANCE: Short-circuit for very short strings.
+  // Shortest possible PII (email, IP, JWT, etc.) are all >= 5 characters.
+  // This bypasses expensive regex scans for small tokens/values.
+  if (text.length < 5) return text;
+
   let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
