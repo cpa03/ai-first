@@ -215,6 +215,41 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
+ * Generate a cryptographically secure random ID.
+ * Uses crypto.randomUUID() if available, with a fallback for older environments.
+ *
+ * @returns A random string ID
+ */
+export function generateId(): string {
+  try {
+    // Check for crypto.randomUUID (Node.js 14.17+, modern browsers)
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof (crypto as unknown as { randomUUID: () => string }).randomUUID ===
+        'function'
+    ) {
+      return (crypto as unknown as { randomUUID: () => string }).randomUUID();
+    }
+
+    // Fallback for browsers
+    if (
+      typeof window !== 'undefined' &&
+      window.crypto &&
+      window.crypto.getRandomValues
+    ) {
+      const array = new Uint32Array(4);
+      window.crypto.getRandomValues(array);
+      return Array.from(array, (dec) => dec.toString(36)).join('');
+    }
+
+    // Last resort fallback (less secure but works everywhere)
+    return `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+  } catch {
+    return `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+  }
+}
+
+/**
  * Utility to trigger haptic feedback on devices that support it.
  * Provides a tactile confirmation for user actions like copying,
  * completing tasks, or reaching milestones.
