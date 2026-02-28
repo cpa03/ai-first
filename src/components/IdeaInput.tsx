@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
-import { MESSAGES, PLACEHOLDERS } from '@/lib/config';
+import { MESSAGES, PLACEHOLDERS, LABELS } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -17,10 +17,10 @@ interface IdeaInputProps {
 
 const validateIdea = (idea: string): string | null => {
   if (idea.trim().length < MIN_IDEA_LENGTH) {
-    return `Idea must be at least ${MIN_IDEA_LENGTH} characters.`;
+    return MESSAGES.ERRORS.IDEA_MIN_LENGTH(MIN_IDEA_LENGTH);
   }
   if (idea.length > MAX_IDEA_LENGTH) {
-    return `Idea must be at most ${MAX_IDEA_LENGTH} characters.`;
+    return MESSAGES.ERRORS.IDEA_MAX_LENGTH(MAX_IDEA_LENGTH);
   }
   return null;
 };
@@ -138,12 +138,12 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         <InputWithValidation
           id="idea-input"
           name="idea"
-          label="What's your idea?"
+          label={LABELS.IDEA_INPUT}
           value={idea}
           onChange={handleIdeaChange}
           onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDERS.IDEA_INPUT}
-          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}`}
+          helpText={`${MESSAGES.IDEA_INPUT.HELP_TEXT} ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}`}
           multiline={true}
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}

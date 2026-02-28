@@ -16,6 +16,7 @@ This file contains only **active tasks** that are currently in progress or pendi
 - 🟡 **In Progress**: 1 task
 - ⏸️ **Pending**: 1 task
 - ✅ **Completed**: 197 tasks (archived)
+- 🔴 **New**: 2 tasks
 
 ---
 
@@ -55,6 +56,55 @@ All API endpoints verified to use:
 - ✅ `withApiHandler()` wrapper for consistent handling
 - ✅ Proper error response formatting
 - ✅ Rate limiting integration
+
+---
+
+## New Tasks (PHASE 1)
+
+### [ ] BUG: Remove `queueMicrotask` from `AutoSaveIndicator.tsx`
+
+**Priority**: MEDIUM
+**Status**: TODO
+
+#### Overview
+
+`queueMicrotask` is causing state updates outside of React's awareness in tests, leading to `act()` warnings. It should be replaced with direct state updates or `useEffect` hooks as appropriate.
+
+### [ ] TASK: Move hardcoded validation messages from `IdeaInput.tsx` to config
+
+**Priority**: LOW
+**Status**: TODO
+
+#### Overview
+
+`src/components/IdeaInput.tsx` contains hardcoded strings like "Idea must be at least...". These should be centralized in `src/lib/config/error-messages.ts`.
+
+---
+
+## [CONSOLIDATE]
+
+### [ ] CONSOLIDATE: Legacy `src/lib/api-handler.ts`
+
+**Priority**: LOW
+**Status**: TODO
+
+#### Overview
+
+`src/lib/api-handler.ts` is a deprecated backward compatibility wrapper. All internal imports should be updated to point to `@/lib/api-handler` directly, and this file should eventually be removed.
+
+---
+
+## [TEST-PERFORMANCE]
+
+### [ ] SLOW TEST: `tests/pii-performance.test.ts`
+
+**Priority**: LOW
+**Status**: TODO
+**Execution Time**: ~3-4s
+
+#### Overview
+
+This test performs 10,000 redactions to measure performance. While useful for benchmarking, it's relatively slow for a unit test suite. Consider moving it to a performance-specific suite or reducing iterations in CI.
 
 ---
 

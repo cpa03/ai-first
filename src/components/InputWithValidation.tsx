@@ -377,32 +377,37 @@ const InputWithValidationComponent = forwardRef<
           {showCharCount && (
             <div className="flex items-center gap-2">
               {maxLength && (
-                <div
-                  className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative`}
-                  role="progressbar"
-                  aria-valuenow={charCount}
-                  aria-valuemin={0}
-                  aria-valuemax={maxLength}
-                  aria-label="Character limit progress"
+                <Tooltip
+                  content={`${Math.max(0, maxLength - charCount)} characters remaining`}
+                  position="top"
                 >
                   <div
-                    className={`h-full transition-all duration-300 rounded-full ${
-                      charCount > maxLength
-                        ? `${BG_COLORS.ERROR} animate-counter-pulse`
-                        : charCount >=
-                            maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                          ? `${BG_COLORS.WARNING} animate-counter-glow`
+                    className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative cursor-help`}
+                    role="progressbar"
+                    aria-valuenow={charCount}
+                    aria-valuemin={0}
+                    aria-valuemax={maxLength}
+                    aria-label="Character limit progress"
+                  >
+                    <div
+                      className={`h-full transition-all duration-300 rounded-full ${
+                        charCount > maxLength
+                          ? `${BG_COLORS.ERROR} animate-counter-pulse`
                           : charCount >=
-                              maxLength *
-                                (UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD * 0.7)
-                            ? BG_COLORS.WARNING
-                            : BG_COLORS.SUCCESS
-                    }`}
-                    style={{
-                      width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
-                    }}
-                  />
-                </div>
+                              maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
+                            ? `${BG_COLORS.WARNING} animate-counter-glow`
+                            : charCount >=
+                                maxLength *
+                                  (UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD * 0.7)
+                              ? BG_COLORS.WARNING
+                              : BG_COLORS.SUCCESS
+                      }`}
+                      style={{
+                        width: `${Math.min((charCount / maxLength) * 100, 100)}%`,
+                      }}
+                    />
+                  </div>
+                </Tooltip>
               )}
               <span
                 className={`text-sm font-medium transition-all duration-300 ${

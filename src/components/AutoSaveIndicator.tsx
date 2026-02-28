@@ -29,17 +29,13 @@ function AutoSaveIndicatorComponent({
     const hasValue = value.trim().length > 0;
 
     if (!hasValue) {
-      queueMicrotask(() => {
-        setSaveState('idle');
-        setShowIndicator(false);
-        setProgress(0);
-      });
+      setSaveState('idle');
+      setShowIndicator(false);
+      setProgress(0);
     } else {
-      queueMicrotask(() => {
-        setSaveState('typing');
-        setShowIndicator(true);
-        setProgress(0);
-      });
+      setSaveState('typing');
+      setShowIndicator(true);
+      setProgress(0);
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -69,17 +65,13 @@ function AutoSaveIndicatorComponent({
       }, COMPONENT_CONFIG.AUTO_SAVE.PROGRESS_INTERVAL_MS);
 
       timeoutRef.current = setTimeout(() => {
-        queueMicrotask(() => {
-          setSaveState('saving');
-        });
+        setSaveState('saving');
 
         // Simulate save completion
         saveTimeoutRef.current = setTimeout(() => {
-          queueMicrotask(() => {
-            setSaveState('saved');
-            setLastSaved(new Date());
-            setProgress(100);
-          });
+          setSaveState('saved');
+          setLastSaved(new Date());
+          setProgress(100);
         }, COMPONENT_CONFIG.AUTO_SAVE.SAVE_DURATION_MS);
       }, delay);
     }
@@ -104,9 +96,7 @@ function AutoSaveIndicatorComponent({
       }
 
       hideTimeoutRef.current = setTimeout(() => {
-        queueMicrotask(() => {
-          setShowIndicator(false);
-        });
+        setShowIndicator(false);
       }, COMPONENT_CONFIG.AUTO_SAVE.HIDE_DELAY_MS);
     }
 

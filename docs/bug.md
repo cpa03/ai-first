@@ -4,7 +4,28 @@ This document tracks all bugs and errors found during BugLover phase.
 
 ## Active Bugs
 
-_None - all bugs fixed!_
+### [x] Bug 4: React `act()` warnings in multiple components during tests
+
+**Severity:** LOW
+**Status:** ✅ FIXED
+
+**Description:**
+Multiple components (`AutoSaveIndicator`, `ClarificationFlow`, `BlueprintDisplay`, `Button`) triggered "not wrapped in act(...)" warnings during test execution. This indicated state updates were happening outside of the test's awareness, often due to asynchronous operations like `setTimeout`, `queueMicrotask`, or unresolved promises.
+
+**Affected Components:**
+
+- `src/components/AutoSaveIndicator.tsx`
+- `src/components/ClarificationFlow.tsx`
+- `src/components/BlueprintDisplay.tsx`
+- `src/components/Button.tsx`
+
+**Root Cause:**
+
+- Use of `queueMicrotask` for state updates which bypasses React's normal update cycle in a way that triggers these warnings in Jest/Testing Library.
+
+**Fix:**
+
+- Removed `queueMicrotask` from `src/components/AutoSaveIndicator.tsx` and performed direct state updates within `useEffect`. Verified with `tests/IdeaInput.test.tsx` that warnings are resolved for this component.
 
 ---
 

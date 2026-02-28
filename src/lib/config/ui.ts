@@ -77,6 +77,7 @@ export const UI_CONFIG = {
 } as const;
 
 export const LABELS = {
+  IDEA_INPUT: "What's your idea?",
   QUESTION: (index: number) => `Question ${index + 1}`,
   STEP: (current: number, total: number) => `Step ${current} of ${total}`,
   PROGRESS: (percent: number) => `${percent}% Complete`,
@@ -123,6 +124,9 @@ export const MESSAGES = {
     SOMETHING_WENT_WRONG: 'Something went wrong',
     FAILED_SAVE_IDEA: 'Failed to save your idea. Please try again.',
     UNKNOWN_ERROR: 'An unknown error occurred',
+    IDEA_MIN_LENGTH: (min: number) =>
+      `Idea must be at least ${min} characters.`,
+    IDEA_MAX_LENGTH: (max: number) => `Idea must be at most ${max} characters.`,
   },
   TASK_MANAGEMENT: {
     TITLE: 'Task Management',
@@ -136,6 +140,8 @@ export const MESSAGES = {
   IDEA_INPUT: {
     SUBMIT_BUTTON: 'Start Clarifying →',
     PROCESSING_BUTTON: 'Processing...',
+    HELP_TEXT:
+      "Be as specific or as general as you'd like. We'll help you clarify details.",
     KEYBOARD_SHORTCUT_LABEL: (isMac: boolean) =>
       `Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`,
   },
