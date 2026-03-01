@@ -2,7 +2,17 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  const result = clsx(inputs);
+
+  // PERFORMANCE: Fast-path for empty or single class name.
+  // twMerge is expensive as it parses and merges Tailwind classes.
+  // If we have no spaces, it's either empty or a single class,
+  // so there are no potential conflicts to merge.
+  if (!result || !result.includes(' ')) {
+    return result;
+  }
+
+  return twMerge(result);
 }
 
 /**
