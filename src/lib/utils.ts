@@ -244,7 +244,7 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
 export function generateId(prefix?: string): string {
   let id: string;
   try {
-    if (typeof crypto !== 'undefined' && (crypto as any).randomUUID) {
+    if (typeof crypto !== 'undefined' && typeof (crypto as any).randomUUID === 'function') {
       id = (crypto as any).randomUUID();
     } else if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
       const arr = new Uint32Array(4);
