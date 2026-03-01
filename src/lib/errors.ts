@@ -336,21 +336,26 @@ export function toErrorResponse(
 export function generateRequestId(): string {
   // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
   // This ensures request IDs are unique and cannot be predicted for security tracing
-  if (typeof crypto !== 'undefined' && typeof (crypto as any).randomUUID === 'function') {
-    return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${(crypto as any).randomUUID()}`;
+  const prefix = ERROR_CONFIG?.REQUEST_ID?.PREFIX || 'req_';
+  try {
+    if (typeof crypto !== 'undefined' && typeof (crypto as any).randomUUID === 'function') {
+      return `${prefix}${(crypto as any).randomUUID()}`;
+    }
+    // Fallback for environments where randomUUID is not available
+    const array = new Uint32Array(4);
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      crypto.getRandomValues(array);
+    } else if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
+      window.crypto.getRandomValues(array);
+    } else {
+      // Ultimate fallback
+      return `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+    }
+    const uuid = Array.from(array, (num) => num.toString(36)).join('-');
+    return `${prefix}${uuid}`;
+  } catch {
+    return `${prefix}${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
   }
-  // Fallback for environments where randomUUID is not available
-  const array = new Uint32Array(4);
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    crypto.getRandomValues(array);
-  } else if (typeof window !== 'undefined' && window.crypto?.getRandomValues) {
-    window.crypto.getRandomValues(array);
-  } else {
-    // Ultimate fallback
-    return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
-  }
-  const uuid = Array.from(array, (num) => num.toString(36)).join('-');
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${uuid}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
