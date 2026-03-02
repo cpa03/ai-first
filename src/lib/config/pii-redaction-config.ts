@@ -85,15 +85,8 @@ export const PII_REDACTION_CONFIG = {
     'requestId',
     'correlationId',
     'timestamp',
-    'level',
-    'environment',
-    'action',
     'method',
     'duration',
-    'component',
-    'userRole',
-    'retryable',
-    'fingerprint',
   ] as const,
 
   /**

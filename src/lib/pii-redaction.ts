@@ -108,11 +108,6 @@ export function redactPII(text: string): string {
   if (typeof text !== 'string') return text;
   if (!text) return text;
 
-  // PERFORMANCE: Fast path for short strings that cannot contain PII.
-  // IPv4 is at least 7 chars (e.g. 1.1.1.1). Common log metadata like
-  // "GET", "200", "INFO" are skipped here.
-  if (text.length < 5) return text;
-
   let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
