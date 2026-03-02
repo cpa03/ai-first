@@ -11,6 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { generateId } from '@/lib/id-generator';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -33,7 +34,7 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = `session_${generateId()}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
