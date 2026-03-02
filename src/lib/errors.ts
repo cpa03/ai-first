@@ -2,7 +2,6 @@ import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
 import { generateId } from './id-generator';
-import crypto from 'node:crypto';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -28,13 +27,18 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
+  // Simple runtime-agnostic hash function (djb2) to avoid Node.js-only crypto dependencies
+  // in Edge runtime. This provides stable grouping for error fingerprints.
+  let hash = 5381;
+  for (let i = 0; i < fingerprintInput.length; i++) {
+    hash = (hash * 33) ^ fingerprintInput.charCodeAt(i);
+  }
+  const hashStr = (hash >>> 0)
+    .toString(16)
+    .padStart(8, '0')
     .substring(0, FINGERPRINT_HASH_LENGTH);
 
-  return `fp_${hash}`;
+  return `fp_${hashStr}`;
 }
 
 export interface ErrorDetail {
