@@ -12,6 +12,7 @@ import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import SuccessCelebration from '@/components/SuccessCelebration';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -68,6 +69,7 @@ function ClarifyPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [answers, setAnswers] = useState<Record<string, string> | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
 
@@ -122,6 +124,7 @@ function ClarifyPageContent() {
         }
 
         setAnswers(completedAnswers);
+        setShowCelebration(true);
 
         // In a real app, this would navigate to results page
         // For now, we'll just show the completion message
@@ -188,6 +191,10 @@ function ClarifyPageContent() {
   if (answers) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <SuccessCelebration
+          show={showCelebration}
+          onComplete={() => setShowCelebration(false)}
+        />
         <div className="slide-up">
           <Alert type="success" title="Clarification Complete!">
             <p className="mb-4">
@@ -207,6 +214,7 @@ function ClarifyPageContent() {
             <Button
               onClick={() => router.push(`/results?ideaId=${ideaId}`)}
               variant="primary"
+              attention={true}
             >
               Generate Blueprint
             </Button>
