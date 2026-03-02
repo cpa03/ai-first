@@ -13,6 +13,7 @@ import {
   ANIMATION_CONFIG,
 } from '@/lib/config/constants';
 import { TOAST_CONFIG } from '@/lib/config';
+import { generateId } from '@/lib/utils';
 
 export interface Toast {
   id: string;
@@ -295,7 +296,7 @@ function ToastContainerComponent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const showToast = useCallback((options: ToastOptions) => {
-    const id = Math.random().toString(36).substring(2, 9);
+    const id = generateId();
     const newToast: Toast = { ...options, id };
     setToasts((prev) => [...prev, newToast]);
   }, []);
