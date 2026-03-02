@@ -81,6 +81,19 @@ export const PII_REDACTION_CONFIG = {
     'status',
     'priority',
     'estimate_hours',
+    // Common metadata keys (Issue #1171)
+    'requestId',
+    'correlationId',
+    'timestamp',
+    'level',
+    'environment',
+    'action',
+    'method',
+    'duration',
+    'component',
+    'userRole',
+    'retryable',
+    'fingerprint',
   ] as const,
 
   /**
