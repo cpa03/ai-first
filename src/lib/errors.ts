@@ -1,7 +1,8 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import { generateId } from './utils';
+import { generateId } from './id-generator';
+import crypto from 'node:crypto';
 
 const API_VERSION = APP_CONFIG.VERSION;
 

@@ -11,7 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { generateId } from '@/lib/utils';
+import { generateId } from '@/lib/id-generator';
 
 const logger = createLogger('SessionAnalytics');
 

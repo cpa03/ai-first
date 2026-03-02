@@ -11,7 +11,7 @@ import {
   useSyncExternalStore,
 } from 'react';
 import { RIPPLE_CONFIG, BUTTON_STYLES } from '@/lib/config';
-import { generateId } from '@/lib/utils';
+import { generateId } from '@/lib/id-generator';
 
 // Custom hook to subscribe to prefers-reduced-motion media query
 // This properly updates when OS accessibility settings change during runtime

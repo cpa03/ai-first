@@ -8,7 +8,7 @@ import {
   RATE_LIMIT_VALUES,
   RATE_LIMIT_CONFIG,
 } from './config/constants';
-import { generateRequestId } from './errors';
+import { generateRequestId } from './id-generator';
 
 export interface RateLimitInfo {
   limit: number;

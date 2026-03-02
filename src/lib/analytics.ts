@@ -17,7 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
-import { generateId } from '@/lib/utils';
+import { generateId } from '@/lib/id-generator';
 
 /**
  * Event categories for analytics

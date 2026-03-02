@@ -13,7 +13,7 @@ import {
   ANIMATION_CONFIG,
 } from '@/lib/config/constants';
 import { TOAST_CONFIG } from '@/lib/config';
-import { generateId } from '@/lib/utils';
+import { generateId } from '@/lib/id-generator';
 
 export interface Toast {
   id: string;
