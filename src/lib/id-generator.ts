@@ -14,24 +14,20 @@
  */
 export function generateId(): string {
   // 1. Try crypto.randomUUID() - Most modern & standard
-  // We use globalThis to avoid Node-specific crypto import issues in some runtimes
-  const g = typeof globalThis !== 'undefined' ? globalThis : (typeof window !== 'undefined' ? window : (typeof self !== 'undefined' ? self : {}));
-  const cryptoObj = (g as any).crypto;
-
   if (
-    cryptoObj &&
-    typeof cryptoObj.randomUUID === 'function'
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
   ) {
-    return cryptoObj.randomUUID();
+    return crypto.randomUUID();
   }
 
   // 2. Try crypto.getRandomValues() - Browser/Node fallback
   if (
-    cryptoObj &&
-    typeof cryptoObj.getRandomValues === 'function'
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
   ) {
     const uint32 = new Uint32Array(4);
-    cryptoObj.getRandomValues(uint32);
+    crypto.getRandomValues(uint32);
     return (
       uint32[0].toString(16) +
       '-' +
