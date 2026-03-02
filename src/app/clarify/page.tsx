@@ -12,7 +12,6 @@ import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import SuccessCelebration from '@/components/SuccessCelebration';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -45,6 +44,13 @@ const DynamicClarificationFlow = dynamic(
         </div>
       </div>
     ),
+  }
+);
+
+const SuccessCelebration = dynamic(
+  () => import('@/components/SuccessCelebration'),
+  {
+    ssr: false,
   }
 );
 
@@ -140,7 +146,7 @@ function ClarifyPageContent() {
         setError('Failed to save your answers. Please try again.');
       }
     },
-    [ideaId, logger]
+    [ideaId, logger, setShowCelebration]
   );
 
   if (authLoading || !hasLoaded) {
