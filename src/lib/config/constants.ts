@@ -746,8 +746,6 @@ export const VALIDATION_LIMITS = {
   } as const,
 } as const;
 
-
-
 /**
  * Rate limit statistics configuration
  * Now supports environment variable overrides
@@ -886,7 +884,6 @@ export const API_CACHE_CONFIG = {
     300
   ),
 } as const;
-
 
 /**
  * External API Versions Configuration

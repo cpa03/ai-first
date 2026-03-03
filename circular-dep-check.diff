@@ -1,0 +1,32 @@
+diff --git a/.github/workflows/on-pull.yml b/.github/workflows/on-pull.yml
+index 58ba954..eaf39e6 100644
+--- a/.github/workflows/on-pull.yml
++++ b/.github/workflows/on-pull.yml
+@@ -18,6 +18,27 @@ concurrency:
+   cancel-in-progress: false
+
+ jobs:
++  circular-dep-check:
++    name: Check Circular Dependencies
++    runs-on: ubuntu-22.04-arm
++    timeout-minutes: 10
++
++    steps:
++      - name: Checkout Code
++        uses: actions/checkout@v6
++
++      - name: Setup Node.js
++        uses: actions/setup-node@v6
++        with:
++          node-version: 20
++          cache: 'npm'
++
++      - name: Install Dependencies
++        run: npm ci
++
++      - name: Check Circular Dependencies
++        run: npm run check:circular
++
+   ci:
+     name: pull
+     runs-on: ubuntu-22.04-arm
