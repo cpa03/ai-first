@@ -246,3 +246,46 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure unique identifier.
+ * Centralizes ID generation for sessions, requests, analytics, and UI elements.
+ *
+ * @param prefix - Optional prefix for the generated ID
+ * @returns Secure random string
+ *
+ * @example
+ * ```typescript
+ * const sessionId = generateId('session'); // 'session_550e8400-e29b-41d4-a716-446655440000'
+ * ```
+ */
+export function generateId(prefix?: string): string {
+  let uuid: string;
+
+  try {
+    // 1. Primary: crypto.randomUUID (Node.js 15.6+, all modern browsers)
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      uuid = crypto.randomUUID();
+    }
+    // 2. Fallback: window.crypto.getRandomValues (Legacy browsers)
+    else if (
+      typeof window !== 'undefined' &&
+      window.crypto &&
+      window.crypto.getRandomValues
+    ) {
+      const array = new Uint32Array(4);
+      window.crypto.getRandomValues(array);
+      uuid = Array.from(array, (dec) => dec.toString(16).padStart(8, '0')).join(
+        '-'
+      );
+    }
+    // 3. Extreme Fallback: Date + Math.random (Non-secure environments)
+    else {
+      uuid = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    }
+  } catch {
+    uuid = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+  }
+
+  return prefix ? `${prefix}_${uuid}` : uuid;
+}
