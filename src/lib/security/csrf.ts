@@ -77,6 +77,7 @@ function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
     if (normalizedOrigin === normalizedTrusted) {
       return true;
     }
+
   }
 
   return false;

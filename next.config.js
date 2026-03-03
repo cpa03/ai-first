@@ -2,6 +2,9 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
+const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
+initOpenNextCloudflareForDev();
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -164,10 +167,5 @@ const nextConfig = {
         : false,
   },
 };
-
-if (process.env.NODE_ENV === 'development') {
-  const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
-  initOpenNextCloudflareForDev();
-}
 
 module.exports = withBundleAnalyzer(nextConfig);
