@@ -2,10 +2,8 @@ export const runtime = 'experimental-edge';
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import {
-  SECURITY_CONFIG,
-  CSP_CONFIG,
-} from '@/lib/config/constants';
+import { SECURITY_CONFIG } from '@/lib/config/security-config';
+import { CSP_CONFIG } from '@/lib/config/csp-config';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 
 /**
@@ -55,16 +53,17 @@ function generateNonce(): string {
   return btoa(binary);
 }
 
-function buildCSPHeader(nonce: string): string {
+/**
+ * PERFORMANCE: Pre-calculate the CSP header template at module level to avoid
+ * expensive object iteration and string construction on every request.
+ */
+const CSP_TEMPLATE = (function buildCSPTemplate(): string {
   const directives = CSP_CONFIG.DIRECTIVES;
   const cspParts: string[] = [];
 
   for (const [directive, values] of Object.entries(directives)) {
     if (directive === 'script-src') {
-      const scriptValues = values.map((v) =>
-        v === "'nonce-placeholder'" ? `'nonce-${nonce}'` : v
-      );
-      scriptValues.push(PROXY_CONFIG.VERCEL_LIVE_URL);
+      const scriptValues = [...values, PROXY_CONFIG.VERCEL_LIVE_URL];
       cspParts.push(`${directive} ${scriptValues.join(' ')}`);
     } else if (values.length === 0) {
       cspParts.push(directive);
@@ -77,6 +76,14 @@ function buildCSPHeader(nonce: string): string {
   cspParts.push('report-to csp-endpoint');
 
   return cspParts.join('; ');
+})();
+
+/**
+ * Build Content Security Policy header with runtime nonce injection.
+ * Uses .replaceAll() for fast substitution within the pre-calculated template.
+ */
+function buildCSPHeader(nonce: string): string {
+  return CSP_TEMPLATE.replaceAll("'nonce-placeholder'", `'nonce-${nonce}'`);
 }
 
 function buildPermissionsPolicy(): string {
