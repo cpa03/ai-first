@@ -35,9 +35,10 @@ function getSessionId(): string {
     if (!sessionId) {
       try {
         // Use crypto.randomUUID() for secure, collision-resistant session IDs
-        sessionId = `session_${crypto.randomUUID()}`;
+        // Use globalThis to ensure availability in both browser and worker contexts
+        sessionId = `session_${globalThis.crypto.randomUUID()}`;
       } catch {
-        // Fallback for older browsers
+        // Fallback for older browsers or environments without randomUUID
         sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       }
       sessionStorage.setItem(storageKey, sessionId);
