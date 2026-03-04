@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-04 - [Standardizing Overlay Backdrops with Blur]
+**Learning:** Using a consistent `backdrop-blur-sm` with `bg-black/50` across all overlays (modals, mobile nav, onboarding) provides a more cohesive and premium feel. It helps the foreground content stand out by subtly obscuring background distractions without losing context entirely.
+**Action:** Always apply `backdrop-blur-sm` and standardize background opacity to `bg-black/50` for all full-screen or significant overlays to ensure visual consistency with the `LoadingOverlay` component.
