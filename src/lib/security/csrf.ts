@@ -71,29 +71,10 @@ function getOriginFromUrl(url: string): string | null {
 function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
   const normalizedOrigin = origin.toLowerCase().replace(/\/$/, '');
 
-  for (const trusted of trustedOrigins) {
+  return trustedOrigins.some((trusted) => {
     const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
-
-    if (normalizedOrigin === normalizedTrusted) {
-      return true;
-    }
-
-    if (
-      normalizedTrusted.includes('.vercel.app') &&
-      normalizedOrigin.endsWith('.vercel.app')
-    ) {
-      return true;
-    }
-
-    if (
-      normalizedTrusted.includes('.pages.dev') &&
-      normalizedOrigin.endsWith('.pages.dev')
-    ) {
-      return true;
-    }
-  }
-
-  return false;
+    return normalizedOrigin === normalizedTrusted;
+  });
 }
 
 export function validateCSRF(

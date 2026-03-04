@@ -33,7 +33,14 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      try {
+        // Use crypto.randomUUID() for secure, collision-resistant session IDs
+        // Use globalThis to ensure availability in both browser and worker contexts
+        sessionId = `session_${globalThis.crypto.randomUUID()}`;
+      } catch {
+        // Fallback for older browsers or environments without randomUUID
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      }
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
@@ -88,12 +95,9 @@ function flushEvents(): void {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
 
-  // Console log for now - can be extended to PostHog later
+  // In development, log to debug logger instead of console.log
   if (process.env.NODE_ENV !== 'production') {
-    console.log(
-      '[SessionAnalytics] Events:',
-      JSON.stringify(eventsToSend, null, 2)
-    );
+    logger.debug('Events:', eventsToSend);
   }
 
   if (flushTimeout) {
