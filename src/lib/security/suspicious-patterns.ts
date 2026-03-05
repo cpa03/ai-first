@@ -579,19 +579,28 @@ export function detectSuspiciousPatterns(
     minSeverity?: 0 | 1 | 2 | 3;
     /** Log detected patterns (default: true) */
     logDetected?: boolean;
+    /** Pre-parsed URL object (optional, for performance optimization) */
+    url?: URL;
   } = {}
 ): SuspiciousPatternResult {
-  const { scanBody = false, minSeverity = 2, logDetected = true } = options;
+  const {
+    scanBody = false,
+    minSeverity = 2,
+    logDetected = true,
+    url: providedUrl,
+  } = options;
 
   const patterns: SuspiciousPatternDetail[] = [];
   // Safety check: Handle undefined/invalid URL gracefully
-  let url: URL | null = null;
-  try {
-    if (request.url) {
-      url = new URL(request.url);
+  let url: URL | null = providedUrl || null;
+  if (!url) {
+    try {
+      if (request.url) {
+        url = new URL(request.url);
+      }
+    } catch {
+      // Invalid URL - continue without path/query scanning
     }
-  } catch {
-    // Invalid URL - continue without path/query scanning
   }
 
   if (url) {

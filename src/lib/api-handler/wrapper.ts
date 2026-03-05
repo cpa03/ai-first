@@ -65,6 +65,18 @@ export function withApiHandler(
     const requestStartTime = Date.now();
     const correlationId = generateCorrelationId();
 
+    // PERFORMANCE: Parse URL once and reuse throughout the handler
+    let url: URL | undefined;
+    let pathname = '/unknown';
+    try {
+      if (request.url) {
+        url = new URL(request.url);
+        pathname = url.pathname;
+      }
+    } catch {
+      // Ignore URL parsing errors here, handled in downstream components
+    }
+
     setCorrelationId(correlationId);
 
     const rateLimitConfig = options.rateLimit
@@ -75,7 +87,7 @@ export function withApiHandler(
       requestId,
       action: request.method,
       metadata: {
-        path: request.url ? new URL(request.url).pathname : '/unknown',
+        path: pathname,
         correlationId,
       },
     };
@@ -85,6 +97,7 @@ export function withApiHandler(
       scanBody: false,
       minSeverity: 2,
       logDetected: true,
+      url, // Pass pre-parsed URL for optimization
     });
 
     if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
@@ -155,7 +168,7 @@ export function withApiHandler(
           limit: rateLimitInfo.limit,
           windowMs: rateLimitConfig.windowMs,
           clientIdentifier: userInfo.identifier,
-          endpoint: request.url ? new URL(request.url).pathname : undefined,
+          endpoint: pathname,
           requestId,
         });
 
@@ -209,9 +222,7 @@ export function withApiHandler(
         } catch (error) {
           if (error instanceof TimeoutError) {
             const duration = Date.now() - requestStartTime;
-            const route = request.url
-              ? new URL(request.url).pathname
-              : '/unknown';
+            const route = pathname;
 
             httpRequestDuration.observe(
               { method: request.method, route, status_code: '504' },
@@ -286,7 +297,7 @@ export function withApiHandler(
         );
       }
 
-      const route = request.url ? new URL(request.url).pathname : '/unknown';
+      const route = pathname;
       const statusCode = String(response.status);
       httpRequestDuration.observe(
         { method: request.method, route, status_code: statusCode },
@@ -306,7 +317,7 @@ export function withApiHandler(
       return response;
     } catch (error) {
       const duration = Date.now() - requestStartTime;
-      const route = request.url ? new URL(request.url).pathname : '/unknown';
+      const route = pathname;
       const errorStatusCode =
         error instanceof AppError ? String(error.statusCode) : '500';
 
