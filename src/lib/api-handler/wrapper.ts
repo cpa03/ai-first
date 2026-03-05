@@ -65,13 +65,17 @@ export function withApiHandler(
     const requestStartTime = Date.now();
     const correlationId = generateCorrelationId();
 
-    // PERFORMANCE: Parse URL once and reuse throughout the handler
-    let url: URL | undefined;
+    // PERFORMANCE: Use Next.js pre-parsed nextUrl for efficiency.
+    // Falls back to manual URL parsing if nextUrl is missing (Edge/Node differences).
+    let parsedUrl: URL | undefined;
     let pathname = '/unknown';
     try {
-      if (request.url) {
-        url = new URL(request.url);
-        pathname = url.pathname;
+      if (request.nextUrl) {
+        parsedUrl = request.nextUrl;
+        pathname = parsedUrl.pathname;
+      } else if (request.url) {
+        parsedUrl = new URL(request.url);
+        pathname = parsedUrl.pathname;
       }
     } catch {
       // Ignore URL parsing errors here, handled in downstream components
@@ -97,7 +101,7 @@ export function withApiHandler(
       scanBody: false,
       minSeverity: 2,
       logDetected: true,
-      url, // Pass pre-parsed URL for optimization
+      parsedUrl, // Pass pre-parsed URL for optimization
     });
 
     if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {

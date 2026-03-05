@@ -580,36 +580,36 @@ export function detectSuspiciousPatterns(
     /** Log detected patterns (default: true) */
     logDetected?: boolean;
     /** Pre-parsed URL object (optional, for performance optimization) */
-    url?: URL;
+    parsedUrl?: URL;
   } = {}
 ): SuspiciousPatternResult {
   const {
     scanBody = false,
     minSeverity = 2,
     logDetected = true,
-    url: providedUrl,
+    parsedUrl: providedUrl,
   } = options;
 
   const patterns: SuspiciousPatternDetail[] = [];
   // Safety check: Handle undefined/invalid URL gracefully
-  let url: URL | null = providedUrl || null;
-  if (!url) {
+  let parsedUrl: URL | null = providedUrl || null;
+  if (!parsedUrl) {
     try {
       if (request.url) {
-        url = new URL(request.url);
+        parsedUrl = new URL(request.url);
       }
     } catch {
       // Invalid URL - continue without path/query scanning
     }
   }
 
-  if (url) {
+  if (parsedUrl) {
     // Scan request path
-    const pathFindings = scanString(url.pathname, 'path', minSeverity);
+    const pathFindings = scanString(parsedUrl.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
     // Scan query parameters
-    for (const [key, value] of url.searchParams.entries()) {
+    for (const [key, value] of parsedUrl.searchParams.entries()) {
       const queryFindings = scanString(value, 'query', minSeverity, key);
       patterns.push(...queryFindings);
     }
@@ -692,7 +692,7 @@ export function detectSuspiciousPatterns(
           field: p.field,
           severity: p.severity,
         })),
-        path: url?.pathname || 'unknown',
+        path: parsedUrl?.pathname || 'unknown',
       },
       environment: process.env.NODE_ENV || 'unknown',
     });
