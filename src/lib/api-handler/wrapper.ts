@@ -65,17 +65,15 @@ export function withApiHandler(
     const requestStartTime = Date.now();
     const correlationId = generateCorrelationId();
 
-    // PERFORMANCE: Use Next.js pre-parsed nextUrl for efficiency.
-    // Falls back to manual URL parsing if nextUrl is missing (Edge/Node differences).
-    let parsedUrl: URL | undefined;
-    let pathname = '/unknown';
+    // PERFORMANCE: Parse URL once and reuse throughout the handler.
+    // We avoid accessing nextUrl directly here to ensure maximum compatibility
+    // across all environments (some Request implementations may not have it).
+    let requestUrl: URL | undefined;
+    let requestPathname = '/unknown';
     try {
-      if (request.nextUrl) {
-        parsedUrl = request.nextUrl;
-        pathname = parsedUrl.pathname;
-      } else if (request.url) {
-        parsedUrl = new URL(request.url);
-        pathname = parsedUrl.pathname;
+      if (request.url) {
+        requestUrl = new URL(request.url);
+        requestPathname = requestUrl.pathname;
       }
     } catch {
       // Ignore URL parsing errors here, handled in downstream components
@@ -91,7 +89,7 @@ export function withApiHandler(
       requestId,
       action: request.method,
       metadata: {
-        path: pathname,
+        path: requestPathname,
         correlationId,
       },
     };
@@ -101,7 +99,7 @@ export function withApiHandler(
       scanBody: false,
       minSeverity: 2,
       logDetected: true,
-      parsedUrl, // Pass pre-parsed URL for optimization
+      preParsedUrl: requestUrl, // Pass pre-parsed URL for optimization
     });
 
     if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
@@ -156,7 +154,7 @@ export function withApiHandler(
         userInfo,
         info: rateLimitInfo,
         allowed,
-      } = checkUserRateLimit(request, rateLimitConfig, pathname);
+      } = checkUserRateLimit(request, rateLimitConfig, requestPathname);
 
       if (!allowed) {
         logger.warnWithContext('Rate limit exceeded', logContext, {
@@ -172,7 +170,7 @@ export function withApiHandler(
           limit: rateLimitInfo.limit,
           windowMs: rateLimitConfig.windowMs,
           clientIdentifier: userInfo.identifier,
-          endpoint: pathname,
+          endpoint: requestPathname,
           requestId,
         });
 
@@ -226,7 +224,7 @@ export function withApiHandler(
         } catch (error) {
           if (error instanceof TimeoutError) {
             const duration = Date.now() - requestStartTime;
-            const route = pathname;
+            const route = requestPathname;
 
             httpRequestDuration.observe(
               { method: request.method, route, status_code: '504' },
@@ -301,7 +299,7 @@ export function withApiHandler(
         );
       }
 
-      const route = pathname;
+      const route = requestPathname;
       const statusCode = String(response.status);
       httpRequestDuration.observe(
         { method: request.method, route, status_code: statusCode },
@@ -321,7 +319,7 @@ export function withApiHandler(
       return response;
     } catch (error) {
       const duration = Date.now() - requestStartTime;
-      const route = pathname;
+      const route = requestPathname;
       const errorStatusCode =
         error instanceof AppError ? String(error.statusCode) : '500';
 
