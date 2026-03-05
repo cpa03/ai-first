@@ -65,6 +65,20 @@ export function withApiHandler(
     const requestStartTime = Date.now();
     const correlationId = generateCorrelationId();
 
+    // PERFORMANCE: Parse URL once and reuse throughout the handler.
+    // We avoid accessing nextUrl directly here to ensure maximum compatibility
+    // across all environments (some Request implementations may not have it).
+    let requestUrl: URL | undefined;
+    let requestPathname = '/unknown';
+    try {
+      if (request.url) {
+        requestUrl = new URL(request.url);
+        requestPathname = requestUrl.pathname;
+      }
+    } catch {
+      // Ignore URL parsing errors here, handled in downstream components
+    }
+
     setCorrelationId(correlationId);
 
     const rateLimitConfig = options.rateLimit
@@ -75,7 +89,7 @@ export function withApiHandler(
       requestId,
       action: request.method,
       metadata: {
-        path: request.url ? new URL(request.url).pathname : '/unknown',
+        path: requestPathname,
         correlationId,
       },
     };
@@ -85,6 +99,7 @@ export function withApiHandler(
       scanBody: false,
       minSeverity: 2,
       logDetected: true,
+      preParsedUrl: requestUrl, // Pass pre-parsed URL for optimization
     });
 
     if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
@@ -139,7 +154,7 @@ export function withApiHandler(
         userInfo,
         info: rateLimitInfo,
         allowed,
-      } = checkUserRateLimit(request, rateLimitConfig);
+      } = checkUserRateLimit(request, rateLimitConfig, requestPathname);
 
       if (!allowed) {
         logger.warnWithContext('Rate limit exceeded', logContext, {
@@ -155,7 +170,7 @@ export function withApiHandler(
           limit: rateLimitInfo.limit,
           windowMs: rateLimitConfig.windowMs,
           clientIdentifier: userInfo.identifier,
-          endpoint: request.url ? new URL(request.url).pathname : undefined,
+          endpoint: requestPathname,
           requestId,
         });
 
@@ -209,9 +224,7 @@ export function withApiHandler(
         } catch (error) {
           if (error instanceof TimeoutError) {
             const duration = Date.now() - requestStartTime;
-            const route = request.url
-              ? new URL(request.url).pathname
-              : '/unknown';
+            const route = requestPathname;
 
             httpRequestDuration.observe(
               { method: request.method, route, status_code: '504' },
@@ -286,7 +299,7 @@ export function withApiHandler(
         );
       }
 
-      const route = request.url ? new URL(request.url).pathname : '/unknown';
+      const route = requestPathname;
       const statusCode = String(response.status);
       httpRequestDuration.observe(
         { method: request.method, route, status_code: statusCode },
@@ -306,7 +319,7 @@ export function withApiHandler(
       return response;
     } catch (error) {
       const duration = Date.now() - requestStartTime;
-      const route = request.url ? new URL(request.url).pathname : '/unknown';
+      const route = requestPathname;
       const errorStatusCode =
         error instanceof AppError ? String(error.statusCode) : '500';
 
