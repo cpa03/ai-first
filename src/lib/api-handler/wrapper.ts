@@ -156,7 +156,7 @@ export function withApiHandler(
         userInfo,
         info: rateLimitInfo,
         allowed,
-      } = checkUserRateLimit(request, rateLimitConfig);
+      } = checkUserRateLimit(request, rateLimitConfig, pathname);
 
       if (!allowed) {
         logger.warnWithContext('Rate limit exceeded', logContext, {

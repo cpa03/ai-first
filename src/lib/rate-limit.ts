@@ -138,9 +138,13 @@ function determineUserRole(request: Request, userId: string | null): UserRole {
  * 2. Fall back to IP-based identifier
  *
  * @param request - The incoming request
+ * @param pathname - Optional pre-parsed request pathname (for performance optimization)
  * @returns UserRateLimitInfo with user ID, role, and identifier
  */
-export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
+export function getUserRateLimitInfo(
+  request: Request,
+  pathname?: string
+): UserRateLimitInfo {
   const userId = extractUserIdFromRequest(request);
   const role = determineUserRole(request, userId);
 
@@ -151,7 +155,7 @@ export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
     identifier = `user:${userId}`;
   } else {
     // Fall back to IP-based identifier for anonymous users
-    identifier = getClientIdentifier(request);
+    identifier = getClientIdentifier(request, pathname);
   }
 
   return {
@@ -176,13 +180,15 @@ export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
  *
  * @param request - The incoming request
  * @param config - Rate limit configuration for the endpoint
+ * @param pathname - Optional pre-parsed request pathname (for performance optimization)
  * @returns Rate limit result with allowed status and info
  */
 export function checkUserRateLimit(
   request: Request,
-  config: RateLimitConfig
+  config: RateLimitConfig,
+  pathname?: string
 ): { allowed: boolean; info: RateLimitInfo; userInfo: UserRateLimitInfo } {
-  const userInfo = getUserRateLimitInfo(request);
+  const userInfo = getUserRateLimitInfo(request, pathname);
 
   // Get tier-specific rate limit config
   const tierConfig = tieredRateLimits[userInfo.role];
@@ -226,18 +232,23 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
  * - Vercel: x-vercel-forwarded-for
  * - Generic: x-forwarded-for, x-real-ip
  */
-function generateRequestFingerprint(request: Request): string {
+function generateRequestFingerprint(
+  request: Request,
+  pathname?: string
+): string {
   const userAgent = request.headers.get('user-agent') || '';
   const acceptLang = request.headers.get('accept-language') || '';
   const acceptEncoding = request.headers.get('accept-encoding') || '';
 
   // Include request path to make fingerprint endpoint-specific
   // This prevents an attacker from reusing the same fingerprint across different endpoints
-  let urlPath = '';
-  try {
-    urlPath = new URL(request.url).pathname;
-  } catch {
-    // URL parsing failed, use empty string
+  let urlPath = pathname || '';
+  if (!urlPath) {
+    try {
+      urlPath = new URL(request.url).pathname;
+    } catch {
+      // URL parsing failed, use empty string
+    }
   }
 
   // Combine characteristics with path
@@ -288,12 +299,16 @@ function getIpFromProxyHeaders(request: Request): string | null {
  * 3. Request fingerprint (client-controlled, use with caution)
  *
  * @param request - The incoming request
+ * @param pathname - Optional pre-parsed request pathname (for performance optimization)
  * @returns A unique identifier for the client
  *
  * @see https://developers.cloudflare.com/fundamentals/reference/http-request-headers/
  * @see https://vercel.com/docs/edge-network/headers
  */
-export function getClientIdentifier(request: Request): string {
+export function getClientIdentifier(
+  request: Request,
+  pathname?: string
+): string {
   const platform = detectPlatform();
 
   // Platform-specific trusted header handling
@@ -324,7 +339,7 @@ export function getClientIdentifier(request: Request): string {
   // Fallback: Use request fingerprinting
   // ⚠️ WARNING: This uses client-controlled headers and should be a last resort
   // Consider logging a warning in production if this path is frequently hit
-  return generateRequestFingerprint(request);
+  return generateRequestFingerprint(request, pathname);
 }
 
 // Memory leak prevention: Maximum requests per identifier to prevent unbounded growth

@@ -149,7 +149,8 @@ describe('withApiHandler', () => {
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
-        rateLimitConfigs.lenient
+        rateLimitConfigs.lenient,
+        '/api/test'
       );
     });
 
@@ -170,7 +171,8 @@ describe('withApiHandler', () => {
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
-        rateLimitConfigs.strict
+        rateLimitConfigs.strict,
+        '/api/test'
       );
     });
 
@@ -191,7 +193,8 @@ describe('withApiHandler', () => {
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
-        rateLimitConfigs.lenient
+        rateLimitConfigs.lenient,
+        '/api/test'
       );
     });
 
@@ -458,7 +461,8 @@ describe('withApiHandler', () => {
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
-        rateLimitConfigs.moderate
+        rateLimitConfigs.moderate,
+        '/api/test'
       );
       expect(response.status).toBe(500);
       expect(response.headers.get('X-Request-ID')).toBeTruthy();
