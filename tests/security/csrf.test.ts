@@ -37,8 +37,6 @@ describe('CSRF Protection', () => {
       const resultVercel = validateCSRF(reqVercel, { trustedOrigins });
       const resultPages = validateCSRF(reqPages, { trustedOrigins });
 
-      // These currently fail (result.valid will be true) because of the vulnerability
-      // We want them to be invalid
       expect(resultVercel.valid).toBe(false);
       expect(resultPages.valid).toBe(false);
     });
