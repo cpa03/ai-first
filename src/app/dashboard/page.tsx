@@ -458,7 +458,7 @@ export default function DashboardPage() {
       {deleteModal.isOpen && deleteModal.idea && (
         <div
           ref={modalRef}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-modal-title"
