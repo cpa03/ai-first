@@ -14,7 +14,10 @@ describe('CSRF Protection', () => {
 
   describe('isTrustedOrigin vulnerability', () => {
     it('should NOT allow malicious subdomains of trusted providers', () => {
-      const trustedOrigins = ['https://my-app.vercel.app', 'https://my-site.pages.dev'];
+      const trustedOrigins = [
+        'https://my-app.vercel.app',
+        'https://my-site.pages.dev',
+      ];
 
       // Malicious origin trying to exploit suffix matching
       const maliciousVercel = 'https://attacker.vercel.app';
@@ -23,15 +26,15 @@ describe('CSRF Protection', () => {
       const reqVercel = new Request('https://my-app.vercel.app/api/data', {
         method: 'POST',
         headers: {
-          'origin': maliciousVercel
-        }
+          origin: maliciousVercel,
+        },
       });
 
       const reqPages = new Request('https://my-app.vercel.app/api/data', {
         method: 'POST',
         headers: {
-          'origin': maliciousPages
-        }
+          origin: maliciousPages,
+        },
       });
 
       const resultVercel = validateCSRF(reqVercel, { trustedOrigins });
@@ -48,8 +51,8 @@ describe('CSRF Protection', () => {
       const req = new Request('https://my-app.vercel.app/api/data', {
         method: 'POST',
         headers: {
-          'origin': validOrigin
-        }
+          origin: validOrigin,
+        },
       });
 
       const result = validateCSRF(req, { trustedOrigins });
