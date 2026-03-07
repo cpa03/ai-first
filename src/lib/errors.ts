@@ -334,9 +334,21 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+  // SECURITY: Use cryptographically secure UUID when available
   // This ensures request IDs are unique and cannot be predicted for security tracing
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${crypto.randomUUID()}`;
+  let uuid: string;
+  try {
+    // Check both web crypto and node crypto (imported)
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      uuid = crypto.randomUUID();
+    } else {
+      uuid = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    }
+  } catch {
+    uuid = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  }
+
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${uuid}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

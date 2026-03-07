@@ -218,7 +218,19 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // SECURITY: Use cryptographically secure UUID when available
+      // Works in most modern browsers, Node.js 15+, and Edge Runtimes
+      let uuid: string;
+      try {
+        uuid =
+          typeof crypto !== 'undefined' &&
+          typeof crypto.randomUUID === 'function'
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      } catch {
+        uuid = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      }
+      sessionId = `session_${uuid}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
