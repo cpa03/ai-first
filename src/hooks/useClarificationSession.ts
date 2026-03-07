@@ -93,15 +93,17 @@ export function useClarificationSession(
   const [error, setError] = useState<string | null>(null);
   const [showCelebration, setShowCelebration] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isMac, setIsMac] = useState(false);
   const textInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
   const stepTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const isMac = useMemo(
-    () => typeof window !== 'undefined' && navigator.platform.includes('Mac'),
-    []
-  );
+  useEffect(() => {
+    setIsMac(
+      typeof window !== 'undefined' && navigator.platform.includes('Mac')
+    );
+  }, []);
 
   const currentQuestion = useMemo(
     () => questions[currentStep],
