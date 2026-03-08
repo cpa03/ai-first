@@ -40,7 +40,15 @@ class EventBus {
     eventType: T,
     handler: EventHandler<Extract<AgentEvent, { type: T }>>
   ): string {
-    const id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
+    let id: string;
+    try {
+      id = `sub_${crypto.randomUUID()}`;
+    } catch {
+      id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    }
+
     const subscription: Subscription = {
       id,
       eventType,
@@ -62,7 +70,15 @@ class EventBus {
    * @returns Subscription ID for unsubscribing
    */
   subscribeAll(handler: EventHandler): string {
-    const id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
+    let id: string;
+    try {
+      id = `sub_${crypto.randomUUID()}`;
+    } catch {
+      id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    }
+
     const subscription: Subscription = {
       id,
       eventType: '*',
