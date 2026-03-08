@@ -102,36 +102,51 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
 };
 
 /**
+ * PERFORMANCE: Combined PII regex for single-pass redaction.
+ * Combining multiple regexes into one with alternation and named capture groups
+ * allows redacting all PII types in a single pass over the string.
+ */
+const COMBINED_PII_REGEX = new RegExp(
+  [
+    `(?<jwt>${PII_REGEX_PATTERNS.jwt.source})`,
+    `(?<url>${PII_REGEX_PATTERNS.urlWithCredentials.source})`,
+    `(?<email>${PII_REGEX_PATTERNS.email.source})`,
+    `(?<passport>${PII_REGEX_PATTERNS.passport.source})`,
+    `(?<dl>${PII_REGEX_PATTERNS.driversLicense.source})`,
+    `(?<phone>${PII_REGEX_PATTERNS.phone.source})`,
+    `(?<ssn>${PII_REGEX_PATTERNS.ssn.source})`,
+    `(?<cc>${PII_REGEX_PATTERNS.creditCard.source})`,
+    `(?<ip>${PII_REGEX_PATTERNS.ipAddress.source})`,
+    `(?<apiKey>${PII_REGEX_PATTERNS.apiKey.source})`,
+  ].join('|'),
+  'giu'
+);
+
+/**
  * Redact PII from a string using predefined patterns
  */
 export function redactPII(text: string): string {
-  if (typeof text !== 'string') return text;
-  if (!text) return text;
+  if (typeof text !== 'string' || !text) return text;
 
-  let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
-  // Order matters: more specific patterns first
-  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.urlWithCredentials,
-    labels.URL_WITH_CREDENTIALS
-  );
-  redacted = redacted.replace(PII_REGEX_PATTERNS.email, labels.EMAIL);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.driversLicense,
-    labels.DRIVERS_LICENSE
-  );
-  redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.creditCard, labels.CREDIT_CARD);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
-    return isPrivateIP(match) ? match : labels.IP_ADDRESS;
-  });
-  redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
+  // PERFORMANCE: Single-pass replacement using combined regex
+  return text.replace(COMBINED_PII_REGEX, (match, ...args) => {
+    const groups = args[args.length - 1] as Record<string, string>;
 
-  return redacted;
+    if (groups.jwt) return labels.JWT;
+    if (groups.url) return labels.URL_WITH_CREDENTIALS;
+    if (groups.email) return labels.EMAIL;
+    if (groups.passport) return labels.PASSPORT;
+    if (groups.dl) return labels.DRIVERS_LICENSE;
+    if (groups.phone) return labels.PHONE;
+    if (groups.ssn) return labels.SSN;
+    if (groups.cc) return labels.CREDIT_CARD;
+    if (groups.ip) return isPrivateIP(match) ? match : labels.IP_ADDRESS;
+    if (groups.apiKey) return labels.API_KEY;
+
+    return match;
+  });
 }
 
 /**
