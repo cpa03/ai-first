@@ -11,7 +11,6 @@ import {
   useSyncExternalStore,
 } from 'react';
 import { RIPPLE_CONFIG, BUTTON_STYLES } from '@/lib/config';
-import { generateSecureId } from '@/lib/utils';
 
 // Custom hook to subscribe to prefers-reduced-motion media query
 // This properly updates when OS accessibility settings change during runtime
@@ -94,7 +93,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 
         // Generate unique ID for ripple - prevents unbounded counter growth
         // Using timestamp + random string ensures uniqueness without state
-        const rippleId = generateSecureId('ripple');
+        const rippleId = `ripple-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
         const newRipple: Ripple = {
           id: rippleId,
           x,
