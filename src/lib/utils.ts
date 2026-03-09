@@ -236,3 +236,28 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure random ID
+ * Uses crypto.randomUUID() when available, falls back to timestamp-based ID
+ *
+ * @param prefix - Optional prefix for the ID
+ * @returns Secure random ID string
+ */
+export function generateSecureId(prefix: string = ''): string {
+  try {
+    // crypto.randomUUID() is available in all modern environments (Node.js 15.6+, Browsers)
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return `${prefix}${crypto.randomUUID()}`;
+    }
+  } catch {
+    // Fallback if crypto is unavailable or throws
+  }
+
+  // Fallback for older environments or restricted contexts
+  const randomPart = Math.random().toString(36).substring(2, 11);
+  return `${prefix}${Date.now()}_${randomPart}`;
+}
