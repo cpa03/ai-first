@@ -8,6 +8,8 @@
 import type { AgentEvent, EventPayloadMap, EventType } from './types';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
+import { AGENT_CONFIG } from '@/lib/config/constants';
+import { generateSecureId } from '@/lib/utils';
 
 const _logger = createLogger('EventBus');
 
@@ -28,7 +30,7 @@ interface Subscription {
 class EventBus {
   private subscriptions: Map<string, Subscription[]> = new Map();
   private eventHistory: AgentEvent[] = [];
-  private readonly maxHistorySize = 1000;
+  private readonly maxHistorySize = AGENT_CONFIG.MAX_HISTORY_SIZE;
 
   /**
    * Subscribe to an event type
@@ -40,7 +42,7 @@ class EventBus {
     eventType: T,
     handler: EventHandler<Extract<AgentEvent, { type: T }>>
   ): string {
-    const id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const id = generateSecureId('sub');
     const subscription: Subscription = {
       id,
       eventType,
@@ -62,7 +64,7 @@ class EventBus {
    * @returns Subscription ID for unsubscribing
    */
   subscribeAll(handler: EventHandler): string {
-    const id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const id = generateSecureId('sub');
     const subscription: Subscription = {
       id,
       eventType: '*',

@@ -4,7 +4,17 @@ This document tracks all bugs and errors found during BugLover phase.
 
 ## Active Bugs
 
-_None - all bugs fixed!_
+### [x] Bug 4: `validate-env.sh` fails with "integer expression expected"
+
+**File:** `scripts/validate-env.sh:170`
+**Severity:** MEDIUM
+**Status:** ✅ FIXED
+
+**Description:**
+The script failed when checking for uppercase/lowercase letters in `ADMIN_API_KEY` because `grep -c` might return multiple lines or empty values in some environments, causing `[` to fail.
+
+**Fix:**
+Piped `grep -c` output to `head -n 1` to ensure a single integer is returned.
 
 ---
 

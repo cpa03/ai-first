@@ -452,6 +452,8 @@ export const AGENT_CONFIG = {
     REQUIRED_DEFAULT: true,
   } as const,
 
+  MAX_HISTORY_SIZE: EnvLoader.number('AGENT_MAX_HISTORY_SIZE', 1000, 10, 10000),
+
   CLARIFIER_CONFIDENCE: {
     BASE_CONFIDENCE:
       EnvLoader.number('AGENT_CLARIFIER_BASE_CONFIDENCE', 30, 0, 100) / 100,

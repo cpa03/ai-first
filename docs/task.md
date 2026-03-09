@@ -85,6 +85,25 @@ Browser console checks require a real browser environment with the application r
   - Resource loading failures
 - [ ] Run Lighthouse audit (target: 90+ all categories)
 
+### [CONSOLIDATE] ID Generation Standardization
+
+**Priority**: MEDIUM
+**Status**: ✅ COMPLETE
+**Date**: 2026-03-09
+
+#### Summary
+
+Standardized secure ID generation across the system by consolidating disparate implementations into a single utility.
+
+#### Actions Taken
+
+- [CONSOLIDATE] Created `generateSecureId` in `src/lib/utils.ts` as a single source of truth for ID generation.
+- [CONSOLIDATE] Refactored `src/lib/logger.ts` to use `generateSecureId` for correlation IDs.
+- [CONSOLIDATE] Refactored `src/lib/agents/events/event-bus.ts` to use `generateSecureId` for subscription IDs.
+- [CONSOLIDATE] Refactored `src/lib/session-analytics.ts` to use `generateSecureId` for session IDs.
+- [CONSOLIDATE] Refactored `src/components/Button.tsx` to use `generateSecureId` for ripple IDs.
+- [REMOVE] Eliminated multiple direct uses of `Math.random()` and `Date.now()` for ID construction.
+
 #### Pre-Check Preparation (Completed 2026-02-07)
 
 ✅ All TypeScript compilation errors resolved  

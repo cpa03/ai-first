@@ -215,6 +215,28 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
+ * Generate a unique secure ID for session and request tracing
+ * Uses crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+ *
+ * @param prefix - Optional prefix for the ID (e.g., 'session', 'req')
+ * @returns Unique secure ID string
+ */
+export function generateSecureId(prefix?: string): string {
+  let id: string;
+
+  // crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
+  // Falls back to a timestamp-based ID if crypto is not available (rare edge case)
+  try {
+    id = crypto.randomUUID();
+  } catch {
+    // Fallback for environments without crypto.randomUUID support
+    id = `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+  }
+
+  return prefix ? `${prefix}_${id}` : id;
+}
+
+/**
  * Utility to trigger haptic feedback on devices that support it.
  * Provides a tactile confirmation for user actions like copying,
  * completing tasks, or reaching milestones.
