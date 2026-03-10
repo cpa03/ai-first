@@ -26,8 +26,6 @@ describe('CSRF Security', () => {
   });
 
   it('should NOT trust subdomains of the same platform (Vercel) if not explicitly trusted', () => {
-    // This is the VULNERABILITY: currently it erroneously trusts 'attacker.vercel.app'
-    // because 'myapp.vercel.app' contains '.vercel.app'
     const trustedOrigins = ['https://myapp.vercel.app'];
     const request = new Request('https://myapp.vercel.app/api/action', {
       method: 'POST',
@@ -37,7 +35,6 @@ describe('CSRF Security', () => {
     });
 
     const result = validateCSRF(request, { trustedOrigins });
-    // This expectation should FAIL with the current vulnerable code
     expect(result.valid).toBe(false);
   });
 
@@ -51,7 +48,6 @@ describe('CSRF Security', () => {
     });
 
     const result = validateCSRF(request, { trustedOrigins });
-    // This expectation should FAIL with the current vulnerable code
     expect(result.valid).toBe(false);
   });
 
