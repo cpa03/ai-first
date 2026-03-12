@@ -12,7 +12,3 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
-
-## 2025-05-14 - [Backdrop Blur and Opacity Stacking]
-**Learning:** When applying `backdrop-blur` to an overlay, avoid using alpha-blended background colors (e.g., `bg-black/50`) in combination with the `opacity` utility (e.g., `opacity-50`). This causes cumulative opacity stacking which can lead to over-darkening and inconsistent visual results. Instead, use a solid background color (e.g., `bg-black`) and let the `opacity` utility handle the transparency.
-**Action:** Use solid background colors with opacity utilities when implementing blurred backdrops to ensure predictable transparency levels.
