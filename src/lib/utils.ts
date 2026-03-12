@@ -2,6 +2,14 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
+  // PERFORMANCE: Fast path for empty inputs
+  if (inputs.length === 0) return '';
+
+  // PERFORMANCE: Fast path for single string class
+  if (inputs.length === 1 && typeof inputs[0] === 'string' && inputs[0].indexOf(' ') === -1) {
+    return inputs[0];
+  }
+
   return twMerge(clsx(inputs));
 }
 
