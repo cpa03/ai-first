@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { generateSecureId } from './id-utils';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -97,14 +98,7 @@ export function getCorrelationId(): string | undefined {
  * Uses crypto.randomUUID() for cryptographically secure, collision-resistant IDs
  */
 export function generateCorrelationId(): string {
-  // crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
-  // Falls back to a timestamp-based ID if crypto is not available (rare edge case)
-  try {
-    return `req_${crypto.randomUUID()}`;
-  } catch {
-    // Fallback for environments without crypto.randomUUID support
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
+  return generateSecureId('req');
 }
 
 export interface LogContext {
