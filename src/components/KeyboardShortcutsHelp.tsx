@@ -9,6 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import Tooltip from './Tooltip';
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -387,7 +388,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       />
       <div
@@ -402,6 +403,7 @@ function KeyboardShortcutsHelpComponent({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -448,6 +450,7 @@ function KeyboardShortcutsHelpComponent({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -468,54 +471,91 @@ function KeyboardShortcutsHelpComponent({
               </p>
             </div>
           </div>
-          <button
-            ref={closeButtonRef}
-            onClick={handleClose}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-            aria-label="Close command palette"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+          <Tooltip content="Close command palette" position="bottom">
+            <button
+              ref={closeButtonRef}
+              onClick={handleClose}
+              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              aria-label="Close command palette"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </Tooltip>
         </div>
 
         {/* Shortcuts List */}
         <div className="overflow-y-auto max-h-[60vh] p-6">
-          {Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
-            <div key={context} className="mb-6 last:mb-0">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                {contextLabels[context as KeyboardShortcut['context']]}
-              </h3>
-              <div className="space-y-1">
-                {shortcuts.map((shortcut, index) => {
-                  const globalIndex = flatShortcuts.findIndex(
-                    (s) => s.description === shortcut.description
-                  );
-                  return (
-                    <ShortcutRow
-                      key={`${context}-${index}`}
-                      shortcut={shortcut}
-                      isMac={isMac}
-                      isSelected={
-                        preferences.vimMode && globalIndex === selectedIndex
-                      }
-                    />
-                  );
-                })}
+          {flatShortcuts.length === 0 ? (
+            <div className="py-12 flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300">
+              <div className="p-3 bg-gray-100 rounded-full mb-4">
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </div>
+              <h3 className="text-sm font-medium text-gray-900 mb-1">
+                No shortcuts found
+              </h3>
+              <p className="text-sm text-gray-500 mb-6">
+                No results for &quot;{searchQuery}&quot;. Try a different term.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              >
+                Clear search
+              </button>
             </div>
-          ))}
+          ) : (
+            Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
+              <div key={context} className="mb-6 last:mb-0">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  {contextLabels[context as KeyboardShortcut['context']]}
+                </h3>
+                <div className="space-y-1">
+                  {shortcuts.map((shortcut, index) => {
+                    const globalIndex = flatShortcuts.findIndex(
+                      (s) => s.description === shortcut.description
+                    );
+                    return (
+                      <ShortcutRow
+                        key={`${context}-${index}`}
+                        shortcut={shortcut}
+                        isMac={isMac}
+                        isSelected={
+                          preferences.vimMode && globalIndex === selectedIndex
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Footer */}
