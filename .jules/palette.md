@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-13 - [Command Palette UX Enhancements & Search Empty States]
+**Learning:** Search-driven components (like the Command Palette) without explicit empty states can leave users confused when filtering returns no results. Implementing a centered empty state with a "Clear search" CTA provides a clear recovery path. Additionally, applying `backdrop-blur-sm` to modal overlays and wrapping icon-only close buttons in `Tooltip` components ensures consistency with the app's established UX patterns for focus and accessibility.
+**Action:** Always include a "No results found" state with a clear recovery action for searchable lists, and ensure modal-like overlays use backdrop blur and accessible tooltips for icon-only controls.
