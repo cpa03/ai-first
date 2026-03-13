@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
-import Tooltip from '@/components/Tooltip';
+import Tooltip from './Tooltip';
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -388,7 +388,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}
+        className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       />
       <div
@@ -403,6 +403,7 @@ function KeyboardShortcutsHelpComponent({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
+              aria-hidden="true"
             >
               <path
                 strokeLinecap="round"
@@ -449,6 +450,7 @@ function KeyboardShortcutsHelpComponent({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -482,6 +484,7 @@ function KeyboardShortcutsHelpComponent({
                 viewBox="0 0 24 24"
                 stroke="currentColor"
                 strokeWidth={2}
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -520,6 +523,7 @@ function KeyboardShortcutsHelpComponent({
                 No results for &quot;{searchQuery}&quot;. Try a different term.
               </p>
               <button
+                type="button"
                 onClick={() => setSearchQuery('')}
                 className="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 hover:bg-primary-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               >
