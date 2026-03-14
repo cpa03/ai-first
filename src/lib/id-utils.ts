@@ -34,14 +34,11 @@ export function generateSecureId(prefix?: string): string {
       id = Array.from(bytes)
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('');
-      // Insert hyphens to match UUID format if desired, but a simple hex string is also fine
-      // For consistency with randomUUID, we'll keep it as a simple hex string or similar
     } else {
       throw new Error('no crypto');
     }
   } catch {
     // Last resort fallback for legacy environments
-    // Combine timestamp with multiple random parts for higher entropy
     const r1 = Math.random().toString(36).substring(2, 10);
     const r2 = Math.random().toString(36).substring(2, 10);
     id = `${Date.now()}-${r1}-${r2}`;
