@@ -1,7 +1,29 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+/**
+ * Utility for merging Tailwind classes with clsx and tailwind-merge.
+ *
+ * PERFORMANCE: This function includes fast-paths for common use cases:
+ * 1. Empty calls: Returns an empty string immediately.
+ * 2. Single simple class: If a single string without whitespace is provided,
+ *    it bypasses both clsx and tailwind-merge overhead.
+ *
+ * This results in significant performance gains for components that frequently
+ * call cn() with simple or no arguments.
+ */
 export function cn(...inputs: ClassValue[]) {
+  // FAST-PATH: Empty input
+  if (inputs.length === 0) return '';
+
+  // FAST-PATH: Single simple class string
+  if (inputs.length === 1 && typeof inputs[0] === 'string') {
+    const str = inputs[0];
+    if (str && !/\s/.test(str)) {
+      return str;
+    }
+  }
+
   return twMerge(clsx(inputs));
 }
 
