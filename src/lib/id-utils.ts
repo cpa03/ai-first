@@ -18,9 +18,12 @@ export function generateSecureId(prefix?: string): string {
   let id: string;
 
   try {
-    // Modern environments (Node.js 15.6+, modern browsers)
-    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-      id = crypto.randomUUID();
+    // Modern environments (Node.js 15.6+, modern browsers, Edge/Cloudflare)
+    // Use globalThis for maximum compatibility across environments
+    const cryptoInstance = typeof globalThis !== 'undefined' ? globalThis.crypto : (typeof crypto !== 'undefined' ? crypto : null);
+
+    if (cryptoInstance && typeof cryptoInstance.randomUUID === 'function') {
+      id = cryptoInstance.randomUUID();
     } else {
       throw new Error('crypto.randomUUID not available');
     }
@@ -28,9 +31,10 @@ export function generateSecureId(prefix?: string): string {
     // High-entropy fallback using crypto.getRandomValues or Math.random
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
     const bytes = new Uint8Array(16);
+    const cryptoInstance = typeof globalThis !== 'undefined' ? globalThis.crypto : (typeof crypto !== 'undefined' ? crypto : null);
 
-    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
-      crypto.getRandomValues(bytes);
+    if (cryptoInstance && typeof cryptoInstance.getRandomValues === 'function') {
+      cryptoInstance.getRandomValues(bytes);
     } else {
       // Last resort fallback for legacy environments
       for (let i = 0; i < bytes.length; i++) {
