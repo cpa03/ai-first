@@ -1,5 +1,8 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { generateSecureId } from './id-utils';
+
+export { generateSecureId };
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
