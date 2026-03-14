@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-12 - [Search Empty States for Modals]
+**Learning:** Search-driven modals (like command palettes or shortcut help) often fail to guide the user when filtering results in no matches. Providing a specific "No results" state with an icon, context-aware message, and a clear "Clear search" CTA significantly improves error recovery and reduces user frustration.
+**Action:** Always implement a dedicated empty state for filtering/search logic in UI components to ensure the user is never left with a blank screen.
