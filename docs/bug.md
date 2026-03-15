@@ -98,6 +98,23 @@ Changed the condition from `if (this.openai)` to `if (this.openai?.models)` to p
 
 ---
 
+### [x] Bug 4: Insecure random number generation and direct console.log
+
+**File:** `src/lib/session-analytics.ts`
+**Severity:** HIGH
+**Status:** ✅ FIXED
+
+**Description:**
+Session tracking was using `Math.random()` for ID generation and `console.log` for event output, which is insecure and bypasses PII redaction.
+
+**Root Cause:**
+Lack of a centralized secure ID utility and use of non-standardized logging in analytics.
+
+**Fix:**
+Created `src/lib/id-utils.ts` for secure ID generation using `crypto.randomUUID()` and refactored `session-analytics.ts` to use `logger.debug`.
+
+---
+
 ## Browser Console Errors
 
 _To be checked in PHASE 7 with BroCula_

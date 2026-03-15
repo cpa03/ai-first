@@ -21,6 +21,22 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## Code Architect Tasks
 
+### ✅ COMPLETED: Security and Logging Hardening
+
+**Priority**: HIGH
+**Status**: ✅ COMPLETED
+**Date**: 2026-03-15
+
+#### Summary
+
+Addressed security warnings related to insecure random number generation and direct console usage.
+
+#### Actions Taken
+
+- [STRENGTHEN] Created `src/lib/id-utils.ts` for cryptographically secure ID generation.
+- [CONSOLIDATE] Refactored `session-analytics.ts` to use centralized `logger.debug` and `generateSecureId`.
+- [REMOVE] Eliminated `console.log` in `session-analytics.ts`.
+
 ### ✅ COMPLETED: Test Regression Fixes - Code-Test Synchronization
 
 **Priority**: HIGH  
