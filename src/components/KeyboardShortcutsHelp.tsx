@@ -389,7 +389,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}
+        className={`absolute inset-0 bg-black backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
         aria-hidden="true"
       />
       <div
