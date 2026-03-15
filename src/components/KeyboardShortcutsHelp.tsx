@@ -9,8 +9,8 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
-import Tooltip from './Tooltip';
-import Button from './Button';
+import Tooltip from '@/components/Tooltip';
+import Button from '@/components/Button';
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -389,7 +389,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       />
       <div
