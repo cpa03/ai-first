@@ -4,14 +4,11 @@ import { twMerge } from 'tailwind-merge';
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Fast-path for common cases to bypass clsx and tailwind-merge overhead.
   // Benchmarks show ~28x faster execution for empty calls and ~1.1x for simple classes.
-  if (inputs.length === 0) return '';
-  if (
-    inputs.length === 1 &&
-    typeof inputs[0] === 'string' &&
-    inputs[0] &&
-    !/\s/.test(inputs[0])
-  ) {
-    return inputs[0];
+  const len = inputs.length;
+  if (len === 0) return '';
+  const first = inputs[0];
+  if (len === 1 && typeof first === 'string' && first && !/\s/.test(first)) {
+    return first;
   }
   return twMerge(clsx(inputs));
 }

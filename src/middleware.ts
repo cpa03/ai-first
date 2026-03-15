@@ -45,7 +45,11 @@ const AUTH_PATHS = ['/login', '/signup'];
 
 function generateNonce(): string {
   const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
+  // PERFORMANCE: Use globalThis.crypto for consistent access across environments
+  // especially in Edge/Cloudflare runtimes.
+  const c = typeof globalThis !== 'undefined' ? globalThis.crypto : crypto;
+  c.getRandomValues(array);
+
   // PERFORMANCE: Optimized conversion using spread operator which is significantly
   // faster than manual loop in Edge/Cloudflare environments for small arrays (16 bytes).
   // Avoids Node.js Buffer which is not available in Cloudflare Workers.
