@@ -1,0 +1,12 @@
+{
+  "name": "CMZ",
+  "description": "Cognitive Meta-Z: Self-healing, self-learning, and self-evolving orchestrator.",
+  "behavior": "self-heal, self-learning, self-evolve",
+  "capabilities": [
+    "orchestration",
+    "error-recovery",
+    "knowledge-acquisition",
+    "system-optimization"
+  ],
+  "version": "1.0.0"
+}

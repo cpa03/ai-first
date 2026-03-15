@@ -11,6 +11,8 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { generateSecureId } from '@/lib/id-utils';
+import { redactPIIInObject } from '@/lib/pii-redaction';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -33,7 +35,7 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = generateSecureId('session');
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
@@ -84,17 +86,11 @@ function flushEvents(): void {
   const eventsToSend = [...eventQueue];
   eventQueue.length = 0;
 
-  if (process.env.NODE_ENV !== 'production') {
-    logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
-  }
+  // Redact PII from events before logging
+  const redactedEvents = redactPIIInObject(eventsToSend);
 
-  // Console log for now - can be extended to PostHog later
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(
-      '[SessionAnalytics] Events:',
-      JSON.stringify(eventsToSend, null, 2)
-    );
-  }
+  // Use logger.debug instead of console.log for better PII redaction and environmental control
+  logger.debug('[SessionAnalytics] Flush events:', redactedEvents);
 
   if (flushTimeout) {
     clearTimeout(flushTimeout);
