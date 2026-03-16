@@ -2,6 +2,16 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
+  // PERFORMANCE: Fast-path for empty inputs or simple strings without whitespace.
+  // This bypasses the overhead of clsx and tailwind-merge for common cases.
+  if (inputs.length === 0) return '';
+  if (
+    inputs.length === 1 &&
+    typeof inputs[0] === 'string' &&
+    !/\s/.test(inputs[0])
+  ) {
+    return inputs[0];
+  }
   return twMerge(clsx(inputs));
 }
 

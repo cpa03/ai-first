@@ -46,13 +46,10 @@ const AUTH_PATHS = ['/login', '/signup'];
 function generateNonce(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
-  // Convert Uint8Array to base64 using Web APIs (Edge-compatible)
-  // Avoids Node.js Buffer which is not available in Cloudflare Workers
-  let binary = '';
-  for (let i = 0; i < array.length; i++) {
-    binary += String.fromCharCode(array[i]);
-  }
-  return btoa(binary);
+  // PERFORMANCE: Converting Uint8Array to base64 using String.fromCharCode.apply()
+  // is significantly faster in Edge/Cloudflare environments than a manual concatenation loop.
+  // This avoids Node.js Buffer which is not available in Cloudflare Workers.
+  return btoa(String.fromCharCode.apply(null, Array.from(array)));
 }
 
 function buildCSPHeader(nonce: string): string {
