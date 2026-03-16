@@ -39,14 +39,6 @@ describe('KeyboardShortcutsHelp Enhancement Tests', () => {
   it('has aria-hidden="true" on decorative SVG icons', () => {
     const { container } = render(<KeyboardShortcutsHelp isOpen={true} onClose={mockOnClose} />);
 
-    const svgs = container.querySelectorAll('svg');
-    svgs.forEach(svg => {
-      // The search icon and close icon should have aria-hidden
-      if (!svg.closest('button[aria-label="Close command palette"]')) {
-         // Generic check for svgs in this component
-      }
-    });
-
     // Check specific icons we added aria-hidden to
     const searchIcon = container.querySelector('svg.text-gray-400');
     expect(searchIcon).toHaveAttribute('aria-hidden', 'true');
