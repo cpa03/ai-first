@@ -11,21 +11,6 @@ const UUID_PATTERN =
 const IP_ADDRESS_PATTERN = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
 const FINGERPRINT_HASH_LENGTH = 12;
 
-/**
- * Simple hash function for error fingerprinting
- * Replaces node:crypto to ensure compatibility with Edge Runtime
- */
-function simpleHash(str: string): string {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
-    hash |= 0; // Convert to 32bit integer
-  }
-  // Return positive hex string
-  return (hash >>> 0).toString(16);
-}
-
 export function generateErrorFingerprint(
   code: ErrorCode | string,
   message: string,
@@ -42,10 +27,8 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = simpleHash(fingerprintInput).substring(
-    0,
-    FINGERPRINT_HASH_LENGTH
-  );
+  const hash = generateSecureId()
+    .substring(0, FINGERPRINT_HASH_LENGTH);
 
   return `fp_${hash}`;
 }

@@ -2,7 +2,7 @@
  * Secure ID Generation Utilities
  *
  * Provides standardized methods for generating cryptographically secure,
- * collision-resistant identifiers and UUIDs.
+ * collision-resistant identifiers and symbols.
  *
  * Uses globalThis.crypto.randomUUID() where available, with a fallback to
  * getRandomValues() for maximum compatibility across Node.js and Edge runtimes.
@@ -57,8 +57,7 @@ export function generateUUID(): string {
  */
 export function generateSecureId(prefix?: string): string {
   const uuid = generateUUID();
-  // Use the first 8 characters of the UUID + timestamp for a shorter but still unique ID
-  // or just return the full UUID with prefix
+  // Use a portion of the UUID for a shorter but still unique ID
   const suffix = uuid.replace(/-/g, '').substring(0, 12);
   return prefix ? `${prefix}_${suffix}` : suffix;
 }

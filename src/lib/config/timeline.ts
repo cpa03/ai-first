@@ -3,8 +3,6 @@
  * Centralizes timeline generation and task decomposition constants
  */
 
-import { generateSecureId } from '../id-utils';
-
 export const TIMELINE_CONFIG = {
   HOURS: {
     PER_WEEK: 40,
@@ -129,8 +127,15 @@ export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
     SEPARATOR: '_',
-    // SECURITY: Use standardized secure ID generation
-    GENERATOR: () => generateSecureId('idea'),
+    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
+    GENERATOR: () => {
+      try {
+        return `idea_${crypto.randomUUID()}`;
+      } catch {
+        return `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+      }
+    },
   },
 
   VALIDATION: {

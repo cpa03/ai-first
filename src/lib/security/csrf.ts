@@ -78,6 +78,19 @@ function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
       return true;
     }
 
+    if (
+      normalizedTrusted.includes('.vercel.app') &&
+      normalizedOrigin.endsWith('.vercel.app')
+    ) {
+      return true;
+    }
+
+    if (
+      normalizedTrusted.includes('.pages.dev') &&
+      normalizedOrigin.endsWith('.pages.dev')
+    ) {
+      return true;
+    }
   }
 
   return false;
