@@ -92,7 +92,7 @@ function flushEvents(): void {
   eventQueue.length = 0;
 
   // Sanitize events before processing
-  const sanitizedEvents = redactPIIInObject(eventsToSend) as SessionEvent[];
+  const sanitizedEvents = redactPIIInObject(eventsToSend) as unknown as SessionEvent[];
 
   if (process.env.NODE_ENV !== 'production') {
     logger.debug('[SessionAnalytics] Flush events:', sanitizedEvents);
