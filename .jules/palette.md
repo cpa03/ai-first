@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-17 - [Backdrop Blur for Navigation Overlays]
+**Learning:** Adding `backdrop-blur-sm` to full-screen or large navigation overlays improves visual hierarchy and focus by subtly obscuring the content below without completely hiding context. This provides a more modern, high-quality feel compared to simple solid or semi-transparent backgrounds and ensures consistency across the application's loading and navigation layers.
+**Action:** Apply `backdrop-blur-sm` to all major overlay backdrops (Modals, Navigation Drawers, Full-screen Loaders) for a consistent and polished UI.
