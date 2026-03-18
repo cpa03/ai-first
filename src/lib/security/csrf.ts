@@ -78,19 +78,16 @@ function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
       return true;
     }
 
-    if (
-      normalizedTrusted.includes('.vercel.app') &&
-      normalizedOrigin.endsWith('.vercel.app')
-    ) {
-      return true;
-    }
-
-    if (
-      normalizedTrusted.includes('.pages.dev') &&
-      normalizedOrigin.endsWith('.pages.dev')
-    ) {
-      return true;
-    }
+    /**
+     * SECURITY: We perform ONLY exact origin matching.
+     *
+     * Previous implementation allowed suffix matching for cloud provider domains
+     * (e.g., .vercel.app, .pages.dev). This is insecure as it allows any site
+     * on the same platform to bypass CSRF protection for our application.
+     *
+     * Exact matching ensures that only our specific deployment origins
+     * can perform state-changing operations.
+     */
   }
 
   return false;
