@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
-import Tooltip from './Tooltip';
+import Tooltip from '@/components/Tooltip';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface KeyboardShortcut {
@@ -510,7 +510,7 @@ function KeyboardShortcutsHelpComponent({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={1.5}
+                    strokeWidth="1.5"
                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                   />
                 </svg>
