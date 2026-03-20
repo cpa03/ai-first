@@ -179,9 +179,11 @@ function getDeterministicRandom(experimentId: string): number {
     // Get or create session ID
     let sessionId = sessionStorage.getItem('ideaflow_session_id');
     if (!sessionId) {
-      try {
+      // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+      // Standard pattern with explicit feature detection for maximum compatibility
+      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
         sessionId = `session_${crypto.randomUUID()}`;
-      } catch {
+      } else {
         // Fallback for environments without crypto.randomUUID support
         sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       }
