@@ -35,7 +35,10 @@ function getSessionId(): string {
     if (!sessionId) {
       // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
       // Standard pattern with explicit feature detection for maximum compatibility
-      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.randomUUID === 'function'
+      ) {
         sessionId = `session_${crypto.randomUUID()}`;
       } else {
         // Fallback for environments without crypto.randomUUID support
@@ -94,7 +97,6 @@ function flushEvents(): void {
   if (process.env.NODE_ENV !== 'production') {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
-
 
   if (flushTimeout) {
     clearTimeout(flushTimeout);

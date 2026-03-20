@@ -181,7 +181,10 @@ function getDeterministicRandom(experimentId: string): number {
     if (!sessionId) {
       // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
       // Standard pattern with explicit feature detection for maximum compatibility
-      if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.randomUUID === 'function'
+      ) {
         sessionId = `session_${crypto.randomUUID()}`;
       } else {
         // Fallback for environments without crypto.randomUUID support
