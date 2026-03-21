@@ -524,26 +524,26 @@ function KeyboardShortcutsHelpComponent({
           ) : (
             Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
               <div key={context} className="mb-6 last:mb-0">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                {contextLabels[context as KeyboardShortcut['context']]}
-              </h3>
-              <div className="space-y-1">
-                {shortcuts.map((shortcut, index) => {
-                  const globalIndex = flatShortcuts.findIndex(
-                    (s) => s.description === shortcut.description
-                  );
-                  return (
-                    <ShortcutRow
-                      key={`${context}-${index}`}
-                      shortcut={shortcut}
-                      isMac={isMac}
-                      isSelected={
-                        preferences.vimMode && globalIndex === selectedIndex
-                      }
-                    />
-                  );
-                })}
-              </div>
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  {contextLabels[context as KeyboardShortcut['context']]}
+                </h3>
+                <div className="space-y-1">
+                  {shortcuts.map((shortcut, index) => {
+                    const globalIndex = flatShortcuts.findIndex(
+                      (s) => s.description === shortcut.description
+                    );
+                    return (
+                      <ShortcutRow
+                        key={`${context}-${index}`}
+                        shortcut={shortcut}
+                        isMac={isMac}
+                        isSelected={
+                          preferences.vimMode && globalIndex === selectedIndex
+                        }
+                      />
+                    );
+                  })}
+                </div>
               </div>
             ))
           )}
