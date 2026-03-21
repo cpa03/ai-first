@@ -48,25 +48,10 @@ function generateNonce(): string {
   crypto.getRandomValues(array);
   // Convert Uint8Array to base64 using Web APIs (Edge-compatible)
   // Avoids Node.js Buffer which is not available in Cloudflare Workers
-  // PERFORMANCE: Unrolled manual indexing for fixed 16-byte nonce is ~4x faster than a loop
-  const binary = String.fromCharCode(
-    array[0],
-    array[1],
-    array[2],
-    array[3],
-    array[4],
-    array[5],
-    array[6],
-    array[7],
-    array[8],
-    array[9],
-    array[10],
-    array[11],
-    array[12],
-    array[13],
-    array[14],
-    array[15]
-  );
+  let binary = '';
+  for (let i = 0; i < array.length; i++) {
+    binary += String.fromCharCode(array[i]);
+  }
   return btoa(binary);
 }
 

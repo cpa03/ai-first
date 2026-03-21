@@ -345,6 +345,13 @@ export const AI_CONFIG = {
 
   /**
    * Default pricing fallback
+    'gpt-3.5-turbo': 0.000002,
+    'gpt-4': 0.00003,
+    'gpt-4-turbo': 0.00001,
+  } as const,
+
+  /**
+   * Default pricing fallback
    * NOTE: Not environment-configurable
    */
   DEFAULT_PRICING_PER_TOKEN: 0.00001,
