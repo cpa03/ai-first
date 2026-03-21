@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-21 - [Keyboard Shortcuts Help UX/Accessibility Enhancements]
+**Learning:** Interactive elements within utility modals (like the Command Palette) require high-clarity affordances. Icon-only buttons (e.g., "Close") must be wrapped in `Tooltip` for context. Searchable lists need a dedicated "No results" state to prevent "blank screen" confusion. Tactical feedback (haptics) on toggles (like Vim mode) provides delightful physical confirmation on mobile. Finally, `backdrop-blur-sm` on modal overlays significantly improves focus by visually receding background noise.
+**Action:** Implement "No results" states for all searchable UI. Wrap icon-only modal actions in `Tooltip`. Apply `backdrop-blur-sm` to overlays for enhanced focus. Use haptics for significant UI state toggles.
