@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-22 - [Keyboard Shortcuts Help UX Polish]
+**Learning:** Adding a "No results" empty state to search-intensive modals provides immediate feedback and prevents user confusion when filters yield no matches. Also, consistent use of backdrop-blur-sm across all modal overlays (consistent with LoadingOverlay) reinforces the application's visual hierarchy and polish.
+**Action:** Always include an empty state for searchable lists and use consistent backdrop-blur-sm for all system-wide overlays.
