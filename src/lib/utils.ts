@@ -1,7 +1,22 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+/**
+ * Utility to merge Tailwind CSS classes with clsx and tailwind-merge.
+ *
+ * PERFORMANCE: Fast-path for empty inputs (returns '') and single strings
+ * without whitespace (returns original string) to avoid overhead of
+ * clsx and tailwind-merge in these common cases.
+ */
 export function cn(...inputs: ClassValue[]) {
+  if (inputs.length === 0) return '';
+  if (
+    inputs.length === 1 &&
+    typeof inputs[0] === 'string' &&
+    inputs[0].indexOf(' ') === -1
+  ) {
+    return inputs[0];
+  }
   return twMerge(clsx(inputs));
 }
 
