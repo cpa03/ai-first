@@ -218,7 +218,8 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+      sessionId = `session_${crypto.randomUUID()}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
