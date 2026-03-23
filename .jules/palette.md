@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-23 - [Keyboard Shortcuts Modal Enhancements]
+**Learning:** Empty states for search-driven UIs and tooltips for hidden actions (like Esc to close) significantly improve discoverability and feedback. Adding haptic feedback to toggles provides physical confirmation on mobile, while backdrop blur enhances visual focus by reducing background noise.
+**Action:** Always implement descriptive empty states with icons for search filters and use tooltips to reveal secondary interaction methods like keyboard shortcuts on action buttons.
