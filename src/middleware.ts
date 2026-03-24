@@ -46,27 +46,12 @@ const AUTH_PATHS = ['/login', '/signup'];
 function generateNonce(): string {
   const array = new Uint8Array(16);
   crypto.getRandomValues(array);
-  // PERFORMANCE: Optimized Uint8Array to base64 conversion for fixed-size (16-byte) buffers.
-  // Using manual unrolled indexing instead of a loop provides a significant speedup
-  // in Edge runtimes by avoiding loop overhead and string concatenation.
-  const binary = String.fromCharCode(
-    array[0],
-    array[1],
-    array[2],
-    array[3],
-    array[4],
-    array[5],
-    array[6],
-    array[7],
-    array[8],
-    array[9],
-    array[10],
-    array[11],
-    array[12],
-    array[13],
-    array[14],
-    array[15]
-  );
+  // Convert Uint8Array to base64 using Web APIs (Edge-compatible)
+  // Avoids Node.js Buffer which is not available in Cloudflare Workers
+  let binary = '';
+  for (let i = 0; i < array.length; i++) {
+    binary += String.fromCharCode(array[i]);
+  }
   return btoa(binary);
 }
 
