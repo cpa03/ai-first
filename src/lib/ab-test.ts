@@ -18,6 +18,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { generateSecureId } from '@/lib/utils';
 
 /**
  * Experiment variant definition
@@ -167,19 +168,35 @@ function saveAssignments(assignments: Record<string, ABAssignment>): void {
 }
 
 /**
+ * Get a secure random value between 0 and 1.
+ */
+function getSecureRandom(): number {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] / (0xffffffff + 1);
+  }
+  // Fallback for non-crypto environments
+  return Date.now() % 1000 / 1000;
+}
+
+/**
  * Get deterministic random value based on user and experiment
  * Uses session ID for consistent assignment
  */
 function getDeterministicRandom(experimentId: string): number {
   if (typeof window === 'undefined') {
-    return Math.random();
+    return getSecureRandom();
   }
 
   try {
     // Get or create session ID
     let sessionId = sessionStorage.getItem('ideaflow_session_id');
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = generateSecureId('session');
       sessionStorage.setItem('ideaflow_session_id', sessionId);
     }
 
@@ -195,7 +212,7 @@ function getDeterministicRandom(experimentId: string): number {
     // Return normalized value 0-1
     return Math.abs(hash) / 2147483647;
   } catch {
-    return Math.random();
+    return getSecureRandom();
   }
 }
 

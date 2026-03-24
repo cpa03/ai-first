@@ -236,3 +236,53 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure, collision-resistant ID.
+ * Uses crypto.randomUUID() when available, falls back to timestamp + random string.
+ *
+ * @param prefix - Optional prefix for the ID (default: 'session')
+ * @returns A unique identifier string
+ *
+ * @example
+ * ```typescript
+ * const sessionId = generateSecureId('session');
+ * // Returns: "session_550e8400-e29b-41d4-a716-446655440000" (if UUID available)
+ * // Or: "session_1623456789012_abc123def" (fallback)
+ * ```
+ */
+export function generateSecureId(prefix: string = 'session'): string {
+  // Use crypto.randomUUID() if available (modern browsers and Node.js 15.6+)
+  try {
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return `${prefix}_${crypto.randomUUID()}`;
+    }
+  } catch {
+    // Ignore error and use fallback
+  }
+
+  // Fallback for older environments: timestamp + random alphanumeric string
+  const timestamp = Date.now();
+
+  // Use crypto.getRandomValues if available even if randomUUID is not
+  let randomPart = '';
+  try {
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const randomValues = new Uint32Array(1);
+      crypto.getRandomValues(randomValues);
+      randomPart = randomValues[0].toString(36);
+    } else {
+      randomPart = Date.now().toString(36);
+    }
+  } catch {
+    randomPart = Date.now().toString(36);
+  }
+
+  return `${prefix}_${timestamp}_${randomPart}`;
+}

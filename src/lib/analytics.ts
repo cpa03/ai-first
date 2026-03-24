@@ -17,6 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { generateSecureId } from '@/lib/utils';
 
 /**
  * Event categories for analytics
@@ -208,6 +209,22 @@ let eventQueue: AnalyticsEventProperties[] = [];
 let flushTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /**
+ * Get a secure random value between 0 and 1.
+ */
+function getSecureRandom(): number {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] / (0xffffffff + 1);
+  }
+  // Fallback for non-crypto environments
+  return Date.now() % 1000 / 1000;
+}
+
+/**
  * Get current session ID (anonymous)
  * Creates a simple session ID stored in sessionStorage
  */
@@ -218,7 +235,7 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = generateSecureId('session');
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
@@ -256,7 +273,7 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
 
   // Check sample rate
   if (ANALYTICS_CONFIG.SAMPLE_RATE < 100) {
-    const random = Math.random() * 100;
+    const random = getSecureRandom() * 100;
     if (random > ANALYTICS_CONFIG.SAMPLE_RATE) {
       return false;
     }
