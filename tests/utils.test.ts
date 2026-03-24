@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
   describe('cn', () => {
@@ -44,6 +44,35 @@ describe('Utils', () => {
         'bg-blue-500': true,
       });
       expect(result).toBe('px-4 py-2 bg-blue-500');
+    });
+  });
+
+  describe('generateSecureId', () => {
+    it('should generate an ID with the default prefix', () => {
+      const id = generateSecureId();
+      expect(id).toMatch(/^session_/);
+    });
+
+    it('should generate an ID with a custom prefix', () => {
+      const id = generateSecureId('test');
+      expect(id).toMatch(/^test_/);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should include a valid UUID when crypto is available', () => {
+      // In Node environment, crypto is usually available
+      const id = generateSecureId('prefix');
+      const parts = id.split('_');
+      expect(parts.length).toBe(2);
+      // Simple regex for UUID v4
+      expect(parts[1]).toMatch(
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+      );
     });
   });
 });
