@@ -168,12 +168,27 @@ function saveAssignments(assignments: Record<string, ABAssignment>): void {
 }
 
 /**
+ * Get a secure random value between 0 and 1.
+ */
+function getSecureRandom(): number {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] / (0xffffffff + 1);
+  }
+  return Math.random();
+}
+
+/**
  * Get deterministic random value based on user and experiment
  * Uses session ID for consistent assignment
  */
 function getDeterministicRandom(experimentId: string): number {
   if (typeof window === 'undefined') {
-    return Math.random();
+    return getSecureRandom();
   }
 
   try {
@@ -196,7 +211,7 @@ function getDeterministicRandom(experimentId: string): number {
     // Return normalized value 0-1
     return Math.abs(hash) / 2147483647;
   } catch {
-    return Math.random();
+    return getSecureRandom();
   }
 }
 

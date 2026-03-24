@@ -266,6 +266,23 @@ export function generateSecureId(prefix: string = 'session'): string {
 
   // Fallback for older environments: timestamp + random alphanumeric string
   const timestamp = Date.now();
-  const randomPart = Math.random().toString(36).substring(2, 11);
+
+  // Use crypto.getRandomValues if available even if randomUUID is not
+  let randomPart = '';
+  try {
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const randomValues = new Uint32Array(1);
+      crypto.getRandomValues(randomValues);
+      randomPart = randomValues[0].toString(36);
+    } else {
+      randomPart = Math.random().toString(36).substring(2, 11);
+    }
+  } catch {
+    randomPart = Math.random().toString(36).substring(2, 11);
+  }
+
   return `${prefix}_${timestamp}_${randomPart}`;
 }

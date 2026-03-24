@@ -209,6 +209,21 @@ let eventQueue: AnalyticsEventProperties[] = [];
 let flushTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /**
+ * Get a secure random value between 0 and 1.
+ */
+function getSecureRandom(): number {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const array = new Uint32Array(1);
+    crypto.getRandomValues(array);
+    return array[0] / (0xffffffff + 1);
+  }
+  return Math.random();
+}
+
+/**
  * Get current session ID (anonymous)
  * Creates a simple session ID stored in sessionStorage
  */
@@ -257,7 +272,7 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
 
   // Check sample rate
   if (ANALYTICS_CONFIG.SAMPLE_RATE < 100) {
-    const random = Math.random() * 100;
+    const random = getSecureRandom() * 100;
     if (random > ANALYTICS_CONFIG.SAMPLE_RATE) {
       return false;
     }
