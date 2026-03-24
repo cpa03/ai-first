@@ -179,7 +179,8 @@ function getSecureRandom(): number {
     crypto.getRandomValues(array);
     return array[0] / (0xffffffff + 1);
   }
-  return Math.random();
+  // Fallback for non-crypto environments
+  return Date.now() % 1000 / 1000;
 }
 
 /**

@@ -278,10 +278,10 @@ export function generateSecureId(prefix: string = 'session'): string {
       crypto.getRandomValues(randomValues);
       randomPart = randomValues[0].toString(36);
     } else {
-      randomPart = Math.random().toString(36).substring(2, 11);
+      randomPart = Date.now().toString(36);
     }
   } catch {
-    randomPart = Math.random().toString(36).substring(2, 11);
+    randomPart = Date.now().toString(36);
   }
 
   return `${prefix}_${timestamp}_${randomPart}`;
