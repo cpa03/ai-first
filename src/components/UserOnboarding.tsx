@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
+import Tooltip from './Tooltip';
 
 /**
  * Onboarding Tour Steps
@@ -265,26 +266,30 @@ export default function UserOnboarding() {
         />
 
         {/* Close button */}
-        <button
-          onClick={handleSkip}
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors p-1"
-          aria-label="Skip onboarding tour"
-        >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+        <div className="absolute top-3 right-3">
+          <Tooltip content="Skip tour" position="bottom">
+            <button
+              onClick={handleSkip}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1"
+              aria-label="Skip onboarding tour"
+            >
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </Tooltip>
+        </div>
 
         {/* Content */}
         <div className="mt-2">
