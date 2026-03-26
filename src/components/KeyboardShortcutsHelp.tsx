@@ -9,6 +9,8 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import Tooltip from './Tooltip';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -387,7 +389,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-100'}`}
         aria-hidden="true"
       />
       <div
@@ -425,9 +427,10 @@ function KeyboardShortcutsHelpComponent({
               <input
                 type="checkbox"
                 checked={preferences.vimMode}
-                onChange={(e) =>
-                  updatePreferences({ vimMode: e.target.checked })
-                }
+                onChange={(e) => {
+                  updatePreferences({ vimMode: e.target.checked });
+                  triggerHapticFeedback();
+                }}
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
               Enable vim navigation (j/k)
@@ -468,31 +471,60 @@ function KeyboardShortcutsHelpComponent({
               </p>
             </div>
           </div>
-          <button
-            ref={closeButtonRef}
-            onClick={handleClose}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-            aria-label="Close command palette"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
+          <Tooltip content="Close (Esc)" position="top">
+            <button
+              ref={closeButtonRef}
+              onClick={handleClose}
+              className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              aria-label="Close command palette"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </Tooltip>
         </div>
 
         {/* Shortcuts List */}
         <div className="overflow-y-auto max-h-[60vh] p-6">
-          {Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
+          {Object.keys(groupedShortcuts).length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center fade-in">
+              <div className="p-4 bg-gray-50 rounded-full mb-4">
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-sm font-medium text-gray-900 mb-1">
+                No results found
+              </h3>
+              <p className="text-xs text-gray-500 max-w-[200px] mx-auto">
+                We couldn&apos;t find any shortcuts matching &quot;{searchQuery}
+                &quot;
+              </p>
+            </div>
+          ) : (
+            Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
             <div key={context} className="mb-6 last:mb-0">
               <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
                 {contextLabels[context as KeyboardShortcut['context']]}
@@ -514,8 +546,9 @@ function KeyboardShortcutsHelpComponent({
                   );
                 })}
               </div>
-            </div>
-          ))}
+              </div>
+            ))
+          )}
         </div>
 
         {/* Footer */}
