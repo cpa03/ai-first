@@ -6,6 +6,48 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Generates a cryptographically secure random identifier.
+ * Uses crypto.randomUUID() if available, with robust fallbacks
+ * for environments without full crypto support.
+ *
+ * @returns A unique string identifier
+ */
+export function generateSecureId(): string {
+  // Try modern Web Crypto API for UUID v4
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    try {
+      return crypto.randomUUID();
+    } catch {
+      // Fallback to manual generation if randomUUID fails
+    }
+  }
+
+  // Fallback 1: crypto.getRandomValues (widely supported in browsers and Node.js)
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    try {
+      const array = new Uint32Array(4);
+      crypto.getRandomValues(array);
+      return Array.from(array)
+        .map((n) => n.toString(36))
+        .join('-');
+    } catch {
+      // Final fallback if getRandomValues fails
+    }
+  }
+
+  // Fallback 2: Math.random + Date.now (not cryptographically secure, but works everywhere)
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 10);
+  return `id-${timestamp}-${random}`;
+}
+
+/**
  * Retry options for retryWithBackoff
  */
 export interface RetryOptions {
