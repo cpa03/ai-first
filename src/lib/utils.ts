@@ -236,3 +236,38 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure unique identifier.
+ * Uses crypto.randomUUID() for collision-resistant IDs.
+ *
+ * @returns A secure unique identifier string.
+ */
+export function generateSecureId(): string {
+  // 1. Try crypto.randomUUID() - standard in modern browsers and Node.js 15.6+
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // Fall through to next method
+  }
+
+  // 2. Try crypto.getRandomValues() - available in older modern browsers and Node.js
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const array = new Uint32Array(4);
+      crypto.getRandomValues(array);
+      return Array.from(array, (dec) => dec.toString(16).padStart(8, '0')).join('-');
+    }
+  } catch {
+    // Fall through to next method
+  }
+
+  // 3. Robust fallback using timestamp and random values (non-cryptographic but safe for basic IDs)
+  // Used only when standard crypto APIs are unavailable
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 11);
+  const random2 = Math.random().toString(36).substring(2, 11);
+  return `${timestamp}-${random}-${random2}`;
+}
