@@ -123,19 +123,16 @@ export const TASK_CONFIG = {
   },
 } as const;
 
+import { generateSecureId } from '../utils';
+
 export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
     SEPARATOR: '_',
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
-    GENERATOR: () => {
-      try {
-        return `idea_${crypto.randomUUID()}`;
-      } catch {
-        return `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      }
-    },
+    /**
+     * Use generateSecureId() for cryptographically secure, collision-resistant IDs
+     */
+    GENERATOR: () => `idea_${generateSecureId()}`,
   },
 
   VALIDATION: {

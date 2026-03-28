@@ -9,6 +9,7 @@ import {
   STATUS_CODES,
   RETRY_VALUES,
 } from '../config/constants';
+import { nonSecureRandom } from '../utils';
 import { RetryOptions } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerState } from './types';
@@ -90,7 +91,7 @@ export class RetryManager {
         // Exponential backoff with jitter
         const delay = Math.min(
           baseDelay * Math.pow(2, attempt - 1) +
-            Math.random() * RETRY_VALUES.JITTER_MULTIPLIER_MS,
+            nonSecureRandom() * RETRY_VALUES.JITTER_MULTIPLIER_MS,
           maxDelay
         );
 
