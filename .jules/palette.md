@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-03-29 - [Tooltip Width and Fixed Position Handling]
+**Learning:** For tooltips on components with `fixed` or `absolute` positioning (like `ScrollToTop`), the `Tooltip` wrapper must be nested within a container that carries the positioning classes to prevent the `Tooltip`'s internal `relative` style from breaking the layout. Additionally, adding `w-max` to the Tooltip's absolute container ensures that short, multi-word labels (e.g., "Back to top") do not wrap prematurely, while `max-w` and `whitespace-normal` still protect against very long content.
+**Action:** Nest `Tooltip` inside a positioned container for fixed/absolute elements and use `w-max` on tooltips to prevent awkward wrapping of short phrases.
