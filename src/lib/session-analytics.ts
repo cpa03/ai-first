@@ -88,12 +88,9 @@ function flushEvents(): void {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
 
-  // Console log for now - can be extended to PostHog later
+  // Detailed log for debugging (satisfies security audit by using logger instead of console.log)
   if (process.env.NODE_ENV !== 'production') {
-    console.log(
-      '[SessionAnalytics] Events:',
-      JSON.stringify(eventsToSend, null, 2)
-    );
+    logger.debug('[SessionAnalytics] Events detail:', eventsToSend);
   }
 
   if (flushTimeout) {
