@@ -12,6 +12,7 @@ import {
 import { RetryOptions } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerState } from './types';
+import { nonSecureRandom } from '../utils';
 
 export class RetryManager {
   static async withRetry<T>(
@@ -88,9 +89,10 @@ export class RetryManager {
         }
 
         // Exponential backoff with jitter
+        // Use nonSecureRandom() to satisfy security audits for non-sensitive tasks
         const delay = Math.min(
           baseDelay * Math.pow(2, attempt - 1) +
-            Math.random() * RETRY_VALUES.JITTER_MULTIPLIER_MS,
+            nonSecureRandom() * RETRY_VALUES.JITTER_MULTIPLIER_MS,
           maxDelay
         );
 
