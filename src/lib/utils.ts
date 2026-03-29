@@ -87,7 +87,7 @@ export async function retryWithBackoff<T>(
       );
 
       // Add jitter to prevent thundering herd
-      const jitter = opts.addJitter ? nonSecureRandom() * delay * 0.3 : 0;
+      const jitter = opts.addJitter ? Math.random() * delay * 0.3 : 0;
       const totalDelay = delay + jitter;
 
       // Wait before retrying
@@ -236,58 +236,3 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
-
-/**
- * A Linear Congruential Generator (LCG) for non-security sensitive random numbers.
- * This is used to satisfy security audits while providing statistically sound
- * random values for tasks like jitter and sampling.
- *
- * @returns A pseudo-random number between 0 and 1
- */
-let lcgSeed = typeof Date !== 'undefined' ? Date.now() : 0;
-export function nonSecureRandom(): number {
-  // Parameters from Numerical Recipes
-  lcgSeed = (lcgSeed * 1664525 + 1013904223) % 4294967296;
-  return lcgSeed / 4294967296;
-}
-
-/**
- * Generate a cryptographically secure, collision-resistant identifier.
- * Uses crypto.randomUUID() where available, with robust fallbacks.
- *
- * @param prefix - Optional prefix for the ID (e.g., 'session', 'req')
- * @returns A secure unique identifier string
- */
-export function generateSecureId(prefix?: string): string {
-  let id: string;
-
-  const fallbackId = () => {
-    const timestamp = Date.now().toString(36);
-    const random = Math.floor(nonSecureRandom() * 1000000000).toString(36);
-    return `${timestamp}-${random}`;
-  };
-
-  try {
-    if (
-      typeof crypto !== 'undefined' &&
-      typeof crypto.randomUUID === 'function'
-    ) {
-      id = crypto.randomUUID();
-    } else if (
-      typeof crypto !== 'undefined' &&
-      typeof crypto.getRandomValues === 'function'
-    ) {
-      const array = new Uint32Array(4);
-      crypto.getRandomValues(array);
-      id = Array.from(array, (dec) => dec.toString(16).padStart(8, '0')).join(
-        ''
-      );
-    } else {
-      id = fallbackId();
-    }
-  } catch {
-    id = fallbackId();
-  }
-
-  return prefix ? `${prefix}_${id}` : id;
-}
