@@ -895,10 +895,6 @@ export const API_CACHE_CONFIG = {
 } as const;
 
 /**
-  HR|  ),
-} as const;
-
-/**
  * External API Versions Configuration
  * Extracted to dedicated module for better modularity
  * @see {@link ./external-api-versions.ts}
