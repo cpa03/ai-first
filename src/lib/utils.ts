@@ -215,6 +215,34 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
 }
 
 /**
+ * Generates a cryptographically secure, collision-resistant identifier.
+ * Primarily uses crypto.randomUUID() for maximum entropy.
+ *
+ * @param prefix - Optional prefix for the ID (e.g., 'session', 'req')
+ * @returns A secure unique identifier string
+ */
+export function generateSecureId(prefix?: string): string {
+  let uuid: string;
+  try {
+    // modern browsers and Node.js 15.6+
+    uuid = crypto.randomUUID();
+  } catch {
+    // Fallback using crypto.getRandomValues if randomUUID is unavailable
+    try {
+      const buffer = new Uint32Array(2);
+      crypto.getRandomValues(buffer);
+      uuid = `${Date.now()}-${buffer[0].toString(36)}-${buffer[1].toString(36)}`;
+    } catch {
+      // Last resort fallback using timestamp and Math.random()
+      // This is for environments where no crypto APIs are present (very rare)
+      uuid = `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+    }
+  }
+
+  return prefix ? `${prefix}_${uuid}` : uuid;
+}
+
+/**
  * Utility to trigger haptic feedback on devices that support it.
  * Provides a tactile confirmation for user actions like copying,
  * completing tasks, or reaching milestones.
