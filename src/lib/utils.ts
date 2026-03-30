@@ -1,8 +1,24 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
+/**
+ * Utility to merge Tailwind CSS classes with clsx and tailwind-merge.
+ * Optimized with a fast-path that bypasses twMerge if the result is empty
+ * or a single class (no spaces), yielding significant performance gains.
+ *
+ * @param inputs - Class values to merge
+ * @returns Merged class string
+ */
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  const result = clsx(inputs);
+
+  // PERFORMANCE: Fast-path for empty strings or single classes without spaces.
+  // This bypasses the relatively expensive twMerge parsing when it's not needed.
+  if (!result || !result.includes(' ')) {
+    return result;
+  }
+
+  return twMerge(result);
 }
 
 /**
