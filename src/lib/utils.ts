@@ -245,6 +245,10 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
  * @returns A secure random ID string
  */
 export function generateSecureId(): string {
+  // Helper for consistent fallback generation
+  const fallbackId = () =>
+    `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+
   try {
     if (
       typeof crypto !== 'undefined' &&
@@ -253,7 +257,7 @@ export function generateSecureId(): string {
       return crypto.randomUUID();
     }
   } catch {
-    // Fallback if randomUUID fails
+    // Ignore and proceed to next fallback
   }
 
   try {
@@ -268,9 +272,9 @@ export function generateSecureId(): string {
         .join('');
     }
   } catch {
-    // Fallback if getRandomValues fails
+    // Ignore and proceed to final fallback
   }
 
-  // Non-secure fallback for extreme edge cases (ensures availability)
-  return `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+  // Final non-secure fallback for extreme edge cases (ensures availability)
+  return fallbackId();
 }
