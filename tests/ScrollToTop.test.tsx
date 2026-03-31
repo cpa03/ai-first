@@ -92,8 +92,7 @@ describe('ScrollToTop', () => {
 
     expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveAttribute('aria-live', 'polite');
-    // After wrapping in Tooltip, "Back to top" is no longer a child of the button
-    // It's in the Tooltip's content, which only renders when mounted
+    expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
   it('should apply custom className', () => {
