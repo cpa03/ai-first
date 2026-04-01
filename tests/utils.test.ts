@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
   describe('cn', () => {
@@ -44,6 +44,25 @@ describe('Utils', () => {
         'bg-blue-500': true,
       });
       expect(result).toBe('px-4 py-2 bg-blue-500');
+    });
+  });
+
+  describe('generateSecureId', () => {
+    it('should generate a string with the given prefix', () => {
+      const prefix = 'test_';
+      const result = generateSecureId(prefix);
+      expect(result.startsWith(prefix)).toBe(true);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should generate IDs of reasonable length', () => {
+      const result = generateSecureId();
+      expect(result.length).toBeGreaterThan(10);
     });
   });
 });
