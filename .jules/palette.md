@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-04-01 - [Fixed-Position Tooltip Implementation]
+**Learning:** When adding a Tooltip to a fixed-position element, wrapping the Tooltip in a container div that carries the 'fixed' classes prevents the Tooltip's internal 'relative' styling from breaking the element's layout. Applying custom 'className' props to this outer wrapper ensures layout consistency and simplifies unit testing for position-dependent components.
+**Action:** Always wrap Tooltip in a positioned container for fixed or absolute elements to avoid CSS utility conflicts.
