@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-04-02 - [Fixing Broken group-hover Animations]
+**Learning:** Tailwind `group-hover` effects on child elements (like icon transitions or color shifts) require the parent interactive element (like an `article` card or `button`) to have the `group` class. In large components, it's easy to omit this class, which silently breaks the intended hover feedback and reduces the "delight" factor of the UI.
+**Action:** When implementing or debugging hover transitions for nested elements, verify that the parent container has the `group` class.
