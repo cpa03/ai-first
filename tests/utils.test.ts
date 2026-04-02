@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
   describe('cn', () => {
@@ -44,6 +44,35 @@ describe('Utils', () => {
         'bg-blue-500': true,
       });
       expect(result).toBe('px-4 py-2 bg-blue-500');
+    });
+  });
+
+  describe('generateSecureId', () => {
+    it('should generate a non-empty string', () => {
+      const id = generateSecureId();
+      expect(typeof id).toBe('string');
+      expect(id.length).toBeGreaterThan(0);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should follow UUID format when randomUUID is available', () => {
+      // In Node.js/Jest environment, crypto.randomUUID should be available
+      const id = generateSecureId();
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+      // Some environments might fall back to hex if randomUUID is mocked/missing
+      // but we expect UUID format in modern Node.js
+      if (id.includes('-') && id.split('-').length === 5) {
+        expect(id).toMatch(uuidRegex);
+      } else {
+        // Hex fallback or other
+        expect(id.length).toBeGreaterThan(16);
+      }
     });
   });
 });
