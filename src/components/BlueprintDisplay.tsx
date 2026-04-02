@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useSyncExternalStore, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
@@ -8,25 +8,8 @@ import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
-
-const subscribe = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-}
 
 interface BlueprintDisplayProps {
   idea: string;

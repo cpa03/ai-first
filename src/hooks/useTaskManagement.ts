@@ -202,14 +202,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = data;
-
-      // Find the task for toast message BEFORE making changes
-      const findTask = () => {
-        return data?.deliverables
-          .flatMap((d) => d.tasks)
-          .find((t) => t.id === taskId);
-      };
+      previousDataRef.current = dataRef.current;
 
       try {
         setUpdatingTaskId(taskId);
@@ -222,7 +215,11 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         // Show haptic feedback for completion
         if (newStatus === 'completed' && typeof window !== 'undefined') {
           triggerHapticFeedback();
-          const task = findTask();
+          // Use dataRef to find the task without adding data to dependency array
+          const task = dataRef.current?.deliverables
+            .flatMap((d) => d.tasks)
+            .find((t) => t.id === taskId);
+
           if (task) {
             const win = window as unknown as {
               showToast?: (options: { type: string; message: string }) => void;
@@ -293,7 +290,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion

@@ -8,33 +8,9 @@ import {
   useCallback,
   useEffect,
   useRef,
-  useSyncExternalStore,
 } from 'react';
 import { RIPPLE_CONFIG, BUTTON_STYLES } from '@/lib/config';
-
-// Custom hook to subscribe to prefers-reduced-motion media query
-// This properly updates when OS accessibility settings change during runtime
-const subscribeToMotionPreference = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getServerMotionSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToMotionPreference,
-    getMotionSnapshot,
-    getServerMotionSnapshot
-  );
-}
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
