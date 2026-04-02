@@ -16,6 +16,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { generateSecureId } from '@/lib/utils';
 import { EnvLoader } from '@/lib/config/environment';
 
 /**
@@ -218,7 +219,8 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // SECURITY: Use cryptographically secure ID generation
+      sessionId = `session_${generateSecureId()}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
