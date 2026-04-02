@@ -6,13 +6,13 @@ import {
   useEffect,
   useState,
   useRef,
-  useSyncExternalStore,
 } from 'react';
 import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
 } from '@/lib/config/constants';
 import { TOAST_CONFIG } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface Toast {
   id: string;
@@ -30,26 +30,6 @@ export interface ToastOptions {
 interface ToastProps {
   toast: Toast;
   onClose: (id: string) => void;
-}
-
-// Custom hook to subscribe to prefers-reduced-motion media query
-// This properly updates when OS accessibility settings change during runtime
-const subscribe = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
 
 const toastIcons = {
