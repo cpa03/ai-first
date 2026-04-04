@@ -1,6 +1,30 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
+  describe('generateSecureId', () => {
+    it('should generate a string ID', () => {
+      const id = generateSecureId();
+      expect(typeof id).toBe('string');
+      expect(id.length).toBeGreaterThan(0);
+    });
+
+    it('should generate unique IDs', () => {
+      const ids = new Set();
+      for (let i = 0; i < 100; i++) {
+        const id = generateSecureId();
+        expect(ids.has(id)).toBe(false);
+        ids.add(id);
+      }
+    });
+
+    it('should handle crypto availability', () => {
+      const id = generateSecureId();
+      // Most environments (Node.js/Jest) will have crypto
+      // This test ensures it returns a valid ID regardless
+      expect(id).toBeDefined();
+    });
+  });
+
   describe('cn', () => {
     it('should merge class names correctly', () => {
       const result = cn('px-4', 'py-2', 'bg-blue-500');

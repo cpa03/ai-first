@@ -236,3 +236,50 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure, collision-resistant ID.
+ * Priority:
+ * 1. crypto.randomUUID() (fastest, standard)
+ * 2. crypto.getRandomValues() (most compatible secure method)
+ * 3. Math.random() + timestamp (insecure fallback for extreme edge cases)
+ *
+ * @returns A secure unique identifier string
+ */
+export function generateSecureId(): string {
+  // 1. Try modern crypto.randomUUID()
+  try {
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // Ignore and try next method
+  }
+
+  // 2. Try crypto.getRandomValues()
+  try {
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const buffer = new Uint8Array(16);
+      crypto.getRandomValues(buffer);
+
+      // Convert to hex (standard UUID-like format)
+      return Array.from(buffer)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+    }
+  } catch {
+    // Ignore and try next method
+  }
+
+  // 3. Fallback (least secure, but ensures availability)
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 15);
+  return `${timestamp}-${random}`;
+}
