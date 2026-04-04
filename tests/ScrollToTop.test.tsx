@@ -85,24 +85,28 @@ describe('ScrollToTop', () => {
 
   it('should have correct accessibility attributes', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
-    render(<ScrollToTop showAt={400} />);
+    const { container } = render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
     const button = screen.getByLabelText(/Scroll to top of page/);
+    const wrapper = container.firstChild as HTMLElement;
 
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toHaveAttribute('aria-live', 'polite');
+    expect(wrapper).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
-  it('should apply custom className', () => {
+  it('should apply custom className to wrapper div', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
-    render(<ScrollToTop showAt={400} className="custom-class" />);
+    const { container } = render(
+      <ScrollToTop showAt={400} className="custom-class" />
+    );
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const wrapper = container.firstChild as HTMLElement;
 
-    expect(button).toHaveClass('custom-class');
+    expect(wrapper).toHaveClass('custom-class');
+    expect(wrapper).toHaveClass('fixed');
   });
 
   it('should use default showAt value of 400', () => {
