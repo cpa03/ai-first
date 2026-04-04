@@ -17,3 +17,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The PII redaction utility and health check endpoint were missing common patterns for modern secrets (like AWS secret keys containing Base64 characters) and highly sensitive payment-related fields (CVV, CVC, PIN).
 **Learning:** Standard alphanumeric regex patterns ([a-zA-Z0-9]) fail to capture many types of secrets that use full Base64 sets or other special characters. Additionally, centralized redaction lists must be kept in sync across diagnostic and logging utilities to prevent inconsistent data exposure.
 **Prevention:** Use comprehensive regex patterns that include Base64 characters (`/`, `+`, `=`) for API key redaction. Centralize sensitive keyword lists used by both health checks and log redaction utilities to ensure consistent protection across the application.
+
+## 2026-02-24 - Systemic Insecure Random ID Generation
+
+**Vulnerability:** Multiple core modules (analytics, A/B testing, request logging, event bus) used `Math.random()` for generating sensitive identifiers like session IDs, request IDs, and correlation IDs.
+**Learning:** `Math.random()` is a non-cryptographic PRNG. While convenient, its output is predictable, making the application vulnerable to session hijacking, ID guessing, and other enumeration attacks in high-security contexts. The lack of a centralized "secure ID" utility led to inconsistent and insecure implementations across the codebase.
+**Prevention:** Always use cryptographically secure APIs (`crypto.randomUUID()` or `crypto.getRandomValues()`) for identifiers that require high entropy. Standardize these operations in a core utility like `generateSecureId` to ensure project-wide compliance and simplify security audits.
