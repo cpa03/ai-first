@@ -9,6 +9,7 @@ import {
   ANIMATION_DELAYS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface StepCelebrationProps {
   stepNumber: number;
@@ -35,19 +36,8 @@ function StepCelebrationComponent({
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [shouldAnimate, setShouldAnimate] = useState(true);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setShouldAnimate(!mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setShouldAnimate(!e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const shouldAnimate = !prefersReducedMotion;
 
   const generateParticles = useCallback((): Particle[] => {
     return Array.from({ length: 8 }, (_, i) => ({
