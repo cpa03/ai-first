@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
   describe('cn', () => {
@@ -44,6 +44,33 @@ describe('Utils', () => {
         'bg-blue-500': true,
       });
       expect(result).toBe('px-4 py-2 bg-blue-500');
+    });
+  });
+
+  describe('generateSecureId', () => {
+    it('should generate a non-empty string', () => {
+      const id = generateSecureId();
+      expect(typeof id).toBe('string');
+      expect(id.length).toBeGreaterThan(0);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should not contain dashes', () => {
+      const id = generateSecureId();
+      expect(id).not.toContain('-');
+    });
+
+    it('should generate IDs with sufficient length', () => {
+      const id = generateSecureId();
+      // crypto.randomUUID().replace(/-/g, '') is 32 chars
+      // fallback getRandomValues is 32 chars (16 bytes * 2)
+      // timestamp fallback is variable but generally > 10
+      expect(id.length).toBeGreaterThanOrEqual(10);
     });
   });
 });
