@@ -91,8 +91,11 @@ describe('ScrollToTop', () => {
     const button = screen.getByLabelText(/Scroll to top of page/);
 
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toHaveAttribute('aria-live', 'polite');
-    expect(screen.getByText('Back to top')).toBeInTheDocument();
+    const container = button.closest('div.fixed');
+    expect(container).toHaveAttribute('aria-live', 'polite');
+    // sr-only span was removed in favor of Tooltip which provides description
+    // Testing the button aria-label instead
+    expect(button).toHaveAttribute('aria-label', expect.stringContaining('Scroll to top of page'));
   });
 
   it('should apply custom className', () => {
@@ -101,8 +104,9 @@ describe('ScrollToTop', () => {
 
     fireEvent.scroll(window);
     const button = screen.getByLabelText(/Scroll to top of page/);
+    const container = button.closest('div.fixed');
 
-    expect(button).toHaveClass('custom-class');
+    expect(container).toHaveClass('custom-class');
   });
 
   it('should use default showAt value of 400', () => {

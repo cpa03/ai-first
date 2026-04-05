@@ -188,7 +188,7 @@ function TooltipComponent({
           ref={tooltipRef}
           role="tooltip"
           className={`
-            absolute z-50 pointer-events-none
+            absolute z-50 pointer-events-none w-max
             ${positionClasses[position]}
             ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
