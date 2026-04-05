@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { generateSecureId } from './utils';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -103,7 +104,7 @@ export function generateCorrelationId(): string {
     return `req_${crypto.randomUUID()}`;
   } catch {
     // Fallback for environments without crypto.randomUUID support
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+    return `req_${generateSecureId()}`;
   }
 }
 
