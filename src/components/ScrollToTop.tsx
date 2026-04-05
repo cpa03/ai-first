@@ -9,6 +9,7 @@ import React, {
   memo,
 } from 'react';
 import { COMPONENT_DEFAULTS } from '@/lib/config';
+import Tooltip from './Tooltip';
 
 interface ScrollToTopProps {
   showAt?: number;
@@ -110,84 +111,87 @@ function ScrollToTopComponent({
     circumference - (scrollProgress / 100) * circumference;
 
   return (
-    <button
-      onClick={scrollToTop}
-      onKeyDown={handleKeyDown}
-      className={`
-        fixed bottom-8 right-8 z-50
-        w-12 h-12
-        flex items-center justify-center
-        bg-white text-gray-700
-        rounded-full shadow-lg
-        border border-gray-200
-        transition-all duration-300 ease-out
-        hover:bg-gray-50 hover:text-primary-600 hover:shadow-xl hover:scale-110
-        hover:border-primary-200
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
-        active:scale-95
-        ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
-        ${className}
-      `}
-      aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
+    <div
+      className={`fixed bottom-8 right-8 z-50 ${className}`}
       aria-live="polite"
-      type="button"
     >
-      {!prefersReducedMotion && (
-        <svg
-          className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
-          viewBox="0 0 48 48"
-          aria-hidden="true"
-          role="progressbar"
-          aria-valuenow={Math.round(scrollProgress)}
-          aria-valuemin={0}
-          aria-valuemax={100}
+      <Tooltip content="Back to top" position="top">
+        <button
+          onClick={scrollToTop}
+          onKeyDown={handleKeyDown}
+          className={`
+            group relative
+            w-12 h-12
+            flex items-center justify-center
+            bg-white text-gray-700
+            rounded-full shadow-lg
+            border border-gray-200
+            transition-all duration-300 ease-out
+            hover:bg-gray-50 hover:text-primary-600 hover:shadow-xl hover:scale-110
+            hover:border-primary-200
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+            active:scale-95
+            ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
+          `}
+          aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
+          type="button"
         >
-          <circle
-            cx="24"
-            cy="24"
-            r="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-gray-100"
-          />
-          <circle
-            cx="24"
-            cy="24"
-            r="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            className="text-primary-500 transition-all duration-150 ease-out"
-            style={{
-              strokeDasharray: circumference,
-              strokeDashoffset: strokeDashoffset,
-            }}
-          />
-        </svg>
-      )}
+          {!prefersReducedMotion && (
+            <svg
+              className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
+              viewBox="0 0 48 48"
+              aria-hidden="true"
+              role="progressbar"
+              aria-valuenow={Math.round(scrollProgress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <circle
+                cx="24"
+                cy="24"
+                r="22"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-gray-100"
+              />
+              <circle
+                cx="24"
+                cy="24"
+                r="22"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                className="text-primary-500 transition-all duration-150 ease-out"
+                style={{
+                  strokeDasharray: circumference,
+                  strokeDashoffset: strokeDashoffset,
+                }}
+              />
+            </svg>
+          )}
 
-      <svg
-        className={`
-          relative z-10 w-5 h-5 transition-transform duration-200
-          ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
-        `}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"
-        />
-      </svg>
-
-      <span className="sr-only">Back to top</span>
-    </button>
+          <svg
+            className={`
+              relative z-10 w-5 h-5 transition-transform duration-200
+              ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
+            `}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
+        </button>
+      </Tooltip>
+    </div>
   );
 }
 

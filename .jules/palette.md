@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-02-26 - [Refactoring Components for Tooltip Integration]
+**Learning:** When integrating a `Tooltip` (which adds its own `relative` wrapper) into an existing UI element with complex positioning or accessibility markers (like `fixed` placement or `aria-live`), it is best to move those properties to a common parent container. This prevents the `Tooltip`'s internal layout from conflicting with the component's desired screen placement and ensures that screen reader announcements remain correctly scoped.
+**Action:** When adding tooltips to positioned elements, wrap the entire assembly in a dedicated container that handles layout and global ARIA attributes.
