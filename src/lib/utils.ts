@@ -236,3 +236,60 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generates a cryptographically secure, collision-resistant unique identifier.
+ *
+ * This utility provides a standardized way to generate IDs across the application,
+ * prioritizing the most secure methods available in the current environment.
+ *
+ * Hierarchy of methods:
+ * 1. crypto.randomUUID() - Modern browsers and Node.js 15.6+
+ * 2. crypto.getRandomValues() - Cryptographically strong fallback
+ * 3. Math.random() + Date.now() - Non-cryptographic emergency fallback
+ *
+ * @returns A unique string identifier.
+ *
+ * @example
+ * ```typescript
+ * const sessionId = generateSecureId(); // "550e8400-e29b-41d4-a716-446655440000"
+ * ```
+ */
+export function generateSecureId(): string {
+  // 1. Prefer crypto.randomUUID() for maximum security and standard format
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    try {
+      return crypto.randomUUID();
+    } catch {
+      // Fall through to next method if randomUUID fails for any reason
+    }
+  }
+
+  // 2. Fallback to crypto.getRandomValues() for older environments supporting crypto
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    try {
+      const array = new Uint8Array(16);
+      crypto.getRandomValues(array);
+
+      // Simple hex conversion for a unique-ish string
+      // Note: This is not a strict UUID v4, but is cryptographically random
+      return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
+        ''
+      );
+    } catch {
+      // Fall through to last resort
+    }
+  }
+
+  // 3. Emergency fallback (non-cryptographically secure)
+  // This should be extremely rare in modern environments
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `${timestamp}-${randomPart}`;
+}
