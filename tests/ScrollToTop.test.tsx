@@ -89,9 +89,10 @@ describe('ScrollToTop', () => {
 
     fireEvent.scroll(window);
     const button = screen.getByLabelText(/Scroll to top of page/);
+    const wrapper = button.closest('div[aria-live="polite"]');
 
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toHaveAttribute('aria-live', 'polite');
+    expect(wrapper).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
@@ -101,8 +102,9 @@ describe('ScrollToTop', () => {
 
     fireEvent.scroll(window);
     const button = screen.getByLabelText(/Scroll to top of page/);
+    const wrapper = button.closest('.custom-class');
 
-    expect(button).toHaveClass('custom-class');
+    expect(wrapper).toBeInTheDocument();
   });
 
   it('should use default showAt value of 400', () => {
