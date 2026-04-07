@@ -8,7 +8,7 @@
 import type { AgentEvent, EventPayloadMap, EventType } from './types';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import { generateSecureId } from '@/lib/id-generator';
+import { generateSecureId } from '../../id-generator';
 
 const _logger = createLogger('EventBus');
 
@@ -41,7 +41,7 @@ class EventBus {
     eventType: T,
     handler: EventHandler<Extract<AgentEvent, { type: T }>>
   ): string {
-    const id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const id = generateSecureId('sub_');
     const subscription: Subscription = {
       id,
       eventType,
@@ -63,7 +63,7 @@ class EventBus {
    * @returns Subscription ID for unsubscribing
    */
   subscribeAll(handler: EventHandler): string {
-    const id = `sub_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    const id = generateSecureId('sub_');
     const subscription: Subscription = {
       id,
       eventType: '*',
