@@ -18,7 +18,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
-import { generateSecureId } from './utils';
+import { generateSecureId } from './id-generator';
 
 /**
  * Experiment variant definition

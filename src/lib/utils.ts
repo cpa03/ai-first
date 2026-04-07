@@ -221,6 +221,8 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
  *
  * @param duration - Duration of the vibration in milliseconds. Defaults to 50ms.
  */
+export { generateSecureId } from './id-generator';
+
 export const triggerHapticFeedback = (duration: number = 50): void => {
   // Robust guard against non-browser environments (SSR/Edge Runtime)
   if (
@@ -236,45 +238,3 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
-
-/**
- * Generate a cryptographically secure, collision-resistant identifier.
- * Uses crypto.randomUUID() when available, with robust fallbacks for different environments.
- *
- * @param prefix - Optional prefix for the ID (e.g., 'session_', 'req_')
- * @returns A unique identifier string
- */
-export function generateSecureId(prefix: string = ''): string {
-  try {
-    // 1. Try crypto.randomUUID() - standard in modern browsers and Node.js 15.6+
-    if (
-      typeof crypto !== 'undefined' &&
-      typeof crypto.randomUUID === 'function'
-    ) {
-      return `${prefix}${crypto.randomUUID()}`;
-    }
-
-    // 2. Try crypto.getRandomValues() - available in older modern browsers and Node.js
-    if (
-      typeof crypto !== 'undefined' &&
-      typeof crypto.getRandomValues === 'function'
-    ) {
-      const array = new Uint8Array(16);
-      crypto.getRandomValues(array);
-      const hex = Array.from(array)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('');
-      // Format as UUID-like structure (8-4-4-4-12)
-      const uuid = `${hex.substring(0, 8)}-${hex.substring(8, 12)}-${hex.substring(12, 16)}-${hex.substring(16, 20)}-${hex.substring(20, 32)}`;
-      return `${prefix}${uuid}`;
-    }
-  } catch {
-    // Fallback if crypto operations fail
-  }
-
-  // 3. Last resort: Timestamp + random alphanumeric string (not cryptographically secure)
-  // Used only when Web Crypto API is completely unavailable
-  const timestamp = Date.now().toString(36);
-  const random = Math.random().toString(36).substring(2, 15);
-  return `${prefix}${timestamp}-${random}`;
-}

@@ -11,7 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { generateSecureId } from './utils';
+import { generateSecureId } from './id-generator';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -89,7 +89,7 @@ function flushEvents(): void {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
 
-  // Log events - can be extended to PostHog later
+  // Console log for now - can be extended to PostHog later
   if (process.env.NODE_ENV !== 'production') {
     logger.debug(
       '[SessionAnalytics] Events:',

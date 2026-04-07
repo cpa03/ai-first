@@ -10,7 +10,7 @@
  */
 
 import { PLATFORM_ENV_VARS } from './config/constants';
-import { generateSecureId } from './utils';
+import { generateSecureId } from './id-generator';
 
 /**
  * Cloudflare-specific headers that are added to requests
