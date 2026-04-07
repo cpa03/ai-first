@@ -221,6 +221,8 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
  *
  * @param duration - Duration of the vibration in milliseconds. Defaults to 50ms.
  */
+export { generateSecureId } from './id-generator';
+
 export const triggerHapticFeedback = (duration: number = 50): void => {
   // Robust guard against non-browser environments (SSR/Edge Runtime)
   if (

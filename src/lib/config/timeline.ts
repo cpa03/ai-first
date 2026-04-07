@@ -2,7 +2,6 @@
  * Timeline & Task Configuration
  * Centralizes timeline generation and task decomposition constants
  */
-
 export const TIMELINE_CONFIG = {
   HOURS: {
     PER_WEEK: 40,
@@ -127,7 +126,7 @@ export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
     SEPARATOR: '_',
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+    // SECURITY: Uses crypto.randomUUID() for cryptographically secure, collision-resistant IDs
     // Falls back to timestamp-based ID if crypto is not available (rare edge case)
     GENERATOR: () => {
       try {
