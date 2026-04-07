@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
   describe('cn', () => {
@@ -44,6 +44,35 @@ describe('Utils', () => {
         'bg-blue-500': true,
       });
       expect(result).toBe('px-4 py-2 bg-blue-500');
+    });
+  });
+
+  describe('generateSecureId', () => {
+    it('should generate an ID without prefix', () => {
+      const id = generateSecureId();
+      expect(typeof id).toBe('string');
+      expect(id.length).toBeGreaterThan(10);
+    });
+
+    it('should generate an ID with prefix', () => {
+      const prefix = 'test_';
+      const id = generateSecureId(prefix);
+      expect(id.startsWith(prefix)).toBe(true);
+      expect(id.length).toBeGreaterThan(prefix.length + 10);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should generate multiple unique IDs in a loop', () => {
+      const ids = new Set();
+      for (let i = 0; i < 100; i++) {
+        ids.add(generateSecureId());
+      }
+      expect(ids.size).toBe(100);
     });
   });
 });
