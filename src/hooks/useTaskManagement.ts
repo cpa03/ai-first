@@ -202,11 +202,11 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = dataRef.current;
+      previousDataRef.current = data;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return dataRef.current?.deliverables
+        return data?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,8 +293,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [logger, applyTaskStatusUpdate]
+    [data, logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
