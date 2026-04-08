@@ -236,3 +236,44 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure, collision-resistant ID.
+ *
+ * Uses crypto.randomUUID() when available (standard in modern browsers and Node.js).
+ * Falls back to crypto.getRandomValues() if randomUUID is not available.
+ * Provides a defensive timestamp+random fallback for rare legacy environments.
+ *
+ * @returns A secure unique identifier
+ */
+export function generateSecureId(): string {
+  // 1. Try crypto.randomUUID() - Standard in modern environments
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // Continue to next fallback
+  }
+
+  // 2. Try crypto.getRandomValues() - Widely supported in browsers and Node.js
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+      const array = new Uint8Array(16);
+      crypto.getRandomValues(array);
+
+      // Convert to hex-like string (simplistic UUID-v4-like format)
+      return Array.from(array)
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+        .replace(/(.{8})(.{4})(.{4})(.{4})(.{12})/, '$1-$2-$3-$4-$5');
+    }
+  } catch {
+    // Continue to final fallback
+  }
+
+  // 3. Last resort fallback - Not cryptographically secure but prevents failure
+  const timestamp = Date.now().toString(36);
+  const random = Math.random().toString(36).substring(2, 10);
+  return `id_${timestamp}_${random}`;
+}
