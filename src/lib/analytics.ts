@@ -17,6 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { generateSecureId } from './utils';
 
 /**
  * Event categories for analytics
@@ -218,7 +219,7 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = `session_${generateSecureId()}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
