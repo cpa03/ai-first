@@ -75,3 +75,6 @@ export {
   CSRF_CONFIG,
   type CSRFValidationResult,
 } from './csrf';
+
+// Secure ID Generation
+export { generateSecureId } from './ids';

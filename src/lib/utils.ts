@@ -5,6 +5,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export { generateSecureId } from './security/ids';
+
 /**
  * Retry options for retryWithBackoff
  */
