@@ -1,6 +1,28 @@
-import { cn } from '@/lib/utils';
+import { cn, generateSecureId } from '@/lib/utils';
 
 describe('Utils', () => {
+  describe('generateSecureId', () => {
+    it('should generate a string', () => {
+      const id = generateSecureId();
+      expect(typeof id).toBe('string');
+      expect(id.length).toBeGreaterThan(0);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should generate many unique IDs', () => {
+      const ids = new Set();
+      for (let i = 0; i < 100; i++) {
+        ids.add(generateSecureId());
+      }
+      expect(ids.size).toBe(100);
+    });
+  });
+
   describe('cn', () => {
     it('should merge class names correctly', () => {
       const result = cn('px-4', 'py-2', 'bg-blue-500');
