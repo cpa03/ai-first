@@ -138,6 +138,7 @@ function ScrollToTopComponent({
           aria-live="polite"
           type="button"
         >
+          <span className="sr-only">Back to top</span>
       {!prefersReducedMotion && (
         <svg
           className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
@@ -192,7 +193,6 @@ function ScrollToTopComponent({
         />
       </svg>
 
-          <span className="sr-only">Back to top</span>
         </button>
       </Tooltip>
     </div>
