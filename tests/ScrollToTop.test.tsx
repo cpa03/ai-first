@@ -97,12 +97,13 @@ describe('ScrollToTop', () => {
 
   it('should apply custom className to the wrapper', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
-    const { container } = render(
-      <ScrollToTop showAt={400} className="custom-class" />
-    );
+    render(<ScrollToTop showAt={400} className="custom-class" />);
 
     fireEvent.scroll(window);
-    const wrapper = container.firstChild;
+    // Find the wrapper div using its class names or structure
+    const wrapper = screen.getByRole('button', {
+      name: /Scroll to top of page/,
+    }).closest('div.fixed');
 
     expect(wrapper).toHaveClass('custom-class');
   });

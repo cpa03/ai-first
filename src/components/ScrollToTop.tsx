@@ -9,7 +9,7 @@ import React, {
   memo,
 } from 'react';
 import { COMPONENT_DEFAULTS } from '@/lib/config';
-import Tooltip from './Tooltip';
+import Tooltip from '@/components/Tooltip';
 
 interface ScrollToTopProps {
   showAt?: number;
