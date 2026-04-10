@@ -15,7 +15,7 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
-import { generateSecureId } from '../security/ids';
+import { generateSecureId } from '../utils';
 
 export interface ExportManagerOptions {
   enableExternalConnectors?: boolean;

@@ -17,7 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
-import { generateSecureId } from './security/ids';
+import { generateSecureId } from '@/lib/utils';
 
 /**
  * Event categories for analytics

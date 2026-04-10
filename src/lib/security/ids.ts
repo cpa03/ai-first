@@ -13,13 +13,17 @@
  * @returns A secure unique identifier string
  */
 export function generateSecureId(): string {
-  // Use crypto.randomUUID() if available (Node 15.6+, modern browsers, Workers)
+  // Use crypto.randomUUID() if available (Node 19+, modern browsers, Workers)
+  // We check globalThis to be most compatible across environments
+  const cryptoObj = typeof globalThis !== 'undefined' ? globalThis.crypto :
+                   (typeof crypto !== 'undefined' ? crypto : undefined);
+
   if (
-    typeof crypto !== 'undefined' &&
-    typeof crypto.randomUUID === 'function'
+    cryptoObj &&
+    typeof cryptoObj.randomUUID === 'function'
   ) {
     try {
-      return crypto.randomUUID();
+      return cryptoObj.randomUUID();
     } catch {
       // Fallback if randomUUID fails for some reason
     }
@@ -27,12 +31,12 @@ export function generateSecureId(): string {
 
   // Fallback 1: Use crypto.getRandomValues if available
   if (
-    typeof crypto !== 'undefined' &&
-    typeof crypto.getRandomValues === 'function'
+    cryptoObj &&
+    typeof cryptoObj.getRandomValues === 'function'
   ) {
     try {
       const array = new Uint8Array(16);
-      crypto.getRandomValues(array);
+      cryptoObj.getRandomValues(array);
       return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join(
         ''
       );
