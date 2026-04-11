@@ -150,13 +150,14 @@ export class ExportManager {
         error?: string;
         serviceHealth?: ServiceHealthResult | null;
       }
-
     > = {};
 
     for (const [type, connector] of this.connectors.entries()) {
       try {
         const isValid = await connector.validateConfig();
-        const serviceHealth = connector.checkServiceHealth ? await connector.checkServiceHealth() : null;
+        const serviceHealth = connector.checkServiceHealth
+          ? await connector.checkServiceHealth()
+          : null;
         results[type] = {
           name: connector.name,
           configured: isValid,

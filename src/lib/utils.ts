@@ -245,7 +245,10 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
  */
 export function generateSecureId(): string {
   // 1. Try crypto.randomUUID() (Node.js 15.6+, modern browsers, Cloudflare Workers)
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
     try {
       return crypto.randomUUID();
     } catch {
@@ -254,7 +257,10 @@ export function generateSecureId(): string {
   }
 
   // 2. Fallback to crypto.getRandomValues()
-  if (typeof crypto !== 'undefined' && typeof crypto.getRandomValues === 'function') {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
     try {
       const bytes = new Uint8Array(16);
       crypto.getRandomValues(bytes);
@@ -269,3 +275,5 @@ export function generateSecureId(): string {
   // 3. Final resort (non-secure but collision-resistant)
   return `id_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
+
+// End of file
