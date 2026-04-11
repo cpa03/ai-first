@@ -10,6 +10,7 @@
  */
 
 import { PLATFORM_ENV_VARS } from './config/constants';
+import { generateSecureId } from './id-utils';
 
 /**
  * Cloudflare-specific headers that are added to requests
@@ -546,16 +547,10 @@ export const CORRELATION_HEADERS = {
 
 /**
  * Generate a cryptographically secure request ID
- * Uses crypto.randomUUID() when available, falls back to timestamp + random
+ * Uses the centralized generateSecureId utility for improved entropy and audit compliance.
  */
 export function generateRequestId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  return `req_${timestamp}_${randomPart}`;
+  return generateSecureId();
 }
 
 /**
@@ -881,7 +876,10 @@ export class CloudflareKV {
    */
   constructor(
     kv: KVNamespace | undefined | null,
-    options?: { prefix?: string; onError?: (error: Error, operation: string, key: string) => void }
+    options?: {
+      prefix?: string;
+      onError?: (error: Error, operation: string, key: string) => void;
+    }
   ) {
     this.kv = kv ?? null;
     this.prefix = options?.prefix ?? '';
@@ -918,7 +916,11 @@ export class CloudflareKV {
       return value as T | null;
     } catch (error) {
       // KV errors should not break the application
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'get', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'get',
+        key
+      );
       return null;
     }
   }
@@ -936,7 +938,11 @@ export class CloudflareKV {
     try {
       return await this.kv.get(this.buildKey(key), 'text');
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'getText', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'getText',
+        key
+      );
       return null;
     }
   }
@@ -954,7 +960,11 @@ export class CloudflareKV {
     try {
       return await this.kv.get(this.buildKey(key), 'arrayBuffer');
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'getArrayBuffer', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'getArrayBuffer',
+        key
+      );
       return null;
     }
   }
@@ -999,7 +1009,11 @@ export class CloudflareKV {
       await this.kv.put(this.buildKey(key), JSON.stringify(value), kvOptions);
       return true;
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'set', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'set',
+        key
+      );
       return false;
     }
   }
@@ -1037,7 +1051,11 @@ export class CloudflareKV {
       await this.kv.put(this.buildKey(key), value, kvOptions);
       return true;
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'setText', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'setText',
+        key
+      );
       return false;
     }
   }
@@ -1055,7 +1073,11 @@ export class CloudflareKV {
       await this.kv.delete(this.buildKey(key));
       return true;
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'delete', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'delete',
+        key
+      );
       return false;
     }
   }
@@ -1073,7 +1095,11 @@ export class CloudflareKV {
       const metadata = await this.kv.getWithMetadata(this.buildKey(key));
       return metadata.value !== null;
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'exists', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'exists',
+        key
+      );
       return false;
     }
   }
@@ -1110,7 +1136,11 @@ export class CloudflareKV {
         metadata: result.metadata,
       };
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'getWithMetadata', key);
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'getWithMetadata',
+        key
+      );
       return { value: null, metadata: null };
     }
   }
@@ -1178,7 +1208,11 @@ export class CloudflareKV {
         cursor: result.list_complete ? undefined : result.cursor,
       };
     } catch (error) {
-      this.onError?.(error instanceof Error ? error : new Error(String(error)), 'list', options?.prefix ?? '');
+      this.onError?.(
+        error instanceof Error ? error : new Error(String(error)),
+        'list',
+        options?.prefix ?? ''
+      );
       return null;
     }
   }
@@ -1195,7 +1229,10 @@ export class CloudflareKV {
 export function createKVCache(
   env: Record<string, unknown> | undefined,
   bindingName: string = 'CACHE_KV',
-  options?: { prefix?: string; onError?: (error: Error, operation: string, key: string) => void }
+  options?: {
+    prefix?: string;
+    onError?: (error: Error, operation: string, key: string) => void;
+  }
 ): CloudflareKV {
   const kv = env?.[bindingName] as KVNamespace | undefined;
   return new CloudflareKV(kv, options);

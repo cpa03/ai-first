@@ -15,6 +15,7 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
+import { generateSecureId } from '../id-utils';
 
 export interface ExportManagerOptions {
   enableExternalConnectors?: boolean;
@@ -149,13 +150,14 @@ export class ExportManager {
         error?: string;
         serviceHealth?: ServiceHealthResult | null;
       }
-
     > = {};
 
     for (const [type, connector] of this.connectors.entries()) {
       try {
         const isValid = await connector.validateConfig();
-        const serviceHealth = connector.checkServiceHealth ? await connector.checkServiceHealth() : null;
+        const serviceHealth = connector.checkServiceHealth
+          ? await connector.checkServiceHealth()
+          : null;
         results[type] = {
           name: connector.name,
           configured: isValid,
@@ -378,13 +380,6 @@ export const exportUtils = {
   },
 
   generateExportId(): string {
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
-    try {
-      return `export_${crypto.randomUUID()}`;
-    } catch {
-      // Fallback for environments without crypto.randomUUID support
-      return `export_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    }
+    return `export_${generateSecureId()}`;
   },
 };

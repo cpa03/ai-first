@@ -236,3 +236,6 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+
+// End of file
