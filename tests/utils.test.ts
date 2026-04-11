@@ -1,4 +1,5 @@
-import { cn, generateSecureId } from '@/lib/utils';
+import { cn } from '@/lib/utils';
+import { generateSecureId } from '@/lib/id-utils';
 
 describe('Utils', () => {
   describe('cn', () => {

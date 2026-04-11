@@ -1,5 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
-import { generateSecureId } from './utils';
+import { generateSecureId } from './id-utils';
 
 export enum LogLevel {
   DEBUG = 0,

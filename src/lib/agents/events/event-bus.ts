@@ -8,7 +8,7 @@
 import type { AgentEvent, EventPayloadMap, EventType } from './types';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import { generateSecureId } from '@/lib/utils';
+import { generateSecureId } from '@/lib/id-utils';
 
 const _logger = createLogger('EventBus');
 
