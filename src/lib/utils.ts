@@ -236,3 +236,54 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a cryptographically secure unique identifier.
+ * Uses crypto.randomUUID() when available, falling back to crypto.getRandomValues().
+ *
+ * @param prefix - Optional prefix for the ID (e.g., 'session', 'req')
+ * @returns A secure unique identifier string
+ *
+ * @example
+ * ```typescript
+ * const sessionId = generateSecureId('session');
+ * // Returns something like: "session_550e8400-e29b-41d4-a716-446655440000"
+ * ```
+ */
+export function generateSecureId(prefix?: string): string {
+  let id: string = '';
+
+  try {
+    // Access crypto safely in any environment
+    const cryptoObj =
+      typeof crypto !== 'undefined'
+        ? crypto
+        : typeof globalThis !== 'undefined' && 'crypto' in globalThis
+          ? (globalThis.crypto as Crypto)
+          : null;
+
+    if (cryptoObj) {
+      // 1. Try crypto.randomUUID() - most secure and efficient
+      if (typeof cryptoObj.randomUUID === 'function') {
+        id = cryptoObj.randomUUID();
+      }
+      // 2. Fallback to crypto.getRandomValues()
+      else if (typeof cryptoObj.getRandomValues === 'function') {
+        const bytes = new Uint8Array(16);
+        cryptoObj.getRandomValues(bytes);
+        id = Array.from(bytes)
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+      }
+    }
+  } catch {
+    // Ignore errors and use fallback
+  }
+
+  // 3. Last resort - not cryptographically secure but provides a reliable fallback
+  if (!id) {
+    id = Date.now().toString(36) + Math.random().toString(36).substring(2);
+  }
+
+  return prefix ? `${prefix}_${id}` : id;
+}

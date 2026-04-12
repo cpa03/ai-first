@@ -127,11 +127,15 @@ export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
     SEPARATOR: '_',
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
+    // SECURITY: Use cryptographically secure ID generation
     GENERATOR: () => {
       try {
-        return `idea_${crypto.randomUUID()}`;
+        // Use crypto.randomUUID() if available
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+          return `idea_${crypto.randomUUID()}`;
+        }
+        // Fallback to timestamp + random
+        return `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       } catch {
         return `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       }

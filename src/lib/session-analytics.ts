@@ -11,6 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { generateSecureId } from '@/lib/utils';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -33,7 +34,7 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = generateSecureId('session');
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
@@ -88,9 +89,9 @@ function flushEvents(): void {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
 
-  // Console log for now - can be extended to PostHog later
+  // Log events for debugging in non-production environments
   if (process.env.NODE_ENV !== 'production') {
-    console.log(
+    logger.debug(
       '[SessionAnalytics] Events:',
       JSON.stringify(eventsToSend, null, 2)
     );
