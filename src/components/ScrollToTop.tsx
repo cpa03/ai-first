@@ -114,7 +114,7 @@ function ScrollToTopComponent({
       onClick={scrollToTop}
       onKeyDown={handleKeyDown}
       className={`
-        fixed bottom-8 right-8 z-50
+        group fixed bottom-8 right-8 z-50
         w-12 h-12
         flex items-center justify-center
         bg-white text-gray-700
