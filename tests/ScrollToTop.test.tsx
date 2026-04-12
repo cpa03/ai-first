@@ -95,7 +95,7 @@ describe('ScrollToTop', () => {
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
-  it('should apply custom className', () => {
+  it('should apply custom className and include group class', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
     render(<ScrollToTop showAt={400} className="custom-class" />);
 
@@ -103,6 +103,7 @@ describe('ScrollToTop', () => {
     const button = screen.getByLabelText(/Scroll to top of page/);
 
     expect(button).toHaveClass('custom-class');
+    expect(button).toHaveClass('group');
   });
 
   it('should use default showAt value of 400', () => {
