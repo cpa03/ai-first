@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, memo } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 import {
   CELEBRATION_COLORS,
@@ -25,8 +26,6 @@ interface Particle {
   scale: number;
   delay: number;
 }
-
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 function StepCelebrationComponent({
   stepNumber,

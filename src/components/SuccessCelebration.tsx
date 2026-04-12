@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useCallback, memo } from 'react';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
@@ -25,8 +26,6 @@ interface SuccessCelebrationProps {
   onComplete?: () => void;
   duration?: number;
 }
-
-import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const COLORS = CELEBRATION_COLORS.ALL;
 const PARTICLE_COUNT = ANIMATION_PHYSICS.PARTICLE_COUNT;
