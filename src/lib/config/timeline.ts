@@ -3,7 +3,7 @@
  * Centralizes timeline generation and task decomposition constants
  */
 
-import { generateSecureId } from '../utils';
+import { generateSecureId } from '../id-generator';
 
 export const TIMELINE_CONFIG = {
   HOURS: {
