@@ -17,7 +17,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { generateSecureId } from '@/lib/utils';
+import { generateSecureId } from '@/lib/id-generator';
 import { EnvLoader } from '@/lib/config/environment';
 
 /**
