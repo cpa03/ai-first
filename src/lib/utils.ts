@@ -236,3 +236,5 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+export { generateSecureId } from './id-generator';

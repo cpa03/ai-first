@@ -17,6 +17,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { generateSecureId } from '@/lib/id-generator';
 import { EnvLoader } from '@/lib/config/environment';
 
 /**
@@ -179,7 +180,7 @@ function getDeterministicRandom(experimentId: string): number {
     // Get or create session ID
     let sessionId = sessionStorage.getItem('ideaflow_session_id');
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = `session_${generateSecureId()}`;
       sessionStorage.setItem('ideaflow_session_id', sessionId);
     }
 

@@ -46,4 +46,29 @@ describe('Utils', () => {
       expect(result).toBe('px-4 py-2 bg-blue-500');
     });
   });
+
+  describe('generateSecureId', () => {
+    const { generateSecureId } = require('@/lib/utils');
+
+    it('should generate a string ID', () => {
+      const id = generateSecureId();
+      expect(typeof id).toBe('string');
+      expect(id.length).toBeGreaterThan(10);
+    });
+
+    it('should generate unique IDs', () => {
+      const id1 = generateSecureId();
+      const id2 = generateSecureId();
+      expect(id1).not.toBe(id2);
+    });
+
+    it('should generate valid UUIDs when crypto is available', () => {
+      const id = generateSecureId();
+      // Simple regex for UUID v4
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      // In Node.js environment, crypto.randomUUID should be available
+      expect(id).toMatch(uuidRegex);
+    });
+  });
 });
