@@ -225,6 +225,13 @@ export const TASK_MANAGEMENT_MESSAGES = {
         ? `Mark "${taskTitle}" as incomplete`
         : `Mark "${taskTitle}" as complete`,
   },
+  TOOLTIPS: {
+    ESTIMATE: (hours: number) =>
+      `Estimated effort: ${hours} hour${hours === 1 ? '' : 's'}`,
+    ASSIGNEE: (name: string) => `Assigned to: ${name}`,
+    RISK: (level: string) =>
+      `${level.charAt(0).toUpperCase() + level.slice(1)} risk level`,
+  },
 } as const;
 
 /**
