@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-04-13 - [Informative Tooltips for Task Metadata]
+**Learning:** Adding descriptive tooltips to abstract icons and badges (like time estimates and risk levels) significantly improves the intuitiveness of the interface for sighted users. It provides explicit context that might otherwise be ambiguous, especially when icons are used without accompanying text. Ensuring that tooltip content remains consistent with `aria-label` logic maintains a unified experience across different assistive technologies.
+**Action:** Use informative tooltips for metadata icons and badges to provide immediate context on hover. Ensure singular/plural logic is handled correctly for values like time duration.

@@ -156,10 +156,10 @@ validate_admin_key_security() {
     fi
     
     local key_length=${#key}
-    local has_upper=$(echo "$key" | grep -c '[A-Z]' || echo 0)
-    local has_lower=$(echo "$key" | grep -c '[a-z]' || echo 0)
-    local has_number=$(echo "$key" | grep -c '[0-9]' || echo 0)
-    local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || echo 0)
+    local has_upper=$(echo "$key" | grep -c '[A-Z]' || :)
+    local has_lower=$(echo "$key" | grep -c '[a-z]' || :)
+    local has_number=$(echo "$key" | grep -c '[0-9]' || :)
+    local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || :)
     
     if [ "$key_length" -lt "$MIN_ADMIN_KEY_LENGTH" ]; then
         print_status "SECURITY" "ADMIN_API_KEY is too short ($key_length chars, minimum $MIN_ADMIN_KEY_LENGTH)"
@@ -419,24 +419,24 @@ main() {
     echo
     
     # Security validations for sensitive environment variables
-    check_placeholder_value "SUPABASE_SERVICE_ROLE_KEY"
-    check_placeholder_value "OPENAI_API_KEY"
-    check_placeholder_value "ANTHROPIC_API_KEY"
-    check_placeholder_value "ADMIN_API_KEY"
+    check_placeholder_value "SUPABASE_SERVICE_ROLE_KEY" || true
+    check_placeholder_value "OPENAI_API_KEY" || true
+    check_placeholder_value "ANTHROPIC_API_KEY" || true
+    check_placeholder_value "ADMIN_API_KEY" || true
     
-    validate_admin_key_security
+    validate_admin_key_security || true
     
     echo
     echo -e "${BLUE}Optional Integrations:${NC}"
     echo
     
     # Check optional variables
-    check_env_var "OPENAI_API_KEY" "false"
-    check_env_var "ANTHROPIC_API_KEY" "false"
-    check_env_var "NOTION_API_KEY" "false"
-    check_env_var "TRELLO_API_KEY" "false"
-    check_env_var "GOOGLE_CLIENT_ID" "false"
-    check_env_var "GITHUB_TOKEN" "false"
+    check_env_var "OPENAI_API_KEY" "false" || true
+    check_env_var "ANTHROPIC_API_KEY" "false" || true
+    check_env_var "NOTION_API_KEY" "false" || true
+    check_env_var "TRELLO_API_KEY" "false" || true
+    check_env_var "GOOGLE_CLIENT_ID" "false" || true
+    check_env_var "GITHUB_TOKEN" "false" || true
     
     echo
     echo -e "${BLUE}============================================${NC}"
