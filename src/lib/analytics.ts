@@ -207,12 +207,16 @@ function isPostHogConfigured(): boolean {
 let eventQueue: AnalyticsEventProperties[] = [];
 let flushTimeout: ReturnType<typeof setTimeout> | null = null;
 
+// PERFORMANCE: Cache session ID to avoid redundant sessionStorage lookups
+let cachedSessionId: string | null = null;
+
 /**
  * Get current session ID (anonymous)
  * Creates a simple session ID stored in sessionStorage
  */
 function getSessionId(): string {
   if (typeof window === 'undefined') return 'server';
+  if (cachedSessionId) return cachedSessionId;
 
   const storageKey = 'ideaflow_session_id';
   try {
@@ -221,6 +225,7 @@ function getSessionId(): string {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
+    cachedSessionId = sessionId;
     return sessionId;
   } catch {
     return 'session_unavailable';
@@ -650,6 +655,7 @@ export function resetAnalytics(): void {
     clearTimeout(flushTimeout);
     flushTimeout = null;
   }
+  cachedSessionId = null;
 
   // Clear session storage
   if (typeof window !== 'undefined') {
