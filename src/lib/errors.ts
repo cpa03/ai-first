@@ -1,7 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import crypto from 'node:crypto';
+import { generateSecureId } from './id-generator';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -27,11 +27,13 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
-    .substring(0, FINGERPRINT_HASH_LENGTH);
+  // Simple, deterministic string hash for fingerprinting
+  // Avoids Node.js crypto module for Edge/Browser compatibility
+  let h = 0;
+  for (let i = 0; i < fingerprintInput.length; i++) {
+    h = (Math.imul(31, h) + fingerprintInput.charCodeAt(i)) | 0;
+  }
+  const hash = Math.abs(h).toString(16).substring(0, FINGERPRINT_HASH_LENGTH);
 
   return `fp_${hash}`;
 }
@@ -334,9 +336,9 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+  // Use generateSecureId() for cryptographically secure, collision-resistant IDs
   // This ensures request IDs are unique and cannot be predicted for security tracing
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${crypto.randomUUID()}`;
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateSecureId()}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

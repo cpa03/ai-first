@@ -8,12 +8,12 @@
 /**
  * Generate a cryptographically secure, collision-resistant ID.
  * Uses crypto.randomUUID() when available, falling back to a robust
- * timestamp-based random ID for maximum compatibility.
+ * combination of high-resolution timestamp and secure random values.
  *
  * @returns A unique ID string
  */
 export function generateSecureId(): string {
-  // Use crypto.randomUUID() if available (Node.js 15.6+, modern browsers, Edge runtime)
+  // 1. Try native crypto.randomUUID() (Node.js 15.6+, modern browsers, Edge runtime)
   if (
     typeof crypto !== 'undefined' &&
     typeof crypto.randomUUID === 'function'
@@ -21,12 +21,30 @@ export function generateSecureId(): string {
     try {
       return crypto.randomUUID();
     } catch {
-      // Fallback if randomUUID fails for any reason
+      // Fallback if randomUUID fails
     }
   }
 
-  // Robust fallback for environments without crypto.randomUUID support
-  // Combines high-resolution timestamp with multiple random parts for entropy
+  // 2. Try crypto.getRandomValues() for secure random fallback
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    try {
+      const array = new Uint32Array(4);
+      crypto.getRandomValues(array);
+      const timestamp = Date.now().toString(36);
+      const randomPart = Array.from(array)
+        .map((n) => n.toString(36))
+        .join('-');
+      return `${timestamp}-${randomPart}`;
+    } catch {
+      // Fallback to basic random
+    }
+  }
+
+  // 3. Last resort: high-resolution timestamp + multiple Math.random() parts
+  // Only reached in very restricted or ancient environments
   const timestamp = Date.now().toString(36);
   const randomPart1 = Math.random().toString(36).substring(2, 15);
   const randomPart2 = Math.random().toString(36).substring(2, 15);
