@@ -419,24 +419,24 @@ main() {
     echo
     
     # Security validations for sensitive environment variables
-    check_placeholder_value "SUPABASE_SERVICE_ROLE_KEY"
-    check_placeholder_value "OPENAI_API_KEY"
-    check_placeholder_value "ANTHROPIC_API_KEY"
-    check_placeholder_value "ADMIN_API_KEY"
+    check_placeholder_value "SUPABASE_SERVICE_ROLE_KEY" || true
+    check_placeholder_value "OPENAI_API_KEY" || true
+    check_placeholder_value "ANTHROPIC_API_KEY" || true
+    check_placeholder_value "ADMIN_API_KEY" || true
     
-    validate_admin_key_security
+    validate_admin_key_security || true
     
     echo
     echo -e "${BLUE}Optional Integrations:${NC}"
     echo
     
     # Check optional variables
-    check_env_var "OPENAI_API_KEY" "false"
-    check_env_var "ANTHROPIC_API_KEY" "false"
-    check_env_var "NOTION_API_KEY" "false"
-    check_env_var "TRELLO_API_KEY" "false"
-    check_env_var "GOOGLE_CLIENT_ID" "false"
-    check_env_var "GITHUB_TOKEN" "false"
+    check_env_var "OPENAI_API_KEY" "false" || true
+    check_env_var "ANTHROPIC_API_KEY" "false" || true
+    check_env_var "NOTION_API_KEY" "false" || true
+    check_env_var "TRELLO_API_KEY" "false" || true
+    check_env_var "GOOGLE_CLIENT_ID" "false" || true
+    check_env_var "GITHUB_TOKEN" "false" || true
     
     echo
     echo -e "${BLUE}============================================${NC}"
