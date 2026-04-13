@@ -23,11 +23,15 @@ export const SESSION_EVENTS = {
   PAGE_TIME: 'page_time',
 } as const;
 
+// PERFORMANCE: Cache session ID to avoid redundant sessionStorage lookups
+let cachedSessionId: string | null = null;
+
 /**
  * Get or create a session ID
  */
 function getSessionId(): string {
   if (typeof window === 'undefined') return 'server';
+  if (cachedSessionId) return cachedSessionId;
 
   const storageKey = 'ideaflow_session_id';
   try {
@@ -36,6 +40,7 @@ function getSessionId(): string {
       sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
+    cachedSessionId = sessionId;
     return sessionId;
   } catch {
     return 'session_unavailable';
@@ -190,6 +195,7 @@ export function resetSession(): void {
     clearTimeout(flushTimeout);
     flushTimeout = null;
   }
+  cachedSessionId = null;
 
   if (typeof window !== 'undefined') {
     try {
