@@ -7,9 +7,9 @@ import React, {
   useCallback,
   useId,
   memo,
-  useSyncExternalStore,
 } from 'react';
 import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -20,28 +20,6 @@ interface TooltipProps {
   delay?: number;
   disabled?: boolean;
   className?: string;
-}
-
-const subscribeReducedMotion = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getReducedMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getReducedMotionServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot
-  );
 }
 
 // PERFORMANCE: Memoize Tooltip to prevent re-renders when parent components update

@@ -5,37 +5,15 @@ import React, {
   useEffect,
   useCallback,
   useRef,
-  useSyncExternalStore,
   memo,
 } from 'react';
 import { COMPONENT_DEFAULTS } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface ScrollToTopProps {
   showAt?: number;
   smooth?: boolean;
   className?: string;
-}
-
-const subscribeToReducedMotionMediaQuery = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getReducedMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getReducedMotionServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToReducedMotionMediaQuery,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot
-  );
 }
 
 // PERFORMANCE: Memoize ScrollToTop to prevent re-renders when parent components update
