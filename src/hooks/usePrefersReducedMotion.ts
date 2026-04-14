@@ -17,11 +17,9 @@ const subscribe = (callback: () => void) => {
     mediaQuery.addEventListener('change', callback);
     return () => mediaQuery.removeEventListener('change', callback);
   } else {
-    // @ts-expect-error - Fallback for older browsers
-    mediaQuery.addListener(callback);
+    (mediaQuery as MediaQueryList).addListener(callback);
     return () => {
-      // @ts-expect-error - Fallback for older browsers
-      mediaQuery.removeListener(callback);
+      (mediaQuery as MediaQueryList).removeListener(callback);
     };
   }
 };
