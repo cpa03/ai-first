@@ -32,7 +32,7 @@ export function generateSecureId(prefix: string = ''): string {
       // 2. Fallback to manual UUID v4 generation using crypto.getRandomValues
       uuid = generateFallbackUuid();
     }
-  } catch (error) {
+  } catch (_error) {
     // 3. Last resort - timestamp + random (less secure, but prevents total failure)
     // This should almost never happen in modern environments
     const randomPart = Math.random().toString(36).substring(2, 11);
