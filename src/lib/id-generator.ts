@@ -30,8 +30,10 @@ export function generateSecureId(prefix: string = ''): string {
           : null;
 
     // 1. Try native crypto.randomUUID() - most efficient and secure
-    if (cryptoObj && typeof (cryptoObj as any).randomUUID === 'function') {
-      uuid = (cryptoObj as any).randomUUID();
+    // Use type assertion to handle older TypeScript environments or limited Crypto interface
+    const extendedCrypto = cryptoObj as Crypto & { randomUUID?: () => string };
+    if (extendedCrypto && typeof extendedCrypto.randomUUID === 'function') {
+      uuid = extendedCrypto.randomUUID();
     } else if (cryptoObj && typeof cryptoObj.getRandomValues === 'function') {
       // 2. Fallback to manual UUID v4 generation using crypto.getRandomValues
       uuid = generateFallbackUuid(cryptoObj);
