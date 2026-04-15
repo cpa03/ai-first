@@ -195,18 +195,20 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     []
   );
 
-  // Toggle task status with OPTIMISTIC updates
+  // PERFORMANCE: Stabilize handleToggleTaskStatus to prevent O(N) re-renders of the task list.
+  // By using dataRef.current instead of data in the dependency array, we ensure this
+  // callback identity remains constant, allowing memoized TaskItem components to skip re-rendering.
   const handleToggleTaskStatus = useCallback(
     async (taskId: string, currentStatus: TaskStatus) => {
       const newStatus: TaskStatus =
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = data;
+      previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return data?.deliverables
+        return dataRef.current?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,7 +295,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
