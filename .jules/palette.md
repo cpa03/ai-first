@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-04-15 - [Enhancing ScrollToTop with Tooltip and Animation]
+**Learning:** Icon-only floating action buttons benefit significantly from descriptive tooltips to provide context. Additionally, animations like `group-hover` require the `group` class on the parent interactive element to function correctly on children SVG elements.
+**Action:** Always verify that parent containers have the `group` class when using `group-hover` utilities on children, and provide tooltips for persistent floating UI elements.
