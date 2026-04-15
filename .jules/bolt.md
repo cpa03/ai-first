@@ -1,0 +1,3 @@
+## 2026-04-15 - Stabilizing list item callbacks with Refs
+**Learning:** In large interactive lists (like task management), including the list state in the dependency array of item action callbacks (e.g., `onToggle`) causes a O(N) re-render cost for any single item update. This is because the callback identity changes, breaking `React.memo` for every item in the list.
+**Action:** Use a "Ref-stabilized callback" pattern: track the state in a `useRef` that is updated on every render, and reference `dataRef.current` inside the `useCallback` instead of including `data` in the dependency array. This keeps the callback identity stable and limits re-renders to only the affected items.
