@@ -21,17 +21,22 @@ export function generateSecureId(prefix: string = ''): string {
   let id = '';
 
   try {
+    // SECURITY: Use globalThis.crypto for maximum environment compatibility
+    // Works in Browser, Node.js (global crypto since 19.0.0), and Edge Runtime.
+    const secureCrypto = typeof crypto !== 'undefined' ? crypto :
+                        (typeof globalThis !== 'undefined' ? globalThis.crypto : undefined);
+
     // 1. Try modern randomUUID
-    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-      id = crypto.randomUUID();
+    if (secureCrypto && typeof secureCrypto.randomUUID === 'function') {
+      id = secureCrypto.randomUUID();
     }
     // 2. Try getRandomValues for custom UUID-like string
     else if (
-      typeof crypto !== 'undefined' &&
-      typeof crypto.getRandomValues === 'function'
+      secureCrypto &&
+      typeof secureCrypto.getRandomValues === 'function'
     ) {
       const bytes = new Uint8Array(16);
-      crypto.getRandomValues(bytes);
+      secureCrypto.getRandomValues(bytes);
       // Set version to 4 (random)
       bytes[6] = (bytes[6] & 0x0f) | 0x40;
       // Set variant to RFC4122
