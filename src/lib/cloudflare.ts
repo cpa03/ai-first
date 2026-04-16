@@ -10,6 +10,7 @@
  */
 
 import { PLATFORM_ENV_VARS } from './config/constants';
+import { generateSecureId } from './id-generator';
 
 /**
  * Cloudflare-specific headers that are added to requests
@@ -549,13 +550,8 @@ export const CORRELATION_HEADERS = {
  * Uses crypto.randomUUID() when available, falls back to timestamp + random
  */
 export function generateRequestId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  return `req_${timestamp}_${randomPart}`;
+  // SECURITY: Use centralized cryptographically secure ID generation
+  return generateSecureId();
 }
 
 /**
