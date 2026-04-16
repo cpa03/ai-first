@@ -2,7 +2,6 @@ import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
 import { generateSecureId } from './id-generator';
-import crypto from 'node:crypto';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -11,6 +10,26 @@ const UUID_PATTERN =
   /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi;
 const IP_ADDRESS_PATTERN = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
 const FINGERPRINT_HASH_LENGTH = 12;
+
+/**
+ * Simple deterministic hash function for error fingerprinting
+ * Avoids node:crypto dependency for cross-platform compatibility (Edge/Browser)
+ * Generates a 16-character hex string.
+ */
+function simpleHash(str: string): string {
+  let hash1 = 0;
+  let hash2 = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash1 = (hash1 << 5) - hash1 + char;
+    hash1 = hash1 & hash1;
+    hash2 = (hash2 << 7) - hash2 + char;
+    hash2 = hash2 & hash2;
+  }
+  const h1 = Math.abs(hash1).toString(16).padStart(8, '0');
+  const h2 = Math.abs(hash2).toString(16).padStart(8, '0');
+  return h1 + h2;
+}
 
 export function generateErrorFingerprint(
   code: ErrorCode | string,
@@ -28,11 +47,7 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
-    .substring(0, FINGERPRINT_HASH_LENGTH);
+  const hash = simpleHash(fingerprintInput).substring(0, FINGERPRINT_HASH_LENGTH);
 
   return `fp_${hash}`;
 }
