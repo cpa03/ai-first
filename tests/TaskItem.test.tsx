@@ -12,10 +12,17 @@ const mockTask: Task = {
   estimate: 2,
   assignee: 'John Doe',
   risk_level: 'medium',
-  order_index: 0,
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   completion_percentage: 0,
+  start_date: null,
+  end_date: null,
+  actual_hours: null,
+  priority_score: 0,
+  complexity_score: 0,
+  tags: null,
+  custom_fields: null,
+  milestone_id: null,
 };
 
 describe('TaskItem Tooltips', () => {
@@ -32,13 +39,5 @@ describe('TaskItem Tooltips', () => {
     expect(screen.getByText('2h')).toBeInTheDocument();
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('medium risk')).toBeInTheDocument();
-
-    // Check for Tooltip aria-describedby or just content if rendered (though Tooltip might not render content until hovered in some implementations, but our Tooltip renders content when isMounted is true. wait, isMounted is only true after delay.)
-
-    // Actually, our Tooltip renders content only when isMounted is true.
-    // In our Tooltip.tsx:
-    // onMouseEnter={showTooltip} -> setTimeout(setIsMounted(true), delay)
-
-    // So we might need to mock Tooltip or just check if Tooltip is wrapping them.
   });
 });
