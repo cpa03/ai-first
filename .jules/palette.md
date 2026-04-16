@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-04-16 - [Task Metadata Tooltips & Tooltip Layout Polish]
+**Learning:** Adding descriptive tooltips to task metadata (shorthand estimates, assignees, risk levels) significantly improves clarity and accessibility by providing context on hover/focus. To prevent awkward text wrapping for short phrases in tooltips, applying `w-max` to the absolute container ensures the tooltip expands to fit its content up to the `max-w` limit.
+**Action:** Always provide descriptive tooltips for shorthand metadata or icons. Use `w-max` on absolute tooltip containers to maintain clean layouts for short strings.
