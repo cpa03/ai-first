@@ -17,3 +17,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The PII redaction utility and health check endpoint were missing common patterns for modern secrets (like AWS secret keys containing Base64 characters) and highly sensitive payment-related fields (CVV, CVC, PIN).
 **Learning:** Standard alphanumeric regex patterns ([a-zA-Z0-9]) fail to capture many types of secrets that use full Base64 sets or other special characters. Additionally, centralized redaction lists must be kept in sync across diagnostic and logging utilities to prevent inconsistent data exposure.
 **Prevention:** Use comprehensive regex patterns that include Base64 characters (`/`, `+`, `=`) for API key redaction. Centralize sensitive keyword lists used by both health checks and log redaction utilities to ensure consistent protection across the application.
+
+## 2026-04-17 - Fail-Open Authentication in Administrative Endpoints
+
+**Vulnerability:** The `/api/metrics` endpoint used a conditional check `if (process.env.ADMIN_API_KEY)` before performing authentication. This created a "fail-open" scenario where the endpoint became publicly accessible if the environment variable was missing or misconfigured in production.
+**Learning:** Conditional authentication based on the presence of a secret is dangerous. If the secret is not loaded, the security layer is completely bypassed. Administrative and sensitive monitoring endpoints must always enforce authentication regardless of configuration state.
+**Prevention:** Always use mandatory authentication helpers like `requireAdminAuth` that fail-closed (deny access) by default if credentials or configuration are missing. Never wrap authentication logic in conditional checks that depend on the availability of the secret itself.

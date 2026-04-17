@@ -3,6 +3,7 @@ import {
   withApiHandler,
   standardSuccessResponse,
 } from '@/lib/api-handler';
+import { requireAdminAuth } from '@/lib/auth';
 import { circuitBreakerManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/export-connectors';
 import { APP_CONFIG } from '@/lib/config';
@@ -59,6 +60,9 @@ function determineOverallStatus(summary: {
 }
 
 async function handleGet(context: ApiContext): Promise<Response> {
+  // Security: Integration health information is restricted to administrators
+  await requireAdminAuth(context.request);
+
   const { rateLimit } = context;
   const timestamp = new Date().toISOString();
   const integrations: IntegrationStatus[] = [];
