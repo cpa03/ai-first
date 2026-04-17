@@ -3,21 +3,14 @@ import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES } from '@/lib/config/http';
 import { createLogger } from '@/lib/logger';
-import { isAdminAuthenticated } from '@/lib/auth';
+import { requireAdminAuth } from '@/lib/auth';
 
 const logger = createLogger('MetricsAPI');
 
 async function handleGet(context: ApiContext) {
-  if (process.env.ADMIN_API_KEY) {
-    const authenticated = await isAdminAuthenticated(context.request);
-    if (!authenticated) {
-      throw new AppError(
-        'Unauthorized. Admin authentication required for metrics endpoint.',
-        ErrorCode.AUTHENTICATION_ERROR,
-        STATUS_CODES.UNAUTHORIZED
-      );
-    }
-  }
+  // Security: Metrics are restricted to administrators.
+  // Using requireAdminAuth ensures that authentication is mandatory and fails securely.
+  await requireAdminAuth(context.request);
 
   const metrics = await register.metrics();
 
