@@ -9,6 +9,7 @@
  * @see https://developers.cloudflare.com/workers/runtime-apis/request/
  */
 
+import { generateSecureId } from './id-generator';
 import { PLATFORM_ENV_VARS } from './config/constants';
 
 /**
@@ -546,16 +547,10 @@ export const CORRELATION_HEADERS = {
 
 /**
  * Generate a cryptographically secure request ID
- * Uses crypto.randomUUID() when available, falls back to timestamp + random
+ * Uses generateSecureId() for cryptographically secure, collision-resistant IDs.
  */
 export function generateRequestId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  return `req_${timestamp}_${randomPart}`;
+  return generateSecureId();
 }
 
 /**

@@ -18,6 +18,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { generateSecureId } from '@/lib/id-generator';
 
 /**
  * Experiment variant definition
@@ -179,7 +180,8 @@ function getDeterministicRandom(experimentId: string): number {
     // Get or create session ID
     let sessionId = sessionStorage.getItem('ideaflow_session_id');
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      // Use cryptographically secure ID for AB testing consistency
+      sessionId = `session_${generateSecureId().replace(/-/g, '').substring(0, 16)}`;
       sessionStorage.setItem('ideaflow_session_id', sessionId);
     }
 

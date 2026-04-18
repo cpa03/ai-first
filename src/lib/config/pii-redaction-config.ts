@@ -22,6 +22,8 @@ export const PII_REDACTION_CONFIG = {
     API_KEY: '[REDACTED_API_KEY]',
     PASSPORT: '[REDACTED_PASSPORT]',
     DRIVERS_LICENSE: '[REDACTED_LICENSE]',
+    IBAN: '[REDACTED_IBAN]',
+    SWIFT: '[REDACTED_SWIFT]',
   } as const,
 
   /**
@@ -69,6 +71,38 @@ export const PII_REDACTION_CONFIG = {
     // License patterns
     'license',
     'licence',
+    // Banking/payment patterns
+    'cvv',
+    'cvc',
+    'pin',
+    'iban',
+    'swift',
+    'bic',
+    // Sensitive system identifiers
+    'session[_-]?id',
+    'cookie',
+    'set-cookie',
+    'xsrf-token',
+    'csrf-token',
+    'stack',
+    'signature',
+    'salt',
+    'hmac',
+    'webhook',
+    'oauth',
+    'cert',
+    'pem',
+    'keystore',
+    'encryption',
+    'decrypt',
+    'mfa',
+    'mnemonic',
+    'recovery',
+    'backup',
+    'seed',
+    'jwk',
+    'otp',
+    'nonce',
   ] as const,
 
   /**
