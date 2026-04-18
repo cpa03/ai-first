@@ -156,10 +156,10 @@ validate_admin_key_security() {
     fi
     
     local key_length=${#key}
-    local has_upper=$(echo "$key" | grep -c '[A-Z]' || echo 0)
-    local has_lower=$(echo "$key" | grep -c '[a-z]' || echo 0)
-    local has_number=$(echo "$key" | grep -c '[0-9]' || echo 0)
-    local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || echo 0)
+    local has_upper=$(printf "%s" "$key" | grep -c '[A-Z]' || true)
+    local has_lower=$(printf "%s" "$key" | grep -c '[a-z]' || true)
+    local has_number=$(printf "%s" "$key" | grep -c '[0-9]' || true)
+    local has_special=$(printf "%s" "$key" | grep -c '[^A-Za-z0-9]' || true)
     
     if [ "$key_length" -lt "$MIN_ADMIN_KEY_LENGTH" ]; then
         print_status "SECURITY" "ADMIN_API_KEY is too short ($key_length chars, minimum $MIN_ADMIN_KEY_LENGTH)"
@@ -360,11 +360,11 @@ main() {
     errors=0
     
     # Check required variables
-    check_env_var "NEXT_PUBLIC_SUPABASE_URL" "true" || ((errors++))
-    check_env_var "NEXT_PUBLIC_SUPABASE_ANON_KEY" "true" || ((errors++))
-    check_env_var "SUPABASE_SERVICE_ROLE_KEY" "true" || ((errors++))
-    check_env_var "COST_LIMIT_DAILY" "true" || ((errors++))
-    check_env_var "NEXT_PUBLIC_APP_URL" "true" || ((errors++))
+    check_env_var "NEXT_PUBLIC_SUPABASE_URL" "true" || ((errors++)) || true
+    check_env_var "NEXT_PUBLIC_SUPABASE_ANON_KEY" "true" || ((errors++)) || true
+    check_env_var "SUPABASE_SERVICE_ROLE_KEY" "true" || ((errors++)) || true
+    check_env_var "COST_LIMIT_DAILY" "true" || ((errors++)) || true
+    check_env_var "NEXT_PUBLIC_APP_URL" "true" || ((errors++)) || true
     
     # Skip detailed validation in quick mode
     if [ "$QUICK_MODE" = true ]; then
@@ -387,19 +387,19 @@ main() {
     echo
     
     # Validate Supabase
-    validate_supabase || ((errors++))
+    validate_supabase || ((errors++)) || true
     
     # Validate AI providers
-    validate_ai_providers || ((errors++))
+    validate_ai_providers || ((errors++)) || true
     
     # Validate cost limit
-    validate_cost_limit || ((errors++))
+    validate_cost_limit || ((errors++)) || true
     
     # Validate logging configuration
-    validate_logging_config
+    validate_logging_config || true
     
     # Validate Node.js version
-    validate_node_version || ((errors++))
+    validate_node_version || ((errors++)) || true
     
     # Skip optional integrations in CI mode
     if [ "$CI_MODE" = true ]; then
@@ -431,12 +431,12 @@ main() {
     echo
     
     # Check optional variables
-    check_env_var "OPENAI_API_KEY" "false"
-    check_env_var "ANTHROPIC_API_KEY" "false"
-    check_env_var "NOTION_API_KEY" "false"
-    check_env_var "TRELLO_API_KEY" "false"
-    check_env_var "GOOGLE_CLIENT_ID" "false"
-    check_env_var "GITHUB_TOKEN" "false"
+    check_env_var "OPENAI_API_KEY" "false" || true
+    check_env_var "ANTHROPIC_API_KEY" "false" || true
+    check_env_var "NOTION_API_KEY" "false" || true
+    check_env_var "TRELLO_API_KEY" "false" || true
+    check_env_var "GOOGLE_CLIENT_ID" "false" || true
+    check_env_var "GITHUB_TOKEN" "false" || true
     
     echo
     echo -e "${BLUE}============================================${NC}"
