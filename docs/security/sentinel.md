@@ -23,3 +23,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The application used inconsistent and sometimes insecure methods for generating identifiers and hashing tokens across different environments. Specifically, it relied on 'node:crypto' which is unavailable in Edge environments (like Cloudflare Workers), and used weak hashing (djb2 or simple substrings) for anonymizing user tokens in rate limiting.
 **Learning:** Security utilities must be environment-agnostic to ensure consistent behavior between Node.js and Edge runtimes. Relying on platform-specific modules like 'node:crypto' leads to runtime errors or requires insecure fallbacks when deployed to the Edge.
 **Prevention:** Centralize all ID generation and hashing in a dedicated, platform-agnostic utility (`src/lib/id-generator.ts`) that uses globally available Web Crypto APIs (`globalThis.crypto`). Always use stable, collision-resistant hashing for anonymizing sensitive data like tokens.
+
+## 2026-04-18 - Fix Workers Build Failure due to node:crypto
+
+**Vulnerability:** The application used 'node:crypto' in some core modules, which is not available in the Edge runtime (Cloudflare Workers), leading to build failures.
+**Learning:** Even with 'nodejs_compat' enabled, direct imports of Node.js built-ins can sometimes cause issues in specific Edge environments if not handled carefully. Centralizing these in an environment-aware utility is safer.
+**Prevention:** Always use the centralized `src/lib/id-generator.ts` for ID generation and hashing, which handles feature detection for `globalThis.crypto` and provides appropriate fallbacks for all runtimes.
