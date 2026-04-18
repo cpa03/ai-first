@@ -30,7 +30,9 @@ export type PIIPatternType =
   | 'jwt'
   | 'urlWithCredentials'
   | 'passport'
-  | 'driversLicense';
+  | 'driversLicense'
+  | 'iban'
+  | 'swift';
 
 /**
  * PII regex patterns interface
@@ -46,6 +48,8 @@ interface PIIPatterns {
   urlWithCredentials: RegExp;
   passport: RegExp;
   driversLicense: RegExp;
+  iban: RegExp;
+  swift: RegExp;
 }
 
 /**
@@ -99,6 +103,12 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   // Driver's License: Alphanumeric, typically 6-14 characters, various formats
   driversLicense:
     /\b(?:dl|driver[\s_-]?license|license[:\s]{1,10})[\s]{0,10}[:#]?\s{0,10}([A-Za-z0-9*-]{6,14})\b|\b[A-Z]{1,2}[0-9]{6,10}[A-Z]{0,2}\b/gi,
+  // International Bank Account Number (IBAN)
+  // SECURITY: Case-sensitive to avoid matching common words
+  iban: /\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]){11,30}\b/g,
+  // SWIFT/BIC Code
+  // SECURITY: Case-sensitive to avoid matching common words like "Standard" or "personal"
+  swift: /\b[A-Z]{6}[A-Z0-9]{2}(?:[A-Z0-9]{3})?\b/g,
 };
 
 /**
@@ -123,6 +133,8 @@ export function redactPII(text: string): string {
     PII_REGEX_PATTERNS.driversLicense,
     labels.DRIVERS_LICENSE
   );
+  redacted = redacted.replace(PII_REGEX_PATTERNS.iban, labels.IBAN);
+  redacted = redacted.replace(PII_REGEX_PATTERNS.swift, labels.SWIFT);
   redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
   redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
   redacted = redacted.replace(PII_REGEX_PATTERNS.creditCard, labels.CREDIT_CARD);
@@ -137,10 +149,10 @@ export function redactPII(text: string): string {
 /**
  * Combined regex for sensitive field detection to avoid iterating through an array
  * SECURITY: Includes common sensitive fields like CVV, CVC, PIN to prevent accidental logging.
- * Updated: Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns (Issue #1171).
+ * Updated: Added IBAN, SWIFT/BIC, Tax ID, NINO, License, and MFA/Recovery patterns.
  */
 const SENSITIVE_FIELD_REGEX =
-  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd|iban|swift|bic|tax[-_]?id|nino|ni[-_]?num|license|licence/i;
+  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|session[_-]?id|cookie|set-cookie|xsrf-token|csrf-token|private[_-]?key|secret[_-]?key|connection[_-]?string|email|phone|ssn|credit[_-]?card|ip[_-]?address|admin[-_ ]?key|adminkey|cvv|cvc|pin|stack|signature|salt|hmac|webhook|oauth|cert|pwd|iban|swift|bic|tax[-_]?id|nino|ni[-_]?num|license|licence|pem|keystore|encryption|decrypt|mfa|mnemonic|recovery|backup|seed|jwk|otp|nonce/i;
 
 const SAFE_FIELDS_SET = new Set<string>(
   PII_REDACTION_CONFIG.SAFE_FIELDS.map((f) => f.toLowerCase())

@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { generateRequestId } from './errors';
+import { simpleHash } from './id-generator';
 
 export interface RateLimitInfo {
   limit: number;
@@ -63,9 +64,10 @@ function extractUserIdFromRequest(request: Request): string | null {
     // For now, we can use the token as a unique identifier
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
-      // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // Return a stable hash of the token as the user identifier
+      // SECURITY: Hash the entire token to prevent partial matches and ensure
+      // anonymity without leaking parts of the actual token.
+      return `token:${simpleHash(token)}`;
     }
   }
 
@@ -243,14 +245,8 @@ function generateRequestFingerprint(request: Request): string {
   // Combine characteristics with path
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
 
-  // Use djb2 hash algorithm for better distribution
-  let hash = 5381;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-  }
-
-  return `fp:${Math.abs(hash >>> 0)}`;
+  // Use cross-platform stable hash for fingerprinting
+  return `fp:${simpleHash(combined)}`;
 }
 
 /**

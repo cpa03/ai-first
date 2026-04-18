@@ -35,6 +35,7 @@ export function useCache<T>(
   // Use ref to avoid dependency on fetcher function identity
   // This prevents infinite re-renders when fetcher is not memoized by caller
   const fetcherRef = useRef(fetcher);
+  // eslint-disable-next-line react-hooks/refs
   fetcherRef.current = fetcher;
 
   const revalidate = useCallback(async () => {
