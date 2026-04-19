@@ -44,6 +44,85 @@ interface UseTaskManagementReturn {
   collapseAll: () => void;
 }
 
+// PERFORMANCE: Move helper outside hook to prevent recreation on every render
+// This function is pure and only depends on its arguments.
+const applyTaskStatusUpdate = (
+  prevData: TasksResponse | null,
+  taskId: string,
+  newStatus: TaskStatus
+): TasksResponse | null => {
+  if (!prevData) return null;
+
+  const dIndex = prevData.deliverables.findIndex((d) =>
+    d.tasks.some((t) => t.id === taskId)
+  );
+  if (dIndex === -1) return prevData;
+
+  const deliverable = prevData.deliverables[dIndex];
+  const taskIndex = deliverable.tasks.findIndex((t) => t.id === taskId);
+  const task = deliverable.tasks[taskIndex];
+  const est = Number(task.estimate) || 0;
+
+  let deltaTasks = 0;
+  let deltaHours = 0;
+
+  if (newStatus === 'completed' && task.status !== 'completed') {
+    deltaTasks = 1;
+    deltaHours = est;
+  } else if (newStatus !== 'completed' && task.status === 'completed') {
+    deltaTasks = -1;
+    deltaHours = -est;
+  }
+
+  if (deltaTasks === 0) return prevData;
+
+  const updatedTasks = [...deliverable.tasks];
+  updatedTasks[taskIndex] = {
+    ...task,
+    status: newStatus,
+    completion_percentage: newStatus === 'completed' ? 100 : 0,
+  };
+
+  const newCompletedCount = deliverable.completedCount + deltaTasks;
+  const newCompletedHours =
+    Math.round((deliverable.completedHours + deltaHours) * 10) / 10;
+
+  const updatedDeliverable = {
+    ...deliverable,
+    tasks: updatedTasks,
+    completedCount: newCompletedCount,
+    completedHours: newCompletedHours,
+    progress: Math.round(
+      updatedTasks.length > 0
+        ? (newCompletedCount / updatedTasks.length) * 100
+        : 0
+    ),
+  };
+
+  const updatedDeliverables = [...prevData.deliverables];
+  updatedDeliverables[dIndex] = updatedDeliverable;
+
+  const { summary } = prevData;
+  const newOverallCompletedTasks = summary.completedTasks + deltaTasks;
+  const newOverallCompletedHours =
+    Math.round((summary.completedHours + deltaHours) * 10) / 10;
+
+  return {
+    ...prevData,
+    deliverables: updatedDeliverables,
+    summary: {
+      ...summary,
+      completedTasks: newOverallCompletedTasks,
+      completedHours: newOverallCompletedHours,
+      overallProgress: Math.round(
+        summary.totalTasks > 0
+          ? (newOverallCompletedTasks / summary.totalTasks) * 100
+          : 0
+      ),
+    },
+  };
+};
+
 export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const logger = useMemo(() => createLogger('TaskManagement'), []);
   const [loading, setLoading] = useState(true);
@@ -60,7 +139,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
-  dataRef.current = data;
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   // Fetch tasks on mount
   useEffect(() => {
@@ -114,87 +196,6 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     }
   }, [ideaId, logger]);
 
-  // Helper function to apply task status update to state
-  const applyTaskStatusUpdate = useCallback(
-    (
-      prevData: TasksResponse | null,
-      taskId: string,
-      newStatus: TaskStatus
-    ): TasksResponse | null => {
-      if (!prevData) return null;
-
-      const dIndex = prevData.deliverables.findIndex((d) =>
-        d.tasks.some((t) => t.id === taskId)
-      );
-      if (dIndex === -1) return prevData;
-
-      const deliverable = prevData.deliverables[dIndex];
-      const taskIndex = deliverable.tasks.findIndex((t) => t.id === taskId);
-      const task = deliverable.tasks[taskIndex];
-      const est = Number(task.estimate) || 0;
-
-      let deltaTasks = 0;
-      let deltaHours = 0;
-
-      if (newStatus === 'completed' && task.status !== 'completed') {
-        deltaTasks = 1;
-        deltaHours = est;
-      } else if (newStatus !== 'completed' && task.status === 'completed') {
-        deltaTasks = -1;
-        deltaHours = -est;
-      }
-
-      if (deltaTasks === 0) return prevData;
-
-      const updatedTasks = [...deliverable.tasks];
-      updatedTasks[taskIndex] = {
-        ...task,
-        status: newStatus,
-        completion_percentage: newStatus === 'completed' ? 100 : 0,
-      };
-
-      const newCompletedCount = deliverable.completedCount + deltaTasks;
-      const newCompletedHours =
-        Math.round((deliverable.completedHours + deltaHours) * 10) / 10;
-
-      const updatedDeliverable = {
-        ...deliverable,
-        tasks: updatedTasks,
-        completedCount: newCompletedCount,
-        completedHours: newCompletedHours,
-        progress: Math.round(
-          updatedTasks.length > 0
-            ? (newCompletedCount / updatedTasks.length) * 100
-            : 0
-        ),
-      };
-
-      const updatedDeliverables = [...prevData.deliverables];
-      updatedDeliverables[dIndex] = updatedDeliverable;
-
-      const { summary } = prevData;
-      const newOverallCompletedTasks = summary.completedTasks + deltaTasks;
-      const newOverallCompletedHours =
-        Math.round((summary.completedHours + deltaHours) * 10) / 10;
-
-      return {
-        ...prevData,
-        deliverables: updatedDeliverables,
-        summary: {
-          ...summary,
-          completedTasks: newOverallCompletedTasks,
-          completedHours: newOverallCompletedHours,
-          overallProgress: Math.round(
-            summary.totalTasks > 0
-              ? (newOverallCompletedTasks / summary.totalTasks) * 100
-              : 0
-          ),
-        },
-      };
-    },
-    []
-  );
-
   // Toggle task status with OPTIMISTIC updates
   const handleToggleTaskStatus = useCallback(
     async (taskId: string, currentStatus: TaskStatus) => {
@@ -202,11 +203,12 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = data;
+      // PERFORMANCE: Use dataRef.current to avoid dependency on 'data' state
+      previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return data?.deliverables
+        return dataRef.current?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,7 +295,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger]
   );
 
   // Toggle deliverable expansion
