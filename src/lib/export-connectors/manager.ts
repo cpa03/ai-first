@@ -14,6 +14,7 @@ import {
   GitHubProjectsExporter,
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
+import { generateSecureId } from '../id-generator';
 import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
 
 export interface ExportManagerOptions {
@@ -378,13 +379,7 @@ export const exportUtils = {
   },
 
   generateExportId(): string {
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
-    try {
-      return `export_${crypto.randomUUID()}`;
-    } catch {
-      // Fallback for environments without crypto.randomUUID support
-      return `export_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    }
+    // SECURITY: Use generateSecureId() for cryptographically secure, collision-resistant IDs
+    return `export_${generateSecureId()}`;
   },
 };

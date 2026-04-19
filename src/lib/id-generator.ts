@@ -44,18 +44,23 @@ export function generateSecureId(): string {
 /**
  * Generate a deterministic hash for a string input.
  * Used for anonymizing sensitive data like tokens while maintaining stable identifiers.
- * This is NOT for password hashing - it's a fast, non-cryptographic stable hash (DJB2).
+ * This is NOT for password hashing - it's a fast, non-cryptographic stable hash.
+ * Returns a 16-character hex string.
  */
 export function simpleHash(input: string): string {
-  if (!input) return 'empty';
+  if (!input) return '0000000000000000';
 
-  let hash = 5381;
+  let h1 = 5381;
+  let h2 = 52711;
   for (let i = 0; i < input.length; i++) {
     const char = input.charCodeAt(i);
-    // (hash * 33) + char
-    hash = (hash << 5) + hash + char;
+    h1 = (h1 << 5) + h1 + char;
+    h2 = (h2 << 7) + h2 + char;
   }
 
-  // Return as an unsigned 32-bit hex string
-  return (hash >>> 0).toString(16);
+  // Return as a 16-character hex string
+  return (
+    (h1 >>> 0).toString(16).padStart(8, '0') +
+    (h2 >>> 0).toString(16).padStart(8, '0')
+  );
 }

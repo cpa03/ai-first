@@ -1,7 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import { simpleHash } from './id-generator';
+import { simpleHash, generateSecureId } from './id-generator';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -28,7 +28,8 @@ export function generateErrorFingerprint(
     : `${code}:${normalizedMessage}`;
 
   // Use a deterministic hash that is cross-platform compatible (Edge/Node/Browser)
-  const hash = simpleHash(fingerprintInput);
+  // Substring to 12 characters to match the established fingerprint format
+  const hash = simpleHash(fingerprintInput).substring(0, 12);
 
   return `fp_${hash}`;
 }
@@ -331,14 +332,8 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use global-safe crypto or fallback for cryptographically secure, collision-resistant IDs
-  // This ensures request IDs are unique and cannot be predicted for security tracing
-  const uuid =
-    typeof crypto !== 'undefined' && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${uuid}`;
+  // Use centralized secure ID generator
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateSecureId()}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

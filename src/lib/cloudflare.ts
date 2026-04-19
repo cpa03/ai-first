@@ -544,18 +544,14 @@ export const CORRELATION_HEADERS = {
   SPAN_ID: 'x-span-id',
 } as const;
 
+import { generateSecureId } from './id-generator';
+
 /**
  * Generate a cryptographically secure request ID
- * Uses crypto.randomUUID() when available, falls back to timestamp + random
+ * Uses generateSecureId() for cryptographically secure identifiers.
  */
 export function generateRequestId(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-    return crypto.randomUUID();
-  }
-
-  const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 15);
-  return `req_${timestamp}_${randomPart}`;
+  return generateSecureId();
 }
 
 /**

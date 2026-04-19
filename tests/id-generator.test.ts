@@ -45,7 +45,7 @@ describe('id-generator', () => {
     });
 
     it('should handle empty input', () => {
-      expect(simpleHash('')).toBe('empty');
+      expect(simpleHash('')).toBe('0000000000000000');
     });
   });
 });

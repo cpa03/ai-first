@@ -1,0 +1,4 @@
+export function generateRequestId(): string {
+  // Use centralized secure ID generator
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateSecureId()}`;
+}
