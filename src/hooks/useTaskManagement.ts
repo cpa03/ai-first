@@ -49,11 +49,11 @@ interface UseTaskManagementReturn {
  * Moved outside the hook to ensure it has a static identity, preventing
  * recreation of callbacks that depend on it.
  */
-const applyTaskStatusUpdate = (
+function applyTaskStatusUpdate(
   prevData: TasksResponse | null,
   taskId: string,
   newStatus: TaskStatus
-): TasksResponse | null => {
+): TasksResponse | null {
   if (!prevData) return null;
 
   const dIndex = prevData.deliverables.findIndex((d) =>
@@ -124,7 +124,7 @@ const applyTaskStatusUpdate = (
       ),
     },
   };
-};
+}
 
 export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const logger = useMemo(() => createLogger('TaskManagement'), []);
@@ -211,8 +211,12 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return dataRef.current?.deliverables
-          .flatMap((d) => d.tasks)
+        const deliverables = dataRef.current?.deliverables;
+        if (!deliverables) return undefined;
+
+        // PERFORMANCE: Use reduce instead of flatMap for maximum compatibility
+        return deliverables
+          .reduce((acc, d) => acc.concat(d.tasks), [] as Task[])
           .find((t) => t.id === taskId);
       };
 
