@@ -214,10 +214,13 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         const deliverables = dataRef.current?.deliverables;
         if (!deliverables) return undefined;
 
-        // PERFORMANCE: Use reduce instead of flatMap for maximum compatibility
-        return deliverables
-          .reduce((acc, d) => acc.concat(d.tasks), [] as Task[])
-          .find((t) => t.id === taskId);
+        // PERFORMANCE: Use a simple loop for maximum performance and compatibility.
+        // This avoids O(N^2) allocations from reduce+concat and O(N) from flatMap.
+        for (const deliverable of deliverables) {
+          const task = deliverable.tasks.find((t) => t.id === taskId);
+          if (task) return task;
+        }
+        return undefined;
       };
 
       try {
