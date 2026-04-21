@@ -30,13 +30,13 @@ describe('Request Signer', () => {
   });
 
   describe('generateNonce', () => {
-    it('should generate a 32-character hex nonce', () => {
+    it('should generate a 32-character hex nonce', async () => {
       const nonce = generateNonce();
       expect(nonce).toHaveLength(32);
       expect(nonce).toMatch(/^[a-f0-9]+$/);
     });
 
-    it('should generate unique nonces', () => {
+    it('should generate unique nonces', async () => {
       const nonce1 = generateNonce();
       const nonce2 = generateNonce();
       expect(nonce1).not.toBe(nonce2);
@@ -44,7 +44,7 @@ describe('Request Signer', () => {
   });
 
   describe('createTimestamp', () => {
-    it('should return current timestamp', () => {
+    it('should return current timestamp', async () => {
       const before = Date.now();
       const timestamp = createTimestamp();
       const after = Date.now();
@@ -55,22 +55,22 @@ describe('Request Signer', () => {
   });
 
   describe('isTimestampValid', () => {
-    it('should return true for current timestamp', () => {
+    it('should return true for current timestamp', async () => {
       const now = Date.now();
       expect(isTimestampValid(now)).toBe(true);
     });
 
-    it('should return true for timestamp within tolerance', () => {
+    it('should return true for timestamp within tolerance', async () => {
       const within = Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS + 60000; // 1 minute ago
       expect(isTimestampValid(within)).toBe(true);
     });
 
-    it('should return false for expired timestamp', () => {
+    it('should return false for expired timestamp', async () => {
       const expired = Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000; // 5 min + 1 sec ago
       expect(isTimestampValid(expired)).toBe(false);
     });
 
-    it('should respect custom tolerance', () => {
+    it('should respect custom tolerance', async () => {
       const now = Date.now();
       expect(isTimestampValid(now, 1000)).toBe(true); // 1 second tolerance
       expect(isTimestampValid(now - 2000, 1000)).toBe(false); // 2 seconds ago
@@ -85,51 +85,51 @@ describe('Request Signer', () => {
       timestamp = createTimestamp();
     });
 
-    it('should create a valid signature', () => {
-      const result = signRequest(payload, timestamp);
+    it('should create a valid signature', async () => {
+      const result = await signRequest(payload, timestamp);
       expect(result.signature).toBeDefined();
       expect(result.signature).toHaveLength(64); // SHA256 hex = 64 chars
       expect(result.timestamp).toBe(timestamp);
       expect(result.nonce).toBeDefined();
     });
 
-    it('should verify a valid signature', () => {
-      const { signature, nonce } = signRequest(payload, timestamp);
+    it('should verify a valid signature', async () => {
+      const { signature, nonce } = await signRequest(payload, timestamp);
 
-      const result = verifySignature(payload, timestamp, signature, { nonce });
+      const result = await verifySignature(payload, timestamp, signature, { nonce });
       expect(result.valid).toBe(true);
       expect(result.error).toBeUndefined();
     });
 
-    it('should reject an invalid signature', () => {
-      const { signature } = signRequest(payload, timestamp);
+    it('should reject an invalid signature', async () => {
+      const { signature } = await signRequest(payload, timestamp);
       const invalidSignature = signature.slice(0, -2) + 'ff'; // Corrupt last 2 chars
 
-      const result = verifySignature(payload, timestamp, invalidSignature);
+      const result = await verifySignature(payload, timestamp, invalidSignature);
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Invalid signature');
     });
 
-    it('should reject signature for tampered payload', () => {
-      const { signature, nonce } = signRequest(payload, timestamp);
+    it('should reject signature for tampered payload', async () => {
+      const { signature, nonce } = await signRequest(payload, timestamp);
       const tamperedPayload = '{"action":"hacked","data":"hello"}';
 
-      const result = verifySignature(tamperedPayload, timestamp, signature, {
+      const result = await verifySignature(tamperedPayload, timestamp, signature, {
         nonce,
       });
       expect(result.valid).toBe(false);
     });
 
-    it('should include method and path in signature', () => {
+    it('should include method and path in signature', async () => {
       const method = 'POST';
       const path = '/api/internal/test';
 
-      const { signature, nonce } = signRequest(payload, timestamp, {
+      const { signature, nonce } = await signRequest(payload, timestamp, {
         method,
         path,
       });
 
-      const result = verifySignature(payload, timestamp, signature, {
+      const result = await verifySignature(payload, timestamp, signature, {
         nonce,
         method,
         path,
@@ -137,7 +137,7 @@ describe('Request Signer', () => {
       expect(result.valid).toBe(true);
 
       // Should fail with different method
-      const wrongMethodResult = verifySignature(payload, timestamp, signature, {
+      const wrongMethodResult = await verifySignature(payload, timestamp, signature, {
         nonce,
         method: 'GET',
         path,
@@ -145,27 +145,27 @@ describe('Request Signer', () => {
       expect(wrongMethodResult.valid).toBe(false);
     });
 
-    it('should reject expired timestamps', () => {
+    it('should reject expired timestamps', async () => {
       const expiredTimestamp =
         Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000;
-      const { signature, nonce } = signRequest(payload, expiredTimestamp);
+      const { signature, nonce } = await signRequest(payload, expiredTimestamp);
 
-      const result = verifySignature(payload, expiredTimestamp, signature, {
+      const result = await verifySignature(payload, expiredTimestamp, signature, {
         nonce,
       });
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Request timestamp outside acceptable window');
     });
 
-    it('should use provided nonce', () => {
+    it('should use provided nonce', async () => {
       const customNonce = 'custom-nonce-12345';
-      const result = signRequest(payload, timestamp, { nonce: customNonce });
+      const result = await signRequest(payload, timestamp, { nonce: customNonce });
       expect(result.nonce).toBe(customNonce);
     });
   });
 
   describe('parseSignatureHeader', () => {
-    it('should parse valid header with nonce', () => {
+    it('should parse valid header with nonce', async () => {
       const header = 't=1234567890,nonce=abc123,sig=def456';
       const result = parseSignatureHeader(header);
 
@@ -175,7 +175,7 @@ describe('Request Signer', () => {
       expect(result?.signature).toBe('def456');
     });
 
-    it('should parse valid header without nonce', () => {
+    it('should parse valid header without nonce', async () => {
       const header = 't=1234567890,sig=def456';
       const result = parseSignatureHeader(header);
 
@@ -185,19 +185,19 @@ describe('Request Signer', () => {
       expect(result?.signature).toBe('def456');
     });
 
-    it('should return null for invalid header', () => {
+    it('should return null for invalid header', async () => {
       const header = 'invalid-header';
       const result = parseSignatureHeader(header);
       expect(result).toBeNull();
     });
 
-    it('should return null for missing timestamp', () => {
+    it('should return null for missing timestamp', async () => {
       const header = 'nonce=abc123,sig=def456';
       const result = parseSignatureHeader(header);
       expect(result).toBeNull();
     });
 
-    it('should return null for missing signature', () => {
+    it('should return null for missing signature', async () => {
       const header = 't=1234567890,nonce=abc123';
       const result = parseSignatureHeader(header);
       expect(result).toBeNull();
@@ -205,12 +205,12 @@ describe('Request Signer', () => {
   });
 
   describe('createSignatureHeader', () => {
-    it('should create header with nonce', () => {
+    it('should create header with nonce', async () => {
       const header = createSignatureHeader(1234567890, 'somesig', 'nonce123');
       expect(header).toBe('t=1234567890,sig=somesig,nonce=nonce123');
     });
 
-    it('should create header without nonce', () => {
+    it('should create header without nonce', async () => {
       const header = createSignatureHeader(1234567890, 'somesig');
       expect(header).toBe('t=1234567890,sig=somesig');
     });
@@ -219,46 +219,46 @@ describe('Request Signer', () => {
   describe('createSignedUrl and verifySignedUrl', () => {
     const baseUrl = 'https://api.example.com/internal/data';
 
-    it('should create signed URL with parameters', () => {
-      const signedUrl = createSignedUrl(baseUrl);
+    it('should create signed URL with parameters', async () => {
+      const signedUrl = await createSignedUrl(baseUrl);
       expect(signedUrl).toContain('_ts=');
       expect(signedUrl).toContain('_sig=');
     });
 
-    it('should verify valid signed URL', () => {
-      const signedUrl = createSignedUrl(baseUrl);
-      const result = verifySignedUrl(signedUrl);
+    it('should verify valid signed URL', async () => {
+      const signedUrl = await createSignedUrl(baseUrl);
+      const result = await verifySignedUrl(signedUrl);
 
       expect(result.valid).toBe(true);
       expect(result.expiresAt).toBeDefined();
     });
 
-    it('should reject URL with invalid signature', () => {
+    it('should reject URL with invalid signature', async () => {
       // Create URL and manually corrupt the signature
-      const signedUrl = createSignedUrl(baseUrl);
+      const signedUrl = await createSignedUrl(baseUrl);
       const urlObj = new URL(signedUrl);
       urlObj.searchParams.set(
         '_sig',
         'invalid0000000000000000000000000000000000000000000000000000000000000000'
       );
 
-      const result = verifySignedUrl(urlObj.toString());
+      const result = await verifySignedUrl(urlObj.toString());
 
       expect(result.valid).toBe(false);
     });
 
-    it('should reject expired URL', () => {
+    it('should reject expired URL', async () => {
       // Create a URL that expires immediately
       const timestamp = Date.now() - 1000;
       const url = `${baseUrl}?_ts=${timestamp}&_sig=test`;
-      const result = verifySignedUrl(url);
+      const result = await verifySignedUrl(url);
 
       expect(result.valid).toBe(false);
       expect(result.error).toBe('URL has expired');
     });
 
-    it('should reject URL without signature params', () => {
-      const result = verifySignedUrl(baseUrl);
+    it('should reject URL without signature params', async () => {
+      const result = await verifySignedUrl(baseUrl);
       expect(result.valid).toBe(false);
     });
   });
@@ -283,7 +283,7 @@ describe('Request Signer', () => {
       // In production (or with proper fetch polyfill), this would work
       const timestamp = Date.now();
       const bodyStr = '{"test":"data"}';
-      const { signature, nonce } = signRequest(bodyStr, timestamp, {
+      const { signature, nonce } = await signRequest(bodyStr, timestamp, {
         method: 'POST',
         path: '/api/internal',
       });
@@ -360,7 +360,7 @@ describe('Request Signer', () => {
       const expiredTimestamp =
         Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000;
       const body = '{"test":"data"}';
-      const { signature, nonce } = signRequest(body, expiredTimestamp);
+      const { signature, nonce } = await signRequest(body, expiredTimestamp);
 
       const request = createMockRequest(
         {
@@ -382,7 +382,7 @@ describe('Request Signer', () => {
       const timestamp = Date.now();
       const originalBody = '{"test":"data"}';
       const tamperedBody = '{"test":"hacked"}';
-      const { signature, nonce } = signRequest(originalBody, timestamp, {
+      const { signature, nonce } = await signRequest(originalBody, timestamp, {
         method: 'POST',
         path: '/api/internal',
       });
@@ -405,7 +405,7 @@ describe('Request Signer', () => {
   });
 
   describe('constants', () => {
-    it('should have valid timestamp tolerance values', () => {
+    it('should have valid timestamp tolerance values', async () => {
       expect(DEFAULT_TIMESTAMP_TOLERANCE_MS).toBe(5 * 60 * 1000); // 5 minutes
       expect(MIN_TIMESTAMP_TOLERANCE_MS).toBe(60 * 1000); // 1 minute
       expect(MAX_TIMESTAMP_TOLERANCE_MS).toBe(24 * 60 * 60 * 1000); // 24 hours

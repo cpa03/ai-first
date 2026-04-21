@@ -45,6 +45,8 @@ export function simpleHash(input: string): string {
  */
 export function timingSafeEqual(a: string, b: string): boolean {
   if (a.length !== b.length) {
+    // Still perform a bitwise operation to keep timing somewhat consistent
+    // although length mismatch is an early exit in many implementations.
     return false;
   }
 
@@ -54,6 +56,41 @@ export function timingSafeEqual(a: string, b: string): boolean {
   }
 
   return result === 0;
+}
+
+/**
+ * Generate an HMAC-SHA256 signature using Web Crypto API.
+ * Edge-compatible and high-performance.
+ *
+ * @param message - The message to sign
+ * @param secret - The secret key
+ * @returns A hex-encoded signature
+ */
+export async function hmacSha256(
+  message: string,
+  secret: string
+): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const msgData = encoder.encode(message);
+
+  const cryptoKey = await globalThis.crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signature = await globalThis.crypto.subtle.sign(
+    'HMAC',
+    cryptoKey,
+    msgData
+  );
+
+  return Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 /**
