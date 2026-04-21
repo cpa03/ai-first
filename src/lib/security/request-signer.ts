@@ -8,6 +8,7 @@
  * @module lib/security/request-signer
  */
 
+import { timingSafeEqual } from '@/lib/id-generator';
 import crypto from 'node:crypto';
 
 export interface SignedRequestOptions {
@@ -98,7 +99,11 @@ function getInternalApiSecret(): string {
  * Generate a cryptographically secure nonce
  */
 export function generateNonce(): string {
-  return crypto.randomBytes(16).toString('hex');
+  const array = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(array);
+  return Array.from(array)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 /**
@@ -153,6 +158,11 @@ export function signRequest(
 
   const message = parts.join(':');
 
+  // Note: For Edge compatibility, we use Web Crypto for HMAC if possible.
+  // However, simple hex HMAC is often easier with a small helper or subtle crypto.
+  // For now, since nodejs_compat is enabled, we could keep it, but let's try to be neutral.
+  // If we must use node:crypto for HMAC, we'll keep it but use the new timingSafeEqual.
+
   // Generate HMAC-SHA256 signature
   const signature = crypto
     .createHmac('sha256', secret)
@@ -205,11 +215,7 @@ export function verifySignature(
 
   // Timing-safe comparison to prevent timing attacks
   try {
-    // Use Buffer.compare for timing-safe comparison
-    const result = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected.signature)
-    );
+    const result = timingSafeEqual(signature, expected.signature);
 
     return {
       valid: result,
