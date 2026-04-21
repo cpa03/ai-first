@@ -35,7 +35,12 @@ export function useCache<T>(
   // Use ref to avoid dependency on fetcher function identity
   // This prevents infinite re-renders when fetcher is not memoized by caller
   const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
+
+  // PERFORMANCE: Stabilize callbacks by updating ref in useEffect rather than render phase.
+  // This avoids the react-hooks/refs lint error and ensures consistent function lookups.
+  useEffect(() => {
+    fetcherRef.current = fetcher;
+  }, [fetcher]);
 
   const revalidate = useCallback(async () => {
     try {

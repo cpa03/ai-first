@@ -1,7 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import crypto from 'node:crypto';
+import { generateSecureId, simpleHash } from './id-generator';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -27,11 +27,12 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
-    .substring(0, FINGERPRINT_HASH_LENGTH);
+  // PERFORMANCE: Use deterministic simpleHash instead of Node.js crypto.createHash
+  // for edge runtime compatibility and better performance.
+  const hash = simpleHash(fingerprintInput).substring(
+    0,
+    FINGERPRINT_HASH_LENGTH
+  );
 
   return `fp_${hash}`;
 }
@@ -334,9 +335,9 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-  // This ensures request IDs are unique and cannot be predicted for security tracing
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${crypto.randomUUID()}`;
+  // PERFORMANCE: Use cross-platform generateSecureId for unique, collision-resistant IDs.
+  // This ensures request IDs are unique across Edge, Node, and Browser environments.
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateSecureId()}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

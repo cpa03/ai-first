@@ -1,7 +1,6 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
+import { STATIC_PROMPTS } from './prompts/index';
 
 export interface PromptVariable {
   [key: string]: string | number | object;
@@ -17,21 +16,6 @@ export class PromptService {
     });
   }
 
-  private getTemplatePath(
-    agent: string,
-    templateName: string,
-    role: 'system' | 'user'
-  ): string {
-    return path.join(
-      process.cwd(),
-      'src',
-      'lib',
-      'prompts',
-      agent,
-      `${templateName}-${role}.txt`
-    );
-  }
-
   async loadTemplate(
     agent: string,
     templateName: string,
@@ -44,17 +28,16 @@ export class PromptService {
       return cached;
     }
 
-    const templatePath = this.getTemplatePath(agent, templateName, role);
+    // PERFORMANCE: Use bundled STATIC_PROMPTS instead of file system (node:fs)
+    // for edge compatibility and faster cold starts.
+    const content = STATIC_PROMPTS[cacheKey];
 
-    try {
-      const content = await fs.promises.readFile(templatePath, 'utf-8');
-      this.promptsCache.set(cacheKey, content);
-      return content;
-    } catch (error) {
-      throw new Error(
-        `Failed to load prompt template: ${templatePath}. ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    if (!content) {
+      throw new Error(`Failed to load prompt template: ${cacheKey}`);
     }
+
+    this.promptsCache.set(cacheKey, content);
+    return content;
   }
 
   interpolate(template: string, variables: PromptVariable): string {
