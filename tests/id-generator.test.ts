@@ -76,8 +76,9 @@ describe('id-generator', () => {
     });
 
     it('should return false when comparing different types', () => {
-      // @ts-expect-error - intentional type mismatch
-      expect(timingSafeEqual('abc', new Uint8Array([97, 98, 99]))).toBe(false);
+      expect(
+        timingSafeEqual('abc', new Uint8Array([97, 98, 99]) as any)
+      ).toBe(false);
     });
   });
 });
