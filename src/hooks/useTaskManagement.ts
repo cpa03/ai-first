@@ -143,7 +143,8 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
 
-  // Update the ref inside useEffect to satisfy react-hooks/refs rule
+  // PERFORMANCE: Update the ref inside useEffect to satisfy react-hooks/refs rule
+  // and ensure render-phase purity.
   useEffect(() => {
     dataRef.current = data;
   }, [data]);
@@ -199,7 +200,6 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       fetchTasks();
     }
   }, [ideaId, logger]);
-
 
   // Toggle task status with OPTIMISTIC updates
   // PERFORMANCE: Use dataRef.current to avoid re-creating this callback on every data change.
