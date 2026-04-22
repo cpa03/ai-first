@@ -8,7 +8,8 @@
  * @module lib/security/request-signer
  */
 
-import crypto from 'node:crypto';
+import { generateRandomHex, timingSafeEqual } from '@/lib/id-generator';
+import { createHmac } from 'node:crypto';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */
@@ -98,7 +99,7 @@ function getInternalApiSecret(): string {
  * Generate a cryptographically secure nonce
  */
 export function generateNonce(): string {
-  return crypto.randomBytes(16).toString('hex');
+  return generateRandomHex(16);
 }
 
 /**
@@ -154,8 +155,9 @@ export function signRequest(
   const message = parts.join(':');
 
   // Generate HMAC-SHA256 signature
-  const signature = crypto
-    .createHmac('sha256', secret)
+  // SECURITY: Use Node.js crypto.createHmac for secure, synchronous signing.
+  // This is compatible with Cloudflare Workers via nodejs_compat.
+  const signature = createHmac('sha256', secret)
     .update(message, 'utf8')
     .digest('hex');
 
@@ -205,11 +207,7 @@ export function verifySignature(
 
   // Timing-safe comparison to prevent timing attacks
   try {
-    // Use Buffer.compare for timing-safe comparison
-    const result = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected.signature)
-    );
+    const result = timingSafeEqual(signature, expected.signature);
 
     return {
       valid: result,
