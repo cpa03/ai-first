@@ -60,8 +60,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
-  // eslint-disable-next-line react-hooks/refs
-  dataRef.current = data;
+  useEffect(() => { dataRef.current = data; }, [data]);
 
   // Fetch tasks on mount
   useEffect(() => {
