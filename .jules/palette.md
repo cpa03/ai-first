@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-04-22 - [Tooltip and Animation for ScrollToTop]
+**Learning:** Adding a 'group' class to a parent interactive element is necessary to trigger CSS transitions (like 'group-hover') on its children. When wrapping a fixed-position button with a Tooltip, the 'fixed' positioning should be moved to the outermost container to ensure the Tooltip's relative positioning logic remains stable and doesn't conflict with the button's layout.
+**Action:** Always use the 'group' class on parents for child hover effects and ensure 'fixed' positioning is handled by the wrapper when using Tooltips.
