@@ -6,6 +6,34 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
+ * Get or create a session ID stored in sessionStorage
+ *
+ * Growth: Enables session tracking for analytics and metrics.
+ *
+ * @returns A unique session identifier
+ */
+export function getSessionId(): string {
+  if (typeof window === 'undefined') return 'server';
+
+  const storageKey = 'ideaflow_session_id';
+  try {
+    let sessionId = sessionStorage.getItem(storageKey);
+    if (!sessionId) {
+      // Use crypto.randomUUID if available, otherwise fallback to Date+Math
+      sessionId =
+        typeof crypto !== 'undefined' &&
+        typeof crypto.randomUUID === 'function'
+          ? `session_${crypto.randomUUID()}`
+          : `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionStorage.setItem(storageKey, sessionId);
+    }
+    return sessionId;
+  } catch {
+    return 'session_unavailable';
+  }
+}
+
+/**
  * Retry options for retryWithBackoff
  */
 export interface RetryOptions {

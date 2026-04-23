@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('useUserPreferences');
@@ -214,14 +214,24 @@ export function useUserPreferences(): UseUserPreferencesReturn {
     logger.info('User preferences reset to defaults');
   }, [persistPreferences]);
 
-  return {
-    preferences,
-    isLoading,
-    updatePreference,
-    updatePreferences,
-    updateNotificationPreferences,
-    resetPreferences,
-  };
+  return useMemo(
+    () => ({
+      preferences,
+      isLoading,
+      updatePreference,
+      updatePreferences,
+      updateNotificationPreferences,
+      resetPreferences,
+    }),
+    [
+      preferences,
+      isLoading,
+      updatePreference,
+      updatePreferences,
+      updateNotificationPreferences,
+      resetPreferences,
+    ]
+  );
 }
 
 export default useUserPreferences;

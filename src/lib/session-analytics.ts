@@ -11,6 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { getSessionId } from '@/lib/utils';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -22,25 +23,6 @@ export const SESSION_EVENTS = {
   SESSION_END: 'session_end',
   PAGE_TIME: 'page_time',
 } as const;
-
-/**
- * Get or create a session ID
- */
-function getSessionId(): string {
-  if (typeof window === 'undefined') return 'server';
-
-  const storageKey = 'ideaflow_session_id';
-  try {
-    let sessionId = sessionStorage.getItem(storageKey);
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      sessionStorage.setItem(storageKey, sessionId);
-    }
-    return sessionId;
-  } catch {
-    return 'session_unavailable';
-  }
-}
 
 /**
  * Get current page context

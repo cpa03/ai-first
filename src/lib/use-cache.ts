@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { CACHE_TTL_CONFIG } from './config/constants';
 
 interface CacheEntry<T> {
@@ -144,7 +144,10 @@ export function useCache<T>(
     };
   }, [key, ttl, staleWhileRevalidate, revalidate]);
 
-  return { data, error, loading, revalidate };
+  return useMemo(
+    () => ({ data, error, loading, revalidate }),
+    [data, error, loading, revalidate]
+  );
 }
 
 export function clearCache(key?: string): void {
