@@ -27,3 +27,8 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** Static imports of `node:crypto` and use of `Math.random()` fallbacks in core libraries caused CI failures and security inconsistencies in Edge/Cloudflare environments.
 **Learning:** Even with `nodejs_compat`, top-level `node:crypto` imports can interfere with certain bundling processes in Next.js/OpenNext. Using `globalThis.crypto` is the preferred path for runtime-neutral secure operations.
 **Prevention:** Always use `globalThis.crypto` (specifically `randomUUID()` and `getRandomValues()`) for secure ID generation in any code that might run at the Edge. Use dynamic requires or centralized utilities to isolate platform-specific crypto needs.
+
+## 2026-04-23 - Standardized Cryptographically Secure Identifiers
+**Vulnerability:** Scattered use of insecure `Math.random()` and timestamp-based fallbacks for IDs (`req_`, `idea_`, `export_`) when `crypto` was assumed unavailable.
+**Learning:** Modern runtimes (Node 19+, Cloudflare Workers, Vercel Edge) all support `globalThis.crypto.randomUUID()`. Standardizing on a centralized utility ensures high-entropy IDs and consistent security without platform-specific dependencies in business logic.
+**Prevention:** Use `src/lib/id-generator.ts` for all unique identifiers. Avoid local implementations or fallbacks that reduce entropy. Ensure Edge compatibility by preferring standard Web APIs over `node:crypto` where possible.

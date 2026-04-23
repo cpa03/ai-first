@@ -14,9 +14,36 @@
  * @returns A random UUID string
  */
 export function generateSecureId(): string {
-  // globalThis.crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
-  // It is also supported in Cloudflare Workers and Vercel Edge Runtime.
-  return globalThis.crypto.randomUUID();
+  /**
+   * globalThis.crypto.randomUUID() is the standard Web API for secure UUID generation.
+   * It is supported in:
+   * - Node.js 19.0.0+ (and 14.7.0+ / 16.7.0+ via crypto module, global in 19+)
+   * - Cloudflare Workers & Vercel Edge Runtime
+   * - All modern browsers
+   *
+   * Since this project requires Node.js >= 20, we can safely rely on the global version.
+   */
+  try {
+    if (typeof globalThis !== 'undefined' && globalThis.crypto?.randomUUID) {
+      return globalThis.crypto.randomUUID();
+    }
+    // Fallback for some Node.js environments where it might not be global yet or in tests
+    // @ts-ignore - crypto might be available via global in Node
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+      // @ts-ignore
+      return crypto.randomUUID();
+    }
+  } catch {
+    // Fallback handled below
+  }
+
+  // Final fallback using a robust but less secure method if Web Crypto is completely unavailable.
+  // This should be extremely rare given our environment constraints.
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
 
 /**

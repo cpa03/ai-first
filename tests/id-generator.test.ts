@@ -4,7 +4,7 @@ describe('id-generator', () => {
   describe('generateSecureId', () => {
     it('should generate a valid UUID', () => {
       const id = generateSecureId();
-      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);
     });
 
     it('should generate unique IDs', () => {

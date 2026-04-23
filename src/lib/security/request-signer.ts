@@ -162,6 +162,7 @@ export function signRequest(
   // Using dynamic require for node:crypto ensures it doesn't break browser/edge bundling.
   let signature: string;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const nodeCrypto = require('node:crypto');
     signature = nodeCrypto
       .createHmac('sha256', secret)
