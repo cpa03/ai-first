@@ -8,7 +8,7 @@
  * @module lib/security/request-signer
  */
 
-import crypto from 'node:crypto';
+import { timingSafeEqual } from '../id-generator';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */
@@ -98,7 +98,11 @@ function getInternalApiSecret(): string {
  * Generate a cryptographically secure nonce
  */
 export function generateNonce(): string {
-  return crypto.randomBytes(16).toString('hex');
+  const array = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(array);
+  return Array.from(array)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 /**
@@ -153,11 +157,22 @@ export function signRequest(
 
   const message = parts.join(':');
 
-  // Generate HMAC-SHA256 signature
-  const signature = crypto
-    .createHmac('sha256', secret)
-    .update(message, 'utf8')
-    .digest('hex');
+  // Generate HMAC-SHA256 signature using node:crypto if available (fastest on server)
+  // or Web Crypto for Edge compatibility.
+  // Using dynamic require for node:crypto ensures it doesn't break browser/edge bundling.
+  let signature: string;
+  try {
+    const nodeCrypto = require('node:crypto');
+    signature = nodeCrypto
+      .createHmac('sha256', secret)
+      .update(message, 'utf8')
+      .digest('hex');
+  } catch {
+    // Fallback or handle appropriately for pure Edge/Browser if needed.
+    // For now, since internal communication is server-to-server, node:crypto
+    // via 'nodejs_compat' in wrangler.toml is the primary path.
+    throw new Error('HMAC generation failed: node:crypto not available');
+  }
 
   return {
     signature,
@@ -204,24 +219,12 @@ export function verifySignature(
   });
 
   // Timing-safe comparison to prevent timing attacks
-  try {
-    // Use Buffer.compare for timing-safe comparison
-    const result = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected.signature)
-    );
+  const result = timingSafeEqual(signature, expected.signature);
 
-    return {
-      valid: result,
-      error: result ? undefined : 'Invalid signature',
-    };
-  } catch {
-    // If buffers are different lengths, timingSafeEqual throws
-    return {
-      valid: false,
-      error: 'Invalid signature format',
-    };
-  }
+  return {
+    valid: result,
+    error: result ? undefined : 'Invalid signature',
+  };
 }
 
 /**

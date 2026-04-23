@@ -61,6 +61,6 @@ export function simpleHash(input: string): string {
     const char = input.charCodeAt(i);
     hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
   }
-  // Return as absolute unsigned 32-bit integer string
-  return Math.abs(hash >>> 0).toString();
+  // Return as 32-bit hex string (8 characters)
+  return (hash >>> 0).toString(16).padStart(8, '0');
 }

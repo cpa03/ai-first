@@ -15,6 +15,7 @@ import {
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db';
 import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
+import { generateSecureId } from '../id-generator';
 
 export interface ExportManagerOptions {
   enableExternalConnectors?: boolean;
@@ -378,13 +379,8 @@ export const exportUtils = {
   },
 
   generateExportId(): string {
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
-    try {
-      return `export_${crypto.randomUUID()}`;
-    } catch {
-      // Fallback for environments without crypto.randomUUID support
-      return `export_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-    }
+    // SECURITY: Use cryptographically secure, collision-resistant IDs
+    // Use centralized generateSecureId which relies on globalThis.crypto.randomUUID()
+    return `export_${generateSecureId()}`;
   },
 };

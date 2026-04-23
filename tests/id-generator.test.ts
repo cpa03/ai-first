@@ -50,8 +50,8 @@ describe('id-generator', () => {
       expect(simpleHash('input1')).not.toBe(simpleHash('input2'));
     });
 
-    it('should return a numeric string', () => {
-      expect(simpleHash('test')).toMatch(/^\d+$/);
+    it('should return an 8-character hex string', () => {
+      expect(simpleHash('test')).toMatch(/^[0-9a-f]{8}$/);
     });
   });
 });

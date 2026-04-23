@@ -22,3 +22,8 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** Use of insecure `Math.random()` fallbacks in `logger.ts` and potential information leakage in `rate-limit.ts` where substrings of secret tokens were used for anonymization (reducing entropy and potentially aiding brute-force).
 **Learning:** Security utilities were previously duplicated or implemented locally (e.g., DJB2 hashing), leading to inconsistent security postures across the app and use of platform-specific APIs (`node:crypto`) that are not always available in Edge runtimes.
 **Prevention:** Use the centralized `src/lib/id-generator.ts` for all ID generation and hashing. It provides runtime-neutral, cryptographically secure (`globalThis.crypto`) and timing-safe operations. Always hash full secrets instead of using substrings for identifiers.
+
+## 2026-04-23 - Edge Runtime Compatibility for Security Utilities
+**Vulnerability:** Static imports of `node:crypto` and use of `Math.random()` fallbacks in core libraries caused CI failures and security inconsistencies in Edge/Cloudflare environments.
+**Learning:** Even with `nodejs_compat`, top-level `node:crypto` imports can interfere with certain bundling processes in Next.js/OpenNext. Using `globalThis.crypto` is the preferred path for runtime-neutral secure operations.
+**Prevention:** Always use `globalThis.crypto` (specifically `randomUUID()` and `getRandomValues()`) for secure ID generation in any code that might run at the Edge. Use dynamic requires or centralized utilities to isolate platform-specific crypto needs.
