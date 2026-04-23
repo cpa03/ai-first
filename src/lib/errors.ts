@@ -1,7 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import crypto from 'node:crypto';
+import { generateSecureId, simpleHash } from './id-generator';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -9,7 +9,6 @@ const LONG_NUMBER_PATTERN = /\d{4,}/g;
 const UUID_PATTERN =
   /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi;
 const IP_ADDRESS_PATTERN = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
-const FINGERPRINT_HASH_LENGTH = 12;
 
 export function generateErrorFingerprint(
   code: ErrorCode | string,
@@ -27,11 +26,10 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
-    .substring(0, FINGERPRINT_HASH_LENGTH);
+  // SECURITY: Use a stable hash for fingerprinting that works across runtimes.
+  // DJB2 (simpleHash) is deterministic and safe for this non-cryptographic use case.
+  // simpleHash returns an 8-char hex string.
+  const hash = simpleHash(fingerprintInput);
 
   return `fp_${hash}`;
 }
@@ -334,9 +332,9 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+  // Use centralized generateSecureId which relies on globalThis.crypto.randomUUID()
   // This ensures request IDs are unique and cannot be predicted for security tracing
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${crypto.randomUUID()}`;
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateSecureId()}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

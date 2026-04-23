@@ -802,7 +802,7 @@ describe('generateErrorFingerprint', () => {
     );
 
     expect(fp1).toBe(fp2);
-    expect(fp1).toMatch(/^fp_[a-f0-9]{12}$/);
+    expect(fp1).toMatch(/^fp_[a-f0-9]{8}$/);
   });
 
   it('should generate different fingerprints for different error codes', () => {
@@ -895,7 +895,7 @@ describe('generateErrorFingerprint', () => {
   it('should handle empty message', () => {
     const fp = generateErrorFingerprint(ErrorCode.INTERNAL_ERROR, '');
 
-    expect(fp).toMatch(/^fp_[a-f0-9]{12}$/);
+    expect(fp).toMatch(/^fp_[a-f0-9]{8}$/);
   });
 
   it('should handle special characters in message', () => {
@@ -904,7 +904,7 @@ describe('generateErrorFingerprint', () => {
       'Error: "invalid" <data> & more'
     );
 
-    expect(fp).toMatch(/^fp_[a-f0-9]{12}$/);
+    expect(fp).toMatch(/^fp_[a-f0-9]{8}$/);
   });
 });
 
@@ -914,7 +914,7 @@ describe('AppError fingerprint', () => {
     const json = error.toJSON();
 
     expect(json.fingerprint).toBeDefined();
-    expect(json.fingerprint).toMatch(/^fp_[a-f0-9]{12}$/);
+    expect(json.fingerprint).toMatch(/^fp_[a-f0-9]{8}$/);
   });
 
   it('should return same fingerprint on multiple calls', () => {
@@ -936,7 +936,7 @@ describe('AppError fingerprint', () => {
 
     expect(response.headers.get('X-Error-Fingerprint')).toBeDefined();
     expect(response.headers.get('X-Error-Fingerprint')).toMatch(
-      /^fp_[a-f0-9]{12}$/
+      /^fp_[a-f0-9]{8}$/
     );
   });
 
@@ -946,6 +946,6 @@ describe('AppError fingerprint', () => {
     const body = (await response.json()) as { fingerprint?: string };
 
     expect(body.fingerprint).toBeDefined();
-    expect(body.fingerprint).toMatch(/^fp_[a-f0-9]{12}$/);
+    expect(body.fingerprint).toMatch(/^fp_[a-f0-9]{8}$/);
   });
 });
