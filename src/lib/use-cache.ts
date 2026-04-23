@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { CACHE_TTL_CONFIG } from './config/constants';
 
 interface CacheEntry<T> {
@@ -35,7 +35,9 @@ export function useCache<T>(
   // Use ref to avoid dependency on fetcher function identity
   // This prevents infinite re-renders when fetcher is not memoized by caller
   const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
+  useEffect(() => {
+    fetcherRef.current = fetcher;
+  }, [fetcher]);
 
   const revalidate = useCallback(async () => {
     try {
@@ -142,7 +144,10 @@ export function useCache<T>(
     };
   }, [key, ttl, staleWhileRevalidate, revalidate]);
 
-  return { data, error, loading, revalidate };
+  return useMemo(
+    () => ({ data, error, loading, revalidate }),
+    [data, error, loading, revalidate]
+  );
 }
 
 export function clearCache(key?: string): void {

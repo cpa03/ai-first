@@ -17,6 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { getSessionId } from '@/lib/utils';
 
 /**
  * Event categories for analytics
@@ -207,25 +208,6 @@ function isPostHogConfigured(): boolean {
 let eventQueue: AnalyticsEventProperties[] = [];
 let flushTimeout: ReturnType<typeof setTimeout> | null = null;
 
-/**
- * Get current session ID (anonymous)
- * Creates a simple session ID stored in sessionStorage
- */
-function getSessionId(): string {
-  if (typeof window === 'undefined') return 'server';
-
-  const storageKey = 'ideaflow_session_id';
-  try {
-    let sessionId = sessionStorage.getItem(storageKey);
-    if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      sessionStorage.setItem(storageKey, sessionId);
-    }
-    return sessionId;
-  } catch {
-    return 'session_unavailable';
-  }
-}
 
 /**
  * Get current page context
