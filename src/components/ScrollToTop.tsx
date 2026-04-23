@@ -9,6 +9,7 @@ import React, {
   memo,
 } from 'react';
 import { COMPONENT_DEFAULTS } from '@/lib/config';
+import Tooltip from './Tooltip';
 
 interface ScrollToTopProps {
   showAt?: number;
@@ -110,28 +111,30 @@ function ScrollToTopComponent({
     circumference - (scrollProgress / 100) * circumference;
 
   return (
-    <button
-      onClick={scrollToTop}
-      onKeyDown={handleKeyDown}
-      className={`
-        fixed bottom-8 right-8 z-50
-        w-12 h-12
-        flex items-center justify-center
-        bg-white text-gray-700
-        rounded-full shadow-lg
-        border border-gray-200
-        transition-all duration-300 ease-out
-        hover:bg-gray-50 hover:text-primary-600 hover:shadow-xl hover:scale-110
-        hover:border-primary-200
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
-        active:scale-95
-        ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
-        ${className}
-      `}
-      aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
-      aria-live="polite"
-      type="button"
-    >
+    <div className="fixed bottom-8 right-8 z-50">
+      <Tooltip content="Back to top" position="top">
+      <button
+        onClick={scrollToTop}
+        onKeyDown={handleKeyDown}
+        className={`
+          group
+          ${className}
+          w-12 h-12
+          flex items-center justify-center
+          bg-white text-gray-700
+          rounded-full shadow-lg
+          border border-gray-200
+          transition-all duration-300 ease-out
+          hover:bg-gray-50 hover:text-primary-600 hover:shadow-xl hover:scale-110
+          hover:border-primary-200
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+          active:scale-95
+          ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
+        `}
+        aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
+        aria-live="polite"
+        type="button"
+      >
       {!prefersReducedMotion && (
         <svg
           className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
@@ -186,8 +189,10 @@ function ScrollToTopComponent({
         />
       </svg>
 
-      <span className="sr-only">Back to top</span>
-    </button>
+        <span className="sr-only">Back to top</span>
+      </button>
+    </Tooltip>
+    </div>
   );
 }
 
