@@ -18,13 +18,17 @@
  * @param input - The string to hash
  * @returns A stable, numeric hash as a string
  */
-export function simpleHash(input: string): string {
+export function simpleHash(input: string, length?: number): string {
   let hash = 5381;
   for (let i = 0; i < input.length; i++) {
     const char = input.charCodeAt(i);
     hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
   }
-  return String(Math.abs(hash >>> 0));
+  const hashStr = Math.abs(hash >>> 0).toString(16);
+  if (length) {
+    return hashStr.padStart(length, '0').substring(0, length);
+  }
+  return hashStr;
 }
 
 /**

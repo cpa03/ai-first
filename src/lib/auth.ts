@@ -3,7 +3,7 @@ import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { AUTH_CONFIG } from '@/lib/config/constants';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
-import { timingSafeEqual } from '@/lib/security/id-generator';
+import { timingSafeEqual } from './id-generator';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');

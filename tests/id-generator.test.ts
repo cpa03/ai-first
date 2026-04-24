@@ -1,4 +1,4 @@
-import { simpleHash, timingSafeEqual, generateSecureId } from '../src/lib/security/id-generator';
+import { simpleHash, timingSafeEqual, generateSecureId } from '../src/lib/id-generator';
 
 describe('id-generator', () => {
   describe('simpleHash', () => {
@@ -11,9 +11,9 @@ describe('id-generator', () => {
       expect(simpleHash('input1')).not.toBe(simpleHash('input2'));
     });
 
-    it('should produce a numeric string', () => {
+    it('should produce a hex string', () => {
       const hash = simpleHash('test');
-      expect(hash).toMatch(/^\d+$/);
+      expect(hash).toMatch(/^[0-9a-f]+$/);
     });
   });
 
