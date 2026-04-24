@@ -127,51 +127,79 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
 
         <div className={TASK_ITEM_STYLES.METADATA.CONTAINER}>
           {task.estimate > 0 && (
-            <span className="flex items-center gap-1">
-              <svg
-                className={TASK_ITEM_STYLES.METADATA.ICON}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+            <Tooltip
+              content={TASK_MANAGEMENT_MESSAGES.METADATA.ESTIMATE(task.estimate)}
+            >
+              <span
+                className={TASK_ITEM_STYLES.METADATA.ITEM}
+                role="img"
+                aria-label={TASK_MANAGEMENT_MESSAGES.METADATA.ESTIMATE(
+                  task.estimate
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              {task.estimate}h
-            </span>
+                <svg
+                  className={TASK_ITEM_STYLES.METADATA.ICON}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {task.estimate}h
+              </span>
+            </Tooltip>
           )}
           {task.assignee && (
-            <span className="flex items-center gap-1">
-              <svg
-                className={TASK_ITEM_STYLES.METADATA.ICON}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
+            <Tooltip
+              content={TASK_MANAGEMENT_MESSAGES.METADATA.ASSIGNEE(task.assignee)}
+            >
+              <span
+                className={TASK_ITEM_STYLES.METADATA.ITEM}
+                role="img"
+                aria-label={TASK_MANAGEMENT_MESSAGES.METADATA.ASSIGNEE(
+                  task.assignee
+                )}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              {task.assignee}
-            </span>
+                <svg
+                  className={TASK_ITEM_STYLES.METADATA.ICON}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                {task.assignee}
+              </span>
+            </Tooltip>
           )}
           {task.risk_level !== 'low' && (
-            <span
-              className={`${TASK_ITEM_STYLES.METADATA.RISK_BADGE} ${
-                RISK_LEVEL_CONFIG[task.risk_level].bgColor
-              } ${RISK_LEVEL_CONFIG[task.risk_level].textColor}`}
+            <Tooltip
+              content={TASK_MANAGEMENT_MESSAGES.METADATA.RISK(task.risk_level)}
             >
-              {task.risk_level} risk
-            </span>
+              <span
+                className={`${TASK_ITEM_STYLES.METADATA.ITEM} ${
+                  RISK_LEVEL_CONFIG[task.risk_level].bgColor
+                } ${RISK_LEVEL_CONFIG[task.risk_level].textColor}`}
+                role="img"
+                aria-label={TASK_MANAGEMENT_MESSAGES.METADATA.RISK(
+                  task.risk_level
+                )}
+              >
+                {task.risk_level} risk
+              </span>
+            </Tooltip>
           )}
         </div>
       </div>

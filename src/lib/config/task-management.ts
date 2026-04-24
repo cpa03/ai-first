@@ -111,6 +111,7 @@ export const TASK_ITEM_STYLES = {
     CONTAINER: 'flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500',
     ICON: 'w-3 h-3',
     RISK_BADGE: 'px-1.5 py-0.5 rounded',
+    ITEM: 'flex items-center gap-1 px-1.5 py-0.5 rounded-md transition-colors hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1 cursor-default',
   },
 } as const;
 
@@ -224,6 +225,12 @@ export const TASK_MANAGEMENT_MESSAGES = {
       isCompleted
         ? `Mark "${taskTitle}" as incomplete`
         : `Mark "${taskTitle}" as complete`,
+  },
+  METADATA: {
+    ESTIMATE: (hours: number) =>
+      `Estimated time: ${hours} ${hours === 1 ? 'hour' : 'hours'}`,
+    ASSIGNEE: (name: string) => `Assigned to ${name}`,
+    RISK: (level: string) => `${level.charAt(0).toUpperCase() + level.slice(1)} risk level`,
   },
 } as const;
 
