@@ -10,7 +10,7 @@ import {
   TASK_ITEM_STYLES,
   TASK_MANAGEMENT_MESSAGES,
 } from '@/lib/config';
-import Tooltip from '../Tooltip';
+import Tooltip from '@/components/Tooltip';
 
 interface TaskItemProps {
   task: Task;
