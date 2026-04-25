@@ -2,7 +2,8 @@
 
 import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
-import { MESSAGES, TASK_HEADER_STYLES } from '@/lib/config';
+import { TASK_HEADER_STYLES } from '@/lib/config/task-management';
+import { MESSAGES } from '@/lib/config/ui';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
