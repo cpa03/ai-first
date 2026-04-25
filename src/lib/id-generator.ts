@@ -3,6 +3,9 @@
  *
  * Provides centralized, secure utilities for generating IDs, hashing tokens,
  * and performing timing-safe comparisons across Node.js and Browser/Edge runtimes.
+ *
+ * NOTE: For cryptographic hashing (SHA-256) and HMAC, use the Web Crypto API
+ * (globalThis.crypto.subtle) which is available in all supported runtimes.
  */
 
 /**
@@ -29,6 +32,9 @@ export function generateSecureId(): string {
  * Useful for anonymizing tokens or identifiers without the complexity of
  * async Web Crypto APIs.
  *
+ * ⚠️ WARNING: Not suitable for cryptographic purposes where collision resistance
+ * or preimage resistance is required. Use globalThis.crypto.subtle for that.
+ *
  * @param str - The string to hash
  * @param length - Optional length to truncate the hex result (default: 32)
  */
@@ -41,10 +47,7 @@ export function simpleHash(str: string, length: number = 32): string {
   // Convert to unsigned 32-bit hex string
   const hex = (hash >>> 0).toString(16).padStart(8, '0');
 
-  // If we need a longer hash, we can combine with string length and some bits
-  if (length <= 8) return hex.substring(0, length);
-
-  // For longer identifiers, add a deterministic secondary component
+  // For longer identifiers, add deterministic secondary components
   let hash2 = 0;
   for (let i = str.length - 1; i >= 0; i--) {
     hash2 = (hash2 * 31) ^ str.charCodeAt(i);
@@ -68,6 +71,18 @@ export function simpleHash(str: string, length: number = 32): string {
   const hex4 = (hash4 >>> 0).toString(16).padStart(8, '0');
 
   return (hex + hex2 + hex3 + hex4).substring(0, length);
+}
+
+/**
+ * Generate a cryptographically secure hash of a string using SHA-256.
+ * Returns a hex-encoded string.
+ */
+export async function sha256(str: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**

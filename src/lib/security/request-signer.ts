@@ -8,7 +8,7 @@
  * @module lib/security/request-signer
  */
 
-import crypto from 'node:crypto';
+import { timingSafeEqual } from '@/lib/id-generator';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */
@@ -98,7 +98,11 @@ function getInternalApiSecret(): string {
  * Generate a cryptographically secure nonce
  */
 export function generateNonce(): string {
-  return crypto.randomBytes(16).toString('hex');
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 /**
@@ -129,7 +133,7 @@ export function isTimestampValid(
  * @param options - Optional parameters (nonce, method, path)
  * @returns Signature result with signature, timestamp, and nonce
  */
-export function signRequest(
+export async function signRequest(
   payload: string,
   timestamp: number,
   options: {
@@ -137,7 +141,7 @@ export function signRequest(
     method?: string;
     path?: string;
   } = {}
-): SignatureResult {
+): Promise<SignatureResult> {
   const secret = getInternalApiSecret();
   const nonce = options.nonce || generateNonce();
 
@@ -153,11 +157,29 @@ export function signRequest(
 
   const message = parts.join(':');
 
-  // Generate HMAC-SHA256 signature
-  const signature = crypto
-    .createHmac('sha256', secret)
-    .update(message, 'utf8')
-    .digest('hex');
+  // SECURITY: Use Web Crypto API for HMAC-SHA256 (Edge compatible)
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(message);
+
+  const key = await globalThis.crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signatureBuffer = await globalThis.crypto.subtle.sign(
+    'HMAC',
+    key,
+    messageData
+  );
+
+  const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+  const signature = signatureArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
 
   return {
     signature,
@@ -175,7 +197,7 @@ export function signRequest(
  * @param options - Optional parameters (nonce, method, path, tolerance)
  * @returns Verification result
  */
-export function verifySignature(
+export async function verifySignature(
   payload: string,
   timestamp: number,
   signature: string,
@@ -185,7 +207,7 @@ export function verifySignature(
     path?: string;
     toleranceMs?: number;
   } = {}
-): VerificationResult {
+): Promise<VerificationResult> {
   // Check timestamp validity first
   const tolerance = options.toleranceMs ?? DEFAULT_TIMESTAMP_TOLERANCE_MS;
 
@@ -197,31 +219,19 @@ export function verifySignature(
   }
 
   // Generate expected signature
-  const expected = signRequest(payload, timestamp, {
+  const expected = await signRequest(payload, timestamp, {
     nonce: options.nonce,
     method: options.method,
     path: options.path,
   });
 
   // Timing-safe comparison to prevent timing attacks
-  try {
-    // Use Buffer.compare for timing-safe comparison
-    const result = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected.signature)
-    );
+  const result = timingSafeEqual(signature, expected.signature);
 
-    return {
-      valid: result,
-      error: result ? undefined : 'Invalid signature',
-    };
-  } catch {
-    // If buffers are different lengths, timingSafeEqual throws
-    return {
-      valid: false,
-      error: 'Invalid signature format',
-    };
-  }
+  return {
+    valid: result,
+    error: result ? undefined : 'Invalid signature',
+  };
 }
 
 /**
@@ -309,7 +319,7 @@ export async function createSignedRequest(
     path = url;
   }
 
-  const { signature, nonce } = signRequest(body, timestamp, {
+  const { signature, nonce } = await signRequest(body, timestamp, {
     method,
     path,
   });
@@ -410,7 +420,7 @@ export async function verifyInternalRequest(
   }
 
   // Verify signature
-  const result = verifySignature(body, parsed.timestamp, parsed.signature, {
+  const result = await verifySignature(body, parsed.timestamp, parsed.signature, {
     nonce: parsed.nonce,
     method,
     path,
@@ -433,15 +443,15 @@ export async function verifyInternalRequest(
  * @param expiresInMs - Expiration time in milliseconds
  * @returns Signed URL with signature query params
  */
-export function createSignedUrl(
+export async function createSignedUrl(
   url: string,
   expiresInMs: number = DEFAULT_TIMESTAMP_TOLERANCE_MS
-): string {
+): Promise<string> {
   const timestamp = Date.now() + expiresInMs;
   const path = new URL(url).pathname;
 
   // Sign an empty payload with the expiry timestamp
-  const { signature, nonce } = signRequest(String(timestamp), timestamp, {
+  const { signature, nonce } = await signRequest(String(timestamp), timestamp, {
     path,
   });
 
@@ -461,9 +471,9 @@ export function createSignedUrl(
  * @param url - The signed URL to verify
  * @returns Whether the URL is valid and not expired
  */
-export function verifySignedUrl(url: string): VerificationResult & {
+export async function verifySignedUrl(url: string): Promise<VerificationResult & {
   expiresAt?: number;
-} {
+}> {
   try {
     const urlObj = new URL(url);
     const timestampStr = urlObj.searchParams.get('_ts');
@@ -486,7 +496,7 @@ export function verifySignedUrl(url: string): VerificationResult & {
 
     // Verify signature
     const path = urlObj.pathname;
-    const result = verifySignature(String(timestamp), timestamp, signature, {
+    const result = await verifySignature(String(timestamp), timestamp, signature, {
       nonce: nonce || undefined,
       path,
     });
