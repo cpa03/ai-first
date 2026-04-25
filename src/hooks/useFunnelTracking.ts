@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useEffect, useMemo } from 'react';
 import { trackFunnelStep, trackFunnelDropoff, flush } from '@/lib/analytics';
 
 /**
@@ -161,12 +161,16 @@ export function useFunnelTracking(
     return currentStepRef.current;
   }, []);
 
-  return {
-    completeStep,
-    markDropoff,
-    reset,
-    getCurrentStep,
-  };
+  // PERFORMANCE: Memoize return object to prevent unnecessary re-renders in components using this hook
+  return useMemo(
+    () => ({
+      completeStep,
+      markDropoff,
+      reset,
+      getCurrentStep,
+    }),
+    [completeStep, markDropoff, reset, getCurrentStep]
+  );
 }
 
 /**
