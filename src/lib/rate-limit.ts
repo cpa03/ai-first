@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { generateRequestId } from './errors';
+import { simpleHash } from './id-generator';
 
 export interface RateLimitInfo {
   limit: number;
@@ -63,9 +64,9 @@ function extractUserIdFromRequest(request: Request): string | null {
     // For now, we can use the token as a unique identifier
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
-      // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // Return a deterministic hash of the token as the user identifier
+      // to avoid leaking the original token in rate limit stores or logs.
+      return `token:${simpleHash(token)}`;
     }
   }
 
