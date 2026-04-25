@@ -4,13 +4,13 @@ import { memo, useCallback, useMemo } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
 import {
-  SVG_ANIMATION,
   TASK_STATUS_CONFIG,
   RISK_LEVEL_CONFIG,
   TASK_ITEM_STYLES,
   TASK_MANAGEMENT_MESSAGES,
-} from '@/lib/config';
-import Tooltip from '../Tooltip';
+} from '@/lib/config/task-management';
+import { SVG_ANIMATION } from '@/lib/config/theme';
+import Tooltip from '@/components/Tooltip';
 
 interface TaskItemProps {
   task: Task;
