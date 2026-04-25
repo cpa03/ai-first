@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { AUTH_CONFIG } from '@/lib/config/constants';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
+import { timingSafeEqual } from './id-generator';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
 const logger = createLogger('auth');
@@ -17,15 +18,6 @@ export interface AuthenticatedUser {
   id: string;
   email?: string;
   role?: string;
-}
-
-function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a[i] ^ b[i];
-  }
-  return result === 0;
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
@@ -76,7 +68,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
       encoder.encode(credentials)
     );
 
-    const authenticated = safeEqual(
+    const authenticated = timingSafeEqual(
       new Uint8Array(expectedHash),
       new Uint8Array(actualHash)
     );
