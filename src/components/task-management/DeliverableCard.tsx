@@ -5,10 +5,10 @@ import type { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import type { TaskStatus } from '@/types/task';
 import {
-  DELIVERABLE_STYLES,
   DELIVERABLE_CARD_STYLES,
   DELIVERABLE_PROGRESS_CONFIG,
-} from '@/lib/config';
+} from '@/lib/config/task-management';
+import { DELIVERABLE_STYLES } from '@/lib/config/theme';
 
 interface DeliverableWithTasks {
   id: string;

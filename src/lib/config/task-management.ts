@@ -224,6 +224,9 @@ export const TASK_MANAGEMENT_MESSAGES = {
       isCompleted
         ? `Mark "${taskTitle}" as incomplete`
         : `Mark "${taskTitle}" as complete`,
+    ESTIMATE_TOOLTIP: (hours: number) =>
+      `Estimate: ${hours} ${hours === 1 ? 'hour' : 'hours'}`,
+    ASSIGNEE_TOOLTIP: (assignee: string) => `Assigned to: ${assignee}`,
   },
 } as const;
 
