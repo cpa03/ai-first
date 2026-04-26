@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { generateRequestId } from './errors';
+import { simpleHash } from './id-generator';
 
 export interface RateLimitInfo {
   limit: number;
@@ -65,7 +66,7 @@ function extractUserIdFromRequest(request: Request): string | null {
     if (token && token.length > 0) {
       // Return a hash of the token as the user identifier
       // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      return `token:${simpleHash(token)}`;
     }
   }
 
