@@ -391,8 +391,7 @@ class AIService {
 
     if (
       typeof TextEncoder === 'undefined' ||
-      typeof crypto === 'undefined' ||
-      !crypto.subtle
+      typeof globalThis.crypto?.subtle === 'undefined'
     ) {
       const hash = btoa(key).substring(
         0,
@@ -403,7 +402,7 @@ class AIService {
 
     const encoder = new TextEncoder();
     const data = encoder.encode(key);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
       .map((b) => b.toString(16).padStart(2, '0'))
