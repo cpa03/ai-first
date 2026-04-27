@@ -894,9 +894,6 @@ export const API_CACHE_CONFIG = {
   ),
 } as const;
 
-/**
-  HR|  ),
-} as const;
 
 /**
  * External API Versions Configuration
