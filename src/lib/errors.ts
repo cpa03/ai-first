@@ -1,8 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import { generateSecureId } from './id-generator';
-import crypto from 'node:crypto';
+import { generateSecureId, simpleHash } from './id-generator';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -28,11 +27,8 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
-    .substring(0, FINGERPRINT_HASH_LENGTH);
+  // Use platform-neutral simpleHash for error fingerprints
+  const hash = simpleHash(fingerprintInput, FINGERPRINT_HASH_LENGTH);
 
   return `fp_${hash}`;
 }

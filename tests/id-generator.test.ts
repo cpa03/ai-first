@@ -1,4 +1,4 @@
-import { generateSecureId, simpleHash, timingSafeEqual } from '../src/lib/id-generator';
+import { generateSecureId, simpleHash, timingSafeEqual, signHmacSha256 } from '../src/lib/id-generator';
 
 describe('id-generator', () => {
   describe('generateSecureId', () => {
@@ -58,6 +58,24 @@ describe('id-generator', () => {
       const c = new TextEncoder().encode('world');
       expect(timingSafeEqual(a, b)).toBe(true);
       expect(timingSafeEqual(a, c)).toBe(false);
+    });
+  });
+
+  describe('signHmacSha256', () => {
+    it('should produce deterministic signatures', async () => {
+      const secret = 'test-secret';
+      const message = 'test-message';
+      const sig1 = await signHmacSha256(secret, message);
+      const sig2 = await signHmacSha256(secret, message);
+      expect(sig1).toBe(sig2);
+      expect(sig1).toHaveLength(64);
+    });
+
+    it('should produce different signatures for different secrets', async () => {
+      const message = 'test-message';
+      const sig1 = await signHmacSha256('secret1', message);
+      const sig2 = await signHmacSha256('secret2', message);
+      expect(sig1).not.toBe(sig2);
     });
   });
 });

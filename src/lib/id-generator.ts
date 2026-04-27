@@ -83,3 +83,30 @@ export function simpleHash(input: string, length: number = 12): string {
   const combined = hex1 + hex2 + hex3 + hex4;
   return combined.substring(0, length);
 }
+
+/**
+ * Perform an HMAC-SHA256 signature using SubtleCrypto
+ * This is platform-neutral and works in Browser, Node.js, and Edge runtimes.
+ */
+export async function signHmacSha256(
+  secret: string,
+  message: string
+): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(message);
+
+  const crypto = globalThis.crypto;
+  const key = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+
+  const signature = await crypto.subtle.sign('HMAC', key, messageData);
+  return Array.from(new Uint8Array(signature))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
