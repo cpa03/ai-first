@@ -1,7 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
-import crypto from 'node:crypto';
+import { generateSecureId, simpleHash } from './id-generator';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -27,11 +27,9 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = crypto
-    .createHash('sha256')
-    .update(fingerprintInput)
-    .digest('hex')
-    .substring(0, FINGERPRINT_HASH_LENGTH);
+  // Use platform-neutral simpleHash for error fingerprints to ensure
+  // compatibility with Edge runtimes (Cloudflare Workers).
+  const hash = simpleHash(fingerprintInput, FINGERPRINT_HASH_LENGTH);
 
   return `fp_${hash}`;
 }
@@ -334,9 +332,9 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-  // This ensures request IDs are unique and cannot be predicted for security tracing
-  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${crypto.randomUUID()}`;
+  // Use centralized secure ID generator for cryptographically secure tracing.
+  // This ensures compatibility across both Node.js and Edge runtimes.
+  return generateSecureId(ERROR_CONFIG.REQUEST_ID.PREFIX);
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
