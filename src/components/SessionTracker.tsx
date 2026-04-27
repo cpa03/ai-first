@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useSessionDuration } from '@/hooks/useSessionDuration';
 
 /**
@@ -13,10 +14,16 @@ import { useSessionDuration } from '@/hooks/useSessionDuration';
  *
  * This component is hidden and tracks silently in the background.
  */
-export default function SessionTracker() {
+function SessionTrackerComponent() {
   // Initialize session tracking - no UI rendered
   useSessionDuration();
 
   // Return null - this is a tracking-only component with no visual presence
   return null;
 }
+
+/**
+ * PERFORMANCE: Memoize SessionTracker to prevent unnecessary re-execution
+ * of the useSessionDuration hook during parent re-renders.
+ */
+export default memo(SessionTrackerComponent);
