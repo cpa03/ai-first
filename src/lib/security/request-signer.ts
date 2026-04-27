@@ -98,9 +98,9 @@ function getInternalApiSecret(): string {
  * Generate a cryptographically secure nonce
  */
 export function generateNonce(): string {
-  const buffer = new Uint8Array(16);
-  globalThis.crypto.getRandomValues(buffer);
-  return Array.from(buffer)
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes)
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('');
 }
@@ -157,7 +157,8 @@ export async function signRequest(
 
   const message = parts.join(':');
 
-  // Use platform-neutral HMAC-SHA256
+  // Use platform-neutral HMAC-SHA256 via SubtleCrypto to ensure
+  // compatibility with Edge runtimes (Cloudflare Workers).
   const signature = await signHmacSha256(secret, message);
 
   return {

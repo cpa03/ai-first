@@ -107,7 +107,11 @@ describe('Request Signer', () => {
       const { signature } = await signRequest(payload, timestamp);
       const invalidSignature = signature.slice(0, -2) + 'ff'; // Corrupt last 2 chars
 
-      const result = await verifySignature(payload, timestamp, invalidSignature);
+      const result = await verifySignature(
+        payload,
+        timestamp,
+        invalidSignature
+      );
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Invalid signature');
     });
@@ -116,9 +120,14 @@ describe('Request Signer', () => {
       const { signature, nonce } = await signRequest(payload, timestamp);
       const tamperedPayload = '{"action":"hacked","data":"hello"}';
 
-      const result = await verifySignature(tamperedPayload, timestamp, signature, {
-        nonce,
-      });
+      const result = await verifySignature(
+        tamperedPayload,
+        timestamp,
+        signature,
+        {
+          nonce,
+        }
+      );
       expect(result.valid).toBe(false);
     });
 
@@ -157,9 +166,14 @@ describe('Request Signer', () => {
         Date.now() - DEFAULT_TIMESTAMP_TOLERANCE_MS - 1000;
       const { signature, nonce } = await signRequest(payload, expiredTimestamp);
 
-      const result = await verifySignature(payload, expiredTimestamp, signature, {
-        nonce,
-      });
+      const result = await verifySignature(
+        payload,
+        expiredTimestamp,
+        signature,
+        {
+          nonce,
+        }
+      );
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Request timestamp outside acceptable window');
     });

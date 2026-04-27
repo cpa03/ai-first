@@ -489,7 +489,11 @@ export class GitHubProjectsExporter extends ExportConnector {
           },
           body: JSON.stringify({
             message: 'Add project README',
-            content: Buffer.from(readme).toString('base64'),
+            content: btoa(
+              Array.from(new TextEncoder().encode(readme))
+                .map((b) => String.fromCharCode(b))
+                .join('')
+            ),
           }),
         }),
       'create-readme'

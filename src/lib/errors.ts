@@ -27,7 +27,8 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  // Use platform-neutral simpleHash for error fingerprints
+  // Use platform-neutral simpleHash for error fingerprints to ensure
+  // compatibility with Edge runtimes (Cloudflare Workers).
   const hash = simpleHash(fingerprintInput, FINGERPRINT_HASH_LENGTH);
 
   return `fp_${hash}`;
@@ -331,8 +332,8 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use centralized secure ID generator for cryptographically secure tracing
-  // This ensures request IDs are unique and cannot be predicted for security tracing
+  // Use centralized secure ID generator for cryptographically secure tracing.
+  // This ensures compatibility across both Node.js and Edge runtimes.
   return generateSecureId(ERROR_CONFIG.REQUEST_ID.PREFIX);
 }
 

@@ -6,27 +6,37 @@
 
 /**
  * Generate a cryptographically secure, collision-resistant ID
- * Uses globalThis.crypto.randomUUID() which is available in Node.js 20+ and modern browsers.
+ * Uses crypto.randomUUID() which is available in Node.js 20+ and modern browsers.
  * Falls back to a robust timestamp + crypto.getRandomValues pattern if randomUUID is missing.
  */
 export function generateSecureId(prefix?: string): string {
-  let id: string;
+  // Check for crypto availability
+  const hasCrypto = typeof crypto !== 'undefined';
 
   try {
-    // native randomUUID is the most secure and efficient option
-    id = globalThis.crypto.randomUUID();
+    if (hasCrypto && typeof crypto.randomUUID === 'function') {
+      return (prefix || '') + crypto.randomUUID();
+    }
   } catch {
-    // Fallback for environments without randomUUID
-    const timestamp = Date.now().toString(36);
-    const randomBuffer = new Uint8Array(16);
-    globalThis.crypto.getRandomValues(randomBuffer);
-    const randomHex = Array.from(randomBuffer)
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-    id = `${timestamp}-${randomHex}`;
+    // Fall through to manual generation
   }
 
-  return prefix ? `${prefix}${id}` : id;
+  // Fallback for environments without randomUUID
+  const timestamp = Date.now().toString(36);
+  let randomHex: string;
+
+  if (hasCrypto && typeof crypto.getRandomValues === 'function') {
+    const bytes = new Uint8Array(16);
+    crypto.getRandomValues(bytes);
+    randomHex = Array.from(bytes)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  } else {
+    // Last resort fallback using Math.random
+    randomHex = Math.random().toString(36).substring(2, 15);
+  }
+
+  return (prefix || '') + `${timestamp}-${randomHex}`;
 }
 
 /**
@@ -51,15 +61,13 @@ export function timingSafeEqual(a: string | Uint8Array, b: string | Uint8Array):
 
 /**
  * Deterministic hash for anonymization purposes
- * Uses a multi-pass approach (DJB2 and SDBM) to provide stable, low-collision
- * identifiers across environments. Supports lengths up to 64 characters.
+ * Uses DJB2 and SDBM algorithms to provide stable, low-collision identifiers
+ * across environments. Supports lengths up to 64 characters.
  * This is NOT a cryptographic hash and should not be used for password hashing.
  */
 export function simpleHash(input: string, length: number = 12): string {
   let h1 = 5381;
   let h2 = 0;
-  let h3 = 0;
-  let h4 = 0x811c9dc5; // FNV-1a basis
 
   for (let i = 0; i < input.length; i++) {
     const char = input.charCodeAt(i);
@@ -67,21 +75,23 @@ export function simpleHash(input: string, length: number = 12): string {
     h1 = (h1 * 33) ^ char;
     // SDBM
     h2 = char + (h2 << 6) + (h2 << 16) - h2;
-    // JS Hash
-    h3 = (h3 << 5) - h3 + char;
-    h3 |= 0;
-    // FNV-1a
-    h4 ^= char;
-    h4 += (h4 << 1) + (h4 << 4) + (h4 << 7) + (h4 << 8) + (h4 << 24);
   }
 
   const hex1 = (h1 >>> 0).toString(16).padStart(8, '0');
   const hex2 = (h2 >>> 0).toString(16).padStart(8, '0');
-  const hex3 = (h3 >>> 0).toString(16).padStart(8, '0');
-  const hex4 = (h4 >>> 0).toString(16).padStart(8, '0');
 
-  const combined = hex1 + hex2 + hex3 + hex4;
-  return combined.substring(0, length);
+  // For longer hashes, we add more entropy passes
+  if (length > 16) {
+    let h3 = 0;
+    for (let i = 0; i < input.length; i++) {
+      h3 = (h3 << 5) - h3 + input.charCodeAt(i);
+      h3 |= 0;
+    }
+    const hex3 = (h3 >>> 0).toString(16).padStart(8, '0');
+    return (hex1 + hex2 + hex3).substring(0, length);
+  }
+
+  return (hex1 + hex2).substring(0, length);
 }
 
 /**
@@ -96,7 +106,6 @@ export async function signHmacSha256(
   const keyData = encoder.encode(secret);
   const messageData = encoder.encode(message);
 
-  const crypto = globalThis.crypto;
   const key = await crypto.subtle.importKey(
     'raw',
     keyData,
