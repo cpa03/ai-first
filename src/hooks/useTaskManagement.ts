@@ -60,6 +60,8 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
+  // Using render-phase update for the latest ref pattern ensures the ref is always current
+  // during the commit phase, avoiding potential stale state in effects or layout effects.
   dataRef.current = data;
 
   // Fetch tasks on mount
@@ -202,11 +204,11 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = data;
+      previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return data?.deliverables
+        return dataRef.current?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,7 +295,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
@@ -323,15 +325,31 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     setExpandedDeliverables(new Set());
   }, []);
 
-  return {
-    loading,
-    error,
-    data,
-    updatingTaskId,
-    expandedDeliverables,
-    handleToggleTaskStatus,
-    toggleDeliverable,
-    expandAll,
-    collapseAll,
-  };
+  // PERFORMANCE: Memoize the return value to prevent unnecessary re-renders of consumers
+  // when internal state (like expandedDeliverables or updatingTaskId) changes,
+  // ensuring the consumer only re-renders when data or other relevant state changes.
+  return useMemo(
+    () => ({
+      loading,
+      error,
+      data,
+      updatingTaskId,
+      expandedDeliverables,
+      handleToggleTaskStatus,
+      toggleDeliverable,
+      expandAll,
+      collapseAll,
+    }),
+    [
+      loading,
+      error,
+      data,
+      updatingTaskId,
+      expandedDeliverables,
+      handleToggleTaskStatus,
+      toggleDeliverable,
+      expandAll,
+      collapseAll,
+    ]
+  );
 }
