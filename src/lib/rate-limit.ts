@@ -60,12 +60,18 @@ function extractUserIdFromRequest(request: Request): string | null {
   const authHeader = request.headers.get('authorization');
   if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
     // In production, we would validate the JWT and extract user ID
-    // For now, we can use the token as a unique identifier
+    // For now, we use a deterministic identifier derived from the token.
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
-      // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // SECURITY: Avoid using token substrings which can cause rate-limit collisions
+      // (JWT headers are often identical) and leak sensitive token data.
+      // We use a simple, fast hash for anonymization in the rate limiter.
+      let hash = 0;
+      for (let i = 0; i < token.length; i++) {
+        hash = (hash << 5) - hash + token.charCodeAt(i);
+        hash |= 0; // Convert to 32bit integer
+      }
+      return `token:${Math.abs(hash).toString(16)}`;
     }
   }
 
