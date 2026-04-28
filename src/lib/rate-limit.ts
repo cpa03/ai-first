@@ -71,7 +71,7 @@ function extractUserIdFromRequest(request: Request): string | null {
         hash = (hash << 5) - hash + token.charCodeAt(i);
         hash |= 0; // Convert to 32bit integer
       }
-      return `token:${Math.abs(hash).toString(16)}`;
+      return `token:${(hash >>> 0).toString(16)}`;
     }
   }
 
