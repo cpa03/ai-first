@@ -65,7 +65,7 @@ function extractUserIdFromRequest(request: Request): string | null {
     if (token && token.length > 0) {
       // SECURITY: Avoid using token substrings which can cause rate-limit collisions
       // (JWT headers are often identical) and leak sensitive token data.
-      // We use a simple, fast hash for anonymization in the rate limiter.
+      // We use a simple, fast hash (DJB2-style) for anonymization.
       let hash = 0;
       for (let i = 0; i < token.length; i++) {
         hash = (hash << 5) - hash + token.charCodeAt(i);
