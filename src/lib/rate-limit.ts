@@ -63,13 +63,28 @@ function extractUserIdFromRequest(request: Request): string | null {
     // For now, we can use the token as a unique identifier
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
-      // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // SECURITY: Hash the full token to prevent collisions and avoid storing
+      // raw token prefixes in the rate limit store.
+      // Most JWTs share identical headers, so substring(0, 32) caused collisions.
+      return `token:${simpleHash(token)}`;
     }
   }
 
   return null;
+}
+
+/**
+ * Simple deterministic hash function (djb2) for anonymizing tokens
+ * while maintaining uniqueness for rate-limit identifiers.
+ * Fast and environment-agnostic.
+ */
+function simpleHash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash * 33) ^ char;
+  }
+  return (hash >>> 0).toString(16);
 }
 
 /**
