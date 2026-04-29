@@ -196,17 +196,19 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   );
 
   // Toggle task status with OPTIMISTIC updates
+  // PERFORMANCE: Use dataRef.current to avoid dependency on data state,
+  // preventing this callback from being recreated on every data change.
   const handleToggleTaskStatus = useCallback(
     async (taskId: string, currentStatus: TaskStatus) => {
       const newStatus: TaskStatus =
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = data;
+      previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return data?.deliverables
+        return dataRef.current?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,7 +295,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
@@ -323,15 +325,29 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     setExpandedDeliverables(new Set());
   }, []);
 
-  return {
-    loading,
-    error,
-    data,
-    updatingTaskId,
-    expandedDeliverables,
-    handleToggleTaskStatus,
-    toggleDeliverable,
-    expandAll,
-    collapseAll,
-  };
+  // PERFORMANCE: Memoize return object to prevent unnecessary re-renders of consumer components.
+  return useMemo(
+    () => ({
+      loading,
+      error,
+      data,
+      updatingTaskId,
+      expandedDeliverables,
+      handleToggleTaskStatus,
+      toggleDeliverable,
+      expandAll,
+      collapseAll,
+    }),
+    [
+      loading,
+      error,
+      data,
+      updatingTaskId,
+      expandedDeliverables,
+      handleToggleTaskStatus,
+      toggleDeliverable,
+      expandAll,
+      collapseAll,
+    ]
+  );
 }
