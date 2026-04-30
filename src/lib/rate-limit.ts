@@ -37,6 +37,25 @@ export interface UserRateLimitInfo {
   identifier: string;
 }
 
+
+/**
+ * Simple hash function for generating deterministic identifiers
+ * Uses the djb2 algorithm for good distribution and performance.
+ * djb2 is a non-cryptographic hash suitable for rate-limit identifiers
+ * where speed is prioritized and cryptographic security is not required.
+ */
+function simpleHash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    // Use bitwise wrapping to stay within 32-bit integer range
+    // hash * 33 + char
+    hash = ((hash << 5) + hash + char) | 0;
+  }
+  // Convert to unsigned 32-bit integer and then to base36 for a compact string
+  return (hash >>> 0).toString(36);
+}
+
 /**
  * Extract user ID from Supabase Authorization header
  *
@@ -63,9 +82,11 @@ function extractUserIdFromRequest(request: Request): string | null {
     // For now, we can use the token as a unique identifier
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
-      // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // Return a hash of the token as the user identifier.
+      // We use a deterministic hash of the FULL token to prevent collisions
+      // between tokens that share the same header/prefix (common in JWTs).
+      // In production, validate JWT properly and extract the actual user ID.
+      return `token:${simpleHash(token)}`;
     }
   }
 
