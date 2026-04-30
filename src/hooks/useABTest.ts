@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { getAssignment, ABAssignment, AB_TEST_CONFIG } from '@/lib/ab-test';
 
 /**
@@ -66,18 +66,25 @@ export function useABTest(
     setIsLoaded(true);
   }, [experimentKey, enabled]);
 
-  const isInVariant = (variantId: string): boolean => {
-    return variant === variantId;
-  };
+  const isInVariant = useCallback(
+    (variantId: string): boolean => {
+      return variant === variantId;
+    },
+    [variant]
+  );
 
-  return {
-    variant,
-    isControl: variant === 'control',
-    isInVariant,
-    isEnabled: enabled,
-    isLoaded,
-    assignment,
-  };
+  // PERFORMANCE: Memoize the return object to prevent unnecessary re-renders of consumers
+  return useMemo(
+    () => ({
+      variant,
+      isControl: variant === 'control',
+      isInVariant,
+      isEnabled: enabled,
+      isLoaded,
+      assignment,
+    }),
+    [variant, isInVariant, enabled, isLoaded, assignment]
+  );
 }
 
 /**

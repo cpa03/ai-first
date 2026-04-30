@@ -1,5 +1,6 @@
 'use client';
 
+import { memo } from 'react';
 import { useSessionDuration } from '@/hooks/useSessionDuration';
 
 /**
@@ -12,11 +13,15 @@ import { useSessionDuration } from '@/hooks/useSessionDuration';
  * - Tab visibility changes
  *
  * This component is hidden and tracks silently in the background.
+ *
+ * PERFORMANCE: Memoized to prevent hook logic from re-running when parent re-renders.
  */
-export default function SessionTracker() {
+function SessionTrackerComponent() {
   // Initialize session tracking - no UI rendered
   useSessionDuration();
 
   // Return null - this is a tracking-only component with no visual presence
   return null;
 }
+
+export default memo(SessionTrackerComponent);
