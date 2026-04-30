@@ -97,12 +97,15 @@ describe('ScrollToTop', () => {
 
   it('should apply custom className', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
-    render(<ScrollToTop showAt={400} className="custom-class" />);
+    const { container } = render(
+      <ScrollToTop showAt={400} className="custom-class" />
+    );
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const root = container.querySelector('.custom-class');
 
-    expect(button).toHaveClass('custom-class');
+    expect(root).toBeInTheDocument();
+    expect(root).toHaveClass('fixed', 'bottom-8', 'right-8');
   });
 
   it('should use default showAt value of 400', () => {
