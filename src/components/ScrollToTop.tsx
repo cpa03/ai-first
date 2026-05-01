@@ -10,7 +10,7 @@ import React, {
 } from 'react';
 import { COMPONENT_DEFAULTS } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
-import Tooltip from './Tooltip';
+import Tooltip from '@/components/Tooltip';
 
 interface ScrollToTopProps {
   showAt?: number;
@@ -113,10 +113,7 @@ function ScrollToTopComponent({
     circumference - (scrollProgress / 100) * circumference;
 
   return (
-    <div
-      className={`fixed bottom-8 right-8 z-50 ${className}`}
-      aria-live="polite"
-    >
+    <div className={`fixed bottom-8 right-8 z-50 ${className}`}>
       <Tooltip content="Scroll to top" position="top">
         <button
           onClick={scrollToTop}
@@ -136,61 +133,62 @@ function ScrollToTopComponent({
             ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
           `}
           aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
+          aria-live="polite"
           type="button"
         >
           {!prefersReducedMotion && (
-        <svg
-          className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
-          viewBox="0 0 48 48"
-          aria-hidden="true"
-          role="progressbar"
-          aria-valuenow={Math.round(scrollProgress)}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          <circle
-            cx="24"
-            cy="24"
-            r="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-gray-100"
-          />
-          <circle
-            cx="24"
-            cy="24"
-            r="22"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            className="text-primary-500 transition-all duration-150 ease-out"
-            style={{
-              strokeDasharray: circumference,
-              strokeDashoffset: strokeDashoffset,
-            }}
-          />
-        </svg>
-      )}
+            <svg
+              className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
+              viewBox="0 0 48 48"
+              aria-hidden="true"
+              role="progressbar"
+              aria-valuenow={Math.round(scrollProgress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+            >
+              <circle
+                cx="24"
+                cy="24"
+                r="22"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="text-gray-100"
+              />
+              <circle
+                cx="24"
+                cy="24"
+                r="22"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                className="text-primary-500 transition-all duration-150 ease-out"
+                style={{
+                  strokeDasharray: circumference,
+                  strokeDashoffset: strokeDashoffset,
+                }}
+              />
+            </svg>
+          )}
 
-      <svg
-        className={`
+          <svg
+            className={`
           relative z-10 w-5 h-5 transition-transform duration-200
           ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
         `}
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-        strokeWidth={2}
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          d="M5 10l7-7m0 0l7 7m-7-7v18"
-        />
-      </svg>
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
+            />
+          </svg>
 
           <span className="sr-only">Back to top</span>
         </button>
