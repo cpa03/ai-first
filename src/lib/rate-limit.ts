@@ -38,6 +38,24 @@ export interface UserRateLimitInfo {
 }
 
 /**
+ * Simple deterministic hash function (djb2)
+ * Used for anonymizing tokens and creating unique identifiers
+ *
+ * @param str - String to hash
+ * @returns 32-bit hash as base36 string
+ */
+function simpleHash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    // djb2 hash: hash * 33 + char
+    // Bitwise OR with 0 ensures 32-bit integer precision
+    hash = (((hash << 5) + hash) + str.charCodeAt(i)) | 0;
+  }
+  // Convert to unsigned 32-bit integer then base36 for a compact identifier
+  return (hash >>> 0).toString(36);
+}
+
+/**
  * Extract user ID from Supabase Authorization header
  *
  * The Supabase client sends the access token in the Authorization header
@@ -63,15 +81,9 @@ function extractUserIdFromRequest(request: Request): string | null {
     // For now, we can use the token as a unique identifier
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the full token as the user identifier to prevent collisions.
-      // Identical headers in different JWTs would otherwise cause multiple users to share a limit.
-      // SECURITY: djb2 hash algorithm provides efficient anonymization and collision resistance for rate-limit keys.
-      let hash = 5381;
-      for (let i = 0; i < token.length; i++) {
-        const char = token.charCodeAt(i);
-        hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-      }
-      return `token:${(hash >>> 0).toString(36)}`;
+      // Return a hash of the full token as the user identifier to prevent collisions
+      // This ensures that users with different tokens don't share the same rate limit
+      return `token:${simpleHash(token)}`;
     }
   }
 
@@ -249,14 +261,7 @@ function generateRequestFingerprint(request: Request): string {
   // Combine characteristics with path
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
 
-  // Use djb2 hash algorithm for better distribution
-  let hash = 5381;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-  }
-
-  return `fp:${Math.abs(hash >>> 0)}`;
+  return `fp:${simpleHash(combined)}`;
 }
 
 /**
