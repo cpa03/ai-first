@@ -7,7 +7,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { getAssignment, ABAssignment, AB_TEST_CONFIG } from '@/lib/ab-test';
 
 /**
@@ -66,18 +66,29 @@ export function useABTest(
     setIsLoaded(true);
   }, [experimentKey, enabled]);
 
-  const isInVariant = (variantId: string): boolean => {
-    return variant === variantId;
-  };
+  // PERFORMANCE: Memoize utility function to prevent unnecessary re-renders of components
+  // that receive it as a prop or use it in dependency arrays.
+  const isInVariant = useCallback(
+    (variantId: string): boolean => {
+      return variant === variantId;
+    },
+    [variant]
+  );
 
-  return {
-    variant,
-    isControl: variant === 'control',
-    isInVariant,
-    isEnabled: enabled,
-    isLoaded,
-    assignment,
-  };
+  // PERFORMANCE: Memoize the return object to ensure referential stability.
+  // This prevents cascading re-renders in components consuming this hook when
+  // the parent component of the hook re-renders but the assignment hasn't changed.
+  return useMemo(
+    () => ({
+      variant,
+      isControl: variant === 'control',
+      isInVariant,
+      isEnabled: enabled,
+      isLoaded,
+      assignment,
+    }),
+    [variant, isInVariant, enabled, isLoaded, assignment]
+  );
 }
 
 /**
