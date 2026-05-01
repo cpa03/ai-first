@@ -1,5 +1,5 @@
 # Bolt Performance Journal
 
-## 2026-02-24 - Referential Stability in Core Hooks
-**Learning:** Found that core utility hooks (useABTest, useUserPreferences, etc.) lacked memoized return objects and stable callbacks. This caused unnecessary re-renders in all components consuming these hooks, even when the underlying data hadn't changed.
-**Action:** Always wrap hook return objects in useMemo and ensure all returned functions are stabilized with useCallback to prevent cascading re-renders across the component tree.
+## 2026-02-24 - Referential Stability in useABTest Hook
+**Learning:** Found that useABTest hook lacked referential stability, causing components to re-render even when experiment assignments didn't change. This is a common performance bottleneck in Growth experimentation frameworks.
+**Action:** Always wrap hook return objects in useMemo and utility functions in useCallback to ensure stable references across renders.

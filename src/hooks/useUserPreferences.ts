@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('useUserPreferences');
@@ -214,28 +214,14 @@ export function useUserPreferences(): UseUserPreferencesReturn {
     logger.info('User preferences reset to defaults');
   }, [persistPreferences]);
 
-  // PERFORMANCE: Memoize the return object to ensure referential stability.
-  // This prevents components consuming this hook from re-rendering unless
-  // preferences or loading state actually changes. All update functions
-  // are already stabilized with useCallback.
-  return useMemo(
-    () => ({
-      preferences,
-      isLoading,
-      updatePreference,
-      updatePreferences,
-      updateNotificationPreferences,
-      resetPreferences,
-    }),
-    [
-      preferences,
-      isLoading,
-      updatePreference,
-      updatePreferences,
-      updateNotificationPreferences,
-      resetPreferences,
-    ]
-  );
+  return {
+    preferences,
+    isLoading,
+    updatePreference,
+    updatePreferences,
+    updateNotificationPreferences,
+    resetPreferences,
+  };
 }
 
 export default useUserPreferences;
