@@ -47,10 +47,11 @@ export interface UserRateLimitInfo {
 function simpleHash(str: string): string {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    // hash * 33 + char
-    hash = ((hash << 5) + hash) ^ char;
+    // djb2 hash: hash * 33 + char
+    // Bitwise OR with 0 ensures 32-bit integer precision
+    hash = (((hash << 5) + hash) + str.charCodeAt(i)) | 0;
   }
+  // Convert to unsigned 32-bit integer then base36 for a compact identifier
   return (hash >>> 0).toString(36);
 }
 
