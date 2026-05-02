@@ -91,6 +91,7 @@ describe('ScrollToTop', () => {
     const button = screen.getByLabelText(/Scroll to top of page/);
 
     expect(button).toHaveAttribute('type', 'button');
+    expect(button).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
