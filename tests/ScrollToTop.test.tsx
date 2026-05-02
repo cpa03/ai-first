@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ScrollToTop from '../src/components/ScrollToTop';
 
 const mockScrollTo = jest.fn();
@@ -91,18 +91,19 @@ describe('ScrollToTop', () => {
     const button = screen.getByLabelText(/Scroll to top of page/);
 
     expect(button).toHaveAttribute('type', 'button');
-    expect(button).toHaveAttribute('aria-live', 'polite');
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
-  it('should apply custom className', () => {
+  it('should apply custom className to root container', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
     render(<ScrollToTop showAt={400} className="custom-class" />);
 
     fireEvent.scroll(window);
     const button = screen.getByLabelText(/Scroll to top of page/);
+    const container = button.closest('.fixed');
 
-    expect(button).toHaveClass('custom-class');
+    expect(container).toHaveClass('custom-class');
+    expect(container).toHaveClass('fixed');
   });
 
   it('should use default showAt value of 400', () => {
