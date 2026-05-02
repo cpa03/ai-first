@@ -9,7 +9,7 @@
 
 'use client';
 
-import { useCallback, useRef, useEffect, useMemo } from 'react';
+import { useCallback, useRef, useEffect } from 'react';
 import { trackFunnelStep, trackFunnelDropoff, flush } from '@/lib/analytics';
 
 /**
@@ -161,16 +161,12 @@ export function useFunnelTracking(
     return currentStepRef.current;
   }, []);
 
-  // PERFORMANCE: Memoize return object to prevent unnecessary re-renders of consumers
-  return useMemo(
-    () => ({
-      completeStep,
-      markDropoff,
-      reset,
-      getCurrentStep,
-    }),
-    [completeStep, markDropoff, reset, getCurrentStep]
-  );
+  return {
+    completeStep,
+    markDropoff,
+    reset,
+    getCurrentStep,
+  };
 }
 
 /**
