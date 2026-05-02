@@ -38,6 +38,25 @@ export interface UserRateLimitInfo {
 }
 
 /**
+ * Simple hash function (djb2) for non-cryptographic identifiers
+ *
+ * This provides a deterministic way to generate a compact identifier
+ * from a string while minimizing collisions.
+ */
+function simpleHash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    // hash * 33 + char
+    hash = ((hash << 5) + hash) + char;
+    // Keep it as a 32-bit integer
+    hash = hash | 0;
+  }
+  // Convert to positive base36 string for compactness
+  return (hash >>> 0).toString(36);
+}
+
+/**
  * Extract user ID from Supabase Authorization header
  *
  * The Supabase client sends the access token in the Authorization header
@@ -60,12 +79,12 @@ function extractUserIdFromRequest(request: Request): string | null {
   const authHeader = request.headers.get('authorization');
   if (authHeader && authHeader.toLowerCase().startsWith('bearer ')) {
     // In production, we would validate the JWT and extract user ID
-    // For now, we can use the token as a unique identifier
+    // For now, we use a hash of the token as a unique identifier to avoid collisions
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
+      // Return a hash of the full token as the user identifier
       // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      return `token:${simpleHash(token)}`;
     }
   }
 
@@ -243,14 +262,7 @@ function generateRequestFingerprint(request: Request): string {
   // Combine characteristics with path
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
 
-  // Use djb2 hash algorithm for better distribution
-  let hash = 5381;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-  }
-
-  return `fp:${Math.abs(hash >>> 0)}`;
+  return `fp:${simpleHash(combined)}`;
 }
 
 /**
