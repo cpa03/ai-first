@@ -38,6 +38,19 @@ export interface UserRateLimitInfo {
 }
 
 /**
+ * Simple, deterministic hash function (djb2 variant)
+ * Used for anonymizing user identifiers and generating stable fingerprints
+ */
+function simpleHash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
+  }
+  return (hash >>> 0).toString(36);
+}
+
+/**
  * Extract user ID from Supabase Authorization header
  *
  * The Supabase client sends the access token in the Authorization header
@@ -63,9 +76,10 @@ function extractUserIdFromRequest(request: Request): string | null {
     // For now, we can use the token as a unique identifier
     const token = authHeader.substring(7);
     if (token && token.length > 0) {
-      // Return a hash of the token as the user identifier
-      // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // Return a hash of the full token as the user identifier
+      // SECURITY: Hashing prevents collision between tokens with the same header
+      // and keeps the full token out of memory/logs where possible.
+      return `token:${simpleHash(token)}`;
     }
   }
 
@@ -243,14 +257,8 @@ function generateRequestFingerprint(request: Request): string {
   // Combine characteristics with path
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
 
-  // Use djb2 hash algorithm for better distribution
-  let hash = 5381;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-  }
-
-  return `fp:${Math.abs(hash >>> 0)}`;
+  // Use centralized simpleHash for better distribution and consistency
+  return `fp:${simpleHash(combined)}`;
 }
 
 /**
