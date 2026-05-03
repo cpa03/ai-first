@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef, useMemo } from 'react';
 import {
   trackSessionStart,
   trackSessionEnd,
@@ -129,10 +129,14 @@ export function useSessionDuration() {
     return Date.now() - pageStartTime.current;
   }, []);
 
-  return {
-    getSessionDuration,
-    getPageDuration,
-  };
+  // PERFORMANCE: Memoize return object to ensure referential stability
+  return useMemo(
+    () => ({
+      getSessionDuration,
+      getPageDuration,
+    }),
+    [getSessionDuration, getPageDuration]
+  );
 }
 
 export default useSessionDuration;
