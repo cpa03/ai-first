@@ -1,0 +1,4 @@
+## 2026-05-03 - Prevent Rate-Limit Collisions by Hashing Full Tokens
+**Vulnerability:** Using a fixed-length prefix (e.g., `substring(0, 32)`) of authentication tokens as rate-limit identifiers causes collisions because structured tokens like JWTs often share identical header segments. This allows one user's traffic to exhaust the rate limit for all users sharing the same prefix, leading to accidental or malicious Denial of Service (DoS).
+**Learning:** A simple prefix is not a reliable unique identifier for structured tokens. Deterministic hashing provides a unique, stable identifier that covers the entire token without storing the full sensitive value in the rate-limit store.
+**Prevention:** Always use a deterministic hash (like `djb2` or `SHA-256`) of the entire token when generating rate-limit identifiers. Ensure the hashing implementation handles potential bitwise overflows to maintain cross-platform consistency.

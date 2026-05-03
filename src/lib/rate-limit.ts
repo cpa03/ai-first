@@ -45,7 +45,8 @@ function simpleHash(str: string): string {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
+    // Use bitwise OR with 0 to ensure 32-bit integer precision
+    hash = (((hash << 5) + hash) ^ char) | 0;
   }
   return (hash >>> 0).toString(36);
 }
