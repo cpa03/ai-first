@@ -328,6 +328,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     setExpandedDeliverables(new Set());
   }, []);
 
+  // PERFORMANCE: Memoize return object to ensure referential stability
   return useMemo(
     () => ({
       loading,
