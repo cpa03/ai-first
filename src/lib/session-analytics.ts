@@ -90,7 +90,6 @@ function flushEvents(): void {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
 
-
   if (flushTimeout) {
     clearTimeout(flushTimeout);
     flushTimeout = null;

@@ -14,20 +14,26 @@
 export function generateSecureId(): string {
   try {
     // 1. Attempt standard randomUUID() (Most modern environments)
-    if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.randomUUID === 'function') {
-      return globalThis.crypto.randomUUID();
+    // We check globalThis.crypto for broad compatibility
+    const crypto =
+      typeof globalThis !== 'undefined'
+        ? (globalThis.crypto as unknown as Crypto)
+        : null;
+
+    if (crypto && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
     }
 
     // 2. Attempt construction via getRandomValues() (Compatibility for some Edge/Browsers)
-    if (typeof globalThis.crypto !== 'undefined' && typeof globalThis.crypto.getRandomValues === 'function') {
+    if (crypto && typeof crypto.getRandomValues === 'function') {
       const buffer = new Uint8Array(16);
-      globalThis.crypto.getRandomValues(buffer);
+      crypto.getRandomValues(buffer);
       // Format as a simple hex string for consistency
       return Array.from(buffer)
         .map((b) => b.toString(16).padStart(2, '0'))
         .join('');
     }
-  } catch (error) {
+  } catch (_error) {
     // Graceful degradation: errors in secure random source should not crash the app
     // We fall through to the Math.random() fallback below
   }
