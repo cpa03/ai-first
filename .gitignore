@@ -114,6 +114,7 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
+.jules/
 .Jules/
 .sisyphus/
 
