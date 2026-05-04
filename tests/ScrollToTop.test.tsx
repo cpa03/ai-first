@@ -95,7 +95,7 @@ describe('ScrollToTop', () => {
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
-  it('should apply custom className to the button', () => {
+  it('should apply custom className', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
     render(<ScrollToTop showAt={400} className="custom-class" />);
 

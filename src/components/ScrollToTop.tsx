@@ -112,7 +112,7 @@ function ScrollToTopComponent({
 
   return (
     <div
-      className={`fixed bottom-8 right-8 z-50`}
+      className="fixed bottom-8 right-8 z-50"
       data-testid="scroll-to-top-container"
     >
       <Tooltip content="Scroll to top" position="top">
