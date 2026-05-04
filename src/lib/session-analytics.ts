@@ -34,7 +34,17 @@ function getSessionId(): string {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
       try {
-        sessionId = `session_${crypto.randomUUID()}`;
+        // Use globalThis.crypto for broader environment support (Cloudflare Workers, Browsers, Node.js)
+        const uuid = (globalThis.crypto as any)?.randomUUID?.() ||
+                    ((globalThis.crypto as any)?.getRandomValues ?
+                    Array.from((globalThis.crypto as any).getRandomValues(new Uint8Array(16))).map((b: any) => b.toString(16).padStart(2, '0')).join('') :
+                    null);
+
+        if (uuid) {
+          sessionId = `session_${uuid}`;
+        } else {
+          sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+        }
       } catch {
         sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       }

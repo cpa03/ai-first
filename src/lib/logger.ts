@@ -100,7 +100,11 @@ export function generateCorrelationId(): string {
   // crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
   // Falls back to a timestamp-based ID if crypto is not available (rare edge case)
   try {
-    return `req_${crypto.randomUUID()}`;
+    const uuid = (globalThis.crypto as any)?.randomUUID?.() ||
+                ((globalThis.crypto as any)?.getRandomValues ?
+                Array.from((globalThis.crypto as any).getRandomValues(new Uint8Array(16))).map((b: any) => b.toString(16).padStart(2, '0')).join('') :
+                null);
+    return uuid ? `req_${uuid}` : `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   } catch {
     // Fallback for environments without crypto.randomUUID support
     return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
