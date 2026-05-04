@@ -3,6 +3,8 @@
  * Centralizes timeline generation and task decomposition constants
  */
 
+import { generateSecureId } from '@/lib/crypto';
+
 export const TIMELINE_CONFIG = {
   HOURS: {
     PER_WEEK: 40,
@@ -127,19 +129,9 @@ export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
     SEPARATOR: '_',
-    // SECURITY: Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
-    // Falls back to timestamp-based ID if crypto is not available (rare edge case)
-    GENERATOR: () => {
-      try {
-        const uuid = (globalThis.crypto as any)?.randomUUID?.() ||
-                    ((globalThis.crypto as any)?.getRandomValues ?
-                    Array.from((globalThis.crypto as any).getRandomValues(new Uint8Array(16))).map((b: any) => b.toString(16).padStart(2, '0')).join('') :
-                    null);
-        return uuid ? `idea_${uuid}` : `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      } catch {
-        return `idea_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-      }
-    },
+    // SECURITY: Use generateSecureId() for cryptographically secure, collision-resistant IDs
+    // This provides a robust cross-environment implementation with safe fallbacks
+    GENERATOR: () => `idea_${generateSecureId()}`,
   },
 
   VALIDATION: {

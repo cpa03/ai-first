@@ -17,6 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { generateSecureId } from '@/lib/crypto';
 
 /**
  * Event categories for analytics
@@ -218,21 +219,8 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      try {
-        // Use globalThis.crypto for broader environment support (Cloudflare Workers, Browsers, Node.js)
-        const uuid = (globalThis.crypto as any)?.randomUUID?.() ||
-                    ((globalThis.crypto as any)?.getRandomValues ?
-                    Array.from((globalThis.crypto as any).getRandomValues(new Uint8Array(16))).map((b: any) => b.toString(16).padStart(2, '0')).join('') :
-                    null);
-
-        if (uuid) {
-          sessionId = `session_${uuid}`;
-        } else {
-          sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-        }
-      } catch {
-        sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-      }
+      // SECURITY: Use cryptographically secure random IDs for session identifiers
+      sessionId = `session_${generateSecureId()}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;

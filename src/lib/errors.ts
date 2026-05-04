@@ -1,6 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
+import { generateSecureId } from './crypto';
 import crypto from 'node:crypto';
 
 const API_VERSION = APP_CONFIG.VERSION;
@@ -334,18 +335,9 @@ export function toErrorResponse(
 }
 
 export function generateRequestId(): string {
-  // Use crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+  // Use generateSecureId() for cryptographically secure, collision-resistant IDs
   // This ensures request IDs are unique and cannot be predicted for security tracing
-  try {
-    const uuid = (globalThis.crypto as any)?.randomUUID?.() ||
-                ((globalThis.crypto as any)?.getRandomValues ?
-                Array.from((globalThis.crypto as any).getRandomValues(new Uint8Array(16))).map((b: any) => b.toString(16).padStart(2, '0')).join('') :
-                null);
-    return uuid ? `${ERROR_CONFIG.REQUEST_ID.PREFIX}${uuid}` :
-                 `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  } catch {
-    return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateSecureId()}`;
 }
 
 export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {

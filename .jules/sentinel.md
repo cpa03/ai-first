@@ -1,0 +1,4 @@
+## 2026-02-21 - Harden Session ID Generation and Remove Sensitive Logs
+**Vulnerability:** Insecure random number generation using Math.random() for session IDs and sensitive data exposure via console.log in non-production environments.
+**Learning:** Math.random() is predictable and not suitable for security-sensitive identifiers. Standard console.log statements can leak data in logs even if guarded by NODE_ENV checks in some cloud environments. Using crypto.randomUUID() directly can cause build failures in environments like Cloudflare Workers where the crypto global may be restricted or unavailable during static analysis.
+**Prevention:** Always use a centralized, robust cryptographic utility with multiple fallbacks (randomUUID -> getRandomValues -> Math.random) and access it via globalThis.crypto for cross-environment compatibility. Avoid console.log for sensitive data entirely, preferring structured logging with redaction.

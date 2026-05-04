@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { generateSecureId } from './crypto';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -94,21 +95,11 @@ export function getCorrelationId(): string | undefined {
 
 /**
  * Generate a unique correlation ID for request tracing
- * Uses crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+ * Uses generateSecureId() for cryptographically secure, collision-resistant IDs
+ * This ensures traceability across distributed environments with safe fallbacks
  */
 export function generateCorrelationId(): string {
-  // crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
-  // Falls back to a timestamp-based ID if crypto is not available (rare edge case)
-  try {
-    const uuid = (globalThis.crypto as any)?.randomUUID?.() ||
-                ((globalThis.crypto as any)?.getRandomValues ?
-                Array.from((globalThis.crypto as any).getRandomValues(new Uint8Array(16))).map((b: any) => b.toString(16).padStart(2, '0')).join('') :
-                null);
-    return uuid ? `req_${uuid}` : `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  } catch {
-    // Fallback for environments without crypto.randomUUID support
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
+  return `req_${generateSecureId()}`;
 }
 
 export interface LogContext {
