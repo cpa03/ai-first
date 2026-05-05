@@ -119,6 +119,7 @@ function ScrollToTopComponent({
           onClick={scrollToTop}
           onKeyDown={handleKeyDown}
           className={`
+            group
             w-12 h-12
             flex items-center justify-center
             bg-white text-gray-700
@@ -190,7 +191,7 @@ function ScrollToTopComponent({
         />
       </svg>
 
-          <span className="sr-only">Back to top</span>
+<span className="sr-only">Back to top</span>
         </button>
       </Tooltip>
     </div>
