@@ -114,6 +114,7 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
+# .jules/ is used for persistence and security journals
 .jules/
 !.jules/bolt.md
 !.jules/sentinel.md

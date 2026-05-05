@@ -1,0 +1,4 @@
+## 2026-05-05 - Fix JWT rate-limit collision vulnerability
+**Vulnerability:** The rate-limiting logic in `src/lib/rate-limit.ts` was using the first 32 characters of the `Authorization` token as a user identifier. Since JWT headers are often identical for all users of an application, this caused all authenticated users to share a single rate-limit bucket, allowing a single user to trigger a global Denial of Service for all authenticated users.
+**Learning:** Modern authentication tokens like JWTs have a common header structure. Using a simple prefix for identification is insecure as it lacks sufficient entropy to distinguish between different users.
+**Prevention:** Always hash the entire token (or extract the unique `sub` claim) when using it for identification purposes. Implementing a consistent, 32-bit precision hash like djb2 with bitwise wrapping ensures collision resistance and cross-environment stability.
