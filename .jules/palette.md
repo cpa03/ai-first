@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-05-06 - [Enhancing Global Icon Buttons with Tooltips and Haptics]
+**Learning:** Fixed-position global components like `ScrollToTop` should be wrapped in a positioning `div` when adding `Tooltip` to prevent layout shifts. Adding `triggerHapticFeedback` to these frequent interaction points improves the tactile experience on mobile. Using `w-max` in `Tooltip` ensures it expands naturally for short content.
+**Action:** Use wrapper `divs` for `Tooltip` integration in fixed/absolute components and combine with `triggerHapticFeedback` for delightful mobile interactions.
