@@ -75,3 +75,6 @@ export {
   CSRF_CONFIG,
   type CSRFValidationResult,
 } from './csrf';
+
+// Cryptographic Utilities
+export { simpleHash, generateSecureId } from './crypto';
