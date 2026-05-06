@@ -1,0 +1,14 @@
+{
+  "name": "CMZ",
+  "behavior": "self heal, self learning, self evolve",
+  "capabilities": [
+    "Self-Heal",
+    "Self-Learn",
+    "Self-Evolve"
+  ],
+  "frameworks": [
+    "OhMyOpenCode",
+    "Superpowers",
+    "UltraRAG"
+  ]
+}

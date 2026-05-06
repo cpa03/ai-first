@@ -236,3 +236,31 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
     }
   }
 };
+
+/**
+ * Generate a secure unique identifier.
+ * Uses crypto.randomUUID() if available, falling back to a timestamp-based
+ * random string for broader compatibility.
+ *
+ * @returns A unique string identifier
+ *
+ * @example
+ * ```typescript
+ * const sessionId = generateId(); // "session_550e8400-e29b-41d4-a716-446655440000"
+ * ```
+ */
+export function generateId(prefix: string = ''): string {
+  let id: string;
+
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    id = crypto.randomUUID();
+  } else {
+    // Fallback for older environments or specific Node.js versions without global crypto
+    id = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  }
+
+  return prefix ? `${prefix}${id}` : id;
+}

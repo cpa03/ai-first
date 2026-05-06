@@ -141,3 +141,12 @@ This task requires browser automation tools (Playwright) or manual testing. Envi
 ---
 
 **Note**: For complete task history, see [docs/archive/](./archive/)
+
+## New Tasks (PHASE 1)
+
+- [x] error: Replace console.log with logger.debug in `src/lib/session-analytics.ts`
+- [x] error: Use `crypto.randomUUID()` for session ID generation in `src/lib/session-analytics.ts`
+
+## [STRENGTHEN] (PHASE 5)
+
+- [x] Strengthen session tracking with structured logging in `src/lib/session-analytics.ts`

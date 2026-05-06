@@ -101,3 +101,8 @@ Changed the condition from `if (this.openai)` to `if (this.openai?.models)` to p
 ## Browser Console Errors
 
 _To be checked in PHASE 7 with BroCula_
+
+## New Findings (PHASE 1)
+
+- [x] bug: Sensitive data leakage via console.log in `src/lib/session-analytics.ts:93`
+- [x] bug: Insecure random number generation for session ID in `src/lib/session-analytics.ts:38`
