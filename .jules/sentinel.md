@@ -1,0 +1,4 @@
+## 2026-02-23 - Predictable Session IDs and Rate-Limit Collisions
+**Vulnerability:** Use of `Math.random()` for session identifiers made them theoretically predictable. Additionally, using only a prefix of a JWT for rate-limiting created a collision risk where different users might share a limit if they shared a common token header.
+**Learning:** Relying on `Math.random()` or string slicing for unique identifiers in security-sensitive contexts (sessions, rate limits) is insufficient. Centralizing secure ID generation with `globalThis.crypto` ensures consistency and security across Edge (Cloudflare Workers) and Node.js environments.
+**Prevention:** Always use `crypto.randomUUID()` or a hardened hashing algorithm (like djb2 with 32-bit wrapping) for identifiers. Avoid `Math.random()` for anything other than non-security UI effects.
