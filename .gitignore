@@ -114,8 +114,8 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-.jules/
-.Jules/
+!.jules/
+!.Jules/
 .sisyphus/
 
 # OpenCode CLI - ignore auto-generated node_modules
