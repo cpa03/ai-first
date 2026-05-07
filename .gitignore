@@ -114,8 +114,9 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-.jules/
-.Jules/
+# Unignored per PR-114 requirements for sentinel/bolt persistence
+# .jules/
+# .Jules/
 .sisyphus/
 
 # OpenCode CLI - ignore auto-generated node_modules
