@@ -238,18 +238,6 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
 };
 
 /**
- * Generate a secure unique identifier.
- * Uses crypto.randomUUID() if available, falling back to a timestamp-based
- * random string for broader compatibility.
- *
- * @returns A unique string identifier
- *
- * @example
- * ```typescript
- * const sessionId = generateId(); // "session_550e8400-e29b-41d4-a716-446655440000"
- * ```
- */
-/**
  * Generate a secure, collision-resistant unique identifier.
  * Uses globalThis.crypto.randomUUID() if available (standard in modern browsers and Node.js 20+),
  * falling back to a timestamp-based random string for older environments.

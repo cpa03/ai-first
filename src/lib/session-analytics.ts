@@ -85,6 +85,10 @@ function flushEvents(): void {
   const eventsToSend = [...eventQueue];
   eventQueue.length = 0;
 
+  if (process.env.NODE_ENV !== 'production') {
+    logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
+  }
+
   // Log events for debugging in non-production environments
   if (process.env.NODE_ENV !== 'production') {
     logger.debug('[SessionAnalytics] Flushing batch events:', {
