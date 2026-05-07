@@ -11,7 +11,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { generateId } from '@/lib/security';
+import { generateId } from '@/lib/security/crypto';
 
 const logger = createLogger('SessionAnalytics');
 
