@@ -249,16 +249,34 @@ export const triggerHapticFeedback = (duration: number = 50): void => {
  * const sessionId = generateId(); // "session_550e8400-e29b-41d4-a716-446655440000"
  * ```
  */
+/**
+ * Generate a secure, collision-resistant unique identifier.
+ * Uses globalThis.crypto.randomUUID() if available (standard in modern browsers and Node.js 20+),
+ * falling back to a timestamp-based random string for older environments.
+ *
+ * @param prefix - Optional prefix for the generated ID
+ * @returns A unique string identifier
+ */
 export function generateId(prefix: string = ''): string {
   let id: string;
 
-  if (
-    typeof crypto !== 'undefined' &&
-    typeof crypto.randomUUID === 'function'
-  ) {
-    id = crypto.randomUUID();
+  // Access crypto via globalThis for best compatibility across environments (Edge, Workers, Node, Browser)
+  const cryptoObj =
+    typeof globalThis !== 'undefined' && globalThis.crypto
+      ? globalThis.crypto
+      : typeof crypto !== 'undefined'
+        ? crypto
+        : undefined;
+
+  if (cryptoObj && typeof cryptoObj.randomUUID === 'function') {
+    try {
+      id = cryptoObj.randomUUID();
+    } catch {
+      // Fallback if randomUUID fails for any reason
+      id = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+    }
   } else {
-    // Fallback for older environments or specific Node.js versions without global crypto
+    // Fallback for older environments
     id = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
 
