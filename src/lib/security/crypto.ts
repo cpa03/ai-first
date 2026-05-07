@@ -25,7 +25,7 @@ export function simpleHash(str: string): string {
     // hash * 33 + char
     hash = ((hash << 5) + hash + char) | 0;
   }
-  return Math.abs(hash >>> 0).toString(36);
+  return (hash >>> 0).toString(36);
 }
 
 /**
