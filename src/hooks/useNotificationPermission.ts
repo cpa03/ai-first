@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('useNotificationPermission');
@@ -111,13 +111,16 @@ export function useNotificationPermission(): NotificationPermissionState {
     init();
   }, [checkPermission]);
 
-  return {
-    permission,
-    isSupported,
-    isLoading,
-    requestPermission,
-    checkPermission,
-  };
+  return useMemo(
+    () => ({
+      permission,
+      isSupported,
+      isLoading,
+      requestPermission,
+      checkPermission,
+    }),
+    [permission, isSupported, isLoading, requestPermission, checkPermission]
+  );
 }
 
 export default useNotificationPermission;

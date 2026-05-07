@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('useUserPreferences');
@@ -142,30 +142,27 @@ export function useUserPreferences(): UseUserPreferencesReturn {
     });
   }, []);
 
-  // Persist to localStorage whenever preferences change
-  const persistPreferences = useCallback((prefs: UserPreferences) => {
-    if (typeof window === 'undefined') return;
+  // PERFORMANCE: Move persistence to useEffect to keep setPreferences pure
+  // and ensure all changes (including initial load updates) are saved.
+  useEffect(() => {
+    if (typeof window === 'undefined' || isLoading) return;
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
       logger.debug('User preferences persisted');
     } catch (error) {
       logger.error('Failed to persist user preferences', error);
     }
-  }, []);
+  }, [preferences, isLoading]);
 
   /**
    * Update a single preference
    */
   const updatePreference = useCallback(
     <K extends keyof UserPreferences>(key: K, value: UserPreferences[K]) => {
-      setPreferences((prev) => {
-        const updated = { ...prev, [key]: value };
-        persistPreferences(updated);
-        return updated;
-      });
+      setPreferences((prev) => ({ ...prev, [key]: value }));
     },
-    [persistPreferences]
+    []
   );
 
   /**
@@ -173,13 +170,9 @@ export function useUserPreferences(): UseUserPreferencesReturn {
    */
   const updatePreferences = useCallback(
     (updates: Partial<UserPreferences>) => {
-      setPreferences((prev) => {
-        const updated = { ...prev, ...updates };
-        persistPreferences(updated);
-        return updated;
-      });
+      setPreferences((prev) => ({ ...prev, ...updates }));
     },
-    [persistPreferences]
+    []
   );
 
   /**
@@ -187,19 +180,15 @@ export function useUserPreferences(): UseUserPreferencesReturn {
    */
   const updateNotificationPreferences = useCallback(
     (updates: Partial<UserPreferences['notifications']>) => {
-      setPreferences((prev) => {
-        const updated = {
-          ...prev,
-          notifications: {
-            ...prev.notifications,
-            ...updates,
-          },
-        };
-        persistPreferences(updated);
-        return updated;
-      });
+      setPreferences((prev) => ({
+        ...prev,
+        notifications: {
+          ...prev.notifications,
+          ...updates,
+        },
+      }));
     },
-    [persistPreferences]
+    []
   );
 
   /**
@@ -210,18 +199,28 @@ export function useUserPreferences(): UseUserPreferencesReturn {
     defaults.firstVisit = Date.now();
     defaults.visitCount = 1;
     setPreferences(defaults);
-    persistPreferences(defaults);
     logger.info('User preferences reset to defaults');
-  }, [persistPreferences]);
+  }, []);
 
-  return {
-    preferences,
-    isLoading,
-    updatePreference,
-    updatePreferences,
-    updateNotificationPreferences,
-    resetPreferences,
-  };
+  // PERFORMANCE: Memoize the return object to prevent unnecessary re-renders of consumers
+  return useMemo(
+    () => ({
+      preferences,
+      isLoading,
+      updatePreference,
+      updatePreferences,
+      updateNotificationPreferences,
+      resetPreferences,
+    }),
+    [
+      preferences,
+      isLoading,
+      updatePreference,
+      updatePreferences,
+      updateNotificationPreferences,
+      resetPreferences,
+    ]
+  );
 }
 
 export default useUserPreferences;

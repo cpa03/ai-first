@@ -60,7 +60,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
-  dataRef.current = data;
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   // Fetch tasks on mount
   useEffect(() => {
@@ -201,12 +204,13 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       const newStatus: TaskStatus =
         currentStatus === 'completed' ? 'todo' : 'completed';
 
+      const currentData = dataRef.current;
       // Store previous state for potential rollback
-      previousDataRef.current = data;
+      previousDataRef.current = currentData;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return data?.deliverables
+        return currentData?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,7 +297,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
