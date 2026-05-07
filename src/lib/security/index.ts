@@ -68,6 +68,9 @@ export {
 // JSON-LD Security
 export { safeJsonLd } from './json-ld';
 
+// Cryptographic and Hashing Utilities
+export { generateId, simpleHash } from './crypto';
+
 // CSRF Protection
 export {
   validateCSRF,
