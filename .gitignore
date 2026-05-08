@@ -114,7 +114,8 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-.jules/
+# .jules/ is used for performance and security journals - unignore to persist across PRs
+# .jules/
 .Jules/
 .sisyphus/
 
