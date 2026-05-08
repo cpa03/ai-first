@@ -389,10 +389,12 @@ class AIService {
     const content = messages.map((m) => `${m.role}:${m.content}`).join('|');
     const key = `${config.provider}:${config.model}:${config.temperature}:${config.maxTokens}:${content}`;
 
+    const cryptoObj = typeof globalThis !== 'undefined' ? globalThis.crypto : undefined;
+
     if (
       typeof TextEncoder === 'undefined' ||
-      typeof crypto === 'undefined' ||
-      !crypto.subtle
+      !cryptoObj ||
+      !cryptoObj.subtle
     ) {
       const hash = btoa(key).substring(
         0,
@@ -403,7 +405,7 @@ class AIService {
 
     const encoder = new TextEncoder();
     const data = encoder.encode(key);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashBuffer = await cryptoObj.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
       .map((b) => b.toString(16).padStart(2, '0'))

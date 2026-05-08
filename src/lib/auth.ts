@@ -66,12 +66,13 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
 
   try {
     const encoder = new TextEncoder();
+    const cryptoObj = globalThis.crypto;
 
-    const expectedHash = await crypto.subtle.digest(
+    const expectedHash = await cryptoObj.subtle.digest(
       'SHA-256',
       encoder.encode(ADMIN_API_KEY)
     );
-    const actualHash = await crypto.subtle.digest(
+    const actualHash = await cryptoObj.subtle.digest(
       'SHA-256',
       encoder.encode(credentials)
     );
