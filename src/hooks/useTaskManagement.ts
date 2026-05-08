@@ -58,9 +58,13 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const previousDataRef = useRef<TasksResponse | null>(null);
 
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
-  // re-creations of callbacks that depend on it.
+  // re-creations of callbacks that depend on it. We update this in useEffect
+  // to maintain render-phase purity and satisfy react-hooks/refs.
   const dataRef = useRef(data);
-  dataRef.current = data;
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   // Fetch tasks on mount
   useEffect(() => {
@@ -196,17 +200,19 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   );
 
   // Toggle task status with OPTIMISTIC updates
+  // PERFORMANCE: This callback is now referentially stable (O(1)) by using dataRef
+  // instead of direct data dependency, preventing O(N) re-renders of task items.
   const handleToggleTaskStatus = useCallback(
     async (taskId: string, currentStatus: TaskStatus) => {
       const newStatus: TaskStatus =
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      previousDataRef.current = data;
+      previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
       const findTask = () => {
-        return data?.deliverables
+        return dataRef.current?.deliverables
           .flatMap((d) => d.tasks)
           .find((t) => t.id === taskId);
       };
@@ -293,7 +299,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [data, logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate]
   );
 
   // Toggle deliverable expansion
@@ -323,15 +329,29 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     setExpandedDeliverables(new Set());
   }, []);
 
-  return {
-    loading,
-    error,
-    data,
-    updatingTaskId,
-    expandedDeliverables,
-    handleToggleTaskStatus,
-    toggleDeliverable,
-    expandAll,
-    collapseAll,
-  };
+  // PERFORMANCE: Memoize return object to ensure referential stability for consumers
+  return useMemo(
+    () => ({
+      loading,
+      error,
+      data,
+      updatingTaskId,
+      expandedDeliverables,
+      handleToggleTaskStatus,
+      toggleDeliverable,
+      expandAll,
+      collapseAll,
+    }),
+    [
+      loading,
+      error,
+      data,
+      updatingTaskId,
+      expandedDeliverables,
+      handleToggleTaskStatus,
+      toggleDeliverable,
+      expandAll,
+      collapseAll,
+    ]
+  );
 }
