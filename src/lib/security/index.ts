@@ -65,6 +65,9 @@ export {
   type InternalApiSignatureHeader,
 } from './request-signer';
 
+// Cryptographic and Hashing Utilities
+export { generateId, simpleHash } from './crypto';
+
 // JSON-LD Security
 export { safeJsonLd } from './json-ld';
 

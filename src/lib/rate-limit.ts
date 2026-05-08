@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { generateRequestId } from './errors';
+import { simpleHash } from '@/lib/security';
 
 export interface RateLimitInfo {
   limit: number;
@@ -243,12 +244,8 @@ function generateRequestFingerprint(request: Request): string {
   // Combine characteristics with path
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
 
-  // Use djb2 hash algorithm for better distribution
-  let hash = 5381;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-  }
+  // Use centralized simpleHash (djb2) algorithm for better distribution
+  const hash = simpleHash(combined);
 
   return `fp:${Math.abs(hash >>> 0)}`;
 }

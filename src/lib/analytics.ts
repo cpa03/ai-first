@@ -17,6 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { generateId } from '@/lib/security';
 
 /**
  * Event categories for analytics
@@ -218,7 +219,7 @@ function getSessionId(): string {
   try {
     let sessionId = sessionStorage.getItem(storageKey);
     if (!sessionId) {
-      sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+      sessionId = `session_${generateId()}`;
       sessionStorage.setItem(storageKey, sessionId);
     }
     return sessionId;
@@ -256,6 +257,7 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
 
   // Check sample rate
   if (ANALYTICS_CONFIG.SAMPLE_RATE < 100) {
+    // Standard random is fine for non-security sampling
     const random = Math.random() * 100;
     if (random > ANALYTICS_CONFIG.SAMPLE_RATE) {
       return false;

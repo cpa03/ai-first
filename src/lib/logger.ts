@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { generateId } from '@/lib/security';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -94,17 +95,10 @@ export function getCorrelationId(): string | undefined {
 
 /**
  * Generate a unique correlation ID for request tracing
- * Uses crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+ * Uses generateId() for cryptographically secure, collision-resistant IDs
  */
 export function generateCorrelationId(): string {
-  // crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
-  // Falls back to a timestamp-based ID if crypto is not available (rare edge case)
-  try {
-    return `req_${crypto.randomUUID()}`;
-  } catch {
-    // Fallback for environments without crypto.randomUUID support
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
+  return `req_${generateId()}`;
 }
 
 export interface LogContext {
@@ -188,6 +182,7 @@ export class Logger {
     if (currentLogLevel > level) return false;
 
     if (currentSampleRate < 1.0 && level <= LogLevel.INFO) {
+      // Standard random is fine for non-security sampling
       return Math.random() < currentSampleRate;
     }
 
