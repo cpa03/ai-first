@@ -108,6 +108,7 @@ export const MESSAGES = {
     PREVIOUS: '← Previous',
     NEXT: 'Next →',
     COMPLETE: 'Complete',
+    BACK_TO_TOP: 'Back to top',
   },
   LOADING: {
     DEFAULT: 'Loading...',

@@ -19,9 +19,7 @@ describe('ScrollToTop', () => {
 
   it('should not render when scroll position is below threshold', () => {
     render(<ScrollToTop showAt={400} />);
-    expect(
-      screen.queryByLabelText(/Scroll to top of page/)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Back to top/)).not.toBeInTheDocument();
   });
 
   it('should render when scroll position is above threshold', () => {
@@ -30,7 +28,7 @@ describe('ScrollToTop', () => {
 
     fireEvent.scroll(window);
 
-    expect(screen.getByLabelText(/Scroll to top of page/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Back to top/)).toBeInTheDocument();
   });
 
   it('should scroll to top when clicked', () => {
@@ -38,7 +36,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} smooth={true} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const button = screen.getByLabelText(/Back to top/);
     fireEvent.click(button);
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -52,7 +50,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} smooth={false} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const button = screen.getByLabelText(/Back to top/);
     fireEvent.click(button);
 
     expect(mockScrollTo).toHaveBeenCalledWith({
@@ -66,7 +64,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const button = screen.getByLabelText(/Back to top/);
     fireEvent.keyDown(button, { key: 'Enter' });
 
     expect(mockScrollTo).toHaveBeenCalled();
@@ -77,7 +75,7 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const button = screen.getByLabelText(/Back to top/);
     fireEvent.keyDown(button, { key: ' ' });
 
     expect(mockScrollTo).toHaveBeenCalled();
@@ -88,19 +86,20 @@ describe('ScrollToTop', () => {
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const button = screen.getByLabelText(/Back to top/);
 
     expect(button).toHaveAttribute('type', 'button');
     expect(button).toHaveAttribute('aria-live', 'polite');
+    // Screen reader text
     expect(screen.getByText('Back to top')).toBeInTheDocument();
   });
 
-  it('should apply custom className', () => {
+  it('should apply custom className to button', () => {
     Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
     render(<ScrollToTop showAt={400} className="custom-class" />);
 
     fireEvent.scroll(window);
-    const button = screen.getByLabelText(/Scroll to top of page/);
+    const button = screen.getByLabelText(/Back to top/);
 
     expect(button).toHaveClass('custom-class');
   });
@@ -111,14 +110,31 @@ describe('ScrollToTop', () => {
 
     fireEvent.scroll(window);
 
-    expect(
-      screen.queryByLabelText(/Scroll to top of page/)
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Back to top/)).not.toBeInTheDocument();
 
     Object.defineProperty(window, 'scrollY', { value: 450, writable: true });
     fireEvent.scroll(window);
 
-    expect(screen.getByLabelText(/Scroll to top of page/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Back to top/)).toBeInTheDocument();
+  });
+
+  it('should show tooltip on hover', async () => {
+    Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
+    render(<ScrollToTop showAt={400} />);
+
+    fireEvent.scroll(window);
+    const button = screen.getByLabelText(/Back to top/);
+
+    fireEvent.mouseEnter(button.parentElement!);
+
+    // Tooltip has a delay (default 300ms in UI_CONFIG)
+    await waitFor(
+      () => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+        expect(screen.getByRole('tooltip')).toHaveTextContent('Back to top');
+      },
+      { timeout: 1000 }
+    );
   });
 
   it('should remove event listener on unmount', () => {
