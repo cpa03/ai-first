@@ -9,7 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { generateRequestId } from './errors';
-import { simpleHash } from '@/lib/security';
+import { simpleHash } from '@/lib/security/crypto';
 
 export interface RateLimitInfo {
   limit: number;
