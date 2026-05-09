@@ -113,7 +113,7 @@ function ScrollToTopComponent({
     circumference - (scrollProgress / 100) * circumference;
 
   return (
-    <div className={`fixed bottom-8 right-8 z-50 ${className}`}>
+    <div className="fixed bottom-8 right-8 z-50">
       <Tooltip content="Back to top" position="top">
         <button
           onClick={scrollToTop}
@@ -130,6 +130,7 @@ function ScrollToTopComponent({
             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
             active:scale-95
             ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
+            ${className}
           `}
           aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
           aria-live="polite"
