@@ -8,6 +8,13 @@
  * @module lib/security/request-signer
  */
 
+/**
+ * Request Signing Utilities for Internal API Communication
+ *
+ * SECURITY: This module is intended for SERVER-SIDE use only.
+ * It depends on node:crypto which is available in Node.js and
+ * Cloudflare Workers (via nodejs_compat).
+ */
 import crypto from 'node:crypto';
 
 export interface SignedRequestOptions {

@@ -44,7 +44,7 @@ export function generateId(prefix?: string): string {
     id = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 10)}`;
   }
 
-  return prefix ? `${prefix}_${id}` : id;
+  return prefix ? `${prefix}${id}` : id;
 }
 
 /**
@@ -65,5 +65,28 @@ export function simpleHash(str: string): string {
     // Convert to 32bit integer
     hash = hash | 0;
   }
-  return (hash >>> 0).toString(16);
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+/**
+ * Hardened djb2 hash that produces a longer string for better collision resistance.
+ * Not cryptographically secure, but suitable for fingerprints.
+ *
+ * @param str - The string to hash
+ * @returns A 12-character hex string
+ */
+export function hardenedHash(str: string): string {
+  let hash1 = 5381;
+  let hash2 = 8903;
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash1 = ((hash1 << 5) + hash1) ^ char;
+    hash2 = ((hash2 << 5) + hash2) ^ char;
+  }
+
+  const h1 = (hash1 >>> 0).toString(16).padStart(8, '0');
+  const h2 = (hash2 >>> 0).toString(16).padStart(8, '0');
+
+  return (h1 + h2).substring(0, 12);
 }
