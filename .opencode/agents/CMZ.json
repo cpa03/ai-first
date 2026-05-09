@@ -2,7 +2,7 @@
   "agents": {
     "sisyphus": {
       "name": "Sisyphus",
-      "model": "opencode/kimi-k2.5-free",
+      "model": "iflowcn/glm-4.6",
       "description": "Main orchestrator with relentless execution",
       "capabilities": ["orchestration", "task_management", "background_tasks"],
       "triggers": ["ultrawork", "ulw"]
@@ -15,7 +15,7 @@
     },
     "oracle": {
       "name": "Oracle",
-      "model": "opencode/kimi-k2.5-free",
+      "model": "iflowcn/glm-4.6",
       "description": "Architecture, debugging, complex reasoning",
       "category": "ultrabrain",
       "capabilities": ["architecture", "debugging", "reasoning"]
@@ -50,7 +50,7 @@
     },
     "repokeeper": {
       "name": "RepoKeeper",
-      "model": "opencode/kimi-k2.5-free",
+      "model": "iflowcn/glm-4.6",
       "description": "Repository maintenance and cleanup agent",
       "capabilities": ["maintenance", "cleanup", "organization"]
     }

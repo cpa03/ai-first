@@ -2,13 +2,13 @@
   "$schema": "https://raw.githubusercontent.com/code-yeongyu/oh-my-opencode/master/assets/oh-my-opencode.schema.json",
   "agents": {
     "sisyphus": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "hephaestus": {
       "model": "opencode/glm-4.7-free"
     },
     "oracle": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "librarian": {
       "model": "opencode/glm-4.7-free"
@@ -20,19 +20,19 @@
       "model": "opencode/glm-4.7-free"
     },
     "prometheus": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "metis": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "momus": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "atlas": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "repokeeper": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     }
   },
   "categories": {
@@ -40,10 +40,10 @@
       "model": "opencode/glm-4.7-free"
     },
     "ultrabrain": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "deep": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "artistry": {
       "model": "opencode/glm-4.7-free"
@@ -55,7 +55,7 @@
       "model": "opencode/minimax-m2.1-free"
     },
     "unspecified-high": {
-      "model": "opencode/kimi-k2.5-free"
+      "model": "iflowcn/glm-4.6"
     },
     "writing": {
       "model": "opencode/glm-4.7-free"
@@ -63,11 +63,11 @@
   },
   "version": "3.0.0",
   "enabled": true,
-  "model": "opencode/kimi-k2.5-free",
+  "model": "iflowcn/glm-4.6",
   "build": {
     "sisyphus": {
       "enabled": true,
-      "model": "opencode/kimi-k2.5-free",
+      "model": "iflowcn/glm-4.6",
       "ultrawork_keyword": "ulw",
       "background_tasks": true,
       "parallel_agents": true,
@@ -81,7 +81,7 @@
     },
     "oracle": {
       "enabled": true,
-      "model": "opencode/kimi-k2.5-free",
+      "model": "iflowcn/glm-4.6",
       "category": "ultrabrain"
     },
     "librarian": {
@@ -108,7 +108,7 @@
     },
     "repokeeper": {
       "enabled": true,
-      "model": "opencode/kimi-k2.5-free",
+      "model": "iflowcn/glm-4.6",
       "description": "Repository maintenance and cleanup agent"
     }
   },
