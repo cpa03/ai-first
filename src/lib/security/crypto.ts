@@ -14,37 +14,57 @@
  * @param prefix - Optional prefix for the ID (e.g., 'session', 'req')
  * @returns A secure unique identifier
  */
+/**
+ * Generate a cryptographically secure, collision-resistant ID.
+ * Uses Web Crypto API (globalThis.crypto) for maximum security and performance.
+ *
+ * Pattern: [prefix_]<uuid>
+ *
+ * @param prefix - Optional prefix for the ID (e.g., 'session', 'req')
+ * @returns A secure unique identifier
+ */
 export function generateId(prefix?: string): string {
-  let id: string;
+  let id: string = '';
 
   try {
-    // 1. Try native randomUUID (supported in Node.js 19+, modern browsers, and Cloudflare Workers)
-    if (typeof globalThis !== 'undefined' && globalThis.crypto?.randomUUID) {
-      id = globalThis.crypto.randomUUID();
-    }
-    // 2. Try getRandomValues fallback for older environments
-    else if (typeof globalThis !== 'undefined' && globalThis.crypto?.getRandomValues) {
-      const bytes = new Uint8Array(16);
-      globalThis.crypto.getRandomValues(bytes);
-      // Format as UUID v4-ish string
-      id = Array.from(bytes)
-        .map((b, i) => {
-          const s = b.toString(16).padStart(2, '0');
-          if ([4, 6, 8, 10].includes(i)) return '-' + s;
-          return s;
-        })
-        .join('');
-    }
-    // 3. Last resort fallback (non-cryptographic, but better than nothing)
-    else {
-      id = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 10)}`;
+    // 1. Prioritize globalThis.crypto for environment compatibility (Edge, Worker, Browser)
+    const crypto = typeof globalThis !== 'undefined' ? globalThis.crypto : null;
+
+    if (crypto) {
+      // 1.1 Try native randomUUID (CSPRNG)
+      if (typeof crypto.randomUUID === 'function') {
+        id = crypto.randomUUID();
+      }
+      // 1.2 Fallback to getRandomValues (CSPRNG)
+      else if (typeof crypto.getRandomValues === 'function') {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+
+        // Manual UUID v4 construction from bytes
+        bytes[6] = (bytes[6] & 0x0f) | 0x40; // Version 4
+        bytes[8] = (bytes[8] & 0x3f) | 0x80; // Variant 10xx
+
+        id = Array.from(bytes)
+          .map((b, i) => {
+            const s = b.toString(16).padStart(2, '0');
+            if ([4, 6, 8, 10].includes(i)) return '-' + s;
+            return s;
+          })
+          .join('');
+      }
     }
   } catch {
-    // Safety fallback for extremely restricted environments
-    id = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 10)}`;
+    // Ignore errors and fall through to insecure fallback
   }
 
-  return prefix ? `${prefix}${id}` : id;
+  // 3. Last resort fallback (non-cryptographic)
+  if (!id) {
+    id = `${Date.now().toString(36)}-${Math.random().toString(36).substring(2, 12)}`;
+  }
+
+  if (!prefix) return id;
+  const separator = prefix.endsWith('_') ? '' : '_';
+  return `${prefix}${separator}${id}`;
 }
 
 /**
