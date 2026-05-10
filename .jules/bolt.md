@@ -1,0 +1,3 @@
+## 2025-05-14 - Optimized useUserPreferences for Referential Stability
+**Learning:** Returning unmemoized object literals from custom hooks causes all consumer components to re-render whenever the hook's parent re-renders, even if the actual state hasn't changed. Additionally, calling side-effects (like `localStorage.setItem`) inside `useState` updater functions violates render-phase purity and can lead to inconsistent state or performance bottlenecks.
+**Action:** Always wrap hook return objects in `useMemo` and ensure all returned functions are stable with `useCallback`. Move side-effects that persist state to a `useEffect` hook triggered by state changes.
