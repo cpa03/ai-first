@@ -45,7 +45,8 @@ const AUTH_PATHS = ['/login', '/signup'];
 
 function generateNonce(): string {
   const array = new Uint8Array(16);
-  crypto.getRandomValues(array);
+  // SECURITY: Access crypto via globalThis for robust Edge compatibility
+  (globalThis.crypto || crypto).getRandomValues(array);
   // Convert Uint8Array to base64 using Web APIs (Edge-compatible)
   // Avoids Node.js Buffer which is not available in Cloudflare Workers
   let binary = '';

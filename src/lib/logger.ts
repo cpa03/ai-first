@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { generateId } from '@/lib/security/crypto';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -51,6 +52,7 @@ function parseLogSampleRate(): number {
 
 let currentLogLevel = parseLogLevelFromEnv();
 let currentSampleRate = parseLogSampleRate();
+
 let globalCorrelationId: string | undefined;
 
 // Detect if we're in a build/SSR environment where console output causes Lighthouse issues
@@ -94,17 +96,11 @@ export function getCorrelationId(): string | undefined {
 
 /**
  * Generate a unique correlation ID for request tracing
- * Uses crypto.randomUUID() for cryptographically secure, collision-resistant IDs
+ * Uses cryptographically secure, collision-resistant IDs via centralized crypto utility
  */
 export function generateCorrelationId(): string {
-  // crypto.randomUUID() is available in Node.js 15.6+ and all modern browsers
-  // Falls back to a timestamp-based ID if crypto is not available (rare edge case)
-  try {
-    return `req_${crypto.randomUUID()}`;
-  } catch {
-    // Fallback for environments without crypto.randomUUID support
-    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
-  }
+  // SECURITY: Use centralized generateId() which is Edge-compatible
+  return `req_${generateId()}`;
 }
 
 export interface LogContext {
