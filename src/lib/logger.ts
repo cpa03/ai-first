@@ -1,4 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
+import { generateId } from '@/lib/security/crypto';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -51,7 +52,6 @@ function parseLogSampleRate(): number {
 
 let currentLogLevel = parseLogLevelFromEnv();
 let currentSampleRate = parseLogSampleRate();
-import { generateId } from '@/lib/security/crypto';
 
 let globalCorrelationId: string | undefined;
 

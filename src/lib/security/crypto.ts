@@ -19,7 +19,13 @@
  */
 export function generateId(): string {
   // Use globalThis.crypto for cross-environment compatibility
-  const cryptoObj = typeof globalThis !== 'undefined' ? globalThis.crypto : undefined;
+  // Robust check for various runtimes (Browsers, Node, Workers)
+  const cryptoObj =
+    typeof globalThis !== 'undefined'
+      ? globalThis.crypto
+      : typeof crypto !== 'undefined'
+        ? crypto
+        : undefined;
 
   // 1. Native randomUUID (preferred)
   if (cryptoObj?.randomUUID) {
