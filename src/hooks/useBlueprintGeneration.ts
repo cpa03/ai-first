@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { ANIMATION_DELAYS } from '@/lib/config';
@@ -119,7 +119,10 @@ export function useBlueprintGeneration(
     return () => {
       isCancelled = true;
     };
-  }, [idea, answers]);
+    // Optimization: Use JSON.stringify(answers) to prevent redundant generations
+    // when the answers object reference changes but content remains the same.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idea, JSON.stringify(answers)]);
 
   /**
    * Downloads the blueprint as a markdown file
@@ -182,13 +185,24 @@ export function useBlueprintGeneration(
     setShowCelebration(false);
   }, []);
 
-  return {
-    isGenerating,
-    blueprint,
-    copied,
-    showCelebration,
-    handleDownload,
-    handleCopy,
-    dismissCelebration,
-  };
+  return useMemo(
+    () => ({
+      isGenerating,
+      blueprint,
+      copied,
+      showCelebration,
+      handleDownload,
+      handleCopy,
+      dismissCelebration,
+    }),
+    [
+      isGenerating,
+      blueprint,
+      copied,
+      showCelebration,
+      handleDownload,
+      handleCopy,
+      dismissCelebration,
+    ]
+  );
 }
