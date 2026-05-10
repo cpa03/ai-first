@@ -15,7 +15,7 @@ Enterprise-grade backend development standards and model configurations for AI-a
 - API design and implementation
 - Security implementation
 - Performance optimization
-- Model: opencode/kimi-k2.5-free
+- Model: iflowcn/glm-4.6
 
 **Medium-Complexity Tasks**
 

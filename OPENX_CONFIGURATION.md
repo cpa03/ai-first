@@ -13,9 +13,9 @@ Comprehensive OpenCode automation environment with multi-agent orchestration, 33
 ### Advanced Configuration
 
 - **.opencode/oh-my-opencode.json** - Multi-agent orchestration configuration
-  - Sisyphus (kimi-k2.5-free) - Main orchestrator
+  - Sisyphus (glm-4.6) - Main orchestrator
   - Hephaestus (glm-4.7-free) - Autonomous deep worker
-  - Oracle (kimi-k2.5-free) - Design & debugging
+  - Oracle (glm-4.6) - Design & debugging
   - Librarian (glm-4.7-free) - Documentation & search
   - Explore (glm-4.7-free) - Fast codebase exploration
   - Frontend UI/UX (glm-4.7-free) - Visual engineering
@@ -97,7 +97,7 @@ Comprehensive OpenCode automation environment with multi-agent orchestration, 33
 
 ## Models Used
 
-- opencode/kimi-k2.5-free - General purpose, complex reasoning
+- iflowcn/glm-4.6 - General purpose, complex reasoning
 - opencode/glm-4.7-free - Logic-heavy tasks, exploration
 - opencode/minimax-m2.1-free - Quick tasks, documentation
 

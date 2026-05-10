@@ -33,9 +33,9 @@ CMZ (Cognitive Meta-Z) is the main orchestrating agent with three core capabilit
 
 | Agent      | Model          | Purpose                                 |
 | ---------- | -------------- | --------------------------------------- |
-| Sisyphus   | kimi-k2.5-free | Main orchestrator, relentless execution |
+| Sisyphus   | glm-4.6 | Main orchestrator, relentless execution |
 | Hephaestus | glm-4.7-free   | Autonomous deep worker                  |
-| Oracle     | kimi-k2.5-free | Architecture, debugging, reasoning      |
+| Oracle     | glm-4.6 | Architecture, debugging, reasoning      |
 | Librarian  | glm-4.7-free   | Documentation, exploration              |
 | Explore    | glm-4.7-free   | Fast codebase search                    |
 
@@ -44,9 +44,9 @@ CMZ (Cognitive Meta-Z) is the main orchestrating agent with three core capabilit
 | Category           | Model             | Use Case                    |
 | ------------------ | ----------------- | --------------------------- |
 | visual-engineering | glm-4.7-free      | UI/Frontend work            |
-| ultrabrain         | kimi-k2.5-free    | Complex logic, architecture |
+| ultrabrain         | glm-4.6    | Complex logic, architecture |
 | quick              | minimax-m2.1-free | Fast, simple tasks          |
-| deep               | kimi-k2.5-free    | Thorough analysis           |
+| deep               | glm-4.6    | Thorough analysis           |
 
 ## Delegation Patterns
 

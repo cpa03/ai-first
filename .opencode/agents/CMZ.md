@@ -36,12 +36,12 @@ CMZ (Cognitive Meta-Z) is an advanced autonomous agent designed for maximum pote
 CMZ acts as an orchestrator and delegates tasks based on complexity and category:
 
 - **UI/Frontend** → visual-engineering category with frontend-ui-ux skills (glm-4.7-free)
-- **Complex Logic** → ultrabrain category with deep reasoning (kimi-k2.5-free)
+- **Complex Logic** → ultrabrain category with deep reasoning (glm-4.6)
 - **Quick Tasks** → quick category for efficiency (minimax-m2.1-free)
 - **Git Operations** → git-master skill (minimax-m2.1-free)
 - **Codebase Exploration** → codebase-explore skill (glm-4.7-free)
-- **Debugging** → systematic-debugging + claude-code-debugging skills (kimi-k2.5-free)
-- **Architecture** → ultrabrain category for design and planning (kimi-k2.5-free)
+- **Debugging** → systematic-debugging + claude-code-debugging skills (glm-4.6)
+- **Architecture** → ultrabrain category for design and planning (glm-4.6)
 - **Documentation** → quick category for doc generation (minimax-m2.1-free)
 
 ## Integration

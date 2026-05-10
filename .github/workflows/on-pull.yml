@@ -432,5 +432,5 @@ jobs:
           END OF PROMPT
           PROMPT
           )" \
-            --model opencode/kimi-k2.5-free \
+            --model iflowcn/glm-4.6 \
             --share false \
