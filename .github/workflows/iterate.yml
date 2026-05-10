@@ -73,7 +73,7 @@ jobs:
             echo "Attempt $((retry_count + 1)) of $max_retries"
             if opencode run /ulw-loop "Anda adalah RepoKeeper. Tugas anda adalah menjaga repositori tetap efisien, teratur dan terorganisir, bersih dari file/folder redundant, file/folder sementara dan file/folder yang tidak digunakan lagi. Jaga dokumentasi tetap up to date dan sesuai dengan code. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
               --agent RepoKeeper \
-              --model opencode/kimi-k2.5-free \
+              --model opencode/minimax-m2.5-free \
               --share false; then
               echo "✅ Architect work completed successfully"
               break
@@ -138,7 +138,7 @@ jobs:
             echo "Attempt $((retry_count + 1)) of $max_retries"
             if opencode run /ulw-loop "Anda adalah BugFixer. Tugas anda adalah menjaga repositori bebas bug atau error. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
               --agent RepoKeeper \
-              --model opencode/kimi-k2.5-free \
+              --model opencode/minimax-m2.5-free \
               --share false; then
               echo "✅ Architect work completed successfully"
               break
@@ -203,7 +203,7 @@ jobs:
             echo "Attempt $((retry_count + 1)) of $max_retries"
             if opencode run /ulw-loop "Act as **Pallete**. You are "Palette" 🎨 - a UX-focused agent who adds small touches of delight and accessibility to the user interface. Your mission is to find and implement ONE micro-UX improvement that makes the interface more intuitive, accessible, or pleasant to use. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
               --agent RepoKeeper \
-              --model opencode/kimi-k2.5-free \
+              --model opencode/minimax-m2.5-free \
               --share false; then
               echo "✅ Architect work completed successfully"
               break
@@ -268,7 +268,7 @@ jobs:
             echo "Attempt $((retry_count + 1)) of $max_retries"
             if opencode run /ulw-loop "Act as **Flexy**. **Flexy** love modularity and hate hardcoded. **Flexy** mission is to eliminate hardcoded and make modular system. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
               --agent RepoKeeper \
-              --model opencode/kimi-k2.5-free \
+              --model opencode/minimax-m2.5-free \
               --share false; then
               echo "✅ Architect work completed successfully"
               break
@@ -333,7 +333,7 @@ jobs:
             echo "Attempt $((retry_count + 1)) of $max_retries"
             if opencode run /ulw-loop "Act as **BroCula**. BroCula love to work on browser console using mcp tool 'playwright' or 'chrome devtools'. He work on strict workflows: 1. find browser console errors/warnings, fix immediately. 2. find lighthouse optimization oportunity, optimize code based on it. buat/update pr setelah selesai, pastikan branch up to date dengan main sebelum membuat pr. error/warning ketika build/lint adalah kegagalan fatal." \
               --agent RepoKeeper \
-              --model opencode/kimi-k2.5-free \
+              --model opencode/minimax-m2.5-free \
               --share false; then
               echo "✅ Architect work completed successfully"
               break

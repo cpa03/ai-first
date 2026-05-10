@@ -15,7 +15,7 @@ Enterprise-grade backend development standards and model configurations for AI-a
 - API design and implementation
 - Security implementation
 - Performance optimization
-- Model: opencode/kimi-k2.5-free
+- Model: opencode/minimax-m2.5-free
 
 **Medium-Complexity Tasks**
 
