@@ -193,7 +193,7 @@ function MobileNavComponent() {
         <>
           {/* Backdrop overlay */}
           <div
-            className="fixed inset-0 top-16 bg-black bg-opacity-50 z-[99] fade-in"
+            className="fixed inset-0 top-16 bg-black bg-opacity-50 backdrop-blur-sm z-[99] fade-in"
             onClick={closeMenu}
             onTouchEnd={closeMenu}
             aria-hidden="true"
