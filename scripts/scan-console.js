@@ -53,7 +53,13 @@ async function scanPage(page, url) {
       text.includes('[DatabaseService] Supabase client not initialized') &&
       text.includes('Check environment variables');
 
-    if (type === 'error' && !isExpectedAPIError) {
+    // Filter out expected GlobalErrorHandler initialization messages
+    // These are informational logs about successful error handler registration
+    const isExpectedInfoLog =
+      text.includes('Global error handlers registered') ||
+      text.includes('Global error handlers unregistered');
+
+    if (type === 'error' && !isExpectedAPIError && !isExpectedInfoLog) {
       pageErrors.push(logEntry);
       errors.push(logEntry);
     } else if (
