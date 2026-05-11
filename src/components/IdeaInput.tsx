@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, memo } from 'react';
+import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
@@ -41,6 +41,19 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     ideaId: string;
   } | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+
+  // Focus management: Focus input after successful submission for better UX
+  // This allows users to quickly submit another idea without clicking
+  const focusInput = useCallback(() => {
+    const input = inputRef.current;
+    if (input) {
+      // Use requestAnimationFrame to ensure DOM is ready after state changes
+      requestAnimationFrame(() => {
+        input.focus();
+      });
+    }
+  }, []);
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -130,6 +143,11 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     }
   }, [submittedIdeaData, onSubmit]);
 
+  const handleErrorClose = useCallback(() => {
+    setError(null);
+    focusInput();
+  }, [focusInput]);
+
   return (
     <>
       <SuccessCelebration
@@ -144,6 +162,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       />
       <form onSubmit={handleSubmit} className="space-y-6 fade-in" noValidate>
         <InputWithValidation
+          ref={inputRef}
           id="idea-input"
           name="idea"
           label="What's your idea?"
@@ -166,7 +185,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {error && (
           <div className="slide-up">
-            <Alert type="error" onClose={() => setError(null)}>
+            <Alert type="error" onClose={handleErrorClose}>
               <p className="text-sm">{error}</p>
             </Alert>
           </div>
