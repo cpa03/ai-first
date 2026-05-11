@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 import { ALERT_STYLES, ALERT_BASE_STYLES } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
+import Tooltip from './Tooltip';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -55,6 +57,7 @@ const AlertComponent = function Alert({
   const styles = ALERT_STYLES[type];
 
   const handleClose = useCallback(() => {
+    triggerHapticFeedback();
     setIsExiting(true);
     setTimeout(() => {
       setIsVisible(false);
@@ -109,27 +112,29 @@ const AlertComponent = function Alert({
         <div className={styles.textColor}>{children}</div>
       </div>
       {onClose && (
-        <button
-          onClick={handleClose}
-          className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor} ${styles.focusRing}`}
-          aria-label="Dismiss alert"
-          type="button"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-            aria-hidden="true"
+        <Tooltip content="Dismiss alert" position="top">
+          <button
+            onClick={handleClose}
+            className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor} ${styles.focusRing}`}
+            aria-label="Dismiss alert"
+            type="button"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </Tooltip>
       )}
     </div>
   );
