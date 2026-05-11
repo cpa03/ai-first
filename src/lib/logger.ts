@@ -100,14 +100,7 @@ export function getCorrelationId(): string | undefined {
  * Uses cryptographically secure, collision-resistant IDs via centralized crypto utility
  */
 export function generateCorrelationId(): string {
-  // SECURITY: Use centralized generateId() which is Edge-compatible
-  return `req_${generateId()}`;
-=======
- * Uses centralized generateSecureId for secure, collision-resistant IDs
- */
-export function generateCorrelationId(): string {
   return generateSecureId('req');
->>>>>>> dad93f8 (🛡️ Sentinel: Standardize secure ID generation and fix analytics logging)
 }
 
 export interface LogContext {
