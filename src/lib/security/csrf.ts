@@ -78,16 +78,20 @@ function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
       return true;
     }
 
+    // Check for exact subdomain match on Vercel (not all .vercel.app subdomains)
     if (
       normalizedTrusted.includes('.vercel.app') &&
-      normalizedOrigin.endsWith('.vercel.app')
+      normalizedOrigin.endsWith('.vercel.app') &&
+      normalizedOrigin === normalizedTrusted
     ) {
       return true;
     }
 
+    // Check for exact subdomain match on Cloudflare Pages (not all .pages.dev subdomains)
     if (
       normalizedTrusted.includes('.pages.dev') &&
-      normalizedOrigin.endsWith('.pages.dev')
+      normalizedOrigin.endsWith('.pages.dev') &&
+      normalizedOrigin === normalizedTrusted
     ) {
       return true;
     }
