@@ -27,7 +27,10 @@ export function generateErrorFingerprint(
     ? `${code}:${normalizedMessage}:${stackFirstLine}`
     : `${code}:${normalizedMessage}`;
 
-  const hash = simpleHash(fingerprintInput).substring(0, FINGERPRINT_HASH_LENGTH);
+  const hash = simpleHash(fingerprintInput).substring(
+    0,
+    FINGERPRINT_HASH_LENGTH
+  );
 
   return `fp_${hash}`;
 }
@@ -62,6 +65,7 @@ export enum ErrorCode {
   SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
   CIRCUIT_BREAKER_OPEN = 'CIRCUIT_BREAKER_OPEN',
   RETRY_EXHAUSTED = 'RETRY_EXHAUSTED',
+  NOT_READY = 'NOT_READY',
 }
 
 export class AppError extends Error {
@@ -406,6 +410,12 @@ export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
     'Check /api/health/detailed for service status',
     'Verify your API credentials and quotas for external services',
     'Contact support with the requestId if this persists',
+  ],
+  NOT_READY: [
+    'Service is initializing or dependencies are unavailable',
+    'Wait briefly and retry the request',
+    'Check /api/health/detailed for specific dependency status',
+    'This is typically returned during service startup or maintenance',
   ],
 };
 
