@@ -1,5 +1,5 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
-import { generateId } from '@/lib/security/crypto';
+import { generateSecureId } from './utils';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -96,11 +96,18 @@ export function getCorrelationId(): string | undefined {
 
 /**
  * Generate a unique correlation ID for request tracing
+<<<<<<< HEAD
  * Uses cryptographically secure, collision-resistant IDs via centralized crypto utility
  */
 export function generateCorrelationId(): string {
   // SECURITY: Use centralized generateId() which is Edge-compatible
   return `req_${generateId()}`;
+=======
+ * Uses centralized generateSecureId for secure, collision-resistant IDs
+ */
+export function generateCorrelationId(): string {
+  return generateSecureId('req');
+>>>>>>> dad93f8 (🛡️ Sentinel: Standardize secure ID generation and fix analytics logging)
 }
 
 export interface LogContext {
