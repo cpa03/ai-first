@@ -30,6 +30,10 @@ const customJestConfig = {
     '<rootDir>/tests/utils/',
     '<rootDir>/tests/config/',
     '<rootDir>/tests/_test-env.d.ts',
+    '<rootDir>/tests/utils/test-secrets.ts$',
+    '<rootDir>/tests/utils/_testHelpers.ts$',
+    '<rootDir>/tests/fixtures/testDataFactory.ts$',
+    '<rootDir>/tests/config/test-config.ts$',
   ],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],

@@ -495,7 +495,7 @@ describe('PII Redaction Utility', () => {
     });
 
     it('should redact common API key formats without labels', () => {
-      const openaiKey = TEST_API_KEY_OPENAI;
+      const openaiKey = 'sk-test_abc123def456ghi789jkl012mno345';
       const output = redactPII(`Key is ${openaiKey}`);
       expect(output).toBe('Key is [REDACTED_API_KEY]');
     });
@@ -640,7 +640,7 @@ describe('PII Redaction Utility', () => {
           return 'test@example.com';
         },
         get apiKey() {
-          return TEST_API_KEY_OPENAI;
+          return 'sk-test_abc123def456ghi789jkl012mno345';
         },
       };
 
