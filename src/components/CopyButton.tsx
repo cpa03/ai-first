@@ -126,8 +126,6 @@ const CopyButtonComponent = function CopyButton({
         onClick={handleCopy}
         className={`${baseClasses} ${variantClasses[variant]} ${className}`}
         aria-label={copied ? 'Copied to clipboard' : ariaLabel}
-        aria-live="polite"
-        aria-atomic="true"
         type="button"
       >
         <span className="relative flex items-center justify-center w-4 h-4">

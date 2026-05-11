@@ -152,6 +152,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           error={validationError || undefined}
           required={true}
           disabled={isSubmitting}
+          autoFocus
           className="min-h-[120px]"
         />
 
