@@ -73,22 +73,7 @@ function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
 
   for (const trusted of trustedOrigins) {
     const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
-
     if (normalizedOrigin === normalizedTrusted) {
-      return true;
-    }
-
-    if (
-      normalizedTrusted.includes('.vercel.app') &&
-      normalizedOrigin.endsWith('.vercel.app')
-    ) {
-      return true;
-    }
-
-    if (
-      normalizedTrusted.includes('.pages.dev') &&
-      normalizedOrigin.endsWith('.pages.dev')
-    ) {
       return true;
     }
   }
