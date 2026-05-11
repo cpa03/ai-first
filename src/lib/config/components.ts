@@ -174,6 +174,22 @@ export const COMPONENT_CONFIG = {
   MOTION_REDUCE: {
     SCALE: 1,
   },
+
+  ONBOARDING: {
+    /** Env: COMPONENT_ONBOARDING_DELAY_MS (default: 1500) */
+    DELAY_MS: EnvLoader.number(
+      'COMPONENT_ONBOARDING_DELAY_MS',
+      1500,
+      500,
+      10000
+    ),
+    STEP_TRANSITION_MS: EnvLoader.number(
+      'COMPONENT_ONBOARDING_STEP_TRANSITION_MS',
+      200,
+      50,
+      1000
+    ),
+  },
 } as const;
 
 export type ComponentConfig = typeof COMPONENT_CONFIG;

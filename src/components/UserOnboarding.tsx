@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
+import { COMPONENT_CONFIG } from '@/lib/config';
 
 /**
  * Onboarding Tour Steps
@@ -147,7 +148,7 @@ export default function UserOnboarding() {
         trackEvent(ANALYTICS_EVENTS.ONBOARDING_START, {
           step: 'welcome',
         });
-      }, 1500);
+      }, COMPONENT_CONFIG.ONBOARDING.DELAY_MS);
 
       return () => clearTimeout(timer);
     }
@@ -214,7 +215,10 @@ export default function UserOnboarding() {
   const handlePrev = useCallback(() => {
     setIsAnimating(true);
     setCurrentStepIndex((prev) => Math.max(0, prev - 1));
-    setTimeout(() => setIsAnimating(false), 200);
+    setTimeout(
+      () => setIsAnimating(false),
+      COMPONENT_CONFIG.ONBOARDING.STEP_TRANSITION_MS
+    );
   }, []);
 
   if (!isVisible || !currentStep) return null;
