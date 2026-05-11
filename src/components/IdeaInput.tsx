@@ -10,6 +10,7 @@ import Button from './Button';
 import InputWithValidation from './InputWithValidation';
 import AutoSaveIndicator from './AutoSaveIndicator';
 import SuccessCelebration from './SuccessCelebration';
+import StatusAnnouncer from './StatusAnnouncer';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
@@ -39,6 +40,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     idea: string;
     ideaId: string;
   } | null>(null);
+  const [successMessage, setSuccessMessage] = useState('');
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -87,6 +89,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         setSubmittedIdeaData({ idea: idea.trim(), ideaId });
         setShowCelebration(true);
+        setSuccessMessage('Idea submitted successfully! Redirecting...');
       } catch (err) {
         logger.errorWithContext('Failed to save idea', {
           component: 'IdeaInput',
@@ -133,6 +136,11 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         show={showCelebration}
         onComplete={handleCelebrationComplete}
         duration={1500}
+      />
+      <StatusAnnouncer
+        message={successMessage}
+        politeness="polite"
+        triggered={!!successMessage}
       />
       <form onSubmit={handleSubmit} className="space-y-6 fade-in" noValidate>
         <InputWithValidation
