@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
-import { MESSAGES, PLACEHOLDERS } from '@/lib/config';
+import { MESSAGES, PLACEHOLDERS, COMPONENT_CONFIG } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -153,7 +153,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       <SuccessCelebration
         show={showCelebration}
         onComplete={handleCelebrationComplete}
-        duration={1500}
+        duration={COMPONENT_CONFIG.BLUEPRINT.GENERATION_DELAY_MS}
       />
       <StatusAnnouncer
         message={successMessage}
