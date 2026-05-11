@@ -12,3 +12,7 @@
 ## 2026-02-25 - [Tooltip for Icon-Only Clear Button]
 **Learning:** Adding a tooltip to icon-only buttons (like a "Clear" button in an input field) provides essential context for users before they interact with it. To prevent the `Tooltip` component's `relative inline-flex` styles from disrupting the `absolute` positioning of elements within an input container, the `Tooltip` should be wrapped in an `absolute` positioned `div` that mirrors the original element's placement.
 **Action:** Always wrap `Tooltip` in an `absolute` positioned container when used for elements that require precise absolute placement within a parent.
+
+## 2026-05-11 - [Standalone Component Verification in Sandbox]
+**Learning:** Standalone frontend verification in the sandbox can be achieved by creating temporary routes (e.g., `src/app/verify-component/page.tsx`) to isolate UI elements for Playwright automation, bypassing complex environment variable validation or authentication flows of the main application.
+**Action:** Use temporary routes for isolated component testing when the main application has heavy environmental or auth requirements.
