@@ -128,7 +128,8 @@ function ScrollToTopComponent({
             transition-all duration-300 ease-out
             hover:bg-gray-50 hover:text-primary-600 hover:shadow-xl hover:scale-110
             hover:border-primary-200
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
+            focus-visible:scale-110
             active:scale-95
             ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
             ${className}
@@ -191,7 +192,7 @@ function ScrollToTopComponent({
             />
           </svg>
 
-<span className="sr-only">Back to top</span>
+          <span className="sr-only">Back to top</span>
         </button>
       </Tooltip>
     </div>
