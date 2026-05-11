@@ -19,6 +19,7 @@
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 import { generateSecureId } from '@/lib/utils';
+import { simpleHash } from '@/lib/security/crypto';
 
 /**
  * Experiment variant definition
@@ -169,7 +170,8 @@ function saveAssignments(assignments: Record<string, ABAssignment>): void {
 
 /**
  * Get deterministic random value based on user and experiment
- * Uses session ID for consistent assignment
+ * Uses session ID for consistent assignment.
+ * Delegates to the hardened simpleHash utility for reliable cross-environment hashing.
  */
 function getDeterministicRandom(experimentId: string): number {
   if (typeof window === 'undefined') {
@@ -184,17 +186,16 @@ function getDeterministicRandom(experimentId: string): number {
       sessionStorage.setItem('ideaflow_session_id', sessionId);
     }
 
-    // Create deterministic hash
+    // Create deterministic hash using centralized utility
     const str = `${sessionId}_${experimentId}`;
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = (hash << 5) - hash + char;
-      hash = hash & hash;
-    }
+    const hashHex = simpleHash(str);
 
-    // Return normalized value 0-1
-    return Math.abs(hash) / 2147483647;
+    // PERFORMANCE: Use only the first 8 characters to ensure we stay within 32-bit integer range
+    // even if simpleHash is later upgraded to a stronger algorithm (like SHA-256).
+    const hashInt = parseInt(hashHex.substring(0, 8), 16);
+
+    // Return normalized value 0-1 (0xFFFFFFFF is the max 32-bit unsigned value)
+    return hashInt / 4294967295;
   } catch {
     return Math.random();
   }

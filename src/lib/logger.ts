@@ -96,7 +96,6 @@ export function getCorrelationId(): string | undefined {
 
 /**
  * Generate a unique correlation ID for request tracing
-<<<<<<< HEAD
  * Uses cryptographically secure, collision-resistant IDs via centralized crypto utility
  */
 export function generateCorrelationId(): string {
