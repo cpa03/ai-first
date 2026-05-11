@@ -123,6 +123,7 @@ __pycache__/
 
 # OpenCode CLI - ignore auto-generated node_modules
 .opencode/node_modules/
+.opencode/package-lock.json
 
 # Archive backups (should not be committed)
 docs/archive/*.gz
