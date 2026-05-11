@@ -423,6 +423,37 @@ Service temporarily unavailable for maintenance or high load.
 
 ---
 
+### NOT_READY
+
+**Status Code:** 503
+**Retryable:** Yes
+
+Service is not ready to handle requests. This is typically used by health check endpoints when critical dependencies are unavailable.
+
+**Common Causes:**
+
+- Database connection failed
+- Required external service unavailable
+- Application initializing
+- Dependency health check failed
+
+**Example Response:**
+
+```json
+{
+  "error": "Service not ready",
+  "code": "NOT_READY",
+  "details": [{ "field": "database", "message": "Connection failed: timeout" }],
+  "timestamp": "2026-01-07T12:00:00Z",
+  "requestId": "req_1234567890_abc123",
+  "retryable": true
+}
+```
+
+**Resolution:** Wait for the service to become ready. Check `/api/health/detailed` for specific dependency status. This is typically returned by Kubernetes readiness probes.
+
+---
+
 ### CIRCUIT_BREAKER_OPEN
 
 **Status Code:** 503
