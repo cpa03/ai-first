@@ -57,7 +57,7 @@ function GlobalErrorHandlerComponent() {
     window.addEventListener('unhandledrejection', handleUnhandledRejection);
     window.addEventListener('error', handleUncaughtException);
 
-    logger.info('Global error handlers registered', {
+    logger.debug('Global error handlers registered', {
       component: 'GlobalErrorHandler',
       action: 'mount',
     });
@@ -69,7 +69,7 @@ function GlobalErrorHandlerComponent() {
       );
       window.removeEventListener('error', handleUncaughtException);
 
-      logger.info('Global error handlers unregistered', {
+      logger.debug('Global error handlers unregistered', {
         component: 'GlobalErrorHandler',
         action: 'unmount',
       });
