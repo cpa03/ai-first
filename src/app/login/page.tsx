@@ -149,26 +149,19 @@ export default function LoginPage() {
               autoComplete="email"
             />
 
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                autoComplete="current-password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Enter your password"
-              />
-            </div>
+            <InputWithValidation
+              id="password"
+              name="password"
+              type="password"
+              label="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isLoading}
+              required
+              autoComplete="current-password"
+              placeholder="Enter your password"
+              showPasswordToggle
+            />
           </div>
 
           <div className="flex items-center justify-between">

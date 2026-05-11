@@ -198,28 +198,22 @@ export default function SignupPage() {
               required
               autoComplete="new-password"
               helpText="Must be at least 8 characters"
+              showPasswordToggle
             />
 
-            <div>
-              <label
-                htmlFor="confirmPassword"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
-                Confirm Password
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={isLoading}
-                required
-                autoComplete="new-password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                placeholder="Confirm your password"
-              />
-            </div>
+            <InputWithValidation
+              id="confirmPassword"
+              name="confirmPassword"
+              type="password"
+              label="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={isLoading}
+              required
+              autoComplete="new-password"
+              placeholder="Confirm your password"
+              showPasswordToggle
+            />
           </div>
 
           <Button
