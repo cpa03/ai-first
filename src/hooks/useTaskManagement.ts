@@ -61,7 +61,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
 
-  // Update dataRef when data changes - MUST be in useEffect to satisfy React lint rules
+// Update dataRef when data changes - MUST be in useEffect to satisfy React lint rules
   useEffect(() => {
     dataRef.current = data;
   }, [data]);
@@ -206,7 +206,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-      // Using dataRef here ensures we have the latest data without depending on 'data'
+// Using dataRef here ensures we have the latest data without depending on 'data'
       previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
