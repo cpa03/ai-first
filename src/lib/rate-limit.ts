@@ -65,7 +65,9 @@ function extractUserIdFromRequest(request: Request): string | null {
     if (token && token.length > 0) {
       // Return a hash of the token as the user identifier
       // This is a simplified approach - in production, validate JWT properly
-      return `token:${token.substring(0, 32)}`;
+      // Using simpleHash ensures the entire token is considered, preventing
+      // collisions when tokens share identical headers.
+      return `token:${simpleHash(token)}`;
     }
   }
 
@@ -212,6 +214,21 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
 }
 
 /**
+ * Simple, fast hash function (djb2) for non-cryptographic use.
+ * Optimized for performance and 32-bit precision across environments.
+ */
+function simpleHash(str: string): string {
+  let hash = 5381;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    // Use bitwise OR with 0 to ensure 32-bit integer operations
+    hash = (((hash << 5) + hash) ^ char) | 0;
+  }
+  // Convert to unsigned 32-bit and then base36 for a compact string
+  return (hash >>> 0).toString(36);
+}
+
+/**
  * Generate a request fingerprint for fallback rate limiting
  *
  * ⚠️ SECURITY WARNING: This fallback uses client-controlled headers which can be spoofed.
@@ -243,14 +260,7 @@ function generateRequestFingerprint(request: Request): string {
   // Combine characteristics with path
   const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
 
-  // Use djb2 hash algorithm for better distribution
-  let hash = 5381;
-  for (let i = 0; i < combined.length; i++) {
-    const char = combined.charCodeAt(i);
-    hash = ((hash << 5) + hash) ^ char; // hash * 33 ^ c
-  }
-
-  return `fp:${Math.abs(hash >>> 0)}`;
+  return `fp:${simpleHash(combined)}`;
 }
 
 /**
