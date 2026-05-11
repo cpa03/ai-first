@@ -42,10 +42,12 @@ const eslintConfig = [
       'next.config.js',
       'tailwind.config.js',
       'postcss.config.js',
+      'lighthouserc.js',
     ],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/no-var-requires': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
       'no-undef': 'off',
     },
   },
@@ -57,6 +59,7 @@ const eslintConfig = [
       'dist/',
       'coverage/',
       'scripts/',
+      '**/.opencode/**',
     ],
   },
 ];
