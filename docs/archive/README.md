@@ -48,9 +48,9 @@ Example: `2025-01-15_old-api-design_archived.md`
 
 ## Index
 
-| File       | Original Date | Archived Date | Reason |
-| ---------- | ------------- | ------------- | ------ |
-| (none yet) | -             | -             | -      |
+| File                                          | Original Date | Archived Date | Reason                            |
+| --------------------------------------------- | ------------- | ------------- | --------------------------------- |
+| 2026-05-11_technical-writer-tasks_archived.md | 2026-02-27    | 2026-05-11    | Task log - not user documentation |
 
 ---
 
