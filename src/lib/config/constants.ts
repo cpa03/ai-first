@@ -999,3 +999,12 @@ export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
  * @see {@link ./idea-status-config.ts} for implementation
  */
 export { IDEA_STATUS_CONFIG, type IdeaStatus } from './idea-status-config';
+
+/**
+ * Session Tracking Configuration (re-exported from session-tracking.ts for modularity)
+ * @see {@link ./session-tracking.ts} for implementation
+ */
+export {
+  SESSION_TRACKING_CONFIG,
+  type SessionTrackingConfig,
+} from './session-tracking';
