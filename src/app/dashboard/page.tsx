@@ -4,11 +4,17 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchWithTimeout } from '@/lib/api-client';
 import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import {
+  ACTION_COLORS,
+  TABLE_PATTERNS,
+  MODAL_PATTERNS,
+  SPINNER_PATTERNS,
+} from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
   loading: () => (
-    <button className="px-4 py-2 bg-gray-200 rounded-md text-gray-600" disabled>
+    <button className={SPINNER_PATTERNS.placeholder.container} disabled>
       Loading...
     </button>
   ),
@@ -18,7 +24,9 @@ const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
   ssr: false,
   loading: () => (
     <div className="flex justify-center items-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <div
+        className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.md} ${SPINNER_PATTERNS.default.border} ${SPINNER_PATTERNS.default.borderColor}`}
+      ></div>
     </div>
   ),
 });
@@ -348,33 +356,27 @@ export default function DashboardPage() {
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           <div className="overflow-x-auto">
             <table
-              className="min-w-full divide-y divide-gray-200"
+              className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
               role="table"
               aria-label="List of your ideas"
             >
-              <thead className="bg-gray-50">
+              <thead className={TABLE_PATTERNS.header.container}>
                 <tr>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
+                  <th scope="col" className={TABLE_PATTERNS.header.cell}>
                     Title
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
+                  <th scope="col" className={TABLE_PATTERNS.header.cell}>
                     Status
                   </th>
-                  <th
-                    scope="col"
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
+                  <th scope="col" className={TABLE_PATTERNS.header.cell}>
                     Created
                   </th>
                   <th
                     scope="col"
-                    className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className={TABLE_PATTERNS.header.cell.replace(
+                      'text-left',
+                      'text-right'
+                    )}
                   >
                     Actions
                   </th>
@@ -382,34 +384,36 @@ export default function DashboardPage() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {ideas.map((idea) => (
-                  <tr key={idea.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                  <tr key={idea.id} className={TABLE_PATTERNS.row.hover}>
+                    <td className={TABLE_PATTERNS.cell.padding}>
+                      <div className={TABLE_PATTERNS.cell.primary}>
                         {idea.title}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className={TABLE_PATTERNS.cell.padding}>
                       <span
-                        className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusColors[idea.status]}`}
+                        className={`${TABLE_PATTERNS.statusBadge.base} ${statusColors[idea.status]}`}
                       >
                         {statusLabels[idea.status]}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td
+                      className={`${TABLE_PATTERNS.cell.padding} ${TABLE_PATTERNS.cell.text}`}
+                    >
                       {formatDate(idea.createdAt)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-2">
+                    <td className={TABLE_PATTERNS.actions.container}>
+                      <div className={TABLE_PATTERNS.actions.buttonGroup}>
                         <Link
                           href={`/clarify?ideaId=${idea.id}`}
-                          className="text-indigo-600 hover:text-indigo-900 px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
+                          className={`${ACTION_COLORS.CONTINUE.text} ${ACTION_COLORS.CONTINUE.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.CONTINUE.hoverBg} transition-colors`}
                           aria-label={`Continue working on ${idea.title}`}
                         >
                           Continue
                         </Link>
                         <Link
                           href={`/results?ideaId=${idea.id}`}
-                          className="text-green-600 hover:text-green-900 px-2 py-1 rounded hover:bg-green-50 transition-colors"
+                          className={`${ACTION_COLORS.VIEW.text} ${ACTION_COLORS.VIEW.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.VIEW.hoverBg} transition-colors`}
                           aria-label={`View blueprint for ${idea.title}`}
                         >
                           View
@@ -417,7 +421,7 @@ export default function DashboardPage() {
                         <button
                           onClick={() => openDeleteModal(idea)}
                           disabled={deletingId === idea.id}
-                          className="text-red-600 hover:text-red-900 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-50 inline-flex items-center gap-1"
+                          className={`${ACTION_COLORS.DELETE.text} ${ACTION_COLORS.DELETE.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.DELETE.hoverBg} transition-colors disabled:opacity-50 inline-flex items-center gap-1`}
                           aria-label={`Delete ${idea.title}`}
                         >
                           {deletingId === idea.id && (
@@ -458,7 +462,7 @@ export default function DashboardPage() {
       {deleteModal.isOpen && deleteModal.idea && (
         <div
           ref={modalRef}
-          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+          className={MODAL_PATTERNS.overlay}
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-modal-title"
@@ -467,15 +471,16 @@ export default function DashboardPage() {
             if (e.target === e.currentTarget) closeDeleteModal();
           }}
           onTouchEnd={(e) => {
-            // Mobile touch support - close modal when tapping backdrop
             if (e.target === e.currentTarget) closeDeleteModal();
           }}
         >
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6 transform transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+          <div
+            className={`${MODAL_PATTERNS.content.container} ${MODAL_PATTERNS.content.transition}`}
+          >
+            <div className={MODAL_PATTERNS.header.container}>
+              <div className={MODAL_PATTERNS.dangerIcon.container}>
                 <svg
-                  className="w-5 h-5 text-red-600"
+                  className={MODAL_PATTERNS.dangerIcon.icon}
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -491,18 +496,21 @@ export default function DashboardPage() {
               </div>
               <h3
                 id="delete-modal-title"
-                className="text-lg font-semibold text-gray-900"
+                className={MODAL_PATTERNS.header.title}
               >
                 Delete Idea
               </h3>
             </div>
 
-            <p id="delete-modal-description" className="text-gray-600 mb-6">
+            <p
+              id="delete-modal-description"
+              className={MODAL_PATTERNS.header.description}
+            >
               Are you sure you want to delete &quot;{deleteModal.idea.title}
               &quot;? This action cannot be undone.
             </p>
 
-            <div className="flex gap-3 justify-end">
+            <div className={MODAL_PATTERNS.footer.container}>
               <Button
                 ref={cancelButtonRef}
                 variant="outline"

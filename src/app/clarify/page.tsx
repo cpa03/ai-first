@@ -13,13 +13,12 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { SPINNER_PATTERNS } from '@/lib/config';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
   loading: () => (
-    <div className="px-4 py-2 bg-gray-200 rounded-md text-gray-600">
-      Loading...
-    </div>
+    <div className={SPINNER_PATTERNS.placeholder.container}>Loading...</div>
   ),
 });
 
