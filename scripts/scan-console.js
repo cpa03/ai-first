@@ -59,7 +59,19 @@ async function scanPage(page, url) {
       text.includes('Global error handlers registered') ||
       text.includes('Global error handlers unregistered');
 
-    if (type === 'error' && !isExpectedAPIError && !isExpectedInfoLog) {
+    // Filter out expected React eval() errors in development mode
+    // Next.js dev mode uses eval() for HMR - this never happens in production
+    // See: https://react.dev/link/react-devtools
+    const isExpectedDevEvalError =
+      text.includes('eval() is not supported in this environment') &&
+      text.includes('React requires eval() in development mode');
+
+    if (
+      type === 'error' &&
+      !isExpectedAPIError &&
+      !isExpectedInfoLog &&
+      !isExpectedDevEvalError
+    ) {
       pageErrors.push(logEntry);
       errors.push(logEntry);
     } else if (
