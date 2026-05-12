@@ -14,13 +14,23 @@
  * Defines which resources can be loaded and from where.
  * Aligned with OWASP security recommendations.
  */
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 export const CSP_CONFIG = {
   /**
    * CSP directives for controlling resource loading
    */
   DIRECTIVES: {
     'default-src': ["'self'"],
-    'script-src': ["'self'", "'nonce-placeholder'"],
+    // BroCula Fix: Add 'unsafe-eval' in development mode for React DevTools and debugging
+    // React requires eval() in development mode for debugging features like reconstructing callstacks
+    // See: https://react.dev/link/react-devtools
+    'script-src': [
+      "'self'",
+      "'nonce-placeholder'",
+      // Required in dev for React debugging features
+      ...(isDevelopment ? ["'unsafe-eval'"] : []),
+    ],
     'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", 'data:', 'https:', 'blob:'],
     'font-src': ["'self'", 'data:'],
