@@ -20,7 +20,7 @@ export default function SignupPage() {
     undefined
   );
 
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
     setPasswordError(undefined);
     setError(null);
@@ -44,42 +44,50 @@ export default function SignupPage() {
     }
 
     return true;
-  };
+  }, [email, password, confirmPassword]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    if (!validateForm()) return;
+      if (!validateForm()) return;
 
-    setIsLoading(true);
-    setError(null);
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      if (!supabaseClient) {
-        throw new Error('Authentication service not available');
+      try {
+        if (!supabaseClient) {
+          throw new Error('Authentication service not available');
+        }
+
+        const { error: signUpError } = await supabaseClient.auth.signUp({
+          email: email.trim(),
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+
+        if (signUpError) {
+          throw signUpError;
+        }
+
+        setSuccess(true);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to create account';
+        setError(errorMessage || 'Failed to create account. Please try again.');
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [validateForm, email, password]
+  );
 
-      const { error: signUpError } = await supabaseClient.auth.signUp({
-        email: email.trim(),
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (signUpError) {
-        throw signUpError;
-      }
-
-      setSuccess(true);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to create account';
-      setError(errorMessage || 'Failed to create account. Please try again.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const submitForm = useCallback(async () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    await handleSubmit(fakeEvent);
+  }, [handleSubmit]);
 
   const handleOAuthSignUp = useCallback(
     async (provider: 'google' | 'github') => {
@@ -213,6 +221,7 @@ export default function SignupPage() {
               autoComplete="new-password"
               placeholder="Confirm your password"
               showPasswordToggle
+              onEnterPress={submitForm}
             />
           </div>
 
