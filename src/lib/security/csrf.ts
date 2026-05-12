@@ -59,15 +59,6 @@ function extractOrigin(request: Request): string | null {
   return null;
 }
 
-function getOriginFromUrl(url: string): string | null {
-  try {
-    const parsedUrl = new URL(url);
-    return parsedUrl.origin.toLowerCase();
-  } catch {
-    return null;
-  }
-}
-
 function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
   const normalizedOrigin = origin.toLowerCase().replace(/\/$/, '');
 
