@@ -1,7 +1,7 @@
 import { Logger, LogLevel, setLogLevel } from '@/lib/logger';
 import { toErrorResponse } from '@/lib/errors';
 import { redactPII } from '@/lib/pii-redaction';
-import { TEST_API_KEY_OPENAI } from './utils/test-secrets';
+import { MOCK_SECRETS } from './utils/test-secrets';
 
 describe('Security Redaction Integration', () => {
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe('Security Redaction Integration', () => {
   describe('Logger PII Redaction', () => {
     it('should redact PII in log messages', () => {
       const logger = new Logger('TestLogger');
-      const sensitiveMessage = `User email is test@example.com and key is ${TEST_API_KEY_OPENAI}`;
+      const sensitiveMessage = `User email is test@example.com and key is sk-test_abc123def456ghi789jkl012mno345`;
 
       logger.info(sensitiveMessage);
 
@@ -25,13 +25,13 @@ describe('Security Redaction Integration', () => {
       expect(logCall).toContain('[REDACTED_EMAIL]');
       expect(logCall).toContain('[REDACTED_API_KEY]');
       expect(logCall).not.toContain('test@example.com');
-      expect(logCall).not.toContain('sk-1234567890abcdef');
+      expect(logCall).not.toContain('sk-test_abc123def456ghi789jkl012mno345');
     });
 
     it('should redact PII in log arguments', () => {
       const logger = new Logger('TestLogger');
       const metadata = {
-        apiKey: TEST_API_KEY_OPENAI,
+        apiKey: MOCK_SECRETS.OPENAI_API_KEY,
         userEmail: 'test@example.com',
         safeField: 'safe',
       };
