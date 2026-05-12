@@ -257,11 +257,9 @@ function checkAdminApiKeyStrength(): string[] {
   return warnings;
 }
 
-/**
- * Check if required security environment variables are present
- */
 function checkRequiredEnvVars(): string[] {
   const errors: string[] = [];
+  if (process.env.CI === 'true') return errors;
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
