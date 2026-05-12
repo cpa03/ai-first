@@ -207,16 +207,23 @@ export function useClarificationSession(
   }, []);
 
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await fetchWithTimeout('/api/clarify', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+        const response = await fetchWithTimeout(
+          '/api/clarify',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ idea, ideaId }),
           },
-          body: JSON.stringify({ idea, ideaId }),
-        });
+          undefined,
+          abortController.signal
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -237,6 +244,9 @@ export function useClarificationSession(
 
         setQuestions(formattedQuestions);
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         logger.errorWithContext('Failed to fetch clarifying questions', {
           component: 'ClarificationFlow',
           action: 'fetchQuestions',
@@ -256,6 +266,10 @@ export function useClarificationSession(
     };
 
     fetchQuestions();
+
+    return () => {
+      abortController.abort();
+    };
   }, [idea, ideaId]);
 
   return {
