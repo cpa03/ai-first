@@ -35,6 +35,8 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
   onClear?: () => void;
   /** Shows a toggle button to show/hide password text */
   showPasswordToggle?: boolean;
+  /** Callback fired when Enter key is pressed - useful for password fields to enable quick form submission */
+  onEnterPress?: () => void;
 }
 
 const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
@@ -56,6 +58,7 @@ const InputWithValidationComponent = forwardRef<
       clearable = false,
       onClear,
       showPasswordToggle = false,
+      onEnterPress,
       className = '',
       value = '',
       onChange,
@@ -94,6 +97,16 @@ const InputWithValidationComponent = forwardRef<
     const handleBlur = useCallback(() => {
       setTouched(true);
     }, []);
+
+    const handleKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        if (e.key === 'Enter' && onEnterPress) {
+          e.preventDefault();
+          onEnterPress();
+        }
+      },
+      [onEnterPress]
+    );
 
     // Trigger shake animation when validation error appears
     useEffect(() => {
@@ -245,6 +258,7 @@ const InputWithValidationComponent = forwardRef<
               value={value}
               onChange={handleChange}
               onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
               className={`${baseInputClasses} ${textareaResizeClass} min-h-[100px] overflow-hidden`}
               aria-invalid={isInvalid}
               aria-required={props.required}
@@ -264,6 +278,7 @@ const InputWithValidationComponent = forwardRef<
               value={value}
               onChange={handleChange}
               onBlur={handleBlur}
+              onKeyDown={handleKeyDown}
               className={baseInputClasses}
               type={
                 showPasswordToggle && inputType === 'password'

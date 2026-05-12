@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
 
-  const validateForm = (): boolean => {
+  const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
     setError(null);
 
@@ -35,49 +35,57 @@ export default function LoginPage() {
     }
 
     return true;
-  };
+  }, [email, password]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    if (!validateForm()) return;
+      if (!validateForm()) return;
 
-    setIsLoading(true);
-    setError(null);
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      if (!supabaseClient) {
-        throw new Error('Authentication service not available');
+      try {
+        if (!supabaseClient) {
+          throw new Error('Authentication service not available');
+        }
+
+        const { error: signInError } =
+          await supabaseClient.auth.signInWithPassword({
+            email: email.trim(),
+            password,
+          });
+
+        if (signInError) {
+          throw signInError;
+        }
+
+        router.push('/dashboard');
+        router.refresh();
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to sign in';
+
+        if (
+          errorMessage.toLowerCase().includes('invalid') ||
+          errorMessage.toLowerCase().includes('credentials')
+        ) {
+          setError('Invalid email or password. Please try again.');
+        } else {
+          setError(errorMessage || 'Failed to sign in. Please try again.');
+        }
+      } finally {
+        setIsLoading(false);
       }
+    },
+    [validateForm, router, email, password]
+  );
 
-      const { error: signInError } =
-        await supabaseClient.auth.signInWithPassword({
-          email: email.trim(),
-          password,
-        });
-
-      if (signInError) {
-        throw signInError;
-      }
-
-      router.push('/dashboard');
-      router.refresh();
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Failed to sign in';
-
-      if (
-        errorMessage.toLowerCase().includes('invalid') ||
-        errorMessage.toLowerCase().includes('credentials')
-      ) {
-        setError('Invalid email or password. Please try again.');
-      } else {
-        setError(errorMessage || 'Failed to sign in. Please try again.');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const submitForm = useCallback(async () => {
+    const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+    await handleSubmit(fakeEvent);
+  }, [handleSubmit]);
 
   const handleOAuthSignIn = useCallback(
     async (provider: 'google' | 'github') => {
@@ -161,6 +169,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               placeholder="Enter your password"
               showPasswordToggle
+              onEnterPress={submitForm}
             />
           </div>
 
