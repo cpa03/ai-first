@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { ANIMATION_DELAYS } from '@/lib/config';
@@ -95,9 +95,15 @@ export function useBlueprintGeneration(
     };
   }, []);
 
+  // PERFORMANCE: Use useMemo for serialized answers to avoid redundant stringification
+  // and ensure it only changes when the content of answers actually changes.
+  const serializedAnswers = useMemo(() => JSON.stringify(answers), [answers]);
+
   // Generate blueprint with delay
   useEffect(() => {
     let isCancelled = false;
+    // Ensure loading state is shown when inputs change
+    setIsGenerating(true);
 
     const generateBlueprint = async () => {
       await new Promise((resolve) =>
@@ -119,7 +125,8 @@ export function useBlueprintGeneration(
     return () => {
       isCancelled = true;
     };
-  }, [idea, answers]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [idea, serializedAnswers]);
 
   /**
    * Downloads the blueprint as a markdown file
@@ -182,13 +189,25 @@ export function useBlueprintGeneration(
     setShowCelebration(false);
   }, []);
 
-  return {
-    isGenerating,
-    blueprint,
-    copied,
-    showCelebration,
-    handleDownload,
-    handleCopy,
-    dismissCelebration,
-  };
+  // PERFORMANCE: Memoize return object to ensure referential stability
+  return useMemo(
+    () => ({
+      isGenerating,
+      blueprint,
+      copied,
+      showCelebration,
+      handleDownload,
+      handleCopy,
+      dismissCelebration,
+    }),
+    [
+      isGenerating,
+      blueprint,
+      copied,
+      showCelebration,
+      handleDownload,
+      handleCopy,
+      dismissCelebration,
+    ]
+  );
 }
