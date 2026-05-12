@@ -148,7 +148,7 @@ const LIGHTHOUSE_CONFIG = {
   /**
    * Public pages to audit
    */
-  PAGES: ['/'],
+  PAGES: ['/', '/login', '/signup'],
 
   /**
    * Pages requiring authentication (skipped)
