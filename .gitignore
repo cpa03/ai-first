@@ -114,11 +114,8 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-# .jules/ is used for persistence and security journals
-.jules/
-!.jules/bolt.md
-!.jules/sentinel.md
-.Jules/
+# .jules/ was used for Bolt AI - now removed
+# .sisyphus/ is for Sisyphus agent state persistence
 .sisyphus/
 
 # OpenCode CLI - ignore auto-generated node_modules
