@@ -15,6 +15,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
+import { OPTIMISTIC_MUTATION_CONFIG } from '@/lib/config/constants';
 
 export interface OptimisticMutationOptions<T, TVariables> {
   /** The async function that performs the actual mutation */
@@ -69,8 +70,8 @@ export function useOptimisticMutation<T, TVariables>(
     onRollback,
     onSuccess,
     onError,
-    maxRetries = 2,
-    retryDelay = 1000,
+    maxRetries = OPTIMISTIC_MUTATION_CONFIG.DEFAULT_MAX_RETRIES,
+    retryDelay = OPTIMISTIC_MUTATION_CONFIG.DEFAULT_RETRY_DELAY_MS,
   } = options;
 
   const [isPending, setIsPending] = useState(false);
