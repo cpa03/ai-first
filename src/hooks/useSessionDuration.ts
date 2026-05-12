@@ -7,6 +7,7 @@ import {
   trackPageTime,
   flush,
 } from '@/lib/session-analytics';
+import { SESSION_TRACKING_CONFIG } from '@/lib/config/session-tracking';
 
 /**
  * Hook for tracking session duration and page time
@@ -47,8 +48,7 @@ export function useSessionDuration() {
     const timeSpent = Date.now() - pageStartTime.current;
     const currentPath = window.location.pathname;
 
-    // Only track if more than 1 second (filters quick navigations)
-    if (timeSpent >= 1000 && currentPath) {
+    if (timeSpent >= SESSION_TRACKING_CONFIG.MIN_PAGE_TIME_MS && currentPath) {
       trackPageTime(currentPath, timeSpent);
     }
   }, []);
