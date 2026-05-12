@@ -134,6 +134,13 @@ export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
 // ENV_CONFIG contains runtime environment metadata
 export { EnvLoader, ENV_CONFIG } from './environment';
 
+// Cloudflare Platform Configuration
+export {
+  CF_CACHE_TTL,
+  CF_LIMITS,
+  CLOUDFLARE_CONFIG,
+} from './cloudflare-config';
+
 // External API Versions Configuration (extracted from constants.ts)
 export {
   EXTERNAL_API_VERSIONS,
