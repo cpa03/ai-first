@@ -440,17 +440,14 @@ describe('useClarificationSession', () => {
     renderHook(() => useClarificationSession(mockIdea, ideaId, mockOnComplete));
 
     await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalledWith(
-        '/api/clarify',
-        expect.objectContaining({
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ idea: mockIdea, ideaId }),
-        })
-      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
     });
+
+    const [[url, options]] = mockFetch.mock.calls;
+    expect(url).toBe('/api/clarify');
+    expect(options.method).toBe('POST');
+    expect(options.headers['Content-Type']).toBe('application/json');
+    expect(options.body).toBe(JSON.stringify({ idea: mockIdea, ideaId }));
   });
 
   it('returns correct types', async () => {
