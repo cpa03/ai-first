@@ -575,3 +575,145 @@ export type AnimationPhysics = typeof ANIMATION_PHYSICS;
 export type ButtonStyles = typeof BUTTON_STYLES;
 export type AlertStyles = typeof ALERT_STYLES;
 export type AnimationDelays = typeof ANIMATION_DELAYS;
+
+/**
+ * Action Colors for Dashboard and Table Actions
+ * Centralizes action button colors (continue, view, delete, etc.)
+ * Eliminates hardcoded color classes in dashboard and results pages
+ */
+export const ACTION_COLORS = {
+  /** Continue action - typically primary brand color */
+  CONTINUE: {
+    text: 'text-primary-600',
+    hoverText: 'hover:text-primary-900',
+    bg: '',
+    hoverBg: 'hover:bg-primary-50',
+    ariaLabel: 'Continue working on this idea',
+  },
+  /** View action - green for positive action */
+  VIEW: {
+    text: 'text-green-600',
+    hoverText: 'hover:text-green-900',
+    bg: '',
+    hoverBg: 'hover:bg-green-50',
+    ariaLabel: 'View blueprint',
+  },
+  /** Delete action - red for destructive action */
+  DELETE: {
+    text: 'text-red-600',
+    hoverText: 'hover:text-red-900',
+    bg: '',
+    hoverBg: 'hover:bg-red-50',
+    ariaLabel: 'Delete this item',
+  },
+  /** Edit action - indigo for secondary action */
+  EDIT: {
+    text: 'text-indigo-600',
+    hoverText: 'hover:text-indigo-900',
+    bg: '',
+    hoverBg: 'hover:bg-indigo-50',
+    ariaLabel: 'Edit this item',
+  },
+} as const;
+
+/**
+ * Table Component Patterns
+ * Centralizes table styling for dashboard and other list views
+ * Eliminates hardcoded Tailwind classes in table components
+ */
+export const TABLE_PATTERNS = {
+  /** Table container */
+  container: 'w-full',
+  /** Table header styles */
+  header: {
+    container: 'bg-gray-50',
+    cell: 'px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider',
+  },
+  /** Table body row styles */
+  row: {
+    default: '',
+    hover: 'hover:bg-gray-50',
+    even: '',
+    odd: '',
+  },
+  /** Table cell styles */
+  cell: {
+    padding: 'px-6 py-4 whitespace-nowrap',
+    text: 'text-sm text-gray-500',
+    primary: 'text-sm font-medium text-gray-900',
+  },
+  /** Actions cell */
+  actions: {
+    container: 'px-6 py-4 whitespace-nowrap text-right text-sm font-medium',
+    buttonGroup: 'flex justify-end gap-2',
+    buttonBase: 'px-2 py-1 rounded transition-colors',
+  },
+  /** Status badge styles */
+  statusBadge: {
+    base: 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
+  },
+} as const;
+
+/**
+ * Modal Component Patterns
+ * Centralizes modal/dialog styling
+ * Eliminates hardcoded Tailwind classes in modal components
+ */
+export const MODAL_PATTERNS = {
+  /** Overlay/backdrop */
+  overlay: 'fixed inset-0 bg-gray-900/50',
+  /** Modal container */
+  container: 'fixed inset-0 z-50 flex items-center justify-center p-4',
+  /** Modal content box */
+  content: {
+    container: 'bg-white rounded-lg shadow-lg p-8 max-w-md w-full',
+    transition: 'transition-all duration-200',
+  },
+  /** Modal header */
+  header: {
+    container: 'mb-6',
+    title: 'text-lg font-semibold text-gray-900',
+    description: 'text-gray-600 mb-6',
+  },
+  /** Modal footer with buttons */
+  footer: {
+    container: 'flex justify-end gap-3',
+    button: 'px-4 py-2 rounded-md transition-colors',
+    cancelButton: 'bg-gray-200 text-gray-600 hover:bg-gray-300',
+    confirmButton: 'bg-red-600 text-white hover:bg-red-700',
+  },
+  /** Close button */
+  closeButton: {
+    iconSize: 'w-5 h-5',
+    iconColor: 'text-red-600',
+  },
+  /** Danger zone icon */
+  dangerIcon: {
+    container:
+      'w-10 h-10 rounded-full bg-red-100 flex items-center justify-center',
+    icon: 'w-5 h-5 text-red-600',
+  },
+} as const;
+
+/**
+ * Spinner Component Patterns
+ * Centralizes loading spinner styling
+ * Eliminates hardcoded Tailwind classes in loading components
+ */
+export const SPINNER_PATTERNS = {
+  /** Default spinner */
+  default: {
+    size: {
+      sm: 'h-4 w-4',
+      md: 'h-8 w-8',
+      lg: 'h-12 w-12',
+    },
+    border: 'border-b-2',
+    borderColor: 'border-indigo-600',
+    borderColorAlt: 'border-transparent',
+  },
+  /** Loading placeholder for dynamic imports */
+  placeholder: {
+    container: 'px-4 py-2 bg-gray-200 rounded-md text-gray-600',
+  },
+} as const;

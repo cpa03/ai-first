@@ -7,13 +7,14 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
+import { SPINNER_PATTERNS } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
   loading: () => (
-    <button className="px-4 py-2 bg-gray-200 rounded-md text-gray-600" disabled>
+    <button className={SPINNER_PATTERNS.placeholder.container} disabled>
       Loading...
     </button>
   ),
@@ -23,7 +24,9 @@ const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
   ssr: false,
   loading: () => (
     <div className="flex justify-center items-center">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      <div
+        className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.md} ${SPINNER_PATTERNS.default.border} ${SPINNER_PATTERNS.default.borderColor}`}
+      ></div>
     </div>
   ),
 });
@@ -40,14 +43,18 @@ const Tooltip = dynamic(() => import('@/components/Tooltip'), {
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
   ssr: false,
   loading: () => (
-    <button className="px-4 py-2 bg-gray-200 rounded-md">Loading...</button>
+    <button className={SPINNER_PATTERNS.placeholder.container}>
+      Loading...
+    </button>
   ),
 });
 
 const EmailButton = dynamic(() => import('@/components/EmailButton'), {
   ssr: false,
   loading: () => (
-    <button className="px-4 py-2 bg-gray-200 rounded-md">Loading...</button>
+    <button className={SPINNER_PATTERNS.placeholder.container}>
+      Loading...
+    </button>
   ),
 });
 
