@@ -47,6 +47,21 @@ export const RETRY_CONFIG = {
   ENABLE_JITTER: EnvLoader.boolean('RETRY_ENABLE_JITTER', true),
 } as const;
 
+export const OPTIMISTIC_MUTATION_CONFIG = {
+  DEFAULT_MAX_RETRIES: EnvLoader.number(
+    'OPTIMISTIC_MUTATION_MAX_RETRIES',
+    2,
+    0,
+    10
+  ),
+  DEFAULT_RETRY_DELAY_MS: EnvLoader.number(
+    'OPTIMISTIC_MUTATION_RETRY_DELAY_MS',
+    1000,
+    100,
+    60000
+  ),
+} as const;
+
 /**
  * UI configuration
  */
@@ -752,8 +767,6 @@ export const VALIDATION_LIMITS = {
       AGENT_CONFIG.DATABASE.HEALTH_CHECK_STALE_THRESHOLD_MS,
   } as const,
 } as const;
-
-
 
 /**
  * Rate limit statistics configuration

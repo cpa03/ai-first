@@ -74,6 +74,16 @@ export const UI_CONFIG = {
       10000
     ),
   },
+
+  ACCESSIBILITY: {
+    /** Env: UI_STATUS_ANNOUNCER_DELAY_MS (default: 100) */
+    STATUS_ANNOUNCER_DELAY_MS: EnvLoader.number(
+      'UI_STATUS_ANNOUNCER_DELAY_MS',
+      100,
+      0,
+      1000
+    ),
+  },
 } as const;
 
 export const LABELS = {

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, memo } from 'react';
+import { UI_CONFIG } from '@/lib/config/ui';
 
 interface StatusAnnouncerProps {
   message: string;
@@ -12,7 +13,7 @@ interface StatusAnnouncerProps {
 function StatusAnnouncerComponent({
   message,
   politeness = 'polite',
-  delay = 100,
+  delay = UI_CONFIG.ACCESSIBILITY.STATUS_ANNOUNCER_DELAY_MS,
   triggered = true,
 }: StatusAnnouncerProps) {
   const announcerRef = useRef<HTMLDivElement>(null);

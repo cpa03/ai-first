@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import CopyButton from './CopyButton';
 import { createLogger } from '@/lib/logger';
+import { APP_CONFIG } from '@/lib/config/app';
 
 // Logger for growth tracking events
 const logger = createLogger('ReferralLink');
@@ -33,7 +34,7 @@ export default function ReferralLink({
   referralCode,
   baseUrl = typeof window !== 'undefined'
     ? window.location.origin
-    : 'https://ideaflow.ai',
+    : APP_CONFIG.URLS.BASE,
   onView,
   onCopy,
   className = '',
