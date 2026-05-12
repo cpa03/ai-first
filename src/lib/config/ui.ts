@@ -138,6 +138,16 @@ export const MESSAGES = {
     PROCESSING_BUTTON: 'Processing...',
     KEYBOARD_SHORTCUT_LABEL: (isMac: boolean) =>
       `Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`,
+    ENCOURAGEMENT: [
+      'Great start! The more detail you provide, the better your blueprint will be.',
+      'Think about the end result you want to achieve.',
+      'Consider mentioning any specific constraints or requirements.',
+      'Including your target audience helps us create a better plan.',
+      "Don't worry about perfection - we'll help clarify the details!",
+      'Specific examples make your blueprint even more actionable.',
+      "Mentioning the problem you're solving helps prioritize features.",
+      'Your context helps us tailor recommendations to your situation.',
+    ],
   },
   BLUEPRINT: {
     COPY_BUTTON: 'Copy to Clipboard',

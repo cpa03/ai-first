@@ -43,12 +43,27 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   const [successMessage, setSuccessMessage] = useState('');
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-  // Focus management: Focus input after successful submission for better UX
-  // This allows users to quickly submit another idea without clicking
+  const encouragementMessages = MESSAGES.IDEA_INPUT.ENCOURAGEMENT;
+
+  const getEncouragementMessage = useCallback(() => {
+    const length = idea.trim().length;
+    if (length === 0) return null;
+    if (length < MIN_IDEA_LENGTH * 0.5) return encouragementMessages[0];
+    if (length < MIN_IDEA_LENGTH) return encouragementMessages[1];
+    if (length < MAX_IDEA_LENGTH * 0.3) return encouragementMessages[2];
+    if (length < MAX_IDEA_LENGTH * 0.5) return encouragementMessages[3];
+    if (length < MAX_IDEA_LENGTH * 0.7) return encouragementMessages[6];
+    return null;
+  }, [idea, encouragementMessages]);
+
+  const writingProgress = Math.min(
+    (idea.trim().length / MAX_IDEA_LENGTH) * 100,
+    100
+  );
+
   const focusInput = useCallback(() => {
     const input = inputRef.current;
     if (input) {
-      // Use requestAnimationFrame to ensure DOM is ready after state changes
       requestAnimationFrame(() => {
         input.focus();
       });
@@ -62,9 +77,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   const handleIdeaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-      const newValue = e.target.value;
-      setIdea(newValue);
-      setValidationError(validateIdea(newValue));
+      setIdea(e.target.value);
+      setValidationError(validateIdea(e.target.value));
     },
     []
   );
@@ -182,6 +196,30 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           autoFocus
           className="min-h-[120px]"
         />
+
+        {getEncouragementMessage() && (
+          <p
+            className="text-sm text-primary-600 animate-fade-in"
+            role="status"
+            aria-live="polite"
+          >
+            {getEncouragementMessage()}
+          </p>
+        )}
+
+        {writingProgress > 5 && (
+          <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary-400 to-primary-600 transition-all duration-300 ease-out rounded-full"
+              style={{ width: `${writingProgress}%` }}
+              role="progressbar"
+              aria-valuenow={Math.round(writingProgress)}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-label="Writing progress"
+            />
+          </div>
+        )}
 
         {error && (
           <div className="slide-up">
