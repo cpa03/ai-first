@@ -2,3 +2,8 @@
 **Vulnerability:** The rate-limiting logic in `src/lib/rate-limit.ts` was using the first 32 characters of the `Authorization` token as a user identifier. Since JWT headers are often identical for all users of an application, this caused all authenticated users to share a single rate-limit bucket, allowing a single user to trigger a global Denial of Service for all authenticated users.
 **Learning:** Modern authentication tokens like JWTs have a common header structure. Using a simple prefix for identification is insecure as it lacks sufficient entropy to distinguish between different users.
 **Prevention:** Always hash the entire token (or extract the unique `sub` claim) when using it for identification purposes. Implementing a consistent, 32-bit precision hash like djb2 with bitwise wrapping ensures collision resistance and cross-environment stability.
+
+## 2026-05-12 - Hardened CSRF missing header bypass
+**Vulnerability:** CSRF protection in `src/lib/security/csrf.ts` allowed state-changing requests (POST, PUT, etc.) to proceed even if they lacked both `Origin` and `Referer` headers. This created a bypass for browser-based CSRF attacks if the attacker could suppress these headers.
+**Learning:** Security logic often defaults to "allow" for edge cases (like missing headers) to avoid breaking unknown clients. However, for CSRF, browsers naturally send these headers, and their absence should be treated as suspicious for session-based requests.
+**Prevention:** Implement "fail secure" logic for CSRF by rejecting requests without origin indicators, while providing an explicit bypass for non-browser API traffic (detected via `Authorization` or custom API key headers) to maintain interoperability without compromising browser security.

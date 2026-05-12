@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { generateRequestId } from './errors';
+import { simpleHash } from './security/crypto';
 
 export interface RateLimitInfo {
   limit: number;
@@ -213,20 +214,6 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
   return detectCloudflarePlatform();
 }
 
-/**
- * Simple, fast hash function (djb2) for non-cryptographic use.
- * Optimized for performance and 32-bit precision across environments.
- */
-function simpleHash(str: string): string {
-  let hash = 5381;
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    // Use bitwise OR with 0 to ensure 32-bit integer operations
-    hash = (((hash << 5) + hash) ^ char) | 0;
-  }
-  // Convert to unsigned 32-bit and then base36 for a compact string
-  return (hash >>> 0).toString(36);
-}
 
 /**
  * Generate a request fingerprint for fallback rate limiting
