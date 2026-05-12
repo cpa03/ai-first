@@ -9,3 +9,7 @@
 ## 2025-05-15 - Referential Stability in Configuration Hooks
 **Learning:** Even simple hooks providing configuration or A/B test flags (like `useABTest`) can cause cascading re-renders if they return new object instances on every render. This is particularly problematic when these objects are used in `useEffect` dependency arrays or passed to `React.memo` components.
 **Action:** Proactively wrap return objects in `useMemo` and functions in `useCallback` for all custom hooks to ensure consistent identity across renders.
+
+## 2026-05-12 - Optimized useBlueprintGeneration for Referential Stability and Efficient Dependency Tracking
+**Learning:** Using `JSON.stringify` directly in a `useEffect` dependency array without memoization adds redundant overhead. Wrapping the stringification in `useMemo` and using that as the dependency provides stable, content-based tracking for objects. This prevents expensive effect re-runs when object references change but their content remains identical.
+**Action:** Use `useMemo(() => JSON.stringify(obj), [obj])` for deep-equality dependencies in effects, and always fully memoize hook return objects to ensure referential stability for consumers.
