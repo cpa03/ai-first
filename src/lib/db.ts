@@ -4,6 +4,7 @@ import { redactPIIInObject } from './pii-redaction';
 import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
 import { AGENT_CONFIG, VALIDATION_LIMITS } from './config/constants';
+import * as dbTypes from './db/types';
 
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
@@ -593,7 +594,8 @@ export class DatabaseService {
         ]);
 
         const timedOut =
-          error instanceof Error && error.message === 'Admin health check timeout';
+          error instanceof Error &&
+          error.message === 'Admin health check timeout';
 
         if (timedOut) {
           logger.warn(
@@ -1599,3 +1601,6 @@ export const dbService = DatabaseService.getInstance();
 
 // Export types for external use
 export type { Database };
+
+// Re-export types from modules for future use (backward compatible)
+export type { dbTypes as DbTypes };
