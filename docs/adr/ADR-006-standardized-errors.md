@@ -108,6 +108,6 @@ try {
 
 ## References
 
-- [Error Codes Reference](./error-codes.md)
-- [Error Implementation](./src/lib/errors.ts)
-- [API Error Handling](./api.md#error-responses)
+- [Error Codes Reference](../error-codes.md)
+- [Error Implementation](https://github.com/cpa03/ai-first/blob/main/src/lib/errors.ts)
+- [API Error Handling](../api.md#error-responses)

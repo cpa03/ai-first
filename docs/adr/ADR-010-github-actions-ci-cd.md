@@ -106,5 +106,5 @@ jobs:
 ## References
 
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
-- [CI/CD Pipeline](./deploy.md#cicd-pipeline)
-- [Workflow Files](./.github/workflows/)
+- [CI/CD Pipeline](../deploy.md#cicd-pipeline)
+- [Workflow Files](https://github.com/cpa03/ai-first/tree/main/.github/workflows)

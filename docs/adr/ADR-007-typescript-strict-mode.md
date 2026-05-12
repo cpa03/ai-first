@@ -94,5 +94,5 @@ function getUserName(user: User | null): string {
 ## References
 
 - [TypeScript Strict Mode](https://www.typescriptlang.org/tsconfig#strict)
-- [tsconfig.json](./tsconfig.json)
-- [Contributing Guidelines](./CONTRIBUTING.md)
+- [tsconfig.json](https://github.com/cpa03/ai-first/blob/main/tsconfig.json)
+- [Contributing Guidelines](../../CONTRIBUTING.md)

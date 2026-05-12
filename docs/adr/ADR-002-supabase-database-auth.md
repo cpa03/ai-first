@@ -62,5 +62,5 @@ Use Supabase as the primary backend service, leveraging:
 ## References
 
 - [Supabase Documentation](https://supabase.com/docs)
-- [Supabase Schema](./database-schema.md)
-- [Auth Implementation](./architecture.md#authentication)
+- [Supabase Schema](../database-schema.md)
+- [Auth Implementation](../architecture.md#authentication)

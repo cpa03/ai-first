@@ -82,7 +82,7 @@ await eventBus.emit({
 
 ## References
 
-- [Agent Configuration](./agent-config.md)
+- [Agent Configuration](../.opencode/agents/CMZ.md)
 - [Skills Library](../.opencode/skills/)
 - [CMZ Agent Configuration](../.opencode/agents/CMZ.json)
 
