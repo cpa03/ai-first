@@ -85,6 +85,6 @@ export async function GET(request: Request) {
 
 ## References
 
-- [Rate Limit Implementation](./error-codes.md#rate-limiting)
-- [Rate Limit Configuration](./api.md#rate-limits)
-- [Security Headers](./security-headers.md)
+- [Rate Limit Implementation](../error-codes.md#rate-limiting)
+- [Rate Limit Configuration](../api.md#rate-limits)
+- [Security Headers](../integration-hardening.md)

@@ -1397,7 +1397,7 @@ All documentation links in README.md verified:
 #### Completed Work
 
 1. **Updated docs/README.md**
-   - Added [Memory Management](./memory-management.md) to Quality & Security section
+   - Added [Memory Management](../memory-management.md) to Quality & Security section
    - File documents memory leak prevention and bounded cache configurations
 
 2. **Updated README.md**

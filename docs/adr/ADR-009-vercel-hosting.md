@@ -80,6 +80,6 @@ ANTHROPIC_API_KEY=sk-ant-...
 
 ## References
 
-- [Deployment Guide](./deploy.md)
+- [Deployment Guide](../deploy.md)
 - [Vercel Dashboard](https://vercel.com/dashboard)
 - [Next.js Deployment](https://nextjs.org/docs/deployment)

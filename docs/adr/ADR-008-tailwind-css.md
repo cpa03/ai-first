@@ -103,4 +103,4 @@ module.exports = {
 ## References
 
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [Styling Guide](./frontend-engineer.md)
+- [Styling Guide](../frontend-engineer.md)

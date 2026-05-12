@@ -493,7 +493,7 @@ Update `docs/technical-writer-tasks.md` with completed work:
 
 ### Task Tracking
 
-- [Technical Writer Tasks](./technical-writer-tasks.md) - Completed work history
+- [Technical Writer Tasks](./archive/2026-05-11_technical-writer-tasks_archived.md) - Completed work history
 
 ---
 

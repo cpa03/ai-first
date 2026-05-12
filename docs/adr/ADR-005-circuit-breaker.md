@@ -91,6 +91,6 @@ const result = await resilient(() => openai.chat.completions.create(messages), {
 
 ## References
 
-- [Resilience Module](./integration-hardening.md)
-- [Circuit Breaker Implementation](./src/lib/resilience/circuit-breaker.ts)
-- [Resilience Configuration](./src/lib/resilience/config.ts)
+- [Resilience Module](../integration-hardening.md)
+- [Circuit Breaker Implementation](https://github.com/cpa03/ai-first/blob/main/src/lib/resilience/circuit-breaker.ts)
+- [Resilience Configuration](https://github.com/cpa03/ai-first/blob/main/src/lib/resilience/config.ts)
