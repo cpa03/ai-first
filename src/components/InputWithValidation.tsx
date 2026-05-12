@@ -348,13 +348,13 @@ const InputWithValidationComponent = forwardRef<
 
           {showClearButton && (
             <div
-              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? 'right-10' : 'right-3'}`}
+              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? 'right-12' : 'right-3'}`}
             >
               <Tooltip content={`Clear ${label}`} position="top">
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200 disabled:opacity-0"
+                  className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200 disabled:opacity-0"
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -378,7 +378,7 @@ const InputWithValidationComponent = forwardRef<
 
           {showPasswordToggle && !multiline && (
             <div
-              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-10' : 'right-3'}`}
+              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-12' : 'right-3'}`}
             >
               <Tooltip
                 content={passwordVisible ? 'Hide password' : 'Show password'}
@@ -387,7 +387,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={() => setPasswordVisible(!passwordVisible)}
-                  className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
+                  className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
                   aria-label={
                     passwordVisible ? 'Hide password' : 'Show password'
                   }

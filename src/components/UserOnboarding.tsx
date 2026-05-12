@@ -309,7 +309,7 @@ export default function UserOnboarding() {
         {/* Navigation buttons */}
         <div className="flex items-center justify-between mt-5">
           {/* Step indicator */}
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-500">
             Step {currentStepIndex + 1} of {TOUR_STEPS.length}
           </span>
 
