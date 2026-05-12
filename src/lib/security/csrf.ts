@@ -77,24 +77,6 @@ function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
     if (normalizedOrigin === normalizedTrusted) {
       return true;
     }
-
-    // Check for exact subdomain match on Vercel (not all .vercel.app subdomains)
-    if (
-      normalizedTrusted.includes('.vercel.app') &&
-      normalizedOrigin.endsWith('.vercel.app') &&
-      normalizedOrigin === normalizedTrusted
-    ) {
-      return true;
-    }
-
-    // Check for exact subdomain match on Cloudflare Pages (not all .pages.dev subdomains)
-    if (
-      normalizedTrusted.includes('.pages.dev') &&
-      normalizedOrigin.endsWith('.pages.dev') &&
-      normalizedOrigin === normalizedTrusted
-    ) {
-      return true;
-    }
   }
 
   return false;
@@ -123,36 +105,41 @@ export function validateCSRF(
   }
 
   const origin = extractOrigin(request);
+  const requestId = request.headers.get('x-request-id');
 
   if (!origin) {
-    const requestUrl = request.url;
-    const requestOrigin = getOriginFromUrl(requestUrl);
+    // Allow requests without Origin/Referer if they have an Authorization or API Key header
+    // These are typical for server-to-server or CLI-based API requests and are
+    // inherently protected against CSRF as they aren't automatically sent by browsers.
+    const hasAuthHeader =
+      request.headers.has('authorization') || request.headers.has('x-api-key');
 
-    if (requestOrigin && isTrustedOrigin(requestOrigin, trustedOrigins)) {
-      return { valid: true, origin: requestOrigin };
+    if (hasAuthHeader) {
+      return { valid: true };
     }
 
     SecurityAuditLog.logEvent({
       timestamp: new Date().toISOString(),
-      category: 'configuration',
-      severity: 'low',
-      message:
-        'Request without origin header allowed (potential server-to-server)',
+      category: 'authentication',
+      severity: 'high',
+      message: 'CSRF validation failed: missing origin/referer headers',
+      requestId: requestId || undefined,
       metadata: {
         method,
-        url: requestUrl,
+        url: request.url,
       },
       environment: process.env.NODE_ENV || 'unknown',
     });
 
-    return { valid: true };
+    return {
+      valid: false,
+      error: 'Missing Origin or Referer header.',
+    };
   }
 
   if (isTrustedOrigin(origin, trustedOrigins)) {
     return { valid: true, origin };
   }
-
-  const requestId = request.headers.get('x-request-id');
 
   SecurityAuditLog.logEvent({
     timestamp: new Date().toISOString(),

@@ -72,4 +72,27 @@ describe('CSRF Security', () => {
     const result = validateCSRF(request);
     expect(result.valid).toBe(true);
   });
+
+  it('should REJECT state-changing requests with NO origin or referer header', () => {
+    const request = new Request('https://myapp.com/api/action', {
+      method: 'POST',
+      headers: {}
+    });
+
+    const result = validateCSRF(request);
+    expect(result.valid).toBe(false);
+    expect(result.error).toContain('Missing Origin or Referer header');
+  });
+
+  it('should ALLOW state-changing requests with NO origin header IF they have an Authorization header', () => {
+    const request = new Request('https://myapp.com/api/action', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer my-token'
+      }
+    });
+
+    const result = validateCSRF(request);
+    expect(result.valid).toBe(true);
+  });
 });
