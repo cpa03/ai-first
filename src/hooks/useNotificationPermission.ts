@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createLogger } from '@/lib/logger';
 
 const logger = createLogger('useNotificationPermission');
@@ -111,13 +111,18 @@ export function useNotificationPermission(): NotificationPermissionState {
     init();
   }, [checkPermission]);
 
-  return {
-    permission,
-    isSupported,
-    isLoading,
-    requestPermission,
-    checkPermission,
-  };
+  // PERFORMANCE: Memoize the return object to ensure referential stability.
+  // This prevents unnecessary re-renders in consumer components that use this hook.
+  return useMemo(
+    () => ({
+      permission,
+      isSupported,
+      isLoading,
+      requestPermission,
+      checkPermission,
+    }),
+    [permission, isSupported, isLoading, requestPermission, checkPermission]
+  );
 }
 
 export default useNotificationPermission;
