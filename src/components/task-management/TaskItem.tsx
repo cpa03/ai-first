@@ -26,6 +26,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onToggle(task.id, task.status);
+      }
+    },
+    [onToggle, task.id, task.status]
+  );
+
   const checkmarkStyle = useMemo(
     () => ({
       strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
@@ -53,13 +63,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     return `${baseClasses} ${stateClasses}`;
   }, [isCompleted]);
 
-  const tooltipContent = isCompleted ? 'Mark as incomplete' : 'Mark as complete';
+  const tooltipContent = isCompleted
+    ? 'Mark as incomplete'
+    : 'Mark as complete';
 
   return (
     <div className={TASK_ITEM_STYLES.CONTAINER}>
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}
+          onKeyDown={handleKeyDown}
           disabled={isUpdating}
           className={checkboxClasses}
           aria-label={TASK_MANAGEMENT_MESSAGES.ARIA.CHECKBOX_LABEL(
