@@ -64,7 +64,8 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       className = '',
       onClick,
-      ...props
+      onKeyDown,
+      ...restProps
     },
     ref
   ) => {
@@ -80,19 +81,43 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     }, []);
 
     const createRipple = useCallback(
-      (event: React.MouseEvent<HTMLButtonElement>) => {
-        onClick?.(event);
+      (
+        event:
+          | React.MouseEvent<HTMLButtonElement>
+          | React.KeyboardEvent<HTMLButtonElement>
+      ) => {
+        const isKeyboardEvent = event.type === 'keydown';
+
+        if (isKeyboardEvent) {
+          const keyboardEvent = event as React.KeyboardEvent<HTMLButtonElement>;
+          if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+            keyboardEvent.preventDefault();
+            onClick?.(
+              keyboardEvent as unknown as React.MouseEvent<HTMLButtonElement>
+            );
+          } else {
+            return;
+          }
+        } else {
+          onClick?.(event as React.MouseEvent<HTMLButtonElement>);
+        }
 
         if (disabled || loading || prefersReducedMotion) return;
 
         const button = event.currentTarget;
         const rect = button.getBoundingClientRect();
         const size = Math.max(rect.width, rect.height);
-        const x = event.clientX - rect.left - size / 2;
-        const y = event.clientY - rect.top - size / 2;
 
-        // Generate unique ID for ripple - prevents unbounded counter growth
-        // Using timestamp + random string ensures uniqueness without state
+        let x: number, y: number;
+        if (isKeyboardEvent) {
+          x = rect.width / 2 - size / 2;
+          y = rect.height / 2 - size / 2;
+        } else {
+          const mouseEvent = event as React.MouseEvent<HTMLButtonElement>;
+          x = mouseEvent.clientX - rect.left - size / 2;
+          y = mouseEvent.clientY - rect.top - size / 2;
+        }
+
         const rippleId = `ripple-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
         const newRipple: Ripple = {
           id: rippleId,
@@ -111,6 +136,17 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       [disabled, loading, onClick, prefersReducedMotion]
     );
 
+    // Handle keyboard activation for ripple effect
+    const handleKeyDown = useCallback(
+      (event: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          createRipple(event);
+        }
+        onKeyDown?.(event);
+      },
+      [createRipple, onKeyDown]
+    );
+
     const stateClasses =
       disabled || loading
         ? BUTTON_STYLES.STATES.disabled
@@ -121,6 +157,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         onClick={createRipple}
+        onKeyDown={handleKeyDown}
         className={`
           ${BUTTON_STYLES.VARIANTS[variant]}
           ${BUTTON_STYLES.SIZES[size]}
@@ -131,7 +168,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           ${className}
         `}
         aria-busy={loading}
-        {...props}
+        {...restProps}
       >
         {loading && (
           <svg
