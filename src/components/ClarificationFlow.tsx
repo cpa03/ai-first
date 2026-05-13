@@ -23,6 +23,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
+import Skeleton from '@/components/Skeleton';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
 
 interface ClarificationFlowProps {
@@ -72,6 +73,41 @@ function ClarificationFlow({
             {MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
           </p>
         </div>
+
+        <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 mt-6 space-y-6 animate-fade-in">
+          <div className="space-y-3">
+            <Skeleton className="h-6 w-3/4" variant="text" />
+            <Skeleton className="h-4 w-full" variant="text" />
+            <Skeleton className="h-4 w-5/6" variant="text" />
+          </div>
+
+          <div className="space-y-4">
+            <Skeleton className="h-10 w-full" variant="rect" />
+            <Skeleton className="h-24 w-full" variant="rect" />
+          </div>
+
+          <div className="flex justify-between items-center pt-4">
+            <Skeleton className="h-10 w-24" variant="rect" />
+            <Skeleton className="h-10 w-28" variant="rect" />
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-center gap-2">
+          <div className="flex gap-1.5">
+            {[0, 1, 2].map((i) => (
+              <div
+                key={i}
+                className="w-2 h-2 rounded-full bg-primary-200 animate-pulse"
+                style={{
+                  animationDelay: `${i * 200}ms`,
+                  animationDuration: '1s',
+                }}
+              />
+            ))}
+          </div>
+          <span className="text-xs text-gray-500">Preparing questions...</span>
+        </div>
+
         {error && (
           <div className="mb-6 slide-up">
             <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
