@@ -8,10 +8,7 @@ export const metadata: Metadata = {
   title: 'Sign Up | IdeaFlow',
   description:
     'Create your IdeaFlow account and start transforming your ideas into actionable projects with AI-powered planning.',
-  robots: {
-    index: false,
-    follow: false,
-  },
+  robots: 'index, follow',
 };
 
 export default function SignupLayout({

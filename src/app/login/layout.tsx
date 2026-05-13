@@ -8,10 +8,7 @@ export const metadata: Metadata = {
   title: 'Login | IdeaFlow',
   description:
     'Sign in to your IdeaFlow account to continue turning your ideas into actionable projects.',
-  robots: {
-    index: false,
-    follow: false,
-  },
+  robots: 'index, follow',
 };
 
 export default function LoginLayout({
