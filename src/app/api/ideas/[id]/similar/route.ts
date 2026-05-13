@@ -5,6 +5,8 @@ import {
 } from '@/lib/api-handler';
 import { requireAuth } from '@/lib/auth';
 import { findSimilarIdeas } from '@/lib/similarity-service';
+import { ValidationError } from '@/lib/errors';
+import { APP_CONFIG } from '@/lib/config/app';
 
 /**
  * GET /api/ideas/[id]/similar
@@ -22,6 +24,50 @@ async function handleGet(context: ApiContext) {
 
   const limit = parseInt(url.searchParams.get('limit') || '5', 10);
   const threshold = parseFloat(url.searchParams.get('threshold') || '0.7');
+
+  // Validate pagination parameters to prevent DoS attacks
+  if (Number.isNaN(limit) || !Number.isFinite(limit)) {
+    throw new ValidationError([
+      {
+        field: 'limit',
+        message: 'Invalid limit parameter: must be a valid number',
+      },
+    ]);
+  }
+  if (limit < APP_CONFIG.PAGINATION.MIN_LIMIT) {
+    throw new ValidationError([
+      {
+        field: 'limit',
+        message: `Limit must be at least ${APP_CONFIG.PAGINATION.MIN_LIMIT}`,
+      },
+    ]);
+  }
+  if (limit > APP_CONFIG.PAGINATION.MAX_LIMIT) {
+    throw new ValidationError([
+      {
+        field: 'limit',
+        message: `Limit cannot exceed ${APP_CONFIG.PAGINATION.MAX_LIMIT}`,
+      },
+    ]);
+  }
+
+  // Validate threshold parameter
+  if (Number.isNaN(threshold) || !Number.isFinite(threshold)) {
+    throw new ValidationError([
+      {
+        field: 'threshold',
+        message: 'Invalid threshold parameter: must be a valid number',
+      },
+    ]);
+  }
+  if (threshold < 0 || threshold > 1) {
+    throw new ValidationError([
+      {
+        field: 'threshold',
+        message: 'Threshold must be between 0 and 1',
+      },
+    ]);
+  }
 
   // Extract idea ID from URL path: /api/ideas/[id]/similar
   const segments = url.pathname.split('/').filter(Boolean);
