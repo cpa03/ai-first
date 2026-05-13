@@ -114,6 +114,24 @@ export function isSensitiveVar(varName: string): boolean {
 // Keys that must NOT have NEXT_PUBLIC_ prefix
 const MUST_BE_PRIVATE = ['SUPABASE_SERVICE_ROLE_KEY', 'ADMIN_API_KEY'] as const;
 
+/**
+ * Whitelist of legitimate public environment variables that are allowed
+ * to have the NEXT_PUBLIC_ prefix, even if they contain sensitive keywords.
+ */
+const ALLOWED_PUBLIC_KEYS = [
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'NEXT_PUBLIC_SUPABASE_ANON_KEY',
+  'NEXT_PUBLIC_APP_URL',
+  'NEXT_PUBLIC_SITE_URL',
+  'NEXT_PUBLIC_VERCEL_URL',
+  'NEXT_PUBLIC_POSTHOG_KEY',
+  'NEXT_PUBLIC_GA_ID',
+  'NEXT_PUBLIC_ANALYTICS_ID',
+  'NEXT_PUBLIC_AB_TEST_ENABLED',
+  'NEXT_PUBLIC_ANALYTICS_ENABLED',
+  'NEXT_PUBLIC_ANALYTICS_POSTHOG_ENABLED',
+] as const;
+
 interface ValidationResult {
   valid: boolean;
   errors: string[];
@@ -136,6 +154,39 @@ function checkNextPublicPrefix(): string[] {
           `${key} must NEVER be prefixed with NEXT_PUBLIC_ as it would expose the key to client bundles. ` +
           `Remove ${publicKey} from your environment and use ${key} instead.`
       );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Scan all NEXT_PUBLIC_ variables for potential secret exposure.
+ * This catch-all check identifies any variable that matches sensitive patterns
+ * but is incorrectly prefixed for client-side exposure.
+ */
+function checkNextPublicExposure(): string[] {
+  const errors: string[] = [];
+
+  for (const key of Object.keys(process.env)) {
+    if (key.startsWith('NEXT_PUBLIC_')) {
+      // Skip explicitly allowed public keys
+      if (
+        ALLOWED_PUBLIC_KEYS.includes(key as (typeof ALLOWED_PUBLIC_KEYS)[number])
+      ) {
+        continue;
+      }
+
+      const baseKey = key.replace('NEXT_PUBLIC_', '');
+
+      if (isSensitiveVar(baseKey)) {
+        errors.push(
+          `CRITICAL SECURITY VIOLATION: ${key} is defined. ` +
+            `This variable matches a sensitive pattern and is prefixed with NEXT_PUBLIC_, ` +
+            `which will expose it to client-side bundles. ` +
+            `Remove the NEXT_PUBLIC_ prefix to keep it server-side only.`
+        );
+      }
     }
   }
 
@@ -291,6 +342,7 @@ export function validateEnvironment(): ValidationResult {
   const warnings: string[] = [];
 
   errors.push(...checkNextPublicPrefix());
+  errors.push(...checkNextPublicExposure());
   errors.push(...checkRequiredEnvVars());
   warnings.push(...checkKeySafety());
   warnings.push(...checkAdminApiKeyStrength());
