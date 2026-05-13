@@ -1,11 +1,6 @@
-export const runtime = 'experimental-edge';
-
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import {
-  SECURITY_CONFIG,
-  CSP_CONFIG,
-} from '@/lib/config/constants';
+import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 
 /**
@@ -158,8 +153,8 @@ function applyCloudflareHeaders(
 
     // Extract and expose geographic information
     // cf-country: ISO 3166-1 Alpha 2 country code (e.g., "US", "GB", "JP")
-    const cfCountry = request.headers.get('cf-country') ||
-                       request.headers.get('cf-ipcountry');
+    const cfCountry =
+      request.headers.get('cf-country') || request.headers.get('cf-ipcountry');
     if (cfCountry) {
       response.headers.set('x-user-country', cfCountry);
     }
@@ -189,7 +184,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';

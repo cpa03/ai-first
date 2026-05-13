@@ -1,6 +1,6 @@
 import { TEST_CONFIG } from './config/test-config';
 
-describe('middleware - unit tests for internal logic', () => {
+describe('proxy - unit tests for internal logic', () => {
   describe('CSP header construction', () => {
     it('should build CSP with correct directives', () => {
       const cspHeader = [
