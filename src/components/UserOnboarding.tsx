@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
-import { COMPONENT_CONFIG } from '@/lib/config';
+import { COMPONENT_CONFIG, ANIMATION_CONFIG } from '@/lib/config';
 
 /**
  * Onboarding Tour Steps
@@ -192,7 +192,7 @@ export default function UserOnboarding() {
       setCurrentStepIndex((prev) => prev + 1);
     }
 
-    setTimeout(() => setIsAnimating(false), 200);
+    setTimeout(() => setIsAnimating(false), ANIMATION_CONFIG.MOUNT_DELAY);
   }, [isLastStep]);
 
   /**

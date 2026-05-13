@@ -3,7 +3,12 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { createLogger } from '@/lib/logger';
-import { UI_CONFIG, CLARIFIER_CONFIG, MESSAGES } from '@/lib/config';
+import {
+  UI_CONFIG,
+  CLARIFIER_CONFIG,
+  MESSAGES,
+  ANIMATION_CONFIG,
+} from '@/lib/config';
 
 const logger = createLogger('useClarificationSession');
 
@@ -140,7 +145,7 @@ export function useClarificationSession(
       stepTransitionTimeoutRef.current = setTimeout(() => {
         setCurrentStep(nextStep);
         setCurrentAnswer('');
-      }, 300);
+      }, ANIMATION_CONFIG.STEP_TRANSITION);
     } else {
       setIsSubmitting(true);
       try {
