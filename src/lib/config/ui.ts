@@ -148,6 +148,8 @@ export const MESSAGES = {
     PROCESSING_BUTTON: 'Processing...',
     KEYBOARD_SHORTCUT_LABEL: (isMac: boolean) =>
       `Keyboard shortcut: ${isMac ? 'Command' : 'Control'} Enter to submit`,
+    NEW_LINE_SHORTCUT_LABEL: (isMac: boolean) =>
+      `${isMac ? 'Shift' : 'Shift'} + Enter for new line`,
     ENCOURAGEMENT: [
       'Great start! The more detail you provide, the better your blueprint will be.',
       'Think about the end result you want to achieve.',
