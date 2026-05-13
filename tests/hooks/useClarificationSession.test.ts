@@ -16,6 +16,10 @@ jest.mock('@/lib/config', () => ({
       { id: 'fallback_1', question: 'Fallback Question?', type: 'open' },
     ],
   },
+  ANIMATION_CONFIG: {
+    STEP_TRANSITION: 300,
+    MOUNT_DELAY: 200,
+  },
   MESSAGES: {
     CLARIFICATION: {
       ERROR_FETCH_QUESTIONS: 'Failed to fetch questions',
