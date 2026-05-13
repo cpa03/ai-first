@@ -194,7 +194,7 @@ validate_supabase() {
     if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ] || [ -z "$NEXT_PUBLIC_SUPABASE_ANON_KEY" ]; then
         return 1
     fi
-    
+
     # Basic URL format validation
     if [[ $NEXT_PUBLIC_SUPABASE_URL =~ ^https://.*\.supabase\.co$ ]] || [[ $NEXT_PUBLIC_SUPABASE_URL =~ ^http://localhost:.*$ ]]; then
         print_status "OK" "Supabase URL format is valid"
@@ -203,6 +203,35 @@ validate_supabase() {
         print_status "ERROR" "Supabase URL format is invalid"
         return 1
     fi
+}
+
+# Function to validate service role key is never exposed to client
+validate_service_role_key_security() {
+    # CRITICAL SECURITY CHECK: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY must NEVER be set
+    # Setting this variable would expose admin privileges to the client browser bundle,
+    # allowing anyone to bypass RLS and perform privileged database operations.
+    if [ -n "$NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY" ]; then
+        print_status "SECURITY" "CRITICAL: NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY is set!"
+        print_status "ERROR" "This exposes admin privileges to the client browser bundle."
+        print_status "ERROR" "The service role key bypasses ALL Row Level Security (RLS) policies."
+        print_status "ERROR" "Remove NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY from your environment."
+        print_status "INFO" "Use SUPABASE_SERVICE_ROLE_KEY (without NEXT_PUBLIC_) for server-side operations only."
+        return 1
+    fi
+
+    # Also check for any other potential NEXT_PUBLIC_ leakage patterns
+    local all_vars=$(env | grep '^NEXT_PUBLIC_')
+    while IFS= read -r var; do
+        if [[ "$var" =~ SERVICE|ROLE|ADMIN|SECRET|PRIVATE|KEY ]]; then
+            local var_name=$(echo "$var" | cut -d= -f1)
+            print_status "SECURITY" "POTENTIAL LEAK: $var_name contains sensitive keyword"
+            print_status "WARN" "NEXT_PUBLIC_ variables are exposed to client browser bundle"
+            ((security_warnings++)) || true
+        fi
+    done <<< "$all_vars"
+
+    print_status "OK" "No service role key exposure detected in NEXT_PUBLIC_ variables"
+    return 0
 }
 
 # Function to validate AI provider setup
@@ -388,7 +417,10 @@ main() {
     
     # Validate Supabase
     validate_supabase || ((errors++))
-    
+
+    # Validate service role key security (CRITICAL - must never be exposed to client)
+    validate_service_role_key_security || ((errors++))
+
     # Validate AI providers
     validate_ai_providers || ((errors++))
     
