@@ -746,3 +746,35 @@ button[aria-disabled='true'].btn-glow-hover {
     opacity: 0;
   }
 }
+
+@keyframes strikethrough {
+  0% {
+    width: 0;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+.animate-strikethrough {
+  position: relative;
+  display: inline-block;
+}
+
+.animate-strikethrough::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  animation: strikethrough 0.4s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-strikethrough::after {
+    animation: none;
+    width: 100%;
+  }
+}
