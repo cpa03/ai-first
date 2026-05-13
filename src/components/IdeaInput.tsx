@@ -45,6 +45,23 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   const encouragementMessages = MESSAGES.IDEA_INPUT.ENCOURAGEMENT;
 
+  // Micro-UX improvement: Show exact characters needed when close to minimum
+  const getCharactersNeededMessage = useCallback(() => {
+    const length = idea.trim().length;
+    const charsNeeded = MIN_IDEA_LENGTH - length;
+
+    // Show exact count when between 50% and 100% of minimum
+    if (length >= MIN_IDEA_LENGTH * 0.5 && length < MIN_IDEA_LENGTH) {
+      return {
+        charsNeeded,
+        isNearMinimum: length >= MIN_IDEA_LENGTH * 0.8,
+      };
+    }
+    return null;
+  }, [idea]);
+
+  const charactersNeededData = getCharactersNeededMessage();
+
   const getEncouragementMessage = useCallback(() => {
     const length = idea.trim().length;
     if (length === 0) return null;
@@ -197,14 +214,33 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           className="min-h-[120px]"
         />
 
-        {getEncouragementMessage() && (
+        {charactersNeededData ? (
           <p
-            className="text-sm text-primary-600 animate-fade-in"
+            className={`text-sm animate-fade-in flex items-center gap-2 ${
+              charactersNeededData.isNearMinimum
+                ? 'text-amber-600 font-medium'
+                : 'text-primary-600'
+            }`}
             role="status"
             aria-live="polite"
           >
-            {getEncouragementMessage()}
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 text-primary-700 text-xs font-bold">
+              {charactersNeededData.charsNeeded}
+            </span>
+            {charactersNeededData.isNearMinimum
+              ? `Almost there! Just ${charactersNeededData.charsNeeded} more to go`
+              : `${charactersNeededData.charsNeeded} more character${charactersNeededData.charsNeeded !== 1 ? 's' : ''} needed`}
           </p>
+        ) : (
+          getEncouragementMessage() && (
+            <p
+              className="text-sm text-primary-600 animate-fade-in"
+              role="status"
+              aria-live="polite"
+            >
+              {getEncouragementMessage()}
+            </p>
+          )
         )}
 
         {writingProgress > 5 && (
