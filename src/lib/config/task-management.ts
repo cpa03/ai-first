@@ -100,7 +100,8 @@ export const TASK_ITEM_STYLES = {
   },
   TITLE: {
     BASE: 'text-sm font-medium transition-all duration-300',
-    COMPLETED: 'text-gray-500 line-through decoration-2 decoration-gray-400',
+    COMPLETED:
+      'text-gray-500 line-through decoration-2 decoration-gray-400 animate-strikethrough',
     PENDING: 'text-gray-900',
   },
   STATUS_BADGE: {
