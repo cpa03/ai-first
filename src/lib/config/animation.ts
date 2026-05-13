@@ -58,6 +58,25 @@ export const ANIMATION_CONFIG = {
    * Env: UI_ANIMATION_ALERT_EXIT (default: 200)
    */
   ALERT_EXIT: EnvLoader.number('UI_ANIMATION_ALERT_EXIT', 200, 50, 1000),
+
+  /**
+   * Step transition delay (ms)
+   * Delay between step transitions in multi-step flows (clarification, onboarding)
+   * Env: UI_ANIMATION_STEP_TRANSITION_DELAY (default: 300)
+   */
+  STEP_TRANSITION: EnvLoader.number(
+    'UI_ANIMATION_STEP_TRANSITION_DELAY',
+    300,
+    50,
+    2000
+  ),
+
+  /**
+   * Component mounting animation delay (ms)
+   * Delay before starting mount animations
+   * Env: UI_ANIMATION_MOUNT_DELAY (default: 200)
+   */
+  MOUNT_DELAY: EnvLoader.number('UI_ANIMATION_MOUNT_DELAY', 200, 50, 1000),
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
