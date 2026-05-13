@@ -18,14 +18,14 @@ This repository uses a sophisticated multi-agent system powered by OpenCode CLI 
 
 | Agent              | Model                      | Purpose                                    |
 | ------------------ | -------------------------- | ------------------------------------------ |
-| **Sisyphus**       | opencode/minimax-m2.5-free    | Main orchestrator, relentless execution    |
+| **Sisyphus**       | opencode/minimax-m2.5-free | Main orchestrator, relentless execution    |
 | **Hephaestus**     | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented      |
-| **Oracle**         | opencode/minimax-m2.5-free    | Architecture, debugging, complex reasoning |
+| **Oracle**         | opencode/minimax-m2.5-free | Architecture, debugging, complex reasoning |
 | **Librarian**      | opencode/glm-4.7-free      | Documentation, codebase exploration        |
 | **Explore**        | opencode/glm-4.7-free      | Fast codebase search                       |
 | **Frontend UI/UX** | opencode/glm-4.7-free      | Frontend development                       |
 | **Minimax Agent**  | opencode/minimax-m2.1-free | Balanced performance tasks                 |
-| **RepoKeeper**     | opencode/minimax-m2.5-free    | Repository maintenance and cleanup agent   |
+| **RepoKeeper**     | opencode/minimax-m2.5-free | Repository maintenance and cleanup agent   |
 
 ## Model Configuration
 
@@ -48,7 +48,7 @@ CMZ automatically delegates based on task type:
 
 ## Skills Library
 
-34 specialized skills available in `.opencode/skills/`:
+33 specialized skills available in `.opencode/skills/`:
 
 ### Process Skills
 
