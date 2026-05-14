@@ -6,6 +6,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import type { Task, Deliverable } from '@/lib/db';
 import { triggerHapticFeedback } from '@/lib/utils';
 import type { TaskStatus } from '@/types/task';
+import { API_ENDPOINTS } from '@/lib/config';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -61,7 +62,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // re-creations of callbacks that depend on it.
   const dataRef = useRef(data);
 
-// Update dataRef when data changes - MUST be in useEffect to satisfy React lint rules
+  // Update dataRef when data changes - MUST be in useEffect to satisfy React lint rules
   useEffect(() => {
     dataRef.current = data;
   }, [data]);
@@ -73,7 +74,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setLoading(true);
         setError(null);
 
-        const response = await fetchWithTimeout(`/api/ideas/${ideaId}/tasks`);
+        const response = await fetchWithTimeout(
+          API_ENDPOINTS.IDEA_TASKS(ideaId)
+        );
 
         if (!response.ok) {
           const errorData = await response.json();
@@ -206,7 +209,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         currentStatus === 'completed' ? 'todo' : 'completed';
 
       // Store previous state for potential rollback
-// Using dataRef here ensures we have the latest data without depending on 'data'
+      // Using dataRef here ensures we have the latest data without depending on 'data'
       previousDataRef.current = dataRef.current;
 
       // Find the task for toast message BEFORE making changes
@@ -240,13 +243,16 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         }
 
         // STEP 2: Make API call
-        const response = await fetchWithTimeout(`/api/tasks/${taskId}/status`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: newStatus }),
-        });
+        const response = await fetchWithTimeout(
+          API_ENDPOINTS.TASK_STATUS(taskId),
+          {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+          }
+        );
 
         if (!response.ok) {
           const errorData = await response.json();

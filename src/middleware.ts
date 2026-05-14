@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
+import { API_ENDPOINTS } from '@/lib/config';
 
 /**
  * Middleware for Next.js
@@ -27,9 +28,9 @@ const PUBLIC_PATHS = [
   '/auth/callback',
   '/forgot-password',
   '/reset-password',
-  '/api/health',
-  '/api/health/live',
-  '/api/health/ready',
+  API_ENDPOINTS.HEALTH,
+  API_ENDPOINTS.HEALTH_LIVE,
+  API_ENDPOINTS.HEALTH_READY,
   '/_next',
   '/favicon.ico',
   '/robots.txt',

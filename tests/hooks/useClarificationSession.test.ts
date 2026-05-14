@@ -28,6 +28,9 @@ jest.mock('@/lib/config', () => ({
       UNKNOWN_ERROR: 'Unknown error',
     },
   },
+  API_ENDPOINTS: {
+    CLARIFY: '/api/clarify',
+  },
 }));
 
 const mockFetch = require('@/lib/api-client').fetchWithTimeout as jest.Mock;
