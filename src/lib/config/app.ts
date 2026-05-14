@@ -26,6 +26,24 @@ export const APP_CONFIG = {
     WWW: EnvLoader.string('APP_WWW_URL', 'https://www.ideaflow.ai'),
   },
 
+  /**
+   * Development URLs Configuration
+   * Centralizes localhost URLs for development environment
+   * Eliminates hardcoded localhost URLs throughout the codebase
+   */
+  DEVELOPMENT: {
+    /** Primary development server URL - Env: DEV_LOCALHOST_URL (default: 'http://localhost:3000') */
+    LOCALHOST_PRIMARY: EnvLoader.string(
+      'DEV_LOCALHOST_URL',
+      'http://localhost:3000'
+    ),
+    /** Secondary development server URL - Env: DEV_LOCALHOST_URL_ALT (default: 'http://localhost:3001') */
+    LOCALHOST_ALT: EnvLoader.string(
+      'DEV_LOCALHOST_URL_ALT',
+      'http://localhost:3001'
+    ),
+  },
+
   BRANDING: {
     /** Dynamic copyright with current year - eliminates hardcoded year */
     get COPYRIGHT() {
@@ -122,12 +140,7 @@ export const APP_CONFIG = {
       32
     ),
     /** Radix for idea ID generation (2-36) - Default: 36 */
-    IDEA_ID_RANDOM_RADIX: EnvLoader.number(
-      'STRING_ID_RANDOM_RADIX',
-      36,
-      2,
-      36
-    ),
+    IDEA_ID_RANDOM_RADIX: EnvLoader.number('STRING_ID_RANDOM_RADIX', 36, 2, 36),
   },
 } as const;
 
