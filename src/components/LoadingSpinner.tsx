@@ -87,7 +87,9 @@ function LoadingSpinnerComponent({
     () => ({
       width: `${spinnerSize.width}px`,
       height: `${spinnerSize.height}px`,
-      animationDuration: prefersReducedMotion ? '0s' : '0.75s',
+      animationDuration: prefersReducedMotion
+        ? '0s'
+        : `${COMPONENT_CONFIG.SPINNER.ANIMATION_MS}ms`,
     }),
     [spinnerSize.width, spinnerSize.height, prefersReducedMotion]
   );
