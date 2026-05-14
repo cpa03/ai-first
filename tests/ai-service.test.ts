@@ -439,9 +439,8 @@ describe('AIService', () => {
       expect(tracking[0].cost).toBe(1000 * 0.00003);
     });
 
-    // Skipping: Model validation now requires specific prefixes (gpt-, claude-, o1-, o3-)
-    // Unknown models are rejected at validation time, so this test is no longer valid
-    it.skip('should use default cost per token for unknown models', async () => {
+    // Test updated: Model validation now checks prefixes, unknown models with valid prefix still work
+    it('should use default cost per token for unknown models', async () => {
       const unknownConfig: AIModelConfig = {
         ...config,
         model: 'gpt-4-custom', // Use valid prefix but unknown model
@@ -458,6 +457,7 @@ describe('AIService', () => {
       );
 
       const tracking = aiService.getCostTracking();
+      // Unknown models with valid prefix should use default cost
       expect(tracking[0].cost).toBe(1000 * 0.00001);
     });
   });
