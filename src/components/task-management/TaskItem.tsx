@@ -68,7 +68,13 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     : 'Mark as complete';
 
   return (
-    <div className={TASK_ITEM_STYLES.CONTAINER}>
+    <div
+      className={
+        isCompleted
+          ? TASK_ITEM_STYLES.CONTAINER_COMPLETED
+          : TASK_ITEM_STYLES.CONTAINER
+      }
+    >
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}

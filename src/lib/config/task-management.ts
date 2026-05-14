@@ -81,7 +81,9 @@ export const RISK_LEVEL_CONFIG: Record<
  */
 export const TASK_ITEM_STYLES = {
   CONTAINER:
-    'flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-shadow',
+    'flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-all duration-300',
+  CONTAINER_COMPLETED:
+    'flex items-start gap-3 p-3 bg-green-50/50 rounded-lg border border-green-200 hover:shadow-sm transition-all duration-300',
   CHECKBOX: {
     BASE: 'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500',
     UNCHECKED:
