@@ -25,7 +25,10 @@ export const CSRF_CONFIG = {
     }
 
     if (process.env.NODE_ENV === 'development') {
-      origins.push('http://localhost:3000', 'http://localhost:3001');
+      origins.push(
+        APP_CONFIG.DEVELOPMENT.LOCALHOST_PRIMARY,
+        APP_CONFIG.DEVELOPMENT.LOCALHOST_ALT
+      );
     }
 
     return [...new Set(origins)];
