@@ -861,18 +861,17 @@ TT|- ✅ ESLint: 0 warnings
 
 **Changes:**
 
-|||| File | Change |
-|| -- | -- | -- |
-|| `src/hooks/useOptimisticMutation.ts` | New hook for optimistic updates |
-|| `src/hooks/useTaskManagement.ts` | Apply UI changes immediately |
+|                                  | File                                              | Change |
+| -------------------------------- | ------------------------------------------------- | ------ |
+| `src/hooks/useTaskManagement.ts` | Apply UI changes immediately (optimistic updates) |
 
 **Technical Implementation:**
 
-1. **New hook** `useOptimisticMutation`:
+1. **Optimistic update pattern in useTaskManagement**:
    - Immediate UI updates before API call
    - Automatic rollback on error
-   - Retry with exponential backoff
-   - Callbacks: onOptimistic, onRollback, onSuccess, onError
+   - Callbacks: onSuccess, onError
+   - Built-in implementation (standalone useOptimisticMutation.ts hook was removed)
 
 2. **Updated task toggle logic**:
    - Store previous state for potential rollback
@@ -889,11 +888,11 @@ TT|- ✅ ESLint: 0 warnings
 
 **Verification:**
 
-|| Check | Status |
-|| -- | -- |
-|| TypeScript | ✅ No errors |
-|| Build | ✅ Pass |
-|| Pattern | ✅ Reusable for other mutations |
+|            | Check                                      | Status |
+| ---------- | ------------------------------------------ | ------ |
+| TypeScript | ✅ No errors                               |
+| Build      | ✅ Pass                                    |
+| Pattern    | ✅ Optimistic updates in useTaskManagement |
 
 **PR:** #1886
 

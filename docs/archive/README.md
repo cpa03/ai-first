@@ -48,13 +48,9 @@ Example: `2025-01-15_old-api-design_archived.md`
 
 ## Index
 
-| File                                          | Original Date | Archived Date | Reason                            |
-| --------------------------------------------- | ------------- | ------------- | --------------------------------- |
-| 2026-05-11_technical-writer-tasks_archived.md | 2026-02-27    | 2026-05-11    | Task log - not user documentation |
+_This archive is currently empty. Archive files should follow the pattern documented above when added._
 
 ---
-
-_This archive is maintained as part of the documentation quality process. See [Documentation Quality Issue #1169](https://github.com/cpa03/ai-first/issues/1169) for context._
 
 ## Note
 
