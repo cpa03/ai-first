@@ -155,6 +155,7 @@ export default function LoginPage() {
               disabled={isLoading}
               required
               autoComplete="email"
+              onEnterPress={submitForm}
             />
 
             <InputWithValidation

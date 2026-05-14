@@ -192,6 +192,7 @@ export default function SignupPage() {
               disabled={isLoading}
               required
               autoComplete="email"
+              onEnterPress={submitForm}
             />
 
             <InputWithValidation
@@ -207,6 +208,7 @@ export default function SignupPage() {
               autoComplete="new-password"
               helpText="Must be at least 8 characters"
               showPasswordToggle
+              onEnterPress={submitForm}
             />
 
             <InputWithValidation
