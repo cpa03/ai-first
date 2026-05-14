@@ -278,25 +278,51 @@ export function useClarificationSession(
     };
   }, [idea, ideaId]);
 
-  return {
-    loading,
-    error,
-    questions,
-    currentStep,
-    currentQuestion,
-    progress,
-    steps,
-    answers,
-    currentAnswer,
-    showCelebration,
-    isSubmitting,
-    isMac,
-    textInputRef,
-    textareaRef,
-    selectRef,
-    setCurrentAnswer,
-    handleNext,
-    handlePrevious,
-    handleKeyDown,
-  };
+  // PERFORMANCE: Memoize return object to ensure referential stability.
+  // This prevents unnecessary re-renders of consumer components when the internal state
+  // hasn't changed or when the component using this hook re-renders for other reasons.
+  return useMemo(
+    () => ({
+      loading,
+      error,
+      questions,
+      currentStep,
+      currentQuestion,
+      progress,
+      steps,
+      answers,
+      currentAnswer,
+      showCelebration,
+      isSubmitting,
+      isMac,
+      textInputRef,
+      textareaRef,
+      selectRef,
+      setCurrentAnswer,
+      handleNext,
+      handlePrevious,
+      handleKeyDown,
+    }),
+    [
+      loading,
+      error,
+      questions,
+      currentStep,
+      currentQuestion,
+      progress,
+      steps,
+      answers,
+      currentAnswer,
+      showCelebration,
+      isSubmitting,
+      isMac,
+      textInputRef,
+      textareaRef,
+      selectRef,
+      setCurrentAnswer,
+      handleNext,
+      handlePrevious,
+      handleKeyDown,
+    ]
+  );
 }
