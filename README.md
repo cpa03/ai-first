@@ -148,8 +148,7 @@
 #QY|    /useAuthCheck.ts        ← Authentication check hook
 #QY|    /useBlueprintGeneration.ts ← Blueprint generation hook
 QV|#QY|    /useClarificationSession.ts ← Clarification session hook
-#XZ|#RR|    /useABTest.ts            ← A/B test and feature flag hook
-#XZ|#YH|    /useOptimisticMutation.ts ← Optimistic UI mutation hook
+#QY|    /useTaskManagement.ts   ← Task management hook
 #PM|  /lib/
 #PM|  /lib/                    ← Core utilities
 #BM|    /auth.ts              ← Authentication service
