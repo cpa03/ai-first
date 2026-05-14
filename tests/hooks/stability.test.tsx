@@ -2,6 +2,18 @@ import { renderHook } from '@testing-library/react';
 import { useFunnelTracking } from '@/hooks/useFunnelTracking';
 import { useSessionDuration } from '@/hooks/useSessionDuration';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
+import { useClarificationSession } from '@/hooks/useClarificationSession';
+
+// Mock api-client
+jest.mock('@/lib/api-client', () => ({
+  fetchWithTimeout: jest.fn().mockResolvedValue({
+    ok: true,
+    json: async () => ({
+      success: true,
+      data: { questions: [] },
+    }),
+  }),
+}));
 
 // Mock analytics to prevent errors
 jest.mock('@/lib/analytics', () => ({
@@ -81,6 +93,25 @@ describe('Referential Stability', () => {
       expect(result.current).toBe(firstRenderResult);
       expect(result.current.requestPermission).toBe(firstRenderResult.requestPermission);
       expect(result.current.checkPermission).toBe(firstRenderResult.checkPermission);
+    });
+  });
+
+  describe('useClarificationSession', () => {
+    it('maintains referential stability of returned object and functions', () => {
+      const mockOnComplete = jest.fn().mockResolvedValue(undefined);
+      const { result, rerender } = renderHook(() =>
+        useClarificationSession('Idea', 'id-123', mockOnComplete)
+      );
+
+      const firstRenderResult = result.current;
+
+      rerender();
+
+      expect(result.current).toBe(firstRenderResult);
+      expect(result.current.handleNext).toBe(firstRenderResult.handleNext);
+      expect(result.current.handlePrevious).toBe(firstRenderResult.handlePrevious);
+      expect(result.current.handleKeyDown).toBe(firstRenderResult.handleKeyDown);
+      expect(result.current.setCurrentAnswer).toBe(firstRenderResult.setCurrentAnswer);
     });
   });
 });
