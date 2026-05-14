@@ -21,7 +21,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
-import { redactPII } from '@/lib/pii-redaction';
+import { redactPIIInObject } from '@/lib/pii-redaction';
 
 const logger = createLogger('SecurityAudit');
 
@@ -441,14 +441,12 @@ export const SecurityAuditLog = {
    * @param event - Security event to log
    */
   logEvent(event: SecurityEventBase): void {
-    // Sanitize any sensitive data in metadata
+    // Sanitize any sensitive data in metadata using deep redaction
     if (event.metadata) {
-      event.metadata = Object.fromEntries(
-        Object.entries(event.metadata).map(([key, value]) => [
-          key,
-          typeof value === 'string' ? redactPII(value) : value,
-        ])
-      );
+      event.metadata = redactPIIInObject(event.metadata) as Record<
+        string,
+        unknown
+      >;
     }
 
     // Log to appropriate level based on severity
