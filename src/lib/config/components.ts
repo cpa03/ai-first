@@ -155,6 +155,13 @@ export const COMPONENT_CONFIG = {
     DEFAULT_SIZE: 'md' as const,
     STROKE_WIDTH: 4,
     VIEWBOX_SIZE: 24,
+    /** Env: COMPONENT_SPINNER_ANIMATION_MS (default: 750) */
+    ANIMATION_MS: EnvLoader.number(
+      'COMPONENT_SPINNER_ANIMATION_MS',
+      750,
+      100,
+      3000
+    ),
   } as const,
 
   STEPPER: {

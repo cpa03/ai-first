@@ -14,6 +14,8 @@ import {
   TEXT_COLORS,
   COMPONENT_DEFAULTS,
   LABELS,
+  ANIMATION_DELAYS,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -99,8 +101,8 @@ function ClarificationFlow({
                 key={i}
                 className="w-2 h-2 rounded-full bg-primary-200 animate-pulse"
                 style={{
-                  animationDelay: `${i * 200}ms`,
-                  animationDuration: '1s',
+                  animationDelay: `${i * ANIMATION_DELAYS.LONG}ms`,
+                  animationDuration: `${ANIMATION_CONFIG.SLOW}ms`,
                 }}
               />
             ))}
