@@ -8,6 +8,7 @@ import {
   CLARIFIER_CONFIG,
   MESSAGES,
   ANIMATION_CONFIG,
+  API_ENDPOINTS,
 } from '@/lib/config';
 
 const logger = createLogger('useClarificationSession');
@@ -218,7 +219,7 @@ export function useClarificationSession(
       try {
         setLoading(true);
         const response = await fetchWithTimeout(
-          '/api/clarify',
+          API_ENDPOINTS.CLARIFY,
           {
             method: 'POST',
             headers: {

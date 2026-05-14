@@ -13,6 +13,9 @@
 // Application Configuration
 export { APP_CONFIG } from './app';
 
+// API Endpoint Configuration
+export { API_ENDPOINTS } from './api-endpoints';
+
 // Export Connectors Configuration
 export {
   TRELLO_CONFIG,
