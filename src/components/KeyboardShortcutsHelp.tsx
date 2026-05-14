@@ -313,10 +313,21 @@ function KeyboardShortcutsHelpComponent({
     };
   }, [isOpen, handleClose]);
 
-  // Vim navigation
   useEffect(() => {
-    if (!isOpen || !preferences.vimMode) return;
-    const handleVim = (e: KeyboardEvent) => {
+    if (!isOpen) return;
+
+    const handleKeyboardNav = (e: KeyboardEvent) => {
+      const isNavKey =
+        e.key === 'j' ||
+        e.key === 'k' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowDown';
+
+      if (!isNavKey) return;
+
+      const isVimKey = e.key === 'j' || e.key === 'k';
+      if (isVimKey && !preferences.vimMode) return;
+
       const filtered = searchQuery
         ? keyboardShortcuts.filter(
             (s) =>
@@ -326,20 +337,47 @@ function KeyboardShortcutsHelpComponent({
               )
           )
         : keyboardShortcuts;
+
+      if (filtered.length === 0) return;
+
       const maxIndex = Math.max(0, filtered.length - 1);
+
       if (e.key === 'j' || e.key === 'ArrowDown') {
         e.preventDefault();
         setSelectedIndex((prev) => Math.min(prev + 1, maxIndex));
       } else if (e.key === 'k' || e.key === 'ArrowUp') {
         e.preventDefault();
         setSelectedIndex((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === 'Enter' && filtered[selectedIndex]) {
-        e.preventDefault();
-        handleClose();
       }
     };
-    document.addEventListener('keydown', handleVim);
-    return () => document.removeEventListener('keydown', handleVim);
+
+    const handleEnterKey = (e: KeyboardEvent) => {
+      if (e.key === 'Enter' && (preferences.vimMode || selectedIndex >= 0)) {
+        const filtered = searchQuery
+          ? keyboardShortcuts.filter(
+              (s) =>
+                s.description
+                  .toLowerCase()
+                  .includes(searchQuery.toLowerCase()) ||
+                s.keys.some((k) =>
+                  k.toLowerCase().includes(searchQuery.toLowerCase())
+                )
+            )
+          : keyboardShortcuts;
+
+        if (filtered[selectedIndex]) {
+          e.preventDefault();
+          handleClose();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyboardNav);
+    document.addEventListener('keydown', handleEnterKey);
+    return () => {
+      document.removeEventListener('keydown', handleKeyboardNav);
+      document.removeEventListener('keydown', handleEnterKey);
+    };
   }, [isOpen, preferences.vimMode, searchQuery, selectedIndex, handleClose]);
 
   // Reset selection on search change
