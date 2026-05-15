@@ -99,5 +99,6 @@ export function secureRandom(): number {
   }
 
   // Fallback to Math.random if Web Crypto API is unavailable
+  // This is a last resort and will be flagged by security scripts
   return Math.random();
 }
