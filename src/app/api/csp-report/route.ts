@@ -1,26 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
-import {
-  checkRateLimit,
-  getClientIdentifier,
-  rateLimitResponse,
-} from '@/lib/rate-limit';
-import { RATE_LIMIT_CONFIG } from '@/lib/config/constants';
-import { RATE_LIMIT_WINDOWS } from '@/lib/config/time';
+import { withApiHandler, ApiContext } from '@/lib/api-handler';
 
 const logger = createLogger('CSPReport');
-
-/**
- * Rate limit configuration for CSP report endpoint
- * Uses centralized rate limit configuration with lenient preset
- * - Uses RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.LENIENT (default: 60 requests)
- * - Uses RATE_LIMIT_WINDOWS.DEFAULT (1 minute window)
- * - Prevents DoS via CSP report flooding
- */
-const CSP_RATE_LIMIT = {
-  limit: RATE_LIMIT_CONFIG.ENDPOINT_PRESETS.LENIENT,
-  windowMs: RATE_LIMIT_WINDOWS.DEFAULT,
-};
 
 /**
  * CSP Violation Report Interface
@@ -44,21 +26,17 @@ interface CSPReportBody {
 }
 
 /**
- * CSP Violation Report Endpoint
+ * CSP Violation Report Handler
  *
  * Receives Content Security Policy violation reports from browsers.
  * Logs violations for security monitoring and incident response.
+ * Always returns 204 to avoid blocking browser reporting.
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/report-uri
  * @see Issue #891 - CSP reporting capability
  */
-export async function POST(request: Request): Promise<Response> {
-  const identifier = getClientIdentifier(request);
-  const rateCheck = checkRateLimit(identifier, CSP_RATE_LIMIT);
-
-  if (!rateCheck.allowed) {
-    return rateLimitResponse(rateCheck.info);
-  }
+async function handleCSPReport(context: ApiContext): Promise<Response> {
+  const { request } = context;
 
   try {
     const contentType = request.headers.get('content-type') || '';
@@ -165,6 +143,14 @@ export async function POST(request: Request): Promise<Response> {
     return new NextResponse(null, { status: 204 });
   }
 }
+
+/**
+ * CSP Violation Report Endpoint
+ *
+ * Uses withApiHandler wrapper for standardized middleware (rate limiting, logging).
+ * Preserves 204 response behavior for browser CSP reporting compatibility.
+ */
+export const POST = withApiHandler(handleCSPReport, { rateLimit: 'lenient' });
 
 /**
  * OPTIONS handler for CORS preflight
