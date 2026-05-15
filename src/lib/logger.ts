@@ -1,5 +1,6 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { generateSecureId } from './utils';
+import { secureRandom } from './security/crypto';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -183,7 +184,8 @@ export class Logger {
     if (currentLogLevel > level) return false;
 
     if (currentSampleRate < 1.0 && level <= LogLevel.INFO) {
-      return Math.random() < currentSampleRate;
+      // SECURITY: Use secureRandom() for cryptographically secure sampling
+      return secureRandom() < currentSampleRate;
     }
 
     return true;
