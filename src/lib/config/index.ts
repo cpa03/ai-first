@@ -52,7 +52,12 @@ export {
 } from './validation';
 
 // Agent Configuration
-export { CLARIFIER_CONFIG, AGENT_PROMPTS, AI_CONFIG } from './agents';
+export {
+  CLARIFIER_CONFIG,
+  AGENT_PROMPTS,
+  AI_CONFIG,
+  EVENT_BUS_CONFIG,
+} from './agents';
 
 // Cache Configuration
 export { CACHE_CONFIG } from './cache';
@@ -188,7 +193,12 @@ export type {
   SanitizationConfig,
   ErrorSuggestionsConfig,
 } from './validation';
-export type { ClarifierConfig, AgentPrompts, AiConfig } from './agents';
+export type {
+  ClarifierConfig,
+  AgentPrompts,
+  AiConfig,
+  EventBusConfig,
+} from './agents';
 export type { CacheConfig } from './cache';
 export type { ComponentConfig } from './components';
 export type { CleanupConfig } from './cleanup';

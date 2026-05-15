@@ -6,6 +6,7 @@
  */
 
 import type { AgentEvent, EventPayloadMap, EventType } from './types';
+import { EVENT_BUS_CONFIG } from '@/lib/config';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { generateId } from '@/lib/security/crypto';
@@ -29,7 +30,7 @@ interface Subscription {
 class EventBus {
   private subscriptions: Map<string, Subscription[]> = new Map();
   private eventHistory: AgentEvent[] = [];
-  private readonly maxHistorySize = 1000;
+  private readonly maxHistorySize = EVENT_BUS_CONFIG.MAX_HISTORY_SIZE;
 
   /**
    * Subscribe to an event type
@@ -142,7 +143,10 @@ class EventBus {
    * @param limit - Maximum number of events to return
    * @param eventType - Optional filter by event type
    */
-  getHistory(limit = 100, eventType?: EventType): AgentEvent[] {
+  getHistory(
+    limit = EVENT_BUS_CONFIG.DEFAULT_HISTORY_LIMIT,
+    eventType?: EventType
+  ): AgentEvent[] {
     let history = this.eventHistory;
     if (eventType) {
       history = history.filter((e) => e.type === eventType);
