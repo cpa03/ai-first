@@ -1,12 +1,118 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
 import { OAUTH_PROVIDER_COLORS } from '@/lib/config';
+
+type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
+
+interface PasswordStrengthResult {
+  strength: PasswordStrength;
+  score: number;
+  feedback: string[];
+}
+
+function calculatePasswordStrength(password: string): PasswordStrengthResult {
+  const feedback: string[] = [];
+  let score = 0;
+
+  if (password.length === 0) {
+    return { strength: 'empty', score: 0, feedback: [] };
+  }
+
+  if (password.length >= 8) score++;
+  if (password.length >= 12) score++;
+  if (password.length >= 16) score++;
+
+  if (/[a-z]/.test(password)) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^a-zA-Z0-9]/.test(password)) score++;
+
+  const normalizedScore = Math.min(Math.floor(score / 2), 4);
+
+  if (password.length < 8) {
+    feedback.push('Use at least 8 characters');
+  }
+  if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
+    feedback.push('Add uppercase and lowercase letters');
+  }
+  if (!/[0-9]/.test(password)) {
+    feedback.push('Add numbers');
+  }
+  if (!/[^a-zA-Z0-9]/.test(password)) {
+    feedback.push('Add special characters (!@#$%^&*)');
+  }
+
+  let strength: PasswordStrength;
+  if (normalizedScore <= 1) strength = 'weak';
+  else if (normalizedScore <= 2) strength = 'medium';
+  else strength = 'strong';
+
+  return { strength, score: normalizedScore, feedback };
+}
+
+function PasswordStrengthIndicator({ password }: { password: string }) {
+  const { strength, score, feedback } = useMemo(
+    () => calculatePasswordStrength(password),
+    [password]
+  );
+
+  const strengthConfig = {
+    empty: { label: '', color: 'bg-gray-200', width: '0%' },
+    weak: { label: 'Weak', color: 'bg-red-500', width: '33%' },
+    medium: { label: 'Medium', color: 'bg-amber-500', width: '66%' },
+    strong: { label: 'Strong', color: 'bg-green-500', width: '100%' },
+  };
+
+  const config = strengthConfig[strength];
+
+  if (strength === 'empty') return null;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className={`h-full ${config.color} transition-all duration-300 ease-out rounded-full`}
+            style={{ width: config.width }}
+            role="progressbar"
+            aria-valuenow={score}
+            aria-valuemin={0}
+            aria-valuemax={4}
+            aria-label={`Password strength: ${config.label}`}
+          />
+        </div>
+        <span
+          className={`text-xs font-medium ${
+            strength === 'weak'
+              ? 'text-red-600'
+              : strength === 'medium'
+                ? 'text-amber-600'
+                : 'text-green-600'
+          }`}
+        >
+          {config.label}
+        </span>
+      </div>
+
+      {feedback.length > 0 && strength !== 'strong' && (
+        <ul className="text-xs text-gray-500 space-y-0.5" aria-live="polite">
+          {feedback.slice(0, 2).map((tip, idx) => (
+            <li key={idx} className="flex items-center gap-1">
+              <span className="text-gray-400">•</span>
+              {tip}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
 
 export default function SignupPage() {
   const [email, setEmail] = useState('');
@@ -210,6 +316,8 @@ export default function SignupPage() {
               showPasswordToggle
               onEnterPress={submitForm}
             />
+
+            {password && <PasswordStrengthIndicator password={password} />}
 
             <InputWithValidation
               id="confirmPassword"
