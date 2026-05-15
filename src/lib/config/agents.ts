@@ -160,6 +160,40 @@ export const AI_CONFIG = {
   },
 } as const;
 
+export const EVENT_BUS_CONFIG = {
+  /**
+   * Maximum number of events to keep in history
+   * Env: EVENT_BUS_MAX_HISTORY_SIZE (default: 1000)
+   */
+  MAX_HISTORY_SIZE: EnvLoader.number(
+    'EVENT_BUS_MAX_HISTORY_SIZE',
+    1000,
+    100,
+    10000
+  ),
+
+  /**
+   * Default limit for fetching event history
+   * Env: EVENT_BUS_DEFAULT_HISTORY_LIMIT (default: 100)
+   */
+  DEFAULT_HISTORY_LIMIT: EnvLoader.number(
+    'EVENT_BUS_DEFAULT_HISTORY_LIMIT',
+    100,
+    10,
+    1000
+  ),
+
+  /**
+   * Whether to enable database audit logging for events
+   * Env: EVENT_BUS_AUDIT_LOGGING_ENABLED (default: true)
+   */
+  AUDIT_LOGGING_ENABLED: EnvLoader.boolean(
+    'EVENT_BUS_AUDIT_LOGGING_ENABLED',
+    true
+  ),
+} as const;
+
 export type ClarifierConfig = typeof CLARIFIER_CONFIG;
 export type AgentPrompts = typeof AGENT_PROMPTS;
 export type AiConfig = typeof AI_CONFIG;
+export type EventBusConfig = typeof EVENT_BUS_CONFIG;
