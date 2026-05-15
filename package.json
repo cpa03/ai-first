@@ -111,6 +111,8 @@
     "@aws-sdk/client-lambda": "^3.750.0",
     "fast-xml-parser": "^5.3.6",
     "brace-expansion": "^1.1.13",
+    // Security fix: pinned minimatch to 3.1.5 to fix HIGH severity vulnerability
+    // (CVE related to brace expansion in path traversal). See issue #1739.
     "minimatch": "3.1.5",
     "@tootallnate/once": "3.0.1"
   },
