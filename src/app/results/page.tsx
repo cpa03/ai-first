@@ -483,8 +483,9 @@ function ResultsContent() {
                 aria-label="Export to GitHub Projects - requires API configuration"
               >
                 Export to GitHub Projects
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"></span>
-                Setup Required
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  Setup Required
+                </span>
               </Button>
             </Tooltip>
           )}
