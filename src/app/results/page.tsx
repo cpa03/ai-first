@@ -265,15 +265,16 @@ function ResultsContent() {
   // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
   // NOTE: This must be called before any early returns to comply with Rules of Hooks.
   const formattedAnswers = useMemo(() => {
-    return session?.state.answers && typeof session.state.answers === 'object'
+    const answers = session?.state.answers;
+    return answers && typeof answers === 'object'
       ? Object.fromEntries(
-          Object.entries(session.state.answers).map(([key, value]) => [
+          Object.entries(answers).map(([key, value]) => [
             key,
             String(value),
           ])
         )
       : {};
-  }, [session?.state.answers]);
+  }, [session]);
 
   if (loading) {
     return (
@@ -483,9 +484,8 @@ function ResultsContent() {
                 aria-label="Export to GitHub Projects - requires API configuration"
               >
                 Export to GitHub Projects
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  Setup Required
-                </span>
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"></span>
+                Setup Required
               </Button>
             </Tooltip>
           )}
