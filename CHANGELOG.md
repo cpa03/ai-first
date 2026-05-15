@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### RepoKeeper Maintenance - 2026-05-15
+
+**Repository Cleanup and Bug Fixes:**
+
+- ✅ **Fixed validate-env.sh integer expression error:**
+  - Resolved bug where grep -c output trailing newlines caused "[: 0\n0: integer expression expected" error
+  - Added tr -d '\n\r' to trim newlines from grep output before integer comparison
+  - Script now correctly validates ADMIN_API_KEY security requirements
+
+- ✅ **Fixed opencode configuration filename:**
+  - Renamed .opencode/oh-my-openagent.json to .opencode/oh-my-opencode.json
+  - Corrects filename to match documentation in AGENTS.md
+  - Configuration now matches expected naming convention
+
+- ✅ **Quality Gates Verified:**
+  - Lint: PASSED (0 errors, 0 warnings)
+  - TypeScript: PASSED (0 errors)
+  - Build: PASSED (26 routes)
+  - Tests: 1507 passed
+
+**Impact:** Repository configuration now consistent and error-free.
+
+---
+
 ### RepoKeeper Maintenance - 2026-05-13
 
 **Repository Health Check (Weekly Maintenance):**
