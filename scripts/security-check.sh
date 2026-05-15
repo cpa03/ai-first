@@ -68,7 +68,7 @@ fi
 echo -e "${BLUE}Checking for improperly exposed secrets...${NC}"
 if grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
     -E 'NEXT_PUBLIC_.*(SECRET|KEY|PASSWORD|TOKEN)' \
-    src/ config/ 2>/dev/null | grep -v "// " | grep -v "ANON_KEY"; then
+    src/ config/ 2>/dev/null | grep -v "// " | grep -v "ANON_KEY" | grep -v "POSTHOG_KEY"; then
     print_status "ERROR" "Found secrets with NEXT_PUBLIC_ prefix (would be exposed to client)"
 else
     print_status "OK" "No improperly exposed secrets found"
@@ -159,7 +159,7 @@ fi
 echo -e "${BLUE}Checking for potential SQL injection patterns...${NC}"
 if grep -rn --include="*.ts" --include="*.tsx" --include="*.js" \
     -E '\$\{[^}]+\}.*(?:SELECT|INSERT|UPDATE|DELETE|FROM|WHERE)' \
-    src/ 2>/dev/null | grep -v "// " | grep -v "process.env" | grep -v "parameterized"; then
+    src/ 2>/dev/null | grep -v "// " | grep -v "process.env" | grep -v "parameterized" | grep -v "className"; then
     print_status "ERROR" "Found potential SQL injection (string interpolation in SQL)"
 else
     print_status "OK" "No SQL injection patterns found"

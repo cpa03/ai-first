@@ -160,7 +160,7 @@ validate_admin_key_security() {
     local has_lower=$(echo "$key" | grep -c '[a-z]' || true; echo 0)
     local has_number=$(echo "$key" | grep -c '[0-9]' || true; echo 0)
     local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || true; echo 0)
-    
+
     # Trim newlines from grep output
     has_upper=$(echo "$has_upper" | tr -d '\n\r')
     has_lower=$(echo "$has_lower" | tr -d '\n\r')

@@ -75,3 +75,30 @@ export function simpleHash(str: string): string {
   // Return as positive hex string, padded to 8 chars
   return (hash >>> 0).toString(16).padStart(8, '0');
 }
+
+/**
+ * Returns a cryptographically secure random number between 0 (inclusive) and 1 (exclusive).
+ * Provides a security-hardened alternative to Math.random() that is compatible
+ * across Browser, Node.js, and Cloudflare Workers.
+ *
+ * @returns A random number between 0 and 1
+ */
+export function secureRandom(): number {
+  const cryptoObj =
+    typeof globalThis !== 'undefined'
+      ? globalThis.crypto
+      : typeof crypto !== 'undefined'
+        ? crypto
+        : undefined;
+
+  if (cryptoObj?.getRandomValues) {
+    const array = new Uint32Array(1);
+    cryptoObj.getRandomValues(array);
+    // Divide by 2^32 (4294967296) to get a number in [0, 1)
+    return array[0] / 4294967296;
+  }
+
+  // Fallback to Math.random if Web Crypto API is unavailable
+  // This is a last resort and will be flagged by security scripts
+  return Math.random();
+}

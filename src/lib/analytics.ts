@@ -17,7 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
-import { generateId } from '@/lib/security/crypto';
+import { generateId, secureRandom } from '@/lib/security/crypto';
 
 /**
  * Event categories for analytics
@@ -258,7 +258,8 @@ function shouldTrackEvent(event: AnalyticsEventType): boolean {
 
   // Check sample rate
   if (ANALYTICS_CONFIG.SAMPLE_RATE < 100) {
-    const random = Math.random() * 100;
+    // SECURITY: Use secureRandom() for cryptographically secure sampling
+    const random = secureRandom() * 100;
     if (random > ANALYTICS_CONFIG.SAMPLE_RATE) {
       return false;
     }
