@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
@@ -261,6 +261,20 @@ function ResultsContent() {
     }
   };
 
+  // PERFORMANCE: Memoize formatted answers to prevent unnecessary re-renders of memoized
+  // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
+  // NOTE: This must be called before any early returns to comply with Rules of Hooks.
+  const formattedAnswers = useMemo(() => {
+    return session?.state.answers && typeof session.state.answers === 'object'
+      ? Object.fromEntries(
+          Object.entries(session.state.answers).map(([key, value]) => [
+            key,
+            String(value),
+          ])
+        )
+      : {};
+  }, [session?.state.answers]);
+
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -320,19 +334,7 @@ function ResultsContent() {
         </Button>
       </div>
 
-      <BlueprintDisplay
-        idea={idea.raw_text}
-        answers={
-          session?.state.answers && typeof session.state.answers === 'object'
-            ? Object.fromEntries(
-                Object.entries(session.state.answers).map(([key, value]) => [
-                  key,
-                  String(value),
-                ])
-              )
-            : {}
-        }
-      />
+      <BlueprintDisplay idea={idea.raw_text} answers={formattedAnswers} />
 
       {/* Task Management */}
       <div className="mt-8">
@@ -491,16 +493,7 @@ function ResultsContent() {
           <EmailButton
             ideaTitle={idea.title}
             ideaContent={idea.raw_text}
-            sessionAnswers={
-              session?.state.answers &&
-              typeof session.state.answers === 'object'
-                ? Object.fromEntries(
-                    Object.entries(session.state.answers).map(
-                      ([key, value]) => [key, String(value)]
-                    )
-                  )
-                : {}
-            }
+            sessionAnswers={formattedAnswers}
             onEmailSent={() => {
               // Growth: Track email send event
               trackEvent(ANALYTICS_EVENTS.CTA_CLICK, {
