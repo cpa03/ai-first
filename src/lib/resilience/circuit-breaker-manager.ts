@@ -1,5 +1,6 @@
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerOptions, CircuitBreakerState } from './types';
+import { RESILIENCE_CONFIG } from '../config/constants';
 
 export interface CircuitBreakerManagerOptions {
   maxSize?: number;
@@ -12,7 +13,8 @@ export class CircuitBreakerManager {
   private maxSize: number;
 
   constructor(options?: CircuitBreakerManagerOptions) {
-    this.maxSize = options?.maxSize ?? 100;
+    this.maxSize =
+      options?.maxSize ?? RESILIENCE_CONFIG.MANAGER.DEFAULT_MAX_SIZE;
   }
 
   static getInstance(): CircuitBreakerManager {

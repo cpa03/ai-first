@@ -716,6 +716,16 @@ export const RESILIENCE_CONFIG = {
       ),
     },
   } as const,
+
+  /** Circuit breaker manager configuration */
+  MANAGER: {
+    DEFAULT_MAX_SIZE: EnvLoader.number(
+      'RESILIENCE_MANAGER_DEFAULT_MAX_SIZE',
+      100,
+      10,
+      1000
+    ),
+  } as const,
 } as const;
 
 /**
