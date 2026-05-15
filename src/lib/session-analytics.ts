@@ -12,6 +12,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { generateSecureId } from '@/lib/utils';
+import { SESSION_ANALYTICS_CONFIG } from '@/lib/config/constants';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -104,14 +105,17 @@ function queueEvent(event: SessionEvent): void {
   eventQueue.push(event);
 
   // Flush if queue is full
-  if (eventQueue.length >= 10) {
+  if (eventQueue.length >= SESSION_ANALYTICS_CONFIG.MAX_QUEUE_SIZE) {
     flushEvents();
     return;
   }
 
   // Schedule flush
   if (!flushTimeout) {
-    flushTimeout = setTimeout(flushEvents, 5000);
+    flushTimeout = setTimeout(
+      flushEvents,
+      SESSION_ANALYTICS_CONFIG.FLUSH_INTERVAL_MS
+    );
   }
 }
 
