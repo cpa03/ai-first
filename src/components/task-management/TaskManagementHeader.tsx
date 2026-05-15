@@ -3,6 +3,7 @@
 import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
 import { MESSAGES, TASK_HEADER_STYLES } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -67,10 +68,24 @@ function TaskManagementHeaderComponent({
       </div>
 
       <div className="flex gap-2 mt-4">
-        <Button onClick={onExpandAll} variant="outline" size="sm">
+        <Button
+          onClick={() => {
+            triggerHapticFeedback();
+            onExpandAll();
+          }}
+          variant="outline"
+          size="sm"
+        >
           {MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
         </Button>
-        <Button onClick={onCollapseAll} variant="outline" size="sm">
+        <Button
+          onClick={() => {
+            triggerHapticFeedback();
+            onCollapseAll();
+          }}
+          variant="outline"
+          size="sm"
+        >
           {MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
         </Button>
       </div>

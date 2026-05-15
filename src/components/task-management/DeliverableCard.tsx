@@ -9,6 +9,7 @@ import {
   DELIVERABLE_CARD_STYLES,
   DELIVERABLE_PROGRESS_CONFIG,
 } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface DeliverableWithTasks {
   id: string;
@@ -43,6 +44,7 @@ function DeliverableCardComponent({
   );
 
   const handleToggleExpand = useCallback(() => {
+    triggerHapticFeedback();
     onToggleExpand(deliverable.id);
   }, [onToggleExpand, deliverable.id]);
 
