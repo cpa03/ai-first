@@ -46,7 +46,10 @@ const WhyChooseSection = dynamic(
               key={i}
               className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100"
             >
-              <Skeleton variant="circle" className="w-6 h-6 flex-shrink-0 mt-1" />
+              <Skeleton
+                variant="circle"
+                className="w-6 h-6 flex-shrink-0 mt-1"
+              />
               <div className="flex-1">
                 <Skeleton variant="text" className="h-5 mb-2 w-1/2" />
                 <Skeleton variant="text" className="h-4 w-3/4" />
@@ -68,13 +71,15 @@ export default function HomePageClient() {
   useEffect(() => {
     trackPageView();
 
-    // Flush events before page unload
-    const handleBeforeUnload = () => {
+    // Flush events before page hide (bfcache-friendly)
+    // Using 'pagehide' instead of 'beforeunload' for bfcache compatibility
+    // This improves Lighthouse best-practices score
+    const handlePageHide = () => {
       // Import flush dynamically to avoid issues
       import('@/lib/analytics').then(({ flush }) => flush());
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    return () => window.removeEventListener('pagehide', handlePageHide);
   }, []);
 
   // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of IdeaInput
