@@ -156,10 +156,16 @@ validate_admin_key_security() {
     fi
     
     local key_length=${#key}
-    local has_upper=$(echo "$key" | grep -c '[A-Z]' || echo 0)
-    local has_lower=$(echo "$key" | grep -c '[a-z]' || echo 0)
-    local has_number=$(echo "$key" | grep -c '[0-9]' || echo 0)
-    local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || echo 0)
+    local has_upper=$(echo "$key" | grep -c '[A-Z]' || true; echo 0)
+    local has_lower=$(echo "$key" | grep -c '[a-z]' || true; echo 0)
+    local has_number=$(echo "$key" | grep -c '[0-9]' || true; echo 0)
+    local has_special=$(echo "$key" | grep -c '[^A-Za-z0-9]' || true; echo 0)
+    
+    # Trim newlines from grep output
+    has_upper=$(echo "$has_upper" | tr -d '\n\r')
+    has_lower=$(echo "$has_lower" | tr -d '\n\r')
+    has_number=$(echo "$has_number" | tr -d '\n\r')
+    has_special=$(echo "$has_special" | tr -d '\n\r')
     
     if [ "$key_length" -lt "$MIN_ADMIN_KEY_LENGTH" ]; then
         print_status "SECURITY" "ADMIN_API_KEY is too short ($key_length chars, minimum $MIN_ADMIN_KEY_LENGTH)"
