@@ -9,6 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -273,6 +274,7 @@ function KeyboardShortcutsHelpComponent({
 
   // Close handler
   const handleClose = useCallback(() => {
+    triggerHapticFeedback();
     setIsLeaving(true);
     setTimeout(() => {
       setIsLeaving(false);

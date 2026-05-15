@@ -4,6 +4,7 @@ import { memo, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UI_CONFIG } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface NavLink {
   href: string;
@@ -120,6 +121,7 @@ function MobileNavComponent() {
   }, []);
 
   const toggleMenu = useCallback(() => {
+    triggerHapticFeedback();
     setIsOpen((prev) => !prev);
   }, []);
 

@@ -114,7 +114,7 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-.jules/                      # Bolt AI learning notes - personal, not for commit
+# .jules/ was used for Bolt AI - now removed
 # .sisyphus/ is for Sisyphus agent state persistence
 .sisyphus/
 

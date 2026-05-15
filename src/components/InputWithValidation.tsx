@@ -18,6 +18,7 @@ import {
   ANIMATION_DELAYS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
+import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -127,6 +128,7 @@ const InputWithValidationComponent = forwardRef<
     );
 
     const handleClear = useCallback(() => {
+      triggerHapticFeedback();
       const emptyValueEvent = {
         target: { value: '', name: props.name, id: props.id },
         currentTarget: { value: '', name: props.name, id: props.id },
@@ -386,7 +388,10 @@ const InputWithValidationComponent = forwardRef<
               >
                 <button
                   type="button"
-                  onClick={() => setPasswordVisible(!passwordVisible)}
+                  onClick={() => {
+                    triggerHapticFeedback();
+                    setPasswordVisible(!passwordVisible);
+                  }}
                   className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
                   aria-label={
                     passwordVisible ? 'Hide password' : 'Show password'
