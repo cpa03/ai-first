@@ -101,7 +101,7 @@ export function withApiHandler(
           requestId,
         },
         {
-          status: 403,
+          status: STATUS_CODES.FORBIDDEN,
           headers: {
             'X-Request-ID': requestId,
           },
@@ -124,7 +124,7 @@ export function withApiHandler(
             requestId,
           },
           {
-            status: 403,
+            status: STATUS_CODES.FORBIDDEN,
             headers: {
               'X-Request-ID': requestId,
             },
@@ -237,7 +237,7 @@ export function withApiHandler(
                 requestId,
               },
               {
-                status: 504,
+                status: STATUS_CODES.GATEWAY_TIMEOUT,
                 headers: {
                   'X-Request-ID': requestId,
                   'X-Response-Time': duration + 'ms',
