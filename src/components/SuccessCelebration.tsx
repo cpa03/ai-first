@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, memo } from 'react';
+import React, { useEffect, useState, useCallback, memo, useSyncExternalStore } from 'react';
 import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
@@ -9,6 +9,8 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
+// PERFORMANCE: Flatten particle interface to reduce object allocations per frame
+// velocity.x -> vx, velocity.y -> vy
 interface Particle {
   id: number;
   x: number;
@@ -16,7 +18,8 @@ interface Particle {
   color: string;
   size: number;
   rotation: number;
-  velocity: { x: number; y: number };
+  vx: number;
+  vy: number;
   opacity: number;
 }
 
@@ -29,6 +32,30 @@ interface SuccessCelebrationProps {
 const COLORS = CELEBRATION_COLORS.ALL;
 const PARTICLE_COUNT = ANIMATION_PHYSICS.PARTICLE_COUNT;
 
+// PERFORMANCE: Centralized reduced motion detection using useSyncExternalStore
+// This avoids redundant useState/useEffect cycles across components
+const subscribeToMotionPreference = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getMotionSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getServerMotionSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToMotionPreference,
+    getMotionSnapshot,
+    getServerMotionSnapshot
+  );
+}
+
 function SuccessCelebrationComponent({
   show,
   onComplete,
@@ -36,19 +63,8 @@ function SuccessCelebrationComponent({
 }: SuccessCelebrationProps) {
   const [particles, setParticles] = useState<Particle[]>([]);
   const [isVisible, setIsVisible] = useState(false);
-  const [shouldAnimate, setShouldAnimate] = useState(true);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setShouldAnimate(!mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setShouldAnimate(!e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const shouldAnimate = !prefersReducedMotion;
 
   const generateParticles = useCallback((): Particle[] => {
     return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
@@ -62,12 +78,10 @@ function SuccessCelebrationComponent({
             ANIMATION_PHYSICS.PARTICLE_SIZE.MIN) +
         ANIMATION_PHYSICS.PARTICLE_SIZE.MIN,
       rotation: Math.random() * 360,
-      velocity: {
-        x: (Math.random() - 0.5) * ANIMATION_PHYSICS.MAX_HORIZONTAL_VELOCITY,
-        y:
-          -Math.random() * ANIMATION_PHYSICS.MAX_VERTICAL_VELOCITY -
-          ANIMATION_PHYSICS.MIN_VERTICAL_BOOST,
-      },
+      vx: (Math.random() - 0.5) * ANIMATION_PHYSICS.MAX_HORIZONTAL_VELOCITY,
+      vy:
+        -Math.random() * ANIMATION_PHYSICS.MAX_VERTICAL_VELOCITY -
+        ANIMATION_PHYSICS.MIN_VERTICAL_BOOST,
       opacity: 1,
     }));
   }, []);
@@ -101,29 +115,38 @@ function SuccessCelebrationComponent({
     let animationId: number;
 
     const animate = () => {
-      setParticles((prevParticles) =>
-        prevParticles
-          .map((particle) => ({
-            ...particle,
-            x:
-              particle.x +
-              particle.velocity.x * ANIMATION_PHYSICS.VELOCITY_MULTIPLIER,
-            y:
-              particle.y +
-              particle.velocity.y * ANIMATION_PHYSICS.VELOCITY_MULTIPLIER,
-            velocity: {
-              x: particle.velocity.x * ANIMATION_PHYSICS.FRICTION,
-              y:
-                particle.velocity.y * ANIMATION_PHYSICS.FRICTION +
-                ANIMATION_PHYSICS.GRAVITY,
-            },
-            rotation:
-              particle.rotation +
-              particle.velocity.x * ANIMATION_PHYSICS.ROTATION_MULTIPLIER,
-            opacity: particle.opacity - ANIMATION_PHYSICS.OPACITY_DECAY,
-          }))
-          .filter((p) => p.opacity > 0)
-      );
+      setParticles((prevParticles) => {
+        if (prevParticles.length === 0) return prevParticles;
+
+        // PERFORMANCE: Use single-pass for loop instead of map().filter()
+        // This significantly reduces object allocations and array traversals per frame
+        const nextParticles: Particle[] = [];
+        const {
+          VELOCITY_MULTIPLIER,
+          FRICTION,
+          GRAVITY,
+          ROTATION_MULTIPLIER,
+          OPACITY_DECAY,
+        } = ANIMATION_PHYSICS;
+
+        for (let i = 0; i < prevParticles.length; i++) {
+          const p = prevParticles[i];
+          const nextOpacity = p.opacity - OPACITY_DECAY;
+
+          if (nextOpacity > 0) {
+            nextParticles.push({
+              ...p,
+              x: p.x + p.vx * VELOCITY_MULTIPLIER,
+              y: p.y + p.vy * VELOCITY_MULTIPLIER,
+              vx: p.vx * FRICTION,
+              vy: p.vy * FRICTION + GRAVITY,
+              rotation: p.rotation + p.vx * ROTATION_MULTIPLIER,
+              opacity: nextOpacity,
+            });
+          }
+        }
+        return nextParticles;
+      });
 
       animationId = requestAnimationFrame(animate);
     };
@@ -194,6 +217,8 @@ function SuccessCelebrationComponent({
               transform: `rotate(${particle.rotation}deg)`,
               opacity: particle.opacity,
               transition: 'none',
+              // PERFORMANCE: Enable GPU acceleration for particle movement
+              willChange: 'transform, opacity',
             }}
           />
         ))}
