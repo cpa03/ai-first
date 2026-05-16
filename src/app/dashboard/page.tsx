@@ -35,11 +35,18 @@ const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
 const ReferralLink = dynamic(() => import('@/components/ReferralLink'), {
   ssr: false,
 });
+
+// Lazy load KeyboardShortcutsHelp for code splitting
+const KeyboardShortcutsHelp = dynamic(
+  () => import('@/components/KeyboardShortcutsHelp'),
+  { ssr: false }
+);
 import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Link from 'next/link';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
+import { triggerHapticFeedback } from '@/lib/utils';
 interface Idea {
   id: string;
   title: string;
@@ -82,6 +89,8 @@ export default function DashboardPage() {
     isOpen: false,
     idea: null,
   });
+  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
+  const filterSelectRef = useRef<HTMLSelectElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
 
   // Growth: Generate referral code from user ID (first 8 chars)
@@ -249,6 +258,47 @@ export default function DashboardPage() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [deleteModal.isOpen, closeDeleteModal]);
 
+  useEffect(() => {
+    const handleKeyboardShortcuts = (e: KeyboardEvent) => {
+      if (deleteModal.isOpen) return;
+
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable;
+
+      if (isInputFocused) return;
+
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        filterSelectRef.current?.focus();
+      }
+
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        setShowKeyboardHelp(true);
+      }
+
+      if (
+        (e.key === 'n' || e.key === 'N') &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.shiftKey
+      ) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        window.location.href = '/';
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+    return () =>
+      document.removeEventListener('keydown', handleKeyboardShortcuts);
+  }, [deleteModal.isOpen]);
+
   if (loading) {
     return (
       <div
@@ -309,11 +359,12 @@ export default function DashboardPage() {
           Filter by status
         </label>
         <select
+          ref={filterSelectRef}
           id="status-filter"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          aria-label="Filter ideas by status"
+          aria-label="Filter ideas by status (Press / to focus)"
         >
           <option value="all">All Statuses</option>
           <option value="draft">Draft</option>
@@ -321,6 +372,20 @@ export default function DashboardPage() {
           <option value="breakdown">In Progress</option>
           <option value="completed">Completed</option>
         </select>
+        <span className="hidden sm:inline-flex items-center gap-1 ml-3 text-xs text-gray-500">
+          <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-sans">
+            /
+          </kbd>
+          <span>to filter</span>
+        </span>
+        <button
+          type="button"
+          onClick={() => setShowKeyboardHelp(true)}
+          className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+          aria-label="Show keyboard shortcuts (press ?)"
+        >
+          Shortcuts
+        </button>
       </div>
       {/* Ideas List */}
       {ideas.length === 0 ? (
@@ -457,6 +522,12 @@ export default function DashboardPage() {
             </table>
           </div>
         </div>
+      )}
+      {showKeyboardHelp && (
+        <KeyboardShortcutsHelp
+          isOpen={showKeyboardHelp}
+          onClose={() => setShowKeyboardHelp(false)}
+        />
       )}
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && deleteModal.idea && (
