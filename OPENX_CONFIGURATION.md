@@ -12,14 +12,20 @@ Comprehensive OpenCode automation environment with multi-agent orchestration, 33
 
 ### Advanced Configuration
 
-- **.opencode/oh-my-opencode.json** - Multi-agent orchestration configuration
-  - Sisyphus (minimax-m2.5-free) - Main orchestrator
+- **.opencode/oh-my-openagent.json** - Multi-agent orchestration configuration
+  - Sisyphus (minimax-m2.5-free) - Main orchestrator, ultrawork loop
   - Hephaestus (glm-4.7-free) - Autonomous deep worker
-  - Oracle (minimax-m2.5-free) - Design & debugging
-  - Librarian (glm-4.7-free) - Documentation & search
-  - Explore (glm-4.7-free) - Fast codebase exploration
+  - Oracle (minimax-m2.5-free) - Architecture & debugging
+  - Librarian (glm-4.7-free) - Documentation & exploration
+  - Explore (glm-4.7-free) - Fast codebase search
   - Frontend UI/UX (glm-4.7-free) - Visual engineering
   - Minimax Agent (minimax-m2.1-free) - General tasks
+  - RepoKeeper (minimax-m2.5-free) - Repository maintenance
+  - Prometheus (minimax-m2.5-free) - Planning orchestration
+  - Metis (minimax-m2.5-free) - Knowledge management
+  - Momus (minimax-m2.5-free) - Creative writing
+  - Atlas (minimax-m2.5-free) - Architecture analysis
+  - Multimodal Looker (glm-4.7-free) - Visual content processing
 
 ### Agent Configuration
 
@@ -76,9 +82,9 @@ Comprehensive OpenCode automation environment with multi-agent orchestration, 33
 
 ## MCP Servers Enabled
 
-- websearch (Exa)
-- context7 (official documentation)
-- github (GitHub search)
+- websearch (Exa) - Web search capabilities
+- context7 - Official documentation lookup
+- github - GitHub repository search and operations
 
 ## GitHub Workflows
 

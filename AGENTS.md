@@ -16,16 +16,21 @@ This repository uses a sophisticated multi-agent system powered by OpenCode CLI 
 
 ### Specialized Agents (via OhMyOpenCode)
 
-| Agent              | Model                      | Purpose                                    |
-| ------------------ | -------------------------- | ------------------------------------------ |
-| **Sisyphus**       | opencode/minimax-m2.5-free | Main orchestrator, relentless execution    |
-| **Hephaestus**     | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented      |
-| **Oracle**         | opencode/minimax-m2.5-free | Architecture, debugging, complex reasoning |
-| **Librarian**      | opencode/glm-4.7-free      | Documentation, codebase exploration        |
-| **Explore**        | opencode/glm-4.7-free      | Fast codebase search                       |
-| **Frontend UI/UX** | opencode/glm-4.7-free      | Frontend development                       |
-| **Minimax Agent**  | opencode/minimax-m2.1-free | Balanced performance tasks                 |
-| **RepoKeeper**     | opencode/minimax-m2.5-free | Repository maintenance and cleanup agent   |
+| Agent                 | Model                      | Purpose                                    |
+| --------------------- | -------------------------- | ------------------------------------------ |
+| **Sisyphus**          | opencode/minimax-m2.5-free | Main orchestrator, ultrawork loop          |
+| **Hephaestus**        | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented      |
+| **Oracle**            | opencode/minimax-m2.5-free | Architecture, debugging, complex reasoning |
+| **Librarian**         | opencode/glm-4.7-free      | Documentation, codebase exploration        |
+| **Explore**           | opencode/glm-4.7-free      | Fast codebase search                       |
+| **Frontend UI/UX**    | opencode/glm-4.7-free      | Frontend development                       |
+| **Minimax Agent**     | opencode/minimax-m2.1-free | Balanced performance tasks                 |
+| **RepoKeeper**        | opencode/minimax-m2.5-free | Repository maintenance and cleanup agent   |
+| **Prometheus**        | opencode/minimax-m2.5-free | Planning and task orchestration            |
+| **Metis**             | opencode/minimax-m2.5-free | Knowledge management and reasoning         |
+| **Momus**             | opencode/minimax-m2.5-free | Creative writing and content generation    |
+| **Atlas**             | opencode/minimax-m2.5-free | System architecture and analysis           |
+| **Multimodal Looker** | opencode/glm-4.7-free      | Visual content analysis and processing     |
 
 ## Model Configuration
 
