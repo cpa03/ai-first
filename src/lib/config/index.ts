@@ -237,3 +237,13 @@ export {
 
 // CSP Configuration (extracted from constants.ts for modularity)
 export { CSP_CONFIG, type CspConfig } from './csp-config';
+
+// Edge Cache Control Configuration
+export {
+  EDGE_CACHE_CONFIG,
+  CACHE_CONTROL_CONFIG,
+  generateApiCacheControl,
+  generateStaticAssetCacheControl,
+  NO_STORE_CACHE_CONTROL,
+  type EdgeCacheConfig,
+} from './cache-control';
