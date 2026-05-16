@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
+import { triggerHapticFeedback } from '@/lib/utils';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
 import { MESSAGES, PLACEHOLDERS, COMPONENT_CONFIG } from '@/lib/config';
 import Alert from './Alert';
@@ -151,6 +152,17 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     [idea, logger]
   );
 
+  // Micro-UX improvement: Add Escape key to clear input field
+  // This provides a quick way for keyboard users to reset the input
+  const handleClearWithKeyboard = useCallback(() => {
+    if (idea.trim()) {
+      triggerHapticFeedback();
+      setIdea('');
+      setValidationError(null);
+      inputRef.current?.focus();
+    }
+  }, [idea]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       // Submit on Cmd/Ctrl + Enter
@@ -164,8 +176,14 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         e.preventDefault();
         handleSubmit(e as unknown as React.FormEvent);
       }
+      // Clear input on Escape - common pattern in modern forms
+      // Only if input has content and not currently submitting
+      if (e.key === 'Escape' && idea.trim() && !isSubmitting) {
+        e.preventDefault();
+        handleClearWithKeyboard();
+      }
     },
-    [isSubmitting, idea, validationError, handleSubmit]
+    [isSubmitting, idea, validationError, handleSubmit, handleClearWithKeyboard]
   );
 
   const handleCelebrationComplete = useCallback(() => {
@@ -201,7 +219,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           onChange={handleIdeaChange}
           onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDERS.IDEA_INPUT}
-          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}`}
+          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. Press Escape to clear.`}
           multiline={true}
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}
