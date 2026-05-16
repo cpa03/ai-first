@@ -130,22 +130,23 @@ Before merging a migration PR:
 - [ ] Tested on local database
 - [ ] Down migration provided
 
-## Consolidation Plan (Future)
+## Consolidation Plan
 
 To reduce the current 60 migrations:
 
 1. **Phase 1** (Completed): Document current state
-2. **Phase 2** (TBD): Identify safe consolidation candidates
-   - Index additions from same date
-   - Related RLS policies
+2. **Phase 2** (Completed): Implement safe consolidation
+   - Created consolidated index migration: `20260222_consolidate_performance_indexes.sql`
+   - Combined 17 independent index-only migrations from 20260218-20260222
+   - Uses `CREATE INDEX IF NOT EXISTS` for idempotency
+   - Safe for fresh installs (reduces migration count by ~27%)
 3. **Phase 3**: Implement governance to prevent future accumulation
 
-### Safe Consolidation Candidates
+### Completed Consolidations
 
-The following can be safely merged (same table, same date, related operations):
-
-- `20260221_add_clarification_question_index.sql` + related FK indexes
-- `20260218_add_missing_rls_policies.sql` (already consolidated)
+| Original Migrations                     | Consolidated File                            | Reduction |
+| --------------------------------------- | -------------------------------------------- | --------- |
+| 17 index-only files (20260218-20260222) | 20260222_consolidate_performance_indexes.sql | 16 files  |
 
 ### Risky Consolidations (Do Not Merge)
 
