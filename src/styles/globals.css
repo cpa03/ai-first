@@ -462,10 +462,29 @@
 
 .btn-glow-hover:focus-visible:not(:disabled) {
   animation: glowPulse 2s ease-in-out infinite;
-  outline: none;
-  box-shadow:
-    0 0 0 3px var(--shadow-primary-strong),
-    0 0 20px -5px var(--shadow-primary-medium);
+}
+
+@keyframes focusRingPulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px var(--ring-primary-600);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px var(--ring-primary-400),
+      0 0 12px -2px var(--ring-primary-400);
+  }
+}
+
+.animate-focus-ring:focus-visible {
+  animation: focusRingPulse 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-focus-ring:focus-visible {
+    animation: none;
+    box-shadow: 0 0 0 3px var(--ring-primary-600);
+  }
 }
 
 /* Reduced motion support for button glow */

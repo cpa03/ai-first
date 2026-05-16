@@ -73,6 +73,7 @@ const InputWithValidationComponent = forwardRef<
     const [shouldShake, setShouldShake] = useState(false);
     const [successAnnounced, setSuccessAnnounced] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
+    const [isFocused, setIsFocused] = useState(false);
     const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
@@ -97,6 +98,11 @@ const InputWithValidationComponent = forwardRef<
 
     const handleBlur = useCallback(() => {
       setTouched(true);
+      setIsFocused(false);
+    }, []);
+
+    const handleFocus = useCallback(() => {
+      setIsFocused(true);
     }, []);
 
     const handleKeyDown = useCallback(
@@ -260,8 +266,9 @@ const InputWithValidationComponent = forwardRef<
               value={value}
               onChange={handleChange}
               onBlur={handleBlur}
+              onFocus={handleFocus}
               onKeyDown={handleKeyDown}
-              className={`${baseInputClasses} ${textareaResizeClass} min-h-[100px] overflow-hidden`}
+              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''} ${textareaResizeClass} min-h-[100px] overflow-hidden`}
               aria-invalid={isInvalid}
               aria-required={props.required}
               aria-describedby={
@@ -280,8 +287,9 @@ const InputWithValidationComponent = forwardRef<
               value={value}
               onChange={handleChange}
               onBlur={handleBlur}
+              onFocus={handleFocus}
               onKeyDown={handleKeyDown}
-              className={baseInputClasses}
+              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''}`}
               type={
                 showPasswordToggle && inputType === 'password'
                   ? passwordVisible
