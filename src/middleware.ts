@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
-import { API_ENDPOINTS } from '@/lib/config';
+import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
  * Middleware for Next.js
@@ -173,13 +173,9 @@ function applyCloudflareHeaders(
     // API routes: shorter cache for dynamic content
     // Static assets are handled by the matcher exclusion in config
     if (pathname.startsWith('/api/')) {
-      // Cache at edge for 5 minutes, revalidate after 10 minutes
       const existingCacheControl = response.headers.get('cache-control');
       if (!existingCacheControl || existingCacheControl === 'no-store') {
-        response.headers.set(
-          'cache-control',
-          'public, max-age=300, s-maxage=600, stale-while-revalidate=60'
-        );
+        response.headers.set('cache-control', generateApiCacheControl());
       }
     }
   }
