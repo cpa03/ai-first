@@ -19,7 +19,7 @@
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 import { generateSecureId } from '@/lib/utils';
-import { simpleHash } from '@/lib/security/crypto';
+import { simpleHash, secureRandom } from '@/lib/security/crypto';
 
 /**
  * Experiment variant definition
@@ -175,7 +175,7 @@ function saveAssignments(assignments: Record<string, ABAssignment>): void {
  */
 function getDeterministicRandom(experimentId: string): number {
   if (typeof window === 'undefined') {
-    return Math.random();
+    return secureRandom();
   }
 
   try {
@@ -197,7 +197,7 @@ function getDeterministicRandom(experimentId: string): number {
     // Return normalized value 0-1 (0xFFFFFFFF is the max 32-bit unsigned value)
     return hashInt / 4294967295;
   } catch {
-    return Math.random();
+    return secureRandom();
   }
 }
 
