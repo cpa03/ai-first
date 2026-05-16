@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { generateId } from './security/crypto';
+import { RETRY_CONFIG } from '@/lib/config/constants';
 
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Fast-path for common empty or single-class cases.
@@ -37,15 +38,16 @@ export interface RetryOptions {
 
 /**
  * Default retry options
+ * Uses centralized RETRY_CONFIG to eliminate hardcoded values
  */
 const DEFAULT_RETRY_OPTIONS: Omit<Required<RetryOptions>, 'onRetry'> & {
   onRetry?: (attempt: number, error: Error) => void;
 } = {
-  maxAttempts: 3,
-  initialDelayMs: 1000,
-  maxDelayMs: 10000,
-  backoffMultiplier: 2,
-  addJitter: true,
+  maxAttempts: RETRY_CONFIG.DEFAULT_MAX_RETRIES,
+  initialDelayMs: RETRY_CONFIG.INITIAL_DELAY,
+  maxDelayMs: RETRY_CONFIG.MAX_DELAY,
+  backoffMultiplier: RETRY_CONFIG.BACKOFF_MULTIPLIER,
+  addJitter: RETRY_CONFIG.ENABLE_JITTER,
   onRetry: undefined,
 };
 
