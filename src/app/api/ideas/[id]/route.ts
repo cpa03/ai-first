@@ -36,7 +36,7 @@ async function handleGet(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.NOT_FOUND.IDEA,
       ErrorCode.NOT_FOUND,
-      404
+      STATUS_CODES.NOT_FOUND
     );
   }
 
@@ -84,7 +84,7 @@ async function handlePut(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.NOT_FOUND.IDEA,
       ErrorCode.NOT_FOUND,
-      404
+      STATUS_CODES.NOT_FOUND
     );
   }
 
@@ -100,7 +100,8 @@ async function handlePut(context: ApiContext) {
   };
 
   if (safeTitle !== undefined) {
-    const titleStr = typeof safeTitle === 'string' ? safeTitle : String(safeTitle ?? '');
+    const titleStr =
+      typeof safeTitle === 'string' ? safeTitle : String(safeTitle ?? '');
     updates.title = sanitizeHtml(titleStr).substring(
       0,
       IDEA_CONFIG.VALIDATION.MAX_TITLE_LENGTH
@@ -149,7 +150,7 @@ async function handleDelete(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.NOT_FOUND.IDEA,
       ErrorCode.NOT_FOUND,
-      404
+      STATUS_CODES.NOT_FOUND
     );
   }
 

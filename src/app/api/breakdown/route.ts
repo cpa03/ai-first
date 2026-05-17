@@ -43,7 +43,7 @@ async function handlePost(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.NOT_FOUND.IDEA,
       ErrorCode.NOT_FOUND,
-      404
+      STATUS_CODES.NOT_FOUND
     );
   }
 
@@ -91,7 +91,7 @@ async function handleGet(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.NOT_FOUND.IDEA,
       ErrorCode.NOT_FOUND,
-      404
+      STATUS_CODES.NOT_FOUND
     );
   }
 
@@ -103,7 +103,7 @@ async function handleGet(context: ApiContext) {
     throw new AppError(
       API_ERROR_MESSAGES.NOT_FOUND.SESSION,
       ErrorCode.NOT_FOUND,
-      404
+      STATUS_CODES.NOT_FOUND
     );
   }
 
