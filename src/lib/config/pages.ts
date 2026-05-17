@@ -91,6 +91,22 @@ export const HOME_PAGE_CONFIG = {
       url: APP_CONFIG.URLS.BASE,
     },
   },
+  HERO: {
+    TITLE: 'AI-Powered Project Planning & Task Management',
+    DESCRIPTION:
+      'Transform raw ideas into actionable project plans with AI. Get automated task breakdown, realistic timelines, and comprehensive roadmaps in minutes.',
+  },
+  SHARE: {
+    TITLE: 'IdeaFlow - Turn Ideas into Action',
+    TEXT: 'Transform your ideas into structured projects with AI-powered planning, task breakdown, and export to your favorite tools.',
+    LABEL: 'Share IdeaFlow',
+    ARIA_LABEL: 'Share IdeaFlow with friends',
+  },
+  CONFIRMATION: {
+    LABEL: 'Your Idea:',
+    SAVED_WITH_ID: 'Saved with ID:',
+    REDIRECTING: 'Redirecting to clarification...',
+  },
 } as const;
 
 /**
