@@ -262,3 +262,84 @@ export function generateSecureId(prefix?: string): string {
   const p = prefix ? `${prefix}_` : '';
   return `${p}${generateId()}`;
 }
+
+/**
+ * Converts a date to a human-readable relative time string.
+ * Provides intuitive time context like "2 hours ago" or "3 days ago".
+ * Falls back to absolute date format for older dates.
+ *
+ * @param dateString - ISO date string or Date object
+ * @param locale - Locale for formatting (default: 'en-US')
+ * @returns Relative time string with appropriate granularity
+ *
+ * @example
+ * ```typescript
+ * getRelativeTime('2026-05-17T10:00:00Z') // "2 hours ago"
+ * getRelativeTime('2026-05-15T10:00:00Z') // "2 days ago"
+ * getRelativeTime('2026-01-01T10:00:00Z') // "Jan 1, 2026"
+ * ```
+ */
+export function getRelativeTime(
+  dateString: string | Date,
+  locale: string = 'en-US'
+): string {
+  const date =
+    typeof dateString === 'string' ? new Date(dateString) : dateString;
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  // Future dates: show absolute date
+  if (diffMs < 0) {
+    return date.toLocaleDateString(locale, {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+
+  // Less than 1 minute: show "just now"
+  if (diffSeconds < 60) {
+    return 'just now';
+  }
+
+  // Less than 1 hour: show minutes
+  if (diffMinutes < 60) {
+    const minutes = Math.floor(diffMinutes);
+    return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
+  }
+
+  // Less than 24 hours: show hours
+  if (diffHours < 24) {
+    const hours = Math.floor(diffHours);
+    return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+  }
+
+  // Less than 7 days: show days
+  if (diffDays < 7) {
+    const days = Math.floor(diffDays);
+    return days === 1 ? '1 day ago' : `${days} days ago`;
+  }
+
+  // Less than 30 days: show weeks
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7);
+    return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
+  }
+
+  // Less than 365 days: show months
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30);
+    return months === 1 ? '1 month ago' : `${months} months ago`;
+  }
+
+  // Older than 1 year: show absolute date
+  return date.toLocaleDateString(locale, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
