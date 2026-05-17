@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
 import {
@@ -21,6 +21,15 @@ interface TaskItemProps {
 function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    if (isCompleted && !isUpdating) {
+      setShowCelebration(true);
+      const timer = setTimeout(() => setShowCelebration(false), 600);
+      return () => clearTimeout(timer);
+    }
+  }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
     onToggle(task.id, task.status);
@@ -67,14 +76,15 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     ? 'Mark as incomplete'
     : 'Mark as complete';
 
+  const containerClasses = useMemo(() => {
+    const base = isCompleted
+      ? TASK_ITEM_STYLES.CONTAINER_COMPLETED
+      : TASK_ITEM_STYLES.CONTAINER;
+    return showCelebration ? `${base} animate-task-complete` : base;
+  }, [isCompleted, showCelebration]);
+
   return (
-    <div
-      className={
-        isCompleted
-          ? TASK_ITEM_STYLES.CONTAINER_COMPLETED
-          : TASK_ITEM_STYLES.CONTAINER
-      }
-    >
+    <div className={containerClasses}>
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}
