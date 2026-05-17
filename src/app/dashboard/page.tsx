@@ -365,7 +365,7 @@ export default function DashboardPage() {
         </div>
       )}
       {/* Filter */}
-      <div className="mb-6">
+      <div className="mb-6 flex flex-wrap items-center gap-4">
         <label htmlFor="status-filter" className="sr-only">
           Filter by status
         </label>
@@ -374,15 +374,75 @@ export default function DashboardPage() {
           id="status-filter"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer"
           aria-label="Filter ideas by status (Press / to focus)"
         >
-          <option value="all">All Statuses</option>
-          <option value="draft">Draft</option>
-          <option value="clarified">Clarified</option>
-          <option value="breakdown">In Progress</option>
-          <option value="completed">Completed</option>
+          <option
+            value="all"
+            className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
+          >
+            {filter === 'all' ? '✓ All Statuses' : 'All Statuses'}
+          </option>
+          <option
+            value="draft"
+            className={filter === 'draft' ? 'bg-primary-50 font-medium' : ''}
+          >
+            {filter === 'draft' ? '✓ Draft' : 'Draft'}
+          </option>
+          <option
+            value="clarified"
+            className={
+              filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
+            }
+          >
+            {filter === 'clarified' ? '✓ Clarified' : 'Clarified'}
+          </option>
+          <option
+            value="breakdown"
+            className={
+              filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
+            }
+          >
+            {filter === 'breakdown' ? '✓ In Progress' : 'In Progress'}
+          </option>
+          <option
+            value="completed"
+            className={
+              filter === 'completed' ? 'bg-primary-50 font-medium' : ''
+            }
+          >
+            {filter === 'completed' ? '✓ Completed' : 'Completed'}
+          </option>
         </select>
+        {filter !== 'all' && (
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+              <svg
+                className="w-3 h-3 mr-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {filter === 'breakdown'
+                ? 'In Progress'
+                : filter.charAt(0).toUpperCase() + filter.slice(1)}
+            </span>
+            <button
+              type="button"
+              onClick={() => setFilter('all')}
+              className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+              aria-label="Clear filter"
+            >
+              Clear
+            </button>
+          </div>
+        )}
         <span className="hidden sm:inline-flex items-center gap-1 ml-3 text-xs text-gray-500">
           <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-sans">
             /
