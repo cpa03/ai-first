@@ -41,12 +41,17 @@ const KeyboardShortcutsHelp = dynamic(
   () => import('@/components/KeyboardShortcutsHelp'),
   { ssr: false }
 );
+
+// Lazy load Tooltip for code splitting - used for showing absolute date on hover
+const Tooltip = dynamic(() => import('@/components/Tooltip'), {
+  ssr: false,
+});
 import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Link from 'next/link';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
-import { triggerHapticFeedback } from '@/lib/utils';
+import { triggerHapticFeedback, getRelativeTime } from '@/lib/utils';
 interface Idea {
   id: string;
   title: string;
@@ -67,7 +72,13 @@ const statusLabels = IDEA_STATUS_CONFIG.LABELS;
 const logger = createLogger('DashboardPage');
 
 // PERFORMANCE: Extract pure function outside component to prevent recreation on every render
+// Using relative time for better UX - shows "2 hours ago" instead of requiring mental date math
 const formatDate = (dateString: string): string => {
+  return getRelativeTime(dateString);
+};
+
+// Also export absolute date for cases where it's needed
+const formatDateAbsolute = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
@@ -465,7 +476,14 @@ export default function DashboardPage() {
                     <td
                       className={`${TABLE_PATTERNS.cell.padding} ${TABLE_PATTERNS.cell.text}`}
                     >
-                      {formatDate(idea.createdAt)}
+                      <Tooltip
+                        content={formatDateAbsolute(idea.createdAt)}
+                        position="top"
+                      >
+                        <span className="cursor-help border-b border-dotted border-gray-400">
+                          {formatDate(idea.createdAt)}
+                        </span>
+                      </Tooltip>
                     </td>
                     <td className={TABLE_PATTERNS.actions.container}>
                       <div className={TABLE_PATTERNS.actions.buttonGroup}>
