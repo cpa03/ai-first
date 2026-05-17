@@ -369,51 +369,60 @@ export default function DashboardPage() {
         <label htmlFor="status-filter" className="sr-only">
           Filter by status
         </label>
-        <select
-          ref={filterSelectRef}
-          id="status-filter"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          className="block w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer"
-          aria-label="Filter ideas by status (Press / to focus)"
-        >
-          <option
-            value="all"
-            className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
+        <div className="relative">
+          <select
+            ref={filterSelectRef}
+            id="status-filter"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="block w-full sm:w-auto px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer"
+            aria-label="Filter ideas by status (Press / to focus)"
           >
-            {filter === 'all' ? '✓ All Statuses' : 'All Statuses'}
-          </option>
-          <option
-            value="draft"
-            className={filter === 'draft' ? 'bg-primary-50 font-medium' : ''}
-          >
-            {filter === 'draft' ? '✓ Draft' : 'Draft'}
-          </option>
-          <option
-            value="clarified"
-            className={
-              filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
-            }
-          >
-            {filter === 'clarified' ? '✓ Clarified' : 'Clarified'}
-          </option>
-          <option
-            value="breakdown"
-            className={
-              filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
-            }
-          >
-            {filter === 'breakdown' ? '✓ In Progress' : 'In Progress'}
-          </option>
-          <option
-            value="completed"
-            className={
-              filter === 'completed' ? 'bg-primary-50 font-medium' : ''
-            }
-          >
-            {filter === 'completed' ? '✓ Completed' : 'Completed'}
-          </option>
-        </select>
+            <option
+              value="all"
+              className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
+            >
+              {filter === 'all' ? '✓ All Statuses' : 'All Statuses'}
+            </option>
+            <option
+              value="draft"
+              className={filter === 'draft' ? 'bg-primary-50 font-medium' : ''}
+            >
+              {filter === 'draft' ? '✓ Draft' : 'Draft'}
+            </option>
+            <option
+              value="clarified"
+              className={
+                filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
+              }
+            >
+              {filter === 'clarified' ? '✓ Clarified' : 'Clarified'}
+            </option>
+            <option
+              value="breakdown"
+              className={
+                filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
+              }
+            >
+              {filter === 'breakdown' ? '✓ In Progress' : 'In Progress'}
+            </option>
+            <option
+              value="completed"
+              className={
+                filter === 'completed' ? 'bg-primary-50 font-medium' : ''
+              }
+            >
+              {filter === 'completed' ? '✓ Completed' : 'Completed'}
+            </option>
+          </select>
+          {ideas.length > 0 && (
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+              <span className="flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 text-xs font-semibold bg-primary-100 text-primary-700 rounded-full">
+                {ideas.length}
+              </span>
+            </div>
+          )}
+        </div>
         {filter !== 'all' && (
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
