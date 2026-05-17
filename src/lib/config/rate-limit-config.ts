@@ -128,4 +128,43 @@ export const RATE_LIMIT_CONFIG = {
       2000
     ),
   },
+
+  /**
+   * External API Rate Limit Tracker Configuration
+   * Tracks rate limit headers from external API responses
+   * Now supports environment variable overrides
+   */
+  EXTERNAL: {
+    /**
+     * Threshold percentage (0-1) to start throttling
+     * Start throttling when this percentage or less remains
+     * Env: EXTERNAL_RATE_LIMIT_THROTTLE_THRESHOLD (default: 0.2 = 20%)
+     */
+    THROTTLE_THRESHOLD: EnvLoader.number(
+      'EXTERNAL_RATE_LIMIT_THROTTLE_THRESHOLD',
+      0.2,
+      0.05,
+      0.5
+    ),
+    /**
+     * Maximum age of rate limit info before considering it stale (ms)
+     * Env: EXTERNAL_RATE_LIMIT_MAX_AGE_MS (default: 3600000 = 1 hour)
+     */
+    MAX_AGE_MS: EnvLoader.number(
+      'EXTERNAL_RATE_LIMIT_MAX_AGE_MS',
+      3600000,
+      60000,
+      86400000
+    ),
+    /**
+     * Maximum number of services to track (memory prevention)
+     * Env: EXTERNAL_RATE_LIMIT_MAX_SERVICES (default: 20)
+     */
+    MAX_SERVICES: EnvLoader.number(
+      'EXTERNAL_RATE_LIMIT_MAX_SERVICES',
+      20,
+      5,
+      100
+    ),
+  },
 } as const;
