@@ -250,7 +250,8 @@ export class DatabaseService {
     if (
       !this._client &&
       process.env.NODE_ENV === 'development' &&
-      !process.env.CI
+      !process.env.CI &&
+      typeof window === 'undefined'
     ) {
       logger.warn(
         'Supabase client not initialized. Check environment variables.'
