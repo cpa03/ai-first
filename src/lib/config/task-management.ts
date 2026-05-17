@@ -87,7 +87,7 @@ export const TASK_ITEM_STYLES = {
   CHECKBOX: {
     BASE: 'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500',
     UNCHECKED:
-      'border-gray-300 hover:border-primary-500 hover:scale-105 cursor-pointer',
+      'border-gray-300 bg-white hover:border-primary-500 hover:bg-primary-50 hover:scale-105 hover:shadow-md cursor-pointer',
     CHECKED: 'bg-green-500 border-green-500 scale-110',
     DISABLED: 'opacity-50 cursor-not-allowed',
   },
