@@ -40,10 +40,24 @@ jest.mock('@/lib/config/constants', () => ({
       'token',
       'credential',
     ],
-    SAFE_FIELDS: ['id', 'created_at', 'updated_at', 'status', 'priority', 'estimate_hours'],
+    SAFE_FIELDS: [
+      'id',
+      'created_at',
+      'updated_at',
+      'status',
+      'priority',
+      'estimate_hours',
+    ],
     MAX_RECURSION_DEPTH: 100,
   },
-}))
+  RETRY_CONFIG: {
+    DEFAULT_MAX_RETRIES: 3,
+    INITIAL_DELAY: 1000,
+    MAX_DELAY: 10000,
+    BACKOFF_MULTIPLIER: 2,
+    ENABLE_JITTER: true,
+  },
+}));
 
 jest.mock('@/lib/config', () => ({
   ANIMATION_DELAYS: {
@@ -278,7 +292,6 @@ describe('useBlueprintGeneration', () => {
     mockAppendChild.mockRestore();
     mockRemoveChild.mockRestore();
   });
-
 
   it('regenerates blueprint when inputs change', async () => {
     const { result, rerender } = renderHook(
