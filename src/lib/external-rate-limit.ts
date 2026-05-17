@@ -10,7 +10,7 @@
 
 import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
-import { TIME_UNITS } from './config';
+import { TIME_UNITS, RATE_LIMIT_CONFIG } from './config';
 
 const logger = createLogger('ExternalRateLimit');
 
@@ -78,11 +78,12 @@ const RATE_LIMIT_HEADERS: Record<
 
 /**
  * Default configuration for rate limit tracking
+ * Uses modular config from RATE_LIMIT_CONFIG.EXTERNAL
  */
 const DEFAULT_CONFIG: ExternalRateLimitConfig = {
-  throttleThreshold: 0.2, // Start throttling when 20% or less remaining
-  maxAgeMs: TIME_UNITS.HOUR, // 1 hour
-  maxServices: 20,
+  throttleThreshold: RATE_LIMIT_CONFIG.EXTERNAL.THROTTLE_THRESHOLD,
+  maxAgeMs: RATE_LIMIT_CONFIG.EXTERNAL.MAX_AGE_MS,
+  maxServices: RATE_LIMIT_CONFIG.EXTERNAL.MAX_SERVICES,
 };
 
 /**
