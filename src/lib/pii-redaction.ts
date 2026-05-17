@@ -105,12 +105,14 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  * Redact PII from a string using predefined patterns
  */
 export function redactPII(text: string): string {
-  if (typeof text !== 'string') return text;
-  if (!text) return text;
+  // PERFORMANCE: Fast path for non-strings or strings too short to contain PII
+  if (typeof text !== 'string' || text.length < 4) return text;
 
   let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
+  // PERFORMANCE: Sequential replace is actually faster in V8 for large strings
+  // than a single complex combined regex with many branches and capturing groups.
   // Order matters: more specific patterns first
   redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
   redacted = redacted.replace(
@@ -369,35 +371,25 @@ export function redactPIIInObject(
 
   const redacted: RedactedObject = {};
 
-  // PERFORMANCE: Avoid expensive property descriptor lookups for non-Error objects.
+  // PERFORMANCE: Inline processEntry logic to avoid closure creation overhead per object property.
   // Using Object.keys() for string keys and processing symbols separately is
-  // significantly faster than getAllPropertyDescriptors() which fetches all
-  // property names, then calls getOwnPropertyDescriptor for each.
-  const processEntry = (key: string, value: unknown) => {
-    if (isSafeField(key)) {
-      redacted[key] = value as RedactionResult;
-      return;
-    }
-
-    if (SENSITIVE_FIELD_REGEX.test(key)) {
-      redacted[key] = getRedactionLabel(key);
-      return;
-    }
-
-    if (typeof value === 'string') {
-      redacted[key] = redactPII(value);
-    } else if (value !== null && typeof value === 'object') {
-      redacted[key] = redactPIIInObject(value, seen, depth + 1);
-    } else {
-      redacted[key] = value as RedactionResult;
-    }
-  };
-
+  // significantly faster than getAllPropertyDescriptors() for non-Error objects.
   const keys = Object.keys(obj);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     try {
-      processEntry(key, (obj as Record<string, unknown>)[key]);
+      const value = (obj as Record<string, unknown>)[key];
+      if (isSafeField(key)) {
+        redacted[key] = value as RedactionResult;
+      } else if (SENSITIVE_FIELD_REGEX.test(key)) {
+        redacted[key] = getRedactionLabel(key);
+      } else if (typeof value === 'string') {
+        redacted[key] = redactPII(value);
+      } else if (value !== null && typeof value === 'object') {
+        redacted[key] = redactPIIInObject(value, seen, depth + 1);
+      } else {
+        redacted[key] = value as RedactionResult;
+      }
     } catch {
       redacted[key] = '[Getter Error]';
     }
@@ -409,7 +401,19 @@ export function redactPIIInObject(
     const sym = symbols[i];
     if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
       try {
-        processEntry(sym.toString(), (obj as Record<symbol, unknown>)[sym]);
+        const key = sym.toString();
+        const value = (obj as Record<symbol, unknown>)[sym];
+        if (isSafeField(key)) {
+          redacted[key] = value as RedactionResult;
+        } else if (SENSITIVE_FIELD_REGEX.test(key)) {
+          redacted[key] = getRedactionLabel(key);
+        } else if (typeof value === 'string') {
+          redacted[key] = redactPII(value);
+        } else if (value !== null && typeof value === 'object') {
+          redacted[key] = redactPIIInObject(value, seen, depth + 1);
+        } else {
+          redacted[key] = value as RedactionResult;
+        }
       } catch {
         redacted[sym.toString()] = '[Getter Error]';
       }

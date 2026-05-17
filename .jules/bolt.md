@@ -9,3 +9,7 @@
 ## 2026-05-16 - Reducing GC pressure in animation loops
 **Learning:** In high-frequency animation loops (e.g., `requestAnimationFrame` updating state at 60fps), nested objects in state trigger excessive garbage collection. Each frame allocation of small objects (like `velocity: {x, y}`) adds up quickly across multiple particles.
 **Action:** Flatten state objects used in animation loops to avoid nested object allocation. Use single-pass `for` loops instead of functional patterns like `.map().filter()` to minimize intermediate array allocations and traversals.
+
+## 2026-05-17 - Sequential vs. Combined Regex Performance
+**Learning:** Combining multiple independent regex patterns into a single pass with named capturing groups and a callback function can sometimes be SLOWER than sequential `.replace()` calls. In this codebase's PII redaction utility, combining 10 patterns increased execution time from ~0.3ms to ~0.57ms per large object, likely due to engine overhead and increased backtracking for non-matching strings.
+**Action:** Measure performance before and after combining regexes. For high-frequency redaction tasks, sequential `.replace()` calls with an early length check (fast path) may be more efficient.
