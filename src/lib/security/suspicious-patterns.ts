@@ -248,6 +248,11 @@ const SUSPICIOUS_PATTERNS: Record<
       severity: 3,
       description: 'Backtick command execution',
     },
+    {
+      pattern: /\$\{IFS\}|(?:\/usr\/bin\/)?(?:nc|netcat|ncat|bash|python|perl|php|ruby|lua)\s+-e\s+['"]?\/bin\/(?:ba)?sh['"]?/i,
+      severity: 3,
+      description: 'Shell bypass or reverse shell execution',
+    },
     // Medium severity
     {
       pattern: /[;&|`]\s*(cat|ls|dir|type|more|less|head|tail)\s/i,
