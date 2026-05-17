@@ -118,6 +118,7 @@ export {
   CLARIFY_PAGE_CONFIG,
   DASHBOARD_PAGE_CONFIG,
   HOME_PAGE_CONFIG,
+  type HomePageConfig,
 } from './pages';
 
 // Time Units Configuration
