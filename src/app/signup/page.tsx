@@ -6,7 +6,10 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
-import { OAUTH_PROVIDER_COLORS } from '@/lib/config';
+import {
+  OAUTH_PROVIDER_COLORS,
+  PASSWORD_VALIDATION_CONFIG,
+} from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
 
@@ -35,17 +38,19 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
 
   const normalizedScore = Math.min(Math.floor(score / 2), 4);
 
-  if (password.length < 8) {
-    feedback.push('Use at least 8 characters');
+  const { MIN_LENGTH, MESSAGES } = PASSWORD_VALIDATION_CONFIG;
+
+  if (password.length < MIN_LENGTH) {
+    feedback.push(MESSAGES.MIN_LENGTH);
   }
   if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
-    feedback.push('Add uppercase and lowercase letters');
+    feedback.push(MESSAGES.UPPERCASE_LOWERCASE);
   }
   if (!/[0-9]/.test(password)) {
-    feedback.push('Add numbers');
+    feedback.push(MESSAGES.NUMBER);
   }
   if (!/[^a-zA-Z0-9]/.test(password)) {
-    feedback.push('Add special characters (!@#$%^&*)');
+    feedback.push(MESSAGES.SPECIAL_CHARACTER);
   }
 
   let strength: PasswordStrength;
@@ -62,11 +67,33 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
     [password]
   );
 
+  const {
+    STRENGTH_LABELS,
+    STRENGTH_COLORS,
+    STRENGTH_WIDTHS,
+    STRENGTH_TEXT_COLORS,
+  } = PASSWORD_VALIDATION_CONFIG;
+
   const strengthConfig = {
-    empty: { label: '', color: 'bg-gray-200', width: '0%' },
-    weak: { label: 'Weak', color: 'bg-red-500', width: '33%' },
-    medium: { label: 'Medium', color: 'bg-amber-500', width: '66%' },
-    strong: { label: 'Strong', color: 'bg-green-500', width: '100%' },
+    empty: { label: '', color: 'bg-gray-200', width: '0%', textColor: '' },
+    weak: {
+      label: STRENGTH_LABELS.WEAK,
+      color: STRENGTH_COLORS.WEAK,
+      width: STRENGTH_WIDTHS.WEAK,
+      textColor: STRENGTH_TEXT_COLORS.WEAK,
+    },
+    medium: {
+      label: STRENGTH_LABELS.MEDIUM,
+      color: STRENGTH_COLORS.MEDIUM,
+      width: STRENGTH_WIDTHS.MEDIUM,
+      textColor: STRENGTH_TEXT_COLORS.MEDIUM,
+    },
+    strong: {
+      label: STRENGTH_LABELS.STRONG,
+      color: STRENGTH_COLORS.STRONG,
+      width: STRENGTH_WIDTHS.STRONG,
+      textColor: STRENGTH_TEXT_COLORS.STRONG,
+    },
   };
 
   const config = strengthConfig[strength];
@@ -87,15 +114,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             aria-label={`Password strength: ${config.label}`}
           />
         </div>
-        <span
-          className={`text-xs font-medium ${
-            strength === 'weak'
-              ? 'text-red-600'
-              : strength === 'medium'
-                ? 'text-amber-600'
-                : 'text-green-600'
-          }`}
-        >
+        <span className={`text-xs font-medium ${config.textColor}`}>
           {config.label}
         </span>
       </div>

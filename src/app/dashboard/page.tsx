@@ -9,6 +9,7 @@ import {
   TABLE_PATTERNS,
   MODAL_PATTERNS,
   SPINNER_PATTERNS,
+  DASHBOARD_FILTER_LABELS,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -382,13 +383,17 @@ export default function DashboardPage() {
               value="all"
               className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
             >
-              {filter === 'all' ? '✓ All Statuses' : 'All Statuses'}
+              {filter === 'all'
+                ? DASHBOARD_FILTER_LABELS.ALL.SELECTED_LABEL
+                : DASHBOARD_FILTER_LABELS.ALL.LABEL}
             </option>
             <option
               value="draft"
               className={filter === 'draft' ? 'bg-primary-50 font-medium' : ''}
             >
-              {filter === 'draft' ? '✓ Draft' : 'Draft'}
+              {filter === 'draft'
+                ? DASHBOARD_FILTER_LABELS.DRAFT.SELECTED_LABEL
+                : DASHBOARD_FILTER_LABELS.DRAFT.LABEL}
             </option>
             <option
               value="clarified"
@@ -396,7 +401,9 @@ export default function DashboardPage() {
                 filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
               }
             >
-              {filter === 'clarified' ? '✓ Clarified' : 'Clarified'}
+              {filter === 'clarified'
+                ? DASHBOARD_FILTER_LABELS.CLARIFIED.SELECTED_LABEL
+                : DASHBOARD_FILTER_LABELS.CLARIFIED.LABEL}
             </option>
             <option
               value="breakdown"
@@ -404,7 +411,9 @@ export default function DashboardPage() {
                 filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
               }
             >
-              {filter === 'breakdown' ? '✓ In Progress' : 'In Progress'}
+              {filter === 'breakdown'
+                ? DASHBOARD_FILTER_LABELS.BREAKDOWN.SELECTED_LABEL
+                : DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL}
             </option>
             <option
               value="completed"
@@ -412,7 +421,9 @@ export default function DashboardPage() {
                 filter === 'completed' ? 'bg-primary-50 font-medium' : ''
               }
             >
-              {filter === 'completed' ? '✓ Completed' : 'Completed'}
+              {filter === 'completed'
+                ? DASHBOARD_FILTER_LABELS.COMPLETED.SELECTED_LABEL
+                : DASHBOARD_FILTER_LABELS.COMPLETED.LABEL}
             </option>
           </select>
           {ideas.length > 0 && (
@@ -439,7 +450,7 @@ export default function DashboardPage() {
                 />
               </svg>
               {filter === 'breakdown'
-                ? 'In Progress'
+                ? DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL
                 : filter.charAt(0).toUpperCase() + filter.slice(1)}
             </span>
             <button

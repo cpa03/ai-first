@@ -237,6 +237,104 @@ export const BUTTON_LABELS = {
   DOWNLOAD: 'Download',
 } as const;
 
+/**
+ * Dashboard filter labels
+ * Used in dashboard page for status filtering dropdown
+ */
+export const DASHBOARD_FILTER_LABELS = {
+  ALL: {
+    LABEL: 'All Statuses',
+    SELECTED_LABEL: '✓ All Statuses',
+  },
+  DRAFT: {
+    LABEL: 'Draft',
+    SELECTED_LABEL: '✓ Draft',
+  },
+  CLARIFIED: {
+    LABEL: 'Clarified',
+    SELECTED_LABEL: '✓ Clarified',
+  },
+  BREAKDOWN: {
+    LABEL: 'In Progress',
+    SELECTED_LABEL: '✓ In Progress',
+  },
+  COMPLETED: {
+    LABEL: 'Completed',
+    SELECTED_LABEL: '✓ Completed',
+  },
+} as const;
+
+/**
+ * Password validation configuration
+ * Used in signup page for password strength validation messages
+ */
+export const PASSWORD_VALIDATION_CONFIG = {
+  MIN_LENGTH: 8,
+  MESSAGES: {
+    MIN_LENGTH: 'Use at least 8 characters',
+    UPPERCASE_LOWERCASE: 'Add uppercase and lowercase letters',
+    NUMBER: 'Add numbers',
+    SPECIAL_CHARACTER: 'Add special characters (!@#$%^&*)',
+  },
+  STRENGTH_LABELS: {
+    EMPTY: '',
+    WEAK: 'Weak',
+    MEDIUM: 'Medium',
+    STRONG: 'Strong',
+  },
+  STRENGTH_COLORS: {
+    WEAK: 'bg-red-500',
+    MEDIUM: 'bg-amber-500',
+    STRONG: 'bg-green-500',
+  },
+  STRENGTH_WIDTHS: {
+    WEAK: '33%',
+    MEDIUM: '66%',
+    STRONG: '100%',
+  },
+  STRENGTH_TEXT_COLORS: {
+    WEAK: 'text-red-600',
+    MEDIUM: 'text-amber-600',
+    STRONG: 'text-green-600',
+  },
+} as const;
+
+/**
+ * Export button labels for results page
+ * Centralizes export button text and loading states
+ */
+export const EXPORT_LABELS = {
+  MARKDOWN: {
+    DEFAULT: 'Download Markdown',
+    LOADING: 'Downloading...',
+  },
+  JSON: {
+    DEFAULT: 'Export JSON',
+    LOADING: 'Exporting...',
+  },
+  NOTION: {
+    DEFAULT: 'Export to Notion',
+    LOADING: 'Exporting to Notion...',
+  },
+  TRELLO: {
+    DEFAULT: 'Export to Trello',
+    LOADING: 'Exporting to Trello...',
+  },
+  GOOGLE_TASKS: {
+    DEFAULT: 'Export to Google Tasks',
+    LOADING: 'Exporting to Google Tasks...',
+  },
+  GITHUB_PROJECTS: {
+    DEFAULT: 'Export to GitHub Projects',
+    LOADING: 'Exporting to GitHub Projects...',
+  },
+  COPY: {
+    DEFAULT: 'Copy to Clipboard',
+    LOADING: 'Copying...',
+    SUCCESS: 'Copied!',
+  },
+} as const;
+
 export const TOAST_CONFIG = {
   DURATION: {
     /** Env: UI_TOAST_SHORT_DURATION_MS (default: 3000) */

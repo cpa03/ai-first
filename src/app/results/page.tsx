@@ -7,7 +7,7 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
-import { SPINNER_PATTERNS } from '@/lib/config';
+import { SPINNER_PATTERNS, EXPORT_LABELS } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
 // Lazy load Button and LoadingSpinner for code splitting
@@ -268,10 +268,7 @@ function ResultsContent() {
     const answers = session?.state.answers;
     return answers && typeof answers === 'object'
       ? Object.fromEntries(
-          Object.entries(answers).map(([key, value]) => [
-            key,
-            String(value),
-          ])
+          Object.entries(answers).map(([key, value]) => [key, String(value)])
         )
       : {};
   }, [session]);
@@ -357,8 +354,8 @@ function ResultsContent() {
             aria-label="Download project blueprint as Markdown file"
           >
             {exportingFormat === 'markdown'
-              ? 'Exporting...'
-              : 'Download Markdown'}
+              ? EXPORT_LABELS.MARKDOWN.LOADING
+              : EXPORT_LABELS.MARKDOWN.DEFAULT}
           </Button>
 
           {/* JSON Export */}
@@ -368,7 +365,9 @@ function ResultsContent() {
             disabled={exportLoading}
             aria-label="Export project blueprint as JSON data"
           >
-            {exportingFormat === 'json' ? 'Exporting...' : 'Export JSON'}
+            {exportingFormat === 'json'
+              ? EXPORT_LABELS.JSON.LOADING
+              : EXPORT_LABELS.JSON.DEFAULT}
           </Button>
 
           {/* Notion Export */}
@@ -380,8 +379,8 @@ function ResultsContent() {
               aria-label="Export project to Notion"
             >
               {exportingFormat === 'notion'
-                ? 'Exporting...'
-                : 'Export to Notion'}
+                ? EXPORT_LABELS.NOTION.LOADING
+                : EXPORT_LABELS.NOTION.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -393,7 +392,7 @@ function ResultsContent() {
                 disabled={true}
                 aria-label="Export to Notion - requires API configuration"
               >
-                Export to Notion
+                {EXPORT_LABELS.NOTION.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
                   Setup Required
                 </span>
@@ -410,8 +409,8 @@ function ResultsContent() {
               aria-label="Export project to Trello"
             >
               {exportingFormat === 'trello'
-                ? 'Exporting...'
-                : 'Export to Trello'}
+                ? EXPORT_LABELS.TRELLO.LOADING
+                : EXPORT_LABELS.TRELLO.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -423,7 +422,7 @@ function ResultsContent() {
                 disabled={true}
                 aria-label="Export to Trello - requires API configuration"
               >
-                Export to Trello
+                {EXPORT_LABELS.TRELLO.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
                   Setup Required
                 </span>
@@ -440,8 +439,8 @@ function ResultsContent() {
               aria-label="Export tasks to Google Tasks"
             >
               {exportingFormat === 'google-tasks'
-                ? 'Exporting...'
-                : 'Export to Google Tasks'}
+                ? EXPORT_LABELS.GOOGLE_TASKS.LOADING
+                : EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -453,7 +452,7 @@ function ResultsContent() {
                 disabled={true}
                 aria-label="Export to Google Tasks - requires API configuration"
               >
-                Export to Google Tasks
+                {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
                   Setup Required
                 </span>
@@ -470,8 +469,8 @@ function ResultsContent() {
               aria-label="Export tasks to GitHub Projects"
             >
               {exportingFormat === 'github-projects'
-                ? 'Exporting...'
-                : 'Export to GitHub Projects'}
+                ? EXPORT_LABELS.GITHUB_PROJECTS.LOADING
+                : EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -483,7 +482,7 @@ function ResultsContent() {
                 disabled={true}
                 aria-label="Export to GitHub Projects - requires API configuration"
               >
-                Export to GitHub Projects
+                {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"></span>
                 Setup Required
               </Button>
