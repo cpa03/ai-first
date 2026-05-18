@@ -48,6 +48,19 @@ describe('Environment Validation', () => {
       );
     });
 
+    it('should detect NEXT_PUBLIC_ prefix on new sensitive keys', () => {
+      process.env.NEXT_PUBLIC_INTERNAL_API_SECRET = 'exposed-secret';
+      process.env.NEXT_PUBLIC_JWT_SECRET = 'exposed-jwt-secret';
+      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+
+      const result = validateEnvironment();
+
+      expect(result.valid).toBe(false);
+      expect(result.errors.some(e => e.includes('NEXT_PUBLIC_INTERNAL_API_SECRET'))).toBe(true);
+      expect(result.errors.some(e => e.includes('NEXT_PUBLIC_JWT_SECRET'))).toBe(true);
+    });
+
     it('should detect missing required variables', () => {
       // Ensure CI mode doesn't skip validation
       delete process.env.CI;

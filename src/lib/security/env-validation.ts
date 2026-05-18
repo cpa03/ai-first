@@ -21,6 +21,7 @@ const SENSITIVE_KEYS = [
   'ADMIN_API_KEY',
   'OPENAI_API_KEY',
   'ANTHROPIC_API_KEY',
+  'INTERNAL_API_SECRET',
 ] as const;
 
 /**
@@ -49,6 +50,7 @@ const SENSITIVE_VAR_PATTERNS = [
   '_PK',
   '_RK',
   'OAUTH', // OAuth tokens/secrets
+  'JWT', // JWT secrets
   'WEBHOOK', // Webhook secrets
   'SALT', // Salt values for hashing
   'HMAC', // HMAC keys
