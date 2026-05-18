@@ -42,6 +42,36 @@
   body {
     @apply bg-gray-50 text-gray-900 font-sans;
   }
+
+  /* Micro-UX improvement: Add subtle cursor change for clickable elements */
+  /* This helps users identify interactive elements more easily */
+  a,
+  button,
+  [role='button'],
+  select,
+  input[type='checkbox'],
+  input[type='radio'] {
+    cursor: pointer;
+  }
+
+  /* Micro-UX improvement: Subtle scale effect on link click/active */
+  /* Provides tactile feedback that element was pressed */
+  a:active,
+  a[href]:active {
+    transform: scale(0.98);
+  }
+
+  /* Micro-UX improvement: Enhanced focus ring for interactive elements */
+  /* Helps keyboard users better identify focused elements */
+  a:focus-visible,
+  button:focus-visible,
+  select:focus-visible,
+  [role='button']:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 3px var(--shadow-primary-medium),
+      0 0 0 6px var(--shadow-primary-light);
+  }
 }
 
 @layer components {
@@ -816,7 +846,8 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-task-complete {
-  animation: taskCompleteCelebration 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: taskCompleteCelebration 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)
+    forwards;
 }
 
 /* Reduced motion support for task completion celebration */
