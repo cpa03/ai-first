@@ -742,7 +742,8 @@ describe('PII Redaction Utility', () => {
     it('should expose redaction stats', () => {
       const stats = getRedactionStats();
 
-      expect(stats.labelCacheSize).toBeGreaterThanOrEqual(0);
+      expect(stats.actionCacheSize).toBeGreaterThanOrEqual(0);
+      expect(stats.labelCacheSize).toBeGreaterThanOrEqual(0); // Backward compatibility
       expect(stats.maxRecursionDepth).toBe(100);
       expect(stats.safeFieldsCount).toBeGreaterThan(0);
     });
@@ -751,11 +752,13 @@ describe('PII Redaction Utility', () => {
       redactPIIInObject({ customField: 'value' });
 
       const statsBefore = getRedactionStats();
+      expect(statsBefore.actionCacheSize).toBeGreaterThanOrEqual(0);
       expect(statsBefore.labelCacheSize).toBeGreaterThanOrEqual(0);
 
       clearRedactionCache();
 
       const statsAfter = getRedactionStats();
+      expect(statsAfter.actionCacheSize).toBe(0);
       expect(statsAfter.labelCacheSize).toBe(0);
     });
   });
