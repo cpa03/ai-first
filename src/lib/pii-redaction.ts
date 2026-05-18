@@ -148,7 +148,17 @@ const SAFE_FIELDS_SET = new Set<string>(
   PII_REDACTION_CONFIG.SAFE_FIELDS.map((f) => f.toLowerCase())
 );
 
-const REDACTION_LABEL_CACHE = new Map<string, string>();
+/**
+ * Cache for key classification results to avoid redundant regex tests
+ * and set lookups. This significantly improves performance when
+ * processing large arrays of objects with similar structures.
+ */
+type KeyAction = {
+  type: 'SAFE' | 'SENSITIVE' | 'REDACTABLE';
+  label?: string;
+};
+
+const KEY_ACTION_CACHE = new Map<string, KeyAction>();
 
 function isSafeField(key: string): boolean {
   // PERFORMANCE: Fast path for exact matches before calling toLowerCase()
@@ -157,19 +167,32 @@ function isSafeField(key: string): boolean {
   return SAFE_FIELDS_SET.has(key.toLowerCase());
 }
 
-function getRedactionLabel(key: string): string {
-  let label = REDACTION_LABEL_CACHE.get(key);
-  if (label) return label;
+/**
+ * Determines the redaction action for a given key and caches the result.
+ */
+function getKeyAction(key: string): KeyAction {
+  let action = KEY_ACTION_CACHE.get(key);
+  if (action) return action;
 
-  const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-  const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
-  label = `[REDACTED_${fieldNameUpper}]`;
-
-  if (REDACTION_LABEL_CACHE.size < 1000) {
-    REDACTION_LABEL_CACHE.set(key, label);
+  if (isSafeField(key)) {
+    action = { type: 'SAFE' };
+  } else if (SENSITIVE_FIELD_REGEX.test(key)) {
+    // Generate redaction label (formerly getRedactionLabel logic)
+    const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
+    const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
+    action = {
+      type: 'SENSITIVE',
+      label: `[REDACTED_${fieldNameUpper}]`,
+    };
+  } else {
+    action = { type: 'REDACTABLE' };
   }
 
-  return label;
+  if (KEY_ACTION_CACHE.size < 1000) {
+    KEY_ACTION_CACHE.set(key, action);
+  }
+
+  return action;
 }
 
 function isPrivateIP(ip: string): boolean {
@@ -379,10 +402,12 @@ export function redactPIIInObject(
     const key = keys[i];
     try {
       const value = (obj as Record<string, unknown>)[key];
-      if (isSafeField(key)) {
+      const action = getKeyAction(key);
+
+      if (action.type === 'SAFE') {
         redacted[key] = value as RedactionResult;
-      } else if (SENSITIVE_FIELD_REGEX.test(key)) {
-        redacted[key] = getRedactionLabel(key);
+      } else if (action.type === 'SENSITIVE') {
+        redacted[key] = action.label!;
       } else if (typeof value === 'string') {
         redacted[key] = redactPII(value);
       } else if (value !== null && typeof value === 'object') {
@@ -403,10 +428,12 @@ export function redactPIIInObject(
       try {
         const key = sym.toString();
         const value = (obj as Record<symbol, unknown>)[sym];
-        if (isSafeField(key)) {
+        const action = getKeyAction(key);
+
+        if (action.type === 'SAFE') {
           redacted[key] = value as RedactionResult;
-        } else if (SENSITIVE_FIELD_REGEX.test(key)) {
-          redacted[key] = getRedactionLabel(key);
+        } else if (action.type === 'SENSITIVE') {
+          redacted[key] = action.label!;
         } else if (typeof value === 'string') {
           redacted[key] = redactPII(value);
         } else if (value !== null && typeof value === 'object') {
@@ -443,17 +470,19 @@ export function containsPII(text: string): boolean {
 }
 
 export function getRedactionStats(): {
-  labelCacheSize: number;
+  actionCacheSize: number;
+  labelCacheSize: number; // Backward compatibility
   maxRecursionDepth: number;
   safeFieldsCount: number;
 } {
   return {
-    labelCacheSize: REDACTION_LABEL_CACHE.size,
+    actionCacheSize: KEY_ACTION_CACHE.size,
+    labelCacheSize: KEY_ACTION_CACHE.size,
     maxRecursionDepth: MAX_RECURSION_DEPTH,
     safeFieldsCount: SAFE_FIELDS_SET.size,
   };
 }
 
 export function clearRedactionCache(): void {
-  REDACTION_LABEL_CACHE.clear();
+  KEY_ACTION_CACHE.clear();
 }
