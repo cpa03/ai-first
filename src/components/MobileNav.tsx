@@ -139,7 +139,7 @@ function MobileNavComponent() {
                     px-4 py-3 text-sm sm:text-base font-medium
                     transition-all duration-300 ease-out
                     border-b-2 ${active ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:border-primary-300'}
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-t-md min-h-[44px] inline-flex items-center
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
                     ${active ? 'bg-primary-50/30' : 'hover:bg-gray-50'}
                   `}
                   aria-label={link.ariaLabel}
@@ -160,7 +160,7 @@ function MobileNavComponent() {
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className="text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 min-h-[44px] min-w-[44px] transition-all duration-200"
+        className="text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} transition-all duration-200"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="mobile-menu"
@@ -247,7 +247,7 @@ function MobileNavComponent() {
                         w-full text-left px-6 py-4 text-lg font-semibold
                         transition-all duration-300 ease-out rounded-md
                         border-l-[3px] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 min-h-[56px] flex items-center
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center
                       `}
                       aria-label={link.ariaLabel}
                       aria-current={active ? 'page' : undefined}

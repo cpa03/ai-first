@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { UI_CONFIG } from '@/lib/config';
 
 interface Step {
   id: string;
@@ -70,7 +71,7 @@ const ProgressStepperComponent = function ProgressStepper({
                   className={`
                     flex items-center justify-center
                     w-10 h-10 rounded-full border-2
-                    font-medium text-sm min-w-[44px] min-h-[44px]
+                    font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                     transition-all duration-300
                     ${
                       step.completed

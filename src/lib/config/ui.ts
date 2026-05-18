@@ -83,6 +83,35 @@ export const UI_CONFIG = {
       0,
       1000
     ),
+    /**
+     * Touch target configurations for accessibility compliance
+     * WCAG 2.1 Level AA requires minimum 44x44px touch targets
+     */
+    TOUCH_TARGET: {
+      /** Minimum touch target size in pixels (WCAG 2.1 Level AA) */
+      MIN_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64),
+      /** Minimum touch target size in Tailwind format */
+      MIN_SIZE: 'min-h-[44px] min-w-[44px]',
+      /** Small touch target (icons, compact buttons) */
+      SMALL_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44),
+      SMALL_SIZE: 'min-h-[32px] min-w-[32px]',
+      /** Large touch target (primary actions) */
+      LARGE_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72),
+      LARGE_SIZE: 'min-h-[56px] min-w-[56px]',
+      /** Keyboard focus minimum (same as touch for consistency) */
+      KEYBOARD_SIZE_PX: EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64),
+      KEYBOARD_SIZE: 'min-h-[44px]',
+    },
+    /**
+     * Keyboard navigation minimums
+     */
+    KEYBOARD: {
+      FOCUS_RING_OFFSET: 'focus-visible:ring-2 focus-visible:ring-offset-2',
+      MIN_HEIGHT: 'min-h-[44px]',
+      MIN_WIDTH: 'min-w-[44px]',
+      KBD_STYLE:
+        'inline-flex items-center justify-center min-w-[28px] h-7 px-2 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-800 shadow-sm',
+    },
   },
 } as const;
 
