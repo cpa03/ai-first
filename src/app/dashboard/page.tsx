@@ -486,16 +486,39 @@ export default function DashboardPage() {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
-            No ideas yet
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Start by creating your first idea to get AI-powered project
-            planning.
-          </p>
-          <Link href="/">
-            <Button variant="primary">Create Your First Idea</Button>
-          </Link>
+          {filter !== 'all' ? (
+            <>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                No matching ideas
+              </h2>
+              <p className="text-gray-600 mb-6">
+                No ideas match the{' '}
+                {filter === 'breakdown' ? 'In Progress' : filter} filter. Try
+                clearing the filter to see all your ideas.
+              </p>
+              <div className="flex justify-center gap-3">
+                <Button variant="outline" onClick={() => setFilter('all')}>
+                  Clear Filter
+                </Button>
+                <Link href="/">
+                  <Button variant="primary">Create New Idea</Button>
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+                No ideas yet
+              </h2>
+              <p className="text-gray-600 mb-6">
+                Start by creating your first idea to get AI-powered project
+                planning.
+              </p>
+              <Link href="/">
+                <Button variant="primary">Create Your First Idea</Button>
+              </Link>
+            </>
+          )}
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
