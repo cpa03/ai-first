@@ -107,14 +107,19 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'SQL comment injection',
     },
     {
-      pattern: /(\bor\b\s+['"]?\d+['"]?\s*=\s*['"]?\d+)/is,
+      pattern: /(\bor\b\s+['"]?([^'"]+)['"]?\s*=\s*['"]?\2['"]?)/is,
       severity: 3,
       description: 'SQL OR tautology',
     },
     {
-      pattern: /(\band\b\s+['"]?\d+['"]?\s*=\s*['"]?\d+)/is,
+      pattern: /(\band\b\s+['"]?([^'"]+)['"]?\s*=\s*['"]?\2['"]?)/is,
       severity: 2,
       description: 'SQL AND tautology',
+    },
+    {
+      pattern: /\b(information_schema|pg_catalog|mysql|performance_schema)\b/is,
+      severity: 3,
+      description: 'SQL system schema access',
     },
     // Medium severity
     {
@@ -153,9 +158,19 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'JavaScript protocol',
     },
     {
-      pattern: /on(load|error|click|mouse|focus|blur|key|submit|change)\s*=/gi,
+      pattern: /on(load|error|click|mouse|focus|blur|key|submit|change|scroll)\s*=/gi,
       severity: 3,
       description: 'Event handler injection',
+    },
+    {
+      pattern: /\bsrcdoc\s*=/gi,
+      severity: 3,
+      description: 'Iframe srcdoc injection',
+    },
+    {
+      pattern: /\b(data|vbscript|javascript)\s*:/gi,
+      severity: 3,
+      description: 'Malicious protocol URI',
     },
     {
       pattern: /<iframe[^>]*>/gi,
@@ -234,9 +249,14 @@ const SUSPICIOUS_PATTERNS: Record<
   command_injection: [
     // High severity
     {
-      pattern: /[;&|`]\s*(rm|del|format|fdisk|shutdown|reboot|halt|init)/i,
+      pattern: /(?:[;&|`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv)\b/i,
       severity: 3,
-      description: 'Destructive command injection',
+      description: 'Destructive or sensitive command injection',
+    },
+    {
+      pattern: /\bprocess\.(?:exit|env|mainModule|global|cwd|memoryUsage|version)\b/,
+      severity: 3,
+      description: 'Node.js process object injection',
     },
     {
       pattern: /\$\([^)]+\)/,
