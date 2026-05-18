@@ -9,6 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
+import { UI_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface KeyboardShortcut {
@@ -205,9 +206,7 @@ const KeyboardKey = memo(function KeyboardKey({
   children: React.ReactNode;
 }) {
   return (
-    <kbd className="inline-flex items-center justify-center min-w-[28px] h-7 px-2 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-800 shadow-sm">
-      {children}
-    </kbd>
+    <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE}>{children}</kbd>
   );
 });
 
