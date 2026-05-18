@@ -314,24 +314,32 @@ const InputWithValidationComponent = forwardRef<
             <div
               className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
             >
-              <svg
-                className="w-5 h-5 text-green-800 animate-in fade-in duration-200 animate-draw-check"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
+              <Tooltip
+                content={`${label} is valid`}
+                position="top"
+                disabled={false}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                  style={{
-                    strokeDasharray: SVG_ANIMATION.DASH_ARRAY.FULL,
-                    strokeDashoffset: SVG_ANIMATION.DASH_OFFSET.HIDDEN,
-                  }}
-                />
-              </svg>
+                <div className="pointer-events-none">
+                  <svg
+                    className="w-5 h-5 text-green-800 animate-in fade-in duration-200 animate-draw-check"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                      style={{
+                        strokeDasharray: SVG_ANIMATION.DASH_ARRAY.FULL,
+                        strokeDashoffset: SVG_ANIMATION.DASH_OFFSET.HIDDEN,
+                      }}
+                    />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           )}
 
@@ -339,20 +347,28 @@ const InputWithValidationComponent = forwardRef<
             <div
               className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
             >
-              <svg
-                className="w-5 h-5 text-red-700 animate-in fade-in duration-200"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden="true"
+              <Tooltip
+                content="Please fix this error"
+                position="top"
+                disabled={false}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
+                <div className="pointer-events-none">
+                  <svg
+                    className="w-5 h-5 text-red-700 animate-in fade-in duration-200"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+              </Tooltip>
             </div>
           )}
 
