@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/db';
@@ -13,12 +13,22 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<'google' | 'github' | null>(
     null
   );
   const [error, setError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
+
+  // Load remembered email preference on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('remembered_email');
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRememberMe(true);
+    }
+  }, []);
 
   const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
@@ -64,6 +74,12 @@ export default function LoginPage() {
           throw signInError;
         }
 
+        if (rememberMe) {
+          localStorage.setItem('remembered_email', email.trim());
+        } else {
+          localStorage.removeItem('remembered_email');
+        }
+
         router.push('/dashboard');
         router.refresh();
       } catch (err) {
@@ -82,7 +98,7 @@ export default function LoginPage() {
         setIsLoading(false);
       }
     },
-    [validateForm, router, email, password]
+    [validateForm, router, email, password, rememberMe]
   );
 
   const submitForm = useCallback(async () => {
@@ -178,13 +194,22 @@ export default function LoginPage() {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <Link
-                href="/forgot-password"
-                className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+                disabled={isLoading}
+              />
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-700 cursor-pointer"
               >
-                Forgot your password?
-              </Link>
+                Remember me
+              </label>
             </div>
           </div>
 
