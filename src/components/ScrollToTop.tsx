@@ -100,9 +100,60 @@ function ScrollToTopComponent({
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         scrollToTop();
+        return;
+      }
+
+      const scrollIncrement = () => {
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        return docHeight * 0.25;
+      };
+
+      const prefersReducedMotionValue = prefersReducedMotion;
+
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          triggerHapticFeedback();
+          if (prefersReducedMotionValue) {
+            window.scrollBy(0, -scrollIncrement());
+          } else {
+            window.scrollBy({ top: -scrollIncrement(), behavior: 'smooth' });
+          }
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          triggerHapticFeedback();
+          if (prefersReducedMotionValue) {
+            window.scrollBy(0, scrollIncrement());
+          } else {
+            window.scrollBy({ top: scrollIncrement(), behavior: 'smooth' });
+          }
+          break;
+        case 'Home':
+          e.preventDefault();
+          triggerHapticFeedback();
+          if (prefersReducedMotionValue) {
+            window.scrollTo(0, 0);
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+          break;
+        case 'End':
+          e.preventDefault();
+          triggerHapticFeedback();
+          if (prefersReducedMotionValue) {
+            window.scrollTo(0, document.documentElement.scrollHeight);
+          } else {
+            window.scrollTo({
+              top: document.documentElement.scrollHeight,
+              behavior: 'smooth',
+            });
+          }
+          break;
       }
     },
-    [scrollToTop]
+    [scrollToTop, prefersReducedMotion]
   );
 
   if (!isVisible) return null;
@@ -118,6 +169,7 @@ function ScrollToTopComponent({
         <button
           onClick={scrollToTop}
           onKeyDown={handleKeyDown}
+          tabIndex={0}
           className={`
             group
             w-12 h-12
@@ -134,7 +186,7 @@ function ScrollToTopComponent({
             ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
             ${className}
           `}
-          aria-label={`Scroll to top of page (${Math.round(scrollProgress)}% scrolled)`}
+          aria-label={`Scroll to top (${Math.round(scrollProgress)}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`}
           aria-live="polite"
           type="button"
         >
