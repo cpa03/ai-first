@@ -114,7 +114,10 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-# .jules/ was used for Bolt AI - now removed
+# .jules/ - Bolt AI temporary files
+.jules/
+# .omo/ - Ralph loop temporary files
+.omo/
 # .sisyphus/ is for Sisyphus agent state persistence
 .sisyphus/
 
