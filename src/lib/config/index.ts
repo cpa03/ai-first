@@ -251,3 +251,24 @@ export {
   NO_STORE_CACHE_CONTROL,
   type EdgeCacheConfig,
 } from './cache-control';
+
+// Landing Page Configuration
+export {
+  FEATURE_CONFIG,
+  HERO_CONFIG,
+  WHY_CHOOSE_CONFIG,
+  type FeatureConfig,
+  type HeroConfig,
+  type WhyChooseConfig,
+} from './landing-page';
+
+// Navigation Configuration
+export {
+  MAIN_NAV_CONFIG,
+  MOBILE_NAV_CONFIG,
+  FOOTER_NAV_CONFIG,
+  type NavItem,
+  type MainNavConfig,
+  type MobileNavConfig,
+  type FooterNavConfig,
+} from './navigation';
