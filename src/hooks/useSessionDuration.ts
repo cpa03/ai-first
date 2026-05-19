@@ -69,8 +69,10 @@ export function useSessionDuration() {
     }
   }, [trackCurrentPageTime]);
 
-  // Handle before unload - track session end
-  const handleBeforeUnload = useCallback(() => {
+  // Handle pagehide for bfcache compatibility (replaces beforeunload)
+  // Using 'pagehide' instead of 'beforeunload' allows back/forward cache to work
+  // which improves performance and Lighthouse scores
+  const handlePageHide = useCallback(() => {
     if (typeof window === 'undefined') {
       return;
     }
@@ -88,6 +90,19 @@ export function useSessionDuration() {
     flush();
   }, [trackCurrentPageTime]);
 
+  // Legacy fallback for older browsers that don't support pagehide
+  const handleBeforeUnload = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    // Only track if not already handled by pagehide
+    // This is a fallback for older browsers
+    if (sessionStartTime.current > 0) {
+      flush();
+    }
+  }, []);
+
   // Initialize session and set up event listeners
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -100,18 +115,22 @@ export function useSessionDuration() {
     // Listen for visibility changes (tab switching)
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Listen for before unload to track session end
+    // Listen for pagehide (bfcache-compatible) to track session end
+    window.addEventListener('pagehide', handlePageHide);
+    // Legacy fallback for older browsers
     window.addEventListener('beforeunload', handleBeforeUnload);
 
     // Track page time on unmount
     return () => {
       trackCurrentPageTime();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pagehide', handlePageHide);
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, [
     initializeSession,
     handleVisibilityChange,
+    handlePageHide,
     handleBeforeUnload,
     trackCurrentPageTime,
   ]);
