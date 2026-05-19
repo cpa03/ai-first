@@ -148,7 +148,7 @@
 #QY|    /useAuthCheck.ts        ← Authentication check hook
 #QY|    /useBlueprintGeneration.ts ← Blueprint generation hook
 QV|#QY|    /useClarificationSession.ts ← Clarification session hook
-#QY|    /useTaskManagement.ts   ← Task management hook
+#QY|    /useSessionDuration.ts   ← Session duration tracking hook
 #PM|  /lib/
 #PM|  /lib/                    ← Core utilities
 #BM|    /auth.ts              ← Authentication service
