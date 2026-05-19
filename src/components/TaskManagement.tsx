@@ -63,12 +63,54 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
   if (!data || data.deliverables.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-lg p-8">
-        <Alert type="info" title={MESSAGES.TASK_MANAGEMENT.NO_TASKS_TITLE}>
-          <p>{MESSAGES.TASK_MANAGEMENT.NO_TASKS_DESCRIPTION}</p>
-          <p className="text-sm mt-2 text-gray-600">
-            Complete the clarification process to generate tasks.
+        <div className="flex flex-col items-center text-center py-6">
+          {/* Micro-UX improvement: Friendly animated empty state with visual guidance */}
+          <div className="relative w-24 h-24 mb-6" aria-hidden="true">
+            <div
+              className="absolute inset-0 bg-primary-50 rounded-full animate-pulse"
+              style={{ animationDuration: '3s' }}
+            />
+            <div className="absolute inset-2 bg-primary-100 rounded-full" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <svg
+                className="w-10 h-10 text-primary-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            {MESSAGES.TASK_MANAGEMENT.NO_TASKS_TITLE}
+          </h3>
+          <p className="text-gray-600 mb-4 max-w-sm">
+            {MESSAGES.TASK_MANAGEMENT.NO_TASKS_DESCRIPTION}
           </p>
-        </Alert>
+          <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-lg">
+            <svg
+              className="w-4 h-4 text-primary-500 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span>Complete the clarification process to generate tasks</span>
+          </div>
+        </div>
       </div>
     );
   }
