@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
@@ -147,6 +147,20 @@ export default function SignupPage() {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
+
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (emailError) {
+      emailInputRef.current?.focus();
+    } else if (passwordError) {
+      passwordInputRef.current?.focus();
+    } else if (error && error.includes('match')) {
+      confirmPasswordInputRef.current?.focus();
+    }
+  }, [emailError, passwordError, error]);
 
   const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
@@ -310,6 +324,7 @@ export default function SignupPage() {
 
           <div className="space-y-4">
             <InputWithValidation
+              ref={emailInputRef}
               id="email"
               name="email"
               type="email"
@@ -325,6 +340,7 @@ export default function SignupPage() {
             />
 
             <InputWithValidation
+              ref={passwordInputRef}
               id="password"
               name="password"
               type="password"
@@ -343,6 +359,7 @@ export default function SignupPage() {
             {password && <PasswordStrengthIndicator password={password} />}
 
             <InputWithValidation
+              ref={confirmPasswordInputRef}
               id="confirmPassword"
               name="confirmPassword"
               type="password"

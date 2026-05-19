@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/db';
@@ -24,7 +24,9 @@ export default function LoginPage() {
     undefined
   );
 
-  // Load remembered email preference on mount
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const savedEmail = localStorage.getItem('remembered_email');
     if (savedEmail) {
@@ -32,6 +34,14 @@ export default function LoginPage() {
       setRememberMe(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (emailError) {
+      emailInputRef.current?.focus();
+    } else if (passwordError) {
+      passwordInputRef.current?.focus();
+    }
+  }, [emailError, passwordError]);
 
   const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
@@ -168,6 +178,7 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <InputWithValidation
+              ref={emailInputRef}
               id="email"
               name="email"
               type="email"
@@ -183,6 +194,7 @@ export default function LoginPage() {
             />
 
             <InputWithValidation
+              ref={passwordInputRef}
               id="password"
               name="password"
               type="password"
