@@ -175,6 +175,7 @@ export default function LoginPage() {
               required
               autoComplete="email"
               onEnterPress={submitForm}
+              autoFocus
             />
 
             <InputWithValidation
