@@ -93,6 +93,13 @@ function ScrollToTopComponent({
         behavior: smooth ? 'smooth' : 'auto',
       });
     }
+
+    // A11y Pattern: Restore keyboard focus to main content after scroll to top (Issue #942)
+    // This prevents keyboard users from being "lost" at the bottom of the document
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.focus({ preventScroll: true });
+    }
   }, [smooth, prefersReducedMotion]);
 
   const handleKeyDown = useCallback(
