@@ -1,34 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { ANIMATION_DELAYS } from '@/lib/config';
-
-interface Feature {
-  step: number;
-  title: string;
-  description: string;
-}
-
-const features: Feature[] = [
-  {
-    step: 1,
-    title: 'Input Your Idea',
-    description:
-      'Share your concept in natural language - no technical knowledge required',
-  },
-  {
-    step: 2,
-    title: 'AI Analysis',
-    description:
-      'Our AI clarifies requirements and breaks down complex projects into manageable tasks',
-  },
-  {
-    step: 3,
-    title: 'Action Plan',
-    description:
-      'Receive detailed blueprints, timelines, and prioritized task lists ready for execution',
-  },
-];
+import { ANIMATION_DELAYS, FEATURE_CONFIG } from '@/lib/config';
 
 function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -43,8 +16,8 @@ function FeatureGridComponent() {
         }
       },
       {
-        threshold: 0.2,
-        rootMargin: '0px 0px -50px 0px',
+        threshold: FEATURE_CONFIG.OBSERVER_THRESHOLD,
+        rootMargin: FEATURE_CONFIG.OBSERVER_ROOT_MARGIN,
       }
     );
 
@@ -55,6 +28,12 @@ function FeatureGridComponent() {
     return () => observer.disconnect();
   }, []);
 
+  const animationClasses = [
+    FEATURE_CONFIG.ANIMATION_DELAYS.STEP_1,
+    FEATURE_CONFIG.ANIMATION_DELAYS.STEP_2,
+    FEATURE_CONFIG.ANIMATION_DELAYS.STEP_3,
+  ];
+
   return (
     <section
       ref={sectionRef}
@@ -64,7 +43,7 @@ function FeatureGridComponent() {
       <h2 id="how-it-works-heading" className="sr-only">
         How It Works
       </h2>
-      {features.map((feature, index) => (
+      {FEATURE_CONFIG.FEATURES.map((feature, index) => (
         <article
           key={feature.step}
           className={`
@@ -72,7 +51,7 @@ function FeatureGridComponent() {
             gradient-border-hover card-lift feature-card-focus
             bg-white
             motion-reduce:transition-none
-            ${isVisible ? `animate-stagger-${index + 1}` : 'opacity-0'}
+            ${isVisible ? animationClasses[index] : 'opacity-0'}
           `}
           aria-label={`Step ${feature.step}: ${feature.title}. ${feature.description}`}
         >
@@ -98,7 +77,7 @@ function FeatureGridComponent() {
             {feature.description}
           </p>
 
-          {index < features.length - 1 && (
+          {index < FEATURE_CONFIG.FEATURES.length - 1 && (
             <div
               className={`
                 hidden md:block absolute top-1/2 -right-4 

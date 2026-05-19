@@ -3,25 +3,10 @@
 import { memo, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UI_CONFIG } from '@/lib/config';
+import { UI_CONFIG, MOBILE_NAV_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
-interface NavLink {
-  href: string;
-  label: string;
-  ariaLabel: string;
-}
-
-const navLinks: NavLink[] = [
-  { href: '/', label: 'Home', ariaLabel: 'Navigate to home page' },
-  {
-    href: '/dashboard',
-    label: 'Dashboard',
-    ariaLabel: 'Navigate to dashboard',
-  },
-  { href: '/clarify', label: 'Clarify', ariaLabel: 'Navigate to clarify page' },
-  { href: '/results', label: 'Results', ariaLabel: 'Navigate to results page' },
-];
+const navLinks = MOBILE_NAV_CONFIG.ITEMS;
 
 function MobileNavComponent() {
   const [isOpen, setIsOpen] = useState(false);
@@ -127,7 +112,7 @@ function MobileNavComponent() {
 
   if (!isMobile) {
     return (
-      <nav aria-label="Main navigation">
+      <nav aria-label={MOBILE_NAV_CONFIG.ARIA_LABEL}>
         <ul className="flex space-x-2 sm:space-x-4">
           {navLinks.map((link) => {
             const active = isActive(link.href);
@@ -156,7 +141,7 @@ function MobileNavComponent() {
   }
 
   return (
-    <nav aria-label="Main navigation">
+    <nav aria-label={MOBILE_NAV_CONFIG.ARIA_LABEL}>
       <button
         ref={buttonRef}
         onClick={toggleMenu}
@@ -164,7 +149,7 @@ function MobileNavComponent() {
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="mobile-menu"
-        aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        aria-label={MOBILE_NAV_CONFIG.TOGGLE_ARIA_LABEL(isOpen)}
       >
         <svg
           className="w-6 h-6"
@@ -205,7 +190,7 @@ function MobileNavComponent() {
               type="button"
               onClick={closeMenu}
               className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 shadow-lg text-gray-600 hover:text-gray-900 hover:bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-              aria-label="Close navigation menu"
+              aria-label={MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL}
             >
               <svg
                 className="w-5 h-5"
