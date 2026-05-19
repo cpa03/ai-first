@@ -20,6 +20,9 @@ export default function LoginPage() {
   );
   const [error, setError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | undefined>(undefined);
+  const [passwordError, setPasswordError] = useState<string | undefined>(
+    undefined
+  );
 
   // Load remembered email preference on mount
   useEffect(() => {
@@ -32,6 +35,7 @@ export default function LoginPage() {
 
   const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
+    setPasswordError(undefined);
     setError(null);
 
     const trimmedEmail = email.trim();
@@ -43,7 +47,7 @@ export default function LoginPage() {
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setPasswordError('Password must be at least 8 characters');
       return false;
     }
 
@@ -184,7 +188,11 @@ export default function LoginPage() {
               type="password"
               label="Password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (passwordError) setPasswordError(undefined);
+              }}
+              error={passwordError}
               disabled={isLoading}
               required
               autoComplete="current-password"
