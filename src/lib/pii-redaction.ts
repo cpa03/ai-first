@@ -102,36 +102,83 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
 };
 
 /**
+ * Combined trigger regex for ALL possible PII types to avoid sequential replace overhead.
+ * Covers: digits (phones, ssn, cc, ip, passport, dl, most api keys), '@' (email, credentials),
+ * 'eyJ' (jwt), '://' (urls), common assignment operators ':', '=', and '#', and specific API key prefixes.
+ */
+const PII_TRIGGER_REGEX = /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-/;
+
+/**
+ * Trigger regex for API keys and secrets using case-insensitive check to avoid large string copies.
+ */
+const API_KEY_TRIGGER_REGEX =
+  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+
+/**
  * Redact PII from a string using predefined patterns
  */
 export function redactPII(text: string): string {
   // PERFORMANCE: Fast path for non-strings or strings too short to contain PII
   if (typeof text !== 'string' || text.length < 4) return text;
 
+  // PERFORMANCE: Fast-path for strings that don't contain any potential PII triggers.
+  // This avoids 10 sequential .replace() calls for most log messages.
+  if (!PII_TRIGGER_REGEX.test(text) && !API_KEY_TRIGGER_REGEX.test(text))
+    return text;
+
   let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
   // PERFORMANCE: Sequential replace is actually faster in V8 for large strings
   // than a single complex combined regex with many branches and capturing groups.
-  // Order matters: more specific patterns first
-  redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.urlWithCredentials,
-    labels.URL_WITH_CREDENTIALS
-  );
-  redacted = redacted.replace(PII_REGEX_PATTERNS.email, labels.EMAIL);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
-  redacted = redacted.replace(
-    PII_REGEX_PATTERNS.driversLicense,
-    labels.DRIVERS_LICENSE
-  );
-  redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.creditCard, labels.CREDIT_CARD);
-  redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
-    return isPrivateIP(match) ? match : labels.IP_ADDRESS;
-  });
-  redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
+  // Order matters: more specific patterns first.
+  // We use additional conditional checks to skip regex execution when triggers are absent.
+
+  if (redacted.includes('eyJ')) {
+    redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
+  }
+
+  if (redacted.includes('://')) {
+    redacted = redacted.replace(
+      PII_REGEX_PATTERNS.urlWithCredentials,
+      labels.URL_WITH_CREDENTIALS
+    );
+  }
+
+  if (redacted.includes('@')) {
+    redacted = redacted.replace(PII_REGEX_PATTERNS.email, labels.EMAIL);
+  }
+
+  // Digits are a trigger for many PII types
+  if (/\d/.test(redacted)) {
+    redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
+    redacted = redacted.replace(
+      PII_REGEX_PATTERNS.driversLicense,
+      labels.DRIVERS_LICENSE
+    );
+    redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
+    redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
+    redacted = redacted.replace(
+      PII_REGEX_PATTERNS.creditCard,
+      labels.CREDIT_CARD
+    );
+
+    // IP addresses also need dots (v4) or colons (v6)
+    if (redacted.includes('.') || redacted.includes(':')) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
+        return isPrivateIP(match) ? match : labels.IP_ADDRESS;
+      });
+    }
+  }
+
+  // API keys often have assignments ':' or '=' or specific prefixes
+  if (
+    /[:=]/.test(redacted) ||
+    /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
+    API_KEY_TRIGGER_REGEX.test(redacted)
+  ) {
+    redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
+  }
 
   return redacted;
 }
@@ -387,7 +434,18 @@ export function redactPIIInObject(
   if (Array.isArray(obj)) {
     const result: RedactionResult[] = new Array(obj.length);
     for (let i = 0; i < obj.length; i++) {
-      result[i] = redactPIIInObject(obj[i], seen, depth + 1);
+      const item = obj[i];
+      // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
+      if (typeof item === 'string') {
+        // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
+        result[i] =
+          item.length < 4 ||
+          (!PII_TRIGGER_REGEX.test(item) && !API_KEY_TRIGGER_REGEX.test(item))
+            ? item
+            : redactPII(item);
+      } else {
+        result[i] = redactPIIInObject(item, seen, depth + 1);
+      }
     }
     return result;
   }
@@ -409,7 +467,13 @@ export function redactPIIInObject(
       } else if (action.type === 'SENSITIVE') {
         redacted[key] = action.label!;
       } else if (typeof value === 'string') {
-        redacted[key] = redactPII(value);
+        // PERFORMANCE: Inline fast-path check to avoid function call overhead
+        // for safe strings. Most log strings do not contain PII.
+        redacted[key] =
+          value.length < 4 ||
+          (!PII_TRIGGER_REGEX.test(value) && !API_KEY_TRIGGER_REGEX.test(value))
+            ? value
+            : redactPII(value);
       } else if (value !== null && typeof value === 'object') {
         redacted[key] = redactPIIInObject(value, seen, depth + 1);
       } else {
@@ -435,7 +499,13 @@ export function redactPIIInObject(
         } else if (action.type === 'SENSITIVE') {
           redacted[key] = action.label!;
         } else if (typeof value === 'string') {
-          redacted[key] = redactPII(value);
+          // PERFORMANCE: Inline fast-path check
+          redacted[key] =
+            value.length < 4 ||
+            (!PII_TRIGGER_REGEX.test(value) &&
+              !API_KEY_TRIGGER_REGEX.test(value))
+              ? value
+              : redactPII(value);
         } else if (value !== null && typeof value === 'object') {
           redacted[key] = redactPIIInObject(value, seen, depth + 1);
         } else {
