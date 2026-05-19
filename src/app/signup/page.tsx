@@ -321,6 +321,7 @@ export default function SignupPage() {
               required
               autoComplete="email"
               onEnterPress={submitForm}
+              autoFocus
             />
 
             <InputWithValidation
