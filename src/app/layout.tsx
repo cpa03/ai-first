@@ -179,7 +179,12 @@ export default async function RootLayout({
                   </div>
                 </div>
               </header>
-              <main id="main-content" className="flex-1" role="main">
+              <main
+                id="main-content"
+                className="flex-1 focus:outline-none"
+                role="main"
+                tabIndex={-1}
+              >
                 {children}
               </main>
               <footer className="bg-white border-t border-gray-200">
