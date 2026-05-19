@@ -45,13 +45,6 @@ export type SuspiciousPatternCategory =
   | 'prototype_pollution'
   | 'log_injection';
 
-
-
-
-
-
-
-
 /**
  * Details about a detected suspicious pattern
  */
@@ -121,6 +114,11 @@ const SUSPICIOUS_PATTERNS: Record<
       severity: 3,
       description: 'SQL system schema access',
     },
+    {
+      pattern: /\b(extractvalue|updatexml|pg_sleep|sleep)\s*\(/is,
+      severity: 3,
+      description: 'SQL injection function (error/time-based)',
+    },
     // Medium severity
     {
       pattern: /('\s*(or|and)\s+')/is,
@@ -158,7 +156,8 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'JavaScript protocol',
     },
     {
-      pattern: /on(load|error|click|mouse|focus|blur|key|submit|change|scroll)\s*=/gi,
+      pattern:
+        /on(load|error|click|mouse|focus|blur|key|submit|change|scroll)\s*=/gi,
       severity: 3,
       description: 'Event handler injection',
     },
@@ -228,6 +227,11 @@ const SUSPICIOUS_PATTERNS: Record<
       severity: 3,
       description: 'System file access attempt',
     },
+    {
+      pattern: /C:\\(Windows|winnt|boot\.ini|inetpub)/i,
+      severity: 3,
+      description: 'Windows sensitive file access attempt',
+    },
     // Medium severity
     {
       pattern: /\.\.[\/\\]/,
@@ -249,12 +253,19 @@ const SUSPICIOUS_PATTERNS: Record<
   command_injection: [
     // High severity
     {
-      pattern: /(?:[;&|`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv)\b/i,
+      pattern:
+        /(?:[;&|`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv)\b/i,
       severity: 3,
       description: 'Destructive or sensitive command injection',
     },
     {
-      pattern: /\bprocess\.(?:exit|env|mainModule|global|cwd|memoryUsage|version)\b/,
+      pattern: /[;&|`]\s*(whoami|id|hostname|uname)\b/i,
+      severity: 3,
+      description: 'Reconnaissance command injection',
+    },
+    {
+      pattern:
+        /\bprocess\.(?:exit|env|mainModule|global|cwd|memoryUsage|version)\b/,
       severity: 3,
       description: 'Node.js process object injection',
     },
@@ -269,7 +280,8 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'Backtick command execution',
     },
     {
-      pattern: /\$\{IFS\}|(?:\/usr\/bin\/)?(?:nc|netcat|ncat|bash|python|perl|php|ruby|lua)\s+-e\s+['"]?\/bin\/(?:ba)?sh['"]?/i,
+      pattern:
+        /\$\{IFS\}|(?:\/usr\/bin\/)?(?:nc|netcat|ncat|bash|python|perl|php|ruby|lua)\s+-e\s+['"]?\/bin\/(?:ba)?sh['"]?/i,
       severity: 3,
       description: 'Shell bypass or reverse shell execution',
     },
@@ -308,6 +320,11 @@ const SUSPICIOUS_PATTERNS: Record<
       pattern: /(169\.254\.169\.254|metadata\.google)/i,
       severity: 3,
       description: 'Cloud metadata access attempt',
+    },
+    {
+      pattern: /(metadata\.google\.internal|instance-data|169\.254\.)/i,
+      severity: 3,
+      description: 'Expanded cloud metadata or link-local access attempt',
     },
     {
       pattern: /internal\.(service|api|host)/i,
@@ -397,7 +414,8 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'MongoDB $where injection',
     },
     {
-      pattern: /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+      pattern:
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -637,19 +655,6 @@ export function detectSuspiciousPatterns(
     logger.warn('Body scanning requested but not yet implemented');
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Scan headers safely - handle cases where headers.entries() might not exist (test mocks)
   try {
     if (typeof request.headers.entries === 'function') {
@@ -663,11 +668,6 @@ export function detectSuspiciousPatterns(
   } catch {
     // Headers iteration failed - continue without header scanning
   }
-
-
-
-
-
 
   // PERFORMANCE: patterns are already pre-filtered by scanString.
   // We only need to calculate maxSeverity from the findings.
