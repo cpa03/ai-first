@@ -10,7 +10,7 @@
  */
 
 import { PLATFORM_ENV_VARS } from './config/constants';
-import { CF_CACHE_TTL } from './config/cloudflare-config';
+import { CF_CACHE_TTL, CF_LIMITS } from './config/cloudflare-config';
 import { generateId } from '@/lib/security/crypto';
 
 /**
@@ -1176,7 +1176,7 @@ export class CloudflareKV {
     try {
       const result = await this.kv.list({
         prefix: options?.prefix,
-        limit: options?.limit ?? 1000,
+        limit: options?.limit ?? CF_LIMITS.KV_LIST_MAX_KEYS,
         cursor: options?.cursor,
       });
 
