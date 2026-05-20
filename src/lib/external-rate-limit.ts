@@ -11,6 +11,7 @@
 import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
 import { TIME_UNITS, RATE_LIMIT_CONFIG } from './config';
+import { TIMESTAMP_CONFIG } from './config/modular-constants';
 
 const logger = createLogger('ExternalRateLimit');
 
@@ -153,18 +154,14 @@ class ExternalRateLimitTracker {
 
     const remaining = parseInt(remainingStr, 10);
     const limit = parseInt(limitStr, 10);
-    // Reset time can be either a Unix timestamp or seconds until reset
     let resetTime: number;
     if (resetStr) {
       const resetValue = parseInt(resetStr, 10);
-      // GitHub uses Unix timestamp, OpenAI uses seconds until reset
-      // If the value is less than a reasonable timestamp (year 2020), it's probably seconds
       resetTime =
-        resetValue < 1577836800
+        resetValue < TIMESTAMP_CONFIG.UNIX_2020
           ? Date.now() + resetValue * 1000
           : resetValue * 1000;
     } else {
-      // Default to 1 hour from now if no reset header
       resetTime = Date.now() + TIME_UNITS.HOUR;
     }
 
