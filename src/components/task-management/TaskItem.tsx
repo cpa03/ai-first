@@ -73,8 +73,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted]);
 
   const tooltipContent = isCompleted
-    ? 'Mark as incomplete'
-    : 'Mark as complete';
+    ? TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_INCOMPLETE
+    : TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_COMPLETE;
 
   const containerClasses = useMemo(() => {
     const base = isCompleted

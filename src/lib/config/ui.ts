@@ -221,6 +221,17 @@ export const MESSAGES = {
   },
 } as const;
 
+export const KEYBOARD_SHORTCUTS_MESSAGES = {
+  SEARCH_PLACEHOLDER: 'Search commands...',
+  VIM_MODE_LABEL: 'Enable vim navigation (j/k)',
+  FILTER_STATUS: {
+    HAS_QUERY: 'Press Enter to select',
+    NO_QUERY: 'Type to filter',
+  },
+  TITLE: 'Command Palette',
+  CLOSE_INSTRUCTION: 'Press Esc to close',
+} as const;
+
 export const BUTTON_LABELS = {
   SUBMIT: 'Submit',
   CANCEL: 'Cancel',
