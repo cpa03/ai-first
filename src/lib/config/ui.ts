@@ -304,9 +304,9 @@ export const PASSWORD_VALIDATION_CONFIG = {
     STRONG: '100%',
   },
   STRENGTH_TEXT_COLORS: {
-    WEAK: 'text-red-600',
-    MEDIUM: 'text-amber-600',
-    STRONG: 'text-green-600',
+    WEAK: 'text-red-700',
+    MEDIUM: 'text-amber-700',
+    STRONG: 'text-green-700',
   },
 } as const;
 
