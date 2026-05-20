@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
-import { PROXY_CONFIG } from '@/lib/config/proxy-config';
+import { MIDDLEWARE_CONFIG } from '@/lib/config/middleware-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
@@ -61,7 +61,7 @@ function buildCSPHeader(nonce: string): string {
       const scriptValues = values.map((v) =>
         v === "'nonce-placeholder'" ? `'nonce-${nonce}'` : v
       );
-      scriptValues.push(PROXY_CONFIG.VERCEL_LIVE_URL);
+      scriptValues.push(MIDDLEWARE_CONFIG.VERCEL_LIVE_URL);
       cspParts.push(`${directive} ${scriptValues.join(' ')}`);
     } else if (values.length === 0) {
       cspParts.push(directive);
@@ -70,7 +70,7 @@ function buildCSPHeader(nonce: string): string {
     }
   }
 
-  cspParts.push(`report-uri ${PROXY_CONFIG.CSP_REPORT_PATH}`);
+  cspParts.push(`report-uri ${MIDDLEWARE_CONFIG.CSP_REPORT_PATH}`);
   cspParts.push('report-to csp-endpoint');
 
   return cspParts.join('; ');
@@ -116,8 +116,8 @@ function applySecurityHeaders(
     'Report-To',
     JSON.stringify({
       group: 'csp-endpoint',
-      max_age: PROXY_CONFIG.CSP_REPORT_MAX_AGE,
-      endpoints: [{ url: PROXY_CONFIG.CSP_REPORT_PATH }],
+      max_age: MIDDLEWARE_CONFIG.CSP_REPORT_MAX_AGE,
+      endpoints: [{ url: MIDDLEWARE_CONFIG.CSP_REPORT_PATH }],
     })
   );
 }

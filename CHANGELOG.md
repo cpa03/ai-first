@@ -711,7 +711,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `/src/templates/` directory
   - Added `/src/lib/resilience/` subdirectory with circuit breaker and retry components
   - Added `/src/instrumentation.ts` instrumentation file
-  - Added `/src/proxy.ts` proxy configuration file
+  - Added `/src/middleware.ts` proxy configuration file
 - ✅ Build: PASSED (Next.js 16.1.6 compiled successfully)
 - ✅ Lint: PASSED (0 errors, 0 warnings)
 - ✅ TypeScript: PASSED (0 errors)

@@ -649,7 +649,7 @@ The following frontend-engineer issues have been verified and confirmed as resol
   ✅ Tests: All passed
 - ✅ Build: Successful
 
-**Note:** Next.js 16 shows a deprecation warning for `middleware.ts` → `proxy.ts` migration. This is a known issue and will be addressed in a future update.
+**Note:** Next.js 16 shows a deprecation warning for `middleware.ts` → `middleware.ts` migration. This is a known issue and will be addressed in a future update.
 
 ---
 

@@ -649,7 +649,7 @@ None - All tests passing ✅
 
 #### Build Warnings Noted
 
-1. **Middleware Deprecation**: Next.js 16 shows deprecation warning for `middleware.ts`. Migration to `proxy.ts` recommended. See: https://nextjs.org/docs/messages/middleware-to-proxy
+1. **Middleware Deprecation**: Next.js 16 shows deprecation warning for `middleware.ts`. Migration to `middleware.ts` recommended. See: https://nextjs.org/docs/messages/middleware-to-proxy
 2. **Experimental Edge Runtime**: API routes using edge runtime show experimental warning.
 
 #### Repository Health
@@ -662,7 +662,7 @@ None - All tests passing ✅
 
 #### Recommendations
 
-1. Plan middleware.ts → proxy.ts migration for Next.js 16 compatibility
+1. Plan middleware.ts → middleware.ts migration for Next.js 16 compatibility
 2. Continue monitoring security issues #1135, #1171, #1177
 3. Address npm vulnerabilities when safe dependency updates available
 4. Review P0 issue #1135 (Supabase Service Role Key exposure) as highest priority
@@ -707,7 +707,7 @@ None - All tests passing ✅
 
 #### Build Warnings Noted
 
-1. **Middleware Deprecation**: Next.js 16 shows deprecation warning for `middleware.ts`. Migration to `proxy.ts` recommended. See: https://nextjs.org/docs/messages/middleware-to-proxy
+1. **Middleware Deprecation**: Next.js 16 shows deprecation warning for `middleware.ts`. Migration to `middleware.ts` recommended. See: https://nextjs.org/docs/messages/middleware-to-proxy
 2. **Experimental Edge Runtime**: API routes using edge runtime show experimental warning.
 
 #### Repository Health
@@ -721,7 +721,7 @@ None - All tests passing ✅
 #### Recommendations
 
 1. Monitor PR #1470 and #1471 for deployment environment configuration
-2. Plan middleware.ts → proxy.ts migration for Next.js 16 compatibility
+2. Plan middleware.ts → middleware.ts migration for Next.js 16 compatibility
 3. Continue monitoring security issues #1135, #1171, #1177
 4. Address npm vulnerabilities when safe dependency updates available
 
@@ -1378,7 +1378,7 @@ All items from consolidated issue #1181 were verified as resolved:
 
 #### Build Warnings
 
-1. **Middleware Deprecation**: Next.js 16 shows deprecation warning for `middleware.ts`. Migration to `proxy.ts` recommended.
+1. **Middleware Deprecation**: Next.js 16 shows deprecation warning for `middleware.ts`. Migration to `middleware.ts` recommended.
 2. **npm Vulnerabilities**: 38 vulnerabilities (1 moderate, 37 high) - all in transitive devDependencies
 
 #### Key Findings
@@ -1395,7 +1395,7 @@ All items from consolidated issue #1181 were verified as resolved:
 2. Apply CI workflow consolidation from issue #1609
 3. Continue monitoring security issues #1171, #1189
 4. Address npm vulnerabilities when safe dependency updates available
-5. Plan middleware.ts → proxy.ts migration for Next.js 16 compatibility
+5. Plan middleware.ts → middleware.ts migration for Next.js 16 compatibility
 
 #### Repository Health
 
@@ -1463,7 +1463,7 @@ All items from consolidated issue #1181 were verified as resolved:
 1. Close false positive issues #666, #661, #655 with resolution notes
 2. Focus on #1711 and #1725 for test coverage improvements
 3. Address npm vulnerabilities when safe dependency updates available
-4. Plan middleware.ts → proxy.ts migration for Next.js 16 compatibility
+4. Plan middleware.ts → middleware.ts migration for Next.js 16 compatibility
 
 #### Repository Health
 

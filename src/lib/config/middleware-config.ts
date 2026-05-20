@@ -1,11 +1,11 @@
 /**
- * Proxy/Middleware Configuration
- * Configuration values for Next.js proxy (middleware)
- * Addresses hardcoded values in proxy.ts
+ * Middleware Configuration
+ * Configuration values for Next.js edge middleware
+ * Addresses hardcoded values in middleware.ts
  */
 import { EnvLoader } from './environment';
 
-export const PROXY_CONFIG = {
+export const MIDDLEWARE_CONFIG = {
   /**
    * CSP Report-To header max_age in seconds
    * Env: PROXY_CSP_REPORT_MAX_AGE (default: 10886400 = ~4 months)
@@ -33,4 +33,4 @@ export const PROXY_CONFIG = {
   CSP_REPORT_PATH: EnvLoader.string('PROXY_CSP_REPORT_PATH', '/api/csp-report'),
 } as const;
 
-export type ProxyConfig = typeof PROXY_CONFIG;
+export type MiddlewareConfig = typeof MIDDLEWARE_CONFIG;

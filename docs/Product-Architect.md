@@ -240,10 +240,10 @@ SP|- **Verification Checklist**:
 #TH|- **PR**: https://github.com/cpa03/ai-first/pull/1964
 #QV|
 
-### 2026-02-27: PROXY_CONFIG Modularization
+### 2026-02-27: MIDDLEWARE_CONFIG Modularization
 
 - **Issue**: #1901 - "Refactor Large Files: Split db.ts and constants.ts"
-- **Action**: Extracted PROXY_CONFIG into dedicated module
+- **Action**: Extracted MIDDLEWARE_CONFIG into dedicated module
 - **Files Changed**:
   - Created: `src/lib/config/proxy-config.ts`
   - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)

@@ -996,7 +996,7 @@ export const PLATFORM_ENV_VARS = {
 // Re-exported from user-story-config.ts for backward compatibility
 export { USER_STORY_CONFIG } from './user-story-config';
 
-export { PROXY_CONFIG } from './proxy-config';
+export { MIDDLEWARE_CONFIG } from './middleware-config';
 
 /**
  * Health Monitoring Constants (re-exported from health.ts for modularity)

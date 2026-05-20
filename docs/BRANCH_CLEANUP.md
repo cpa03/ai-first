@@ -375,7 +375,7 @@ This document tracks branch cleanup activities and identifies candidates for fut
     - Added `/src/templates/` directory
     - Added `/src/lib/resilience/` subdirectory with resilience components
     - Added `/src/instrumentation.ts` file
-    - Added `/src/proxy.ts` file
+    - Added `/src/middleware.ts` file
   - Updated BRANCH_CLEANUP.md with maintenance entry
   - Updated CHANGELOG.md with maintenance entry
 

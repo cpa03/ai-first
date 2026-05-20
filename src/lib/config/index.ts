@@ -70,7 +70,7 @@ export { CACHE_TTL_CONFIG } from './cache-ttl-config';
 // Component Configuration
 export { COMPONENT_CONFIG } from './components';
 // Proxy/Middleware Configuration
-export { PROXY_CONFIG } from './proxy-config';
+export { MIDDLEWARE_CONFIG } from './middleware-config';
 
 // Task Management Configuration
 export {
