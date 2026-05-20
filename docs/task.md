@@ -4,9 +4,8 @@
 
 This file contains only **active tasks** that are currently in progress or pending. All completed tasks have been archived to maintain efficiency.
 
-**Last Archive**: 2026-02-07  
-**Archive Location**: `docs/archive/task-archive-2026-02.md`  
-**Archived Tasks**: 197 completed tasks  
+**Last Archive**: 2026-02-07
+**Archived Tasks**: 197 completed tasks
 **Current Active Tasks**: 2
 
 ---
@@ -139,5 +138,3 @@ This task requires browser automation tools (Playwright) or manual testing. Envi
 | 2026-02-07 | task-archive-2026-02.md | 197            | 550KB |
 
 ---
-
-**Note**: For complete task history, see [docs/archive/](./archive/)
