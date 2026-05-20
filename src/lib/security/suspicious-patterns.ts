@@ -218,19 +218,26 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'Multiple path traversal sequences',
     },
     {
-      pattern: /\/etc\/(passwd|shadow|hosts)/i,
+      pattern: /\/etc\/(passwd|shadow|hosts|group|issue|hostname)/i,
       severity: 3,
       description: 'Sensitive file access attempt',
     },
     {
-      pattern: /\/(proc|sys)\//i,
+      pattern: /\/(proc|sys|dev|root|usr\/local\/bin)\//i,
       severity: 3,
       description: 'System file access attempt',
     },
     {
-      pattern: /C:\\(Windows|winnt|boot\.ini|inetpub)/i,
+      pattern:
+        /C:\\(Windows|winnt|boot\.ini|inetpub|config\.sys|autoexec\.bat)/i,
       severity: 3,
       description: 'Windows sensitive file access attempt',
+    },
+    {
+      pattern:
+        /(?:\/|^)(\.env|\.git|\.ssh|\.aws|\.bash_history|\.zsh_history|\.npmrc|\.yarnrc|\.docker|id_rsa|id_dsa|authorized_keys|known_hosts)\b/i,
+      severity: 3,
+      description: 'Sensitive configuration or history file access',
     },
     // Medium severity
     {
@@ -254,12 +261,13 @@ const SUSPICIOUS_PATTERNS: Record<
     // High severity
     {
       pattern:
-        /(?:[;&|`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv)\b/i,
+        /(?:[;&|`]\s*|\b)(rm|del|format|fdisk|shutdown|reboot|halt|init|env|printenv|powershell|pwsh|cmd\.exe)\b/i,
       severity: 3,
       description: 'Destructive or sensitive command injection',
     },
     {
-      pattern: /[;&|`]\s*(whoami|id|hostname|uname)\b/i,
+      pattern:
+        /[;&|`]\s*(whoami|id|hostname|uname|tasklist|netstat|ipconfig|ifconfig|arp|route)\b/i,
       severity: 3,
       description: 'Reconnaissance command injection',
     },
@@ -317,7 +325,8 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'Localhost SSRF attempt',
     },
     {
-      pattern: /(169\.254\.169\.254|metadata\.google)/i,
+      pattern:
+        /(169\.254\.169\.254|168\.63\.129\.16|100\.100\.100\.200|192\.0\.0\.192|metadata\.google|fd00:ec2::254)/i,
       severity: 3,
       description: 'Cloud metadata access attempt',
     },
@@ -409,9 +418,9 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$where\s*:/i,
+      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
       severity: 3,
-      description: 'MongoDB $where injection',
+      description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
@@ -447,9 +456,10 @@ const SUSPICIOUS_PATTERNS: Record<
   prototype_pollution: [
     // High severity - direct prototype manipulation
     {
-      pattern: /__proto__\s*[\[.]/i,
+      pattern:
+        /(__proto__|__defineGetter__|__defineSetter__|__lookupGetter__|__lookupSetter__)\s*[\[.(]/i,
       severity: 3,
-      description: 'Prototype pollution via __proto__',
+      description: 'Prototype pollution via internal methods',
     },
     {
       pattern: /constructor\s*[\[.]\s*prototype/i,

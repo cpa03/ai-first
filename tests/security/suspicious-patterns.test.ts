@@ -163,6 +163,10 @@ describe('Suspicious Pattern Detection Improvements', () => {
         'metadata.google.internal',
         'instance-data',
         '169.254.1.1',
+        '168.63.129.16', // Azure
+        '100.100.100.200', // Alibaba
+        '192.0.0.192', // Oracle
+        'fd00:ec2::254', // AWS IPv6
       ];
       for (const target of targets) {
         const request = createMockRequest(
@@ -172,6 +176,81 @@ describe('Suspicious Pattern Detection Improvements', () => {
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
+      }
+    });
+
+    it('should detect sensitive config file access', () => {
+      const files = ['.env', '.git/config', '.ssh/id_rsa', '.bash_history'];
+      for (const file of files) {
+        const request = createMockRequest(
+          `https://example.com/api/test?path=/home/user/${file}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'path_traversal')
+        ).toBe(true);
+      }
+    });
+
+    it('should detect Windows system files', () => {
+      const files = ['config.sys', 'autoexec.bat'];
+      for (const file of files) {
+        const request = createMockRequest(
+          `https://example.com/api/test?file=C:\\${file}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'path_traversal')
+        ).toBe(true);
+      }
+    });
+
+    it('should detect advanced Windows and recon commands', () => {
+      const commands = ['powershell', 'cmd.exe', 'tasklist', 'netstat', 'ipconfig'];
+      for (const cmd of commands) {
+        const request = createMockRequest(
+          `https://example.com/api/test?cmd=;${cmd}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'command_injection')
+        ).toBe(true);
+      }
+    });
+
+    it('should detect new NoSQL injection operators', () => {
+      const operators = ['$accumulator', '$function'];
+      for (const op of operators) {
+        const request = createMockRequest(
+          `https://example.com/api/test?q={"${op}":"..."}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'nosql_injection')
+        ).toBe(true);
+      }
+    });
+
+    it('should detect internal method prototype pollution', () => {
+      const methods = ['__defineGetter__', '__lookupSetter__'];
+      for (const method of methods) {
+        const request = createMockRequest(
+          `https://example.com/api/test?pollute=obj.${method}("foo", ...)`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(
+          result.patterns.some((p) => p.category === 'prototype_pollution')
+        ).toBe(true);
       }
     });
   });
