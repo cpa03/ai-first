@@ -5,7 +5,7 @@ import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
- * Middleware for Next.js
+ * Proxy for Next.js (replacement for deprecated middleware)
  *
  * Features:
  * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
@@ -181,7 +181,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export default function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -214,3 +214,16 @@ export default function middleware(request: NextRequest) {
 
   return response;
 }
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+  ],
+};
