@@ -102,20 +102,27 @@ const ProgressStepperComponent = function ProgressStepper({
                     index + 1
                   )}
                 </div>
-                <span
-                  className={`
-                    ml-3 text-sm font-medium
-                    ${
-                      step.current
-                        ? 'text-primary-600'
-                        : step.completed
-                          ? 'text-gray-900'
-                          : 'text-gray-700'
-                    }
-                  `}
-                >
-                  {step.label}
-                </span>
+                <div className="flex flex-col ml-3">
+                  <span
+                    className={`
+                      text-sm font-medium
+                      ${
+                        step.current
+                          ? 'text-primary-600'
+                          : step.completed
+                            ? 'text-gray-900'
+                            : 'text-gray-700'
+                      }
+                    `}
+                  >
+                    {step.label}
+                  </span>
+                  {step.current && (
+                    <span className="text-xs text-primary-500 font-medium">
+                      Step {currentStep + 1} of {steps.length}
+                    </span>
+                  )}
+                </div>
               </div>
               {!isLast && (
                 <div
