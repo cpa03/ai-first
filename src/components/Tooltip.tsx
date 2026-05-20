@@ -197,9 +197,9 @@ function TooltipComponent({
           <div className="relative">
             <div
               className={`
-                px-2 py-1 bg-gray-800 text-white text-xs font-medium rounded-md
-                shadow-lg whitespace-normal
-                w-max max-w-[200px] break-words
+                px-2.5 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md
+                shadow-lg border border-gray-700/50 whitespace-normal
+                w-max max-w-[240px] break-words
               `}
             >
               {content}
