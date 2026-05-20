@@ -120,7 +120,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       </div>
 
       {feedback.length > 0 && strength !== 'strong' && (
-        <ul className="text-xs text-gray-500 space-y-0.5" aria-live="polite">
+        <ul className="text-xs text-gray-600 space-y-0.5" aria-live="polite">
           {feedback.slice(0, 2).map((tip, idx) => (
             <li key={idx} className="flex items-center gap-1">
               <span className="text-gray-400">•</span>
