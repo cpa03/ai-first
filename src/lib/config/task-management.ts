@@ -228,6 +228,10 @@ export const TASK_MANAGEMENT_MESSAGES = {
         ? `Mark "${taskTitle}" as incomplete`
         : `Mark "${taskTitle}" as complete`,
   },
+  TOOLTIP: {
+    MARK_COMPLETE: 'Mark as complete',
+    MARK_INCOMPLETE: 'Mark as incomplete',
+  },
 } as const;
 
 /**

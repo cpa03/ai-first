@@ -9,7 +9,7 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
-import { UI_CONFIG } from '@/lib/config';
+import { UI_CONFIG, KEYBOARD_SHORTCUTS_MESSAGES } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface KeyboardShortcut {
@@ -452,7 +452,7 @@ function KeyboardShortcutsHelpComponent({
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Search commands..."
+              placeholder={KEYBOARD_SHORTCUTS_MESSAGES.SEARCH_PLACEHOLDER}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-400"
@@ -469,10 +469,12 @@ function KeyboardShortcutsHelpComponent({
                 }
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
-              Enable vim navigation (j/k)
+              {KEYBOARD_SHORTCUTS_MESSAGES.VIM_MODE_LABEL}
             </label>
             <span className="text-xs text-gray-500">
-              {searchQuery ? 'Press Enter to select' : 'Type to filter'}
+              {searchQuery
+                ? KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.HAS_QUERY
+                : KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.NO_QUERY}
             </span>
           </div>
         </div>
@@ -500,10 +502,12 @@ function KeyboardShortcutsHelpComponent({
                 id="keyboard-shortcuts-title"
                 className="text-lg font-semibold text-gray-900"
               >
-                Command Palette
+                {KEYBOARD_SHORTCUTS_MESSAGES.TITLE}
               </h2>
               <p className="text-sm text-gray-600">
-                Press <KeyboardKey>Esc</KeyboardKey> to close
+                {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[0]}
+                <KeyboardKey>Esc</KeyboardKey>
+                {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[1]}
               </p>
             </div>
           </div>
