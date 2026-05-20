@@ -8,6 +8,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { dbService } from './db';
 import { createLogger } from './logger';
+import { SIMILARITY_CONFIG } from './config/similarity-config';
 
 const logger = createLogger('SimilarityService');
 
@@ -51,8 +52,8 @@ export interface SimilarIdea {
 export async function findSimilarIdeas(
   ideaId: string,
   userId: string,
-  limit: number = 5,
-  threshold: number = 0.7
+  limit: number = SIMILARITY_CONFIG.DEFAULT_LIMIT,
+  threshold: number = SIMILARITY_CONFIG.DEFAULT_THRESHOLD
 ): Promise<SimilarIdea[]> {
   const supabase = getSupabaseClient();
 

@@ -7,6 +7,8 @@ import { requireAuth } from '@/lib/auth';
 import { findSimilarIdeas } from '@/lib/similarity-service';
 import { ValidationError } from '@/lib/errors';
 import { APP_CONFIG } from '@/lib/config/app';
+import { SIMILARITY_CONFIG } from '@/lib/config/similarity-config';
+import { STATUS_CODES } from '@/lib/config/http';
 
 /**
  * GET /api/ideas/[id]/similar
@@ -22,8 +24,14 @@ async function handleGet(context: ApiContext) {
   const { request, rateLimit } = context;
   const url = new URL(request.url);
 
-  const limit = parseInt(url.searchParams.get('limit') || '5', 10);
-  const threshold = parseFloat(url.searchParams.get('threshold') || '0.7');
+  const limit = parseInt(
+    url.searchParams.get('limit') || String(SIMILARITY_CONFIG.DEFAULT_LIMIT),
+    10
+  );
+  const threshold = parseFloat(
+    url.searchParams.get('threshold') ||
+      String(SIMILARITY_CONFIG.DEFAULT_THRESHOLD)
+  );
 
   // Validate pagination parameters to prevent DoS attacks
   if (Number.isNaN(limit) || !Number.isFinite(limit)) {
@@ -60,11 +68,14 @@ async function handleGet(context: ApiContext) {
       },
     ]);
   }
-  if (threshold < 0 || threshold > 1) {
+  if (
+    threshold < SIMILARITY_CONFIG.MIN_THRESHOLD ||
+    threshold > SIMILARITY_CONFIG.MAX_THRESHOLD
+  ) {
     throw new ValidationError([
       {
         field: 'threshold',
-        message: 'Threshold must be between 0 and 1',
+        message: `Threshold must be between ${SIMILARITY_CONFIG.MIN_THRESHOLD} and ${SIMILARITY_CONFIG.MAX_THRESHOLD}`,
       },
     ]);
   }
@@ -90,7 +101,7 @@ async function handleGet(context: ApiContext) {
       count: similarIdeas.length,
     },
     context.requestId,
-    200,
+    STATUS_CODES.OK,
     rateLimit
   );
 }

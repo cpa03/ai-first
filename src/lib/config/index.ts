@@ -290,3 +290,6 @@ export {
   DATABASE_CONFIG,
   type ModularConstants,
 } from './modular-constants';
+
+// Similarity Search Configuration
+export { SIMILARITY_CONFIG, type SimilarityConfig } from './similarity-config';
