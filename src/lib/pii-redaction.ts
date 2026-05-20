@@ -104,28 +104,24 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
 /**
  * Combined trigger regex for ALL possible PII types to avoid sequential replace overhead.
  * Covers: digits (phones, ssn, cc, ip, passport, dl, most api keys), '@' (email, credentials),
- * 'eyJ' (jwt), '://' (urls), common assignment operators ':', '=', and '#', and specific API key prefixes.
+ * 'eyJ' (jwt), '://' (urls), common assignment operators ':', '=', and '#', and specific API key prefixes,
+ * and common secret-related keywords.
+ * PERFORMANCE: Single regex test is faster than multiple tests on every log message.
  */
-const PII_TRIGGER_REGEX = /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-/;
+const COMBINED_TRIGGER_REGEX =
+  /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
 
 /**
- * Trigger regex for API keys and secrets using case-insensitive check to avoid large string copies.
+ * Specific triggers for API keys and secrets to avoid running the full complex regex.
  */
-const API_KEY_TRIGGER_REGEX =
-  /api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+const API_KEY_SPECIFIC_TRIGGER_REGEX =
+  /api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
 
 /**
- * Redact PII from a string using predefined patterns
+ * Internal redaction logic that skips fast-path checks.
+ * Use this when the fast-path check has already been performed.
  */
-export function redactPII(text: string): string {
-  // PERFORMANCE: Fast path for non-strings or strings too short to contain PII
-  if (typeof text !== 'string' || text.length < 4) return text;
-
-  // PERFORMANCE: Fast-path for strings that don't contain any potential PII triggers.
-  // This avoids 10 sequential .replace() calls for most log messages.
-  if (!PII_TRIGGER_REGEX.test(text) && !API_KEY_TRIGGER_REGEX.test(text))
-    return text;
-
+function _redactPII(text: string): string {
   let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
@@ -172,15 +168,30 @@ export function redactPII(text: string): string {
   }
 
   // API keys often have assignments ':' or '=' or specific prefixes
+  // PERFORMANCE: More specific check before running complex apiKey regex
   if (
     /[:=]/.test(redacted) ||
     /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
-    API_KEY_TRIGGER_REGEX.test(redacted)
+    API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted)
   ) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
   }
 
   return redacted;
+}
+
+/**
+ * Redact PII from a string using predefined patterns
+ */
+export function redactPII(text: string): string {
+  // PERFORMANCE: Fast path for non-strings or strings too short to contain PII
+  if (typeof text !== 'string' || text.length < 4) return text;
+
+  // PERFORMANCE: Fast-path for strings that don't contain any potential PII triggers.
+  // This avoids 10 sequential .replace() calls for most log messages.
+  if (!COMBINED_TRIGGER_REGEX.test(text)) return text;
+
+  return _redactPII(text);
 }
 
 /**
@@ -439,10 +450,9 @@ export function redactPIIInObject(
       if (typeof item === 'string') {
         // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
         result[i] =
-          item.length < 4 ||
-          (!PII_TRIGGER_REGEX.test(item) && !API_KEY_TRIGGER_REGEX.test(item))
+          item.length < 4 || !COMBINED_TRIGGER_REGEX.test(item)
             ? item
-            : redactPII(item);
+            : _redactPII(item);
       } else {
         result[i] = redactPIIInObject(item, seen, depth + 1);
       }
@@ -470,10 +480,9 @@ export function redactPIIInObject(
         // PERFORMANCE: Inline fast-path check to avoid function call overhead
         // for safe strings. Most log strings do not contain PII.
         redacted[key] =
-          value.length < 4 ||
-          (!PII_TRIGGER_REGEX.test(value) && !API_KEY_TRIGGER_REGEX.test(value))
+          value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
             ? value
-            : redactPII(value);
+            : _redactPII(value);
       } else if (value !== null && typeof value === 'object') {
         redacted[key] = redactPIIInObject(value, seen, depth + 1);
       } else {
@@ -501,11 +510,9 @@ export function redactPIIInObject(
         } else if (typeof value === 'string') {
           // PERFORMANCE: Inline fast-path check
           redacted[key] =
-            value.length < 4 ||
-            (!PII_TRIGGER_REGEX.test(value) &&
-              !API_KEY_TRIGGER_REGEX.test(value))
+            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
               ? value
-              : redactPII(value);
+              : _redactPII(value);
         } else if (value !== null && typeof value === 'object') {
           redacted[key] = redactPIIInObject(value, seen, depth + 1);
         } else {
