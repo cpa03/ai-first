@@ -13,6 +13,7 @@ import {
   type ResilienceConfig,
 } from './resilience';
 import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
+import { AI_MODEL_CONFIG } from './config/modular-constants';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
@@ -791,10 +792,8 @@ class AIService {
       try {
         await withTimeout(
           async () => {
-            // Anthropic doesn't have a simple list models endpoint,
-            // so we use the messages API with a minimal request
             await this.anthropic!.messages.create({
-              model: 'claude-3-haiku-20240307',
+              model: AI_MODEL_CONFIG.HEALTH_CHECK_MODEL,
               max_tokens: 1,
               messages: [{ role: 'user', content: 'ping' }],
             });
@@ -804,9 +803,7 @@ class AIService {
           }
         );
         providers.push('anthropic');
-      } catch {
-        // Don't log error for Anthropic as it may fail due to API key issues
-      }
+      } catch {}
     }
 
     const circuitBreakers = circuitBreakerManager.getAllStatuses();

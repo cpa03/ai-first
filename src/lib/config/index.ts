@@ -273,3 +273,20 @@ export {
   type MobileNavConfig,
   type FooterNavConfig,
 } from './navigation';
+
+// Modular Constants Configuration
+// Centralized magic numbers and constants for eliminating hardcoded values
+export {
+  MODULAR_CONSTANTS,
+  HASH_CONFIG,
+  TIMESTAMP_CONFIG,
+  SESSION_CONFIG,
+  RATE_LIMIT_STORE_CONFIG,
+  EXTERNAL_RATE_LIMIT_CONFIG,
+  AB_TEST,
+  ANALYTICS_CONFIG,
+  COST_TRACKING_CONFIG,
+  AI_MODEL_CONFIG,
+  DATABASE_CONFIG,
+  type ModularConstants,
+} from './modular-constants';

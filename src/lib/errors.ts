@@ -2,6 +2,7 @@ import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
 import { generateId, simpleHash } from './security/crypto';
+import { HASH_CONFIG } from './config/modular-constants';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -9,7 +10,6 @@ const LONG_NUMBER_PATTERN = /\d{4,}/g;
 const UUID_PATTERN =
   /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi;
 const IP_ADDRESS_PATTERN = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
-const FINGERPRINT_HASH_LENGTH = 8;
 
 export function generateErrorFingerprint(
   code: ErrorCode | string,
@@ -29,7 +29,7 @@ export function generateErrorFingerprint(
 
   const hash = simpleHash(fingerprintInput).substring(
     0,
-    FINGERPRINT_HASH_LENGTH
+    HASH_CONFIG.FINGERPRINT_LENGTH
   );
 
   return `fp_${hash}`;

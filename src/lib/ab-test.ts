@@ -20,6 +20,7 @@ import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 import { generateSecureId } from '@/lib/utils';
 import { simpleHash, secureRandom } from '@/lib/security/crypto';
+import { HASH_CONFIG } from '@/lib/config/modular-constants';
 
 /**
  * Experiment variant definition
@@ -190,12 +191,9 @@ function getDeterministicRandom(experimentId: string): number {
     const str = `${sessionId}_${experimentId}`;
     const hashHex = simpleHash(str);
 
-    // PERFORMANCE: Use only the first 8 characters to ensure we stay within 32-bit integer range
-    // even if simpleHash is later upgraded to a stronger algorithm (like SHA-256).
     const hashInt = parseInt(hashHex.substring(0, 8), 16);
 
-    // Return normalized value 0-1 (0xFFFFFFFF is the max 32-bit unsigned value)
-    return hashInt / 4294967295;
+    return hashInt / HASH_CONFIG.MAX_INT_32;
   } catch {
     return secureRandom();
   }
