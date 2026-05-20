@@ -64,6 +64,12 @@ export const CF_LIMITS = {
 
   /** Maximum D1 database size */
   MAX_D1_SIZE: EnvLoader.string('CF_MAX_D1_SIZE', '500MB'),
+
+  /**
+   * Maximum number of keys to list in a single KV list operation
+   * Env: CF_KV_LIST_MAX_KEYS (default: 1000)
+   */
+  KV_LIST_MAX_KEYS: EnvLoader.number('CF_KV_LIST_MAX_KEYS', 1000, 1, 10000),
 } as const;
 
 /**
