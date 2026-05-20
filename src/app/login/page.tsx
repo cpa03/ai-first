@@ -8,6 +8,7 @@ import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
 import { OAUTH_PROVIDER_COLORS } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -216,20 +217,64 @@ export default function LoginPage() {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
-                disabled={isLoading}
-              />
               <label
                 htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-700 cursor-pointer"
+                className="flex items-center gap-2.5 cursor-pointer group"
               >
-                Remember me
+                <span className="relative">
+                  <input
+                    id="remember-me"
+                    name="remember-me"
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => {
+                      setRememberMe(e.target.checked);
+                      if (e.target.checked) {
+                        triggerHapticFeedback();
+                      }
+                    }}
+                    className="peer sr-only"
+                    disabled={isLoading}
+                  />
+                  <span
+                    className={`
+                      w-5 h-5 rounded border-2 transition-all duration-200 ease-out
+                      flex items-center justify-center
+                      peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-2
+                      peer-hover:border-primary-400
+                      ${
+                        rememberMe
+                          ? 'bg-primary-600 border-primary-600'
+                          : 'bg-white border-gray-300 group-hover:border-primary-400'
+                      }
+                      ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+                    `}
+                    aria-hidden="true"
+                  >
+                    {rememberMe && (
+                      <svg
+                        className="w-3 h-3 text-white animate-draw-check"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={3}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    )}
+                  </span>
+                </span>
+                <span
+                  className={`text-sm transition-colors duration-200 ${rememberMe ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover:text-gray-900'}`}
+                >
+                  Remember me
+                </span>
               </label>
             </div>
             <div className="text-sm">
