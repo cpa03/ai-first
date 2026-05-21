@@ -321,7 +321,7 @@ const SUSPICIOUS_PATTERNS: Record<
     // High severity
     {
       pattern: /(localhost|127\.0\.0\.1|0\.0\.0\.0|::1)/i,
-      severity: 2,
+      severity: 3,
       description: 'Localhost SSRF attempt',
     },
     {
@@ -545,7 +545,18 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   3: [],
 };
 
-// Initialize PATTERNS_BY_MIN_SEVERITY
+/**
+ * PERFORMANCE: Consolidate patterns into a single "trigger" regex per severity level.
+ * This provides a high-frequency fast-path that bypasses detailed scanning for clean traffic.
+ */
+const TRIGGER_REGEXES: Record<number, RegExp | null> = {
+  0: null,
+  1: null,
+  2: null,
+  3: null,
+};
+
+// Initialize PATTERNS_BY_MIN_SEVERITY and TRIGGER_REGEXES
 (function initializePatternCache() {
   const allPatterns: FlattenedPattern[] = [];
   for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
@@ -558,9 +569,18 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   }
 
   for (let severity = 0; severity <= 3; severity++) {
-    PATTERNS_BY_MIN_SEVERITY[severity] = allPatterns.filter(
-      (p) => p.severity >= severity
-    );
+    const filtered = allPatterns.filter((p) => p.severity >= severity);
+    PATTERNS_BY_MIN_SEVERITY[severity] = filtered;
+
+    if (filtered.length > 0) {
+      // Create a union of all patterns for the fast-path trigger
+      // We use case-insensitive and dotAll matching for the trigger to catch most variants.
+      // The trigger only needs to detect presence, so 'is' flags are sufficient.
+      const unionPattern = filtered
+        .map((p) => `(?:${p.pattern.source})`)
+        .join('|');
+      TRIGGER_REGEXES[severity] = new RegExp(unionPattern, 'is');
+    }
   }
 })();
 
@@ -590,6 +610,13 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
+
+  // PERFORMANCE: Fast-path trigger check. If the consolidated trigger regex
+  // doesn't match, we can skip testing 70+ granular regexes.
+  const trigger = TRIGGER_REGEXES[minSeverity];
+  if (trigger && !trigger.test(input)) {
+    return [];
+  }
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];

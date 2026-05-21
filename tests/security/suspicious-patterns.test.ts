@@ -253,5 +253,18 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       }
     });
+
+    it('should detect localhost SSRF at severity 3', () => {
+      const targets = ['localhost', '127.0.0.1', '0.0.0.0', '::1'];
+      for (const target of targets) {
+        const request = createMockRequest(
+          `https://example.com/api/test?url=http://${target}`
+        );
+        const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+        expect(result.detected).toBe(true);
+        expect(result.maxSeverity).toBe(3);
+        expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
+      }
+    });
   });
 });
