@@ -630,10 +630,11 @@ function scanString(
 
     // SECURITY: Skip SSRF checks for referer and origin headers to allow local development
     // but still scan them for XSS, SQLi, and other malicious patterns.
+    const normalizedField = field?.toLowerCase();
     if (
       category === 'ssrf' &&
       location === 'header' &&
-      (field === 'referer' || field === 'origin')
+      (normalizedField === 'referer' || normalizedField === 'origin')
     ) {
       continue;
     }
