@@ -534,7 +534,8 @@ interface FlattenedPattern {
 }
 
 /**
- * PERFORMANCE: Pre-flattened and pre-filtered pattern lists by minimum severity.
+ * PERFORMANCE: Pre-flattened and pre-filtered pattern lists by minimum severity,
+ * along with programmatically derived trigger regexes for fast-path scanning.
  * This avoids iterating through the nested object structure and executing
  * irrelevant regexes during request scanning.
  */
@@ -545,7 +546,18 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   3: [],
 };
 
-// Initialize PATTERNS_BY_MIN_SEVERITY
+/**
+ * Fast-path trigger regexes programmatically derived from the patterns at each severity level.
+ * If a string doesn't match the trigger, we can skip the granular loop.
+ */
+const TRIGGER_REGEX_BY_SEVERITY: Record<number, RegExp | null> = {
+  0: null,
+  1: null,
+  2: null,
+  3: null,
+};
+
+// Initialize PATTERNS_BY_MIN_SEVERITY and TRIGGER_REGEX_BY_SEVERITY
 (function initializePatternCache() {
   const allPatterns: FlattenedPattern[] = [];
   for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
@@ -558,9 +570,31 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   }
 
   for (let severity = 0; severity <= 3; severity++) {
-    PATTERNS_BY_MIN_SEVERITY[severity] = allPatterns.filter(
-      (p) => p.severity >= severity
-    );
+    const filteredPatterns = allPatterns.filter((p) => p.severity >= severity);
+    PATTERNS_BY_MIN_SEVERITY[severity] = filteredPatterns;
+
+    // PERFORMANCE: Programmatically derive a fast-path trigger regex for this severity level.
+    // By joining all pattern sources, we create a single regex that can skip the granular loop
+    // for clean strings. We replace numbered backreferences with wildcards to ensure the
+    // trigger remains a safe superset of all original patterns.
+    if (filteredPatterns.length > 0) {
+      const triggerSource = filteredPatterns
+        .map((p) => {
+          // Replace numbered backreferences (e.g. \1, \2) with .* to ensure the trigger
+          // is a safe superset, as numbered backreferences change meaning when joined.
+          return `(?:${p.pattern.source.replace(/\\\d+/g, '.*')})`;
+        })
+        .join('|');
+
+      try {
+        // Use 'is' flags (ignoreCase, dotAll) to ensure the trigger is as inclusive as possible.
+        TRIGGER_REGEX_BY_SEVERITY[severity] = new RegExp(triggerSource, 'is');
+      } catch (e) {
+        // Fallback: if complex join fails, this severity will always run full granular scan
+        logger.warn('Failed to construct trigger regex for severity ' + severity, e);
+        TRIGGER_REGEX_BY_SEVERITY[severity] = null;
+      }
+    }
   }
 })();
 
@@ -588,8 +622,14 @@ function scanString(
   minSeverity: number,
   field?: string
 ): SuspiciousPatternDetail[] {
-  // PERFORMANCE: Early return for empty input
+  // PERFORMANCE: Early return for empty input.
   if (!input) return [];
+
+  // PERFORMANCE: Fast-path guard using programmatically derived trigger regex.
+  // If the input doesn't match the combined trigger for this severity level,
+  // we can safely skip the expensive granular loop through individual patterns.
+  const trigger = TRIGGER_REGEX_BY_SEVERITY[minSeverity];
+  if (trigger && !trigger.test(input)) return [];
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
