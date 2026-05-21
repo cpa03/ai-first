@@ -591,7 +591,10 @@ const TRIGGER_REGEX_BY_SEVERITY: Record<number, RegExp | null> = {
         TRIGGER_REGEX_BY_SEVERITY[severity] = new RegExp(triggerSource, 'is');
       } catch (e) {
         // Fallback: if complex join fails, this severity will always run full granular scan
-        logger.warn('Failed to construct trigger regex for severity ' + severity, e);
+        logger.warn(
+          'Failed to construct trigger regex for severity ' + severity,
+          e
+        );
         TRIGGER_REGEX_BY_SEVERITY[severity] = null;
       }
     }
