@@ -576,8 +576,11 @@ const TRIGGER_REGEXES: Record<number, RegExp | null> = {
       // Create a union of all patterns for the fast-path trigger
       // We use case-insensitive and dotAll matching for the trigger to catch most variants.
       // The trigger only needs to detect presence, so 'is' flags are sufficient.
+      // NOTE: We replace backreferences (like \1, \2) with .* because group indices
+      // will be offset and incorrect in the unioned regex. The trigger remains a
+      // safe superset (matching more, not less) while avoiding syntax errors.
       const unionPattern = filtered
-        .map((p) => `(?:${p.pattern.source})`)
+        .map((p) => `(?:${p.pattern.source.replace(/\\\d+/g, '.*')})`)
         .join('|');
       TRIGGER_REGEXES[severity] = new RegExp(unionPattern, 'is');
     }
@@ -624,6 +627,17 @@ function scanString(
   // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
   for (let i = 0; i < patterns.length; i++) {
     const { category, pattern, severity, description } = patterns[i];
+
+    // SECURITY: Skip SSRF checks for referer and origin headers to allow local development
+    // but still scan them for XSS, SQLi, and other malicious patterns.
+    if (
+      category === 'ssrf' &&
+      location === 'header' &&
+      (field === 'referer' || field === 'origin')
+    ) {
+      continue;
+    }
+
     if (pattern.test(input)) {
       findings.push({
         category,

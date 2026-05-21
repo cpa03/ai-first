@@ -181,7 +181,15 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function proxy(request: NextRequest) {
+/**
+ * SECURITY/INFRA: Middleware runtime configuration
+ *
+ * Cloudflare Workers (via OpenNext) currently requires 'experimental-edge'
+ * for proper middleware execution and header propagation.
+ */
+export const runtime = 'experimental-edge';
+
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
