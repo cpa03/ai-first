@@ -235,7 +235,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     {
       pattern:
-        /(?:\/|^)(\.env|\.git|\.ssh|\.aws|\.bash_history|\.zsh_history|\.npmrc|\.yarnrc|\.docker|id_rsa|id_dsa|authorized_keys|known_hosts)\b/i,
+        /(?:\/|^)(\.env|\.git|\.ssh|\.aws|\.bash_history|\.zsh_history|\.npmrc|\.yarnrc|\.docker|\.kube\/config|credentials|id_rsa|id_dsa|authorized_keys|known_hosts)\b/i,
       severity: 3,
       description: 'Sensitive configuration or history file access',
     },
@@ -418,13 +418,13 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /\$(where|accumulator|function)["']?\s*:/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)["']?\s*:/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -669,8 +669,19 @@ export function detectSuspiciousPatterns(
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
-        if (!SKIP_HEADERS.has(key.toLowerCase())) {
-          const headerFindings = scanString(value, 'header', minSeverity, key);
+        const lowerKey = key.toLowerCase();
+        if (!SKIP_HEADERS.has(lowerKey)) {
+          let headerFindings = scanString(value, 'header', minSeverity, key);
+
+          // SECURITY: Special exclusion for SSRF validation in referer and origin headers.
+          // This prevents false positives when legitimate requests come from localhost
+          // during development, while still maintaining XSS/SQLi protection for these fields.
+          if (lowerKey === 'referer' || lowerKey === 'origin') {
+            headerFindings = headerFindings.filter(
+              (f) => f.category !== 'ssrf'
+            );
+          }
+
           patterns.push(...headerFindings);
         }
       }

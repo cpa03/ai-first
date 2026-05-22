@@ -91,6 +91,7 @@ const SENSITIVE_VAR_PATTERNS = [
   'IP_ADDRESS', // IP addresses
   'BEARER', // Bearer tokens
   'STACK_TRACE', // Error stack traces
+  'KUBECONFIG', // Kubernetes configuration
 ] as const;
 
 /**
