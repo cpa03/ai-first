@@ -5,18 +5,7 @@ import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
- * Middleware for Next.js
- *
- * Features:
- * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
- * - Authentication flow handling
- * - Cloudflare Workers optimization (edge detection, geo, caching)
- *
- * Cloudflare Headers Used:
- * - cf-ray: Request ID for debugging
- * - cf-country/cf-ipcountry: Country code for geo features
- * - cf-connecting-ip: Original client IP
- * - cf-visitor: HTTPS info
+ * Middleware for Next.js (Edge Runtime)
  */
 
 export const runtime = 'experimental-edge';
@@ -41,10 +30,7 @@ const AUTH_PATHS = ['/login', '/signup'];
 
 function generateNonce(): string {
   const array = new Uint8Array(16);
-  // SECURITY: Access crypto via globalThis for robust Edge compatibility
   (globalThis.crypto || crypto).getRandomValues(array);
-  // Convert Uint8Array to base64 using Web APIs (Edge-compatible)
-  // Avoids Node.js Buffer which is not available in Cloudflare Workers
   let binary = '';
   for (let i = 0; i < array.length; i++) {
     binary += String.fromCharCode(array[i]);
@@ -57,16 +43,17 @@ function buildCSPHeader(nonce: string): string {
   const cspParts: string[] = [];
 
   for (const [directive, values] of Object.entries(directives)) {
+    const valuesArray = [...(values as unknown as string[])];
     if (directive === 'script-src') {
-      const scriptValues = values.map((v) =>
+      const scriptValues = valuesArray.map((v) =>
         v === "'nonce-placeholder'" ? `'nonce-${nonce}'` : v
       );
       scriptValues.push(PROXY_CONFIG.VERCEL_LIVE_URL);
       cspParts.push(`${directive} ${scriptValues.join(' ')}`);
-    } else if (values.length === 0) {
+    } else if (valuesArray.length === 0) {
       cspParts.push(directive);
     } else {
-      cspParts.push(`${directive} ${values.join(' ')}`);
+      cspParts.push(`${directive} ${valuesArray.join(' ')}`);
     }
   }
 
@@ -77,7 +64,7 @@ function buildCSPHeader(nonce: string): string {
 }
 
 function buildPermissionsPolicy(): string {
-  return CSP_CONFIG.PERMISSIONS_POLICY.join(', ');
+  return [...CSP_CONFIG.PERMISSIONS_POLICY].join(', ');
 }
 
 function applySecurityHeaders(
@@ -127,23 +114,17 @@ function applyCloudflareHeaders(
   response: NextResponse
 ): void {
   const cfRay = request.headers.get('cf-ray');
-  const isCloudflare = !!cfRay;
-
-  if (isCloudflare) {
+  if (cfRay) {
     response.headers.set('x-cloudflare-edge', 'true');
-    if (cfRay) {
-      const requestId = cfRay.split('-')[0];
-      response.headers.set('x-request-id', requestId);
-    }
-    const cfCountry =
-      request.headers.get('cf-country') || request.headers.get('cf-ipcountry');
-    if (cfCountry) {
-      response.headers.set('x-user-country', cfCountry);
-    }
+    const requestId = cfRay.split('-')[0];
+    response.headers.set('x-request-id', requestId);
+
+    const cfCountry = request.headers.get('cf-country') || request.headers.get('cf-ipcountry');
+    if (cfCountry) response.headers.set('x-user-country', cfCountry);
+
     const cfIP = request.headers.get('cf-connecting-ip');
-    if (cfIP) {
-      response.headers.set('x-real-ip', cfIP);
-    }
+    if (cfIP) response.headers.set('x-real-ip', cfIP);
+
     const { pathname } = request.nextUrl;
     if (pathname.startsWith('/api/')) {
       const existingCacheControl = response.headers.get('cache-control');
@@ -189,13 +170,6 @@ export default async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
     '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };

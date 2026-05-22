@@ -180,7 +180,7 @@ QV|#QY|    /useClarificationSession.ts ← Clarification session hook
 #QJ|  /styles/                  ← Global styles
 #RS|  /templates/               ← Template files
 #BQ|    /blueprint-template.ts ← Blueprint template
-#JP|  /proxy.ts                 ← Next.js middleware (replacement)
+#JP|  /middleware.ts            ← Next.js middleware (Edge Runtime)
 #JP|  /instrumentation.ts      ← Next.js instrumentation
 #JP|  /instrumentation.node.ts  ← Node-specific instrumentation
 #MJ|/supabase/
