@@ -538,6 +538,13 @@ interface FlattenedPattern {
  * This avoids iterating through the nested object structure and executing
  * irrelevant regexes during request scanning.
  */
+const TRIGGER_REGEX_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
+  0: null,
+  1: null,
+  2: null,
+  3: null,
+};
+
 const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   0: [],
   1: [],
@@ -545,7 +552,7 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   3: [],
 };
 
-// Initialize PATTERNS_BY_MIN_SEVERITY
+// Initialize PATTERNS_BY_MIN_SEVERITY and TRIGGER_REGEX_BY_MIN_SEVERITY
 (function initializePatternCache() {
   const allPatterns: FlattenedPattern[] = [];
   for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
@@ -558,9 +565,30 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   }
 
   for (let severity = 0; severity <= 3; severity++) {
-    PATTERNS_BY_MIN_SEVERITY[severity] = allPatterns.filter(
-      (p) => p.severity >= severity
-    );
+    const filteredPatterns = allPatterns.filter((p) => p.severity >= severity);
+    PATTERNS_BY_MIN_SEVERITY[severity] = filteredPatterns;
+
+    if (filteredPatterns.length > 0) {
+      // PERFORMANCE: Create a combined trigger regex for this severity level.
+      // This allows for a fast-path "no match" check.
+      // Sanitization: Backreferences (\1, \2, etc.) must be replaced with .*
+      // in the combined regex because capture group indices will shift.
+      const triggerSource = filteredPatterns
+        .map((p) => {
+          let source = p.pattern.source;
+          // Replace backreferences with .*
+          source = source.replace(/\\\d+/g, '.*');
+          return `(?:${source})`;
+        })
+        .join('|');
+
+      try {
+        TRIGGER_REGEX_BY_MIN_SEVERITY[severity] = new RegExp(triggerSource, 'is');
+      } catch (err) {
+        logger.error('Failed to initialize trigger regex', { severity, err });
+        TRIGGER_REGEX_BY_MIN_SEVERITY[severity] = null;
+      }
+    }
   }
 })();
 
@@ -590,6 +618,11 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
+
+  // PERFORMANCE: Fast-path for inputs that don't contain any potential suspicious triggers.
+  // This avoids executing 50+ sequential regexes for every safe request field.
+  const trigger = TRIGGER_REGEX_BY_MIN_SEVERITY[minSeverity];
+  if (trigger && !trigger.test(input)) return [];
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
