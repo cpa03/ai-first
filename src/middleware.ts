@@ -5,7 +5,7 @@ import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
- * Proxy for Next.js (replacement for deprecated middleware)
+ * Middleware for Next.js
  *
  * Features:
  * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
@@ -17,9 +17,9 @@ import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
  * - cf-country/cf-ipcountry: Country code for geo features
  * - cf-connecting-ip: Original client IP
  * - cf-visitor: HTTPS info
- *
- * See: https://nextjs.org/docs/messages/middleware-to-proxy
  */
+
+export const runtime = 'experimental-edge';
 
 const PUBLIC_PATHS = [
   '/',
@@ -122,56 +122,29 @@ function applySecurityHeaders(
   );
 }
 
-/**
- * Apply Cloudflare-specific headers for edge optimization
- *
- * Cloudflare provides unique headers that can be used for:
- * - Request tracing (cf-ray)
- * - Geographic optimization (cf-country, cf-ipcountry)
- * - Client IP detection (cf-connecting-ip)
- * - HTTPS detection (cf-visitor)
- *
- * @see https://developers.cloudflare.com/workers/runtime-apis/request/#incomingrequestcfproperties
- */
 function applyCloudflareHeaders(
   request: NextRequest,
   response: NextResponse
 ): void {
-  // Detect if running on Cloudflare Workers via cf-ray header
   const cfRay = request.headers.get('cf-ray');
   const isCloudflare = !!cfRay;
 
   if (isCloudflare) {
-    // Mark response as coming from Cloudflare edge
     response.headers.set('x-cloudflare-edge', 'true');
-
-    // Add request ID from cf-ray for debugging and tracing
-    // cf-ray format: "7d1e2f3g4h5i-SJC" (requestId-datacenter)
     if (cfRay) {
       const requestId = cfRay.split('-')[0];
       response.headers.set('x-request-id', requestId);
     }
-
-    // Extract and expose geographic information
-    // cf-country: ISO 3166-1 Alpha 2 country code (e.g., "US", "GB", "JP")
     const cfCountry =
       request.headers.get('cf-country') || request.headers.get('cf-ipcountry');
     if (cfCountry) {
       response.headers.set('x-user-country', cfCountry);
     }
-
-    // Extract real client IP from Cloudflare
-    // cf-connecting-ip: Original visitor IP address
     const cfIP = request.headers.get('cf-connecting-ip');
     if (cfIP) {
       response.headers.set('x-real-ip', cfIP);
     }
-
-    // Optimize cache headers for Cloudflare edge
     const { pathname } = request.nextUrl;
-
-    // API routes: shorter cache for dynamic content
-    // Static assets are handled by the matcher exclusion in config
     if (pathname.startsWith('/api/')) {
       const existingCacheControl = response.headers.get('cache-control');
       if (!existingCacheControl || existingCacheControl === 'no-store') {
@@ -181,7 +154,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -209,7 +182,6 @@ export async function proxy(request: NextRequest) {
   }
 
   applySecurityHeaders(response, nonce, isProduction);
-  // Apply Cloudflare-specific optimizations for edge deployment
   applyCloudflareHeaders(request, response);
 
   return response;
