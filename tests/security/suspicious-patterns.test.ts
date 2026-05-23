@@ -167,6 +167,7 @@ describe('Suspicious Pattern Detection Improvements', () => {
         '100.100.100.200', // Alibaba
         '192.0.0.192', // Oracle
         'fd00:ec2::254', // AWS IPv6
+        'metadata.tencent.com',
       ];
       for (const target of targets) {
         const request = createMockRequest(
@@ -180,7 +181,16 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     it('should detect sensitive config file access', () => {
-      const files = ['.env', '.git/config', '.ssh/id_rsa', '.bash_history'];
+      const files = [
+        '.env',
+        '.git/config',
+        '.ssh/id_rsa',
+        '.bash_history',
+        '.bashrc',
+        '.profile',
+        'credentials',
+        'settings.py',
+      ];
       for (const file of files) {
         const request = createMockRequest(
           `https://example.com/api/test?path=/home/user/${file}`
@@ -210,7 +220,15 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     it('should detect advanced Windows and recon commands', () => {
-      const commands = ['powershell', 'cmd.exe', 'tasklist', 'netstat', 'ipconfig'];
+      const commands = [
+        'powershell',
+        'cmd.exe',
+        'tasklist',
+        'netstat',
+        'ipconfig',
+        'systeminfo',
+        'crontab',
+      ];
       for (const cmd of commands) {
         const request = createMockRequest(
           `https://example.com/api/test?cmd=;${cmd}`

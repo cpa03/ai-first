@@ -235,7 +235,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     {
       pattern:
-        /(?:\/|^)(\.env|\.git|\.ssh|\.aws|\.bash_history|\.zsh_history|\.npmrc|\.yarnrc|\.docker|id_rsa|id_dsa|authorized_keys|known_hosts)\b/i,
+        /(?:\/|^)(\.env|\.git|\.ssh|\.aws|\.bash_history|\.zsh_history|\.npmrc|\.yarnrc|\.docker|id_rsa|id_dsa|authorized_keys|known_hosts|\.bashrc|\.profile|\.bash_logout|\.zprofile|\.zshrc|\.git\/config|\.kube\/config|\.docker\/config\.json|credentials|secrets\.yml|settings\.py)\b/i,
       severity: 3,
       description: 'Sensitive configuration or history file access',
     },
@@ -267,7 +267,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     {
       pattern:
-        /[;&|`]\s*(whoami|id|hostname|uname|tasklist|netstat|ipconfig|ifconfig|arp|route)\b/i,
+        /[;&|`]\s*(whoami|id|hostname|uname|tasklist|netstat|ipconfig|ifconfig|arp|route|systeminfo|net|nltest|query|findstr|grep|awk|sed|crontab|at)\b/i,
       severity: 3,
       description: 'Reconnaissance command injection',
     },
@@ -326,7 +326,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     {
       pattern:
-        /(169\.254\.169\.254|168\.63\.129\.16|100\.100\.100\.200|192\.0\.0\.192|metadata\.google|fd00:ec2::254)/i,
+        /(169\.254\.169\.254|168\.63\.129\.16|100\.100\.100\.200|192\.0\.0\.192|metadata\.google|metadata\.tencent\.com|fd00:ec2::254)/i,
       severity: 3,
       description: 'Cloud metadata access attempt',
     },
