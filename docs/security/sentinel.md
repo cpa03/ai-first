@@ -17,3 +17,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The PII redaction utility and health check endpoint were missing common patterns for modern secrets (like AWS secret keys containing Base64 characters) and highly sensitive payment-related fields (CVV, CVC, PIN).
 **Learning:** Standard alphanumeric regex patterns ([a-zA-Z0-9]) fail to capture many types of secrets that use full Base64 sets or other special characters. Additionally, centralized redaction lists must be kept in sync across diagnostic and logging utilities to prevent inconsistent data exposure.
 **Prevention:** Use comprehensive regex patterns that include Base64 characters (`/`, `+`, `=`) for API key redaction. Centralize sensitive keyword lists used by both health checks and log redaction utilities to ensure consistent protection across the application.
+
+## 2026-05-24 - Expanded Suspicious Pattern Detection
+
+**Vulnerability:** Suspicious pattern detection (e.g., SQLi, XSS, NoSQLi) only scanned request values, missing malicious payloads in parameter keys (e.g., `?id[$ne]=null`).
+**Learning:** Security scanners must validate both the structure (keys) and content (values) of incoming requests, as many modern frameworks allow property-based injection through parameter keys.
+**Prevention:** Always iterate through both keys and values of `URLSearchParams` and `Headers` when performing security scans on incoming requests.
