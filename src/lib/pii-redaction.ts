@@ -153,9 +153,13 @@ function _redactPII(text: string): string {
       labels.DRIVERS_LICENSE
     );
     redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
+
+    // PERFORMANCE: Only run SSN regex if hyphens are present,
+    // as the current pattern strictly requires them.
     if (redacted.includes('-')) {
       redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
     }
+
     redacted = redacted.replace(
       PII_REGEX_PATTERNS.creditCard,
       labels.CREDIT_CARD
@@ -237,11 +241,11 @@ function getKeyAction(key: string): KeyAction {
     action = { type: 'SAFE' };
   } else if (SENSITIVE_FIELD_REGEX.test(key)) {
     // Generate redaction label (formerly getRedactionLabel logic)
-    const fieldName = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-    const fieldNameUpper = fieldName.toUpperCase().replace(/^_+/, '');
+    const fieldName = key.replace(/([A-Z])/g, '_$1').toUpperCase();
+    const fieldNameSanitized = fieldName.replace(/^_+/, '');
     action = {
       type: 'SENSITIVE',
-      label: `[REDACTED_${fieldNameUpper}]`,
+      label: `[REDACTED_${fieldNameSanitized}]`,
     };
   } else {
     action = { type: 'REDACTABLE' };
@@ -496,33 +500,31 @@ export function redactPIIInObject(
 
   // Handle enumerable symbols
   const symbols = Object.getOwnPropertySymbols(obj);
-  if (symbols.length > 0) {
-    for (let i = 0; i < symbols.length; i++) {
-      const sym = symbols[i];
-      if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
-        try {
-          const key = sym.toString();
-          const value = (obj as Record<symbol, unknown>)[sym];
-          const action = getKeyAction(key);
+  for (let i = 0; i < symbols.length; i++) {
+    const sym = symbols[i];
+    if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
+      try {
+        const key = sym.toString();
+        const value = (obj as Record<symbol, unknown>)[sym];
+        const action = getKeyAction(key);
 
-          if (action.type === 'SAFE') {
-            redacted[key] = value as RedactionResult;
-          } else if (action.type === 'SENSITIVE') {
-            redacted[key] = action.label!;
-          } else if (typeof value === 'string') {
-            // PERFORMANCE: Inline fast-path check
-            redacted[key] =
-              value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
-                ? value
-                : _redactPII(value);
-          } else if (value !== null && typeof value === 'object') {
-            redacted[key] = redactPIIInObject(value, seen, depth + 1);
-          } else {
-            redacted[key] = value as RedactionResult;
-          }
-        } catch {
-          redacted[sym.toString()] = '[Getter Error]';
+        if (action.type === 'SAFE') {
+          redacted[key] = value as RedactionResult;
+        } else if (action.type === 'SENSITIVE') {
+          redacted[key] = action.label!;
+        } else if (typeof value === 'string') {
+          // PERFORMANCE: Inline fast-path check
+          redacted[key] =
+            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+              ? value
+              : _redactPII(value);
+        } else if (value !== null && typeof value === 'object') {
+          redacted[key] = redactPIIInObject(value, seen, depth + 1);
+        } else {
+          redacted[key] = value as RedactionResult;
         }
+      } catch {
+        redacted[sym.toString()] = '[Getter Error]';
       }
     }
   }
