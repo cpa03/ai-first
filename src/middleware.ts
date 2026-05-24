@@ -13,6 +13,8 @@ import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
  * - Cloudflare Workers optimization (edge detection, geo, caching)
  */
 
+export const runtime = 'experimental-edge';
+
 const PUBLIC_PATHS = [
   '/',
   '/login',
