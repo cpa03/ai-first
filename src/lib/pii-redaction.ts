@@ -109,13 +109,13 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  * PERFORMANCE: Single regex test is faster than multiple tests on every log message.
  */
 const COMBINED_TRIGGER_REGEX =
-  /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+  /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer|access[-_ ]?key|admin[-_ ]?key/i;
 
 /**
  * Specific triggers for API keys and secrets to avoid running the full complex regex.
  */
 const API_KEY_SPECIFIC_TRIGGER_REGEX =
-  /api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+  /api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer|access[-_ ]?key|admin[-_ ]?key/i;
 
 /**
  * Internal redaction logic that skips fast-path checks.
@@ -153,7 +153,9 @@ function _redactPII(text: string): string {
       labels.DRIVERS_LICENSE
     );
     redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
-    redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
+    if (redacted.includes('-')) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
+    }
     redacted = redacted.replace(
       PII_REGEX_PATTERNS.creditCard,
       labels.CREDIT_CARD
@@ -170,7 +172,6 @@ function _redactPII(text: string): string {
   // API keys often have assignments ':' or '=' or specific prefixes
   // PERFORMANCE: More specific check before running complex apiKey regex
   if (
-    /[:=]/.test(redacted) ||
     /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
     API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted)
   ) {
@@ -495,31 +496,33 @@ export function redactPIIInObject(
 
   // Handle enumerable symbols
   const symbols = Object.getOwnPropertySymbols(obj);
-  for (let i = 0; i < symbols.length; i++) {
-    const sym = symbols[i];
-    if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
-      try {
-        const key = sym.toString();
-        const value = (obj as Record<symbol, unknown>)[sym];
-        const action = getKeyAction(key);
+  if (symbols.length > 0) {
+    for (let i = 0; i < symbols.length; i++) {
+      const sym = symbols[i];
+      if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
+        try {
+          const key = sym.toString();
+          const value = (obj as Record<symbol, unknown>)[sym];
+          const action = getKeyAction(key);
 
-        if (action.type === 'SAFE') {
-          redacted[key] = value as RedactionResult;
-        } else if (action.type === 'SENSITIVE') {
-          redacted[key] = action.label!;
-        } else if (typeof value === 'string') {
-          // PERFORMANCE: Inline fast-path check
-          redacted[key] =
-            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
-              ? value
-              : _redactPII(value);
-        } else if (value !== null && typeof value === 'object') {
-          redacted[key] = redactPIIInObject(value, seen, depth + 1);
-        } else {
-          redacted[key] = value as RedactionResult;
+          if (action.type === 'SAFE') {
+            redacted[key] = value as RedactionResult;
+          } else if (action.type === 'SENSITIVE') {
+            redacted[key] = action.label!;
+          } else if (typeof value === 'string') {
+            // PERFORMANCE: Inline fast-path check
+            redacted[key] =
+              value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+                ? value
+                : _redactPII(value);
+          } else if (value !== null && typeof value === 'object') {
+            redacted[key] = redactPIIInObject(value, seen, depth + 1);
+          } else {
+            redacted[key] = value as RedactionResult;
+          }
+        } catch {
+          redacted[sym.toString()] = '[Getter Error]';
         }
-      } catch {
-        redacted[sym.toString()] = '[Getter Error]';
       }
     }
   }
