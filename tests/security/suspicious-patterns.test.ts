@@ -254,4 +254,39 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
   });
+
+  describe('Key Scanning (Query and Headers)', () => {
+    it('should detect suspicious patterns in query parameter KEYS', () => {
+      // NoSQL injection in key
+      const request = createMockRequest(
+        'https://example.com/api/test?id[$ne]=null'
+      );
+      const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
+      expect(result.detected).toBe(true);
+      expect(
+        result.patterns.some((p) => p.category === 'nosql_injection')
+      ).toBe(true);
+    });
+
+    it('should detect suspicious patterns in header KEYS', () => {
+      // CRLF injection in header key - simulated by passing it as field in scanString directly
+      // since Headers constructor validates keys.
+      // But we can test it through the actual Request headers if the environment allows it,
+      // or we can test it by manually calling detectSuspiciousPatterns with a mock request
+      // that bypasses Headers constructor validation.
+      const mockRequest = {
+        url: 'https://example.com/api/test',
+        headers: {
+          get: (name: string) => null,
+          entries: () => [['X-Injection\r\nInjected-Header', 'test']],
+        },
+      } as unknown as Request;
+
+      const result = detectSuspiciousPatterns(mockRequest, { minSeverity: 2 });
+      expect(result.detected).toBe(true);
+      expect(
+        result.patterns.some((p) => p.category === 'header_injection')
+      ).toBe(true);
+    });
+  });
 });
