@@ -253,5 +253,37 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       }
     });
+
+    it('should detect NoSQL injection in query parameter keys with bracket notation', () => {
+      // Bracket notation injection: ?id[$ne]=null
+      const request = createMockRequest(
+        'https://example.com/api/test?id[$ne]=null'
+      );
+      const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'nosql_injection')).toBe(
+        true
+      );
+    });
+
+    it('should detect SQL injection in header keys', () => {
+      const request = createMockRequest('https://example.com/api/test', {
+        'X-SELECT-FROM': 'malicious',
+      });
+      const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'sql_injection')).toBe(
+        true
+      );
+    });
+
+    it('should detect script tag in query parameter keys', () => {
+      const request = createMockRequest(
+        'https://example.com/api/test?<script>alert(1)</script>=value'
+      );
+      const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'xss')).toBe(true);
+    });
   });
 });
