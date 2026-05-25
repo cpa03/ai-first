@@ -1,0 +1,3 @@
+## 2026-05-25 - [Dynamic Feedback for Async State Transitions]
+**Learning:** For components undergoing background asynchronous updates (like task status toggles), providing immediate visual and screen-reader feedback is critical. Using dynamic tooltips (e.g., "Updating status...") combined with `aria-busy="true"` ensures users (including those using assistive technologies) are aware that their action is being processed, even if the final state change is delayed.
+**Action:** Always check interactive elements that trigger async actions for appropriate 'loading' or 'busy' states, and update tooltips/ARIA labels to reflect the current process status.
