@@ -545,7 +545,17 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   3: [],
 };
 
-// Initialize PATTERNS_BY_MIN_SEVERITY
+/**
+ * PERFORMANCE: Cached trigger regexes for each minimum severity level.
+ */
+const TRIGGER_REGEX_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
+  0: null,
+  1: null,
+  2: null,
+  3: null,
+};
+
+// Initialize PATTERNS_BY_MIN_SEVERITY and TRIGGER_REGEX_BY_MIN_SEVERITY
 (function initializePatternCache() {
   const allPatterns: FlattenedPattern[] = [];
   for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
@@ -558,9 +568,23 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   }
 
   for (let severity = 0; severity <= 3; severity++) {
-    PATTERNS_BY_MIN_SEVERITY[severity] = allPatterns.filter(
-      (p) => p.severity >= severity
-    );
+    const filtered = allPatterns.filter((p) => p.severity >= severity);
+    PATTERNS_BY_MIN_SEVERITY[severity] = filtered;
+
+    if (filtered.length > 0) {
+      // PERFORMANCE: Create a combined trigger regex for this severity level.
+      // This allows a single fast pass to skip scanning for strings that don't
+      // contain any suspicious markers.
+      const sources = filtered.map((p) => {
+        // Replace backreferences with .* to avoid group index shifting issues
+        // and ensure the trigger remains a superset of the actual patterns.
+        return `(?:${p.pattern.source.replace(/\\\d+/g, '.*')})`;
+      });
+      TRIGGER_REGEX_BY_MIN_SEVERITY[severity] = new RegExp(
+        sources.join('|'),
+        'is'
+      );
+    }
   }
 })();
 
@@ -593,6 +617,13 @@ function scanString(
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
+
+  // PERFORMANCE: Fast-path check using the combined trigger regex for this severity.
+  // This avoids executing dozens of individual regexes for clean inputs.
+  const trigger = TRIGGER_REGEX_BY_MIN_SEVERITY[minSeverity];
+  if (trigger && !trigger.test(input)) {
+    return [];
+  }
 
   // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
   for (let i = 0; i < patterns.length; i++) {
