@@ -181,7 +181,11 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function proxy(request: NextRequest) {
+/**
+ * Middleware function for Next.js
+ * Addresses issue: Node.js middleware not supported in Cloudflare
+ */
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -214,6 +218,8 @@ export async function proxy(request: NextRequest) {
 
   return response;
 }
+
+export const runtime = 'experimental-edge';
 
 export const config = {
   matcher: [
