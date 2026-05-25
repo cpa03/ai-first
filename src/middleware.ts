@@ -181,10 +181,6 @@ function applyCloudflareHeaders(
   }
 }
 
-/**
- * Middleware function for Next.js
- * Addresses issue: Node.js middleware not supported in Cloudflare
- */
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
