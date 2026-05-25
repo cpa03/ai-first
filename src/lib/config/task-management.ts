@@ -231,6 +231,7 @@ export const TASK_MANAGEMENT_MESSAGES = {
   TOOLTIP: {
     MARK_COMPLETE: 'Mark as complete',
     MARK_INCOMPLETE: 'Mark as incomplete',
+    UPDATING: 'Updating status...',
   },
 } as const;
 

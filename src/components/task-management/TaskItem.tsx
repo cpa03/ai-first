@@ -72,9 +72,11 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     return `${baseClasses} ${stateClasses}`;
   }, [isCompleted]);
 
-  const tooltipContent = isCompleted
-    ? TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_INCOMPLETE
-    : TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_COMPLETE;
+  const tooltipContent = isUpdating
+    ? TASK_MANAGEMENT_MESSAGES.TOOLTIP.UPDATING
+    : isCompleted
+      ? TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_INCOMPLETE
+      : TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_COMPLETE;
 
   const containerClasses = useMemo(() => {
     const base = isCompleted
@@ -96,6 +98,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             isCompleted
           )}
           aria-pressed={isCompleted}
+          aria-busy={isUpdating}
         >
           {isCompleted && (
             <svg
