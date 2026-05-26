@@ -6,6 +6,7 @@ import { UI_CONFIG } from '@/lib/config/constants';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -117,17 +118,19 @@ const CopyButtonComponent = function CopyButton({
   };
 
   return (
-    <Tooltip
-      content={copied ? successLabel : ariaLabel}
-      disabled={false}
-      position="top"
-    >
-      <button
-        onClick={handleCopy}
-        className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={copied ? 'Copied to clipboard' : ariaLabel}
-        type="button"
+    <>
+      <StatusAnnouncer message={toastMessage} triggered={copied} />
+      <Tooltip
+        content={copied ? successLabel : ariaLabel}
+        disabled={false}
+        position="top"
       >
+        <button
+          onClick={handleCopy}
+          className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+          aria-label={copied ? 'Copied to clipboard' : ariaLabel}
+          type="button"
+        >
         <span className="relative flex items-center justify-center w-4 h-4">
           <svg
             className={`
@@ -173,8 +176,9 @@ const CopyButtonComponent = function CopyButton({
             {copied ? successLabel : label}
           </span>
         )}
-      </button>
-    </Tooltip>
+        </button>
+      </Tooltip>
+    </>
   );
 };
 

@@ -7,6 +7,7 @@ import { APP_CONFIG } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -170,19 +171,22 @@ const ShareButtonComponent = function ShareButton({
   };
 
   return (
-    <Tooltip
-      content={shared ? successLabel : ariaLabel}
-      disabled={false}
-      position="top"
-    >
-      <button
-        onClick={handleShare}
-        className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={shared ? 'Shared' : ariaLabel}
-        aria-live="polite"
-        aria-atomic="true"
-        type="button"
+    <>
+      <StatusAnnouncer
+        message={shared ? successLabel : ''}
+        triggered={shared}
+      />
+      <Tooltip
+        content={shared ? successLabel : ariaLabel}
+        disabled={false}
+        position="top"
       >
+        <button
+          onClick={handleShare}
+          className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+          aria-label={shared ? 'Shared' : ariaLabel}
+          type="button"
+        >
         <span className="relative flex items-center justify-center w-4 h-4">
           {/* Share icon */}
           <svg
@@ -233,8 +237,9 @@ const ShareButtonComponent = function ShareButton({
             {shared ? successLabel : label}
           </span>
         )}
-      </button>
-    </Tooltip>
+        </button>
+      </Tooltip>
+    </>
   );
 };
 
