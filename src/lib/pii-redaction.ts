@@ -124,43 +124,60 @@ const API_KEY_SPECIFIC_TRIGGER_REGEX =
 function _redactPII(text: string): string {
   let redacted = text;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
+  const minLengths = PII_REDACTION_CONFIG.MIN_LENGTHS;
+  // Store initial length to ensure that redacting one piece of PII
+  // doesn't skip others due to the string shrinking.
+  const originalLength = text.length;
 
   // PERFORMANCE: Sequential replace is actually faster in V8 for large strings
   // than a single complex combined regex with many branches and capturing groups.
   // Order matters: more specific patterns first.
   // We use additional conditional checks to skip regex execution when triggers are absent.
 
-  if (redacted.includes('eyJ')) {
+  if (originalLength >= minLengths.JWT && redacted.includes('eyJ')) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
   }
 
-  if (redacted.includes('://')) {
+  if (originalLength >= minLengths.URL_CREDENTIALS && redacted.includes('://')) {
     redacted = redacted.replace(
       PII_REGEX_PATTERNS.urlWithCredentials,
       labels.URL_WITH_CREDENTIALS
     );
   }
 
-  if (redacted.includes('@')) {
+  if (originalLength >= minLengths.EMAIL && redacted.includes('@')) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.email, labels.EMAIL);
   }
 
   // Digits are a trigger for many PII types
   if (/\d/.test(redacted)) {
-    redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
-    redacted = redacted.replace(
-      PII_REGEX_PATTERNS.driversLicense,
-      labels.DRIVERS_LICENSE
-    );
-    redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
-    redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
-    redacted = redacted.replace(
-      PII_REGEX_PATTERNS.creditCard,
-      labels.CREDIT_CARD
-    );
+    if (originalLength >= minLengths.PASSPORT) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
+    }
+    if (originalLength >= minLengths.LICENSE) {
+      redacted = redacted.replace(
+        PII_REGEX_PATTERNS.driversLicense,
+        labels.DRIVERS_LICENSE
+      );
+    }
+    if (originalLength >= minLengths.PHONE) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
+    }
+    if (originalLength >= minLengths.SSN && redacted.includes('-')) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
+    }
+    if (originalLength >= minLengths.CREDIT_CARD) {
+      redacted = redacted.replace(
+        PII_REGEX_PATTERNS.creditCard,
+        labels.CREDIT_CARD
+      );
+    }
 
     // IP addresses also need dots (v4) or colons (v6)
-    if (redacted.includes('.') || redacted.includes(':')) {
+    if (
+      originalLength >= minLengths.IP_ADDRESS &&
+      (redacted.includes('.') || redacted.includes(':'))
+    ) {
       redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
         return isPrivateIP(match) ? match : labels.IP_ADDRESS;
       });
@@ -170,9 +187,11 @@ function _redactPII(text: string): string {
   // API keys often have assignments ':' or '=' or specific prefixes
   // PERFORMANCE: More specific check before running complex apiKey regex
   if (
-    /[:=]/.test(redacted) ||
-    /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
-    API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted)
+    originalLength >= minLengths.API_KEY &&
+    (redacted.includes(':') ||
+      redacted.includes('=') ||
+      /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
+      API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted))
   ) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
   }

@@ -84,6 +84,23 @@ export const PII_REDACTION_CONFIG = {
   ] as const,
 
   /**
+   * Minimum length for various PII types to avoid unnecessary regex execution.
+   * These are conservative estimates based on standard formats and regex definitions.
+   */
+  MIN_LENGTHS: {
+    EMAIL: 6, // a@b.co
+    PHONE: 10, // 1234567890
+    SSN: 11, // 123-45-6789
+    CREDIT_CARD: 13, // Conservative (AMEX is 15, Diners is 14)
+    IP_ADDRESS: 7, // 1.2.3.4
+    API_KEY: 8, // Minimum typical key/secret length
+    JWT: 17, // eyJ... (header.payload.signature)
+    URL_CREDENTIALS: 10, // ab://c:d@e
+    PASSPORT: 6, // Minimum passport # length
+    LICENSE: 6, // Minimum license # length
+  } as const,
+
+  /**
    * Maximum recursion depth for PII redaction in nested objects
    * Prevents stack overflow on deeply nested or circular structures
    * NOTE: Not environment-configurable as this is a safety limit
