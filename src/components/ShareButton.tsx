@@ -150,6 +150,7 @@ const ShareButtonComponent = function ShareButton({
     shareUrl,
     shareTitle,
     shareText,
+    successLabel,
     toastMessage,
     showSuccessToast,
     showErrorToast,
