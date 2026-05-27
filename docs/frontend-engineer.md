@@ -159,7 +159,7 @@ npx eslint src/ --ext .ts,.tsx
 
 1. **Deprecation Warning**
    - Next.js 16 shows: `"middleware" file convention is deprecated`
-   - Recommendation: Consider migrating to `proxy` convention when stable
+   - Recommendation: Consider migrating to `middleware` convention when stable
    - **Impact:** Low - functionality works, just a deprecation notice
 
 2. **Environment Variables**
@@ -649,7 +649,7 @@ The following frontend-engineer issues have been verified and confirmed as resol
   ✅ Tests: All passed
 - ✅ Build: Successful
 
-**Note:** Next.js 16 shows a deprecation warning for `middleware.ts` → `proxy.ts` migration. This is a known issue and will be addressed in a future update.
+**Note:** Next.js 16 shows a deprecation warning for `proxy.ts` → `middleware.ts` migration. This is a known issue and will be addressed in a future update.
 
 ---
 
