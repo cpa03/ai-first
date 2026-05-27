@@ -418,13 +418,13 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /\$(where|accumulator|function)(['"]?\s*:|\])/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)(['"]?\s*:|\])/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -652,10 +652,15 @@ export function detectSuspiciousPatterns(
     const pathFindings = scanString(url.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
-    // Scan query parameters
+    // Scan query parameters (both keys and values)
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan key for injection (e.g., ?id[$ne]=null)
+      const keyFindings = scanString(key, 'query', minSeverity, key);
+      patterns.push(...keyFindings);
+
+      // Scan value
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...valueFindings);
     }
   }
 
@@ -670,6 +675,11 @@ export function detectSuspiciousPatterns(
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
         if (!SKIP_HEADERS.has(key.toLowerCase())) {
+          // Scan header key
+          const keyFindings = scanString(key, 'header', minSeverity, key);
+          patterns.push(...keyFindings);
+
+          // Scan header value
           const headerFindings = scanString(value, 'header', minSeverity, key);
           patterns.push(...headerFindings);
         }
