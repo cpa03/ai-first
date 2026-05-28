@@ -123,15 +123,14 @@ const API_KEY_SPECIFIC_TRIGGER_REGEX =
  */
 function _redactPII(text: string): string {
   let redacted = text;
-  const originalLength = text.length;
-  const { REDACTION_LABELS: labels, MIN_LENGTHS } = PII_REDACTION_CONFIG;
+  const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
 
   // PERFORMANCE: Sequential replace is actually faster in V8 for large strings
   // than a single complex combined regex with many branches and capturing groups.
   // Order matters: more specific patterns first.
   // We use additional conditional checks to skip regex execution when triggers are absent.
 
-  if (originalLength >= MIN_LENGTHS.JWT && redacted.includes('eyJ')) {
+  if (redacted.includes('eyJ')) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
   }
 
@@ -142,44 +141,26 @@ function _redactPII(text: string): string {
     );
   }
 
-  if (originalLength >= MIN_LENGTHS.EMAIL && redacted.includes('@')) {
+  if (redacted.includes('@')) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.email, labels.EMAIL);
   }
 
-  // Digits are a trigger for many PII types (Phones, SSN, Credit Card, IP, Passport, DL)
-  // PERFORMANCE: Combined length check for all digit-based PII
-  if (originalLength >= 6 && /\d/.test(redacted)) {
-    if (originalLength >= MIN_LENGTHS.PASSPORT) {
-      redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
-    }
-
-    if (originalLength >= MIN_LENGTHS.DRIVERS_LICENSE) {
-      redacted = redacted.replace(
-        PII_REGEX_PATTERNS.driversLicense,
-        labels.DRIVERS_LICENSE
-      );
-    }
-
-    if (originalLength >= MIN_LENGTHS.PHONE) {
-      redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
-    }
-
-    if (originalLength >= MIN_LENGTHS.SSN && redacted.includes('-')) {
-      redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
-    }
-
-    if (originalLength >= MIN_LENGTHS.CREDIT_CARD) {
-      redacted = redacted.replace(
-        PII_REGEX_PATTERNS.creditCard,
-        labels.CREDIT_CARD
-      );
-    }
+  // Digits are a trigger for many PII types
+  if (/\d/.test(redacted)) {
+    redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
+    redacted = redacted.replace(
+      PII_REGEX_PATTERNS.driversLicense,
+      labels.DRIVERS_LICENSE
+    );
+    redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
+    redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
+    redacted = redacted.replace(
+      PII_REGEX_PATTERNS.creditCard,
+      labels.CREDIT_CARD
+    );
 
     // IP addresses also need dots (v4) or colons (v6)
-    if (
-      originalLength >= MIN_LENGTHS.IP_ADDRESS &&
-      (redacted.includes('.') || redacted.includes(':'))
-    ) {
+    if (redacted.includes('.') || redacted.includes(':')) {
       redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
         return isPrivateIP(match) ? match : labels.IP_ADDRESS;
       });
@@ -189,10 +170,9 @@ function _redactPII(text: string): string {
   // API keys often have assignments ':' or '=' or specific prefixes
   // PERFORMANCE: More specific check before running complex apiKey regex
   if (
-    originalLength >= MIN_LENGTHS.API_KEY &&
-    (/[:=]/.test(redacted) ||
-      /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
-      API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted))
+    /[:=]/.test(redacted) ||
+    /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
+    API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted)
   ) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
   }
@@ -466,9 +446,9 @@ export function redactPIIInObject(
     const result: RedactionResult[] = new Array(obj.length);
     for (let i = 0; i < obj.length; i++) {
       const item = obj[i];
+      // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
       if (typeof item === 'string') {
         // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
-        // for better performance on arrays of strings.
         result[i] =
           item.length < 4 || !COMBINED_TRIGGER_REGEX.test(item)
             ? item
@@ -514,35 +494,32 @@ export function redactPIIInObject(
   }
 
   // Handle enumerable symbols
-  // PERFORMANCE: Only process symbols if they exist to avoid loop overhead
   const symbols = Object.getOwnPropertySymbols(obj);
-  if (symbols.length > 0) {
-    for (let i = 0; i < symbols.length; i++) {
-      const sym = symbols[i];
-      if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
-        try {
-          const key = sym.toString();
-          const value = (obj as Record<symbol, unknown>)[sym];
-          const action = getKeyAction(key);
+  for (let i = 0; i < symbols.length; i++) {
+    const sym = symbols[i];
+    if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
+      try {
+        const key = sym.toString();
+        const value = (obj as Record<symbol, unknown>)[sym];
+        const action = getKeyAction(key);
 
-          if (action.type === 'SAFE') {
-            redacted[key] = value as RedactionResult;
-          } else if (action.type === 'SENSITIVE') {
-            redacted[key] = action.label!;
-          } else if (typeof value === 'string') {
-            // PERFORMANCE: Inline fast-path check
-            redacted[key] =
-              value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
-                ? value
-                : _redactPII(value);
-          } else if (value !== null && typeof value === 'object') {
-            redacted[key] = redactPIIInObject(value, seen, depth + 1);
-          } else {
-            redacted[key] = value as RedactionResult;
-          }
-        } catch {
-          redacted[sym.toString()] = '[Getter Error]';
+        if (action.type === 'SAFE') {
+          redacted[key] = value as RedactionResult;
+        } else if (action.type === 'SENSITIVE') {
+          redacted[key] = action.label!;
+        } else if (typeof value === 'string') {
+          // PERFORMANCE: Inline fast-path check
+          redacted[key] =
+            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+              ? value
+              : _redactPII(value);
+        } else if (value !== null && typeof value === 'object') {
+          redacted[key] = redactPIIInObject(value, seen, depth + 1);
+        } else {
+          redacted[key] = value as RedactionResult;
         }
+      } catch {
+        redacted[sym.toString()] = '[Getter Error]';
       }
     }
   }
