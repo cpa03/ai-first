@@ -25,7 +25,12 @@ function StatusAnnouncerComponent({
       clearTimeout(timeoutRef.current);
     }
 
-    if (triggered && message && message !== previousMessageRef.current) {
+    if (!triggered) {
+      previousMessageRef.current = '';
+      return;
+    }
+
+    if (message && message !== previousMessageRef.current) {
       timeoutRef.current = setTimeout(() => {
         const announcer = announcerRef.current;
         if (announcer) {
