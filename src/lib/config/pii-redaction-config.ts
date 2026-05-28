@@ -84,6 +84,22 @@ export const PII_REDACTION_CONFIG = {
   ] as const,
 
   /**
+   * Minimum lengths for various PII types to allow fast-path skipping
+   * PERFORMANCE: Avoids expensive regex execution for strings shorter than these limits.
+   */
+  MIN_LENGTHS: {
+    EMAIL: 6, // a@b.co
+    PHONE: 10, // 1234567890
+    SSN: 11, // 000-00-0000
+    CREDIT_CARD: 13,
+    IP_ADDRESS: 7, // 0.0.0.0
+    JWT: 12, // eyJ... (header.payload.signature)
+    PASSPORT: 6,
+    DRIVERS_LICENSE: 6,
+    API_KEY: 4,
+  } as const,
+
+  /**
    * Maximum recursion depth for PII redaction in nested objects
    * Prevents stack overflow on deeply nested or circular structures
    * NOTE: Not environment-configurable as this is a safety limit
