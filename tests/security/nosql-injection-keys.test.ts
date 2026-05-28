@@ -29,21 +29,24 @@ describe('NoSQL Injection in Keys Detection', () => {
       const request = createMockRequest(url);
       const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
 
-      // We expect this to fail initially if the implementation only checks values
       expect(result.detected).toBe(true);
-      expect(result.patterns.some((p) => p.category === 'nosql_injection')).toBe(true);
+      expect(
+        result.patterns.some((p) => p.category === 'nosql_injection')
+      ).toBe(true);
       expect(result.maxSeverity).toBeGreaterThanOrEqual(2);
     }
   });
 
   it('should detect NoSQL operators in header values', () => {
     const request = createMockRequest('https://example.com/api/ideas', {
-      'X-Custom-Filter': '{"$ne": null}'
+      'X-Custom-Filter': '{"$ne": null}',
     });
 
     const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
     expect(result.detected).toBe(true);
-    expect(result.patterns.some((p) => p.category === 'nosql_injection')).toBe(true);
+    expect(result.patterns.some((p) => p.category === 'nosql_injection')).toBe(
+      true
+    );
   });
 
   it('should not flag normal query parameters', () => {

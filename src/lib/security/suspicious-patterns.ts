@@ -423,7 +423,8 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'MongoDB NoSQL injection operator',
     },
     {
-      pattern: /\[\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\]/i,
+      pattern:
+        /\[\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\]/i,
       severity: 3,
       description: 'NoSQL bracket notation operator injection',
     },
@@ -679,7 +680,12 @@ export function detectSuspiciousPatterns(
       for (const [key, value] of request.headers.entries()) {
         if (!SKIP_HEADERS.has(key.toLowerCase())) {
           // Scan both key and value
-          const keyFindings = scanString(key, 'header', minSeverity, `key:${key}`);
+          const keyFindings = scanString(
+            key,
+            'header',
+            minSeverity,
+            `key:${key}`
+          );
           patterns.push(...keyFindings);
           const valueFindings = scanString(value, 'header', minSeverity, key);
           patterns.push(...valueFindings);
