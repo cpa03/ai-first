@@ -29,6 +29,7 @@ interface Subscription {
  */
 class EventBus {
   private subscriptions: Map<string, Subscription[]> = new Map();
+  private subscriptionMap: Map<string, string> = new Map();
   private eventHistory: AgentEvent[] = [];
   private readonly maxHistorySize = EVENT_BUS_CONFIG.MAX_HISTORY_SIZE;
 
@@ -53,6 +54,7 @@ class EventBus {
     const existing = this.subscriptions.get(eventType) || [];
     existing.push(subscription);
     this.subscriptions.set(eventType, existing);
+    this.subscriptionMap.set(id, eventType);
 
     _logger.debug(`Subscribed to event: ${eventType}, id: ${id}`);
     return id;
@@ -75,6 +77,7 @@ class EventBus {
     const existing = this.subscriptions.get('*') || [];
     existing.push(subscription);
     this.subscriptions.set('*', existing);
+    this.subscriptionMap.set(id, '*');
 
     _logger.debug(`Subscribed to all events, id: ${id}`);
     return id;
@@ -86,10 +89,15 @@ class EventBus {
    * @returns true if subscription was found and removed
    */
   unsubscribe(subscriptionId: string): boolean {
-    for (const [eventType, subs] of this.subscriptions.entries()) {
+    const eventType = this.subscriptionMap.get(subscriptionId);
+    if (!eventType) return false;
+
+    const subs = this.subscriptions.get(eventType);
+    if (subs) {
       const index = subs.findIndex((s) => s.id === subscriptionId);
       if (index !== -1) {
         subs.splice(index, 1);
+        this.subscriptionMap.delete(subscriptionId);
         _logger.debug(
           `Unsubscribed from event: ${eventType}, id: ${subscriptionId}`
         );
@@ -107,19 +115,24 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Log to database for audit trail
-    await this.logEvent(event);
+    // PERFORMANCE: Non-blocking audit logging to avoid network I/O latency
+    // in the main event emission path.
+    this.logEvent(event);
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
     // Get wildcard subscribers
     const wildcardSubs = this.subscriptions.get('*') || [];
 
-    // Combine and deduplicate
-    const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
+    // PERFORMANCE: Use a Set for O(S) deduplication instead of O(S1*S2) nested search.
+    const allSubs: Subscription[] = [...typeSubs];
+    if (wildcardSubs.length > 0) {
+      const seenIds = new Set(allSubs.map((s) => s.id));
+      for (let i = 0; i < wildcardSubs.length; i++) {
+        const sub = wildcardSubs[i];
+        if (!seenIds.has(sub.id)) {
+          allSubs.push(sub);
+        }
       }
     }
 
@@ -187,11 +200,18 @@ class EventBus {
   private addToHistory(event: AgentEvent): void {
     this.eventHistory.push(event);
     if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
+      // PERFORMANCE: Use shift() for O(1) removal of oldest entry when at capacity,
+      // instead of O(N) slice() which creates a new array.
+      this.eventHistory.shift();
     }
   }
 
   private async logEvent(event: AgentEvent): Promise<void> {
+    // PERFORMANCE: Check if audit logging is enabled before attempting database I/O
+    if (!EVENT_BUS_CONFIG.AUDIT_LOGGING_ENABLED) {
+      return;
+    }
+
     try {
       await dbService.logAgentAction('event-bus', event.type, {
         payload: event.payload,
