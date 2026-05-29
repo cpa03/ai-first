@@ -22,7 +22,6 @@ describe('NoSQL Injection in Keys', () => {
     );
     const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
 
-    // This is expected to fail initially as only values are scanned
     expect(result.detected).toBe(true);
     expect(result.patterns.some(p => p.category === 'nosql_injection')).toBe(true);
     expect(result.patterns.some(p => p.field === 'id[$ne]')).toBe(true);
@@ -40,8 +39,6 @@ describe('NoSQL Injection in Keys', () => {
   });
 
   it('should detect NoSQL operators using bracket notation in values', () => {
-    // Current regex is /\$(where|accumulator|function)['"]?\s*:/i
-    // It should also support [$ne]
     const request = createMockRequest(
       'https://example.com/api/ideas?filter=[$ne]:null'
     );
