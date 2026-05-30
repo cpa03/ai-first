@@ -29,6 +29,11 @@ interface Subscription {
  */
 class EventBus {
   private subscriptions: Map<string, Subscription[]> = new Map();
+  /**
+   * PERFORMANCE: Map of subscription ID to event type for O(1) unsubscription lookup.
+   * This replaces the O(T * S) search through all event types and their subscribers.
+   */
+  private subscriptionMap: Map<string, string> = new Map();
   private eventHistory: AgentEvent[] = [];
   private readonly maxHistorySize = EVENT_BUS_CONFIG.MAX_HISTORY_SIZE;
 
@@ -53,6 +58,7 @@ class EventBus {
     const existing = this.subscriptions.get(eventType) || [];
     existing.push(subscription);
     this.subscriptions.set(eventType, existing);
+    this.subscriptionMap.set(id, eventType);
 
     _logger.debug(`Subscribed to event: ${eventType}, id: ${id}`);
     return id;
@@ -75,6 +81,7 @@ class EventBus {
     const existing = this.subscriptions.get('*') || [];
     existing.push(subscription);
     this.subscriptions.set('*', existing);
+    this.subscriptionMap.set(id, '*');
 
     _logger.debug(`Subscribed to all events, id: ${id}`);
     return id;
@@ -86,16 +93,22 @@ class EventBus {
    * @returns true if subscription was found and removed
    */
   unsubscribe(subscriptionId: string): boolean {
-    for (const [eventType, subs] of this.subscriptions.entries()) {
-      const index = subs.findIndex((s) => s.id === subscriptionId);
-      if (index !== -1) {
-        subs.splice(index, 1);
-        _logger.debug(
-          `Unsubscribed from event: ${eventType}, id: ${subscriptionId}`
-        );
-        return true;
-      }
+    const eventType = this.subscriptionMap.get(subscriptionId);
+    if (!eventType) return false;
+
+    const subs = this.subscriptions.get(eventType);
+    if (!subs) return false;
+
+    const index = subs.findIndex((s) => s.id === subscriptionId);
+    if (index !== -1) {
+      subs.splice(index, 1);
+      this.subscriptionMap.delete(subscriptionId);
+      _logger.debug(
+        `Unsubscribed from event: ${eventType}, id: ${subscriptionId}`
+      );
+      return true;
     }
+
     return false;
   }
 
@@ -107,8 +120,12 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Log to database for audit trail
-    await this.logEvent(event);
+    /**
+     * PERFORMANCE: Non-blocking audit logging.
+     * We don't await the database log to prevent I/O latency from blocking the agent's
+     * execution flow. The logEvent method handles its own errors.
+     */
+    this.logEvent(event);
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
@@ -116,10 +133,17 @@ class EventBus {
     const wildcardSubs = this.subscriptions.get('*') || [];
 
     // Combine and deduplicate
+    /**
+     * PERFORMANCE: Using Set for O(S) subscriber deduplication.
+     * Replaces O(S1 * S2) nested lookup.
+     */
     const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
+    if (wildcardSubs.length > 0) {
+      const seenIds = new Set(allSubs.map((s) => s.id));
+      for (const sub of wildcardSubs) {
+        if (!seenIds.has(sub.id)) {
+          allSubs.push(sub);
+        }
       }
     }
 
@@ -186,12 +210,22 @@ class EventBus {
 
   private addToHistory(event: AgentEvent): void {
     this.eventHistory.push(event);
+    /**
+     * PERFORMANCE: Using shift() for O(1) removal of oldest entry when at capacity.
+     * Avoids O(N) overhead and array allocation of slice().
+     */
     if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
+      this.eventHistory.shift();
     }
   }
 
   private async logEvent(event: AgentEvent): Promise<void> {
+    /**
+     * PERFORMANCE: Honor AUDIT_LOGGING_ENABLED flag to avoid unnecessary
+     * database calls when logging is disabled.
+     */
+    if (!EVENT_BUS_CONFIG.AUDIT_LOGGING_ENABLED) return;
+
     try {
       await dbService.logAgentAction('event-bus', event.type, {
         payload: event.payload,
