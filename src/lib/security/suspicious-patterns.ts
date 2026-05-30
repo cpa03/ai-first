@@ -418,13 +418,13 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /\$(where|accumulator|function)(?:['"]?\s*:|\])/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)(?:['"]?\s*:|\])/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -435,12 +435,12 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     // Medium severity
     {
-      pattern: /{\s*\$.*?:/i,
+      pattern: /[{\[]\s*\$.*?(?::|\])/i,
       severity: 2,
       description: 'NoSQL query operator pattern',
     },
     {
-      pattern: /\$or\s*:\s*\[/i,
+      pattern: /\$or(?:['"]?\s*:|\])\s*\[/i,
       severity: 2,
       description: 'MongoDB $or array injection',
     },
@@ -652,10 +652,16 @@ export function detectSuspiciousPatterns(
     const pathFindings = scanString(url.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
-    // Scan query parameters
+    // Scan query parameters (both keys and values)
+    // Scanning keys is crucial for detecting bracket-notation NoSQL injection (e.g. ?id[$ne]=...)
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan key
+      const keyFindings = scanString(key, 'query', minSeverity, key);
+      patterns.push(...keyFindings);
+
+      // Scan value
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...valueFindings);
     }
   }
 
