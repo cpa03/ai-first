@@ -6,6 +6,7 @@ import { UI_CONFIG } from '@/lib/config/constants';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -34,6 +35,7 @@ const CopyButtonComponent = function CopyButton({
   onCopy,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -53,9 +55,11 @@ const CopyButtonComponent = function CopyButton({
       await navigator.clipboard.writeText(textToCopy);
       triggerHapticFeedback();
       setCopied(true);
+      setAnnouncement(toastMessage);
 
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
+        setAnnouncement('');
       }, UI_CONFIG.COPY_FEEDBACK_DURATION);
 
       if (showToast && typeof window !== 'undefined' && win.showToast) {
@@ -117,15 +121,17 @@ const CopyButtonComponent = function CopyButton({
   };
 
   return (
-    <Tooltip
-      content={copied ? successLabel : ariaLabel}
-      disabled={false}
-      position="top"
-    >
-      <button
+    <>
+      <StatusAnnouncer message={announcement} />
+      <Tooltip
+        content={copied ? successLabel : ariaLabel}
+        disabled={false}
+        position="top"
+      >
+        <button
         onClick={handleCopy}
         className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={copied ? 'Copied to clipboard' : ariaLabel}
+        aria-label={copied ? successLabel : ariaLabel}
         type="button"
       >
         <span className="relative flex items-center justify-center w-4 h-4">
@@ -173,8 +179,9 @@ const CopyButtonComponent = function CopyButton({
             {copied ? successLabel : label}
           </span>
         )}
-      </button>
-    </Tooltip>
+        </button>
+      </Tooltip>
+    </>
   );
 };
 

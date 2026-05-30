@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
 import {
@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
 } from '@/lib/config';
 import Tooltip from '../Tooltip';
+import StatusAnnouncer from '../StatusAnnouncer';
 
 interface TaskItemProps {
   task: Task;
@@ -22,6 +23,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
   const [showCelebration, setShowCelebration] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
+  const announcementTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (announcementTimeoutRef.current) {
+        clearTimeout(announcementTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -31,18 +42,34 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     }
   }, [isCompleted, isUpdating, task.status]);
 
-  const handleClick = useCallback(() => {
+  const handleToggleAction = useCallback(() => {
     onToggle(task.id, task.status);
-  }, [onToggle, task.id, task.status]);
+    const nextStatus = isCompleted ? 'incomplete' : 'complete';
+    setAnnouncement(`Task "${task.title}" marked as ${nextStatus}`);
+
+    if (announcementTimeoutRef.current) {
+      clearTimeout(announcementTimeoutRef.current);
+    }
+
+    // Clear announcement after a delay to allow re-announcement if toggled again quickly
+    announcementTimeoutRef.current = setTimeout(() => {
+      setAnnouncement('');
+      announcementTimeoutRef.current = null;
+    }, 3000);
+  }, [onToggle, task.id, task.status, task.title, isCompleted]);
+
+  const handleClick = useCallback(() => {
+    handleToggleAction();
+  }, [handleToggleAction]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onToggle(task.id, task.status);
+        handleToggleAction();
       }
     },
-    [onToggle, task.id, task.status]
+    [handleToggleAction]
   );
 
   const checkmarkStyle = useMemo(
@@ -85,6 +112,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
 
   return (
     <div className={containerClasses}>
+      <StatusAnnouncer message={announcement} />
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}
