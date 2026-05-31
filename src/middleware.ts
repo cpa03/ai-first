@@ -181,7 +181,6 @@ function applyCloudflareHeaders(
   }
 }
 
-export const runtime = 'experimental-edge';
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
