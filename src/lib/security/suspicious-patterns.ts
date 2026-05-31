@@ -424,7 +424,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)(?:['"]?\s*:|\])/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },

@@ -253,18 +253,19 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       }
     });
-
-    it('should detect bracket-notation NoSQL injection in query keys', () => {
-      const request = createMockRequest(
-        'https://example.com/api/test?id[$ne]=null'
-      );
-      const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
-      expect(result.detected).toBe(true);
-      expect(result.patterns.some((p) => p.category === 'nosql_injection')).toBe(
-        true
-      );
-      expect(result.patterns.some((p) => p.field === 'id[$ne]')).toBe(true);
-    });
-
   });
 });
+
+  describe('NoSQL Key Injection', () => {
+    it('should detect bracket-notation NoSQL injection in query keys', () => {
+      const { NextRequest } = require('next/server');
+      const { detectSuspiciousPatterns } = require('@/lib/security/suspicious-patterns');
+      const request = new NextRequest(new URL('https://example.com/api/test?id[$ne]=null'), {
+        headers: new Headers({}),
+      });
+      const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p: any) => p.category === 'nosql_injection')).toBe(true);
+      expect(result.patterns.some((p: any) => p.field === 'id[$ne]')).toBe(true);
+    });
+  });
