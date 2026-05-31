@@ -96,6 +96,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             isCompleted
           )}
           aria-pressed={isCompleted}
+          aria-busy={isUpdating}
         >
           {isCompleted && (
             <svg
