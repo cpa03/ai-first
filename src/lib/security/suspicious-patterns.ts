@@ -577,7 +577,24 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'sec-fetch-dest',
+  'sec-fetch-mode',
+  'sec-fetch-site',
+  'sec-fetch-user',
+  'sec-ch-ua',
+  'sec-ch-ua-mobile',
+  'sec-ch-ua-platform',
+  'priority',
+  'dnt',
+  'upgrade-insecure-requests',
 ]);
+
+/**
+ * PERFORMANCE: Cache for scan results to avoid redundant regex execution
+ * for repetitive strings like common header values or frequent paths.
+ */
+const SCAN_RESULT_CACHE = new Map<string, SuspiciousPatternDetail[]>();
+const MAX_SCAN_CACHE_SIZE = 500;
 
 /**
  * Scan a string for suspicious patterns
@@ -590,6 +607,14 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
+
+  // PERFORMANCE: Use cache for repetitive strings (header values, paths)
+  const cacheKey = `${minSeverity}:${input}`;
+  const cached = SCAN_RESULT_CACHE.get(cacheKey);
+  if (cached) {
+    // If there's a field or location difference, we must clone and update the details
+    return cached.map((f) => ({ ...f, location, field }));
+  }
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
@@ -611,6 +636,11 @@ function scanString(
         pattern.lastIndex = 0;
       }
     }
+  }
+
+  // Store in cache if cache is not too large
+  if (SCAN_RESULT_CACHE.size < MAX_SCAN_CACHE_SIZE) {
+    SCAN_RESULT_CACHE.set(cacheKey, findings);
   }
 
   return findings;
@@ -640,7 +670,10 @@ export function detectSuspiciousPatterns(
   // Safety check: Handle undefined/invalid URL gracefully
   let url: URL | null = null;
   try {
-    if (request.url) {
+    // PERFORMANCE: Use nextUrl if available (Next.js NextRequest) to avoid redundant URL parsing.
+    if ((request as any).nextUrl) {
+      url = (request as any).nextUrl;
+    } else if (request.url) {
       url = new URL(request.url);
     }
   } catch {
@@ -687,6 +720,8 @@ export function detectSuspiciousPatterns(
   for (let i = 0; i < patterns.length; i++) {
     if (patterns[i].severity > maxSeverity) {
       maxSeverity = patterns[i].severity as 0 | 1 | 2 | 3;
+      // PERFORMANCE: Max severity is 3, no need to check further if reached.
+      if (maxSeverity === 3) break;
     }
   }
 
