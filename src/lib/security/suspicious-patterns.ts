@@ -671,8 +671,9 @@ export function detectSuspiciousPatterns(
   let url: URL | null = null;
   try {
     // PERFORMANCE: Use nextUrl if available (Next.js NextRequest) to avoid redundant URL parsing.
-    if ((request as any).nextUrl) {
-      url = (request as any).nextUrl;
+    const nextRequest = request as Request & { nextUrl?: URL };
+    if (nextRequest.nextUrl) {
+      url = nextRequest.nextUrl;
     } else if (request.url) {
       url = new URL(request.url);
     }
