@@ -418,13 +418,13 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /\$(where|accumulator|function)(?:['"]?\s*:|\])/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)(?:['"]?\s*:|\])/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -435,12 +435,12 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     // Medium severity
     {
-      pattern: /{\s*\$.*?:/i,
+      pattern: /{\s*\$.*?(?:\s*:|\])/i,
       severity: 2,
       description: 'NoSQL query operator pattern',
     },
     {
-      pattern: /\$or\s*:\s*\[/i,
+      pattern: /\$or\s*(?::\s*\[|\])/i,
       severity: 2,
       description: 'MongoDB $or array injection',
     },
@@ -565,6 +565,13 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
 })();
 
 /**
+ * PERFORMANCE: Cache for scanString results to avoid redundant regex tests
+ * on frequently repeated strings across requests.
+ */
+const SCAN_RESULT_CACHE = new Map<string, SuspiciousPatternDetail[]>();
+const MAX_CACHE_SIZE = 500;
+
+/**
  * PERFORMANCE: Static set of headers to skip during scanning to avoid
  * repeated Set allocations on every request.
  */
@@ -591,6 +598,20 @@ function scanString(
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
 
+  // PERFORMANCE: Use a cache key that includes minSeverity and input
+  const cacheKey = `${minSeverity}:${input}`;
+  const cached = SCAN_RESULT_CACHE.get(cacheKey);
+
+  if (cached) {
+    // Return a copy to avoid external modification of cached results
+    // while overriding location and field for the current context
+    return cached.map((f) => ({
+      ...f,
+      location,
+      field,
+    }));
+  }
+
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
 
@@ -611,6 +632,17 @@ function scanString(
         pattern.lastIndex = 0;
       }
     }
+  }
+
+  // Update cache if results found (caching clean strings is also valuable but could grow fast)
+  if (SCAN_RESULT_CACHE.size < MAX_CACHE_SIZE) {
+    SCAN_RESULT_CACHE.set(cacheKey, findings);
+  } else if (findings.length > 0) {
+    // If cache is full, only cache findings (LRU would be better but Map.clear() is simpler)
+    if (SCAN_RESULT_CACHE.size > MAX_CACHE_SIZE * 1.2) {
+      SCAN_RESULT_CACHE.clear();
+    }
+    SCAN_RESULT_CACHE.set(cacheKey, findings);
   }
 
   return findings;
@@ -652,10 +684,17 @@ export function detectSuspiciousPatterns(
     const pathFindings = scanString(url.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
-    // Scan query parameters
+    // Scan query parameters (both keys and values)
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan value
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...valueFindings);
+
+      // Scan key (important for NoSQL injection like ?id[$ne]=null)
+      if (key.includes('$') || key.includes('[') || key.includes(']')) {
+        const keyFindings = scanString(key, 'query', minSeverity, key);
+        patterns.push(...keyFindings);
+      }
     }
   }
 
@@ -669,9 +708,17 @@ export function detectSuspiciousPatterns(
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
-        if (!SKIP_HEADERS.has(key.toLowerCase())) {
-          const headerFindings = scanString(value, 'header', minSeverity, key);
-          patterns.push(...headerFindings);
+        const lowerKey = key.toLowerCase();
+        if (!SKIP_HEADERS.has(lowerKey)) {
+          // Scan header value
+          const valueFindings = scanString(value, 'header', minSeverity, key);
+          patterns.push(...valueFindings);
+
+          // Scan header key if it looks suspicious
+          if (key.includes('$') || key.includes('{')) {
+            const keyFindings = scanString(key, 'header', minSeverity, key);
+            patterns.push(...keyFindings);
+          }
         }
       }
     }

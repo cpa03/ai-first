@@ -138,6 +138,17 @@ describe('Suspicious Pattern Detection Improvements', () => {
       }
     });
 
+    it('should detect NoSQL injection in query parameter keys (bracket notation)', () => {
+      const request = createMockRequest(
+        'https://example.com/api/test?id[$ne]=null'
+      );
+      const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
+      expect(result.detected).toBe(true);
+      expect(
+        result.patterns.some((p) => p.category === 'nosql_injection')
+      ).toBe(true);
+    });
+
     it('should detect Windows sensitive paths', () => {
       const paths = [
         'C:\\Windows\\System32',
