@@ -215,6 +215,10 @@ export async function proxy(request: NextRequest) {
   return response;
 }
 
+export default proxy;
+
+export const runtime = 'experimental-edge';
+
 export const config = {
   matcher: [
     /*
