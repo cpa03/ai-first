@@ -253,5 +253,12 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       }
     });
+
+    it('should detect NoSQL operator injection in query parameter keys', () => {
+      const request = createMockRequest('https://example.com/api/test?id[$ne]=null');
+      const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'nosql_injection')).toBe(true);
+    });
   });
 });
