@@ -29,6 +29,8 @@ interface Subscription {
  */
 class EventBus {
   private subscriptions: Map<string, Subscription[]> = new Map();
+  /** Map of subscription ID to event type for O(1) lookups during unsubscribe */
+  private subscriptionMap: Map<string, string> = new Map();
   private eventHistory: AgentEvent[] = [];
   private readonly maxHistorySize = EVENT_BUS_CONFIG.MAX_HISTORY_SIZE;
 
@@ -53,6 +55,7 @@ class EventBus {
     const existing = this.subscriptions.get(eventType) || [];
     existing.push(subscription);
     this.subscriptions.set(eventType, existing);
+    this.subscriptionMap.set(id, eventType);
 
     _logger.debug(`Subscribed to event: ${eventType}, id: ${id}`);
     return id;
@@ -75,6 +78,7 @@ class EventBus {
     const existing = this.subscriptions.get('*') || [];
     existing.push(subscription);
     this.subscriptions.set('*', existing);
+    this.subscriptionMap.set(id, '*');
 
     _logger.debug(`Subscribed to all events, id: ${id}`);
     return id;
@@ -86,16 +90,23 @@ class EventBus {
    * @returns true if subscription was found and removed
    */
   unsubscribe(subscriptionId: string): boolean {
-    for (const [eventType, subs] of this.subscriptions.entries()) {
+    // PERFORMANCE: Use subscriptionMap for O(1) event type lookup instead of O(T*S) scan
+    const eventType = this.subscriptionMap.get(subscriptionId);
+    if (!eventType) return false;
+
+    const subs = this.subscriptions.get(eventType);
+    if (subs) {
       const index = subs.findIndex((s) => s.id === subscriptionId);
       if (index !== -1) {
         subs.splice(index, 1);
+        this.subscriptionMap.delete(subscriptionId);
         _logger.debug(
           `Unsubscribed from event: ${eventType}, id: ${subscriptionId}`
         );
         return true;
       }
     }
+
     return false;
   }
 
@@ -110,7 +121,13 @@ class EventBus {
     // PERFORMANCE: Log to database for audit trail without blocking event delivery.
     // This prevents database I/O latency from delaying subscriber execution.
     // We clone the event to prevent race conditions if subscribers modify it.
-    void this.logEvent(structuredClone(event));
+    try {
+      const clonedEvent = structuredClone(event);
+      void this.logEvent(clonedEvent);
+    } catch {
+      // Fallback for non-serializable events
+      void this.logEvent(event);
+    }
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
@@ -119,9 +136,13 @@ class EventBus {
 
     // Combine and deduplicate
     const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
+    // PERFORMANCE: Use a Set for O(S) deduplication instead of O(S1 * S2) find()
+    if (wildcardSubs.length > 0) {
+      const seenIds = new Set(allSubs.map((s) => s.id));
+      for (const sub of wildcardSubs) {
+        if (!seenIds.has(sub.id)) {
+          allSubs.push(sub);
+        }
       }
     }
 
@@ -179,17 +200,15 @@ class EventBus {
    * Get subscription count
    */
   getSubscriptionCount(): number {
-    let count = 0;
-    for (const subs of this.subscriptions.values()) {
-      count += subs.length;
-    }
-    return count;
+    // PERFORMANCE: O(1) count via subscriptionMap
+    return this.subscriptionMap.size;
   }
 
   private addToHistory(event: AgentEvent): void {
     this.eventHistory.push(event);
     if (this.eventHistory.length > this.maxHistorySize) {
-      this.eventHistory = this.eventHistory.slice(-this.maxHistorySize);
+      // PERFORMANCE: O(1) removal of oldest entry instead of O(N) slice()
+      this.eventHistory.shift();
     }
   }
 
