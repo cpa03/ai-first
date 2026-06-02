@@ -107,8 +107,10 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Log to database for audit trail
-    await this.logEvent(event);
+    // PERFORMANCE: Log to database for audit trail without blocking event delivery.
+    // This prevents database I/O latency from delaying subscriber execution.
+    // We clone the event to prevent race conditions if subscribers modify it.
+    void this.logEvent(structuredClone(event));
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
@@ -193,6 +195,11 @@ class EventBus {
 
   private async logEvent(event: AgentEvent): Promise<void> {
     try {
+      // PERFORMANCE: Early return if audit logging is disabled to avoid unnecessary processing
+      if (!EVENT_BUS_CONFIG.AUDIT_LOGGING_ENABLED) {
+        return;
+      }
+
       await dbService.logAgentAction('event-bus', event.type, {
         payload: event.payload,
         source: event.source,

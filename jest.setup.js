@@ -196,6 +196,11 @@ if (typeof global.TextDecoder === 'undefined') {
   global.TextDecoder = util.TextDecoder;
 }
 
+// Polyfill structuredClone for Node.js environments < 17
+if (typeof global.structuredClone === 'undefined') {
+  global.structuredClone = (obj) => JSON.parse(JSON.stringify(obj));
+}
+
 // Polyfill crypto
 const cryptoModule = require('node:crypto');
 if (typeof global.crypto === 'undefined' || !global.crypto.subtle) {
