@@ -3,7 +3,8 @@ export const runtime = 'experimental-edge';
 import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
-import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
+import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
+import { generateApiCacheControl } from '@/lib/config/cache-control';
 
 /**
  * Proxy for Next.js (replacement for deprecated middleware)
