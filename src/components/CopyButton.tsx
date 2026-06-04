@@ -6,6 +6,7 @@ import { UI_CONFIG } from '@/lib/config/constants';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -117,64 +118,71 @@ const CopyButtonComponent = function CopyButton({
   };
 
   return (
-    <Tooltip
-      content={copied ? successLabel : ariaLabel}
-      disabled={false}
-      position="top"
-    >
-      <button
-        onClick={handleCopy}
-        className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={copied ? 'Copied to clipboard' : ariaLabel}
-        type="button"
+    <>
+      <StatusAnnouncer
+        message={successLabel}
+        politeness="polite"
+        triggered={copied}
+      />
+      <Tooltip
+        content={copied ? successLabel : ariaLabel}
+        disabled={false}
+        position="top"
       >
-        <span className="relative flex items-center justify-center w-4 h-4">
-          <svg
-            className={`
-              absolute inset-0 w-4 h-4 transition-all duration-200
-              ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
-            `}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-            aria-hidden="true"
-          >
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-          </svg>
+        <button
+          onClick={handleCopy}
+          className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+          aria-label={ariaLabel}
+          type="button"
+        >
+          <span className="relative flex items-center justify-center w-4 h-4">
+            <svg
+              className={`
+                absolute inset-0 w-4 h-4 transition-all duration-200
+                ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
+              `}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+            </svg>
 
-          <svg
-            className={`
-              absolute inset-0 w-4 h-4 text-green-600 transition-all duration-200
-              ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
-            `}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={3}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </span>
-
-        {variant !== 'icon-only' && (
-          <span
-            className={`
-              transition-all duration-200
-              ${copied ? 'text-green-700' : ''}
-            `}
-          >
-            {copied ? successLabel : label}
+            <svg
+              className={`
+                absolute inset-0 w-4 h-4 text-green-600 transition-all duration-200
+                ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
+              `}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={3}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
           </span>
-        )}
-      </button>
-    </Tooltip>
+
+          {variant !== 'icon-only' && (
+            <span
+              className={`
+                transition-all duration-200
+                ${copied ? 'text-green-700' : ''}
+              `}
+            >
+              {copied ? successLabel : label}
+            </span>
+          )}
+        </button>
+      </Tooltip>
+    </>
   );
 };
 
