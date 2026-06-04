@@ -577,7 +577,24 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'referer',
+  'sec-ch-ua',
+  'sec-ch-ua-mobile',
+  'sec-ch-ua-platform',
+  'sec-fetch-dest',
+  'sec-fetch-mode',
+  'sec-fetch-site',
+  'sec-fetch-user',
+  'x-request-id',
+  'x-correlation-id',
 ]);
+
+/**
+ * PERFORMANCE: Cache for scan results to avoid repeated regex execution.
+ * Limit size to prevent memory growth.
+ */
+const SCAN_RESULT_CACHE = new Map<string, SuspiciousPatternDetail[]>();
+const SCAN_CACHE_LIMIT = 500;
 
 /**
  * Scan a string for suspicious patterns
@@ -590,6 +607,18 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
+
+  // PERFORMANCE: Cache lookup using a composite key
+  const cacheKey = `${minSeverity}:${input}`;
+  const cached = SCAN_RESULT_CACHE.get(cacheKey);
+  if (cached) {
+    // Re-map cached results with current location and field
+    return cached.map((p) => ({
+      ...p,
+      location,
+      field,
+    }));
+  }
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
@@ -611,6 +640,11 @@ function scanString(
         pattern.lastIndex = 0;
       }
     }
+  }
+
+  // Store in cache if limit not reached
+  if (SCAN_RESULT_CACHE.size < SCAN_CACHE_LIMIT) {
+    SCAN_RESULT_CACHE.set(cacheKey, findings);
   }
 
   return findings;
@@ -639,8 +673,15 @@ export function detectSuspiciousPatterns(
   const patterns: SuspiciousPatternDetail[] = [];
   // Safety check: Handle undefined/invalid URL gracefully
   let url: URL | null = null;
+
+  // PERFORMANCE: Use request.nextUrl if available (Next.js) to avoid re-parsing the URL string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const nextUrl = (request as any).nextUrl;
+
   try {
-    if (request.url) {
+    if (nextUrl) {
+      url = nextUrl;
+    } else if (request.url) {
       url = new URL(request.url);
     }
   } catch {
@@ -654,8 +695,14 @@ export function detectSuspiciousPatterns(
 
     // Scan query parameters
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // PERFORMANCE: Only scan keys that might contain NoSQL operators
+      const keyFindings =
+        key.includes('$') || key.includes('[') || key.includes(']')
+          ? scanString(key, 'query', minSeverity, '[key]')
+          : [];
+
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...keyFindings, ...valueFindings);
     }
   }
 
@@ -685,8 +732,11 @@ export function detectSuspiciousPatterns(
   // Calculate max severity
   let maxSeverity: 0 | 1 | 2 | 3 = 0;
   for (let i = 0; i < patterns.length; i++) {
-    if (patterns[i].severity > maxSeverity) {
-      maxSeverity = patterns[i].severity as 0 | 1 | 2 | 3;
+    const severity = patterns[i].severity as 0 | 1 | 2 | 3;
+    if (severity > maxSeverity) {
+      maxSeverity = severity;
+      // PERFORMANCE: Early exit if we reached maximum possible severity
+      if (maxSeverity === 3) break;
     }
   }
 
