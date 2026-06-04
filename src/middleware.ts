@@ -215,6 +215,7 @@ export default async function middleware(request: NextRequest) {
   return response;
 }
 
+
 export const runtime = 'experimental-edge';
 
 export const config = {
