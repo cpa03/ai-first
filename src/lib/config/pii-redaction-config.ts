@@ -72,6 +72,23 @@ export const PII_REDACTION_CONFIG = {
   ] as const,
 
   /**
+   * Minimum lengths for different PII types to avoid redundant regex execution
+   * on strings that are too short to possibly contain the pattern.
+   */
+  MIN_LENGTHS: {
+    EMAIL: 6, // a@b.co
+    PHONE: 10, // 5555555555
+    SSN: 11, // 000-00-0000
+    CREDIT_CARD: 13, // minimum CC length
+    IP_ADDRESS: 7, // 1.1.1.1
+    JWT: 20, // ejy...header.payload.signature
+    URL_WITH_CREDENTIALS: 12, // h://u:p@h.c
+    PASSPORT: 6,
+    DRIVERS_LICENSE: 6,
+    API_KEY: 4,
+  } as const,
+
+  /**
    * Safe fields that should not be redacted
    */
   SAFE_FIELDS: [

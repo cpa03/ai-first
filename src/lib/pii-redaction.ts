@@ -13,6 +13,8 @@
 
 import { PII_REDACTION_CONFIG } from './config/pii-redaction-config';
 
+const { REDACTION_LABELS: labels, MIN_LENGTHS } = PII_REDACTION_CONFIG;
+
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
@@ -123,44 +125,60 @@ const API_KEY_SPECIFIC_TRIGGER_REGEX =
  */
 function _redactPII(text: string): string {
   let redacted = text;
-  const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
+  const originalLength = text.length;
 
   // PERFORMANCE: Sequential replace is actually faster in V8 for large strings
   // than a single complex combined regex with many branches and capturing groups.
   // Order matters: more specific patterns first.
   // We use additional conditional checks to skip regex execution when triggers are absent.
 
-  if (redacted.includes('eyJ')) {
+  if (originalLength >= MIN_LENGTHS.JWT && redacted.includes('eyJ')) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.jwt, labels.JWT);
   }
 
-  if (redacted.includes('://')) {
+  if (
+    originalLength >= MIN_LENGTHS.URL_WITH_CREDENTIALS &&
+    redacted.includes('://')
+  ) {
     redacted = redacted.replace(
       PII_REGEX_PATTERNS.urlWithCredentials,
       labels.URL_WITH_CREDENTIALS
     );
   }
 
-  if (redacted.includes('@')) {
+  if (originalLength >= MIN_LENGTHS.EMAIL && redacted.includes('@')) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.email, labels.EMAIL);
   }
 
   // Digits are a trigger for many PII types
   if (/\d/.test(redacted)) {
-    redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
-    redacted = redacted.replace(
-      PII_REGEX_PATTERNS.driversLicense,
-      labels.DRIVERS_LICENSE
-    );
-    redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
-    redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
-    redacted = redacted.replace(
-      PII_REGEX_PATTERNS.creditCard,
-      labels.CREDIT_CARD
-    );
+    if (originalLength >= MIN_LENGTHS.PASSPORT) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
+    }
+    if (originalLength >= MIN_LENGTHS.DRIVERS_LICENSE) {
+      redacted = redacted.replace(
+        PII_REGEX_PATTERNS.driversLicense,
+        labels.DRIVERS_LICENSE
+      );
+    }
+    if (originalLength >= MIN_LENGTHS.PHONE) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.phone, labels.PHONE);
+    }
+    if (originalLength >= MIN_LENGTHS.SSN && redacted.includes('-')) {
+      redacted = redacted.replace(PII_REGEX_PATTERNS.ssn, labels.SSN);
+    }
+    if (originalLength >= MIN_LENGTHS.CREDIT_CARD) {
+      redacted = redacted.replace(
+        PII_REGEX_PATTERNS.creditCard,
+        labels.CREDIT_CARD
+      );
+    }
 
     // IP addresses also need dots (v4) or colons (v6)
-    if (redacted.includes('.') || redacted.includes(':')) {
+    if (
+      originalLength >= MIN_LENGTHS.IP_ADDRESS &&
+      (redacted.includes('.') || redacted.includes(':'))
+    ) {
       redacted = redacted.replace(PII_REGEX_PATTERNS.ipAddress, (match) => {
         return isPrivateIP(match) ? match : labels.IP_ADDRESS;
       });
@@ -170,9 +188,10 @@ function _redactPII(text: string): string {
   // API keys often have assignments ':' or '=' or specific prefixes
   // PERFORMANCE: More specific check before running complex apiKey regex
   if (
-    /[:=]/.test(redacted) ||
-    /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
-    API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted)
+    originalLength >= MIN_LENGTHS.API_KEY &&
+    (/[:=]/.test(redacted) ||
+      /sk_|pk_|rk_|AKIA|sk-/.test(redacted) ||
+      API_KEY_SPECIFIC_TRIGGER_REGEX.test(redacted))
   ) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
   }
@@ -446,13 +465,23 @@ export function redactPIIInObject(
     const result: RedactionResult[] = new Array(obj.length);
     for (let i = 0; i < obj.length; i++) {
       const item = obj[i];
-      // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
-      if (typeof item === 'string') {
+      // PERFORMANCE: Fast-path for non-object primitives in arrays to avoid
+      // recursion overhead (depth checks, WeakSet ops, etc.).
+      const itemType = typeof item;
+      if (
+        item === null ||
+        itemType === 'number' ||
+        itemType === 'boolean' ||
+        itemType === 'undefined'
+      ) {
+        result[i] = item as RedactionResult;
+      } else if (itemType === 'string') {
         // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
+        const s = item as string;
         result[i] =
-          item.length < 4 || !COMBINED_TRIGGER_REGEX.test(item)
-            ? item
-            : _redactPII(item);
+          s.length < 4 || !COMBINED_TRIGGER_REGEX.test(s)
+            ? s
+            : _redactPII(s);
       } else {
         result[i] = redactPIIInObject(item, seen, depth + 1);
       }
@@ -495,31 +524,33 @@ export function redactPIIInObject(
 
   // Handle enumerable symbols
   const symbols = Object.getOwnPropertySymbols(obj);
-  for (let i = 0; i < symbols.length; i++) {
-    const sym = symbols[i];
-    if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
-      try {
-        const key = sym.toString();
-        const value = (obj as Record<symbol, unknown>)[sym];
-        const action = getKeyAction(key);
+  if (symbols.length > 0) {
+    for (let i = 0; i < symbols.length; i++) {
+      const sym = symbols[i];
+      if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
+        try {
+          const key = sym.toString();
+          const value = (obj as Record<symbol, unknown>)[sym];
+          const action = getKeyAction(key);
 
-        if (action.type === 'SAFE') {
-          redacted[key] = value as RedactionResult;
-        } else if (action.type === 'SENSITIVE') {
-          redacted[key] = action.label!;
-        } else if (typeof value === 'string') {
-          // PERFORMANCE: Inline fast-path check
-          redacted[key] =
-            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
-              ? value
-              : _redactPII(value);
-        } else if (value !== null && typeof value === 'object') {
-          redacted[key] = redactPIIInObject(value, seen, depth + 1);
-        } else {
-          redacted[key] = value as RedactionResult;
+          if (action.type === 'SAFE') {
+            redacted[key] = value as RedactionResult;
+          } else if (action.type === 'SENSITIVE') {
+            redacted[key] = action.label!;
+          } else if (typeof value === 'string') {
+            // PERFORMANCE: Inline fast-path check
+            redacted[key] =
+              value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+                ? value
+                : _redactPII(value);
+          } else if (value !== null && typeof value === 'object') {
+            redacted[key] = redactPIIInObject(value, seen, depth + 1);
+          } else {
+            redacted[key] = value as RedactionResult;
+          }
+        } catch {
+          redacted[sym.toString()] = '[Getter Error]';
         }
-      } catch {
-        redacted[sym.toString()] = '[Getter Error]';
       }
     }
   }
