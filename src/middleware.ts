@@ -21,6 +21,8 @@ import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
  * See: https://nextjs.org/docs/messages/middleware-to-proxy
  */
 
+export const runtime = 'experimental-edge';
+
 const PUBLIC_PATHS = [
   '/',
   '/login',
@@ -181,7 +183,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
