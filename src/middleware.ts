@@ -1,11 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
-import { PROXY_CONFIG } from '@/lib/config/proxy-config';
-import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
+import { SECURITY_CONFIG, CSP_CONFIG, PROXY_CONFIG, API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
- * Proxy for Next.js (replacement for deprecated middleware)
+ * Middleware for Next.js (replacement for deprecated proxy.ts)
  *
  * Features:
  * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
@@ -17,8 +15,6 @@ import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
  * - cf-country/cf-ipcountry: Country code for geo features
  * - cf-connecting-ip: Original client IP
  * - cf-visitor: HTTPS info
- *
- * See: https://nextjs.org/docs/messages/middleware-to-proxy
  */
 
 const PUBLIC_PATHS = [
