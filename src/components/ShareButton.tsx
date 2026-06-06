@@ -7,6 +7,7 @@ import { APP_CONFIG } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -175,6 +176,11 @@ const ShareButtonComponent = function ShareButton({
       disabled={false}
       position="top"
     >
+      <StatusAnnouncer
+        message={shared ? (navigator.share ? 'Shared successfully' : toastMessage) : ''}
+        triggered={shared}
+        politeness="polite"
+      />
       <button
         onClick={handleShare}
         className={`${baseClasses} ${variantClasses[variant]} ${className}`}

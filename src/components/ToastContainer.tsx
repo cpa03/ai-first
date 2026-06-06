@@ -203,6 +203,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     <div
       role={toastRole}
       aria-live={ariaLive}
+      aria-atomic="true"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}

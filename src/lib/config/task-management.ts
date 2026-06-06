@@ -227,6 +227,10 @@ export const TASK_MANAGEMENT_MESSAGES = {
       isCompleted
         ? `Mark "${taskTitle}" as incomplete`
         : `Mark "${taskTitle}" as complete`,
+    COMPLETED_ANNOUNCEMENT: (taskTitle: string) =>
+      `Task "${taskTitle}" marked as completed`,
+    INCOMPLETE_ANNOUNCEMENT: (taskTitle: string) =>
+      `Task "${taskTitle}" marked as incomplete`,
   },
   TOOLTIP: {
     MARK_COMPLETE: 'Mark as complete',
