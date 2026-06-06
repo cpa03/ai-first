@@ -282,6 +282,10 @@ function getAllPropertyDescriptors(obj: object): SafePropertyDescriptor[] {
   try {
     const stringKeys = Object.getOwnPropertyNames(obj);
     for (const key of stringKeys) {
+      // SECURITY: skip prototype-polluting keys
+      if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+        continue;
+      }
       try {
         const descriptor = Object.getOwnPropertyDescriptor(obj, key);
         if (descriptor) {
@@ -468,6 +472,10 @@ export function redactPIIInObject(
   const keys = Object.keys(obj);
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
+    // SECURITY: skip prototype-polluting keys
+    if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+      continue;
+    }
     try {
       const value = (obj as Record<string, unknown>)[key];
       const action = getKeyAction(key);

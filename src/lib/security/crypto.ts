@@ -100,5 +100,10 @@ export function secureRandom(): number {
 
   // Fallback to Math.random if Web Crypto API is unavailable
   // This is a last resort and will be flagged by security scripts
+  if (typeof console !== 'undefined' && typeof console.warn === 'function') {
+    console.warn(
+      '[Security] Web Crypto API unavailable. Falling back to insecure Math.random().'
+    );
+  }
   return Math.random();
 }
