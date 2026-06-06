@@ -177,7 +177,7 @@ const ShareButtonComponent = function ShareButton({
       position="top"
     >
       <StatusAnnouncer
-        message={shared ? (navigator.share ? 'Shared successfully' : toastMessage) : ''}
+        message={shared ? successLabel : ''}
         triggered={shared}
         politeness="polite"
       />
