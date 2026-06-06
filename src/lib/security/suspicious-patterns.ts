@@ -633,9 +633,9 @@ function scanString(
     return [];
   }
 
-  // PERFORMANCE: Check cache for identical inputs
-  const cacheKey = `${minSeverity}:${input}`;
-  const cached = SCAN_RESULT_CACHE.get(cacheKey);
+  // PERFORMANCE: Check cache for identical inputs (limited to reasonable size)
+  const cacheKey = input.length < 1000 ? `${minSeverity}:${input}` : null;
+  const cached = cacheKey ? SCAN_RESULT_CACHE.get(cacheKey) : null;
   if (cached) {
     // If findings contain location-specific info (field/location), we must clone
     // and update them if they differ. For simplicity and correctness, we only
@@ -665,12 +665,14 @@ function scanString(
     }
   }
 
-  // Manage cache size
-  if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
-    const firstKey = SCAN_RESULT_CACHE.keys().next().value;
-    if (firstKey !== undefined) SCAN_RESULT_CACHE.delete(firstKey);
+  // Manage cache size (only for reasonable length strings)
+  if (cacheKey) {
+    if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
+      const firstKey = SCAN_RESULT_CACHE.keys().next().value;
+      if (firstKey !== undefined) SCAN_RESULT_CACHE.delete(firstKey);
+    }
+    SCAN_RESULT_CACHE.set(cacheKey, findings);
   }
-  SCAN_RESULT_CACHE.set(cacheKey, findings);
 
   return findings;
 }
