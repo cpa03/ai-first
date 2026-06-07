@@ -711,7 +711,8 @@ export function detectSuspiciousPatterns(
   // Fall back to new URL(request.url) only if nextUrl is missing.
   let url: URL | null = null;
   try {
-    url = (request as any).nextUrl || (request.url ? new URL(request.url) : null);
+    const nextRequest = request as unknown as { nextUrl?: URL };
+    url = nextRequest.nextUrl || (request.url ? new URL(request.url) : null);
   } catch {
     // Malformed URL - continue without path/query scanning
   }
