@@ -418,14 +418,14 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /\$(where|accumulator|function)['"]?\s*[:\]]/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
-      severity: 2,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*[:\]]/i,
+      severity: 3,
       description: 'MongoDB operator injection',
     },
     {
@@ -433,15 +433,15 @@ const SUSPICIOUS_PATTERNS: Record<
       severity: 3,
       description: 'MongoDB JavaScript injection',
     },
-    // Medium severity
+    // High severity (elevated to block by default)
     {
-      pattern: /{\s*\$.*?:/i,
-      severity: 2,
+      pattern: /{\s*\$.*?[:\]]/i,
+      severity: 3,
       description: 'NoSQL query operator pattern',
     },
     {
-      pattern: /\$or\s*:\s*\[/i,
-      severity: 2,
+      pattern: /\$or\s*[:\]]\s*\[/i,
+      severity: 3,
       description: 'MongoDB $or array injection',
     },
     // Low severity
@@ -577,7 +577,22 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'referer',
 ]);
+
+/**
+ * Fast-path trigger for suspicious strings to avoid iterating through all regexes.
+ * Includes characters that typically trigger SQLi, XSS, NoSQLi, and Path Traversal.
+ * SECURITY: Also include alphanumeric keywords that might trigger sensitive patterns (e.g. metadata.google)
+ */
+const SUSPICIOUS_TRIGGER_REGEX =
+  /[\$<>'"\\;&`\|\.\{\}\[\]\(\)=:/]|(metadata\.google|instance-data|printenv|whoami|hostname|tasklist|netstat|ipconfig|ifconfig)/i;
+
+/**
+ * Cache for scan results to improve performance on repetitive inputs
+ */
+const SCAN_RESULT_CACHE = new Map<string, SuspiciousPatternDetail[]>();
+const MAX_CACHE_SIZE = 1000;
 
 /**
  * Scan a string for suspicious patterns
@@ -589,7 +604,18 @@ function scanString(
   field?: string
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
-  if (!input) return [];
+  if (!input || input.length === 0) return [];
+
+  // PERFORMANCE: Fast path for strings that don't contain suspicious characters
+  if (!SUSPICIOUS_TRIGGER_REGEX.test(input)) return [];
+
+  // PERFORMANCE: Use cache for common inputs (limit cache size and input length)
+  const cacheKey = `${minSeverity}:${input}`;
+  if (input.length < 1000 && SCAN_RESULT_CACHE.has(cacheKey)) {
+    const cached = SCAN_RESULT_CACHE.get(cacheKey)!;
+    // Map cached results to update location and field
+    return cached.map((f) => ({ ...f, location, field }));
+  }
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
@@ -611,6 +637,15 @@ function scanString(
         pattern.lastIndex = 0;
       }
     }
+  }
+
+  // Cache findings (limit cache size)
+  if (input.length < 1000) {
+    if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
+      const firstKey = SCAN_RESULT_CACHE.keys().next().value;
+      if (firstKey !== undefined) SCAN_RESULT_CACHE.delete(firstKey);
+    }
+    SCAN_RESULT_CACHE.set(cacheKey, findings);
   }
 
   return findings;
@@ -656,6 +691,12 @@ export function detectSuspiciousPatterns(
     for (const [key, value] of url.searchParams.entries()) {
       const queryFindings = scanString(value, 'query', minSeverity, key);
       patterns.push(...queryFindings);
+
+      // SECURITY: Also scan keys if they contain suspicious characters (NoSQL bracket notation)
+      if (key.includes('$') || key.includes('[') || key.includes(']')) {
+        const keyFindings = scanString(key, 'query', minSeverity, key);
+        patterns.push(...keyFindings);
+      }
     }
   }
 

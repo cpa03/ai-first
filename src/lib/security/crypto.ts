@@ -50,6 +50,9 @@ export function generateId(): string {
 
   // 3. Last resort fallback (non-cryptographic)
   // This should only be reached in extremely restricted legacy environments
+  console.warn(
+    '[Security] Cryptographically secure ID generation unavailable. Falling back to insecure random generator.'
+  );
   const timestamp = Date.now().toString(36);
   const randomPart = Math.random().toString(36).substring(2, 11);
   return `${timestamp}-${randomPart}`;
@@ -100,5 +103,8 @@ export function secureRandom(): number {
 
   // Fallback to Math.random if Web Crypto API is unavailable
   // This is a last resort and will be flagged by security scripts
+  console.warn(
+    '[Security] Cryptographically secure random number generation unavailable. Falling back to insecure random generator.'
+  );
   return Math.random();
 }
