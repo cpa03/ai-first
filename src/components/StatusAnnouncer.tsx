@@ -25,6 +25,11 @@ function StatusAnnouncerComponent({
       clearTimeout(timeoutRef.current);
     }
 
+    // Reset previous message when not triggered to allow repetitive identical announcements
+    if (!triggered) {
+      previousMessageRef.current = '';
+    }
+
     if (triggered && message && message !== previousMessageRef.current) {
       timeoutRef.current = setTimeout(() => {
         const announcer = announcerRef.current;

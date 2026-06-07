@@ -36,6 +36,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const handleClick = useCallback(() => {
     setIsToggled(true);
     onToggle(task.id, task.status);
+    // Reset toggle state after announcement delay to allow re-announcement if toggled again
+    setTimeout(() => setIsToggled(false), 2000);
   }, [onToggle, task.id, task.status]);
 
   const handleKeyDown = useCallback(
@@ -44,6 +46,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
         e.preventDefault();
         setIsToggled(true);
         onToggle(task.id, task.status);
+        // Reset toggle state after announcement delay
+        setTimeout(() => setIsToggled(false), 2000);
       }
     },
     [onToggle, task.id, task.status]
