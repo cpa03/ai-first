@@ -577,7 +577,31 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'referer',
 ]);
+
+/**
+ * Fast-path trigger for suspicious strings to avoid iterating through all regexes.
+ * Includes critical keywords and control characters that trigger security patterns.
+ */
+const SUSPICIOUS_TRIGGER_REGEX =
+  /[\$<>'"\\;&`\|\.\{\}\[\]\(\)=:/]|(metadata\.google|instance-data|printenv|whoami|hostname|tasklist|netstat|ipconfig|ifconfig)/i;
+
+/**
+ * Internal interface for raw regex matches to avoid metadata corruption in cache.
+ */
+interface PatternMatch {
+  category: SuspiciousPatternCategory;
+  description: string;
+  severity: 1 | 2 | 3;
+}
+
+/**
+ * Cache for scan results to improve performance on repetitive inputs.
+ * PERFORMANCE: Stores raw PatternMatch references instead of finalized Detail objects.
+ */
+const SCAN_RESULT_CACHE = new Map<string, PatternMatch[]>();
+const MAX_CACHE_SIZE = 1000;
 
 /**
  * Scan a string for suspicious patterns
@@ -588,32 +612,59 @@ function scanString(
   minSeverity: number,
   field?: string
 ): SuspiciousPatternDetail[] {
-  // PERFORMANCE: Early return for empty input
-  if (!input) return [];
+  // PERFORMANCE: Early return for empty or safe input
+  if (!input || input.length === 0) return [];
 
-  const findings: SuspiciousPatternDetail[] = [];
-  const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
+  // PERFORMANCE: Fast-path skip for safe strings
+  if (!SUSPICIOUS_TRIGGER_REGEX.test(input)) return [];
 
-  // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
-  for (let i = 0; i < patterns.length; i++) {
-    const { category, pattern, severity, description } = patterns[i];
-    if (pattern.test(input)) {
-      findings.push({
-        category,
-        pattern: description,
-        location,
-        field,
-        severity,
-      });
+  // PERFORMANCE: Use cache for common inputs (limit cache size and input length)
+  const cacheKey = `${minSeverity}:${input}`;
+  let matches: PatternMatch[] | undefined;
 
-      // PERFORMANCE: Only reset lastIndex for global regexes to avoid unnecessary property access
-      if (pattern.global) {
-        pattern.lastIndex = 0;
+  if (input.length < 1000) {
+    matches = SCAN_RESULT_CACHE.get(cacheKey);
+  }
+
+  if (!matches) {
+    matches = [];
+    const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
+
+    // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
+    for (let i = 0; i < patterns.length; i++) {
+      const { category, pattern, severity, description } = patterns[i];
+      if (pattern.test(input)) {
+        matches.push({
+          category,
+          description,
+          severity,
+        });
+
+        // PERFORMANCE: Only reset lastIndex for global regexes to avoid unnecessary property access
+        if (pattern.global) {
+          pattern.lastIndex = 0;
+        }
       }
+    }
+
+    // Cache results for small strings
+    if (input.length < 1000) {
+      if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
+        const firstKey = SCAN_RESULT_CACHE.keys().next().value;
+        if (firstKey !== undefined) SCAN_RESULT_CACHE.delete(firstKey);
+      }
+      SCAN_RESULT_CACHE.set(cacheKey, matches);
     }
   }
 
-  return findings;
+  // Map matches to include dynamic context (location, field)
+  return matches.map((m) => ({
+    category: m.category,
+    pattern: m.description,
+    location,
+    field,
+    severity: m.severity,
+  }));
 }
 
 /**

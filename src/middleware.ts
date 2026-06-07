@@ -1,3 +1,4 @@
+export const runtime = 'experimental-edge';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
@@ -181,7 +182,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -227,4 +228,3 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };
-export default middleware;
