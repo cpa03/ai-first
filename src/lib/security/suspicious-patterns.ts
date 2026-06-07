@@ -577,7 +577,45 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'sec-fetch-dest',
+  'sec-fetch-mode',
+  'sec-fetch-site',
+  'sec-fetch-user',
+  'sec-ch-ua',
+  'sec-ch-ua-mobile',
+  'sec-ch-ua-platform',
+  'priority',
+  'origin',
+  'pragma',
+  'cache-control',
+  'upgrade-insecure-requests',
+  'purpose',
 ]);
+
+/**
+ * Combined trigger regex for ALL suspicious patterns to allow fast-path skipping.
+ * Covers common attack characters and keywords.
+ * Updated to include missing patterns found in regression tests.
+ */
+const SUSPICIOUS_TRIGGER_REGEX =
+  /[<>{}[\]\\^`|;'"=()]|\.\.|\.env|\.git|\.ssh|\.aws|\.bash_history|\.zsh_history|\.npmrc|\.yarnrc|\.docker|id_rsa|id_dsa|authorized_keys|known_hosts|--|\/\*|\*\/|\$|javascript:|vbscript:|on\w+=|srcdoc|union|select|insert|update|delete|drop|information_schema|pg_catalog|mysql|extractvalue|updatexml|pg_sleep|sleep|exec|waitfor|benchmark|rm|del|env|printenv|powershell|pwsh|cmd\.exe|whoami|process\.|localhost|127\.0\.0\.1|169\.254|168\.63\.129\.16|100\.100\.100\.200|192\.0\.0\.192|metadata\.google|instance-data|fd00:ec2::254|__proto__|constructor|prototype|jndi|ldap/i;
+
+/**
+ * Internal interface for matching patterns
+ */
+interface PatternMatch {
+  category: SuspiciousPatternCategory;
+  description: string;
+  severity: 1 | 2 | 3;
+}
+
+/**
+ * Cache for scan results to avoid repeated regex execution for same inputs.
+ * Limit size to prevent memory leaks.
+ * PERFORMANCE: We cache PatternMatch objects which are context-agnostic.
+ */
+const SCAN_RESULT_CACHE = new Map<string, PatternMatch[]>();
+const MAX_CACHE_SIZE = 500;
 
 /**
  * Scan a string for suspicious patterns
@@ -591,29 +629,60 @@ function scanString(
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
 
-  const findings: SuspiciousPatternDetail[] = [];
-  const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
+  // PERFORMANCE: Fast-path skip for clean strings.
+  // Most inputs (like normal search queries, IDs, etc.) won't contain these characters.
+  if (input.length < 1000 && !SUSPICIOUS_TRIGGER_REGEX.test(input)) {
+    return [];
+  }
 
-  // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
-  for (let i = 0; i < patterns.length; i++) {
-    const { category, pattern, severity, description } = patterns[i];
-    if (pattern.test(input)) {
-      findings.push({
-        category,
-        pattern: description,
-        location,
-        field,
-        severity,
-      });
+  // PERFORMANCE: Use cache for relatively small strings to avoid redundant regex tests.
+  // We include minSeverity in the cache key as it affects the result.
+  const cacheKey = `${minSeverity}:${input}`;
+  let matches: PatternMatch[] | undefined;
 
-      // PERFORMANCE: Only reset lastIndex for global regexes to avoid unnecessary property access
-      if (pattern.global) {
-        pattern.lastIndex = 0;
+  if (input.length < 1000) {
+    matches = SCAN_RESULT_CACHE.get(cacheKey);
+  }
+
+  if (!matches) {
+    matches = [];
+    const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
+
+    // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
+    for (let i = 0; i < patterns.length; i++) {
+      const { category, pattern, severity, description } = patterns[i];
+      if (pattern.test(input)) {
+        matches.push({
+          category,
+          description,
+          severity: severity as 1 | 2 | 3,
+        });
+
+        // PERFORMANCE: Only reset lastIndex for global regexes to avoid unnecessary property access
+        if (pattern.global) {
+          pattern.lastIndex = 0;
+        }
       }
+    }
+
+    // Update cache
+    if (input.length < 1000) {
+      if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
+        // Simple cache eviction: clear everything if full
+        SCAN_RESULT_CACHE.clear();
+      }
+      SCAN_RESULT_CACHE.set(cacheKey, matches);
     }
   }
 
-  return findings;
+  // Convert PatternMatch to SuspiciousPatternDetail with current context
+  return matches.map((m) => ({
+    category: m.category,
+    pattern: m.description,
+    location,
+    field,
+    severity: m.severity,
+  }));
 }
 
 /**
@@ -637,14 +706,14 @@ export function detectSuspiciousPatterns(
   const { scanBody = false, minSeverity = 2, logDetected = true } = options;
 
   const patterns: SuspiciousPatternDetail[] = [];
-  // Safety check: Handle undefined/invalid URL gracefully
+
+  // PERFORMANCE: Use request.nextUrl if available (Next.js specific) to avoid redundant URL parsing.
+  // Fall back to new URL(request.url) only if nextUrl is missing.
   let url: URL | null = null;
   try {
-    if (request.url) {
-      url = new URL(request.url);
-    }
+    url = (request as any).nextUrl || (request.url ? new URL(request.url) : null);
   } catch {
-    // Invalid URL - continue without path/query scanning
+    // Malformed URL - continue without path/query scanning
   }
 
   if (url) {
@@ -653,9 +722,13 @@ export function detectSuspiciousPatterns(
     patterns.push(...pathFindings);
 
     // Scan query parameters
-    for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+    // Handle both URLSearchParams and record-like objects
+    const searchParams = url.searchParams;
+    if (typeof searchParams?.entries === 'function') {
+      for (const [key, value] of searchParams.entries()) {
+        const queryFindings = scanString(value, 'query', minSeverity, key);
+        patterns.push(...queryFindings);
+      }
     }
   }
 
