@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
 } from '@/lib/config';
 import Tooltip from '../Tooltip';
+import StatusAnnouncer from '../StatusAnnouncer';
 
 interface TaskItemProps {
   task: Task;
@@ -22,6 +23,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -32,6 +34,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
+    setIsToggled(true);
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
 
@@ -39,6 +42,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        setIsToggled(true);
         onToggle(task.id, task.status);
       }
     },
@@ -83,8 +87,13 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     return showCelebration ? `${base} animate-task-complete` : base;
   }, [isCompleted, showCelebration]);
 
+  const announcementMessage = isCompleted
+    ? `Task completed: ${task.title}`
+    : `Task incomplete: ${task.title}`;
+
   return (
     <div className={containerClasses}>
+      <StatusAnnouncer message={announcementMessage} triggered={isToggled} />
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}
