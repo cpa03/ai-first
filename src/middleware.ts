@@ -181,8 +181,7 @@ function applyCloudflareHeaders(
   }
 }
 
-
-export default async function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -228,3 +227,4 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };
+export default middleware;

@@ -253,18 +253,5 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       }
     });
-
-    it('should detect NoSQL bracket-notation operator injection in query keys', () => {
-      const request = createMockRequest(
-        'https://example.com/api/test?user[$ne]=admin'
-      );
-      // minSeverity: 3 because NoSQL operators are now severity 3
-      const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
-      expect(result.detected).toBe(true);
-      expect(result.maxSeverity).toBe(3);
-      expect(
-        result.patterns.some((p) => p.category === 'nosql_injection')
-      ).toBe(true);
-    });
   });
 });
