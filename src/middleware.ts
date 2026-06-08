@@ -1,4 +1,3 @@
-export const runtime = 'experimental-edge';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';

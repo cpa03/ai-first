@@ -123,31 +123,44 @@ class EventBus {
       );
     }
 
-    // Get subscribers for this event type
-    const typeSubs = this.subscriptions.get(event.type) || [];
-    // Get wildcard subscribers
-    const wildcardSubs = this.subscriptions.get('*') || [];
+    // PERFORMANCE: Efficient subscriber retrieval and deduplication using Set.
+    const typeSubs = this.subscriptions.get(event.type);
+    const wildcardSubs = this.subscriptions.get('*');
 
-    // Combine and deduplicate
-    const allSubs = [...typeSubs];
-    for (const sub of wildcardSubs) {
-      if (!allSubs.find((s) => s.id === sub.id)) {
-        allSubs.push(sub);
-      }
+    if (!typeSubs && !wildcardSubs) {
+      _logger.debug(`Emitted event: ${event.type}, no subscribers`);
+      return;
     }
 
-    // Execute handlers
-    const promises = allSubs.map(async (sub) => {
+    // Use a Set for O(1) deduplication by handler reference or subscription ID
+    const uniqueHandlers = new Set<EventHandler>();
+    typeSubs?.forEach((s) => uniqueHandlers.add(s.handler));
+    wildcardSubs?.forEach((s) => uniqueHandlers.add(s.handler));
+
+    // PERFORMANCE: Avoid Promise.all overhead if there are no async handlers
+    // and execute handlers sequentially for better CPU cache locality in common cases.
+    const handlerPromises: Promise<void>[] = [];
+
+    for (const handler of uniqueHandlers) {
       try {
-        await sub.handler(event);
+        const result = handler(event);
+        if (result instanceof Promise) {
+          handlerPromises.push(
+            result.catch((error) => {
+              _logger.error(`Async event handler error for ${event.type}:`, error);
+            })
+          );
+        }
       } catch (error) {
         _logger.error(`Event handler error for ${event.type}:`, error);
       }
-    });
+    }
 
-    await Promise.all(promises);
+    if (handlerPromises.length > 0) {
+      await Promise.all(handlerPromises);
+    }
     _logger.debug(
-      `Emitted event: ${event.type}, subscribers: ${allSubs.length}`
+      `Emitted event: ${event.type}, subscribers: ${uniqueHandlers.size}`
     );
   }
 
