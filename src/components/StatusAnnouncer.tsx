@@ -36,6 +36,10 @@ function StatusAnnouncerComponent({
           });
         }
       }, delay);
+    } else if (!triggered) {
+      // Reset previous message ref when not triggered to allow re-announcement
+      // of the same message when triggered again (e.g. repetitive copy actions)
+      previousMessageRef.current = '';
     }
 
     return () => {

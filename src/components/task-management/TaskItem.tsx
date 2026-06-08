@@ -1,8 +1,9 @@
 'use client';
 
-import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
+import { triggerHapticFeedback } from '@/lib/utils';
 import {
   SVG_ANIMATION,
   TASK_STATUS_CONFIG,
@@ -11,6 +12,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
 } from '@/lib/config';
 import Tooltip from '../Tooltip';
+import StatusAnnouncer from '../StatusAnnouncer';
 
 interface TaskItemProps {
   task: Task;
@@ -22,6 +24,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
+  const toggleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (toggleTimeoutRef.current) {
+        clearTimeout(toggleTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -31,18 +43,33 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     }
   }, [isCompleted, isUpdating, task.status]);
 
-  const handleClick = useCallback(() => {
+  const handleToggle = useCallback(() => {
+    triggerHapticFeedback();
+    setIsToggled(true);
+
+    if (toggleTimeoutRef.current) {
+      clearTimeout(toggleTimeoutRef.current);
+    }
+
+    toggleTimeoutRef.current = setTimeout(() => {
+      setIsToggled(false);
+    }, 2000);
+
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
+
+  const handleClick = useCallback(() => {
+    handleToggle();
+  }, [handleToggle]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        onToggle(task.id, task.status);
+        handleToggle();
       }
     },
-    [onToggle, task.id, task.status]
+    [handleToggle]
   );
 
   const checkmarkStyle = useMemo(
@@ -83,8 +110,18 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     return showCelebration ? `${base} animate-task-complete` : base;
   }, [isCompleted, showCelebration]);
 
+  const announcementMessage = TASK_MANAGEMENT_MESSAGES.ARIA.STATUS_ANNOUNCEMENT(
+    task.title,
+    isCompleted
+  );
+
   return (
     <div className={containerClasses}>
+      <StatusAnnouncer
+        message={announcementMessage}
+        triggered={isToggled}
+        politeness="polite"
+      />
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}

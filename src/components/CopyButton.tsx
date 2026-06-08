@@ -6,6 +6,7 @@ import { UI_CONFIG } from '@/lib/config/constants';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -122,10 +123,15 @@ const CopyButtonComponent = function CopyButton({
       disabled={false}
       position="top"
     >
+      <StatusAnnouncer
+        message={successLabel}
+        triggered={copied}
+        politeness="polite"
+      />
       <button
         onClick={handleCopy}
         className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={copied ? 'Copied to clipboard' : ariaLabel}
+        aria-label={ariaLabel}
         type="button"
       >
         <span className="relative flex items-center justify-center w-4 h-4">
