@@ -6,7 +6,7 @@
  */
 
 import type { AgentEvent, EventPayloadMap, EventType } from './types';
-import { EVENT_BUS_CONFIG } from '@/lib/config';
+import { EVENT_BUS_CONFIG } from '@/lib/config/agents';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { generateId } from '@/lib/security/crypto';
@@ -111,11 +111,18 @@ class EventBus {
     // We clone the event to ensure that even if a subscriber mutates it, the audit log
     // contains the original data.
     if (EVENT_BUS_CONFIG.AUDIT_LOGGING_ENABLED) {
-      // Use structuredClone if available, fallback to simple clone for basic safety
+      // Use structuredClone for deep integrity, with a safe fallback.
+      // We prefer globalThis.structuredClone for explicit Edge compatibility.
       const eventToLog =
-        typeof structuredClone === 'function'
-          ? structuredClone(event)
-          : { ...event, payload: { ...(event.payload as object) } };
+        typeof globalThis.structuredClone === 'function'
+          ? globalThis.structuredClone(event)
+          : {
+              ...event,
+              payload:
+                typeof event.payload === 'object' && event.payload !== null
+                  ? { ...event.payload }
+                  : event.payload,
+            };
 
       // Fire and forget logging - do not await
       this.logEvent(eventToLog as T).catch((err) =>
