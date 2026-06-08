@@ -107,8 +107,21 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Log to database for audit trail
-    await this.logEvent(event);
+    // PERFORMANCE: Non-blocking audit logging to eliminate DB latency from critical path.
+    // We clone the event to ensure that even if a subscriber mutates it, the audit log
+    // contains the original data.
+    if (EVENT_BUS_CONFIG.AUDIT_LOGGING_ENABLED) {
+      // Use structuredClone if available, fallback to simple clone for basic safety
+      const eventToLog =
+        typeof structuredClone === 'function'
+          ? structuredClone(event)
+          : { ...event, payload: { ...(event.payload as object) } };
+
+      // Fire and forget logging - do not await
+      this.logEvent(eventToLog as T).catch((err) =>
+        _logger.warn('Failed to log event to database:', err)
+      );
+    }
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
