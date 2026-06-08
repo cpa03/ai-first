@@ -1,7 +1,7 @@
 /**
  * Proxy/Middleware Configuration
  * Configuration values for Next.js proxy (middleware)
- * Addresses hardcoded values in middleware.ts
+ * Addresses hardcoded values in proxy.ts
  */
 import { EnvLoader } from './environment';
 

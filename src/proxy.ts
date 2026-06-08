@@ -181,9 +181,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export const runtime = 'experimental-edge';
-
-export default async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
