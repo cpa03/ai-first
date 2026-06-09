@@ -107,8 +107,16 @@ class EventBus {
     // Add to history
     this.addToHistory(event);
 
-    // Log to database for audit trail
-    await this.logEvent(event);
+    // Log to database for audit trail (non-blocking to improve performance)
+    // We clone the event to ensure that if subscribers mutate it, the log remains accurate.
+    const eventClone =
+      typeof structuredClone === 'function'
+        ? structuredClone(event)
+        : JSON.parse(JSON.stringify(event));
+
+    this.logEvent(eventClone).catch((error) => {
+      _logger.warn('Failed to log event to database:', error);
+    });
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
