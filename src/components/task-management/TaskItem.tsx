@@ -96,6 +96,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             isCompleted
           )}
           aria-pressed={isCompleted}
+          type="button"
         >
           {isCompleted && (
             <svg
