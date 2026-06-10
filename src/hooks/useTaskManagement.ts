@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import type { Task, Deliverable } from '@/lib/db';
-import { triggerHapticFeedback } from '@/lib/utils';
 import type { TaskStatus } from '@/types/task';
 import { API_ENDPOINTS } from '@/lib/config';
 
@@ -227,9 +226,8 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           applyTaskStatusUpdate(prevData, taskId, newStatus)
         );
 
-        // Show haptic feedback for completion
+        // Show success toast for completion
         if (newStatus === 'completed' && typeof window !== 'undefined') {
-          triggerHapticFeedback();
           const task = findTask();
           if (task) {
             const win = window as unknown as {

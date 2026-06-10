@@ -3,6 +3,8 @@
 import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
+import { triggerHapticFeedback } from '@/lib/utils';
+import StatusAnnouncer from '../StatusAnnouncer';
 import {
   SVG_ANIMATION,
   TASK_STATUS_CONFIG,
@@ -22,6 +24,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -32,6 +35,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
+    triggerHapticFeedback();
+    setIsToggled(true);
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
 
@@ -39,6 +44,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        triggerHapticFeedback();
+        setIsToggled(true);
         onToggle(task.id, task.status);
       }
     },
@@ -85,6 +92,14 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
 
   return (
     <div className={containerClasses}>
+      <StatusAnnouncer
+        message={
+          isCompleted
+            ? `Completed: ${task.title}`
+            : `Marked as incomplete: ${task.title}`
+        }
+        triggered={isToggled}
+      />
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}
@@ -96,6 +111,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             isCompleted
           )}
           aria-pressed={isCompleted}
+          type="button"
         >
           {isCompleted && (
             <svg
