@@ -580,14 +580,6 @@ const SKIP_HEADERS = new Set([
 ]);
 
 /**
- * Cache for scan results to avoid repeated regex execution on identical strings.
- * Key format: `${minSeverity}:${input}`
- */
-const SCAN_RESULT_CACHE = new Map<string, SuspiciousPatternDetail[]>();
-const MAX_CACHE_SIZE = 1000;
-const MAX_CACHEABLE_LENGTH = 1000;
-
-/**
  * Scan a string for suspicious patterns
  */
 function scanString(
@@ -598,20 +590,6 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return [];
-
-  // PERFORMANCE: Cache lookup for small strings.
-  // Using a composite key to handle different minSeverity levels.
-  const cacheKey = `${minSeverity}:${input}`;
-  const shouldCache = input.length < MAX_CACHEABLE_LENGTH;
-
-  if (shouldCache) {
-    const cached = SCAN_RESULT_CACHE.get(cacheKey);
-    if (cached) {
-      // Return clones of cached results to avoid metadata corruption
-      // when field/location are updated by the caller.
-      return cached.map((f) => ({ ...f, location, field }));
-    }
-  }
 
   const findings: SuspiciousPatternDetail[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
@@ -633,19 +611,6 @@ function scanString(
         pattern.lastIndex = 0;
       }
     }
-  }
-
-  // PERFORMANCE: Update cache if applicable
-  if (shouldCache) {
-    if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
-      // Simple O(1) eviction: clear entire cache when full
-      SCAN_RESULT_CACHE.clear();
-    }
-    // Cache the findings without location/field context as it's added during retrieval
-    SCAN_RESULT_CACHE.set(
-      cacheKey,
-      findings.map((f) => ({ ...f, location: 'path', field: undefined }))
-    );
   }
 
   return findings;
@@ -689,9 +654,6 @@ export function detectSuspiciousPatterns(
 
     // Scan query parameters
     for (const [key, value] of url.searchParams.entries()) {
-      const keyFindings = scanString(key, 'query', minSeverity, key);
-      patterns.push(...keyFindings);
-
       const queryFindings = scanString(value, 'query', minSeverity, key);
       patterns.push(...queryFindings);
     }
