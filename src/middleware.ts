@@ -181,7 +181,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function proxy(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -216,6 +216,7 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
+  runtime: 'experimental-edge',
   matcher: [
     /*
      * Match all request paths except:
