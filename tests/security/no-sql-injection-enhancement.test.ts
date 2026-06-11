@@ -27,7 +27,6 @@ describe('NoSQL Injection Detection Enhancements', () => {
   });
 
   it('should detect NoSQL injection in query parameter keys (bracket notation)', () => {
-    // This currently fails because keys are not scanned and regex requires a colon
     const request = createMockRequest('https://example.com/api/test?id[$ne]=1');
     const result = detectSuspiciousPatterns(request, { minSeverity: 2 });
     expect(result.detected).toBe(true);
