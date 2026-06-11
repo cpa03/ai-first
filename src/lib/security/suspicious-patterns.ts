@@ -580,6 +580,24 @@ const SKIP_HEADERS = new Set([
 ]);
 
 /**
+ * Partial match data for caching to avoid storing redundant location/field metadata.
+ */
+type PatternMatch = {
+  category: SuspiciousPatternCategory;
+  pattern: string;
+  severity: 1 | 2 | 3;
+};
+
+/**
+ * PERFORMANCE: Results cache for scanString to avoid redundant regex execution
+ * on repeated values (e.g., common header values, repeat query params).
+ */
+const SCAN_RESULT_CACHE = new Map<string, PatternMatch[]>();
+const MAX_CACHE_SIZE = 500;
+const CACHE_INPUT_LENGTH_THRESHOLD = 1000;
+const EMPTY_FINDINGS: SuspiciousPatternDetail[] = [];
+
+/**
  * Scan a string for suspicious patterns
  */
 function scanString(
@@ -589,31 +607,66 @@ function scanString(
   field?: string
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
-  if (!input) return [];
+  if (!input) return EMPTY_FINDINGS;
 
-  const findings: SuspiciousPatternDetail[] = [];
+  // PERFORMANCE: Check cache for small inputs to avoid repeated regex runs.
+  // We use a composite key of minSeverity and input.
+  const isCacheable = input.length < CACHE_INPUT_LENGTH_THRESHOLD;
+  const cacheKey = isCacheable ? `${minSeverity}:${input}` : null;
+
+  if (cacheKey) {
+    const cached = SCAN_RESULT_CACHE.get(cacheKey);
+    if (cached) {
+      if (cached.length === 0) return EMPTY_FINDINGS;
+
+      // Reconstruct full detail objects with current location and field
+      return cached.map((match) => ({
+        ...match,
+        location,
+        field,
+      }));
+    }
+  }
+
+  const matches: PatternMatch[] = [];
   const patterns = PATTERNS_BY_MIN_SEVERITY[minSeverity] || [];
 
   // PERFORMANCE: Use simple for loop over pre-filtered array for maximum speed
   for (let i = 0; i < patterns.length; i++) {
     const { category, pattern, severity, description } = patterns[i];
     if (pattern.test(input)) {
-      findings.push({
+      matches.push({
         category,
         pattern: description,
-        location,
-        field,
         severity,
       });
 
-      // PERFORMANCE: Only reset lastIndex for global regexes to avoid unnecessary property access
+      // PERFORMANCE: Only reset lastIndex for global regexes
       if (pattern.global) {
         pattern.lastIndex = 0;
       }
     }
   }
 
-  return findings;
+  // Cache results if cacheable
+  if (cacheKey) {
+    if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
+      // Simple LRU: delete first entry (oldest insertion)
+      const firstKey = SCAN_RESULT_CACHE.keys().next().value;
+      if (firstKey !== undefined) {
+        SCAN_RESULT_CACHE.delete(firstKey);
+      }
+    }
+    SCAN_RESULT_CACHE.set(cacheKey, matches);
+  }
+
+  if (matches.length === 0) return EMPTY_FINDINGS;
+
+  return matches.map((match) => ({
+    ...match,
+    location,
+    field,
+  }));
 }
 
 /**
@@ -756,4 +809,12 @@ export function hasSuspiciousPatterns(
  */
 export function getPatternDefinitions(): typeof SUSPICIOUS_PATTERNS {
   return { ...SUSPICIOUS_PATTERNS };
+}
+
+/**
+ * Clear the scan result cache.
+ * Useful for testing and memory management.
+ */
+export function clearScanCache(): void {
+  SCAN_RESULT_CACHE.clear();
 }
