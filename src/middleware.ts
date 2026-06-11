@@ -4,6 +4,23 @@ import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
+/**
+ * Edge Middleware for Next.js
+ *
+ * Features:
+ * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
+ * - Authentication flow handling
+ * - Cloudflare Workers optimization (edge detection, geo, caching)
+ *
+ * Cloudflare Headers Used:
+ * - cf-ray: Request ID for debugging
+ * - cf-country/cf-ipcountry: Country code for geo features
+ * - cf-connecting-ip: Original client IP
+ * - cf-visitor: HTTPS info
+ *
+ * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
+ */
+
 export const runtime = 'experimental-edge';
 
 const PUBLIC_PATHS = [
