@@ -417,14 +417,16 @@ const SUSPICIOUS_PATTERNS: Record<
   // NoSQL Injection patterns (MongoDB, Redis, etc.)
   nosql_injection: [
     // High severity - NoSQL operator injection
+    // Enhanced to detect bracket notation and JSON-encoded operators
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern:
+        /\$(where|accumulator|function)(?:['"]?\s*:|\]|(?![a-zA-Z0-9]))/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)(?:['"]?\s*:|\]|(?![a-zA-Z0-9]))/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -435,7 +437,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     // Medium severity
     {
-      pattern: /{\s*\$.*?:/i,
+      pattern: /{\s*\$.*?(?:['"]?\s*:|\])/i,
       severity: 2,
       description: 'NoSQL query operator pattern',
     },
@@ -652,10 +654,15 @@ export function detectSuspiciousPatterns(
     const pathFindings = scanString(url.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
-    // Scan query parameters
+    // Scan query parameters (both keys and values)
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan key for injection (e.g., NoSQL bracket notation ?id[$ne]=1)
+      const keyFindings = scanString(key, 'query', minSeverity, `${key} (key)`);
+      patterns.push(...keyFindings);
+
+      // Scan value for injection
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...valueFindings);
     }
   }
 
@@ -665,11 +672,21 @@ export function detectSuspiciousPatterns(
     logger.warn('Body scanning requested but not yet implemented');
   }
 
-  // Scan headers safely - handle cases where headers.entries() might not exist (test mocks)
+  // Scan headers safely (both keys and values)
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
         if (!SKIP_HEADERS.has(key.toLowerCase())) {
+          // Scan header key
+          const keyFindings = scanString(
+            key,
+            'header',
+            minSeverity,
+            `${key} (key)`
+          );
+          patterns.push(...keyFindings);
+
+          // Scan header value
           const headerFindings = scanString(value, 'header', minSeverity, key);
           patterns.push(...headerFindings);
         }
