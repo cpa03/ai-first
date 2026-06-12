@@ -418,13 +418,13 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /(?:\$|\[\$)(where|accumulator|function)(?:\]|['"]?\s*:)/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
+        /(?:\$|\[\$)(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)(?:\]|['"]?\s*:)/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -440,7 +440,7 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'NoSQL query operator pattern',
     },
     {
-      pattern: /\$or\s*:\s*\[/i,
+      pattern: /(?:\$|\[\$)(or)(?:\]|['"]?\s*:\s*\[)/i,
       severity: 2,
       description: 'MongoDB $or array injection',
     },
@@ -484,7 +484,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     // Low severity
     {
-      pattern: /\[\s*['"]__proto__['"]\s*\]/i,
+      pattern: /\[\s*['"]?__proto__['"]?\s*\]/i,
       severity: 2,
       description: 'Bracket notation __proto__ access',
     },
@@ -654,8 +654,11 @@ export function detectSuspiciousPatterns(
 
     // Scan query parameters
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan both keys and values for suspicious patterns
+      // Key scanning helps detect bracket notation injection and other parameter-based attacks
+      const keyFindings = scanString(key, 'query', minSeverity, key);
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...keyFindings, ...valueFindings);
     }
   }
 
@@ -670,8 +673,10 @@ export function detectSuspiciousPatterns(
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
         if (!SKIP_HEADERS.has(key.toLowerCase())) {
+          // Scan both keys and values in headers (excluding safe standard headers)
+          const keyFindings = scanString(key, 'header', minSeverity, key);
           const headerFindings = scanString(value, 'header', minSeverity, key);
-          patterns.push(...headerFindings);
+          patterns.push(...keyFindings, ...headerFindings);
         }
       }
     }
