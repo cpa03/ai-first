@@ -108,18 +108,7 @@ class EventBus {
     this.addToHistory(event);
 
     // Log to database for audit trail
-    // PERFORMANCE: Non-blocking logging to prevent database latency from slowing down event processing.
-    // We clone the event to ensure that the logged data is not affected by any subsequent mutations
-    // by subscribers, preserving audit trail integrity.
-    const eventClone =
-      typeof structuredClone === 'function'
-        ? structuredClone(event)
-        : JSON.parse(JSON.stringify(event));
-
-    // Execute logging without awaiting to avoid blocking the event loop
-    this.logEvent(eventClone).catch((error) => {
-      _logger.warn('Failed to log event to database:', error);
-    });
+    await this.logEvent(event);
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
@@ -203,11 +192,16 @@ class EventBus {
   }
 
   private async logEvent(event: AgentEvent): Promise<void> {
-    await dbService.logAgentAction('event-bus', event.type, {
-      payload: event.payload,
-      source: event.source,
-      correlationId: event.correlationId,
-    });
+    try {
+      await dbService.logAgentAction('event-bus', event.type, {
+        payload: event.payload,
+        source: event.source,
+        correlationId: event.correlationId,
+      });
+    } catch (error) {
+      // Don't throw - logging should not block event processing
+      _logger.warn('Failed to log event to database:', error);
+    }
   }
 }
 
