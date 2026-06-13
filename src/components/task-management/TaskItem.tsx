@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
 import {

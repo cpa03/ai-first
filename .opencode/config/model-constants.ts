@@ -9,7 +9,7 @@
  *
  * Instead of:
  * ```json
- * "model": "opencode/minimax-m2.5-free"
+ * "model": "opencode/mimo-v2.5-free"
  * ```
  *
  * Use the constant:
@@ -26,7 +26,7 @@
 
 export const MODELS = {
   /** High reasoning capability model - for complex logic */
-  MINIMAX_M2_5_FREE: 'opencode/minimax-m2.5-free',
+  MINIMAX_M2_5_FREE: 'opencode/mimo-v2.5-free',
 
   /** Fast, efficient model - for UI/quick tasks */
   GLM_4_7_FREE: 'opencode/glm-4.7-free',
