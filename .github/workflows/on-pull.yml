@@ -71,7 +71,12 @@ jobs:
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
         run: |
-          opencode run /ulw-loop "$(cat <<'PROMPT'
+          max_retries=2
+          retry_count=0
+          echo "🏗️ Starting Pull Request Intelligence Cycle"
+          while [ $retry_count -lt $max_retries ]; do
+            echo "Attempt $((retry_count + 1)) of $max_retries"
+            if opencode run /ulw-loop "$(cat <<'PROMPT'
           YOU ARE AN AUTONOMOUS SOFTWARE ENGINEERING AGENT. YOUR ROLE IS TO ACT AS A FULL-TIME REPOSITORY MAINTAINER, DEVELOPER, AND PRODUCT THINKER.
 
           ========================
@@ -433,4 +438,16 @@ jobs:
           PROMPT
           )" \
             --model opencode/minimax-m2.5-free \
-            --share false \
+            --share false; then
+              echo "✅ Pull request work completed successfully"
+              break
+            fi
+            retry_count=$((retry_count + 1))
+            if [ $retry_count -lt $max_retries ]; then
+              echo "⚠️ Attempt failed, retrying in 30 seconds..."
+              sleep 30
+            else
+              echo "❌ All attempts failed"
+              exit 1
+            fi
+          done
