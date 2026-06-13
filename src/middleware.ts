@@ -181,7 +181,14 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function proxy(request: NextRequest) {
+/**
+ * CRITICAL: For Cloudflare Workers / OpenNext compatibility, the middleware
+ * MUST use the Edge runtime and a default export.
+ * Named exports like 'proxy' will cause routing failures in these environments.
+ */
+export const runtime = 'experimental-edge';
+
+export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
