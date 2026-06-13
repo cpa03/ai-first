@@ -49,6 +49,15 @@ const ShareButtonComponent = function ShareButton({
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const getWindow = () => {
     return window as unknown as Window & {
@@ -103,7 +112,8 @@ const ShareButtonComponent = function ShareButton({
           shareUrl,
         });
 
-        setTimeout(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
           setShared(false);
           setAnnouncement('');
         }, UI_CONFIG.COPY_FEEDBACK_DURATION);
@@ -131,7 +141,8 @@ const ShareButtonComponent = function ShareButton({
           shareUrl,
         });
 
-        setTimeout(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
           setShared(false);
           setAnnouncement('');
         }, UI_CONFIG.COPY_FEEDBACK_DURATION);

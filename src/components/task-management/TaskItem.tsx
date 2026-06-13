@@ -25,6 +25,15 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const [announcement, setAnnouncement] = useState('');
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -40,8 +49,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
       task.status === 'completed' ? 'Task marked incomplete' : 'Task completed'
     );
 
-    // Reset toggle state after delay to allow re-announcement
-    setTimeout(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
       setIsToggled(false);
       setAnnouncement('');
     }, 2000);
@@ -60,8 +69,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             : 'Task completed'
         );
 
-        // Reset toggle state after delay to allow re-announcement
-        setTimeout(() => {
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
           setIsToggled(false);
           setAnnouncement('');
         }, 2000);

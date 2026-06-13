@@ -57,6 +57,7 @@ const CopyButtonComponent = function CopyButton({
       setCopied(true);
       setAnnouncement(toastMessage);
 
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
         setAnnouncement('');
@@ -125,10 +126,10 @@ const CopyButtonComponent = function CopyButton({
       <StatusAnnouncer message={announcement} triggered={!!announcement} />
       <Tooltip
         content={copied ? successLabel : ariaLabel}
-      disabled={false}
-      position="top"
-    >
-      <button
+        disabled={false}
+        position="top"
+      >
+        <button
         onClick={handleCopy}
         className={`${baseClasses} ${variantClasses[variant]} ${className}`}
         aria-label={copied ? 'Copied to clipboard' : ariaLabel}
