@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
 } from '@/lib/config';
 import Tooltip from '../Tooltip';
+import StatusAnnouncer from '../StatusAnnouncer';
 
 interface TaskItemProps {
   task: Task;
@@ -22,6 +23,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -32,6 +35,17 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
+    setIsToggled(true);
+    setAnnouncement(
+      task.status === 'completed' ? 'Task marked incomplete' : 'Task completed'
+    );
+
+    // Reset toggle state after delay to allow re-announcement
+    setTimeout(() => {
+      setIsToggled(false);
+      setAnnouncement('');
+    }, 2000);
+
     onToggle(task.id, task.status);
   }, [onToggle, task.id, task.status]);
 
@@ -39,6 +53,19 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        setIsToggled(true);
+        setAnnouncement(
+          task.status === 'completed'
+            ? 'Task marked incomplete'
+            : 'Task completed'
+        );
+
+        // Reset toggle state after delay to allow re-announcement
+        setTimeout(() => {
+          setIsToggled(false);
+          setAnnouncement('');
+        }, 2000);
+
         onToggle(task.id, task.status);
       }
     },
@@ -85,6 +112,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
 
   return (
     <div className={containerClasses}>
+      <StatusAnnouncer message={announcement} triggered={isToggled} />
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}

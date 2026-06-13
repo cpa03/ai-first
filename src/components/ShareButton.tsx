@@ -7,6 +7,7 @@ import { APP_CONFIG } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -47,6 +48,7 @@ const ShareButtonComponent = function ShareButton({
   onShare,
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
 
   const getWindow = () => {
     return window as unknown as Window & {
@@ -95,12 +97,16 @@ const ShareButtonComponent = function ShareButton({
         triggerHapticFeedback();
         await navigator.share(shareData);
         setShared(true);
+        setAnnouncement('Thanks for sharing!');
         logger.debug('Successfully shared via Web Share API', {
           shareTitle,
           shareUrl,
         });
 
-        setTimeout(() => setShared(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
+        setTimeout(() => {
+          setShared(false);
+          setAnnouncement('');
+        }, UI_CONFIG.COPY_FEEDBACK_DURATION);
         showSuccessToast('Thanks for sharing!');
 
         // Growth: Fire onShare callback for analytics
@@ -120,11 +126,15 @@ const ShareButtonComponent = function ShareButton({
         triggerHapticFeedback();
         await navigator.clipboard.writeText(shareUrl);
         setShared(true);
+        setAnnouncement(toastMessage);
         logger.debug('Successfully copied share URL to clipboard', {
           shareUrl,
         });
 
-        setTimeout(() => setShared(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
+        setTimeout(() => {
+          setShared(false);
+          setAnnouncement('');
+        }, UI_CONFIG.COPY_FEEDBACK_DURATION);
         showSuccessToast(toastMessage);
 
         // Growth: Fire onShare callback for analytics (clipboard fallback)
@@ -170,19 +180,19 @@ const ShareButtonComponent = function ShareButton({
   };
 
   return (
-    <Tooltip
-      content={shared ? successLabel : ariaLabel}
-      disabled={false}
-      position="top"
-    >
-      <button
-        onClick={handleShare}
-        className={`${baseClasses} ${variantClasses[variant]} ${className}`}
-        aria-label={shared ? 'Shared' : ariaLabel}
-        aria-live="polite"
-        aria-atomic="true"
-        type="button"
+    <>
+      <StatusAnnouncer message={announcement} triggered={!!announcement} />
+      <Tooltip
+        content={shared ? successLabel : ariaLabel}
+        disabled={false}
+        position="top"
       >
+        <button
+          onClick={handleShare}
+          className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+          aria-label={shared ? 'Shared' : ariaLabel}
+          type="button"
+        >
         <span className="relative flex items-center justify-center w-4 h-4">
           {/* Share icon */}
           <svg
@@ -233,8 +243,9 @@ const ShareButtonComponent = function ShareButton({
             {shared ? successLabel : label}
           </span>
         )}
-      </button>
-    </Tooltip>
+        </button>
+      </Tooltip>
+    </>
   );
 };
 
