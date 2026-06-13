@@ -5,21 +5,19 @@ import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
 
 /**
- * Proxy for Next.js (replacement for deprecated middleware)
+ * Edge Middleware for Next.js
  *
  * Features:
  * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
  * - Authentication flow handling
  * - Cloudflare Workers optimization (edge detection, geo, caching)
  *
- * Cloudflare Headers Used:
- * - cf-ray: Request ID for debugging
- * - cf-country/cf-ipcountry: Country code for geo features
- * - cf-connecting-ip: Original client IP
- * - cf-visitor: HTTPS info
+ * CRITICAL: For Cloudflare Workers / OpenNext compatibility, the middleware
+ * MUST use the Edge runtime and a default export.
  *
- * See: https://nextjs.org/docs/messages/middleware-to-proxy
+ * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
+export const runtime = 'experimental-edge';
 
 const PUBLIC_PATHS = [
   '/',
@@ -180,13 +178,6 @@ function applyCloudflareHeaders(
     }
   }
 }
-
-/**
- * CRITICAL: For Cloudflare Workers / OpenNext compatibility, the middleware
- * MUST use the Edge runtime and a default export.
- * Named exports like 'proxy' will cause routing failures in these environments.
- */
-export const runtime = 'experimental-edge';
 
 export default async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
