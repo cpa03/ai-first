@@ -227,10 +227,97 @@ const LHCI_CONFIG = {
   },
 };
 
+/**
+ * Browser Scanner Configuration
+ * Used by brocula-scan.js, scan-console-firefox.js, and performance-audit-firefox.js
+ * Centralizes all hardcoded values from browser-based audit scripts
+ */
+const BROWSER_SCANNER_CONFIG = {
+  /**
+   * Base URL for scanning
+   * Env: BASE_URL (default: http://localhost:3000)
+   */
+  BASE_URL: getEnvString('BASE_URL', 'http://localhost:3000'),
+
+  /**
+   * Pages to scan for console errors
+   * Env: SCANNER_PAGES (default: '/,/dashboard,/clarify,/results')
+   * Comma-separated list of page paths
+   */
+  CONSOLE_SCAN_PAGES: getEnvString(
+    'SCANNER_PAGES',
+    '/,/dashboard,/clarify,/results'
+  ).split(','),
+
+  /**
+   * Pages to scan for performance
+   * Env: PERFORMANCE_SCANNER_PAGES (default: '/,/login,/signup,/dashboard,/clarify,/results')
+   */
+  PERFORMANCE_SCAN_PAGES: getEnvString(
+    'PERFORMANCE_SCANNER_PAGES',
+    '/,/login,/signup,/dashboard,/clarify,/results'
+  ).split(','),
+
+  /**
+   * Pages for Lighthouse Firefox audit (public pages only)
+   * Env: LIGHTHOUSE_FIREFOX_PAGES (default: '/,/login,/signup')
+   */
+  LIGHTHOUSE_PAGES: getEnvString(
+    'LIGHTHOUSE_FIREFOX_PAGES',
+    '/,/login,/signup'
+  ).split(','),
+
+  /**
+   * Navigation timeout in milliseconds
+   * Env: SCANNER_NAVIGATION_TIMEOUT (default: 30000)
+   */
+  NAVIGATION_TIMEOUT: getEnvNumber(
+    'SCANNER_NAVIGATION_TIMEOUT',
+    30000,
+    5000,
+    120000
+  ),
+
+  /**
+   * Wait time after page load for async errors in milliseconds
+   * Env: SCANNER_ASYNC_WAIT_MS (default: 2000)
+   */
+  ASYNC_WAIT_MS: getEnvNumber('SCANNER_ASYNC_WAIT_MS', 2000, 500, 10000),
+
+  /**
+   * Low score threshold for Lighthouse warnings
+   * Env: LIGHTHOUSE_LOW_SCORE_THRESHOLD (default: 70)
+   */
+  LOW_SCORE_THRESHOLD: getEnvNumber(
+    'LIGHTHOUSE_LOW_SCORE_THRESHOLD',
+    70,
+    0,
+    100
+  ),
+
+  /**
+   * Large image width threshold in pixels
+   * Env: SCANNER_LARGE_IMAGE_WIDTH (default: 1920)
+   */
+  LARGE_IMAGE_WIDTH: getEnvNumber('SCANNER_LARGE_IMAGE_WIDTH', 1920, 640, 3840),
+
+  /**
+   * Large image height threshold in pixels
+   * Env: SCANNER_LARGE_IMAGE_HEIGHT (default: 1080)
+   */
+  LARGE_IMAGE_HEIGHT: getEnvNumber(
+    'SCANNER_LARGE_IMAGE_HEIGHT',
+    1080,
+    480,
+    2160
+  ),
+};
+
 module.exports = {
   CONSOLE_SCANNER_CONFIG,
   LIGHTHOUSE_CONFIG,
   LHCI_CONFIG,
+  BROWSER_SCANNER_CONFIG,
   getEnvNumber,
   getEnvString,
 };
