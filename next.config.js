@@ -76,8 +76,7 @@ const nextConfig = {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          // Scripts: self + nonce-placeholder (replaced by middleware at runtime)
-          "script-src 'self' 'nonce-placeholder'",
+          "script-src 'self' 'unsafe-inline'",
           // Styles: self + inline (needed for Tailwind/CSS-in-JS)
           "style-src 'self' 'unsafe-inline'",
           // Images: self + data URIs + HTTPS sources
