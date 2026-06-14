@@ -4,9 +4,13 @@ const { default: lighthouse } = require('lighthouse');
 const { firefox } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const { BROWSER_SCANNER_CONFIG } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/login', '/signup'];
+const {
+  BASE_URL,
+  LIGHTHOUSE_PAGES: PAGES,
+  LOW_SCORE_THRESHOLD,
+} = BROWSER_SCANNER_CONFIG;
 
 const CONFIG = {
   extends: 'lighthouse:default',
@@ -173,13 +177,12 @@ async function main() {
   console.log('');
   console.log(`📄 Full report saved to: ${reportPath}`);
 
-  const lowScoreThreshold = 70;
   const lowScores = validAudits.filter(
     (a) =>
-      a.scores.performance < lowScoreThreshold ||
-      a.scores.accessibility < lowScoreThreshold ||
-      a.scores.bestPractices < lowScoreThreshold ||
-      a.scores.seo < lowScoreThreshold
+      a.scores.performance < LOW_SCORE_THRESHOLD ||
+      a.scores.accessibility < LOW_SCORE_THRESHOLD ||
+      a.scores.bestPractices < LOW_SCORE_THRESHOLD ||
+      a.scores.seo < LOW_SCORE_THRESHOLD
   );
 
   if (lowScores.length > 0) {
@@ -187,17 +190,17 @@ async function main() {
     console.log('⚠️  PAGES WITH LOW SCORES:');
     lowScores.forEach((a) => {
       console.log(`  ${a.url}:`);
-      if (a.scores.performance < lowScoreThreshold)
+      if (a.scores.performance < LOW_SCORE_THRESHOLD)
         console.log(`    - Performance: ${a.scores.performance.toFixed(1)}`);
-      if (a.scores.accessibility < lowScoreThreshold)
+      if (a.scores.accessibility < LOW_SCORE_THRESHOLD)
         console.log(
           `    - Accessibility: ${a.scores.accessibility.toFixed(1)}`
         );
-      if (a.scores.bestPractices < lowScoreThreshold)
+      if (a.scores.bestPractices < LOW_SCORE_THRESHOLD)
         console.log(
           `    - Best Practices: ${a.scores.bestPractices.toFixed(1)}`
         );
-      if (a.scores.seo < lowScoreThreshold)
+      if (a.scores.seo < LOW_SCORE_THRESHOLD)
         console.log(`    - SEO: ${a.scores.seo.toFixed(1)}`);
     });
     process.exit(1);
