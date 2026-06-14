@@ -64,18 +64,21 @@ ALTER TABLE clarification_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE clarification_answers ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for clarification_sessions
+DROP POLICY IF EXISTS "Users can view clarification sessions for their ideas" ON clarification_sessions;
 CREATE POLICY "Users can view clarification sessions for their ideas" ON clarification_sessions
     FOR SELECT USING (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid() AND deleted_at IS NULL)
         OR auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can create clarification sessions for their ideas" ON clarification_sessions;
 CREATE POLICY "Users can create clarification sessions for their ideas" ON clarification_sessions
     FOR INSERT WITH CHECK (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid())
         OR auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can update their clarification sessions" ON clarification_sessions;
 CREATE POLICY "Users can update their clarification sessions" ON clarification_sessions
     FOR UPDATE USING (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid())
@@ -83,6 +86,7 @@ CREATE POLICY "Users can update their clarification sessions" ON clarification_s
     );
 
 -- RLS Policies for clarification_answers
+DROP POLICY IF EXISTS "Users can view clarification answers for their sessions" ON clarification_answers;
 CREATE POLICY "Users can view clarification answers for their sessions" ON clarification_answers
     FOR SELECT USING (
         EXISTS (
@@ -95,6 +99,7 @@ CREATE POLICY "Users can view clarification answers for their sessions" ON clari
         OR auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can create clarification answers for their sessions" ON clarification_answers;
 CREATE POLICY "Users can create clarification answers for their sessions" ON clarification_answers
     FOR INSERT WITH CHECK (
         EXISTS (
@@ -106,6 +111,7 @@ CREATE POLICY "Users can create clarification answers for their sessions" ON cla
         OR auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can update their clarification answers" ON clarification_answers;
 CREATE POLICY "Users can update their clarification answers" ON clarification_answers
     FOR UPDATE USING (
         EXISTS (
@@ -131,11 +137,13 @@ END;
 $$ language 'plpgsql';
 
 -- Apply updated_at trigger to clarification_sessions
+DROP TRIGGER IF EXISTS update_clarification_sessions_updated_at ON clarification_sessions;
 CREATE TRIGGER update_clarification_sessions_updated_at
     BEFORE UPDATE ON clarification_sessions
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- Apply updated_at trigger to clarification_answers
+DROP TRIGGER IF EXISTS update_clarification_answers_updated_at ON clarification_answers;
 CREATE TRIGGER update_clarification_answers_updated_at
     BEFORE UPDATE ON clarification_answers
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

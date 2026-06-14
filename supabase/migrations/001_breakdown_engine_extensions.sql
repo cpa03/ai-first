@@ -154,21 +154,27 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
+DROP TRIGGER IF EXISTS update_milestones_updated_at ON milestones;
 CREATE TRIGGER update_milestones_updated_at BEFORE UPDATE ON milestones
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_task_comments_updated_at ON task_comments;
 CREATE TRIGGER update_task_comments_updated_at BEFORE UPDATE ON task_comments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_time_tracking_updated_at ON time_tracking;
 CREATE TRIGGER update_time_tracking_updated_at BEFORE UPDATE ON time_tracking
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_breakdown_sessions_updated_at ON breakdown_sessions;
 CREATE TRIGGER update_breakdown_sessions_updated_at BEFORE UPDATE ON breakdown_sessions
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_timelines_updated_at ON timelines;
 CREATE TRIGGER update_timelines_updated_at BEFORE UPDATE ON timelines
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_risk_assessments_updated_at ON risk_assessments;
 CREATE TRIGGER update_risk_assessments_updated_at BEFORE UPDATE ON risk_assessments
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
@@ -183,6 +189,7 @@ ALTER TABLE timelines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE risk_assessments ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for task_dependencies
+DROP POLICY IF EXISTS "Users can view task dependencies for their ideas" ON task_dependencies;
 CREATE POLICY "Users can view task dependencies for their ideas" ON task_dependencies
     FOR SELECT USING (
         EXISTS (
@@ -194,6 +201,7 @@ CREATE POLICY "Users can view task dependencies for their ideas" ON task_depende
         ) OR auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can create task dependencies for their ideas" ON task_dependencies;
 CREATE POLICY "Users can create task dependencies for their ideas" ON task_dependencies
     FOR INSERT WITH CHECK (
         EXISTS (
@@ -206,16 +214,20 @@ CREATE POLICY "Users can create task dependencies for their ideas" ON task_depen
     );
 
 -- RLS Policies for milestones
+DROP POLICY IF EXISTS "Users can view milestones for their ideas" ON milestones;
 CREATE POLICY "Users can view milestones for their ideas" ON milestones
     FOR SELECT USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Users can create milestones for their ideas" ON milestones;
 CREATE POLICY "Users can create milestones for their ideas" ON milestones
     FOR INSERT WITH CHECK (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Users can update milestones for their ideas" ON milestones;
 CREATE POLICY "Users can update milestones for their ideas" ON milestones
     FOR UPDATE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 -- RLS Policies for task_assignments
+DROP POLICY IF EXISTS "Users can view task assignments for their ideas" ON task_assignments;
 CREATE POLICY "Users can view task assignments for their ideas" ON task_assignments
     FOR SELECT USING (
         EXISTS (
@@ -228,13 +240,16 @@ CREATE POLICY "Users can view task assignments for their ideas" ON task_assignme
     );
 
 -- RLS Policies for time_tracking
+DROP POLICY IF EXISTS "Users can view their own time tracking" ON time_tracking;
 CREATE POLICY "Users can view their own time tracking" ON time_tracking
     FOR SELECT USING (user_id = auth.uid() OR auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Users can create their own time tracking" ON time_tracking;
 CREATE POLICY "Users can create their own time tracking" ON time_tracking
     FOR INSERT WITH CHECK (user_id = auth.uid() OR auth.role() = 'service_role');
 
 -- RLS Policies for task_comments
+DROP POLICY IF EXISTS "Users can view comments for their ideas" ON task_comments;
 CREATE POLICY "Users can view comments for their ideas" ON task_comments
     FOR SELECT USING (
         EXISTS (
@@ -246,6 +261,7 @@ CREATE POLICY "Users can view comments for their ideas" ON task_comments
         ) OR auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can create comments for their ideas" ON task_comments;
 CREATE POLICY "Users can create comments for their ideas" ON task_comments
     FOR INSERT WITH CHECK (
         EXISTS (
@@ -258,26 +274,32 @@ CREATE POLICY "Users can create comments for their ideas" ON task_comments
     );
 
 -- RLS Policies for breakdown_sessions
+DROP POLICY IF EXISTS "Users can view breakdown sessions for their ideas" ON breakdown_sessions;
 CREATE POLICY "Users can view breakdown sessions for their ideas" ON breakdown_sessions
     FOR SELECT USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Users can create breakdown sessions for their ideas" ON breakdown_sessions;
 CREATE POLICY "Users can create breakdown sessions for their ideas" ON breakdown_sessions
     FOR INSERT WITH CHECK (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 -- RLS Policies for timelines
+DROP POLICY IF EXISTS "Users can view timelines for their ideas" ON timelines;
 CREATE POLICY "Users can view timelines for their ideas" ON timelines
     FOR SELECT USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
+DROP POLICY IF EXISTS "Users can create timelines for their ideas" ON timelines;
 CREATE POLICY "Users can create timelines for their ideas" ON timelines
     FOR INSERT WITH CHECK (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 -- RLS Policies for risk_assessments
+DROP POLICY IF EXISTS "Users can view risk assessments for their ideas" ON risk_assessments;
 CREATE POLICY "Users can view risk assessments for their ideas" ON risk_assessments
     FOR SELECT USING (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR 
         auth.role() = 'service_role'
     );
 
+DROP POLICY IF EXISTS "Users can create risk assessments for their ideas" ON risk_assessments;
 CREATE POLICY "Users can create risk assessments for their ideas" ON risk_assessments
     FOR INSERT WITH CHECK (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR 
