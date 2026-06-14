@@ -124,11 +124,6 @@
       "enabled": true
     }
   },
-  "lsp": {
-    "enabled": true,
-    "refactoring": true,
-    "diagnostics": true
-  },
   "skills": {
     "paths": [".opencode/skills"]
   },
