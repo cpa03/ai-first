@@ -104,11 +104,29 @@ class EventBus {
    * @param event - The event to emit
    */
   async emit<T extends AgentEvent>(event: T): Promise<void> {
+    // PERFORMANCE: Non-blocking logging with a deep copy to prevent issues with mutable event objects.
+    // This allows the event emission to complete immediately without waiting for DB logging.
+    // We use a safe deep copy fallback if structuredClone is unavailable (e.g. older Node or some test envs).
+    const captureEvent = () => {
+      try {
+        if (typeof structuredClone === 'function') {
+          return structuredClone(event);
+        }
+        return JSON.parse(JSON.stringify(event));
+      } catch {
+        return event; // Fallback to original if cloning fails
+      }
+    };
+
+    const eventToLog = captureEvent();
+
+    // Log to database for audit trail (non-blocking)
+    this.logEvent(eventToLog).catch((err) => {
+      _logger.warn('Background event logging failed:', err);
+    });
+
     // Add to history
     this.addToHistory(event);
-
-    // Log to database for audit trail
-    await this.logEvent(event);
 
     // Get subscribers for this event type
     const typeSubs = this.subscriptions.get(event.type) || [];
