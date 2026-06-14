@@ -55,165 +55,163 @@
 
    **Check health status**: [http://localhost:3000/api/health](http://localhost:3000/api/health)
 
-#SB|## 📁 Project Structure
-#QH|
-#PH|``text
-#PX|/README.md                    ← This file
-#QH|/blueprint.md                  ← Project blueprint and architecture
-#VY|/docs/                        ← Documentation
-#NR|  /architecture.md           ← Technical architecture details
-#HS|  /agent-guidelines.md       ← Agent behavior rules
-#RY|  /api.md                   ← Complete API reference
-#RP|  /error-codes.md           ← Error code reference
-#BW|  /health-monitoring.md      ← Health monitoring guide
-#TH|  /deploy.md                ← Deployment instructions
-#HT|  /troubleshooting.md       ← Troubleshooting guide
-#HS|  /integration-hardening.md  ← Resilience patterns
-#HH|  /templates/               ← User-downloadable templates
-#HH|  /security/                ← Security audit reports
-#HH|  /adr/                     ← Architecture decision records
-#HH|  /user-stories/            ← User story specifications
-#BY|  /src/
-#PJ|  /app/                    ← Next.js app (app router)
-#XY|    /clarify/              ← Clarification flow pages
-#NY|    /results/              ← Results display pages
-#PK|    /dashboard/            ← Dashboard and analytics pages
-#VB|    /login/                ← Login page
-#VB|    /signup/               ← Signup page
-#VB|    /auth/callback/        ← OAuth callback handler
-#PB|    /api/                  ← API routes
-#SN|      /health/             ← Health check endpoints
-#XK|        /detailed/        ← Detailed health check
-#XK|        /database/        ← Database health check
-#XK|        /live/            ← Liveness probe
-#XK|        /ready/           ← Readiness probe
-#XK|        /integrations/    ← External integrations health
-#ZP|      /clarify/            ← Clarification API
-#ZP|        /start/           ← Start clarification session
-#ZP|        /answer/          ← Submit clarification answer
-#ZP|        /complete/        ← Complete clarification
-#ZP|      /breakdown/          ← Breakdown API
-#PW|      /ideas/              ← Ideas CRUD API
-#PW|        /[id]/tasks/      ← Tasks for idea
-#PW|        /[id]/session/    ← Session management
-#PW|        /[id]/route.ts    ← Single idea CRUD
-#KK|      /deliverables/       ← Deliverables API
-#KK|        /[id]/tasks/      ← Tasks for deliverable
-#KP|      /tasks/              ← Tasks API
-#KP|        /[id]/           ← Single task
-#KP|        /[id]/status/     ← Task status update
-#HR|      /metrics/            ← Metrics API
-#RT|      /admin/              ← Admin endpoints
-#RT|        /rate-limit/      ← Rate limit management
-#RT|      /csp-report/         ← CSP violation reports
-#RT|      /robots.ts          ← Robots.txt
-#RT|      /sitemap.ts         ← Sitemap
-#XM|  /components/             ← React components
-#PR|    /Alert.tsx             ← Alert component
-#RT|    /AutoSaveIndicator.tsx  ← Auto-save status indicator
-#SJ|    /BlueprintDisplay.tsx   ← Blueprint display UI
-#VH|    /Button.tsx            ← Reusable button component
-#ZH|    /ClarificationFlow.tsx  ← Clarification workflow UI
+## 📁 Project Structure
+
+```text
+/README.md                    ← This file
+/blueprint.md                  ← Project blueprint and architecture
+/docs/                        ← Documentation
+  /architecture.md           ← Technical architecture details
+  /agent-guidelines.md       ← Agent behavior rules
+  /api.md                   ← Complete API reference
+  /error-codes.md           ← Error code reference
+  /health-monitoring.md      ← Health monitoring guide
+  /deploy.md                ← Deployment instructions
+  /troubleshooting.md       ← Troubleshooting guide
+  /integration-hardening.md  ← Resilience patterns
+  /templates/               ← User-downloadable templates
+  /security/                ← Security audit reports
+  /adr/                     ← Architecture decision records
+  /user-stories/            ← User story specifications
+/src/
+  /app/                    ← Next.js app (app router)
+    /clarify/              ← Clarification flow pages
+    /results/              ← Results display pages
+    /dashboard/            ← Dashboard and analytics pages
+    /login/                ← Login page
+    /signup/               ← Signup page
+    /auth/callback/        ← OAuth callback handler
+    /api/                  ← API routes
+      /health/             ← Health check endpoints
+        /detailed/        ← Detailed health check
+        /database/        ← Database health check
+        /live/            ← Liveness probe
+        /ready/           ← Readiness probe
+        /integrations/    ← External integrations health
+      /clarify/            ← Clarification API
+        /start/           ← Start clarification session
+        /answer/          ← Submit clarification answer
+        /complete/        ← Complete clarification
+      /breakdown/          ← Breakdown API
+      /ideas/              ← Ideas CRUD API
+        /[id]/tasks/      ← Tasks for idea
+        /[id]/session/    ← Session management
+        /[id]/route.ts    ← Single idea CRUD
+      /deliverables/       ← Deliverables API
+        /[id]/tasks/      ← Tasks for deliverable
+      /tasks/              ← Tasks API
+        /[id]/           ← Single task
+        /[id]/status/     ← Task status update
+      /metrics/            ← Metrics API
+      /admin/              ← Admin endpoints
+        /rate-limit/      ← Rate limit management
+      /csp-report/         ← CSP violation reports
+      /robots.ts          ← Robots.txt
+      /sitemap.ts         ← Sitemap
+  /components/             ← React components
+    /Alert.tsx             ← Alert component
+    /AutoSaveIndicator.tsx  ← Auto-save status indicator
+    /BlueprintDisplay.tsx   ← Blueprint display UI
+    /Button.tsx            ← Reusable button component
+    /ClarificationFlow.tsx  ← Clarification workflow UI
     /CopyButton.tsx         ← Copy to clipboard button
     /EmailButton.tsx         ← Email send-to-self button
-#JS|    /ErrorBoundary.tsx      ← Error boundary component
-#QM|    /FeatureGrid.tsx        ← Feature showcase grid
-#HB|    /GlobalErrorHandler.tsx  ← Global error handling
-#YK|    /IdeaInput.tsx          ← Idea input component
-#BX|    /InputWithValidation.tsx ← Form input with validation
-#YQ|    /KeyboardShortcutsHelp.tsx ← Keyboard shortcuts help
-#SK|    /KeyboardShortcutsProvider.tsx ← Keyboard shortcuts context
-#RN|    /LoadingAnnouncer.tsx   ← Screen reader announcements
-#TQ|    /LoadingOverlay.tsx     ← Loading overlay component
-#MQ|    /LoadingSpinner.tsx     ← Spinner component
-#TB|    /MobileNav.tsx         ← Responsive navigation
-#WX|    /ProgressStepper.tsx    ← Progress indicator
-#QS|    /ScrollToTop.tsx        ← Scroll to top button
-#XK|    /Skeleton.tsx           ← Skeleton loading component
-#QZ|    /StepCelebration.tsx    ← Step completion celebration
-#TT|    /SuccessCelebration.tsx  ← Success celebration animation
-#RR|    /TaskManagement.tsx     ← Task management UI
-#PS|    /ToastContainer.tsx     ← Toast notification container
-#BR|    /Tooltip.tsx            ← Accessible tooltip component
-#YQ|    /WhyChooseSection.tsx   ← Why choose section
-#JW|    /UserOnboarding.tsx     ← User onboarding flow
-#JW|    /ShareButton.tsx        ← Share functionality
-#JW|    /ReferralLink.tsx       ← Referral link component
-#PR|    /task-management/       ← Task management components
-#KK|      /DeliverableCard.tsx    ← Deliverable card with tasks list
-#KK|      /TaskItem.tsx           ← Individual task item with status toggle
-#KK|      /TaskManagementHeader.tsx ← Header with progress stats
-#HX|  /hooks/                  ← React custom hooks
-#QY|    /useTaskManagement.ts   ← Task management hook
-#QY|    /useAuthCheck.ts        ← Authentication check hook
-#QY|    /useBlueprintGeneration.ts ← Blueprint generation hook
-QV|#QY|    /useClarificationSession.ts ← Clarification session hook
-#QY|    /useSessionDuration.ts   ← Session duration tracking hook
-#PM|  /lib/
-#PM|  /lib/                    ← Core utilities
-#BM|    /auth.ts              ← Authentication service
-#HN|    /db.ts                ← Database service
-#BK|    /api-client.ts        ← API client utilities
-#KB|    /api-handler.ts       ← API request handler
-#ZT|    /errors.ts            ← Error handling
-#PM|    /rate-limit.ts        ← Rate limiting
-#PM|    /external-rate-limit.ts ← External rate limit service
-#PM|    /use-cache.ts         ← Caching utilities
-#PM|    /metrics.ts          ← Metrics collection
-#PM|    /logger.ts           ← Logging utilities
-#PM|    /config-service.ts    ← Configuration service
-#PM|    /type-guards.ts      ← Type guard utilities
-#PM|    /resilience/          ← Resilience framework
-#SR|      /circuit-breaker.ts    ← Circuit breaker implementation
-#BJ|      /circuit-breaker-manager.ts ← Circuit breaker manager
-#PK|      /retry-manager.ts      ← Retry logic manager
-#MK|      /timeout-manager.ts    ← Timeout management
-#WX|      /resilient-wrapper.ts  ← Resilient operation wrapper
-#WX|      /manager.ts           ← Resilience manager
-#WX|      /config.ts            ← Resilience config
-#WX|      /types.ts             ← Resilience types
-#RT|  /types/                   ← TypeScript type definitions
-#RT|    /api.ts               ← API response types
-#RT|    /database.ts          ← Database types
-#RT|    /task.ts              ← Task types
-#RT|    /cloudflare.d.ts      ← Cloudflare types
-#QJ|  /styles/                  ← Global styles
-#RS|  /templates/               ← Template files
-#BQ|    /blueprint-template.ts ← Blueprint template
-#JP|  /proxy.ts                 ← Next.js middleware (replacement)
-#JP|  /instrumentation.ts      ← Next.js instrumentation
-#JP|  /instrumentation.node.ts  ← Node-specific instrumentation
-#MJ|/supabase/
-#RX|  schema.sql                 ← Database schema
-#MJ|/ai/
-#JR|  /agent-configs/           ← Agent configuration files
-#MZ|    clarifier.yml           ← Clarifier agent config
-#QJ|    breakdown-engine.yml     ← Breakdown engine config
-#WZ|/config/
-#TK|  /.env.example             ← Environment variable template
-#TK|  /.env.test.example       ← Test environment template
-#TK|  /agent-policy.md          ← Agent behavior rules
-#QH|/scripts/
-#ZP|  /validate-env.sh          ← Environment validation script
-#ZP|  /setup-cloudflare-env.sh ← Cloudflare environment setup
-#ZP|  /security-check.sh        ← Security validation script
-#ZP|  /check-circular-deps.js   ← Circular dependency checker
-#ZP|  /scan-console.js          ← Console log scanner
-#ZP|  /lighthouse-audit.js      ← Lighthouse performance audit
-#ZP|  /validate-ci-config.js    ← CI configuration validator
-#ZP|  /validate-user-stories.js  ← User story validator
-#ZP|  /docs-link-validator.js   ← Documentation link checker
-#ZP|  /setup.js                 ← Project setup script
-#ZP|  /config.js                ← Configuration loader
-#ZP|  /generate-pwa-icons.js    ← PWA icon generator
-#XT|/tests/                     ← Test files
-#WZ|  /api/                    ← API tests
-#QB|  /utils/                   ← Test utilities
-#RM|  /fixtures/                ← Test data and mocks
-#PJ|/.github/workflows/          ← GitHub Actions automation
-#KM|/.husky/                     ← Git hooks
-#KM|`text
-#HM|
+    /ErrorBoundary.tsx      ← Error boundary component
+    /FeatureGrid.tsx        ← Feature showcase grid
+    /GlobalErrorHandler.tsx  ← Global error handling
+    /IdeaInput.tsx          ← Idea input component
+    /InputWithValidation.tsx ← Form input with validation
+    /KeyboardShortcutsHelp.tsx ← Keyboard shortcuts help
+    /KeyboardShortcutsProvider.tsx ← Keyboard shortcuts context
+    /LoadingAnnouncer.tsx   ← Screen reader announcements
+    /LoadingOverlay.tsx     ← Loading overlay component
+    /LoadingSpinner.tsx     ← Spinner component
+    /MobileNav.tsx         ← Responsive navigation
+    /ProgressStepper.tsx    ← Progress indicator
+    /ScrollToTop.tsx        ← Scroll to top button
+    /Skeleton.tsx           ← Skeleton loading component
+    /StepCelebration.tsx    ← Step completion celebration
+    /SuccessCelebration.tsx  ← Success celebration animation
+    /TaskManagement.tsx     ← Task management UI
+    /ToastContainer.tsx     ← Toast notification container
+    /Tooltip.tsx            ← Accessible tooltip component
+    /WhyChooseSection.tsx   ← Why choose section
+    /UserOnboarding.tsx     ← User onboarding flow
+    /ShareButton.tsx        ← Share functionality
+    /ReferralLink.tsx       ← Referral link component
+    /task-management/       ← Task management components
+      /DeliverableCard.tsx    ← Deliverable card with tasks list
+      /TaskItem.tsx           ← Individual task item with status toggle
+      /TaskManagementHeader.tsx ← Header with progress stats
+  /hooks/                  ← React custom hooks
+    /useTaskManagement.ts   ← Task management hook
+    /useAuthCheck.ts        ← Authentication check hook
+    /useBlueprintGeneration.ts ← Blueprint generation hook
+    /useClarificationSession.ts ← Clarification session hook
+    /useSessionDuration.ts   ← Session duration tracking hook
+  /lib/                    ← Core utilities
+    /auth.ts              ← Authentication service
+    /db.ts                ← Database service
+    /api-client.ts        ← API client utilities
+    /api-handler.ts       ← API request handler
+    /errors.ts            ← Error handling
+    /rate-limit.ts        ← Rate limiting
+    /external-rate-limit.ts ← External rate limit service
+    /use-cache.ts         ← Caching utilities
+    /metrics.ts          ← Metrics collection
+    /logger.ts           ← Logging utilities
+    /config-service.ts    ← Configuration service
+    /type-guards.ts      ← Type guard utilities
+    /resilience/          ← Resilience framework
+      /circuit-breaker.ts    ← Circuit breaker implementation
+      /circuit-breaker-manager.ts ← Circuit breaker manager
+      /retry-manager.ts      ← Retry logic manager
+      /timeout-manager.ts    ← Timeout management
+      /resilient-wrapper.ts  ← Resilient operation wrapper
+      /manager.ts           ← Resilience manager
+      /config.ts            ← Resilience config
+      /types.ts             ← Resilience types
+  /types/                   ← TypeScript type definitions
+    /api.ts               ← API response types
+    /database.ts          ← Database types
+    /task.ts              ← Task types
+    /cloudflare.d.ts      ← Cloudflare types
+  /styles/                  ← Global styles
+  /templates/               ← Template files
+    /blueprint-template.ts ← Blueprint template
+  /proxy.ts                 ← Next.js middleware (replacement)
+  /instrumentation.ts      ← Next.js instrumentation
+  /instrumentation.node.ts  ← Node-specific instrumentation
+/supabase/
+  schema.sql                 ← Database schema
+/ai/
+  /agent-configs/           ← Agent configuration files
+    clarifier.yml           ← Clarifier agent config
+    breakdown-engine.yml     ← Breakdown engine config
+/config/
+  /.env.example             ← Environment variable template
+  /.env.test.example       ← Test environment template
+  /agent-policy.md          ← Agent behavior rules
+/scripts/
+  /validate-env.sh          ← Environment validation script
+  /setup-cloudflare-env.sh ← Cloudflare environment setup
+  /security-check.sh        ← Security validation script
+  /check-circular-deps.js   ← Circular dependency checker
+  /scan-console.js          ← Console log scanner
+  /lighthouse-audit.js      ← Lighthouse performance audit
+  /validate-ci-config.js    ← CI configuration validator
+  /validate-user-stories.js  ← User story validator
+  /docs-link-validator.js   ← Documentation link checker
+  /setup.js                 ← Project setup script
+  /config.js                ← Configuration loader
+  /generate-pwa-icons.js    ← PWA icon generator
+/tests/                     ← Test files
+  /api/                    ← API tests
+  /utils/                   ← Test utilities
+  /fixtures/                ← Test data and mocks
+/.github/workflows/          ← GitHub Actions automation
+/.husky/                     ← Git hooks
+```
 
 ## 🤖 How the Agent System Works
 
@@ -266,7 +264,7 @@ npm run env:check
 
 # Deploy to Vercel
 vercel --prod
-```bash
+```
 
 ## 🏗️ Architecture Summary
 
@@ -277,10 +275,6 @@ vercel --prod
 - **AI**: OpenAI/Anthropic APIs via abstraction layer
 - **Hosting**: Vercel (free tier)
 - **CI/CD**: GitHub Actions with OpenCode CLI agents
-
-### Component Interaction
-
-```text
 
 ### Phase 0 Current Capabilities
 
