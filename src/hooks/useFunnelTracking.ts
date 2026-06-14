@@ -11,6 +11,9 @@
 
 import { useCallback, useRef, useEffect, useMemo } from 'react';
 import { trackFunnelStep, trackFunnelDropoff, flush } from '@/lib/analytics';
+import { createLogger } from '@/lib/logger';
+
+const logger = createLogger('FunnelTracking');
 
 /**
  * Funnel configuration
@@ -98,8 +101,8 @@ export function useFunnelTracking(
     (step: number) => {
       // Validate step
       if (step < 1 || step > totalSteps) {
-        console.warn(
-          `[FunnelTracking] Invalid step ${step} for funnel "${name}" with ${totalSteps} steps`
+        logger.warn(
+          `Invalid step ${step} for funnel "${name}" with ${totalSteps} steps`
         );
         return;
       }
@@ -130,9 +133,7 @@ export function useFunnelTracking(
     (atStep: number) => {
       // Validate step
       if (atStep < 1 || atStep > totalSteps) {
-        console.warn(
-          `[FunnelTracking] Invalid dropoff step ${atStep} for funnel "${name}"`
-        );
+        logger.warn(`Invalid dropoff step ${atStep} for funnel "${name}"`);
         return;
       }
 

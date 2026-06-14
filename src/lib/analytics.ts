@@ -321,7 +321,7 @@ function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
 
   if (!apiKey) {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.warn('[Analytics] PostHog API key not configured');
+      logger.warn('PostHog API key not configured');
     }
     return;
   }
@@ -349,7 +349,7 @@ function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
     body: JSON.stringify(posthogEvents),
   }).catch((error) => {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.error('[Analytics] Failed to send events to PostHog:', error);
+      logger.error('Failed to send events to PostHog:', error);
     }
   });
 }
@@ -363,7 +363,7 @@ function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
 
   if (!apiKey) {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.warn('[Analytics] PostHog API key not configured');
+      logger.warn('PostHog API key not configured');
     }
     return;
   }
@@ -391,7 +391,7 @@ function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
     credentials: 'omit' as RequestCredentials,
   }).catch((error) => {
     if (ANALYTICS_CONFIG.DEBUG) {
-      console.error('[Analytics] Failed to send events to PostHog:', error);
+      logger.error('Failed to send events to PostHog:', error);
     }
   });
 }
