@@ -129,6 +129,7 @@ export default function NotificationPrompt({
           <button
             onClick={handleEnable}
             disabled={isRequesting}
+            type="button"
             className={`
               px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200
               bg-primary-600 text-white hover:bg-primary-700
@@ -170,6 +171,7 @@ export default function NotificationPrompt({
           {dismissible && (
             <button
               onClick={handleDismiss}
+              type="button"
               className="p-1 text-primary-400 hover:text-primary-600 transition-colors rounded"
               aria-label="Dismiss notification prompt"
             >
@@ -236,6 +238,7 @@ export default function NotificationPrompt({
             <button
               onClick={handleEnable}
               disabled={isRequesting}
+              type="button"
               className={`
                 inline-flex items-center justify-center gap-2 px-4 py-2
                 text-sm font-medium rounded-lg transition-all duration-200
@@ -245,6 +248,7 @@ export default function NotificationPrompt({
                 disabled:opacity-50 disabled:cursor-not-allowed
                 active:scale-[0.98]
               `}
+              aria-label={enableLabel}
             >
               {isRequesting ? (
                 <>
@@ -294,7 +298,9 @@ export default function NotificationPrompt({
             {dismissible && (
               <button
                 onClick={handleDismiss}
+                type="button"
                 className="text-sm text-primary-600 hover:text-primary-800 font-medium transition-colors"
+                aria-label="Maybe later"
               >
                 Maybe later
               </button>
