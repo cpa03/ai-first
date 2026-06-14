@@ -3,10 +3,9 @@ import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
-export const runtime = 'experimental-edge';
 
 /**
- * Edge Middleware for Next.js
+ * Proxy for Next.js (replaces deprecated middleware)
  *
  * Features:
  * - Security headers (CSP, HSTS, X-Frame-Options, etc.)
@@ -19,7 +18,7 @@ export const runtime = 'experimental-edge';
  * - cf-connecting-ip: Original client IP
  * - cf-visitor: HTTPS info
  *
- * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
+ * @see https://nextjs.org/docs/app/api-reference/file-conventions/proxy
  */
 
 const PUBLIC_PATHS = [
@@ -152,7 +151,7 @@ function applyCloudflareHeaders(
   }
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const nonce = generateNonce();
   const isProduction = process.env.NODE_ENV === 'production';
@@ -186,6 +185,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  runtime: 'experimental-edge',
   matcher: ['/((?!_next/static|_next/image|favicon.ico|public/).*)'],
 };
