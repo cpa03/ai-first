@@ -18,25 +18,25 @@ This repository uses a sophisticated multi-agent system powered by OpenCode CLI 
 
 | Agent                 | Model                      | Purpose                                    |
 | --------------------- | -------------------------- | ------------------------------------------ |
-| **Sisyphus**          | opencode/minimax-m2.5-free | Main orchestrator, ultrawork loop          |
+| **Sisyphus**          | opencode/mimo-v2.5-free | Main orchestrator, ultrawork loop          |
 | **Hephaestus**        | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented      |
-| **Oracle**            | opencode/minimax-m2.5-free | Architecture, debugging, complex reasoning |
+| **Oracle**            | opencode/mimo-v2.5-free | Architecture, debugging, complex reasoning |
 | **Librarian**         | opencode/glm-4.7-free      | Documentation, codebase exploration        |
 | **Explore**           | opencode/glm-4.7-free      | Fast codebase search                       |
 | **Frontend UI/UX**    | opencode/glm-4.7-free      | Frontend development                       |
 | **Minimax Agent**     | opencode/minimax-m2.1-free | Balanced performance tasks                 |
-| **RepoKeeper**        | opencode/minimax-m2.5-free | Repository maintenance and cleanup agent   |
-| **Prometheus**        | opencode/minimax-m2.5-free | Planning and task orchestration            |
-| **Metis**             | opencode/minimax-m2.5-free | Knowledge management and reasoning         |
-| **Momus**             | opencode/minimax-m2.5-free | Creative writing and content generation    |
-| **Atlas**             | opencode/minimax-m2.5-free | System architecture and analysis           |
+| **RepoKeeper**        | opencode/mimo-v2.5-free | Repository maintenance and cleanup agent   |
+| **Prometheus**        | opencode/mimo-v2.5-free | Planning and task orchestration            |
+| **Metis**             | opencode/mimo-v2.5-free | Knowledge management and reasoning         |
+| **Momus**             | opencode/mimo-v2.5-free | Creative writing and content generation    |
+| **Atlas**             | opencode/mimo-v2.5-free | System architecture and analysis           |
 | **Multimodal Looker** | opencode/glm-4.7-free      | Visual content analysis and processing     |
 
 ## Model Configuration
 
 All agents use free-tier OpenCode models:
 
-- **opencode/minimax-m2.5-free**: High reasoning capability (Sisyphus, Oracle, CMZ)
+- **opencode/mimo-v2.5-free**: High reasoning capability (Sisyphus, Oracle, CMZ)
 - **opencode/glm-4.7-free**: Fast, efficient (Hephaestus, Librarian, Explore)
 - **opencode/minimax-m2.1-free**: Balanced performance (quick tasks)
 

@@ -13,18 +13,18 @@ Comprehensive OpenCode automation environment with multi-agent orchestration, 33
 ### Advanced Configuration
 
 - **.opencode/oh-my-openagent.json** - Multi-agent orchestration configuration
-  - Sisyphus (minimax-m2.5-free) - Main orchestrator, ultrawork loop
+  - Sisyphus (mimo-v2.5-free) - Main orchestrator, ultrawork loop
   - Hephaestus (glm-4.7-free) - Autonomous deep worker
-  - Oracle (minimax-m2.5-free) - Architecture & debugging
+  - Oracle (mimo-v2.5-free) - Architecture & debugging
   - Librarian (glm-4.7-free) - Documentation & exploration
   - Explore (glm-4.7-free) - Fast codebase search
   - Frontend UI/UX (glm-4.7-free) - Visual engineering
   - Minimax Agent (minimax-m2.1-free) - General tasks
-  - RepoKeeper (minimax-m2.5-free) - Repository maintenance
-  - Prometheus (minimax-m2.5-free) - Planning orchestration
-  - Metis (minimax-m2.5-free) - Knowledge management
-  - Momus (minimax-m2.5-free) - Creative writing
-  - Atlas (minimax-m2.5-free) - Architecture analysis
+  - RepoKeeper (mimo-v2.5-free) - Repository maintenance
+  - Prometheus (mimo-v2.5-free) - Planning orchestration
+  - Metis (mimo-v2.5-free) - Knowledge management
+  - Momus (mimo-v2.5-free) - Creative writing
+  - Atlas (mimo-v2.5-free) - Architecture analysis
   - Multimodal Looker (glm-4.7-free) - Visual content processing
 
 ### Agent Configuration
@@ -103,7 +103,7 @@ Comprehensive OpenCode automation environment with multi-agent orchestration, 33
 
 ## Models Used
 
-- opencode/minimax-m2.5-free - General purpose, complex reasoning
+- opencode/mimo-v2.5-free - General purpose, complex reasoning
 - opencode/glm-4.7-free - Logic-heavy tasks, exploration
 - opencode/minimax-m2.1-free - Quick tasks, documentation
 
