@@ -81,14 +81,15 @@ export const RISK_LEVEL_CONFIG: Record<
  */
 export const TASK_ITEM_STYLES = {
   CONTAINER:
-    'flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-all duration-300',
+    'flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50/50 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer',
   CONTAINER_COMPLETED:
-    'flex items-start gap-3 p-3 bg-green-50/50 rounded-lg border border-green-200 hover:shadow-sm transition-all duration-300',
+    'flex items-start gap-3 p-3 bg-green-50/50 rounded-lg border border-green-200 hover:border-green-300 hover:bg-green-50/80 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer',
   CHECKBOX: {
-    BASE: 'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500',
+    BASE: 'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500',
     UNCHECKED:
-      'border-gray-300 bg-white hover:border-primary-500 hover:bg-primary-50 hover:scale-105 hover:shadow-md cursor-pointer',
-    CHECKED: 'bg-green-500 border-green-500 scale-110',
+      'border-gray-300 bg-white hover:border-primary-500 hover:bg-primary-50 hover:scale-110 hover:shadow-md cursor-pointer',
+    CHECKED:
+      'bg-green-500 border-green-500 scale-110 hover:bg-green-600 hover:border-green-600',
     DISABLED: 'opacity-50 cursor-not-allowed',
   },
   CHECKMARK: {
