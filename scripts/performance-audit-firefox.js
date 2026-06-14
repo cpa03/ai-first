@@ -3,9 +3,15 @@
 const { firefox } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const { BROWSER_SCANNER_CONFIG } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/login', '/signup', '/dashboard', '/clarify', '/results'];
+const {
+  BASE_URL,
+  PERFORMANCE_SCAN_PAGES: PAGES,
+  NAVIGATION_TIMEOUT,
+  LARGE_IMAGE_WIDTH,
+  LARGE_IMAGE_HEIGHT,
+} = BROWSER_SCANNER_CONFIG;
 
 const audits = [];
 
@@ -23,7 +29,10 @@ async function auditPage(browser, pagePath) {
 
   try {
     const startTime = Date.now();
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto(url, {
+      waitUntil: 'networkidle',
+      timeout: NAVIGATION_TIMEOUT,
+    });
     const loadTime = Date.now() - startTime;
 
     results.metrics.loadTime = `${loadTime}ms`;
@@ -83,7 +92,10 @@ async function auditPage(browser, pagePath) {
       const imgs = document.querySelectorAll('img');
       const largeImages = [];
       imgs.forEach((img) => {
-        if (img.naturalWidth > 1920 || img.naturalHeight > 1080) {
+        if (
+          img.naturalWidth > LARGE_IMAGE_WIDTH ||
+          img.naturalHeight > LARGE_IMAGE_HEIGHT
+        ) {
           largeImages.push({
             src: img.src,
             width: img.naturalWidth,
