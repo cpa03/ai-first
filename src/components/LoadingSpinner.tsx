@@ -1,34 +1,13 @@
 'use client';
 
-import { memo, useMemo, useSyncExternalStore } from 'react';
+import { memo, useMemo } from 'react';
 import { COMPONENT_CONFIG } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   ariaLabel?: string;
-}
-
-const subscribeReducedMotion = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getReducedMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getReducedMotionServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot
-  );
 }
 
 function LoadingSpinnerComponent({
