@@ -20,6 +20,7 @@
 -- ============================================================================
 
 -- Allow users to update task dependencies for their ideas
+DROP POLICY IF EXISTS "Users can update task dependencies for their ideas" ON task_dependencies;
 CREATE POLICY "Users can update task dependencies for their ideas" ON task_dependencies
     FOR UPDATE USING (
         EXISTS (
@@ -32,6 +33,7 @@ CREATE POLICY "Users can update task dependencies for their ideas" ON task_depen
     );
 
 -- Allow users to delete task dependencies for their ideas
+DROP POLICY IF EXISTS "Users can delete task dependencies for their ideas" ON task_dependencies;
 CREATE POLICY "Users can delete task dependencies for their ideas" ON task_dependencies
     FOR DELETE USING (
         EXISTS (
@@ -48,6 +50,7 @@ CREATE POLICY "Users can delete task dependencies for their ideas" ON task_depen
 -- ============================================================================
 
 -- Allow users to delete milestones for their ideas
+DROP POLICY IF EXISTS "Users can delete milestones for their ideas" ON milestones;
 CREATE POLICY "Users can delete milestones for their ideas" ON milestones
     FOR DELETE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
@@ -56,6 +59,7 @@ CREATE POLICY "Users can delete milestones for their ideas" ON milestones
 -- ============================================================================
 
 -- Allow users to create task assignments for their ideas
+DROP POLICY IF EXISTS "Users can create task assignments for their ideas" ON task_assignments;
 CREATE POLICY "Users can create task assignments for their ideas" ON task_assignments
     FOR INSERT WITH CHECK (
         EXISTS (
@@ -68,6 +72,7 @@ CREATE POLICY "Users can create task assignments for their ideas" ON task_assign
     );
 
 -- Allow users to update task assignments for their ideas
+DROP POLICY IF EXISTS "Users can update task assignments for their ideas" ON task_assignments;
 CREATE POLICY "Users can update task assignments for their ideas" ON task_assignments
     FOR UPDATE USING (
         EXISTS (
@@ -80,6 +85,7 @@ CREATE POLICY "Users can update task assignments for their ideas" ON task_assign
     );
 
 -- Allow users to delete task assignments for their ideas
+DROP POLICY IF EXISTS "Users can delete task assignments for their ideas" ON task_assignments;
 CREATE POLICY "Users can delete task assignments for their ideas" ON task_assignments
     FOR DELETE USING (
         EXISTS (
@@ -97,10 +103,12 @@ CREATE POLICY "Users can delete task assignments for their ideas" ON task_assign
 -- ============================================================================
 
 -- Allow users to update their own time tracking entries
+DROP POLICY IF EXISTS "Users can update their own time tracking" ON time_tracking;
 CREATE POLICY "Users can update their own time tracking" ON time_tracking
     FOR UPDATE USING (user_id = auth.uid() OR auth.role() = 'service_role');
 
 -- Allow users to delete their own time tracking entries
+DROP POLICY IF EXISTS "Users can delete their own time tracking" ON time_tracking;
 CREATE POLICY "Users can delete their own time tracking" ON time_tracking
     FOR DELETE USING (user_id = auth.uid() OR auth.role() = 'service_role');
 
@@ -109,6 +117,7 @@ CREATE POLICY "Users can delete their own time tracking" ON time_tracking
 -- ============================================================================
 
 -- Allow users to update comments for their ideas
+DROP POLICY IF EXISTS "Users can update comments for their ideas" ON task_comments;
 CREATE POLICY "Users can update comments for their ideas" ON task_comments
     FOR UPDATE USING (
         EXISTS (
@@ -121,6 +130,7 @@ CREATE POLICY "Users can update comments for their ideas" ON task_comments
     );
 
 -- Allow users to delete comments for their ideas
+DROP POLICY IF EXISTS "Users can delete comments for their ideas" ON task_comments;
 CREATE POLICY "Users can delete comments for their ideas" ON task_comments
     FOR DELETE USING (
         EXISTS (
@@ -137,10 +147,12 @@ CREATE POLICY "Users can delete comments for their ideas" ON task_comments
 -- ============================================================================
 
 -- Allow users to update breakdown sessions for their ideas
+DROP POLICY IF EXISTS "Users can update breakdown sessions for their ideas" ON breakdown_sessions;
 CREATE POLICY "Users can update breakdown sessions for their ideas" ON breakdown_sessions
     FOR UPDATE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 -- Allow users to delete breakdown sessions for their ideas
+DROP POLICY IF EXISTS "Users can delete breakdown sessions for their ideas" ON breakdown_sessions;
 CREATE POLICY "Users can delete breakdown sessions for their ideas" ON breakdown_sessions
     FOR DELETE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
@@ -149,10 +161,12 @@ CREATE POLICY "Users can delete breakdown sessions for their ideas" ON breakdown
 -- ============================================================================
 
 -- Allow users to update timelines for their ideas
+DROP POLICY IF EXISTS "Users can update timelines for their ideas" ON timelines;
 CREATE POLICY "Users can update timelines for their ideas" ON timelines
     FOR UPDATE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
 -- Allow users to delete timelines for their ideas
+DROP POLICY IF EXISTS "Users can delete timelines for their ideas" ON timelines;
 CREATE POLICY "Users can delete timelines for their ideas" ON timelines
     FOR DELETE USING (idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR auth.role() = 'service_role');
 
@@ -161,6 +175,7 @@ CREATE POLICY "Users can delete timelines for their ideas" ON timelines
 -- ============================================================================
 
 -- Allow users to update risk assessments for their ideas
+DROP POLICY IF EXISTS "Users can update risk assessments for their ideas" ON risk_assessments;
 CREATE POLICY "Users can update risk assessments for their ideas" ON risk_assessments
     FOR UPDATE USING (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR
@@ -168,6 +183,7 @@ CREATE POLICY "Users can update risk assessments for their ideas" ON risk_assess
     );
 
 -- Allow users to delete risk assessments for their ideas
+DROP POLICY IF EXISTS "Users can delete risk assessments for their ideas" ON risk_assessments;
 CREATE POLICY "Users can delete risk assessments for their ideas" ON risk_assessments
     FOR DELETE USING (
         idea_id IN (SELECT id FROM ideas WHERE user_id = auth.uid()) OR
