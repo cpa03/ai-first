@@ -213,7 +213,7 @@ jobs:
             Never introduce complexity without measurable gain.
             Optimize for long-term maintainability and strategic leverage.
             " \
-            --model opencode/minimax-m2.5-free \
+            --model opencode/mimo-v2.5-free \
             --share false
 
   # ================================================================
@@ -319,7 +319,7 @@ jobs:
           Never refactor unrelated modules.
           Never introduce unnecessary abstraction.
           " \
-          --model opencode/minimax-m2.5-free \
+          --model opencode/mimo-v2.5-free \
           --agent ${{ matrix.role }} \
           --share false
 
@@ -375,7 +375,7 @@ jobs:
           Add detailed technical comments.
           DO NOT merge PR.
           " \
-          --model opencode/minimax-m2.5-free \
+          --model opencode/mimo-v2.5-free \
           --share false
 
   # ================================================================
@@ -449,5 +449,5 @@ jobs:
              - Delete remote branch if policy allows
              - Log action
           " \
-          --model opencode/minimax-m2.5-free \
+          --model opencode/mimo-v2.5-free \
           --share false

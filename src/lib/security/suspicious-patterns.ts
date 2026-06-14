@@ -418,13 +418,13 @@ const SUSPICIOUS_PATTERNS: Record<
   nosql_injection: [
     // High severity - NoSQL operator injection
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*[:\]]/i,
+      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)['"]?\s*[:\]]/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
       severity: 2,
       description: 'MongoDB operator injection',
     },
@@ -435,7 +435,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     // Medium severity
     {
-      pattern: /{\s*\$.*?[:\]]/i,
+      pattern: /{\s*\$.*?:/i,
       severity: 2,
       description: 'NoSQL query operator pattern',
     },
@@ -654,13 +654,8 @@ export function detectSuspiciousPatterns(
 
     // Scan query parameters
     for (const [key, value] of url.searchParams.entries()) {
-      // Scan both key and value for malicious patterns
-      // Keys are often used for NoSQL injection (e.g., ?id[$ne]=1)
-      const keyFindings = scanString(key, 'query', minSeverity, key);
-      patterns.push(...keyFindings);
-
-      const valueFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...valueFindings);
+      const queryFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...queryFindings);
     }
   }
 

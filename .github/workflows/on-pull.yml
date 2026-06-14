@@ -432,5 +432,5 @@ jobs:
           END OF PROMPT
           PROMPT
           )" \
-            --model opencode/minimax-m2.5-free \
+            --model opencode/mimo-v2.5-free \
             --share false \

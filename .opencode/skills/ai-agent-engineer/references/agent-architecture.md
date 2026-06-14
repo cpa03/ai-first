@@ -50,7 +50,7 @@ Deep dive into the IdeaFlow multi-agent system internals, model selection strate
 
 | Model             | Provider | Strengths                    | Cost Tier |
 | ----------------- | -------- | ---------------------------- | --------- |
-| minimax-m2.5-free    | OpenCode | Deep reasoning, architecture | Free      |
+| mimo-v2.5-free    | OpenCode | Deep reasoning, architecture | Free      |
 | glm-4.7-free      | OpenCode | Fast, efficient, frontend    | Free      |
 | minimax-m2.1-free | OpenCode | Balanced, quick tasks        | Free      |
 
@@ -60,7 +60,7 @@ Deep dive into the IdeaFlow multi-agent system internals, model selection strate
 // Decision tree for model selection
 function selectModel(task: Task): Model {
   if (task.requiresDeepReasoning) {
-    return 'minimax-m2.5-free'; // Architecture, debugging
+    return 'mimo-v2.5-free'; // Architecture, debugging
   }
   if (task.isFrontendWork) {
     return 'glm-4.7-free'; // UI/UX components
@@ -76,10 +76,10 @@ function selectModel(task: Task): Model {
 
 | Category             | Model             | When to Use                                      |
 | -------------------- | ----------------- | ------------------------------------------------ |
-| `ultrabrain`         | minimax-m2.5-free    | Complex logic, architecture decisions, debugging |
+| `ultrabrain`         | mimo-v2.5-free    | Complex logic, architecture decisions, debugging |
 | `visual-engineering` | glm-4.7-free      | UI components, styling, frontend features        |
 | `quick`              | minimax-m2.1-free | Documentation, simple fixes, formatting          |
-| `deep`               | minimax-m2.5-free    | Thorough analysis, comprehensive refactoring     |
+| `deep`               | mimo-v2.5-free    | Thorough analysis, comprehensive refactoring     |
 | `artistry`           | glm-4.7-free      | Creative solutions, non-standard approaches      |
 | `writing`            | glm-4.7-free      | Documentation, comments, explanations            |
 
