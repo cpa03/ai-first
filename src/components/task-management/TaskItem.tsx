@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import type { Task } from '@/lib/db';
 import type { TaskStatus } from '@/types/task';
 import {
@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
 } from '@/lib/config';
 import Tooltip from '../Tooltip';
+import StatusAnnouncer from '../StatusAnnouncer';
 
 interface TaskItemProps {
   task: Task;
@@ -22,6 +23,15 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === 'completed';
   const [showCelebration, setShowCelebration] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
+  const isMountedRef = useRef(false);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (isCompleted && !isUpdating) {
@@ -32,14 +42,22 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
+    setIsToggled(true);
     onToggle(task.id, task.status);
+    setTimeout(() => {
+      if (isMountedRef.current) setIsToggled(false);
+    }, 500);
   }, [onToggle, task.id, task.status]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        setIsToggled(true);
         onToggle(task.id, task.status);
+        setTimeout(() => {
+          if (isMountedRef.current) setIsToggled(false);
+        }, 500);
       }
     },
     [onToggle, task.id, task.status]
@@ -85,6 +103,14 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
 
   return (
     <div className={containerClasses}>
+      <StatusAnnouncer
+        message={
+          isCompleted
+            ? `Task "${task.title}" marked as complete`
+            : `Task "${task.title}" marked as incomplete`
+        }
+        triggered={isToggled}
+      />
       <Tooltip content={tooltipContent}>
         <button
           onClick={handleClick}
@@ -96,6 +122,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
             isCompleted
           )}
           aria-pressed={isCompleted}
+          type="button"
         >
           {isCompleted && (
             <svg

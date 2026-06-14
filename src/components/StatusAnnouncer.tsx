@@ -36,6 +36,8 @@ function StatusAnnouncerComponent({
           });
         }
       }, delay);
+    } else if (!triggered) {
+      previousMessageRef.current = '';
     }
 
     return () => {
