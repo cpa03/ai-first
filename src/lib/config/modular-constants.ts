@@ -300,6 +300,103 @@ export const DATABASE_CONFIG = {
 } as const;
 
 /**
+ * Security Configuration
+ * Settings for request signing and timestamp validation
+ */
+export const SECURITY_CONFIG = {
+  /**
+   * Default timestamp tolerance in milliseconds (5 minutes)
+   * Requests with timestamps outside this window are rejected
+   * Env: SECURITY_TIMESTAMP_TOLERANCE_MS (default: 300000 = 5 minutes)
+   */
+  TIMESTAMP_TOLERANCE_MS: EnvLoader.number(
+    'SECURITY_TIMESTAMP_TOLERANCE_MS',
+    300000,
+    60000,
+    86400000
+  ),
+
+  /**
+   * Minimum timestamp tolerance (1 minute)
+   * Env: SECURITY_MIN_TIMESTAMP_TOLERANCE_MS (default: 60000)
+   */
+  MIN_TIMESTAMP_TOLERANCE_MS: EnvLoader.number(
+    'SECURITY_MIN_TIMESTAMP_TOLERANCE_MS',
+    60000,
+    10000,
+    300000
+  ),
+
+  /**
+   * Maximum timestamp tolerance (24 hours)
+   * Env: SECURITY_MAX_TIMESTAMP_TOLERANCE_MS (default: 86400000)
+   */
+  MAX_TIMESTAMP_TOLERANCE_MS: EnvLoader.number(
+    'SECURITY_MAX_TIMESTAMP_TOLERANCE_MS',
+    86400000,
+    3600000,
+    604800000
+  ),
+
+  /**
+   * Minimum length for internal API secrets
+   * Env: SECURITY_MIN_SECRET_LENGTH (default: 32)
+   */
+  MIN_SECRET_LENGTH: EnvLoader.number(
+    'SECURITY_MIN_SECRET_LENGTH',
+    32,
+    16,
+    128
+  ),
+} as const;
+
+/**
+ * Task Animation Configuration
+ * Settings for task management UI animations
+ */
+export const TASK_ANIMATION_CONFIG = {
+  /**
+   * Celebration animation duration for task completion (ms)
+   * Env: TASK_CELEBRATION_DURATION_MS (default: 600)
+   */
+  CELEBRATION_DURATION_MS: EnvLoader.number(
+    'TASK_CELEBRATION_DURATION_MS',
+    600,
+    200,
+    2000
+  ),
+
+  /**
+   * Toggle state reset delay (ms)
+   * Env: TASK_TOGGLE_RESET_DELAY_MS (default: 500)
+   */
+  TOGGLE_RESET_DELAY_MS: EnvLoader.number(
+    'TASK_TOGGLE_RESET_DELAY_MS',
+    500,
+    100,
+    1000
+  ),
+} as const;
+
+/**
+ * AI Health Check Configuration
+ * Settings for AI service health checks
+ */
+export const AI_HEALTH_CHECK_CONFIG = {
+  /**
+   * Health check timeout divisor
+   * Health check timeout = DEFAULT_TIMEOUTS.openai / DIVISOR
+   * Env: AI_HEALTH_CHECK_TIMEOUT_DIVISOR (default: 2)
+   */
+  TIMEOUT_DIVISOR: EnvLoader.number(
+    'AI_HEALTH_CHECK_TIMEOUT_DIVISOR',
+    2,
+    1,
+    10
+  ),
+} as const;
+
+/**
  * Export all configurations as a combined object for convenience
  */
 export const MODULAR_CONSTANTS = {
@@ -313,6 +410,9 @@ export const MODULAR_CONSTANTS = {
   COST_TRACKING: COST_TRACKING_CONFIG,
   AI_MODEL: AI_MODEL_CONFIG,
   DATABASE: DATABASE_CONFIG,
+  SECURITY: SECURITY_CONFIG,
+  TASK_ANIMATION: TASK_ANIMATION_CONFIG,
+  AI_HEALTH_CHECK: AI_HEALTH_CHECK_CONFIG,
 } as const;
 
 export type ModularConstants = typeof MODULAR_CONSTANTS;

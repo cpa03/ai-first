@@ -288,6 +288,9 @@ export {
   COST_TRACKING_CONFIG,
   AI_MODEL_CONFIG,
   DATABASE_CONFIG,
+  SECURITY_CONFIG,
+  TASK_ANIMATION_CONFIG,
+  AI_HEALTH_CHECK_CONFIG,
   type ModularConstants,
 } from './modular-constants';
 

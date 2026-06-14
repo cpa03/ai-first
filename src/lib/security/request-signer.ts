@@ -9,6 +9,7 @@
  */
 
 import crypto from 'node:crypto';
+import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */
@@ -51,18 +52,24 @@ export interface InternalApiSignatureHeader {
 /**
  * Default timestamp tolerance in milliseconds (5 minutes)
  * Requests with timestamps outside this window are rejected
+ * @deprecated Use SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS instead
  */
-export const DEFAULT_TIMESTAMP_TOLERANCE_MS = 5 * 60 * 1000;
+export const DEFAULT_TIMESTAMP_TOLERANCE_MS =
+  SECURITY_CONFIG.TIMESTAMP_TOLERANCE_MS;
 
 /**
  * Minimum timestamp tolerance (1 minute)
+ * @deprecated Use SECURITY_CONFIG.MIN_TIMESTAMP_TOLERANCE_MS instead
  */
-export const MIN_TIMESTAMP_TOLERANCE_MS = 60 * 1000;
+export const MIN_TIMESTAMP_TOLERANCE_MS =
+  SECURITY_CONFIG.MIN_TIMESTAMP_TOLERANCE_MS;
 
 /**
  * Maximum timestamp tolerance (24 hours)
+ * @deprecated Use SECURITY_CONFIG.MAX_TIMESTAMP_TOLERANCE_MS instead
  */
-export const MAX_TIMESTAMP_TOLERANCE_MS = 24 * 60 * 60 * 1000;
+export const MAX_TIMESTAMP_TOLERANCE_MS =
+  SECURITY_CONFIG.MAX_TIMESTAMP_TOLERANCE_MS;
 
 /**
  * Get the internal API secret from environment
@@ -85,9 +92,9 @@ function getInternalApiSecret(): string {
   }
 
   // Validate secret minimum length
-  if (secret.length < 32) {
+  if (secret.length < SECURITY_CONFIG.MIN_SECRET_LENGTH) {
     throw new Error(
-      'INTERNAL_API_SECRET must be at least 32 characters for adequate security'
+      `INTERNAL_API_SECRET must be at least ${SECURITY_CONFIG.MIN_SECRET_LENGTH} characters for adequate security`
     );
   }
 

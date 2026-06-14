@@ -13,7 +13,10 @@ import {
   type ResilienceConfig,
 } from './resilience';
 import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
-import { AI_MODEL_CONFIG } from './config/modular-constants';
+import {
+  AI_MODEL_CONFIG,
+  AI_HEALTH_CHECK_CONFIG,
+} from './config/modular-constants';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
@@ -780,7 +783,8 @@ class AIService {
     if (this.openai?.models) {
       try {
         await withTimeout(() => this.openai!.models.list(), {
-          timeoutMs: DEFAULT_TIMEOUTS.openai / 2,
+          timeoutMs:
+            DEFAULT_TIMEOUTS.openai / AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
         });
         providers.push('openai');
       } catch (error) {
@@ -799,7 +803,9 @@ class AIService {
             });
           },
           {
-            timeoutMs: (DEFAULT_TIMEOUTS.openai ?? 60000) / 2,
+            timeoutMs:
+              (DEFAULT_TIMEOUTS.openai ?? 60000) /
+              AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
           }
         );
         providers.push('anthropic');

@@ -9,6 +9,7 @@ import {
   RISK_LEVEL_CONFIG,
   TASK_ITEM_STYLES,
   TASK_MANAGEMENT_MESSAGES,
+  TASK_ANIMATION_CONFIG,
 } from '@/lib/config';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
@@ -36,7 +37,10 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   useEffect(() => {
     if (isCompleted && !isUpdating) {
       setShowCelebration(true);
-      const timer = setTimeout(() => setShowCelebration(false), 600);
+      const timer = setTimeout(
+        () => setShowCelebration(false),
+        TASK_ANIMATION_CONFIG.CELEBRATION_DURATION_MS
+      );
       return () => clearTimeout(timer);
     }
   }, [isCompleted, isUpdating, task.status]);
@@ -46,7 +50,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     onToggle(task.id, task.status);
     setTimeout(() => {
       if (isMountedRef.current) setIsToggled(false);
-    }, 500);
+    }, TASK_ANIMATION_CONFIG.TOGGLE_RESET_DELAY_MS);
   }, [onToggle, task.id, task.status]);
 
   const handleKeyDown = useCallback(
@@ -57,7 +61,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
         onToggle(task.id, task.status);
         setTimeout(() => {
           if (isMountedRef.current) setIsToggled(false);
-        }, 500);
+        }, TASK_ANIMATION_CONFIG.TOGGLE_RESET_DELAY_MS);
       }
     },
     [onToggle, task.id, task.status]
