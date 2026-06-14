@@ -6,7 +6,12 @@ import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import { TaskManagementHeader, DeliverableCard } from './task-management';
 import { useTaskManagement } from '@/hooks/useTaskManagement';
-import { MESSAGES, BUTTON_LABELS, COMPONENT_DEFAULTS } from '@/lib/config';
+import {
+  MESSAGES,
+  BUTTON_LABELS,
+  COMPONENT_DEFAULTS,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
 
 interface TaskManagementProps {
   ideaId: string;
@@ -68,7 +73,9 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           <div className="relative w-24 h-24 mb-6" aria-hidden="true">
             <div
               className="absolute inset-0 bg-primary-50 rounded-full animate-pulse"
-              style={{ animationDuration: '3s' }}
+              style={{
+                animationDuration: `${COMPONENT_CONFIG.EMPTY_STATE.PULSE_DURATION_MS}ms`,
+              }}
             />
             <div className="absolute inset-2 bg-primary-100 rounded-full" />
             <div className="absolute inset-0 flex items-center justify-center">

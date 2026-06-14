@@ -46,6 +46,19 @@ export const COMPONENT_CONFIG = {
     DEFAULT_ARIA_LABEL: 'Loading...',
   } as const,
 
+  /**
+   * Empty state component settings
+   */
+  EMPTY_STATE: {
+    /** Env: COMPONENT_EMPTY_STATE_PULSE_DURATION_MS (default: 3000) */
+    PULSE_DURATION_MS: EnvLoader.number(
+      'COMPONENT_EMPTY_STATE_PULSE_DURATION_MS',
+      3000,
+      1000,
+      10000
+    ),
+  } as const,
+
   INPUT: {
     /** Env: COMPONENT_INPUT_VALIDATION_DEBOUNCE_MS (default: 300) */
     VALIDATION_DEBOUNCE_MS: EnvLoader.number(
