@@ -102,18 +102,21 @@ export function useBlueprintGeneration(
   // Generate blueprint with delay
   useEffect(() => {
     let isCancelled = false;
-    // Ensure loading state is shown when inputs change
     setIsGenerating(true);
+
+    const parsedAnswers = JSON.parse(serializedAnswers) as Record<
+      string,
+      string
+    >;
 
     const generateBlueprint = async () => {
       await new Promise((resolve) =>
         setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
       );
 
-      // Prevent state updates if component unmounted during generation
       if (isCancelled) return;
 
-      const generatedBlueprint = generateBlueprintTemplate(idea, answers);
+      const generatedBlueprint = generateBlueprintTemplate(idea, parsedAnswers);
 
       setBlueprint(generatedBlueprint);
       setIsGenerating(false);
@@ -125,7 +128,6 @@ export function useBlueprintGeneration(
     return () => {
       isCancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idea, serializedAnswers]);
 
   /**

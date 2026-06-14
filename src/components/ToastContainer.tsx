@@ -91,10 +91,16 @@ function ToastComponent({ toast, onClose }: ToastProps) {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const progressRef = useRef(100);
+  const isPausedRef = useRef(false);
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
 
   const prefersReducedMotion = usePrefersReducedMotion();
+
+  // Keep ref in sync with state for interval callback
+  useEffect(() => {
+    isPausedRef.current = isPaused;
+  }, [isPaused]);
 
   useEffect(() => {
     const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
@@ -103,7 +109,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     let currentStep = 0;
 
     const progressTimer = setInterval(() => {
-      if (isPaused) return;
+      if (isPausedRef.current) return;
 
       currentStep++;
       const remainingProgress = Math.max(
@@ -121,7 +127,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     }, updateInterval);
 
     return () => clearInterval(progressTimer);
-  }, [toast.id, toast.duration, onClose, isPaused]);
+  }, [toast.id, toast.duration, onClose]);
 
   const handleMouseEnter = () => {
     setIsPaused(true);
