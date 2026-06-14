@@ -117,6 +117,8 @@ const CopyButtonComponent = function CopyButton({
     `,
   };
 
+  const glowClass = copied ? 'animate-copy-success-glow' : '';
+
   return (
     <Tooltip
       content={copied ? successLabel : ariaLabel}
@@ -125,7 +127,7 @@ const CopyButtonComponent = function CopyButton({
     >
       <button
         onClick={handleCopy}
-        className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+        className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
         aria-label={copied ? 'Copied to clipboard' : ariaLabel}
         type="button"
       >
