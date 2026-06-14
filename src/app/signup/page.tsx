@@ -147,6 +147,7 @@ export default function SignupPage() {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
+  const [confirmPasswordTouched, setConfirmPasswordTouched] = useState(false);
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -161,6 +162,11 @@ export default function SignupPage() {
       confirmPasswordInputRef.current?.focus();
     }
   }, [emailError, passwordError, error]);
+
+  const passwordsMatch =
+    confirmPassword.length > 0 && password === confirmPassword;
+  const passwordsMismatch =
+    confirmPassword.length > 0 && password !== confirmPassword;
 
   const validateForm = useCallback((): boolean => {
     setEmailError(undefined);
@@ -358,21 +364,81 @@ export default function SignupPage() {
 
             {password && <PasswordStrengthIndicator password={password} />}
 
-            <InputWithValidation
-              ref={confirmPasswordInputRef}
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              label="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={isLoading}
-              required
-              autoComplete="new-password"
-              placeholder="Confirm your password"
-              showPasswordToggle
-              onEnterPress={submitForm}
-            />
+            <div className="space-y-2">
+              <div className="relative">
+                <InputWithValidation
+                  ref={confirmPasswordInputRef}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  label="Confirm Password"
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setConfirmPasswordTouched(true);
+                  }}
+                  onBlur={() => setConfirmPasswordTouched(true)}
+                  disabled={isLoading}
+                  required
+                  autoComplete="new-password"
+                  placeholder="Confirm your password"
+                  showPasswordToggle
+                  onEnterPress={submitForm}
+                  error={
+                    passwordsMismatch && confirmPasswordTouched
+                      ? 'Passwords do not match'
+                      : undefined
+                  }
+                />
+                {confirmPasswordTouched && confirmPassword.length > 0 && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                    <div
+                      className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-xs font-medium transition-all duration-200 ${
+                        passwordsMatch
+                          ? 'text-green-700 bg-green-50'
+                          : 'text-red-700 bg-red-50'
+                      }`}
+                    >
+                      {passwordsMatch ? (
+                        <>
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          <span>Match</span>
+                        </>
+                      ) : (
+                        <>
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                          <span>No match</span>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
           <Button
