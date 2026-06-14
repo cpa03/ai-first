@@ -22,8 +22,6 @@ export const runtime = 'experimental-edge';
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
 
-export const runtime = 'experimental-edge';
-
 const PUBLIC_PATHS = [
   '/',
   '/login',
@@ -189,7 +187,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   runtime: 'experimental-edge',
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|public/).*)'],
 };
