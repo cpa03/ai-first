@@ -1,9 +1,14 @@
 #!/usr/bin/env node
 
 const { chromium } = require('playwright');
+const { BROWSER_SCANNER_CONFIG } = require('./config');
 
-const BASE_URL = 'http://localhost:3000';
-const PAGES = ['/', '/dashboard', '/clarify', '/results'];
+const {
+  BASE_URL,
+  CONSOLE_SCAN_PAGES: PAGES,
+  NAVIGATION_TIMEOUT,
+  ASYNC_WAIT_MS,
+} = BROWSER_SCANNER_CONFIG;
 
 const consoleLogs = [];
 const errors = [];
@@ -67,8 +72,11 @@ async function scanPage(browser, page, url) {
 
   try {
     console.log(`Scanning ${url}...`);
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
-    await page.waitForTimeout(2000);
+    await page.goto(url, {
+      waitUntil: 'networkidle',
+      timeout: NAVIGATION_TIMEOUT,
+    });
+    await page.waitForTimeout(ASYNC_WAIT_MS);
     console.log(`  ✓ ${url} scanned`);
   } catch (err) {
     console.log(`  ✗ Failed to scan ${url}: ${err.message}`);
