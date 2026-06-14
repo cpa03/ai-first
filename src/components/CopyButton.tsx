@@ -113,6 +113,7 @@ const CopyButtonComponent = function CopyButton({
       text-gray-500 hover:text-primary-600 hover:bg-primary-50
       rounded-full
       active:scale-[0.9]
+      ${copied ? 'text-green-600 bg-green-50 hover:bg-green-100 hover:text-green-700' : ''}
     `,
   };
 
