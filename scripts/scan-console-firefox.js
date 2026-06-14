@@ -3,9 +3,14 @@
 const { firefox } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const { BROWSER_SCANNER_CONFIG } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/dashboard', '/clarify', '/results', '/login', '/signup'];
+const {
+  BASE_URL,
+  CONSOLE_SCAN_PAGES: PAGES,
+  NAVIGATION_TIMEOUT,
+  ASYNC_WAIT_MS,
+} = BROWSER_SCANNER_CONFIG;
 
 const consoleLogs = [];
 const errors = [];
@@ -81,11 +86,11 @@ async function scanPage(browser, url) {
   try {
     await page.goto(`${BASE_URL}${url}`, {
       waitUntil: 'networkidle',
-      timeout: 30000,
+      timeout: NAVIGATION_TIMEOUT,
     });
 
     // Wait a bit for any async errors
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(ASYNC_WAIT_MS);
 
     console.log(
       `✓ Scanned ${url}: ${pageErrors.length} errors, ${pageWarnings.length} warnings`
