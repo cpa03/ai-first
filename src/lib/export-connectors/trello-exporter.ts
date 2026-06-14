@@ -1,5 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
-import { Task } from '../db';
+import { Task } from '../db/service';
 import { TRELLO_CONFIG, TASK_CONFIG } from '../config';
 
 import { createLogger } from '../logger';
@@ -123,7 +123,9 @@ export class TrelloExporter extends ExportConnector {
     }
   }
 
-  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+  async checkServiceHealth(): Promise<
+    import('./base').ServiceHealthResult | null
+  > {
     const startTime = Date.now();
     const checkedAt = new Date().toISOString();
 

@@ -23,19 +23,23 @@ Each ADR follows this structure:
 
 ## Index
 
-| ADR                                            | Title                                  | Status   | Date       |
-| ---------------------------------------------- | -------------------------------------- | -------- | ---------- |
-| [ADR-000](./ADR-000-template.md)               | ADR Template                           | Template | -          |
-| [ADR-001](./ADR-001-ai-abstraction-layer.md)   | AI Provider Abstraction Layer          | Accepted | 2026-02-23 |
-| [ADR-002](./ADR-002-supabase-database-auth.md) | Use Supabase for Database and Auth     | Accepted | 2026-02-27 |
-| [ADR-003](./ADR-003-nextjs-app-router.md)      | Use Next.js App Router for Frontend    | Accepted | 2026-02-27 |
-| [ADR-004](./ADR-004-rate-limiting.md)          | Implement Rate Limiting at API Level   | Accepted | 2026-02-27 |
-| [ADR-005](./ADR-005-circuit-breaker.md)        | Use Circuit Breaker Pattern for AI     | Accepted | 2026-02-27 |
-| [ADR-006](./ADR-006-standardized-errors.md)    | Standardized Error Response Format     | Accepted | 2026-02-27 |
-| [ADR-007](./ADR-007-typescript-strict-mode.md) | TypeScript Strict Mode for Type Safety | Accepted | 2026-02-27 |
-| [ADR-008](./ADR-008-tailwind-css.md)           | Use Tailwind CSS for Styling           | Accepted | 2026-02-27 |
-| [ADR-009](./ADR-009-vercel-hosting.md)         | Use Vercel for Primary Hosting         | Accepted | 2026-02-27 |
-| [ADR-010](./ADR-010-github-actions-ci-cd.md)   | GitHub Actions for CI/CD               | Accepted | 2026-02-27 |
+| ADR                                                | Title                                  | Status   | Date       |
+| -------------------------------------------------- | -------------------------------------- | -------- | ---------- |
+| [ADR-000](./ADR-000-template.md)                   | ADR Template                           | Template | -          |
+| [ADR-001](./ADR-001-ai-abstraction-layer.md)       | AI Provider Abstraction Layer          | Accepted | 2026-02-23 |
+| [ADR-002](./ADR-002-supabase-database-auth.md)     | Use Supabase for Database and Auth     | Accepted | 2026-02-27 |
+| [ADR-003](./ADR-003-nextjs-app-router.md)          | Use Next.js App Router for Frontend    | Accepted | 2026-02-27 |
+| [ADR-004](./ADR-004-rate-limiting.md)              | Implement Rate Limiting at API Level   | Accepted | 2026-02-27 |
+| [ADR-005](./ADR-005-circuit-breaker.md)            | Use Circuit Breaker Pattern for AI     | Accepted | 2026-02-27 |
+| [ADR-006](./ADR-006-standardized-errors.md)        | Standardized Error Response Format     | Accepted | 2026-02-27 |
+| [ADR-007](./ADR-007-typescript-strict-mode.md)     | TypeScript Strict Mode for Type Safety | Accepted | 2026-02-27 |
+| [ADR-008](./ADR-008-tailwind-css.md)               | Use Tailwind CSS for Styling           | Accepted | 2026-02-27 |
+| [ADR-009](./ADR-009-vercel-hosting.md)             | Use Vercel for Primary Hosting         | Accepted | 2026-02-27 |
+| [ADR-010](./ADR-010-github-actions-ci-cd.md)       | GitHub Actions for CI/CD               | Accepted | 2026-02-27 |
+| [ADR-011](./ADR-011-supabase-database-services.md) | Supabase Database and Backend Services | Accepted | 2026-02-27 |
+| [ADR-012](./ADR-012-rest-api-design-patterns.md)   | REST API Design Patterns               | Accepted | 2026-02-27 |
+| [ADR-013](./ADR-013-resilience-patterns.md)        | Resilience Patterns for Integrations   | Accepted | 2026-02-27 |
+| [ADR-014](./ADR-014-supabase-auth.md)              | Supabase Authentication                | Accepted | 2026-02-27 |
 
 ## Creating a New ADR
 

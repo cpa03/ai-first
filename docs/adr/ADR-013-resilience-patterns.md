@@ -1,4 +1,4 @@
-# ADR-004: Resilience Patterns for External Integrations
+# ADR-013: Resilience Patterns for External Integrations
 
 ## Status
 

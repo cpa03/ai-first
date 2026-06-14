@@ -1,5 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
-import { Deliverable, Task } from '../db';
+import { Deliverable, Task } from '../db/service';
 
 export class MarkdownExporter extends ExportConnector {
   readonly type = 'markdown';

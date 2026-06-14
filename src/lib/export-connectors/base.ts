@@ -12,7 +12,7 @@ import {
   type ExternalRateLimitInfo,
 } from '../external-rate-limit';
 import { createLogger } from '../logger';
-import { Idea, Deliverable, Task } from '../db';
+import { Idea, Deliverable, Task } from '../db/service';
 
 function toResilienceConfig(config: ServiceResilienceConfig): ResilienceConfig {
   return {
@@ -107,7 +107,7 @@ export abstract class ExportConnector {
    * Optional method to check external service health/availability.
    * This performs a lightweight probe to verify the external service is reachable.
    * Returns null if not implemented or not applicable.
-   * 
+   *
    * @returns Health check result with status, latency, and optional error message
    */
   async checkServiceHealth?(): Promise<ServiceHealthResult | null>;

@@ -13,7 +13,7 @@ import {
   GoogleTasksExporter,
   GitHubProjectsExporter,
 } from './connectors';
-import { Deliverable, Task, Idea } from '../db';
+import { Deliverable, Task, Idea } from '../db/service';
 import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
 import { generateId } from '@/lib/security/crypto';
 
@@ -150,13 +150,14 @@ export class ExportManager {
         error?: string;
         serviceHealth?: ServiceHealthResult | null;
       }
-
     > = {};
 
     for (const [type, connector] of this.connectors.entries()) {
       try {
         const isValid = await connector.validateConfig();
-        const serviceHealth = connector.checkServiceHealth ? await connector.checkServiceHealth() : null;
+        const serviceHealth = connector.checkServiceHealth
+          ? await connector.checkServiceHealth()
+          : null;
         results[type] = {
           name: connector.name,
           configured: isValid,
