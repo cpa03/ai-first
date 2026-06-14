@@ -121,6 +121,7 @@ Complete index of all IdeaFlow documentation.
 ## Subdirectories
 
 - [API Specifications](./api/) - OpenAPI specifications
+- [Audit Reports](./audit/) - Browser console audits, verification reports
 - [Security](./security/) - Security documentation and logs
 - [Templates](./templates/) - User-downloadable templates
 
