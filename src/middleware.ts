@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server';
 import { SECURITY_CONFIG, CSP_CONFIG } from '@/lib/config/constants';
 import { PROXY_CONFIG } from '@/lib/config/proxy-config';
 import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
+export const runtime = 'experimental-edge';
 
 /**
  * Edge Middleware for Next.js
@@ -20,8 +21,6 @@ import { API_ENDPOINTS, generateApiCacheControl } from '@/lib/config';
  *
  * @see https://nextjs.org/docs/app/building-your-application/routing/middleware
  */
-
-export const runtime = 'experimental-edge';
 
 const PUBLIC_PATHS = [
   '/',
@@ -188,7 +187,5 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   runtime: 'experimental-edge',
-  matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|public/).*)'],
 };
