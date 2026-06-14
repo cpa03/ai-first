@@ -1,10 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
-import { redactPIIInObject } from './pii-redaction';
-import { createLogger } from './logger';
-import { resourceCleanupManager } from './resource-cleanup';
-import { AGENT_CONFIG, VALIDATION_LIMITS } from './config/constants';
-import * as dbTypes from './db/types';
+import { redactPIIInObject } from '../pii-redaction';
+import { createLogger } from '../logger';
+import { resourceCleanupManager } from '../resource-cleanup';
+import { AGENT_CONFIG, VALIDATION_LIMITS } from '../config/constants';
+import type {
+  Idea,
+  IdeaSession,
+  Deliverable,
+  Task,
+  Vector,
+  AgentLog,
+  ClarificationSessionRow,
+  ClarificationAnswerRow,
+  PaginationOptions,
+  PaginatedResult,
+  ConnectionHealth,
+} from './types';
 
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
@@ -90,136 +102,20 @@ export function getSupabaseAdmin(): ReturnType<
 // to prevent any risk of the service role key being bundled in client code.
 // Always use getSupabaseAdmin() function instead.
 
-// Database types and utilities
-export interface Idea {
-  id: string;
-  user_id: string;
-  title: string;
-  raw_text: string;
-  status: 'draft' | 'clarified' | 'breakdown' | 'completed';
-  deleted_at: string | null;
-  created_at: string;
-  updated_at?: string;
-}
-
-export interface IdeaSession {
-  idea_id: string;
-  state: Record<string, unknown>;
-  last_agent: string;
-  metadata: Record<string, unknown>;
-  updated_at: string;
-}
-
-export interface Deliverable {
-  id: string;
-  idea_id: string;
-  title: string;
-  description?: string;
-  priority: number;
-  estimate_hours: number;
-  milestone_id: string | null;
-  completion_percentage: number;
-  business_value: number;
-  risk_factors: string[] | null;
-  acceptance_criteria: Record<string, unknown> | null;
-  deliverable_type:
-    | 'feature'
-    | 'documentation'
-    | 'testing'
-    | 'deployment'
-    | 'research';
-  created_at: string;
-  updated_at?: string;
-  deleted_at?: string | null;
-}
-
-export interface Task {
-  id: string;
-  deliverable_id: string;
-  title: string;
-  description?: string;
-  assignee?: string;
-  status: 'todo' | 'in_progress' | 'completed';
-  estimate: number;
-  start_date: string | null;
-  end_date: string | null;
-  actual_hours: number | null;
-  completion_percentage: number;
-  priority_score: number;
-  complexity_score: number;
-  risk_level: 'low' | 'medium' | 'high';
-  tags: string[] | null;
-  custom_fields: Record<string, unknown> | null;
-  milestone_id: string | null;
-  created_at: string;
-  updated_at?: string;
-  deleted_at?: string | null;
-}
-
-export interface Vector {
-  id: string;
-  idea_id: string;
-  vector_data?: Record<string, unknown>;
-  reference_type: string;
-  reference_id?: string;
-  created_at: string;
-  embedding?: number[];
-}
-
-export interface AgentLog {
-  id: string;
-  agent: string;
-  action: string;
-  payload: Record<string, unknown>;
-  timestamp: string;
-}
-
-export interface ClarificationSessionRow {
-  id: string;
-  idea_id: string;
-  status: 'active' | 'completed' | 'cancelled';
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ClarificationAnswerRow {
-  id: string;
-  session_id: string;
-  question_id: string;
-  answer: string;
-  created_at: string;
-  updated_at: string;
-}
-
-/**
- * Pagination options for list queries
- * Prevents memory exhaustion by limiting result sets
- */
-export interface PaginationOptions {
-  page?: number;
-  pageSize?: number;
-  cursor?: string;
-}
-
-/**
- * Paginated result wrapper
- */
-export interface PaginatedResult<T> {
-  data: T[];
-  total: number;
-  page: number;
-  pageSize: number;
-  hasMore: boolean;
-  nextCursor?: string;
-}
-
-/**
- * Connection health status for both client and admin connections
- */
-export interface ConnectionHealth {
-  client: boolean;
-  admin: boolean;
-}
+// Re-export types for backward compatibility
+export type {
+  Idea,
+  IdeaSession,
+  Deliverable,
+  Task,
+  Vector,
+  AgentLog,
+  ClarificationSessionRow,
+  ClarificationAnswerRow,
+  PaginationOptions,
+  PaginatedResult,
+  ConnectionHealth,
+} from './types';
 
 // Database service class
 export class DatabaseService {
@@ -1602,6 +1498,3 @@ export const dbService = DatabaseService.getInstance();
 
 // Export types for external use
 export type { Database };
-
-// Re-export types from modules for future use (backward compatible)
-export type { dbTypes as DbTypes };

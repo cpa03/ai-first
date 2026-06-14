@@ -1,4 +1,4 @@
-# ADR-003: REST API Design Patterns with Next.js App Router
+# ADR-012: REST API Design Patterns with Next.js App Router
 
 ## Status
 

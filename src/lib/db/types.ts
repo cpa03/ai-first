@@ -114,7 +114,6 @@ export interface PaginatedResult<T> {
 }
 
 export interface ConnectionHealth {
-  isConnected: boolean;
-  latencyMs?: number;
-  error?: string;
+  client: boolean;
+  admin: boolean;
 }

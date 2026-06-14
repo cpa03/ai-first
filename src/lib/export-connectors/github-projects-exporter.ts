@@ -1,5 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
-import { Task, Deliverable, Idea } from '../db';
+import { Task, Deliverable, Idea } from '../db/service';
 import { GITHUB_CONFIG, TASK_CONFIG } from '@/lib/config';
 
 import { createLogger } from '../logger';
@@ -168,7 +168,9 @@ export class GitHubProjectsExporter extends ExportConnector {
     }
   }
 
-  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+  async checkServiceHealth(): Promise<
+    import('./base').ServiceHealthResult | null
+  > {
     const startTime = Date.now();
     const checkedAt = new Date().toISOString();
 

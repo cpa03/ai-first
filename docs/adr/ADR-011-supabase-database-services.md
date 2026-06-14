@@ -1,4 +1,4 @@
-# ADR-002: Use Supabase as Primary Database and Backend Services
+# ADR-011: Use Supabase as Primary Database and Backend Services
 
 ## Status
 

@@ -1,4 +1,4 @@
-# ADR-005: Authentication with Supabase Auth
+# ADR-014: Authentication with Supabase Auth
 
 ## Status
 
