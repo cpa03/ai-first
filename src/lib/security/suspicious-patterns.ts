@@ -737,19 +737,28 @@ export function detectSuspiciousPatterns(
     logger.warn('Body scanning requested but not yet implemented');
   }
 
-  // Scan headers safely - handle cases where headers.entries() might not exist (test mocks)
+  // Scan headers safely - handle cases where headers might not be iterable (standard Fetch API)
   try {
-    if (typeof request.headers.entries === 'function') {
-      for (const [key, value] of request.headers.entries()) {
-        const lowerKey = key.toLowerCase();
-        if (!SKIP_HEADERS.has(lowerKey)) {
-          // Scan header key
-          const keyFindings = scanString(key, 'header', minSeverity, key);
-          patterns.push(...keyFindings);
-
-          // Scan header value
-          const headerFindings = scanString(value, 'header', minSeverity, key);
-          patterns.push(...headerFindings);
+    const headers = request.headers;
+    if (headers) {
+      // Prefer forEach as it is widely supported and safe for iteration in various environments
+      if (typeof headers.forEach === 'function') {
+        headers.forEach((value, key) => {
+          const lowerKey = key.toLowerCase();
+          if (!SKIP_HEADERS.has(lowerKey)) {
+            // Scan header key and value
+            patterns.push(...scanString(key, 'header', minSeverity, key));
+            patterns.push(...scanString(value, 'header', minSeverity, key));
+          }
+        });
+      } else if (typeof headers.entries === 'function') {
+        // Fallback to entries() iterator if forEach is not available
+        for (const [key, value] of headers.entries()) {
+          const lowerKey = key.toLowerCase();
+          if (!SKIP_HEADERS.has(lowerKey)) {
+            patterns.push(...scanString(key, 'header', minSeverity, key));
+            patterns.push(...scanString(value, 'header', minSeverity, key));
+          }
         }
       }
     }

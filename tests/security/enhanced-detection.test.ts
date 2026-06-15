@@ -3,7 +3,6 @@
  * @module tests/security/enhanced-detection.test
  */
 
-import { NextRequest } from 'next/server';
 import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 
 describe('Enhanced Suspicious Pattern Detection', () => {
@@ -11,7 +10,7 @@ describe('Enhanced Suspicious Pattern Detection', () => {
     url: string,
     headers: Record<string, string> = {}
   ) => {
-    return new NextRequest(new URL(url, 'https://example.com'), {
+    return new Request(new URL(url, 'https://example.com').toString(), {
       headers: new Headers(headers),
     });
   };
@@ -44,10 +43,6 @@ describe('Enhanced Suspicious Pattern Detection', () => {
           `https://example.com/api/test?id[${op}]=1`
         );
         const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
-        // We log the result to debug why it might be failing
-        if (!result.detected) {
-          console.log(`Failed to detect NoSQL injection for operator: ${op}`);
-        }
         expect(result.detected).toBe(true);
         expect(result.maxSeverity).toBe(3);
         expect(result.patterns.some(p => p.category === 'nosql_injection')).toBe(true);
@@ -87,22 +82,19 @@ describe('Enhanced Suspicious Pattern Detection', () => {
       expect(resultValue.detected).toBe(true);
       expect(resultValue.patterns.some(p => p.category === 'xss')).toBe(true);
 
-      // Suspicious header key - Use a valid header name that contains the payload
-      // since Headers constructor validates the name.
-      // Actually, many header implementations are strict about header names.
-      // Let's test scanning header names with a name that is technically valid
-      // but contains suspicious characters if possible, or just skip name-specific
-      // scanning if it's too hard to test with strict Header implementations.
-      // JSDOM Headers is strict: https://fetch.spec.whatwg.org/#header-name
+      // We use a manually created request object to test key scanning without Header validation
+      // as standard Headers constructor validates that keys are valid HTTP tokens.
+      const headersList: [string, string][] = [
+        ['X-JNDI-Payload-${jndi:ldap://a}', 'value']
+      ];
 
-      // We can use a manually created request object to test key scanning without Header validation
       const mockRequest = {
         url: 'https://example.com/api/test',
+        method: 'GET',
         headers: {
-          get: () => null,
-          entries: () => [
-            ['X-JNDI-Payload-${jndi:ldap://a}', 'value']
-          ]
+          get: (name: string) => null,
+          forEach: (cb: any) => headersList.forEach(([k, v]) => cb(v, k)),
+          entries: () => headersList[Symbol.iterator]()
         }
       } as unknown as Request;
 
@@ -118,9 +110,6 @@ describe('Enhanced Suspicious Pattern Detection', () => {
         'Authorization': 'Bearer ${jndi:ldap://a}',
         'X-API-Key': 'sk_live_12345'
       });
-      // We check if it detects NOTHING at severity 3
-      // Note: sk_live_... might be detected as API key if we don't skip it,
-      // but SKIP_HEADERS should prevent scanning the header value.
       const result = detectSuspiciousPatterns(request, { minSeverity: 3 });
       expect(result.detected).toBe(false);
     });
