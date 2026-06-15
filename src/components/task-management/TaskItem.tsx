@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
   TASK_ANIMATION_CONFIG,
 } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
 
@@ -26,6 +27,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const isMountedRef = useRef(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -102,8 +104,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     const base = isCompleted
       ? TASK_ITEM_STYLES.CONTAINER_COMPLETED
       : TASK_ITEM_STYLES.CONTAINER;
-    return showCelebration ? `${base} animate-task-complete` : base;
-  }, [isCompleted, showCelebration]);
+    const riskIndicator =
+      task.risk_level !== 'low'
+        ? `${TASK_ITEM_STYLES.RISK_INDICATOR} ${RISK_LEVEL_CONFIG[task.risk_level].indicatorColor}`
+        : '';
+    const celebrationClass = showCelebration ? 'animate-task-complete' : '';
+    const reducedMotionClass = prefersReducedMotion
+      ? 'motion-reduce:transition-none motion-reduce:hover:transform-none'
+      : '';
+    return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass}`;
+  }, [isCompleted, showCelebration, task.risk_level, prefersReducedMotion]);
 
   return (
     <div className={containerClasses}>
