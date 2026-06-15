@@ -9,7 +9,11 @@ import React, {
   useMemo,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
-import { UI_CONFIG, KEYBOARD_SHORTCUTS_MESSAGES } from '@/lib/config';
+import {
+  UI_CONFIG,
+  KEYBOARD_SHORTCUTS_MESSAGES,
+  LOCAL_STORAGE_KEYS,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 export interface KeyboardShortcut {
@@ -135,7 +139,7 @@ const contextOrder: KeyboardShortcut['context'][] = [
 ];
 
 // Storage key for user preferences
-export const SHORTCUTS_STORAGE_KEY = 'ideaflow-keyboard-shortcuts';
+export const SHORTCUTS_STORAGE_KEY = LOCAL_STORAGE_KEYS.KEYBOARD_SHORTCUTS;
 
 interface ShortcutsPreferences {
   vimMode: boolean;

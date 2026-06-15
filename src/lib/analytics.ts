@@ -18,6 +18,7 @@
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 import { generateId, secureRandom } from '@/lib/security/crypto';
+import { SESSION_STORAGE_KEYS } from '@/lib/config';
 
 /**
  * Event categories for analytics
@@ -215,13 +216,12 @@ let flushTimeout: ReturnType<typeof setTimeout> | null = null;
 function getSessionId(): string {
   if (typeof window === 'undefined') return 'server';
 
-  const storageKey = 'ideaflow_session_id';
   try {
-    let sessionId = sessionStorage.getItem(storageKey);
+    let sessionId = sessionStorage.getItem(SESSION_STORAGE_KEYS.SESSION_ID);
     if (!sessionId) {
       // SECURITY: Use generateId() for cryptographically secure session IDs
       sessionId = `session_${generateId()}`;
-      sessionStorage.setItem(storageKey, sessionId);
+      sessionStorage.setItem(SESSION_STORAGE_KEYS.SESSION_ID, sessionId);
     }
     return sessionId;
   } catch {

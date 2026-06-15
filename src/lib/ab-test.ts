@@ -21,6 +21,7 @@ import { EnvLoader } from '@/lib/config/environment';
 import { generateSecureId } from '@/lib/utils';
 import { simpleHash, secureRandom } from '@/lib/security/crypto';
 import { HASH_CONFIG } from '@/lib/config/modular-constants';
+import { LOCAL_STORAGE_KEYS, SESSION_STORAGE_KEYS } from '@/lib/config';
 
 /**
  * Experiment variant definition
@@ -99,7 +100,7 @@ export const AB_TEST_CONFIG = {
   /**
    * Experiment assignments storage key
    */
-  ASSIGNMENTS_KEY: 'ideaflow_ab_assignments',
+  ASSIGNMENTS_KEY: LOCAL_STORAGE_KEYS.AB_TEST_ASSIGNMENTS,
 } as const;
 
 /**
@@ -181,10 +182,10 @@ function getDeterministicRandom(experimentId: string): number {
 
   try {
     // Get or create session ID
-    let sessionId = sessionStorage.getItem('ideaflow_session_id');
+    let sessionId = sessionStorage.getItem(SESSION_STORAGE_KEYS.SESSION_ID);
     if (!sessionId) {
       sessionId = generateSecureId('session');
-      sessionStorage.setItem('ideaflow_session_id', sessionId);
+      sessionStorage.setItem(SESSION_STORAGE_KEYS.SESSION_ID, sessionId);
     }
 
     // Create deterministic hash using centralized utility

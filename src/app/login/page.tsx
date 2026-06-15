@@ -7,7 +7,7 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
-import { OAUTH_PROVIDER_COLORS } from '@/lib/config';
+import { OAUTH_PROVIDER_COLORS, LOCAL_STORAGE_KEYS } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 export default function LoginPage() {
@@ -29,7 +29,9 @@ export default function LoginPage() {
   const passwordInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    const savedEmail = localStorage.getItem('remembered_email');
+    const savedEmail = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.REMEMBERED_EMAIL
+    );
     if (savedEmail) {
       setEmail(savedEmail);
       setRememberMe(true);
@@ -90,9 +92,12 @@ export default function LoginPage() {
         }
 
         if (rememberMe) {
-          localStorage.setItem('remembered_email', email.trim());
+          localStorage.setItem(
+            LOCAL_STORAGE_KEYS.REMEMBERED_EMAIL,
+            email.trim()
+          );
         } else {
-          localStorage.removeItem('remembered_email');
+          localStorage.removeItem(LOCAL_STORAGE_KEYS.REMEMBERED_EMAIL);
         }
 
         router.push('/dashboard');

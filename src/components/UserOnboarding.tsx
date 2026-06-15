@@ -2,7 +2,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
-import { COMPONENT_CONFIG, ANIMATION_CONFIG } from '@/lib/config';
+import {
+  COMPONENT_CONFIG,
+  ANIMATION_CONFIG,
+  LOCAL_STORAGE_KEYS,
+} from '@/lib/config';
 
 /**
  * Onboarding Tour Steps
@@ -58,7 +62,7 @@ const TOUR_STEPS: TourStep[] = [
 /**
  * Storage key for remembering if user has completed onboarding
  */
-const ONBOARDING_COMPLETED_KEY = 'ideaflow_onboarding_completed';
+const ONBOARDING_COMPLETED_KEY = LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED;
 
 /**
  * UserOnboarding Component

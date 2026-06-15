@@ -13,6 +13,7 @@
 import { createLogger } from '@/lib/logger';
 import { generateSecureId } from '@/lib/utils';
 import { SESSION_ANALYTICS_CONFIG } from '@/lib/config/constants';
+import { SESSION_STORAGE_KEYS } from '@/lib/config';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -31,12 +32,11 @@ export const SESSION_EVENTS = {
 function getSessionId(): string {
   if (typeof window === 'undefined') return 'server';
 
-  const storageKey = 'ideaflow_session_id';
   try {
-    let sessionId = sessionStorage.getItem(storageKey);
+    let sessionId = sessionStorage.getItem(SESSION_STORAGE_KEYS.SESSION_ID);
     if (!sessionId) {
       sessionId = generateSecureId('session');
-      sessionStorage.setItem(storageKey, sessionId);
+      sessionStorage.setItem(SESSION_STORAGE_KEYS.SESSION_ID, sessionId);
     }
     return sessionId;
   } catch {

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { createLogger } from '@/lib/logger';
+import { LOCAL_STORAGE_KEYS } from '@/lib/config';
 
 const logger = createLogger('useUserPreferences');
 
@@ -43,11 +44,6 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 };
 
 /**
- * Storage key for preferences
- */
-const STORAGE_KEY = 'ideaflow_user_preferences';
-
-/**
  * Get initial preferences from localStorage or defaults
  */
 function getInitialPreferences(): UserPreferences {
@@ -56,7 +52,7 @@ function getInitialPreferences(): UserPreferences {
   }
 
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(LOCAL_STORAGE_KEYS.USER_PREFERENCES);
     if (stored) {
       const parsed = JSON.parse(stored);
       // Merge with defaults to handle new fields
@@ -149,7 +145,10 @@ export function useUserPreferences(): UseUserPreferencesReturn {
     if (isLoading || typeof window === 'undefined') return;
 
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.USER_PREFERENCES,
+        JSON.stringify(preferences)
+      );
       logger.debug('User preferences persisted');
     } catch (error) {
       logger.error('Failed to persist user preferences', error);
@@ -169,12 +168,9 @@ export function useUserPreferences(): UseUserPreferencesReturn {
   /**
    * Update multiple preferences at once
    */
-  const updatePreferences = useCallback(
-    (updates: Partial<UserPreferences>) => {
-      setPreferences((prev) => ({ ...prev, ...updates }));
-    },
-    []
-  );
+  const updatePreferences = useCallback((updates: Partial<UserPreferences>) => {
+    setPreferences((prev) => ({ ...prev, ...updates }));
+  }, []);
 
   /**
    * Update notification preferences specifically

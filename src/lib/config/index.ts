@@ -296,3 +296,14 @@ export {
 
 // Similarity Search Configuration
 export { SIMILARITY_CONFIG, type SimilarityConfig } from './similarity-config';
+
+// Storage Keys Configuration
+export {
+  LOCAL_STORAGE_KEYS,
+  SESSION_STORAGE_KEYS,
+  SUPABASE_STORAGE_KEYS,
+  STORAGE_KEYS,
+  type LocalStorageKeys,
+  type SessionStorageKeys,
+  type StorageKeys,
+} from './storage-keys';
