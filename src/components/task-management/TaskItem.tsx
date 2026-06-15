@@ -27,12 +27,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const [showCelebration, setShowCelebration] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const isMountedRef = useRef(false);
+  const toggleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      if (toggleTimeoutRef.current) {
+        clearTimeout(toggleTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -50,7 +54,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const handleClick = useCallback(() => {
     setIsToggled(true);
     onToggle(task.id, task.status);
-    setTimeout(() => {
+    toggleTimeoutRef.current = setTimeout(() => {
       if (isMountedRef.current) setIsToggled(false);
     }, TASK_ANIMATION_CONFIG.TOGGLE_RESET_DELAY_MS);
   }, [onToggle, task.id, task.status]);
@@ -61,7 +65,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
         e.preventDefault();
         setIsToggled(true);
         onToggle(task.id, task.status);
-        setTimeout(() => {
+        toggleTimeoutRef.current = setTimeout(() => {
           if (isMountedRef.current) setIsToggled(false);
         }, TASK_ANIMATION_CONFIG.TOGGLE_RESET_DELAY_MS);
       }
