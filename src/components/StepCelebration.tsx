@@ -36,6 +36,15 @@ function StepCelebrationComponent({
   const [isExiting, setIsExiting] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
   const [shouldAnimate, setShouldAnimate] = useState(true);
+  const exitTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  React.useEffect(() => {
+    return () => {
+      if (exitTimeoutRef.current) {
+        clearTimeout(exitTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -69,13 +78,18 @@ function StepCelebrationComponent({
 
       const timer = setTimeout(() => {
         setIsExiting(true);
-        setTimeout(() => {
+        exitTimeoutRef.current = setTimeout(() => {
           setIsVisible(false);
           onComplete?.();
         }, ANIMATION_CONFIG.FAST);
       }, ANIMATION_PHYSICS.STEP_CELEBRATION_DURATION_MS);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        if (exitTimeoutRef.current) {
+          clearTimeout(exitTimeoutRef.current);
+        }
+      };
     } else if (show && !shouldAnimate) {
       setIsVisible(true);
       const timer = setTimeout(() => {

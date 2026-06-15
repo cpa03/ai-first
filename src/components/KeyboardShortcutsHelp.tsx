@@ -267,6 +267,15 @@ function KeyboardShortcutsHelpComponent({
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Detect Mac
   useEffect(() => {
@@ -279,7 +288,7 @@ function KeyboardShortcutsHelpComponent({
   const handleClose = useCallback(() => {
     triggerHapticFeedback();
     setIsLeaving(true);
-    setTimeout(() => {
+    closeTimeoutRef.current = setTimeout(() => {
       setIsLeaving(false);
       setSearchQuery('');
       setSelectedIndex(0);
