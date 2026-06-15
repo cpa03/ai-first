@@ -8,6 +8,7 @@ import {
   RATE_LIMIT_VALUES,
   RATE_LIMIT_CONFIG,
 } from './config/constants';
+import { HTTP_HEADERS } from './config/http';
 import { generateRequestId } from './errors';
 import { simpleHash } from './security/crypto';
 
@@ -213,7 +214,6 @@ const rateLimitStore = new Map<string, number[]>();
 function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
   return detectCloudflarePlatform();
 }
-
 
 /**
  * Generate a request fingerprint for fallback rate limiting
@@ -551,7 +551,7 @@ export function rateLimitResponse(
   };
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
     'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
     'X-RateLimit-Limit': String(rateLimitInfo.limit),
     'X-RateLimit-Remaining': String(rateLimitInfo.remaining),

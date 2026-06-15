@@ -17,6 +17,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { HTTP_HEADERS } from '@/lib/config/http';
 import { generateId, secureRandom } from '@/lib/security/crypto';
 import { SESSION_STORAGE_KEYS } from '@/lib/config';
 
@@ -343,9 +344,7 @@ function sendEventsToPostHogServer(events: AnalyticsEventProperties[]): void {
   // Send to PostHog batch endpoint
   fetch(`${host}/capture/`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
     body: JSON.stringify(posthogEvents),
   }).catch((error) => {
     if (ANALYTICS_CONFIG.DEBUG) {
@@ -384,9 +383,7 @@ function sendEventsToPostHogClient(events: AnalyticsEventProperties[]): void {
   // Send to PostHog using fetch
   fetch(`${host}/capture/`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
     body: JSON.stringify(posthogEvents),
     credentials: 'omit' as RequestCredentials,
   }).catch((error) => {

@@ -9,6 +9,7 @@ import {
 import { requireAuth } from '@/lib/auth';
 import { APP_CONFIG } from '@/lib/config/app';
 import { STATUS_CODES } from '@/lib/config/http';
+import { IDEA_STATUS_CONFIG } from '@/lib/config';
 import { generateEmbedding } from '@/lib/embedding-service';
 import { storeIdeaEmbedding } from '@/lib/similarity-service';
 import { createLogger } from '@/lib/logger';
@@ -152,7 +153,7 @@ async function handlePost(context: ApiContext) {
         ? '...'
         : ''),
     raw_text: validatedIdea,
-    status: 'draft' as const,
+    status: IDEA_STATUS_CONFIG.TYPES.DRAFT,
     deleted_at: null,
   };
 

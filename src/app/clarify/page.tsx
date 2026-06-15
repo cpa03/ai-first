@@ -13,7 +13,11 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
-import { SPINNER_PATTERNS } from '@/lib/config';
+import {
+  SPINNER_PATTERNS,
+  IDEA_STATUS_CONFIG,
+  HTTP_HEADERS,
+} from '@/lib/config';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -106,10 +110,10 @@ function ClarifyPageContent() {
         if (ideaId) {
           const response = await fetchWithTimeout(`/api/ideas/${ideaId}`, {
             method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: 'clarified' }),
+            headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
+            body: JSON.stringify({
+              status: IDEA_STATUS_CONFIG.TYPES.CLARIFIED,
+            }),
           });
 
           if (!response.ok) {

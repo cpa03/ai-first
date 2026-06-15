@@ -6,7 +6,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import type { Task, Deliverable } from '@/lib/db';
 import { triggerHapticFeedback } from '@/lib/utils';
 import type { TaskStatus } from '@/types/task';
-import { API_ENDPOINTS } from '@/lib/config';
+import { API_ENDPOINTS, HTTP_HEADERS } from '@/lib/config';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -247,9 +247,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           API_ENDPOINTS.TASK_STATUS(taskId),
           {
             method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
             body: JSON.stringify({ status: newStatus }),
           }
         );

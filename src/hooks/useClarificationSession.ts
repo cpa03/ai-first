@@ -9,6 +9,7 @@ import {
   MESSAGES,
   ANIMATION_CONFIG,
   API_ENDPOINTS,
+  HTTP_HEADERS,
 } from '@/lib/config';
 
 const logger = createLogger('useClarificationSession');
@@ -222,9 +223,7 @@ export function useClarificationSession(
           API_ENDPOINTS.CLARIFY,
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
             body: JSON.stringify({ idea, ideaId }),
           },
           undefined,

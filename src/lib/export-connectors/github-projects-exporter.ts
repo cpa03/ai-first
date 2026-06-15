@@ -1,6 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task, Deliverable, Idea } from '../db/service';
-import { GITHUB_CONFIG, TASK_CONFIG } from '@/lib/config';
+import { GITHUB_CONFIG, TASK_CONFIG, HTTP_HEADERS } from '@/lib/config';
 
 import { createLogger } from '../logger';
 
@@ -272,7 +272,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
           },
           body: JSON.stringify({
             name: repoName,
@@ -321,7 +321,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.inertia-preview+json',
-            'Content-Type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
           },
           body: JSON.stringify({
             name: projectName,
@@ -352,7 +352,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.inertia-preview+json',
-            'Content-Type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
           },
           body: JSON.stringify({
             name: columnName,
@@ -407,7 +407,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
           },
           body: JSON.stringify(issueData),
         }),
@@ -433,7 +433,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.inertia-preview+json',
-            'Content-Type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
           },
           body: JSON.stringify({
             content_id: issueId,
@@ -487,7 +487,7 @@ export class GitHubProjectsExporter extends ExportConnector {
           headers: {
             Authorization: `token ${token}`,
             Accept: 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json',
+            [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
           },
           body: JSON.stringify({
             message: 'Add project README',

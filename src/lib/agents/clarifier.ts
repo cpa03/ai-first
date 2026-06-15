@@ -2,6 +2,7 @@ import { AIModelConfig, aiService } from '@/lib/ai';
 import { dbService, type Idea } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
 import { CLARIFIER_VALUES } from '@/lib/config/constants';
+import { IDEA_STATUS_CONFIG } from '@/lib/config';
 import {
   QuestionGenerator,
   IdeaRefiner,
@@ -208,7 +209,9 @@ export class ClarifierAgent {
 
       await this.sessionManager!.store(session);
 
-      await dbService.updateIdea(ideaId, { status: 'clarified' });
+      await dbService.updateIdea(ideaId, {
+        status: IDEA_STATUS_CONFIG.TYPES.CLARIFIED,
+      });
 
       // Emit ClarificationCompleted event
       await eventBus.emit({

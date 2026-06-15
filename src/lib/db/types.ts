@@ -1,9 +1,11 @@
+import type { IdeaStatus } from '@/lib/config';
+
 export interface Idea {
   id: string;
   user_id: string;
   title: string;
   raw_text: string;
-  status: 'draft' | 'clarified' | 'breakdown' | 'completed';
+  status: IdeaStatus;
   deleted_at: string | null;
   created_at: string;
   updated_at?: string;
