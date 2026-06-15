@@ -31,6 +31,9 @@ jest.mock('@/lib/config', () => ({
   API_ENDPOINTS: {
     CLARIFY: '/api/clarify',
   },
+  HTTP_HEADERS: {
+    JSON_CONTENT_TYPE: { 'Content-Type': 'application/json' },
+  },
 }));
 
 const mockFetch = require('@/lib/api-client').fetchWithTimeout as jest.Mock;
