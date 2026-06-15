@@ -883,3 +883,29 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Share Success Glow Animation - Micro-UX delight for successful share actions */
+/* Creates a brief, satisfying glow effect that confirms the action to users */
+@keyframes shareSuccessGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+  30% {
+    box-shadow: 0 0 12px 4px rgba(59, 130, 246, 0.35);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-share-success-glow {
+  animation: shareSuccessGlow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Reduced motion support for share success glow */
+@media (prefers-reduced-motion: reduce) {
+  .animate-share-success-glow {
+    animation: none;
+    box-shadow: none;
+  }
+}
