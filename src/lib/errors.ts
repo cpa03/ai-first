@@ -1,6 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
+import { HTTP_HEADERS } from './config/http';
 import { generateId, simpleHash } from './security/crypto';
 import { HASH_CONFIG } from './config/modular-constants';
 
@@ -306,7 +307,7 @@ export function toErrorResponse(
   errorResponse.requestId = requestId || generateRequestId();
 
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
+    [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
     'X-Request-ID': errorResponse.requestId || '',
     'X-Error-Code': appError.code,
     'X-Error-Fingerprint': appError.fingerprint,

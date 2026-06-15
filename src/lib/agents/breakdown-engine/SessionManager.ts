@@ -1,7 +1,7 @@
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import type { BreakdownSession } from './types';
-import { TASK_CONFIG } from '@/lib/config';
+import { TASK_CONFIG, IDEA_STATUS_CONFIG } from '@/lib/config';
 
 const logger = createLogger('SessionManager');
 
@@ -88,7 +88,9 @@ export class SessionManager {
         await dbService.createTasks(tasksData);
       }
 
-      await dbService.updateIdea(session.ideaId, { status: 'breakdown' });
+      await dbService.updateIdea(session.ideaId, {
+        status: IDEA_STATUS_CONFIG.TYPES.BREAKDOWN,
+      });
     } catch (error) {
       logger.error('Failed to persist breakdown results:', error);
       throw error;

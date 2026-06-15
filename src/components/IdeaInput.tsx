@@ -5,7 +5,12 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
-import { MESSAGES, PLACEHOLDERS, COMPONENT_CONFIG } from '@/lib/config';
+import {
+  MESSAGES,
+  PLACEHOLDERS,
+  COMPONENT_CONFIG,
+  HTTP_HEADERS,
+} from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -118,9 +123,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       try {
         const response = await fetchWithTimeout('/api/ideas', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
           body: JSON.stringify({ idea }),
         });
 
