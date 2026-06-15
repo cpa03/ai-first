@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
 import {
   COMPONENT_CONFIG,
@@ -85,10 +85,19 @@ export default function UserOnboarding() {
     left: 0,
   });
   const [isAnimating, setIsAnimating] = useState(false);
+  const animatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const currentStep = TOUR_STEPS[currentStepIndex];
   const isLastStep = currentStepIndex === TOUR_STEPS.length - 1;
   const progress = ((currentStepIndex + 1) / TOUR_STEPS.length) * 100;
+
+  useEffect(() => {
+    return () => {
+      if (animatingTimeoutRef.current) {
+        clearTimeout(animatingTimeoutRef.current);
+      }
+    };
+  }, []);
 
   /**
    * Calculate tooltip position based on target element
@@ -196,7 +205,10 @@ export default function UserOnboarding() {
       setCurrentStepIndex((prev) => prev + 1);
     }
 
-    setTimeout(() => setIsAnimating(false), ANIMATION_CONFIG.MOUNT_DELAY);
+    animatingTimeoutRef.current = setTimeout(
+      () => setIsAnimating(false),
+      ANIMATION_CONFIG.MOUNT_DELAY
+    );
   }, [isLastStep]);
 
   /**
@@ -219,7 +231,7 @@ export default function UserOnboarding() {
   const handlePrev = useCallback(() => {
     setIsAnimating(true);
     setCurrentStepIndex((prev) => Math.max(0, prev - 1));
-    setTimeout(
+    animatingTimeoutRef.current = setTimeout(
       () => setIsAnimating(false),
       COMPONENT_CONFIG.ONBOARDING.STEP_TRANSITION_MS
     );
