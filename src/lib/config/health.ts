@@ -54,6 +54,15 @@ export const HEALTH_CONFIG = {
 } as const;
 
 /**
+ * Memory Unit Conversion
+ * Eliminates hardcoded 1024 magic number for bytes-to-MB conversion
+ * Env: MEMORY_BYTES_PER_MB (default: 1048576 = 1024 * 1024)
+ */
+export const MEMORY_UNITS = {
+  BYTES_PER_MB: EnvLoader.number('MEMORY_BYTES_PER_MB', 1048576, 1, 10485760),
+} as const;
+
+/**
  * Memory Health Configuration
  * Thresholds for memory usage monitoring and alerts
  * Used by the detailed health endpoint for memory leak detection

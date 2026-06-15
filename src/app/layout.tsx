@@ -8,7 +8,7 @@ import ToastContainer from '@/components/ToastContainer';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
-import { SEO_CONFIG, APP_CONFIG } from '@/lib/config';
+import { SEO_CONFIG, APP_CONFIG, BRAND_COLORS } from '@/lib/config';
 import { safeJsonLd } from '@/lib/security/json-ld';
 import {
   KeyboardShortcutsProvider,
@@ -106,8 +106,8 @@ export const metadata: Metadata = {
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
     'apple-mobile-web-app-title': APP_CONFIG.NAME,
-    'msapplication-TileColor': '#2563eb',
-    'theme-color': '#2563eb',
+    'msapplication-TileColor': BRAND_COLORS.PRIMARY,
+    'theme-color': BRAND_COLORS.PRIMARY,
   },
 };
 

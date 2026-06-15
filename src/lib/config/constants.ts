@@ -1002,7 +1002,7 @@ export { PROXY_CONFIG } from './proxy-config';
  * Health Monitoring Constants (re-exported from health.ts for modularity)
  * @see {@link ./health.ts} for implementation
  */
-export { HEALTH_CONFIG, MEMORY_CONFIG } from './health';
+export { HEALTH_CONFIG, MEMORY_CONFIG, MEMORY_UNITS } from './health';
 
 /**
  * Idea Status Configuration (re-exported from idea-status-config.ts for modularity)
