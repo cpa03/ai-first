@@ -100,7 +100,7 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - Removed duplicate Install Node.js steps
   - Expected savings: 40-60% reduction in CI time
 
-- PR #XXXX: fix(platform): improve circular dependency detection accuracy
+- **2026-02-26**: fix(platform): improve circular dependency detection accuracy
   - Addresses issue #1846
   - Added --ts-config tsconfig.json to madge for proper path alias resolution
   - Fixed false negative: script now correctly detects 5 circular dependencies
@@ -117,15 +117,10 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - NOTE: gh pr create command failed but gh api works
   - Use: gh api repos/owner/repo/pulls -X POST for creating PRs when CLI fails
 
-#BR|
-#KM|- **2026-02-27**: RE-ISSUE: Corrupted YAML in test-unified-workflow still present
-#QT| - PR #1950 claimed to fix this but the corrupted content is STILL in the file
-#QT| - Lines 308-310 still contain: content>, <line_count>207</line_count>, </write_to_file>
-#QT| - Running `node scripts/validate-ci-config.js` shows 1 YAML parsing error
-#QT| - FIX: Remove lines 308-310 from `.github/workflows/test-unified-workflow.yml`
-#QT| - File should end at line 307 with: GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#QT| - ISSUE: Cannot push workflow changes due to GitHub App missing workflows permission
-#QP| - Status: BLOCKED - manual fix required
+- **2026-06-15**: FIX: Removed corrupted YAML from test-unified-workflow.yml
+  - Removed lines 308-310 containing: `content>`, `<line_count>207</line_count>`, `</write_to_file>`
+  - File now ends correctly at `GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}`
+  - Status: RESOLVED by RepoKeeper
 
 - **2026-02-27**: PR #2009: fix(platform): remove duplicate variable declarations in useSessionDuration
   - Fixed TypeScript compilation error in `src/hooks/useSessionDuration.ts`
