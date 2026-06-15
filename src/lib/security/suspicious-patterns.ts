@@ -429,6 +429,11 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'MongoDB operator injection',
     },
     {
+      pattern: /\[\$(gt|gte|lt|lte|ne|eq|in|nin|exists|regex|size)\]/i,
+      severity: 3,
+      description: 'NoSQL bracket notation injection',
+    },
+    {
       pattern: /\$javascript/i,
       severity: 3,
       description: 'MongoDB JavaScript injection',
@@ -460,6 +465,11 @@ const SUSPICIOUS_PATTERNS: Record<
         /(__proto__|__defineGetter__|__defineSetter__|__lookupGetter__|__lookupSetter__)\s*[\[.(]/i,
       severity: 3,
       description: 'Prototype pollution via internal methods',
+    },
+    {
+      pattern: /^__proto__$/i,
+      severity: 3,
+      description: 'Prototype pollution via __proto__ key',
     },
     {
       pattern: /constructor\s*[\[.]\s*prototype/i,
@@ -494,7 +504,7 @@ const SUSPICIOUS_PATTERNS: Record<
   log_injection: [
     // High severity - JNDI/LDAP injection (Log4j style)
     {
-      pattern: /\$\{\s*(jndi|ldap|dns|rmi)\s*:/gi,
+      pattern: /\$\{\s*(jndi|ldap|dns|rmi|jmx|nis|iiop)\s*:/gi,
       severity: 3,
       description: 'JNDI/LDAP injection attempt',
     },
@@ -577,6 +587,10 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'cookie',
+  'authorization',
+  'x-api-key',
+  'x-csrf-token',
 ]);
 
 /**
@@ -705,10 +719,15 @@ export function detectSuspiciousPatterns(
     const pathFindings = scanString(url.pathname, 'path', minSeverity);
     patterns.push(...pathFindings);
 
-    // Scan query parameters
+    // Scan query parameters (both keys and values)
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan query parameter key
+      const keyFindings = scanString(key, 'query', minSeverity, key);
+      patterns.push(...keyFindings);
+
+      // Scan query parameter value
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...valueFindings);
     }
   }
 
@@ -722,7 +741,13 @@ export function detectSuspiciousPatterns(
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
-        if (!SKIP_HEADERS.has(key.toLowerCase())) {
+        const lowerKey = key.toLowerCase();
+        if (!SKIP_HEADERS.has(lowerKey)) {
+          // Scan header key
+          const keyFindings = scanString(key, 'header', minSeverity, key);
+          patterns.push(...keyFindings);
+
+          // Scan header value
           const headerFindings = scanString(value, 'header', minSeverity, key);
           patterns.push(...headerFindings);
         }

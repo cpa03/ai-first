@@ -51,7 +51,8 @@ export function generateId(): string {
   // 3. Last resort fallback (non-cryptographic)
   // This should only be reached in extremely restricted legacy environments
   const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 11);
+  // SECURITY: Use secureRandom() which logs a security warning if Web Crypto is unavailable
+  const randomPart = secureRandom().toString(36).substring(2, 11);
   return `${timestamp}-${randomPart}`;
 }
 
