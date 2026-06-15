@@ -4,6 +4,7 @@ import React, { useCallback } from 'react';
 import Button from './Button';
 import { createLogger } from '@/lib/logger';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { APP_CONFIG } from '@/lib/config';
 
 export interface EmailButtonProps {
   ideaTitle: string;
@@ -44,7 +45,9 @@ const EmailButtonComponent = function EmailButton({
       const emailBody = buildEmailBody(ideaTitle, ideaContent, sessionAnswers);
 
       // Create mailto link
-      const subject = encodeURIComponent(`My IdeaFlow Blueprint: ${ideaTitle}`);
+      const subject = encodeURIComponent(
+        `My ${APP_CONFIG.NAME} Blueprint: ${ideaTitle}`
+      );
       const body = encodeURIComponent(emailBody);
       const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
 
@@ -85,7 +88,7 @@ function buildEmailBody(
   content: string,
   answers: Record<string, string>
 ): string {
-  let body = `My Project Blueprint from IdeaFlow\n`;
+  let body = `My Project Blueprint from ${APP_CONFIG.NAME}\n`;
   body += `================================\n\n`;
   body += `Title: ${title}\n\n`;
   body += `Summary:\n${content}\n\n`;
@@ -104,8 +107,8 @@ function buildEmailBody(
   }
 
   body += `---\n`;
-  body += `Created with IdeaFlow - Turn ideas into actionable plans\n`;
-  body += `https://ideaflow.ai`;
+  body += `Created with ${APP_CONFIG.NAME} - ${APP_CONFIG.TAGLINE}\n`;
+  body += `${APP_CONFIG.URLS.BASE}`;
 
   return body;
 }
