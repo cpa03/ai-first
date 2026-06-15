@@ -30,6 +30,11 @@ module.exports = {
     'border-green-200',
     'border-yellow-200',
     'border-red-200',
+    // Risk level indicator colors (left border for task items)
+    'border-l-4',
+    'border-l-green-400',
+    'border-l-yellow-400',
+    'border-l-red-400',
     // Focus ring colors for accessibility
     'focus-visible:ring-gray-400',
     'focus-visible:ring-blue-500',

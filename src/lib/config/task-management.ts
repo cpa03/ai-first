@@ -54,6 +54,7 @@ export const RISK_LEVEL_CONFIG: Record<
     bgColor: string;
     textColor: string;
     borderColor: string;
+    indicatorColor: string;
   }
 > = {
   low: {
@@ -61,18 +62,21 @@ export const RISK_LEVEL_CONFIG: Record<
     bgColor: 'bg-green-100',
     textColor: 'text-green-700',
     borderColor: 'border-green-200',
+    indicatorColor: 'border-l-green-400',
   },
   medium: {
     label: 'Medium Risk',
     bgColor: 'bg-yellow-100',
     textColor: 'text-yellow-700',
     borderColor: 'border-yellow-200',
+    indicatorColor: 'border-l-yellow-400',
   },
   high: {
     label: 'High Risk',
     bgColor: 'bg-red-100',
     textColor: 'text-red-700',
     borderColor: 'border-red-200',
+    indicatorColor: 'border-l-red-400',
   },
 } as const;
 
@@ -84,6 +88,7 @@ export const TASK_ITEM_STYLES = {
     'flex items-start gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50/50 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer',
   CONTAINER_COMPLETED:
     'flex items-start gap-3 p-3 bg-green-50/50 rounded-lg border border-green-200 hover:border-green-300 hover:bg-green-50/80 hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 ease-out cursor-pointer',
+  RISK_INDICATOR: 'border-l-4',
   CHECKBOX: {
     BASE: 'mt-0.5 flex-shrink-0 w-5 h-5 rounded border-2 flex items-center justify-center transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500',
     UNCHECKED:
