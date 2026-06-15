@@ -1,9 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
-import { redactPIIInObject } from '../pii-redaction';
 import { createLogger } from '../logger';
 import { resourceCleanupManager } from '../resource-cleanup';
-import { AGENT_CONFIG, VALIDATION_LIMITS } from '../config/constants';
+import { AGENT_CONFIG } from '../config/constants';
+import { IdeaService, type ClientProvider } from './ideas';
+import { DeliverableService } from './deliverables';
+import { TaskService } from './tasks';
+import { VectorService } from './vectors';
+import { ClarificationService } from './clarification';
 import type {
   Idea,
   IdeaSession,
@@ -98,10 +102,6 @@ export function getSupabaseAdmin(): ReturnType<
   return _supabaseAdmin;
 }
 
-// SECURITY NOTE: The previous supabaseAdmin export has been REMOVED
-// to prevent any risk of the service role key being bundled in client code.
-// Always use getSupabaseAdmin() function instead.
-
 // Re-export types for backward compatibility
 export type {
   Idea,
@@ -117,8 +117,25 @@ export type {
   ConnectionHealth,
 } from './types';
 
-// Database service class
-export class DatabaseService {
+// Re-export sub-services for direct access
+export { IdeaService } from './ideas';
+export { DeliverableService } from './deliverables';
+export { TaskService } from './tasks';
+export { VectorService } from './vectors';
+export { ClarificationService } from './clarification';
+
+/**
+ * Database service class
+ *
+ * This is the main entry point for all database operations.
+ * It delegates to domain-specific services for better modularity:
+ * - IdeaService: Idea CRUD and statistics
+ * - DeliverableService: Deliverable operations
+ * - TaskService: Task operations
+ * - VectorService: Vector/embedding operations
+ * - ClarificationService: Clarification sessions and agent logging
+ */
+export class DatabaseService implements ClientProvider {
   private _client: ReturnType<typeof createClient<Database>> | null = null;
   private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
@@ -137,6 +154,13 @@ export class DatabaseService {
     totalQueries: 0,
     failedQueries: 0,
   };
+
+  // Domain-specific services (initialized lazily)
+  private _ideas: IdeaService | null = null;
+  private _deliverables: DeliverableService | null = null;
+  private _tasks: TaskService | null = null;
+  private _vectors: VectorService | null = null;
+  private _clarification: ClarificationService | null = null;
 
   private constructor() {
     this._client = supabaseClient;
@@ -161,17 +185,13 @@ export class DatabaseService {
     }
   }
 
-  private get client() {
+  // ClientProvider implementation
+  getClient(): ReturnType<typeof createClient<Database>> | null {
     this.ensureNotDisposed();
     return this._client;
   }
 
-  /**
-   * Get the admin client (lazy-loaded, server-side only)
-   * SECURITY: This getter calls getSupabaseAdmin() which has runtime checks
-   * to prevent usage in browser contexts
-   */
-  private get admin() {
+  getAdmin(): ReturnType<typeof createClient<Database>> | null {
     this.ensureNotDisposed();
     // Lazy initialization to prevent client-side bundling
     if (!this._admin) {
@@ -200,6 +220,56 @@ export class DatabaseService {
       );
     }
     return DatabaseService.instance;
+  }
+
+  /**
+   * Get the IdeaService instance
+   */
+  get ideas(): IdeaService {
+    if (!this._ideas) {
+      this._ideas = new IdeaService(this);
+    }
+    return this._ideas;
+  }
+
+  /**
+   * Get the DeliverableService instance
+   */
+  get deliverables(): DeliverableService {
+    if (!this._deliverables) {
+      this._deliverables = new DeliverableService(this);
+    }
+    return this._deliverables;
+  }
+
+  /**
+   * Get the TaskService instance
+   */
+  get tasks(): TaskService {
+    if (!this._tasks) {
+      this._tasks = new TaskService(this);
+    }
+    return this._tasks;
+  }
+
+  /**
+   * Get the VectorService instance
+   */
+  get vectors(): VectorService {
+    if (!this._vectors) {
+      this._vectors = new VectorService(this);
+    }
+    return this._vectors;
+  }
+
+  /**
+   * Get the ClarificationService instance
+   */
+  get clarification(): ClarificationService {
+    if (!this._clarification) {
+      this._clarification = new ClarificationService(this);
+    }
+    return this._clarification;
   }
 
   /**
@@ -420,13 +490,13 @@ export class DatabaseService {
     // Check client connection
     let clientHealthy = false;
     try {
-      if (!this.client) {
+      if (!this._client) {
         this.connectionMetrics.failedConnections++;
         this.connectionMetrics.lastFailedConnection = new Date();
       } else {
         this.connectionMetrics.totalConnections++;
 
-        const healthCheckPromise = this.client
+        const healthCheckPromise = this._client
           .from('ideas')
           .select('id')
           .limit(1);
@@ -464,13 +534,14 @@ export class DatabaseService {
     // Check admin connection
     let adminHealthy = false;
     try {
-      if (!this.admin) {
+      const admin = this.getAdmin();
+      if (!admin) {
         // Admin client not initialized - consider it unhealthy
         adminHealthy = false;
       } else {
         // Test admin connection with a simple query
         // Using agent_logs table which is commonly used for admin operations
-        const adminHealthCheckPromise = this.admin
+        const adminHealthCheckPromise = admin
           .from('agent_logs')
           .select('id')
           .limit(1);
@@ -542,510 +613,144 @@ export class DatabaseService {
     };
   }
 
+  // ============================================================================
+  // Backward-compatible delegates to sub-services
+  // These methods delegate to the domain-specific services while maintaining
+  // the existing API for backward compatibility.
+  // ============================================================================
+
   // Ideas CRUD operations
   async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('ideas')
-      .insert(idea as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.ideas.createIdea(idea);
   }
 
   async getIdea(id: string): Promise<Idea | null> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('ideas')
-      .select('*')
-      .eq('id', id)
-      .is('deleted_at', null)
-      .single();
-
-    if (error) return null;
-    return data;
+    return this.ideas.getIdea(id);
   }
 
   async getUserIdeas(userId: string): Promise<Idea[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('ideas')
-      .select('*')
-      .eq('user_id', userId)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
+    return this.ideas.getUserIdeas(userId);
   }
 
-  /**
-   * Get paginated ideas for a user with optional status filtering
-   *
-   * PERFORMANCE: Uses database-level pagination and filtering instead of
-   * in-memory operations. Supports filtering by status at the query level
-   * for optimal performance.
-   *
-   * @param userId - The user ID to get ideas for
-   * @param pagination - Pagination options (page, pageSize)
-   * @param filters - Optional filters (status, search)
-   * @returns Paginated result with ideas and metadata
-   */
   async getUserIdeasPaginated(
     userId: string,
     pagination: PaginationOptions = {},
     filters?: { status?: Idea['status'] | 'all'; search?: string }
   ): Promise<PaginatedResult<Idea>> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const page = Math.max(1, pagination.page || 1);
-    const pageSize = Math.min(
-      pagination.pageSize || VALIDATION_LIMITS.PAGINATION.DEFAULT_LIMIT,
-      VALIDATION_LIMITS.PAGINATION.MAX_LIMIT
-    );
-    const offset = (page - 1) * pageSize;
-
-    // Build the base query with common filters
-    let countQuery = this.client
-      .from('ideas')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .is('deleted_at', null);
-
-    let dataQuery = this.client
-      .from('ideas')
-      .select('*')
-      .eq('user_id', userId)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    // Apply status filter if provided and not 'all'
-    if (filters?.status && filters.status !== 'all') {
-      countQuery = countQuery.eq('status', filters.status);
-      dataQuery = dataQuery.eq('status', filters.status);
-    }
-
-    // Apply search filter if provided (searches in title and raw_text)
-    if (filters?.search && filters.search.trim()) {
-      const searchTerm = `%${filters.search.trim().toLowerCase()}%`;
-      // Use OR filter for searching across multiple columns
-      countQuery = countQuery.or(
-        `title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`
-      );
-      dataQuery = dataQuery.or(
-        `title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`
-      );
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) throw countError;
-
-    const { data, error } = await dataQuery;
-
-    if (error) throw error;
-
-    const total = count || 0;
-
-    return {
-      data: data || [],
-      total,
-      page,
-      pageSize,
-      hasMore: offset + (data?.length || 0) < total,
-    };
+    return this.ideas.getUserIdeasPaginated(userId, pagination, filters);
   }
 
   async updateIdea(id: string, updates: Partial<Idea>): Promise<Idea> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { data, error } = await this.admin
-      .from('ideas')
-      .update(updates as never)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Idea;
+    return this.ideas.updateIdea(id, updates);
   }
 
   async softDeleteIdea(id: string): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { error } = await this.admin
-      .from('ideas')
-      .update({ deleted_at: new Date().toISOString() } as never)
-      .eq('id', id);
-
-    if (error) throw error;
+    return this.ideas.softDeleteIdea(id);
   }
 
   async deleteIdea(id: string): Promise<void> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { error } = await this.client.from('ideas').delete().eq('id', id);
-
-    if (error) throw error;
+    return this.ideas.deleteIdea(id);
   }
 
   // Idea sessions operations
   async upsertIdeaSession(
     session: Omit<IdeaSession, 'updated_at'>
   ): Promise<IdeaSession> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('idea_sessions')
-      .upsert({
-        ...session,
-        updated_at: new Date().toISOString(),
-      } as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.ideas.upsertIdeaSession(session);
   }
 
   async getIdeaSession(ideaId: string): Promise<IdeaSession | null> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('idea_sessions')
-      .select('*')
-      .eq('idea_id', ideaId)
-      .single();
-
-    if (error) return null;
-    return data;
+    return this.ideas.getIdeaSession(ideaId);
   }
 
   // Deliverables operations
   async createDeliverable(
     deliverable: Omit<Deliverable, 'id' | 'created_at'>
   ): Promise<Deliverable> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('deliverables')
-      .insert(deliverable as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.deliverables.createDeliverable(deliverable);
   }
 
   async createDeliverables(
     deliverables: Omit<Deliverable, 'id' | 'created_at'>[]
   ): Promise<Deliverable[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('deliverables')
-      .insert(deliverables as never)
-      .select();
-
-    if (error) throw error;
-    return data || [];
+    return this.deliverables.createDeliverables(deliverables);
   }
 
   async getIdeaDeliverables(ideaId: string): Promise<Deliverable[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('deliverables')
-      .select('*')
-      .eq('idea_id', ideaId)
-      .is('deleted_at', null)
-      .order('priority', { ascending: false });
-
-    if (error) throw error;
-    return data || [];
+    return this.deliverables.getIdeaDeliverables(ideaId);
   }
 
-  /**
-   * Fetches all deliverables for an idea with their associated tasks in a single optimized query.
-   *
-   * PERFORMANCE OPTIMIZATION (Issue #855 - N+1 Query Resolution):
-   * ===========================================================================
-   * This method uses a SINGLE database query with a JOIN (via Supabase's embedded select)
-   * instead of the classic N+1 pattern that would fetch deliverables first, then
-   * fetch tasks for each deliverable individually.
-   *
-   * Query Pattern Analysis:
-   * - OLD (N+1): 1 query for deliverables + N queries for tasks = N+1 total queries
-   * - NEW (Optimized): 1 query with embedded select = 1 total query
-   *
-   * Performance Characteristics:
-   * - Best Case: 1 deliverable = 1 query
-   * - Typical Case: 10 deliverables = 1 query (not 11)
-   * - Worst Case: 100 deliverables = 1 query (not 101)
-   * - Scaling: O(1) regardless of deliverable count
-   *
-   * Additional Optimizations:
-   * - Server-side filtering via `.is('tasks.deleted_at', null)` eliminates
-   *   client-side filtering and reduces network payload
-   * - Deliverables ordered by priority (highest first)
-   * - Tasks ordered by creation date (oldest first) for consistent UI display
-   *
-   * @param ideaId - The ID of the idea to fetch deliverables for
-   * @returns Array of deliverables with their tasks, sorted by priority
-   * @throws Error if Supabase client is not initialized
-   *
-   * @see https://supabase.com/docs/reference/javascript/select#query-foreign-tables
-   */
   async getIdeaDeliverablesWithTasks(
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('deliverables')
-      .select(
-        `
-        *,
-        tasks!tasks_deliverable_id_fkey (
-          *
-        )
-      `
-      )
-      .eq('idea_id', ideaId)
-      .is('deleted_at', null)
-      .is('tasks.deleted_at', null)
-      .order('priority', { ascending: false });
-
-    if (error) throw error;
-
-    const deliverables = (data || []) as (Deliverable & { tasks: Task[] })[];
-
-    return deliverables.map((d) => ({
-      ...d,
-      tasks: (d.tasks || []).sort((a, b) =>
-        a.created_at.localeCompare(b.created_at)
-      ),
-    }));
+    return this.deliverables.getIdeaDeliverablesWithTasks(ideaId);
   }
 
   async getDeliverableWithIdea(
     id: string
   ): Promise<(Deliverable & { idea: Idea }) | null> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('deliverables')
-      .select(
-        `
-        *,
-        idea:ideas!inner(*)
-      `
-      )
-      .eq('id', id)
-      .is('deliverables.deleted_at', null)
-      .is('ideas.deleted_at', null)
-      .single();
-
-    if (error || !data) return null;
-
-    return data as Deliverable & { idea: Idea };
+    return this.deliverables.getDeliverableWithIdea(id);
   }
 
   async updateDeliverable(
     id: string,
     updates: Partial<Deliverable>
   ): Promise<Deliverable> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { data, error } = await this.admin
-      .from('deliverables')
-      .update(updates as never)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Deliverable;
+    return this.deliverables.updateDeliverable(id, updates);
   }
 
   async softDeleteDeliverable(id: string): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { error } = await this.admin
-      .from('deliverables')
-      .update({ deleted_at: new Date().toISOString() } as never)
-      .eq('id', id);
-
-    if (error) throw error;
+    return this.deliverables.softDeleteDeliverable(id);
   }
 
   async deleteDeliverable(id: string): Promise<void> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { error } = await this.client
-      .from('deliverables')
-      .delete()
-      .eq('id', id);
-
-    if (error) throw error;
+    return this.deliverables.deleteDeliverable(id);
   }
 
   // Tasks operations
   async createTask(task: Omit<Task, 'id' | 'created_at'>): Promise<Task> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('tasks')
-      .insert(task as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.tasks.createTask(task);
   }
 
   async createTasks(tasks: Omit<Task, 'id' | 'created_at'>[]): Promise<Task[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('tasks')
-      .insert(tasks as never)
-      .select();
-
-    if (error) throw error;
-    return data || [];
+    return this.tasks.createTasks(tasks);
   }
 
   async getDeliverableTasks(deliverableId: string): Promise<Task[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('tasks')
-      .select('*')
-      .eq('deliverable_id', deliverableId)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: true });
-
-    if (error) throw error;
-    return data || [];
+    return this.tasks.getDeliverableTasks(deliverableId);
   }
 
   async getTask(id: string): Promise<Task | null> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('tasks')
-      .select('*')
-      .eq('id', id)
-      .is('deleted_at', null)
-      .single();
-
-    if (error) return null;
-    return data;
+    return this.tasks.getTask(id);
   }
 
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { data, error } = await this.admin
-      .from('tasks')
-      .update(updates as never)
-      .eq('id', id)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data as Task;
+    return this.tasks.updateTask(id, updates);
   }
 
   async softDeleteTask(id: string): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { error } = await this.admin
-      .from('tasks')
-      .update({ deleted_at: new Date().toISOString() } as never)
-      .eq('id', id);
-
-    if (error) throw error;
+    return this.tasks.softDeleteTask(id);
   }
 
   async deleteTask(id: string): Promise<void> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { error } = await this.client.from('tasks').delete().eq('id', id);
-
-    if (error) throw error;
+    return this.tasks.deleteTask(id);
   }
 
   async getTaskWithOwnership(
     id: string
   ): Promise<(Task & { deliverable: Deliverable; idea: Idea }) | null> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('tasks')
-      .select(
-        `
-        *,
-        deliverable:deliverables!inner(*),
-        idea:deliverables!inner(idea:ideas!inner(*))
-      `
-      )
-      .eq('id', id)
-      .is('tasks.deleted_at', null)
-      .is('deliverables.deleted_at', null)
-      .is('ideas.deleted_at', null)
-      .single();
-
-    if (error || !data) return null;
-
-    const typedData = data as Task & {
-      deliverable: Deliverable;
-      idea: { idea: Idea };
-    };
-    return {
-      ...typedData,
-      idea: typedData.idea.idea,
-    };
+    return this.tasks.getTaskWithOwnership(id);
   }
 
   // Vector operations for embeddings and context
   async storeVector(
     vector: Omit<Vector, 'id' | 'created_at'>
   ): Promise<Vector> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('vectors')
-      .insert(vector as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.vectors.storeVector(vector);
   }
 
   async getVectors(ideaId: string, referenceType?: string): Promise<Vector[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    let query = this.client.from('vectors').select('*').eq('idea_id', ideaId);
-
-    if (referenceType) {
-      query = query.eq('reference_type', referenceType);
-    }
-
-    const { data, error } = await query.order('created_at', {
-      ascending: false,
-    });
-
-    if (error) throw error;
-    return data || [];
+    return this.vectors.getVectors(ideaId, referenceType);
   }
 
   async getVectorsPaginated(
@@ -1053,93 +758,18 @@ export class DatabaseService {
     referenceType?: string,
     pagination: PaginationOptions = {}
   ): Promise<PaginatedResult<Vector>> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const page = Math.max(1, pagination.page || 1);
-    const pageSize = Math.min(
-      pagination.pageSize || VALIDATION_LIMITS.PAGINATION.DEFAULT_LIMIT,
-      VALIDATION_LIMITS.PAGINATION.MAX_LIMIT
-    );
-    const offset = (page - 1) * pageSize;
-
-    let countQuery = this.client
-      .from('vectors')
-      .select('*', { count: 'exact', head: true })
-      .eq('idea_id', ideaId);
-
-    if (referenceType) {
-      countQuery = countQuery.eq('reference_type', referenceType);
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) throw countError;
-
-    let query = this.client
-      .from('vectors')
-      .select('*')
-      .eq('idea_id', ideaId)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (referenceType) {
-      query = query.eq('reference_type', referenceType);
-    }
-
-    const { data, error } = await query;
-
-    if (error) throw error;
-
-    const total = count || 0;
-
-    return {
-      data: data || [],
-      total,
-      page,
-      pageSize,
-      hasMore: offset + (data?.length || 0) < total,
-    };
+    return this.vectors.getVectorsPaginated(ideaId, referenceType, pagination);
   }
 
   async getVectorsByIdeaIds(
     ideaIds: string[],
     referenceType?: string
   ): Promise<Map<string, Vector[]>> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-    if (ideaIds.length === 0) return new Map();
-
-    let query = this.client.from('vectors').select('*').in('idea_id', ideaIds);
-
-    if (referenceType) {
-      query = query.eq('reference_type', referenceType);
-    }
-
-    const { data, error } = await query.order('created_at', {
-      ascending: false,
-    });
-
-    if (error) throw error;
-
-    const vectors = (data || []) as Vector[];
-    const resultMap = new Map<string, Vector[]>();
-
-    for (const vector of vectors) {
-      const ideaId = vector.idea_id;
-      if (!resultMap.has(ideaId)) {
-        resultMap.set(ideaId, []);
-      }
-      resultMap.get(ideaId)!.push(vector);
-    }
-
-    return resultMap;
+    return this.vectors.getVectorsByIdeaIds(ideaIds, referenceType);
   }
 
   async deleteVector(id: string): Promise<void> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { error } = await this.client.from('vectors').delete().eq('id', id);
-
-    if (error) throw error;
+    return this.vectors.deleteVector(id);
   }
 
   async storeEmbedding(
@@ -1149,22 +779,13 @@ export class DatabaseService {
     referenceId?: string,
     vectorData?: Record<string, unknown>
   ): Promise<Vector> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    const { data, error } = await this.admin
-      .from('vectors')
-      .insert({
-        idea_id: ideaId,
-        embedding: `[${embedding.join(',')}]`,
-        reference_type: referenceType,
-        reference_id: referenceId,
-        vector_data: vectorData,
-      } as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.vectors.storeEmbedding(
+      ideaId,
+      referenceType,
+      embedding,
+      referenceId,
+      vectorData
+    );
   }
 
   async searchSimilarVectors(
@@ -1172,19 +793,7 @@ export class DatabaseService {
     queryEmbedding: number[],
     limit: number = DATABASE.DEFAULT_SEARCH_LIMIT
   ): Promise<Vector[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const embeddingString = `[${queryEmbedding.join(',')}]`;
-
-    const { data, error } = await this.client.rpc('match_vectors', {
-      query_embedding: embeddingString,
-      match_threshold: DATABASE.VECTOR_SIMILARITY_THRESHOLD,
-      match_count: limit,
-      idea_id_filter: ideaId,
-    } as never);
-
-    if (error) throw error;
-    return data || [];
+    return this.vectors.searchSimilarVectors(ideaId, queryEmbedding, limit);
   }
 
   // Agent logging
@@ -1193,131 +802,32 @@ export class DatabaseService {
     action: string,
     payload: Record<string, unknown>
   ): Promise<void> {
-    if (!this.admin) throw new Error('Supabase admin client not initialized');
-
-    // Redact sensitive information before logging to database
-    const sanitizedPayload = redactPIIInObject(payload);
-
-    const { error } = await this.admin.from('agent_logs').insert({
-      agent,
-      action,
-      payload: sanitizedPayload,
-      timestamp: new Date().toISOString(),
-    } as never);
-
-    if (error) throw error;
+    return this.clarification.logAgentAction(agent, action, payload);
   }
 
   // Clarification session operations
   async createClarificationSession(
     ideaId: string
   ): Promise<ClarificationSessionRow> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const { data, error } = await this.client
-      .from('clarification_sessions')
-      .insert({
-        idea_id: ideaId,
-        status: 'active',
-      } as never)
-      .select()
-      .single();
-
-    if (error) throw error;
-    return data;
+    return this.clarification.createClarificationSession(ideaId);
   }
 
   async saveAnswers(
     sessionId: string,
     answers: Record<string, string>
   ): Promise<ClarificationAnswerRow[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const entries = Object.entries(answers).map(([questionId, answer]) => ({
-      session_id: sessionId,
-      question_id: questionId,
-      answer,
-    }));
-
-    const { data, error } = await this.client
-      .from('clarification_answers')
-      .insert(entries as never)
-      .select();
-
-    if (error) throw error;
-    return data || [];
+    return this.clarification.saveAnswers(sessionId, answers);
   }
 
-  async getAgentLogs(
-    agent?: string,
-    limit: number = VALIDATION_LIMITS.PAGINATION.AGENT_LOGS_DEFAULT
-  ): Promise<AgentLog[]> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    let query = this.client
-      .from('agent_logs')
-      .select('*')
-      .order('timestamp', { ascending: false })
-      .limit(limit);
-
-    if (agent) {
-      query = query.eq('agent', agent);
-    }
-
-    const { data, error } = await query;
-
-    if (error) throw error;
-    return data || [];
+  async getAgentLogs(agent?: string, limit?: number): Promise<AgentLog[]> {
+    return this.clarification.getAgentLogs(agent, limit);
   }
 
   async getAgentLogsPaginated(
     agent?: string,
     pagination: PaginationOptions = {}
   ): Promise<PaginatedResult<AgentLog>> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    const page = Math.max(1, pagination.page || 1);
-    const pageSize = Math.min(
-      pagination.pageSize || VALIDATION_LIMITS.PAGINATION.AGENT_LOGS_DEFAULT,
-      VALIDATION_LIMITS.PAGINATION.MAX_LIMIT
-    );
-    const offset = (page - 1) * pageSize;
-
-    let countQuery = this.client
-      .from('agent_logs')
-      .select('*', { count: 'exact', head: true });
-
-    if (agent) {
-      countQuery = countQuery.eq('agent', agent);
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) throw countError;
-
-    let query = this.client
-      .from('agent_logs')
-      .select('*')
-      .order('timestamp', { ascending: false })
-      .range(offset, offset + pageSize - 1);
-
-    if (agent) {
-      query = query.eq('agent', agent);
-    }
-
-    const { data, error } = await query;
-
-    if (error) throw error;
-
-    const total = count || 0;
-
-    return {
-      data: data || [],
-      total,
-      page,
-      pageSize,
-      hasMore: offset + (data?.length || 0) < total,
-    };
+    return this.clarification.getAgentLogsPaginated(agent, pagination);
   }
 
   /**
@@ -1332,127 +842,14 @@ export class DatabaseService {
     return chunks;
   }
 
-  /**
-   * Get aggregated statistics for a user's ideas, deliverables, and tasks.
-   *
-   * PERFORMANCE OPTIMIZATION (Issue #1927 - N+1 Query Resolution):
-   * ===========================================================================
-   * This method uses 4 efficient SQL queries instead of the previous N+1 pattern:
-   *
-   * OLD (N+1):
-   * - 1 query for ideas
-   * - N queries for deliverables (iterative per idea chunk)
-   * - N*M queries for tasks (iterative per deliverable chunk)
-   * - Total: 1 + N + N*M queries (potentially 1000+ for active users)
-   *
-   * NEW (Optimized):
-   * - 1 query for ideas with IDs and status
-   * - 1 query for total deliverables count using .in() filter
-   * - 1 query for deliverable IDs using .in() filter
-   * - 1 query for total tasks count using .in() filter
-   * - Total: 4 queries (constant, regardless of data size)
-   *
-   * Performance Characteristics:
-   * - Old: O(N*M) queries where N=ideas, M=deliverables per idea
-   * - New: O(1) = 4 queries constant time
-   * - For 100 ideas with 10 deliverables each: 1000+ queries → 4 queries
-   * - Query reduction: ~99.6% decrease in database round trips
-   *
-   * @param userId - The user ID to get stats for
-   * @returns Aggregated stats object with counts
-   */
+  // Delegate to IdeaService for stats
   async getIdeaStats(userId: string): Promise<{
     totalIdeas: number;
     ideasByStatus: Record<string, number>;
     totalDeliverables: number;
     totalTasks: number;
   }> {
-    if (!this.client) throw new Error('Supabase client not initialized');
-
-    // Query 1: Get all ideas with status (needed for ideasByStatus)
-    const { data: ideasData, error: ideasError } = await this.client
-      .from('ideas')
-      .select('id, status')
-      .eq('user_id', userId)
-      .is('deleted_at', null);
-
-    if (ideasError) throw ideasError;
-
-    const typedIdeas =
-      (ideasData as { id: string; status: string }[] | null) ?? [];
-    const totalIdeas = typedIdeas.length;
-
-    // Count ideas by status in JavaScript (fast for small result sets)
-    const ideasByStatus = typedIdeas.reduce(
-      (acc, idea) => {
-        acc[idea.status] = (acc[idea.status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>
-    );
-
-    // Early return if no ideas
-    if (totalIdeas === 0) {
-      return {
-        totalIdeas: 0,
-        ideasByStatus,
-        totalDeliverables: 0,
-        totalTasks: 0,
-      };
-    }
-
-    const ideaIds = typedIdeas.map((i) => i.id);
-
-    // Query 2: Single optimized query using RPC for all aggregations
-    // Falls back to two queries if RPC doesn't exist
-    let totalDeliverables = 0;
-    let totalTasks = 0;
-
-    // Try to use RPC for efficient single-query aggregation
-    const { data: statsData, error: statsError } = await this.client.rpc(
-      'get_user_idea_stats',
-      { p_user_id: userId } as never
-    );
-
-    if (!statsError && statsData) {
-      // RPC returned result - use it
-      totalDeliverables =
-        (statsData as { total_deliverables: number }).total_deliverables ?? 0;
-      totalTasks = (statsData as { total_tasks: number }).total_tasks ?? 0;
-    } else {
-      // Fallback: Use optimized two-query approach
-      // Query 2a: Get deliverable count and IDs in single query using count + select
-      const { data: deliverablesData, error: deliverablesError } =
-        await this.client
-          .from('deliverables')
-          .select('id', { count: 'exact', head: false })
-          .in('idea_id', ideaIds)
-          .is('deleted_at', null);
-
-      if (deliverablesError) throw deliverablesError;
-      const deliverables = (deliverablesData as { id: string }[] | null) ?? [];
-      totalDeliverables = deliverables.length;
-
-      // Query 2b: Get task count directly using deliverable IDs (only if needed)
-      if (deliverables.length > 0) {
-        const deliverableIds = deliverables.map((d) => d.id);
-        const { count: taskCount, error: taskError } = await this.client
-          .from('tasks')
-          .select('*', { count: 'exact', head: true })
-          .in('deliverable_id', deliverableIds)
-          .is('deleted_at', null);
-
-        if (taskError) throw taskError;
-        totalTasks = taskCount || 0;
-      }
-    }
-
-    return {
-      totalIdeas,
-      ideasByStatus,
-      totalDeliverables,
-      totalTasks,
-    };
+    return this.ideas.getIdeaStats(userId);
   }
 
   // Health check
