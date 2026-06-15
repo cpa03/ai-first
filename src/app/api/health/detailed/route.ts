@@ -13,6 +13,7 @@ import {
   API_CACHE_CONFIG,
   HEALTH_CONFIG,
   MEMORY_CONFIG,
+  MEMORY_UNITS,
 } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
 import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
@@ -67,7 +68,6 @@ interface ExternalRateLimitStats {
   }>;
 }
 
-
 interface HealthResponse {
   status: string;
   timestamp: string;
@@ -96,18 +96,17 @@ interface HealthResponse {
   externalRateLimits: ExternalRateLimitStats;
 }
 
-
 function getMemoryHealth(): MemoryHealthResult {
   const memUsage = process.memoryUsage();
   const warnings: string[] = [];
 
   const metrics: MemoryMetrics = {
-    heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
-    heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+    heapUsed: Math.round(memUsage.heapUsed / MEMORY_UNITS.BYTES_PER_MB),
+    heapTotal: Math.round(memUsage.heapTotal / MEMORY_UNITS.BYTES_PER_MB),
     heapUsedPercent: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100),
-    rss: Math.round(memUsage.rss / 1024 / 1024),
-    external: Math.round(memUsage.external / 1024 / 1024),
-    arrayBuffers: Math.round(memUsage.arrayBuffers / 1024 / 1024),
+    rss: Math.round(memUsage.rss / MEMORY_UNITS.BYTES_PER_MB),
+    external: Math.round(memUsage.external / MEMORY_UNITS.BYTES_PER_MB),
+    arrayBuffers: Math.round(memUsage.arrayBuffers / MEMORY_UNITS.BYTES_PER_MB),
   };
 
   let status: 'healthy' | 'warning' | 'critical' = 'healthy';
@@ -166,7 +165,8 @@ function getExternalRateLimitStats(): ExternalRateLimitStats {
   const stats = tracker.getStats();
 
   const services = stats.services.map((s) => {
-    const percentRemaining = s.limit > 0 ? Math.round((s.remaining / s.limit) * 100) : 0;
+    const percentRemaining =
+      s.limit > 0 ? Math.round((s.remaining / s.limit) * 100) : 0;
     let status: 'healthy' | 'warning' | 'critical' = 'healthy';
     if (percentRemaining <= 10) {
       status = 'critical';
@@ -188,7 +188,6 @@ function getExternalRateLimitStats(): ExternalRateLimitStats {
     services,
   };
 }
-
 
 async function handleGet(context: ApiContext) {
   // Security: Detailed health information is restricted to administrators
@@ -409,8 +408,6 @@ async function handleGet(context: ApiContext) {
     circuitBreakers,
     externalRateLimits: getExternalRateLimitStats(),
   };
-
-
 
   const statusCode = overallStatus === 'healthy' ? 200 : 503;
 

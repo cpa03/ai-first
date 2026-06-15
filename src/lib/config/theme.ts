@@ -369,6 +369,16 @@ export const CELEBRATION_COLORS = {
 } as const;
 
 /**
+ * Brand Colors
+ * Eliminates hardcoded brand colors in layout metadata and meta tags
+ * Env: BRAND_COLOR_PRIMARY (default: '#2563eb')
+ */
+export const BRAND_COLORS = {
+  /** Primary brand color - used for theme-color, TileColor, and progress indicators */
+  PRIMARY: EnvLoader.string('BRAND_COLOR_PRIMARY', '#2563eb'),
+} as const;
+
+/**
  * OAuth provider brand colors
  * Used for social login buttons (Google, GitHub, etc.)
  * Eliminates hardcoded brand colors in login/signup pages
