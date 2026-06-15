@@ -416,7 +416,7 @@ const InputWithValidationComponent = forwardRef<
                     triggerHapticFeedback();
                     setPasswordVisible(!passwordVisible);
                   }}
-                  className="flex items-center gap-1.5 px-2 py-1.5 text-gray-400 hover:text-gray-600 rounded-md hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
+                  className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:text-gray-800 rounded-md hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
                   aria-label={
                     passwordVisible ? 'Hide password' : 'Show password'
                   }
