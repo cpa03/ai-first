@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
@@ -48,6 +48,16 @@ const ShareButtonComponent = function ShareButton({
   onShare,
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const getWindow = () => {
     return window as unknown as Window & {
@@ -101,7 +111,10 @@ const ShareButtonComponent = function ShareButton({
           shareUrl,
         });
 
-        setTimeout(() => setShared(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
+        timeoutRef.current = setTimeout(
+          () => setShared(false),
+          UI_CONFIG.COPY_FEEDBACK_DURATION
+        );
         showSuccessToast('Thanks for sharing!');
 
         // Growth: Fire onShare callback for analytics
@@ -125,7 +138,10 @@ const ShareButtonComponent = function ShareButton({
           shareUrl,
         });
 
-        setTimeout(() => setShared(false), UI_CONFIG.COPY_FEEDBACK_DURATION);
+        timeoutRef.current = setTimeout(
+          () => setShared(false),
+          UI_CONFIG.COPY_FEEDBACK_DURATION
+        );
         showSuccessToast(toastMessage);
 
         // Growth: Fire onShare callback for analytics (clipboard fallback)

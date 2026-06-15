@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 import { ALERT_STYLES, ALERT_BASE_STYLES } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -55,11 +55,21 @@ const AlertComponent = function Alert({
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const styles = ALERT_STYLES[type];
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleClose = useCallback(() => {
     triggerHapticFeedback();
     setIsExiting(true);
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
       onClose?.();
     }, ANIMATION_CONFIG.ALERT_EXIT);
