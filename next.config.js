@@ -76,7 +76,9 @@ const nextConfig = {
         key: 'Content-Security-Policy',
         value: [
           "default-src 'self'",
-          "script-src 'self' 'unsafe-inline'",
+          // In development, React requires eval() for debugging features like reconstructing callstacks
+          // In production, eval() is never used by React
+          `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
           // Styles: self + inline (needed for Tailwind/CSS-in-JS)
           "style-src 'self' 'unsafe-inline'",
           // Images: self + data URIs + HTTPS sources
