@@ -1,6 +1,7 @@
 /**
  * Navigation Configuration
  * Centralizes navigation items and labels for all nav components
+ * Supports environment variable overrides for social links
  */
 
 import { EnvLoader } from './environment';
@@ -54,7 +55,24 @@ export const MOBILE_NAV_CONFIG = {
 } as const;
 
 /**
+ * Default social links
+ */
+const DEFAULT_SOCIAL_LINKS: NavItem[] = [
+  {
+    href: 'https://twitter.com/ideaflowai',
+    label: 'Twitter',
+    ariaLabel: 'Follow us on Twitter',
+  },
+  {
+    href: 'https://github.com/cpa03/ai-first',
+    label: 'GitHub',
+    ariaLabel: 'View on GitHub',
+  },
+];
+
+/**
  * Footer navigation configuration
+ * Social links are configurable via environment variables
  */
 export const FOOTER_NAV_CONFIG = {
   COLUMNS: [
@@ -82,18 +100,21 @@ export const FOOTER_NAV_CONFIG = {
     },
   ],
 
-  SOCIAL_LINKS: [
-    {
-      href: 'https://twitter.com/ideaflowai',
-      label: 'Twitter',
-      ariaLabel: 'Follow us on Twitter',
-    },
-    {
-      href: 'https://github.com/cpa03/ai-first',
-      label: 'GitHub',
-      ariaLabel: 'View on GitHub',
-    },
-  ],
+  /**
+   * Social links for footer
+   * Env: FOOTER_SOCIAL_LINKS (JSON string of nav items)
+   */
+  SOCIAL_LINKS: (() => {
+    const envLinks = EnvLoader.string('FOOTER_SOCIAL_LINKS', '');
+    if (envLinks) {
+      try {
+        return JSON.parse(envLinks) as NavItem[];
+      } catch {
+        return DEFAULT_SOCIAL_LINKS;
+      }
+    }
+    return DEFAULT_SOCIAL_LINKS;
+  })(),
 } as const;
 
 export type MainNavConfig = typeof MAIN_NAV_CONFIG;
