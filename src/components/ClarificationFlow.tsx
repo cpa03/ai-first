@@ -312,32 +312,77 @@ function ClarificationFlow({
                     *
                   </span>
                 </label>
-                <select
-                  id="answer-select"
-                  ref={selectRef}
-                  value={currentAnswer}
-                  onChange={(e) => setCurrentAnswer(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px] cursor-pointer`}
-                  aria-required="true"
-                  aria-invalid={
-                    !!(
-                      currentAnswer.trim() === '' &&
-                      currentStep === questions.length - 1
-                    )
-                  }
-                  disabled={showCelebration || isSubmitting}
-                  required
-                >
-                  <option value="">
-                    {COMPONENT_DEFAULTS.CLARIFICATION_FLOW.SELECT_PLACEHOLDER}
-                  </option>
-                  {currentQuestion.options.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
+                <div className="relative">
+                  <select
+                    id="answer-select"
+                    ref={selectRef}
+                    value={currentAnswer}
+                    onChange={(e) => setCurrentAnswer(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px] cursor-pointer appearance-none bg-white pr-10 transition-all duration-200 hover:border-gray-400 ${
+                      currentAnswer
+                        ? 'text-gray-900 font-medium'
+                        : 'text-gray-500'
+                    }`}
+                    aria-required="true"
+                    aria-invalid={
+                      !!(
+                        currentAnswer.trim() === '' &&
+                        currentStep === questions.length - 1
+                      )
+                    }
+                    disabled={showCelebration || isSubmitting}
+                    required
+                  >
+                    <option value="" disabled>
+                      {COMPONENT_DEFAULTS.CLARIFICATION_FLOW.SELECT_PLACEHOLDER}
                     </option>
-                  ))}
-                </select>
+                    {currentQuestion.options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <svg
+                      className="w-5 h-5 text-gray-400 transition-transform duration-200"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                {currentAnswer && (
+                  <p
+                    className="text-sm text-green-600 flex items-center gap-1.5 animate-fade-in"
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                    Selected: {currentAnswer}
+                  </p>
+                )}
               </div>
             )}
           </div>
