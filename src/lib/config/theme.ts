@@ -314,44 +314,57 @@ export const SVG_ANIMATION = {
  * Celebration animation colors
  * Used for success/confetti animations
  * Eliminates hardcoded color values in SuccessCelebration component
+ * Supports environment variable overrides
  */
 export const CELEBRATION_COLORS = {
   /** Success green */
-  SUCCESS: '#10B981',
+  SUCCESS: EnvLoader.string('CELEBRATION_COLOR_SUCCESS', '#10B981'),
   /** Primary blue */
-  PRIMARY: '#3B82F6',
+  PRIMARY: EnvLoader.string('CELEBRATION_COLOR_PRIMARY', '#3B82F6'),
   /** Purple accent */
-  PURPLE: '#8B5CF6',
+  PURPLE: EnvLoader.string('CELEBRATION_COLOR_PURPLE', '#8B5CF6'),
   /** Amber/warning */
-  AMBER: '#F59E0B',
+  AMBER: EnvLoader.string('CELEBRATION_COLOR_AMBER', '#F59E0B'),
   /** Pink accent */
-  PINK: '#EC4899',
+  PINK: EnvLoader.string('CELEBRATION_COLOR_PINK', '#EC4899'),
   /** Cyan accent */
-  CYAN: '#06B6D4',
+  CYAN: EnvLoader.string('CELEBRATION_COLOR_CYAN', '#06B6D4'),
   /** All colors as array for iteration */
-  ALL: [
-    '#10B981',
-    '#3B82F6',
-    '#8B5CF6',
-    '#F59E0B',
-    '#EC4899',
-    '#06B6D4',
-  ] as const,
+  ALL: (() => {
+    const colors = [
+      EnvLoader.string('CELEBRATION_COLOR_SUCCESS', '#10B981'),
+      EnvLoader.string('CELEBRATION_COLOR_PRIMARY', '#3B82F6'),
+      EnvLoader.string('CELEBRATION_COLOR_PURPLE', '#8B5CF6'),
+      EnvLoader.string('CELEBRATION_COLOR_AMBER', '#F59E0B'),
+      EnvLoader.string('CELEBRATION_COLOR_PINK', '#EC4899'),
+      EnvLoader.string('CELEBRATION_COLOR_CYAN', '#06B6D4'),
+    ];
+    return colors as unknown as readonly string[];
+  })(),
   /** Progress circle colors - eliminates hardcoded colors in StepCelebration */
   PROGRESS_CIRCLE: {
     /** Background track color (gray-200) */
-    TRACK: '#e5e7eb',
+    TRACK: EnvLoader.string('CELEBRATION_PROGRESS_TRACK_COLOR', '#e5e7eb'),
     /** Progress indicator color (blue-600/primary) */
-    PROGRESS: '#2563eb',
+    PROGRESS: EnvLoader.string(
+      'CELEBRATION_PROGRESS_INDICATOR_COLOR',
+      '#2563eb'
+    ),
     /** Radius for the progress circle */
-    RADIUS: 45,
+    RADIUS: EnvLoader.number('CELEBRATION_PROGRESS_RADIUS', 45, 20, 100),
   },
   /** Shadow colors for progress glow effects - eliminates hardcoded rgba() in StepCelebration */
   SHADOWS: {
     /** Drop shadow for progress circle (blue-600 at 40% opacity) */
-    DROP_SHADOW: 'rgba(37, 99, 235, 0.4)',
+    DROP_SHADOW: EnvLoader.string(
+      'CELEBRATION_SHADOW_DROP',
+      'rgba(37, 99, 235, 0.4)'
+    ),
     /** Box shadow for progress bar (blue-600 at 50% opacity) */
-    BOX_SHADOW: 'rgba(37, 99, 235, 0.5)',
+    BOX_SHADOW: EnvLoader.string(
+      'CELEBRATION_SHADOW_BOX',
+      'rgba(37, 99, 235, 0.5)'
+    ),
   },
 } as const;
 
