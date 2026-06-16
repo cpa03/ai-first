@@ -1,3 +1,4 @@
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import type { ClientProvider } from './ideas';
 import type { Task, Deliverable, Idea } from './types';
 
@@ -13,7 +14,7 @@ export class TaskService {
    */
   async createTask(task: Omit<Task, 'id' | 'created_at'>): Promise<Task> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('tasks')
@@ -30,7 +31,7 @@ export class TaskService {
    */
   async createTasks(tasks: Omit<Task, 'id' | 'created_at'>[]): Promise<Task[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('tasks')
@@ -46,7 +47,7 @@ export class TaskService {
    */
   async getDeliverableTasks(deliverableId: string): Promise<Task[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('tasks')
@@ -64,7 +65,7 @@ export class TaskService {
    */
   async getTask(id: string): Promise<Task | null> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('tasks')
@@ -82,7 +83,7 @@ export class TaskService {
    */
   async updateTask(id: string, updates: Partial<Task>): Promise<Task> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
       .from('tasks')
@@ -100,7 +101,7 @@ export class TaskService {
    */
   async softDeleteTask(id: string): Promise<void> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { error } = await admin
       .from('tasks')
@@ -115,7 +116,7 @@ export class TaskService {
    */
   async deleteTask(id: string): Promise<void> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { error } = await client.from('tasks').delete().eq('id', id);
 
@@ -129,7 +130,7 @@ export class TaskService {
     id: string
   ): Promise<(Task & { deliverable: Deliverable; idea: Idea }) | null> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('tasks')

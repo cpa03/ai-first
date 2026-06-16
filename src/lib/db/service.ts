@@ -3,6 +3,7 @@ import { Database } from '@/types/database';
 import { createLogger } from '../logger';
 import { resourceCleanupManager } from '../resource-cleanup';
 import { AGENT_CONFIG } from '../config/constants';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { IdeaService, type ClientProvider } from './ideas';
 import { DeliverableService } from './deliverables';
 import { TaskService } from './tasks';
@@ -503,7 +504,7 @@ export class DatabaseService implements ClientProvider {
 
         const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
           setTimeout(() => {
-            reject(new Error('Health check timeout'));
+            reject(new Error(API_ERROR_MESSAGES.DB.HEALTH_CHECK_TIMEOUT));
           }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
         });
 
@@ -517,7 +518,8 @@ export class DatabaseService implements ClientProvider {
         ]);
 
         const timedOut =
-          error instanceof Error && error.message === 'Health check timeout';
+          error instanceof Error &&
+          error.message === API_ERROR_MESSAGES.DB.HEALTH_CHECK_TIMEOUT;
 
         if (timedOut) {
           logger.warn(
@@ -548,7 +550,7 @@ export class DatabaseService implements ClientProvider {
 
         const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
           setTimeout(() => {
-            reject(new Error('Admin health check timeout'));
+            reject(new Error(API_ERROR_MESSAGES.DB.ADMIN_HEALTH_CHECK_TIMEOUT));
           }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
         });
 
@@ -563,7 +565,7 @@ export class DatabaseService implements ClientProvider {
 
         const timedOut =
           error instanceof Error &&
-          error.message === 'Admin health check timeout';
+          error.message === API_ERROR_MESSAGES.DB.ADMIN_HEALTH_CHECK_TIMEOUT;
 
         if (timedOut) {
           logger.warn(

@@ -1,5 +1,6 @@
 import { redactPIIInObject } from '../pii-redaction';
 import { VALIDATION_LIMITS } from '../config/constants';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import type { ClientProvider } from './ideas';
 import type {
   ClarificationSessionRow,
@@ -23,7 +24,7 @@ export class ClarificationService {
     ideaId: string
   ): Promise<ClarificationSessionRow> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('clarification_sessions')
@@ -46,7 +47,7 @@ export class ClarificationService {
     answers: Record<string, string>
   ): Promise<ClarificationAnswerRow[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const entries = Object.entries(answers).map(([questionId, answer]) => ({
       session_id: sessionId,
@@ -72,7 +73,7 @@ export class ClarificationService {
     payload: Record<string, unknown>
   ): Promise<void> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     // Redact sensitive information before logging to database
     const sanitizedPayload = redactPIIInObject(payload);
@@ -95,7 +96,7 @@ export class ClarificationService {
     limit: number = VALIDATION_LIMITS.PAGINATION.AGENT_LOGS_DEFAULT
   ): Promise<AgentLog[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     let query = client
       .from('agent_logs')
@@ -121,7 +122,7 @@ export class ClarificationService {
     pagination: PaginationOptions = {}
   ): Promise<PaginatedResult<AgentLog>> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const page = Math.max(1, pagination.page || 1);
     const pageSize = Math.min(

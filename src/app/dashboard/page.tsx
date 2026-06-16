@@ -10,6 +10,7 @@ import {
   MODAL_PATTERNS,
   SPINNER_PATTERNS,
   DASHBOARD_FILTER_LABELS,
+  API_ERROR_MESSAGES,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -131,7 +132,7 @@ export default function DashboardPage() {
           setPagination(null);
           return;
         }
-        throw new Error('Failed to fetch ideas');
+        throw new Error(API_ERROR_MESSAGES.PAGE.FETCH_IDEAS_FAILED);
       }
 
       const data = await response.json();
@@ -188,7 +189,7 @@ export default function DashboardPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to delete idea');
+        throw new Error(API_ERROR_MESSAGES.PAGE.DELETE_IDEA_FAILED);
       }
 
       const data = await response.json();

@@ -7,7 +7,11 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
-import { OAUTH_PROVIDER_COLORS, LOCAL_STORAGE_KEYS } from '@/lib/config';
+import {
+  OAUTH_PROVIDER_COLORS,
+  LOCAL_STORAGE_KEYS,
+  API_ERROR_MESSAGES,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 export default function LoginPage() {
@@ -78,7 +82,7 @@ export default function LoginPage() {
 
       try {
         if (!supabaseClient) {
-          throw new Error('Authentication service not available');
+          throw new Error(API_ERROR_MESSAGES.PAGE.AUTH_SERVICE_UNAVAILABLE);
         }
 
         const { error: signInError } =
@@ -133,7 +137,7 @@ export default function LoginPage() {
 
       try {
         if (!supabaseClient) {
-          throw new Error('Authentication service not available');
+          throw new Error(API_ERROR_MESSAGES.PAGE.AUTH_SERVICE_UNAVAILABLE);
         }
 
         const { error: oauthError } = await supabaseClient.auth.signInWithOAuth(

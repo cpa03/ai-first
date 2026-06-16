@@ -1,3 +1,4 @@
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import type { ClientProvider } from './ideas';
 import type { Deliverable, Task, Idea } from './types';
 
@@ -15,7 +16,7 @@ export class DeliverableService {
     deliverable: Omit<Deliverable, 'id' | 'created_at'>
   ): Promise<Deliverable> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('deliverables')
@@ -34,7 +35,7 @@ export class DeliverableService {
     deliverables: Omit<Deliverable, 'id' | 'created_at'>[]
   ): Promise<Deliverable[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('deliverables')
@@ -50,7 +51,7 @@ export class DeliverableService {
    */
   async getIdeaDeliverables(ideaId: string): Promise<Deliverable[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('deliverables')
@@ -98,7 +99,7 @@ export class DeliverableService {
     ideaId: string
   ): Promise<(Deliverable & { tasks: Task[] })[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('deliverables')
@@ -134,7 +135,7 @@ export class DeliverableService {
     id: string
   ): Promise<(Deliverable & { idea: Idea }) | null> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('deliverables')
@@ -162,7 +163,7 @@ export class DeliverableService {
     updates: Partial<Deliverable>
   ): Promise<Deliverable> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
       .from('deliverables')
@@ -180,7 +181,7 @@ export class DeliverableService {
    */
   async softDeleteDeliverable(id: string): Promise<void> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { error } = await admin
       .from('deliverables')
@@ -195,7 +196,7 @@ export class DeliverableService {
    */
   async deleteDeliverable(id: string): Promise<void> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { error } = await client.from('deliverables').delete().eq('id', id);
 

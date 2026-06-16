@@ -1,4 +1,5 @@
 import { AGENT_CONFIG, VALIDATION_LIMITS } from '../config/constants';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import type { ClientProvider } from './ideas';
 import type { Vector, PaginationOptions, PaginatedResult } from './types';
 
@@ -18,7 +19,7 @@ export class VectorService {
     vector: Omit<Vector, 'id' | 'created_at'>
   ): Promise<Vector> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('vectors')
@@ -35,7 +36,7 @@ export class VectorService {
    */
   async getVectors(ideaId: string, referenceType?: string): Promise<Vector[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     let query = client.from('vectors').select('*').eq('idea_id', ideaId);
 
@@ -60,7 +61,7 @@ export class VectorService {
     pagination: PaginationOptions = {}
   ): Promise<PaginatedResult<Vector>> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const page = Math.max(1, pagination.page || 1);
     const pageSize = Math.min(
@@ -116,7 +117,7 @@ export class VectorService {
     referenceType?: string
   ): Promise<Map<string, Vector[]>> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
     if (ideaIds.length === 0) return new Map();
 
     let query = client.from('vectors').select('*').in('idea_id', ideaIds);
@@ -150,7 +151,7 @@ export class VectorService {
    */
   async deleteVector(id: string): Promise<void> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { error } = await client.from('vectors').delete().eq('id', id);
 
@@ -168,7 +169,7 @@ export class VectorService {
     vectorData?: Record<string, unknown>
   ): Promise<Vector> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
       .from('vectors')
@@ -195,7 +196,7 @@ export class VectorService {
     limit: number = DATABASE.DEFAULT_SEARCH_LIMIT
   ): Promise<Vector[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const embeddingString = `[${queryEmbedding.join(',')}]`;
 

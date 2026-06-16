@@ -91,6 +91,34 @@ export const API_ERROR_MESSAGES = {
       'Cannot create task dependency that would form a cycle',
     RESOURCE_LOCKED: 'Resource is currently locked for modification',
   },
+
+  /**
+   * Database client initialization errors
+   * Centralizes repeated "Supabase client not initialized" messages
+   */
+  DB: {
+    CLIENT_NOT_INITIALIZED: 'Supabase client not initialized',
+    ADMIN_NOT_INITIALIZED: 'Supabase admin client not initialized',
+    HEALTH_CHECK_TIMEOUT: 'Health check timeout',
+    ADMIN_HEALTH_CHECK_TIMEOUT: 'Admin health check timeout',
+  },
+
+  /**
+   * Page and component error messages
+   * Centralizes error messages used in UI pages and hooks
+   */
+  PAGE: {
+    AUTH_SERVICE_UNAVAILABLE: 'Authentication service not available',
+    FETCH_IDEAS_FAILED: 'Failed to fetch ideas',
+    DELETE_IDEA_FAILED: 'Failed to delete idea',
+    IDEA_NOT_FOUND: 'Idea not found',
+    INVALID_SERVER_RESPONSE: 'Invalid response from server',
+    JSON_EXPORT_NO_AUTH: 'JSON export does not require authentication',
+    MARKDOWN_EXPORT_NO_AUTH: 'Markdown export does not require authentication',
+    INVALID_EXPORT_DATA: 'Invalid export data: idea object is required',
+    OPENAI_API_KEY_MISSING: 'OPENAI_API_KEY environment variable is not set',
+    TEXT_EMPTY_EMBEDDING: 'Text cannot be empty for embedding generation',
+  },
 } as const;
 
 export type APIErrorMessages = typeof API_ERROR_MESSAGES;
