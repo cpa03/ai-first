@@ -308,3 +308,14 @@ export {
   type SessionStorageKeys,
   type StorageKeys,
 } from './storage-keys';
+
+// Notification Configuration
+export {
+  NOTIFICATION_CONFIG,
+  BROWSER_SETTINGS_URLS,
+  NOTIFICATION_STATUS,
+  NOTIFICATION_LABELS,
+  NOTIFICATION_PROMPT_LABELS,
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  type NotificationConfig,
+} from './notification-config';

@@ -4,6 +4,12 @@ import { useState, useCallback, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import useNotificationPermission from '@/hooks/useNotificationPermission';
 import { unsubscribeFromPush } from '@/lib/service-worker';
+import {
+  NOTIFICATION_LABELS,
+  NOTIFICATION_STATUS,
+  DEFAULT_NOTIFICATION_PREFERENCES,
+  NOTIFICATION_CONFIG,
+} from '@/lib/config';
 
 export interface NotificationPreferencesProps {
   showDetailed?: boolean;
@@ -33,10 +39,10 @@ export default function NotificationPreferences({
 
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     browser: permission === 'granted',
-    email: true,
-    taskReminders: true,
-    ideaUpdates: true,
-    weeklyDigest: false,
+    email: DEFAULT_NOTIFICATION_PREFERENCES.EMAIL,
+    taskReminders: DEFAULT_NOTIFICATION_PREFERENCES.TASK_REMINDERS,
+    ideaUpdates: DEFAULT_NOTIFICATION_PREFERENCES.IDEA_UPDATES,
+    weeklyDigest: DEFAULT_NOTIFICATION_PREFERENCES.WEEKLY_DIGEST,
     ...initialPreferences,
   });
 
@@ -72,7 +78,7 @@ export default function NotificationPreferences({
   const handleBrowserDisable = async () => {
     logger.info('User requested to disable browser notifications');
     if (typeof window !== 'undefined') {
-      window.open('chrome://settings', '_blank');
+      window.open(NOTIFICATION_CONFIG.getBrowserSettingsUrl(), '_blank');
     }
   };
 
@@ -110,7 +116,7 @@ export default function NotificationPreferences({
     >
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-lg font-semibold text-gray-900">
-          Notification Settings
+          {NOTIFICATION_LABELS.SETTINGS_TITLE}
         </h3>
         {hasChanges && (
           <button
@@ -118,7 +124,9 @@ export default function NotificationPreferences({
             disabled={isSaving}
             className="px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50"
           >
-            {isSaving ? 'Saving...' : 'Save Changes'}
+            {isSaving
+              ? NOTIFICATION_LABELS.SAVING_BUTTON
+              : NOTIFICATION_LABELS.SAVE_BUTTON}
           </button>
         )}
       </div>
@@ -142,13 +150,15 @@ export default function NotificationPreferences({
               </svg>
             </div>
             <div>
-              <p className="font-medium text-gray-900">Browser Notifications</p>
+              <p className="font-medium text-gray-900">
+                {NOTIFICATION_LABELS.BROWSER_SECTION}
+              </p>
               <p className="text-sm text-gray-500">
                 {permission === 'granted'
-                  ? 'Enabled'
+                  ? NOTIFICATION_STATUS.GRANTED
                   : permission === 'denied'
-                    ? 'Blocked'
-                    : 'Not yet enabled'}
+                    ? NOTIFICATION_STATUS.DENIED
+                    : NOTIFICATION_STATUS.PROMPT}
               </p>
             </div>
           </div>
@@ -158,25 +168,27 @@ export default function NotificationPreferences({
                 onClick={handleBrowserDisable}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                Manage
+                {NOTIFICATION_LABELS.MANAGE_BUTTON}
               </button>
             ) : permission === 'denied' ? (
               <button
                 onClick={handleBrowserDisable}
                 className="text-sm text-red-600"
               >
-                Unblock
+                {NOTIFICATION_LABELS.UNBLOCK_BUTTON}
               </button>
             ) : (
               <button
                 onClick={handleBrowserEnable}
                 className="text-sm font-medium text-primary-600"
               >
-                Enable
+                {NOTIFICATION_LABELS.ENABLE_BUTTON}
               </button>
             )
           ) : (
-            <span className="text-sm text-gray-400">Not supported</span>
+            <span className="text-sm text-gray-400">
+              {NOTIFICATION_STATUS.UNSUPPORTED}
+            </span>
           )}
         </div>
       </div>
@@ -184,23 +196,23 @@ export default function NotificationPreferences({
       {showDetailed && (
         <div className="space-y-4">
           <h4 className="text-sm font-medium text-gray-700">
-            Notification Types
+            {NOTIFICATION_LABELS.NOTIFICATION_TYPES_HEADING}
           </h4>
           <PreferenceToggle
-            label="Task Reminders"
-            description="Get notified when tasks are updated"
+            label={NOTIFICATION_LABELS.TASK_REMINDERS_LABEL}
+            description={NOTIFICATION_LABELS.TASK_REMINDERS_DESCRIPTION}
             enabled={preferences.taskReminders}
             onToggle={() => handleToggle('taskReminders')}
           />
           <PreferenceToggle
-            label="Idea Updates"
-            description="Updates about your ideas"
+            label={NOTIFICATION_LABELS.IDEA_UPDATES_LABEL}
+            description={NOTIFICATION_LABELS.IDEA_UPDATES_DESCRIPTION}
             enabled={preferences.ideaUpdates}
             onToggle={() => handleToggle('ideaUpdates')}
           />
           <PreferenceToggle
-            label="Weekly Digest"
-            description="Summary of your weekly progress"
+            label={NOTIFICATION_LABELS.WEEKLY_DIGEST_LABEL}
+            description={NOTIFICATION_LABELS.WEEKLY_DIGEST_DESCRIPTION}
             enabled={preferences.weeklyDigest}
             onToggle={() => handleToggle('weeklyDigest')}
           />

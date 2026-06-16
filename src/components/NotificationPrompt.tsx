@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { createLogger } from '@/lib/logger';
 import useNotificationPermission from '@/hooks/useNotificationPermission';
+import { NOTIFICATION_PROMPT_LABELS } from '@/lib/config';
 export interface NotificationPromptProps {
   /** Custom label for the enable button */
   enableLabel?: string;
@@ -37,9 +38,9 @@ const logger = createLogger('NotificationPrompt');
  * />
  */
 export default function NotificationPrompt({
-  enableLabel = 'Enable Notifications',
-  enabledLabel = 'Notifications Enabled',
-  message = 'Stay updated with important progress on your ideas!',
+  enableLabel = NOTIFICATION_PROMPT_LABELS.ENABLE_LABEL,
+  enabledLabel = NOTIFICATION_PROMPT_LABELS.ENABLED_LABEL,
+  message = NOTIFICATION_PROMPT_LABELS.MESSAGE,
   dismissible = true,
   onPermissionGranted,
   onDismiss,
@@ -87,7 +88,7 @@ export default function NotificationPrompt({
       case 'granted':
         return enabledLabel;
       case 'denied':
-        return 'Notifications blocked';
+        return NOTIFICATION_PROMPT_LABELS.BLOCKED_STATUS;
       default:
         return enableLabel;
     }
@@ -161,7 +162,7 @@ export default function NotificationPrompt({
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   />
                 </svg>
-                Enabling...
+                {NOTIFICATION_PROMPT_LABELS.ENABLING}
               </span>
             ) : (
               getStatusText()
@@ -205,7 +206,7 @@ export default function NotificationPrompt({
         ${className}
       `}
       role="region"
-      aria-label="Stay updated with notifications"
+      aria-label={NOTIFICATION_PROMPT_LABELS.ARIA_LABEL}
     >
       <div className="flex flex-col sm:flex-row items-start gap-4">
         {/* Icon */}
@@ -229,7 +230,7 @@ export default function NotificationPrompt({
         {/* Content */}
         <div className="flex-1 min-w-0">
           <h3 className="text-lg font-semibold text-primary-900 mb-1">
-            Stay in the Loop
+            {NOTIFICATION_PROMPT_LABELS.HEADING}
           </h3>
           <p className="text-sm text-primary-700 mb-4">{message}</p>
 
@@ -272,7 +273,7 @@ export default function NotificationPrompt({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                     />
                   </svg>
-                  Enabling...
+                  {NOTIFICATION_PROMPT_LABELS.ENABLING}
                 </>
               ) : (
                 <>
@@ -300,9 +301,9 @@ export default function NotificationPrompt({
                 onClick={handleDismiss}
                 type="button"
                 className="text-sm text-primary-600 hover:text-primary-800 font-medium transition-colors"
-                aria-label="Maybe later"
+                aria-label={NOTIFICATION_PROMPT_LABELS.DISMISS_ARIA_LABEL}
               >
-                Maybe later
+                {NOTIFICATION_PROMPT_LABELS.DISMISS_TEXT}
               </button>
             )}
           </div>
