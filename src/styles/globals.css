@@ -909,3 +909,63 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Dashboard row staggered entrance animation - Micro-UX delight */
+/* Creates a smooth cascading fade-in effect for table rows when data loads */
+/* Uses the same stagger pattern as FeatureGrid for visual consistency */
+@keyframes dashboardRowFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dashboard-row {
+  animation: dashboardRowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+/* Stagger delays for up to 10 rows - each row enters 50ms after the previous */
+.animate-dashboard-row-1 {
+  animation-delay: 0ms;
+}
+.animate-dashboard-row-2 {
+  animation-delay: 50ms;
+}
+.animate-dashboard-row-3 {
+  animation-delay: 100ms;
+}
+.animate-dashboard-row-4 {
+  animation-delay: 150ms;
+}
+.animate-dashboard-row-5 {
+  animation-delay: 200ms;
+}
+.animate-dashboard-row-6 {
+  animation-delay: 250ms;
+}
+.animate-dashboard-row-7 {
+  animation-delay: 300ms;
+}
+.animate-dashboard-row-8 {
+  animation-delay: 350ms;
+}
+.animate-dashboard-row-9 {
+  animation-delay: 400ms;
+}
+.animate-dashboard-row-10 {
+  animation-delay: 450ms;
+}
+
+/* Reduced motion support for dashboard row animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-dashboard-row {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
