@@ -563,8 +563,11 @@ export default function DashboardPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {ideas.map((idea) => (
-                  <tr key={idea.id} className={TABLE_PATTERNS.row.hover}>
+                {ideas.map((idea, index) => (
+                  <tr
+                    key={idea.id}
+                    className={`${TABLE_PATTERNS.row.hover} animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)}`}
+                  >
                     <td className={TABLE_PATTERNS.cell.padding}>
                       <div className={TABLE_PATTERNS.cell.primary}>
                         {idea.title}
