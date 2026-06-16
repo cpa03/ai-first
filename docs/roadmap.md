@@ -760,17 +760,12 @@ This roadmap is a living document. It will be reviewed and updated:
 
 ## Appendix: Contact & Ownership
 
-**Product Lead**: TBD
-**Engineering Lead**: TBD
-**Design Lead**: TBD
-**Marketing Lead**: TBD
-
 > **Note**: IdeaFlow operates with an **agent-driven development model**. Human oversight is provided by the Principal Product Strategist (Agent 00), while specialized AI agents (CMZ, Sisyphus, Hephaestus, Oracle) handle implementation tasks. Traditional human leadership roles will be established as the team scales toward public launch.
 
 **Roadmap Owner**: Principal Product Strategist (Agent 00)
 
-**Last Updated**: February 22, 2026
-**Next Review**: March 15, 2026
+**Last Updated**: June 16, 2026
+**Next Review**: Monthly (aligned with sprint reviews)
 
 ---
 
