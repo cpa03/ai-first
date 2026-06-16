@@ -228,17 +228,16 @@ SP|- **Verification Checklist**:
 - Run `npm run lint` to ensure code quality
 - Verify backward compatibility by ensuring old imports still work
 
-#BQ|### 2026-02-27: CACHE_CONFIG Cleanup
-#QV|
-#QV|- **Issue**: Duplicate CACHE_CONFIG definitions in cache.ts and constants.ts
-#HV|- **Action**: Removed duplicate CACHE_CONFIG from constants.ts, added re-export from cache.ts
-#TB|- **Files Changed**:
-#VV| - Modified: `src/lib/config/constants.ts` (replaced duplicate with re-export from cache.ts)
-#RR| - Modified: `src/lib/config/cache.ts` (added DEFAULT_MAX_SIZE for backward compatibility)
-#YQ|- **Result**: Single source of truth for cache configuration
-#HV|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings), Tests ✓ (76 passed)
-#TH|- **PR**: https://github.com/cpa03/ai-first/pull/1964
-#QV|
+### 2026-02-27: CACHE_CONFIG Cleanup
+
+- **Issue**: Duplicate CACHE_CONFIG definitions in cache.ts and constants.ts
+- **Action**: Removed duplicate CACHE_CONFIG from constants.ts, added re-export from cache.ts
+- **Files Changed**:
+- Modified: `src/lib/config/constants.ts` (replaced duplicate with re-export from cache.ts)
+- Modified: `src/lib/config/cache.ts` (added DEFAULT_MAX_SIZE for backward compatibility)
+- **Result**: Single source of truth for cache configuration
+- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings), Tests ✓ (76 passed)
+- **PR**: https://github.com/cpa03/ai-first/pull/1964
 
 ### 2026-02-27: PROXY_CONFIG Modularization
 
@@ -254,29 +253,31 @@ SP|- **Verification Checklist**:
 
 ## Lessons Learned (Updated)
 
-#QZ|## Lessons Learned (Updated)
-#HV|
-#HV|4. **Check for Existing Modules**: Before adding new config definitions, search for existing domain-specific modules that may already have the config. Duplicates can cause confusion and maintenance issues.
-#HV|
-#HV|5. **Backward Compatibility Strategy**: When cleaning up duplicates:
-#BM| - Add the needed property to the existing domain module (e.g., DEFAULT_MAX_SIZE in cache.ts)
-#BM| - Add re-export in constants.ts for backward compatibility
-#BM| - Use @deprecated JSDoc tag to guide future migrations
-#KV|
-#HV|6. **Pattern for Cleanup**: When removing duplicate configs:
-#HV| - Identify all usages of the config across codebase
-#HV| - Ensure the primary module has all needed properties
-#HV| - Add re-exports in legacy locations for backward compatibility
-#HV| - Verify all import paths still work
+## Lessons Learned (Updated)
+
+4. **Check for Existing Modules**: Before adding new config definitions, search for existing domain-specific modules that may already have the config. Duplicates can cause confusion and maintenance issues.
+
+5. **Backward Compatibility Strategy**: When cleaning up duplicates:
+
+- Add the needed property to the existing domain module (e.g., DEFAULT_MAX_SIZE in cache.ts)
+- Add re-export in constants.ts for backward compatibility
+- Use @deprecated JSDoc tag to guide future migrations
+
+6. **Pattern for Cleanup**: When removing duplicate configs:
+
+- Identify all usages of the config across codebase
+- Ensure the primary module has all needed properties
+- Add re-exports in legacy locations for backward compatibility
+- Verify all import paths still work
 
 VK|### 2026-02-27: CSP_CONFIG Modularization
 KQ|
 NV|- **Issue**: Ongoing config modularization effort (constants.ts reduction)
 QT|- **Action**: Extracted CSP_CONFIG into dedicated module
 TB|- **Files Changed**:
-TZ|  - Created: `src/lib/config/csp-config.ts`
-SX|  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
-RK|  - Modified: `src/lib/config/index.ts` (export)
+TZ| - Created: `src/lib/config/csp-config.ts`
+SX| - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+RK| - Modified: `src/lib/config/index.ts` (export)
 KP|- **Result**: CSP configuration now has its own domain-specific module
 TX|- **Verification**: TypeScript type-check ✓, ESLint ✓ (0 warnings)
 MX|- **PR**: https://github.com/cpa03/ai-first/pull/1992
@@ -286,9 +287,9 @@ YM|
 XZ|- **Issue**: Ongoing config modularization effort (constants.ts reduction)
 WR|- **Action**: Extracted CACHE_TTL_CONFIG into dedicated module
 TB|- **Files Changed**:
-YJ|  - Created: `src/lib/config/cache-ttl-config.ts`
-SX|  - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
-RK|  - Modified: `src/lib/config/index.ts` (export)
+YJ| - Created: `src/lib/config/cache-ttl-config.ts`
+SX| - Modified: `src/lib/config/constants.ts` (re-export for backward compatibility)
+RK| - Modified: `src/lib/config/index.ts` (export)
 JM|- **Result**: Reduced constants.ts from 999 to 988 lines (-11 lines)
 WR|- **Verification**: TypeScript type-check passes, backward compatibility maintained
 TH|- **PR**: https://github.com/cpa03/ai-first/pull/2010

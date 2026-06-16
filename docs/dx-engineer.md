@@ -44,8 +44,8 @@ This guide provides comprehensive information for Developer Experience (DX) Engi
 ### Prerequisites
 
 | Tool    | Version | Installation                               |
-| ------- | ------- | ------------------------------------------ |
-JT|| Node.js | 20+     | `nvm install 20 && nvm use 20`
+| ------- | ------- | ------------------------------------------ | --- | ------------------------------ |
+| JT      |         | Node.js                                    | 20+ | `nvm install 20 && nvm use 20` |
 | npm     | 9+      | Comes with Node.js                         |
 | Git     | 2.x     | System package manager                     |
 | VS Code | Latest  | [Download](https://code.visualstudio.com/) |
@@ -355,36 +355,36 @@ assignees: ''
 - [ ] Unit tests pass
 - [ ] Lint passes
 - [ ] Type-check passes
-#VM|```
-#QR|
-#NM|### 7. Use Consistent Logging Pattern
-#NM|
-#NM|**Problem:** Direct console.log statements can pollute production logs and aren't controlled by log levels
-#NM|
-#NM|**Solution:** Use the centralized logger service:
-#NM|
-#NM|```typescript
-#NM|// Bad - direct console.log
-#NM|console.log('[Analytics] Track event:', event);
-#NM|
-#NM|// Good - use logger service with config-based control
-#NM|import { createLogger } from '@/lib/logger';
-#NM|const logger = createLogger('ModuleName');
-#NM|
-#NM|// Controlled by ANALYTICS_CONFIG.DEBUG and LOG_LEVEL
-#NM|if (ANALYTICS_CONFIG.DEBUG) {
-#NM|  logger.debug('[Analytics] Track event:', event);
-#NM|}
-#NM|```
-#NM|
-#NM|**Benefits:**
-#NM|- Centralized log format
-#NM|- Respects LOG_LEVEL environment variable
-#NM|- Can be filtered/aggregated in production
-#NM|- PII redaction built-in
-#NM|- Consistent with codebase patterns
-#NM|```
-#QR|
+```
+
+### 7. Use Consistent Logging Pattern
+
+**Problem:** Direct console.log statements can pollute production logs and aren't controlled by log levels
+
+**Solution:** Use the centralized logger service:
+
+```typescript
+// Bad - direct console.log
+console.log('[Analytics] Track event:', event);
+
+// Good - use logger service with config-based control
+import { createLogger } from '@/lib/logger';
+const logger = createLogger('ModuleName');
+
+// Controlled by ANALYTICS_CONFIG.DEBUG and LOG_LEVEL
+if (ANALYTICS_CONFIG.DEBUG) {
+  logger.debug('[Analytics] Track event:', event);
+}
+```
+
+**Benefits:**
+- Centralized log format
+- Respects LOG_LEVEL environment variable
+- Can be filtered/aggregated in production
+- PII redaction built-in
+- Consistent with codebase patterns
+```
+
 
 ---
 

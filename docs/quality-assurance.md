@@ -1643,7 +1643,7 @@ Test Suites: 1 passed
 Tests:       32 passed
 ```
 
-#ZS|- Linked Issue: #1827
+- Linked Issue: #1827
 
 ---
 

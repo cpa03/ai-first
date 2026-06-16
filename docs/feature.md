@@ -2,53 +2,54 @@
 
 This document tracks all features in the IdeaFlow system, their user stories, acceptance criteria, and status.
 
-#HH|---
-#SY|
-#RT|## User Story Validation Guidelines
-#SY|
-#RT|This section ensures all features follow consistent user story format and have proper acceptance criteria.
-#SY|
-#RT|### User Story Format Requirements
-#SY|
-#RT|All user stories MUST follow this format:
-#SY|
-#RT|```
-#RT|As a [persona],
-#RT|I want [goal/action],
-#RT|So that [benefit/value].
-#RT|```
-#SY|
-#RT|### Validation Checklist
-#SY|
-#RT|- [ ] Story follows 'As a [persona], I want [action], So that [benefit]' format
-#RT|- [ ] Persona is specific (founder, maker, developer, etc.)
-#RT|- [ ] Goal/action is clear and actionable
-#RT|- [ ] Benefit/value explains user value
-#RT|- [ ] At least 3 acceptance criteria defined
-#RT|- [ ] Acceptance criteria are testable
-#RT|- [ ] Priority label assigned (P0/P1/P2)
-#RT|- [ ] Status tracked (Not Started/In Progress/Complete)
-#SY|
-#RT|### Quality Criteria for Acceptance Criteria
-#SY|
-#RT|Each acceptance criteria must be:
-#RT|1. **Specific**: Clear and unambiguous
-#RT|2. **Measurable**: Can be verified through testing
-#RT|3. **Achievable**: Realistically attainable
-#RT|4. **Relevant**: Directly related to user story
-#RT|5. **Time-bound**: Has clear completion point
-#SY|
-#RT|### Review Process
-#SY|
-#RT|Before implementing any feature:
-#RT|1. Review user story format compliance
-#RT|2. Verify acceptance criteria are complete
-#RT|3. Ensure acceptance criteria are testable
-#RT|4. Confirm priority aligns with roadmap
-#RT|5. Update status after implementation
-#SY|
-#RT|---
-#SY|
+---
+
+## User Story Validation Guidelines
+
+This section ensures all features follow consistent user story format and have proper acceptance criteria.
+
+### User Story Format Requirements
+
+All user stories MUST follow this format:
+
+```
+As a [persona],
+I want [goal/action],
+So that [benefit/value].
+```
+
+### Validation Checklist
+
+- [ ] Story follows 'As a [persona], I want [action], So that [benefit]' format
+- [ ] Persona is specific (founder, maker, developer, etc.)
+- [ ] Goal/action is clear and actionable
+- [ ] Benefit/value explains user value
+- [ ] At least 3 acceptance criteria defined
+- [ ] Acceptance criteria are testable
+- [ ] Priority label assigned (P0/P1/P2)
+- [ ] Status tracked (Not Started/In Progress/Complete)
+
+### Quality Criteria for Acceptance Criteria
+
+Each acceptance criteria must be:
+
+1. **Specific**: Clear and unambiguous
+2. **Measurable**: Can be verified through testing
+3. **Achievable**: Realistically attainable
+4. **Relevant**: Directly related to user story
+5. **Time-bound**: Has clear completion point
+
+### Review Process
+
+Before implementing any feature:
+
+1. Review user story format compliance
+2. Verify acceptance criteria are complete
+3. Ensure acceptance criteria are testable
+4. Confirm priority aligns with roadmap
+5. Update status after implementation
+
+---
 
 ## FEATURE-001 Basic Clarification Agent
 

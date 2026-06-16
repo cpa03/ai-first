@@ -147,7 +147,7 @@ All agents should emit typed events for:
 - Completion of operation
 - Errors
 
-#JY|This enables loose coupling and easy extensibility.
+This enables loose coupling and easy extensibility.
 
 ## CI Workflow Jobs
 
@@ -201,53 +201,58 @@ Lesson learned: docs/ai-agent-engineer.md already had correct iterate.yml info (
 PM|Fixed AGENTS.md to include all 5 iterate.yml jobs:
 
 JX|- architect (Strategy & Triage)
-#QP|- bugfix (Bug fixing)
-#YQ|- Palette (UX improvements)
-#NQ|- Flexy (Modularity improvements)
-#HB|- Brocula (Browser console fixes) - **was missing**
+
+- bugfix (Bug fixing)
+- Palette (UX improvements)
+- Flexy (Modularity improvements)
+- Brocula (Browser console fixes) - **was missing**
 
 YX|This was discovered during proactive scanning - docs/ai-agent-engineer.md had correct info, but AGENTS.md was outdated.
 
-#TB|This was discovered during proactive scanning - docs/ai-agent-engineer.md had correct info, but AGENTS.md was outdated.
+This was discovered during proactive scanning - docs/ai-agent-engineer.md had correct info, but AGENTS.md was outdated.
 
-#RH|### Missing Skill Discovery (2026-02-27)
+### Missing Skill Discovery (2026-02-27)
 
-#QT|During proactive scan of agent configurations:
+During proactive scan of agent configurations:
 
-#QT|1. **Issue Found**: CMZ.json and oh-my-opencode.json referenced a non-existent skill `frontend-ui-ux`
-#YQ|2. **Impact**: Agent configs had broken skill reference
-#JM|3. **Fix Applied**: Created `.opencode/skills/frontend-ui-ux/SKILL.md`
-#NH|4. **Verification**: Skills count increased from 33 to 34
+1. **Issue Found**: CMZ.json and oh-my-opencode.json referenced a non-existent skill `frontend-ui-ux`
+2. **Impact**: Agent configs had broken skill reference
+3. **Fix Applied**: Created `.opencode/skills/frontend-ui-ux/SKILL.md`
+4. **Verification**: Skills count increased from 33 to 34
 
-#YH|Key verification command:
+Key verification command:
 
-#QW|`bash
-#YQ|ls .opencode/skills/*/SKILL.md | wc -l
-#MM|`
+`bash
+ls .opencode/skills/*/SKILL.md | wc -l
+`
 
-#QZ|Always verify referenced skills exist in `.opencode/skills/` directory.
-#YY|#QZ|Always verify referenced skills exist in `.opencode/skills/` directory.
+Always verify referenced skills exist in `.opencode/skills/` directory.
+Always verify referenced skills exist in `.opencode/skills/` directory.
 
-#NH|#TB|### RepoKeeper Agent Definition (2026-02-27)
-#YQ|#QT|During proactive scan of iterate.yml workflow:
-#QT|
-#QT|#QT|1. **Issue Found**: iterate.yml used `--agent RepoKeeper` but RepoKeeper was not defined in CMZ.json or oh-my-opencode.json
-#QT|#QT|2. **Impact**: Documentation inconsistency - agent referenced but not configured
-#QT|#QT|3. **Fix Applied**: Added repokeeper agent to both CMZ.json and oh-my-opencode.json
-#QT|#QT|4. **Verification**: JSON validation passed, lint passed with 0 warnings
-#QT|
-#QT|#YQ|Key verification commands:
-#QT|
-#QT|#QW|`bash
-#QT|#YQ|# Validate JSON files
-#QT|#YQ|node -e "JSON.parse(require('fs').readFileSync('.opencode/agents/CMZ.json'))"
-#QT|#YQ|node -e "JSON.parse(require('fs').readFileSync('.opencode/oh-my-opencode.json'))"
-#QT|#YQ|
-#QT|#YQ|# Run lint
-#QT|#YQ|npm run lint
-#QT|#QW|`
-#QT|
-#QT|#JM|Always verify agents referenced in iterate.yml are defined in configuration files.
+### RepoKeeper Agent Definition (2026-02-27)
+
+During proactive scan of iterate.yml workflow:
+
+1. **Issue Found**: iterate.yml used `--agent RepoKeeper` but RepoKeeper was not defined in CMZ.json or oh-my-opencode.json
+2. **Impact**: Documentation inconsistency - agent referenced but not configured
+3. **Fix Applied**: Added repokeeper agent to both CMZ.json and oh-my-opencode.json
+4. **Verification**: JSON validation passed, lint passed with 0 warnings
+
+Key verification commands:
+
+`bash
+
+# Validate JSON files
+
+node -e "JSON.parse(require('fs').readFileSync('.opencode/agents/CMZ.json'))"
+node -e "JSON.parse(require('fs').readFileSync('.opencode/oh-my-opencode.json'))"
+
+# Run lint
+
+npm run lint
+`
+
+Always verify agents referenced in iterate.yml are defined in configuration files.
 
 ### TypeScript Build Failure Fix (2026-02-27)
 
