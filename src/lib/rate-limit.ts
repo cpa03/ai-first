@@ -239,6 +239,7 @@ function generateRequestFingerprint(request: Request): string {
   // This prevents an attacker from reusing the same fingerprint across different endpoints
   // PERFORMANCE: Use pre-parsed nextUrl if available (from NextRequest)
   // nextUrl is 15-20x faster than new URL(request.url)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let urlPath = (request as any).nextUrl?.pathname || '';
   if (!urlPath) {
     try {
