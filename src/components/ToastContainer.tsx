@@ -267,6 +267,7 @@ const Toast = memo(ToastComponent);
  */
 function ToastContainerComponent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
+  const [isClearingAll, setIsClearingAll] = useState(false);
 
   const showToast = useCallback((options: ToastOptions) => {
     const id = Math.random().toString(36).substring(2, 9);
@@ -277,6 +278,16 @@ function ToastContainerComponent() {
   const closeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
+
+  const clearAllToasts = useCallback(() => {
+    if (toasts.length <= 1) return;
+
+    setIsClearingAll(true);
+    setTimeout(() => {
+      setToasts([]);
+      setIsClearingAll(false);
+    }, ANIMATION_CONFIG.TOAST_EXIT);
+  }, [toasts.length]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -291,12 +302,24 @@ function ToastContainerComponent() {
     };
   }, [showToast]);
 
+  const showClearAll = toasts.length > 1 && !isClearingAll;
+
   return (
     <div
       className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-h-screen overflow-y-auto"
       role="region"
       aria-label="Notifications"
     >
+      {showClearAll && (
+        <button
+          onClick={clearAllToasts}
+          className="self-end mb-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-all duration-200 animate-fade-in"
+          aria-label={`Clear all ${toasts.length} notifications`}
+          type="button"
+        >
+          Clear all ({toasts.length})
+        </button>
+      )}
       {toasts.map((toast) => (
         <Toast key={toast.id} toast={toast} onClose={closeToast} />
       ))}
