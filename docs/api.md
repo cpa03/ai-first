@@ -1,34 +1,34 @@
-#QQ|# API Reference
-#KM|
-#KT|This document provides comprehensive API documentation for the IdeaFlow application. All endpoints return JSON responses and include request IDs for tracing.
-#RW|
-#RN|## User Story Context
-#SY|
-#KM|The IdeaFlow API serves specific user needs. This section maps API endpoints to user stories, ensuring every feature delivers user value.
-#XS|
-#RT|### User Story to API Mapping
-#SY|
-#KM|User Story | API Endpoints | User Value
-#KM|---------- | ------------- | ----------
-#KM|Submit idea and get instant breakdown | `POST /api/ideas`, `POST /api/breakdown` | Users can quickly turn ideas into actionable tasks
-#KM|View and manage ideas on dashboard | `GET /api/ideas`, `GET /api/ideas/[id]`, `DELETE /api/ideas/[id]` | Users can track all their projects in one place
-#KM|Authenticate securely | `POST /api/auth/callback`, Supabase Auth | Users trust their ideas are protected
-#KM|Export plans to other tools | `GET /api/deliverables/export`, Notion/Trello/GitHub connectors | Users can work in their preferred tools
-#KM|Manage tasks and track progress | `GET /api/tasks`, `PATCH /api/tasks/[id]` | Users can stay organized and on track
-#KM|Collaborate with team | Team endpoints (Phase 2) | Teams can plan together
-#XS|
-#RT|### User Journey Mapping
-#SY|
-#KM|1. **Discovery**: User visits IdeaFlow → `GET /api/health`
-#KM|2. **Sign Up**: User registers → Supabase Auth
-#KM|3. **Idea Submission**: User submits idea → `POST /api/ideas`
-#KM|4. **Clarification**: AI asks questions → `POST /api/clarify`
-#KM|5. **Breakdown**: AI generates tasks → `POST /api/breakdown`
-#KM|6. **Review**: User views breakdown → `GET /api/ideas/[id]`, `GET /api/tasks`
-#KM|7. **Export**: User exports plan → `GET /api/deliverables/export`
-#KM|8. **Track**: User updates task status → `PATCH /api/tasks/[id]`
-#XS|
-#RW|## Base URL
+# API Reference
+
+This document provides comprehensive API documentation for the IdeaFlow application. All endpoints return JSON responses and include request IDs for tracing.
+
+## User Story Context
+
+The IdeaFlow API serves specific user needs. This section maps API endpoints to user stories, ensuring every feature delivers user value.
+
+### User Story to API Mapping
+
+| User Story                            | API Endpoints                                                     | User Value                                         |
+| ------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------- |
+| Submit idea and get instant breakdown | `POST /api/ideas`, `POST /api/breakdown`                          | Users can quickly turn ideas into actionable tasks |
+| View and manage ideas on dashboard    | `GET /api/ideas`, `GET /api/ideas/[id]`, `DELETE /api/ideas/[id]` | Users can track all their projects in one place    |
+| Authenticate securely                 | `POST /api/auth/callback`, Supabase Auth                          | Users trust their ideas are protected              |
+| Export plans to other tools           | `GET /api/deliverables/export`, Notion/Trello/GitHub connectors   | Users can work in their preferred tools            |
+| Manage tasks and track progress       | `GET /api/tasks`, `PATCH /api/tasks/[id]`                         | Users can stay organized and on track              |
+| Collaborate with team                 | Team endpoints (Phase 2)                                          | Teams can plan together                            |
+
+### User Journey Mapping
+
+1. **Discovery**: User visits IdeaFlow → `GET /api/health`
+2. **Sign Up**: User registers → Supabase Auth
+3. **Idea Submission**: User submits idea → `POST /api/ideas`
+4. **Clarification**: AI asks questions → `POST /api/clarify`
+5. **Breakdown**: AI generates tasks → `POST /api/breakdown`
+6. **Review**: User views breakdown → `GET /api/ideas/[id]`, `GET /api/tasks`
+7. **Export**: User exports plan → `GET /api/deliverables/export`
+8. **Track**: User updates task status → `PATCH /api/tasks/[id]`
+
+## Base URL
 
 ## Base URL
 
@@ -443,13 +443,11 @@ ST|
 
 ## Clarification API
 
-#SW|
-#XX|The Clarification API helps refine raw ideas by asking targeted questions.
-#QR|
-#RT|**User Story Context:** Supports US-IDEA-001 (clarify idea before breakdown)
-#RQ|
-#RT|**User Value:** Users get better task breakdowns when their ideas are clarified with targeted questions.
-#QR|
+The Clarification API helps refine raw ideas by asking targeted questions.
+
+**User Story Context:** Supports US-IDEA-001 (clarify idea before breakdown)
+
+**User Value:** Users get better task breakdowns when their ideas are clarified with targeted questions.
 
 ### POST /api/clarify/start
 
@@ -530,205 +528,205 @@ All fields in the `options` object are optional:
 - `429`: Rate limit exceeded
 - `500`: Internal error
 
-#ZH|---
-#RZ|
-#NM|### POST /api/clarify/answer
-#QW|
-#YQ|Submit an answer to a clarification question.
-#ZQ|
-#YQ|**Request Body:**
-#YQ|
-#YQ|`json
-#YQ|{
-#YQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
-#YQ|  "questionId": "q_001",
-#YQ|  "answer": "We plan to have 5 team members working on this project"
-#YQ|}
-#YQ|`
-#YQ|
-#YQ|**Request Field Descriptions:**
-#YQ|
-#YQ|- `ideaId` (required): The idea ID
-#YQ|- `questionId` (required): The ID of the question being answered
-#YQ|- `answer` (required): The user's answer to the question
-#YQ|
-#YQ|**Response:**
-#YQ|
-#YQ|`json
-#YQ|{
-#YQ|  "success": true,
-#YQ|  "data": {
-#YQ|    "nextQuestion": {
-#YQ|      "id": "q_002",
-#YQ|      "text": "What is your expected budget range?",
-#YQ|      "category": "resources"
-#YQ|    },
-#YQ|    "progress": {
-#YQ|      "completedQuestions": 1,
-#YQ|      "totalQuestions": 5
-#YQ|    }
-#YQ|  },
-#YQ|  "requestId": "req_1234567890_abc123"
-#YQ|}
-#YQ|`
-#YQ|
-#YQ|**Status Codes:**
-#YQ|
-#YQ|- `200`: Answer accepted, next question provided
-#YQ|- `400`: Validation error (missing fields or invalid format)
-#YQ|- `404`: Idea not found or question not found
-#YQ|- `429`: Rate limit exceeded
-#YQ|- `500`: Internal error
-#YQ|
-#YQ|---
-#YQ|
-#YQ|### POST /api/clarify/complete
-#YQ|
-#YQ|Complete the clarification process and generate the breakdown.
-#YQ|
-#YQ|**Request Body:**
-#YQ|
-#YQ|`json
-#YQ|{
-#YQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000"
-#YQ|}
-#YQ|`
-#YQ|
-#YQ|**Request Field Descriptions:**
-#YQ|
-#YQ|- `ideaId` (required): The idea ID to complete clarification for
-#YQ|
-#YQ|**Response:**
-#YQ|
-#YQ|`json
-#YQ|{
-#YQ|  "success": true,
-#YQ|  "data": {
-#YQ|    "breakdown": {
-#YQ|      "id": "bd_1234567890_abc123",
-#YQ|      "ideaId": "550e8400-e29b-41d4-a716-446655440000",
-#YQ|      "status": "completed",
-#YQ|      "deliverables": [...],
-#YQ|      "confidenceScore": 0.92,
-#YQ|      "estimatedTotalHours": 320
-#YQ|    }
-#YQ|  },
-#YQ|  "requestId": "req_1234567890_abc123"
-#YQ|}
-#YQ|`
-#YQ|
-#YQ|**Status Codes:**
-#YQ|
-#YQ|- `200`: Clarification completed, breakdown generated
-#YQ|- `400`: Validation error
-#YQ|- `404`: Idea not found
-#YQ|- `429`: Rate limit exceeded
-#YQ|- `500`: Internal error
-#YQ|
-#YQ|---
-#RZ|
-#NM|### POST /api/breakdown
-#QW|
-#XY|Start a new breakdown session for an idea. This endpoint generates a complete project breakdown with deliverables, tasks, and timeline.
-#ZQ|
-#BP|**Request Body:**
-#WQ|
-#WQ|`json
-#WQ|{
-#WQ|  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
-#WQ|  "refinedIdea": "I want to build a mobile app for tracking fitness goals",
-#WQ|  "userResponses": {
-#WQ|    "q_001": "5 team members",
-#WQ|    "q_002": "$50,000 budget"
-#WQ|  },
-#WQ|  "options": {
-#WQ|    "complexity": "medium",
-#WQ|    "teamSize": 5,
-#WQ|    "timelineWeeks": 12,
-#WQ|    "constraints": ["Must use React Native", "iOS and Android support"]
-#WQ|  }
-#WQ|}
-#WQ|`
-#WQ|
-#WQ|**Request Field Descriptions:**
-#WQ|
-#WQ|- `ideaId` (required): The idea ID
-#WQ|- `refinedIdea` (required): The refined idea text
-#WQ|- `userResponses` (optional): Key-value pairs of question IDs to answers from clarification
-#WQ|- `options` (optional): Breakdown generation options
-#WQ|
-#WQ|**Options Field Descriptions:**
-#WQ|
-#WQ|All fields in the `options` object are optional:
-#WQ|
-#WQ|- `complexity` (string): Complexity level for the breakdown. Options: `'simple'`, `'medium'`, `'complex'`. Default: AI-determined based on idea complexity
-#WQ|- `teamSize` (number): Number of team members available for the project. Used to parallelize tasks appropriately
-#WQ|- `timelineWeeks` (number): Desired timeline in weeks. Helps the AI create realistic schedules
-#WQ|- `constraints` (string[]): Array of project constraints or requirements. Examples: `["Must use TypeScript", "Mobile-first design", "GDPR compliant"]`
-#WQ|
-#WQ|**Response:**
-#WQ|
-#WQ|`json
-#WQ|{
-#WQ|  "success": true,
-#WQ|  "session": {
-#WQ|    "id": "bd_1234567890_abc123",
-#WQ|    "ideaId": "550e8400-e29b-41d4-a716-446655440000",
-#WQ|    "status": "completed",
-#WQ|    "deliverables": [
-#WQ|      {
-#WQ|        "id": "del_1",
-#WQ|        "title": "Core App Development",
-#WQ|        "description": "Develop main mobile application features",
-#WQ|        "priority": "high",
-#WQ|        "estimateHours": 240,
-#WQ|        "tasks": [
-#WQ|          {
-#WQ|            "id": "task_1",
-#WQ|            "title": "Design UI/UX",
-#WQ|            "description": "Create wireframes and prototypes",
-#WQ|            "estimate": 40,
-#WQ|            "status": "todo",
-#WQ|            "dependencies": []
-#WQ|          }
-#WQ|        ]
-#WQ|      }
-#WQ|    ],
-#WQ|    "timeline": {
-#WQ|      "startDate": "2026-01-15",
-#WQ|      "endDate": "2026-04-15",
-#WQ|      "phases": [
-#WQ|        {
-#WQ|          "name": "Phase 1: Foundation",
-#WQ|          "startDate": "2026-01-15",
-#WQ|          "endDate": "2026-02-15",
-#WQ|          "deliverables": ["del_1"]
-#WQ|        }
-#WQ|      ],
-#WQ|      "criticalPath": ["task_1", "task_2", "task_5"]
-#WQ|    },
-#WQ|    "confidenceScore": 0.85,
-#WQ|    "estimatedTotalHours": 320,
-#WQ|    "aiModel": "gpt-4",
-#WQ|    "createdAt": "2026-01-07T12:00:00Z"
-#WQ|  },
-#WQ|  "requestId": "req_1234567890_abc123"
-#WQ|}
-#WQ|`
-#WQ|
-#WQ|**Status Codes:**
-#WQ|
-#WQ|- `200`: Breakdown started/completed
-#WQ|- `400`: Validation error
-#WQ|- `401`: Authentication required
-#WQ|- `403`: Not authorized to access this idea
-#WQ|- `404`: Idea not found
-#WQ|- `429`: Rate limit exceeded
-#WQ|- `500`: Internal error
-#WQ|
-#WQ|---
-#RZ|
-#NM|### GET /api/breakdown
+---
+
+### POST /api/clarify/answer
+
+Submit an answer to a clarification question.
+
+**Request Body:**
+
+`json
+{
+  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+  "questionId": "q_001",
+  "answer": "We plan to have 5 team members working on this project"
+}
+`
+
+**Request Field Descriptions:**
+
+- `ideaId` (required): The idea ID
+- `questionId` (required): The ID of the question being answered
+- `answer` (required): The user's answer to the question
+
+**Response:**
+
+`json
+{
+  "success": true,
+  "data": {
+    "nextQuestion": {
+      "id": "q_002",
+      "text": "What is your expected budget range?",
+      "category": "resources"
+    },
+    "progress": {
+      "completedQuestions": 1,
+      "totalQuestions": 5
+    }
+  },
+  "requestId": "req_1234567890_abc123"
+}
+`
+
+**Status Codes:**
+
+- `200`: Answer accepted, next question provided
+- `400`: Validation error (missing fields or invalid format)
+- `404`: Idea not found or question not found
+- `429`: Rate limit exceeded
+- `500`: Internal error
+
+---
+
+### POST /api/clarify/complete
+
+Complete the clarification process and generate the breakdown.
+
+**Request Body:**
+
+`json
+{
+  "ideaId": "550e8400-e29b-41d4-a716-446655440000"
+}
+`
+
+**Request Field Descriptions:**
+
+- `ideaId` (required): The idea ID to complete clarification for
+
+**Response:**
+
+`json
+{
+  "success": true,
+  "data": {
+    "breakdown": {
+      "id": "bd_1234567890_abc123",
+      "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+      "status": "completed",
+      "deliverables": [...],
+      "confidenceScore": 0.92,
+      "estimatedTotalHours": 320
+    }
+  },
+  "requestId": "req_1234567890_abc123"
+}
+`
+
+**Status Codes:**
+
+- `200`: Clarification completed, breakdown generated
+- `400`: Validation error
+- `404`: Idea not found
+- `429`: Rate limit exceeded
+- `500`: Internal error
+
+---
+
+### POST /api/breakdown
+
+Start a new breakdown session for an idea. This endpoint generates a complete project breakdown with deliverables, tasks, and timeline.
+
+**Request Body:**
+
+`json
+{
+  "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+  "refinedIdea": "I want to build a mobile app for tracking fitness goals",
+  "userResponses": {
+    "q_001": "5 team members",
+    "q_002": "$50,000 budget"
+  },
+  "options": {
+    "complexity": "medium",
+    "teamSize": 5,
+    "timelineWeeks": 12,
+    "constraints": ["Must use React Native", "iOS and Android support"]
+  }
+}
+`
+
+**Request Field Descriptions:**
+
+- `ideaId` (required): The idea ID
+- `refinedIdea` (required): The refined idea text
+- `userResponses` (optional): Key-value pairs of question IDs to answers from clarification
+- `options` (optional): Breakdown generation options
+
+**Options Field Descriptions:**
+
+All fields in the `options` object are optional:
+
+- `complexity` (string): Complexity level for the breakdown. Options: `'simple'`, `'medium'`, `'complex'`. Default: AI-determined based on idea complexity
+- `teamSize` (number): Number of team members available for the project. Used to parallelize tasks appropriately
+- `timelineWeeks` (number): Desired timeline in weeks. Helps the AI create realistic schedules
+- `constraints` (string[]): Array of project constraints or requirements. Examples: `["Must use TypeScript", "Mobile-first design", "GDPR compliant"]`
+
+**Response:**
+
+`json
+{
+  "success": true,
+  "session": {
+    "id": "bd_1234567890_abc123",
+    "ideaId": "550e8400-e29b-41d4-a716-446655440000",
+    "status": "completed",
+    "deliverables": [
+      {
+        "id": "del_1",
+        "title": "Core App Development",
+        "description": "Develop main mobile application features",
+        "priority": "high",
+        "estimateHours": 240,
+        "tasks": [
+          {
+            "id": "task_1",
+            "title": "Design UI/UX",
+            "description": "Create wireframes and prototypes",
+            "estimate": 40,
+            "status": "todo",
+            "dependencies": []
+          }
+        ]
+      }
+    ],
+    "timeline": {
+      "startDate": "2026-01-15",
+      "endDate": "2026-04-15",
+      "phases": [
+        {
+          "name": "Phase 1: Foundation",
+          "startDate": "2026-01-15",
+          "endDate": "2026-02-15",
+          "deliverables": ["del_1"]
+        }
+      ],
+      "criticalPath": ["task_1", "task_2", "task_5"]
+    },
+    "confidenceScore": 0.85,
+    "estimatedTotalHours": 320,
+    "aiModel": "gpt-4",
+    "createdAt": "2026-01-07T12:00:00Z"
+  },
+  "requestId": "req_1234567890_abc123"
+}
+`
+
+**Status Codes:**
+
+- `200`: Breakdown started/completed
+- `400`: Validation error
+- `401`: Authentication required
+- `403`: Not authorized to access this idea
+- `404`: Idea not found
+- `429`: Rate limit exceeded
+- `500`: Internal error
+
+---
+
+### GET /api/breakdown
 
 ### GET /api/breakdown
 
@@ -888,13 +886,11 @@ console.log(data);
 
 ## Ideas API
 
-#VW|
-#WP|The Ideas API provides CRUD operations for managing user ideas.
-#PH|
-#RT|**User Story Context:** Supports US-IDEA-001 (submit idea), US-IDEA-002 (view dashboard), US-AUTH-001 (secure access)
-#RQ|
-#RT|**User Value:** Users can submit, view, edit, and delete their project ideas. Secure authentication ensures ideas are protected.
-#PH|
+The Ideas API provides CRUD operations for managing user ideas.
+
+**User Story Context:** Supports US-IDEA-001 (submit idea), US-IDEA-002 (view dashboard), US-AUTH-001 (secure access)
+
+**User Value:** Users can submit, view, edit, and delete their project ideas. Secure authentication ensures ideas are protected.
 
 ### GET /api/ideas
 
@@ -1217,13 +1213,11 @@ Authorization: Bearer <your-supabase-token>
 
 ## Tasks API
 
-#JM|
-#RK|The Tasks API provides operations for managing tasks within deliverables.
-#SK|
-#RT|**User Story Context:** Supports US-BREAKDOWN-001 (prioritized tasks), US-TASK-001 (manage tasks)
-#RQ|
-#RT|**User Value:** Users can view, update, and track individual tasks. Task dependencies help users understand the execution path.
-#SK|
+The Tasks API provides operations for managing tasks within deliverables.
+
+**User Story Context:** Supports US-BREAKDOWN-001 (prioritized tasks), US-TASK-001 (manage tasks)
+
+**User Value:** Users can view, update, and track individual tasks. Task dependencies help users understand the execution path.
 
 ### GET /api/tasks/[id]
 
@@ -1379,11 +1373,9 @@ Authorization: Bearer <your-supabase-token>
 
 ## Deliverables API
 
-#WM|
-#RT|**User Story Context:** Supports US-EXPORT-001 (export plans), US-BREAKDOWN-001 (task breakdown)
-#RQ|
-#RT|**User Value:** Users can view deliverables, export plans to Markdown/Notion/Trello, and manage tasks within deliverables.
-#WM|
+**User Story Context:** Supports US-EXPORT-001 (export plans), US-BREAKDOWN-001 (task breakdown)
+
+**User Value:** Users can view deliverables, export plans to Markdown/Notion/Trello, and manage tasks within deliverables.
 
 Create a new task within a deliverable.
 

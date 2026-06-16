@@ -38,45 +38,44 @@ src/
 - Error boundaries for graceful error handling
 - Comprehensive accessibility (a11y) support
 
-#SR|---
-#XN|
-#RT|## User Story Mapping
-#PB|
-#PR|This section maps UI components and patterns to user stories, ensuring every UI element serves a specific user need.
-#QT|
-#RT|### Component to User Story Mapping
-#PB|
-#QT|Component | User Story | User Need | User Value
-#QT|---------- | ----------- | --------- | ----------
-#QT|IdeaInput | US-IDEA-001 | Submit idea | Users can easily enter their idea
-#QT|Dashboard | US-IDEA-002 | View all ideas | Users can see all their projects at a glance
-#QT|ClarificationFlow | US-IDEA-001 | Clarify idea | Users get better breakdowns with clarified ideas
-#QT|BreakdownResults | US-BREAKDOWN-001 | View task breakdown | Users can see prioritized tasks with dependencies
-#QT|TaskItem | US-BREAKDOWN-001 | Track tasks | Users can mark tasks complete
-#QT|BlueprintDisplay | US-EXPORT-001 | Export plan | Users can view and copy their plan
-#QT|Alert | US-AUTH-001 | Error feedback | Users understand what went wrong
-#QT|LoadingSpinner | US-IDEA-001 | Loading feedback | Users know their request is being processed
-#QT|
-#RT|### User Journey to UI Mapping
-#PB|
-#QT|1. **Landing**: User visits → Homepage with IdeaInput
-#QT|2. **Authentication**: Sign up/Login → Auth forms with validation
-#QT|3. **Dashboard**: View ideas → Dashboard with idea list and filters
-#QT|4. **Submission**: Submit idea → IdeaInput → Success feedback
-#QT|5. **Clarification**: Clarify details → ClarificationFlow with questions
-#QT|6. **Results**: View breakdown → BreakdownResults with task list
-#QT|7. **Export**: Export plan → BlueprintDisplay with export options
-#QT|8. **Management**: Update tasks → TaskItem with status toggle
-#QT|
-#RT|### User-Centric Design Principles
-#PB|
-#QT|- **Clarity**: Each component clearly serves a user need
-#QT|- **Feedback**: Users always know what's happening (loading, success, error)
-#QT|- **Efficiency**: Users can accomplish tasks with minimal clicks
-#QT|- **Trust**: Secure, professional UI builds user confidence
-#QT|
-#XN|---
-#XN|
+---
+
+## User Story Mapping
+
+This section maps UI components and patterns to user stories, ensuring every UI element serves a specific user need.
+
+### Component to User Story Mapping
+
+| Component         | User Story       | User Need           | User Value                                        |
+| ----------------- | ---------------- | ------------------- | ------------------------------------------------- |
+| IdeaInput         | US-IDEA-001      | Submit idea         | Users can easily enter their idea                 |
+| Dashboard         | US-IDEA-002      | View all ideas      | Users can see all their projects at a glance      |
+| ClarificationFlow | US-IDEA-001      | Clarify idea        | Users get better breakdowns with clarified ideas  |
+| BreakdownResults  | US-BREAKDOWN-001 | View task breakdown | Users can see prioritized tasks with dependencies |
+| TaskItem          | US-BREAKDOWN-001 | Track tasks         | Users can mark tasks complete                     |
+| BlueprintDisplay  | US-EXPORT-001    | Export plan         | Users can view and copy their plan                |
+| Alert             | US-AUTH-001      | Error feedback      | Users understand what went wrong                  |
+| LoadingSpinner    | US-IDEA-001      | Loading feedback    | Users know their request is being processed       |
+
+### User Journey to UI Mapping
+
+1. **Landing**: User visits → Homepage with IdeaInput
+2. **Authentication**: Sign up/Login → Auth forms with validation
+3. **Dashboard**: View ideas → Dashboard with idea list and filters
+4. **Submission**: Submit idea → IdeaInput → Success feedback
+5. **Clarification**: Clarify details → ClarificationFlow with questions
+6. **Results**: View breakdown → BreakdownResults with task list
+7. **Export**: Export plan → BlueprintDisplay with export options
+8. **Management**: Update tasks → TaskItem with status toggle
+
+### User-Centric Design Principles
+
+- **Clarity**: Each component clearly serves a user need
+- **Feedback**: Users always know what's happening (loading, success, error)
+- **Efficiency**: Users can accomplish tasks with minimal clicks
+- **Trust**: Secure, professional UI builds user confidence
+
+---
 
 ## Component Inventory
 
