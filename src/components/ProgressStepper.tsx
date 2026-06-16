@@ -33,11 +33,13 @@ const ProgressStepperComponent = function ProgressStepper({
                 <li
                   key={step.id}
                   className={`
-                    w-3 h-3 rounded-full transition-all duration-300
+                    rounded-full transition-all duration-300 ease-out
                     ${
-                      step.completed || step.current
-                        ? 'bg-primary-600'
-                        : 'bg-gray-300'
+                      step.current
+                        ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200'
+                        : step.completed
+                          ? 'w-3 h-3 bg-primary-600'
+                          : 'w-3 h-3 bg-gray-300'
                     }
                   `}
                   aria-current={step.current ? 'step' : undefined}
@@ -47,7 +49,7 @@ const ProgressStepperComponent = function ProgressStepper({
             })}
           </ol>
           <span
-            className="text-xs text-gray-700 font-medium"
+            className="text-xs text-gray-700 font-medium tabular-nums"
             aria-hidden="true"
           >
             {currentStep + 1} / {steps.length}
