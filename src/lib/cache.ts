@@ -238,12 +238,12 @@ export class Cache<T = unknown> {
     const recommendations: string[] = [];
 
     // Check utilization thresholds
-    if (utilizationPercent >= 95) {
+    if (utilizationPercent >= CACHE_CONFIG.HEALTH.CRITICAL_UTILIZATION) {
       status = 'critical';
       recommendations.push(
         'Cache is nearly full. Consider increasing maxSize or reducing TTL.'
       );
-    } else if (utilizationPercent >= 80) {
+    } else if (utilizationPercent >= CACHE_CONFIG.HEALTH.WARNING_UTILIZATION) {
       status = 'warning';
       recommendations.push(
         'Cache is approaching capacity. Monitor for evictions.'
@@ -252,7 +252,10 @@ export class Cache<T = unknown> {
 
     // Check hit rate (only if we have enough requests)
     const totalRequests = stats.hits + stats.misses;
-    if (totalRequests >= 100 && stats.hitRate < 0.5) {
+    if (
+      totalRequests >= CACHE_CONFIG.HEALTH.MIN_REQUESTS_FOR_HIT_RATE &&
+      stats.hitRate < CACHE_CONFIG.HEALTH.LOW_HIT_RATE_THRESHOLD
+    ) {
       if (status === 'healthy') {
         status = 'warning';
       }
