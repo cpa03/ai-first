@@ -417,15 +417,16 @@ const SUSPICIOUS_PATTERNS: Record<
   // NoSQL Injection patterns (MongoDB, Redis, etc.)
   nosql_injection: [
     // High severity - NoSQL operator injection
+    // Supports both JSON-encoded ($op: value) and bracket notation ([$op]=value)
     {
-      pattern: /\$(where|accumulator|function)['"]?\s*:/i,
+      pattern: /\$(where|accumulator|function)['"]?\s*[:\]]/i,
       severity: 3,
       description: 'MongoDB NoSQL injection operator',
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)\s*:/i,
-      severity: 2,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)['"]?\s*[:\]]/i,
+      severity: 3,
       description: 'MongoDB operator injection',
     },
     {
@@ -494,7 +495,7 @@ const SUSPICIOUS_PATTERNS: Record<
   log_injection: [
     // High severity - JNDI/LDAP injection (Log4j style)
     {
-      pattern: /\$\{\s*(jndi|ldap|dns|rmi)\s*:/gi,
+      pattern: /\$\{\s*(jndi|ldap|dns|rmi|jmx|nis|iiop)\s*:/gi,
       severity: 3,
       description: 'JNDI/LDAP injection attempt',
     },
@@ -577,6 +578,10 @@ const SKIP_HEADERS = new Set([
   'connection',
   'content-type',
   'content-length',
+  'cookie',
+  'authorization',
+  'x-api-key',
+  'x-csrf-token',
 ]);
 
 /**
@@ -707,8 +712,12 @@ export function detectSuspiciousPatterns(
 
     // Scan query parameters
     for (const [key, value] of url.searchParams.entries()) {
-      const queryFindings = scanString(value, 'query', minSeverity, key);
-      patterns.push(...queryFindings);
+      // Scan BOTH key and value for injection patterns to prevent bypass via bracket notation
+      const keyFindings = scanString(key, 'query', minSeverity, key);
+      patterns.push(...keyFindings);
+
+      const valueFindings = scanString(value, 'query', minSeverity, key);
+      patterns.push(...valueFindings);
     }
   }
 
@@ -723,6 +732,10 @@ export function detectSuspiciousPatterns(
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
         if (!SKIP_HEADERS.has(key.toLowerCase())) {
+          // Scan BOTH key and value for injection patterns
+          const keyFindings = scanString(key, 'header', minSeverity, key);
+          patterns.push(...keyFindings);
+
           const headerFindings = scanString(value, 'header', minSeverity, key);
           patterns.push(...headerFindings);
         }
