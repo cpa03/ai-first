@@ -13,11 +13,74 @@ import {
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
+type PasswordMatch = 'empty' | 'match' | 'mismatch';
 
 interface PasswordStrengthResult {
   strength: PasswordStrength;
   score: number;
   feedback: string[];
+}
+
+interface PasswordMatchIndicatorProps {
+  password: string;
+  confirmPassword: string;
+}
+
+function PasswordMatchIndicator({
+  password,
+  confirmPassword,
+}: PasswordMatchIndicatorProps) {
+  const matchStatus: PasswordMatch = useMemo(() => {
+    if (!confirmPassword) return 'empty';
+    return password === confirmPassword ? 'match' : 'mismatch';
+  }, [password, confirmPassword]);
+
+  if (matchStatus === 'empty') return null;
+
+  return (
+    <div
+      className={`flex items-center gap-2 text-sm transition-all duration-200 animate-fade-in ${
+        matchStatus === 'match' ? 'text-green-700' : 'text-amber-600'
+      }`}
+      role="status"
+      aria-live="polite"
+    >
+      {matchStatus === 'match' ? (
+        <svg
+          className="w-4 h-4 text-green-600"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      ) : (
+        <svg
+          className="w-4 h-4 text-amber-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+      )}
+      <span className="text-xs font-medium">
+        {matchStatus === 'match' ? 'Passwords match' : 'Passwords do not match'}
+      </span>
+    </div>
+  );
 }
 
 function calculatePasswordStrength(password: string): PasswordStrengthResult {
@@ -373,6 +436,11 @@ export default function SignupPage() {
               placeholder="Confirm your password"
               showPasswordToggle
               onEnterPress={submitForm}
+            />
+
+            <PasswordMatchIndicator
+              password={password}
+              confirmPassword={confirmPassword}
             />
           </div>
 
