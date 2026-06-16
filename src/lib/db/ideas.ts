@@ -1,4 +1,5 @@
 import { VALIDATION_LIMITS } from '../config/constants';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import type {
   Idea,
   IdeaSession,
@@ -32,7 +33,7 @@ export class IdeaService {
    */
   async createIdea(idea: Omit<Idea, 'id' | 'created_at'>): Promise<Idea> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('ideas')
@@ -49,7 +50,7 @@ export class IdeaService {
    */
   async getIdea(id: string): Promise<Idea | null> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('ideas')
@@ -67,7 +68,7 @@ export class IdeaService {
    */
   async getUserIdeas(userId: string): Promise<Idea[]> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('ideas')
@@ -98,7 +99,7 @@ export class IdeaService {
     filters?: { status?: Idea['status'] | 'all'; search?: string }
   ): Promise<PaginatedResult<Idea>> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const page = Math.max(1, pagination.page || 1);
     const pageSize = Math.min(
@@ -164,7 +165,7 @@ export class IdeaService {
    */
   async updateIdea(id: string, updates: Partial<Idea>): Promise<Idea> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
       .from('ideas')
@@ -182,7 +183,7 @@ export class IdeaService {
    */
   async softDeleteIdea(id: string): Promise<void> {
     const admin = this.clientProvider.getAdmin();
-    if (!admin) throw new Error('Supabase admin client not initialized');
+    if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { error } = await admin
       .from('ideas')
@@ -197,7 +198,7 @@ export class IdeaService {
    */
   async deleteIdea(id: string): Promise<void> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { error } = await client.from('ideas').delete().eq('id', id);
 
@@ -211,7 +212,7 @@ export class IdeaService {
     session: Omit<IdeaSession, 'updated_at'>
   ): Promise<IdeaSession> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('idea_sessions')
@@ -231,7 +232,7 @@ export class IdeaService {
    */
   async getIdeaSession(ideaId: string): Promise<IdeaSession | null> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
       .from('idea_sessions')
@@ -279,7 +280,7 @@ export class IdeaService {
     totalTasks: number;
   }> {
     const client = this.clientProvider.getClient();
-    if (!client) throw new Error('Supabase client not initialized');
+    if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     // Query 1: Get all ideas with status (needed for ideasByStatus)
     const { data: ideasData, error: ideasError } = await client

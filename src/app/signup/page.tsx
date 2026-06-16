@@ -9,6 +9,7 @@ import Alert from '@/components/Alert';
 import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
+  API_ERROR_MESSAGES,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -199,7 +200,7 @@ export default function SignupPage() {
 
       try {
         if (!supabaseClient) {
-          throw new Error('Authentication service not available');
+          throw new Error(API_ERROR_MESSAGES.PAGE.AUTH_SERVICE_UNAVAILABLE);
         }
 
         const { error: signUpError } = await supabaseClient.auth.signUp({
@@ -238,7 +239,7 @@ export default function SignupPage() {
 
       try {
         if (!supabaseClient) {
-          throw new Error('Authentication service not available');
+          throw new Error(API_ERROR_MESSAGES.PAGE.AUTH_SERVICE_UNAVAILABLE);
         }
 
         const { error: oauthError } = await supabaseClient.auth.signInWithOAuth(

@@ -6,7 +6,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import type { Task, Deliverable } from '@/lib/db';
 import { triggerHapticFeedback } from '@/lib/utils';
 import type { TaskStatus } from '@/types/task';
-import { API_ENDPOINTS, HTTP_HEADERS } from '@/lib/config';
+import { API_ENDPOINTS, HTTP_HEADERS, API_ERROR_MESSAGES } from '@/lib/config';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -86,7 +86,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         const result = await response.json();
 
         if (!result.success) {
-          throw new Error('Invalid response from server');
+          throw new Error(API_ERROR_MESSAGES.PAGE.INVALID_SERVER_RESPONSE);
         }
 
         // PERFORMANCE: Use server-provided statistics to avoid redundant client-side calculations
@@ -260,7 +260,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         const result = await response.json();
 
         if (!result.success) {
-          throw new Error('Invalid response from server');
+          throw new Error(API_ERROR_MESSAGES.PAGE.INVALID_SERVER_RESPONSE);
         }
 
         // STEP 3: Success - optimistic update is already applied

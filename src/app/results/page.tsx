@@ -7,7 +7,11 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
-import { SPINNER_PATTERNS, EXPORT_LABELS } from '@/lib/config';
+import {
+  SPINNER_PATTERNS,
+  EXPORT_LABELS,
+  API_ERROR_MESSAGES,
+} from '@/lib/config';
 import dynamic from 'next/dynamic';
 
 // Lazy load Button and LoadingSpinner for code splitting
@@ -161,7 +165,7 @@ function ResultsContent() {
         const ideaData = await ideaResponse.json();
 
         if (!ideaData.success || !ideaData.data) {
-          throw new Error('Idea not found');
+          throw new Error(API_ERROR_MESSAGES.NOT_FOUND.IDEA);
         }
 
         const sessionData = sessionResponse.ok
