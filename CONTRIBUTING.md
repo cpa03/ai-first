@@ -70,8 +70,8 @@ This project uses **npm** as its package manager. Please use npm for all depende
   #BV|To bypass pre-commit hooks (use sparingly):
   #QM|
   #QS|`bash
-#QS|git commit --no-verify -m "Your commit message"
-#QS|`
+git commit --no-verify -m "Your commit message"
+`
   #QS|
   #QM|## Project Structure
 
