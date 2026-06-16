@@ -5,7 +5,7 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 import { createLogger } from '@/lib/logger';
-import { NextResponse } from 'next/server';
+import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES } from '@/lib/config/http';
 import { API_CACHE_CONFIG } from '@/lib/config/constants';
 
@@ -76,7 +76,6 @@ async function handleGet(context: ApiContext) {
     );
   }
 
-  // Return 503 Service Unavailable if not ready
   const notReadyChecks = Object.entries(checks)
     .filter(([, check]) => check.status === 'not_ready')
     .map(([name, check]) => ({
@@ -84,37 +83,20 @@ async function handleGet(context: ApiContext) {
       message: check.error || `Service ${name} is not ready`,
     }));
 
-  const errorResponseBody = {
-    error: 'Service not ready',
-    code: 'NOT_READY',
-    details: notReadyChecks,
-    timestamp: new Date().toISOString(),
-    requestId: context.requestId,
-    retryable: true,
-  };
-
-  const errorResponse = NextResponse.json(errorResponseBody, {
-    status: STATUS_CODES.SERVICE_UNAVAILABLE,
-  });
-
-  errorResponse.headers.set('Content-Type', 'application/json');
-  errorResponse.headers.set('X-Request-ID', context.requestId);
-  errorResponse.headers.set('X-Error-Code', 'NOT_READY');
-  errorResponse.headers.set('X-Retryable', 'true');
-
-  if (_rateLimit) {
-    errorResponse.headers.set('X-RateLimit-Limit', String(_rateLimit.limit));
-    errorResponse.headers.set(
-      'X-RateLimit-Remaining',
-      String(_rateLimit.remaining)
-    );
-    errorResponse.headers.set(
-      'X-RateLimit-Reset',
-      new Date(_rateLimit.reset).toISOString()
-    );
-  }
-
-  return errorResponse;
+  throw new AppError(
+    'Service not ready',
+    ErrorCode.NOT_READY,
+    STATUS_CODES.SERVICE_UNAVAILABLE,
+    notReadyChecks.map((check) => ({
+      field: check.field,
+      message: check.message,
+    })),
+    true,
+    [
+      'Wait briefly and retry the request',
+      'Check /api/health/detailed for specific dependency status',
+    ]
+  );
 }
 
 export const GET = withApiHandler(handleGet, {
