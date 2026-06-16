@@ -27,6 +27,7 @@
 import { createLogger } from '@/lib/logger';
 import { SecurityAuditLog } from './audit-log';
 import { getClientIdentifier } from '@/lib/rate-limit';
+import { CACHE_CONFIG } from '@/lib/config/cache';
 
 const logger = createLogger('SuspiciousPatterns');
 
@@ -598,8 +599,6 @@ type PatternMatch = {
  * on repeated values (e.g., common header values, repeat query params).
  */
 const SCAN_RESULT_CACHE = new Map<string, PatternMatch[]>();
-const MAX_CACHE_SIZE = 500;
-const CACHE_INPUT_LENGTH_THRESHOLD = 1000;
 const EMPTY_FINDINGS: SuspiciousPatternDetail[] = [];
 
 /**
@@ -616,7 +615,8 @@ function scanString(
 
   // PERFORMANCE: Check cache for small inputs to avoid repeated regex runs.
   // We use a composite key of minSeverity and input.
-  const isCacheable = input.length < CACHE_INPUT_LENGTH_THRESHOLD;
+  const isCacheable =
+    input.length < CACHE_CONFIG.SECURITY.INPUT_LENGTH_THRESHOLD;
   const cacheKey = isCacheable ? `${minSeverity}:${input}` : null;
 
   if (cacheKey) {
@@ -655,7 +655,7 @@ function scanString(
 
   // Cache results if cacheable
   if (cacheKey) {
-    if (SCAN_RESULT_CACHE.size >= MAX_CACHE_SIZE) {
+    if (SCAN_RESULT_CACHE.size >= CACHE_CONFIG.SECURITY.MAX_SIZE) {
       // Simple LRU: delete first entry (oldest insertion)
       const firstKey = SCAN_RESULT_CACHE.keys().next().value;
       if (firstKey !== undefined) {

@@ -218,6 +218,79 @@ export const CACHE_CONFIG = {
      */
     TRIM_PERCENTAGE: EnvLoader.number('CACHE_TRIM_PERCENTAGE', 20, 5, 50) / 100,
   } as const,
+
+  /**
+   * Security pattern detection cache configuration
+   * Controls caching behavior for suspicious pattern scanning
+   */
+  SECURITY: {
+    /**
+     * Maximum number of cached scan results
+     * Env: CACHE_SECURITY_MAX_SIZE (default: 500)
+     */
+    MAX_SIZE: EnvLoader.number('CACHE_SECURITY_MAX_SIZE', 500, 100, 5000),
+
+    /**
+     * Maximum input length to cache (longer inputs skip cache)
+     * Env: CACHE_SECURITY_INPUT_LENGTH_THRESHOLD (default: 1000)
+     */
+    INPUT_LENGTH_THRESHOLD: EnvLoader.number(
+      'CACHE_SECURITY_INPUT_LENGTH_THRESHOLD',
+      1000,
+      100,
+      5000
+    ),
+  } as const,
+
+  /**
+   * Cache health monitoring thresholds
+   * Controls when cache health status changes
+   */
+  HEALTH: {
+    /**
+     * Utilization percentage for critical status (cache nearly full)
+     * Env: CACHE_HEALTH_CRITICAL_UTILIZATION (default: 95)
+     */
+    CRITICAL_UTILIZATION: EnvLoader.number(
+      'CACHE_HEALTH_CRITICAL_UTILIZATION',
+      95,
+      80,
+      100
+    ),
+
+    /**
+     * Utilization percentage for warning status (cache approaching capacity)
+     * Env: CACHE_HEALTH_WARNING_UTILIZATION (default: 80)
+     */
+    WARNING_UTILIZATION: EnvLoader.number(
+      'CACHE_HEALTH_WARNING_UTILIZATION',
+      80,
+      50,
+      95
+    ),
+
+    /**
+     * Minimum total requests before checking hit rate
+     * Env: CACHE_HEALTH_MIN_REQUESTS_FOR_HIT_RATE (default: 100)
+     */
+    MIN_REQUESTS_FOR_HIT_RATE: EnvLoader.number(
+      'CACHE_HEALTH_MIN_REQUESTS_FOR_HIT_RATE',
+      100,
+      10,
+      1000
+    ),
+
+    /**
+     * Hit rate threshold below which warning is triggered
+     * Env: CACHE_HEALTH_LOW_HIT_RATE_THRESHOLD (default: 0.5)
+     */
+    LOW_HIT_RATE_THRESHOLD: EnvLoader.number(
+      'CACHE_HEALTH_LOW_HIT_RATE_THRESHOLD',
+      0.5,
+      0.1,
+      0.9
+    ),
+  } as const,
 } as const;
 
 export type CacheConfig = typeof CACHE_CONFIG;
