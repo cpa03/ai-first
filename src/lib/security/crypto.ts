@@ -50,8 +50,9 @@ export function generateId(): string {
 
   // 3. Last resort fallback (non-cryptographic)
   // This should only be reached in extremely restricted legacy environments
+  // We use secureRandom() which provides a centralized fallback with security logging
   const timestamp = Date.now().toString(36);
-  const randomPart = Math.random().toString(36).substring(2, 11);
+  const randomPart = secureRandom().toString(36).substring(2, 11);
   return `${timestamp}-${randomPart}`;
 }
 
