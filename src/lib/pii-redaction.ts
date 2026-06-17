@@ -123,9 +123,11 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  * 'eyJ' (jwt), '://' (urls), common assignment operators ':', '=', and '#', and specific API key prefixes,
  * and common secret-related keywords.
  * PERFORMANCE: Single regex test is faster than multiple tests on every log message.
+ * Updated: Refined digit trigger to \d[\s\S]*\d (at least two digits) to reduce false positives
+ * from single sequence numbers or IDs, while maintaining security for all PII types.
  */
 const COMBINED_TRIGGER_REGEX =
-  /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+  /[@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer|passport|license|licence|iban|swift|bic|nino|ssn|\d[\s\S]*\d/i;
 
 /**
  * Specific triggers for API keys and secrets to avoid running the full complex regex.
@@ -166,7 +168,9 @@ function _redactPII(text: string): string {
   }
 
   // Digits are a trigger for many PII types
-  if (/\d/.test(redacted)) {
+  // PERFORMANCE: At least two digits are required for any numeric PII (Phone, SSN, CC, IP, Passport).
+  // This avoids running multiple complex regexes on strings with only a single digit.
+  if (/\d[\s\S]*\d/.test(redacted)) {
     if (originalLength >= MIN_LENGTHS.PASSPORT) {
       redacted = redacted.replace(PII_REGEX_PATTERNS.passport, labels.PASSPORT);
     }
@@ -477,97 +481,136 @@ export function redactPIIInObject(
   }
 
   if (Array.isArray(obj)) {
-    const result: RedactionResult[] = new Array(obj.length);
+    let result: RedactionResult[] | undefined;
     for (let i = 0; i < obj.length; i++) {
       const item = obj[i];
-      // PERFORMANCE: Fast-path for non-string primitives to avoid recursive call
-      if (item === null || (typeof item !== 'object' && typeof item !== 'string')) {
-        result[i] = item as RedactionResult;
-        continue;
-      }
+      let redactedItem: RedactionResult;
 
-      // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
-      if (typeof item === 'string') {
-        result[i] =
+      // PERFORMANCE: Fast-path for non-string primitives
+      if (
+        item === null ||
+        (typeof item !== 'object' && typeof item !== 'string')
+      ) {
+        redactedItem = item as RedactionResult;
+      } else if (typeof item === 'string') {
+        redactedItem =
           item.length < 4 || !COMBINED_TRIGGER_REGEX.test(item)
             ? item
             : _redactPII(item);
       } else {
-        result[i] = redactPIIInObject(item, seen, depth + 1);
+        redactedItem = redactPIIInObject(item, seen, depth + 1);
+      }
+
+      if (result) {
+        result[i] = redactedItem;
+      } else if (redactedItem !== item) {
+        result = obj.slice(0, i) as RedactionResult[];
+        result[i] = redactedItem;
       }
     }
-    return result;
+    return result || (obj as unknown as RedactionResult);
   }
 
-  const redacted: RedactedObject = {};
-
-  // PERFORMANCE: Inline processEntry logic to avoid closure creation overhead per object property.
-  // Using Object.keys() for string keys and processing symbols separately is
-  // significantly faster than getAllPropertyDescriptors() for non-Error objects.
+  let redacted: RedactedObject | undefined;
   const keys = Object.keys(obj);
+
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     try {
       const action = getKeyAction(key);
+      const value = (obj as Record<string, unknown>)[key];
+      let redactedValue: RedactionResult;
 
       if (action.type === 'SENSITIVE') {
-        redacted[key] = action.label!;
-        continue;
-      }
-
-      const value = (obj as Record<string, unknown>)[key];
-
-      if (action.type === 'SAFE') {
-        redacted[key] = value as RedactionResult;
+        redactedValue = action.label!;
+      } else if (action.type === 'SAFE') {
+        redactedValue = value as RedactionResult;
       } else if (typeof value === 'string') {
-        // PERFORMANCE: Inline fast-path check to avoid function call overhead
-        // for safe strings. Most log strings do not contain PII.
-        redacted[key] =
+        redactedValue =
           value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
             ? value
             : _redactPII(value);
       } else if (value !== null && typeof value === 'object') {
-        redacted[key] = redactPIIInObject(value, seen, depth + 1);
+        redactedValue = redactPIIInObject(value, seen, depth + 1);
       } else {
-        redacted[key] = value as RedactionResult;
+        redactedValue = value as RedactionResult;
+      }
+
+      if (redacted) {
+        redacted[key] = redactedValue;
+      } else if (redactedValue !== value) {
+        redacted = {};
+        for (let j = 0; j < i; j++) {
+          redacted[keys[j]] = (obj as Record<string, unknown>)[keys[j]] as RedactionResult;
+        }
+        redacted[key] = redactedValue;
       }
     } catch {
+      if (!redacted) {
+        redacted = {};
+        for (let j = 0; j < i; j++) {
+          redacted[keys[j]] = (obj as Record<string, unknown>)[keys[j]] as RedactionResult;
+        }
+      }
       redacted[key] = '[Getter Error]';
     }
   }
 
-  // Handle enumerable symbols
   const symbols = Object.getOwnPropertySymbols(obj);
   for (let i = 0; i < symbols.length; i++) {
     const sym = symbols[i];
-    if (Object.prototype.propertyIsEnumerable.call(obj, sym)) {
-      try {
-        const key = sym.toString();
-        const value = (obj as Record<symbol, unknown>)[sym];
-        const action = getKeyAction(key);
+    if (!Object.prototype.propertyIsEnumerable.call(obj, sym)) continue;
 
-        if (action.type === 'SAFE') {
-          redacted[key] = value as RedactionResult;
-        } else if (action.type === 'SENSITIVE') {
-          redacted[key] = action.label!;
-        } else if (typeof value === 'string') {
-          // PERFORMANCE: Inline fast-path check
-          redacted[key] =
-            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
-              ? value
-              : _redactPII(value);
-        } else if (value !== null && typeof value === 'object') {
-          redacted[key] = redactPIIInObject(value, seen, depth + 1);
-        } else {
-          redacted[key] = value as RedactionResult;
-        }
-      } catch {
-        redacted[sym.toString()] = '[Getter Error]';
+    try {
+      const key = sym.toString();
+      const value = (obj as Record<symbol, unknown>)[sym];
+      const action = getKeyAction(key);
+      let redactedValue: RedactionResult;
+
+      if (action.type === 'SENSITIVE') {
+        redactedValue = action.label!;
+      } else if (action.type === 'SAFE') {
+        redactedValue = value as RedactionResult;
+      } else if (typeof value === 'string') {
+        redactedValue =
+          value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+            ? value
+            : _redactPII(value);
+      } else if (value !== null && typeof value === 'object') {
+        redactedValue = redactPIIInObject(value, seen, depth + 1);
+      } else {
+        redactedValue = value as RedactionResult;
       }
+
+      if (redacted) {
+        redacted[key] = redactedValue;
+      } else if (redactedValue !== value) {
+        redacted = {};
+        for (const k of keys) redacted[k] = (obj as Record<string, unknown>)[k] as RedactionResult;
+        for (let j = 0; j < i; j++) {
+          const s = symbols[j];
+          if (Object.prototype.propertyIsEnumerable.call(obj, s)) {
+            redacted[s.toString()] = (obj as Record<symbol, unknown>)[s] as RedactionResult;
+          }
+        }
+        redacted[key] = redactedValue;
+      }
+    } catch {
+      if (!redacted) {
+        redacted = {};
+        for (const k of keys) redacted[k] = (obj as Record<string, unknown>)[k] as RedactionResult;
+        for (let j = 0; j < i; j++) {
+          const s = symbols[j];
+          if (Object.prototype.propertyIsEnumerable.call(obj, s)) {
+            redacted[s.toString()] = (obj as Record<symbol, unknown>)[s] as RedactionResult;
+          }
+        }
+      }
+      redacted[sym.toString()] = '[Getter Error]';
     }
   }
 
-  return redacted;
+  return redacted || (obj as unknown as RedactionResult);
 }
 
 export function sanitizeAgentLog(
