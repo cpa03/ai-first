@@ -12,6 +12,7 @@ import {
   TASK_ANIMATION_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
 
@@ -52,6 +53,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
+    triggerHapticFeedback();
     setIsToggled(true);
     onToggle(task.id, task.status);
     toggleTimeoutRef.current = setTimeout(() => {
@@ -63,6 +65,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
+        triggerHapticFeedback();
         setIsToggled(true);
         onToggle(task.id, task.status);
         toggleTimeoutRef.current = setTimeout(() => {
