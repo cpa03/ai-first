@@ -109,9 +109,20 @@ export const HERO_CONFIG = {
 
 /**
  * Why choose section configuration
+ * Centralizes content for WhyChooseSection component
+ * Eliminates hardcoded strings, styles, and SVG paths
  */
 export const WHY_CHOOSE_CONFIG = {
-  TITLE: EnvLoader.string('LANDING_PAGE_WHY_TITLE', 'Why Choose IdeaFlow?'),
+  TITLE: EnvLoader.string(
+    'LANDING_PAGE_WHY_TITLE',
+    'Why Choose IdeaFlow for Project Planning?'
+  ),
+
+  SECTION_STYLES: {
+    CONTAINER: 'mt-16 bg-gray-50 rounded-lg p-8',
+    HEADING: 'text-2xl font-bold text-gray-900 mb-6 text-center',
+    GRID: 'grid md:grid-cols-2 gap-6',
+  },
 
   BENEFITS: (() => {
     const envBenefits = EnvLoader.string('LANDING_PAGE_WHY_BENEFITS', '');
@@ -120,6 +131,71 @@ export const WHY_CHOOSE_CONFIG = {
     }
     return DEFAULT_BENEFITS;
   })(),
+
+  ARTICLES: [
+    {
+      id: 'ai-powered',
+      TITLE: 'AI-Powered Intelligence',
+      DESCRIPTION:
+        'Advanced AI algorithms analyze your ideas and generate comprehensive project plans',
+      ICON_BG: 'bg-green-100',
+      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_COLOR: 'text-green-600',
+      SVG_PATH:
+        'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
+      HOVER_BORDER: 'hover:border-green-200',
+      HOVER_BG: 'hover:bg-green-50/30',
+    },
+    {
+      id: 'time-saving',
+      TITLE: 'Time-Saving Automation',
+      DESCRIPTION:
+        'Reduce planning time by 80% with automated task breakdown and timeline generation',
+      ICON_BG: 'bg-green-100',
+      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_COLOR: 'text-green-600',
+      SVG_PATH:
+        'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
+      HOVER_BORDER: 'hover:border-green-200',
+      HOVER_BG: 'hover:bg-green-50/30',
+    },
+    {
+      id: 'developer-friendly',
+      TITLE: 'Developer-Friendly',
+      DESCRIPTION:
+        'Export plans to GitHub, Notion, and other tools your team already uses',
+      ICON_BG: 'bg-green-100',
+      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_COLOR: 'text-green-600',
+      SVG_PATH:
+        'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
+      HOVER_BORDER: 'hover:border-green-200',
+      HOVER_BG: 'hover:bg-green-50/30',
+    },
+    {
+      id: 'collaborative',
+      TITLE: 'Collaborative Planning',
+      DESCRIPTION:
+        'Share blueprints with your team and iterate on plans in real-time',
+      ICON_BG: 'bg-green-100',
+      ICON_HOVER_BG: 'group-hover:bg-green-200',
+      ICON_COLOR: 'text-green-600',
+      SVG_PATH:
+        'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
+      HOVER_BORDER: 'hover:border-green-200',
+      HOVER_BG: 'hover:bg-green-50/30',
+    },
+  ],
+
+  ARTICLE_STYLES: {
+    CONTAINER:
+      'flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 ease-out motion-reduce:transition-none',
+    ICON_CONTAINER:
+      'rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-colors duration-200',
+    ICON_SVG: 'w-4 h-4',
+    TITLE: 'font-semibold text-gray-900 mb-1',
+    DESCRIPTION: 'text-gray-700 text-sm',
+  },
 } as const;
 
 export type FeatureConfig = typeof FEATURE_CONFIG;
