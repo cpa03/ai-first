@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/db';
-import { API_ERROR_MESSAGES } from '@/lib/config';
+import { API_ERROR_MESSAGES, AUTH_LABELS } from '@/lib/config';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -38,11 +38,9 @@ export default function AuthCallbackPage() {
       <div className="max-w-md w-full text-center space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
         <h2 className="text-xl font-semibold text-gray-900">
-          Completing sign in...
+          {AUTH_LABELS.CALLBACK.COMPLETING_SIGN_IN}
         </h2>
-        <p className="text-gray-600">
-          Please wait while we verify your account.
-        </p>
+        <p className="text-gray-600">{AUTH_LABELS.CALLBACK.PLEASE_WAIT}</p>
       </div>
     </div>
   );

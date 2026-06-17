@@ -10,6 +10,7 @@ import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
   API_ERROR_MESSAGES,
+  AUTH_LABELS,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -77,7 +78,9 @@ function PasswordMatchIndicator({
         </svg>
       )}
       <span className="text-xs font-medium">
-        {matchStatus === 'match' ? 'Passwords match' : 'Passwords do not match'}
+        {matchStatus === 'match'
+          ? AUTH_LABELS.PASSWORD_MATCH.MATCH
+          : AUTH_LABELS.PASSWORD_MATCH.MISMATCH}
       </span>
     </div>
   );
@@ -235,17 +238,17 @@ export default function SignupPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError(PASSWORD_VALIDATION_CONFIG.MESSAGES.MIN_LENGTH);
       return false;
     }
 
-    if (password.length < 8) {
-      setPasswordError('Password must be at least 8 characters');
+    if (password.length < PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
+      setPasswordError(PASSWORD_VALIDATION_CONFIG.MESSAGES.MIN_LENGTH);
       return false;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(AUTH_LABELS.PASSWORD_MATCH.MISMATCH);
       return false;
     }
 
@@ -281,8 +284,12 @@ export default function SignupPage() {
         setSuccess(true);
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : 'Failed to create account';
-        setError(errorMessage || 'Failed to create account. Please try again.');
+          err instanceof Error
+            ? err.message
+            : API_ERROR_MESSAGES.INTERNAL.CREATE_IDEA_FAILED;
+        setError(
+          errorMessage || API_ERROR_MESSAGES.INTERNAL.CREATE_IDEA_FAILED
+        );
       } finally {
         setIsLoading(false);
       }
@@ -321,10 +328,9 @@ export default function SignupPage() {
         const errorMessage =
           err instanceof Error
             ? err.message
-            : `Failed to sign up with ${provider}`;
+            : AUTH_LABELS.SIGNUP.OAUTH_FAILED(provider);
         setError(
-          errorMessage ||
-            `Failed to sign up with ${provider}. Please try again.`
+          errorMessage || AUTH_LABELS.SIGNUP.OAUTH_FAILED_DEFAULT(provider)
         );
         setOauthLoading(null);
       }
@@ -351,16 +357,19 @@ export default function SignupPage() {
               />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-900">Check your email</h2>
+          <h2 className="text-3xl font-bold text-gray-900">
+            {AUTH_LABELS.EMAIL_VERIFICATION.TITLE}
+          </h2>
           <p className="text-gray-600">
-            We&apos;ve sent a confirmation link to <strong>{email}</strong>.
-            Please check your email and click the link to verify your account.
+            {AUTH_LABELS.EMAIL_VERIFICATION.DESCRIPTION_PREFIX}{' '}
+            <strong>{email}</strong>.{' '}
+            {AUTH_LABELS.EMAIL_VERIFICATION.DESCRIPTION_SUFFIX}
           </p>
           <Link
             href="/login"
             className="inline-block font-medium text-primary-600 hover:text-primary-500"
           >
-            Return to sign in
+            {AUTH_LABELS.EMAIL_VERIFICATION.RETURN_LINK}
           </Link>
         </div>
       </div>
@@ -372,16 +381,16 @@ export default function SignupPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">
-            Create your account
+            {AUTH_LABELS.SIGNUP.TITLE}
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Get started with IdeaFlow today.
+            {AUTH_LABELS.SIGNUP.SUBTITLE}
           </p>
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <Alert type="error" title="Sign Up Error">
+            <Alert type="error" title={AUTH_LABELS.SIGNUP.ERROR_TITLE}>
               {error}
             </Alert>
           )}
@@ -392,7 +401,7 @@ export default function SignupPage() {
               id="email"
               name="email"
               type="email"
-              label="Email address"
+              label={AUTH_LABELS.COMMON.EMAIL_LABEL}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={emailError}
@@ -408,14 +417,14 @@ export default function SignupPage() {
               id="password"
               name="password"
               type="password"
-              label="Password"
+              label={AUTH_LABELS.COMMON.PASSWORD_LABEL}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               error={passwordError}
               disabled={isLoading}
               required
               autoComplete="new-password"
-              helpText="Must be at least 8 characters"
+              helpText={AUTH_LABELS.SIGNUP.PASSWORD_HELP}
               showPasswordToggle
               onEnterPress={submitForm}
             />
@@ -427,13 +436,13 @@ export default function SignupPage() {
               id="confirmPassword"
               name="confirmPassword"
               type="password"
-              label="Confirm Password"
+              label={AUTH_LABELS.SIGNUP.CONFIRM_PASSWORD_LABEL}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               disabled={isLoading}
               required
               autoComplete="new-password"
-              placeholder="Confirm your password"
+              placeholder={AUTH_LABELS.SIGNUP.CONFIRM_PASSWORD_PLACEHOLDER}
               showPasswordToggle
               onEnterPress={submitForm}
             />
@@ -450,7 +459,9 @@ export default function SignupPage() {
             className="w-full"
             size="lg"
           >
-            {isLoading ? 'Creating account...' : 'Create account'}
+            {isLoading
+              ? AUTH_LABELS.SIGNUP.SUBMIT_LOADING
+              : AUTH_LABELS.SIGNUP.SUBMIT_BUTTON}
           </Button>
         </form>
 
@@ -460,7 +471,7 @@ export default function SignupPage() {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-gray-50 text-gray-600">
-              Or sign up with
+              {AUTH_LABELS.SIGNUP.DIVIDER_TEXT}
             </span>
           </div>
         </div>
@@ -512,7 +523,9 @@ export default function SignupPage() {
                 />
               </svg>
             )}
-            {oauthLoading === 'google' ? 'Connecting...' : 'Google'}
+            {oauthLoading === 'google'
+              ? AUTH_LABELS.OAUTH_BUTTONS.CONNECTING
+              : AUTH_LABELS.OAUTH_BUTTONS.GOOGLE}
           </button>
 
           <button
@@ -554,17 +567,19 @@ export default function SignupPage() {
                 />
               </svg>
             )}
-            {oauthLoading === 'github' ? 'Connecting...' : 'GitHub'}
+            {oauthLoading === 'github'
+              ? AUTH_LABELS.OAUTH_BUTTONS.CONNECTING
+              : AUTH_LABELS.OAUTH_BUTTONS.GITHUB}
           </button>
         </div>
 
         <p className="text-center text-sm text-gray-600">
-          Already have an account?{' '}
+          {AUTH_LABELS.SIGNUP.HAS_ACCOUNT}{' '}
           <Link
             href="/login"
             className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           >
-            Sign in
+            {AUTH_LABELS.SIGNUP.SIGN_IN_LINK}
           </Link>
         </p>
       </div>

@@ -311,6 +311,72 @@ export const PASSWORD_VALIDATION_CONFIG = {
 } as const;
 
 /**
+ * Authentication page labels
+ * Centralizes hardcoded strings from login/signup pages
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const AUTH_LABELS = {
+  LOGIN: {
+    TITLE: 'Sign in to your account',
+    SUBTITLE: 'Welcome back! Please sign in to continue.',
+    ERROR_TITLE: 'Sign In Error',
+    SUBMIT_BUTTON: 'Sign in',
+    SUBMIT_LOADING: 'Signing in...',
+    FORGOT_PASSWORD: 'Forgot password?',
+    REMEMBER_ME: 'Remember me',
+    NO_ACCOUNT: "Don't have an account?",
+    SIGN_UP_LINK: 'Sign up',
+    DIVIDER_TEXT: 'Or continue with',
+    INVALID_CREDENTIALS: 'Invalid email or password. Please try again.',
+    SIGN_IN_FAILED: 'Failed to sign in. Please try again.',
+    OAUTH_FAILED: (provider: string) => `Failed to sign in with ${provider}`,
+    OAUTH_FAILED_DEFAULT: (provider: string) =>
+      `Failed to sign in with ${provider}. Please try again.`,
+  },
+  SIGNUP: {
+    TITLE: 'Create your account',
+    SUBTITLE: 'Get started with IdeaFlow today.',
+    ERROR_TITLE: 'Sign Up Error',
+    SUBMIT_BUTTON: 'Create account',
+    SUBMIT_LOADING: 'Creating account...',
+    HAS_ACCOUNT: 'Already have an account?',
+    SIGN_IN_LINK: 'Sign in',
+    DIVIDER_TEXT: 'Or sign up with',
+    PASSWORD_HELP: 'Must be at least 8 characters',
+    CONFIRM_PASSWORD_LABEL: 'Confirm Password',
+    CONFIRM_PASSWORD_PLACEHOLDER: 'Confirm your password',
+    OAUTH_FAILED: (provider: string) => `Failed to sign up with ${provider}`,
+    OAUTH_FAILED_DEFAULT: (provider: string) =>
+      `Failed to sign up with ${provider}. Please try again.`,
+  },
+  EMAIL_VERIFICATION: {
+    TITLE: 'Check your email',
+    DESCRIPTION_PREFIX: "We've sent a confirmation link to",
+    DESCRIPTION_SUFFIX:
+      'Please check your email and click the link to verify your account.',
+    RETURN_LINK: 'Return to sign in',
+  },
+  PASSWORD_MATCH: {
+    MATCH: 'Passwords match',
+    MISMATCH: 'Passwords do not match',
+  },
+  OAUTH_BUTTONS: {
+    CONNECTING: 'Connecting...',
+    GOOGLE: 'Google',
+    GITHUB: 'GitHub',
+  },
+  COMMON: {
+    EMAIL_LABEL: 'Email address',
+    PASSWORD_LABEL: 'Password',
+    PASSWORD_PLACEHOLDER: 'Enter your password',
+  },
+  CALLBACK: {
+    COMPLETING_SIGN_IN: 'Completing sign in...',
+    PLEASE_WAIT: 'Please wait while we verify your account.',
+  },
+} as const;
+
+/**
  * Export button labels for results page
  * Centralizes export button text and loading states
  */
