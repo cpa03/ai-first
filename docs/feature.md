@@ -310,7 +310,6 @@ As a developer, I want automated deployment setup, so that I can deploy easily.
 
 ### Acceptance Criteria
 
-- [ ] setup-cloudflare-env.sh script
 - [ ] Comprehensive deployment documentation
 - [ ] CI/CD integration with GitHub Actions
 - [ ] Environment variable management

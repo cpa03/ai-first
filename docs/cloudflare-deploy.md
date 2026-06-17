@@ -77,23 +77,7 @@ TRELLO_API_KEY=...
 GITHUB_TOKEN=...
 ```
 
-### 5. Run Automated Setup Script
-
-```bash
-# Make script executable
-chmod +x scripts/setup-cloudflare-env.sh
-
-# Run setup script
-./scripts/setup-cloudflare-env.sh
-```
-
-This script will:
-
-- Validate your `.env.local` configuration
-- Prompt you to select environments (Production/Preview/Both)
-- Automatically configure all environment variables in Cloudflare
-
-### 6. Deploy to Cloudflare
+### 5. Deploy to Cloudflare
 
 ```bash
 # Build for Cloudflare (generates .open-next/ directory)
@@ -144,9 +128,9 @@ Add the following variables to both **Production** and **Preview** environments:
 
 #### Application Configuration
 
-| Variable              | Description             | Example               |
-| --------------------- | ----------------------- | --------------------- |
-| `COST_LIMIT_DAILY`    | Daily cost limit in USD | `10.0`                |
+| Variable              | Description             | Example                   |
+| --------------------- | ----------------------- | ------------------------- |
+| `COST_LIMIT_DAILY`    | Daily cost limit in USD | `10.0`                    |
 | `NEXT_PUBLIC_APP_URL` | Application URL         | `https://your-domain.com` |
 
 ### Step 3: Optional Export Integrations
@@ -243,8 +227,7 @@ If the **Cloudflare Workers Build** check fails:
 1. **Check build logs** in GitHub Actions
 2. **Verify environment variables** in Cloudflare dashboard
 3. **Run locally** to reproduce: `npm run build`
-4. **Re-run the setup script**: `./scripts/setup-cloudflare-env.sh`
-5. **Trigger manual build** in Cloudflare dashboard
+4. **Trigger manual build** in Cloudflare dashboard
 
 ## Supabase Database Setup
 
@@ -411,10 +394,7 @@ Monitor errors via:
 **Solution**:
 
 ```bash
-# Run setup script
-./scripts/setup-cloudflare-env.sh
-
-# Or manually add variables in Cloudflare dashboard
+# Manually add variables in Cloudflare dashboard
 ```
 
 ### Issue: "Supabase clients not initialized" error

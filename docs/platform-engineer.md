@@ -72,13 +72,11 @@ The GitHub Actions runner uses a GH_TOKEN from a GitHub App that does NOT have "
   - Documentation updated to reflect current state
 
 - **2026-02-26**: Discovered corrupted content in `.github/workflows/test-unified-workflow.yml`
-  #QB| - File had 3 invalid lines at end (lines 308-310) containing metadata markers
-  #QM| - These lines caused YAML parsing errors in validate-ci-config.js
-  #HB| - FIX: Remove lines 308-310 from the file
-  #YM| - NOTE: Cannot push workflow changes due to GitHub App permission restriction
-  #QP| - Workaround: Manual fix required or use different authentication
-  #BQ|
-  #ZB|- PR #1873: feat(platform): update Node.js engine requirement to >=20.0.0
+  - File had 3 invalid lines at end (lines 308-310) containing metadata markers
+  - These lines caused YAML parsing errors
+  - FIX: Remove lines 308-310 from the file
+  - NOTE: Cannot push workflow changes due to GitHub App permission restriction
+  - Workaround: Manual fix required or use different authentication
 
 - PR #1873: feat(platform): update Node.js engine requirement to >=20.0.0
   - Aligns package.json engines field with CI pipeline (Node 20)
