@@ -16,7 +16,7 @@ This guide covers deploying IdeaFlow to Cloudflare Workers using the OpenNext ad
 - Cloudflare account (free tier)
 - Supabase account (free tier)
 - AI provider account (OpenAI or Anthropic)
-- Node.js 18+ installed locally
+- Node.js 20+ installed locally
 - Wrangler CLI (installed automatically as dev dependency)
 
 ## Quick Setup

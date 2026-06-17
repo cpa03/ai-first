@@ -11,7 +11,7 @@
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - npm (package manager)
 
 ### Development Commands
