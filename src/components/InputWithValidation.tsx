@@ -74,6 +74,7 @@ const InputWithValidationComponent = forwardRef<
     const [successAnnounced, setSuccessAnnounced] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
+    const [showSuccessFlash, setShowSuccessFlash] = useState(false);
     const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
@@ -126,6 +127,16 @@ const InputWithValidationComponent = forwardRef<
       }
     }, [isInvalid, error]);
 
+    useEffect(() => {
+      if (isValid && charCount > 0) {
+        setShowSuccessFlash(true);
+        const timeout = setTimeout(() => {
+          setShowSuccessFlash(false);
+        }, 1500);
+        return () => clearTimeout(timeout);
+      }
+    }, [isValid, charCount]);
+
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         onChange?.(e);
@@ -171,6 +182,8 @@ const InputWithValidationComponent = forwardRef<
       isInvalid ? INPUT_STYLES.ERROR : INPUT_STYLES.NORMAL,
       paddingClass,
       shouldShake && 'animate-shake',
+      showSuccessFlash &&
+        'border-green-500 ring-green-500 shadow-[0_0_0_3px_rgba(34,197,94,0.2)]',
       className
     );
 
