@@ -57,6 +57,11 @@ Complete index of all IdeaFlow documentation.
 - [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
 - [Environment Setup](./environment-setup.md) - Development environment setup
 - [FAQ](./faq.md) - Frequently asked questions
+- [Database Migrations](./database-migrations.md) - Database migration guide and conventions
+- [Events System](./events.md) - Event-driven architecture documentation
+- [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
+- [Skipped Tests](./skipped-tests.md) - Documentation for skipped tests
+- [Workflow Fix](./workflow-fix.md) - Workflow troubleshooting and fixes
 
 ## Specialist Guides
 
@@ -69,6 +74,8 @@ Complete index of all IdeaFlow documentation.
 - [DX Engineer](./dx-engineer.md) - Developer experience and tooling
 - [Integration Engineer](./integration-engineer.md) - Integration patterns
 - [API Specialist](./api-specialist.md) - API design and implementation
+- [AI Agent Engineer](./ai-agent-engineer.md) - AI agent engineering and configuration
+- [Platform Engineer](./platform-engineer.md) - Platform architecture and infrastructure
 
 ### Quality & Security
 
@@ -97,6 +104,9 @@ Complete index of all IdeaFlow documentation.
 - [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
 - [User Story Engineer](./user-story-engineer.md) - User story writing best practices
 - [User Personas](./user-stories/personas.md) - Primary user personas for writing user stories
+- [Product Architect](./Product-Architect.md) - Product architecture and design decisions
+- [Growth & Innovation Strategist](./Growth-Innovation-Strategist.md) - Growth strategy and innovation
+- [Research & Development](./RnD.md) - R&D documentation and experiments
 
 ## Operations
 
