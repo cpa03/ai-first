@@ -54,7 +54,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     this.setState({ error, errorInfo });
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(_prevProps: Props, prevState: State) {
     if (this.state.hasError && !prevState.hasError) {
       this.errorRef.current?.focus();
     }

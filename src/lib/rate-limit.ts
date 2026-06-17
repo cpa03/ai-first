@@ -18,11 +18,6 @@ export interface RateLimitInfo {
   reset: number;
 }
 
-interface _RateLimitEntry {
-  count: number;
-  resetTime: number;
-}
-
 export interface RateLimitConfig {
   limit: number;
   windowMs: number;

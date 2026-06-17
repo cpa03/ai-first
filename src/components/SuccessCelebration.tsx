@@ -1,6 +1,12 @@
 'use client';
 
-import React, { useEffect, useState, useCallback, memo, useSyncExternalStore } from 'react';
+import {
+  useEffect,
+  useState,
+  useCallback,
+  memo,
+  useSyncExternalStore,
+} from 'react';
 import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,

@@ -565,17 +565,6 @@ class AIService {
     return context;
   }
 
-  // Estimate token count (rough approximation)
-  private estimateTokens(
-    messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>
-  ): number {
-    const totalChars = messages.reduce(
-      (sum, msg) => sum + msg.content.length,
-      0
-    );
-    return Math.ceil(totalChars / AI_CONFIG.CHARS_PER_TOKEN);
-  }
-
   // Cost tracking and guardrails
   private async trackCost(tokens: number, model: string): Promise<void> {
     // Memory leak prevention: Clean up old cost trackers before adding new ones

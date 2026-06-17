@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { createLogger } from '@/lib/logger';
 import useNotificationPermission from '@/hooks/useNotificationPermission';
 import { NOTIFICATION_PROMPT_LABELS } from '@/lib/config';

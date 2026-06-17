@@ -79,7 +79,7 @@ export class CircuitBreaker {
     }
   }
 
-  private onError(error: Error, now: number, attemptCount: number = 1): void {
+  private onError(_error: Error, now: number, attemptCount: number = 1): void {
     for (let i = 0; i < attemptCount; i++) {
       this.recentFailures.push(now);
     }

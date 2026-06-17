@@ -246,7 +246,7 @@ export class TrelloExporter extends ExportConnector {
   }
 
   private async createCard(
-    listId: string,
+    _listId: string,
     task: Task,
     apiKey: string,
     token: string
