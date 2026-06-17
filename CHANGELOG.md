@@ -25,6 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Database Migrations, Events System, CI Parallel Tests, Skipped Tests, Workflow Fix (Development Guides)
     - Product Architect, Growth & Innovation Strategist, Research & Development (Project Management)
 
+- ✅ **Documentation Fixes (PR #2531):**
+  - Removed references to 3 non-existent scripts from README.md:
+    - `scripts/setup-cloudflare-env.sh`, `scripts/validate-ci-config.js`, `scripts/generate-pwa-icons.js`
+  - Updated Node.js version requirement from 18 to 20 in CONTRIBUTING.md, docs/deploy.md, docs/cloudflare-deploy.md, docs/frontend-engineer.md to match package.json engines field
+
 **Impact:** Repository remains clean and organized. All quality gates passing.
 
 ---
