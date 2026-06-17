@@ -26,7 +26,7 @@ This guide covers deploying IdeaFlow to Vercel with Supabase backend.
 
 ### Local Requirements
 
-- Node.js 18+ installed
+- Node.js 20+ installed
 - Git installed
 - npm (package manager)
 

@@ -191,17 +191,14 @@
   /agent-policy.md          ← Agent behavior rules
 /scripts/
   /validate-env.sh          ← Environment validation script
-  /setup-cloudflare-env.sh ← Cloudflare environment setup
   /security-check.sh        ← Security validation script
   /check-circular-deps.js   ← Circular dependency checker
   /scan-console.js          ← Console log scanner
   /lighthouse-audit.js      ← Lighthouse performance audit
-  /validate-ci-config.js    ← CI configuration validator
   /validate-user-stories.js  ← User story validator
   /docs-link-validator.js   ← Documentation link checker
   /setup.js                 ← Project setup script
   /config.js                ← Configuration loader
-  /generate-pwa-icons.js    ← PWA icon generator
 /tests/                     ← Test files
   /api/                    ← API tests
   /utils/                   ← Test utilities

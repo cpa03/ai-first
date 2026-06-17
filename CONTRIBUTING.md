@@ -27,7 +27,7 @@ Thank you for your interest in contributing to IdeaFlow! This document provides 
 
 ### Prerequisites
 
-- **Node.js**: Version 18.0.0 or higher
+- **Node.js**: Version 20.0.0 or higher
 - **npm**: Version 9.0.0 or higher
 - **Supabase account**: For database and authentication
 - **GitHub account**: For repository automation
