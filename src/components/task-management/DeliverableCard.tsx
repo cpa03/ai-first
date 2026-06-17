@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect } from 'react';
 import type { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import type { TaskStatus } from '@/types/task';
@@ -10,6 +10,7 @@ import {
   DELIVERABLE_PROGRESS_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface DeliverableWithTasks {
   id: string;
@@ -42,6 +43,25 @@ function DeliverableCardComponent({
     () => DELIVERABLE_STYLES.getByProgress(deliverable.progress),
     [deliverable.progress]
   );
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [animatedProgress, setAnimatedProgress] = useState(0);
+
+  // Micro-UX: Animate progress bar from 0 to actual value when card expands
+  // Creates a delightful visual feedback that draws attention to progress
+  useEffect(() => {
+    if (isExpanded && !prefersReducedMotion) {
+      // Reset to 0 first, then animate to actual value
+      setAnimatedProgress(0);
+      const animationFrame = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setAnimatedProgress(deliverable.progress);
+        });
+      });
+      return () => cancelAnimationFrame(animationFrame);
+    } else {
+      setAnimatedProgress(deliverable.progress);
+    }
+  }, [isExpanded, deliverable.progress, prefersReducedMotion]);
 
   const handleToggleExpand = useCallback(() => {
     triggerHapticFeedback();
@@ -49,8 +69,8 @@ function DeliverableCardComponent({
   }, [onToggleExpand, deliverable.id]);
 
   const progressStyle = useMemo(
-    () => ({ width: `${deliverable.progress}%` }),
-    [deliverable.progress]
+    () => ({ width: `${animatedProgress}%` }),
+    [animatedProgress]
   );
 
   const containerClasses = useMemo(
