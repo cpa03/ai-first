@@ -1,7 +1,6 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService } from '@/lib/config-service';
-import { createLogger } from '@/lib/logger';
 import {
   IdeaAnalyzer,
   TaskDecomposer,
@@ -26,8 +25,6 @@ import type {
   BreakdownConfig,
   BreakdownSession,
 } from './breakdown-engine/types';
-
-const _logger = createLogger('BreakdownEngine');
 
 class BreakdownEngine {
   private config: BreakdownConfig | null = null;

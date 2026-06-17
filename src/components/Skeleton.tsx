@@ -1,6 +1,6 @@
 'use client';
 
-import React, { memo, useSyncExternalStore } from 'react';
+import { memo, useSyncExternalStore } from 'react';
 
 const subscribe = (callback: () => void) => {
   if (typeof window === 'undefined') return () => {};

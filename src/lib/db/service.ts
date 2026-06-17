@@ -141,7 +141,6 @@ export class DatabaseService implements ClientProvider {
   private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
   private connectionRetries = 0;
-  private maxConnectionRetries = DATABASE.MAX_CONNECTION_RETRIES;
   private connectionHealthy = false;
   private lastHealthCheck: Date | null = null;
   private _disposed = false;
@@ -830,18 +829,6 @@ export class DatabaseService implements ClientProvider {
     pagination: PaginationOptions = {}
   ): Promise<PaginatedResult<AgentLog>> {
     return this.clarification.getAgentLogsPaginated(agent, pagination);
-  }
-
-  /**
-   * Helper method to chunk array into smaller batches
-   * Prevents query parameter overflow and memory exhaustion
-   */
-  private chunkArray<T>(array: T[], size: number): T[][] {
-    const chunks: T[][] = [];
-    for (let i = 0; i < array.length; i += size) {
-      chunks.push(array.slice(i, i + size));
-    }
-    return chunks;
   }
 
   // Delegate to IdeaService for stats

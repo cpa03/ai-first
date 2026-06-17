@@ -1,7 +1,4 @@
-import { createLogger } from '@/lib/logger';
 import type { TaskDecomposition, DependencyGraph } from './types';
-
-const _logger = createLogger('DependencyAnalyzer');
 
 export class DependencyAnalyzer {
   analyzeDependencies(taskDecomposition: TaskDecomposition): DependencyGraph {

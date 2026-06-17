@@ -1,4 +1,3 @@
-import { createLogger } from '@/lib/logger';
 import { TIMELINE_CONFIG } from '@/lib/config';
 import type {
   IdeaAnalysis,
@@ -6,8 +5,6 @@ import type {
   DependencyGraph,
   Timeline,
 } from './types';
-
-const _logger = createLogger('TimelineGenerator');
 
 const HOURS_PER_WEEK = TIMELINE_CONFIG.HOURS.PER_WEEK;
 const MILLISECONDS_PER_WEEK = TIMELINE_CONFIG.MILLISECONDS.PER_WEEK;
