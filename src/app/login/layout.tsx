@@ -1,13 +1,15 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { LOGIN_PAGE_CONFIG } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Login | IdeaFlow',
-  description:
-    'Sign in to your IdeaFlow account to continue turning your ideas into actionable projects.',
+  title: LOGIN_PAGE_CONFIG.METADATA.title,
+  description: LOGIN_PAGE_CONFIG.METADATA.description,
+  keywords: [...LOGIN_PAGE_CONFIG.METADATA.keywords],
+  openGraph: LOGIN_PAGE_CONFIG.METADATA.openGraph,
   robots: 'index, follow',
 };
 

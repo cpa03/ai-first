@@ -122,7 +122,13 @@ export {
   CLARIFY_PAGE_CONFIG,
   DASHBOARD_PAGE_CONFIG,
   HOME_PAGE_CONFIG,
+  LOGIN_PAGE_CONFIG,
+  SIGNUP_PAGE_CONFIG,
+  AUTH_CALLBACK_PAGE_CONFIG,
   type HomePageConfig,
+  type LoginPageConfig,
+  type SignupPageConfig,
+  type AuthCallbackPageConfig,
 } from './pages';
 
 // Time Units Configuration

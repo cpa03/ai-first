@@ -1,16 +1,19 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { AUTH_CALLBACK_PAGE_CONFIG } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Authenticating | IdeaFlow',
-  description: 'Please wait while we complete your authentication.',
+  title: AUTH_CALLBACK_PAGE_CONFIG.METADATA.title,
+  description: AUTH_CALLBACK_PAGE_CONFIG.METADATA.description,
+  keywords: [...AUTH_CALLBACK_PAGE_CONFIG.METADATA.keywords],
   robots: {
     index: false,
     follow: false,
   },
+  openGraph: AUTH_CALLBACK_PAGE_CONFIG.METADATA.openGraph,
 };
 
 export default function AuthCallbackLayout({
