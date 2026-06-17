@@ -816,13 +816,12 @@ TT|- ✅ ESLint: 0 warnings
 
 **Changes:**
 
-| File                            | Change                                              |
-| ------------------------------- | --------------------------------------------------- |
-| `public/manifest.json`          | Updated with PNG icons and screenshot configuration |
-| `public/icon-192.png`           | New PWA icon (192x192 PNG)                          |
-| `public/icon-512.png`           | New PWA icon (512x512 PNG)                          |
-| `public/screenshot.png`         | New screenshot for rich install UI                  |
-| `scripts/generate-pwa-icons.js` | Icon generation script using sharp                  |
+| File                    | Change                                              |
+| ----------------------- | --------------------------------------------------- |
+| `public/manifest.json`  | Updated with PNG icons and screenshot configuration |
+| `public/icon-192.png`   | New PWA icon (192x192 PNG)                          |
+| `public/icon-512.png`   | New PWA icon (512x512 PNG)                          |
+| `public/screenshot.png` | New screenshot for rich install UI                  |
 
 **Technical Details:**
 

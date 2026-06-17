@@ -26,5 +26,5 @@ The file should end at line 304 (the last valid YAML content is the `GH_TOKEN` e
 
 After the fix:
 
-- `node scripts/validate-ci-config.js` should show 0 errors (currently shows 1 error)
 - The workflow file should be valid YAML
+- Run `npm run lint` to verify no linting errors
