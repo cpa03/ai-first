@@ -110,6 +110,70 @@ export const HOME_PAGE_CONFIG = {
 } as const;
 
 /**
+ * Login page metadata configuration
+ */
+export const LOGIN_PAGE_CONFIG = {
+  METADATA: {
+    title: `Login | ${APP_CONFIG.NAME}`,
+    description:
+      'Sign in to your IdeaFlow account to continue turning your ideas into actionable projects.',
+    keywords: [
+      'login',
+      'sign in',
+      'account access',
+      'IdeaFlow login',
+      'authentication',
+    ],
+    openGraph: {
+      title: `Login | ${APP_CONFIG.NAME}`,
+      description:
+        'Sign in to your IdeaFlow account to continue turning your ideas into actionable projects.',
+      url: `${APP_CONFIG.URLS.BASE}/login`,
+    },
+  },
+} as const;
+
+/**
+ * Signup page metadata configuration
+ */
+export const SIGNUP_PAGE_CONFIG = {
+  METADATA: {
+    title: `Sign Up | ${APP_CONFIG.NAME}`,
+    description:
+      'Create your IdeaFlow account and start transforming your ideas into actionable projects with AI-powered planning.',
+    keywords: [
+      'sign up',
+      'create account',
+      'register',
+      'IdeaFlow signup',
+      'new account',
+    ],
+    openGraph: {
+      title: `Sign Up | ${APP_CONFIG.NAME}`,
+      description:
+        'Create your IdeaFlow account and start transforming your ideas into actionable projects with AI-powered planning.',
+      url: `${APP_CONFIG.URLS.BASE}/signup`,
+    },
+  },
+} as const;
+
+/**
+ * Auth callback page metadata configuration
+ */
+export const AUTH_CALLBACK_PAGE_CONFIG = {
+  METADATA: {
+    title: `Authenticating | ${APP_CONFIG.NAME}`,
+    description: 'Please wait while we complete your authentication.',
+    keywords: ['authentication', 'oauth', 'callback', 'sign in'],
+    openGraph: {
+      title: `Authenticating | ${APP_CONFIG.NAME}`,
+      description: 'Please wait while we complete your authentication.',
+      url: `${APP_CONFIG.URLS.BASE}/auth/callback`,
+    },
+  },
+} as const;
+
+/**
  * All page configurations exported as a single object
  */
 export const PAGE_CONFIG = {
@@ -117,6 +181,9 @@ export const PAGE_CONFIG = {
   RESULTS: RESULTS_PAGE_CONFIG,
   CLARIFY: CLARIFY_PAGE_CONFIG,
   DASHBOARD: DASHBOARD_PAGE_CONFIG,
+  LOGIN: LOGIN_PAGE_CONFIG,
+  SIGNUP: SIGNUP_PAGE_CONFIG,
+  AUTH_CALLBACK: AUTH_CALLBACK_PAGE_CONFIG,
 } as const;
 
 export type PageConfig = typeof PAGE_CONFIG;
@@ -124,3 +191,6 @@ export type ResultsPageConfig = typeof RESULTS_PAGE_CONFIG;
 export type ClarifyPageConfig = typeof CLARIFY_PAGE_CONFIG;
 export type DashboardPageConfig = typeof DASHBOARD_PAGE_CONFIG;
 export type HomePageConfig = typeof HOME_PAGE_CONFIG;
+export type LoginPageConfig = typeof LOGIN_PAGE_CONFIG;
+export type SignupPageConfig = typeof SIGNUP_PAGE_CONFIG;
+export type AuthCallbackPageConfig = typeof AUTH_CALLBACK_PAGE_CONFIG;

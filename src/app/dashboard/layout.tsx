@@ -1,21 +1,19 @@
 import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { DASHBOARD_PAGE_CONFIG } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Dashboard - Your Ideas',
-  description:
-    'View and manage all your project ideas in one place. Track progress from draft to completion.',
+  title: DASHBOARD_PAGE_CONFIG.METADATA.title,
+  description: DASHBOARD_PAGE_CONFIG.METADATA.description,
+  keywords: [...DASHBOARD_PAGE_CONFIG.METADATA.keywords],
   robots: {
     index: false,
     follow: false,
   },
-  openGraph: {
-    title: 'Dashboard - Your Ideas',
-    description: 'View and manage all your project ideas in one place.',
-  },
+  openGraph: DASHBOARD_PAGE_CONFIG.METADATA.openGraph,
 };
 
 export default function DashboardLayout({

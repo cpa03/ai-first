@@ -1,13 +1,15 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { SIGNUP_PAGE_CONFIG } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Sign Up | IdeaFlow',
-  description:
-    'Create your IdeaFlow account and start transforming your ideas into actionable projects with AI-powered planning.',
+  title: SIGNUP_PAGE_CONFIG.METADATA.title,
+  description: SIGNUP_PAGE_CONFIG.METADATA.description,
+  keywords: [...SIGNUP_PAGE_CONFIG.METADATA.keywords],
+  openGraph: SIGNUP_PAGE_CONFIG.METADATA.openGraph,
   robots: 'index, follow',
 };
 
