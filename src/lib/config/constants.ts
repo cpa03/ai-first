@@ -1,6 +1,5 @@
 export { TIMEOUT_CONFIG, type TimeoutConfig } from './timeout-config';
 export { RATE_LIMIT_CONFIG } from './rate-limit-config';
-export { CACHE_TTL_CONFIG } from './cache-ttl-config';
 
 // Import for local use within this file
 import { RATE_LIMIT_CONFIG } from './rate-limit-config';

@@ -124,7 +124,6 @@
     /KeyboardShortcutsHelp.tsx ← Keyboard shortcuts help
     /KeyboardShortcutsProvider.tsx ← Keyboard shortcuts context
     /LoadingAnnouncer.tsx   ← Screen reader announcements
-    /LoadingOverlay.tsx     ← Loading overlay component
     /LoadingSpinner.tsx     ← Spinner component
     /MobileNav.tsx         ← Responsive navigation
     /ProgressStepper.tsx    ← Progress indicator
@@ -153,11 +152,9 @@
     /auth.ts              ← Authentication service
     /db.ts                ← Database service
     /api-client.ts        ← API client utilities
-    /api-handler.ts       ← API request handler
     /errors.ts            ← Error handling
     /rate-limit.ts        ← Rate limiting
     /external-rate-limit.ts ← External rate limit service
-    /use-cache.ts         ← Caching utilities
     /metrics.ts          ← Metrics collection
     /logger.ts           ← Logging utilities
     /config-service.ts    ← Configuration service
