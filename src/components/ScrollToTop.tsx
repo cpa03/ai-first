@@ -170,6 +170,10 @@ function ScrollToTopComponent({
   const strokeDashoffset =
     circumference - (scrollProgress / 100) * circumference;
 
+  // Micro-UX: Determine when to show percentage text vs arrow icon
+  // Show percentage when scrolled past 10% for meaningful feedback
+  const showPercentage = scrollProgress >= 10;
+
   return (
     <div className="fixed bottom-8 right-8 z-50">
       <Tooltip content="Back to top" position="top">
@@ -233,23 +237,33 @@ function ScrollToTopComponent({
             </svg>
           )}
 
-          <svg
-            className={`
-          relative z-10 w-5 h-5 transition-transform duration-200
-          ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
-        `}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M5 10l7-7m0 0l7 7m-7-7v18"
-            />
-          </svg>
+          {/* Micro-UX: Show scroll percentage inside the button for at-a-glance feedback */}
+          {showPercentage && !prefersReducedMotion ? (
+            <span
+              className="relative z-10 text-[10px] font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors duration-200"
+              aria-hidden="true"
+            >
+              {Math.round(scrollProgress)}
+            </span>
+          ) : (
+            <svg
+              className={`
+                relative z-10 w-5 h-5 transition-transform duration-200
+                ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
+              `}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 10l7-7m0 0l7 7m-7-7v18"
+              />
+            </svg>
+          )}
 
           <span className="sr-only">Back to top</span>
         </button>
