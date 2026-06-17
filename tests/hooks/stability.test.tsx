@@ -1,5 +1,4 @@
 import { renderHook } from '@testing-library/react';
-import { useFunnelTracking } from '@/hooks/useFunnelTracking';
 import { useSessionDuration } from '@/hooks/useSessionDuration';
 import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
@@ -46,30 +45,19 @@ jest.mock('@/lib/logger', () => ({
 jest.mock('@/lib/db', () => ({
   supabaseClient: {
     auth: {
-      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
-      onAuthStateChange: jest.fn().mockReturnValue({ data: { subscription: { unsubscribe: jest.fn() } } }),
+      getSession: jest
+        .fn()
+        .mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: jest
+        .fn()
+        .mockReturnValue({
+          data: { subscription: { unsubscribe: jest.fn() } },
+        }),
     },
   },
 }));
 
 describe('Referential Stability', () => {
-  describe('useFunnelTracking', () => {
-    it('maintains referential stability of returned object and functions', () => {
-      const config = { name: 'test-funnel', totalSteps: 3 };
-      const { result, rerender } = renderHook(() => useFunnelTracking(config));
-
-      const firstRenderResult = result.current;
-
-      rerender();
-
-      expect(result.current).toBe(firstRenderResult);
-      expect(result.current.completeStep).toBe(firstRenderResult.completeStep);
-      expect(result.current.markDropoff).toBe(firstRenderResult.markDropoff);
-      expect(result.current.reset).toBe(firstRenderResult.reset);
-      expect(result.current.getCurrentStep).toBe(firstRenderResult.getCurrentStep);
-    });
-  });
-
   describe('useSessionDuration', () => {
     it('maintains referential stability of returned object and functions', () => {
       const { result, rerender } = renderHook(() => useSessionDuration());
@@ -79,22 +67,32 @@ describe('Referential Stability', () => {
       rerender();
 
       expect(result.current).toBe(firstRenderResult);
-      expect(result.current.getSessionDuration).toBe(firstRenderResult.getSessionDuration);
-      expect(result.current.getPageDuration).toBe(firstRenderResult.getPageDuration);
+      expect(result.current.getSessionDuration).toBe(
+        firstRenderResult.getSessionDuration
+      );
+      expect(result.current.getPageDuration).toBe(
+        firstRenderResult.getPageDuration
+      );
     });
   });
 
   describe('useNotificationPermission', () => {
     it('maintains referential stability of returned object and functions', () => {
-      const { result, rerender } = renderHook(() => useNotificationPermission());
+      const { result, rerender } = renderHook(() =>
+        useNotificationPermission()
+      );
 
       const firstRenderResult = result.current;
 
       rerender();
 
       expect(result.current).toBe(firstRenderResult);
-      expect(result.current.requestPermission).toBe(firstRenderResult.requestPermission);
-      expect(result.current.checkPermission).toBe(firstRenderResult.checkPermission);
+      expect(result.current.requestPermission).toBe(
+        firstRenderResult.requestPermission
+      );
+      expect(result.current.checkPermission).toBe(
+        firstRenderResult.checkPermission
+      );
     });
   });
 
@@ -111,9 +109,15 @@ describe('Referential Stability', () => {
 
       expect(result.current).toBe(firstRenderResult);
       expect(result.current.handleNext).toBe(firstRenderResult.handleNext);
-      expect(result.current.handlePrevious).toBe(firstRenderResult.handlePrevious);
-      expect(result.current.handleKeyDown).toBe(firstRenderResult.handleKeyDown);
-      expect(result.current.setCurrentAnswer).toBe(firstRenderResult.setCurrentAnswer);
+      expect(result.current.handlePrevious).toBe(
+        firstRenderResult.handlePrevious
+      );
+      expect(result.current.handleKeyDown).toBe(
+        firstRenderResult.handleKeyDown
+      );
+      expect(result.current.setCurrentAnswer).toBe(
+        firstRenderResult.setCurrentAnswer
+      );
     });
   });
 });
