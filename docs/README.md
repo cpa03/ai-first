@@ -131,8 +131,12 @@ Complete index of all IdeaFlow documentation.
 ## Subdirectories
 
 - [API Specifications](./api/) - OpenAPI specifications
+- [Architecture Decision Records](./adr/) - ADR documentation
+- [Brocula Reports](./brocular/) - Browser audit and verification reports
+- [Implementation Plans](./plans/) - Feature implementation plans
 - [Security](./security/) - Security documentation and logs
 - [Templates](./templates/) - User-downloadable templates
+- [User Stories](./user-stories/) - User story specifications and personas
 
 ---
 
