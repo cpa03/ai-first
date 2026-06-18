@@ -123,6 +123,7 @@ Complete index of all IdeaFlow documentation.
 ## Maintenance
 
 - [Branch Cleanup Registry](./BRANCH_CLEANUP.md) - Branch cleanup history and recommendations
+- [Repository Health Report](./repository-health-report.md) - Repository health check results
 
 ## Project Meta
 

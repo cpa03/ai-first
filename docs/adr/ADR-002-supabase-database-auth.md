@@ -27,7 +27,7 @@ Use Supabase as the primary backend service, leveraging:
 
 ```typescript
 // Database schema location: supabase/schema.sql
-// Client: src/lib/db.ts
+// Client: src/lib/db/index.ts
 
 // RLS policies enforce:
 // - Users can only see their own ideas

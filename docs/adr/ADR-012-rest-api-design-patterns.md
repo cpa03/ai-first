@@ -183,7 +183,7 @@ async function handler(request: NextRequest) {
 
 - [API Documentation](../api.md)
 - [Error Codes](../error-codes.md)
-- [API Handler Utility](../../src/lib/api-handler.ts)
+- [API Handler Utility](../../src/lib/api-handler/index.ts)
 - [Route Examples](../../src/app/api/ideas/)
 
 ## Notes

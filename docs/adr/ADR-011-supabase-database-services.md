@@ -129,7 +129,7 @@ Key tables:
 - [Supabase Documentation](https://supabase.com/docs)
 - [Database Schema](../../supabase/schema.sql)
 - [Auth Configuration](../../src/lib/auth.ts)
-- [Database Service](../../src/lib/db.ts)
+- [Database Service](../../src/lib/db/index.ts)
 
 ## Notes
 
