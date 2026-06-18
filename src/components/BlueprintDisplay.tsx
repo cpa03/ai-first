@@ -1,6 +1,11 @@
 'use client';
 
-import React, { useSyncExternalStore, useRef, useEffect } from 'react';
+import React, {
+  useSyncExternalStore,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Skeleton from '@/components/Skeleton';
@@ -9,6 +14,7 @@ import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
 import { MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 const subscribe = (callback: () => void) => {
   if (typeof window === 'undefined') return () => {};
@@ -51,6 +57,36 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   const headingRef = useRef<HTMLHeadingElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const wasGeneratingRef = useRef(isGenerating);
+
+  // Micro-UX: Add Cmd/Ctrl + C keyboard shortcut to copy blueprint
+  // This provides a familiar shortcut for keyboard users to quickly copy content
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      // Only handle shortcut when not generating and blueprint is available
+      if (
+        !isGenerating &&
+        blueprint &&
+        (e.metaKey || e.ctrlKey) &&
+        e.key === 'c'
+      ) {
+        // Check if there's a text selection - if so, let the default copy behavior work
+        const selection = window.getSelection();
+        if (selection && selection.toString().length > 0) {
+          return;
+        }
+
+        e.preventDefault();
+        triggerHapticFeedback();
+        handleCopy();
+      }
+    },
+    [isGenerating, blueprint, handleCopy]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
 
   // Focus management: Set focus to heading when blueprint generation completes (Issue #723)
   useEffect(() => {
