@@ -8,6 +8,31 @@
 import { EnvLoader } from './environment';
 
 /**
+ * State shadow utilities for form inputs (non-focus states)
+ * Pre-defined shadow classes for success/error/warning visual feedback
+ * Use these for transient state indicators like success flash effects
+ */
+export const STATE_SHADOWS = {
+  /**
+   * Green success shadow - used for valid input success flash
+   * Equivalent to: shadow-[0_0_0_3px_rgba(34,197,94,0.2)]
+   */
+  SUCCESS: 'shadow-[0_0_0_3px_rgba(34,197,94,0.2)]',
+
+  /**
+   * Blue primary shadow - used for active/selected state indicators
+   * Equivalent to: shadow-[0_0_0_3px_rgba(59,130,246,0.2)]
+   */
+  PRIMARY: 'shadow-[0_0_0_3px_rgba(59,130,246,0.2)]',
+
+  /**
+   * Red error shadow - used for invalid input error indicators
+   * Equivalent to: shadow-[0_0_0_3px_rgba(239,68,68,0.2)]
+   */
+  ERROR: 'shadow-[0_0_0_3px_rgba(239,68,68,0.2)]',
+} as const;
+
+/**
  * Focus ring shadow utilities for form inputs
  * Pre-defined shadow classes for consistent focus states
  */

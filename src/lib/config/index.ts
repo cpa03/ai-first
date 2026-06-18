@@ -89,6 +89,7 @@ export { CLEANUP_CONFIG } from './cleanup';
 
 // Theme Configuration
 export {
+  STATE_SHADOWS,
   FOCUS_SHADOWS,
   BORDER_COLORS,
   RING_COLORS,
