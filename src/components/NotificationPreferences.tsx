@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useId } from 'react';
 import { createLogger } from '@/lib/logger';
 import useNotificationPermission from '@/hooks/useNotificationPermission';
 import { unsubscribeFromPush } from '@/lib/service-worker';
+import { triggerHapticFeedback, cn } from '@/lib/utils';
 import {
   NOTIFICATION_LABELS,
   NOTIFICATION_STATUS,
@@ -233,20 +234,51 @@ function PreferenceToggle({
   enabled: boolean;
   onToggle: () => void;
 }) {
+  const labelId = useId();
+  const descriptionId = useId();
+
+  const handleToggle = useCallback(() => {
+    triggerHapticFeedback();
+    onToggle();
+  }, [onToggle]);
+
   return (
-    <div className="flex items-center justify-between py-2">
-      <div>
-        <p className="font-medium text-gray-900">{label}</p>
-        <p className="text-sm text-gray-500">{description}</p>
+    <div
+      className={cn(
+        'group flex items-center justify-between py-3 px-4 -mx-4 rounded-xl cursor-pointer transition-all duration-200',
+        'hover:bg-gray-50 active:bg-gray-100'
+      )}
+      onClick={handleToggle}
+    >
+      <div className="flex-1 pr-4">
+        <p id={labelId} className="font-medium text-gray-900 select-none">
+          {label}
+        </p>
+        <p id={descriptionId} className="text-sm text-gray-500 select-none">
+          {description}
+        </p>
       </div>
       <button
+        type="button"
         role="switch"
         aria-checked={enabled}
-        onClick={onToggle}
-        className={`relative inline-flex h-6 w-11 rounded-full transition-colors ${enabled ? 'bg-primary-600' : 'bg-gray-200'}`}
+        aria-labelledby={labelId}
+        aria-describedby={descriptionId}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleToggle();
+        }}
+        className={cn(
+          'relative inline-flex h-6 w-11 shrink-0 rounded-full transition-colors duration-200 ease-in-out',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+          enabled ? 'bg-primary-600' : 'bg-gray-200'
+        )}
       >
         <span
-          className={`inline-block h-5 w-5 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-5' : 'translate-x-0'}`}
+          className={cn(
+            'inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out mt-0.5',
+            enabled ? 'translate-x-5' : 'translate-x-1'
+          )}
         />
       </button>
     </div>
