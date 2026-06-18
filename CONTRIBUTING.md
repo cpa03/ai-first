@@ -56,24 +56,21 @@ This project uses **npm** as its package manager. Please use npm for all depende
 - ✅ `npm install` - Install dependencies
 - ✅ `npm run <script>` - Run npm scripts
 - ❌ Do not use yarn or pnpm (to avoid lock file conflicts)
-  JQ|- ❌ Do not use yarn or pnpm (to avoid lock file conflicts)
-  #QH|
-  #MB|### Pre-commit Hooks
-  #QV|
-  #KM|This project uses **Husky** and **lint-staged** for pre-commit code quality checks.
-  #KM|
-  #QV|After running `npm install`, the pre-commit hook will automatically run on every commit:
-  #QM|
-  #JB|- **ESLint** - Lints and fixes TypeScript/JavaScript files
-  #QM|- **Prettier** - Formats code in staged files
-  #QM|
-  #BV|To bypass pre-commit hooks (use sparingly):
-  #QM|
-  #QS|`bash
+
+### Pre-commit Hooks
+
+This project uses **Husky** and **lint-staged** for pre-commit code quality checks.
+
+After running `npm install`, the pre-commit hook will automatically run on every commit:
+
+- **ESLint** - Lints and fixes TypeScript/JavaScript files
+- **Prettier** - Formats code in staged files
+
+To bypass pre-commit hooks (use sparingly):
+
+```bash
 git commit --no-verify -m "Your commit message"
-`
-  #QS|
-  #QM|## Project Structure
+```
 
 ## Project Structure
 
