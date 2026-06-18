@@ -12,6 +12,7 @@ import {
   LOCAL_STORAGE_KEYS,
   API_ERROR_MESSAGES,
   ROUTES,
+  LOGIN_PAGE_CONTENT,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -60,12 +61,12 @@ export default function LoginPage() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
-      setEmailError('Please enter a valid email address');
+      setEmailError(LOGIN_PAGE_CONTENT.ERRORS.INVALID_EMAIL);
       return false;
     }
 
     if (password.length < 8) {
-      setPasswordError('Password must be at least 8 characters');
+      setPasswordError(LOGIN_PAGE_CONTENT.ERRORS.PASSWORD_TOO_SHORT);
       return false;
     }
 
@@ -115,9 +116,9 @@ export default function LoginPage() {
           errorMessage.toLowerCase().includes('invalid') ||
           errorMessage.toLowerCase().includes('credentials')
         ) {
-          setError('Invalid email or password. Please try again.');
+          setError(LOGIN_PAGE_CONTENT.ERRORS.INVALID_CREDENTIALS);
         } else {
-          setError(errorMessage || 'Failed to sign in. Please try again.');
+          setError(errorMessage || LOGIN_PAGE_CONTENT.ERRORS.SIGN_IN_FAILED);
         }
       } finally {
         setIsLoading(false);
@@ -157,10 +158,10 @@ export default function LoginPage() {
         const errorMessage =
           err instanceof Error
             ? err.message
-            : `Failed to sign in with ${provider}`;
+            : `${LOGIN_PAGE_CONTENT.ERRORS.OAUTH_FAILED_PREFIX} ${provider}`;
         setError(
           errorMessage ||
-            `Failed to sign in with ${provider}. Please try again.`
+            `${LOGIN_PAGE_CONTENT.ERRORS.OAUTH_FAILED_PREFIX} ${provider}${LOGIN_PAGE_CONTENT.ERRORS.OAUTH_FAILED_SUFFIX}`
         );
         setOauthLoading(null);
       }
@@ -173,10 +174,10 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900">
-            Sign in to your account
+            {LOGIN_PAGE_CONTENT.HEADING}
           </h1>
           <p className="mt-2 text-sm text-gray-600">
-            Welcome back! Please sign in to continue.
+            {LOGIN_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>
 
@@ -193,7 +194,7 @@ export default function LoginPage() {
               id="email"
               name="email"
               type="email"
-              label="Email address"
+              label={LOGIN_PAGE_CONTENT.FORM.EMAIL_LABEL}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               error={emailError}
@@ -209,7 +210,7 @@ export default function LoginPage() {
               id="password"
               name="password"
               type="password"
-              label="Password"
+              label={LOGIN_PAGE_CONTENT.FORM.PASSWORD_LABEL}
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -219,7 +220,7 @@ export default function LoginPage() {
               disabled={isLoading}
               required
               autoComplete="current-password"
-              placeholder="Enter your password"
+              placeholder={LOGIN_PAGE_CONTENT.FORM.PASSWORD_PLACEHOLDER}
               showPasswordToggle
               onEnterPress={submitForm}
             />
@@ -283,7 +284,7 @@ export default function LoginPage() {
                 <span
                   className={`text-sm transition-colors duration-200 ${rememberMe ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover:text-gray-900'}`}
                 >
-                  Remember me
+                  {LOGIN_PAGE_CONTENT.FORM.REMEMBER_ME}
                 </span>
               </label>
             </div>
@@ -292,7 +293,7 @@ export default function LoginPage() {
                 href="/forgot-password"
                 className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
               >
-                Forgot password?
+                {LOGIN_PAGE_CONTENT.FORM.FORGOT_PASSWORD}
               </Link>
             </div>
           </div>
@@ -303,7 +304,9 @@ export default function LoginPage() {
             className="w-full"
             size="lg"
           >
-            {isLoading ? 'Signing in...' : 'Sign in'}
+            {isLoading
+              ? LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING
+              : LOGIN_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
           </Button>
         </form>
 
@@ -313,7 +316,7 @@ export default function LoginPage() {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-gray-50 text-gray-600">
-              Or continue with
+              {LOGIN_PAGE_CONTENT.OAUTH.SEPARATOR}
             </span>
           </div>
         </div>
@@ -365,7 +368,9 @@ export default function LoginPage() {
                 />
               </svg>
             )}
-            {oauthLoading === 'google' ? 'Connecting...' : 'Google'}
+            {oauthLoading === 'google'
+              ? LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING
+              : LOGIN_PAGE_CONTENT.OAUTH.GOOGLE}
           </button>
 
           <button
@@ -407,17 +412,19 @@ export default function LoginPage() {
                 />
               </svg>
             )}
-            {oauthLoading === 'github' ? 'Connecting...' : 'GitHub'}
+            {oauthLoading === 'github'
+              ? LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING
+              : LOGIN_PAGE_CONTENT.OAUTH.GITHUB}
           </button>
         </div>
 
         <p className="text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
+          {LOGIN_PAGE_CONTENT.FOOTER.NO_ACCOUNT}{' '}
           <Link
             href={ROUTES.SIGNUP}
             className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           >
-            Sign up
+            {LOGIN_PAGE_CONTENT.FOOTER.SIGN_UP}
           </Link>
         </p>
       </div>

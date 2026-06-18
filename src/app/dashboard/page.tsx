@@ -12,6 +12,7 @@ import {
   DASHBOARD_FILTER_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
+  DASHBOARD_PAGE_CONTENT,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -128,7 +129,7 @@ export default function DashboardPage() {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError('Please sign in to view your ideas');
+          setError(DASHBOARD_PAGE_CONTENT.ERRORS.SIGN_IN_REQUIRED);
           setIdeas([]);
           setPagination(null);
           return;
@@ -146,7 +147,9 @@ export default function DashboardPage() {
       setPagination(data.data.pagination);
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : 'An unknown error occurred';
+        err instanceof Error
+          ? err.message
+          : DASHBOARD_PAGE_CONTENT.ERRORS.UNKNOWN_ERROR;
       if (!errorMessage.includes('sign in')) {
         logger.error('Error fetching ideas:', err);
       }
@@ -159,7 +162,7 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!authLoading && !isAuthenticated) {
       setLoading(false);
-      setError('Please sign in to view your ideas');
+      setError(DASHBOARD_PAGE_CONTENT.ERRORS.SIGN_IN_REQUIRED);
       return;
     }
 
@@ -196,7 +199,9 @@ export default function DashboardPage() {
       const data = await response.json();
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to delete idea');
+        throw new Error(
+          data.error || DASHBOARD_PAGE_CONTENT.ERRORS.DELETE_FAILED
+        );
       }
 
       setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
@@ -324,9 +329,9 @@ export default function DashboardPage() {
           <LoadingSpinner
             size="md"
             className="mb-4 mx-auto"
-            ariaLabel="Loading your ideas"
+            ariaLabel={DASHBOARD_PAGE_CONTENT.LOADING}
           />
-          <p className="text-gray-600">Loading your ideas...</p>
+          <p className="text-gray-600">{DASHBOARD_PAGE_CONTENT.LOADING}</p>
         </div>
       </div>
     );
@@ -335,11 +340,11 @@ export default function DashboardPage() {
   if (error) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Alert type="error" title="Error">
+        <Alert type="error" title={DASHBOARD_PAGE_CONTENT.ERROR_TITLE}>
           {error}
           <div className="mt-4">
             <Button onClick={fetchIdeas} variant="primary">
-              Try Again
+              {DASHBOARD_PAGE_CONTENT.TRY_AGAIN}
             </Button>
           </div>
         </Alert>
@@ -351,14 +356,21 @@ export default function DashboardPage() {
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Your Ideas</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            {DASHBOARD_PAGE_CONTENT.HEADING}
+          </h1>
           <p className="text-gray-600 mt-1">
-            {pagination?.total || 0} idea{pagination?.total !== 1 ? 's' : ''}{' '}
-            total
+            {pagination?.total || 0}{' '}
+            {pagination?.total !== 1
+              ? DASHBOARD_PAGE_CONTENT.IDEA_COUNT.PLURAL
+              : DASHBOARD_PAGE_CONTENT.IDEA_COUNT.SINGULAR}{' '}
+            {DASHBOARD_PAGE_CONTENT.IDEA_COUNT.TOTAL}
           </p>
         </div>
         <Link href="/">
-          <Button variant="primary">+ New Idea</Button>
+          <Button variant="primary">
+            {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
+          </Button>
         </Link>
       </div>
       {/* Growth: Referral Link - Viral Growth Loop */}
@@ -370,7 +382,7 @@ export default function DashboardPage() {
       {/* Filter */}
       <div className="mb-6 flex flex-wrap items-center gap-4">
         <label htmlFor="status-filter" className="sr-only">
-          Filter by status
+          {DASHBOARD_PAGE_CONTENT.FILTER.LABEL}
         </label>
         <div className="relative">
           <select

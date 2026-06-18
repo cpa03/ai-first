@@ -174,6 +174,90 @@ export const AUTH_CALLBACK_PAGE_CONFIG = {
 } as const;
 
 /**
+ * Login page content configuration
+ * Eliminates hardcoded UI strings in login page
+ */
+export const LOGIN_PAGE_CONTENT = {
+  HEADING: 'Sign in to your account',
+  SUBHEADING: 'Welcome back! Please sign in to continue.',
+  FORM: {
+    EMAIL_LABEL: 'Email address',
+    PASSWORD_LABEL: 'Password',
+    PASSWORD_PLACEHOLDER: 'Enter your password',
+    REMEMBER_ME: 'Remember me',
+    FORGOT_PASSWORD: 'Forgot password?',
+    SUBMIT_BUTTON: 'Sign in',
+    SUBMIT_LOADING: 'Signing in...',
+  },
+  OAUTH: {
+    SEPARATOR: 'Or continue with',
+    GOOGLE: 'Google',
+    GOOGLE_LOADING: 'Connecting...',
+    GITHUB: 'GitHub',
+    GITHUB_LOADING: 'Connecting...',
+  },
+  FOOTER: {
+    NO_ACCOUNT: "Don't have an account?",
+    SIGN_UP: 'Sign up',
+  },
+  ERRORS: {
+    INVALID_EMAIL: 'Please enter a valid email address',
+    PASSWORD_TOO_SHORT: 'Password must be at least 8 characters',
+    INVALID_CREDENTIALS: 'Invalid email or password. Please try again.',
+    SIGN_IN_FAILED: 'Failed to sign in. Please try again.',
+    OAUTH_FAILED_PREFIX: 'Failed to sign in with',
+    OAUTH_FAILED_SUFFIX: '. Please try again.',
+  },
+} as const;
+
+/**
+ * Dashboard page content configuration
+ * Eliminates hardcoded UI strings in dashboard page
+ */
+export const DASHBOARD_PAGE_CONTENT = {
+  HEADING: 'Your Ideas',
+  LOADING: 'Loading your ideas...',
+  ERROR_TITLE: 'Error',
+  TRY_AGAIN: 'Try Again',
+  EMPTY_STATE: {
+    TITLE: 'No ideas yet',
+    DESCRIPTION: 'Create your first idea to get started.',
+    BUTTON: '+ New Idea',
+  },
+  FILTER: {
+    LABEL: 'Filter by status',
+    ALL: 'All',
+    DRAFT: 'Draft',
+    IN_PROGRESS: 'In Progress',
+    COMPLETED: 'Completed',
+  },
+  IDEA_COUNT: {
+    SINGULAR: 'idea',
+    PLURAL: 'ideas',
+    TOTAL: 'total',
+  },
+  ACTIONS: {
+    NEW_IDEA: '+ New Idea',
+    VIEW: 'View',
+    EDIT: 'Edit',
+    DELETE: 'Delete',
+  },
+  DELETE_MODAL: {
+    TITLE: 'Delete Idea',
+    CONFIRM: 'Are you sure you want to delete this idea?',
+    CANCEL: 'Cancel',
+    DELETE: 'Delete',
+    DELETING: 'Deleting...',
+  },
+  ERRORS: {
+    FETCH_FAILED: 'Failed to fetch ideas',
+    DELETE_FAILED: 'Failed to delete idea',
+    SIGN_IN_REQUIRED: 'Please sign in to view your ideas',
+    UNKNOWN_ERROR: 'An unknown error occurred',
+  },
+} as const;
+
+/**
  * All page configurations exported as a single object
  */
 export const PAGE_CONFIG = {

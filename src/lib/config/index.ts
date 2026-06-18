@@ -125,6 +125,8 @@ export {
   LOGIN_PAGE_CONFIG,
   SIGNUP_PAGE_CONFIG,
   AUTH_CALLBACK_PAGE_CONFIG,
+  LOGIN_PAGE_CONTENT,
+  DASHBOARD_PAGE_CONTENT,
   type HomePageConfig,
   type LoginPageConfig,
   type SignupPageConfig,
