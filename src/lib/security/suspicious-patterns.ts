@@ -44,7 +44,9 @@ export type SuspiciousPatternCategory =
   | 'encoding_attack'
   | 'nosql_injection'
   | 'prototype_pollution'
-  | 'log_injection';
+  | 'log_injection'
+  | 'ssti'
+  | 'insecure_deserialization';
 
 /**
  * Details about a detected suspicious pattern
@@ -426,7 +428,7 @@ const SUSPICIOUS_PATTERNS: Record<
     },
     {
       pattern:
-        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size)['"]?\s*[:\]]/i,
+        /\$(gt|gte|lt|lte|ne|eq|in|nin|exists|type|mod|regex|text|all|elemMatch|size|expr|jsonSchema)['"]?\s*[:\]]/i,
       severity: 3,
       description: 'MongoDB operator injection',
     },
@@ -521,6 +523,69 @@ const SUSPICIOUS_PATTERNS: Record<
       pattern: /\n\s*(ERROR|WARN|INFO|DEBUG|FATAL)\s*[:\[]/i,
       severity: 2,
       description: 'Log level injection',
+    },
+  ],
+
+  // SSTI patterns (Jinja2, Twig, Liquid, etc.)
+  ssti: [
+    {
+      pattern: /\{\{\s*['"]?.*['"]?\s*\}\}/,
+      severity: 3,
+      description: 'Generic template interpolation pattern',
+    },
+    {
+      pattern: /\{\{\s*(config|self|request|session|g|get_flashed_messages|url_for|app)\s*\}\}/i,
+      severity: 3,
+      description: 'SSTI sensitive object access',
+    },
+    {
+      pattern: /\{\{\s*.*\.(__class__|__mro__|__subclasses__|__globals__)\s*\}\}/i,
+      severity: 3,
+      description: 'Python SSTI introspection',
+    },
+    {
+      pattern: /\$\{\s*.*\s*\}/,
+      severity: 2,
+      description: 'SSTI/Expression Language pattern',
+    },
+    {
+      pattern: /<%\s*.*\s*%>/,
+      severity: 2,
+      description: 'ERB/ASP template pattern',
+    },
+    {
+      pattern: /\[% \w+ %\]/,
+      severity: 2,
+      description: 'Template Toolkit pattern',
+    },
+  ],
+
+  // Insecure Deserialization patterns
+  insecure_deserialization: [
+    {
+      pattern: /O:\d+:"[^"]+":\d+:\{/i,
+      severity: 3,
+      description: 'PHP serialized object pattern',
+    },
+    {
+      pattern: /PHP_Incomplete_Class/i,
+      severity: 3,
+      description: 'PHP insecure deserialization indicator',
+    },
+    {
+      pattern: /rO0ABX/i, // Base64 for 0xAC ED 00 05 (Java serialization header)
+      severity: 3,
+      description: 'Java serialization header (Base64)',
+    },
+    {
+      pattern: /(_serialized_|__type|__jsonclass__)/i,
+      severity: 2,
+      description: 'Potential custom deserialization marker',
+    },
+    {
+      pattern: /y0A/i, // Base64 for .NET serialization
+      severity: 2,
+      description: '.NET serialization indicator',
     },
   ],
 };
@@ -690,9 +755,16 @@ export function detectSuspiciousPatterns(
     minSeverity?: 0 | 1 | 2 | 3;
     /** Log detected patterns (default: true) */
     logDetected?: boolean;
+    /** Request ID for tracing */
+    requestId?: string;
   } = {}
 ): SuspiciousPatternResult {
-  const { scanBody = false, minSeverity = 2, logDetected = true } = options;
+  const {
+    scanBody = false,
+    minSeverity = 2,
+    logDetected = true,
+    requestId: optionRequestId,
+  } = options;
 
   const patterns: SuspiciousPatternDetail[] = [];
 
@@ -776,6 +848,8 @@ export function detectSuspiciousPatterns(
   if (result.detected && logDetected) {
     const clientIdentifier = getClientIdentifier(request);
     const categories = [...new Set(patterns.map((p) => p.category))].join(', ');
+    const requestId =
+      optionRequestId || request.headers.get('x-request-id') || undefined;
 
     SecurityAuditLog.logEvent({
       timestamp: new Date().toISOString(),
@@ -784,6 +858,7 @@ export function detectSuspiciousPatterns(
         maxSeverity === 3 ? 'critical' : maxSeverity === 2 ? 'high' : 'medium',
       message: `Suspicious request patterns detected: ${categories}`,
       clientIdentifier,
+      requestId,
       metadata: {
         patternCount: patterns.length,
         categories,

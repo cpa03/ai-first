@@ -174,6 +174,7 @@ export function withApiHandler(
         scanBody: false,
         minSeverity: 2,
         logDetected: true,
+        requestId,
       });
 
       if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
