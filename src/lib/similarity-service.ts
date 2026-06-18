@@ -16,8 +16,30 @@ let supabaseClient: SupabaseClient | null = null;
 
 /**
  * Get or create Supabase client with service role key
+ *
+ * ⚠️ CRITICAL SECURITY WARNING ⚠️
+ * This function accesses the SUPABASE_SERVICE_ROLE_KEY which bypasses ALL Row Level Security (RLS) policies.
+ * It MUST ONLY be called in server-side contexts (API routes, server components, server actions).
+ *
+ * NEVER call this function from:
+ * - Client components (use 'use client' directive)
+ * - Browser-side code
+ * - Any code that may be bundled for the client
+ *
+ * The service role key grants FULL ADMIN ACCESS to the database. Exposing it to clients
+ * would allow anyone to read/modify/delete any data, bypassing all security policies.
  */
 function getSupabaseClient(): SupabaseClient {
+  // SECURITY: Runtime check to ensure we're on the server
+  // This prevents accidental usage in client components
+  if (typeof window !== 'undefined') {
+    throw new Error(
+      'CRITICAL SECURITY VIOLATION: getSupabaseClient() was called in browser context.\n' +
+        'The Supabase service role key bypasses RLS and must NEVER be exposed to clients.\n' +
+        'Use API routes for admin operations instead.'
+    );
+  }
+
   if (!supabaseClient) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
