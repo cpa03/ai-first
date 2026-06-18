@@ -120,6 +120,12 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     context: 'navigation',
   },
   { keys: ['?'], description: 'Show keyboard shortcuts', context: 'global' },
+  {
+    keys: ['⌘', 'C'],
+    description: 'Copy blueprint (when no text selected)',
+    context: 'global',
+    action: 'copyBlueprint',
+  },
 ];
 
 const contextLabels: Record<KeyboardShortcut['context'], string> = {
