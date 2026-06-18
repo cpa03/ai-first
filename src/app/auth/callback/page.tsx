@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/db';
-import { API_ERROR_MESSAGES } from '@/lib/config';
+import { API_ERROR_MESSAGES, ROUTES } from '@/lib/config';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -23,10 +23,10 @@ export default function AuthCallbackPage() {
           throw error;
         }
 
-        router.push('/dashboard');
+        router.push(ROUTES.DASHBOARD);
         router.refresh();
       } catch {
-        router.push('/login?error=auth_callback_failed');
+        router.push(`${ROUTES.LOGIN}?error=auth_callback_failed`);
       }
     };
 

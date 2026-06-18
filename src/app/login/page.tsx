@@ -11,6 +11,7 @@ import {
   OAUTH_PROVIDER_COLORS,
   LOCAL_STORAGE_KEYS,
   API_ERROR_MESSAGES,
+  ROUTES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -104,7 +105,7 @@ export default function LoginPage() {
           localStorage.removeItem(LOCAL_STORAGE_KEYS.REMEMBERED_EMAIL);
         }
 
-        router.push('/dashboard');
+        router.push(ROUTES.DASHBOARD);
         router.refresh();
       } catch (err) {
         const errorMessage =
@@ -144,7 +145,7 @@ export default function LoginPage() {
           {
             provider,
             options: {
-              redirectTo: `${window.location.origin}/auth/callback`,
+              redirectTo: `${window.location.origin}${ROUTES.AUTH_CALLBACK}`,
             },
           }
         );
@@ -413,7 +414,7 @@ export default function LoginPage() {
         <p className="text-center text-sm text-gray-600">
           Don&apos;t have an account?{' '}
           <Link
-            href="/signup"
+            href={ROUTES.SIGNUP}
             className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           >
             Sign up

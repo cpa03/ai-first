@@ -324,3 +324,7 @@ export {
   DEFAULT_NOTIFICATION_PREFERENCES,
   type NotificationConfig,
 } from './notification-config';
+
+// Page Routes Configuration
+// Centralizes all client-side navigation paths
+export { ROUTES, type Routes } from './routes';

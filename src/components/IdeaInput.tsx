@@ -10,6 +10,7 @@ import {
   PLACEHOLDERS,
   COMPONENT_CONFIG,
   HTTP_HEADERS,
+  API_ENDPOINTS,
 } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
@@ -121,7 +122,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       setError(null);
 
       try {
-        const response = await fetchWithTimeout('/api/ideas', {
+        const response = await fetchWithTimeout(API_ENDPOINTS.IDEAS, {
           method: 'POST',
           headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
           body: JSON.stringify({ idea }),

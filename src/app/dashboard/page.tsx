@@ -11,6 +11,7 @@ import {
   SPINNER_PATTERNS,
   DASHBOARD_FILTER_LABELS,
   API_ERROR_MESSAGES,
+  ROUTES,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -303,7 +304,7 @@ export default function DashboardPage() {
       ) {
         e.preventDefault();
         triggerHapticFeedback();
-        window.location.href = '/';
+        window.location.href = ROUTES.HOME;
       }
     };
 

@@ -11,6 +11,7 @@ import {
   SPINNER_PATTERNS,
   EXPORT_LABELS,
   API_ERROR_MESSAGES,
+  ROUTES,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -148,7 +149,7 @@ function ResultsContent() {
         const ideaId = searchParams.get('ideaId');
 
         if (!ideaId) {
-          router.push('/dashboard');
+          router.push(ROUTES.DASHBOARD);
           return;
         }
 
