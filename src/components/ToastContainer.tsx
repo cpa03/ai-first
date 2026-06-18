@@ -93,6 +93,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
   const progressRef = useRef(100);
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
+  const toastRef = useRef<HTMLDivElement>(null);
 
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -164,17 +165,30 @@ function ToastComponent({ toast, onClose }: ToastProps) {
 
   const styles = toastColors[toast.type];
 
-  // PERFORMANCE: Memoize close handler to prevent function recreation on each render
   const handleClose = useCallback(() => {
     setIsLeaving(true);
     setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
   }, [onClose, toast.id]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && document.activeElement === toastRef.current) {
+        handleClose();
+      }
+    };
+
+    const toastElement = toastRef.current;
+    toastElement?.addEventListener('keydown', handleKeyDown);
+    return () => toastElement?.removeEventListener('keydown', handleKeyDown);
+  }, [handleClose]);
 
   const toastRole = toast.type === 'error' ? 'alert' : 'status';
   const ariaLive = toast.type === 'error' ? 'assertive' : 'polite';
 
   return (
     <div
+      ref={toastRef}
+      tabIndex={0}
       role={toastRole}
       aria-live={ariaLive}
       onMouseEnter={handleMouseEnter}
@@ -188,6 +202,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         transform transition-all duration-300 ease-in-out
         ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}
         ${prefersReducedMotion ? '' : 'touch-pan-y'}
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
       `}
       style={{
         transform:
@@ -231,6 +246,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           />
         </svg>
       </button>
+      <span className="sr-only">Press Escape to dismiss</span>
       {isSwiping && swipeOffset > 20 && (
         <div
           className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
