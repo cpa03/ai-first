@@ -10,6 +10,7 @@ import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
   API_ERROR_MESSAGES,
+  ROUTES,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -270,7 +271,7 @@ export default function SignupPage() {
           email: email.trim(),
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
+            emailRedirectTo: `${window.location.origin}${ROUTES.AUTH_CALLBACK}`,
           },
         });
 
@@ -309,7 +310,7 @@ export default function SignupPage() {
           {
             provider,
             options: {
-              redirectTo: `${window.location.origin}/auth/callback`,
+              redirectTo: `${window.location.origin}${ROUTES.AUTH_CALLBACK}`,
             },
           }
         );
@@ -357,7 +358,7 @@ export default function SignupPage() {
             Please check your email and click the link to verify your account.
           </p>
           <Link
-            href="/login"
+            href={ROUTES.LOGIN}
             className="inline-block font-medium text-primary-600 hover:text-primary-500"
           >
             Return to sign in
@@ -561,7 +562,7 @@ export default function SignupPage() {
         <p className="text-center text-sm text-gray-600">
           Already have an account?{' '}
           <Link
-            href="/login"
+            href={ROUTES.LOGIN}
             className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           >
             Sign in
