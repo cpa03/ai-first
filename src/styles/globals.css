@@ -139,6 +139,14 @@
     animation: scaleIn 0.3s ease-out;
   }
 
+  .slide-down-enter {
+    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -151,7 +159,9 @@
 
     .fade-in,
     .slide-up,
-    .scale-in {
+    .scale-in,
+    .slide-down-enter,
+    .animate-slide-down {
       animation: none;
     }
   }
@@ -185,6 +195,17 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
