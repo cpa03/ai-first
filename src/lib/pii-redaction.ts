@@ -123,9 +123,10 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
  * 'eyJ' (jwt), '://' (urls), common assignment operators ':', '=', and '#', and specific API key prefixes,
  * and common secret-related keywords.
  * PERFORMANCE: Single regex test is faster than multiple tests on every log message.
+ * The numeric trigger requires at least two digits to avoid scanning common single-digit IDs.
  */
 const COMBINED_TRIGGER_REGEX =
-  /[\d@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
+  /\d[\s\S]*\d|[@:=#]|eyJ|:\/\/|sk_|pk_|rk_|AKIA|sk-|api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
 
 /**
  * Specific triggers for API keys and secrets to avoid running the full complex regex.
@@ -477,29 +478,39 @@ export function redactPIIInObject(
   }
 
   if (Array.isArray(obj)) {
-    const result: RedactionResult[] = new Array(obj.length);
+    let result: RedactionResult[] | null = null;
     for (let i = 0; i < obj.length; i++) {
       const item = obj[i];
-      // PERFORMANCE: Fast-path for non-string primitives to avoid recursive call
-      if (item === null || (typeof item !== 'object' && typeof item !== 'string')) {
-        result[i] = item as RedactionResult;
-        continue;
-      }
+      let redactedItem: RedactionResult;
 
-      // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
-      if (typeof item === 'string') {
-        result[i] =
+      // PERFORMANCE: Fast-path for non-string primitives to avoid recursive call
+      if (
+        item === null ||
+        (typeof item !== 'object' && typeof item !== 'string')
+      ) {
+        redactedItem = item as RedactionResult;
+      } else if (typeof item === 'string') {
+        // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
+        redactedItem =
           item.length < 4 || !COMBINED_TRIGGER_REGEX.test(item)
             ? item
             : _redactPII(item);
       } else {
-        result[i] = redactPIIInObject(item, seen, depth + 1);
+        redactedItem = redactPIIInObject(item, seen, depth + 1);
+      }
+
+      // PERFORMANCE: Copy-on-change - only allocate a new array if something was redacted.
+      if (result) {
+        result[i] = redactedItem;
+      } else if (redactedItem !== item) {
+        result = [...obj];
+        result[i] = redactedItem;
       }
     }
-    return result;
+    return result || (obj as RedactedArray);
   }
 
-  const redacted: RedactedObject = {};
+  let redacted: RedactedObject | null = null;
 
   // PERFORMANCE: Inline processEntry logic to avoid closure creation overhead per object property.
   // Using Object.keys() for string keys and processing symbols separately is
@@ -509,29 +520,59 @@ export function redactPIIInObject(
     const key = keys[i];
     try {
       const action = getKeyAction(key);
+      const value = (obj as Record<string, unknown>)[key];
+      let redactedValue: RedactionResult;
 
       if (action.type === 'SENSITIVE') {
-        redacted[key] = action.label!;
-        continue;
-      }
-
-      const value = (obj as Record<string, unknown>)[key];
-
-      if (action.type === 'SAFE') {
-        redacted[key] = value as RedactionResult;
+        redactedValue = action.label!;
+      } else if (action.type === 'SAFE') {
+        redactedValue = value as RedactionResult;
       } else if (typeof value === 'string') {
         // PERFORMANCE: Inline fast-path check to avoid function call overhead
         // for safe strings. Most log strings do not contain PII.
-        redacted[key] =
+        redactedValue =
           value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
             ? value
             : _redactPII(value);
       } else if (value !== null && typeof value === 'object') {
-        redacted[key] = redactPIIInObject(value, seen, depth + 1);
+        redactedValue = redactPIIInObject(value, seen, depth + 1);
       } else {
-        redacted[key] = value as RedactionResult;
+        redactedValue = value as RedactionResult;
+      }
+
+      // PERFORMANCE: Copy-on-change - only allocate a new object if something was redacted.
+      if (redacted) {
+        redacted[key] = redactedValue;
+      } else if (redactedValue !== value) {
+        redacted = {};
+        // Safe backfill: avoid spread as it triggers throwing getters again
+        for (let j = 0; j < i; j++) {
+          const prevKey = keys[j];
+          try {
+            redacted[prevKey] = (obj as Record<string, unknown>)[
+              prevKey
+            ] as RedactionResult;
+          } catch {
+            redacted[prevKey] = '[Getter Error]';
+          }
+        }
+        redacted[key] = redactedValue;
       }
     } catch {
+      if (!redacted) {
+        redacted = {};
+        // Safe backfill
+        for (let j = 0; j < i; j++) {
+          const prevKey = keys[j];
+          try {
+            redacted[prevKey] = (obj as Record<string, unknown>)[
+              prevKey
+            ] as RedactionResult;
+          } catch {
+            redacted[prevKey] = '[Getter Error]';
+          }
+        }
+      }
       redacted[key] = '[Getter Error]';
     }
   }
@@ -545,29 +586,85 @@ export function redactPIIInObject(
         const key = sym.toString();
         const value = (obj as Record<symbol, unknown>)[sym];
         const action = getKeyAction(key);
+        let redactedValue: RedactionResult;
 
         if (action.type === 'SAFE') {
-          redacted[key] = value as RedactionResult;
+          redactedValue = value as RedactionResult;
         } else if (action.type === 'SENSITIVE') {
-          redacted[key] = action.label!;
+          redactedValue = action.label!;
         } else if (typeof value === 'string') {
           // PERFORMANCE: Inline fast-path check
-          redacted[key] =
+          redactedValue =
             value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
               ? value
               : _redactPII(value);
         } else if (value !== null && typeof value === 'object') {
-          redacted[key] = redactPIIInObject(value, seen, depth + 1);
+          redactedValue = redactPIIInObject(value, seen, depth + 1);
         } else {
-          redacted[key] = value as RedactionResult;
+          redactedValue = value as RedactionResult;
+        }
+
+        // PERFORMANCE: Copy-on-change for symbols.
+        if (redacted) {
+          redacted[sym.toString()] = redactedValue;
+        } else if (redactedValue !== value) {
+          redacted = {};
+          // Safe backfill: string keys first, then previous symbols
+          for (const k of keys) {
+            try {
+              redacted[k] = (obj as Record<string, unknown>)[
+                k
+              ] as RedactionResult;
+            } catch {
+              redacted[k] = '[Getter Error]';
+            }
+          }
+          for (let j = 0; j < i; j++) {
+            const s = symbols[j];
+            if (Object.prototype.propertyIsEnumerable.call(obj, s)) {
+              try {
+                redacted[s.toString()] = (obj as Record<symbol, unknown>)[
+                  s
+                ] as RedactionResult;
+              } catch {
+                redacted[s.toString()] = '[Getter Error]';
+              }
+            }
+          }
+          redacted[sym.toString()] = redactedValue;
         }
       } catch {
+        if (!redacted) {
+          redacted = {};
+          // Safe backfill
+          for (const k of keys) {
+            try {
+              redacted[k] = (obj as Record<string, unknown>)[
+                k
+              ] as RedactionResult;
+            } catch {
+              redacted[k] = '[Getter Error]';
+            }
+          }
+          for (let j = 0; j < i; j++) {
+            const s = symbols[j];
+            if (Object.prototype.propertyIsEnumerable.call(obj, s)) {
+              try {
+                redacted[s.toString()] = (obj as Record<symbol, unknown>)[
+                  s
+                ] as RedactionResult;
+              } catch {
+                redacted[s.toString()] = '[Getter Error]';
+              }
+            }
+          }
+        }
         redacted[sym.toString()] = '[Getter Error]';
       }
     }
   }
 
-  return redacted;
+  return redacted || (obj as RedactedObject);
 }
 
 export function sanitizeAgentLog(
