@@ -16,6 +16,7 @@ import {
   SIZES,
   SVG_ANIMATION,
   ANIMATION_DELAYS,
+  STATE_SHADOWS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -183,7 +184,7 @@ const InputWithValidationComponent = forwardRef<
       paddingClass,
       shouldShake && 'animate-shake',
       showSuccessFlash &&
-        'border-green-500 ring-green-500 shadow-[0_0_0_3px_rgba(34,197,94,0.2)]',
+        `border-green-500 ring-green-500 ${STATE_SHADOWS.SUCCESS}`,
       className
     );
 
