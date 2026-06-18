@@ -12,6 +12,7 @@
  */
 
 import { createLogger } from '@/lib/logger';
+import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
 
 const logger = createLogger('EnvValidation');
 
@@ -174,7 +175,9 @@ function checkNextPublicExposure(): string[] {
     if (key.startsWith('NEXT_PUBLIC_')) {
       // Skip explicitly allowed public keys
       if (
-        ALLOWED_PUBLIC_KEYS.includes(key as (typeof ALLOWED_PUBLIC_KEYS)[number])
+        ALLOWED_PUBLIC_KEYS.includes(
+          key as (typeof ALLOWED_PUBLIC_KEYS)[number]
+        )
       ) {
         continue;
       }
@@ -258,12 +261,12 @@ function checkAdminApiKeyStrength(): string[] {
     return warnings;
   }
 
-  // Check minimum length (32 characters as per documentation)
-  const MIN_LENGTH = 32;
-  if (adminKey.length < MIN_LENGTH) {
+  // Check minimum length (uses centralized security config)
+  const minLength = SECURITY_CONFIG.MIN_SECRET_LENGTH;
+  if (adminKey.length < minLength) {
     warnings.push(
       `SECURITY WARNING: ADMIN_API_KEY is too short (${adminKey.length} chars). ` +
-        `Minimum required: ${MIN_LENGTH} characters. ` +
+        `Minimum required: ${minLength} characters. ` +
         `Generate a secure key with: openssl rand -base64 32`
     );
   }
