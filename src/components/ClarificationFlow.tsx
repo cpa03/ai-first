@@ -7,6 +7,7 @@ import {
   MIN_SHORT_ANSWER_LENGTH,
   MAX_SHORT_ANSWER_LENGTH,
 } from '@/lib/validation';
+import { triggerHapticFeedback } from '@/lib/utils';
 import {
   MESSAGES,
   PLACEHOLDERS,
@@ -317,7 +318,10 @@ function ClarificationFlow({
                     id="answer-select"
                     ref={selectRef}
                     value={currentAnswer}
-                    onChange={(e) => setCurrentAnswer(e.target.value)}
+                    onChange={(e) => {
+                      triggerHapticFeedback();
+                      setCurrentAnswer(e.target.value);
+                    }}
                     onKeyDown={handleKeyDown}
                     className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px] cursor-pointer appearance-none bg-white pr-10 transition-all duration-200 hover:border-gray-400 ${
                       currentAnswer
