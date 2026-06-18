@@ -44,7 +44,23 @@ describe('PII Redaction Performance', () => {
     },
   };
 
-  it('measures redaction performance for a large object', () => {
+  const cleanObject = {
+    id: 'task_1',
+    status: 'pending',
+    tags: ['development', 'feature'],
+    config: {
+      retries: 3,
+      enabled: true,
+      mode: 'production'
+    },
+    items: [
+      { id: 'item_1', name: 'Setup' },
+      { id: 'item_2', name: 'Code' },
+      { id: 'item_3', name: 'Test' }
+    ]
+  };
+
+  it('measures redaction performance for a large object with PII', () => {
     const iterations = 10000;
     const start = performance.now();
     for (let i = 0; i < iterations; i++) {
@@ -53,10 +69,26 @@ describe('PII Redaction Performance', () => {
     const end = performance.now();
     const duration = end - start;
     console.log(
-      `Redacted large object ${iterations} times in ${duration.toFixed(2)}ms`
+      `Redacted large object with PII ${iterations} times in ${duration.toFixed(2)}ms`
     );
     console.log(
-      `Average time per redaction: ${(duration / iterations).toFixed(4)}ms`
+      `Average time per redaction (with PII): ${(duration / iterations).toFixed(4)}ms`
+    );
+  });
+
+  it('measures redaction performance for a clean object without PII', () => {
+    const iterations = 10000;
+    const start = performance.now();
+    for (let i = 0; i < iterations; i++) {
+      redactPIIInObject(cleanObject);
+    }
+    const end = performance.now();
+    const duration = end - start;
+    console.log(
+      `Processed clean object ${iterations} times in ${duration.toFixed(2)}ms`
+    );
+    console.log(
+      `Average time per processing (clean): ${(duration / iterations).toFixed(4)}ms`
     );
   });
 });
