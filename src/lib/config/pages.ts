@@ -211,6 +211,55 @@ export const LOGIN_PAGE_CONTENT = {
 } as const;
 
 /**
+ * Signup page content configuration
+ * Eliminates hardcoded UI strings in signup page
+ */
+export const SIGNUP_PAGE_CONTENT = {
+  HEADING: 'Create your account',
+  SUBHEADING: 'Get started with IdeaFlow today.',
+  FORM: {
+    EMAIL_LABEL: 'Email address',
+    PASSWORD_LABEL: 'Password',
+    PASSWORD_HELP_TEXT: 'Must be at least 8 characters',
+    CONFIRM_PASSWORD_LABEL: 'Confirm Password',
+    CONFIRM_PASSWORD_PLACEHOLDER: 'Confirm your password',
+    SUBMIT_BUTTON: 'Create account',
+    SUBMIT_LOADING: 'Creating account...',
+  },
+  OAUTH: {
+    SEPARATOR: 'Or sign up with',
+    GOOGLE: 'Google',
+    GOOGLE_LOADING: 'Connecting...',
+    GITHUB: 'GitHub',
+    GITHUB_LOADING: 'Connecting...',
+  },
+  FOOTER: {
+    HAS_ACCOUNT: 'Already have an account?',
+    SIGN_IN: 'Sign in',
+  },
+  SUCCESS: {
+    HEADING: 'Check your email',
+    MESSAGE_PREFIX: "We've sent a confirmation link to",
+    MESSAGE_SUFFIX:
+      'Please check your email and click the link to verify your account.',
+    RETURN_LINK: 'Return to sign in',
+  },
+  PASSWORD_MATCH: {
+    MATCH: 'Passwords match',
+    MISMATCH: 'Passwords do not match',
+  },
+  ERRORS: {
+    INVALID_EMAIL: 'Please enter a valid email address',
+    PASSWORD_TOO_SHORT: 'Password must be at least 8 characters',
+    PASSWORDS_DO_NOT_MATCH: 'Passwords do not match',
+    CREATE_ACCOUNT_FAILED: 'Failed to create account',
+    CREATE_ACCOUNT_FAILED_RETRY: 'Failed to create account. Please try again.',
+    OAUTH_FAILED_PREFIX: 'Failed to sign up with',
+    OAUTH_FAILED_SUFFIX: '. Please try again.',
+  },
+} as const;
+
+/**
  * Dashboard page content configuration
  * Eliminates hardcoded UI strings in dashboard page
  */
