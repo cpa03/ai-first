@@ -106,8 +106,8 @@
       /admin/              ← Admin endpoints
         /rate-limit/      ← Rate limit management
       /csp-report/         ← CSP violation reports
-      /robots.ts          ← Robots.txt
-      /sitemap.ts         ← Sitemap
+    /robots.ts          ← Robots.txt
+    /sitemap.ts         ← Sitemap
   /components/             ← React components
     /Alert.tsx             ← Alert component
     /AutoSaveIndicator.tsx  ← Auto-save status indicator
@@ -150,7 +150,14 @@
     /useSessionDuration.ts   ← Session duration tracking hook
   /lib/                    ← Core utilities
     /auth.ts              ← Authentication service
-    /db.ts                ← Database service
+    /db/                  ← Database service module
+      /service.ts        ← Database service
+      /client.ts         ← Database client
+      /ideas.ts          ← Ideas repository
+      /tasks.ts          ← Tasks repository
+      /deliverables.ts   ← Deliverables repository
+      /clarification.ts  ← Clarification repository
+      /vectors.ts        ← Vector store repository
     /api-client.ts        ← API client utilities
     /errors.ts            ← Error handling
     /rate-limit.ts        ← Rate limiting
@@ -176,7 +183,6 @@
   /styles/                  ← Global styles
   /templates/               ← Template files
     /blueprint-template.ts ← Blueprint template
-  /proxy.ts                 ← Next.js middleware (replacement)
   /instrumentation.ts      ← Next.js instrumentation
   /instrumentation.node.ts  ← Node-specific instrumentation
 /supabase/
