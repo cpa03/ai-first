@@ -253,5 +253,42 @@ describe('Suspicious Pattern Detection Improvements', () => {
         ).toBe(true);
       }
     });
+
+    describe('Complex Regex Correctness (Bolt Optimization)', () => {
+      it('should correctly detect patterns with backreferences', () => {
+        // SQL OR tautology uses backreferences: /(\bor\b\s+['"]?([^'"]+)['"]?\s*=\s*['"]?\2['"]?)/is
+        const input = "1' OR '1'='1";
+        const result = detectSuspiciousPatterns(
+          new NextRequest(
+            new URL(
+              `https://example.com/api/test?q=${encodeURIComponent(input)}`
+            )
+          ),
+          { minSeverity: 3 }
+        );
+        expect(result.detected).toBe(true);
+        expect(
+          result.patterns.some((p) => p.category === 'sql_injection')
+        ).toBe(true);
+      });
+
+      it('should correctly detect multiline patterns', () => {
+        // Path traversal with multiple lines
+        const input =
+          'GET /api/test HTTP/1.1\nHost: example.com\n\n../../etc/passwd';
+        const result = detectSuspiciousPatterns(
+          new NextRequest(
+            new URL(
+              `https://example.com/api/test?q=${encodeURIComponent(input)}`
+            )
+          ),
+          { minSeverity: 2 }
+        );
+        expect(result.detected).toBe(true);
+        expect(
+          result.patterns.some((p) => p.category === 'path_traversal')
+        ).toBe(true);
+      });
+    });
   });
 });
