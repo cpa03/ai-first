@@ -13,7 +13,6 @@
     "jsx": "react-jsx",
     "incremental": true,
     "target": "ES2022",
-    "downlevelIteration": true,
     "types": ["jest", "@testing-library/jest-dom"],
     "plugins": [
       {
