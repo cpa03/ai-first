@@ -331,3 +331,17 @@ export {
 // Page Routes Configuration
 // Centralizes all client-side navigation paths
 export { ROUTES, type Routes } from './routes';
+
+// Component Labels Configuration
+// Centralizes hardcoded string labels, messages, and aria-labels for UI components
+export {
+  SHARE_BUTTON_LABELS,
+  COPY_BUTTON_LABELS,
+  INPUT_VALIDATION_LABELS,
+  TOOLTIP_LABELS,
+  COMPONENT_LABELS,
+  type ShareButtonLabels,
+  type CopyButtonLabels,
+  type InputValidationLabels,
+  type ComponentLabels,
+} from './component-labels';

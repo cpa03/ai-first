@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { APP_CONFIG } from '@/lib/config';
+import { APP_CONFIG, SHARE_BUTTON_LABELS } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -38,13 +38,13 @@ const ShareButtonComponent = function ShareButton({
   shareUrl = APP_CONFIG.URLS.BASE,
   shareTitle = APP_CONFIG.NAME,
   shareText = APP_CONFIG.DESCRIPTION,
-  label = 'Share',
-  successLabel = 'Shared!',
-  ariaLabel = 'Share this page',
+  label = SHARE_BUTTON_LABELS.DEFAULT_LABEL,
+  successLabel = SHARE_BUTTON_LABELS.SUCCESS_LABEL,
+  ariaLabel = SHARE_BUTTON_LABELS.ARIA_LABEL,
   className = '',
   variant = 'default',
   showToast = true,
-  toastMessage = 'Link copied to clipboard!',
+  toastMessage = SHARE_BUTTON_LABELS.CLIPBOARD_TOAST,
   onShare,
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
@@ -115,7 +115,7 @@ const ShareButtonComponent = function ShareButton({
           () => setShared(false),
           UI_CONFIG.COPY_FEEDBACK_DURATION
         );
-        showSuccessToast('Thanks for sharing!');
+        showSuccessToast(SHARE_BUTTON_LABELS.SHARE_SUCCESS);
 
         // Growth: Fire onShare callback for analytics
         if (onShare) {
@@ -150,7 +150,7 @@ const ShareButtonComponent = function ShareButton({
         }
       } catch (clipboardErr) {
         logger.error('Failed to copy share URL', clipboardErr);
-        showErrorToast('Failed to copy link. Please try again.');
+        showErrorToast(SHARE_BUTTON_LABELS.CLIPBOARD_ERROR);
       }
     }
   }, [

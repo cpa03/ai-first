@@ -17,6 +17,7 @@ import {
   SVG_ANIMATION,
   ANIMATION_DELAYS,
   STATE_SHADOWS,
+  INPUT_VALIDATION_LABELS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -432,11 +433,15 @@ const InputWithValidationComponent = forwardRef<
                   }}
                   className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:text-gray-800 rounded-md hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
                   aria-label={
-                    passwordVisible ? 'Hide password' : 'Show password'
+                    passwordVisible
+                      ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
+                      : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
                   }
                 >
                   <span className="text-xs font-medium tabular-nums">
-                    {passwordVisible ? 'Hide' : 'Show'}
+                    {passwordVisible
+                      ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD
+                      : INPUT_VALIDATION_LABELS.SHOW_PASSWORD}
                   </span>
                   {passwordVisible ? (
                     <svg
