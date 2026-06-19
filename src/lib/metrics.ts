@@ -7,6 +7,13 @@
  * Safe for both Node.js and Edge runtimes.
  */
 
+import {
+  METRIC_NAMES,
+  METRIC_HELP,
+  METRIC_LABELS,
+  HISTOGRAM_BUCKETS,
+} from '@/lib/config/metrics-config';
+
 interface Register {
   metrics: () => Promise<string>;
   contentType: string;
@@ -60,38 +67,50 @@ if (isEdge) {
     promClient.collectDefaultMetrics({ register });
 
     httpRequestDuration = new promClient.Histogram({
-      name: 'http_request_duration_seconds',
-      help: 'Duration of HTTP requests in seconds',
-      labelNames: ['method', 'route', 'status_code'],
-      buckets: [0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1, 5],
+      name: METRIC_NAMES.HTTP_REQUEST_DURATION,
+      help: METRIC_HELP.HTTP_REQUEST_DURATION,
+      labelNames: [
+        METRIC_LABELS.HTTP_METHOD,
+        METRIC_LABELS.HTTP_ROUTE,
+        METRIC_LABELS.HTTP_STATUS_CODE,
+      ],
+      buckets: HISTOGRAM_BUCKETS,
       registers: [register],
     });
 
     httpRequestErrors = new promClient.Counter({
-      name: 'http_request_errors_total',
-      help: 'Total number of HTTP request errors',
-      labelNames: ['method', 'route', 'status_code'],
+      name: METRIC_NAMES.HTTP_REQUEST_ERRORS,
+      help: METRIC_HELP.HTTP_REQUEST_ERRORS,
+      labelNames: [
+        METRIC_LABELS.HTTP_METHOD,
+        METRIC_LABELS.HTTP_ROUTE,
+        METRIC_LABELS.HTTP_STATUS_CODE,
+      ],
       registers: [register],
     });
 
     httpRequestTotal = new promClient.Counter({
-      name: 'http_requests_total',
-      help: 'Total number of HTTP requests',
-      labelNames: ['method', 'route', 'status_code'],
+      name: METRIC_NAMES.HTTP_REQUEST_TOTAL,
+      help: METRIC_HELP.HTTP_REQUEST_TOTAL,
+      labelNames: [
+        METRIC_LABELS.HTTP_METHOD,
+        METRIC_LABELS.HTTP_ROUTE,
+        METRIC_LABELS.HTTP_STATUS_CODE,
+      ],
       registers: [register],
     });
 
     circuitBreakerState = new promClient.Gauge({
-      name: 'circuit_breaker_state',
-      help: 'Circuit breaker state (0=closed, 1=half-open, 2=open)',
-      labelNames: ['name'],
+      name: METRIC_NAMES.CIRCUIT_BREAKER_STATE,
+      help: METRIC_HELP.CIRCUIT_BREAKER_STATE,
+      labelNames: [METRIC_LABELS.CIRCUIT_BREAKER_NAME],
       registers: [register],
     });
 
     rateLimiterHits = new promClient.Counter({
-      name: 'rate_limiter_hits_total',
-      help: 'Total number of rate limiter hits',
-      labelNames: ['method', 'route'],
+      name: METRIC_NAMES.RATE_LIMITER_HITS,
+      help: METRIC_HELP.RATE_LIMITER_HITS,
+      labelNames: [METRIC_LABELS.HTTP_METHOD, METRIC_LABELS.HTTP_ROUTE],
       registers: [register],
     });
   } catch {

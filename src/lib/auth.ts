@@ -2,6 +2,7 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { AUTH_CONFIG } from '@/lib/config/constants';
+import { STATUS_CODES } from '@/lib/config/http';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 
 const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
@@ -68,11 +69,11 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
     const encoder = new TextEncoder();
 
     const expectedHash = await crypto.subtle.digest(
-      'SHA-256',
+      AUTH_CONFIG.HASH_ALGORITHM,
       encoder.encode(ADMIN_API_KEY)
     );
     const actualHash = await crypto.subtle.digest(
-      'SHA-256',
+      AUTH_CONFIG.HASH_ALGORITHM,
       encoder.encode(credentials)
     );
 
@@ -105,7 +106,7 @@ export async function requireAdminAuth(request: Request): Promise<void> {
     throw new AppError(
       'Unauthorized. Valid admin API key required.',
       ErrorCode.AUTHENTICATION_ERROR,
-      401
+      STATUS_CODES.UNAUTHORIZED
     );
   }
 }
@@ -159,7 +160,7 @@ export async function requireAuth(
     throw new AppError(
       'Unauthorized. Valid authentication token required.',
       ErrorCode.AUTHENTICATION_ERROR,
-      401
+      STATUS_CODES.UNAUTHORIZED
     );
   }
 
@@ -175,7 +176,7 @@ export function verifyResourceOwnership(
     throw new AppError(
       `Forbidden. You do not have access to this ${resourceType}.`,
       ErrorCode.AUTHORIZATION_ERROR,
-      403
+      STATUS_CODES.FORBIDDEN
     );
   }
 }
