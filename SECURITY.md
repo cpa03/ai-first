@@ -136,57 +136,52 @@ The reporting endpoint is designed to be lightweight and non-blocking for browse
 
 ## Security Audit History
 
-| Date       | Issue                                          | Status           | Report                                                     |
-| ---------- | ---------------------------------------------- | ---------------- | ---------------------------------------------------------- |
-| 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md)   |
-| 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                      |
-| 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                    |
-| 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations      |
-| 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring                |
-| 2026-02-20 | #878 - Rate Limiting for CSP Report Endpoint   | ✅ Implemented   | Added rate limiting (60 req/min) to prevent DoS abuse      |
-| 2026-02-20 | #1171 - Health Endpoint Sensitive Var Filter   | ✅ Implemented   | Added OAUTH, WEBHOOK, SALT, HMAC, APIKEY patterns          |
-| 2026-02-20 | #1171 - PII Redaction Enhancement              | ✅ Implemented   | Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns      |
-| 2026-02-20 | #1171 - CSP worker-src/manifest-src Directives | ✅ Implemented   | Added missing CSP directives for web workers and manifests |
-| 2026-02-21 | #841 - Centralized Test Secrets Management     | ✅ Implemented   | Added MOCK_SECRETS object with safe test credential values |
-| 2026-02-21 | CSP 'unsafe-eval' Directive Removed            | ✅ Implemented   | Hardened CSP by removing eval permission (not used)        |
-| 2026-02-21 | Metrics Endpoint Authentication                | ✅ Implemented   | Added admin auth requirement for /api/metrics endpoint     |
-| 2026-02-21 | #1171 - Sensitive Variable Patterns Enhanced  | ✅ Implemented   | Added PEM, KEYSTORE, ENCRYPTION, DECRYPT, MFA, MNEMONIC, RECOVERY, BACKUP, SEED, JWK patterns |
-| 2026-02-22 | Security Audit Event Logging Added            | ✅ Implemented   | Added SecurityAuditLog module for structured security event logging |
-| 2026-02-22 | Cryptographic ID Generation Hardening        | ✅ Implemented   | Replaced Math.random() with crypto.randomUUID() for export and idea IDs |
-| 2026-02-22 | Attack Pattern Detection Enhanced            | ✅ Implemented   | Added NoSQL injection, prototype pollution, and Log4j-style attack patterns |
-| 2026-02-22 | Rate Limit Security Audit Logging            | ✅ Implemented   | Added SecurityAuditLog for rate limit violations in API handler |
+| Date       | Issue                                          | Status           | Report                                                                                        |
+| ---------- | ---------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------- |
+| 2026-02-17 | #1135 - Service Role Key Exposure              | ✅ Resolved      | [View Report](./docs/security/SECURITY_AUDIT_P0_1135.md)                                      |
+| 2026-02-18 | #1185 - npm audit vulnerabilities (ajv/eslint) | ✅ Accepted Risk | DevDependencies only, not exploitable                                                         |
+| 2026-02-18 | #1171 - Consolidated Security Hardening        | 🔄 In Progress   | Multiple security items being addressed                                                       |
+| 2026-02-19 | #1171 - Cross-Origin Security Headers Added    | ✅ Implemented   | CORP and COOP headers added per OWASP recommendations                                         |
+| 2026-02-19 | #891 - CSP Violation Reporting                 | ✅ Implemented   | /api/csp-report endpoint for XSS monitoring                                                   |
+| 2026-02-20 | #878 - Rate Limiting for CSP Report Endpoint   | ✅ Implemented   | Added rate limiting (60 req/min) to prevent DoS abuse                                         |
+| 2026-02-20 | #1171 - Health Endpoint Sensitive Var Filter   | ✅ Implemented   | Added OAUTH, WEBHOOK, SALT, HMAC, APIKEY patterns                                             |
+| 2026-02-20 | #1171 - PII Redaction Enhancement              | ✅ Implemented   | Added IBAN, SWIFT/BIC, Tax ID, NINO, License patterns                                         |
+| 2026-02-20 | #1171 - CSP worker-src/manifest-src Directives | ✅ Implemented   | Added missing CSP directives for web workers and manifests                                    |
+| 2026-02-21 | #841 - Centralized Test Secrets Management     | ✅ Implemented   | Added MOCK_SECRETS object with safe test credential values                                    |
+| 2026-02-21 | CSP 'unsafe-eval' Directive Removed            | ✅ Implemented   | Hardened CSP by removing eval permission (not used)                                           |
+| 2026-02-21 | Metrics Endpoint Authentication                | ✅ Implemented   | Added admin auth requirement for /api/metrics endpoint                                        |
+| 2026-02-21 | #1171 - Sensitive Variable Patterns Enhanced   | ✅ Implemented   | Added PEM, KEYSTORE, ENCRYPTION, DECRYPT, MFA, MNEMONIC, RECOVERY, BACKUP, SEED, JWK patterns |
+| 2026-02-22 | Security Audit Event Logging Added             | ✅ Implemented   | Added SecurityAuditLog module for structured security event logging                           |
+| 2026-02-22 | Cryptographic ID Generation Hardening          | ✅ Implemented   | Replaced Math.random() with crypto.randomUUID() for export and idea IDs                       |
+| 2026-02-22 | Attack Pattern Detection Enhanced              | ✅ Implemented   | Added NoSQL injection, prototype pollution, and Log4j-style attack patterns                   |
+| 2026-02-22 | Rate Limit Security Audit Logging              | ✅ Implemented   | Added SecurityAuditLog for rate limit violations in API handler                               |
 
-## Current npm Audit Status (2026-02-18)
+## Current npm Audit Status (2026-06-19)
 
-**Summary**: 46 vulnerabilities detected (1 low, 18 moderate, 27 high, 0 critical)
+**Summary**: Moderate vulnerabilities detected in devDependencies only
 
 ### Vulnerability Breakdown
 
-| Category             | Count | Risk Level | Notes                                            |
-| -------------------- | ----- | ---------- | ------------------------------------------------ |
-| Production deps      | 0     | ✅ Safe    | No direct production vulnerabilities             |
-| DevDependencies      | 46    | ⚠️ Low     | All in dev tooling, not deployed                 |
-| Transitive (AWS SDK) | 27    | ⚠️ Low     | From @opennextjs/cloudflare, not used at runtime |
+| Category                | Severity | Risk Level | Notes                                           |
+| ----------------------- | -------- | ---------- | ----------------------------------------------- |
+| Production deps         | None     | ✅ Safe    | No direct production vulnerabilities            |
+| DevDependencies         | Moderate | ⚠️ Low     | All in dev tooling, not deployed                |
+| Transitive (lighthouse) | Moderate | ⚠️ Low     | From lighthouse → @sentry/node → @opentelemetry |
 
 ### Accepted Risks
 
-1. **eslint/ajv vulnerabilities** (18 moderate) - DevDependencies only
-   - ReDoS in ajv when using `$data` option
+1. **@opentelemetry/core vulnerability** (moderate) - DevDependency only
+   - Unbounded memory allocation in W3C Baggage propagation
+   - Affects: lighthouse (dev tool for performance auditing)
    - Not exploitable in production builds
-   - Breaking change required to update
-
-2. **fast-xml-parser** (27 high) - Transitive dependency
-   - From @opennextjs/cloudflare → AWS SDK chain
-   - DoS through entity expansion in DOCTYPE
-   - Not used at runtime in deployed application
-   - Requires major dependency tree changes to fix
+   - Requires lighthouse major version update to fix
 
 ### Mitigation
 
 - Production dependencies are clean (0 vulnerabilities)
-- All vulnerabilities are in development/build tooling
+- All vulnerabilities are in development/build tooling only
 - Runtime application is not affected
-- Regular monitoring for new vulnerabilities
+- Regular monitoring for new vulnerabilities via `npm audit`
 
 ---
 

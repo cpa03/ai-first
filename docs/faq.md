@@ -12,6 +12,7 @@
 IdeaFlow is currently in **MVP development phase** (Phase 1). Here's what's available:
 
 **✅ Available Now:**
+
 - User Authentication (Email/Password + OAuth with Google/GitHub)
 - Task Management Interface
 - Basic Idea Dashboard
@@ -20,11 +21,13 @@ IdeaFlow is currently in **MVP development phase** (Phase 1). Here's what's avai
 - Automatic Breakdown Engine (70%)
 
 **🚧 In Progress:**
+
 - Performance Optimization
 - Testing & Quality Assurance (75% coverage)
 - Monitoring & Alerting
 
 **📅 Coming Soon (Phase 2 - Q2 2026):**
+
 - Notion Integration
 - Trello Integration
 - Google Tasks Integration
@@ -159,10 +162,11 @@ Yes! If you're not satisfied with the initial breakdown:
 ### What export formats are available?
 
 - **Markdown** - Download as a formatted .md file
-- **Notion** - Export directly to Notion (coming soon)
-- **Trello** - Create Trello boards (coming soon)
-- **Google Tasks** - Sync with Google Tasks (coming soon)
-- **GitHub Projects** - Create GitHub issues (coming soon)
+- **Notion** - Export directly to Notion workspace
+- **Trello** - Create Trello boards and cards
+- **Google Tasks** - Sync with Google Tasks
+- **GitHub Projects** - Create GitHub issues and projects
+- **JSON** - Machine-readable export format
 
 ### How do I export to Markdown?
 
@@ -171,9 +175,9 @@ Yes! If you're not satisfied with the initial breakdown:
 3. Select "Markdown"
 4. Download the .md file
 
-### When will Notion/Trello integrations be available?
+### How do I export to Notion/Trello?
 
-Export connectors for Notion, Trello, Google Tasks, and GitHub Projects are planned for Phase 2 (Q2 2026). Sign up for our newsletter to be notified when they launch.
+Export connectors are available for Notion, Trello, Google Tasks, and GitHub Projects. Configure your API credentials in the settings panel, then select the desired export format.
 
 ### Can I import ideas from other tools?
 
