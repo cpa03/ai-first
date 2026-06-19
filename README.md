@@ -59,7 +59,7 @@
 
 ```text
 /README.md                    ← This file
-/blueprint.md                  ← Project blueprint and architecture
+/docs/blueprint.md            ← Project blueprint and architecture
 /docs/                        ← Documentation
   /architecture.md           ← Technical architecture details
   /agent-guidelines.md       ← Agent behavior rules
@@ -309,7 +309,7 @@ All automated work follows this pattern:
 
 ## 📚 Documentation
 
-- [Blueprint](./blueprint.md) - Complete project architecture
+- [Blueprint](./docs/blueprint.md) - Complete project architecture
 - [Architecture](./docs/architecture.md) - Technical deep-dive
 - [API Reference](./docs/api.md) - Complete API documentation with examples
 - [Error Codes](./docs/error-codes.md) - Error code reference

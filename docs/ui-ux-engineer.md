@@ -1450,7 +1450,7 @@ font-mono text-sm
 - **Next.js Docs:** https://nextjs.org/docs
 - **React Testing Library:** https://testing-library.com/docs/react-testing-library/intro/
 - **WCAG Guidelines:** https://www.w3.org/WAI/WCAG21/quickref/
-- **Project Blueprint:** `/home/runner/work/ai-first/ai-first/blueprint.md`
+- **Project Blueprint:** `/home/runner/work/ai-first/ai-first/docs/blueprint.md`
 - # **Architecture Docs:** `/home/runner/work/ai-first/ai-first/docs/architecture.md`
 
 # UI-UX Engineer
