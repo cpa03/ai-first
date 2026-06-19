@@ -39,13 +39,16 @@ export const HTTP_HEADERS = {
   APPLICATION_JSON: 'application/json',
   JSON_CONTENT_TYPE: { 'Content-Type': 'application/json' },
   X_REQUEST_ID: 'X-Request-ID',
+  X_CORRELATION_ID: 'X-Correlation-ID',
   X_ERROR_CODE: 'X-Error-Code',
   X_RETRYABLE: 'X-Retryable',
+  X_RESPONSE_TIME: 'X-Response-Time',
   RETRY_AFTER: 'Retry-After',
   X_RATELIMIT_LIMIT: 'X-RateLimit-Limit',
   X_RATELIMIT_REMAINING: 'X-RateLimit-Remaining',
   X_RATELIMIT_RESET: 'X-RateLimit-Reset',
   X_API_VERSION: 'X-API-Version',
+  CACHE_CONTROL: 'Cache-Control',
 } as const;
 
 /**

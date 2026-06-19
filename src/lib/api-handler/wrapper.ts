@@ -17,7 +17,7 @@ import {
   setCorrelationId,
   type LogContext,
 } from '@/lib/logger';
-import { STATUS_CODES } from '@/lib/config/http';
+import { STATUS_CODES, HTTP_HEADERS } from '@/lib/config/http';
 import {
   httpRequestDuration,
   httpRequestErrors,
@@ -133,7 +133,7 @@ export function withApiHandler(
             {
               status: STATUS_CODES.FORBIDDEN,
               headers: {
-                'X-Request-ID': requestId,
+                [HTTP_HEADERS.X_REQUEST_ID]: requestId,
               },
             }
           );
@@ -193,7 +193,7 @@ export function withApiHandler(
           {
             status: STATUS_CODES.FORBIDDEN,
             headers: {
-              'X-Request-ID': requestId,
+              [HTTP_HEADERS.X_REQUEST_ID]: requestId,
             },
           }
         );
@@ -263,8 +263,8 @@ export function withApiHandler(
               {
                 status: STATUS_CODES.GATEWAY_TIMEOUT,
                 headers: {
-                  'X-Request-ID': requestId,
-                  'X-Response-Time': duration + 'ms',
+                  [HTTP_HEADERS.X_REQUEST_ID]: requestId,
+                  [HTTP_HEADERS.X_RESPONSE_TIME]: duration + 'ms',
                 },
               }
             );
@@ -275,37 +275,37 @@ export function withApiHandler(
         response = await handler(context);
       }
 
-      if (!response.headers.has('X-Request-ID')) {
-        response.headers.set('X-Request-ID', requestId);
+      if (!response.headers.has(HTTP_HEADERS.X_REQUEST_ID)) {
+        response.headers.set(HTTP_HEADERS.X_REQUEST_ID, requestId);
       }
 
-      response.headers.set('X-Correlation-ID', correlationId);
+      response.headers.set(HTTP_HEADERS.X_CORRELATION_ID, correlationId);
 
       response.headers.set(
-        'X-RateLimit-Limit',
+        HTTP_HEADERS.X_RATELIMIT_LIMIT,
         String(context.rateLimit.limit)
       );
       response.headers.set(
-        'X-RateLimit-Remaining',
+        HTTP_HEADERS.X_RATELIMIT_REMAINING,
         String(context.rateLimit.remaining)
       );
       response.headers.set(
-        'X-RateLimit-Reset',
+        HTTP_HEADERS.X_RATELIMIT_RESET,
         String(new Date(context.rateLimit.reset).toISOString())
       );
 
       const duration = Date.now() - requestStartTime;
-      response.headers.set('X-Response-Time', `${duration}ms`);
-      response.headers.set('X-API-Version', API_VERSION);
+      response.headers.set(HTTP_HEADERS.X_RESPONSE_TIME, `${duration}ms`);
+      response.headers.set(HTTP_HEADERS.X_API_VERSION, API_VERSION);
 
       if (
         options.cacheTtlSeconds !== undefined &&
         options.cacheTtlSeconds > 0 &&
-        !response.headers.has('Cache-Control')
+        !response.headers.has(HTTP_HEADERS.CACHE_CONTROL)
       ) {
         const scope = options.cacheScope || 'public';
         response.headers.set(
-          'Cache-Control',
+          HTTP_HEADERS.CACHE_CONTROL,
           `${scope}, max-age=${options.cacheTtlSeconds}`
         );
       }
@@ -334,7 +334,9 @@ export function withApiHandler(
       // PERFORMANCE: Use path extracted at start of request
       const route = path || '/unknown';
       const errorStatusCode =
-        error instanceof AppError ? String(error.statusCode) : '500';
+        error instanceof AppError
+          ? String(error.statusCode)
+          : String(STATUS_CODES.INTERNAL_ERROR);
 
       httpRequestDuration.observe(
         { method: request.method, route, status_code: errorStatusCode },
