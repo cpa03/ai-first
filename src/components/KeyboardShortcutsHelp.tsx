@@ -515,11 +515,23 @@ function KeyboardShortcutsHelpComponent({
               />
               {KEYBOARD_SHORTCUTS_MESSAGES.VIM_MODE_LABEL}
             </label>
-            <span className="text-xs text-gray-500">
-              {searchQuery
-                ? KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.HAS_QUERY
-                : KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.NO_QUERY}
-            </span>
+            <div className="flex items-center gap-2">
+              {searchQuery && (
+                <span
+                  className="text-xs text-primary-600 font-medium px-2 py-0.5 bg-primary-50 rounded-full"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {flatShortcuts.length}{' '}
+                  {flatShortcuts.length === 1 ? 'result' : 'results'}
+                </span>
+              )}
+              <span className="text-xs text-gray-500">
+                {searchQuery
+                  ? KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.HAS_QUERY
+                  : KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.NO_QUERY}
+              </span>
+            </div>
           </div>
         </div>
 
