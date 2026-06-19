@@ -18,7 +18,7 @@ function WhyChooseSectionComponent() {
         {ARTICLES.map((article) => (
           <article
             key={article.id}
-            className={`${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG}`}
+            className={`group ${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG}`}
           >
             <div
               className={`${ARTICLE_STYLES.ICON_CONTAINER} ${article.ICON_BG} ${article.ICON_HOVER_BG}`}
