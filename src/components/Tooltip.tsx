@@ -15,7 +15,7 @@ type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
 interface TooltipProps {
   children: React.ReactNode;
-  content: string;
+  content: React.ReactNode;
   position?: TooltipPosition;
   delay?: number;
   disabled?: boolean;

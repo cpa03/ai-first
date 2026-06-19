@@ -174,9 +174,30 @@ function ScrollToTopComponent({
   // Show percentage when scrolled past 10% for meaningful feedback
   const showPercentage = scrollProgress >= 10;
 
+  const tooltipContent = (
+    <div className="flex flex-col gap-1.5">
+      <span className="font-medium">Back to top</span>
+      <span className="text-[10px] text-gray-400 opacity-80">
+        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">↑</kbd>{' '}
+        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">↓</kbd>{' '}
+        Scroll 25%
+        <span className="mx-1">·</span>
+        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+          Home
+        </kbd>{' '}
+        Top
+        <span className="mx-1">·</span>
+        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+          End
+        </kbd>{' '}
+        Bottom
+      </span>
+    </div>
+  );
+
   return (
     <div className="fixed bottom-8 right-8 z-50">
-      <Tooltip content="Back to top" position="top">
+      <Tooltip content={tooltipContent} position="top">
         <button
           onClick={scrollToTop}
           onKeyDown={handleKeyDown}
