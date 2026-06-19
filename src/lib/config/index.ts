@@ -339,9 +339,11 @@ export {
   COPY_BUTTON_LABELS,
   INPUT_VALIDATION_LABELS,
   TOOLTIP_LABELS,
+  LAYOUT_ERROR_LABELS,
   COMPONENT_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
   type InputValidationLabels,
+  type LayoutErrorLabels,
   type ComponentLabels,
 } from './component-labels';
