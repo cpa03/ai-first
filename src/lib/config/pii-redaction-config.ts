@@ -89,6 +89,13 @@ export const PII_REDACTION_CONFIG = {
    * NOTE: Not environment-configurable as this is a safety limit
    */
   MAX_RECURSION_DEPTH: 100,
+
+  /**
+   * Maximum size of key action cache
+   * Prevents unbounded memory growth for key classification cache
+   * NOTE: Not environment-configurable as this is a safety limit
+   */
+  MAX_KEY_ACTION_CACHE_SIZE: 1000,
 } as const;
 
 // Type export

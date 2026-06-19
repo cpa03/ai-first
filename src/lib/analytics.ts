@@ -654,7 +654,7 @@ export function resetAnalytics(): void {
   // Clear session storage
   if (typeof window !== 'undefined') {
     try {
-      sessionStorage.removeItem('ideaflow_session_id');
+      sessionStorage.removeItem(SESSION_STORAGE_KEYS.SESSION_ID);
     } catch {
       // Ignore errors
     }

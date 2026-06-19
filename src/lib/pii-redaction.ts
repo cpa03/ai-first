@@ -105,7 +105,8 @@ const PII_REGEX_PATTERNS: PIIPatterns = {
   apiKey:
     /(?:api[-_ ]?key|apikey|secret|token|password|passphrase|credential|auth|authorization|access[-_ ]?key|bearer|admin[-_ ]?key|adminkey)[\s:=]{1,50}['"]?([a-zA-Z0-9_/+=-]{4,128})['"]?|(?:sk|pk|rk)_(?:live|test)_[a-zA-Z0-9]{24,64}|sk-[a-zA-Z0-9_-]{32,64}|AKIA[0-9A-Z]{16}/gi,
   jwt: /eyJ[a-zA-Z0-9_-]{4,}\.[a-zA-Z0-9_-]{4,}\.[a-zA-Z0-9_-]{4,}/g,
-  urlWithCredentials: /[a-zA-Z]{2,10}:\/\/[^:\s]{1,64}:[^@\s]{1,64}@[^\s]{1,255}/g,
+  urlWithCredentials:
+    /[a-zA-Z]{2,10}:\/\/[^:\s]{1,64}:[^@\s]{1,64}@[^\s]{1,255}/g,
   // US Passport: 9 characters (alphanumeric, starting with letter for newer formats)
   // Pattern 1: With "passport" prefix or "passport #" context
   // Pattern 2: 1-2 letters followed by 7-9 digits (common format)
@@ -281,7 +282,7 @@ function getKeyAction(key: string): KeyAction {
     action = { type: 'REDACTABLE' };
   }
 
-  if (KEY_ACTION_CACHE.size < 1000) {
+  if (KEY_ACTION_CACHE.size < PII_REDACTION_CONFIG.MAX_KEY_ACTION_CACHE_SIZE) {
     KEY_ACTION_CACHE.set(key, action);
   }
 
