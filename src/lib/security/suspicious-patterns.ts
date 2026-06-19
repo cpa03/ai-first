@@ -612,6 +612,17 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   3: [],
 };
 
+/**
+ * PERFORMANCE: Combined trigger regex for each minimum severity level.
+ * Used as a fast-path to skip individual pattern scanning for safe strings.
+ */
+const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
+  0: null,
+  1: null,
+  2: null,
+  3: null,
+};
+
 // Initialize PATTERNS_BY_MIN_SEVERITY
 (function initializePatternCache() {
   const allPatterns: FlattenedPattern[] = [];
@@ -625,9 +636,33 @@ const PATTERNS_BY_MIN_SEVERITY: Record<number, FlattenedPattern[]> = {
   }
 
   for (let severity = 0; severity <= 3; severity++) {
-    PATTERNS_BY_MIN_SEVERITY[severity] = allPatterns.filter(
-      (p) => p.severity >= severity
-    );
+    const filteredPatterns = allPatterns.filter((p) => p.severity >= severity);
+    PATTERNS_BY_MIN_SEVERITY[severity] = filteredPatterns;
+
+    if (filteredPatterns.length > 0) {
+      try {
+        // Build a combined regex by joining individual pattern sources.
+        // PERFORMANCE: Using non-capturing groups (?:...) to avoid breaking
+        // backreferences (\1, \2, etc.) in individual patterns.
+        // FLAGS: Using 'ims' flags to ensure the combined regex is a safe
+        // superset of all individual patterns (multiline, case-insensitive, dot-all).
+        const combinedSource = filteredPatterns
+          .map((p) => `(?:${p.pattern.source})`)
+          .join('|');
+        COMBINED_TRIGGERS_BY_MIN_SEVERITY[severity] = new RegExp(
+          combinedSource,
+          'ims'
+        );
+      } catch (e) {
+        // Fallback: if combining regex fails (e.g. named group collision),
+        // we skip the fast-path for this severity level.
+        console.error(
+          `Failed to build combined trigger regex for severity ${severity}:`,
+          e
+        );
+        COMBINED_TRIGGERS_BY_MIN_SEVERITY[severity] = null;
+      }
+    }
   }
 })();
 
@@ -660,10 +695,28 @@ type PatternMatch = {
 };
 
 /**
+ * Consolidates LRU cache eviction logic.
+ */
+function evictOldest(cache: Map<string, unknown>): void {
+  if (cache.size >= CACHE_CONFIG.SECURITY.MAX_SIZE) {
+    const firstKey = cache.keys().next().value;
+    if (firstKey !== undefined) {
+      cache.delete(firstKey);
+    }
+  }
+}
+
+/**
  * PERFORMANCE: Results cache for scanString to avoid redundant regex execution
  * on repeated values (e.g., common header values, repeat query params).
+ * Uses a nested Map structure (minSeverity -> input -> matches) to avoid string concatenation.
  */
-const SCAN_RESULT_CACHE = new Map<string, PatternMatch[]>();
+const SCAN_RESULT_CACHE = new Map<number, Map<string, PatternMatch[]>>([
+  [0, new Map()],
+  [1, new Map()],
+  [2, new Map()],
+  [3, new Map()],
+]);
 const EMPTY_FINDINGS: SuspiciousPatternDetail[] = [];
 
 /**
@@ -679,13 +732,14 @@ function scanString(
   if (!input) return EMPTY_FINDINGS;
 
   // PERFORMANCE: Check cache for small inputs to avoid repeated regex runs.
-  // We use a composite key of minSeverity and input.
   const isCacheable =
     input.length < CACHE_CONFIG.SECURITY.INPUT_LENGTH_THRESHOLD;
-  const cacheKey = isCacheable ? `${minSeverity}:${input}` : null;
+  const severityCache = isCacheable
+    ? SCAN_RESULT_CACHE.get(minSeverity)
+    : undefined;
 
-  if (cacheKey) {
-    const cached = SCAN_RESULT_CACHE.get(cacheKey);
+  if (severityCache) {
+    const cached = severityCache.get(input);
     if (cached) {
       if (cached.length === 0) return EMPTY_FINDINGS;
 
@@ -696,6 +750,18 @@ function scanString(
         field,
       }));
     }
+  }
+
+  // PERFORMANCE: Fast-path check using combined trigger regex.
+  // If the combined regex doesn't match, we know no individual patterns will match.
+  const triggerRegex = COMBINED_TRIGGERS_BY_MIN_SEVERITY[minSeverity];
+  if (triggerRegex && !triggerRegex.test(input)) {
+    // Cache the negative result before returning
+    if (severityCache) {
+      evictOldest(severityCache);
+      severityCache.set(input, []);
+    }
+    return EMPTY_FINDINGS;
   }
 
   const matches: PatternMatch[] = [];
@@ -719,15 +785,9 @@ function scanString(
   }
 
   // Cache results if cacheable
-  if (cacheKey) {
-    if (SCAN_RESULT_CACHE.size >= CACHE_CONFIG.SECURITY.MAX_SIZE) {
-      // Simple LRU: delete first entry (oldest insertion)
-      const firstKey = SCAN_RESULT_CACHE.keys().next().value;
-      if (firstKey !== undefined) {
-        SCAN_RESULT_CACHE.delete(firstKey);
-      }
-    }
-    SCAN_RESULT_CACHE.set(cacheKey, matches);
+  if (severityCache) {
+    evictOldest(severityCache);
+    severityCache.set(input, matches);
   }
 
   if (matches.length === 0) return EMPTY_FINDINGS;
@@ -914,5 +974,7 @@ export function getPatternDefinitions(): typeof SUSPICIOUS_PATTERNS {
  * Useful for testing and memory management.
  */
 export function clearScanCache(): void {
-  SCAN_RESULT_CACHE.clear();
+  for (const severityMap of SCAN_RESULT_CACHE.values()) {
+    severityMap.clear();
+  }
 }
