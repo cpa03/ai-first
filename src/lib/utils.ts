@@ -101,7 +101,9 @@ export async function retryWithBackoff<T>(
       );
 
       // Add jitter to prevent thundering herd
-      const jitter = opts.addJitter ? Math.random() * delay * 0.3 : 0;
+      const jitter = opts.addJitter
+        ? Math.random() * delay * RETRY_CONFIG.JITTER_FACTOR
+        : 0;
       const totalDelay = delay + jitter;
 
       // Wait before retrying

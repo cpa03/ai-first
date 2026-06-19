@@ -44,6 +44,13 @@ export const RETRY_CONFIG = {
    * Env: RETRY_ENABLE_JITTER (default: true)
    */
   ENABLE_JITTER: EnvLoader.boolean('RETRY_ENABLE_JITTER', true),
+
+  /**
+   * Jitter factor for retry delays (0-1)
+   * Maximum percentage of delay to add as random jitter
+   * Env: RETRY_JITTER_FACTOR (default: 0.3)
+   */
+  JITTER_FACTOR: EnvLoader.number('RETRY_JITTER_FACTOR', 0.3, 0, 1),
 } as const;
 
 export const OPTIMISTIC_MUTATION_CONFIG = {
