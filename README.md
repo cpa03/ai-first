@@ -309,24 +309,32 @@ All automated work follows this pattern:
 
 ## 📚 Documentation
 
+> **Complete documentation index**: [docs/README.md](./docs/README.md) — 80+ documents organized by category
+
+### Quick Links
+
 - [Blueprint](./docs/blueprint.md) - Complete project architecture
 - [Architecture](./docs/architecture.md) - Technical deep-dive
 - [API Reference](./docs/api.md) - Complete API documentation with examples
-- [Error Codes](./docs/error-codes.md) - Error code reference
-- [Health Monitoring](./docs/health-monitoring.md) - Health check guide
-- [Troubleshooting](./docs/troubleshooting.md) - Common issues and solutions
-- [Agent Guidelines](./docs/agent-guidelines.md) - Agent behavior rules
-- [Deployment](./docs/deploy.md) - Production deployment guide
-- [Integration Hardening](./docs/integration-hardening.md) - Resilience patterns
-- [Templates](./docs/templates/) - User-facing templates
-- [Cloudflare Deployment](./docs/cloudflare-deploy.md) - Cloudflare-specific deployment
+- [Database Schema](./docs/database-schema.md) - Database schema with ERD
 - [Environment Setup](./docs/environment-setup.md) - Development environment setup
+- [Deployment](./docs/deploy.md) - Production deployment guide
 - [FAQ](./docs/faq.md) - Frequently asked questions
-- [Security Headers](./docs/security-headers.md) - HTTP security headers
-- [Technical Writer Guide](./docs/technical-writer.md) - Documentation standards
-- [Task Security](./docs/task-security.md) - Security considerations for tasks
-- [Phase 1 Implementation Plan](./docs/phase-1-implementation-plan.md) - Phase 1 detailed plan
-- [Integration Engineer](./docs/integration-engineer.md) - Integration patterns guide
+
+### Specialist Guides
+
+- [Backend Engineer](./docs/backend-engineer.md) | [Frontend Engineer](./docs/frontend-engineer.md) | [Database Architect](./docs/database-architect.md)
+- [DevOps Engineer](./docs/devops-engineer.md) | [Security Engineer](./docs/security-engineer.md) | [API Specialist](./docs/api-specialist.md)
+- [Quality Assurance](./docs/quality-assurance.md) | [Performance Engineer](./docs/performance-engineer.md)
+
+### Architecture Decision Records
+
+- [ADR Index](./docs/adr/) - All 15 architecture decisions (ADR-000 through ADR-014)
+
+### User Stories & Templates
+
+- [User Stories](./docs/user-stories/) - Authentication, ideas, breakdown, export, growth
+- [Templates](./docs/templates/) - Blueprint, roadmap, tasks, user story templates
 
 ## 🗺️ Roadmap
 

@@ -129,15 +129,75 @@ Complete index of all IdeaFlow documentation.
 
 - [Changelog](../CHANGELOG.md) - Project changelog and version history
 
-## Subdirectories
+## Architecture Decision Records
 
-- [API Specifications](./api/) - OpenAPI specifications
-- [Architecture Decision Records](./adr/) - ADR documentation
-- [Brocula Reports](./brocular/) - Browser audit and verification reports
-- [Implementation Plans](./plans/) - Feature implementation plans
-- [Security](./security/) - Security documentation and logs
-- [Templates](./templates/) - User-downloadable templates
-- [User Stories](./user-stories/) - User story specifications and personas
+- [ADR-000: Template](./adr/ADR-000-template.md) - ADR template for new decisions
+- [ADR-001: AI Abstraction Layer](./adr/ADR-001-ai-abstraction-layer.md) - AI provider abstraction strategy
+- [ADR-002: Supabase Database & Auth](./adr/ADR-002-supabase-database-auth.md) - Database and auth provider choice
+- [ADR-003: Next.js App Router](./adr/ADR-003-nextjs-app-router.md) - Next.js routing strategy
+- [ADR-004: Rate Limiting](./adr/ADR-004-rate-limiting.md) - Rate limiting implementation
+- [ADR-005: Circuit Breaker](./adr/ADR-005-circuit-breaker.md) - Circuit breaker pattern
+- [ADR-006: Standardized Errors](./adr/ADR-006-standardized-errors.md) - Error handling standards
+- [ADR-007: TypeScript Strict Mode](./adr/ADR-007-typescript-strict-mode.md) - TypeScript configuration
+- [ADR-008: Tailwind CSS](./adr/ADR-008-tailwind-css.md) - Styling approach
+- [ADR-009: Vercel Hosting](./adr/ADR-009-vercel-hosting.md) - Hosting platform choice
+- [ADR-010: GitHub Actions CI/CD](./adr/ADR-010-github-actions-ci-cd.md) - CI/CD pipeline
+- [ADR-011: Supabase Database Services](./adr/ADR-011-supabase-database-services.md) - Database service patterns
+- [ADR-012: REST API Design Patterns](./adr/ADR-012-rest-api-design-patterns.md) - API design standards
+- [ADR-013: Resilience Patterns](./adr/ADR-013-resilience-patterns.md) - Resilience and retry patterns
+- [ADR-014: Supabase Auth](./adr/ADR-014-supabase-auth.md) - Authentication implementation
+
+## Templates
+
+- [Blueprint Template](./templates/blueprint_template.md) - Blueprint document template
+- [Roadmap Template](./templates/roadmap_template.md) - Roadmap document template
+- [Tasks Template](./templates/tasks_template.md) - Tasks document template
+- [User Story Template](./templates/user-story_template.md) - User story template
+- [Specialist User Story Template](./templates/specialist-user-story_template.md) - Specialist user story template
+
+## User Stories
+
+### Authentication
+
+- [US-AUTH-001: Signup](./user-stories/authentication/us-auth-001-signup.md) - User signup flow
+- [US-AUTH-002: Login](./user-stories/authentication/us-auth-002-login.md) - User login flow
+- [US-AUTH-003: Password Reset](./user-stories/authentication/us-auth-003-password-reset.md) - Password reset flow
+
+### Idea Management
+
+- [US-IDEA-001: Submission](./user-stories/idea-management/us-idea-001-submission.md) - Idea submission flow
+- [US-IDEA-002: Dashboard](./user-stories/idea-management/us-idea-002-dashboard.md) - Dashboard management
+
+### Breakdown
+
+- [US-BREAKDOWN-001: Engine](./user-stories/breakdown/us-breakdown-001-engine.md) - Breakdown engine flow
+
+### Export
+
+- [US-EXPORT-001: Markdown](./user-stories/export/us-export-001-markdown.md) - Markdown export flow
+
+### Growth
+
+- [US-GROWTH-001: Share](./user-stories/growth/us-growth-001-share.md) - Sharing functionality
+- [US-GROWTH-002: Referral](./user-stories/growth/us-growth-002-referral.md) - Referral system
+
+### Personas
+
+- [User Personas](./user-stories/personas.md) - Primary user personas
+
+## Implementation Plans
+
+- [Flexy Modularity Plan](./plans/flexy-modularity-plan.md) - Modular architecture plan
+- [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
+
+## Security Reports
+
+- [Security Audit P0](./security/SECURITY_AUDIT_P0_1135.md) - Priority-0 security audit
+- [Security Sentinel](./security/sentinel.md) - Security vulnerability log
+
+## Reports
+
+- [Brocula Verification Report](./brocular/verification-report-20260518.md) - Browser audit verification
 
 ---
 
