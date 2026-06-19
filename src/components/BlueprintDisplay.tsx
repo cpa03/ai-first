@@ -1,6 +1,7 @@
 'use client';
 
 import React, {
+  useState,
   useSyncExternalStore,
   useRef,
   useEffect,
@@ -224,12 +225,16 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
         <div className="p-4 sm:p-8">
           <div className="prose prose-sm sm:prose-lg max-w-none">
-            <pre
-              className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
-              aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
-            >
-              {blueprint}
-            </pre>
+            <div className="relative group">
+              <pre
+                className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
+                aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
+              >
+                {blueprint}
+              </pre>
+              {/* Micro-UX: Copy button on code block for easy copying */}
+              <CopyCodeButton text={blueprint || ''} />
+            </div>
           </div>
         </div>
 
@@ -287,5 +292,91 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     </div>
   );
 };
+
+function CopyCodeButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot
+  );
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleCopy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      triggerHapticFeedback();
+      setCopied(true);
+
+      timeoutRef.current = setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy blueprint:', err);
+    }
+  }, [text]);
+
+  return (
+    <button
+      onClick={handleCopy}
+      className={`
+        absolute top-3 right-3 
+        flex items-center gap-1.5 px-2.5 py-1.5 
+        text-xs font-medium rounded-md
+        transition-all duration-200 ease-out
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+        ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
+        ${
+          copied
+            ? 'bg-green-100 text-green-700 border border-green-200'
+            : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 focus-visible:opacity-100'
+        }
+      `}
+      aria-label={
+        copied ? 'Copied to clipboard' : 'Copy blueprint to clipboard'
+      }
+      aria-live="polite"
+      type="button"
+    >
+      {copied ? (
+        <svg
+          className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2.5}
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
+      ) : (
+        <svg
+          className="w-3.5 h-3.5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden="true"
+        >
+          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+        </svg>
+      )}
+      <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>
+    </button>
+  );
+}
 
 export default React.memo(BlueprintDisplayComponent);
