@@ -65,6 +65,21 @@ export const TOOLTIP_LABELS = {
 } as const;
 
 /**
+ * Layout Error Fallback Labels
+ * Eliminates hardcoded strings in LayoutErrorFallback component
+ */
+export const LAYOUT_ERROR_LABELS = {
+  /** Retry button label */
+  RETRY_BUTTON: 'Try Again',
+  /** Home link label */
+  HOME_LINK: 'Back to Home',
+  /** Default error title */
+  DEFAULT_TITLE: 'Something went wrong',
+  /** Default error message */
+  DEFAULT_MESSAGE: 'An unexpected error occurred. Please try again.',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -73,9 +88,11 @@ export const COMPONENT_LABELS = {
   COPY_BUTTON: COPY_BUTTON_LABELS,
   INPUT_VALIDATION: INPUT_VALIDATION_LABELS,
   TOOLTIP: TOOLTIP_LABELS,
+  LAYOUT_ERROR: LAYOUT_ERROR_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
 export type CopyButtonLabels = typeof COPY_BUTTON_LABELS;
 export type InputValidationLabels = typeof INPUT_VALIDATION_LABELS;
+export type LayoutErrorLabels = typeof LAYOUT_ERROR_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
