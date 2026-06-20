@@ -232,6 +232,7 @@ function ClarificationFlow({
       </div>
 
       <section
+        key={currentStep}
         aria-labelledby="question-heading"
         aria-describedby="question-description"
         className="bg-white rounded-lg shadow-lg p-6 sm:p-8 scale-in"
