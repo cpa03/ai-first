@@ -13,6 +13,7 @@ import {
   API_ERROR_MESSAGES,
   ROUTES,
   LOGIN_PAGE_CONTENT,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -268,7 +269,7 @@ export default function LoginPage() {
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        strokeWidth={3}
+                        strokeWidth={SVG_STROKE_WIDTHS.THICK}
                         strokeLinecap="round"
                         strokeLinejoin="round"
                       >

@@ -13,6 +13,8 @@ import {
   UI_CONFIG,
   KEYBOARD_SHORTCUTS_MESSAGES,
   LOCAL_STORAGE_KEYS,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -439,7 +441,7 @@ function KeyboardShortcutsHelpComponent({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className={`fixed inset-0 z-[${Z_INDEX_LAYERS.MODAL}] flex items-center justify-center p-4`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="keyboard-shortcuts-title"
@@ -464,7 +466,7 @@ function KeyboardShortcutsHelpComponent({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
@@ -492,7 +494,7 @@ function KeyboardShortcutsHelpComponent({
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth={2}
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 >
                   <path
                     strokeLinecap="round"
@@ -544,7 +546,7 @@ function KeyboardShortcutsHelpComponent({
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               >
                 <path
                   strokeLinecap="round"
@@ -578,7 +580,7 @@ function KeyboardShortcutsHelpComponent({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
             >
               <path
                 strokeLinecap="round"

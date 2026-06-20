@@ -8,7 +8,11 @@ import React, {
   useSyncExternalStore,
   memo,
 } from 'react';
-import { COMPONENT_DEFAULTS } from '@/lib/config';
+import {
+  COMPONENT_DEFAULTS,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 
@@ -196,7 +200,7 @@ function ScrollToTopComponent({
   );
 
   return (
-    <div className="fixed bottom-8 right-8 z-50">
+    <div className={`fixed bottom-8 right-8 z-[${Z_INDEX_LAYERS.TOAST}]`}>
       <Tooltip content={tooltipContent} position="top">
         <button
           onClick={scrollToTop}
@@ -238,7 +242,7 @@ function ScrollToTopComponent({
                 r="22"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 className="text-gray-100"
               />
               <circle
@@ -247,7 +251,7 @@ function ScrollToTopComponent({
                 r="22"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 strokeLinecap="round"
                 className="text-primary-500 transition-all duration-150 ease-out"
                 style={{
@@ -275,7 +279,7 @@ function ScrollToTopComponent({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <path

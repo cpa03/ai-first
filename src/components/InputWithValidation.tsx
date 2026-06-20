@@ -18,6 +18,7 @@ import {
   ANIMATION_DELAYS,
   STATE_SHADOWS,
   INPUT_VALIDATION_LABELS,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -341,7 +342,7 @@ const InputWithValidationComponent = forwardRef<
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth={2}
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                     aria-hidden="true"
                   >
                     <path
@@ -374,7 +375,7 @@ const InputWithValidationComponent = forwardRef<
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth={2}
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                     aria-hidden="true"
                   >
                     <path
@@ -404,7 +405,7 @@ const InputWithValidationComponent = forwardRef<
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
-                    strokeWidth={2}
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                     aria-hidden="true"
                   >
                     <path
@@ -450,7 +451,7 @@ const InputWithValidationComponent = forwardRef<
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      strokeWidth={2}
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-hidden="true"
                     >
                       <path
@@ -465,7 +466,7 @@ const InputWithValidationComponent = forwardRef<
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      strokeWidth={2}
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-hidden="true"
                     >
                       <path

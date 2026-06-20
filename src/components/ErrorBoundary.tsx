@@ -10,6 +10,7 @@ import {
   MESSAGES,
   BUTTON_LABELS,
   COMPONENT_DEFAULTS,
+  Z_INDEX_LAYERS,
 } from '@/lib/config';
 
 interface Props {
@@ -81,7 +82,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         <>
           <a
             href="#error-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md"
+            className={`sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[${Z_INDEX_LAYERS.TOAST}] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md`}
           >
             Skip to error content
           </a>

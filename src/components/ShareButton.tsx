@@ -3,7 +3,11 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { APP_CONFIG, SHARE_BUTTON_LABELS } from '@/lib/config';
+import {
+  APP_CONFIG,
+  SHARE_BUTTON_LABELS,
+  SVG_STROKE_WIDTHS,
+} from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -213,7 +217,7 @@ const ShareButtonComponent = function ShareButton({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <path
@@ -232,7 +236,7 @@ const ShareButtonComponent = function ShareButton({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={3}
+              strokeWidth={SVG_STROKE_WIDTHS.THICK}
               aria-hidden="true"
             >
               <path

@@ -114,6 +114,8 @@ export {
   TABLE_PATTERNS,
   MODAL_PATTERNS,
   SPINNER_PATTERNS,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
 } from './theme';
 
 // Page Configuration

@@ -5,6 +5,7 @@ import KeyboardShortcutsHelp, {
 } from '@/components/KeyboardShortcutsHelp';
 import Tooltip from '@/components/Tooltip';
 import SessionTracker from '@/components/SessionTracker';
+import { SVG_STROKE_WIDTHS } from '@/lib/config';
 import {
   createContext,
   useContext,
@@ -82,7 +83,7 @@ function KeyboardShortcutsButtonComponent() {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
         >
           <path

@@ -12,6 +12,7 @@ import {
   ALERT_STYLES,
   ALERT_BASE_STYLES,
   COMPONENT_CONFIG,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -242,7 +243,7 @@ const AlertComponent = function Alert({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <path

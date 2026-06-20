@@ -12,6 +12,7 @@ import {
   API_ERROR_MESSAGES,
   ROUTES,
   SIGNUP_PAGE_CONTENT,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -53,7 +54,7 @@ function PasswordMatchIndicator({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
         >
           <path
@@ -68,7 +69,7 @@ function PasswordMatchIndicator({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
         >
           <path
@@ -354,7 +355,7 @@ export default function SignupPage() {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 d="M5 13l4 4L19 7"
               />
             </svg>

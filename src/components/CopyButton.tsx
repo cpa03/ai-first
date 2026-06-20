@@ -3,7 +3,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { COPY_BUTTON_LABELS } from '@/lib/config';
+import { COPY_BUTTON_LABELS, SVG_STROKE_WIDTHS } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -144,7 +144,7 @@ const CopyButtonComponent = function CopyButton({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
@@ -159,7 +159,7 @@ const CopyButtonComponent = function CopyButton({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={3}
+              strokeWidth={SVG_STROKE_WIDTHS.THICK}
               aria-hidden="true"
             >
               <path

@@ -14,7 +14,12 @@ import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
-import { MESSAGES, COMPONENT_DEFAULTS, COMPONENT_CONFIG } from '@/lib/config';
+import {
+  MESSAGES,
+  COMPONENT_DEFAULTS,
+  COMPONENT_CONFIG,
+  SVG_STROKE_WIDTHS,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 const subscribe = (callback: () => void) => {
@@ -352,7 +357,7 @@ function CopyCodeButton({ text }: { text: string }) {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2.5}
+          strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
           aria-hidden="true"
         >
           <path
@@ -367,7 +372,7 @@ function CopyCodeButton({ text }: { text: string }) {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
         >
           <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
