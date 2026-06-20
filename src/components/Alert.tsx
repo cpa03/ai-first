@@ -8,7 +8,11 @@ import React, {
   useSyncExternalStore,
 } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
-import { ALERT_STYLES, ALERT_BASE_STYLES } from '@/lib/config';
+import {
+  ALERT_STYLES,
+  ALERT_BASE_STYLES,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 
@@ -77,9 +81,9 @@ const ALERT_ICONS = {
   ),
 } as const;
 
-const DEFAULT_DISMISS_DELAYS: Record<string, number> = {
-  success: 5000,
-  info: 3000,
+const ALERT_DISMISS_DELAYS: Record<string, number> = {
+  success: COMPONENT_CONFIG.ALERT.SUCCESS_DISMISS_MS,
+  info: COMPONENT_CONFIG.ALERT.INFO_DISMISS_MS,
 };
 
 const AlertComponent = function Alert({
@@ -104,7 +108,10 @@ const AlertComponent = function Alert({
   const shouldAutoDismiss =
     autoDismiss && (type === 'success' || type === 'info') && onClose;
 
-  const effectiveDelay = dismissDelay ?? DEFAULT_DISMISS_DELAYS[type] ?? 5000;
+  const effectiveDelay =
+    dismissDelay ??
+    ALERT_DISMISS_DELAYS[type] ??
+    COMPONENT_CONFIG.ALERT.DEFAULT_DISMISS_MS;
 
   const cleanupTimers = useCallback(() => {
     if (timeoutRef.current) {
@@ -124,7 +131,7 @@ const AlertComponent = function Alert({
   useEffect(() => {
     if (!shouldAutoDismiss || isPaused) return;
 
-    const updateInterval = 50;
+    const updateInterval = COMPONENT_CONFIG.ALERT.PROGRESS_INTERVAL_MS;
     const totalSteps = effectiveDelay / updateInterval;
     let currentStep = 0;
 
