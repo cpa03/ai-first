@@ -56,9 +56,12 @@ export const CLARIFIER_CONFIG = {
   } as const,
 
   LIMITS: {
-    MAX_QUESTIONS: 10,
-    MIN_QUESTIONS: 3,
-    MAX_OPTIONS: 6,
+    /** Env: CLARIFIER_MAX_QUESTIONS (default: 10) */
+    MAX_QUESTIONS: EnvLoader.number('CLARIFIER_MAX_QUESTIONS', 10, 1, 20),
+    /** Env: CLARIFIER_MIN_QUESTIONS (default: 3) */
+    MIN_QUESTIONS: EnvLoader.number('CLARIFIER_MIN_QUESTIONS', 3, 1, 10),
+    /** Env: CLARIFIER_MAX_OPTIONS (default: 6) */
+    MAX_OPTIONS: EnvLoader.number('CLARIFIER_MAX_OPTIONS', 6, 2, 10),
   },
 } as const;
 
@@ -111,7 +114,13 @@ Respond in JSON format with a "questions" array.`,
 
 export const AI_CONFIG = {
   CACHE: {
-    KEY_HASH_LENGTH: 64,
+    /** Env: AGENT_CACHE_KEY_HASH_LENGTH (default: 64) */
+    KEY_HASH_LENGTH: EnvLoader.number(
+      'AGENT_CACHE_KEY_HASH_LENGTH',
+      64,
+      8,
+      128
+    ),
     /** Env: AGENT_CACHE_TTL_SECONDS (default: 3600) */
     TTL_SECONDS: EnvLoader.number('AGENT_CACHE_TTL_SECONDS', 3600, 60, 86400),
     /** Env: AGENT_CACHE_MAX_ENTRIES (default: 1000) */
@@ -119,13 +128,32 @@ export const AI_CONFIG = {
   },
 
   TOKENIZATION: {
-    CHARS_PER_TOKEN: 4,
-    AVG_TOKENS_PER_WORD: 1.3,
+    /** Env: AGENT_TOKENIZATION_CHARS_PER_TOKEN (default: 4) */
+    CHARS_PER_TOKEN: EnvLoader.number(
+      'AGENT_TOKENIZATION_CHARS_PER_TOKEN',
+      4,
+      1,
+      10
+    ),
+    /** Env: AGENT_TOKENIZATION_AVG_TOKENS_PER_WORD (default: 1.3) */
+    AVG_TOKENS_PER_WORD: EnvLoader.number(
+      'AGENT_TOKENIZATION_AVG_TOKENS_PER_WORD',
+      1.3,
+      0.5,
+      3
+    ),
   },
 
   RETRY: {
-    MAX_ATTEMPTS: 3,
-    BACKOFF_MULTIPLIER: 2,
+    /** Env: AGENT_RETRY_MAX_ATTEMPTS (default: 3) */
+    MAX_ATTEMPTS: EnvLoader.number('AGENT_RETRY_MAX_ATTEMPTS', 3, 1, 10),
+    /** Env: AGENT_RETRY_BACKOFF_MULTIPLIER (default: 2) */
+    BACKOFF_MULTIPLIER: EnvLoader.number(
+      'AGENT_RETRY_BACKOFF_MULTIPLIER',
+      2,
+      1,
+      10
+    ),
     /** Env: AGENT_RETRY_INITIAL_DELAY_MS (default: 1000) */
     INITIAL_DELAY_MS: EnvLoader.number(
       'AGENT_RETRY_INITIAL_DELAY_MS',

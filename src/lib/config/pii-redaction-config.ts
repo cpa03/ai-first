@@ -84,6 +84,13 @@ export const PII_REDACTION_CONFIG = {
   ] as const,
 
   /**
+   * Minimum string length to check for PII patterns
+   * Strings shorter than this are returned unchanged for performance
+   * NOTE: Not environment-configurable as this is a performance optimization
+   */
+  MIN_LENGTH_FOR_PII_CHECK: 4,
+
+  /**
    * Maximum recursion depth for PII redaction in nested objects
    * Prevents stack overflow on deeply nested or circular structures
    * NOTE: Not environment-configurable as this is a safety limit
