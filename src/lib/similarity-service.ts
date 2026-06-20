@@ -9,6 +9,12 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { dbService } from './db';
 import { createLogger } from './logger';
 import { SIMILARITY_CONFIG } from './config/similarity-config';
+import {
+  DB_TABLES,
+  DB_RPC,
+  DB_REFERENCE_TYPES,
+  DB_COLUMNS,
+} from './config/database-tables';
 
 const logger = createLogger('SimilarityService');
 
@@ -81,10 +87,10 @@ export async function findSimilarIdeas(
 
   // Get the embedding for this idea
   const { data: vectorData, error: vectorError } = await supabase
-    .from('vectors')
-    .select('embedding')
-    .eq('idea_id', ideaId)
-    .eq('reference_type', 'idea')
+    .from(DB_TABLES.VECTORS)
+    .select(DB_COLUMNS.EMBEDDING)
+    .eq(DB_COLUMNS.IDEA_ID, ideaId)
+    .eq(DB_COLUMNS.REFERENCE_TYPE, DB_REFERENCE_TYPES.IDEA)
     .single();
 
   if (vectorError || !vectorData?.embedding) {
@@ -94,7 +100,7 @@ export async function findSimilarIdeas(
 
   // Find similar ideas using the match_vectors function
   const { data: similarResults, error: matchError } = await supabase.rpc(
-    'match_vectors',
+    DB_RPC.MATCH_VECTORS,
     {
       idea_id_filter: ideaId, // Exclude the current idea
       match_count: limit + 1,
@@ -161,9 +167,9 @@ export async function storeIdeaEmbedding(
 ): Promise<void> {
   const supabase = getSupabaseClient();
 
-  await supabase.from('vectors').insert({
+  await supabase.from(DB_TABLES.VECTORS).insert({
     idea_id: ideaId,
-    reference_type: 'idea',
+    reference_type: DB_REFERENCE_TYPES.IDEA,
     reference_id: ideaId,
     embedding: embeddingResult.embedding,
     vector_data: {
