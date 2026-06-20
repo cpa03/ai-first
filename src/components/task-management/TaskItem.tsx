@@ -10,6 +10,7 @@ import {
   TASK_ITEM_STYLES,
   TASK_MANAGEMENT_MESSAGES,
   TASK_ANIMATION_CONFIG,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
