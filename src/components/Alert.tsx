@@ -1,10 +1,38 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useSyncExternalStore,
+} from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 import { ALERT_STYLES, ALERT_BASE_STYLES } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
+
+const subscribeToReducedMotion = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getReducedMotionSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getReducedMotionServerSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToReducedMotion,
+    getReducedMotionSnapshot,
+    getReducedMotionServerSnapshot
+  );
+}
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';
@@ -12,6 +40,10 @@ interface AlertProps {
   children: React.ReactNode;
   className?: string;
   onClose?: () => void;
+  /** Auto-dismiss after delay (only for success and info alerts) */
+  autoDismiss?: boolean;
+  /** Delay in ms before auto-dismiss (default: 5000ms for success, 3000ms for info) */
+  dismissDelay?: number;
 }
 
 const ALERT_ICONS = {
@@ -45,35 +77,88 @@ const ALERT_ICONS = {
   ),
 } as const;
 
+const DEFAULT_DISMISS_DELAYS: Record<string, number> = {
+  success: 5000,
+  info: 3000,
+};
+
 const AlertComponent = function Alert({
   type,
   title,
   children,
   className = '',
   onClose,
+  autoDismiss = false,
+  dismissDelay,
 }: AlertProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [progress, setProgress] = useState(100);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const progressRef = useRef<NodeJS.Timeout | null>(null);
+  const progressValueRef = useRef(100);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
-  // Cleanup timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
+  const shouldAutoDismiss =
+    autoDismiss && (type === 'success' || type === 'info') && onClose;
+
+  const effectiveDelay = dismissDelay ?? DEFAULT_DISMISS_DELAYS[type] ?? 5000;
+
+  const cleanupTimers = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    if (progressRef.current) {
+      clearInterval(progressRef.current);
+      progressRef.current = null;
+    }
   }, []);
 
+  useEffect(() => {
+    return cleanupTimers;
+  }, [cleanupTimers]);
+
+  useEffect(() => {
+    if (!shouldAutoDismiss || isPaused) return;
+
+    const updateInterval = 50;
+    const totalSteps = effectiveDelay / updateInterval;
+    let currentStep = 0;
+
+    progressRef.current = setInterval(() => {
+      currentStep++;
+      const remainingProgress = Math.max(
+        0,
+        100 - (currentStep / totalSteps) * 100
+      );
+      progressValueRef.current = remainingProgress;
+      setProgress(remainingProgress);
+
+      if (currentStep >= totalSteps) {
+        cleanupTimers();
+        setIsExiting(true);
+        timeoutRef.current = setTimeout(() => {
+          setIsVisible(false);
+          onClose?.();
+        }, ANIMATION_CONFIG.ALERT_EXIT);
+      }
+    }, updateInterval);
+
+    return cleanupTimers;
+  }, [shouldAutoDismiss, isPaused, effectiveDelay, cleanupTimers, onClose]);
+
   const handleClose = useCallback(() => {
+    cleanupTimers();
     triggerHapticFeedback();
     setIsExiting(true);
     timeoutRef.current = setTimeout(() => {
       setIsVisible(false);
       onClose?.();
     }, ANIMATION_CONFIG.ALERT_EXIT);
-  }, [onClose]);
+  }, [cleanupTimers, onClose]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -94,6 +179,18 @@ const AlertComponent = function Alert({
     ? ALERT_BASE_STYLES.exiting
     : ALERT_BASE_STYLES.visible;
 
+  const handleMouseEnter = () => {
+    if (shouldAutoDismiss) {
+      setIsPaused(true);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (shouldAutoDismiss) {
+      setIsPaused(false);
+    }
+  };
+
   return (
     <div
       role="alert"
@@ -104,6 +201,10 @@ const AlertComponent = function Alert({
         ${visibilityClass}
         ${className}
       `}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onFocus={handleMouseEnter}
+      onBlur={handleMouseLeave}
     >
       <svg
         className={`w-5 h-5 ${styles.iconColor} flex-shrink-0 mt-0.5`}
@@ -145,6 +246,16 @@ const AlertComponent = function Alert({
             </svg>
           </button>
         </Tooltip>
+      )}
+      {shouldAutoDismiss && !prefersReducedMotion && (
+        <div
+          className="absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
+          style={{
+            width: `${progress}%`,
+            transitionDuration: isPaused ? '0ms' : '75ms',
+          }}
+          aria-hidden="true"
+        />
       )}
     </div>
   );
