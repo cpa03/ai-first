@@ -12,6 +12,7 @@ import {
   TASK_ANIMATION_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
 
@@ -52,6 +53,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, isUpdating, task.status]);
 
   const handleClick = useCallback(() => {
+    triggerHapticFeedback();
     setIsToggled(true);
     onToggle(task.id, task.status);
     toggleTimeoutRef.current = setTimeout(() => {
@@ -120,7 +122,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   }, [isCompleted, showCelebration, task.risk_level, prefersReducedMotion]);
 
   return (
-    <div className={containerClasses}>
+    <div className="relative group">
       <StatusAnnouncer
         message={
           isCompleted
@@ -134,121 +136,126 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           disabled={isUpdating}
-          className={checkboxClasses}
-          aria-label={TASK_MANAGEMENT_MESSAGES.ARIA.CHECKBOX_LABEL(
+          className={containerClasses}
+          aria-label={`${TASK_MANAGEMENT_MESSAGES.ARIA.CHECKBOX_LABEL(
             task.title,
             isCompleted
-          )}
+          )}. ${task.description ? task.description + '.' : ''} ${task.estimate ? 'Estimate: ' + task.estimate + ' hours.' : ''} ${task.assignee ? 'Assignee: ' + task.assignee + '.' : ''} ${task.risk_level !== 'low' ? 'Risk: ' + task.risk_level + '.' : ''}`}
           aria-pressed={isCompleted}
           type="button"
         >
-          {isCompleted && (
-            <svg
-              key={`check-${task.id}`}
-              className={TASK_ITEM_STYLES.CHECKMARK.CONTAINER}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              style={checkmarkStyle}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={TASK_ITEM_STYLES.CHECKMARK.STROKE_WIDTH}
-                d={TASK_ITEM_STYLES.CHECKMARK.PATH}
-              />
-            </svg>
-          )}
-          {isUpdating && (
-            <svg
-              className={TASK_ITEM_STYLES.LOADING_SPINNER.CONTAINER}
-              fill="none"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
+          <div className={checkboxClasses} aria-hidden="true">
+            {isCompleted && (
+              <svg
+                key={`check-${task.id}`}
+                className={TASK_ITEM_STYLES.CHECKMARK.CONTAINER}
+                fill="none"
                 stroke="currentColor"
-                strokeWidth={TASK_ITEM_STYLES.LOADING_SPINNER.STROKE_WIDTH}
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              />
-            </svg>
-          )}
+                viewBox="0 0 24 24"
+                style={checkmarkStyle}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={TASK_ITEM_STYLES.CHECKMARK.STROKE_WIDTH}
+                  d={TASK_ITEM_STYLES.CHECKMARK.PATH}
+                />
+              </svg>
+            )}
+            {isUpdating && (
+              <svg
+                className={TASK_ITEM_STYLES.LOADING_SPINNER.CONTAINER}
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth={TASK_ITEM_STYLES.LOADING_SPINNER.STROKE_WIDTH}
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                />
+              </svg>
+            )}
+          </div>
+
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-2">
+              <p className={titleClasses}>{task.title}</p>
+              <span
+                className={`${TASK_ITEM_STYLES.STATUS_BADGE.BASE} ${taskStatus.bgColor} ${taskStatus.color}`}
+              >
+                {taskStatus.label}
+              </span>
+            </div>
+
+            {task.description && (
+              <p className={TASK_ITEM_STYLES.DESCRIPTION} aria-hidden="true">
+                {task.description}
+              </p>
+            )}
+
+            <div
+              className={TASK_ITEM_STYLES.METADATA.CONTAINER}
+              aria-hidden="true"
+            >
+              {task.estimate > 0 && (
+                <span className="flex items-center gap-1">
+                  <svg
+                    className={TASK_ITEM_STYLES.METADATA.ICON}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  {task.estimate}h
+                </span>
+              )}
+              {task.assignee && (
+                <span className="flex items-center gap-1">
+                  <svg
+                    className={TASK_ITEM_STYLES.METADATA.ICON}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  {task.assignee}
+                </span>
+              )}
+              {task.risk_level !== 'low' && (
+                <span
+                  className={`${TASK_ITEM_STYLES.METADATA.RISK_BADGE} ${
+                    RISK_LEVEL_CONFIG[task.risk_level].bgColor
+                  } ${RISK_LEVEL_CONFIG[task.risk_level].textColor}`}
+                >
+                  {task.risk_level} risk
+                </span>
+              )}
+            </div>
+          </div>
         </button>
       </Tooltip>
-
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <p className={titleClasses}>{task.title}</p>
-          <span
-            className={`${TASK_ITEM_STYLES.STATUS_BADGE.BASE} ${taskStatus.bgColor} ${taskStatus.color}`}
-          >
-            {taskStatus.label}
-          </span>
-        </div>
-
-        {task.description && (
-          <p className={TASK_ITEM_STYLES.DESCRIPTION}>{task.description}</p>
-        )}
-
-        <div className={TASK_ITEM_STYLES.METADATA.CONTAINER}>
-          {task.estimate > 0 && (
-            <span className="flex items-center gap-1">
-              <svg
-                className={TASK_ITEM_STYLES.METADATA.ICON}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              {task.estimate}h
-            </span>
-          )}
-          {task.assignee && (
-            <span className="flex items-center gap-1">
-              <svg
-                className={TASK_ITEM_STYLES.METADATA.ICON}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              {task.assignee}
-            </span>
-          )}
-          {task.risk_level !== 'low' && (
-            <span
-              className={`${TASK_ITEM_STYLES.METADATA.RISK_BADGE} ${
-                RISK_LEVEL_CONFIG[task.risk_level].bgColor
-              } ${RISK_LEVEL_CONFIG[task.risk_level].textColor}`}
-            >
-              {task.risk_level} risk
-            </span>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
