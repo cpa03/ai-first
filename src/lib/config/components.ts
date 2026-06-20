@@ -182,6 +182,21 @@ export const COMPONENT_CONFIG = {
     SCALE: 1,
   },
 
+  IDEA_READY_INDICATOR: {
+    /** Delay before showing checkmark animation (ms) - Env: COMPONENT_IDEA_READY_DELAY_MS (default: 150) */
+    DELAY_MS: EnvLoader.number('COMPONENT_IDEA_READY_DELAY_MS', 150, 50, 1000),
+  } as const,
+
+  INPUT_VALIDATION: {
+    /** Duration for success flash animation (ms) - Env: COMPONENT_INPUT_SUCCESS_FLASH_MS (default: 1500) */
+    SUCCESS_FLASH_DURATION_MS: EnvLoader.number(
+      'COMPONENT_INPUT_SUCCESS_FLASH_MS',
+      1500,
+      200,
+      5000
+    ),
+  } as const,
+
   ONBOARDING: {
     /** Env: COMPONENT_ONBOARDING_DELAY_MS (default: 1500) */
     DELAY_MS: EnvLoader.number(
@@ -196,6 +211,31 @@ export const COMPONENT_CONFIG = {
       50,
       1000
     ),
+    TOOLTIP: {
+      /** Tooltip width in pixels - Env: COMPONENT_ONBOARDING_TOOLTIP_WIDTH (default: 300) */
+      WIDTH: EnvLoader.number(
+        'COMPONENT_ONBOARDING_TOOLTIP_WIDTH',
+        300,
+        200,
+        600
+      ),
+      /** Tooltip height in pixels - Env: COMPONENT_ONBOARDING_TOOLTIP_HEIGHT (default: 150) */
+      HEIGHT: EnvLoader.number(
+        'COMPONENT_ONBOARDING_TOOLTIP_HEIGHT',
+        150,
+        80,
+        400
+      ),
+      /** Gap between tooltip and target element (px) - Env: COMPONENT_ONBOARDING_TOOLTIP_GAP (default: 12) */
+      GAP: EnvLoader.number('COMPONENT_ONBOARDING_TOOLTIP_GAP', 12, 4, 40),
+      /** Viewport padding (px) - Env: COMPONENT_ONBOARDING_TOOLTIP_VIEWPORT_PADDING (default: 10) */
+      VIEWPORT_PADDING: EnvLoader.number(
+        'COMPONENT_ONBOARDING_TOOLTIP_VIEWPORT_PADDING',
+        10,
+        0,
+        50
+      ),
+    },
   },
 } as const;
 

@@ -14,7 +14,7 @@ import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
-import { MESSAGES, COMPONENT_DEFAULTS } from '@/lib/config';
+import { MESSAGES, COMPONENT_DEFAULTS, COMPONENT_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 const subscribe = (callback: () => void) => {
@@ -318,7 +318,7 @@ function CopyCodeButton({ text }: { text: string }) {
 
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
-      }, 2000);
+      }, COMPONENT_CONFIG.COPY_FEEDBACK.DURATION_MS);
     } catch (err) {
       console.error('Failed to copy blueprint:', err);
     }
