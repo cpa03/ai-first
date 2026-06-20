@@ -18,6 +18,7 @@ import InputWithValidation from './InputWithValidation';
 import AutoSaveIndicator from './AutoSaveIndicator';
 import SuccessCelebration from './SuccessCelebration';
 import StatusAnnouncer from './StatusAnnouncer';
+import IdeaReadyIndicator from './IdeaReadyIndicator';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
@@ -266,15 +267,26 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         )}
 
         {writingProgress > 5 && (
-          <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
-            <div
-              className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary-400 to-primary-600 transition-all duration-300 ease-out rounded-full"
-              style={{ width: `${writingProgress}%` }}
-              role="progressbar"
-              aria-valuenow={Math.round(writingProgress)}
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-label="Writing progress"
+          <div className="space-y-2">
+            <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div
+                className={`absolute left-0 top-0 h-full transition-all duration-300 ease-out rounded-full ${
+                  idea.trim().length >= MIN_IDEA_LENGTH
+                    ? 'bg-gradient-to-r from-green-400 to-green-600'
+                    : 'bg-gradient-to-r from-primary-400 to-primary-600'
+                }`}
+                style={{ width: `${writingProgress}%` }}
+                role="progressbar"
+                aria-valuenow={Math.round(writingProgress)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="Writing progress"
+              />
+            </div>
+            <IdeaReadyIndicator
+              isReady={
+                idea.trim().length >= MIN_IDEA_LENGTH && !validationError
+              }
             />
           </div>
         )}
