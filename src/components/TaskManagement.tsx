@@ -11,6 +11,7 @@ import {
   BUTTON_LABELS,
   COMPONENT_DEFAULTS,
   ANIMATION_CONFIG,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 
 interface TaskManagementProps {
@@ -84,7 +85,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={1.5}
+                strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
               >
                 <path
                   strokeLinecap="round"
@@ -106,7 +107,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <path

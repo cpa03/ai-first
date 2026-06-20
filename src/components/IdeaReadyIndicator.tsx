@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useState } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { COMPONENT_CONFIG } from '@/lib/config';
+import { COMPONENT_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
   isReady: boolean;
@@ -59,7 +59,7 @@ function IdeaReadyIndicatorComponent({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={3}
+          strokeWidth={SVG_STROKE_WIDTHS.THICK}
           aria-hidden="true"
         >
           <path

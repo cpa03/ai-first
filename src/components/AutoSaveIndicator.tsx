@@ -1,7 +1,11 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { COMPONENT_CONFIG, ANIMATION_DELAYS } from '@/lib/config';
+import {
+  COMPONENT_CONFIG,
+  ANIMATION_DELAYS,
+  SVG_STROKE_WIDTHS,
+} from '@/lib/config';
 
 interface AutoSaveIndicatorProps {
   value: string;
@@ -198,7 +202,7 @@ function AutoSaveIndicatorComponent({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              strokeWidth={3}
+              strokeWidth={SVG_STROKE_WIDTHS.THICK}
               aria-hidden="true"
             >
               <path

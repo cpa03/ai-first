@@ -8,6 +8,7 @@ import {
   DELIVERABLE_STYLES,
   DELIVERABLE_CARD_STYLES,
   DELIVERABLE_PROGRESS_CONFIG,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -127,7 +128,7 @@ function DeliverableCardComponent({
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               d="M19 9l-7 7-7-7"
             />
           </svg>

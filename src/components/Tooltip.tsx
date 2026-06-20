@@ -10,6 +10,7 @@ import React, {
   useSyncExternalStore,
 } from 'react';
 import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
+import { Z_INDEX_LAYERS } from '@/lib/config';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -188,7 +189,7 @@ function TooltipComponent({
           ref={tooltipRef}
           role="tooltip"
           className={`
-            absolute z-50 pointer-events-none
+            absolute z-[${Z_INDEX_LAYERS.TOAST}] pointer-events-none
             ${positionClasses[position]}
             ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}

@@ -765,3 +765,94 @@ export const SPINNER_PATTERNS = {
     container: 'px-4 py-2 bg-gray-200 rounded-md text-gray-600',
   },
 } as const;
+
+/**
+ * SVG Stroke Width Configuration
+ * Centralizes SVG strokeWidth values used across all icon and visualization components.
+ * Eliminates hardcoded numeric strokeWidth props in 17+ component files.
+ *
+ * Usage:
+ * ```typescript
+ * import { SVG_STROKE_WIDTHS } from '@/lib/config';
+ * <svg strokeWidth={SVG_STROKE_WIDTHS.STANDARD} />
+ * ```
+ */
+export const SVG_STROKE_WIDTHS = {
+  /**
+   * Standard stroke width (2px) - default for most icons
+   * Env: SVG_STROKE_WIDTH_STANDARD (default: 2)
+   */
+  STANDARD: EnvLoader.number('SVG_STROKE_WIDTH_STANDARD', 2, 1, 4),
+
+  /**
+   * Light stroke width (1.5px) - for thin/delicate icons
+   * Env: SVG_STROKE_WIDTH_LIGHT (default: 1.5)
+   */
+  LIGHT: EnvLoader.number('SVG_STROKE_WIDTH_LIGHT', 1.5, 0.5, 3),
+
+  /**
+   * Thick stroke width (3px) - for emphasis icons (checkmarks, close)
+   * Env: SVG_STROKE_WIDTH_THICK (default: 3)
+   */
+  THICK: EnvLoader.number('SVG_STROKE_WIDTH_THICK', 3, 2, 6),
+
+  /**
+   * Extra thick stroke width (2.5px) - for progress indicators
+   * Env: SVG_STROKE_WIDTH_EXTRA_THICK (default: 2.5)
+   */
+  EXTRA_THICK: EnvLoader.number('SVG_STROKE_WIDTH_EXTRA_THICK', 2.5, 1, 5),
+} as const;
+
+/**
+ * Z-Index Layer Configuration
+ * Centralizes z-index values used across all UI layering components.
+ * Eliminates hardcoded z-NN tailwind classes in 10+ component files.
+ * Follows a consistent layering system: base < overlay < modal < toast < celebration.
+ *
+ * Usage:
+ * ```typescript
+ * import { Z_INDEX_LAYERS } from '@/lib/config';
+ * <div className={`z-[${Z_INDEX_LAYERS.MODAL}]`} />
+ * // or as style: style={{ zIndex: Z_INDEX_LAYERS.MODAL }}
+ * ```
+ */
+export const Z_INDEX_LAYERS = {
+  /**
+   * Base layer (0) - default stacking context
+   */
+  BASE: 0,
+
+  /**
+   * Content layer (10) - above base, for regular content
+   */
+  CONTENT: 10,
+
+  /**
+   * Sticky layer (20) - for sticky headers and navigation
+   */
+  STICKY: 20,
+
+  /**
+   * Overlay layer (30) - for backdrop overlays and highlights
+   * Env: Z_INDEX_OVERLAY (default: 30)
+   */
+  OVERLAY: EnvLoader.number('Z_INDEX_OVERLAY', 30, 10, 50),
+
+  /**
+   * Modal layer (40) - for modals, drawers, and onboarding
+   * Env: Z_INDEX_MODAL (default: 40)
+   */
+  MODAL: EnvLoader.number('Z_INDEX_MODAL', 40, 20, 60),
+
+  /**
+   * Toast layer (50) - for toast notifications and tooltips
+   * Env: Z_INDEX_TOAST (default: 50)
+   */
+  TOAST: EnvLoader.number('Z_INDEX_TOAST', 50, 30, 70),
+
+  /**
+   * Celebration layer (50) - for celebration animations and success popups
+   * Env: Z_INDEX_CELEBRATION (default: 50)
+   */
+  CELEBRATION: EnvLoader.number('Z_INDEX_CELEBRATION', 50, 30, 70),
+} as const;

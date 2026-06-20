@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { UI_CONFIG } from '@/lib/config';
+import { UI_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
 
 interface Step {
   id: string;
@@ -90,7 +90,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
-                      strokeWidth={2}
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-label="Completed"
                       role="img"
                     >

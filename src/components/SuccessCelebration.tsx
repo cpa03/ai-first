@@ -12,6 +12,8 @@ import {
   ANIMATION_PHYSICS,
   COMPONENT_DEFAULTS,
   SVG_ANIMATION,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -166,7 +168,7 @@ function SuccessCelebrationComponent({
 
   return (
     <div
-      className="fixed inset-0 pointer-events-none z-50 flex items-center justify-center"
+      className={`fixed inset-0 pointer-events-none z-[${Z_INDEX_LAYERS.CELEBRATION}] flex items-center justify-center`}
       aria-hidden="true"
       role="presentation"
     >
@@ -183,7 +185,7 @@ function SuccessCelebrationComponent({
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            strokeWidth={3}
+            strokeWidth={SVG_STROKE_WIDTHS.THICK}
           >
             <path
               strokeLinecap="round"

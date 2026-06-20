@@ -5,7 +5,7 @@ import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
 } from '@/lib/config/constants';
-import { TOAST_CONFIG } from '@/lib/config';
+import { TOAST_CONFIG, SVG_STROKE_WIDTHS, Z_INDEX_LAYERS } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface Toast {
@@ -236,7 +236,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
         >
           <path
@@ -322,7 +322,7 @@ function ToastContainerComponent() {
 
   return (
     <div
-      className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-h-screen overflow-y-auto"
+      className={`fixed top-4 right-4 z-[${Z_INDEX_LAYERS.TOAST}] flex flex-col gap-2 max-h-screen overflow-y-auto`}
       role="region"
       aria-label="Notifications"
     >

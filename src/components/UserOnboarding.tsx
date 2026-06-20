@@ -6,6 +6,8 @@ import {
   COMPONENT_CONFIG,
   ANIMATION_CONFIG,
   LOCAL_STORAGE_KEYS,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
 } from '@/lib/config';
 
 /**
@@ -251,14 +253,14 @@ export default function UserOnboarding() {
     <>
       {/* Backdrop overlay */}
       <div
-        className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity duration-300"
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[${Z_INDEX_LAYERS.OVERLAY}] transition-opacity duration-300`}
         aria-hidden="true"
         onClick={handleSkip}
       />
 
       {/* Highlighted area indicator (simplified) */}
       <div
-        className="fixed pointer-events-none z-30 border-2 border-primary-500 rounded-lg transition-all duration-300"
+        className={`fixed pointer-events-none z-[${Z_INDEX_LAYERS.CONTENT}] border-2 border-primary-500 rounded-lg transition-all duration-300`}
         style={{
           opacity: 0,
         }}
@@ -271,7 +273,7 @@ export default function UserOnboarding() {
         aria-labelledby="onboarding-title"
         aria-describedby="onboarding-content"
         className={`
-          fixed z-50 w-[300px] bg-white rounded-xl shadow-2xl 
+          fixed z-[${Z_INDEX_LAYERS.MODAL}] w-[300px] bg-white rounded-xl shadow-2xl 
           border border-gray-200 p-5
           transition-all duration-300 ease-out
           ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
@@ -308,7 +310,7 @@ export default function UserOnboarding() {
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>

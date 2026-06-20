@@ -10,6 +10,7 @@ import {
   TASK_ITEM_STYLES,
   TASK_MANAGEMENT_MESSAGES,
   TASK_ANIMATION_CONFIG,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from '../Tooltip';
@@ -212,7 +213,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
@@ -231,7 +232,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth={2}
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                 />
               </svg>
