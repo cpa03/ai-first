@@ -17,6 +17,7 @@ import {
   AI_MODEL_CONFIG,
   AI_HEALTH_CHECK_CONFIG,
 } from './config/modular-constants';
+import { API_ERROR_MESSAGES } from './config';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
@@ -142,10 +143,7 @@ class AIService {
   private getSupabase(): SupabaseClient | null {
     // SECURITY: Runtime check to prevent browser execution
     if (typeof window !== 'undefined') {
-      throw new Error(
-        'CRITICAL SECURITY VIOLATION: getSupabase() was called in browser context. ' +
-          'The Supabase service role key bypasses RLS and must NEVER be exposed to clients.'
-      );
+      throw new Error(API_ERROR_MESSAGES.AI.SECURITY_BROWSER_VIOLATION);
     }
 
     // Lazy initialization to prevent key from being accessed during module load
@@ -170,11 +168,11 @@ class AIService {
   async initialize(config: AIModelConfig): Promise<void> {
     // Validate API keys and configuration
     if (config.provider === 'openai' && !this.openai) {
-      throw new Error('OpenAI API key not configured');
+      throw new Error(API_ERROR_MESSAGES.AI.OPENAI_API_KEY_NOT_CONFIGURED);
     }
 
     if (config.provider === 'anthropic' && !this.anthropic) {
-      throw new Error('Anthropic API key not configured');
+      throw new Error(API_ERROR_MESSAGES.AI.ANTHROPIC_API_KEY_NOT_CONFIGURED);
     }
 
     // Log initialization for audit
@@ -608,7 +606,7 @@ class AIService {
 
     if (totalTodayCost > dailyLimit) {
       throw new Error(
-        `Cost limit exceeded. Today's cost: $${totalTodayCost}, Limit: $${dailyLimit}`
+        `${API_ERROR_MESSAGES.AI.COST_LIMIT_EXCEEDED}. Today's cost: $${totalTodayCost}, Limit: $${dailyLimit}`
       );
     }
 

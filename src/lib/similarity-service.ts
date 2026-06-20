@@ -15,6 +15,7 @@ import {
   DB_REFERENCE_TYPES,
   DB_COLUMNS,
 } from './config/database-tables';
+import { API_ERROR_MESSAGES } from './config';
 
 const logger = createLogger('SimilarityService');
 
@@ -40,9 +41,7 @@ function getSupabaseClient(): SupabaseClient {
   // This prevents accidental usage in client components
   if (typeof window !== 'undefined') {
     throw new Error(
-      'CRITICAL SECURITY VIOLATION: getSupabaseClient() was called in browser context.\n' +
-        'The Supabase service role key bypasses RLS and must NEVER be exposed to clients.\n' +
-        'Use API routes for admin operations instead.'
+      API_ERROR_MESSAGES.AI.SECURITY_SIMILARITY_BROWSER_VIOLATION
     );
   }
 
@@ -51,7 +50,7 @@ function getSupabaseClient(): SupabaseClient {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceKey) {
-      throw new Error('Supabase configuration missing');
+      throw new Error(API_ERROR_MESSAGES.DB.CONFIG_MISSING);
     }
 
     supabaseClient = createClient(supabaseUrl, serviceKey);
@@ -111,7 +110,7 @@ export async function findSimilarIdeas(
 
   if (matchError) {
     logger.error('Vector similarity search failed:', matchError);
-    throw new Error('Failed to find similar ideas');
+    throw new Error(API_ERROR_MESSAGES.AI.FAILED_TO_FIND_SIMILAR_IDEAS);
   }
 
   // Filter out the current idea and get full details

@@ -1,6 +1,7 @@
 import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService } from '@/lib/config-service';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 import {
   IdeaAnalyzer,
   TaskDecomposer,
@@ -46,7 +47,7 @@ class BreakdownEngine {
       await configurationService.loadAIModelConfig('breakdown-engine');
 
     if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
+      throw new Error(API_ERROR_MESSAGES.AGENT.AI_CONFIG_NOT_LOADED);
     }
     await aiService.initialize(this.aiConfig);
 
@@ -86,7 +87,7 @@ class BreakdownEngine {
       !this.confidenceCalculator
     ) {
       throw new Error(
-        'BreakdownEngine not initialized. Call initialize() first.'
+        API_ERROR_MESSAGES.AGENT.BREAKDOWN_ENGINE_NOT_INITIALIZED
       );
     }
 
@@ -231,7 +232,7 @@ class BreakdownEngine {
   async getBreakdownSession(ideaId: string): Promise<BreakdownSession | null> {
     if (!this.sessionManager) {
       throw new Error(
-        'BreakdownEngine not initialized. Call initialize() first.'
+        API_ERROR_MESSAGES.AGENT.BREAKDOWN_ENGINE_NOT_INITIALIZED
       );
     }
 

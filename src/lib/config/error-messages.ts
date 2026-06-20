@@ -101,6 +101,7 @@ export const API_ERROR_MESSAGES = {
     ADMIN_NOT_INITIALIZED: 'Supabase admin client not initialized',
     HEALTH_CHECK_TIMEOUT: 'Health check timeout',
     ADMIN_HEALTH_CHECK_TIMEOUT: 'Admin health check timeout',
+    CONFIG_MISSING: 'Supabase configuration missing',
   },
 
   /**
@@ -118,6 +119,34 @@ export const API_ERROR_MESSAGES = {
     INVALID_EXPORT_DATA: 'Invalid export data: idea object is required',
     OPENAI_API_KEY_MISSING: 'OPENAI_API_KEY environment variable is not set',
     TEXT_EMPTY_EMBEDDING: 'Text cannot be empty for embedding generation',
+  },
+
+  /**
+   * Agent error messages
+   * Centralizes error messages used in agent files
+   */
+  AGENT: {
+    AI_CONFIG_NOT_LOADED: 'AI configuration not loaded',
+    BREAKDOWN_ENGINE_NOT_INITIALIZED:
+      'BreakdownEngine not initialized. Call initialize() first.',
+    REQUIRED_QUESTIONS_UNANSWERED: 'required questions still unanswered',
+  },
+
+  /**
+   * AI service error messages
+   * Centralizes error messages used in AI service files
+   */
+  AI: {
+    OPENAI_API_KEY_NOT_CONFIGURED: 'OpenAI API key not configured',
+    ANTHROPIC_API_KEY_NOT_CONFIGURED: 'Anthropic API key not configured',
+    INVALID_RESPONSE_NO_DATA:
+      'Invalid response from OpenAI embedding API: no data returned',
+    FAILED_TO_FIND_SIMILAR_IDEAS: 'Failed to find similar ideas',
+    SECURITY_BROWSER_VIOLATION:
+      'CRITICAL SECURITY VIOLATION: getSupabase() was called in browser context. The Supabase service role key bypasses RLS and must NEVER be exposed to clients.',
+    SECURITY_SIMILARITY_BROWSER_VIOLATION:
+      'CRITICAL SECURITY VIOLATION: getSupabaseClient() was called in browser context.\nThe Supabase service role key bypasses RLS and must NEVER be exposed to clients.\nUse API routes for admin operations instead.',
+    COST_LIMIT_EXCEEDED: 'Cost limit exceeded',
   },
 } as const;
 
