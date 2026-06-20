@@ -29,8 +29,8 @@
 
 ### Branch Maintenance
 
-- **Merged Branches Cleaned**: 0 (none found)
-- **Total Remote Branches**: 183
+- **Merged Branches Cleaned**: 0 (candidates found: `origin/flexy/centralize-error-messages`, `origin/palette/why-choose-section-animations`)
+- **Total Remote Branches**: 185
 - **Stale Files**: None found
 - **Temporary Files**: None found
 - **Empty Directories**: None (except .wrangler which is gitignored)

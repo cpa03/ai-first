@@ -2,7 +2,7 @@
 
 This document tracks branch cleanup activities and identifies candidates for future cleanup.
 
-**Last Updated**: 2026-06-20 (RepoKeeper Ultrawork Maintenance)
+**Last Updated**: 2026-06-20 (RepoKeeper Nightly Maintenance)
 
 ---
 
@@ -19,8 +19,8 @@ This document tracks branch cleanup activities and identifies candidates for fut
   - Tests: PASSED (1554 passed, 18 skipped, 0 failed)
 
 - ✅ **Branch Status:**
-  - Total remote branches: 183
-  - No merged branches found for cleanup
+  - Total remote branches: 185
+  - 2 merged branches found for cleanup: `origin/flexy/centralize-error-messages`, `origin/palette/why-choose-section-animations`
   - 183 unmerged branches (mostly agent-generated feature branches)
 
 - ✅ **Repository Cleanup:**
