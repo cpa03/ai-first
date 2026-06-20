@@ -1016,3 +1016,47 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+/* WhyChooseSection staggered entrance animation */
+@keyframes whyChooseFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-why-choose-1 {
+  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  opacity: 0;
+}
+
+.animate-why-choose-2 {
+  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+.animate-why-choose-3 {
+  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+.animate-why-choose-4 {
+  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  opacity: 0;
+}
+
+/* Reduced motion support for WhyChooseSection animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-why-choose-1,
+  .animate-why-choose-2,
+  .animate-why-choose-3,
+  .animate-why-choose-4 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

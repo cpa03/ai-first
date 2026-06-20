@@ -1,13 +1,44 @@
-import { memo } from 'react';
+'use client';
+
+import { memo, useEffect, useRef, useState } from 'react';
 import { WHY_CHOOSE_CONFIG } from '@/lib/config';
 
-// PERFORMANCE: Component is wrapped with memo to prevent unnecessary re-renders
-// since it's a pure static component with no props, state, or dynamic content.
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.2,
+        rootMargin: '0px 0px -50px 0px',
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  const animationClasses = [
+    'animate-why-choose-1',
+    'animate-why-choose-2',
+    'animate-why-choose-3',
+    'animate-why-choose-4',
+  ];
 
   return (
     <section
+      ref={sectionRef}
       className={SECTION_STYLES.CONTAINER}
       aria-labelledby="why-choose-heading"
     >
@@ -15,10 +46,12 @@ function WhyChooseSectionComponent() {
         {TITLE}
       </h2>
       <div className={SECTION_STYLES.GRID}>
-        {ARTICLES.map((article) => (
+        {ARTICLES.map((article, index) => (
           <article
             key={article.id}
-            className={`group ${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG}`}
+            className={`group ${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG} ${
+              isVisible ? animationClasses[index] : 'opacity-0'
+            }`}
           >
             <div
               className={`${ARTICLE_STYLES.ICON_CONTAINER} ${article.ICON_BG} ${article.ICON_HOVER_BG}`}
