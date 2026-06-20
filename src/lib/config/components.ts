@@ -237,6 +237,37 @@ export const COMPONENT_CONFIG = {
       ),
     },
   },
+
+  ALERT: {
+    /** Auto-dismiss delay for success alerts (ms) - Env: COMPONENT_ALERT_SUCCESS_DISMISS_MS (default: 5000) */
+    SUCCESS_DISMISS_MS: EnvLoader.number(
+      'COMPONENT_ALERT_SUCCESS_DISMISS_MS',
+      5000,
+      1000,
+      30000
+    ),
+    /** Auto-dismiss delay for info alerts (ms) - Env: COMPONENT_ALERT_INFO_DISMISS_MS (default: 3000) */
+    INFO_DISMISS_MS: EnvLoader.number(
+      'COMPONENT_ALERT_INFO_DISMISS_MS',
+      3000,
+      1000,
+      30000
+    ),
+    /** Default fallback dismiss delay (ms) - Env: COMPONENT_ALERT_DEFAULT_DISMISS_MS (default: 5000) */
+    DEFAULT_DISMISS_MS: EnvLoader.number(
+      'COMPONENT_ALERT_DEFAULT_DISMISS_MS',
+      5000,
+      1000,
+      30000
+    ),
+    /** Progress bar update interval (ms) - Env: COMPONENT_ALERT_PROGRESS_INTERVAL_MS (default: 50) */
+    PROGRESS_INTERVAL_MS: EnvLoader.number(
+      'COMPONENT_ALERT_PROGRESS_INTERVAL_MS',
+      50,
+      10,
+      200
+    ),
+  },
 } as const;
 
 export type ComponentConfig = typeof COMPONENT_CONFIG;

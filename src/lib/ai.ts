@@ -12,7 +12,12 @@ import {
   type ServiceResilienceConfig,
   type ResilienceConfig,
 } from './resilience';
-import { AI_CONFIG, AI_SERVICE_LIMITS, STATUS_CODES } from './config/constants';
+import {
+  AI_CONFIG,
+  AI_SERVICE_LIMITS,
+  STATUS_CODES,
+  RESILIENCE_CONFIG,
+} from './config/constants';
 import {
   AI_MODEL_CONFIG,
   AI_HEALTH_CHECK_CONFIG,
@@ -791,7 +796,7 @@ class AIService {
           },
           {
             timeoutMs:
-              (DEFAULT_TIMEOUTS.openai ?? 60000) /
+              (DEFAULT_TIMEOUTS.openai ?? RESILIENCE_CONFIG.TIMEOUTS.OPENAI) /
               AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
           }
         );
