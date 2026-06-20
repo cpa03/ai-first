@@ -221,7 +221,11 @@ function _redactPII(text: string): string {
  */
 export function redactPII(text: string): string {
   // PERFORMANCE: Fast path for non-strings or strings too short to contain PII
-  if (typeof text !== 'string' || text.length < 4) return text;
+  if (
+    typeof text !== 'string' ||
+    text.length < PII_REDACTION_CONFIG.MIN_LENGTH_FOR_PII_CHECK
+  )
+    return text;
 
   // PERFORMANCE: Fast-path for strings that don't contain any potential PII triggers.
   // This avoids 10 sequential .replace() calls for most log messages.
@@ -493,7 +497,8 @@ export function redactPIIInObject(
       } else if (typeof item === 'string') {
         // PERFORMANCE: Inline string handling to avoid recursive redactPIIInObject call
         redactedItem =
-          item.length < 4 || !COMBINED_TRIGGER_REGEX.test(item)
+          item.length < PII_REDACTION_CONFIG.MIN_LENGTH_FOR_PII_CHECK ||
+          !COMBINED_TRIGGER_REGEX.test(item)
             ? item
             : _redactPII(item);
       } else {
@@ -532,7 +537,8 @@ export function redactPIIInObject(
         // PERFORMANCE: Inline fast-path check to avoid function call overhead
         // for safe strings. Most log strings do not contain PII.
         redactedValue =
-          value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+          value.length < PII_REDACTION_CONFIG.MIN_LENGTH_FOR_PII_CHECK ||
+          !COMBINED_TRIGGER_REGEX.test(value)
             ? value
             : _redactPII(value);
       } else if (value !== null && typeof value === 'object') {
@@ -596,7 +602,8 @@ export function redactPIIInObject(
         } else if (typeof value === 'string') {
           // PERFORMANCE: Inline fast-path check
           redactedValue =
-            value.length < 4 || !COMBINED_TRIGGER_REGEX.test(value)
+            value.length < PII_REDACTION_CONFIG.MIN_LENGTH_FOR_PII_CHECK ||
+            !COMBINED_TRIGGER_REGEX.test(value)
               ? value
               : _redactPII(value);
         } else if (value !== null && typeof value === 'object') {
