@@ -2,7 +2,7 @@ import { AIModelConfig, aiService } from '@/lib/ai';
 import { dbService, type Idea } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
 import { CLARIFIER_VALUES } from '@/lib/config/constants';
-import { IDEA_STATUS_CONFIG } from '@/lib/config';
+import { IDEA_STATUS_CONFIG, API_ERROR_MESSAGES } from '@/lib/config';
 import {
   QuestionGenerator,
   IdeaRefiner,
@@ -41,7 +41,7 @@ export class ClarifierAgent {
     this.aiConfig = await configurationService.loadAIModelConfig('clarifier');
 
     if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
+      throw new Error(API_ERROR_MESSAGES.AGENT.AI_CONFIG_NOT_LOADED);
     }
 
     const aiServiceToUse = this.injectedAiService || aiService;
@@ -124,7 +124,7 @@ export class ClarifierAgent {
     try {
       const session = await this.sessionManager!.get(ideaId);
       if (!session) {
-        throw new Error('Clarification session not found');
+        throw new Error(API_ERROR_MESSAGES.NOT_FOUND.CLARIFICATION_SESSION);
       }
 
       session.answers[questionId] = answer;
@@ -187,7 +187,7 @@ export class ClarifierAgent {
     try {
       const session = await this.sessionManager!.get(ideaId);
       if (!session) {
-        throw new Error('Clarification session not found');
+        throw new Error(API_ERROR_MESSAGES.NOT_FOUND.CLARIFICATION_SESSION);
       }
 
       const unansweredRequired = session.questions.filter(
@@ -196,7 +196,7 @@ export class ClarifierAgent {
 
       if (unansweredRequired.length > 0) {
         throw new Error(
-          `${unansweredRequired.length} required questions still unanswered`
+          `${unansweredRequired.length} ${API_ERROR_MESSAGES.AGENT.REQUIRED_QUESTIONS_UNANSWERED}`
         );
       }
 

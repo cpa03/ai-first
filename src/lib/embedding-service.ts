@@ -9,6 +9,7 @@ import 'openai/shims/node';
 import OpenAI from 'openai';
 import { createLogger } from './logger';
 import { EMBEDDING_CONFIG } from './config/embedding-config';
+import { API_ERROR_MESSAGES } from './config';
 
 const logger = createLogger('EmbeddingService');
 
@@ -21,7 +22,7 @@ let openaiClient: OpenAI | null = null;
 function getOpenAIClient(): OpenAI {
   if (!openaiClient) {
     if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY environment variable is not set');
+      throw new Error(API_ERROR_MESSAGES.PAGE.OPENAI_API_KEY_MISSING);
     }
     openaiClient = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
@@ -49,7 +50,7 @@ export async function generateEmbedding(
   model: string = EMBEDDING_CONFIG.DEFAULT_MODEL
 ): Promise<EmbeddingResult> {
   if (!text || text.trim().length === 0) {
-    throw new Error('Text cannot be empty for embedding generation');
+    throw new Error(API_ERROR_MESSAGES.PAGE.TEXT_EMPTY_EMBEDDING);
   }
 
   const client = getOpenAIClient();
@@ -62,9 +63,7 @@ export async function generateEmbedding(
     });
 
     if (!response || !response.data || response.data.length === 0) {
-      throw new Error(
-        'Invalid response from OpenAI embedding API: no data returned'
-      );
+      throw new Error(API_ERROR_MESSAGES.AI.INVALID_RESPONSE_NO_DATA);
     }
 
     const embedding = response.data[0].embedding;
