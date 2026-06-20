@@ -108,13 +108,14 @@ export default function UserOnboarding() {
     const targetElement = document.querySelector(currentStep.targetSelector);
     if (!targetElement) {
       // Default position if element not found
-      return { top: 200, left: window.innerWidth / 2 - 150 };
+      const tooltipWidth = COMPONENT_CONFIG.ONBOARDING.TOOLTIP.WIDTH;
+      return { top: 200, left: window.innerWidth / 2 - tooltipWidth / 2 };
     }
 
     const rect = targetElement.getBoundingClientRect();
-    const tooltipWidth = 300;
-    const tooltipHeight = 150;
-    const gap = 12;
+    const tooltipWidth = COMPONENT_CONFIG.ONBOARDING.TOOLTIP.WIDTH;
+    const tooltipHeight = COMPONENT_CONFIG.ONBOARDING.TOOLTIP.HEIGHT;
+    const gap = COMPONENT_CONFIG.ONBOARDING.TOOLTIP.GAP;
 
     let top = 0;
     let left = 0;
@@ -139,8 +140,15 @@ export default function UserOnboarding() {
     }
 
     // Keep tooltip within viewport
-    left = Math.max(10, Math.min(left, window.innerWidth - tooltipWidth - 10));
-    top = Math.max(10, Math.min(top, window.innerHeight - tooltipHeight - 10));
+    const padding = COMPONENT_CONFIG.ONBOARDING.TOOLTIP.VIEWPORT_PADDING;
+    left = Math.max(
+      padding,
+      Math.min(left, window.innerWidth - tooltipWidth - padding)
+    );
+    top = Math.max(
+      padding,
+      Math.min(top, window.innerHeight - tooltipHeight - padding)
+    );
 
     return { top, left };
   }, [currentStep]);

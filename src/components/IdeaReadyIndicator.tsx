@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useState } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
   isReady: boolean;
@@ -22,7 +23,7 @@ function IdeaReadyIndicatorComponent({
       const timer = setTimeout(() => {
         setShowCheckmark(true);
         setHasAnimated(true);
-      }, 150);
+      }, COMPONENT_CONFIG.IDEA_READY_INDICATOR.DELAY_MS);
       return () => clearTimeout(timer);
     } else if (!isReady) {
       setShowCheckmark(false);

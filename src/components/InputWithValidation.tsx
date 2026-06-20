@@ -20,6 +20,7 @@ import {
   INPUT_VALIDATION_LABELS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
+import { COMPONENT_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 
@@ -134,7 +135,7 @@ const InputWithValidationComponent = forwardRef<
         setShowSuccessFlash(true);
         const timeout = setTimeout(() => {
           setShowSuccessFlash(false);
-        }, 1500);
+        }, COMPONENT_CONFIG.INPUT_VALIDATION.SUCCESS_FLASH_DURATION_MS);
         return () => clearTimeout(timeout);
       }
     }, [isValid, charCount]);
