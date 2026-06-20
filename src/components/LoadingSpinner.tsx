@@ -8,12 +8,15 @@ interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   ariaLabel?: string;
+  /** Delay animation start by N ms for staggered multi-spinner effects */
+  animationDelay?: number;
 }
 
 function LoadingSpinnerComponent({
   size = COMPONENT_CONFIG.SPINNER.DEFAULT_SIZE,
   className = '',
   ariaLabel = COMPONENT_CONFIG.LOADING.DEFAULT_ARIA_LABEL,
+  animationDelay = 0,
 }: LoadingSpinnerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -46,8 +49,9 @@ function LoadingSpinnerComponent({
       top: `-${pulseRingOffset}px`,
       left: '50%',
       transform: 'translateX(-50%)',
+      animationDelay: animationDelay > 0 ? `${animationDelay}ms` : undefined,
     }),
-    [pulseRingSize, pulseRingOffset]
+    [pulseRingSize, pulseRingOffset, animationDelay]
   );
 
   const borderRingStyle = useMemo(
@@ -58,8 +62,9 @@ function LoadingSpinnerComponent({
       left: '50%',
       transform: 'translateX(-50%)',
       animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      animationDelay: animationDelay > 0 ? `${animationDelay}ms` : undefined,
     }),
-    [spinnerDimension]
+    [spinnerDimension, animationDelay]
   );
 
   const svgStyle = useMemo(
@@ -69,8 +74,14 @@ function LoadingSpinnerComponent({
       animationDuration: prefersReducedMotion
         ? '0s'
         : `${COMPONENT_CONFIG.SPINNER.ANIMATION_MS}ms`,
+      animationDelay: animationDelay > 0 ? `${animationDelay}ms` : undefined,
     }),
-    [spinnerSize.width, spinnerSize.height, prefersReducedMotion]
+    [
+      spinnerSize.width,
+      spinnerSize.height,
+      prefersReducedMotion,
+      animationDelay,
+    ]
   );
 
   return (
