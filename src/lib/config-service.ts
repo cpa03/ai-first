@@ -5,6 +5,7 @@ import path from 'node:path';
 import { Cache } from './cache';
 import { CACHE_CONFIG } from './config';
 import { AI_CONFIG } from './config/constants';
+import { EXTERNAL_API_VERSIONS } from './config/external-api-versions';
 import {
   validateModelTemperature,
   validateModelMaxTokens,
@@ -110,7 +111,9 @@ class ConfigurationService {
 
     // Validate model name
     const modelValidation = validateModelName(agentConfig.model);
-    const safeModel = modelValidation.valid ? agentConfig.model : 'gpt-4';
+    const safeModel = modelValidation.valid
+      ? agentConfig.model
+      : EXTERNAL_API_VERSIONS.OPENAI.DEFAULT_MODEL;
 
     return {
       provider: 'openai',

@@ -348,3 +348,18 @@ export {
   type LayoutErrorLabels,
   type ComponentLabels,
 } from './component-labels';
+
+// Embedding Configuration
+export { EMBEDDING_CONFIG, type EmbeddingConfig } from './embedding-config';
+
+// Database Tables and RPC Configuration
+export {
+  DB_TABLES,
+  DB_RPC,
+  DB_REFERENCE_TYPES,
+  DB_COLUMNS,
+  type DbTables,
+  type DbRpc,
+  type DbReferenceTypes,
+  type DbColumns,
+} from './database-tables';

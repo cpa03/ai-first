@@ -1,5 +1,6 @@
 import { AGENT_CONFIG, VALIDATION_LIMITS } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { DB_TABLES, DB_RPC } from '../config/database-tables';
 import type { ClientProvider } from './ideas';
 import type { Vector, PaginationOptions, PaginatedResult } from './types';
 
@@ -22,7 +23,7 @@ export class VectorService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('vectors')
+      .from(DB_TABLES.VECTORS)
       .insert(vector as never)
       .select()
       .single();
@@ -38,7 +39,10 @@ export class VectorService {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
-    let query = client.from('vectors').select('*').eq('idea_id', ideaId);
+    let query = client
+      .from(DB_TABLES.VECTORS)
+      .select('*')
+      .eq('idea_id', ideaId);
 
     if (referenceType) {
       query = query.eq('reference_type', referenceType);
@@ -71,7 +75,7 @@ export class VectorService {
     const offset = (page - 1) * pageSize;
 
     let countQuery = client
-      .from('vectors')
+      .from(DB_TABLES.VECTORS)
       .select('*', { count: 'exact', head: true })
       .eq('idea_id', ideaId);
 
@@ -84,7 +88,7 @@ export class VectorService {
     if (countError) throw countError;
 
     let query = client
-      .from('vectors')
+      .from(DB_TABLES.VECTORS)
       .select('*')
       .eq('idea_id', ideaId)
       .order('created_at', { ascending: false })
@@ -120,7 +124,10 @@ export class VectorService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
     if (ideaIds.length === 0) return new Map();
 
-    let query = client.from('vectors').select('*').in('idea_id', ideaIds);
+    let query = client
+      .from(DB_TABLES.VECTORS)
+      .select('*')
+      .in('idea_id', ideaIds);
 
     if (referenceType) {
       query = query.eq('reference_type', referenceType);
@@ -153,7 +160,10 @@ export class VectorService {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
-    const { error } = await client.from('vectors').delete().eq('id', id);
+    const { error } = await client
+      .from(DB_TABLES.VECTORS)
+      .delete()
+      .eq('id', id);
 
     if (error) throw error;
   }
@@ -172,7 +182,7 @@ export class VectorService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
-      .from('vectors')
+      .from(DB_TABLES.VECTORS)
       .insert({
         idea_id: ideaId,
         embedding: `[${embedding.join(',')}]`,
@@ -200,7 +210,7 @@ export class VectorService {
 
     const embeddingString = `[${queryEmbedding.join(',')}]`;
 
-    const { data, error } = await client.rpc('match_vectors', {
+    const { data, error } = await client.rpc(DB_RPC.MATCH_VECTORS, {
       query_embedding: embeddingString,
       match_threshold: DATABASE.VECTOR_SIMILARITY_THRESHOLD,
       match_count: limit,
