@@ -424,6 +424,7 @@ function ClarificationFlow({
               variant="primary"
               disabled={!currentAnswer.trim() || showCelebration}
               loading={isSubmitting}
+              enableTransition
             >
               {currentStep === questions.length - 1
                 ? MESSAGES.NAVIGATION.COMPLETE

@@ -18,6 +18,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
   fullWidth?: boolean;
   attention?: boolean;
+  /** Shows a subtle animation when button transitions from disabled to enabled */
+  enableTransition?: boolean;
   children: React.ReactNode;
 }
 
@@ -36,6 +38,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       loading = false,
       fullWidth = false,
       attention = false,
+      enableTransition = false,
       disabled,
       children,
       className = '',
@@ -46,7 +49,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const [ripples, setRipples] = useState<Ripple[]>([]);
+    const [justEnabled, setJustEnabled] = useState(false);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
+    const wasDisabledRef = useRef(disabled || loading);
     const prefersReducedMotion = usePrefersReducedMotion();
 
     useEffect(() => {
@@ -55,6 +60,21 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
       };
     }, []);
+
+    useEffect(() => {
+      const isCurrentlyDisabled = disabled || loading;
+      const wasDisabled = wasDisabledRef.current;
+
+      if (wasDisabled && !isCurrentlyDisabled && enableTransition) {
+        setJustEnabled(true);
+        const timeoutId = setTimeout(() => {
+          setJustEnabled(false);
+        }, 600);
+        timeoutRefs.current.push(timeoutId);
+      }
+
+      wasDisabledRef.current = isCurrentlyDisabled;
+    }, [disabled, loading, enableTransition]);
 
     const createRipple = useCallback(
       (
@@ -141,6 +161,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           ${stateClasses}
           ${BUTTON_STYLES.BASE} ${BUTTON_STYLES.FOCUS_RINGS[variant]}
           ${attention && !disabled && !loading ? 'btn-attention-pulse' : ''}
+          ${justEnabled && !prefersReducedMotion ? 'animate-enable-feedback' : ''}
           ${className}
         `}
         aria-busy={loading}
