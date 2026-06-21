@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { STATUS_CODES } from '@/lib/config';
+import { SecurityAuditLog } from '@/lib/security/audit-log';
 
 const logger = createLogger('CSPReport');
 
@@ -73,66 +74,32 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
 
     // Extract violation details from report
     const cspReport = reportData['csp-report'];
-    const documentUri = cspReport['document-uri'] || 'unknown';
-    const blockedUri = cspReport['blocked-uri'] || 'unknown';
+    const documentUri = cspReport['document-uri'];
+    const blockedUri = cspReport['blocked-uri'];
     const violatedDirective = cspReport['violated-directive'] || 'unknown';
-    const effectiveDirective =
-      cspReport['effective-directive'] || violatedDirective;
-    const originalPolicy = cspReport['original-policy'] || '';
-    const referrer = cspReport['referrer'] || '';
-    const sourceFile = cspReport['source-file'] || '';
+    const effectiveDirective = cspReport['effective-directive'];
+    const originalPolicy = cspReport['original-policy'];
+    const referrer = cspReport['referrer'];
+    const sourceFile = cspReport['source-file'];
     const lineNumber = cspReport['line-number'];
     const columnNumber = cspReport['column-number'];
-    const scriptSample = cspReport['script-sample'] || '';
+    const scriptSample = cspReport['script-sample'];
 
-    // Determine severity based on violation type
-    let severity: 'error' | 'warn' | 'info' = 'warn';
-    if (
-      violatedDirective.includes('script-src') &&
-      blockedUri !== 'inline' &&
-      blockedUri !== 'eval'
-    ) {
-      severity = 'error'; // Potential XSS attempt from external source
-    } else if (violatedDirective.includes('default-src')) {
-      severity = 'warn';
-    } else {
-      severity = 'info';
-    }
-
-    // Construct log metadata
-    const logMetadata: Record<string, unknown> = {
-      documentUri,
-      blockedUri,
+    // Log the violation via SecurityAuditLog for standardized handling
+    SecurityAuditLog.logCSPViolation({
       violatedDirective,
       effectiveDirective,
-      referrer: referrer || undefined,
-      userAgent: request.headers.get('user-agent') || 'unknown',
-      timestamp: new Date().toISOString(),
-    };
-
-    // Add source location if available
-    if (sourceFile) {
-      logMetadata.sourceFile = sourceFile;
-      if (lineNumber !== undefined) logMetadata.lineNumber = lineNumber;
-      if (columnNumber !== undefined) logMetadata.columnNumber = columnNumber;
-    }
-
-    // Truncate long values to prevent log flooding
-    if (originalPolicy) {
-      logMetadata.originalPolicy = `${originalPolicy.substring(0, 200)}...`;
-    }
-    if (scriptSample) {
-      logMetadata.scriptSample = `${scriptSample.substring(0, 100)}...`;
-    }
-
-    // Log the violation with appropriate severity
-    if (severity === 'error') {
-      logger.error('CSP Violation - Potential XSS Detected', logMetadata);
-    } else if (severity === 'warn') {
-      logger.warn('CSP Violation Report', logMetadata);
-    } else {
-      logger.info('CSP Violation Report', logMetadata);
-    }
+      blockedUri,
+      sourceFile,
+      lineNumber,
+      columnNumber,
+      originalPolicy,
+      documentUri,
+      referrer,
+      scriptSample,
+      userAgent: request.headers.get('user-agent') || undefined,
+      requestId: context.requestId,
+    });
 
     // Return 204 No Content - browsers don't need a response
     return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });

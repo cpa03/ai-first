@@ -123,6 +123,8 @@ export interface RateLimitEventDetails {
 export interface CSPViolationEventDetails {
   /** Directive that was violated */
   violatedDirective: string;
+  /** Directive that actually failed */
+  effectiveDirective?: string;
   /** URL that caused the violation */
   blockedUri?: string;
   /** Source file if available */
@@ -133,6 +135,14 @@ export interface CSPViolationEventDetails {
   columnNumber?: number;
   /** Original policy */
   originalPolicy?: string;
+  /** URI of the document where violation occurred */
+  documentUri?: string;
+  /** Referrer of the document */
+  referrer?: string;
+  /** Sample of the script that caused violation */
+  scriptSample?: string;
+  /** User Agent of the reporting browser */
+  userAgent?: string;
   /** Request ID for tracing */
   requestId?: string;
 }
@@ -321,7 +331,9 @@ export const SecurityAuditLog = {
     if (
       details.blockedUri &&
       !details.blockedUri.startsWith('/') &&
-      !details.blockedUri.startsWith('inline')
+      !details.blockedUri.startsWith('inline') &&
+      !details.blockedUri.startsWith('data:') &&
+      !details.blockedUri.startsWith('blob:')
     ) {
       severity = severity === 'high' ? 'critical' : 'high';
     }
@@ -338,10 +350,22 @@ export const SecurityAuditLog = {
       requestId: details.requestId,
       metadata: {
         violatedDirective: details.violatedDirective,
+        effectiveDirective:
+          details.effectiveDirective || details.violatedDirective,
         blockedUri: details.blockedUri,
         sourceFile: details.sourceFile,
         lineNumber: details.lineNumber,
         columnNumber: details.columnNumber,
+        documentUri: details.documentUri,
+        referrer: details.referrer,
+        userAgent: details.userAgent,
+        // Truncate long values to prevent log flooding (Bolt optimization)
+        scriptSample: details.scriptSample
+          ? `${details.scriptSample.substring(0, 200)}${details.scriptSample.length > 200 ? '...' : ''}`
+          : undefined,
+        originalPolicy: details.originalPolicy
+          ? `${details.originalPolicy.substring(0, 500)}${details.originalPolicy.length > 500 ? '...' : ''}`
+          : undefined,
       },
       environment: getEnvironment(),
     };
