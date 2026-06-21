@@ -223,7 +223,8 @@ function ClarificationFlow({
             {LABELS.QUESTION(currentStep)} of {questions.length}
           </span>
           <span
-            className="text-sm text-gray-900 font-medium"
+            key={currentStep}
+            className="text-sm text-gray-900 font-medium animate-scale-in tabular-nums"
             aria-label={`Progress: ${Math.round(progress)} percent`}
           >
             {Math.round(progress)}%
