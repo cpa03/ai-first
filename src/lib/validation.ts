@@ -197,32 +197,63 @@ export function sanitizeString(
  * to prevent XSS attacks. This is a basic sanitization suitable for
  * simple text fields like titles.
  */
+/**
+ * Pre-compiled regex for HTML entity escaping to avoid dynamic creation on every call.
+ */
+const HTML_ESCAPE_MAP = SANITIZATION_CONFIG.HTML.ESCAPE_MAP;
+const HTML_ESCAPE_REGEX = new RegExp(
+  `[${Object.keys(HTML_ESCAPE_MAP)
+    .join('')
+    .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}]`,
+  'g'
+);
+
+/**
+ * Fast-path trigger regex to identify strings that likely need no sanitization.
+ * Checks for: <, >, &, ", ', / or any common event handler pattern (on...).
+ */
+const NEEDS_SANITIZATION_REGEX = /[<>&"'/]|\bon\w+\s*=/i;
+
+/**
+ * Sanitizes HTML content by removing script tags and escaping HTML entities
+ * to prevent XSS attacks. This is a basic sanitization suitable for
+ * simple text fields like titles.
+ *
+ * PERFORMANCE: Uses a tiered strategy:
+ * 1. Fast-path for non-strings/empty strings.
+ * 2. Trim and check if sanitization is even needed via trigger regex.
+ * 3. Use pre-compiled regexes for the actual replacement work.
+ */
 export function sanitizeHtml(input: string): string {
   if (!input || typeof input !== 'string') {
     return '';
   }
 
+  const trimmed = input.trim();
+  if (trimmed.length === 0) {
+    return '';
+  }
+
+  // PERFORMANCE: Fast-path for plain text without special characters.
+  // This avoids multiple expensive regex replacements for the 99% case.
+  if (!NEEDS_SANITIZATION_REGEX.test(trimmed)) {
+    return trimmed;
+  }
+
   // Remove script tags and their contents
-  let sanitized = input.replace(SANITIZATION_CONFIG.REGEX.SCRIPT, '');
+  let sanitized = trimmed.replace(SANITIZATION_CONFIG.REGEX.SCRIPT, '');
 
   // Remove event handlers (onload, onclick, etc.)
   sanitized = sanitized.replace(SANITIZATION_CONFIG.REGEX.EVENT_HANDLER, '');
 
   // Escape HTML entities to prevent script injection
-  const htmlEscapes = SANITIZATION_CONFIG.HTML.ESCAPE_MAP;
-  const escapePattern = new RegExp(
-    `[${Object.keys(htmlEscapes)
-      .join('')
-      .replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}]`,
-    'g'
-  );
-
   sanitized = sanitized.replace(
-    escapePattern,
-    (char) => htmlEscapes[char as keyof typeof htmlEscapes] || char
+    HTML_ESCAPE_REGEX,
+    (char) =>
+      (HTML_ESCAPE_MAP as unknown as Record<string, string>)[char] || char
   );
 
-  return sanitized.trim();
+  return sanitized;
 }
 
 export function buildErrorResponse(errors: ValidationError[]): Response {
