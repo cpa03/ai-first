@@ -78,9 +78,18 @@ export const FEATURE_CONFIG = {
   ),
 
   ANIMATION_DELAYS: {
-    STEP_1: 'delay-100',
-    STEP_2: 'delay-200',
-    STEP_3: 'delay-300',
+    STEP_1: EnvLoader.string(
+      'LANDING_PAGE_ANIMATION_DELAY_STEP_1',
+      'delay-100'
+    ),
+    STEP_2: EnvLoader.string(
+      'LANDING_PAGE_ANIMATION_DELAY_STEP_2',
+      'delay-200'
+    ),
+    STEP_3: EnvLoader.string(
+      'LANDING_PAGE_ANIMATION_DELAY_STEP_3',
+      'delay-300'
+    ),
   } as const,
 } as const;
 
