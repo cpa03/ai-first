@@ -247,7 +247,7 @@ export default function SignupPage() {
       return false;
     }
 
-    if (password.length < 8) {
+    if (password.length < PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
       setPasswordError(SIGNUP_PAGE_CONTENT.ERRORS.PASSWORD_TOO_SHORT);
       return false;
     }
