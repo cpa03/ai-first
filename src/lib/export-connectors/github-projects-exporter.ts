@@ -222,7 +222,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const redirectUri =
       process.env.GITHUB_REDIRECT_URI ||
       `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/github/callback`;
-    const scopes = 'repo,project,read:org';
+    const scopes = GITHUB_CONFIG.OAUTH_SCOPES;
 
     const params = new URLSearchParams({
       client_id: clientId || '',
