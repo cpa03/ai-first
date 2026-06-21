@@ -102,28 +102,30 @@ export function useBlueprintGeneration(
   // Generate blueprint with delay
   useEffect(() => {
     let isCancelled = false;
+    let timeoutId: NodeJS.Timeout | null = null;
     // Ensure loading state is shown when inputs change
     setIsGenerating(true);
 
-    const generateBlueprint = async () => {
-      await new Promise((resolve) =>
-        setTimeout(resolve, UI_CONFIG.BLUEPRINT_GENERATION_DELAY)
-      );
+    const generateBlueprint = () => {
+      timeoutId = setTimeout(() => {
+        // Prevent state updates if component unmounted during generation
+        if (isCancelled) return;
 
-      // Prevent state updates if component unmounted during generation
-      if (isCancelled) return;
+        const generatedBlueprint = generateBlueprintTemplate(idea, answers);
 
-      const generatedBlueprint = generateBlueprintTemplate(idea, answers);
-
-      setBlueprint(generatedBlueprint);
-      setIsGenerating(false);
-      setShowCelebration(true);
+        setBlueprint(generatedBlueprint);
+        setIsGenerating(false);
+        setShowCelebration(true);
+      }, UI_CONFIG.BLUEPRINT_GENERATION_DELAY);
     };
 
     generateBlueprint();
 
     return () => {
       isCancelled = true;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idea, serializedAnswers]);
