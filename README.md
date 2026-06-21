@@ -120,36 +120,51 @@
     /FeatureGrid.tsx        ← Feature showcase grid
     /GlobalErrorHandler.tsx  ← Global error handling
     /IdeaInput.tsx          ← Idea input component
+    /IdeaReadyIndicator.tsx ← Idea ready status indicator
     /InputWithValidation.tsx ← Form input with validation
     /KeyboardShortcutsHelp.tsx ← Keyboard shortcuts help
     /KeyboardShortcutsProvider.tsx ← Keyboard shortcuts context
+    /LayoutErrorFallback.tsx ← Layout error fallback UI
     /LoadingAnnouncer.tsx   ← Screen reader announcements
     /LoadingSpinner.tsx     ← Spinner component
     /MobileNav.tsx         ← Responsive navigation
+    /NotificationPreferences.tsx ← Notification preferences settings
+    /NotificationPrompt.tsx ← Notification permission prompt
     /ProgressStepper.tsx    ← Progress indicator
+    /ReferralLink.tsx       ← Referral link component
     /ScrollToTop.tsx        ← Scroll to top button
+    /SessionTracker.tsx     ← Session tracking component
+    /ShareButton.tsx        ← Share functionality
     /Skeleton.tsx           ← Skeleton loading component
+    /StatusAnnouncer.tsx    ← Status announcements for a11y
     /StepCelebration.tsx    ← Step completion celebration
     /SuccessCelebration.tsx  ← Success celebration animation
     /TaskManagement.tsx     ← Task management UI
     /ToastContainer.tsx     ← Toast notification container
     /Tooltip.tsx            ← Accessible tooltip component
-    /WhyChooseSection.tsx   ← Why choose section
     /UserOnboarding.tsx     ← User onboarding flow
-    /ShareButton.tsx        ← Share functionality
-    /ReferralLink.tsx       ← Referral link component
+    /WhyChooseSection.tsx   ← Why choose section
     /task-management/       ← Task management components
       /DeliverableCard.tsx    ← Deliverable card with tasks list
       /TaskItem.tsx           ← Individual task item with status toggle
       /TaskManagementHeader.tsx ← Header with progress stats
   /hooks/                  ← React custom hooks
-    /useTaskManagement.ts   ← Task management hook
     /useAuthCheck.ts        ← Authentication check hook
     /useBlueprintGeneration.ts ← Blueprint generation hook
     /useClarificationSession.ts ← Clarification session hook
+    /useNotificationPermission.ts ← Notification permission hook
+    /usePrefersReducedMotion.ts ← Reduced motion preference hook
     /useSessionDuration.ts   ← Session duration tracking hook
+    /useTaskManagement.ts   ← Task management hook
   /lib/                    ← Core utilities
+    /ab-test.ts           ← A/B testing utilities
+    /ai.ts                ← AI provider abstraction
+    /analytics.ts         ← Analytics tracking
+    /api-client.ts        ← API client utilities
     /auth.ts              ← Authentication service
+    /cache.ts             ← Caching utilities
+    /cloudflare.ts        ← Cloudflare integration
+    /config-service.ts    ← Configuration service
     /db/                  ← Database service module
       /service.ts        ← Database service
       /client.ts         ← Database client
@@ -158,14 +173,21 @@
       /deliverables.ts   ← Deliverables repository
       /clarification.ts  ← Clarification repository
       /vectors.ts        ← Vector store repository
-    /api-client.ts        ← API client utilities
+    /embedding-service.ts ← Embedding service
     /errors.ts            ← Error handling
-    /rate-limit.ts        ← Rate limiting
     /external-rate-limit.ts ← External rate limit service
-    /metrics.ts          ← Metrics collection
     /logger.ts           ← Logging utilities
-    /config-service.ts    ← Configuration service
+    /metrics.ts          ← Metrics collection
+    /pii-redaction.ts    ← PII redaction utilities
+    /prompt-service.ts   ← AI prompt service
+    /rate-limit.ts       ← Rate limiting
+    /resource-cleanup.ts ← Resource cleanup utilities
+    /service-worker.ts   ← Service worker utilities
+    /session-analytics.ts ← Session analytics
+    /similarity-service.ts ← Similarity matching service
     /type-guards.ts      ← Type guard utilities
+    /utils.ts            ← General utilities
+    /validation.ts       ← Input validation utilities
     /resilience/          ← Resilience framework
       /circuit-breaker.ts    ← Circuit breaker implementation
       /circuit-breaker-manager.ts ← Circuit breaker manager
