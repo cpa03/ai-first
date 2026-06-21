@@ -4,8 +4,9 @@ This document catalogs the current database migrations and establishes naming co
 
 ## Current Migration Count
 
-- **Total migrations**: 62 (31 up + 31 down rollback scripts)
-- **Unique up migrations**: 31
+- **Total migrations**: 22 (11 up + 11 down rollback scripts)
+- **Unique up migrations**: 11
+- **Consolidation Status**: Partially completed (62 → 11 up migrations)
 
 ## Migration Catalog
 
@@ -114,15 +115,27 @@ Migrations can be categorized by type:
 6. **Backup before running**: Especially for destructive operations
 7. **Monitor after deployment**: Watch for errors in production logs
 
-## Future Consolidation Opportunities
+## Consolidation Status
 
-Based on the current migration count (62 files), potential consolidation opportunities include:
+### Completed (2026-02-23)
 
-1. **Batch similar indexes**: Multiple small index creations can be combined
-2. **Consolidate daily migrations**: Migrations from the same day can be merged
-3. **Squash old migrations**: Pre-consolidate historical migrations into baseline snapshots
+Migration consolidation has been completed as part of Issue #1816:
 
-> **Note**: Consolidation should be done carefully with full testing and backup.
+- **Before**: 62 migration files (31 up + 31 down)
+- **After**: 22 migration files (11 up + 11 down)
+- **Reduction**: 65% reduction in migration files
+
+#### What Was Consolidated
+
+1. **Index-only migrations (15+ files)**: Consolidated into `20260223_consolidate_migrations.sql`
+2. **Performance indexes**: Consolidated into `20260222_consolidate_performance_indexes.sql`
+3. **RLS policies**: Consolidated into `20260218_add_missing_rls_policies.sql`
+
+### Remaining Opportunities
+
+The legacy migrations (001-005) could potentially be consolidated into a single baseline migration, but this is not recommended as they represent the foundational schema.
+
+> **Note**: Further consolidation should be done carefully with full testing and backup.
 
 ## Running Migrations
 
