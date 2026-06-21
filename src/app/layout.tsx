@@ -256,9 +256,9 @@ export default async function RootLayout({
                     {/* Navigation columns */}
                     {FOOTER_NAV_CONFIG.COLUMNS.map((column) => (
                       <div key={column.title}>
-                        <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
+                        <p className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
                           {column.title}
-                        </h3>
+                        </p>
                         <ul className="mt-4 space-y-3">
                           {column.items.map((item) => (
                             <li key={item.href}>
