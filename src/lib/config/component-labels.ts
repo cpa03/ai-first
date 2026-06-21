@@ -53,6 +53,8 @@ export const INPUT_VALIDATION_LABELS = {
   SHOW_PASSWORD_ARIA: 'Show password',
   /** ARIA label to hide password */
   HIDE_PASSWORD_ARIA: 'Hide password',
+  /** Tooltip for invalid input error icon */
+  FIX_ERROR_TOOLTIP: 'Please fix this error',
 } as const;
 
 /**

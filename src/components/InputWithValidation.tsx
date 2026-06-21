@@ -365,7 +365,7 @@ const InputWithValidationComponent = forwardRef<
               className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
             >
               <Tooltip
-                content="Please fix this error"
+                content={INPUT_VALIDATION_LABELS.FIX_ERROR_TOOLTIP}
                 position="top"
                 disabled={false}
               >
