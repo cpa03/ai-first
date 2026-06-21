@@ -1,4 +1,5 @@
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { DB_TABLES } from '../config/database-tables';
 import type { ClientProvider } from './ideas';
 import type { Deliverable, Task, Idea } from './types';
 
@@ -19,7 +20,7 @@ export class DeliverableService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .insert(deliverable as never)
       .select()
       .single();
@@ -38,7 +39,7 @@ export class DeliverableService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .insert(deliverables as never)
       .select();
 
@@ -54,7 +55,7 @@ export class DeliverableService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .select('*')
       .eq('idea_id', ideaId)
       .is('deleted_at', null)
@@ -102,7 +103,7 @@ export class DeliverableService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .select(
         `
         *,
@@ -138,7 +139,7 @@ export class DeliverableService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .select(
         `
         *,
@@ -166,7 +167,7 @@ export class DeliverableService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .update(updates as never)
       .eq('id', id)
       .select()
@@ -184,7 +185,7 @@ export class DeliverableService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { error } = await admin
-      .from('deliverables')
+      .from(DB_TABLES.DELIVERABLES)
       .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
@@ -198,7 +199,10 @@ export class DeliverableService {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
-    const { error } = await client.from('deliverables').delete().eq('id', id);
+    const { error } = await client
+      .from(DB_TABLES.DELIVERABLES)
+      .delete()
+      .eq('id', id);
 
     if (error) throw error;
   }

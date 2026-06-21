@@ -1,4 +1,5 @@
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { DB_TABLES } from '../config/database-tables';
 import type { ClientProvider } from './ideas';
 import type { Task, Deliverable, Idea } from './types';
 
@@ -17,7 +18,7 @@ export class TaskService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .insert(task as never)
       .select()
       .single();
@@ -34,7 +35,7 @@ export class TaskService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .insert(tasks as never)
       .select();
 
@@ -50,7 +51,7 @@ export class TaskService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .select('*')
       .eq('deliverable_id', deliverableId)
       .is('deleted_at', null)
@@ -68,7 +69,7 @@ export class TaskService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .select('*')
       .eq('id', id)
       .is('deleted_at', null)
@@ -86,7 +87,7 @@ export class TaskService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .update(updates as never)
       .eq('id', id)
       .select()
@@ -104,7 +105,7 @@ export class TaskService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { error } = await admin
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
@@ -118,7 +119,7 @@ export class TaskService {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
-    const { error } = await client.from('tasks').delete().eq('id', id);
+    const { error } = await client.from(DB_TABLES.TASKS).delete().eq('id', id);
 
     if (error) throw error;
   }
@@ -133,7 +134,7 @@ export class TaskService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('tasks')
+      .from(DB_TABLES.TASKS)
       .select(
         `
         *,

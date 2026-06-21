@@ -1,6 +1,7 @@
 import { redactPIIInObject } from '../pii-redaction';
 import { VALIDATION_LIMITS } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { DB_TABLES } from '../config/database-tables';
 import type { ClientProvider } from './ideas';
 import type {
   ClarificationSessionRow,
@@ -27,7 +28,7 @@ export class ClarificationService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('clarification_sessions')
+      .from(DB_TABLES.CLARIFICATION_SESSIONS)
       .insert({
         idea_id: ideaId,
         status: 'active',
@@ -56,7 +57,7 @@ export class ClarificationService {
     }));
 
     const { data, error } = await client
-      .from('clarification_answers')
+      .from(DB_TABLES.CLARIFICATION_ANSWERS)
       .insert(entries as never)
       .select();
 
@@ -78,7 +79,7 @@ export class ClarificationService {
     // Redact sensitive information before logging to database
     const sanitizedPayload = redactPIIInObject(payload);
 
-    const { error } = await admin.from('agent_logs').insert({
+    const { error } = await admin.from(DB_TABLES.AGENT_LOGS).insert({
       agent,
       action,
       payload: sanitizedPayload,
@@ -99,7 +100,7 @@ export class ClarificationService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     let query = client
-      .from('agent_logs')
+      .from(DB_TABLES.AGENT_LOGS)
       .select('*')
       .order('timestamp', { ascending: false })
       .limit(limit);
@@ -132,7 +133,7 @@ export class ClarificationService {
     const offset = (page - 1) * pageSize;
 
     let countQuery = client
-      .from('agent_logs')
+      .from(DB_TABLES.AGENT_LOGS)
       .select('*', { count: 'exact', head: true });
 
     if (agent) {
@@ -144,7 +145,7 @@ export class ClarificationService {
     if (countError) throw countError;
 
     let query = client
-      .from('agent_logs')
+      .from(DB_TABLES.AGENT_LOGS)
       .select('*')
       .order('timestamp', { ascending: false })
       .range(offset, offset + pageSize - 1);
