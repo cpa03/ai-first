@@ -6,6 +6,7 @@ import React, {
   useRef,
   useEffect,
   useCallback,
+  useMemo,
 } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
@@ -21,6 +22,7 @@ import {
   SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { createLogger } from '@/lib/logger';
 
 const subscribe = (callback: () => void) => {
   if (typeof window === 'undefined') return () => {};
@@ -301,6 +303,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 function CopyCodeButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const logger = useMemo(() => createLogger('CopyCodeButton'), []);
   const prefersReducedMotion = useSyncExternalStore(
     subscribe,
     getSnapshot,
@@ -325,9 +328,9 @@ function CopyCodeButton({ text }: { text: string }) {
         setCopied(false);
       }, COMPONENT_CONFIG.COPY_FEEDBACK.DURATION_MS);
     } catch (err) {
-      console.error('Failed to copy blueprint:', err);
+      logger.error('Failed to copy blueprint', err as Error);
     }
-  }, [text]);
+  }, [text, logger]);
 
   return (
     <button
