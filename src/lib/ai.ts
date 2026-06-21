@@ -104,7 +104,7 @@ class AIService {
     if (process.env.ANTHROPIC_API_KEY) {
       this.anthropic = new Anthropic({
         apiKey: process.env.ANTHROPIC_API_KEY,
-        timeout: DEFAULT_TIMEOUTS.openai,
+        timeout: DEFAULT_TIMEOUTS.anthropic,
       });
     }
 
@@ -796,7 +796,8 @@ class AIService {
           },
           {
             timeoutMs:
-              (DEFAULT_TIMEOUTS.openai ?? RESILIENCE_CONFIG.TIMEOUTS.OPENAI) /
+              (DEFAULT_TIMEOUTS.anthropic ??
+                RESILIENCE_CONFIG.TIMEOUTS.ANTHROPIC) /
               AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
           }
         );

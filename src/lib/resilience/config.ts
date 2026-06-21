@@ -15,6 +15,7 @@ export const DEFAULT_RETRIES: RetryConfig = {
 
 export const DEFAULT_TIMEOUTS: Record<string, number> = {
   openai: RESILIENCE_CONFIG.TIMEOUTS.OPENAI,
+  anthropic: RESILIENCE_CONFIG.TIMEOUTS.ANTHROPIC,
   notion: RESILIENCE_CONFIG.TIMEOUTS.NOTION,
   trello: RESILIENCE_CONFIG.TIMEOUTS.TRELLO,
   github: RESILIENCE_CONFIG.TIMEOUTS.GITHUB,
@@ -33,6 +34,11 @@ export const defaultResilienceConfigs: Record<string, ServiceResilienceConfig> =
     openai: {
       retry: RESILIENCE_CONFIG.SERVICE_RETRY.OPENAI,
       timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.OPENAI },
+      circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.OPENAI,
+    },
+    anthropic: {
+      retry: RESILIENCE_CONFIG.SERVICE_RETRY.OPENAI,
+      timeout: { timeoutMs: RESILIENCE_CONFIG.TIMEOUTS.ANTHROPIC },
       circuitBreaker: RESILIENCE_CONFIG.SERVICE_CIRCUIT_BREAKER.OPENAI,
     },
     github: {
