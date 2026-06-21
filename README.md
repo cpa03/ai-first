@@ -165,14 +165,6 @@
     /cache.ts             ← Caching utilities
     /cloudflare.ts        ← Cloudflare integration
     /config-service.ts    ← Configuration service
-    /db/                  ← Database service module
-      /service.ts        ← Database service
-      /client.ts         ← Database client
-      /ideas.ts          ← Ideas repository
-      /tasks.ts          ← Tasks repository
-      /deliverables.ts   ← Deliverables repository
-      /clarification.ts  ← Clarification repository
-      /vectors.ts        ← Vector store repository
     /embedding-service.ts ← Embedding service
     /errors.ts            ← Error handling
     /external-rate-limit.ts ← External rate limit service
@@ -188,6 +180,33 @@
     /type-guards.ts      ← Type guard utilities
     /utils.ts            ← General utilities
     /validation.ts       ← Input validation utilities
+    /agents/             ← AI agent implementations
+      /breakdown-engine/  ← Breakdown engine agent
+      /clarifier-engine/  ← Clarifier engine agent
+      /events/           ← Event handling agents
+    /api-handler/        ← API handler utilities
+      /wrapper.ts        ← API request wrapper
+      /response.ts       ← Response formatting
+    /config/             ← Configuration modules (40+ files)
+      /constants.ts      ← Centralized constants
+      /environment.ts    ← Environment configuration
+      /database-tables.ts ← Database table names
+      /theme.ts          ← Theme configuration
+    /db/                  ← Database service module
+      /service.ts        ← Database service
+      /client.ts         ← Database client
+      /ideas.ts          ← Ideas repository
+      /tasks.ts          ← Tasks repository
+      /deliverables.ts   ← Deliverables repository
+      /clarification.ts  ← Clarification repository
+      /vectors.ts        ← Vector store repository
+    /export-connectors/  ← Export integrations
+      /notion-exporter.ts ← Notion export
+      /trello-exporter.ts ← Trello export
+      /github-projects-exporter.ts ← GitHub Projects export
+    /prompts/            ← AI prompt templates
+      /breakdown/        ← Breakdown prompts
+      /clarifier/        ← Clarifier prompts
     /resilience/          ← Resilience framework
       /circuit-breaker.ts    ← Circuit breaker implementation
       /circuit-breaker-manager.ts ← Circuit breaker manager
@@ -197,6 +216,11 @@
       /manager.ts           ← Resilience manager
       /config.ts            ← Resilience config
       /types.ts             ← Resilience types
+    /security/           ← Security utilities
+      /crypto.ts         ← Cryptographic functions
+      /csrf.ts           ← CSRF protection
+      /request-signer.ts ← Request signing
+      /suspicious-patterns.ts ← Threat detection
   /types/                   ← TypeScript type definitions
     /api.ts               ← API response types
     /database.ts          ← Database types
