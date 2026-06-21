@@ -22,6 +22,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { redactPIIInObject } from '@/lib/pii-redaction';
+import { SECURITY_CONFIG } from '@/lib/config';
 
 const logger = createLogger('SecurityAudit');
 
@@ -361,10 +362,10 @@ export const SecurityAuditLog = {
         userAgent: details.userAgent,
         // Truncate long values to prevent log flooding (Bolt optimization)
         scriptSample: details.scriptSample
-          ? `${details.scriptSample.substring(0, 200)}${details.scriptSample.length > 200 ? '...' : ''}`
+          ? `${details.scriptSample.substring(0, SECURITY_CONFIG.AUDIT_SCRIPT_SAMPLE_MAX_LENGTH)}${details.scriptSample.length > SECURITY_CONFIG.AUDIT_SCRIPT_SAMPLE_MAX_LENGTH ? '...' : ''}`
           : undefined,
         originalPolicy: details.originalPolicy
-          ? `${details.originalPolicy.substring(0, 500)}${details.originalPolicy.length > 500 ? '...' : ''}`
+          ? `${details.originalPolicy.substring(0, SECURITY_CONFIG.AUDIT_ORIGINAL_POLICY_MAX_LENGTH)}${details.originalPolicy.length > SECURITY_CONFIG.AUDIT_ORIGINAL_POLICY_MAX_LENGTH ? '...' : ''}`
           : undefined,
       },
       environment: getEnvironment(),

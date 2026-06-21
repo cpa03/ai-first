@@ -348,6 +348,28 @@ export const SECURITY_CONFIG = {
     16,
     128
   ),
+
+  /**
+   * Maximum length for script sample in audit logs (characters)
+   * Env: SECURITY_AUDIT_SCRIPT_SAMPLE_MAX_LENGTH (default: 200)
+   */
+  AUDIT_SCRIPT_SAMPLE_MAX_LENGTH: EnvLoader.number(
+    'SECURITY_AUDIT_SCRIPT_SAMPLE_MAX_LENGTH',
+    200,
+    50,
+    500
+  ),
+
+  /**
+   * Maximum length for original policy in audit logs (characters)
+   * Env: SECURITY_AUDIT_ORIGINAL_POLICY_MAX_LENGTH (default: 500)
+   */
+  AUDIT_ORIGINAL_POLICY_MAX_LENGTH: EnvLoader.number(
+    'SECURITY_AUDIT_ORIGINAL_POLICY_MAX_LENGTH',
+    500,
+    100,
+    1000
+  ),
 } as const;
 
 /**
