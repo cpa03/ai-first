@@ -276,6 +276,9 @@ function KeyboardShortcutsHelpComponent({
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Micro-UX: Store the element that had focus before modal opened
+  // This enables proper focus restoration when modal closes
+  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     return () => {
@@ -292,7 +295,8 @@ function KeyboardShortcutsHelpComponent({
     );
   }, []);
 
-  // Close handler
+  // Micro-UX: Close handler with focus restoration
+  // Restores focus to the element that triggered the modal for seamless keyboard navigation
   const handleClose = useCallback(() => {
     triggerHapticFeedback();
     setIsLeaving(true);
@@ -301,12 +305,18 @@ function KeyboardShortcutsHelpComponent({
       setSearchQuery('');
       setSelectedIndex(0);
       onClose();
+      if (previouslyFocusedRef.current) {
+        previouslyFocusedRef.current.focus();
+        previouslyFocusedRef.current = null;
+      }
     }, ANIMATION_CONFIG.STANDARD);
   }, [onClose]);
 
-  // Handle open state
+  // Micro-UX: Handle open state with focus management
+  // Save previously focused element and trap focus within modal
   useEffect(() => {
     if (isOpen) {
+      previouslyFocusedRef.current = document.activeElement as HTMLElement;
       requestAnimationFrame(() => searchInputRef.current?.focus());
       document.body.style.overflow = 'hidden';
     } else {
@@ -402,10 +412,41 @@ function KeyboardShortcutsHelpComponent({
     };
   }, [isOpen, preferences.vimMode, searchQuery, selectedIndex, handleClose]);
 
-  // Reset selection on search change
+  // Micro-UX: Focus trap for accessibility
+  // Prevents keyboard users from tabbing outside the modal to elements behind the backdrop
   useEffect(() => {
-    setSelectedIndex(0);
-  }, [searchQuery]);
+    if (!isOpen || !modalRef.current) return;
+
+    const modal = modalRef.current;
+
+    const handleTabTrap = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      const focusableElements = modal.querySelectorAll<HTMLElement>(
+        'input, button, [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (focusableElements.length === 0) return;
+
+      const firstElement = focusableElements[0];
+      const lastElement = focusableElements[focusableElements.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement.focus();
+        }
+      } else {
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleTabTrap);
+    return () => document.removeEventListener('keydown', handleTabTrap);
+  }, [isOpen]);
 
   // Filter and group shortcuts
   const groupedShortcuts = useMemo(() => {
