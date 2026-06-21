@@ -2,7 +2,7 @@
 
 This document outlines the strategic direction and planned releases for IdeaFlow.
 
-**Last Updated**: June 18, 2026
+**Last Updated**: June 21, 2026
 
 ---
 
@@ -10,8 +10,8 @@ This document outlines the strategic direction and planned releases for IdeaFlow
 
 IdeaFlow is an AI-powered project planning tool that turns raw ideas into actionable plans. Our vision is to make idea-to-execution frictionless for founders, makers, and project owners.
 
-**Current Status**: Phase 1 Foundation Complete
-**Next Milestone**: MVP Launch (Q1 2026)
+**Current Status**: Phase 1 MVP - In Progress (Core features implemented, polish in progress)
+**Next Milestone**: MVP Launch (Target: Q3 2026)
 
 ---
 
@@ -52,7 +52,7 @@ IdeaFlow is an AI-powered project planning tool that turns raw ideas into action
 ## Release Timeline
 
 ```
-2025 Q4        2026 Q1           2026 Q2           2026 Q3           2026 Q4
+2025 Q4        2026 Q1-Q2        2026 Q3           2026 Q4           2027 Q1
     |               |                |                |                |
 Phase 0        Phase 1         Phase 2          Phase 3          Phase 4
 Foundation         MVP         Integrations      Scale          Enterprise
@@ -115,10 +115,10 @@ Establish the technical foundation and core infrastructure.
 
 ## Phase 1: MVP 🚀 IN PROGRESS
 
-**Timeline**: 2026 Q1 (January - March)
-**Status**: In Progress
-**Target Launch**: March 31, 2026
-**Overall Progress**: ~55% (See [MVP Feature Status Dashboard](./mvp-feature-status.md) for details)
+**Timeline**: 2026 Q1-Q2 (January - June)
+**Status**: In Progress - Core features implemented, polish and testing in progress
+**Target Launch**: Q3 2026 (July - September)
+**Overall Progress**: ~75% (See [MVP Feature Status Dashboard](./mvp-feature-status.md) for details)
 
 ### Goal
 
