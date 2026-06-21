@@ -10,18 +10,29 @@ const createMockClientProvider = (): ClientProvider => ({
 });
 
 const createMockSupabaseClient = () => {
-  const chain: Record<string, unknown> = {};
+  const chain = {
+    from: jest.fn(),
+    insert: jest.fn(),
+    select: jest.fn(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    eq: jest.fn(),
+    is: jest.fn(),
+    order: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    range: jest.fn(),
+  };
 
-  chain.from = jest.fn().mockReturnValue(chain);
-  chain.insert = jest.fn().mockReturnValue(chain);
-  chain.select = jest.fn().mockReturnValue(chain);
-  chain.single = jest.fn().mockResolvedValue({ data: null, error: null });
-  chain.eq = jest.fn().mockReturnValue(chain);
-  chain.is = jest.fn().mockReturnValue(chain);
-  chain.order = jest.fn().mockReturnValue(chain);
-  chain.update = jest.fn().mockReturnValue(chain);
-  chain.delete = jest.fn().mockReturnValue(chain);
-  chain.range = jest.fn().mockReturnValue(chain);
+  // Set up chain returns after object creation
+  chain.from.mockReturnValue(chain);
+  chain.insert.mockReturnValue(chain);
+  chain.select.mockReturnValue(chain);
+  chain.eq.mockReturnValue(chain);
+  chain.is.mockReturnValue(chain);
+  chain.order.mockReturnValue(chain);
+  chain.update.mockReturnValue(chain);
+  chain.delete.mockReturnValue(chain);
+  chain.range.mockReturnValue(chain);
 
   (chain as any)._result = { data: null, error: null };
   (chain as any).then = function (
@@ -69,6 +80,9 @@ describe('Database Services', () => {
           priority_score: 0,
           complexity_score: 0,
           risk_level: 'low' as const,
+          milestone_id: null,
+          tags: null,
+          custom_fields: null,
         };
         const expectedTask = {
           id: 'task-1',
@@ -104,6 +118,9 @@ describe('Database Services', () => {
             priority_score: 0,
             complexity_score: 0,
             risk_level: 'low',
+            milestone_id: null,
+            tags: null,
+            custom_fields: null,
           })
         ).rejects.toThrow(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
       });
@@ -127,6 +144,9 @@ describe('Database Services', () => {
             priority_score: 0,
             complexity_score: 0,
             risk_level: 'low',
+            milestone_id: null,
+            tags: null,
+            custom_fields: null,
           })
         ).rejects.toEqual({ message: 'Database error' });
       });
@@ -147,6 +167,9 @@ describe('Database Services', () => {
             priority_score: 0,
             complexity_score: 0,
             risk_level: 'low' as const,
+            milestone_id: null,
+            tags: null,
+            custom_fields: null,
           },
         ];
         const expectedTasks = tasks.map((t, i) => ({
