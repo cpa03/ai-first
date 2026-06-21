@@ -297,7 +297,7 @@ export default function UserOnboarding() {
         {/* Close button */}
         <button
           onClick={handleSkip}
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors p-1"
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md"
           aria-label="Skip onboarding tour"
         >
           <svg
@@ -344,14 +344,14 @@ export default function UserOnboarding() {
             {currentStepIndex > 0 && (
               <button
                 onClick={handlePrev}
-                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               >
                 Back
               </button>
             )}
             <button
               onClick={handleNext}
-              className="px-4 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
+              className="px-4 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
               {isLastStep ? 'Get Started!' : 'Next'}
             </button>
