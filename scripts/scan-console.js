@@ -107,6 +107,16 @@ async function scanPage(page, url) {
     };
     errors.push(logEntry);
     console.error(`✗ Failed to scan ${url}: ${err.message}`);
+
+    // Provide helpful debugging info
+    if (err.message.includes('ERR_CONNECTION_REFUSED')) {
+      console.error(`  → Make sure the dev server is running on ${BASE_URL}`);
+    } else if (err.message.includes('timeout')) {
+      console.error(
+        `  → Page took too long to load (timeout: ${CONSOLE_SCANNER_CONFIG.NAVIGATION_TIMEOUT}ms)`
+      );
+    }
+
     return { pageErrors: [logEntry], pageWarnings: [] };
   }
 }
@@ -114,9 +124,24 @@ async function scanPage(page, url) {
 async function main() {
   console.log('🧛 BroCula Console Scanner Starting...');
   console.log(`Base URL: ${BASE_URL}`);
+  console.log(`Pages to scan: ${PAGES.join(', ')}`);
   console.log('');
 
-  const browser = await chromium.launch({ headless: true });
+  let browser;
+  try {
+    browser = await chromium.launch({
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+      ],
+    });
+  } catch (launchError) {
+    console.error(`❌ Failed to launch browser: ${launchError.message}`);
+    console.error('   Please run: npx playwright install chromium');
+    process.exit(1);
+  }
 
   try {
     for (const pagePath of PAGES) {

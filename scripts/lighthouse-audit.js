@@ -47,13 +47,51 @@ const CONFIG = {
 const audits = [];
 
 async function runLighthouse(url) {
-  const chrome = await chromeLauncher.launch({
-    chromePath: CHROME_PATH,
-    chromeFlags: ['--no-sandbox', '--headless', '--disable-gpu'],
-  });
+  // Validate Chrome path exists before launching
+  if (CHROME_PATH && !fs.existsSync(CHROME_PATH)) {
+    console.error(`  ✗ Chrome not found at: ${CHROME_PATH}`);
+    console.error('  Run: npx playwright install chromium');
+    throw new Error(`Chrome executable not found: ${CHROME_PATH}`);
+  }
+
+  let chrome;
+  try {
+    chrome = await chromeLauncher.launch({
+      chromePath: CHROME_PATH,
+      chromeFlags: [
+        '--no-sandbox',
+        '--headless',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+      ],
+    });
+  } catch (launchError) {
+    console.error(`  ✗ Failed to launch Chrome: ${launchError.message}`);
+    console.error('  Trying without explicit Chrome path...');
+
+    // Try without explicit path
+    chrome = await chromeLauncher.launch({
+      chromeFlags: [
+        '--no-sandbox',
+        '--headless',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-setuid-sandbox',
+      ],
+    });
+  }
 
   try {
-    const { lhr } = await lighthouse(
+    // Add timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(
+        () => reject(new Error('Lighthouse audit timed out after 60 seconds')),
+        60000
+      );
+    });
+
+    const auditPromise = lighthouse(
       url,
       {
         port: chrome.port,
@@ -62,6 +100,8 @@ async function runLighthouse(url) {
       },
       CONFIG
     );
+
+    const { lhr } = await Promise.race([auditPromise, timeoutPromise]);
 
     const results = {
       url,
@@ -114,19 +154,35 @@ async function runLighthouse(url) {
     });
 
     return results;
+  } catch (error) {
+    console.error(`  ✗ Lighthouse audit failed for ${url}: ${error.message}`);
+    throw error;
   } finally {
-    await chrome.kill();
+    if (chrome) {
+      try {
+        await chrome.kill();
+      } catch (killError) {
+        // Ignore errors when killing Chrome
+      }
+    }
   }
 }
 
 async function main() {
   console.log('🧛 BroCula Lighthouse Auditor Starting...');
   console.log(`Base URL: ${BASE_URL}`);
-  console.log(`Chrome Path: ${CHROME_PATH}`);
+  console.log(`Chrome Path: ${CHROME_PATH || 'Auto-detect'}`);
   console.log(
     `Auditing ${PAGES.length} public page(s) (skipping ${AUTH_PAGES.length} auth-required pages)`
   );
   console.log('');
+
+  // Verify Chrome is available before starting
+  if (CHROME_PATH && !fs.existsSync(CHROME_PATH)) {
+    console.error(`❌ Chrome executable not found at: ${CHROME_PATH}`);
+    console.error('   Please run: npx playwright install chromium');
+    process.exit(1);
+  }
 
   for (const pagePath of PAGES) {
     const url = `${BASE_URL}${pagePath}`;
