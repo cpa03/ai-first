@@ -1,5 +1,6 @@
 import { VALIDATION_LIMITS } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { DB_TABLES } from '../config/database-tables';
 import type {
   Idea,
   IdeaSession,
@@ -36,7 +37,7 @@ export class IdeaService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .insert(idea as never)
       .select()
       .single();
@@ -53,7 +54,7 @@ export class IdeaService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .select('*')
       .eq('id', id)
       .is('deleted_at', null)
@@ -71,7 +72,7 @@ export class IdeaService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .select('*')
       .eq('user_id', userId)
       .is('deleted_at', null)
@@ -110,13 +111,13 @@ export class IdeaService {
 
     // Build the base query with common filters
     let countQuery = client
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .select('*', { count: 'exact', head: true })
       .eq('user_id', userId)
       .is('deleted_at', null);
 
     let dataQuery = client
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .select('*')
       .eq('user_id', userId)
       .is('deleted_at', null)
@@ -168,7 +169,7 @@ export class IdeaService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { data, error } = await admin
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .update(updates as never)
       .eq('id', id)
       .select()
@@ -186,7 +187,7 @@ export class IdeaService {
     if (!admin) throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
 
     const { error } = await admin
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .update({ deleted_at: new Date().toISOString() } as never)
       .eq('id', id);
 
@@ -200,7 +201,7 @@ export class IdeaService {
     const client = this.clientProvider.getClient();
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
-    const { error } = await client.from('ideas').delete().eq('id', id);
+    const { error } = await client.from(DB_TABLES.IDEAS).delete().eq('id', id);
 
     if (error) throw error;
   }
@@ -215,7 +216,7 @@ export class IdeaService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('idea_sessions')
+      .from(DB_TABLES.IDEA_SESSIONS)
       .upsert({
         ...session,
         updated_at: new Date().toISOString(),
@@ -235,7 +236,7 @@ export class IdeaService {
     if (!client) throw new Error(API_ERROR_MESSAGES.DB.CLIENT_NOT_INITIALIZED);
 
     const { data, error } = await client
-      .from('idea_sessions')
+      .from(DB_TABLES.IDEA_SESSIONS)
       .select('*')
       .eq('idea_id', ideaId)
       .single();
@@ -284,7 +285,7 @@ export class IdeaService {
 
     // Query 1: Get all ideas with status (needed for ideasByStatus)
     const { data: ideasData, error: ideasError } = await client
-      .from('ideas')
+      .from(DB_TABLES.IDEAS)
       .select('id, status')
       .eq('user_id', userId)
       .is('deleted_at', null);
@@ -336,7 +337,7 @@ export class IdeaService {
       // Fallback: Use optimized two-query approach
       // Query 2a: Get deliverable count and IDs in single query using count + select
       const { data: deliverablesData, error: deliverablesError } = await client
-        .from('deliverables')
+        .from(DB_TABLES.DELIVERABLES)
         .select('id', { count: 'exact', head: false })
         .in('idea_id', ideaIds)
         .is('deleted_at', null);
@@ -349,7 +350,7 @@ export class IdeaService {
       if (deliverables.length > 0) {
         const deliverableIds = deliverables.map((d) => d.id);
         const { count: taskCount, error: taskError } = await client
-          .from('tasks')
+          .from(DB_TABLES.TASKS)
           .select('*', { count: 'exact', head: true })
           .in('deliverable_id', deliverableIds)
           .is('deleted_at', null);

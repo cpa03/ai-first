@@ -4,6 +4,7 @@ import { createLogger } from '../logger';
 import { resourceCleanupManager } from '../resource-cleanup';
 import { AGENT_CONFIG } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { DB_TABLES } from '../config/database-tables';
 import { IdeaService, type ClientProvider } from './ideas';
 import { DeliverableService } from './deliverables';
 import { TaskService } from './tasks';
@@ -497,7 +498,7 @@ export class DatabaseService implements ClientProvider {
         this.connectionMetrics.totalConnections++;
 
         const healthCheckPromise = this._client
-          .from('ideas')
+          .from(DB_TABLES.IDEAS)
           .select('id')
           .limit(1);
 
@@ -543,7 +544,7 @@ export class DatabaseService implements ClientProvider {
         // Test admin connection with a simple query
         // Using agent_logs table which is commonly used for admin operations
         const adminHealthCheckPromise = admin
-          .from('agent_logs')
+          .from(DB_TABLES.AGENT_LOGS)
           .select('id')
           .limit(1);
 
