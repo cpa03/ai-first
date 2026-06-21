@@ -14,6 +14,7 @@ import {
   ROUTES,
   LOGIN_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
+  PASSWORD_VALIDATION_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -66,7 +67,7 @@ export default function LoginPage() {
       return false;
     }
 
-    if (password.length < 8) {
+    if (password.length < PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
       setPasswordError(LOGIN_PAGE_CONTENT.ERRORS.PASSWORD_TOO_SHORT);
       return false;
     }

@@ -96,9 +96,12 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
     return { strength: 'empty', score: 0, feedback: [] };
   }
 
-  if (password.length >= 8) score++;
-  if (password.length >= 12) score++;
-  if (password.length >= 16) score++;
+  const { MIN_LENGTH, STRENGTH_THRESHOLDS, MESSAGES } =
+    PASSWORD_VALIDATION_CONFIG;
+
+  if (password.length >= STRENGTH_THRESHOLDS.WEAK) score++;
+  if (password.length >= STRENGTH_THRESHOLDS.MEDIUM) score++;
+  if (password.length >= STRENGTH_THRESHOLDS.STRONG) score++;
 
   if (/[a-z]/.test(password)) score++;
   if (/[A-Z]/.test(password)) score++;
@@ -107,10 +110,10 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
 
   const normalizedScore = Math.min(Math.floor(score / 2), 4);
 
-  const { MIN_LENGTH, MESSAGES } = PASSWORD_VALIDATION_CONFIG;
-
   if (password.length < MIN_LENGTH) {
-    feedback.push(MESSAGES.MIN_LENGTH);
+    feedback.push(
+      MESSAGES.MIN_LENGTH.replace('{minLength}', String(MIN_LENGTH))
+    );
   }
   if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
     feedback.push(MESSAGES.UPPERCASE_LOWERCASE);

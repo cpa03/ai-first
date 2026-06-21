@@ -278,11 +278,22 @@ export const DASHBOARD_FILTER_LABELS = {
 /**
  * Password validation configuration
  * Used in signup page for password strength validation messages
+ * Follows the "Flexy" principle: eliminate hardcoded values
  */
 export const PASSWORD_VALIDATION_CONFIG = {
-  MIN_LENGTH: 8,
+  /** Minimum password length - Env: PASSWORD_MIN_LENGTH (default: 8) */
+  MIN_LENGTH: EnvLoader.number('PASSWORD_MIN_LENGTH', 8, 4, 32),
+  /** Password strength scoring thresholds */
+  STRENGTH_THRESHOLDS: {
+    /** Length threshold for first strength point - Env: PASSWORD_THRESHOLD_WEAK (default: 8) */
+    WEAK: EnvLoader.number('PASSWORD_THRESHOLD_WEAK', 8, 4, 16),
+    /** Length threshold for second strength point - Env: PASSWORD_THRESHOLD_MEDIUM (default: 12) */
+    MEDIUM: EnvLoader.number('PASSWORD_THRESHOLD_MEDIUM', 12, 8, 24),
+    /** Length threshold for third strength point - Env: PASSWORD_THRESHOLD_STRONG (default: 16) */
+    STRONG: EnvLoader.number('PASSWORD_THRESHOLD_STRONG', 16, 12, 32),
+  },
   MESSAGES: {
-    MIN_LENGTH: 'Use at least 8 characters',
+    MIN_LENGTH: 'Use at least {minLength} characters',
     UPPERCASE_LOWERCASE: 'Add uppercase and lowercase letters',
     NUMBER: 'Add numbers',
     SPECIAL_CHARACTER: 'Add special characters (!@#$%^&*)',
@@ -308,6 +319,15 @@ export const PASSWORD_VALIDATION_CONFIG = {
     MEDIUM: 'text-amber-700',
     STRONG: 'text-green-700',
   },
+} as const;
+
+/**
+ * Referral code configuration
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const REFERRAL_CONFIG = {
+  /** Length of referral code from user ID - Env: REFERRAL_CODE_LENGTH (default: 8) */
+  CODE_LENGTH: EnvLoader.number('REFERRAL_CODE_LENGTH', 4, 4, 16),
 } as const;
 
 /**

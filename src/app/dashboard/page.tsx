@@ -14,6 +14,7 @@ import {
   ROUTES,
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
+  REFERRAL_CONFIG,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -109,8 +110,10 @@ export default function DashboardPage() {
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
 
-  // Growth: Generate referral code from user ID (first 8 chars)
-  const referralCode = userId ? userId.slice(0, 8).toLowerCase() : '';
+  // Growth: Generate referral code from user ID (configurable length)
+  const referralCode = userId
+    ? userId.slice(0, REFERRAL_CONFIG.CODE_LENGTH).toLowerCase()
+    : '';
 
   const fetchIdeas = useCallback(async () => {
     try {

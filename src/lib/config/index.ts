@@ -42,6 +42,7 @@ export {
   PASSWORD_VALIDATION_CONFIG,
   EXPORT_LABELS,
   KEYBOARD_SHORTCUTS_MESSAGES,
+  REFERRAL_CONFIG,
 } from './ui';
 export { ANIMATION_CONFIG } from './animation';
 
