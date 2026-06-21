@@ -1093,3 +1093,33 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Checkbox Toggle Pulse Animation - Micro-UX delight for task checkbox interactions */
+/* Creates a brief, satisfying pulse effect that confirms the toggle action to users */
+@keyframes checkboxTogglePulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+  }
+}
+
+.animate-checkbox-pulse {
+  animation: checkboxTogglePulse 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Reduced motion support for checkbox toggle pulse */
+@media (prefers-reduced-motion: reduce) {
+  .animate-checkbox-pulse {
+    animation: none;
+    transform: none;
+    box-shadow: none;
+  }
+}

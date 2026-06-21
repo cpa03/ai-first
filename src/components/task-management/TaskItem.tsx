@@ -92,8 +92,10 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     const disabledClasses = isUpdating
       ? TASK_ITEM_STYLES.CHECKBOX.DISABLED
       : '';
-    return `${baseClasses} ${stateClasses} ${disabledClasses}`;
-  }, [isCompleted, isUpdating]);
+    const togglePulseClass =
+      isToggled && !prefersReducedMotion ? 'animate-checkbox-pulse' : '';
+    return `${baseClasses} ${stateClasses} ${disabledClasses} ${togglePulseClass}`;
+  }, [isCompleted, isUpdating, isToggled, prefersReducedMotion]);
 
   const titleClasses = useMemo(() => {
     const baseClasses = TASK_ITEM_STYLES.TITLE.BASE;
