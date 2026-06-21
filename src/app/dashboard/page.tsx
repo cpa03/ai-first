@@ -654,7 +654,9 @@ export default function DashboardPage() {
                               />
                             </svg>
                           )}
-                          {deletingId === idea.id ? 'Deleting...' : 'Delete'}
+                          {deletingId === idea.id
+                            ? DASHBOARD_PAGE_CONTENT.DELETE_MODAL.DELETING
+                            : DASHBOARD_PAGE_CONTENT.ACTIONS.DELETE}
                         </button>
                       </div>
                     </td>
