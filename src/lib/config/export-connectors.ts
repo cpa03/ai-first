@@ -34,7 +34,12 @@ export const TRELLO_CONFIG = {
     /** High priority threshold (1-5) - Env: TRELLO_PRIORITY_HIGH_THRESHOLD (default: 4) */
     HIGH_THRESHOLD: EnvLoader.number('TRELLO_PRIORITY_HIGH_THRESHOLD', 4, 1, 5),
     /** Medium priority threshold (1-5) - Env: TRELLO_PRIORITY_MEDIUM_THRESHOLD (default: 2) */
-    MEDIUM_THRESHOLD: EnvLoader.number('TRELLO_PRIORITY_MEDIUM_THRESHOLD', 2, 1, 5),
+    MEDIUM_THRESHOLD: EnvLoader.number(
+      'TRELLO_PRIORITY_MEDIUM_THRESHOLD',
+      2,
+      1,
+      5
+    ),
     LABELS: {
       HIGH: 'High Priority',
       MEDIUM: 'Medium Priority',
@@ -103,6 +108,16 @@ export const GITHUB_CONFIG = {
     REPO_NAME_TEMPLATE: 'ideaflow-{title}',
     ISSUE_LABEL: 'ideaflow',
   },
+
+  /**
+   * GitHub OAuth scopes for Projects integration
+   * Env: GITHUB_OAUTH_SCOPES (default: 'repo,project,read:org')
+   * @see https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/scopes-for-oauth-apps
+   */
+  OAUTH_SCOPES: EnvLoader.string(
+    'GITHUB_OAUTH_SCOPES',
+    'repo,project,read:org'
+  ),
 } as const;
 
 export const LINEAR_CONFIG = {
