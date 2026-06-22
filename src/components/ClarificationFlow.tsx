@@ -158,7 +158,6 @@ function ClarificationFlow({
         stepNumber={currentStep}
         totalSteps={questions.length}
         show={showCelebration}
-        onComplete={() => {}}
       />
 
       {error && (

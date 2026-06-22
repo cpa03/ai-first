@@ -145,6 +145,7 @@ export function useClarificationSession(
       const nextStep = currentStep + 1;
       setShowCelebration(true);
       stepTransitionTimeoutRef.current = setTimeout(() => {
+        setShowCelebration(false);
         setCurrentStep(nextStep);
         setCurrentAnswer('');
       }, ANIMATION_CONFIG.STEP_TRANSITION);
