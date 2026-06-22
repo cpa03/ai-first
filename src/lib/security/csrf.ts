@@ -1,10 +1,15 @@
 import { APP_CONFIG } from '@/lib/config/app';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 
-export const CSRF_CONFIG = {
-  STATE_CHANGING_METHODS: ['POST', 'PUT', 'DELETE', 'PATCH'] as const,
+/**
+ * PERFORMANCE: Lazy-initialized trusted origins to avoid expensive array creation
+ * on every access while ensuring compatibility with Edge/Workers initialization.
+ */
+let memoizedOriginsArray: string[] | null = null;
+let memoizedOriginsSet: Set<string> | null = null;
 
-  get TRUSTED_ORIGINS(): string[] {
+function getOriginsConfig() {
+  if (!memoizedOriginsArray || !memoizedOriginsSet) {
     const origins: string[] = [APP_CONFIG.URLS.BASE];
 
     if (process.env.VERCEL_URL) {
@@ -31,7 +36,22 @@ export const CSRF_CONFIG = {
       );
     }
 
-    return [...new Set(origins)];
+    memoizedOriginsArray = [...new Set(origins)];
+    memoizedOriginsSet = new Set(
+      memoizedOriginsArray.map((t) => t.toLowerCase().replace(/\/$/, ''))
+    );
+  }
+  return { array: memoizedOriginsArray, set: memoizedOriginsSet };
+}
+
+export const CSRF_CONFIG = {
+  STATE_CHANGING_METHODS: ['POST', 'PUT', 'DELETE', 'PATCH'] as const,
+
+  /**
+   * PERFORMANCE: Returns the memoized array.
+   */
+  get TRUSTED_ORIGINS(): string[] {
+    return getOriginsConfig().array;
   },
 
   ENABLED: process.env.NODE_ENV !== 'test',
@@ -62,18 +82,27 @@ function extractOrigin(request: Request): string | null {
   return null;
 }
 
-function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
+/**
+ * Checks if the origin is in the trusted origins set.
+ * PERFORMANCE: Uses O(1) Set lookup with pre-normalized trusted origins.
+ */
+function isTrustedOrigin(origin: string, trustedOrigins?: string[]): boolean {
   const normalizedOrigin = origin.toLowerCase().replace(/\/$/, '');
+  const config = getOriginsConfig();
 
-  for (const trusted of trustedOrigins) {
-    const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
-
-    if (normalizedOrigin === normalizedTrusted) {
-      return true;
+  // If custom trusted origins are provided, use the O(N) fallback loop.
+  // This is rare and typically only happens in tests.
+  if (trustedOrigins && trustedOrigins !== config.array) {
+    for (const trusted of trustedOrigins) {
+      const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
+      if (normalizedOrigin === normalizedTrusted) {
+        return true;
+      }
     }
+    return false;
   }
 
-  return false;
+  return config.set.has(normalizedOrigin);
 }
 
 export function validateCSRF(
