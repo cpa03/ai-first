@@ -6,6 +6,7 @@ import {
   ANIMATION_DELAYS,
   SVG_STROKE_WIDTHS,
 } from '@/lib/config';
+import Tooltip from './Tooltip';
 
 interface AutoSaveIndicatorProps {
   value: string;
@@ -133,6 +134,17 @@ function AutoSaveIndicatorComponent({
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const formatExactTimestamp = (date: Date): string => {
+    return date.toLocaleString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+  };
+
   if (!showIndicator) return null;
 
   return (
@@ -231,11 +243,23 @@ function AutoSaveIndicatorComponent({
           <span className="flex items-center gap-1">
             <span className="animate-in fade-in duration-200">Saved</span>
             {lastSaved && (
-              <span
-                className={`text-gray-400 animate-in fade-in slide-in-from-left-1 duration-300 ${ANIMATION_DELAYS.TAILWIND[100]}`}
+              <Tooltip
+                content={
+                  <div className="flex flex-col gap-1">
+                    <span className="font-medium">Last saved</span>
+                    <span className="text-[10px] text-gray-400 opacity-80">
+                      {formatExactTimestamp(lastSaved)}
+                    </span>
+                  </div>
+                }
+                position="top"
               >
-                • {formatLastSaved(lastSaved)}
-              </span>
+                <span
+                  className={`text-gray-400 animate-in fade-in slide-in-from-left-1 duration-300 cursor-help border-b border-dotted border-gray-400 hover:text-gray-600 transition-colors duration-200 ${ANIMATION_DELAYS.TAILWIND[100]}`}
+                >
+                  • {formatLastSaved(lastSaved)}
+                </span>
+              </Tooltip>
             )}
           </span>
         )}
