@@ -23,6 +23,7 @@ import {
   AI_HEALTH_CHECK_CONFIG,
 } from './config/modular-constants';
 import { API_ERROR_MESSAGES } from './config';
+import { DB_TABLES } from './config/database-tables';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
@@ -503,7 +504,7 @@ class AIService {
       }
     } else {
       const { data: existingContext } = await supabase
-        .from('vectors')
+        .from(DB_TABLES.VECTORS)
         .select('vector_data')
         .eq('idea_id', ideaId)
         .eq('reference_type', 'context')
@@ -554,7 +555,7 @@ class AIService {
       context = [...systemMessages, ...nonSystemMessages];
     }
 
-    await supabase.from('vectors').upsert({
+    await supabase.from(DB_TABLES.VECTORS).upsert({
       idea_id: ideaId,
       reference_type: 'context',
       vector_data: { messages: context } as unknown as Record<string, unknown>,
@@ -618,7 +619,7 @@ class AIService {
     // Store cost tracking
     const supabase = this.getSupabase();
     if (supabase) {
-      await supabase.from('agent_logs').insert({
+      await supabase.from(DB_TABLES.AGENT_LOGS).insert({
         agent: 'ai-service',
         action: 'cost-tracking',
         payload: tracker,
@@ -711,7 +712,7 @@ class AIService {
       // Redact sensitive information before logging to database
       const sanitizedPayload = redactPIIInObject(payload);
 
-      await supabase.from('agent_logs').insert({
+      await supabase.from(DB_TABLES.AGENT_LOGS).insert({
         agent,
         action,
         payload: {
