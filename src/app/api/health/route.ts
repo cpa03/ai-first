@@ -7,6 +7,7 @@ import { APP_CONFIG } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getCloudflareRequestInfo } from '@/lib/cloudflare';
 import { isSensitiveVar } from '@/lib/security/env-validation';
+import { PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit, request } = context;
@@ -31,7 +32,7 @@ async function handleGet(context: ApiContext) {
     };
   } = {
     status: APP_CONFIG.HEALTH_STATUS.HEALTHY,
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env[PLATFORM_ENV_KEYS.NODE_ENV] || 'development',
     checks: {},
   };
 

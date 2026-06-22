@@ -4,11 +4,15 @@ import { createLogger } from '@/lib/logger';
 import { AUTH_CONFIG } from '@/lib/config/constants';
 import { STATUS_CODES } from '@/lib/config/http';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
+import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 
-const ADMIN_API_KEY = process.env.ADMIN_API_KEY;
+const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
 
-if (!ADMIN_API_KEY && process.env.NODE_ENV !== 'development') {
+if (
+  !ADMIN_API_KEY &&
+  process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
+) {
   logger.warn(
     'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
   );
@@ -31,7 +35,7 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
   if (!ADMIN_API_KEY) {
-    return process.env.NODE_ENV === 'development';
+    return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
   }
 
   const authHeader = request.headers.get('authorization');

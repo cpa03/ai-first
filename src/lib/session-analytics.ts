@@ -14,6 +14,7 @@ import { createLogger } from '@/lib/logger';
 import { generateSecureId } from '@/lib/utils';
 import { SESSION_ANALYTICS_CONFIG } from '@/lib/config/constants';
 import { SESSION_STORAGE_KEYS } from '@/lib/config';
+import { PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 
 const logger = createLogger('SessionAnalytics');
 
@@ -86,12 +87,12 @@ function flushEvents(): void {
   const eventsToSend = [...eventQueue];
   eventQueue.length = 0;
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'production') {
     logger.debug('[SessionAnalytics] Flush events:', eventsToSend);
   }
 
   // Logger.debug for now - can be extended to PostHog later
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'production') {
     logger.debug('[SessionAnalytics] Events:', eventsToSend);
   }
 

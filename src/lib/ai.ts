@@ -24,6 +24,11 @@ import {
 } from './config/modular-constants';
 import { API_ERROR_MESSAGES } from './config';
 import { DB_TABLES } from './config/database-tables';
+import {
+  AI_ENV_KEYS,
+  PLATFORM_ENV_KEYS,
+  DATABASE_ENV_KEYS,
+} from './config/env-keys';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
@@ -95,16 +100,16 @@ class AIService {
     // to prevent SUPABASE_SERVICE_ROLE_KEY from being accessed at module load time
     // Use getSupabase() method instead for lazy initialization
 
-    if (process.env.OPENAI_API_KEY) {
+    if (process.env[AI_ENV_KEYS.OPENAI_API_KEY]) {
       this.openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
+        apiKey: process.env[AI_ENV_KEYS.OPENAI_API_KEY],
         timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
 
-    if (process.env.ANTHROPIC_API_KEY) {
+    if (process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY]) {
       this.anthropic = new Anthropic({
-        apiKey: process.env.ANTHROPIC_API_KEY,
+        apiKey: process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY],
         timeout: DEFAULT_TIMEOUTS.openai,
       });
     }
@@ -114,9 +119,9 @@ class AIService {
     // RELIABILITY: Conditional interval start prevents Jest force exit warnings
     if (
       typeof process !== 'undefined' &&
-      process.env.NODE_ENV === 'production' &&
-      !process.env.JEST_WORKER_ID &&
-      !process.env.VITEST_WORKER_ID
+      process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'production' &&
+      !process.env[PLATFORM_ENV_KEYS.JEST_WORKER_ID] &&
+      !process.env[PLATFORM_ENV_KEYS.VITEST_WORKER_ID]
     ) {
       this.cleanupIntervalId = setInterval(() => {
         this.cleanupOldCostTrackers();
@@ -154,8 +159,10 @@ class AIService {
 
     // Lazy initialization to prevent key from being accessed during module load
     if (!this._supabase) {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+      const supabaseUrl =
+        process.env[DATABASE_ENV_KEYS.NEXT_PUBLIC_SUPABASE_URL];
+      const serviceKey =
+        process.env[DATABASE_ENV_KEYS.SUPABASE_SERVICE_ROLE_KEY];
 
       if (!supabaseUrl || !serviceKey) {
         logger.warn(
@@ -607,7 +614,8 @@ class AIService {
     this.todayCostCache.set(cacheKey, totalTodayCost);
 
     const dailyLimit = parseFloat(
-      process.env.COST_LIMIT_DAILY || String(AI_CONFIG.DEFAULT_DAILY_COST_LIMIT)
+      process.env[AI_ENV_KEYS.COST_LIMIT_DAILY] ||
+        String(AI_CONFIG.DEFAULT_DAILY_COST_LIMIT)
     );
 
     if (totalTodayCost > dailyLimit) {

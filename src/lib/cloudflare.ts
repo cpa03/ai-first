@@ -12,6 +12,7 @@
 import { PLATFORM_ENV_VARS } from './config/constants';
 import { CF_CACHE_TTL, CF_LIMITS } from './config/cloudflare-config';
 import { generateId } from '@/lib/security/crypto';
+import { PLATFORM_ENV_KEYS } from './config/env-keys';
 
 /**
  * Cloudflare-specific headers that are added to requests
@@ -210,7 +211,7 @@ export interface CacheControlOptions {
 
 export function isCloudflareWorker(): boolean {
   if (
-    process.env[CLOUDFLARE_ENV_VARS.CF_WORKER] ||
+    process.env[PLATFORM_ENV_KEYS.CF_WORKER] ||
     process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE] ||
     process.env[CLOUDFLARE_ENV_VARS.CLOUDFLARE_WORKERS]
   ) {
@@ -218,9 +219,9 @@ export function isCloudflareWorker(): boolean {
   }
 
   if (
-    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES] ||
+    process.env[PLATFORM_ENV_KEYS.CF_PAGES] ||
     process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_BRANCH] ||
-    process.env[CLOUDFLARE_ENV_VARS.CF_PAGES_URL]
+    process.env[PLATFORM_ENV_KEYS.CF_PAGES_URL]
   ) {
     return true;
   }
@@ -401,13 +402,13 @@ export function getExecutionContext(): ExecutionContext {
     typeof process.versions !== 'undefined' &&
     typeof process.versions.node !== 'undefined';
 
-  const nodeEnv = process.env.NODE_ENV;
+  const nodeEnv = process.env[PLATFORM_ENV_KEYS.NODE_ENV];
   const isDevelopment = nodeEnv === 'development';
   const isProduction = nodeEnv === 'production';
 
   const nodeVersion = isNode ? process.versions.node : null;
   const region =
-    process.env[PLATFORM_ENV_VARS.VERCEL.VERCEL_REGION] ||
+    process.env[PLATFORM_ENV_KEYS.VERCEL_URL] ||
     process.env[PLATFORM_ENV_VARS.CLOUDFLARE.CF_REGION] ||
     null;
 

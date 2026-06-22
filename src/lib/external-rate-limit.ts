@@ -12,6 +12,7 @@ import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
 import { TIME_UNITS, RATE_LIMIT_CONFIG } from './config';
 import { TIMESTAMP_CONFIG } from './config/modular-constants';
+import { PLATFORM_ENV_KEYS } from './config/env-keys';
 
 const logger = createLogger('ExternalRateLimit');
 
@@ -103,9 +104,9 @@ class ExternalRateLimitTracker {
     // RELIABILITY: Only start cleanup interval in production to avoid open handles in tests
     if (
       typeof process !== 'undefined' &&
-      process.env.NODE_ENV === 'production' &&
-      !process.env.JEST_WORKER_ID &&
-      !process.env.VITEST_WORKER_ID
+      process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'production' &&
+      !process.env[PLATFORM_ENV_KEYS.JEST_WORKER_ID] &&
+      !process.env[PLATFORM_ENV_KEYS.VITEST_WORKER_ID]
     ) {
       this.startCleanupInterval();
 
