@@ -234,8 +234,7 @@ describe('ClarificationFlow', () => {
     expect(input).toHaveValue('My Project');
   });
 
-  // Skipping: Test appears to have timing/async issues with select input rendering
-  it.skip('handles select input correctly', async () => {
+  it('handles select input correctly', async () => {
     (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
@@ -270,7 +269,7 @@ describe('ClarificationFlow', () => {
           })
         ).toBeInTheDocument();
       },
-      { timeout: 2000 }
+      { timeout: 3000 }
     );
 
     const secondTextarea = screen.getByPlaceholderText(
@@ -289,7 +288,7 @@ describe('ClarificationFlow', () => {
           })
         ).toBeInTheDocument();
       },
-      { timeout: 2000 }
+      { timeout: 3000 }
     );
 
     const select = screen.getByDisplayValue(/select an option/i);
@@ -298,8 +297,7 @@ describe('ClarificationFlow', () => {
     expect(select).toHaveValue('1 month');
   });
 
-  // Skipping: Test appears to have timing/async issues with previous button navigation
-  it.skip('navigates between questions correctly', async () => {
+  it('navigates between questions correctly', async () => {
     const mockQuestions = [
       {
         id: '1',
@@ -339,11 +337,14 @@ describe('ClarificationFlow', () => {
     const nextButton = screen.getByText('Next →');
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: mockQuestions[1].question })
-      ).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(
+          screen.getByRole('heading', { name: mockQuestions[1].question })
+        ).toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
 
     expect(
       screen.getByText(/question 2 of 2/i, { selector: 'span' })
@@ -359,7 +360,10 @@ describe('ClarificationFlow', () => {
       ).toBeInTheDocument();
     });
 
-    expect(textarea).toHaveValue('Developers'); // Should restore previous answer
+    const restoredTextarea = screen.getByPlaceholderText(
+      /enter your answer here/i
+    );
+    expect(restoredTextarea).toHaveValue('Developers');
   });
 
   it('completes flow after last question', async () => {

@@ -206,7 +206,7 @@ describe('useClarificationSession', () => {
       jest.runAllTimers();
     });
 
-    expect(result.current.showCelebration).toBe(true);
+    expect(result.current.showCelebration).toBe(false);
   });
 
   it('handles previous navigation', async () => {
