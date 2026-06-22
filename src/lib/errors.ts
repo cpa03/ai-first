@@ -4,6 +4,16 @@ import { APP_CONFIG } from './config/app';
 import { HTTP_HEADERS } from './config/http';
 import { generateId, simpleHash } from './security/crypto';
 import { HASH_CONFIG } from './config/modular-constants';
+import {
+  RETRYABLE_PATTERNS,
+  NETWORK_ERROR_PATTERNS,
+  TIMEOUT_ERROR_PATTERNS,
+  DATABASE_ERROR_PATTERNS,
+  AUTH_ERROR_PATTERNS,
+  RATE_LIMIT_ERROR_PATTERNS,
+  VALIDATION_ERROR_PATTERNS,
+  matchesPattern,
+} from './config/error-classification';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -443,14 +453,14 @@ export function isRetryableError(error: unknown): boolean {
   }
 
   if (error instanceof Error) {
-    const message = error.message.toLowerCase();
+    const message = error.message;
     return (
-      message.includes('timeout') ||
-      message.includes('rate limit') ||
-      message.includes('econnreset') ||
-      message.includes('econnrefused') ||
-      message.includes('etimedout') ||
-      message.includes('enotfound')
+      matchesPattern(message, RETRYABLE_PATTERNS.TIMEOUT) ||
+      matchesPattern(message, RETRYABLE_PATTERNS.RATE_LIMIT) ||
+      matchesPattern(message, RETRYABLE_PATTERNS.ECONNRESET) ||
+      matchesPattern(message, RETRYABLE_PATTERNS.ECONNREFUSED) ||
+      matchesPattern(message, RETRYABLE_PATTERNS.ETIMEDOUT) ||
+      matchesPattern(message, RETRYABLE_PATTERNS.ENOTFOUND)
     );
   }
 
@@ -608,53 +618,59 @@ function classifyStandardError(error: Error): ErrorClassification {
 
   // Network errors
   if (
-    message.includes('econnreset') ||
-    message.includes('econnrefused') ||
-    message.includes('enotfound') ||
-    message.includes('network')
+    matchesPattern(message, NETWORK_ERROR_PATTERNS.ECONNRESET) ||
+    matchesPattern(message, NETWORK_ERROR_PATTERNS.ECONNREFUSED) ||
+    matchesPattern(message, NETWORK_ERROR_PATTERNS.ENOTFOUND) ||
+    matchesPattern(message, NETWORK_ERROR_PATTERNS.NETWORK)
   ) {
     return 'network_error';
   }
 
   // Timeout errors
-  if (message.includes('timeout') || name.includes('timeout')) {
+  if (
+    matchesPattern(message, TIMEOUT_ERROR_PATTERNS.MESSAGE_TIMEOUT) ||
+    matchesPattern(name, TIMEOUT_ERROR_PATTERNS.NAME_TIMEOUT)
+  ) {
     return 'timeout_error';
   }
 
   // Database errors (PostgreSQL/Supabase patterns)
   if (
-    message.includes('database') ||
-    message.includes('sql') ||
-    message.includes('relation') ||
-    message.includes('column') ||
-    name.includes('database') ||
-    name.includes('postgres')
+    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_DATABASE) ||
+    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_SQL) ||
+    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_RELATION) ||
+    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_COLUMN) ||
+    matchesPattern(name, DATABASE_ERROR_PATTERNS.NAME_DATABASE) ||
+    matchesPattern(name, DATABASE_ERROR_PATTERNS.NAME_POSTGRES)
   ) {
     return 'database_error';
   }
 
   // Auth errors
   if (
-    message.includes('unauthorized') ||
-    message.includes('unauthenticated') ||
-    message.includes('forbidden') ||
-    message.includes('invalid token') ||
-    message.includes('jwt')
+    matchesPattern(message, AUTH_ERROR_PATTERNS.UNAUTHORIZED) ||
+    matchesPattern(message, AUTH_ERROR_PATTERNS.UNAUTHENTICATED) ||
+    matchesPattern(message, AUTH_ERROR_PATTERNS.FORBIDDEN) ||
+    matchesPattern(message, AUTH_ERROR_PATTERNS.INVALID_TOKEN) ||
+    matchesPattern(message, AUTH_ERROR_PATTERNS.JWT)
   ) {
     return 'auth_error';
   }
 
   // Rate limit errors
-  if (message.includes('rate limit') || message.includes('too many requests')) {
+  if (
+    matchesPattern(message, RATE_LIMIT_ERROR_PATTERNS.MESSAGE_RATE_LIMIT) ||
+    matchesPattern(message, RATE_LIMIT_ERROR_PATTERNS.TOO_MANY_REQUESTS)
+  ) {
     return 'rate_limit_error';
   }
 
   // Validation errors
   if (
-    message.includes('validation') ||
-    message.includes('invalid') ||
-    message.includes('required') ||
-    name.includes('validation')
+    matchesPattern(message, VALIDATION_ERROR_PATTERNS.MESSAGE_VALIDATION) ||
+    matchesPattern(message, VALIDATION_ERROR_PATTERNS.MESSAGE_INVALID) ||
+    matchesPattern(message, VALIDATION_ERROR_PATTERNS.MESSAGE_REQUIRED) ||
+    matchesPattern(name, VALIDATION_ERROR_PATTERNS.NAME_VALIDATION)
   ) {
     return 'validation_error';
   }
