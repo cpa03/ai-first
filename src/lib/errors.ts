@@ -2,6 +2,7 @@ import { redactPII, redactPIIInObject } from './pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
 import { HTTP_HEADERS } from './config/http';
+import { ENV_ACCESSORS } from './config/env-keys';
 import { generateId, simpleHash } from './security/crypto';
 import { HASH_CONFIG } from './config/modular-constants';
 import {
@@ -531,7 +532,7 @@ export function extractErrorContext(
 ): ErrorContext {
   const timestamp = new Date().toISOString();
   const shouldIncludeStack =
-    includeStack ?? process.env.NODE_ENV !== 'production';
+    includeStack ?? ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production';
 
   // Handle AppError and subclasses
   if (error instanceof AppError) {

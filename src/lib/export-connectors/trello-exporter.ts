@@ -1,6 +1,7 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task } from '../db/service';
 import { TRELLO_CONFIG, TASK_CONFIG } from '../config';
+import { ENV_ACCESSORS } from '../config/env-keys';
 
 import { createLogger } from '../logger';
 
@@ -16,8 +17,8 @@ export class TrelloExporter extends ExportConnector {
     _options?: Record<string, unknown>
   ): Promise<ExportResult> {
     const { idea, deliverables = [], tasks = [] } = data;
-    const apiKey = process.env.TRELLO_API_KEY;
-    const token = process.env.TRELLO_TOKEN;
+    const apiKey = ENV_ACCESSORS.EXPORT.TRELLO_API_KEY();
+    const token = ENV_ACCESSORS.EXPORT.TRELLO_TOKEN();
 
     if (!apiKey || !token) {
       return {
@@ -108,8 +109,8 @@ export class TrelloExporter extends ExportConnector {
 
   async validateConfig(): Promise<boolean> {
     try {
-      const apiKey = process.env.TRELLO_API_KEY;
-      const token = process.env.TRELLO_TOKEN;
+      const apiKey = ENV_ACCESSORS.EXPORT.TRELLO_API_KEY();
+      const token = ENV_ACCESSORS.EXPORT.TRELLO_TOKEN();
 
       if (!apiKey || !token) return false;
 
@@ -130,8 +131,8 @@ export class TrelloExporter extends ExportConnector {
     const checkedAt = new Date().toISOString();
 
     try {
-      const apiKey = process.env.TRELLO_API_KEY;
-      const token = process.env.TRELLO_TOKEN;
+      const apiKey = ENV_ACCESSORS.EXPORT.TRELLO_API_KEY();
+      const token = ENV_ACCESSORS.EXPORT.TRELLO_TOKEN();
 
       if (!apiKey || !token) {
         return {
@@ -174,11 +175,11 @@ export class TrelloExporter extends ExportConnector {
   }
 
   async getAuthUrl(): Promise<string> {
-    const apiKey = process.env.TRELLO_API_KEY;
+    const apiKey = ENV_ACCESSORS.EXPORT.TRELLO_API_KEY();
     const appName = TRELLO_CONFIG.APP.NAME;
     const redirectUri =
-      process.env.TRELLO_REDIRECT_URI ||
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/trello/callback`;
+      ENV_ACCESSORS.EXPORT.TRELLO_REDIRECT_URI() ||
+      `${ENV_ACCESSORS.APP.NEXT_PUBLIC_APP_URL()}/api/auth/trello/callback`;
 
     const params = new URLSearchParams({
       key: apiKey || '',

@@ -119,7 +119,7 @@ export const SECURITY_ENV_KEYS = {
 export const LOGGING_ENV_KEYS = {
   /** Log level (DEBUG, INFO, WARN, ERROR) */
   LOG_LEVEL: 'LOG_LEVEL',
-  /** Log sample rate for performance monitoring */
+  /** Log sample rate for performance monitoring (0.0 to 1.0) */
   LOG_SAMPLE_RATE: 'LOG_SAMPLE_RATE',
   /** Suppress build-time logs */
   SUPPRESS_BUILD_LOGS: 'SUPPRESS_BUILD_LOGS',

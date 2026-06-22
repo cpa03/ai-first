@@ -3,11 +3,10 @@ import {
   ApiContext,
   withApiHandler,
 } from '@/lib/api-handler';
-import { APP_CONFIG } from '@/lib/config';
+import { APP_CONFIG, ENV_ACCESSORS } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getCloudflareRequestInfo } from '@/lib/cloudflare';
 import { isSensitiveVar } from '@/lib/security/env-validation';
-import { PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit, request } = context;
@@ -32,11 +31,10 @@ async function handleGet(context: ApiContext) {
     };
   } = {
     status: APP_CONFIG.HEALTH_STATUS.HEALTHY,
-    environment: process.env[PLATFORM_ENV_KEYS.NODE_ENV] || 'development',
+    environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'development',
     checks: {},
   };
 
-  // Add Cloudflare-specific information for observability
   const cfInfo = getCloudflareRequestInfo(request);
   envStatus.cloudflare = {
     isCloudflare: cfInfo.isCloudflare,
@@ -55,7 +53,6 @@ async function handleGet(context: ApiContext) {
   requiredVars.forEach((varName) => {
     const isSet = !!process.env[varName];
 
-    // Security: Only expose non-sensitive variable names in the health check response
     if (!isSensitiveVar(varName)) {
       envStatus.checks[varName] = {
         present: isSet,
@@ -71,7 +68,6 @@ async function handleGet(context: ApiContext) {
   aiVars.forEach((varName) => {
     const isSet = !!process.env[varName];
 
-    // Security: Only expose non-sensitive variable names in the health check response
     if (!isSensitiveVar(varName)) {
       envStatus.checks[varName] = {
         present: isSet,

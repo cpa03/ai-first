@@ -8,18 +8,10 @@ import { createLogger } from '@/lib/logger';
 import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES } from '@/lib/config/http';
 import { API_CACHE_CONFIG } from '@/lib/config/constants';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 const logger = createLogger('readiness');
 
-/**
- * Readiness probe endpoint for container orchestration (Kubernetes, Docker)
- *
- * Purpose: Should the container receive traffic?
- * Returns: 200 OK if all dependencies are ready, 503 if not ready
- *
- * This checks that all required dependencies (database, etc.) are healthy
- * and the application is ready to serve traffic.
- */
 async function handleGet(context: ApiContext) {
   const { rateLimit: _rateLimit } = context;
 
@@ -34,7 +26,6 @@ async function handleGet(context: ApiContext) {
   > = {};
   let allReady = true;
 
-  // Check database connectivity
   const dbStartTime = Date.now();
   try {
     const connectionHealth = await dbService.checkConnection();
@@ -63,7 +54,7 @@ async function handleGet(context: ApiContext) {
     status: allReady ? 'ready' : 'not_ready',
     timestamp: new Date().toISOString(),
     service: 'readiness',
-    environment: process.env.NODE_ENV || 'development',
+    environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'development',
     checks,
   };
 

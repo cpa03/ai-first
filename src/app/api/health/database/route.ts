@@ -5,6 +5,7 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit: _rateLimit } = context;
@@ -14,7 +15,7 @@ async function handleGet(context: ApiContext) {
     ...healthCheck,
     service: 'database',
     timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'development',
   };
 
   return standardSuccessResponse(

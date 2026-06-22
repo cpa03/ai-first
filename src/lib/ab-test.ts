@@ -18,6 +18,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { generateSecureId } from '@/lib/utils';
 import { simpleHash, secureRandom } from '@/lib/security/crypto';
 import { HASH_CONFIG } from '@/lib/config/modular-constants';
@@ -69,22 +70,14 @@ export interface ABAssignment {
  * A/B Test configuration
  */
 export const AB_TEST_CONFIG = {
-  /**
-   * Whether A/B testing is enabled
-   * Env: NEXT_PUBLIC_AB_TEST_ENABLED (default: true in development, false in production)
-   */
   ENABLED: EnvLoader.boolean(
     'NEXT_PUBLIC_AB_TEST_ENABLED',
-    process.env.NODE_ENV !== 'production'
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production'
   ),
 
-  /**
-   * Debug logging
-   * Env: AB_TEST_DEBUG (default: true in development)
-   */
   DEBUG: EnvLoader.boolean(
     'AB_TEST_DEBUG',
-    process.env.NODE_ENV !== 'production'
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production'
   ),
 
   /**

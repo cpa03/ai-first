@@ -9,6 +9,7 @@ import {
   RATE_LIMIT_CONFIG,
 } from './config/constants';
 import { HTTP_HEADERS } from './config/http';
+import { ENV_ACCESSORS } from './config/env-keys';
 import { generateRequestId } from './errors';
 import { simpleHash } from './security/crypto';
 
@@ -526,9 +527,9 @@ export function restartCleanupInterval(): void {
 // This prevents memory leaks in test environments and hot module reloading
 if (
   typeof process !== 'undefined' &&
-  process.env.NODE_ENV === 'production' &&
-  !process.env.JEST_WORKER_ID &&
-  !process.env.VITEST_WORKER_ID
+  ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production' &&
+  !ENV_ACCESSORS.PLATFORM.JEST_WORKER_ID() &&
+  !ENV_ACCESSORS.PLATFORM.VITEST_WORKER_ID()
 ) {
   startCleanupInterval();
   resourceCleanupManager.register('rate-limit-cleanup', () =>

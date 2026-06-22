@@ -5,6 +5,7 @@ import { resourceCleanupManager } from '../resource-cleanup';
 import { AGENT_CONFIG } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { DB_TABLES } from '../config/database-tables';
+import { ENV_ACCESSORS } from '../config/env-keys';
 import { IdeaService, type ClientProvider } from './ideas';
 import { DeliverableService } from './deliverables';
 import { TaskService } from './tasks';
@@ -27,9 +28,8 @@ import type {
 const logger = createLogger('DatabaseService');
 const { DATABASE } = AGENT_CONFIG;
 
-// Supabase client configuration
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = ENV_ACCESSORS.DATABASE.NEXT_PUBLIC_SUPABASE_URL();
+const supabaseAnonKey = ENV_ACCESSORS.DATABASE.NEXT_PUBLIC_SUPABASE_ANON_KEY();
 
 // SECURITY: Service role key is NEVER accessed at module level
 // to prevent accidental bundling in client-side code.
@@ -84,7 +84,7 @@ export function getSupabaseAdmin(): ReturnType<
   // Lazy initialization to prevent key from being accessed during module load
   // This ensures the key is only accessed when the function is actually called
   if (!_supabaseAdmin) {
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const serviceKey = ENV_ACCESSORS.DATABASE.SUPABASE_SERVICE_ROLE_KEY();
 
     if (!supabaseUrl || !serviceKey) {
       logger.warn(
@@ -170,8 +170,8 @@ export class DatabaseService implements ClientProvider {
 
     if (
       !this._client &&
-      process.env.NODE_ENV === 'development' &&
-      !process.env.CI &&
+      ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development' &&
+      !ENV_ACCESSORS.PLATFORM.CI() &&
       typeof window === 'undefined'
     ) {
       logger.warn(
@@ -400,9 +400,9 @@ export class DatabaseService implements ClientProvider {
       );
     }
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const url = ENV_ACCESSORS.DATABASE.NEXT_PUBLIC_SUPABASE_URL();
+    const anonKey = ENV_ACCESSORS.DATABASE.NEXT_PUBLIC_SUPABASE_ANON_KEY();
+    const serviceKey = ENV_ACCESSORS.DATABASE.SUPABASE_SERVICE_ROLE_KEY();
 
     logger.info('Reinitializing database clients...');
 
