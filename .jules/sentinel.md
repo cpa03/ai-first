@@ -1,0 +1,4 @@
+## 2026-06-22 - [Fail-Open in Metrics API]
+**Vulnerability:** The `/api/metrics` endpoint was using a fail-open authentication pattern. It only checked for admin authentication if the `ADMIN_API_KEY` environment variable was present. If the variable was missing (e.g., due to misconfiguration), the endpoint became publicly accessible in production.
+**Learning:** Checking for the existence of a secret before requiring it for authentication creates a critical fail-open vulnerability. Authentication should always be enforced, which naturally results in a "fail-closed" state if the necessary secret is missing (as authentication will fail).
+**Prevention:** Use mandatory authentication checks (like `requireAdminAuth`) unconditionally. Never wrap security checks in conditionals that depend on the presence of the security credentials themselves.
