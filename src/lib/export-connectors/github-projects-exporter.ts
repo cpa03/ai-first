@@ -1,6 +1,7 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task, Deliverable, Idea } from '../db/service';
 import { GITHUB_CONFIG, TASK_CONFIG, HTTP_HEADERS } from '@/lib/config';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 import { createLogger } from '../logger';
 
@@ -24,7 +25,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     data: ExportData,
     _options?: Record<string, unknown>
   ): Promise<ExportResult> {
-    const token = process.env.GITHUB_TOKEN;
+    const token = ENV_ACCESSORS.EXPORT.GITHUB_TOKEN();
     if (!token) {
       return {
         success: false,
@@ -151,7 +152,7 @@ export class GitHubProjectsExporter extends ExportConnector {
 
   async validateConfig(): Promise<boolean> {
     try {
-      const token = process.env.GITHUB_TOKEN;
+      const token = ENV_ACCESSORS.EXPORT.GITHUB_TOKEN();
       if (!token) return false;
 
       const response = await this.executeWithResilience(
@@ -175,7 +176,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     const checkedAt = new Date().toISOString();
 
     try {
-      const token = process.env.GITHUB_TOKEN;
+      const token = ENV_ACCESSORS.EXPORT.GITHUB_TOKEN();
 
       if (!token) {
         return {
@@ -218,10 +219,10 @@ export class GitHubProjectsExporter extends ExportConnector {
   }
 
   async getAuthUrl(): Promise<string> {
-    const clientId = process.env.GITHUB_CLIENT_ID;
+    const clientId = ENV_ACCESSORS.EXPORT.GITHUB_CLIENT_ID();
     const redirectUri =
-      process.env.GITHUB_REDIRECT_URI ||
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/github/callback`;
+      ENV_ACCESSORS.EXPORT.GITHUB_REDIRECT_URI() ||
+      `${ENV_ACCESSORS.APP.NEXT_PUBLIC_APP_URL()}/api/auth/github/callback`;
     const scopes = GITHUB_CONFIG.OAUTH_SCOPES;
 
     const params = new URLSearchParams({

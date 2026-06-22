@@ -1,6 +1,7 @@
 import { redactPII, redactPIIInObject } from './pii-redaction';
 import { generateSecureId } from './utils';
 import { secureRandom } from './security/crypto';
+import { ENV_ACCESSORS } from './config/env-keys';
 
 export enum LogLevel {
   DEBUG = 0,
@@ -13,11 +14,11 @@ const VALID_LOG_LEVELS = ['DEBUG', 'INFO', 'WARN', 'ERROR'] as const;
 type ValidLogLevelString = (typeof VALID_LOG_LEVELS)[number];
 
 function parseLogLevelFromEnv(): LogLevel {
-  const envLevel = process.env.LOG_LEVEL?.toUpperCase();
+  const envLevel = ENV_ACCESSORS.LOGGING.LOG_LEVEL().toUpperCase();
   if (!envLevel) return LogLevel.INFO;
 
   if (!VALID_LOG_LEVELS.includes(envLevel as ValidLogLevelString)) {
-    if (process.env.SUPPRESS_BUILD_LOGS !== 'true') {
+    if (!ENV_ACCESSORS.LOGGING.SUPPRESS_BUILD_LOGS()) {
       console.warn(
         `[Logger] Invalid LOG_LEVEL "${envLevel}", falling back to INFO. Valid values: ${VALID_LOG_LEVELS.join(', ')}`
       );
@@ -28,19 +29,13 @@ function parseLogLevelFromEnv(): LogLevel {
   return LogLevel[envLevel as ValidLogLevelString];
 }
 
-/**
- * Parse log sample rate from environment variable.
- * Value should be between 0.0 and 1.0 (e.g., 0.1 = 10% of logs).
- * Default is 1.0 (no sampling - log everything).
- * Only applies to INFO and DEBUG logs; ERROR and WARN are always logged.
- */
 function parseLogSampleRate(): number {
-  const envRate = process.env.LOG_SAMPLE_RATE;
+  const envRate = String(ENV_ACCESSORS.LOGGING.LOG_SAMPLE_RATE());
   if (!envRate) return 1.0;
 
   const rate = parseFloat(envRate);
   if (isNaN(rate) || rate < 0 || rate > 1) {
-    if (process.env.SUPPRESS_BUILD_LOGS !== 'true') {
+    if (!ENV_ACCESSORS.LOGGING.SUPPRESS_BUILD_LOGS()) {
       console.warn(
         `[Logger] Invalid LOG_SAMPLE_RATE "${envRate}", falling back to 1.0. Valid values: 0.0 to 1.0`
       );
@@ -58,16 +53,15 @@ let globalCorrelationId: string | undefined;
 
 // Detect if we're in a build/SSR environment where console output causes Lighthouse issues
 const isBuildTime =
-  typeof window === 'undefined' && process.env.NODE_ENV === 'production';
-const isSilentMode = isBuildTime && process.env.SUPPRESS_BUILD_LOGS === 'true';
+  typeof window === 'undefined' &&
+  ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production';
+const isSilentMode = isBuildTime && ENV_ACCESSORS.LOGGING.SUPPRESS_BUILD_LOGS();
 
-// Emergency debug mode - allows debug logs in production via environment variable
 const isEmergencyDebugMode =
-  typeof window === 'undefined' && process.env.ENABLE_DEBUG_LOGS === 'true';
+  typeof window === 'undefined' && ENV_ACCESSORS.LOGGING.ENABLE_DEBUG_LOGS();
 
-// Check if structured JSON logging is enabled for production
 const isStructuredLogging =
-  typeof window === 'undefined' && process.env.STRUCTURED_LOGGING === 'true';
+  typeof window === 'undefined' && ENV_ACCESSORS.LOGGING.STRUCTURED_LOGGING();
 
 export function setLogLevel(level: LogLevel): void {
   currentLogLevel = level;
@@ -133,7 +127,7 @@ export class Logger {
   }
 
   private getEnvironment(): string {
-    return process.env.NODE_ENV || 'unknown';
+    return ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'unknown';
   }
 
   private createStructuredEntry(
@@ -214,7 +208,7 @@ export class Logger {
       // Use console.error for ALL logs in production to ensure they survive
       // Next.js's removeConsole configuration (Issue #949).
       // This preserves production observability for incident response.
-      const isProduction = process.env.NODE_ENV === 'production';
+      const isProduction = ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production';
 
       if (isProduction) {
         // In production, ALL logs go to console.error to survive removeConsole

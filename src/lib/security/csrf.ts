@@ -1,4 +1,5 @@
 import { APP_CONFIG } from '@/lib/config/app';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 
 /**
@@ -12,24 +13,29 @@ function getOriginsConfig() {
   if (!memoizedOriginsArray || !memoizedOriginsSet) {
     const origins: string[] = [APP_CONFIG.URLS.BASE];
 
-    if (process.env.VERCEL_URL) {
-      origins.push(`https://${process.env.VERCEL_URL}`);
+    const vercelUrl = ENV_ACCESSORS.PLATFORM.VERCEL_URL();
+    if (vercelUrl) {
+      origins.push(`https://${vercelUrl}`);
     }
-    if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-      origins.push(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`);
+    const nextPublicVercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
+    if (nextPublicVercelUrl) {
+      origins.push(`https://${nextPublicVercelUrl}`);
     }
-    if (process.env.VERCEL_LIVE_URL) {
-      origins.push(`https://${process.env.VERCEL_LIVE_URL}`);
-    }
-
-    if (process.env.CF_PAGES_URL) {
-      origins.push(`https://${process.env.CF_PAGES_URL}`);
-    }
-    if (process.env.CF_PAGES_BRANCH_URL) {
-      origins.push(`https://${process.env.CF_PAGES_BRANCH_URL}`);
+    const vercelLiveUrl = ENV_ACCESSORS.PLATFORM.VERCEL_LIVE_URL();
+    if (vercelLiveUrl) {
+      origins.push(`https://${vercelLiveUrl}`);
     }
 
-    if (process.env.NODE_ENV === 'development') {
+    const cfPagesUrl = ENV_ACCESSORS.PLATFORM.CF_PAGES_URL();
+    if (cfPagesUrl) {
+      origins.push(`https://${cfPagesUrl}`);
+    }
+    const cfPagesBranchUrl = ENV_ACCESSORS.PLATFORM.CF_PAGES_BRANCH_URL();
+    if (cfPagesBranchUrl) {
+      origins.push(`https://${cfPagesBranchUrl}`);
+    }
+
+    if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
       origins.push(
         APP_CONFIG.DEVELOPMENT.LOCALHOST_PRIMARY,
         APP_CONFIG.DEVELOPMENT.LOCALHOST_ALT
@@ -47,14 +53,11 @@ function getOriginsConfig() {
 export const CSRF_CONFIG = {
   STATE_CHANGING_METHODS: ['POST', 'PUT', 'DELETE', 'PATCH'] as const,
 
-  /**
-   * PERFORMANCE: Returns the memoized array.
-   */
   get TRUSTED_ORIGINS(): string[] {
     return getOriginsConfig().array;
   },
 
-  ENABLED: process.env.NODE_ENV !== 'test',
+  ENABLED: ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'test',
 } as const;
 
 export interface CSRFValidationResult {

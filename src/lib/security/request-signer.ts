@@ -10,6 +10,7 @@
 
 import crypto from 'node:crypto';
 import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */
@@ -76,22 +77,19 @@ export const MAX_TIMESTAMP_TOLERANCE_MS =
  * Throws if not configured in production
  */
 function getInternalApiSecret(): string {
-  const secret = process.env.INTERNAL_API_SECRET;
+  const secret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
 
   if (!secret) {
-    // In production, this is required
-    if (process.env.NODE_ENV === 'production') {
+    if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production') {
       throw new Error(
         'INTERNAL_API_SECRET environment variable is required in production'
       );
     }
-    // In development, use a default test secret
-    return process.env.NODE_ENV === 'development'
+    return ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development'
       ? 'dev-internal-api-secret-do-not-use-in-production'
       : 'test-internal-api-secret';
   }
 
-  // Validate secret minimum length
   if (secret.length < SECURITY_CONFIG.MIN_SECRET_LENGTH) {
     throw new Error(
       `INTERNAL_API_SECRET must be at least ${SECURITY_CONFIG.MIN_SECRET_LENGTH} characters for adequate security`
@@ -360,7 +358,10 @@ export async function verifyInternalRequest(
   const timestampHeader = request.headers.get('X-Request-Timestamp');
 
   // Development mode: skip verification if explicitly allowed
-  if (options.allowDevelopment && process.env.NODE_ENV !== 'production') {
+  if (
+    options.allowDevelopment &&
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production'
+  ) {
     return { verified: true };
   }
 

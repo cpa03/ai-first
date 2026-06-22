@@ -4,16 +4,8 @@ import {
   withApiHandler,
 } from '@/lib/api-handler';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
-/**
- * Liveness probe endpoint for container orchestration (Kubernetes, Docker)
- *
- * Purpose: Should the container be restarted?
- * Returns: 200 OK if the application process is running
- *
- * This is a simple check that the Node.js process is alive.
- * If this endpoint fails, the orchestrator will restart the container.
- */
 async function handleGet(context: ApiContext) {
   const { rateLimit: _rateLimit } = context;
 
@@ -21,7 +13,7 @@ async function handleGet(context: ApiContext) {
     status: 'ok',
     timestamp: new Date().toISOString(),
     service: 'liveness',
-    environment: process.env.NODE_ENV || 'development',
+    environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'development',
   };
 
   return standardSuccessResponse(

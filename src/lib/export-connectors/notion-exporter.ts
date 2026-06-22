@@ -1,5 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { TIMEOUT_CONFIG, NOTION_CONFIG } from '../config';
+import { ENV_ACCESSORS } from '../config/env-keys';
 import { createLogger } from '../logger';
 import type { Client as NotionClient } from '@notionhq/client';
 
@@ -14,7 +15,7 @@ export class NotionExporter extends ExportConnector {
     data: ExportData,
     options?: Record<string, unknown>
   ): Promise<ExportResult> {
-    const apiKey = process.env.NOTION_API_KEY;
+    const apiKey = ENV_ACCESSORS.EXPORT.NOTION_API_KEY();
     if (!apiKey) {
       return {
         success: false,
@@ -40,7 +41,7 @@ export class NotionExporter extends ExportConnector {
 
       const parentPageId =
         (options?.parentPageId as string | undefined) ||
-        (process.env.NOTION_PARENT_PAGE_ID as string | undefined);
+        (ENV_ACCESSORS.EXPORT.NOTION_PARENT_PAGE_ID() as string | undefined);
 
       const pageData: Record<string, unknown> = {};
 
@@ -57,7 +58,10 @@ export class NotionExporter extends ExportConnector {
             title: [
               {
                 text: {
-                  content: NOTION_CONFIG.DEFAULTS.PAGE_TITLE_TEMPLATE.replace('{title}', idea.title),
+                  content: NOTION_CONFIG.DEFAULTS.PAGE_TITLE_TEMPLATE.replace(
+                    '{title}',
+                    idea.title
+                  ),
                 },
               },
             ],
@@ -102,7 +106,7 @@ export class NotionExporter extends ExportConnector {
 
   async validateConfig(): Promise<boolean> {
     try {
-      const apiKey = process.env.NOTION_API_KEY;
+      const apiKey = ENV_ACCESSORS.EXPORT.NOTION_API_KEY();
       if (!apiKey) return false;
 
       const { Client } = await import('@notionhq/client');
@@ -118,12 +122,14 @@ export class NotionExporter extends ExportConnector {
     }
   }
 
-  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+  async checkServiceHealth(): Promise<
+    import('./base').ServiceHealthResult | null
+  > {
     const startTime = Date.now();
     const checkedAt = new Date().toISOString();
 
     try {
-      const apiKey = process.env.NOTION_API_KEY;
+      const apiKey = ENV_ACCESSORS.EXPORT.NOTION_API_KEY();
       if (!apiKey) {
         return {
           available: false,
@@ -253,10 +259,10 @@ export class NotionExporter extends ExportConnector {
   }
 
   async getAuthUrl(): Promise<string> {
-    const clientId = process.env.NOTION_CLIENT_ID;
+    const clientId = ENV_ACCESSORS.EXPORT.NOTION_CLIENT_ID();
     const redirectUri =
-      process.env.NOTION_REDIRECT_URI ||
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/notion/callback`;
+      ENV_ACCESSORS.EXPORT.NOTION_REDIRECT_URI() ||
+      `${ENV_ACCESSORS.APP.NEXT_PUBLIC_APP_URL()}/api/auth/notion/callback`;
 
     const params = new URLSearchParams({
       client_id: clientId || '',

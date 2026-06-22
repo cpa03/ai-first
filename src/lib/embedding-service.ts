@@ -10,23 +10,20 @@ import OpenAI from 'openai';
 import { createLogger } from './logger';
 import { EMBEDDING_CONFIG } from './config/embedding-config';
 import { API_ERROR_MESSAGES } from './config';
+import { ENV_ACCESSORS } from './config/env-keys';
 
 const logger = createLogger('EmbeddingService');
 
 // Singleton OpenAI client
 let openaiClient: OpenAI | null = null;
 
-/**
- * Initialize the OpenAI client if not already done
- */
 function getOpenAIClient(): OpenAI {
   if (!openaiClient) {
-    if (!process.env.OPENAI_API_KEY) {
+    const apiKey = ENV_ACCESSORS.AI.OPENAI_API_KEY();
+    if (!apiKey) {
       throw new Error(API_ERROR_MESSAGES.PAGE.OPENAI_API_KEY_MISSING);
     }
-    openaiClient = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    openaiClient = new OpenAI({ apiKey });
   }
   return openaiClient;
 }
