@@ -365,3 +365,30 @@ export {
   type DbReferenceTypes,
   type DbColumns,
 } from './database-tables';
+
+// Environment Keys Configuration
+// Centralizes all environment variable keys for modularity
+export {
+  AI_ENV_KEYS,
+  DATABASE_ENV_KEYS,
+  EXPORT_ENV_KEYS,
+  PLATFORM_ENV_KEYS,
+  SECURITY_ENV_KEYS,
+  LOGGING_ENV_KEYS,
+  APP_ENV_KEYS,
+  ALL_ENV_KEYS,
+  ENV_ACCESSORS,
+  getEnvValue,
+  isEnvSet,
+  getEnvNumber,
+  getEnvBoolean,
+  type AiEnvKeys,
+  type DatabaseEnvKeys,
+  type ExportEnvKeys,
+  type PlatformEnvKeys,
+  type SecurityEnvKeys,
+  type LoggingEnvKeys,
+  type AppEnvKeys,
+  type AllEnvKeys,
+  type EnvAccessors,
+} from './env-keys';

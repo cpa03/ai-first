@@ -16,6 +16,7 @@ import {
   DB_COLUMNS,
 } from './config/database-tables';
 import { API_ERROR_MESSAGES } from './config';
+import { DATABASE_ENV_KEYS } from './config/env-keys';
 
 const logger = createLogger('SimilarityService');
 
@@ -46,8 +47,8 @@ function getSupabaseClient(): SupabaseClient {
   }
 
   if (!supabaseClient) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseUrl = process.env[DATABASE_ENV_KEYS.NEXT_PUBLIC_SUPABASE_URL];
+    const serviceKey = process.env[DATABASE_ENV_KEYS.SUPABASE_SERVICE_ROLE_KEY];
 
     if (!supabaseUrl || !serviceKey) {
       throw new Error(API_ERROR_MESSAGES.DB.CONFIG_MISSING);

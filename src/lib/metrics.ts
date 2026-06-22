@@ -13,6 +13,7 @@ import {
   METRIC_LABELS,
   HISTOGRAM_BUCKETS,
 } from '@/lib/config/metrics-config';
+import { PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 
 interface Register {
   metrics: () => Promise<string>;
@@ -36,9 +37,9 @@ let rateLimiterHits: Metric;
 // Detect runtime
 const isEdge =
   typeof process !== 'undefined' &&
-  (process.env.NEXT_RUNTIME === 'edge' ||
-    process.env.CF_PAGES === 'true' ||
-    process.env.CF_WORKER === 'true');
+  (process.env[PLATFORM_ENV_KEYS.NEXT_RUNTIME] === 'edge' ||
+    process.env[PLATFORM_ENV_KEYS.CF_PAGES] === 'true' ||
+    process.env[PLATFORM_ENV_KEYS.CF_WORKER] === 'true');
 const createNoOpMetric = () => ({
   inc: () => {},
   observe: () => {},

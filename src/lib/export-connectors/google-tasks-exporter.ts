@@ -1,5 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { GOOGLE_TASKS_CONFIG } from '@/lib/config';
+import { EXPORT_ENV_KEYS, APP_ENV_KEYS } from '@/lib/config/env-keys';
 
 export class GoogleTasksExporter extends ExportConnector {
   readonly type = 'google-tasks';
@@ -17,17 +18,19 @@ export class GoogleTasksExporter extends ExportConnector {
   }
 
   async validateConfig(): Promise<boolean> {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const clientId = process.env[EXPORT_ENV_KEYS.GOOGLE_CLIENT_ID];
+    const clientSecret = process.env[EXPORT_ENV_KEYS.GOOGLE_CLIENT_SECRET];
     return !!(clientId && clientSecret);
   }
 
-  async checkServiceHealth(): Promise<import('./base').ServiceHealthResult | null> {
+  async checkServiceHealth(): Promise<
+    import('./base').ServiceHealthResult | null
+  > {
     const startTime = Date.now();
     const checkedAt = new Date().toISOString();
 
-    const clientId = process.env.GOOGLE_CLIENT_ID;
-    const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    const clientId = process.env[EXPORT_ENV_KEYS.GOOGLE_CLIENT_ID];
+    const clientSecret = process.env[EXPORT_ENV_KEYS.GOOGLE_CLIENT_SECRET];
 
     if (!clientId || !clientSecret) {
       return {
@@ -47,10 +50,10 @@ export class GoogleTasksExporter extends ExportConnector {
   }
 
   async getAuthUrl(): Promise<string> {
-    const clientId = process.env.GOOGLE_CLIENT_ID;
+    const clientId = process.env[EXPORT_ENV_KEYS.GOOGLE_CLIENT_ID];
     const redirectUri =
-      process.env.GOOGLE_REDIRECT_URI ||
-      `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/google/callback`;
+      process.env[EXPORT_ENV_KEYS.GOOGLE_REDIRECT_URI] ||
+      `${process.env[APP_ENV_KEYS.NEXT_PUBLIC_APP_URL]}/api/auth/google/callback`;
 
     const params = new URLSearchParams({
       client_id: clientId || '',
