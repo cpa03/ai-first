@@ -368,11 +368,19 @@ export default function DashboardPage() {
             {DASHBOARD_PAGE_CONTENT.IDEA_COUNT.TOTAL}
           </p>
         </div>
-        <Link href="/">
-          <Button variant="primary">
-            {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
-          </Button>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link href="/">
+            <Button variant="primary">
+              {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
+            </Button>
+          </Link>
+          <span className="hidden sm:inline-flex items-center gap-1 text-xs text-gray-500">
+            <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-sans">
+              n
+            </kbd>
+            <span>for new</span>
+          </span>
+        </div>
       </div>
       {/* Growth: Referral Link - Viral Growth Loop */}
       {isAuthenticated && referralCode && (
