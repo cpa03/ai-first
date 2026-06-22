@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/metrics/route';
+import { setProcessEnv } from '../utils/_testHelpers';
 
 // Mock the dependencies
 jest.mock('@/lib/metrics', () => ({
@@ -26,7 +27,7 @@ describe('Metrics API Security', () => {
 
   it('FIX VERIFICATION: should NOT return metrics when ADMIN_API_KEY is NOT set', async () => {
     // In production, if ADMIN_API_KEY is missing, it should FAIL CLOSED.
-    process.env.NODE_ENV = 'production';
+    setProcessEnv('NODE_ENV', 'production');
     delete process.env.ADMIN_API_KEY;
 
     const request = new NextRequest('http://localhost:3000/api/metrics', {
@@ -42,8 +43,8 @@ describe('Metrics API Security', () => {
   });
 
   it('should require authentication when ADMIN_API_KEY IS set', async () => {
-    process.env.NODE_ENV = 'production';
-    process.env.ADMIN_API_KEY = 'super-secret-key';
+    setProcessEnv('NODE_ENV', 'production');
+    setProcessEnv('ADMIN_API_KEY', 'super-secret-key');
 
     const request = new NextRequest('http://localhost:3000/api/metrics', {
       method: 'GET',
