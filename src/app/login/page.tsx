@@ -14,6 +14,8 @@ import {
   ROUTES,
   LOGIN_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
+  LOGIN_ERROR_PATTERNS,
+  matchesPattern,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -114,7 +116,7 @@ export default function LoginPage() {
           err instanceof Error ? err.message : 'Failed to sign in';
 
         if (
-          errorMessage.toLowerCase().includes('invalid') ||
+          matchesPattern(errorMessage, LOGIN_ERROR_PATTERNS.INVALID) ||
           errorMessage.toLowerCase().includes('credentials')
         ) {
           setError(LOGIN_PAGE_CONTENT.ERRORS.INVALID_CREDENTIALS);

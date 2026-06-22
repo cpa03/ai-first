@@ -392,3 +392,20 @@ export {
   type AllEnvKeys,
   type EnvAccessors,
 } from './env-keys';
+
+// Error Classification Patterns Configuration
+// Centralizes all error classification patterns for modularity
+export {
+  RETRYABLE_PATTERNS,
+  NETWORK_ERROR_PATTERNS,
+  TIMEOUT_ERROR_PATTERNS,
+  DATABASE_ERROR_PATTERNS,
+  AUTH_ERROR_PATTERNS,
+  RATE_LIMIT_ERROR_PATTERNS,
+  VALIDATION_ERROR_PATTERNS,
+  LOGIN_ERROR_PATTERNS,
+  ERROR_CLASSIFICATION_PATTERNS,
+  matchesAnyPattern,
+  matchesPattern,
+  type ErrorClassificationPatterns,
+} from './error-classification';
