@@ -173,7 +173,7 @@ export default function NotificationPrompt({
             <button
               onClick={handleDismiss}
               type="button"
-              className="p-1 text-primary-400 hover:text-primary-600 transition-colors rounded"
+              className="p-1 text-primary-400 hover:text-primary-600 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
               aria-label="Dismiss notification prompt"
             >
               <svg
@@ -300,7 +300,7 @@ export default function NotificationPrompt({
               <button
                 onClick={handleDismiss}
                 type="button"
-                className="text-sm text-primary-600 hover:text-primary-800 font-medium transition-colors"
+                className="text-sm text-primary-600 hover:text-primary-800 font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
                 aria-label={NOTIFICATION_PROMPT_LABELS.DISMISS_ARIA_LABEL}
               >
                 {NOTIFICATION_PROMPT_LABELS.DISMISS_TEXT}
