@@ -1,37 +1,56 @@
 import { APP_CONFIG } from '@/lib/config/app';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 
+/**
+ * PERFORMANCE: Pre-calculate trusted origins to avoid expensive array creation
+ * and Set construction on every getter access.
+ */
+const TRUSTED_ORIGINS_ARRAY = (() => {
+  const origins: string[] = [APP_CONFIG.URLS.BASE];
+
+  if (process.env.VERCEL_URL) {
+    origins.push(`https://${process.env.VERCEL_URL}`);
+  }
+  if (process.env.NEXT_PUBLIC_VERCEL_URL) {
+    origins.push(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`);
+  }
+  if (process.env.VERCEL_LIVE_URL) {
+    origins.push(`https://${process.env.VERCEL_LIVE_URL}`);
+  }
+
+  if (process.env.CF_PAGES_URL) {
+    origins.push(`https://${process.env.CF_PAGES_URL}`);
+  }
+  if (process.env.CF_PAGES_BRANCH_URL) {
+    origins.push(`https://${process.env.CF_PAGES_BRANCH_URL}`);
+  }
+
+  if (process.env.NODE_ENV === 'development') {
+    origins.push(
+      APP_CONFIG.DEVELOPMENT.LOCALHOST_PRIMARY,
+      APP_CONFIG.DEVELOPMENT.LOCALHOST_ALT
+    );
+  }
+
+  return [...new Set(origins)];
+})();
+
+/**
+ * PERFORMANCE: Pre-normalize trusted origins into a Set for O(1) lookup.
+ * This avoids O(N) loop and repeated string normalization on every request.
+ */
+const TRUSTED_ORIGINS_SET = new Set(
+  TRUSTED_ORIGINS_ARRAY.map((t) => t.toLowerCase().replace(/\/$/, ''))
+);
+
 export const CSRF_CONFIG = {
   STATE_CHANGING_METHODS: ['POST', 'PUT', 'DELETE', 'PATCH'] as const,
 
+  /**
+   * PERFORMANCE: Returns the pre-calculated array.
+   */
   get TRUSTED_ORIGINS(): string[] {
-    const origins: string[] = [APP_CONFIG.URLS.BASE];
-
-    if (process.env.VERCEL_URL) {
-      origins.push(`https://${process.env.VERCEL_URL}`);
-    }
-    if (process.env.NEXT_PUBLIC_VERCEL_URL) {
-      origins.push(`https://${process.env.NEXT_PUBLIC_VERCEL_URL}`);
-    }
-    if (process.env.VERCEL_LIVE_URL) {
-      origins.push(`https://${process.env.VERCEL_LIVE_URL}`);
-    }
-
-    if (process.env.CF_PAGES_URL) {
-      origins.push(`https://${process.env.CF_PAGES_URL}`);
-    }
-    if (process.env.CF_PAGES_BRANCH_URL) {
-      origins.push(`https://${process.env.CF_PAGES_BRANCH_URL}`);
-    }
-
-    if (process.env.NODE_ENV === 'development') {
-      origins.push(
-        APP_CONFIG.DEVELOPMENT.LOCALHOST_PRIMARY,
-        APP_CONFIG.DEVELOPMENT.LOCALHOST_ALT
-      );
-    }
-
-    return [...new Set(origins)];
+    return TRUSTED_ORIGINS_ARRAY;
   },
 
   ENABLED: process.env.NODE_ENV !== 'test',
@@ -62,18 +81,26 @@ function extractOrigin(request: Request): string | null {
   return null;
 }
 
-function isTrustedOrigin(origin: string, trustedOrigins: string[]): boolean {
+/**
+ * Checks if the origin is in the trusted origins set.
+ * PERFORMANCE: Uses O(1) Set lookup with pre-normalized trusted origins.
+ */
+function isTrustedOrigin(origin: string, trustedOrigins?: string[]): boolean {
   const normalizedOrigin = origin.toLowerCase().replace(/\/$/, '');
 
-  for (const trusted of trustedOrigins) {
-    const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
-
-    if (normalizedOrigin === normalizedTrusted) {
-      return true;
+  // If custom trusted origins are provided, use the O(N) fallback loop.
+  // This is rare and typically only happens in tests.
+  if (trustedOrigins && trustedOrigins !== TRUSTED_ORIGINS_ARRAY) {
+    for (const trusted of trustedOrigins) {
+      const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
+      if (normalizedOrigin === normalizedTrusted) {
+        return true;
+      }
     }
+    return false;
   }
 
-  return false;
+  return TRUSTED_ORIGINS_SET.has(normalizedOrigin);
 }
 
 export function validateCSRF(
