@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import {
   COMPONENT_DEFAULTS,
+  COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
 } from '@/lib/config';
@@ -117,7 +118,7 @@ function ScrollToTopComponent({
       const scrollIncrement = () => {
         const docHeight =
           document.documentElement.scrollHeight - window.innerHeight;
-        return docHeight * 0.25;
+        return docHeight * COMPONENT_CONFIG.SCROLL_TO_TOP.INCREMENT_FACTOR;
       };
 
       const prefersReducedMotionValue = prefersReducedMotion;

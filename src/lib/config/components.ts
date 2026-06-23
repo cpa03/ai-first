@@ -222,6 +222,29 @@ export const COMPONENT_CONFIG = {
     ),
   } as const,
 
+  IDEA_INPUT: {
+    /** Progress threshold for showing character count message (percentage of min length) */
+    PROGRESS_SHOW_CHARS_THRESHOLD: EnvLoader.number(
+      'IDEA_INPUT_PROGRESS_CHARS_THRESHOLD',
+      0.5,
+      0.1,
+      0.9
+    ),
+    /** Progress threshold for near-minimum indicator */
+    NEAR_MINIMUM_THRESHOLD: EnvLoader.number(
+      'IDEA_INPUT_NEAR_MINIMUM_THRESHOLD',
+      0.8,
+      0.5,
+      0.95
+    ),
+    /** Progress thresholds for encouragement messages */
+    ENCOURAGEMENT_THRESHOLDS: {
+      LOW: EnvLoader.number('IDEA_INPUT_ENCOURAGE_LOW', 0.5, 0.1, 0.9),
+      MEDIUM: EnvLoader.number('IDEA_INPUT_ENCOURAGE_MEDIUM', 0.3, 0.1, 0.9),
+      HIGH: EnvLoader.number('IDEA_INPUT_ENCOURAGE_HIGH', 0.7, 0.1, 0.9),
+    },
+  } as const,
+
   ONBOARDING: {
     /** Env: COMPONENT_ONBOARDING_DELAY_MS (default: 1500) */
     DELAY_MS: EnvLoader.number(
@@ -262,6 +285,16 @@ export const COMPONENT_CONFIG = {
       ),
     },
   },
+
+  SCROLL_TO_TOP: {
+    /** Scroll increment factor (percentage of viewport height per arrow key press) */
+    INCREMENT_FACTOR: EnvLoader.number(
+      'SCROLL_TO_TOP_INCREMENT_FACTOR',
+      0.25,
+      0.1,
+      0.5
+    ),
+  } as const,
 
   ALERT: {
     /** Auto-dismiss delay for success alerts (ms) - Env: COMPONENT_ALERT_SUCCESS_DISMISS_MS (default: 5000) */

@@ -10,6 +10,7 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   COMPONENT_CONFIG,
+  UI_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -150,7 +151,7 @@ function StepCelebrationComponent({
           ${isExiting ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}
         `}
           style={{
-            transitionTimingFunction: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+            transitionTimingFunction: UI_CONFIG.ANIMATION.EASING.SPRING,
           }}
         >
           {shouldAnimate &&
@@ -161,7 +162,7 @@ function StepCelebrationComponent({
                 style={{
                   transform: `translate(${particle.x}px, ${particle.y}px) rotate(${particle.rotation}deg) scale(${isExiting ? 0 : particle.scale})`,
                   opacity: isExiting ? 0 : 0.8,
-                  transition: `all ${ANIMATION_CONFIG.STANDARD}ms cubic-bezier(0.34, 1.56, 0.64, 1)`,
+                  transition: `all ${ANIMATION_CONFIG.STANDARD}ms ${UI_CONFIG.ANIMATION.EASING.SPRING}`,
                   transitionDelay: `${particle.delay}ms`,
                 }}
               />

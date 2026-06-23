@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useMemo } from 'react';
-import { COMPONENT_CONFIG } from '@/lib/config';
+import { COMPONENT_CONFIG, UI_CONFIG } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -61,7 +61,7 @@ function LoadingSpinnerComponent({
       top: '-4px',
       left: '50%',
       transform: 'translateX(-50%)',
-      animation: 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      animation: `pulse ${COMPONENT_CONFIG.SPINNER.ANIMATION_MS}ms ${UI_CONFIG.ANIMATION.EASING.SPINNER} infinite`,
       animationDelay: animationDelay > 0 ? `${animationDelay}ms` : undefined,
     }),
     [spinnerDimension, animationDelay]
