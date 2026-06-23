@@ -49,7 +49,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     ideaId: string;
   } | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
+  const [milestoneReached, setMilestoneReached] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const prevMeetsMinimumRef = useRef(false);
 
   const encouragementMessages = MESSAGES.IDEA_INPUT.ENCOURAGEMENT;
 
@@ -107,6 +109,31 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   useEffect(() => {
     setIsMac(navigator.platform.includes('Mac'));
   }, []);
+
+  // Micro-UX: Milestone celebration when user first reaches minimum length
+  // Provides delightful positive feedback at the exact moment the idea becomes submittable
+  useEffect(() => {
+    const meetsMinimum = idea.trim().length >= MIN_IDEA_LENGTH;
+    const justReachedMinimum = meetsMinimum && !prevMeetsMinimumRef.current;
+
+    if (justReachedMinimum && !milestoneReached) {
+      setMilestoneReached(true);
+      triggerHapticFeedback();
+
+      // Auto-clear the milestone celebration after a brief moment
+      const timer = setTimeout(() => {
+        setMilestoneReached(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+
+    // Reset milestone if user edits below minimum
+    if (!meetsMinimum) {
+      setMilestoneReached(false);
+    }
+
+    prevMeetsMinimumRef.current = meetsMinimum;
+  }, [idea, milestoneReached]);
 
   const handleIdeaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -245,7 +272,32 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           className="min-h-[120px]"
         />
 
-        {charactersNeededData ? (
+        {milestoneReached && (
+          <div
+            className="flex items-center gap-2 text-sm text-green-600 font-medium animate-fade-in"
+            role="status"
+            aria-live="polite"
+          >
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 animate-success-pop">
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </span>
+            Great idea! Ready to submit
+          </div>
+        )}
+
+        {!milestoneReached && charactersNeededData ? (
           <p
             className={`text-sm animate-fade-in flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
@@ -263,6 +315,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               : `${charactersNeededData.charsNeeded} more character${charactersNeededData.charsNeeded !== 1 ? 's' : ''} needed`}
           </p>
         ) : (
+          !milestoneReached &&
           getEncouragementMessage() && (
             <p
               className="text-sm text-primary-600 animate-fade-in"
