@@ -20,6 +20,7 @@ import {
   COMPONENT_DEFAULTS,
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
+  UI_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -126,7 +127,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
   if (isGenerating) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className={UI_CONFIG.LAYOUT.CONTAINER}>
         <LoadingAnnouncer message={MESSAGES.LOADING.BLUEPRINT} />
         <div className="text-center mb-8">
           <LoadingSpinner
@@ -146,14 +147,16 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           aria-labelledby="skeleton-heading"
           className="bg-white rounded-lg shadow-lg"
         >
-          <header className="border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
+          <header
+            className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
+          >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <Skeleton className="h-6 sm:h-8 w-36 sm:w-48" variant="text" />
               <Skeleton className="h-10 w-full sm:w-40" />
             </div>
           </header>
 
-          <div className="p-4 sm:p-8 space-y-4">
+          <div className={UI_CONFIG.LAYOUT.CARD_BODY}>
             <Skeleton className="h-5 sm:h-6 w-3/4" variant="text" />
             <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
             <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
@@ -172,7 +175,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             </div>
           </div>
 
-          <footer className="border-t border-gray-200 px-4 sm:px-8 py-4 sm:py-6 bg-gray-50">
+          <footer
+            className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
+          >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <Skeleton className="h-3 sm:h-4 w-full sm:w-1/2" variant="text" />
               <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
@@ -187,12 +192,14 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+    <div className={UI_CONFIG.LAYOUT.CONTAINER}>
       <section
         aria-labelledby="blueprint-heading"
         className="bg-white rounded-lg shadow-lg"
       >
-        <header className="border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
+        <header
+          className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2
               id="blueprint-heading"
@@ -239,13 +246,14 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               >
                 {blueprint}
               </pre>
-              {/* Micro-UX: Copy button on code block for easy copying */}
               <CopyCodeButton text={blueprint || ''} />
             </div>
           </div>
         </div>
 
-        <footer className="border-t border-gray-200 px-4 sm:px-8 py-4 sm:py-6 bg-gray-50">
+        <footer
+          className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
+        >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <p className="text-xs sm:text-sm text-gray-600">
               {MESSAGES.BLUEPRINT.FOOTER_TEXT}

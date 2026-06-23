@@ -312,6 +312,8 @@ export const SVG_ANIMATION = {
     HIDDEN: '24',
     /** Fully visible as string variant */
     VISIBLE_STR: '0',
+    /** Full hidden state (animation start) - numeric variant for IdeaReadyIndicator */
+    FULL: 24,
   } as const,
 
   /** Progress circle calculations */
@@ -801,6 +803,39 @@ export const SVG_STROKE_WIDTHS = {
    * Env: SVG_STROKE_WIDTH_EXTRA_THICK (default: 2.5)
    */
   EXTRA_THICK: EnvLoader.number('SVG_STROKE_WIDTH_EXTRA_THICK', 2.5, 1, 5),
+} as const;
+
+/**
+ * SVG Size Configuration
+ * Centralizes SVG icon size Tailwind classes used across all icon components.
+ * Eliminates hardcoded w-N h-N classes in 20+ component files.
+ *
+ * Usage:
+ * ```typescript
+ * import { SVG_SIZES } from '@/lib/config';
+ * <svg className={SVG_SIZES.SM} />  // w-5 h-5
+ * <svg className={SVG_SIZES.MD} />  // w-6 h-6
+ * <svg className={SVG_SIZES.LG} />  // w-8 h-8
+ * ```
+ */
+export const SVG_SIZES = {
+  /**
+   * Small SVG icon (20x20px) - default for most icons
+   * Equivalent to: w-5 h-5
+   */
+  SM: 'w-5 h-5',
+
+  /**
+   * Medium SVG icon (24x24px) - for emphasis icons
+   * Equivalent to: w-6 h-6
+   */
+  MD: 'w-6 h-6',
+
+  /**
+   * Large SVG icon (32x32px) - for prominent icons
+   * Equivalent to: w-8 h-8
+   */
+  LG: 'w-8 h-8',
 } as const;
 
 /**

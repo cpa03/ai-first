@@ -171,6 +171,21 @@ export const COMPONENT_CONFIG = {
     COMPLETED_ICON_SIZE: 24,
   } as const,
 
+  STEP_CELEBRATION: {
+    /** Number of particles for step celebration animation */
+    PARTICLE_COUNT: 8,
+    /** Particle radius multiplier for circular arrangement */
+    RADIUS_MULTIPLIER: 30,
+    /** SVG container size (Tailwind class) */
+    CONTAINER_SIZE: 'w-24 h-24',
+    /** SVG viewBox size */
+    VIEWBOX_SIZE: 100,
+    /** SVG circle center position */
+    CIRCLE_CENTER: 50,
+    /** SVG progress circle stroke width */
+    PROGRESS_STROKE_WIDTH: 6,
+  } as const,
+
   ARIA: {
     POLITE: 'polite' as const,
     ASSERTIVE: 'assertive' as const,
