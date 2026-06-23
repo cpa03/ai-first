@@ -198,6 +198,15 @@ Complete index of all IdeaFlow documentation.
 ## Reports
 
 - [Brocula Verification Report](./brocular/verification-report-20260518.md) - Browser audit verification
+- [Audit Report 2026-06-21](./audit-report-2026-06-21.md) - Codebase audit report
+- [Bug Verification 2026-06-23](./bug-verification-2026-06-23.md) - Bug verification report
+- [Phase 1 Diagnostic Report](./PHASE1_DIAGNOSTIC_REPORT.md) - Phase 1 diagnostic report
+- [Phase 2 Hardening Report](./PHASE2_HARDENING_REPORT.md) - Phase 2 hardening report
+- [Phase 3 Strategic Report](./PHASE3_STRATEGIC_REPORT.md) - Phase 3 strategic report
+- [Hardening Findings 2026-06-21](./hardening-findings-2026-06-21.md) - Security hardening findings
+- [Session Summary 2026-06-21](./session-summary-2026-06-21.md) - Session summary
+- [Strategic Expansion 2026-06-21](./strategic-expansion-2026-06-21.md) - Strategic expansion report
+- [Modular Architecture Review](./modular-architecture-review.md) - Architecture review
 
 ---
 
