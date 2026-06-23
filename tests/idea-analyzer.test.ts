@@ -7,6 +7,7 @@
 
 import { IdeaAnalyzer } from '@/lib/agents/breakdown-engine/IdeaAnalyzer';
 import { IdeaAnalysis } from '@/lib/agents/breakdown-engine';
+import type { AIModelConfig } from '@/lib/ai';
 
 jest.mock('@/lib/ai', () => ({
   aiService: {
@@ -23,7 +24,7 @@ jest.mock('@/lib/prompt-service', () => ({
 
 describe('IdeaAnalyzer', () => {
   let analyzer: IdeaAnalyzer;
-  let mockAiConfig: unknown;
+  let mockAiConfig: AIModelConfig;
 
   beforeEach(() => {
     jest.clearAllMocks();

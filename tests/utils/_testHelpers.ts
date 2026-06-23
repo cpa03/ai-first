@@ -410,6 +410,8 @@ export const createMockDbCreate = <T extends { id: string }>(
 // Additional Typed Mock Helpers - Reduce 'as any' in API tests
 // =============================================================================
 
+import { NextRequest } from 'next/server';
+
 /**
  * Creates a mock Next.js Request object for API route testing.
  * Use this instead of '{} as any' or 'request as any' when testing API routes.
@@ -431,7 +433,7 @@ export interface MockRequestOptions {
 
 export const createMockRequest = (
   options: MockRequestOptions = {}
-): Request => {
+): NextRequest => {
   const {
     method = 'POST',
     headers = {},
@@ -441,9 +443,12 @@ export const createMockRequest = (
     url = 'http://localhost:3000/api/test',
   } = options;
 
+  const headersObj = new Headers(headers);
+  const parsedUrl = new URL(url);
+
   const mockRequest = {
     method,
-    headers: new Headers(headers),
+    headers: headersObj,
     json,
     text,
     body,
@@ -470,9 +475,21 @@ export const createMockRequest = (
       throwIfAborted: () => {},
       dispatchEvent: () => true,
     } as AbortSignal,
+    cookies: {
+      get: (name: string) => headersObj.get(`cookie-${name}`),
+      getAll: () => [],
+      set: () => {},
+      delete: () => {},
+      has: () => false,
+      clear: () => {},
+      toString: () => '',
+    },
+    nextUrl: parsedUrl,
+    page: '/',
+    ua: headersObj.get('user-agent') || '',
   };
 
-  return mockRequest as unknown as Request;
+  return mockRequest as unknown as NextRequest;
 };
 
 /**

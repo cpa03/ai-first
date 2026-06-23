@@ -225,7 +225,8 @@ describe('Integration Tests', () => {
     });
 
     it('should handle export errors gracefully', async () => {
-      const invalidData = null;
+      const invalidData =
+        null as unknown as import('@/lib/export-connectors/base').ExportData;
 
       const result = await exportManager.export({
         type: 'markdown',
@@ -299,9 +300,10 @@ describe('Integration Tests', () => {
             raw_text: 'Test',
             status: 'draft' as const,
             created_at: new Date().toISOString(),
+            deleted_at: null,
           },
         },
-      });
+      } as unknown as import('@/lib/export-connectors/base').ExportFormat);
 
       expect(result.success).toBe(false);
       expect(result.error).toContain('not found');
@@ -312,7 +314,7 @@ describe('Integration Tests', () => {
         idea: null, // Invalid
         deliverables: 'not-an-array', // Invalid
         tasks: { also: 'invalid' }, // Invalid
-      };
+      } as unknown as import('@/lib/export-connectors/base').ExportData;
 
       const result = await exportManager.export({
         type: 'markdown',

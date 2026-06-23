@@ -191,7 +191,8 @@ describe('Export Services', () => {
     });
 
     it('should handle export errors gracefully', async () => {
-      const invalidData = null;
+      const invalidData =
+        null as unknown as import('@/lib/export-connectors/base').ExportData;
       const result = await exporter.export(invalidData);
 
       expect(result.success).toBe(false);
@@ -530,7 +531,7 @@ describe('Export Services', () => {
             deleted_at: null,
           },
         }),
-      };
+      } as unknown as ExportFormat;
 
       const result = await manager.export(format);
       expect(result.success).toBe(false);
@@ -654,7 +655,8 @@ describe('Export Services', () => {
       });
 
       it('should detect missing idea', () => {
-        const invalidData = {};
+        const invalidData =
+          {} as unknown as import('@/lib/export-connectors/base').ExportData;
 
         const result = exportUtils.validateExportData(invalidData);
         expect(result.valid).toBe(false);
