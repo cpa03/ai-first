@@ -2,7 +2,11 @@
 
 import { memo, useEffect, useState } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { COMPONENT_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  COMPONENT_CONFIG,
+  SVG_STROKE_WIDTHS,
+  SVG_ANIMATION,
+} from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
   isReady: boolean;
@@ -71,8 +75,10 @@ function IdeaReadyIndicatorComponent({
               ${showCheckmark ? 'stroke-dashoffset-0' : 'stroke-dashoffset-24'}
             `}
             style={{
-              strokeDasharray: 24,
-              strokeDashoffset: showCheckmark ? 0 : 24,
+              strokeDasharray: SVG_ANIMATION.DASH_ARRAY.FULL,
+              strokeDashoffset: showCheckmark
+                ? SVG_ANIMATION.DASH_OFFSET.VISIBLE
+                : SVG_ANIMATION.DASH_OFFSET.FULL,
               transition: prefersReducedMotion
                 ? 'none'
                 : 'stroke-dashoffset 0.4s ease-out 0.1s',

@@ -9,6 +9,7 @@ import {
   ANIMATION_DELAYS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -62,11 +63,16 @@ function StepCelebrationComponent({
   }, []);
 
   const generateParticles = useCallback((): Particle[] => {
-    return Array.from({ length: 8 }, (_, i) => ({
+    const count = COMPONENT_CONFIG.STEP_CELEBRATION.PARTICLE_COUNT;
+    return Array.from({ length: count }, (_, i) => ({
       id: i,
-      x: Math.cos((i / 8) * Math.PI * 2) * 30,
-      y: Math.sin((i / 8) * Math.PI * 2) * 30,
-      rotation: (i / 8) * 360,
+      x:
+        Math.cos((i / count) * Math.PI * 2) *
+        COMPONENT_CONFIG.STEP_CELEBRATION.RADIUS_MULTIPLIER,
+      y:
+        Math.sin((i / count) * Math.PI * 2) *
+        COMPONENT_CONFIG.STEP_CELEBRATION.RADIUS_MULTIPLIER,
+      rotation: (i / count) * 360,
       scale: 0.5 + Math.random() * 0.5,
       delay: i * ANIMATION_DELAYS.PARTICLE_STAGGER,
     }));
@@ -162,22 +168,29 @@ function StepCelebrationComponent({
             ))}
 
           <div className="relative">
-            <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+            <svg
+              className={`${COMPONENT_CONFIG.STEP_CELEBRATION.CONTAINER_SIZE} -rotate-90`}
+              viewBox={`0 0 ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE} ${COMPONENT_CONFIG.STEP_CELEBRATION.VIEWBOX_SIZE}`}
+            >
               <circle
-                cx="50"
-                cy="50"
+                cx={COMPONENT_CONFIG.STEP_CELEBRATION.CIRCLE_CENTER}
+                cy={COMPONENT_CONFIG.STEP_CELEBRATION.CIRCLE_CENTER}
                 r={CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS}
                 fill="none"
                 stroke={CELEBRATION_COLORS.PROGRESS_CIRCLE.TRACK}
-                strokeWidth="6"
+                strokeWidth={
+                  COMPONENT_CONFIG.STEP_CELEBRATION.PROGRESS_STROKE_WIDTH
+                }
               />
               <circle
-                cx="50"
-                cy="50"
+                cx={COMPONENT_CONFIG.STEP_CELEBRATION.CIRCLE_CENTER}
+                cy={COMPONENT_CONFIG.STEP_CELEBRATION.CIRCLE_CENTER}
                 r={CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS}
                 fill="none"
                 stroke={CELEBRATION_COLORS.PROGRESS_CIRCLE.PROGRESS}
-                strokeWidth="6"
+                strokeWidth={
+                  COMPONENT_CONFIG.STEP_CELEBRATION.PROGRESS_STROKE_WIDTH
+                }
                 strokeLinecap="round"
                 strokeDasharray={circumference}
                 strokeDashoffset={SVG_ANIMATION.PROGRESS.getDashOffset(

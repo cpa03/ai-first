@@ -49,6 +49,14 @@ export const UI_CONFIG = {
     XXL: 1536,
   },
 
+  LAYOUT: {
+    CONTAINER: 'max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12',
+    CARD_HEADER: 'px-4 sm:px-8 py-4 sm:py-6',
+    CARD_BODY: 'p-4 sm:p-8 space-y-4',
+    CARD_FOOTER: 'px-4 sm:px-8 py-4 sm:py-6 bg-gray-50',
+    SECTION: 'space-y-4',
+  },
+
   Z_INDEX: {
     BASE: 0,
     DROPDOWN: 100,

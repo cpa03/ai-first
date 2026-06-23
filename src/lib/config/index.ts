@@ -115,6 +115,7 @@ export {
   MODAL_PATTERNS,
   SPINNER_PATTERNS,
   SVG_STROKE_WIDTHS,
+  SVG_SIZES,
   Z_INDEX_LAYERS,
 } from './theme';
 
