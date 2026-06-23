@@ -150,6 +150,7 @@ export const INPUT_STYLES = {
     'w-full px-4 py-3 border rounded-md shadow-sm',
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white',
     'transition-all duration-200',
+    'hover:border-gray-400 hover:shadow-md',
   ].join(' '),
 
   /** Normal/default state */

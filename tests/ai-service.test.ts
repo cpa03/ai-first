@@ -14,7 +14,7 @@ import 'openai/shims/node';
 // Simulate server-side environment for security checks
 // The AIService.getSupabase() method throws if window is defined
 // because the service role key must NEVER be exposed to clients
-delete (global).window;
+delete (global as Record<string, unknown>).window;
 
 import { AIService, AIModelConfig } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
@@ -62,17 +62,45 @@ jest.mock('@/lib/resilience', () => ({
 }));
 
 // Mock window to be undefined (server-side) - required for AIService security checks
-delete (global).window;
+delete (global as Record<string, unknown>).window;
 
-const mockCreateClient = createClient as jest.MockedFunction<
+const mockCreateClient = createClient as unknown as jest.MockedFunction<
   typeof createClient
 >;
-const mockOpenAIConstructor = OpenAI as jest.MockedClass<typeof OpenAI>;
+const mockOpenAIConstructor = OpenAI as unknown as jest.MockedClass<
+  typeof OpenAI
+>;
+
+const mockSupabaseClient = {
+  from: jest.fn(() => mockSupabaseClient),
+  insert: jest.fn(() => mockSupabaseClient),
+  select: jest.fn(() => mockSupabaseClient),
+  eq: jest.fn(() => mockSupabaseClient),
+  single: jest.fn(),
+  upsert: jest.fn(() => mockSupabaseClient),
+} as unknown as ReturnType<typeof createClient>;
+
+const mockOpenAIClient = {
+  chat: {
+    completions: {
+      create: jest.fn(),
+    },
+  },
+  models: {
+    list: jest.fn(),
+  },
+} as unknown as InstanceType<typeof OpenAI>;
+
+const mockOpenAIClientChat = mockOpenAIClient.chat.completions
+  .create as unknown as jest.Mock;
+const mockOpenAIClientModels = mockOpenAIClient.models
+  .list as unknown as jest.Mock;
+const mockSupabaseClientSingle = (
+  mockSupabaseClient as unknown as { single: jest.Mock }
+).single;
 
 describe('AIService', () => {
   let aiService: AIService;
-  let mockOpenAI: unknown;
-  let mockSupabase: unknown;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -83,28 +111,8 @@ describe('AIService', () => {
       MOCK_SECRETS.SUPABASE_SERVICE_ROLE_KEY;
     process.env.COST_LIMIT_DAILY = '10.0';
 
-    mockOpenAI = {
-      chat: {
-        completions: {
-          create: jest.fn(),
-        },
-      },
-      models: {
-        list: jest.fn(),
-      },
-    };
-
-    mockSupabase = {
-      from: jest.fn(() => mockSupabase),
-      insert: jest.fn(() => mockSupabase),
-      select: jest.fn(() => mockSupabase),
-      eq: jest.fn(() => mockSupabase),
-      single: jest.fn(),
-      upsert: jest.fn(() => mockSupabase),
-    };
-
-    mockCreateClient.mockReturnValue(mockSupabase);
-    mockOpenAIConstructor.mockImplementation(() => mockOpenAI);
+    mockCreateClient.mockReturnValue(mockSupabaseClient);
+    mockOpenAIConstructor.mockImplementation(() => mockOpenAIClient);
 
     aiService = new AIService();
   });
@@ -182,14 +190,14 @@ describe('AIService', () => {
     };
 
     it('should call OpenAI completion with correct parameters', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Hi there!' } }],
         usage: { total_tokens: 50 },
       });
 
       const result = await aiService.callModel(mockMessages, config);
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalledWith({
+      expect(mockOpenAIClientChat).toHaveBeenCalledWith({
         model: 'gpt-4',
         messages: mockMessages,
         max_tokens: 1000,
@@ -199,7 +207,7 @@ describe('AIService', () => {
     });
 
     it('should return empty string when completion has no content', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{}],
         usage: { total_tokens: 0 },
       });
@@ -223,7 +231,7 @@ describe('AIService', () => {
     });
 
     it('should track cost when usage data is available', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 100 },
       });
@@ -237,7 +245,7 @@ describe('AIService', () => {
     });
 
     it('should not track cost when usage data is missing', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
       });
 
@@ -248,7 +256,7 @@ describe('AIService', () => {
     });
 
     it('should throw error when cost limit is exceeded', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 500000 },
       });
@@ -259,14 +267,14 @@ describe('AIService', () => {
     });
 
     it('should use resilience wrapper for OpenAI calls', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 50 },
       });
 
       await aiService.callModel(mockMessages, config);
 
-      expect(mockOpenAI.chat.completions.create).toHaveBeenCalled();
+      expect(mockOpenAIClientChat).toHaveBeenCalled();
     });
   });
 
@@ -274,7 +282,7 @@ describe('AIService', () => {
     const newMessages = [{ role: 'user' as const, content: 'New message' }];
 
     beforeEach(() => {
-      mockSupabase.single.mockResolvedValue({
+      mockSupabaseClientSingle.mockResolvedValue({
         data: { vector_data: { messages: [] } },
       });
     });
@@ -361,7 +369,7 @@ describe('AIService', () => {
     });
 
     it('should track costs across multiple calls', async () => {
-      mockOpenAI.chat.completions.create
+      mockOpenAIClientChat
         .mockResolvedValueOnce({
           choices: [{ message: { content: 'Response 1' } }],
           usage: { total_tokens: 100 },
@@ -390,7 +398,7 @@ describe('AIService', () => {
     });
 
     it('should include timestamps in cost trackers', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 100 },
       });
@@ -410,7 +418,7 @@ describe('AIService', () => {
         model: 'gpt-3.5-turbo',
       };
 
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 1000 },
       });
@@ -425,7 +433,7 @@ describe('AIService', () => {
     });
 
     it('should calculate cost correctly for gpt-4', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 1000 },
       });
@@ -446,7 +454,7 @@ describe('AIService', () => {
         model: 'gpt-4-custom', // Use valid prefix but unknown model
       };
 
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: 'Response' } }],
         usage: { total_tokens: 1000 },
       });
@@ -502,7 +510,7 @@ describe('AIService', () => {
 
   describe('healthCheck', () => {
     it('should return healthy when OpenAI is available', async () => {
-      mockOpenAI.models.list.mockResolvedValue({ data: [] });
+      mockOpenAIClientModels.mockResolvedValue({ data: [] });
 
       const health = await aiService.healthCheck();
 
@@ -521,7 +529,7 @@ describe('AIService', () => {
     });
 
     it('should handle OpenAI health check errors gracefully', async () => {
-      mockOpenAI.models.list.mockRejectedValue(new Error('API error'));
+      mockOpenAIClientModels.mockRejectedValue(new Error('API error'));
 
       const health = await aiService.healthCheck();
 
@@ -530,7 +538,7 @@ describe('AIService', () => {
     });
 
     it('should list only available providers', async () => {
-      mockOpenAI.models.list.mockResolvedValue({ data: [] });
+      mockOpenAIClientModels.mockResolvedValue({ data: [] });
 
       const health = await aiService.healthCheck();
 
@@ -547,13 +555,13 @@ describe('AIService', () => {
     };
 
     beforeEach(() => {
-      mockSupabase.single.mockResolvedValue({
+      mockSupabaseClientSingle.mockResolvedValue({
         data: { vector_data: { messages: [] } },
       });
     });
 
     it('should handle empty messages array', async () => {
-      mockOpenAI.chat.completions.create.mockResolvedValue({
+      mockOpenAIClientChat.mockResolvedValue({
         choices: [{ message: { content: '' } }],
         usage: { total_tokens: 0 },
       });
@@ -564,9 +572,7 @@ describe('AIService', () => {
     });
 
     it('should handle OpenAI API errors', async () => {
-      mockOpenAI.chat.completions.create.mockRejectedValue(
-        new Error('API error')
-      );
+      mockOpenAIClientChat.mockRejectedValue(new Error('API error'));
 
       await expect(
         aiService.callModel(
