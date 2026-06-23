@@ -36,7 +36,7 @@ describe('sanitizeHtml Performance', () => {
     // Event handlers
     expect(sanitizeHtml('<div onclick="alert(1)">')).toBe('&lt;div&gt;');
     // Script protocol
-    expect(sanitizeHtml('<a href="javascript:alert(1)">')).toBe('&lt;a href=&quot;javascript:alert(1)&quot;&gt;');
+    expect(sanitizeHtml('<a href="javascript:alert(1)">')).toBe('&lt;a href=&quot;[REDACTED_PROTOCOL]alert(1)&quot;&gt;');
     // Note: sanitizeHtml in this codebase seems to only remove <script> tags and onXXX attributes, then escapes everything.
     // So <a href="javascript:..."> becomes &lt;a href=&quot;javascript:...&quot;&gt; which is safe as it's escaped.
   });
