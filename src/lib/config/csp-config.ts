@@ -8,14 +8,14 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta}
  */
 
+import { isDevelopment } from './environment';
+
 /**
  * Content Security Policy configuration
  *
  * Defines which resources can be loaded and from where.
  * Aligned with OWASP security recommendations.
  */
-const isDevelopment = process.env.NODE_ENV === 'development';
-
 export const CSP_CONFIG = {
   /**
    * CSP directives for controlling resource loading

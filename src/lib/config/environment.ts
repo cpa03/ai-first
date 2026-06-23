@@ -7,6 +7,10 @@
  * with the logger module (logger → pii-redaction → config/constants).
  */
 
+export const isDevelopment = process.env.NODE_ENV === 'development';
+export const isProduction = process.env.NODE_ENV === 'production';
+export const isTest = process.env.NODE_ENV === 'test';
+
 /**
  * Type-safe environment variable loader
  */

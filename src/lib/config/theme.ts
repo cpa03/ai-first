@@ -406,6 +406,24 @@ export const BRAND_COLORS = {
 } as const;
 
 /**
+ * Confetti Colors for CopyButton and Celebration Components
+ * Eliminates hardcoded confetti color arrays in CopyButton.tsx
+ * Supports environment variable overrides for customization
+ */
+export const CONFETTI_COLORS = {
+  /** Primary confetti colors - used for copy button confetti animation */
+  PRIMARY: [
+    EnvLoader.string('CONFETTI_COLOR_1', '#22c55e'),
+    EnvLoader.string('CONFETTI_COLOR_2', '#3b82f6'),
+    EnvLoader.string('CONFETTI_COLOR_3', '#eab308'),
+    EnvLoader.string('CONFETTI_COLOR_4', '#ec4899'),
+    EnvLoader.string('CONFETTI_COLOR_5', '#8b5cf6'),
+  ] as readonly string[],
+  /** Number of particles to generate per confetti burst */
+  PARTICLE_COUNT: EnvLoader.number('CONFETTI_PARTICLE_COUNT', 6, 3, 12),
+} as const;
+
+/**
  * OAuth provider brand colors
  * Used for social login buttons (Google, GitHub, etc.)
  * Eliminates hardcoded brand colors in login/signup pages
