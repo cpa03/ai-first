@@ -56,7 +56,7 @@ import Alert from '@/components/Alert';
 import Link from 'next/link';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
-import { triggerHapticFeedback, getRelativeTime } from '@/lib/utils';
+import { triggerHapticFeedback, getRelativeTime, formatAbsoluteDate } from '@/lib/utils';
 interface Idea {
   id: string;
   title: string;
@@ -76,19 +76,16 @@ const statusColors = IDEA_STATUS_CONFIG.COLORS;
 const statusLabels = IDEA_STATUS_CONFIG.LABELS;
 const logger = createLogger('DashboardPage');
 
-// PERFORMANCE: Extract pure function outside component to prevent recreation on every render
+// PERFORMANCE: Extract pure functions outside component to prevent recreation on every render
 // Using relative time for better UX - shows "2 hours ago" instead of requiring mental date math
 const formatDate = (dateString: string): string => {
   return getRelativeTime(dateString);
 };
 
-// Also export absolute date for cases where it's needed
+// Also export absolute date for cases where it's needed.
+// PERFORMANCE: Uses the optimized formatAbsoluteDate from utils for maximum efficiency.
 const formatDateAbsolute = (dateString: string): string => {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  return formatAbsoluteDate(new Date(dateString));
 };
 
 export default function DashboardPage() {
