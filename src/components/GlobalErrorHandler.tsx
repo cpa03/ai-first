@@ -2,6 +2,7 @@
 
 import { memo, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 const logger = createLogger('GlobalErrorHandler');
 
@@ -22,7 +23,7 @@ function GlobalErrorHandlerComponent() {
         },
       });
 
-      if (process.env.NODE_ENV === 'development') {
+      if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
         console.error(
           '[GlobalErrorHandler] Unhandled Promise Rejection:',
           reason
@@ -47,7 +48,7 @@ function GlobalErrorHandlerComponent() {
         },
       });
 
-      if (process.env.NODE_ENV === 'development') {
+      if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
         console.error('[GlobalErrorHandler] Uncaught Exception:', event.error);
       }
 

@@ -28,6 +28,7 @@ import { createLogger } from '@/lib/logger';
 import { SecurityAuditLog } from './audit-log';
 import { getClientIdentifier } from '@/lib/rate-limit';
 import { CACHE_CONFIG } from '@/lib/config/cache';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 const logger = createLogger('SuspiciousPatterns');
 
@@ -534,12 +535,14 @@ const SUSPICIOUS_PATTERNS: Record<
       description: 'Generic template interpolation pattern',
     },
     {
-      pattern: /\{\{\s*(config|self|request|session|g|get_flashed_messages|url_for|app)\s*\}\}/i,
+      pattern:
+        /\{\{\s*(config|self|request|session|g|get_flashed_messages|url_for|app)\s*\}\}/i,
       severity: 3,
       description: 'SSTI sensitive object access',
     },
     {
-      pattern: /\{\{\s*.*\.(__class__|__mro__|__subclasses__|__globals__)\s*\}\}/i,
+      pattern:
+        /\{\{\s*.*\.(__class__|__mro__|__subclasses__|__globals__)\s*\}\}/i,
       severity: 3,
       description: 'Python SSTI introspection',
     },
@@ -931,7 +934,7 @@ export function detectSuspiciousPatterns(
         })),
         path: pathname || 'unknown',
       },
-      environment: process.env.NODE_ENV || 'unknown',
+      environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'unknown',
     });
 
     logger.debug('Suspicious patterns detected', {

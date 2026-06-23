@@ -6,6 +6,7 @@
 import { CLEANUP_CONFIG, validateConfigurationOrThrow } from './lib/config';
 import { resourceCleanupManager } from './lib/resource-cleanup';
 import { createLogger } from './lib/logger';
+import { ENV_ACCESSORS } from './lib/config/env-keys';
 
 const logger = createLogger('Instrumentation');
 const GRACEFUL_SHUTDOWN_TIMEOUT_MS =
@@ -62,7 +63,7 @@ export function registerNodejsHandlers(): void {
         }
       );
 
-      if (process.env.NODE_ENV === 'development') {
+      if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
         logger.error('Exiting due to unhandled rejection in development mode');
         process.exit(1);
       }
@@ -79,7 +80,7 @@ export function registerNodejsHandlers(): void {
   process.on('SIGTERM', () => performGracefulShutdown('SIGTERM'));
   process.on('SIGINT', () => performGracefulShutdown('SIGINT'));
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production') {
     logger.info('Global error handlers registered successfully');
   }
 }

@@ -20,6 +20,7 @@ import { EnvLoader } from '@/lib/config/environment';
 import { HTTP_HEADERS } from '@/lib/config/http';
 import { generateId, secureRandom } from '@/lib/security/crypto';
 import { SESSION_STORAGE_KEYS } from '@/lib/config';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 /**
  * Event categories for analytics
@@ -118,7 +119,7 @@ export const ANALYTICS_CONFIG = {
    */
   ENABLED: EnvLoader.boolean(
     'NEXT_PUBLIC_ANALYTICS_ENABLED',
-    process.env.NODE_ENV !== 'production'
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production'
   ),
 
   /**
@@ -127,7 +128,7 @@ export const ANALYTICS_CONFIG = {
    */
   DEBUG: EnvLoader.boolean(
     'ANALYTICS_DEBUG',
-    process.env.NODE_ENV !== 'production'
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production'
   ),
 
   /**
@@ -163,7 +164,7 @@ export const ANALYTICS_CONFIG = {
    * Env: ANALYTICS_PROVIDER (default: console in dev, posthog in prod)
    */
   PROVIDER: (EnvLoader.string('ANALYTICS_PROVIDER', '') ||
-    (process.env.NODE_ENV !== 'production'
+    (ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'production'
       ? 'console'
       : 'posthog')) as AnalyticsProviderType,
 
@@ -185,7 +186,7 @@ export const ANALYTICS_CONFIG = {
    */
   POSTHOG_ENABLED: EnvLoader.boolean(
     'NEXT_PUBLIC_ANALYTICS_POSTHOG_ENABLED',
-    process.env.NODE_ENV === 'production'
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production'
   ),
 } as const;
 

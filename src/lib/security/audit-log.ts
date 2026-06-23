@@ -22,6 +22,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { redactPIIInObject } from '@/lib/pii-redaction';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 const logger = createLogger('SecurityAudit');
 
@@ -205,7 +206,7 @@ function determineAuthSeverity(
  * Get current environment string
  */
 function getEnvironment(): string {
-  return process.env.NODE_ENV || 'unknown';
+  return ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'unknown';
 }
 
 /**
