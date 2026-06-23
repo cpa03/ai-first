@@ -366,17 +366,13 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/">
-            <Button variant="primary">
-              {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
-            </Button>
-          </Link>
-          <span className="hidden sm:inline-flex items-center gap-1 text-xs text-gray-500">
-            <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-sans">
-              n
-            </kbd>
-            <span>for new</span>
-          </span>
+          <Tooltip content="Create a new idea" shortcut={['N']}>
+            <Link href="/">
+              <Button variant="primary">
+                {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
+              </Button>
+            </Link>
+          </Tooltip>
         </div>
       </div>
       {/* Growth: Referral Link - Viral Growth Loop */}
@@ -391,14 +387,15 @@ export default function DashboardPage() {
           {DASHBOARD_PAGE_CONTENT.FILTER.LABEL}
         </label>
         <div className="relative">
-          <select
-            ref={filterSelectRef}
-            id="status-filter"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="block w-full sm:w-auto px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring"
-            aria-label="Filter ideas by status (Press / to focus)"
-          >
+          <Tooltip content="Filter by status" shortcut={['/']}>
+            <select
+              ref={filterSelectRef}
+              id="status-filter"
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="block w-full sm:w-auto px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring"
+              aria-label="Filter ideas by status"
+            >
             <option
               value="all"
               className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
@@ -446,6 +443,7 @@ export default function DashboardPage() {
                 : DASHBOARD_FILTER_LABELS.COMPLETED.LABEL}
             </option>
           </select>
+          </Tooltip>
           {ideas.length > 0 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <span className="flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 text-xs font-semibold bg-primary-100 text-primary-700 rounded-full">
@@ -483,12 +481,6 @@ export default function DashboardPage() {
             </button>
           </div>
         )}
-        <span className="hidden sm:inline-flex items-center gap-1 ml-3 text-xs text-gray-500">
-          <kbd className="px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-xs font-sans">
-            /
-          </kbd>
-          <span>to filter</span>
-        </span>
         <button
           type="button"
           onClick={() => setShowKeyboardHelp(true)}

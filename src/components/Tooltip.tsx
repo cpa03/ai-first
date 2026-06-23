@@ -17,6 +17,8 @@ type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 interface TooltipProps {
   children: React.ReactNode;
   content: React.ReactNode;
+  /** Optional keyboard shortcut keys to display in the tooltip (e.g. ['⌘', 'C']) */
+  shortcut?: string[];
   position?: TooltipPosition;
   delay?: number;
   disabled?: boolean;
@@ -50,6 +52,7 @@ function usePrefersReducedMotion() {
 function TooltipComponent({
   children,
   content,
+  shortcut,
   position = 'top',
   delay = UI_CONFIG.TOOLTIP_DELAY,
   disabled = false,
@@ -57,6 +60,7 @@ function TooltipComponent({
 }: TooltipProps) {
   const id = useId();
   const [isVisible, setIsVisible] = useState(false);
+  const [isMac, setIsMac] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const triggerRef = useRef<HTMLDivElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -120,6 +124,11 @@ function TooltipComponent({
   }, []);
 
   useEffect(() => {
+    setIsMac(
+      typeof navigator !== 'undefined' &&
+        /Mac|iPhone|iPad|iPod/.test(navigator.platform)
+    );
+
     return () => {
       if (showTimeoutRef.current) {
         clearTimeout(showTimeoutRef.current);
@@ -189,11 +198,12 @@ function TooltipComponent({
           ref={tooltipRef}
           role="tooltip"
           className={`
-            absolute z-[${Z_INDEX_LAYERS.TOAST}] pointer-events-none
+            absolute pointer-events-none
             ${positionClasses[position]}
             ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `}
+          style={{ zIndex: Z_INDEX_LAYERS.TOAST }}
         >
           <div className="relative">
             <div
@@ -201,9 +211,26 @@ function TooltipComponent({
                 px-2.5 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md
                 shadow-lg border border-gray-700/50 whitespace-normal
                 w-max max-w-[240px] break-words
+                flex items-center gap-2.5
               `}
             >
-              {content}
+              <span>{content}</span>
+              {shortcut && shortcut.length > 0 && (
+                <div className="flex items-center gap-1 border-l border-gray-700 pl-2 ml-auto">
+                  {shortcut.map((key, i) => (
+                    <React.Fragment key={i}>
+                      <kbd className="min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded text-[10px] font-sans font-bold text-gray-300">
+                        {key === '⌘' ? (isMac ? '⌘' : 'Ctrl') : key}
+                      </kbd>
+                      {i < shortcut.length - 1 && (
+                        <span className="text-[10px] text-gray-500 font-bold">
+                          +
+                        </span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
             </div>
             <div
               className={`
