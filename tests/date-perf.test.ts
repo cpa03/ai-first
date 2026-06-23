@@ -11,6 +11,7 @@ describe('Date Formatting Performance and Correctness', () => {
   beforeAll(() => {
     global.Date = class extends RealDate {
       constructor(arg?: string | number | Date) {
+        super();
         if (arg === undefined) {
           return new RealDate(now.getTime());
         }
@@ -65,7 +66,9 @@ describe('Date Formatting Performance and Correctness', () => {
       const end = performance.now();
       const duration = end - start;
 
-      console.log(`[Benchmark] getRelativeTime (${iterations} iterations): ${duration.toFixed(2)}ms`);
+      console.log(
+        `[Benchmark] getRelativeTime (${iterations} iterations): ${duration.toFixed(2)}ms`
+      );
 
       // Basic sanity check
       expect(duration).toBeDefined();
