@@ -1,5 +1,6 @@
 import { clarifierAgent, ClarifierQuestion } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
+import { createMockVector } from './utils/_testHelpers';
 
 // Mock the database service
 jest.mock('@/lib/db');
@@ -120,7 +121,7 @@ describe('ClarifierAgent', () => {
       );
 
       mockDbService.logAgentAction.mockResolvedValue(undefined);
-      mockDbService.storeVector.mockResolvedValue({});
+      mockDbService.storeVector.mockResolvedValue(createMockVector());
 
       const session = await clarifierAgent.startClarification(
         'idea-123',
@@ -157,11 +158,15 @@ describe('ClarifierAgent', () => {
 
       mockDbService.getVectors.mockResolvedValue([
         {
+          id: 'test-vector-id',
+          idea_id: 'idea-123',
           vector_data: mockSession,
+          reference_type: 'clarification_session',
+          created_at: new Date().toISOString(),
         },
       ]);
 
-      mockDbService.storeVector.mockResolvedValue({});
+      mockDbService.storeVector.mockResolvedValue(createMockVector());
       mockDbService.logAgentAction.mockResolvedValue(undefined);
 
       const updatedSession = await clarifierAgent.submitAnswer(
@@ -208,12 +213,12 @@ describe('ClarifierAgent', () => {
       aiService.callModel.mockResolvedValue('Refined idea description');
 
       mockDbService.getVectors.mockResolvedValue([
-        {
+        createMockVector({
           vector_data: mockSession,
-        },
+        }),
       ]);
-      mockDbService.storeVector.mockResolvedValue({});
-      mockDbService.updateIdea.mockResolvedValue({});
+      mockDbService.storeVector.mockResolvedValue(createMockVector());
+      mockDbService.updateIdea.mockResolvedValue({} as import('@/lib/db').Idea);
       mockDbService.logAgentAction.mockResolvedValue(undefined);
 
       const result = await clarifierAgent.completeClarification('idea-123');
@@ -246,9 +251,9 @@ describe('ClarifierAgent', () => {
       };
 
       mockDbService.getVectors.mockResolvedValue([
-        {
+        createMockVector({
           vector_data: mockSession,
-        },
+        }),
       ]);
 
       await expect(
@@ -335,9 +340,9 @@ describe('ClarifierAgent', () => {
       };
 
       mockDbService.getVectors.mockResolvedValue([
-        {
+        createMockVector({
           vector_data: mockSessionData,
-        },
+        }),
       ]);
 
       const session = await clarifierAgent.getSession('idea-123');

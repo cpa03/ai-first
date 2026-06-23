@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 
 // Load existing tests as examples
 describe('Frontend Component Tests - Basic', () => {
-  let user: unknown;
+  let user: ReturnType<typeof userEvent.setup>;
 
   beforeEach(() => {
     user = userEvent.setup();

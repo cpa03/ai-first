@@ -32,7 +32,7 @@ import {
 } from './utils/_testHelpers';
 
 // Mock window to be undefined (server-side)
-delete (global).window;
+delete (global as Record<string, unknown>).window;
 
 // Get mocked constructors
 const mockCreateClient = createClient as jest.MockedFunction<
@@ -41,8 +41,14 @@ const mockCreateClient = createClient as jest.MockedFunction<
 const mockOpenAIConstructor = OpenAI as jest.MockedClass<typeof OpenAI>;
 
 describe('Backend Service Tests', () => {
-  let mockSupabase: unknown;
-  let mockOpenAI: unknown;
+  let mockSupabase: ReturnType<typeof createMockSupabaseClient>;
+  let mockOpenAI: {
+    chat: {
+      completions: {
+        create: jest.Mock;
+      };
+    };
+  };
   let dbService: DatabaseService;
 
   beforeEach(() => {
@@ -58,10 +64,14 @@ describe('Backend Service Tests', () => {
     };
 
     // Mock createClient function - must return valid mock for DatabaseService
-    mockCreateClient.mockReturnValue(mockSupabase);
+    mockCreateClient.mockReturnValue(
+      mockSupabase as unknown as ReturnType<typeof createClient>
+    );
 
     // Mock OpenAI constructor
-    mockOpenAIConstructor.mockImplementation(() => mockOpenAI);
+    mockOpenAIConstructor.mockImplementation(
+      () => mockOpenAI as unknown as OpenAI
+    );
 
     // Reset DatabaseService singleton to ensure it picks up mocked clients
     DatabaseService.resetInstance();
@@ -284,7 +294,7 @@ describe('Backend Service Tests', () => {
   });
 
   describe('ExportService', () => {
-    let exportService: unknown;
+    let exportService: typeof ExportService.prototype;
 
     beforeEach(() => {
       exportService = new ExportService();
@@ -298,12 +308,15 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test Description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          deleted_at: null,
         },
         deliverables: [],
         tasks: [],
       };
 
-      const result = await exportService.exportToMarkdown(mockData);
+      const result = await exportService.exportToMarkdown(
+        mockData as unknown as import('@/lib/export-connectors/base').ExportData
+      );
 
       expect(result.success).toBe(true);
       expect(result.content).toContain('Test Project');
@@ -330,12 +343,15 @@ describe('Backend Service Tests', () => {
           raw_text: 'Test Description',
           status: 'draft' as const,
           created_at: new Date().toISOString(),
+          deleted_at: null,
         },
         deliverables: [],
         tasks: [],
       };
 
-      const result = await exportService.exportToJSON(mockData);
+      const result = await exportService.exportToJSON(
+        mockData as unknown as import('@/lib/export-connectors/base').ExportData
+      );
 
       expect(result.success).toBe(true);
     });

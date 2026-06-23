@@ -6,6 +6,7 @@
 
 import { TaskDecomposer } from '@/lib/agents/breakdown-engine/TaskDecomposer';
 import { IdeaAnalysis } from '@/lib/agents/breakdown-engine';
+import type { AIModelConfig } from '@/lib/ai';
 
 jest.mock('@/lib/ai', () => ({
   aiService: {
@@ -30,7 +31,7 @@ jest.mock('@/lib/logger', () => ({
 
 describe('TaskDecomposer', () => {
   let decomposer: TaskDecomposer;
-  let mockAiConfig: unknown;
+  let mockAiConfig: AIModelConfig;
 
   beforeEach(() => {
     jest.clearAllMocks();

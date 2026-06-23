@@ -81,11 +81,15 @@ describe('Cache', () => {
     });
 
     it('should handle null and undefined values', () => {
-      cache.set('null-key', null);
-      cache.set('undefined-key', undefined);
+      const nullableCache = new Cache<string | null | undefined>({
+        ttl: 5000,
+        maxSize: 100,
+      });
+      nullableCache.set('null-key', null);
+      nullableCache.set('undefined-key', undefined);
 
-      expect(cache.get('null-key')).toBeNull();
-      expect(cache.get('undefined-key')).toBeUndefined();
+      expect(nullableCache.get('null-key')).toBeNull();
+      expect(nullableCache.get('undefined-key')).toBeUndefined();
     });
 
     it('should handle empty string keys', () => {

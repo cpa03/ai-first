@@ -5,11 +5,11 @@ describe('CSRF Security', () => {
 
   beforeAll(() => {
     // Manually enable CSRF for testing as it's disabled in 'test' env by default
-    (CSRF_CONFIG).ENABLED = true;
+    (CSRF_CONFIG as Record<string, unknown>).ENABLED = true;
   });
 
   afterAll(() => {
-    (CSRF_CONFIG).ENABLED = originalEnabled;
+    (CSRF_CONFIG as Record<string, unknown>).ENABLED = originalEnabled;
   });
 
   it('should trust exact matches for trusted origins', () => {
@@ -17,8 +17,8 @@ describe('CSRF Security', () => {
     const request = new Request('https://myapp.vercel.app/api/action', {
       method: 'POST',
       headers: {
-        'Origin': 'https://myapp.vercel.app'
-      }
+        Origin: 'https://myapp.vercel.app',
+      },
     });
 
     const result = validateCSRF(request, { trustedOrigins });
@@ -30,8 +30,8 @@ describe('CSRF Security', () => {
     const request = new Request('https://myapp.vercel.app/api/action', {
       method: 'POST',
       headers: {
-        'Origin': 'https://attacker.vercel.app'
-      }
+        Origin: 'https://attacker.vercel.app',
+      },
     });
 
     const result = validateCSRF(request, { trustedOrigins });
@@ -43,8 +43,8 @@ describe('CSRF Security', () => {
     const request = new Request('https://myapp.pages.dev/api/action', {
       method: 'POST',
       headers: {
-        'Origin': 'https://attacker.pages.dev'
-      }
+        Origin: 'https://attacker.pages.dev',
+      },
     });
 
     const result = validateCSRF(request, { trustedOrigins });
@@ -56,8 +56,8 @@ describe('CSRF Security', () => {
     const request = new Request('https://myapp.com/api/action', {
       method: 'POST',
       headers: {
-        'Origin': 'https://myapp.com'
-      }
+        Origin: 'https://myapp.com',
+      },
     });
 
     const result = validateCSRF(request, { trustedOrigins });
@@ -66,7 +66,7 @@ describe('CSRF Security', () => {
 
   it('should allow GET requests without origin validation', () => {
     const request = new Request('https://myapp.com/api/data', {
-      method: 'GET'
+      method: 'GET',
     });
 
     const result = validateCSRF(request);
@@ -76,7 +76,7 @@ describe('CSRF Security', () => {
   it('should REJECT state-changing requests with NO origin or referer header', () => {
     const request = new Request('https://myapp.com/api/action', {
       method: 'POST',
-      headers: {}
+      headers: {},
     });
 
     const result = validateCSRF(request);
@@ -88,8 +88,8 @@ describe('CSRF Security', () => {
     const request = new Request('https://myapp.com/api/action', {
       method: 'POST',
       headers: {
-        'Authorization': 'Bearer my-token'
-      }
+        Authorization: 'Bearer my-token',
+      },
     });
 
     const result = validateCSRF(request);

@@ -46,7 +46,9 @@ describe('/api/ideas/[id]/tasks GET', () => {
     );
 
     const request = new Request(buildApiUrl(`/ideas/${ideaId}/tasks`));
-    const response = await GET(request);
+    const response = await GET(
+      request as unknown as import('next/server').NextRequest
+    );
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -78,7 +80,9 @@ describe('/api/ideas/[id]/tasks GET', () => {
     );
 
     const request = new Request(buildApiUrl(`/ideas/${ideaId}/tasks`));
-    const response = await GET(request);
+    const response = await GET(
+      request as unknown as import('next/server').NextRequest
+    );
     const data = await response.json();
 
     expect(response.status).toBe(200);

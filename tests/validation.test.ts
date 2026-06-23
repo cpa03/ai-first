@@ -10,6 +10,7 @@ import {
   MAX_IDEA_ID_LENGTH,
   validateUserStoryFormat,
   validateIdeaWithUserStory,
+  type ValidationError,
 } from '@/lib/validation';
 import { asInvalidInput, createMockRequest } from './utils/_testHelpers';
 
@@ -856,7 +857,7 @@ describe('buildErrorResponse', () => {
     });
 
     it('should handle empty errors array', async () => {
-      const errors: unknown[] = [];
+      const errors: ValidationError[] = [];
       const response = buildErrorResponse(errors);
       const body = await response.json();
 

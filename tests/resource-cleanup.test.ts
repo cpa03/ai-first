@@ -28,7 +28,11 @@ describe('ResourceCleanupManager', () => {
 
   beforeEach(() => {
     // Get a fresh instance for each test by resetting the singleton
-    (ResourceCleanupManager).instance = undefined;
+    (
+      ResourceCleanupManager as unknown as {
+        instance: ResourceCleanupManager | undefined;
+      }
+    ).instance = undefined;
     manager = ResourceCleanupManager.getInstance();
   });
 

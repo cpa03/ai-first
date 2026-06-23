@@ -21,7 +21,10 @@ interface MockSupabaseChain {
   delete: jest.Mock;
   range: jest.Mock;
   _result: { data: unknown; error: Error | null };
-  then: (resolve: (value: unknown) => unknown, reject?: (reason: unknown) => unknown) => Promise<unknown>;
+  then: (
+    resolve: (value: unknown) => unknown,
+    reject?: (reason: unknown) => unknown
+  ) => Promise<unknown>;
 }
 
 const createMockSupabaseClient = (): MockSupabaseChain => {
@@ -281,7 +284,7 @@ describe('Database Services', () => {
 
     describe('softDeleteTask', () => {
       it('should soft delete a task', async () => {
-        mockAdmin._result = { error: null };
+        mockAdmin._result = { data: null, error: null };
 
         await taskService.softDeleteTask('task-1');
 
@@ -293,7 +296,7 @@ describe('Database Services', () => {
 
     describe('deleteTask', () => {
       it('should permanently delete a task', async () => {
-        mockClient._result = { error: null };
+        mockClient._result = { data: null, error: null };
 
         await taskService.deleteTask('task-1');
 
@@ -554,7 +557,7 @@ describe('Database Services', () => {
 
     describe('softDeleteDeliverable', () => {
       it('should soft delete a deliverable', async () => {
-        mockAdmin._result = { error: null };
+        mockAdmin._result = { data: null, error: null };
 
         await deliverableService.softDeleteDeliverable('del-1');
 
@@ -566,7 +569,7 @@ describe('Database Services', () => {
 
     describe('deleteDeliverable', () => {
       it('should permanently delete a deliverable', async () => {
-        mockClient._result = { error: null };
+        mockClient._result = { data: null, error: null };
 
         await deliverableService.deleteDeliverable('del-1');
 
@@ -683,7 +686,7 @@ describe('Database Services', () => {
 
     describe('softDeleteIdea', () => {
       it('should soft delete an idea', async () => {
-        mockAdmin._result = { error: null };
+        mockAdmin._result = { data: null, error: null };
 
         await ideaService.softDeleteIdea('idea-1');
 
@@ -695,7 +698,7 @@ describe('Database Services', () => {
 
     describe('deleteIdea', () => {
       it('should permanently delete an idea', async () => {
-        mockClient._result = { error: null };
+        mockClient._result = { data: null, error: null };
 
         await ideaService.deleteIdea('idea-1');
 

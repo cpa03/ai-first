@@ -179,7 +179,7 @@ export class ExternalServiceError extends AppError {
   constructor(
     message: string,
     service: string,
-    public readonly originalError?: Error
+    public readonly originalError?: Error | null
   ) {
     const suggestions = [
       'The system will automatically retry this operation',
@@ -260,7 +260,7 @@ export class RetryExhaustedError extends AppError {
     message: string,
     service: string,
     attempts: number,
-    public readonly originalError?: Error
+    public readonly originalError?: Error | null
   ) {
     const suggestions = [
       `The operation failed after ${attempts} retry attempts`,
