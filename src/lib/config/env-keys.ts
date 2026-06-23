@@ -234,7 +234,7 @@ export const ENV_ACCESSORS = {
   LOGGING: {
     LOG_LEVEL: () => EnvLoader.string(LOGGING_ENV_KEYS.LOG_LEVEL, 'INFO'),
     LOG_SAMPLE_RATE: () =>
-      EnvLoader.number(LOGGING_ENV_KEYS.LOG_SAMPLE_RATE, 100, 0, 100),
+      EnvLoader.number(LOGGING_ENV_KEYS.LOG_SAMPLE_RATE, 1.0, 0, 1),
     SUPPRESS_BUILD_LOGS: () =>
       EnvLoader.boolean(LOGGING_ENV_KEYS.SUPPRESS_BUILD_LOGS, false),
     ENABLE_DEBUG_LOGS: () =>
