@@ -8,7 +8,6 @@
 import { NotionExporter } from '@/lib/export-connectors/notion-exporter';
 import type { ExportData } from '@/lib/export-connectors/base';
 
-// Type for accessing private buildNotionBlocks method for testing
 interface NotionExporterWithInternalMethods extends NotionExporter {
   buildNotionBlocks(
     idea: ExportData['idea'],
@@ -21,7 +20,8 @@ describe('NotionExporter.buildNotionBlocks', () => {
   let exporter: NotionExporterWithInternalMethods;
 
   beforeEach(() => {
-    exporter = new NotionExporter() as NotionExporterWithInternalMethods;
+    exporter =
+      new NotionExporter() as unknown as NotionExporterWithInternalMethods;
   });
 
   describe('Basic Idea Export', () => {
@@ -30,6 +30,9 @@ describe('NotionExporter.buildNotionBlocks', () => {
         id: 'test-idea',
         title: 'Test Project',
         raw_text: 'This is a test description',
+        status: 'draft' as const,
+        deleted_at: null,
+        created_at: new Date().toISOString(),
       };
 
       const blocks = exporter.buildNotionBlocks(idea, [], []);
@@ -39,7 +42,11 @@ describe('NotionExporter.buildNotionBlocks', () => {
         object: 'block',
         type: 'paragraph',
       });
-      expect(blocks[0].paragraph.rich_text[0].text.content).toBe(
+      expect((blocks[0] as Record<string, unknown>).paragraph).toBeDefined();
+      const paragraph = blocks[0] as {
+        paragraph: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(paragraph.paragraph.rich_text[0].text.content).toBe(
         'This is a test description'
       );
     });
@@ -48,12 +55,19 @@ describe('NotionExporter.buildNotionBlocks', () => {
       const idea = {
         id: 'test-idea',
         title: 'Test Project',
+        raw_text: '',
+        status: 'draft' as const,
+        deleted_at: null,
+        created_at: new Date().toISOString(),
       };
 
       const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
-      expect(blocks[0].paragraph.rich_text[0].text.content).toBe(
+      const paragraph = blocks[0] as {
+        paragraph: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(paragraph.paragraph.rich_text[0].text.content).toBe(
         'Test Project'
       );
     });
@@ -61,12 +75,20 @@ describe('NotionExporter.buildNotionBlocks', () => {
     it('should use fallback text when both raw_text and title are missing', () => {
       const idea = {
         id: 'test-idea',
+        title: '',
+        raw_text: '',
+        status: 'draft' as const,
+        deleted_at: null,
+        created_at: new Date().toISOString(),
       };
 
       const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
-      expect(blocks[0].paragraph.rich_text[0].text.content).toBe(
+      const paragraph = blocks[0] as {
+        paragraph: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(paragraph.paragraph.rich_text[0].text.content).toBe(
         'No description'
       );
     });
@@ -78,43 +100,64 @@ describe('NotionExporter.buildNotionBlocks', () => {
         id: 'test-idea',
         title: 'Test Project',
         raw_text: 'Description',
+        status: 'draft' as const,
+        deleted_at: null,
+        created_at: new Date().toISOString(),
       };
 
       const deliverables = [
         {
           id: 'd1',
+          idea_id: 'test-idea',
           title: 'Deliverable 1',
           description: 'First deliverable',
           estimate_hours: 8,
+          priority: 1,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature' as const,
+          created_at: new Date().toISOString(),
         },
         {
           id: 'd2',
+          idea_id: 'test-idea',
           title: 'Deliverable 2',
           description: 'Second deliverable',
           estimate_hours: 12,
+          priority: 2,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature' as const,
+          created_at: new Date().toISOString(),
         },
       ];
 
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        []
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, []);
 
       expect(blocks).toHaveLength(4);
       expect(blocks[1]).toMatchObject({
         object: 'block',
         type: 'heading_2',
       });
-      expect(blocks[1].heading_2.rich_text[0].text.content).toBe(
-        'Deliverables'
-      );
+      const heading = blocks[1] as {
+        heading_2: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(heading.heading_2.rich_text[0].text.content).toBe('Deliverables');
 
       expect(blocks[2]).toMatchObject({
         object: 'block',
         type: 'bulleted_list_item',
       });
-      expect(blocks[2].bulleted_list_item.rich_text[0].text.content).toBe(
+      const bullet = blocks[2] as {
+        bulleted_list_item: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(bullet.bulleted_list_item.rich_text[0].text.content).toBe(
         'Deliverable 1 - First deliverable (8h)'
       );
 
@@ -122,7 +165,10 @@ describe('NotionExporter.buildNotionBlocks', () => {
         object: 'block',
         type: 'bulleted_list_item',
       });
-      expect(blocks[3].bulleted_list_item.rich_text[0].text.content).toBe(
+      const bullet2 = blocks[3] as {
+        bulleted_list_item: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(bullet2.bulleted_list_item.rich_text[0].text.content).toBe(
         'Deliverable 2 - Second deliverable (12h)'
       );
     });
@@ -132,24 +178,35 @@ describe('NotionExporter.buildNotionBlocks', () => {
         id: 'test-idea',
         title: 'Test Project',
         raw_text: 'Description',
+        status: 'draft' as const,
+        deleted_at: null,
+        created_at: new Date().toISOString(),
       };
 
       const deliverables = [
         {
           id: 'd1',
+          idea_id: 'test-idea',
           title: 'Deliverable 1',
           estimate_hours: 8,
+          priority: 1,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature' as const,
+          created_at: new Date().toISOString(),
         },
       ];
 
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        []
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, []);
 
       expect(blocks).toHaveLength(3);
-      expect(blocks[2].bulleted_list_item.rich_text[0].text.content).toBe(
+      const bullet = blocks[2] as {
+        bulleted_list_item: { rich_text: Array<{ text: { content: string } }> };
+      };
+      expect(bullet.bulleted_list_item.rich_text[0].text.content).toBe(
         'Deliverable 1 -  (8h)'
       );
     });
@@ -159,13 +216,18 @@ describe('NotionExporter.buildNotionBlocks', () => {
         id: 'test-idea',
         title: 'Test Project',
         raw_text: 'Description',
+        status: 'draft' as const,
+        deleted_at: null,
+        created_at: new Date().toISOString(),
       };
 
       const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
       expect(blocks[0].type).toBe('paragraph');
-      expect(blocks.every((b: unknown) => b.type !== 'heading_2')).toBe(true);
+      expect(
+        blocks.every((b: Record<string, unknown>) => b.type !== 'heading_2')
+      ).toBe(true);
     });
   });
 
@@ -279,11 +341,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        tasks
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, tasks);
 
       expect(blocks).toHaveLength(5);
       expect(blocks[0].type).toBe('paragraph');
@@ -333,11 +391,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        []
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, []);
 
       expect(blocks).toHaveLength(3);
       expect(blocks[0].type).toBe('paragraph');
@@ -374,11 +428,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        tasks
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, tasks);
 
       blocks.forEach((block: unknown) => {
         expect(block).toHaveProperty('object', 'block');
@@ -414,11 +464,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        tasks
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, tasks);
 
       expect(blocks[0].paragraph).toHaveProperty('rich_text');
       expect(blocks[0].paragraph.rich_text).toBeInstanceOf(Array);
@@ -449,11 +495,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
       }));
 
       const startTime = Date.now();
-      const blocks = exporter.buildNotionBlocks(
-        idea,
-        deliverables,
-        tasks
-      );
+      const blocks = exporter.buildNotionBlocks(idea, deliverables, tasks);
       const endTime = Date.now();
 
       expect(blocks).toHaveLength(1 + 1 + 20 + 1 + 20);
