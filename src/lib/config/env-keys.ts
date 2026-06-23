@@ -119,7 +119,7 @@ export const SECURITY_ENV_KEYS = {
 export const LOGGING_ENV_KEYS = {
   /** Log level (DEBUG, INFO, WARN, ERROR) */
   LOG_LEVEL: 'LOG_LEVEL',
-  /** Log sample rate for performance monitoring (0.0 to 1.0) */
+  /** Log sample rate for performance monitoring (0.0 to 1.0, where 1.0 = 100%) */
   LOG_SAMPLE_RATE: 'LOG_SAMPLE_RATE',
   /** Suppress build-time logs */
   SUPPRESS_BUILD_LOGS: 'SUPPRESS_BUILD_LOGS',
@@ -234,7 +234,7 @@ export const ENV_ACCESSORS = {
   LOGGING: {
     LOG_LEVEL: () => EnvLoader.string(LOGGING_ENV_KEYS.LOG_LEVEL, 'INFO'),
     LOG_SAMPLE_RATE: () =>
-      EnvLoader.number(LOGGING_ENV_KEYS.LOG_SAMPLE_RATE, 100, 0, 100),
+      EnvLoader.number(LOGGING_ENV_KEYS.LOG_SAMPLE_RATE, 1.0, 0, 1),
     SUPPRESS_BUILD_LOGS: () =>
       EnvLoader.boolean(LOGGING_ENV_KEYS.SUPPRESS_BUILD_LOGS, false),
     ENABLE_DEBUG_LOGS: () =>
