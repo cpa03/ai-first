@@ -131,6 +131,7 @@ Complete index of all IdeaFlow documentation.
 
 ## Architecture Decision Records
 
+- [ADR Index](./adr/README.md) - Complete ADR listing and guidelines
 - [ADR-000: Template](./adr/ADR-000-template.md) - ADR template for new decisions
 - [ADR-001: AI Abstraction Layer](./adr/ADR-001-ai-abstraction-layer.md) - AI provider abstraction strategy
 - [ADR-002: Supabase Database & Auth](./adr/ADR-002-supabase-database-auth.md) - Database and auth provider choice
@@ -149,6 +150,7 @@ Complete index of all IdeaFlow documentation.
 
 ## Templates
 
+- [Templates Index](./templates/README.md) - Complete templates listing and usage guide
 - [Blueprint Template](./templates/blueprint_template.md) - Blueprint document template
 - [Roadmap Template](./templates/roadmap_template.md) - Roadmap document template
 - [Tasks Template](./templates/tasks_template.md) - Tasks document template
@@ -156,6 +158,8 @@ Complete index of all IdeaFlow documentation.
 - [Specialist User Story Template](./templates/specialist-user-story_template.md) - Specialist user story template
 
 ## User Stories
+
+- [User Stories Index](./user-stories/README.md) - Complete user stories dashboard and progress tracker
 
 ### Authentication
 
