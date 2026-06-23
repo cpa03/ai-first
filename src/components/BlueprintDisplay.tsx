@@ -211,20 +211,29 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               {MESSAGES.BLUEPRINT.PAGE_TITLE}
             </h2>
             <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <Button
-                onClick={handleCopyWithFocus}
-                variant="outline"
-                fullWidth={false}
-                aria-label={
+              <Tooltip
+                content={
                   copied
                     ? MESSAGES.BLUEPRINT.COPIED_BUTTON
-                    : COMPONENT_DEFAULTS.ARIA_LABELS.COPY_BLUEPRINT
+                    : MESSAGES.BLUEPRINT.COPY_BUTTON
                 }
+                shortcut={['⌘', 'C']}
               >
-                {copied
-                  ? MESSAGES.BLUEPRINT.COPIED_BUTTON
-                  : MESSAGES.BLUEPRINT.COPY_BUTTON}
-              </Button>
+                <Button
+                  onClick={handleCopyWithFocus}
+                  variant="outline"
+                  fullWidth={false}
+                  aria-label={
+                    copied
+                      ? MESSAGES.BLUEPRINT.COPIED_BUTTON
+                      : COMPONENT_DEFAULTS.ARIA_LABELS.COPY_BLUEPRINT
+                  }
+                >
+                  {copied
+                    ? MESSAGES.BLUEPRINT.COPIED_BUTTON
+                    : MESSAGES.BLUEPRINT.COPY_BUTTON}
+                </Button>
+              </Tooltip>
               <Button
                 onClick={handleDownloadWithFocus}
                 variant="primary"
