@@ -35,6 +35,7 @@ interface ConfettiParticle {
   y: number;
   color: string;
   delay: number;
+  size: number; // Size variation for more natural confetti effect
 }
 
 const CopyButtonComponent = function CopyButton({
@@ -66,12 +67,14 @@ const CopyButtonComponent = function CopyButton({
     for (let i = 0; i < particleCount; i++) {
       const angle = (i / particleCount) * Math.PI * 2;
       const distance = 20 + Math.random() * 20;
+      const size = 4 + Math.random() * 6;
       particles.push({
         id: `confetti-${Date.now()}-${i}`,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance,
         color: CONFETTI_COLORS.PRIMARY[i % CONFETTI_COLORS.PRIMARY.length],
         delay: i * 30,
+        size,
       });
     }
     setConfetti(particles);
@@ -218,11 +221,13 @@ const CopyButtonComponent = function CopyButton({
           {confetti.map((particle) => (
             <span
               key={particle.id}
-              className="absolute w-1.5 h-1.5 rounded-full pointer-events-none animate-copy-confetti"
+              className="absolute rounded-full pointer-events-none animate-copy-confetti"
               style={
                 {
                   left: '50%',
                   top: '50%',
+                  width: `${particle.size}px`,
+                  height: `${particle.size}px`,
                   backgroundColor: particle.color,
                   '--confetti-x': `${particle.x}px`,
                   '--confetti-y': `${particle.y}px`,
