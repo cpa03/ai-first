@@ -58,11 +58,17 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     const length = idea.trim().length;
     const charsNeeded = MIN_IDEA_LENGTH - length;
 
-    // Show exact count when between 50% and 100% of minimum
-    if (length >= MIN_IDEA_LENGTH * 0.5 && length < MIN_IDEA_LENGTH) {
+    if (
+      length >=
+        MIN_IDEA_LENGTH *
+          COMPONENT_CONFIG.IDEA_INPUT.PROGRESS_SHOW_CHARS_THRESHOLD &&
+      length < MIN_IDEA_LENGTH
+    ) {
       return {
         charsNeeded,
-        isNearMinimum: length >= MIN_IDEA_LENGTH * 0.8,
+        isNearMinimum:
+          length >=
+          MIN_IDEA_LENGTH * COMPONENT_CONFIG.IDEA_INPUT.NEAR_MINIMUM_THRESHOLD,
       };
     }
     return null;
@@ -72,12 +78,14 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   const getEncouragementMessage = useCallback(() => {
     const length = idea.trim().length;
+    const { LOW, MEDIUM, HIGH } =
+      COMPONENT_CONFIG.IDEA_INPUT.ENCOURAGEMENT_THRESHOLDS;
     if (length === 0) return null;
-    if (length < MIN_IDEA_LENGTH * 0.5) return encouragementMessages[0];
+    if (length < MIN_IDEA_LENGTH * LOW) return encouragementMessages[0];
     if (length < MIN_IDEA_LENGTH) return encouragementMessages[1];
-    if (length < MAX_IDEA_LENGTH * 0.3) return encouragementMessages[2];
-    if (length < MAX_IDEA_LENGTH * 0.5) return encouragementMessages[3];
-    if (length < MAX_IDEA_LENGTH * 0.7) return encouragementMessages[6];
+    if (length < MAX_IDEA_LENGTH * MEDIUM) return encouragementMessages[2];
+    if (length < MAX_IDEA_LENGTH * LOW) return encouragementMessages[3];
+    if (length < MAX_IDEA_LENGTH * HIGH) return encouragementMessages[6];
     return null;
   }, [idea, encouragementMessages]);
 

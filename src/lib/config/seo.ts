@@ -1,9 +1,11 @@
 /**
  * SEO Configuration
- * Centralizes metadata, OpenGraph, and SEO-related constants
+ * Centralizes metadata, OpenGraph, sitemap, robots, and SEO-related constants
+ * Eliminates hardcoded values in sitemap.ts and robots.ts
  */
 
 import { APP_CONFIG } from './app';
+import { EnvLoader } from './environment';
 
 export const SEO_CONFIG = {
   METADATA: {
@@ -75,6 +77,51 @@ export const SEO_CONFIG = {
   },
 
   MANIFEST: '/manifest.json',
+
+  /**
+   * Sitemap configuration
+   * Centralizes page priorities and change frequencies for sitemap generation
+   * Eliminates hardcoded values in sitemap.ts
+   */
+  SITEMAP: {
+    PAGES: {
+      HOME: {
+        PRIORITY: EnvLoader.number('SITEMAP_HOME_PRIORITY', 1, 0, 1),
+        CHANGE_FREQUENCY: EnvLoader.string('SITEMAP_HOME_CHANGE_FREQ', 'daily'),
+      },
+      CLARIFY: {
+        PRIORITY: EnvLoader.number('SITEMAP_CLARIFY_PRIORITY', 0.8, 0, 1),
+        CHANGE_FREQUENCY: EnvLoader.string(
+          'SITEMAP_CLARIFY_CHANGE_FREQ',
+          'weekly'
+        ),
+      },
+      RESULTS: {
+        PRIORITY: EnvLoader.number('SITEMAP_RESULTS_PRIORITY', 0.8, 0, 1),
+        CHANGE_FREQUENCY: EnvLoader.string(
+          'SITEMAP_RESULTS_CHANGE_FREQ',
+          'weekly'
+        ),
+      },
+    },
+  } as const,
+
+  /**
+   * Robots.txt configuration
+   * Centralizes allowed/disallowed paths for search engine crawlers
+   * Eliminates hardcoded values in robots.ts
+   */
+  ROBOTS: {
+    USER_AGENT: '*',
+    ALLOW: EnvLoader.string('ROBOTS_ALLOW', '/'),
+    DISALLOW: (() => {
+      const envDisallow = EnvLoader.string('ROBOTS_DISALLOW', '');
+      if (envDisallow) {
+        return envDisallow.split(',').map((p) => p.trim());
+      }
+      return ['/api/', '/admin/'] as readonly string[];
+    })(),
+  } as const,
 } as const;
 
 export const FONT_CONFIG = {

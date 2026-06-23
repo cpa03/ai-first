@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { WHY_CHOOSE_CONFIG } from '@/lib/config';
+import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
@@ -17,8 +17,8 @@ function WhyChooseSectionComponent() {
         }
       },
       {
-        threshold: 0.2,
-        rootMargin: '0px 0px -50px 0px',
+        threshold: FEATURE_CONFIG.OBSERVER_THRESHOLD,
+        rootMargin: FEATURE_CONFIG.OBSERVER_ROOT_MARGIN,
       }
     );
 
