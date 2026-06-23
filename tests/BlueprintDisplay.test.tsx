@@ -105,7 +105,7 @@ describe('BlueprintDisplay', () => {
 
     // Mock showToast
     const mockShowToast = jest.fn();
-    (window as any).showToast = mockShowToast;
+    (window).showToast = mockShowToast;
 
     render(<BlueprintDisplay idea={idea} answers={answers} />);
 

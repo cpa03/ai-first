@@ -23,7 +23,7 @@ jest.mock('@/lib/prompt-service', () => ({
 
 describe('IdeaAnalyzer', () => {
   let analyzer: IdeaAnalyzer;
-  let mockAiConfig: any;
+  let mockAiConfig: unknown;
 
   beforeEach(() => {
     jest.clearAllMocks();

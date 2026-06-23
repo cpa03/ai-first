@@ -9,8 +9,23 @@ const createMockClientProvider = (): ClientProvider => ({
   getAdmin: jest.fn(),
 });
 
-const createMockSupabaseClient = () => {
-  const chain = {
+interface MockSupabaseChain {
+  from: jest.Mock;
+  insert: jest.Mock;
+  select: jest.Mock;
+  single: jest.Mock;
+  eq: jest.Mock;
+  is: jest.Mock;
+  order: jest.Mock;
+  update: jest.Mock;
+  delete: jest.Mock;
+  range: jest.Mock;
+  _result: { data: unknown; error: Error | null };
+  then: (resolve: (value: unknown) => unknown, reject?: (reason: unknown) => unknown) => Promise<unknown>;
+}
+
+const createMockSupabaseClient = (): MockSupabaseChain => {
+  const chain: MockSupabaseChain = {
     from: jest.fn(),
     insert: jest.fn(),
     select: jest.fn(),
@@ -21,6 +36,13 @@ const createMockSupabaseClient = () => {
     update: jest.fn(),
     delete: jest.fn(),
     range: jest.fn(),
+    _result: { data: null, error: null },
+    then: function (
+      resolve: (value: unknown) => unknown,
+      reject?: (reason: unknown) => unknown
+    ) {
+      return Promise.resolve(chain._result).then(resolve, reject);
+    },
   };
 
   // Set up chain returns after object creation
@@ -33,15 +55,6 @@ const createMockSupabaseClient = () => {
   chain.update.mockReturnValue(chain);
   chain.delete.mockReturnValue(chain);
   chain.range.mockReturnValue(chain);
-
-  (chain as any)._result = { data: null, error: null };
-  (chain as any).then = function (
-    resolve: (value: any) => any,
-
-    reject?: (reason: any) => any
-  ) {
-    return Promise.resolve((chain as any)._result).then(resolve, reject);
-  };
 
   return chain;
 };
@@ -178,7 +191,7 @@ describe('Database Services', () => {
           created_at: new Date().toISOString(),
         }));
 
-        (mockClient as any)._result = { data: expectedTasks, error: null };
+        mockClient._result = { data: expectedTasks, error: null };
 
         const result = await taskService.createTasks(tasks);
 
@@ -186,7 +199,7 @@ describe('Database Services', () => {
       });
 
       it('should return empty array when no data returned', async () => {
-        (mockClient as any)._result = { data: null, error: null };
+        mockClient._result = { data: null, error: null };
 
         const result = await taskService.createTasks([]);
 
@@ -201,7 +214,7 @@ describe('Database Services', () => {
           { id: 'task-2', deliverable_id: 'del-1', title: 'Task 2' },
         ];
 
-        (mockClient as any)._result = { data: tasks, error: null };
+        mockClient._result = { data: tasks, error: null };
 
         const result = await taskService.getDeliverableTasks('del-1');
 
@@ -213,7 +226,7 @@ describe('Database Services', () => {
       it('should exclude soft-deleted tasks', async () => {
         const tasks = [{ id: 'task-1', deleted_at: null }];
 
-        (mockClient as any)._result = { data: tasks, error: null };
+        mockClient._result = { data: tasks, error: null };
 
         await taskService.getDeliverableTasks('del-1');
 
@@ -268,7 +281,7 @@ describe('Database Services', () => {
 
     describe('softDeleteTask', () => {
       it('should soft delete a task', async () => {
-        (mockAdmin as any)._result = { error: null };
+        mockAdmin._result = { error: null };
 
         await taskService.softDeleteTask('task-1');
 
@@ -280,7 +293,7 @@ describe('Database Services', () => {
 
     describe('deleteTask', () => {
       it('should permanently delete a task', async () => {
-        (mockClient as any)._result = { error: null };
+        mockClient._result = { error: null };
 
         await taskService.deleteTask('task-1');
 
@@ -404,7 +417,7 @@ describe('Database Services', () => {
           created_at: new Date().toISOString(),
         }));
 
-        (mockClient as any)._result = { data: expected, error: null };
+        mockClient._result = { data: expected, error: null };
 
         const result =
           await deliverableService.createDeliverables(deliverables);
@@ -419,7 +432,7 @@ describe('Database Services', () => {
           { id: 'del-1', idea_id: 'idea-1', title: 'Deliverable 1' },
         ];
 
-        (mockClient as any)._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, error: null };
 
         const result = await deliverableService.getIdeaDeliverables('idea-1');
 
@@ -428,7 +441,7 @@ describe('Database Services', () => {
       });
 
       it('should order by priority descending', async () => {
-        (mockClient as any)._result = { data: [], error: null };
+        mockClient._result = { data: [], error: null };
 
         await deliverableService.getIdeaDeliverables('idea-1');
 
@@ -451,7 +464,7 @@ describe('Database Services', () => {
           },
         ];
 
-        (mockClient as any)._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, error: null };
 
         const result =
           await deliverableService.getIdeaDeliverablesWithTasks('idea-1');
@@ -471,7 +484,7 @@ describe('Database Services', () => {
           },
         ];
 
-        (mockClient as any)._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, error: null };
 
         const result =
           await deliverableService.getIdeaDeliverablesWithTasks('idea-1');
@@ -483,7 +496,7 @@ describe('Database Services', () => {
       it('should handle null tasks array', async () => {
         const deliverables = [{ id: 'del-1', tasks: null }];
 
-        (mockClient as any)._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, error: null };
 
         const result =
           await deliverableService.getIdeaDeliverablesWithTasks('idea-1');
@@ -541,7 +554,7 @@ describe('Database Services', () => {
 
     describe('softDeleteDeliverable', () => {
       it('should soft delete a deliverable', async () => {
-        (mockAdmin as any)._result = { error: null };
+        mockAdmin._result = { error: null };
 
         await deliverableService.softDeleteDeliverable('del-1');
 
@@ -553,7 +566,7 @@ describe('Database Services', () => {
 
     describe('deleteDeliverable', () => {
       it('should permanently delete a deliverable', async () => {
-        (mockClient as any)._result = { error: null };
+        mockClient._result = { error: null };
 
         await deliverableService.deleteDeliverable('del-1');
 
@@ -670,7 +683,7 @@ describe('Database Services', () => {
 
     describe('softDeleteIdea', () => {
       it('should soft delete an idea', async () => {
-        (mockAdmin as any)._result = { error: null };
+        mockAdmin._result = { error: null };
 
         await ideaService.softDeleteIdea('idea-1');
 
@@ -682,7 +695,7 @@ describe('Database Services', () => {
 
     describe('deleteIdea', () => {
       it('should permanently delete an idea', async () => {
-        (mockClient as any)._result = { error: null };
+        mockClient._result = { error: null };
 
         await ideaService.deleteIdea('idea-1');
 
@@ -699,7 +712,7 @@ describe('Database Services', () => {
           { id: 'idea-2', user_id: 'user-1', title: 'Idea 2' },
         ];
 
-        (mockClient as any)._result = { data: ideas, error: null };
+        mockClient._result = { data: ideas, error: null };
 
         const result = await ideaService.getUserIdeas('user-1');
 
@@ -708,7 +721,7 @@ describe('Database Services', () => {
       });
 
       it('should exclude soft-deleted ideas', async () => {
-        (mockClient as any)._result = { data: [], error: null };
+        mockClient._result = { data: [], error: null };
 
         await ideaService.getUserIdeas('user-1');
 
@@ -720,7 +733,7 @@ describe('Database Services', () => {
       it('should return paginated ideas', async () => {
         const ideas = [{ id: 'idea-1', user_id: 'user-1', title: 'Idea 1' }];
 
-        (mockClient as any)._result = { data: ideas, error: null };
+        mockClient._result = { data: ideas, error: null };
 
         const result = await ideaService.getUserIdeasPaginated('user-1', {
           page: 1,
@@ -733,7 +746,7 @@ describe('Database Services', () => {
       });
 
       it('should use default pagination options', async () => {
-        (mockClient as any)._result = { data: [], error: null };
+        mockClient._result = { data: [], error: null };
 
         const result = await ideaService.getUserIdeasPaginated('user-1');
 

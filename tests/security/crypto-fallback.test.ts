@@ -1,7 +1,7 @@
 import { generateId, secureRandom } from '@/lib/security/crypto';
 
 describe('generateId Fallback', () => {
-  let originalCrypto: any;
+  let originalCrypto: unknown;
   let warnSpy: jest.SpyInstance;
 
   beforeAll(() => {

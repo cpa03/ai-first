@@ -30,7 +30,7 @@ jest.mock('@/lib/logger', () => ({
 
 describe('TaskDecomposer', () => {
   let decomposer: TaskDecomposer;
-  let mockAiConfig: any;
+  let mockAiConfig: unknown;
 
   beforeEach(() => {
     jest.clearAllMocks();

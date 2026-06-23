@@ -371,7 +371,7 @@ describe('Integration Tests - User Workflows', () => {
       const originalWebSocket = global.WebSocket;
       global.WebSocket = jest
         .fn()
-        .mockImplementation(() => mockWebSocketInstance) as any;
+        .mockImplementation(() => mockWebSocketInstance);
 
       try {
         // Simulate real-time updates

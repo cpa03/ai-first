@@ -487,7 +487,7 @@ describe('Logger Module', () => {
 
     it('should not log error message when level is higher than ERROR', () => {
       const logger = new Logger('TestLogger');
-      setLogLevel((LogLevel.ERROR + 1) as any);
+      setLogLevel((LogLevel.ERROR + 1));
       logger.error('Error message');
       expect(console.error).not.toHaveBeenCalled();
     });
@@ -678,7 +678,7 @@ describe('Logger Module', () => {
     it('should handle circular references in metadata', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
-      const circular: any = { name: 'test' };
+      const circular: unknown = { name: 'test' };
       circular.self = circular;
       const context: LogContext = { metadata: circular };
 
@@ -699,7 +699,7 @@ describe('Logger Module', () => {
     it('should handle numbers as messages', () => {
       setLogLevel(LogLevel.INFO);
       const logger = new Logger('Test');
-      logger.info(123 as any);
+      logger.info(123);
       expect(console.info).toHaveBeenCalledWith(
         expect.stringContaining('[Test] 123')
       );

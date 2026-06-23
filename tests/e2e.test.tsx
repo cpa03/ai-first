@@ -36,7 +36,7 @@ jest.mock('@/lib/db', () => ({
 const mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
 
 // Declare mockFetch on globalThis for test helpers
-(globalThis as any).mockFetch = (
+(globalThis).mockFetch = (
   response: any,
   ok: boolean = true,
   status: number = 200

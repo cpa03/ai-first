@@ -155,7 +155,7 @@ describe('withApiHandler', () => {
 
     it('should use specified rate limit config', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
-      const wrapped = withApiHandler(mockHandler as any, {
+      const wrapped = withApiHandler(mockHandler, {
         rateLimit: 'strict',
       });
       const request = new NextRequest(buildApiUrl('/test'));
@@ -390,7 +390,7 @@ describe('withApiHandler', () => {
 
     it('should skip size validation when validateSize is false', async () => {
       const mockHandler = jest.fn().mockResolvedValue(new Response('OK'));
-      const wrapped = withApiHandler(mockHandler as any, {
+      const wrapped = withApiHandler(mockHandler, {
         validateSize: false,
       });
       const request = new NextRequest(buildApiUrl('/test'), {
@@ -441,7 +441,7 @@ describe('withApiHandler', () => {
         .mockRejectedValue(
           new AppError('Test error', ErrorCode.INTERNAL_ERROR, 500)
         );
-      const wrapped = withApiHandler(mockHandler as any, {
+      const wrapped = withApiHandler(mockHandler, {
         rateLimit: 'moderate',
       });
       const request = new NextRequest(buildApiUrl('/test'), {

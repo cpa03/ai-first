@@ -191,7 +191,7 @@ describe('Export Services', () => {
     });
 
     it('should handle export errors gracefully', async () => {
-      const invalidData = null as any;
+      const invalidData = null;
       const result = await exporter.export(invalidData);
 
       expect(result.success).toBe(false);
@@ -469,8 +469,8 @@ describe('Export Services', () => {
         readonly name = 'Custom';
 
         async export(
-          data: any,
-          options?: Record<string, any>
+          data: unknown,
+          options?: Record<string, unknown>
         ): Promise<ExportResult> {
           return {
             success: true,
@@ -519,7 +519,7 @@ describe('Export Services', () => {
 
     it('should fail export with unknown connector', async () => {
       const format = {
-        type: 'unknown' as any,
+        type: 'unknown',
         data: createMockIdea({
           idea: {
             id: 'test',
@@ -529,7 +529,7 @@ describe('Export Services', () => {
             created_at: new Date().toISOString(),
             deleted_at: null,
           },
-        }) as any,
+        }),
       };
 
       const result = await manager.export(format);
@@ -654,7 +654,7 @@ describe('Export Services', () => {
       });
 
       it('should detect missing idea', () => {
-        const invalidData = {} as any;
+        const invalidData = {};
 
         const result = exportUtils.validateExportData(invalidData);
         expect(result.valid).toBe(false);

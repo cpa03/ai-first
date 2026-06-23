@@ -94,7 +94,7 @@ describe('SessionManager', () => {
       };
 
       dbService.getVectors.mockResolvedValue([
-        { vector_data: mockSessionData } as any,
+        { vector_data: mockSessionData },
       ]);
 
       const session = await manager.getBreakdownSession('idea-123');
@@ -194,12 +194,12 @@ describe('SessionManager', () => {
       };
 
       dbService.createDeliverables.mockResolvedValue([
-        { id: 'del-1', title: 'Deliverable 1' } as any,
-        { id: 'del-2', title: 'Deliverable 2' } as any,
+        { id: 'del-1', title: 'Deliverable 1' },
+        { id: 'del-2', title: 'Deliverable 2' },
       ]);
       dbService.createTasks.mockResolvedValue([
-        { id: 'task-1' } as any,
-        { id: 'task-2' } as any,
+        { id: 'task-1' },
+        { id: 'task-2' },
       ]);
       dbService.updateIdea.mockResolvedValue(undefined);
 

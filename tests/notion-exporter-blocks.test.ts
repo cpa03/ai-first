@@ -6,12 +6,22 @@
  */
 
 import { NotionExporter } from '@/lib/export-connectors/notion-exporter';
+import type { ExportData } from '@/lib/export-connectors/base';
+
+// Type for accessing private buildNotionBlocks method for testing
+interface NotionExporterWithInternalMethods extends NotionExporter {
+  buildNotionBlocks(
+    idea: ExportData['idea'],
+    deliverables?: ExportData['deliverables'],
+    tasks?: ExportData['tasks']
+  ): Record<string, unknown>[];
+}
 
 describe('NotionExporter.buildNotionBlocks', () => {
-  let exporter: NotionExporter;
+  let exporter: NotionExporterWithInternalMethods;
 
   beforeEach(() => {
-    exporter = new NotionExporter();
+    exporter = new NotionExporter() as NotionExporterWithInternalMethods;
   });
 
   describe('Basic Idea Export', () => {
@@ -22,7 +32,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         raw_text: 'This is a test description',
       };
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], []);
+      const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
       expect(blocks[0]).toMatchObject({
@@ -40,7 +50,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         title: 'Test Project',
       };
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], []);
+      const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
       expect(blocks[0].paragraph.rich_text[0].text.content).toBe(
@@ -53,7 +63,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         id: 'test-idea',
       };
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], []);
+      const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
       expect(blocks[0].paragraph.rich_text[0].text.content).toBe(
@@ -85,7 +95,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         []
@@ -132,7 +142,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         []
@@ -151,11 +161,11 @@ describe('NotionExporter.buildNotionBlocks', () => {
         raw_text: 'Description',
       };
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], []);
+      const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
       expect(blocks[0].type).toBe('paragraph');
-      expect(blocks.every((b: any) => b.type !== 'heading_2')).toBe(true);
+      expect(blocks.every((b: unknown) => b.type !== 'heading_2')).toBe(true);
     });
   });
 
@@ -182,7 +192,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], tasks);
+      const blocks = exporter.buildNotionBlocks(idea, [], tasks);
 
       expect(blocks).toHaveLength(4);
       expect(blocks[1]).toMatchObject({
@@ -222,7 +232,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], tasks);
+      const blocks = exporter.buildNotionBlocks(idea, [], tasks);
 
       expect(blocks).toHaveLength(3);
       expect(blocks[2].to_do.checked).toBe(false);
@@ -236,7 +246,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         raw_text: 'Description',
       };
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], []);
+      const blocks = exporter.buildNotionBlocks(idea, [], []);
 
       expect(blocks).toHaveLength(1);
       expect(blocks[0].type).toBe('paragraph');
@@ -269,7 +279,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         tasks
@@ -299,7 +309,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(idea, [], tasks);
+      const blocks = exporter.buildNotionBlocks(idea, [], tasks);
 
       expect(blocks).toHaveLength(3);
       expect(blocks[0].type).toBe('paragraph');
@@ -323,7 +333,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         []
@@ -364,13 +374,13 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         tasks
       );
 
-      blocks.forEach((block: any) => {
+      blocks.forEach((block: unknown) => {
         expect(block).toHaveProperty('object', 'block');
         expect(block).toHaveProperty('type');
         expect(block.type).toMatch(
@@ -404,7 +414,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         },
       ];
 
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         tasks
@@ -439,7 +449,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
       }));
 
       const startTime = Date.now();
-      const blocks = (exporter as any).buildNotionBlocks(
+      const blocks = exporter.buildNotionBlocks(
         idea,
         deliverables,
         tasks

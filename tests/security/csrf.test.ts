@@ -5,11 +5,11 @@ describe('CSRF Security', () => {
 
   beforeAll(() => {
     // Manually enable CSRF for testing as it's disabled in 'test' env by default
-    (CSRF_CONFIG as any).ENABLED = true;
+    (CSRF_CONFIG).ENABLED = true;
   });
 
   afterAll(() => {
-    (CSRF_CONFIG as any).ENABLED = originalEnabled;
+    (CSRF_CONFIG).ENABLED = originalEnabled;
   });
 
   it('should trust exact matches for trusted origins', () => {

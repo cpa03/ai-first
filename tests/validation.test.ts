@@ -11,6 +11,7 @@ import {
   validateUserStoryFormat,
   validateIdeaWithUserStory,
 } from '@/lib/validation';
+import { asInvalidInput, createMockRequest } from './utils/_testHelpers';
 
 describe('validateIdea', () => {
   describe('valid ideas', () => {
@@ -65,10 +66,8 @@ describe('validateIdea', () => {
 
   describe('invalid ideas', () => {
     it('should reject null or undefined', () => {
-       
-      const result1 = validateIdea(null as any);
-       
-      const result2 = validateIdea(undefined as any);
+      const result1 = validateIdea(asInvalidInput(null));
+      const result2 = validateIdea(asInvalidInput(undefined));
 
       expect(result1.valid).toBe(false);
       expect(result1.errors).toHaveLength(1);
@@ -80,12 +79,9 @@ describe('validateIdea', () => {
     });
 
     it('should reject non-string types', () => {
-       
-      const result1 = validateIdea(123 as any);
-       
-      const result2 = validateIdea({ idea: 'test' } as any);
-       
-      const result3 = validateIdea(['idea'] as any);
+      const result1 = validateIdea(asInvalidInput(123));
+      const result2 = validateIdea(asInvalidInput({ idea: 'test' }));
+      const result3 = validateIdea(asInvalidInput(['idea']));
 
       expect(result1.valid).toBe(false);
       expect(result1.errors[0].message).toContain('must be a string');
@@ -243,10 +239,8 @@ describe('validateIdeaId', () => {
 
   describe('invalid idea IDs', () => {
     it('should reject null or undefined', () => {
-       
-      const result1 = validateIdeaId(null as any);
-       
-      const result2 = validateIdeaId(undefined as any);
+      const result1 = validateIdeaId(asInvalidInput(null));
+      const result2 = validateIdeaId(asInvalidInput(undefined));
 
       expect(result1.valid).toBe(false);
       expect(result1.errors[0].field).toBe('ideaId');
@@ -257,10 +251,8 @@ describe('validateIdeaId', () => {
     });
 
     it('should reject non-string types', () => {
-       
-      const result1 = validateIdeaId(123 as any);
-       
-      const result2 = validateIdeaId({ id: 'test' } as any);
+      const result1 = validateIdeaId(asInvalidInput(123));
+      const result2 = validateIdeaId(asInvalidInput({ id: 'test' }));
 
       expect(result1.valid).toBe(false);
       expect(result1.errors[0].message).toContain('must be a string');
@@ -444,8 +436,7 @@ describe('validateUserResponses', () => {
 
   describe('invalid responses', () => {
     it('should reject array', () => {
-       
-      const responses = ['answer1', 'answer2'] as any;
+      const responses = asInvalidInput(['answer1', 'answer2']);
       const result = validateUserResponses(responses);
 
       expect(result.valid).toBe(false);
@@ -454,8 +445,7 @@ describe('validateUserResponses', () => {
     });
 
     it('should reject string', () => {
-       
-      const responses = 'not an object' as any;
+      const responses = asInvalidInput('not an object');
       const result = validateUserResponses(responses);
 
       expect(result.valid).toBe(false);
@@ -463,8 +453,7 @@ describe('validateUserResponses', () => {
     });
 
     it('should reject number', () => {
-       
-      const responses = 123 as any;
+      const responses = asInvalidInput(123);
       const result = validateUserResponses(responses);
 
       expect(result.valid).toBe(false);
@@ -472,8 +461,7 @@ describe('validateUserResponses', () => {
     });
 
     it('should reject boolean', () => {
-       
-      const responses = true as any;
+      const responses = asInvalidInput(true);
       const result = validateUserResponses(responses);
 
       expect(result.valid).toBe(false);
@@ -503,8 +491,7 @@ describe('validateUserResponses', () => {
 
     it('should accept numeric keys (converted to strings)', () => {
       const responses = {
-         
-        123: 'Answer' as any,
+        123: asInvalidInput<string>('Answer'),
       };
       const result = validateUserResponses(responses);
 
@@ -514,8 +501,7 @@ describe('validateUserResponses', () => {
 
     it('should reject non-string, non-null, non-undefined values', () => {
       const responses = {
-         
-        '1': 123 as any,
+        '1': asInvalidInput<string>(123),
       };
       const result = validateUserResponses(responses);
 
@@ -526,8 +512,7 @@ describe('validateUserResponses', () => {
 
     it('should reject array values', () => {
       const responses = {
-         
-        '1': ['answer'] as any,
+        '1': asInvalidInput<string>(['answer']),
       };
       const result = validateUserResponses(responses);
 
@@ -537,8 +522,7 @@ describe('validateUserResponses', () => {
 
     it('should reject object values', () => {
       const responses = {
-         
-        '1': { answer: 'test' } as any,
+        '1': asInvalidInput<string>({ answer: 'test' }),
       };
       const result = validateUserResponses(responses);
 
@@ -561,10 +545,8 @@ describe('validateUserResponses', () => {
     it('should collect multiple validation errors', () => {
       const responses = {
         ['a'.repeat(101)]: 'b'.repeat(1001),
-         
-        123: 'c' as any,
-         
-        '2': 456 as any,
+        123: asInvalidInput<string>('c'),
+        '2': asInvalidInput<string>(456),
       };
       const result = validateUserResponses(responses);
 
@@ -590,10 +572,7 @@ describe('validateRequestSize', () => {
   let mockRequest: Request;
 
   beforeEach(() => {
-    mockRequest = {
-      headers: new Headers(),
-       
-    } as any;
+    mockRequest = createMockRequest();
   });
 
   describe('valid requests', () => {
@@ -877,7 +856,7 @@ describe('buildErrorResponse', () => {
     });
 
     it('should handle empty errors array', async () => {
-      const errors: any[] = [];
+      const errors: unknown[] = [];
       const response = buildErrorResponse(errors);
       const body = await response.json();
 
@@ -1174,16 +1153,14 @@ describe('validateIdeaWithUserStory', () => {
 
   describe('edge cases', () => {
     it('should handle null input', () => {
-       
-      const result = validateIdeaWithUserStory(null as any);
+      const result = validateIdeaWithUserStory(asInvalidInput(null));
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
     it('should handle undefined input', () => {
-       
-      const result = validateIdeaWithUserStory(undefined as any);
+      const result = validateIdeaWithUserStory(asInvalidInput(undefined));
 
       expect(result.valid).toBe(false);
     });

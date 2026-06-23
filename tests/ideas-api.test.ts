@@ -15,6 +15,8 @@ jest.mock('@/lib/auth', () => ({
 
 import { POST } from '@/app/api/ideas/route';
 import { dbService } from '@/lib/db';
+import type { Idea } from '@/lib/db';
+import { createMockRequest } from './utils/_testHelpers';
 
 const mockCreateIdea = dbService.createIdea as jest.MockedFunction<
   typeof dbService.createIdea
@@ -28,26 +30,25 @@ describe('/api/ideas POST', () => {
 
   describe('Happy Path', () => {
     it('should create idea and return 201 with correct response structure', async () => {
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-123',
         title: 'Build a task management app',
-        status: 'draft' as const,
+        status: 'draft',
         created_at: '2024-01-15T10:00:00.000Z',
         raw_text: 'Build a task management app for remote teams',
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({
           idea: 'Build a task management app for remote teams',
         }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(201);
@@ -67,24 +68,23 @@ describe('/api/ideas POST', () => {
     });
 
     it('should trim whitespace from idea before saving', async () => {
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-456',
         title: 'Valid idea',
-        status: 'draft' as const,
+        status: 'draft',
         created_at: new Date().toISOString(),
         raw_text: 'Valid idea',
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: '  Valid idea  ' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
 
       expect(response.status).toBe(201);
       expect(mockCreateIdea).toHaveBeenCalledWith(
@@ -98,24 +98,23 @@ describe('/api/ideas POST', () => {
       const longIdea =
         'Build a comprehensive task management application that includes features for remote teams, real-time collaboration, and advanced project tracking capabilities';
 
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-789',
         title: longIdea.substring(0, 50) + '...',
-        status: 'draft' as const,
+        status: 'draft',
         created_at: new Date().toISOString(),
         raw_text: longIdea,
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: longIdea }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(201);
@@ -128,24 +127,23 @@ describe('/api/ideas POST', () => {
         'Build a task management app for remote teams 12345';
       expect(exactLengthIdea.length).toBe(50);
 
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-999',
         title: exactLengthIdea,
-        status: 'draft' as const,
+        status: 'draft',
         created_at: new Date().toISOString(),
         raw_text: exactLengthIdea,
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: exactLengthIdea }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(201);
@@ -156,12 +154,11 @@ describe('/api/ideas POST', () => {
 
   describe('Validation Errors', () => {
     it('should return 400 when idea field is missing', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({}),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -178,12 +175,11 @@ describe('/api/ideas POST', () => {
     });
 
     it('should return 400 when idea is null', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: null }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -192,12 +188,11 @@ describe('/api/ideas POST', () => {
     });
 
     it('should return 400 when idea is undefined', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: undefined }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -206,12 +201,11 @@ describe('/api/ideas POST', () => {
     });
 
     it('should return 400 when idea is not a string', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: { text: 'object' } }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -220,12 +214,11 @@ describe('/api/ideas POST', () => {
     });
 
     it('should return 400 when idea is too short (less than 10 characters)', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: 'Too short' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -242,12 +235,11 @@ describe('/api/ideas POST', () => {
     it('should return 400 when idea is too long (exceeds 10000 characters)', async () => {
       const longIdea = 'x'.repeat(10001);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: longIdea }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -262,12 +254,11 @@ describe('/api/ideas POST', () => {
     });
 
     it('should return 400 when idea contains only whitespace', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: '     ' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -280,12 +271,11 @@ describe('/api/ideas POST', () => {
     it('should handle database creation errors', async () => {
       mockCreateIdea.mockRejectedValue(new Error('Database connection failed'));
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: 'Test idea for error handling' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -299,12 +289,11 @@ describe('/api/ideas POST', () => {
     it('should include request ID in error responses', async () => {
       mockCreateIdea.mockRejectedValue(new Error('Database error'));
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: 'Test idea' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(data.requestId).toMatch(
@@ -315,24 +304,23 @@ describe('/api/ideas POST', () => {
 
   describe('Response Structure', () => {
     it('should include all required response fields', async () => {
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-struct',
         title: 'Test idea for response structure',
-        status: 'draft' as const,
+        status: 'draft',
         created_at: '2024-01-15T12:00:00.000Z',
         raw_text: 'Test idea for response structure',
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: 'Test idea for response structure' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
       const data = await response.json();
 
       expect(data).toHaveProperty('success');
@@ -352,36 +340,34 @@ describe('/api/ideas POST', () => {
 
   describe('Boundary Cases', () => {
     it('should accept idea exactly at minimum length (10 characters)', async () => {
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-111',
         title: '1234567890',
-        status: 'draft' as const,
+        status: 'draft',
         created_at: new Date().toISOString(),
         raw_text: '1234567890',
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: '1234567890' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
 
       expect(response.status).toBe(201);
       expect(mockCreateIdea).toHaveBeenCalled();
     });
 
     it('should reject idea one below minimum length (9 characters)', async () => {
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: '123456789' }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
 
       expect(response.status).toBe(400);
       expect(mockCreateIdea).not.toHaveBeenCalled();
@@ -390,24 +376,23 @@ describe('/api/ideas POST', () => {
     it('should accept idea exactly at maximum length (10000 characters)', async () => {
       const longIdea = 'x'.repeat(10000);
 
-      const mockIdea = {
+      const mockIdea: Idea = {
         id: 'idea-max',
         title: longIdea.substring(0, 50) + '...',
-        status: 'draft' as const,
+        status: 'draft',
         created_at: new Date().toISOString(),
         raw_text: longIdea,
         user_id: 'default_user',
         deleted_at: null,
       };
 
-      mockCreateIdea.mockResolvedValue(mockIdea as any);
+      mockCreateIdea.mockResolvedValue(mockIdea);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: longIdea }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
 
       expect(response.status).toBe(201);
       expect(mockCreateIdea).toHaveBeenCalled();
@@ -416,12 +401,11 @@ describe('/api/ideas POST', () => {
     it('should reject idea one above maximum length (10001 characters)', async () => {
       const longIdea = 'x'.repeat(10001);
 
-      const request = {
-        headers: { get: jest.fn(() => undefined) },
+      const request = createMockRequest({
         json: async () => ({ idea: longIdea }),
-      };
+      });
 
-      const response = await POST(request as any);
+      const response = await POST(request);
 
       expect(response.status).toBe(400);
       expect(mockCreateIdea).not.toHaveBeenCalled();

@@ -32,7 +32,7 @@ import {
 } from './utils/_testHelpers';
 
 // Mock window to be undefined (server-side)
-delete (global as any).window;
+delete (global).window;
 
 // Get mocked constructors
 const mockCreateClient = createClient as jest.MockedFunction<
@@ -41,8 +41,8 @@ const mockCreateClient = createClient as jest.MockedFunction<
 const mockOpenAIConstructor = OpenAI as jest.MockedClass<typeof OpenAI>;
 
 describe('Backend Service Tests', () => {
-  let mockSupabase: any;
-  let mockOpenAI: any;
+  let mockSupabase: unknown;
+  let mockOpenAI: unknown;
   let dbService: DatabaseService;
 
   beforeEach(() => {
@@ -284,7 +284,7 @@ describe('Backend Service Tests', () => {
   });
 
   describe('ExportService', () => {
-    let exportService: any;
+    let exportService: unknown;
 
     beforeEach(() => {
       exportService = new ExportService();

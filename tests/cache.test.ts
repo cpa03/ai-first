@@ -81,8 +81,8 @@ describe('Cache', () => {
     });
 
     it('should handle null and undefined values', () => {
-      cache.set('null-key', null as any);
-      cache.set('undefined-key', undefined as any);
+      cache.set('null-key', null);
+      cache.set('undefined-key', undefined);
 
       expect(cache.get('null-key')).toBeNull();
       expect(cache.get('undefined-key')).toBeUndefined();

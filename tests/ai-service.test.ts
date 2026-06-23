@@ -14,7 +14,7 @@ import 'openai/shims/node';
 // Simulate server-side environment for security checks
 // The AIService.getSupabase() method throws if window is defined
 // because the service role key must NEVER be exposed to clients
-delete (global as any).window;
+delete (global).window;
 
 import { AIService, AIModelConfig } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
@@ -62,7 +62,7 @@ jest.mock('@/lib/resilience', () => ({
 }));
 
 // Mock window to be undefined (server-side) - required for AIService security checks
-delete (global as any).window;
+delete (global).window;
 
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
@@ -71,8 +71,8 @@ const mockOpenAIConstructor = OpenAI as jest.MockedClass<typeof OpenAI>;
 
 describe('AIService', () => {
   let aiService: AIService;
-  let mockOpenAI: any;
-  let mockSupabase: any;
+  let mockOpenAI: unknown;
+  let mockSupabase: unknown;
 
   beforeEach(() => {
     jest.clearAllMocks();

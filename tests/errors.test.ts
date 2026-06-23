@@ -259,7 +259,7 @@ describe('ExternalServiceError', () => {
     const error = new ExternalServiceError(
       'Service unavailable',
       'Trello',
-      null as any
+      null
     );
 
     expect(error.originalError).toBeNull();
@@ -359,7 +359,7 @@ describe('AppRetryExhaustedError', () => {
       'Failed',
       'GitHub',
       2,
-      null as any
+      null
     );
 
     expect(error.originalError).toBeNull();
@@ -429,7 +429,7 @@ describe('toErrorResponse', () => {
   });
 
   it('should convert unknown error to ErrorResponse', () => {
-    const error = 'string error' as any;
+    const error = 'string error';
     const response = toErrorResponse(error);
 
     expect(response.status).toBe(500);
@@ -475,7 +475,7 @@ describe('toErrorResponse', () => {
   });
 
   it('should parse response body for unknown error', async () => {
-    const error = null as any;
+    const error = null;
     const response = toErrorResponse(error);
     const body = await response.json();
 

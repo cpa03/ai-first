@@ -8,7 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { createMockFetch } from './utils/_testHelpers';
 
 describe('Integration Tests - Basic', () => {
-  let user: any;
+  let user: unknown;
 
   beforeEach(() => {
     user = userEvent.setup();

@@ -514,7 +514,7 @@ describe('PII Redaction Utility', () => {
     });
 
     it('should handle objects with circular references (gracefully)', () => {
-      const obj: any = { email: 'test@example.com' };
+      const obj: unknown = { email: 'test@example.com' };
       obj.self = obj;
 
       expect(() => redactPIIInObject(obj)).not.toThrow();

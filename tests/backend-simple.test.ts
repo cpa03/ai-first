@@ -26,7 +26,7 @@ jest.mock('@/lib/db', () => {
       createClarificationSession: jest.fn(),
       saveAnswers: jest.fn(),
     },
-    Idea: function (data: any) {
+    Idea: function (data: unknown) {
       return { ...data };
     },
   };

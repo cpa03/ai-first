@@ -225,7 +225,7 @@ describe('Integration Tests', () => {
     });
 
     it('should handle export errors gracefully', async () => {
-      const invalidData = null as any;
+      const invalidData = null;
 
       const result = await exportManager.export({
         type: 'markdown',
@@ -291,7 +291,7 @@ describe('Integration Tests', () => {
     it('should handle export connector failures', async () => {
       // Test with non-existent connector
       const result = await exportManager.export({
-        type: 'non-existent' as any,
+        type: 'non-existent',
         data: {
           idea: {
             id: 'test',
@@ -300,7 +300,7 @@ describe('Integration Tests', () => {
             status: 'draft' as const,
             created_at: new Date().toISOString(),
           },
-        } as any,
+        },
       });
 
       expect(result.success).toBe(false);
@@ -312,7 +312,7 @@ describe('Integration Tests', () => {
         idea: null, // Invalid
         deliverables: 'not-an-array', // Invalid
         tasks: { also: 'invalid' }, // Invalid
-      } as any;
+      };
 
       const result = await exportManager.export({
         type: 'markdown',
