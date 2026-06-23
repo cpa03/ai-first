@@ -93,6 +93,8 @@ export const PLATFORM_ENV_KEYS = {
   CF_WORKER: 'CF_WORKER',
   /** Vercel deployment URL */
   VERCEL_URL: 'VERCEL_URL',
+  /** Vercel public URL (NEXT_PUBLIC_ prefix for client-side) */
+  NEXT_PUBLIC_VERCEL_URL: 'NEXT_PUBLIC_VERCEL_URL',
   /** Vercel live URL */
   VERCEL_LIVE_URL: 'VERCEL_LIVE_URL',
   /** Cloudflare Pages URL */
@@ -216,6 +218,8 @@ export const ENV_ACCESSORS = {
     CF_PAGES: () => EnvLoader.string(PLATFORM_ENV_KEYS.CF_PAGES, ''),
     CF_WORKER: () => EnvLoader.string(PLATFORM_ENV_KEYS.CF_WORKER, ''),
     VERCEL_URL: () => EnvLoader.string(PLATFORM_ENV_KEYS.VERCEL_URL, ''),
+    NEXT_PUBLIC_VERCEL_URL: () =>
+      EnvLoader.string(PLATFORM_ENV_KEYS.NEXT_PUBLIC_VERCEL_URL, ''),
     VERCEL_LIVE_URL: () =>
       EnvLoader.string(PLATFORM_ENV_KEYS.VERCEL_LIVE_URL, ''),
     CF_PAGES_URL: () => EnvLoader.string(PLATFORM_ENV_KEYS.CF_PAGES_URL, ''),

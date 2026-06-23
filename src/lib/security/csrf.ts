@@ -17,7 +17,7 @@ function getOriginsConfig() {
     if (vercelUrl) {
       origins.push(`https://${vercelUrl}`);
     }
-    const nextPublicVercelUrl = process.env.NEXT_PUBLIC_VERCEL_URL;
+    const nextPublicVercelUrl = ENV_ACCESSORS.PLATFORM.NEXT_PUBLIC_VERCEL_URL();
     if (nextPublicVercelUrl) {
       origins.push(`https://${nextPublicVercelUrl}`);
     }
@@ -154,7 +154,7 @@ export function validateCSRF(
         method,
         url: request.url,
       },
-      environment: process.env.NODE_ENV || 'unknown',
+      environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'unknown',
     });
 
     return {
@@ -179,7 +179,7 @@ export function validateCSRF(
       trustedOrigins: trustedOrigins.length,
       url: request.url,
     },
-    environment: process.env.NODE_ENV || 'unknown',
+    environment: ENV_ACCESSORS.PLATFORM.NODE_ENV() || 'unknown',
   });
 
   return {

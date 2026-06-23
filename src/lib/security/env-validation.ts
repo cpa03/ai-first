@@ -13,6 +13,7 @@
 
 import { createLogger } from '@/lib/logger';
 import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 const logger = createLogger('EnvValidation');
 
@@ -249,7 +250,7 @@ function checkKeySafety(): string[] {
  */
 function checkAdminApiKeyStrength(): string[] {
   const warnings: string[] = [];
-  const adminKey = process.env.ADMIN_API_KEY;
+  const adminKey = ENV_ACCESSORS.SECURITY.ADMIN_API_KEY();
 
   // Skip validation if not set (already warned elsewhere)
   if (!adminKey) {
@@ -257,7 +258,7 @@ function checkAdminApiKeyStrength(): string[] {
   }
 
   // Skip validation in development mode to allow easier local development
-  if (process.env.NODE_ENV === 'development') {
+  if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
     return warnings;
   }
 
@@ -315,7 +316,7 @@ function checkAdminApiKeyStrength(): string[] {
 
 function checkRequiredEnvVars(): string[] {
   const errors: string[] = [];
-  if (process.env.CI === 'true') return errors;
+  if (ENV_ACCESSORS.PLATFORM.CI()) return errors;
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
