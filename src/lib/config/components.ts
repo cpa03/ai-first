@@ -114,6 +114,16 @@ export const COMPONENT_CONFIG = {
     ),
   } as const,
 
+  CONFETTI: {
+    /** Env: COMPONENT_CONFETTI_CLEANUP_MS (default: 600) */
+    CLEANUP_MS: EnvLoader.number(
+      'COMPONENT_CONFETTI_CLEANUP_MS',
+      600,
+      100,
+      2000
+    ),
+  } as const,
+
   BUTTON: {
     VARIANTS: {
       PRIMARY: 'primary',

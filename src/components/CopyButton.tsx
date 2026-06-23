@@ -3,7 +3,12 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
-import { COPY_BUTTON_LABELS, SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  COPY_BUTTON_LABELS,
+  SVG_STROKE_WIDTHS,
+  CONFETTI_COLORS,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -32,8 +37,6 @@ interface ConfettiParticle {
   delay: number;
 }
 
-const CONFETTI_COLORS = ['#22c55e', '#3b82f6', '#eab308', '#ec4899', '#8b5cf6'];
-
 const CopyButtonComponent = function CopyButton({
   textToCopy,
   label = COPY_BUTTON_LABELS.DEFAULT_LABEL,
@@ -59,19 +62,20 @@ const CopyButtonComponent = function CopyButton({
 
   const generateConfetti = useCallback(() => {
     const particles: ConfettiParticle[] = [];
-    for (let i = 0; i < 6; i++) {
-      const angle = (i / 6) * Math.PI * 2;
+    const particleCount = CONFETTI_COLORS.PARTICLE_COUNT;
+    for (let i = 0; i < particleCount; i++) {
+      const angle = (i / particleCount) * Math.PI * 2;
       const distance = 20 + Math.random() * 20;
       particles.push({
         id: `confetti-${Date.now()}-${i}`,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance,
-        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        color: CONFETTI_COLORS.PRIMARY[i % CONFETTI_COLORS.PRIMARY.length],
         delay: i * 30,
       });
     }
     setConfetti(particles);
-    setTimeout(() => setConfetti([]), 600);
+    setTimeout(() => setConfetti([]), COMPONENT_CONFIG.CONFETTI.CLEANUP_MS);
   }, []);
 
   const handleCopy = useCallback(async () => {
