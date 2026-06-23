@@ -461,7 +461,11 @@ export const createMockRequest = (
     redirect: 'follow' as RequestRedirect,
     referrer: '',
     referrerPolicy: 'no-referrer' as ReferrerPolicy,
-    signal: { aborted: false, addEventListener: () => {}, removeEventListener: () => {} } as AbortSignal,
+    signal: {
+      aborted: false,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    } as unknown as AbortSignal,
   };
 
   return mockRequest as unknown as Request;
