@@ -24,6 +24,16 @@ export interface CopyButtonProps {
 
 const logger = createLogger('CopyButton');
 
+interface ConfettiParticle {
+  id: string;
+  x: number;
+  y: number;
+  color: string;
+  delay: number;
+}
+
+const CONFETTI_COLORS = ['#22c55e', '#3b82f6', '#eab308', '#ec4899', '#8b5cf6'];
+
 const CopyButtonComponent = function CopyButton({
   textToCopy,
   label = COPY_BUTTON_LABELS.DEFAULT_LABEL,
@@ -36,6 +46,7 @@ const CopyButtonComponent = function CopyButton({
   onCopy,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
+  const [confetti, setConfetti] = useState<ConfettiParticle[]>([]);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -44,6 +55,23 @@ const CopyButtonComponent = function CopyButton({
         clearTimeout(timeoutRef.current);
       }
     };
+  }, []);
+
+  const generateConfetti = useCallback(() => {
+    const particles: ConfettiParticle[] = [];
+    for (let i = 0; i < 6; i++) {
+      const angle = (i / 6) * Math.PI * 2;
+      const distance = 20 + Math.random() * 20;
+      particles.push({
+        id: `confetti-${Date.now()}-${i}`,
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        delay: i * 30,
+      });
+    }
+    setConfetti(particles);
+    setTimeout(() => setConfetti([]), 600);
   }, []);
 
   const handleCopy = useCallback(async () => {
@@ -55,6 +83,7 @@ const CopyButtonComponent = function CopyButton({
       await navigator.clipboard.writeText(textToCopy);
       triggerHapticFeedback();
       setCopied(true);
+      generateConfetti();
 
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
@@ -87,7 +116,7 @@ const CopyButtonComponent = function CopyButton({
         });
       }
     }
-  }, [textToCopy, showToast, toastMessage, onCopy]);
+  }, [textToCopy, showToast, toastMessage, onCopy, generateConfetti]);
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
@@ -129,58 +158,77 @@ const CopyButtonComponent = function CopyButton({
         disabled={false}
         position="top"
       >
-        <button
-          onClick={handleCopy}
-          className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
-          aria-label={ariaLabel}
-          type="button"
-        >
-          <span className="relative flex items-center justify-center w-4 h-4">
-            <svg
-              className={`
+        <span className="relative inline-flex">
+          <button
+            onClick={handleCopy}
+            className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
+            aria-label={ariaLabel}
+            type="button"
+          >
+            <span className="relative flex items-center justify-center w-4 h-4">
+              <svg
+                className={`
               absolute inset-0 w-4 h-4 transition-all duration-200
               ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-              aria-hidden="true"
-            >
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-            </svg>
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                aria-hidden="true"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+              </svg>
 
-            <svg
-              className={`
+              <svg
+                className={`
               absolute inset-0 w-4 h-4 text-green-600 transition-all duration-200
               ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={SVG_STROKE_WIDTHS.THICK}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </span>
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </span>
 
-          {variant !== 'icon-only' && (
-            <span
-              className={`
+            {variant !== 'icon-only' && (
+              <span
+                className={`
               transition-all duration-200
               ${copied ? 'text-green-700' : ''}
             `}
-            >
-              {copied ? successLabel : label}
-            </span>
-          )}
-        </button>
+              >
+                {copied ? successLabel : label}
+              </span>
+            )}
+          </button>
+          {confetti.map((particle) => (
+            <span
+              key={particle.id}
+              className="absolute w-1.5 h-1.5 rounded-full pointer-events-none animate-copy-confetti"
+              style={
+                {
+                  left: '50%',
+                  top: '50%',
+                  backgroundColor: particle.color,
+                  '--confetti-x': `${particle.x}px`,
+                  '--confetti-y': `${particle.y}px`,
+                  animationDelay: `${particle.delay}ms`,
+                } as React.CSSProperties
+              }
+              aria-hidden="true"
+            />
+          ))}
+        </span>
       </Tooltip>
     </>
   );
