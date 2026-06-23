@@ -210,9 +210,10 @@ const HTML_ESCAPE_REGEX = new RegExp(
 
 /**
  * Fast-path trigger regex to identify strings that likely need no sanitization.
- * Checks for: <, >, &, ", ', / or any common event handler pattern (on...).
+ * Checks for: <, >, &, ", ', / or any common event handler pattern (on...),
+ * or dangerous protocols (javascript:, data:text/html).
  */
-const NEEDS_SANITIZATION_REGEX = /[<>&"'/]|\bon\w+\s*=/i;
+const NEEDS_SANITIZATION_REGEX = /[<>&"'/]|\bon\w+\s*=|javascript:|data:text\/html/i;
 
 /**
  * Sanitizes HTML content by removing script tags and escaping HTML entities
@@ -245,6 +246,16 @@ export function sanitizeHtml(input: string): string {
 
   // Remove event handlers (onload, onclick, etc.)
   sanitized = sanitized.replace(SANITIZATION_CONFIG.REGEX.EVENT_HANDLER, '');
+
+  // Redact potentially dangerous protocols
+  sanitized = sanitized.replace(
+    SANITIZATION_CONFIG.REGEX.JAVASCRIPT_PROTOCOL,
+    '[REDACTED_PROTOCOL]'
+  );
+  sanitized = sanitized.replace(
+    SANITIZATION_CONFIG.REGEX.DATA_URI,
+    '[REDACTED_DATA_URI]'
+  );
 
   // Escape HTML entities to prevent script injection
   sanitized = sanitized.replace(
