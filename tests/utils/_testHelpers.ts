@@ -465,7 +465,11 @@ export const createMockRequest = (
       aborted: false,
       addEventListener: () => {},
       removeEventListener: () => {},
-    } as unknown as AbortSignal,
+      onabort: null,
+      reason: '',
+      throwIfAborted: () => {},
+      dispatchEvent: () => true,
+    } as AbortSignal,
   };
 
   return mockRequest as unknown as Request;
