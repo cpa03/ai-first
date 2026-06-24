@@ -1,36 +1,26 @@
 # BroCula Browser Console & Lighthouse Audit Report
 
 **Date**: 2026-06-24  
-**Branch**: brocula/browser-console-lighthouse-20260624-0732  
+**Branch**: brocula/browser-console-lighthouse-20260624-1040  
 **Auditor**: BroCula (Browser Console Specialist)
 
 ## Executive Summary
 
-Completed browser console and Lighthouse audit for the IdeaFlow application. Fixed a fatal Turbopack instrumentation error that prevented the dev server from starting. The audit identified **zero browser console errors/warnings** and **excellent Lighthouse scores** (98.7+ average).
-
-## Critical Fix
-
-### Turbopack Instrumentation Module Resolution Error (FIXED)
-
-- **Issue**: `ERR_MODULE_NOT_FOUND` / `MODULE_NOT_FOUND` for `instrumentation.node` module
-- **Root Cause**: Turbopack (Next.js 16 default bundler) bundles `instrumentation.node.ts` into a chunk, making `require()` and dynamic `import()` fail at runtime. The `/* webpackIgnore: true */` comment is not supported by Turbopack.
-- **Fix**: Inlined all Node.js handlers from `instrumentation.node.ts` directly into `instrumentation.ts`. The `NEXT_RUNTIME` guard already prevents Edge Runtime execution, making the separate file unnecessary.
-- **Impact**: Dev server now starts successfully. Build completes without fatal errors.
-- **Files Changed**: `src/instrumentation.ts` (rewritten), `src/instrumentation.node.ts` (deleted)
+Completed browser console and Lighthouse audit for the IdeaFlow application. The audit identified **zero browser console errors/warnings** and **excellent Lighthouse scores** (96.3+ average). No critical issues requiring immediate action.
 
 ## Build Analysis
 
 ### Build Status: ✅ PASSED
 
-The Next.js build completes successfully with expected Edge Runtime warnings:
+The Next.js build completes successfully with expected warnings:
 
-#### Edge Runtime Warnings (9 warnings)
+#### Environment Warnings (Expected)
 
-- **Location**: `src/instrumentation.ts`
-- **Issue**: Node.js API usage (process.exit, process.on) flagged as incompatible with Edge Runtime
-- **Impact**: Build-time warnings only, no runtime errors
-- **Root Cause**: Turbopack static analysis checks all files for Edge Runtime compatibility, even those only loaded in Node.js runtime
-- **Status**: Expected warnings since the code is correctly guarded with `NEXT_RUNTIME === 'nodejs'` check
+- **Location**: Environment validation
+- **Issue**: Placeholder API keys detected
+- **Impact**: Development-only warnings, no runtime errors
+- **Root Cause**: Using placeholder values for testing
+- **Status**: Expected in development environment
 
 ### Lint Status: ✅ PASSED
 
@@ -73,19 +63,19 @@ The Next.js build completes successfully with expected Edge Runtime warnings:
 
 | Page        | Performance | Accessibility | Best Practices | SEO       |
 | ----------- | ----------- | ------------- | -------------- | --------- |
-| `/`         | 98          | 100           | 100            | 100       |
-| `/login`    | 100         | 100           | 100            | 100       |
+| `/`         | 93          | 100           | 100            | 100       |
+| `/login`    | 98          | 100           | 100            | 100       |
 | `/signup`   | 98          | 100           | 100            | 100       |
-| **Average** | **98.7**    | **100.0**     | **100.0**      | **100.0** |
+| **Average** | **96.3**    | **100.0**     | **100.0**      | **100.0** |
 
 ### Core Web Vitals
 
 | Metric      | `/`   | `/login` | `/signup` |
 | ----------- | ----- | -------- | --------- |
 | FCP         | 0.3s  | 0.3s     | 0.3s      |
-| LCP         | 0.9s  | 1.0s     | 1.1s      |
-| TBT         | 10ms  | 10ms     | 20ms      |
-| CLS         | 0.062 | 0        | 0         |
+| LCP         | 1.6s  | 1.1s     | 1.1s      |
+| TBT         | 20ms  | 10ms     | 10ms      |
+| CLS         | 0.059 | 0        | 0         |
 | Speed Index | 1.4s  | 0.6s     | 0.6s      |
 
 ### Performance Optimizations Already in Place
@@ -99,12 +89,25 @@ The Next.js build completes successfully with expected Edge Runtime warnings:
 - ✅ Proper CSP headers configured
 - ✅ `pagehide` event used for bfcache compatibility
 
+### Lighthouse Diagnostics (Informational)
+
+1. **Missing source maps for large first-party JavaScript**
+   - Status: Already addressed with `productionBrowserSourceMaps: true`
+   - Note: Source maps are enabled but may not be deployed to production
+
+2. **Page prevented back/forward cache restoration**
+   - Status: Code already uses `pagehide` event for bfcache compatibility
+   - Note: This is an informational diagnostic, not a failure
+
+3. **Legacy JavaScript**
+   - Status: Minimal transpilation based on browserslist config
+   - Note: Target is ES2022, which is appropriate for modern browsers
+
 ## Recommendations
 
-### Immediate Actions (Completed)
+### Immediate Actions (None Required)
 
-1. ✅ Fixed Turbopack instrumentation module resolution error
-2. ✅ Inlined Node.js handlers to eliminate unnecessary file separation
+The application is in excellent condition with no critical issues.
 
 ### Future Improvements (Optional)
 
@@ -113,9 +116,9 @@ The Next.js build completes successfully with expected Edge Runtime warnings:
    - Configure performance budgets
    - Track performance metrics over time
 
-2. **Build Cache**
-   - Configure build caching for faster rebuilds
-   - Consider using `next build` cache in CI/CD
+2. **Source Maps Deployment**
+   - Ensure source maps are deployed to production for better debugging
+   - Consider using `next build` with source maps in CI/CD
 
 3. **Performance Monitoring**
    - Add Real User Monitoring (RUM) in production
@@ -126,15 +129,14 @@ The Next.js build completes successfully with expected Edge Runtime warnings:
 The IdeaFlow application demonstrates excellent browser console hygiene and Lighthouse performance:
 
 - **Browser Console**: Zero errors, zero warnings
-- **Lighthouse Performance**: 98.7 average (excellent)
+- **Lighthouse Performance**: 96.3 average (excellent)
 - **Lighthouse Accessibility**: 100.0 (perfect)
 - **Lighthouse Best Practices**: 100.0 (perfect)
 - **Lighthouse SEO**: 100.0 (perfect)
-- **Turbopack Fix**: Instrumentation module resolution error resolved
 
 **BroCula Verdict**: ✅ Application is healthy and ready for production deployment.
 
 ---
 
 _Report generated by BroCula Browser Console Specialist_  
-_Audit Date: 2026-06-24T07:40:00Z_
+_Audit Date: 2026-06-24T10:42:00Z_
