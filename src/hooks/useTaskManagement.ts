@@ -55,8 +55,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     new Set()
   );
 
-  // Track previous data for rollback on error
-  const previousDataRef = useRef<TasksResponse | null>(null);
+  // Track previous data for rollback on error (per-task to handle rapid toggles)
+  const previousDataByTaskRef = useRef<Map<string, TasksResponse | null>>(
+    new Map()
+  );
 
   // PERFORMANCE: Use a ref to keep track of the latest data without triggering
   // re-creations of callbacks that depend on it.
@@ -69,13 +71,18 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
   // Fetch tasks on mount
   useEffect(() => {
+    const abortController = new AbortController();
+
     const fetchTasks = async () => {
       try {
         setLoading(true);
         setError(null);
 
         const response = await fetchWithTimeout(
-          API_ENDPOINTS.IDEA_TASKS(ideaId)
+          API_ENDPOINTS.IDEA_TASKS(ideaId),
+          undefined,
+          undefined,
+          abortController.signal
         );
 
         if (!response.ok) {
@@ -102,6 +109,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           );
         }
       } catch (err) {
+        if (err instanceof Error && err.name === 'AbortError') {
+          return;
+        }
         logger.errorWithContext('Failed to fetch tasks', {
           component: 'TaskManagement',
           action: 'fetchTasks',
@@ -119,6 +129,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     if (ideaId) {
       fetchTasks();
     }
+
+    return () => {
+      abortController.abort();
+    };
   }, [ideaId, logger]);
 
   // Helper function to apply task status update to state
@@ -208,11 +222,8 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       const newStatus: TaskStatus =
         currentStatus === 'completed' ? 'todo' : 'completed';
 
-      // Store previous state for potential rollback
-      // Using dataRef here ensures we have the latest data without depending on 'data'
-      previousDataRef.current = dataRef.current;
+      previousDataByTaskRef.current.set(taskId, dataRef.current);
 
-      // Find the task for toast message BEFORE making changes
       const findTask = () => {
         return dataRef.current?.deliverables
           .flatMap((d) => d.tasks)
@@ -222,12 +233,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       try {
         setUpdatingTaskId(taskId);
 
-        // STEP 1: Apply OPTIMISTIC update immediately (before API call)
         setData((prevData) =>
           applyTaskStatusUpdate(prevData, taskId, newStatus)
         );
 
-        // Show haptic feedback for completion
         if (newStatus === 'completed' && typeof window !== 'undefined') {
           triggerHapticFeedback();
           const task = findTask();
@@ -242,7 +251,6 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           }
         }
 
-        // STEP 2: Make API call
         const response = await fetchWithTimeout(
           API_ENDPOINTS.TASK_STATUS(taskId),
           {
@@ -263,10 +271,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           throw new Error(API_ERROR_MESSAGES.PAGE.INVALID_SERVER_RESPONSE);
         }
 
-        // STEP 3: Success - optimistic update is already applied
+        previousDataByTaskRef.current.delete(taskId);
         logger.info('Task status updated successfully', { taskId, newStatus });
       } catch (err) {
-        // STEP 4: Failure - ROLLBACK to previous state
         logger.errorWithContext('Failed to update task status', {
           component: 'TaskManagement',
           action: 'handleToggleTaskStatus',
@@ -278,12 +285,12 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           },
         });
 
-        // Rollback to previous state
-        if (previousDataRef.current) {
-          setData(previousDataRef.current);
+        const rollbackData = previousDataByTaskRef.current.get(taskId);
+        if (rollbackData) {
+          setData(rollbackData);
+          previousDataByTaskRef.current.delete(taskId);
         }
 
-        // Show error toast
         if (typeof window !== 'undefined') {
           const win = window as unknown as {
             showToast?: (options: { type: string; message: string }) => void;
