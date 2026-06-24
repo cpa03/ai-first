@@ -419,6 +419,12 @@ export function redactPIIInObject(
     return obj as RedactionResult;
   }
 
+  // PERFORMANCE: Skip TypedArrays (Uint8Array, etc.) to avoid expensive
+  // property iteration over numeric indices. These never contain PII strings.
+  if (ArrayBuffer.isView(obj)) {
+    return obj as unknown as RedactionResult;
+  }
+
   if (seen.has(obj)) {
     return '[Circular Reference]';
   }
