@@ -14,6 +14,7 @@ import {
   ROUTES,
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
+  LOCAL_STORAGE_KEYS,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -56,7 +57,11 @@ import Alert from '@/components/Alert';
 import Link from 'next/link';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
-import { triggerHapticFeedback, getRelativeTime, formatAbsoluteDate } from '@/lib/utils';
+import {
+  triggerHapticFeedback,
+  getRelativeTime,
+  formatAbsoluteDate,
+} from '@/lib/utils';
 interface Idea {
   id: string;
   title: string;
@@ -396,53 +401,55 @@ export default function DashboardPage() {
               className="block w-full sm:w-auto px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring"
               aria-label="Filter ideas by status"
             >
-            <option
-              value="all"
-              className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
-            >
-              {filter === 'all'
-                ? DASHBOARD_FILTER_LABELS.ALL.SELECTED_LABEL
-                : DASHBOARD_FILTER_LABELS.ALL.LABEL}
-            </option>
-            <option
-              value="draft"
-              className={filter === 'draft' ? 'bg-primary-50 font-medium' : ''}
-            >
-              {filter === 'draft'
-                ? DASHBOARD_FILTER_LABELS.DRAFT.SELECTED_LABEL
-                : DASHBOARD_FILTER_LABELS.DRAFT.LABEL}
-            </option>
-            <option
-              value="clarified"
-              className={
-                filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
-              }
-            >
-              {filter === 'clarified'
-                ? DASHBOARD_FILTER_LABELS.CLARIFIED.SELECTED_LABEL
-                : DASHBOARD_FILTER_LABELS.CLARIFIED.LABEL}
-            </option>
-            <option
-              value="breakdown"
-              className={
-                filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
-              }
-            >
-              {filter === 'breakdown'
-                ? DASHBOARD_FILTER_LABELS.BREAKDOWN.SELECTED_LABEL
-                : DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL}
-            </option>
-            <option
-              value="completed"
-              className={
-                filter === 'completed' ? 'bg-primary-50 font-medium' : ''
-              }
-            >
-              {filter === 'completed'
-                ? DASHBOARD_FILTER_LABELS.COMPLETED.SELECTED_LABEL
-                : DASHBOARD_FILTER_LABELS.COMPLETED.LABEL}
-            </option>
-          </select>
+              <option
+                value="all"
+                className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
+              >
+                {filter === 'all'
+                  ? DASHBOARD_FILTER_LABELS.ALL.SELECTED_LABEL
+                  : DASHBOARD_FILTER_LABELS.ALL.LABEL}
+              </option>
+              <option
+                value="draft"
+                className={
+                  filter === 'draft' ? 'bg-primary-50 font-medium' : ''
+                }
+              >
+                {filter === 'draft'
+                  ? DASHBOARD_FILTER_LABELS.DRAFT.SELECTED_LABEL
+                  : DASHBOARD_FILTER_LABELS.DRAFT.LABEL}
+              </option>
+              <option
+                value="clarified"
+                className={
+                  filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
+                }
+              >
+                {filter === 'clarified'
+                  ? DASHBOARD_FILTER_LABELS.CLARIFIED.SELECTED_LABEL
+                  : DASHBOARD_FILTER_LABELS.CLARIFIED.LABEL}
+              </option>
+              <option
+                value="breakdown"
+                className={
+                  filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
+                }
+              >
+                {filter === 'breakdown'
+                  ? DASHBOARD_FILTER_LABELS.BREAKDOWN.SELECTED_LABEL
+                  : DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL}
+              </option>
+              <option
+                value="completed"
+                className={
+                  filter === 'completed' ? 'bg-primary-50 font-medium' : ''
+                }
+              >
+                {filter === 'completed'
+                  ? DASHBOARD_FILTER_LABELS.COMPLETED.SELECTED_LABEL
+                  : DASHBOARD_FILTER_LABELS.COMPLETED.LABEL}
+              </option>
+            </select>
           </Tooltip>
           {ideas.length > 0 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -488,6 +495,17 @@ export default function DashboardPage() {
           aria-label="Show keyboard shortcuts (press ?)"
         >
           Shortcuts
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED);
+            window.location.reload();
+          }}
+          className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+          aria-label="Restart the onboarding tour"
+        >
+          Restart Tour
         </button>
       </div>
       {/* Ideas List */}
