@@ -18,7 +18,14 @@ export async function register() {
       await import('./lib/security/env-validation');
     validateEnvironmentStrict();
 
-    const { registerNodejsHandlers } = await import('./instrumentation.node');
+    // IMPORTANT: The import path is constructed dynamically using a template literal
+    // to prevent Turbopack from statically tracing it into the Edge Runtime bundle.
+    // The .node.ts file contains Node.js-only APIs (process.exit, process.on) that
+    // are incompatible with Edge Runtime.
+    const nodeModule = './instrumentation' + '.node';
+    const { registerNodejsHandlers } = await import(
+      /* webpackIgnore: true */ nodeModule
+    );
     registerNodejsHandlers();
   }
 }
