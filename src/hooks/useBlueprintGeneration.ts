@@ -85,12 +85,16 @@ export function useBlueprintGeneration(
   const [copied, setCopied] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const downloadCleanupRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Cleanup timeout on unmount
+  // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
       if (copyTimeoutRef.current) {
         clearTimeout(copyTimeoutRef.current);
+      }
+      if (downloadCleanupRef.current) {
+        clearTimeout(downloadCleanupRef.current);
       }
     };
   }, []);
@@ -130,9 +134,6 @@ export function useBlueprintGeneration(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idea, serializedAnswers]);
 
-  /**
-   * Downloads the blueprint as a markdown file
-   */
   const handleDownload = useCallback(() => {
     const blob = new Blob([blueprint], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
@@ -141,9 +142,14 @@ export function useBlueprintGeneration(
     a.download = 'project-blueprint.md';
     document.body.appendChild(a);
 
-    setTimeout(() => {
+    if (downloadCleanupRef.current) {
+      clearTimeout(downloadCleanupRef.current);
+    }
+
+    downloadCleanupRef.current = setTimeout(() => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      downloadCleanupRef.current = null;
     }, ANIMATION_DELAYS.CLEANUP);
 
     a.click();
