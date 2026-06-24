@@ -9,7 +9,7 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { RIPPLE_CONFIG, BUTTON_STYLES } from '@/lib/config';
+import { RIPPLE_CONFIG, BUTTON_STYLES, SVG_STROKE_WIDTHS } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -181,7 +181,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
               cy="12"
               r="10"
               stroke="currentColor"
-              strokeWidth="4"
+              strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
             ></circle>
             <path
               className="opacity-75"

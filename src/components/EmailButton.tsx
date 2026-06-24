@@ -4,7 +4,7 @@ import React, { useCallback, useState, useRef, useEffect } from 'react';
 import Button from './Button';
 import { createLogger } from '@/lib/logger';
 import { triggerHapticFeedback } from '@/lib/utils';
-import { APP_CONFIG, UI_CONFIG } from '@/lib/config';
+import { APP_CONFIG, UI_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface EmailButtonProps {
@@ -117,7 +117,7 @@ const EmailButtonComponent = function EmailButton({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2}
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
         >
           <path
@@ -134,7 +134,7 @@ const EmailButtonComponent = function EmailButton({
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          strokeWidth={2.5}
+          strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
           aria-hidden="true"
         >
           <path
