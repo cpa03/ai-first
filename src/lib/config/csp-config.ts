@@ -8,7 +8,7 @@
  * @see {@link https://developer.mozilla.org/en-US/docs/Web/HTML/Element/meta}
  */
 
-import { isDevelopment } from './environment';
+import { isDevelopment, EnvLoader } from './environment';
 
 /**
  * Content Security Policy configuration
@@ -41,9 +41,12 @@ export const CSP_CONFIG = {
     'upgrade-insecure-requests': [],
     'connect-src': [
       "'self'",
-      'https://*.supabase.co',
-      'https://api.openai.com',
-      'https://api.anthropic.com',
+      // Env: CSP_SUPABASE_URLS (default: 'https://*.supabase.co')
+      EnvLoader.string('CSP_SUPABASE_URLS', 'https://*.supabase.co'),
+      // Env: CSP_OPENAI_URL (default: 'https://api.openai.com')
+      EnvLoader.string('CSP_OPENAI_URL', 'https://api.openai.com'),
+      // Env: CSP_ANTHROPIC_URL (default: 'https://api.anthropic.com')
+      EnvLoader.string('CSP_ANTHROPIC_URL', 'https://api.anthropic.com'),
     ],
     'worker-src': ["'self'"],
     'manifest-src': ["'self'"],
