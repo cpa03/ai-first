@@ -9,7 +9,12 @@ import {
   useEffect,
   useRef,
 } from 'react';
-import { RIPPLE_CONFIG, BUTTON_STYLES, SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  RIPPLE_CONFIG,
+  BUTTON_STYLES,
+  SVG_STROKE_WIDTHS,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -69,7 +74,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         setJustEnabled(true);
         const timeoutId = setTimeout(() => {
           setJustEnabled(false);
-        }, 600);
+        }, COMPONENT_CONFIG.BUTTON.ANIMATION.ENABLE_TRANSITION_DURATION_MS);
         timeoutRefs.current.push(timeoutId);
       }
 
