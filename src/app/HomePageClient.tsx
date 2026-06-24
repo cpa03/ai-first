@@ -17,6 +17,7 @@ import {
   trackFunnelStep,
 } from '@/lib/analytics';
 import { HOME_PAGE_CONFIG } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
@@ -67,6 +68,7 @@ export default function HomePageClient() {
   const router = useRouter();
   const [idea, setIdea] = useState('');
   const [ideaId, setIdeaId] = useState('');
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Growth: Track page view on mount
   useEffect(() => {
@@ -106,14 +108,36 @@ export default function HomePageClient() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      {/* Micro-UX: Staggered entrance animation for hero section creates a polished first impression */}
+      {/* Respects prefers-reduced-motion for accessibility */}
       <section aria-labelledby="hero-heading" className="text-center mb-12">
-        <h1 id="hero-heading" className="text-4xl font-bold text-gray-900 mb-4">
+        <h1
+          id="hero-heading"
+          className={`text-4xl font-bold text-gray-900 mb-4 ${
+            prefersReducedMotion ? '' : 'animate-hero-entrance'
+          }`}
+          style={!prefersReducedMotion ? { animationDelay: '0ms' } : undefined}
+        >
           {HOME_PAGE_CONFIG.HERO.TITLE}
         </h1>
-        <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+        <p
+          className={`text-xl text-gray-700 max-w-2xl mx-auto ${
+            prefersReducedMotion ? '' : 'animate-hero-entrance'
+          }`}
+          style={
+            !prefersReducedMotion ? { animationDelay: '100ms' } : undefined
+          }
+        >
           {HOME_PAGE_CONFIG.HERO.DESCRIPTION}
         </p>
-        <div className="mt-6 flex justify-center gap-3">
+        <div
+          className={`mt-6 flex justify-center gap-3 ${
+            prefersReducedMotion ? '' : 'animate-hero-entrance'
+          }`}
+          style={
+            !prefersReducedMotion ? { animationDelay: '200ms' } : undefined
+          }
+        >
           <ShareButton
             shareTitle={HOME_PAGE_CONFIG.SHARE.TITLE}
             shareText={HOME_PAGE_CONFIG.SHARE.TEXT}

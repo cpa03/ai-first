@@ -236,6 +236,30 @@
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
+/* Micro-UX: Hero entrance animation for a polished first impression */
+/* Staggered fade-in + slide-up creates visual hierarchy and guides user attention */
+@keyframes heroEntrance {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-hero-entrance {
+  animation: heroEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Reduced motion support for hero entrance */
+@media (prefers-reduced-motion: reduce) {
+  .animate-hero-entrance {
+    animation: none;
+  }
+}
+
 /* Reduced motion support for shimmer */
 @media (prefers-reduced-motion: reduce) {
   .animate-shimmer {
