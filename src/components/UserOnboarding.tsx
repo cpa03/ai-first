@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
 import {
   COMPONENT_CONFIG,
@@ -9,6 +9,30 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
 } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
+
+// Reduced motion detection for celebration animation
+const subscribeToMotionPreference = (callback: () => void) => {
+  if (typeof window === 'undefined') return () => {};
+  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  mediaQuery.addEventListener('change', callback);
+  return () => mediaQuery.removeEventListener('change', callback);
+};
+
+const getMotionSnapshot = () => {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+const getServerMotionSnapshot = () => false;
+
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(
+    subscribeToMotionPreference,
+    getMotionSnapshot,
+    getServerMotionSnapshot
+  );
+}
 
 /**
  * Onboarding Tour Steps
@@ -87,7 +111,10 @@ export default function UserOnboarding() {
     left: 0,
   });
   const [isAnimating, setIsAnimating] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
   const animatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const currentStep = TOUR_STEPS[currentStepIndex];
   const isLastStep = currentStepIndex === TOUR_STEPS.length - 1;
@@ -97,6 +124,9 @@ export default function UserOnboarding() {
     return () => {
       if (animatingTimeoutRef.current) {
         clearTimeout(animatingTimeoutRef.current);
+      }
+      if (celebrationTimeoutRef.current) {
+        clearTimeout(celebrationTimeoutRef.current);
       }
     };
   }, []);
@@ -204,13 +234,17 @@ export default function UserOnboarding() {
     setIsAnimating(true);
 
     if (isLastStep) {
-      // Complete onboarding
-      localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
-      setIsVisible(false);
-      // Growth: Track onboarding completion
-      trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, {
-        total_steps: TOUR_STEPS.length,
-      });
+      triggerHapticFeedback();
+      setShowCelebration(true);
+
+      celebrationTimeoutRef.current = setTimeout(() => {
+        localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+        setIsVisible(false);
+        setShowCelebration(false);
+        trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, {
+          total_steps: TOUR_STEPS.length,
+        });
+      }, prefersReducedMotion ? 1200 : 2000);
     } else {
       setCurrentStepIndex((prev) => prev + 1);
     }
@@ -219,7 +253,7 @@ export default function UserOnboarding() {
       () => setIsAnimating(false),
       ANIMATION_CONFIG.MOUNT_DELAY
     );
-  }, [isLastStep]);
+  }, [isLastStep, prefersReducedMotion]);
 
   /**
    * Handle skipping/dismissing onboarding
@@ -247,7 +281,46 @@ export default function UserOnboarding() {
     );
   }, []);
 
-  if (!isVisible || !currentStep) return null;
+  if (!isVisible) return null;
+
+  if (showCelebration) {
+    return (
+      <div
+        className={`fixed inset-0 z-[${Z_INDEX_LAYERS.MODAL}] flex items-center justify-center`}
+        role="dialog"
+        aria-label="Onboarding complete"
+      >
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
+        <div
+          className={`relative bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-4 ${
+            prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-300'
+          }`}
+        >
+          <div
+            className={`w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center ${
+              prefersReducedMotion ? 'bg-green-100' : 'bg-green-100 animate-success-pop'
+            }`}
+          >
+            <svg
+              className={`w-10 h-10 text-green-600 ${prefersReducedMotion ? '' : 'animate-success-check'}`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.THICK}
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">You're all set!</h3>
+          <p className="text-sm text-gray-600">
+            You're ready to turn your ideas into actionable plans.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!currentStep) return null;
 
   return (
     <>
