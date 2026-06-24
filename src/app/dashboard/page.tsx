@@ -209,6 +209,16 @@ export default function DashboardPage() {
 
       setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
       closeDeleteModal();
+
+      if (typeof window !== 'undefined') {
+        const win = window as Window & {
+          showToast?: (options: { type: string; message: string }) => void;
+        };
+        win.showToast?.({
+          type: 'success',
+          message: 'Idea deleted successfully',
+        });
+      }
     } catch (err) {
       logger.error('Error deleting idea:', err);
       setError(err instanceof Error ? err.message : 'Failed to delete idea');
