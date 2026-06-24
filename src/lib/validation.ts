@@ -213,7 +213,8 @@ const HTML_ESCAPE_REGEX = new RegExp(
  * Checks for: <, >, &, ", ', / or any common event handler pattern (on...),
  * or dangerous protocols (javascript:, data:text/html).
  */
-const NEEDS_SANITIZATION_REGEX = /[<>&"'/]|\bon\w+\s*=|javascript:|data:text\/html/i;
+const NEEDS_SANITIZATION_REGEX =
+  /[<>&"'/`]|\bon\w+\s*=|j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:|d\s*a\s*t\s*a\s*:\s*t\s*e\s*x\s*t\s*\/\s*h\s*t\s*m\s*l/i;
 
 /**
  * Sanitizes HTML content by removing script tags and escaping HTML entities
