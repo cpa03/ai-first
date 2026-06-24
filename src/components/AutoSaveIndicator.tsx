@@ -167,7 +167,7 @@ function AutoSaveIndicatorComponent({
             cy="12"
             r="10"
             stroke="currentColor"
-            strokeWidth="2"
+            strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
             className="text-gray-200"
           />
           {(saveState === 'typing' || saveState === 'saving') && (
@@ -176,7 +176,7 @@ function AutoSaveIndicatorComponent({
               cy="12"
               r="10"
               stroke="currentColor"
-              strokeWidth="2"
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               strokeLinecap="round"
               className="text-primary-500 transition-all duration-100"
               strokeDasharray={`${2 * Math.PI * 10}`}

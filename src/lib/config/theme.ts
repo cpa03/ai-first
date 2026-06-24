@@ -822,6 +822,12 @@ export const SVG_STROKE_WIDTHS = {
    * Env: SVG_STROKE_WIDTH_EXTRA_THICK (default: 2.5)
    */
   EXTRA_THICK: EnvLoader.number('SVG_STROKE_WIDTH_EXTRA_THICK', 2.5, 1, 5),
+
+  /**
+   * Spinner stroke width (4px) - for loading spinner circles
+   * Env: SVG_STROKE_WIDTH_SPINNER (default: 4)
+   */
+  SPINNER: EnvLoader.number('SVG_STROKE_WIDTH_SPINNER', 4, 2, 6),
 } as const;
 
 /**

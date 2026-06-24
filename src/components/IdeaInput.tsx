@@ -11,6 +11,7 @@ import {
   COMPONENT_CONFIG,
   HTTP_HEADERS,
   API_ENDPOINTS,
+  SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
@@ -284,7 +285,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
-                strokeWidth={3}
+                strokeWidth={SVG_STROKE_WIDTHS.THICK}
               >
                 <path
                   strokeLinecap="round"
