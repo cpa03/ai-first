@@ -1,26 +1,36 @@
 # BroCula Browser Console & Lighthouse Audit Report
 
 **Date**: 2026-06-24  
-**Branch**: brocula/browser-console-lighthouse-20260624-0154  
+**Branch**: brocula/browser-console-lighthouse-20260624-0732  
 **Auditor**: BroCula (Browser Console Specialist)
 
 ## Executive Summary
 
-Completed browser console and Lighthouse audit for the IdeaFlow application. The audit identified **zero browser console errors/warnings** and **excellent Lighthouse scores** (98+ average). No critical issues requiring immediate action.
+Completed browser console and Lighthouse audit for the IdeaFlow application. Fixed a fatal Turbopack instrumentation error that prevented the dev server from starting. The audit identified **zero browser console errors/warnings** and **excellent Lighthouse scores** (98.7+ average).
+
+## Critical Fix
+
+### Turbopack Instrumentation Module Resolution Error (FIXED)
+
+- **Issue**: `ERR_MODULE_NOT_FOUND` / `MODULE_NOT_FOUND` for `instrumentation.node` module
+- **Root Cause**: Turbopack (Next.js 16 default bundler) bundles `instrumentation.node.ts` into a chunk, making `require()` and dynamic `import()` fail at runtime. The `/* webpackIgnore: true */` comment is not supported by Turbopack.
+- **Fix**: Inlined all Node.js handlers from `instrumentation.node.ts` directly into `instrumentation.ts`. The `NEXT_RUNTIME` guard already prevents Edge Runtime execution, making the separate file unnecessary.
+- **Impact**: Dev server now starts successfully. Build completes without fatal errors.
+- **Files Changed**: `src/instrumentation.ts` (rewritten), `src/instrumentation.node.ts` (deleted)
 
 ## Build Analysis
 
 ### Build Status: ✅ PASSED
 
-The Next.js build completes successfully with expected warnings:
+The Next.js build completes successfully with expected Edge Runtime warnings:
 
 #### Edge Runtime Warnings (9 warnings)
 
-- **Location**: `src/instrumentation.node.ts`
+- **Location**: `src/instrumentation.ts`
 - **Issue**: Node.js API usage (process.exit, process.on) flagged as incompatible with Edge Runtime
 - **Impact**: Build-time warnings only, no runtime errors
 - **Root Cause**: Turbopack static analysis checks all files for Edge Runtime compatibility, even those only loaded in Node.js runtime
-- **Status**: These are expected warnings since the file is correctly guarded with `NEXT_RUNTIME === 'nodejs'` check
+- **Status**: Expected warnings since the code is correctly guarded with `NEXT_RUNTIME === 'nodejs'` check
 
 ### Lint Status: ✅ PASSED
 
@@ -63,10 +73,10 @@ The Next.js build completes successfully with expected warnings:
 
 | Page        | Performance | Accessibility | Best Practices | SEO       |
 | ----------- | ----------- | ------------- | -------------- | --------- |
-| `/`         | 97          | 100           | 100            | 100       |
-| `/login`    | 99          | 100           | 100            | 100       |
+| `/`         | 98          | 100           | 100            | 100       |
+| `/login`    | 100         | 100           | 100            | 100       |
 | `/signup`   | 98          | 100           | 100            | 100       |
-| **Average** | **98.0**    | **100.0**     | **100.0**      | **100.0** |
+| **Average** | **98.7**    | **100.0**     | **100.0**      | **100.0** |
 
 ### Core Web Vitals
 
@@ -77,20 +87,6 @@ The Next.js build completes successfully with expected warnings:
 | TBT         | 10ms  | 10ms     | 20ms      |
 | CLS         | 0.062 | 0        | 0         |
 | Speed Index | 1.4s  | 0.6s     | 0.6s      |
-
-### Lighthouse Diagnostics (Informational Only)
-
-1. **Missing source maps for large first-party JavaScript**
-   - Status: Already configured with `productionBrowserSourceMaps: true` in next.config.js
-   - Note: Source maps are generated in production builds, not dev server
-
-2. **Page prevented back/forward cache restoration**
-   - Status: Code already uses `pagehide` event instead of `beforeunload`
-   - Note: This is a minor diagnostic that doesn't significantly impact score
-
-3. **Legacy JavaScript**
-   - Status: Polyfills/transpilation for older browsers
-   - Note: browserslist already configured for modern browsers (>0.2%, not dead)
 
 ### Performance Optimizations Already in Place
 
@@ -105,9 +101,10 @@ The Next.js build completes successfully with expected warnings:
 
 ## Recommendations
 
-### Immediate Actions (None Required)
+### Immediate Actions (Completed)
 
-The application is currently in a healthy state with excellent performance metrics.
+1. ✅ Fixed Turbopack instrumentation module resolution error
+2. ✅ Inlined Node.js handlers to eliminate unnecessary file separation
 
 ### Future Improvements (Optional)
 
@@ -129,14 +126,15 @@ The application is currently in a healthy state with excellent performance metri
 The IdeaFlow application demonstrates excellent browser console hygiene and Lighthouse performance:
 
 - **Browser Console**: Zero errors, zero warnings
-- **Lighthouse Performance**: 98.0 average (excellent)
+- **Lighthouse Performance**: 98.7 average (excellent)
 - **Lighthouse Accessibility**: 100.0 (perfect)
 - **Lighthouse Best Practices**: 100.0 (perfect)
 - **Lighthouse SEO**: 100.0 (perfect)
+- **Turbopack Fix**: Instrumentation module resolution error resolved
 
 **BroCula Verdict**: ✅ Application is healthy and ready for production deployment.
 
 ---
 
 _Report generated by BroCula Browser Console Specialist_  
-_Audit Date: 2026-06-24T02:02:00Z_
+_Audit Date: 2026-06-24T07:40:00Z_
