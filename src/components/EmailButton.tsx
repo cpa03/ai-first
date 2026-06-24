@@ -2,6 +2,8 @@
 
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import Button from './Button';
+import Tooltip from './Tooltip';
+import StatusAnnouncer from './StatusAnnouncer';
 import { createLogger } from '@/lib/logger';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { APP_CONFIG, UI_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
@@ -14,6 +16,7 @@ export interface EmailButtonProps {
   label?: string;
   successLabel?: string;
   ariaLabel?: string;
+  tooltipLabel?: string;
   className?: string;
   onEmailSent?: () => void;
 }
@@ -41,6 +44,7 @@ const EmailButtonComponent = function EmailButton({
   label = 'Email to Self',
   successLabel = 'Email Opened!',
   ariaLabel = 'Email blueprint to yourself',
+  tooltipLabel = 'Send blueprint to your email',
   className = '',
   onEmailSent,
 }: EmailButtonProps) {
@@ -102,57 +106,70 @@ const EmailButtonComponent = function EmailButton({
     : 'transition-all duration-200';
 
   return (
-    <Button
-      variant="primary"
-      loading={state === 'loading'}
-      onClick={handleEmailClick}
-      aria-label={ariaLabel}
-      className={className}
-    >
-      <span className="relative flex items-center justify-center w-4 h-4">
-        <svg
-          className={`absolute inset-0 w-4 h-4 ${iconTransition} ${
-            state === 'success' ? 'opacity-0 scale-75' : 'opacity-100 scale-100'
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-          />
-        </svg>
-
-        <svg
-          className={`absolute inset-0 w-4 h-4 text-green-600 ${iconTransition} ${
-            state === 'success' ? 'opacity-100 scale-100' : 'opacity-0 scale-50'
-          }`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      </span>
-
-      <span
-        className={`${iconTransition} ${
-          state === 'success' ? 'text-green-100' : ''
-        }`}
+    <>
+      <StatusAnnouncer message={successLabel} triggered={state === 'success'} />
+      <Tooltip
+        content={state === 'success' ? successLabel : tooltipLabel}
+        disabled={false}
+        position="top"
       >
-        {state === 'success' ? successLabel : label}
-      </span>
-    </Button>
+        <Button
+          variant="primary"
+          loading={state === 'loading'}
+          onClick={handleEmailClick}
+          aria-label={ariaLabel}
+          className={className}
+        >
+          <span className="relative flex items-center justify-center w-4 h-4">
+            <svg
+              className={`absolute inset-0 w-4 h-4 ${iconTransition} ${
+                state === 'success'
+                  ? 'opacity-0 scale-75'
+                  : 'opacity-100 scale-100'
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+
+            <svg
+              className={`absolute inset-0 w-4 h-4 text-green-600 ${iconTransition} ${
+                state === 'success'
+                  ? 'opacity-100 scale-100'
+                  : 'opacity-0 scale-50'
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </span>
+
+          <span
+            className={`${iconTransition} ${
+              state === 'success' ? 'text-green-100' : ''
+            }`}
+          >
+            {state === 'success' ? successLabel : label}
+          </span>
+        </Button>
+      </Tooltip>
+    </>
   );
 };
 
