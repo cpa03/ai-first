@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useSyncExternalStore } from 'react';
+import {
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+  useSyncExternalStore,
+} from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
 import {
   COMPONENT_CONFIG,
@@ -237,14 +243,17 @@ export default function UserOnboarding() {
       triggerHapticFeedback();
       setShowCelebration(true);
 
-      celebrationTimeoutRef.current = setTimeout(() => {
-        localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
-        setIsVisible(false);
-        setShowCelebration(false);
-        trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, {
-          total_steps: TOUR_STEPS.length,
-        });
-      }, prefersReducedMotion ? 1200 : 2000);
+      celebrationTimeoutRef.current = setTimeout(
+        () => {
+          localStorage.setItem(ONBOARDING_COMPLETED_KEY, 'true');
+          setIsVisible(false);
+          setShowCelebration(false);
+          trackEvent(ANALYTICS_EVENTS.ONBOARDING_COMPLETE, {
+            total_steps: TOUR_STEPS.length,
+          });
+        },
+        prefersReducedMotion ? 1200 : 2000
+      );
     } else {
       setCurrentStepIndex((prev) => prev + 1);
     }
@@ -290,15 +299,22 @@ export default function UserOnboarding() {
         role="dialog"
         aria-label="Onboarding complete"
       >
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
+        <div
+          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          aria-hidden="true"
+        />
         <div
           className={`relative bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-4 ${
-            prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-300'
+            prefersReducedMotion
+              ? ''
+              : 'animate-in fade-in zoom-in duration-300'
           }`}
         >
           <div
             className={`w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center ${
-              prefersReducedMotion ? 'bg-green-100' : 'bg-green-100 animate-success-pop'
+              prefersReducedMotion
+                ? 'bg-green-100'
+                : 'bg-green-100 animate-success-pop'
             }`}
           >
             <svg
@@ -308,12 +324,18 @@ export default function UserOnboarding() {
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.THICK}
             >
-              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">You're all set!</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            You&apos;re all set!
+          </h3>
           <p className="text-sm text-gray-600">
-            You're ready to turn your ideas into actionable plans.
+            You&apos;re ready to turn your ideas into actionable plans.
           </p>
         </div>
       </div>
