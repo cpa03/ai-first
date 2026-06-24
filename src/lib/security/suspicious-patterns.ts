@@ -649,8 +649,10 @@ const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
         // backreferences (\1, \2, etc.) in individual patterns.
         // FLAGS: Using 'ims' flags to ensure the combined regex is a safe
         // superset of all individual patterns (multiline, case-insensitive, dot-all).
+        // PERFORMANCE: Replace backreferences (e.g. \1, \2) with .* in the combined
+        // trigger source to avoid failing when group indices shift during concatenation.
         const combinedSource = filteredPatterns
-          .map((p) => `(?:${p.pattern.source})`)
+          .map((p) => `(?:${p.pattern.source.replace(/\\\d+/g, '.*')})`)
           .join('|');
         COMBINED_TRIGGERS_BY_MIN_SEVERITY[severity] = new RegExp(
           combinedSource,

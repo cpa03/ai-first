@@ -48,6 +48,7 @@ export const SANITIZATION_CONFIG = {
       '"': '&quot;',
       "'": '&#x27;',
       '/': '&#x2F;',
+      '`': '&#x60;',
     } as const,
 
     ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'code', 'pre'] as const,
@@ -56,9 +57,10 @@ export const SANITIZATION_CONFIG = {
 
   REGEX: {
     SCRIPT: /<script[^>]*>[\s\S]*?<\/script>/gi,
-    EVENT_HANDLER: /\s*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
-    JAVASCRIPT_PROTOCOL: /javascript:/gi,
-    DATA_URI: /data:text\/html/gi,
+    EVENT_HANDLER:
+      /(?:\s+|[\/]*)on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
+    JAVASCRIPT_PROTOCOL: /j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:/gi,
+    DATA_URI: /d\s*a\s*t\s*a\s*:\s*t\s*e\s*x\s*t\s*\/\s*h\s*t\s*m\s*l/gi,
   },
 
   PII: {
