@@ -3,14 +3,13 @@ import { Database } from '@/types/database';
 import { createLogger } from '../logger';
 import { resourceCleanupManager } from '../resource-cleanup';
 import { AGENT_CONFIG } from '../config/constants';
-import { API_ERROR_MESSAGES } from '../config/error-messages';
-import { DB_TABLES } from '../config/database-tables';
 import { ENV_ACCESSORS } from '../config/env-keys';
 import { IdeaService, type ClientProvider } from './ideas';
 import { DeliverableService } from './deliverables';
 import { TaskService } from './tasks';
 import { VectorService } from './vectors';
 import { ClarificationService } from './clarification';
+import { ConnectionHealthMonitor } from './health';
 import type {
   Idea,
   IdeaSession,
@@ -141,22 +140,10 @@ export class DatabaseService implements ClientProvider {
   private _client: ReturnType<typeof createClient<Database>> | null = null;
   private _admin: ReturnType<typeof createClient<Database>> | null = null;
   private static instance: DatabaseService;
-  private connectionRetries = 0;
-  private connectionHealthy = false;
-  private lastHealthCheck: Date | null = null;
   private _disposed = false;
 
-  // Connection metrics for observability
-  private connectionMetrics = {
-    totalConnections: 0,
-    failedConnections: 0,
-    lastSuccessfulConnection: null as Date | null,
-    lastFailedConnection: null as Date | null,
-    totalQueries: 0,
-    failedQueries: 0,
-  };
+  private _healthMonitor: ConnectionHealthMonitor | null = null;
 
-  // Domain-specific services (initialized lazily)
   private _ideas: IdeaService | null = null;
   private _deliverables: DeliverableService | null = null;
   private _tasks: TaskService | null = null;
@@ -273,9 +260,13 @@ export class DatabaseService implements ClientProvider {
     return this._clarification;
   }
 
-  /**
-   * Check if the service has been disposed
-   */
+  get healthMonitor(): ConnectionHealthMonitor {
+    if (!this._healthMonitor) {
+      this._healthMonitor = new ConnectionHealthMonitor();
+    }
+    return this._healthMonitor;
+  }
+
   isDisposed(): boolean {
     return this._disposed;
   }
@@ -290,14 +281,16 @@ export class DatabaseService implements ClientProvider {
     adminCleared: boolean;
     healthTrackingReset: boolean;
   } {
+    const healthStatus = this._healthMonitor?.getHealthStatus();
     return {
       disposed: this._disposed,
       clientCleared: this._client === null,
       adminCleared: this._admin === null,
-      healthTrackingReset:
-        !this.connectionHealthy &&
-        this.lastHealthCheck === null &&
-        this.connectionRetries === 0,
+      healthTrackingReset: healthStatus
+        ? !healthStatus.healthy &&
+          healthStatus.lastCheck === null &&
+          healthStatus.retries === 0
+        : true,
     };
   }
 
@@ -370,12 +363,8 @@ export class DatabaseService implements ClientProvider {
       _supabaseAdmin = null;
     }
 
-    // Reset connection health tracking
-    this.connectionHealthy = false;
-    this.lastHealthCheck = null;
-    this.connectionRetries = 0;
+    this._healthMonitor?.resetHealthTracking();
 
-    // Mark as disposed
     this._disposed = true;
 
     logger.info('DatabaseService disposed successfully');
@@ -460,14 +449,10 @@ export class DatabaseService implements ClientProvider {
       }
     }
 
-    // Assign new clients
     this._client = newClient;
     this._admin = newAdmin;
 
-    // Reset connection health
-    this.connectionHealthy = false;
-    this.lastHealthCheck = null;
-    this.connectionRetries = 0;
+    this._healthMonitor?.resetHealthTracking();
 
     logger.info('Database clients reinitialized successfully');
   }
@@ -486,133 +471,18 @@ export class DatabaseService implements ClientProvider {
     (DatabaseService as any).instance = undefined;
   }
 
-  // Connection health monitoring
   async checkConnection(): Promise<ConnectionHealth> {
-    // Check client connection
-    let clientHealthy = false;
-    try {
-      if (!this._client) {
-        this.connectionMetrics.failedConnections++;
-        this.connectionMetrics.lastFailedConnection = new Date();
-      } else {
-        this.connectionMetrics.totalConnections++;
-
-        const healthCheckPromise = this._client
-          .from(DB_TABLES.IDEAS)
-          .select('id')
-          .limit(1);
-
-        const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
-          setTimeout(() => {
-            reject(new Error(API_ERROR_MESSAGES.DB.HEALTH_CHECK_TIMEOUT));
-          }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
-        });
-
-        const { error } = await Promise.race([
-          healthCheckPromise,
-          timeoutPromise
-            .then(() => ({ error: null }))
-            .catch((err) => ({
-              error: err,
-            })),
-        ]);
-
-        const timedOut =
-          error instanceof Error &&
-          error.message === API_ERROR_MESSAGES.DB.HEALTH_CHECK_TIMEOUT;
-
-        if (timedOut) {
-          logger.warn(
-            `Database client health check timed out after ${DATABASE.HEALTH_CHECK_TIMEOUT_MS}ms`
-          );
-        }
-
-        clientHealthy = !error && !timedOut;
-      }
-    } catch {
-      clientHealthy = false;
-    }
-
-    // Check admin connection
-    let adminHealthy = false;
-    try {
-      const admin = this.getAdmin();
-      if (!admin) {
-        // Admin client not initialized - consider it unhealthy
-        adminHealthy = false;
-      } else {
-        // Test admin connection with a simple query
-        // Using agent_logs table which is commonly used for admin operations
-        const adminHealthCheckPromise = admin
-          .from(DB_TABLES.AGENT_LOGS)
-          .select('id')
-          .limit(1);
-
-        const timeoutPromise = new Promise<{ error: Error }>((_, reject) => {
-          setTimeout(() => {
-            reject(new Error(API_ERROR_MESSAGES.DB.ADMIN_HEALTH_CHECK_TIMEOUT));
-          }, DATABASE.HEALTH_CHECK_TIMEOUT_MS);
-        });
-
-        const { error } = await Promise.race([
-          adminHealthCheckPromise,
-          timeoutPromise
-            .then(() => ({ error: null }))
-            .catch((err) => ({
-              error: err,
-            })),
-        ]);
-
-        const timedOut =
-          error instanceof Error &&
-          error.message === API_ERROR_MESSAGES.DB.ADMIN_HEALTH_CHECK_TIMEOUT;
-
-        if (timedOut) {
-          logger.warn(
-            `Database admin health check timed out after ${DATABASE.HEALTH_CHECK_TIMEOUT_MS}ms`
-          );
-        }
-
-        adminHealthy = !error && !timedOut;
-      }
-    } catch {
-      adminHealthy = false;
-    }
-
-    // Update connection metrics
-    const allHealthy = clientHealthy && adminHealthy;
-    this.connectionHealthy = allHealthy;
-    this.lastHealthCheck = new Date();
-
-    if (!allHealthy) {
-      this.connectionMetrics.failedConnections++;
-      this.connectionMetrics.lastFailedConnection = new Date();
-    } else {
-      this.connectionMetrics.lastSuccessfulConnection = new Date();
-    }
-
-    return { client: clientHealthy, admin: adminHealthy };
+    return this.healthMonitor.checkConnection(this._client, () =>
+      this.getAdmin()
+    );
   }
 
   isConnectionHealthy(): boolean {
-    if (!this.lastHealthCheck) return false;
-    const staleThreshold = new Date(
-      Date.now() - DATABASE.HEALTH_CHECK_STALE_THRESHOLD_MS
-    );
-    return this.connectionHealthy && this.lastHealthCheck > staleThreshold;
+    return this.healthMonitor.isConnectionHealthy();
   }
 
   getConnectionMetrics() {
-    return {
-      ...this.connectionMetrics,
-      lastSuccessfulConnection:
-        this.connectionMetrics.lastSuccessfulConnection?.toISOString() ?? null,
-      lastFailedConnection:
-        this.connectionMetrics.lastFailedConnection?.toISOString() ?? null,
-      connectionHealthy: this.connectionHealthy,
-      lastHealthCheck: this.lastHealthCheck?.toISOString() ?? null,
-      connectionRetries: this.connectionRetries,
-    };
+    return this.healthMonitor.getConnectionMetrics();
   }
 
   // ============================================================================
