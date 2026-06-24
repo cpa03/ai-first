@@ -133,6 +133,7 @@ docs/archive/*.tar.gz
 # Note: docs/archive/README.md is intentionally tracked for documentation
 
 # Temporary agent reports (auto-generated, should not be committed)
+*BROCULA*.md
 *BROCULA_AUDIT*.md
 *BROCULA-AUDIT*.md
 *BROCULA_VERIFICATION*.md
