@@ -153,6 +153,14 @@ export const COMPONENT_CONFIG = {
         50,
         1000
       ),
+      /** Duration for enable transition animation (ms) - shows feedback when button transitions from disabled to enabled */
+      /** Env: COMPONENT_BUTTON_ENABLE_TRANSITION_DURATION_MS (default: 600) */
+      ENABLE_TRANSITION_DURATION_MS: EnvLoader.number(
+        'COMPONENT_BUTTON_ENABLE_TRANSITION_DURATION_MS',
+        600,
+        100,
+        2000
+      ),
     },
   } as const,
 
@@ -243,6 +251,14 @@ export const COMPONENT_CONFIG = {
       MEDIUM: EnvLoader.number('IDEA_INPUT_ENCOURAGE_MEDIUM', 0.3, 0.1, 0.9),
       HIGH: EnvLoader.number('IDEA_INPUT_ENCOURAGE_HIGH', 0.7, 0.1, 0.9),
     },
+    /** Duration for milestone celebration auto-clear (ms) - when user first reaches minimum length */
+    /** Env: COMPONENT_IDEA_INPUT_MILESTONE_CELEBRATION_DURATION_MS (default: 2000) */
+    MILESTONE_CELEBRATION_DURATION_MS: EnvLoader.number(
+      'COMPONENT_IDEA_INPUT_MILESTONE_CELEBRATION_DURATION_MS',
+      2000,
+      500,
+      5000
+    ),
   } as const,
 
   ONBOARDING: {

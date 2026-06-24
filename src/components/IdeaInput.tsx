@@ -124,7 +124,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       // Auto-clear the milestone celebration after a brief moment
       const timer = setTimeout(() => {
         setMilestoneReached(false);
-      }, 2000);
+      }, COMPONENT_CONFIG.IDEA_INPUT.MILESTONE_CELEBRATION_DURATION_MS);
       return () => clearTimeout(timer);
     }
 
