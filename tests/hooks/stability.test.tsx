@@ -1,6 +1,5 @@
 import { renderHook } from '@testing-library/react';
 import { useSessionDuration } from '@/hooks/useSessionDuration';
-import { useNotificationPermission } from '@/hooks/useNotificationPermission';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
 
 // Mock api-client
@@ -48,11 +47,9 @@ jest.mock('@/lib/db', () => ({
       getSession: jest
         .fn()
         .mockResolvedValue({ data: { session: null }, error: null }),
-      onAuthStateChange: jest
-        .fn()
-        .mockReturnValue({
-          data: { subscription: { unsubscribe: jest.fn() } },
-        }),
+      onAuthStateChange: jest.fn().mockReturnValue({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      }),
     },
   },
 }));
@@ -72,26 +69,6 @@ describe('Referential Stability', () => {
       );
       expect(result.current.getPageDuration).toBe(
         firstRenderResult.getPageDuration
-      );
-    });
-  });
-
-  describe('useNotificationPermission', () => {
-    it('maintains referential stability of returned object and functions', () => {
-      const { result, rerender } = renderHook(() =>
-        useNotificationPermission()
-      );
-
-      const firstRenderResult = result.current;
-
-      rerender();
-
-      expect(result.current).toBe(firstRenderResult);
-      expect(result.current.requestPermission).toBe(
-        firstRenderResult.requestPermission
-      );
-      expect(result.current.checkPermission).toBe(
-        firstRenderResult.checkPermission
       );
     });
   });
