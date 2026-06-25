@@ -548,8 +548,10 @@ export default function DashboardPage() {
               </h2>
               <p className="text-gray-600 mb-6">
                 No ideas match the{' '}
-                {filter === 'breakdown' ? 'In Progress' : filter} filter. Try
-                clearing the filter to see all your ideas.
+                {filter === 'breakdown'
+                  ? IDEA_STATUS_CONFIG.LABELS.breakdown
+                  : filter}{' '}
+                filter. Try clearing the filter to see all your ideas.
               </p>
               <div className="flex justify-center gap-3">
                 <Button variant="outline" onClick={() => setFilter('all')}>
