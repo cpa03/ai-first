@@ -104,6 +104,7 @@ export function useClarificationSession(
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const selectRef = useRef<HTMLSelectElement>(null);
   const stepTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const isMountedRef = useRef(true);
 
   const isMac = useMemo(
     () => typeof window !== 'undefined' && navigator.platform.includes('Mac'),
@@ -154,7 +155,9 @@ export function useClarificationSession(
       try {
         await onComplete(newAnswers);
       } finally {
-        setIsSubmitting(false);
+        if (isMountedRef.current) {
+          setIsSubmitting(false);
+        }
       }
     }
   }, [
@@ -208,6 +211,7 @@ export function useClarificationSession(
 
   useEffect(() => {
     return () => {
+      isMountedRef.current = false;
       if (stepTransitionTimeoutRef.current) {
         clearTimeout(stepTransitionTimeoutRef.current);
       }
