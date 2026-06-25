@@ -52,16 +52,24 @@ const CopyButtonComponent = function CopyButton({
   const [copied, setCopied] = useState(false);
   const [confetti, setConfetti] = useState<ConfettiParticle[]>([]);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const confettiTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
+      if (confettiTimeoutRef.current) {
+        clearTimeout(confettiTimeoutRef.current);
+      }
     };
   }, []);
 
   const generateConfetti = useCallback(() => {
+    if (confettiTimeoutRef.current) {
+      clearTimeout(confettiTimeoutRef.current);
+    }
+
     const particles: ConfettiParticle[] = [];
     const particleCount = CONFETTI_COLORS.PARTICLE_COUNT;
     for (let i = 0; i < particleCount; i++) {
@@ -78,7 +86,10 @@ const CopyButtonComponent = function CopyButton({
       });
     }
     setConfetti(particles);
-    setTimeout(() => setConfetti([]), COMPONENT_CONFIG.CONFETTI.CLEANUP_MS);
+    confettiTimeoutRef.current = setTimeout(
+      () => setConfetti([]),
+      COMPONENT_CONFIG.CONFETTI.CLEANUP_MS
+    );
   }, []);
 
   const handleCopy = useCallback(async () => {
