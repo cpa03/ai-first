@@ -5,6 +5,7 @@
 
 import { APP_CONFIG } from './app';
 import { TIMEOUT_CONFIG } from './constants';
+import { isProduction } from './environment';
 import { createLogger } from '../logger';
 
 const logger = createLogger('ConfigValidator');
@@ -277,7 +278,7 @@ export function validateConfigurationOrThrow(): void {
     const errorMessage = `Configuration validation failed:\n${result.errors.join('\n')}`;
     logger.error(errorMessage);
 
-    if (process.env.NODE_ENV === 'production') {
+    if (isProduction) {
       throw new Error(errorMessage);
     }
   }

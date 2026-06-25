@@ -6,7 +6,7 @@
  * and can be overridden via environment variables.
  */
 
-import { EnvLoader } from './environment';
+import { EnvLoader, isTest } from './environment';
 
 /**
  * Configuration for session duration tracking
@@ -32,10 +32,7 @@ export const SESSION_TRACKING_CONFIG = {
    * Env: SESSION_TRACKING_ENABLED
    * Default: true in non-test environments
    */
-  ENABLED: EnvLoader.boolean(
-    'SESSION_TRACKING_ENABLED',
-    process.env.NODE_ENV !== 'test'
-  ),
+  ENABLED: EnvLoader.boolean('SESSION_TRACKING_ENABLED', !isTest),
 
   /**
    * Maximum session duration to track (in milliseconds).
