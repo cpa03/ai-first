@@ -120,11 +120,6 @@ Complete index of all IdeaFlow documentation.
 - [Bug Guide](./bug.md) - Bug reporting guidelines
 - [Feature Guide](./feature.md) - Feature request guidelines
 
-## Maintenance
-
-- [Branch Cleanup Registry](./BRANCH_CLEANUP.md) - Branch cleanup history and recommendations
-- [Repository Health Report](./repository-health-report.md) - Repository health check results
-
 ## Project Meta
 
 - [Changelog](../CHANGELOG.md) - Project changelog and version history
