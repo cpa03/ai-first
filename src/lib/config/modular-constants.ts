@@ -187,7 +187,7 @@ export const EXTERNAL_RATE_LIMIT_CONFIG = {
 /**
  * A/B Testing Configuration
  * Settings for A/B test experiments and variant assignment
- * NOTE: AB_TEST_CONFIG is defined in ab-test.ts with custom environment logic
+ * AB testing constants consolidated from former ab-test.ts
  */
 export const AB_TEST = {
   /**

@@ -128,8 +128,6 @@
     /LoadingAnnouncer.tsx   ← Screen reader announcements
     /LoadingSpinner.tsx     ← Spinner component
     /MobileNav.tsx         ← Responsive navigation
-    /NotificationPreferences.tsx ← Notification preferences settings
-    /NotificationPrompt.tsx ← Notification permission prompt
     /ProgressStepper.tsx    ← Progress indicator
     /ReferralLink.tsx       ← Referral link component
     /ScrollToTop.tsx        ← Scroll to top button
@@ -152,12 +150,10 @@
     /useAuthCheck.ts        ← Authentication check hook
     /useBlueprintGeneration.ts ← Blueprint generation hook
     /useClarificationSession.ts ← Clarification session hook
-    /useNotificationPermission.ts ← Notification permission hook
     /usePrefersReducedMotion.ts ← Reduced motion preference hook
     /useSessionDuration.ts   ← Session duration tracking hook
     /useTaskManagement.ts   ← Task management hook
   /lib/                    ← Core utilities
-    /ab-test.ts           ← A/B testing utilities
     /ai.ts                ← AI provider abstraction
     /analytics.ts         ← Analytics tracking
     /api-client.ts        ← API client utilities
@@ -174,7 +170,6 @@
     /prompt-service.ts   ← AI prompt service
     /rate-limit.ts       ← Rate limiting
     /resource-cleanup.ts ← Resource cleanup utilities
-    /service-worker.ts   ← Service worker utilities
     /session-analytics.ts ← Session analytics
     /similarity-service.ts ← Similarity matching service
     /type-guards.ts      ← Type guard utilities
