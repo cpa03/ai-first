@@ -84,6 +84,9 @@ export {
   TASK_ANIMATION_DURATIONS,
 } from './task-management';
 
+// Idea Status Configuration
+export { IDEA_STATUS_CONFIG, type IdeaStatus } from './idea-status-config';
+
 // Cleanup Configuration
 export { CLEANUP_CONFIG } from './cleanup';
 

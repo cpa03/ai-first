@@ -55,17 +55,17 @@ export class GitHubProjectsExporter extends ExportConnector {
 
       const todoColumn = await this.createProjectColumn(
         project.id,
-        'To Do',
+        GITHUB_CONFIG.DEFAULTS.ISSUE_STATE_TODO,
         token
       );
       const inProgressColumn = await this.createProjectColumn(
         project.id,
-        'In Progress',
+        GITHUB_CONFIG.DEFAULTS.ISSUE_STATE_IN_PROGRESS,
         token
       );
       const doneColumn = await this.createProjectColumn(
         project.id,
-        'Done',
+        GITHUB_CONFIG.DEFAULTS.ISSUE_STATE_DONE,
         token
       );
 

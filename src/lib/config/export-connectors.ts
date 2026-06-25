@@ -107,6 +107,9 @@ export const GITHUB_CONFIG = {
   DEFAULTS: {
     REPO_NAME_TEMPLATE: 'ideaflow-{title}',
     ISSUE_LABEL: 'ideaflow',
+    ISSUE_STATE_TODO: 'To Do',
+    ISSUE_STATE_IN_PROGRESS: 'In Progress',
+    ISSUE_STATE_DONE: 'Done',
   },
 
   /**
