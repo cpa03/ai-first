@@ -19,6 +19,11 @@ const ProgressStepperComponent = function ProgressStepper({
   steps,
   currentStep,
 }: ProgressStepperProps) {
+  const progressPercentage = Math.round(
+    ((currentStep + 1) / steps.length) * 100
+  );
+  const completedCount = steps.filter((step) => step.completed).length;
+
   return (
     <nav
       className="mb-6 sm:mb-8"
@@ -55,6 +60,15 @@ const ProgressStepperComponent = function ProgressStepper({
             {currentStep + 1} / {steps.length}
           </span>
         </div>
+        {/* Micro-UX: ARIA progress indicator for screen readers */}
+        <div
+          role="progressbar"
+          aria-valuenow={progressPercentage}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={`Progress: ${completedCount} of ${steps.length} steps completed, ${progressPercentage}%`}
+          className="sr-only"
+        />
       </div>
 
       <ol className="hidden sm:flex items-center justify-between">
@@ -140,6 +154,15 @@ const ProgressStepperComponent = function ProgressStepper({
           );
         })}
       </ol>
+      {/* Micro-UX: ARIA progress indicator for screen readers */}
+      <div
+        role="progressbar"
+        aria-valuenow={progressPercentage}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Progress: ${completedCount} of ${steps.length} steps completed, ${progressPercentage}%`}
+        className="sr-only"
+      />
     </nav>
   );
 };
