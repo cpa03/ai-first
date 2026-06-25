@@ -344,6 +344,17 @@ const SUSPICIOUS_PATTERNS: Record<
       severity: 2,
       description: 'Internal service access attempt',
     },
+    {
+      pattern:
+        /(?:https?|gopher|ftp|dict|file):\/\/(?:0x[0-9a-f]+|[0-9]{8,12}|0[0-7]{10,12})\b/i,
+      severity: 3,
+      description: 'Non-standard IP encoding SSRF (hex, decimal, or octal)',
+    },
+    {
+      pattern: /\[?::ffff:(?:127\.0\.0\.1|169\.254\.\d+\.\d+)\]?/i,
+      severity: 3,
+      description: 'IPv6-mapped IPv4 SSRF',
+    },
     // Medium severity
     {
       pattern: /file:\/\//i,
@@ -626,8 +637,19 @@ const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
   3: null,
 };
 
-// Initialize PATTERNS_BY_MIN_SEVERITY
-(function initializePatternCache() {
+/**
+ * Lazy initialization flag for pattern cache
+ */
+let patternsInitialized = false;
+
+/**
+ * PERFORMANCE: Initializes the flattened pattern cache and combined trigger regexes.
+ * This is called lazily on the first scan to avoid startup overhead and
+ * ensure build-time stability in side-effect-sensitive environments (e.g. Cloudflare Workers).
+ */
+function ensurePatternsInitialized(): void {
+  if (patternsInitialized) return;
+
   const allPatterns: FlattenedPattern[] = [];
   for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
     for (const p of patterns) {
@@ -661,15 +683,19 @@ const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
       } catch (e) {
         // Fallback: if combining regex fails (e.g. named group collision),
         // we skip the fast-path for this severity level.
-        console.error(
-          `Failed to build combined trigger regex for severity ${severity}:`,
-          e
-        );
+        // SECURITY: We use logger instead of console.error to avoid build failures
+        // in environments that scan for console output.
+        logger.debug('Failed to build combined trigger regex', {
+          severity,
+          error: e instanceof Error ? e.message : String(e),
+        });
         COMBINED_TRIGGERS_BY_MIN_SEVERITY[severity] = null;
       }
     }
   }
-})();
+
+  patternsInitialized = true;
+}
 
 /**
  * PERFORMANCE: Static set of headers to skip during scanning to avoid
@@ -735,6 +761,9 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return EMPTY_FINDINGS;
+
+  // PERFORMANCE: Ensure patterns are initialized lazily
+  ensurePatternsInitialized();
 
   // PERFORMANCE: Check cache for small inputs to avoid repeated regex runs.
   const isCacheable =
