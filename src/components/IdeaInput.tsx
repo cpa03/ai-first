@@ -275,7 +275,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {milestoneReached && (
           <div
-            className="flex items-center gap-2 text-sm text-green-600 font-medium animate-fade-in"
+            className="flex items-center gap-2 text-sm text-green-700 font-medium animate-fade-in"
             role="status"
             aria-live="polite"
           >

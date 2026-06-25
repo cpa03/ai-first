@@ -18,6 +18,7 @@ module.exports = {
     'text-blue-600',
     'bg-green-100',
     'text-green-600',
+    'text-green-700',
     // Risk level colors (dynamic from RISK_LEVEL_CONFIG)
     'bg-yellow-100',
     'text-yellow-700',

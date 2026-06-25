@@ -141,7 +141,7 @@ const EmailButtonComponent = function EmailButton({
             </svg>
 
             <svg
-              className={`absolute inset-0 w-4 h-4 text-green-600 ${iconTransition} ${
+              className={`absolute inset-0 w-4 h-4 text-green-700 ${iconTransition} ${
                 state === 'success'
                   ? 'opacity-100 scale-100'
                   : 'opacity-0 scale-50'

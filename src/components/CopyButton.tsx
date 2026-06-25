@@ -162,7 +162,7 @@ const CopyButtonComponent = function CopyButton({
       text-gray-500 hover:text-primary-600 hover:bg-primary-50
       rounded-full
       active:scale-[0.9]
-      ${copied ? 'text-green-600 bg-green-50 hover:bg-green-100 hover:text-green-700' : ''}
+      ${copied ? 'text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800' : ''}
     `,
   };
 
@@ -201,7 +201,7 @@ const CopyButtonComponent = function CopyButton({
 
               <svg
                 className={`
-              absolute inset-0 w-4 h-4 text-green-600 transition-all duration-200
+              absolute inset-0 w-4 h-4 text-green-700 transition-all duration-200
               ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
                 fill="none"

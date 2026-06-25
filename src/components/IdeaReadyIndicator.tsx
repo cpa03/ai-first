@@ -51,7 +51,7 @@ function IdeaReadyIndicatorComponent({
         className={`
           relative flex items-center justify-center w-5 h-5 rounded-full
           transition-all duration-300 ease-out
-          ${isReady ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}
+          ${isReady ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}
         `}
       >
         {/* Checkmark SVG with draw animation */}
@@ -97,7 +97,7 @@ function IdeaReadyIndicatorComponent({
       <span
         className={`
           text-xs font-medium transition-colors duration-300
-          ${isReady ? 'text-green-600' : 'text-gray-500'}
+          ${isReady ? 'text-green-700' : 'text-gray-500'}
         `}
       >
         {isReady ? 'Ready to submit!' : 'Keep writing...'}

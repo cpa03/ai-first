@@ -179,7 +179,7 @@ function SuccessCelebrationComponent({
           }`}
         >
           <svg
-            className={`w-12 h-12 text-green-600 ${
+            className={`w-12 h-12 text-green-700 ${
               shouldAnimate ? 'animate-success-check' : ''
             }`}
             fill="none"
