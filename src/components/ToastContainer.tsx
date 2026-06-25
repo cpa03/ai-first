@@ -5,7 +5,12 @@ import {
   UI_CONFIG as UI_CONSTANTS,
   ANIMATION_CONFIG,
 } from '@/lib/config/constants';
-import { TOAST_CONFIG, SVG_STROKE_WIDTHS, Z_INDEX_LAYERS } from '@/lib/config';
+import {
+  TOAST_CONFIG,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
+  TOAST_CONTAINER_LABELS,
+} from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface Toast {
@@ -246,7 +251,9 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           />
         </svg>
       </button>
-      <span className="sr-only">Press Escape to dismiss</span>
+      <span className="sr-only">
+        {TOAST_CONTAINER_LABELS.DISMISS_INSTRUCTION}
+      </span>
       {isSwiping && swipeOffset > 20 && (
         <div
           className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
