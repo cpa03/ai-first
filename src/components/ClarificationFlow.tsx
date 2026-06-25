@@ -368,7 +368,7 @@ function ClarificationFlow({
                 </div>
                 {currentAnswer && (
                   <p
-                    className="text-sm text-green-600 flex items-center gap-1.5 animate-fade-in"
+                    className="text-sm text-green-700 flex items-center gap-1.5 animate-fade-in"
                     role="status"
                     aria-live="polite"
                   >

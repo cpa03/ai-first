@@ -140,7 +140,7 @@ export const WHY_CHOOSE_CONFIG = {
         'Advanced AI algorithms analyze your ideas and generate comprehensive project plans',
       ICON_BG: 'bg-green-100',
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-600',
+      ICON_COLOR: 'text-green-700',
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -153,7 +153,7 @@ export const WHY_CHOOSE_CONFIG = {
         'Reduce planning time by 80% with automated task breakdown and timeline generation',
       ICON_BG: 'bg-green-100',
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-600',
+      ICON_COLOR: 'text-green-700',
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -166,7 +166,7 @@ export const WHY_CHOOSE_CONFIG = {
         'Export plans to GitHub, Notion, and other tools your team already uses',
       ICON_BG: 'bg-green-100',
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-600',
+      ICON_COLOR: 'text-green-700',
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -179,7 +179,7 @@ export const WHY_CHOOSE_CONFIG = {
         'Share blueprints with your team and iterate on plans in real-time',
       ICON_BG: 'bg-green-100',
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-600',
+      ICON_COLOR: 'text-green-700',
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -194,7 +194,7 @@ export const WHY_CHOOSE_CONFIG = {
       'rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-200 group-hover:scale-110',
     ICON_SVG: 'w-4 h-4',
     TITLE:
-      'font-semibold text-gray-900 mb-1 group-hover:text-green-700 transition-colors duration-200',
+      'font-semibold text-gray-900 mb-1 group-hover:text-green-800 transition-colors duration-200',
     DESCRIPTION: 'text-gray-700 text-sm',
   },
 } as const;

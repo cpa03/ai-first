@@ -235,7 +235,7 @@ function AutoSaveIndicatorComponent({
             ? 'text-gray-500'
             : saveState === 'saving'
               ? 'text-primary-600'
-              : 'text-green-600'
+              : 'text-green-700'
         }`}
       >
         {saveState === 'typing' && AUTO_SAVE_INDICATOR_LABELS.TYPING}

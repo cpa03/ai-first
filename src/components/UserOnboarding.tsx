@@ -371,7 +371,7 @@ export default function UserOnboarding() {
             }`}
           >
             <svg
-              className={`w-10 h-10 text-green-600 ${prefersReducedMotion ? '' : 'animate-success-check'}`}
+              className={`w-10 h-10 text-green-700 ${prefersReducedMotion ? '' : 'animate-success-check'}`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
