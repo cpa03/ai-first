@@ -114,7 +114,9 @@ __pycache__/
 .worktrees/
 
 # Agent temporary directories
-# .jules/ - Bolt AI temporary files
+# .Jules/ - Bolt AI temporary files
+.Jules/
+# .jules/ - Bolt AI temporary files (lowercase variant)
 .jules/
 # .omo/ - Ralph loop temporary files
 .omo/
