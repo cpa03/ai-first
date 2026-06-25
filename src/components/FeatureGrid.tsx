@@ -78,17 +78,30 @@ function FeatureGridComponent() {
           </p>
 
           {index < FEATURE_CONFIG.FEATURES.length - 1 && (
-            <div
-              className={`
-                hidden md:block absolute top-1/2 -right-4 
-                w-8 h-0.5 bg-gradient-to-r from-primary-300 to-primary-100
-                transform -translate-y-1/2
-                opacity-0 group-hover:opacity-100 
-                transition-opacity duration-500 ${ANIMATION_DELAYS.TAILWIND[100]}
-                motion-reduce:opacity-0
-              `}
-              aria-hidden="true"
-            />
+            <>
+              {/* Desktop: Horizontal connector arrow */}
+              <div
+                className={`
+                  hidden md:block absolute top-1/2 -right-4 
+                  w-8 h-0.5 bg-gradient-to-r from-primary-300 to-primary-100
+                  transform -translate-y-1/2
+                  opacity-0 group-hover:opacity-100 
+                  transition-opacity duration-500 ${ANIMATION_DELAYS.TAILWIND[100]}
+                  motion-reduce:opacity-0
+                `}
+                aria-hidden="true"
+              />
+              {/* Mobile: Vertical connector line for step flow clarity */}
+              <div
+                className={`
+                  md:hidden absolute left-1/2 -bottom-4
+                  w-0.5 h-8 bg-gradient-to-b from-primary-300 to-primary-100
+                  transform -translate-x-1/2
+                  ${isVisible ? 'fade-in' : 'opacity-0'}
+                `}
+                aria-hidden="true"
+              />
+            </>
           )}
         </article>
       ))}
