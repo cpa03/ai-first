@@ -5,6 +5,7 @@ import {
   COMPONENT_CONFIG,
   ANIMATION_DELAYS,
   SVG_STROKE_WIDTHS,
+  AUTO_SAVE_INDICATOR_LABELS,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -127,7 +128,7 @@ function AutoSaveIndicatorComponent({
     const diff = now.getTime() - date.getTime();
     const seconds = Math.floor(diff / 1000);
 
-    if (seconds < 10) return 'just now';
+    if (seconds < 10) return AUTO_SAVE_INDICATOR_LABELS.JUST_NOW;
     if (seconds < 60) return `${seconds}s ago`;
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60) return `${minutes}m ago`;
@@ -237,16 +238,20 @@ function AutoSaveIndicatorComponent({
               : 'text-green-600'
         }`}
       >
-        {saveState === 'typing' && 'Typing...'}
-        {saveState === 'saving' && 'Saving...'}
+        {saveState === 'typing' && AUTO_SAVE_INDICATOR_LABELS.TYPING}
+        {saveState === 'saving' && AUTO_SAVE_INDICATOR_LABELS.SAVING}
         {saveState === 'saved' && (
           <span className="flex items-center gap-1">
-            <span className="animate-in fade-in duration-200">Saved</span>
+            <span className="animate-in fade-in duration-200">
+              {AUTO_SAVE_INDICATOR_LABELS.SAVED}
+            </span>
             {lastSaved && (
               <Tooltip
                 content={
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">Last saved</span>
+                    <span className="font-medium">
+                      {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
+                    </span>
                     <span className="text-[10px] text-gray-400 opacity-80">
                       {formatExactTimestamp(lastSaved)}
                     </span>

@@ -15,6 +15,7 @@ import {
   LOCAL_STORAGE_KEYS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
+  KEYBOARD_SHORTCUTS_HELP_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -663,10 +664,14 @@ function KeyboardShortcutsHelpComponent({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
           <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
-            <span role="img" aria-label="Tip" className="text-base">
+            <span
+              role="img"
+              aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.TIP_ARIA_LABEL}
+              className="text-base"
+            >
               💡
             </span>
-            <span>Tip: Enable vim mode to navigate with j/k keys</span>
+            <span>{KEYBOARD_SHORTCUTS_HELP_LABELS.TIP_TEXT}</span>
           </p>
         </div>
       </div>

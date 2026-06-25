@@ -82,6 +82,72 @@ export const LAYOUT_ERROR_LABELS = {
 } as const;
 
 /**
+ * ScrollToTop Labels
+ * Eliminates hardcoded strings in ScrollToTop component
+ */
+export const SCROLL_TO_TOP_LABELS = {
+  /** Main tooltip title */
+  TITLE: 'Back to top',
+  /** Screen reader text */
+  SR_TEXT: 'Back to top',
+  /** Scroll instruction label */
+  SCROLL_INSTRUCTION: 'Scroll 25%',
+  /** Top position label */
+  TOP: 'Top',
+  /** Bottom position label */
+  BOTTOM: 'Bottom',
+  /** Keyboard key labels */
+  KEYS: {
+    UP: '↑',
+    DOWN: '↓',
+    HOME: 'Home',
+    END: 'End',
+  },
+  /** Separator between keyboard shortcuts */
+  SEPARATOR: '·',
+  /** ARIA label template for the button */
+  ARIA_LABEL: (progress: number) =>
+    `Scroll to top (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
+} as const;
+
+/**
+ * ToastContainer Labels
+ * Eliminates hardcoded strings in ToastContainer component
+ */
+export const TOAST_CONTAINER_LABELS = {
+  /** Screen reader instruction to dismiss toast */
+  DISMISS_INSTRUCTION: 'Press Escape to dismiss',
+} as const;
+
+/**
+ * AutoSaveIndicator Labels
+ * Eliminates hardcoded strings in AutoSaveIndicator component
+ */
+export const AUTO_SAVE_INDICATOR_LABELS = {
+  /** Last saved text */
+  LAST_SAVED: 'Last saved',
+  /** Typing state label */
+  TYPING: 'Typing...',
+  /** Saving state label */
+  SAVING: 'Saving...',
+  /** Saved state label */
+  SAVED: 'Saved',
+  /** Just now timestamp label */
+  JUST_NOW: 'just now',
+} as const;
+
+/**
+ * KeyboardShortcutsHelp Labels
+ * Eliminates hardcoded strings in KeyboardShortcutsHelp component
+ */
+export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
+  /** Tip aria-label */
+  TIP_ARIA_LABEL: 'Tip',
+  /** Tip text content */
+  TIP_TEXT: 'Tip: Enable vim mode to navigate with j/k keys',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -91,10 +157,18 @@ export const COMPONENT_LABELS = {
   INPUT_VALIDATION: INPUT_VALIDATION_LABELS,
   TOOLTIP: TOOLTIP_LABELS,
   LAYOUT_ERROR: LAYOUT_ERROR_LABELS,
+  SCROLL_TO_TOP: SCROLL_TO_TOP_LABELS,
+  TOAST_CONTAINER: TOAST_CONTAINER_LABELS,
+  AUTO_SAVE_INDICATOR: AUTO_SAVE_INDICATOR_LABELS,
+  KEYBOARD_SHORTCUTS_HELP: KEYBOARD_SHORTCUTS_HELP_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
 export type CopyButtonLabels = typeof COPY_BUTTON_LABELS;
 export type InputValidationLabels = typeof INPUT_VALIDATION_LABELS;
 export type LayoutErrorLabels = typeof LAYOUT_ERROR_LABELS;
+export type ScrollToTopLabels = typeof SCROLL_TO_TOP_LABELS;
+export type ToastContainerLabels = typeof TOAST_CONTAINER_LABELS;
+export type AutoSaveIndicatorLabels = typeof AUTO_SAVE_INDICATOR_LABELS;
+export type KeyboardShortcutsHelpLabels = typeof KEYBOARD_SHORTCUTS_HELP_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

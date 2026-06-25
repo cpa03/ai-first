@@ -13,6 +13,7 @@ import {
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
+  SCROLL_TO_TOP_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -181,21 +182,25 @@ function ScrollToTopComponent({
 
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
-      <span className="font-medium">Back to top</span>
+      <span className="font-medium">{SCROLL_TO_TOP_LABELS.TITLE}</span>
       <span className="text-[10px] text-gray-400 opacity-80">
-        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">↑</kbd>{' '}
-        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">↓</kbd>{' '}
-        Scroll 25%
-        <span className="mx-1">·</span>
         <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
-          Home
+          {SCROLL_TO_TOP_LABELS.KEYS.UP}
         </kbd>{' '}
-        Top
-        <span className="mx-1">·</span>
         <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
-          End
+          {SCROLL_TO_TOP_LABELS.KEYS.DOWN}
         </kbd>{' '}
-        Bottom
+        {SCROLL_TO_TOP_LABELS.SCROLL_INSTRUCTION}
+        <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
+        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+          {SCROLL_TO_TOP_LABELS.KEYS.HOME}
+        </kbd>{' '}
+        {SCROLL_TO_TOP_LABELS.TOP}
+        <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
+        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+          {SCROLL_TO_TOP_LABELS.KEYS.END}
+        </kbd>{' '}
+        {SCROLL_TO_TOP_LABELS.BOTTOM}
       </span>
     </div>
   );
@@ -223,7 +228,9 @@ function ScrollToTopComponent({
             ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
             ${className}
           `}
-          aria-label={`Scroll to top (${Math.round(scrollProgress)}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`}
+          aria-label={SCROLL_TO_TOP_LABELS.ARIA_LABEL(
+            Math.round(scrollProgress)
+          )}
           aria-live="polite"
           type="button"
         >
@@ -291,7 +298,7 @@ function ScrollToTopComponent({
             </svg>
           )}
 
-          <span className="sr-only">Back to top</span>
+          <span className="sr-only">{SCROLL_TO_TOP_LABELS.SR_TEXT}</span>
         </button>
       </Tooltip>
     </div>
