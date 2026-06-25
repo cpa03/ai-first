@@ -206,7 +206,26 @@ export function useKeyboardShortcutsHelp() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable;
+
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        toggleHelp();
+        return;
+      }
+
+      if (
+        e.key === '?' &&
+        !e.ctrlKey &&
+        !e.metaKey &&
+        !e.shiftKey &&
+        !isInputFocused
+      ) {
         e.preventDefault();
         toggleHelp();
       }
