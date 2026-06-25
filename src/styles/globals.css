@@ -995,41 +995,44 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Dashboard row animation - uses CSS custom properties for modularity */
+/* Values can be overridden via JavaScript: document.documentElement.style.setProperty('--dashboard-row-duration', '500ms') */
 .animate-dashboard-row {
-  animation: dashboardRowFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: dashboardRowFadeIn var(--dashboard-row-duration, 400ms)
+    cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
 }
 
-/* Stagger delays for up to 10 rows - each row enters 50ms after the previous */
+/* Stagger delays for up to 10 rows - each row enters after stagger delay */
 .animate-dashboard-row-1 {
-  animation-delay: 0ms;
+  animation-delay: calc(0 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-2 {
-  animation-delay: 50ms;
+  animation-delay: calc(1 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-3 {
-  animation-delay: 100ms;
+  animation-delay: calc(2 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-4 {
-  animation-delay: 150ms;
+  animation-delay: calc(3 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-5 {
-  animation-delay: 200ms;
+  animation-delay: calc(4 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-6 {
-  animation-delay: 250ms;
+  animation-delay: calc(5 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-7 {
-  animation-delay: 300ms;
+  animation-delay: calc(6 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-8 {
-  animation-delay: 350ms;
+  animation-delay: calc(7 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-9 {
-  animation-delay: 400ms;
+  animation-delay: calc(8 * var(--dashboard-stagger-delay, 50ms));
 }
 .animate-dashboard-row-10 {
-  animation-delay: 450ms;
+  animation-delay: calc(9 * var(--dashboard-stagger-delay, 50ms));
 }
 
 /* Reduced motion support for dashboard row animations */

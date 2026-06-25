@@ -77,6 +77,42 @@ export const ANIMATION_CONFIG = {
    * Env: UI_ANIMATION_MOUNT_DELAY (default: 200)
    */
   MOUNT_DELAY: EnvLoader.number('UI_ANIMATION_MOUNT_DELAY', 200, 50, 1000),
+
+  /**
+   * Dashboard row stagger delay (ms)
+   * Delay between each row's animation in dashboard
+   * Env: UI_ANIMATION_DASHBOARD_STAGGER_DELAY (default: 50)
+   */
+  DASHBOARD_STAGGER_DELAY: EnvLoader.number(
+    'UI_ANIMATION_DASHBOARD_STAGGER_DELAY',
+    50,
+    10,
+    200
+  ),
+
+  /**
+   * Dashboard row animation duration (ms)
+   * Duration of each row's fade-in animation
+   * Env: UI_ANIMATION_DASHBOARD_ROW_DURATION (default: 400)
+   */
+  DASHBOARD_ROW_DURATION: EnvLoader.number(
+    'UI_ANIMATION_DASHBOARD_ROW_DURATION',
+    400,
+    100,
+    2000
+  ),
+
+  /**
+   * Number of dashboard rows to animate
+   * Maximum number of stagger delay classes to generate
+   * Env: UI_ANIMATION_DASHBOARD_ROW_COUNT (default: 10)
+   */
+  DASHBOARD_ROW_COUNT: EnvLoader.number(
+    'UI_ANIMATION_DASHBOARD_ROW_COUNT',
+    10,
+    1,
+    20
+  ),
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
