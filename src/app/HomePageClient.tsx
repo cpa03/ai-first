@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic';
 import IdeaInput from '@/components/IdeaInput';
 import CopyButton from '@/components/CopyButton';
 import ShareButton from '@/components/ShareButton';
-import UserOnboarding from '@/components/UserOnboarding';
 import Skeleton from '@/components/Skeleton';
 import {
   trackEvent,
@@ -63,6 +62,10 @@ const WhyChooseSection = dynamic(
     ),
   }
 );
+
+const UserOnboarding = dynamic(() => import('@/components/UserOnboarding'), {
+  ssr: false,
+});
 
 export default function HomePageClient() {
   const router = useRouter();
