@@ -13,16 +13,29 @@ import { useSyncExternalStore } from 'react';
  * @example
  * const prefersReducedMotion = usePrefersReducedMotion();
  */
+
+// PERFORMANCE: Shared MediaQueryList instance to avoid repeated window.matchMedia calls.
+// Initialized lazily to ensure compatibility with SSR/Edge runtimes.
+let memoizedMediaQuery: MediaQueryList | null = null;
+
+const getMediaQuery = () => {
+  if (typeof window === 'undefined') return null;
+  if (!memoizedMediaQuery) {
+    memoizedMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  }
+  return memoizedMediaQuery;
+};
+
 const subscribe = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const mediaQuery = getMediaQuery();
+  if (!mediaQuery) return () => {};
   mediaQuery.addEventListener('change', callback);
   return () => mediaQuery.removeEventListener('change', callback);
 };
 
 const getSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mediaQuery = getMediaQuery();
+  return mediaQuery ? mediaQuery.matches : false;
 };
 
 const getServerSnapshot = () => false;
