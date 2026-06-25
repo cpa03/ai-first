@@ -635,30 +635,67 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Shortcuts List */}
         <div className="overflow-y-auto max-h-[60vh] p-6">
-          {Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
-            <div key={context} className="mb-6 last:mb-0">
-              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                {contextLabels[context as KeyboardShortcut['context']]}
-              </h3>
-              <div className="space-y-1">
-                {shortcuts.map((shortcut, index) => {
-                  const globalIndex = flatShortcuts.findIndex(
-                    (s) => s.description === shortcut.description
-                  );
-                  return (
-                    <ShortcutRow
-                      key={`${context}-${index}`}
-                      shortcut={shortcut}
-                      isMac={isMac}
-                      isSelected={
-                        preferences.vimMode && globalIndex === selectedIndex
-                      }
-                    />
-                  );
-                })}
+          {flatShortcuts.length === 0 && searchQuery ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+                <svg
+                  className="w-8 h-8 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </div>
+              <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_TITLE}
+              </h3>
+              <p className="text-sm text-gray-500 max-w-xs mb-4">
+                {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_DESCRIPTION}
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  searchInputRef.current?.focus();
+                }}
+                className="text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+              >
+                {KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
+              </button>
             </div>
-          ))}
+          ) : (
+            Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
+              <div key={context} className="mb-6 last:mb-0">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  {contextLabels[context as KeyboardShortcut['context']]}
+                </h3>
+                <div className="space-y-1">
+                  {shortcuts.map((shortcut, index) => {
+                    const globalIndex = flatShortcuts.findIndex(
+                      (s) => s.description === shortcut.description
+                    );
+                    return (
+                      <ShortcutRow
+                        key={`${context}-${index}`}
+                        shortcut={shortcut}
+                        isMac={isMac}
+                        isSelected={
+                          preferences.vimMode && globalIndex === selectedIndex
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Footer */}

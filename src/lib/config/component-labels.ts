@@ -145,6 +145,13 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   TIP_ARIA_LABEL: 'Tip',
   /** Tip text content */
   TIP_TEXT: 'Tip: Enable vim mode to navigate with j/k keys',
+  /** No results title */
+  NO_RESULTS_TITLE: 'No shortcuts found',
+  /** No results description */
+  NO_RESULTS_DESCRIPTION:
+    'Try a different search term or clear the search to see all shortcuts.',
+  /** Clear search button label */
+  CLEAR_SEARCH_LABEL: 'Clear search',
 } as const;
 
 /**
