@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { generateId } from './security/crypto';
 import { RETRY_CONFIG } from './config/constants';
+import { TIME_UNITS } from './config/time';
 
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Optimized fast-path for common empty or single-class cases.
@@ -304,7 +305,9 @@ function getCachedFormatter(
 ): Intl.DateTimeFormat {
   // PERFORMANCE: Use a pre-computed key for the most common case (default options)
   const isDefault = options === DEFAULT_ABS_DATE_OPTIONS;
-  const cacheKey = isDefault ? `${locale}:default` : `${locale}:${JSON.stringify(options)}`;
+  const cacheKey = isDefault
+    ? `${locale}:default`
+    : `${locale}:${JSON.stringify(options)}`;
 
   let formatter = dateFormattingCache.get(cacheKey);
 
@@ -341,7 +344,7 @@ export function getRelativeTime(
     typeof dateString === 'string' ? new Date(dateString) : dateString;
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
-  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffSeconds = Math.floor(diffMs / TIME_UNITS.SECOND);
   const diffMinutes = Math.floor(diffSeconds / 60);
   const diffHours = Math.floor(diffMinutes / 60);
   const diffDays = Math.floor(diffHours / 24);

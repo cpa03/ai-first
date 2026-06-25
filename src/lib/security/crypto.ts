@@ -7,6 +7,8 @@
  * @module lib/security/crypto
  */
 
+import { HASH_CONFIG } from '@/lib/config/modular-constants';
+
 /**
  * Generate a cryptographically secure, collision-resistant ID.
  *
@@ -68,13 +70,15 @@ export function generateId(): string {
  * @returns A 32-bit hex string hash (up to 8 characters)
  */
 export function simpleHash(str: string): string {
-  let hash = 5381;
+  let hash = HASH_CONFIG.DJB2_SEED;
   for (let i = 0; i < str.length; i++) {
     // hash * 33 + charCode
     hash = ((hash << 5) + hash + str.charCodeAt(i)) | 0;
   }
   // Return as positive hex string, padded to 8 chars
-  return (hash >>> 0).toString(16).padStart(8, '0');
+  return (hash >>> 0)
+    .toString(16)
+    .padStart(HASH_CONFIG.FINGERPRINT_LENGTH, '0');
 }
 
 /**
@@ -95,12 +99,14 @@ export function secureRandom(): number {
   if (cryptoObj?.getRandomValues) {
     const array = new Uint32Array(1);
     cryptoObj.getRandomValues(array);
-    // Divide by 2^32 (4294967296) to get a number in [0, 1)
-    return array[0] / 4294967296;
+    // Divide by 2^32 to get a number in [0, 1)
+    return array[0] / HASH_CONFIG.TWO_POWER_32;
   }
 
   // Fallback to Math.random if Web Crypto API is unavailable
-  console.warn("CRITICAL SECURITY WARNING: Using insecure random generator as Web Crypto API is unavailable.");
+  console.warn(
+    'CRITICAL SECURITY WARNING: Using insecure random generator as Web Crypto API is unavailable.'
+  );
   // This is a last resort and will be flagged by security scripts
   return Math.random();
 }

@@ -44,6 +44,24 @@ export const HASH_CONFIG = {
   MAX_INT_32: EnvLoader.number('HASH_MAX_INT_32', 4294967295, 1, 4294967295),
 
   /**
+   * 2^32 - maximum value for 32-bit unsigned integer + 1 (0x100000000)
+   * Used for normalizing random values to [0, 1) range
+   * Env: HASH_TWO_POWER_32 (default: 4294967296)
+   */
+  TWO_POWER_32: EnvLoader.number(
+    'HASH_TWO_POWER_32',
+    4294967296,
+    1,
+    4294967296
+  ),
+
+  /**
+   * Initial seed value for djb2 hash algorithm
+   * Env: HASH_DJB2_SEED (default: 5381)
+   */
+  DJB2_SEED: EnvLoader.number('HASH_DJB2_SEED', 5381, 1, 100000),
+
+  /**
    * Length of hash fingerprint (characters)
    * Env: HASH_FINGERPRINT_LENGTH (default: 8)
    */

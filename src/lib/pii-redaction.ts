@@ -79,19 +79,9 @@ interface SafePropertyDescriptor {
 
 /**
  * Minimum lengths for various PII types to avoid running regex on short strings.
+ * Extracted to config for modularity.
  */
-const MIN_LENGTHS = {
-  EMAIL: 6, // a@b.cd
-  PHONE: 10, // 1234567890
-  SSN: 11, // 000-00-0000
-  CREDIT_CARD: 13, // minimum CC length
-  IP_ADDRESS: 7, // 1.1.1.1
-  API_KEY: 8,
-  JWT: 40,
-  URL_WITH_CREDENTIALS: 15,
-  PASSPORT: 6,
-  DRIVERS_LICENSE: 6,
-} as const;
+const MIN_LENGTHS = PII_REDACTION_CONFIG.MIN_LENGTHS;
 
 const PII_REGEX_PATTERNS: PIIPatterns = {
   // Enhanced email regex with Unicode support for international characters
