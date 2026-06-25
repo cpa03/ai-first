@@ -187,6 +187,7 @@ export default function DashboardPage() {
     if (!deleteModal.idea) return;
 
     const id = deleteModal.idea.id;
+    const ideaTitle = deleteModal.idea.title;
 
     try {
       setDeletingId(id);
@@ -208,6 +209,9 @@ export default function DashboardPage() {
       }
 
       setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+      setPagination((prev) =>
+        prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
+      );
       closeDeleteModal();
 
       if (typeof window !== 'undefined') {
@@ -216,7 +220,7 @@ export default function DashboardPage() {
         };
         win.showToast?.({
           type: 'success',
-          message: 'Idea deleted successfully',
+          message: `"${ideaTitle}" deleted successfully`,
         });
       }
     } catch (err) {
