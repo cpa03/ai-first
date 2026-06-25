@@ -233,41 +233,9 @@ export function withApiHandler(
           });
         } catch (error) {
           if (error instanceof TimeoutError) {
-            const duration = Date.now() - requestStartTime;
-            // PERFORMANCE: Use path extracted at start of request
-            const route = path || '/unknown';
-
-            httpRequestDuration.observe(
-              { method: request.method, route, status_code: '504' },
-              duration / 1000
-            );
-            httpRequestErrors.inc({
-              method: request.method,
-              route,
-              status_code: '504',
-            });
-            httpRequestTotal.inc({
-              method: request.method,
-              route,
-              status_code: '504',
-            });
-
-            return NextResponse.json(
-              {
-                error: 'Gateway Timeout',
-                code: 'TIMEOUT',
-                message: 'Request timed out after ' + timeoutMs + 'ms',
-                timestamp: new Date().toISOString(),
-                requestId,
-              },
-              {
-                status: STATUS_CODES.GATEWAY_TIMEOUT,
-                headers: {
-                  [HTTP_HEADERS.X_REQUEST_ID]: requestId,
-                  [HTTP_HEADERS.X_RESPONSE_TIME]: duration + 'ms',
-                },
-              }
-            );
+            // Re-throw to be handled by the general error handler below
+            // This ensures consistent error response format
+            throw error;
           }
           throw error;
         }
