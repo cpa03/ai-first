@@ -127,6 +127,9 @@ __pycache__/
 .opencode/node_modules/
 .opencode/package-lock.json
 
+# Codegraph - generated database
+.codegraph/
+
 # Archive backups (should not be committed)
 docs/archive/*.gz
 docs/archive/*.zip

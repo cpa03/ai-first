@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### RepoKeeper Maintenance - 2026-06-25 (Session 10)
+
+**Repository Cleanup:**
+
+- ✅ **Removed dead code:**
+  - `src/lib/ab-test.ts` - A/B testing framework (347 lines) - not imported anywhere in the codebase
+  - Removed unused `AB_TEST_ASSIGNMENTS` key from `src/lib/config/storage-keys.ts`
+
+- ✅ **Gitignore improvements:**
+  - Added `.codegraph/` to `.gitignore` (generated database files should not be tracked)
+
+- ✅ **Branch cleanup:**
+  - Deleted merged branch: `brocula/browser-console-lighthouse-20260625-0158`
+
+- ✅ **Quality gates:**
+  - Lint: PASSED (0 errors, 0 warnings)
+  - TypeScript: PASSED (0 errors)
+  - Tests: PASSED (1592 passed, 16 skipped, 0 failed)
+
+**Impact:** Repository cleaned of 347 lines of dead code. Build and lint passing.
+
 ### RepoKeeper Maintenance - 2026-06-24 (Session 8)
 
 **Repository Cleanup:**
