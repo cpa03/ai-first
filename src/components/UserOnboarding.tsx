@@ -290,6 +290,59 @@ export default function UserOnboarding() {
     );
   }, []);
 
+  /**
+   * Micro-UX: Keyboard navigation for onboarding tour
+   * ArrowRight/Enter = Next step, ArrowLeft/Backspace = Previous step, Escape = Skip
+   * Improves accessibility for keyboard-only users
+   */
+  useEffect(() => {
+    if (!isVisible || showCelebration) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't handle if user is typing in an input
+      const target = e.target as HTMLElement;
+      if (
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.isContentEditable
+      ) {
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowRight':
+        case 'Enter':
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleNext();
+          break;
+        case 'ArrowLeft':
+        case 'Backspace':
+          e.preventDefault();
+          if (currentStepIndex > 0) {
+            triggerHapticFeedback();
+            handlePrev();
+          }
+          break;
+        case 'Escape':
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleSkip();
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [
+    isVisible,
+    showCelebration,
+    currentStepIndex,
+    handleNext,
+    handlePrev,
+    handleSkip,
+  ]);
+
   if (!isVisible) return null;
 
   if (showCelebration) {
@@ -429,10 +482,26 @@ export default function UserOnboarding() {
 
         {/* Navigation buttons */}
         <div className="flex items-center justify-between mt-5">
-          {/* Step indicator */}
-          <span className="text-xs text-gray-500">
-            Step {currentStepIndex + 1} of {TOUR_STEPS.length}
-          </span>
+          {/* Step indicator with keyboard hint */}
+          <div className="flex flex-col gap-1">
+            <span className="text-xs text-gray-500">
+              Step {currentStepIndex + 1} of {TOUR_STEPS.length}
+            </span>
+            <span className="text-[10px] text-gray-400 hidden sm:inline">
+              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px]">
+                ←
+              </kbd>{' '}
+              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px]">
+                →
+              </kbd>{' '}
+              navigate
+              <span className="mx-1">·</span>
+              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px]">
+                Esc
+              </kbd>{' '}
+              skip
+            </span>
+          </div>
 
           {/* Action buttons */}
           <div className="flex gap-2">
