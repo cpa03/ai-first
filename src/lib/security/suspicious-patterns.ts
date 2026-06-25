@@ -344,6 +344,17 @@ const SUSPICIOUS_PATTERNS: Record<
       severity: 2,
       description: 'Internal service access attempt',
     },
+    {
+      pattern:
+        /(?:https?|gopher|ftp|dict|file):\/\/(?:0x[0-9a-f]+|[0-9]{8,12}|0[0-7]{10,12})\b/i,
+      severity: 3,
+      description: 'Non-standard IP encoding SSRF (hex, decimal, or octal)',
+    },
+    {
+      pattern: /\[?::ffff:(?:127\.0\.0\.1|169\.254\.\d+\.\d+)\]?/i,
+      severity: 3,
+      description: 'IPv6-mapped IPv4 SSRF',
+    },
     // Medium severity
     {
       pattern: /file:\/\//i,
