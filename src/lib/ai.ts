@@ -810,7 +810,9 @@ class AIService {
           }
         );
         providers.push('anthropic');
-      } catch {}
+      } catch (error) {
+        logger.error('Anthropic health check failed:', error);
+      }
     }
 
     const circuitBreakers = circuitBreakerManager.getAllStatuses();

@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### RepoKeeper Maintenance - 2026-06-25 (Session 11)
+
+**Code Quality Fixes:**
+
+- ✅ **Fixed empty catch block:**
+  - `src/lib/ai.ts` - Added proper error logging to Anthropic health check (line 813)
+  - Previously silently swallowed errors, now logs like OpenAI health check
+
+- ✅ **Quality gates:**
+  - Lint: PASSED (0 errors, 0 warnings)
+  - TypeScript: PASSED (0 errors)
+  - Build: PASSED
+
+**Impact:** Improved error observability for Anthropic health checks.
+
 ### RepoKeeper Maintenance - 2026-06-25 (Session 10)
 
 **Repository Cleanup:**
