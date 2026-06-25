@@ -254,7 +254,7 @@ const ShortcutRow = memo(function ShortcutRow({
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
             {index < displayKeys.length - 1 && (
-              <span className="text-gray-400 text-xs">+</span>
+              <span className="text-gray-500 text-xs">+</span>
             )}
           </React.Fragment>
         ))}
@@ -500,7 +500,7 @@ function KeyboardShortcutsHelpComponent({
         <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
           <div className="relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -518,7 +518,7 @@ function KeyboardShortcutsHelpComponent({
               placeholder={KEYBOARD_SHORTCUTS_MESSAGES.SEARCH_PLACEHOLDER}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-400"
+              className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-500"
               aria-label="Search keyboard shortcuts"
             />
             {searchQuery && (
@@ -528,7 +528,7 @@ function KeyboardShortcutsHelpComponent({
                   setSearchQuery('');
                   searchInputRef.current?.focus();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-500 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
                 aria-label="Clear search"
               >
                 <svg
@@ -639,7 +639,7 @@ function KeyboardShortcutsHelpComponent({
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
                 <svg
-                  className="w-8 h-8 text-gray-400"
+                  className="w-8 h-8 text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

@@ -252,7 +252,7 @@ function AutoSaveIndicatorComponent({
                     <span className="font-medium">
                       {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
                     </span>
-                    <span className="text-[10px] text-gray-400 opacity-80">
+                    <span className="text-[10px] text-gray-500 opacity-80">
                       {formatExactTimestamp(lastSaved)}
                     </span>
                   </div>
@@ -260,7 +260,7 @@ function AutoSaveIndicatorComponent({
                 position="top"
               >
                 <span
-                  className={`text-gray-400 animate-in fade-in slide-in-from-left-1 duration-300 cursor-help border-b border-dotted border-gray-400 hover:text-gray-600 transition-colors duration-200 ${ANIMATION_DELAYS.TAILWIND[100]}`}
+                  className={`text-gray-500 animate-in fade-in slide-in-from-left-1 duration-300 cursor-help border-b border-dotted border-gray-400 hover:text-gray-600 transition-colors duration-200 ${ANIMATION_DELAYS.TAILWIND[100]}`}
                 >
                   • {formatLastSaved(lastSaved)}
                 </span>
