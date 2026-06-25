@@ -48,12 +48,12 @@ cpu_ms = 50
 [placement]
 mode = "smart"
 
+# OpenNext outputs the worker to .open-next/worker.js
+main = ".open-next/worker.js"
+
 [build]
 command = "npm run build"
 watch_dir = ".next"
-
-# OpenNext outputs the worker to .open-next/worker.js
-main = ".open-next/worker.js"
 
 # Assets binding for static files served by Cloudflare
 [assets]
