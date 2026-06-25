@@ -57,6 +57,15 @@ export const API_BASE_URL = getEnvString(
 );
 
 /**
+ * WebSocket Base URL (for WebSocket testing)
+ * Can be overridden via TEST_WS_BASE_URL environment variable
+ */
+export const WS_BASE_URL = getEnvString(
+  'TEST_WS_BASE_URL',
+  BASE_URL.replace('http', 'ws')
+);
+
+/**
  * Test Configuration Constants
  */
 export const TEST_CONFIG = {
@@ -65,6 +74,9 @@ export const TEST_CONFIG = {
 
   /** Base URL for API routes */
   API_BASE_URL,
+
+  /** Base URL for WebSocket connections */
+  WS_BASE_URL,
 
   /** Default timeout for async operations in tests (ms) */
   DEFAULT_TIMEOUT: getEnvNumber('TEST_DEFAULT_TIMEOUT', 5000, 100, 60000),
