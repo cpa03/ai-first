@@ -13,6 +13,7 @@ export const setProcessEnv = (
  */
 
 import { MOCK_SECRETS } from './test-secrets';
+import { BASE_URL } from '../config/test-config';
 
 // Centralized mock environment variables using MOCK_SECRETS
 // This ensures all test files use the same safe, mock credentials
@@ -440,7 +441,7 @@ export const createMockRequest = (
     json = async () => ({}),
     text = async () => '',
     body = null,
-    url = 'http://localhost:3000/api/test',
+    url = `${BASE_URL}/api/test`,
   } = options;
 
   const headersObj = new Headers(headers);
