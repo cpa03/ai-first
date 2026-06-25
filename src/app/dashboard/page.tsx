@@ -15,6 +15,7 @@ import {
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
   LOCAL_STORAGE_KEYS,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -105,6 +106,19 @@ export default function DashboardPage() {
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
+
+  // Set CSS custom properties for dashboard animation from config
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty(
+      '--dashboard-stagger-delay',
+      `${ANIMATION_CONFIG.DASHBOARD_STAGGER_DELAY}ms`
+    );
+    root.style.setProperty(
+      '--dashboard-row-duration',
+      `${ANIMATION_CONFIG.DASHBOARD_ROW_DURATION}ms`
+    );
+  }, []);
 
   // Growth: Generate referral code from user ID (first 8 chars)
   const referralCode = userId ? userId.slice(0, 8).toLowerCase() : '';
