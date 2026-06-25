@@ -42,12 +42,6 @@ const ReferralLink = dynamic(() => import('@/components/ReferralLink'), {
   ssr: false,
 });
 
-// Lazy load KeyboardShortcutsHelp for code splitting
-const KeyboardShortcutsHelp = dynamic(
-  () => import('@/components/KeyboardShortcutsHelp'),
-  { ssr: false }
-);
-
 // Lazy load Tooltip for code splitting - used for showing absolute date on hover
 const Tooltip = dynamic(() => import('@/components/Tooltip'), {
   ssr: false,
@@ -57,6 +51,7 @@ import Alert from '@/components/Alert';
 import Link from 'next/link';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
+import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import {
   triggerHapticFeedback,
   getRelativeTime,
@@ -107,9 +102,9 @@ export default function DashboardPage() {
     isOpen: false,
     idea: null,
   });
-  const [showKeyboardHelp, setShowKeyboardHelp] = useState(false);
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
+  const { openHelp } = useKeyboardShortcuts();
 
   // Growth: Generate referral code from user ID (first 8 chars)
   const referralCode = userId ? userId.slice(0, 8).toLowerCase() : '';
@@ -312,12 +307,6 @@ export default function DashboardPage() {
         filterSelectRef.current?.focus();
       }
 
-      if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
-        e.preventDefault();
-        triggerHapticFeedback();
-        setShowKeyboardHelp(true);
-      }
-
       if (
         (e.key === 'n' || e.key === 'N') &&
         !e.ctrlKey &&
@@ -504,7 +493,7 @@ export default function DashboardPage() {
         )}
         <button
           type="button"
-          onClick={() => setShowKeyboardHelp(true)}
+          onClick={() => openHelp()}
           className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           aria-label="Show keyboard shortcuts (press ?)"
         >
@@ -692,12 +681,6 @@ export default function DashboardPage() {
             </table>
           </div>
         </div>
-      )}
-      {showKeyboardHelp && (
-        <KeyboardShortcutsHelp
-          isOpen={showKeyboardHelp}
-          onClose={() => setShowKeyboardHelp(false)}
-        />
       )}
       {/* Delete Confirmation Modal */}
       {deleteModal.isOpen && deleteModal.idea && (
