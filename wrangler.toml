@@ -48,6 +48,10 @@ cpu_ms = 50
 [placement]
 mode = "smart"
 
+[build]
+command = "npm run build"
+watch_dir = ".next"
+
 # OpenNext outputs the worker to .open-next/worker.js
 main = ".open-next/worker.js"
 
@@ -78,7 +82,7 @@ head_sampling_rate = 0.1
 # Environment variables (set via Cloudflare dashboard or GitHub Actions secrets)
 # DO NOT hardcode sensitive values here
 [env.production.vars]
-# NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
+NEXT_PUBLIC_APP_URL = "https://ideaflow.ai"
 
 # Route configuration for custom domain (optional)
 # Uncomment and configure when ready to deploy to custom domain
@@ -99,7 +103,7 @@ enabled = true
 head_sampling_rate = 1.0  # 100% sampling in staging
 
 [env.staging.vars]
-# NEXT_PUBLIC_APP_URL = "https://staging.ideaflow.ai"
+NEXT_PUBLIC_APP_URL = "https://staging.ideaflow.ai"
 
 # ============================================================
 # Preview Environment (for PR deployments)
@@ -113,7 +117,7 @@ enabled = true
 head_sampling_rate = 0.5  # 50% sampling for debugging with cost control
 
 [env.preview.vars]
-# NEXT_PUBLIC_APP_URL = "https://preview.ai-first.pages.dev"
+NEXT_PUBLIC_APP_URL = "https://preview.ai-first.pages.dev"
 
 # ============================================================
 # Cloudflare AI Binding (Optional)
