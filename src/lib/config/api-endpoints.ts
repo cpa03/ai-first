@@ -19,6 +19,12 @@ import { EnvLoader } from './environment';
 const BASE_PATH = EnvLoader.string('API_BASE_PATH', '/api');
 
 /**
+ * Application base URL for constructing full URLs
+ * Env: NEXT_PUBLIC_APP_URL (default: '')
+ */
+const APP_BASE_URL = EnvLoader.string('NEXT_PUBLIC_APP_URL', '');
+
+/**
  * API Endpoint paths
  * All paths are relative to the API base path
  */
@@ -62,10 +68,10 @@ export const API_ENDPOINTS = {
 
   // Auth callbacks (full URLs)
   AUTH_CALLBACKS: {
-    NOTION: `${process.env.NEXT_PUBLIC_APP_URL || ''}${BASE_PATH}/auth/notion/callback`,
-    TRELLO: `${process.env.NEXT_PUBLIC_APP_URL || ''}${BASE_PATH}/auth/trello/callback`,
-    GOOGLE: `${process.env.NEXT_PUBLIC_APP_URL || ''}${BASE_PATH}/auth/google/callback`,
-    GITHUB: `${process.env.NEXT_PUBLIC_APP_URL || ''}${BASE_PATH}/auth/github/callback`,
+    NOTION: `${APP_BASE_URL}${BASE_PATH}/auth/notion/callback`,
+    TRELLO: `${APP_BASE_URL}${BASE_PATH}/auth/trello/callback`,
+    GOOGLE: `${APP_BASE_URL}${BASE_PATH}/auth/google/callback`,
+    GITHUB: `${APP_BASE_URL}${BASE_PATH}/auth/github/callback`,
   },
 } as const;
 
