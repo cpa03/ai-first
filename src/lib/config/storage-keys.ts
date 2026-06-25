@@ -34,9 +34,6 @@ export const LOCAL_STORAGE_KEYS = {
   /** Onboarding completion status */
   ONBOARDING_COMPLETED: `${STORAGE_PREFIX}onboarding_completed`,
 
-  /** A/B test variant assignments */
-  AB_TEST_ASSIGNMENTS: `${STORAGE_PREFIX}ab_assignments`,
-
   /** Cache entries */
   CACHE_PREFIX: `${STORAGE_PREFIX}cache_`,
 } as const;
