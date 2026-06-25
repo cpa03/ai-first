@@ -41,6 +41,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
   },
   { keys: ['⌘', 'Enter'], description: 'Submit form', context: 'form' },
   {
+    keys: ['⌘', '←'],
+    description: 'Previous question in clarification flow',
+    context: 'form',
+  },
+  {
     keys: ['⌘', 'N'],
     description: 'New idea',
     context: 'global',

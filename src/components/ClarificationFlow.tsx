@@ -404,20 +404,30 @@ function ClarificationFlow({
             </Button>
 
             <div
-              className="hidden sm:flex items-center gap-2 text-xs text-gray-600 mr-4"
+              className="hidden sm:flex items-center gap-3 text-xs text-gray-600 mr-4"
               aria-hidden="true"
             >
-              <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
-                Enter
-              </kbd>
-              <span>
-                to{' '}
-                {currentStep === questions.length - 1
-                  ? MESSAGES.NAVIGATION.COMPLETE.toLowerCase()
-                  : MESSAGES.NAVIGATION.NEXT.replace(' →', '').toLowerCase()}
+              {currentStep > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                    {isMac ? '⌘' : 'Ctrl'}
+                  </kbd>
+                  <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                    ←
+                  </kbd>
+                  <span>prev</span>
+                </span>
+              )}
+              <span className="flex items-center gap-1.5">
+                <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                  Enter
+                </kbd>
+                <span>
+                  {currentStep === questions.length - 1 ? 'submit' : 'next'}
+                </span>
               </span>
             </div>
 

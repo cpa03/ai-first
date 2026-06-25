@@ -188,9 +188,15 @@ export function useClarificationSession(
       ) {
         e.preventDefault();
         handleNext();
+        return;
+      }
+
+      if ((e.metaKey || e.ctrlKey) && e.key === 'ArrowLeft') {
+        e.preventDefault();
+        handlePrevious();
       }
     },
-    [currentAnswer, handleNext]
+    [currentAnswer, handleNext, handlePrevious]
   );
 
   useEffect(() => {
