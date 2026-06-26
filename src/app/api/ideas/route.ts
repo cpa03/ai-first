@@ -1,5 +1,5 @@
 import { dbService } from '@/lib/db';
-import { validateIdea } from '@/lib/validation';
+import { validateIdea, sanitizeHtml } from '@/lib/validation';
 import { ValidationError } from '@/lib/errors';
 import {
   withApiHandler,
@@ -141,18 +141,17 @@ async function handlePost(context: ApiContext) {
   }
 
   const validatedIdea = idea.trim();
+  // Sanitization must occur BEFORE truncation to ensure tag-matching regexes work correctly
+  const sanitizedIdea = sanitizeHtml(validatedIdea);
 
   const newIdea = {
     user_id: userId,
     title:
-      validatedIdea.substring(
-        0,
-        APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
-      ) +
-      (validatedIdea.length > APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
+      sanitizedIdea.substring(0, APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH) +
+      (sanitizedIdea.length > APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
         ? '...'
         : ''),
-    raw_text: validatedIdea,
+    raw_text: sanitizedIdea,
     status: IDEA_STATUS_CONFIG.TYPES.DRAFT,
     deleted_at: null,
   };
