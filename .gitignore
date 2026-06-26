@@ -146,3 +146,4 @@ docs/archive/*.tar.gz
 *MAINTENANCE_REPORT*.md
 *AUDIT_REPORT*.md
 *HEALTH_CHECK*.md
+.env.local
