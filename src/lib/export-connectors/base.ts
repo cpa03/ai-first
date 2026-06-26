@@ -1,4 +1,3 @@
-import { TIMEOUT_CONFIG } from '../config/constants';
 import {
   resilienceManager,
   defaultResilienceConfigs,
@@ -182,25 +181,5 @@ export abstract class ExportConnector {
     }
 
     return result;
-  }
-
-  protected async executeWithTimeout<T>(
-    operation: () => Promise<T>,
-    timeoutMs: number = TIMEOUT_CONFIG.DEFAULT
-  ): Promise<T> {
-    logger.warn(
-      `[DEPRECATED] executeWithTimeout is deprecated. Use executeWithResilience instead.`
-    );
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-    try {
-      const result = await operation();
-      clearTimeout(timeoutId);
-      return result;
-    } catch (error) {
-      clearTimeout(timeoutId);
-      throw error;
-    }
   }
 }
