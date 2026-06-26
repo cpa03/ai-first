@@ -136,6 +136,16 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     context: 'global',
     action: 'copyBlueprint',
   },
+  {
+    keys: ['['],
+    description: 'Expand all deliverables',
+    context: 'navigation',
+  },
+  {
+    keys: [']'],
+    description: 'Collapse all deliverables',
+    context: 'navigation',
+  },
 ];
 
 const contextLabels: Record<KeyboardShortcut['context'], string> =

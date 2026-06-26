@@ -339,6 +339,34 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
     setExpandedDeliverables(new Set());
   }, []);
 
+  // Micro-UX: Global keyboard shortcuts for Task Management
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable;
+
+      if (isInputFocused) return;
+
+      // [ for Expand All, ] for Collapse All
+      if (e.key === '[' && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        expandAll();
+      } else if (e.key === ']' && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        collapseAll();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [expandAll, collapseAll]);
+
   // PERFORMANCE: Memoize return value to prevent unnecessary re-renders of consumers
   return useMemo(
     () => ({
