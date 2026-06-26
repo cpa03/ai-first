@@ -7,6 +7,7 @@ import {
 } from '@/lib/validation';
 import { createLogger } from '@/lib/logger';
 import { AGENT_CONFIG } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 
 const logger = createLogger('QuestionGenerator');
 const { QUESTION_GENERATOR } = AGENT_CONFIG;
@@ -35,7 +36,7 @@ export class QuestionGenerator {
 
   async generate(ideaText: string): Promise<ClarifierQuestion[]> {
     if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
+      throw new Error(API_ERROR_MESSAGES.AGENT.AI_CONFIG_NOT_LOADED);
     }
 
     const prompt = await promptService.getUserPrompt(
@@ -96,29 +97,9 @@ export class QuestionGenerator {
   }
 
   private getFallbackQuestions(): ClarifierQuestion[] {
-    return [
-      {
-        id: 'q_1',
-        question:
-          'What is main problem you are trying to solve with this idea?',
-        type: 'open',
-        options: [],
-        required: true,
-      },
-      {
-        id: 'q_2',
-        question: 'Who is target audience for this solution?',
-        type: 'open',
-        options: [],
-        required: true,
-      },
-      {
-        id: 'q_3',
-        question: 'What are key features or functionality you envision?',
-        type: 'open',
-        options: [],
-        required: true,
-      },
-    ];
+    return AGENT_CONFIG.QUESTION_GENERATOR.FALLBACK_QUESTIONS.map((q) => ({
+      ...q,
+      options: q.options || [],
+    }));
   }
 }

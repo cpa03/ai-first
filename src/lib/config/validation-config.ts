@@ -98,6 +98,30 @@ export const AGENT_CONFIG = {
     MAX_QUESTIONS: EnvLoader.number('AGENT_QUESTION_MAX', 5, 1, 20),
     DEFAULT_QUESTION_TYPE: 'open' as const,
     REQUIRED_DEFAULT: true,
+    FALLBACK_QUESTIONS: [
+      {
+        id: 'q_1',
+        question:
+          'What is main problem you are trying to solve with this idea?',
+        type: 'open' as const,
+        options: [] as string[],
+        required: true,
+      },
+      {
+        id: 'q_2',
+        question: 'Who is target audience for this solution?',
+        type: 'open' as const,
+        options: [] as string[],
+        required: true,
+      },
+      {
+        id: 'q_3',
+        question: 'What are key features or functionality you envision?',
+        type: 'open' as const,
+        options: [] as string[],
+        required: true,
+      },
+    ],
   } as const,
 
   CLARIFIER_CONFIDENCE: {

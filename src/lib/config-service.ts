@@ -11,6 +11,7 @@ import {
   validateModelMaxTokens,
   validateModelName,
 } from './validation';
+import { API_ERROR_MESSAGES } from './config/error-messages';
 
 interface AgentConfig {
   name: string;
@@ -49,7 +50,9 @@ class ConfigurationService {
     // Sanitize agentName to prevent path traversal
     const sanitizedName = agentName.replace(/[^a-zA-Z0-9_-]/g, '');
     if (!sanitizedName) {
-      throw new Error(`Invalid agent name: ${agentName}`);
+      throw new Error(
+        `${API_ERROR_MESSAGES.CONFIG.INVALID_AGENT_NAME}: ${agentName}`
+      );
     }
     return path.join(process.cwd(), this.configDir, `${sanitizedName}.yml`);
   }
@@ -62,13 +65,17 @@ class ConfigurationService {
       const config = yaml.load(configContent) as AgentConfig;
 
       if (!config || !config.name || !config.model) {
-        throw new Error(`Invalid configuration structure for ${agentName}`);
+        throw new Error(
+          `${API_ERROR_MESSAGES.CONFIG.INVALID_CONFIG_STRUCTURE} for ${agentName}`
+        );
       }
 
       return config;
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(`Failed to load ${agentName} config: ${message}`);
+      throw new Error(
+        `${API_ERROR_MESSAGES.CONFIG.LOAD_FAILED} ${agentName}: ${message}`
+      );
     }
   }
 

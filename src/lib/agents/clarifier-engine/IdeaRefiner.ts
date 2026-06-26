@@ -2,6 +2,7 @@ import { aiService, AIModelConfig } from '@/lib/ai';
 import { promptService } from '@/lib/prompt-service';
 import { createLogger } from '@/lib/logger';
 import type { ClarifierQuestion } from './QuestionGenerator';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 
 const logger = createLogger('IdeaRefiner');
 
@@ -33,7 +34,7 @@ export class IdeaRefiner {
 
   async refine(session: ClarificationSession): Promise<string> {
     if (!this.aiConfig) {
-      throw new Error('AI configuration not loaded');
+      throw new Error(API_ERROR_MESSAGES.AGENT.AI_CONFIG_NOT_LOADED);
     }
 
     const answersText = this.formatAnswers(session);

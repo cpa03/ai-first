@@ -1,5 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Deliverable, Task } from '../db/service';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 
 export class MarkdownExporter extends ExportConnector {
   readonly type = 'markdown';
@@ -30,11 +31,11 @@ export class MarkdownExporter extends ExportConnector {
   }
 
   async getAuthUrl(): Promise<string> {
-    throw new Error('Markdown export does not require authentication');
+    throw new Error(API_ERROR_MESSAGES.PAGE.MARKDOWN_EXPORT_NO_AUTH);
   }
 
   async handleAuthCallback(_code: string): Promise<void> {
-    throw new Error('Markdown export does not require authentication');
+    throw new Error(API_ERROR_MESSAGES.PAGE.MARKDOWN_EXPORT_NO_AUTH);
   }
 
   private generateMarkdown(

@@ -5,6 +5,7 @@ import { AUTH_CONFIG } from '@/lib/config/constants';
 import { STATUS_CODES } from '@/lib/config/http';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 
 const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
@@ -133,7 +134,7 @@ export async function verifyAuth(
   try {
     const adminClient = getSupabaseAdmin();
     if (!adminClient) {
-      throw new Error('Supabase admin client not initialized');
+      throw new Error(API_ERROR_MESSAGES.DB.ADMIN_NOT_INITIALIZED);
     }
 
     const {

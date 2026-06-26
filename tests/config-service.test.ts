@@ -78,7 +78,7 @@ describe('ConfigurationService', () => {
     it('should throw error for non-existent configuration', async () => {
       await expect(
         service.loadAgentConfig('nonexistent-agent')
-      ).rejects.toThrow('Failed to load nonexistent-agent config');
+      ).rejects.toThrow('Failed to load configuration nonexistent-agent');
     });
 
     it('should include agent name in error message', async () => {
@@ -97,7 +97,7 @@ describe('ConfigurationService', () => {
 
       try {
         await expect(service.loadAgentConfig('invalid')).rejects.toThrow(
-          /Failed to load invalid config/
+          /Failed to load configuration invalid/
         );
       } finally {
         if (fs.existsSync(invalidConfigPath)) {
@@ -232,7 +232,7 @@ describe('ConfigurationService', () => {
 
     it('should throw error when reloading non-existent config', async () => {
       await expect(service.reloadAgentConfig('nonexistent')).rejects.toThrow(
-        'Failed to load nonexistent config'
+        'Failed to load configuration nonexistent'
       );
     });
 

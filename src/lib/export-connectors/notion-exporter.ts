@@ -2,6 +2,7 @@ import { ExportConnector, ExportResult, ExportData } from './base';
 import { TIMEOUT_CONFIG, NOTION_CONFIG } from '../config';
 import { ENV_ACCESSORS } from '../config/env-keys';
 import { createLogger } from '../logger';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import type { Client as NotionClient } from '@notionhq/client';
 
 const logger = createLogger('NotionExporter');
@@ -34,7 +35,7 @@ export class NotionExporter extends ExportConnector {
       }
 
       if (!data || !data.idea) {
-        throw new Error('Invalid export data: idea object is required');
+        throw new Error(API_ERROR_MESSAGES.PAGE.INVALID_EXPORT_DATA);
       }
 
       const { idea, deliverables = [], tasks = [] } = data;

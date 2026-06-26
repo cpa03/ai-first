@@ -1,5 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { APP_CONFIG } from '../config';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 
 export class JSONExporter extends ExportConnector {
   readonly type = 'json';
@@ -29,11 +30,11 @@ export class JSONExporter extends ExportConnector {
   }
 
   async getAuthUrl(): Promise<string> {
-    throw new Error('JSON export does not require authentication');
+    throw new Error(API_ERROR_MESSAGES.PAGE.JSON_EXPORT_NO_AUTH);
   }
 
   async handleAuthCallback(_code: string): Promise<void> {
-    throw new Error('JSON export does not require authentication');
+    throw new Error(API_ERROR_MESSAGES.PAGE.JSON_EXPORT_NO_AUTH);
   }
 
   private generateJSON(

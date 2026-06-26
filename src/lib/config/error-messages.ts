@@ -105,6 +105,26 @@ export const API_ERROR_MESSAGES = {
   },
 
   /**
+   * Configuration service error messages
+   * Centralizes error messages for config loading and validation
+   */
+  CONFIG: {
+    INVALID_AGENT_NAME: 'Invalid agent name',
+    INVALID_CONFIG_STRUCTURE: 'Invalid configuration structure',
+    LOAD_FAILED: 'Failed to load configuration',
+  },
+
+  /**
+   * API client error messages
+   * Centralizes error messages for API client operations
+   */
+  API_CLIENT: {
+    INVALID_RESPONSE_SUCCESS: 'Invalid API response: success must be true',
+    INVALID_RESPONSE_DATA: 'Invalid API response: data is undefined',
+    REQUEST_TIMEOUT: 'Request timed out',
+  },
+
+  /**
    * Page and component error messages
    * Centralizes error messages used in UI pages and hooks
    */
@@ -130,6 +150,8 @@ export const API_ERROR_MESSAGES = {
     BREAKDOWN_ENGINE_NOT_INITIALIZED:
       'BreakdownEngine not initialized. Call initialize() first.',
     REQUIRED_QUESTIONS_UNANSWERED: 'required questions still unanswered',
+    IDEA_ANALYSIS_FAILED: 'Idea analysis failed',
+    QUESTION_GENERATION_FAILED: 'Failed to generate questions',
   },
 
   /**
