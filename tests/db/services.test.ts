@@ -1,6 +1,8 @@
 import { TaskService } from '@/lib/db/tasks';
 import { DeliverableService } from '@/lib/db/deliverables';
 import { IdeaService } from '@/lib/db/ideas';
+import { VectorService } from '@/lib/db/vectors';
+import { ClarificationService } from '@/lib/db/clarification';
 import type { ClientProvider } from '@/lib/db/ideas';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -20,7 +22,7 @@ interface MockSupabaseChain {
   update: jest.Mock;
   delete: jest.Mock;
   range: jest.Mock;
-  _result: { data: unknown; error: Error | null };
+  _result: { data: unknown; count: number | null; error: Error | null };
   then: (
     resolve: (value: unknown) => unknown,
     reject?: (reason: unknown) => unknown
@@ -32,14 +34,14 @@ const createMockSupabaseClient = (): MockSupabaseChain => {
     from: jest.fn(),
     insert: jest.fn(),
     select: jest.fn(),
-    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    single: jest.fn().mockResolvedValue({ data: null, count: null, error: null }),
     eq: jest.fn(),
     is: jest.fn(),
     order: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
     range: jest.fn(),
-    _result: { data: null, error: null },
+    _result: { data: null, count: null, error: null },
     then: function (
       resolve: (value: unknown) => unknown,
       reject?: (reason: unknown) => unknown
@@ -733,10 +735,10 @@ describe('Database Services', () => {
     });
 
     describe('getUserIdeasPaginated', () => {
-      it('should return paginated ideas', async () => {
+      it('should return paginated ideas with total count', async () => {
         const ideas = [{ id: 'idea-1', user_id: 'user-1', title: 'Idea 1' }];
 
-        mockClient._result = { data: ideas, error: null };
+        mockClient._result = { data: ideas, count: 1, error: null };
 
         const result = await ideaService.getUserIdeasPaginated('user-1', {
           page: 1,
@@ -744,12 +746,29 @@ describe('Database Services', () => {
         });
 
         expect(result.data).toEqual(ideas);
+        expect(result.total).toBe(1);
         expect(result.page).toBe(1);
         expect(result.pageSize).toBe(10);
+        expect(result.hasMore).toBe(false);
+      });
+
+      it('should correctly identify when more pages are available', async () => {
+        const ideas = [{ id: 'idea-1', user_id: 'user-1', title: 'Idea 1' }];
+
+        mockClient._result = { data: ideas, count: 15, error: null };
+
+        const result = await ideaService.getUserIdeasPaginated('user-1', {
+          page: 1,
+          pageSize: 10,
+        });
+
+        expect(result.data).toEqual(ideas);
+        expect(result.total).toBe(15);
+        expect(result.hasMore).toBe(true);
       });
 
       it('should use default pagination options', async () => {
-        mockClient._result = { data: [], error: null };
+        mockClient._result = { data: [], count: 0, error: null };
 
         const result = await ideaService.getUserIdeasPaginated('user-1');
 
@@ -777,6 +796,68 @@ describe('Database Services', () => {
         const result = await ideaService.getIdeaSession('nonexistent');
 
         expect(result).toBeNull();
+      });
+    });
+  });
+
+  describe('VectorService', () => {
+    let vectorService: VectorService;
+    let mockProvider: ClientProvider;
+    let mockClient: ReturnType<typeof createMockSupabaseClient>;
+
+    beforeEach(() => {
+      mockProvider = createMockClientProvider();
+      mockClient = createMockSupabaseClient();
+      (mockProvider.getClient as jest.Mock).mockReturnValue(mockClient);
+      vectorService = new VectorService(mockProvider);
+    });
+
+    describe('getVectorsPaginated', () => {
+      it('should return paginated vectors with total count', async () => {
+        const vectors = [
+          { id: 'v-1', idea_id: 'idea-1', reference_type: 'context' },
+        ];
+        mockClient._result = { data: vectors, count: 1, error: null };
+
+        const result = await vectorService.getVectorsPaginated('idea-1', 'context', {
+          page: 1,
+          pageSize: 10,
+        });
+
+        expect(result.data).toEqual(vectors);
+        expect(result.total).toBe(1);
+        expect(result.hasMore).toBe(false);
+      });
+    });
+  });
+
+  describe('ClarificationService', () => {
+    let clarificationService: ClarificationService;
+    let mockProvider: ClientProvider;
+    let mockClient: ReturnType<typeof createMockSupabaseClient>;
+
+    beforeEach(() => {
+      mockProvider = createMockClientProvider();
+      mockClient = createMockSupabaseClient();
+      (mockProvider.getClient as jest.Mock).mockReturnValue(mockClient);
+      clarificationService = new ClarificationService(mockProvider);
+    });
+
+    describe('getAgentLogsPaginated', () => {
+      it('should return paginated agent logs with total count', async () => {
+        const logs = [
+          { id: 'log-1', agent: 'test-agent', action: 'test-action' },
+        ];
+        mockClient._result = { data: logs, count: 1, error: null };
+
+        const result = await clarificationService.getAgentLogsPaginated('test-agent', {
+          page: 1,
+          pageSize: 10,
+        });
+
+        expect(result.data).toEqual(logs);
+        expect(result.total).toBe(1);
+        expect(result.hasMore).toBe(false);
       });
     });
   });

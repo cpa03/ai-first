@@ -74,22 +74,12 @@ export class VectorService {
     );
     const offset = (page - 1) * pageSize;
 
-    let countQuery = client
-      .from(DB_TABLES.VECTORS)
-      .select('*', { count: 'exact', head: true })
-      .eq('idea_id', ideaId);
-
-    if (referenceType) {
-      countQuery = countQuery.eq('reference_type', referenceType);
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) throw countError;
-
+    // PERFORMANCE OPTIMIZATION: Combine count and data queries into a single request
+    // using Supabase's select('*', { count: 'exact' }). This reduces database
+    // round-trips from 2 to 1.
     let query = client
       .from(DB_TABLES.VECTORS)
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('idea_id', ideaId)
       .order('created_at', { ascending: false })
       .range(offset, offset + pageSize - 1);
@@ -98,7 +88,7 @@ export class VectorService {
       query = query.eq('reference_type', referenceType);
     }
 
-    const { data, error } = await query;
+    const { data, count, error } = await query;
 
     if (error) throw error;
 
