@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 import CopyButton from './CopyButton';
 import { createLogger } from '@/lib/logger';
 import { APP_CONFIG } from '@/lib/config/app';
-import { SVG_STROKE_WIDTHS } from '@/lib/config';
+import { SVG_STROKE_WIDTHS, REFERRAL_LINK_LABELS } from '@/lib/config';
 
 // Logger for growth tracking events
 const logger = createLogger('ReferralLink');
@@ -71,15 +71,15 @@ export default function ReferralLink({
     <div
       className={`bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-4 border border-primary-100 ${className}`}
       role="region"
-      aria-label="Referral link"
+      aria-label={REFERRAL_LINK_LABELS.REGION_ARIA_LABEL}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold text-primary-900 mb-1">
-            Share Your Referral Link
+            {REFERRAL_LINK_LABELS.TITLE}
           </h3>
           <p className="text-xs text-primary-700 mb-2">
-            Invite friends and earn rewards when they sign up!
+            {REFERRAL_LINK_LABELS.DESCRIPTION}
           </p>
           <div className="flex items-center gap-2">
             <code className="flex-1 min-w-0 px-3 py-2 bg-white border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono">
@@ -87,10 +87,10 @@ export default function ReferralLink({
             </code>
             <CopyButton
               textToCopy={referralUrl}
-              label="Copy"
-              successLabel="Copied!"
-              ariaLabel="Copy referral link"
-              toastMessage="Referral link copied!"
+              label={REFERRAL_LINK_LABELS.COPY_LABEL}
+              successLabel={REFERRAL_LINK_LABELS.COPY_SUCCESS_LABEL}
+              ariaLabel={REFERRAL_LINK_LABELS.COPY_ARIA_LABEL}
+              toastMessage={REFERRAL_LINK_LABELS.COPY_TOAST_MESSAGE}
               onCopy={handleCopy}
               variant="default"
             />

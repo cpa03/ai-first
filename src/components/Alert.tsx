@@ -13,6 +13,7 @@ import {
   ALERT_BASE_STYLES,
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
+  ALERT_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -235,7 +236,7 @@ const AlertComponent = function Alert({
           <button
             onClick={handleClose}
             className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor} ${styles.focusRing}`}
-            aria-label="Dismiss alert"
+            aria-label={ALERT_LABELS.DISMISS_ARIA_LABEL}
             type="button"
           >
             <svg

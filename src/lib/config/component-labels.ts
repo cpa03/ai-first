@@ -55,6 +55,8 @@ export const INPUT_VALIDATION_LABELS = {
   HIDE_PASSWORD_ARIA: 'Hide password',
   /** Tooltip for invalid input error icon */
   FIX_ERROR_TOOLTIP: 'Please fix this error',
+  /** Character limit progress aria-label */
+  CHAR_LIMIT_PROGRESS_ARIA: 'Character limit progress',
 } as const;
 
 /**
@@ -155,6 +157,88 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
 } as const;
 
 /**
+ * ProgressStepper Labels
+ * Eliminates hardcoded aria-labels in ProgressStepper component
+ */
+export const PROGRESS_STEPPER_LABELS = {
+  /** Navigation aria-label for the stepper */
+  NAV_ARIA_LABEL: 'Question progress',
+  /** Step completion status labels */
+  STEP_CURRENT: 'Current',
+  STEP_COMPLETED: 'Completed',
+  STEP_UPCOMING: 'Upcoming',
+  /** Progress bar aria-label template */
+  PROGRESS_ARIA_LABEL: (completed: number, total: number, percentage: number) =>
+    `Progress: ${completed} of ${total} steps completed, ${percentage}%`,
+  /** Checkmark SVG aria-label */
+  CHECKMARK_ARIA_LABEL: 'Completed',
+  /** Step counter label */
+  STEP_COUNTER: (current: number, total: number) =>
+    `Step ${current} of ${total}`,
+} as const;
+
+/**
+ * ReferralLink Labels
+ * Eliminates hardcoded aria-labels and strings in ReferralLink component
+ */
+export const REFERRAL_LINK_LABELS = {
+  /** Region aria-label */
+  REGION_ARIA_LABEL: 'Referral link',
+  /** Title text */
+  TITLE: 'Share Your Referral Link',
+  /** Description text */
+  DESCRIPTION: 'Invite friends and earn rewards when they sign up!',
+  /** Copy button label */
+  COPY_LABEL: 'Copy',
+  /** Copy button success label */
+  COPY_SUCCESS_LABEL: 'Copied!',
+  /** Copy button aria-label */
+  COPY_ARIA_LABEL: 'Copy referral link',
+  /** Copy button toast message */
+  COPY_TOAST_MESSAGE: 'Referral link copied!',
+} as const;
+
+/**
+ * Alert Labels
+ * Eliminates hardcoded aria-labels in Alert component
+ */
+export const ALERT_LABELS = {
+  /** Dismiss button aria-label */
+  DISMISS_ARIA_LABEL: 'Dismiss alert',
+} as const;
+
+/**
+ * KeyboardShortcutsProvider Labels
+ * Eliminates hardcoded aria-labels in KeyboardShortcutsProvider component
+ */
+export const KEYBOARD_SHORTCUTS_PROVIDER_LABELS = {
+  /** Help button aria-label */
+  HELP_BUTTON_ARIA_LABEL: 'Open keyboard shortcuts help',
+} as const;
+
+/**
+ * IdeaInput Labels
+ * Eliminates hardcoded aria-labels in IdeaInput component
+ */
+export const IDEA_INPUT_LABELS = {
+  /** Writing progress aria-label */
+  WRITING_PROGRESS_ARIA_LABEL: 'Writing progress',
+} as const;
+
+/**
+ * UserOnboarding Labels
+ * Eliminates hardcoded aria-labels and strings in UserOnboarding component
+ */
+export const USER_ONBOARDING_LABELS = {
+  /** Completion message aria-label */
+  COMPLETION_ARIA_LABEL: 'Onboarding complete',
+  /** Progress aria-label */
+  PROGRESS_ARIA_LABEL: 'Onboarding progress',
+  /** Skip button aria-label */
+  SKIP_ARIA_LABEL: 'Skip onboarding tour',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -168,6 +252,12 @@ export const COMPONENT_LABELS = {
   TOAST_CONTAINER: TOAST_CONTAINER_LABELS,
   AUTO_SAVE_INDICATOR: AUTO_SAVE_INDICATOR_LABELS,
   KEYBOARD_SHORTCUTS_HELP: KEYBOARD_SHORTCUTS_HELP_LABELS,
+  PROGRESS_STEPPER: PROGRESS_STEPPER_LABELS,
+  REFERRAL_LINK: REFERRAL_LINK_LABELS,
+  ALERT: ALERT_LABELS,
+  KEYBOARD_SHORTCUTS_PROVIDER: KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
+  IDEA_INPUT: IDEA_INPUT_LABELS,
+  USER_ONBOARDING: USER_ONBOARDING_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -178,4 +268,11 @@ export type ScrollToTopLabels = typeof SCROLL_TO_TOP_LABELS;
 export type ToastContainerLabels = typeof TOAST_CONTAINER_LABELS;
 export type AutoSaveIndicatorLabels = typeof AUTO_SAVE_INDICATOR_LABELS;
 export type KeyboardShortcutsHelpLabels = typeof KEYBOARD_SHORTCUTS_HELP_LABELS;
+export type ProgressStepperLabels = typeof PROGRESS_STEPPER_LABELS;
+export type ReferralLinkLabels = typeof REFERRAL_LINK_LABELS;
+export type AlertLabels = typeof ALERT_LABELS;
+export type KeyboardShortcutsProviderLabels =
+  typeof KEYBOARD_SHORTCUTS_PROVIDER_LABELS;
+export type IdeaInputLabels = typeof IDEA_INPUT_LABELS;
+export type UserOnboardingLabels = typeof USER_ONBOARDING_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

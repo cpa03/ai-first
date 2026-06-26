@@ -528,7 +528,7 @@ const InputWithValidationComponent = forwardRef<
                   aria-valuenow={charCount}
                   aria-valuemin={0}
                   aria-valuemax={maxLength}
-                  aria-label="Character limit progress"
+                  aria-label={INPUT_VALIDATION_LABELS.CHAR_LIMIT_PROGRESS_ARIA}
                 >
                   <div
                     className={`h-full transition-all duration-300 rounded-full ${
