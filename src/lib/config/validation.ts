@@ -57,8 +57,7 @@ export const SANITIZATION_CONFIG = {
 
   REGEX: {
     SCRIPT: /<script[^>]*>[\s\S]*?<\/script>/gi,
-    EVENT_HANDLER:
-      /(?:[\s/]+)on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
+    EVENT_HANDLER: /(?:\s|[/])*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
     JAVASCRIPT_PROTOCOL:
       /(?:j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t|v\s*b\s*s\s*c\s*r\s*i\s*p\s*t|l\s*i\s*v\s*e\s*s\s*c\s*r\s*i\s*p\s*t)\s*:/gi,
     DATA_URI:
