@@ -223,7 +223,7 @@ function TooltipComponent({
                         {key === '⌘' ? (isMac ? '⌘' : 'Ctrl') : key}
                       </kbd>
                       {i < shortcut.length - 1 && (
-                        <span className="text-[10px] text-gray-500 font-bold">
+                        <span className="text-[10px] text-gray-300 font-bold">
                           +
                         </span>
                       )}

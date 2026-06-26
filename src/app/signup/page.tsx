@@ -192,7 +192,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <ul className="text-xs text-gray-600 space-y-0.5" aria-live="polite">
           {feedback.slice(0, 2).map((tip, idx) => (
             <li key={idx} className="flex items-center gap-1">
-              <span className="text-gray-400">•</span>
+              <span className="text-gray-500">•</span>
               {tip}
             </li>
           ))}

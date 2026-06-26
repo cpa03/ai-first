@@ -183,7 +183,7 @@ function ScrollToTopComponent({
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
       <span className="font-medium">{SCROLL_TO_TOP_LABELS.TITLE}</span>
-      <span className="text-[10px] text-gray-400 opacity-80">
+      <span className="text-[10px] text-gray-300 opacity-80">
         <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
           {SCROLL_TO_TOP_LABELS.KEYS.UP}
         </kbd>{' '}

@@ -278,7 +278,7 @@ const ShortcutRow = memo(function ShortcutRow({
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
             {index < displayKeys.length - 1 && (
-              <span className="text-gray-500 text-xs">+</span>
+              <span className="text-gray-600 text-xs">+</span>
             )}
           </React.Fragment>
         ))}
@@ -524,7 +524,7 @@ function KeyboardShortcutsHelpComponent({
         <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
           <div className="relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -552,7 +552,7 @@ function KeyboardShortcutsHelpComponent({
                   setSearchQuery('');
                   searchInputRef.current?.focus();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-500 hover:text-gray-600 rounded-full hover:bg-gray-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-600 hover:text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
                 aria-label="Clear search"
               >
                 <svg
@@ -594,7 +594,7 @@ function KeyboardShortcutsHelpComponent({
                   {flatShortcuts.length === 1 ? 'result' : 'results'}
                 </span>
               )}
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-600">
                 {searchQuery
                   ? KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.HAS_QUERY
                   : KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.NO_QUERY}
@@ -638,7 +638,7 @@ function KeyboardShortcutsHelpComponent({
           <button
             ref={closeButtonRef}
             onClick={handleClose}
-            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+            className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             aria-label="Close command palette"
           >
             <svg
@@ -663,7 +663,7 @@ function KeyboardShortcutsHelpComponent({
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
                 <svg
-                  className="w-8 h-8 text-gray-500"
+                  className="w-8 h-8 text-gray-600"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -724,7 +724,7 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
+          <p className="text-xs text-gray-600 text-center flex items-center justify-center gap-2">
             <span
               role="img"
               aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.TIP_ARIA_LABEL}

@@ -487,16 +487,16 @@ export default function UserOnboarding() {
             <span className="text-xs text-gray-500">
               Step {currentStepIndex + 1} of {TOUR_STEPS.length}
             </span>
-            <span className="text-[10px] text-gray-400 hidden sm:inline">
-              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px]">
+            <span className="text-[10px] text-gray-500 hidden sm:inline">
+              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600">
                 ←
               </kbd>{' '}
-              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px]">
+              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600">
                 →
               </kbd>{' '}
               navigate
               <span className="mx-1">·</span>
-              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px]">
+              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600">
                 Esc
               </kbd>{' '}
               skip

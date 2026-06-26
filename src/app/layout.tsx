@@ -161,7 +161,7 @@ export default async function RootLayout({
                   />
                 </svg>
                 Skip to main content
-                <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-primary-700 rounded text-xs font-sans">
+                <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-white/30 rounded text-xs font-sans">
                   Tab
                 </kbd>
               </span>
@@ -222,7 +222,7 @@ export default async function RootLayout({
                             href={link.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-400 hover:text-gray-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-1"
+                            className="text-gray-500 hover:text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-1"
                             aria-label={link.ariaLabel}
                           >
                             {link.label === 'Twitter' ? (
