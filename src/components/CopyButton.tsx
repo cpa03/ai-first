@@ -173,6 +173,7 @@ const CopyButtonComponent = function CopyButton({
       <StatusAnnouncer message={successLabel} triggered={copied} />
       <Tooltip
         content={copied ? successLabel : ariaLabel}
+        shortcut={copied ? undefined : ['⌘', 'C']}
         disabled={false}
         position="top"
       >
