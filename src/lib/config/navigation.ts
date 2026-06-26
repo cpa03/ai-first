@@ -87,15 +87,11 @@ export const FOOTER_NAV_CONFIG = {
     {
       title: 'Resources',
       items: [
-        { href: '/docs', label: 'Documentation' },
-        { href: '/blog', label: 'Blog' },
-      ],
-    },
-    {
-      title: 'Company',
-      items: [
-        { href: '/about', label: 'About' },
-        { href: '/contact', label: 'Contact' },
+        {
+          href: 'https://github.com/cpa03/ai-first',
+          label: 'GitHub',
+          ariaLabel: 'View source code on GitHub',
+        },
       ],
     },
   ],
