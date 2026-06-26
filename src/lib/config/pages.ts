@@ -201,12 +201,16 @@ export const LOGIN_PAGE_CONTENT = {
     SIGN_UP: 'Sign up',
   },
   ERRORS: {
+    TITLE: 'Sign In Error',
     INVALID_EMAIL: 'Please enter a valid email address',
     PASSWORD_TOO_SHORT: 'Password must be at least 8 characters',
     INVALID_CREDENTIALS: 'Invalid email or password. Please try again.',
     SIGN_IN_FAILED: 'Failed to sign in. Please try again.',
     OAUTH_FAILED_PREFIX: 'Failed to sign in with',
     OAUTH_FAILED_SUFFIX: '. Please try again.',
+  },
+  BUTTONS: {
+    GO_BACK: 'Go Back',
   },
 } as const;
 
@@ -249,6 +253,7 @@ export const SIGNUP_PAGE_CONTENT = {
     MISMATCH: 'Passwords do not match',
   },
   ERRORS: {
+    TITLE: 'Sign Up Error',
     INVALID_EMAIL: 'Please enter a valid email address',
     PASSWORD_TOO_SHORT: 'Password must be at least 8 characters',
     PASSWORDS_DO_NOT_MATCH: 'Passwords do not match',
@@ -256,6 +261,44 @@ export const SIGNUP_PAGE_CONTENT = {
     CREATE_ACCOUNT_FAILED_RETRY: 'Failed to create account. Please try again.',
     OAUTH_FAILED_PREFIX: 'Failed to sign up with',
     OAUTH_FAILED_SUFFIX: '. Please try again.',
+  },
+  BUTTONS: {
+    GO_BACK: 'Go Back',
+  },
+} as const;
+
+/**
+ * Clarify page content configuration
+ * Eliminates hardcoded UI strings in clarify page
+ */
+export const CLARIFY_PAGE_CONTENT = {
+  HEADING: 'Clarify Your Idea',
+  LOADING: 'Loading clarification flow...',
+  ERROR_TITLE: 'Error',
+  SUCCESS_TITLE: 'Clarification Complete!',
+  SUCCESS_MESSAGE:
+    'Your answers have been collected. Ready to generate your blueprint?',
+  BUTTONS: {
+    GO_BACK: 'Go Back',
+    GENERATE_BLUEPRINT: 'Generate Blueprint',
+  },
+} as const;
+
+/**
+ * Results page content configuration
+ * Eliminates hardcoded UI strings in results page
+ */
+export const RESULTS_PAGE_CONTENT = {
+  HEADING: 'Project Blueprint',
+  LOADING: 'Loading blueprint...',
+  GENERATING: 'Generating your project blueprint...',
+  ERROR_TITLE: 'Error',
+  SUCCESS_TITLE: 'Export Successful',
+  WARNING_TITLE: 'No Idea Found',
+  WARNING_MESSAGE: "The idea you're looking for doesn't exist.",
+  BUTTONS: {
+    GO_BACK: 'Go Back',
+    GO_HOME: 'Go Home',
   },
 } as const;
 

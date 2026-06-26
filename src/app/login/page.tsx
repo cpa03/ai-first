@@ -186,7 +186,7 @@ export default function LoginPage() {
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <Alert type="error" title="Sign In Error">
+            <Alert type="error" title={LOGIN_PAGE_CONTENT.ERRORS.TITLE}>
               {error}
             </Alert>
           )}

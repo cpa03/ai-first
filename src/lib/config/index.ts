@@ -136,6 +136,8 @@ export {
   LOGIN_PAGE_CONTENT,
   SIGNUP_PAGE_CONTENT,
   DASHBOARD_PAGE_CONTENT,
+  CLARIFY_PAGE_CONTENT,
+  RESULTS_PAGE_CONTENT,
   type HomePageConfig,
   type LoginPageConfig,
   type SignupPageConfig,
