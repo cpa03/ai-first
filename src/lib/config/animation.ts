@@ -113,6 +113,30 @@ export const ANIMATION_CONFIG = {
     1,
     20
   ),
+
+  /**
+   * Onboarding celebration delay with reduced motion (ms)
+   * Shorter delay for users who prefer reduced motion
+   * Env: UI_ANIMATION_ONBOARDING_CELEBRATION_REDUCED (default: 1200)
+   */
+  ONBOARDING_CELEBRATION_REDUCED: EnvLoader.number(
+    'UI_ANIMATION_ONBOARDING_CELEBRATION_REDUCED',
+    1200,
+    500,
+    5000
+  ),
+
+  /**
+   * Onboarding celebration delay without reduced motion (ms)
+   * Standard delay for full animation experience
+   * Env: UI_ANIMATION_ONBOARDING_CELEBRATION_STANDARD (default: 2000)
+   */
+  ONBOARDING_CELEBRATION_STANDARD: EnvLoader.number(
+    'UI_ANIMATION_ONBOARDING_CELEBRATION_STANDARD',
+    2000,
+    500,
+    5000
+  ),
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;

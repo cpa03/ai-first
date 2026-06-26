@@ -1,7 +1,11 @@
 'use client';
 
 import React from 'react';
-import { UI_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  UI_CONFIG,
+  SVG_STROKE_WIDTHS,
+  PROGRESS_STEPPER_LABELS,
+} from '@/lib/config';
 
 interface Step {
   id: string;
@@ -27,7 +31,7 @@ const ProgressStepperComponent = function ProgressStepper({
   return (
     <nav
       className="mb-6 sm:mb-8"
-      aria-label="Question progress"
+      aria-label={PROGRESS_STEPPER_LABELS.NAV_ARIA_LABEL}
       role="navigation"
     >
       <div className="sm:hidden">
@@ -48,7 +52,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     }
                   `}
                   aria-current={step.current ? 'step' : undefined}
-                  aria-label={`Question ${index + 1}: ${step.current ? 'Current' : step.completed ? 'Completed' : 'Upcoming'}`}
+                  aria-label={`Question ${index + 1}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}`}
                 />
               );
             })}
@@ -66,7 +70,11 @@ const ProgressStepperComponent = function ProgressStepper({
           aria-valuenow={progressPercentage}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Progress: ${completedCount} of ${steps.length} steps completed, ${progressPercentage}%`}
+          aria-label={PROGRESS_STEPPER_LABELS.PROGRESS_ARIA_LABEL(
+            completedCount,
+            steps.length,
+            progressPercentage
+          )}
           className="sr-only"
         />
       </div>
@@ -80,7 +88,7 @@ const ProgressStepperComponent = function ProgressStepper({
               key={step.id}
               className={`flex-1 ${!isLast ? 'flex items-center' : ''}`}
               aria-current={step.current ? 'step' : undefined}
-              aria-label={`${step.label}: ${step.current ? 'Current' : step.completed ? 'Completed' : 'Upcoming'}`}
+              aria-label={`${step.label}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}`}
             >
               <div className="flex items-center w-full" aria-hidden="true">
                 <div
@@ -105,7 +113,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                       strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                      aria-label="Completed"
+                      aria-label={PROGRESS_STEPPER_LABELS.CHECKMARK_ARIA_LABEL}
                       role="img"
                     >
                       <path
@@ -160,7 +168,11 @@ const ProgressStepperComponent = function ProgressStepper({
         aria-valuenow={progressPercentage}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-label={`Progress: ${completedCount} of ${steps.length} steps completed, ${progressPercentage}%`}
+        aria-label={PROGRESS_STEPPER_LABELS.PROGRESS_ARIA_LABEL(
+          completedCount,
+          steps.length,
+          progressPercentage
+        )}
         className="sr-only"
       />
     </nav>

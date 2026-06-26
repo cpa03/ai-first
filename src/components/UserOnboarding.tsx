@@ -14,6 +14,7 @@ import {
   LOCAL_STORAGE_KEYS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
+  USER_ONBOARDING_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -252,7 +253,9 @@ export default function UserOnboarding() {
             total_steps: TOUR_STEPS.length,
           });
         },
-        prefersReducedMotion ? 1200 : 2000
+        prefersReducedMotion
+          ? ANIMATION_CONFIG.ONBOARDING_CELEBRATION_REDUCED
+          : ANIMATION_CONFIG.ONBOARDING_CELEBRATION_STANDARD
       );
     } else {
       setCurrentStepIndex((prev) => prev + 1);
@@ -350,7 +353,7 @@ export default function UserOnboarding() {
       <div
         className={`fixed inset-0 z-[${Z_INDEX_LAYERS.MODAL}] flex items-center justify-center`}
         role="dialog"
-        aria-label="Onboarding complete"
+        aria-label={USER_ONBOARDING_LABELS.COMPLETION_ARIA_LABEL}
       >
         <div
           className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -439,14 +442,14 @@ export default function UserOnboarding() {
           aria-valuenow={progress}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label="Onboarding progress"
+          aria-label={USER_ONBOARDING_LABELS.PROGRESS_ARIA_LABEL}
         />
 
         {/* Close button */}
         <button
           onClick={handleSkip}
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors p-1"
-          aria-label="Skip onboarding tour"
+          aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
         >
           <svg
             className="w-5 h-5"

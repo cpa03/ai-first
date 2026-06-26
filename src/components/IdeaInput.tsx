@@ -12,6 +12,7 @@ import {
   HTTP_HEADERS,
   API_ENDPOINTS,
   SVG_STROKE_WIDTHS,
+  IDEA_INPUT_LABELS,
 } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
@@ -342,7 +343,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 aria-valuenow={Math.round(writingProgress)}
                 aria-valuemin={0}
                 aria-valuemax={100}
-                aria-label="Writing progress"
+                aria-label={IDEA_INPUT_LABELS.WRITING_PROGRESS_ARIA_LABEL}
               />
             </div>
             <IdeaReadyIndicator

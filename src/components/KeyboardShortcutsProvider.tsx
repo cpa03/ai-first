@@ -5,7 +5,10 @@ import KeyboardShortcutsHelp, {
 } from '@/components/KeyboardShortcutsHelp';
 import Tooltip from '@/components/Tooltip';
 import SessionTracker from '@/components/SessionTracker';
-import { SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  SVG_STROKE_WIDTHS,
+  KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
+} from '@/lib/config';
 import { createContext, useContext, ReactNode, useMemo, memo } from 'react';
 
 interface KeyboardShortcutsContextValue {
@@ -62,7 +65,7 @@ function KeyboardShortcutsButtonComponent() {
       <button
         onClick={openHelp}
         className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-        aria-label="Open keyboard shortcuts help"
+        aria-label={KEYBOARD_SHORTCUTS_PROVIDER_LABELS.HELP_BUTTON_ARIA_LABEL}
         type="button"
       >
         <svg
