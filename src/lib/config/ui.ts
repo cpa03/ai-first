@@ -380,6 +380,8 @@ export const TOAST_CONFIG = {
       TEXT: 'text-green-800',
       // Use CSS custom property for theming support (Issue #1028, #1166)
       ICON_COLOR: 'rgb(var(--toast-success-icon))',
+      // Micro-UX: Colored left border for quick visual identification of toast type
+      LEFT_BORDER: 'border-l-4 border-l-green-500',
     },
     ERROR: {
       BG: 'bg-red-50',
@@ -387,6 +389,8 @@ export const TOAST_CONFIG = {
       TEXT: 'text-red-800',
       // Use CSS custom property for theming support (Issue #1028, #1166)
       ICON_COLOR: 'rgb(var(--toast-error-icon))',
+      // Micro-UX: Colored left border for quick visual identification of toast type
+      LEFT_BORDER: 'border-l-4 border-l-red-500',
     },
     WARNING: {
       BG: 'bg-yellow-50',
@@ -394,6 +398,8 @@ export const TOAST_CONFIG = {
       TEXT: 'text-yellow-800',
       // Use CSS custom property for theming support (Issue #1028, #1166)
       ICON_COLOR: 'rgb(var(--toast-warning-icon))',
+      // Micro-UX: Colored left border for quick visual identification of toast type
+      LEFT_BORDER: 'border-l-4 border-l-yellow-500',
     },
     INFO: {
       BG: 'bg-blue-50',
@@ -401,6 +407,8 @@ export const TOAST_CONFIG = {
       TEXT: 'text-blue-800',
       // Use CSS custom property for theming support (Issue #1028, #1166)
       ICON_COLOR: 'rgb(var(--toast-info-icon))',
+      // Micro-UX: Colored left border for quick visual identification of toast type
+      LEFT_BORDER: 'border-l-4 border-l-blue-500',
     },
   },
 } as const;
