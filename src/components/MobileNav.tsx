@@ -40,6 +40,16 @@ function MobileNavComponent() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Micro-UX: Auto-close mobile menu when pathname changes
+  // This ensures the menu doesn't stay open after programmatic navigation
+  useEffect(() => {
+    if (isOpen) {
+      setIsOpen(false);
+      buttonRef.current?.focus();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+
   useEffect(() => {
     if (isOpen && isMobile) {
       document.body.style.overflow = 'hidden';
