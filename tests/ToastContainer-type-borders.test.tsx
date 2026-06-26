@@ -64,12 +64,15 @@ describe('TOAST_CONFIG - Left Border Styles', () => {
   });
 
   it('left border styles include proper Tailwind classes', () => {
-    Object.values(TOAST_CONFIG.STYLES).forEach(
-      (style: { LEFT_BORDER: string; BG: string; BORDER: string }) => {
-        expect(style.LEFT_BORDER).toMatch(/^border-l-4 border-l-\w+-500$/);
-        expect(style.BG).toMatch(/^bg-\w+-50$/);
-        expect(style.BORDER).toMatch(/^border-\w+-200$/);
-      }
-    );
+    Object.values(TOAST_CONFIG.STYLES).forEach((style: unknown) => {
+      const typedStyle = style as {
+        LEFT_BORDER: string;
+        BG: string;
+        BORDER: string;
+      };
+      expect(typedStyle.LEFT_BORDER).toMatch(/^border-l-4 border-l-\w+-500$/);
+      expect(typedStyle.BG).toMatch(/^bg-\w+-50$/);
+      expect(typedStyle.BORDER).toMatch(/^border-\w+-200$/);
+    });
   });
 });
