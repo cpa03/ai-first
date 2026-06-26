@@ -8,15 +8,7 @@ import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 
 const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
-
-if (
-  !ADMIN_API_KEY &&
-  process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
-) {
-  logger.warn(
-    'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
-  );
-}
+let hasWarnedAboutMissingKey = false;
 
 export interface AuthenticatedUser {
   id: string;
@@ -35,7 +27,14 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
   if (!ADMIN_API_KEY) {
-    return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
+    const isDev = process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
+    if (!isDev && !hasWarnedAboutMissingKey) {
+      logger.warn(
+        'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
+      );
+      hasWarnedAboutMissingKey = true;
+    }
+    return isDev;
   }
 
   const authHeader = request.headers.get('authorization');

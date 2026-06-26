@@ -214,7 +214,7 @@ const HTML_ESCAPE_REGEX = new RegExp(
  * or dangerous protocols (javascript:, data:text/html).
  */
 const NEEDS_SANITIZATION_REGEX =
-  /[<>&"'/`]|\bon\w+\s*=|j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t\s*:|d\s*a\s*t\s*a\s*:\s*t\s*e\s*x\s*t\s*\/\s*h\s*t\s*m\s*l/i;
+  /[<>&"'/`]|\bon\w+\s*=|(?:\b(?:j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t|v\s*b\s*s\s*c\s*r\s*i\s*p\s*t|l\s*i\s*v\s*e\s*s\s*c\s*r\s*i\s*p\s*t)\s*:)|(?:\bd\s*a\s*t\s*a\s*:\s*(?:t\s*e\s*x\s*t\s*\/\s*h\s*t\s*m\s*l|i\s*m\s*a\s*g\s*e\s*\/\s*s\s*v\s*g\s*\+\s*x\s*m\s*l))/i;
 
 /**
  * Sanitizes HTML content by removing script tags and escaping HTML entities
