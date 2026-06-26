@@ -10,6 +10,7 @@ jest.mock('@/hooks/usePrefersReducedMotion', () => ({
 describe('ToastContainer - Type Border Styles', () => {
   beforeEach(() => {
     // Clear any existing toasts
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).showToast = undefined;
   });
 
