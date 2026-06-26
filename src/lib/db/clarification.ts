@@ -132,21 +132,12 @@ export class ClarificationService {
     );
     const offset = (page - 1) * pageSize;
 
-    let countQuery = client
-      .from(DB_TABLES.AGENT_LOGS)
-      .select('*', { count: 'exact', head: true });
-
-    if (agent) {
-      countQuery = countQuery.eq('agent', agent);
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) throw countError;
-
+    // PERFORMANCE OPTIMIZATION: Combine count and data queries into a single request
+    // using Supabase's select('*', { count: 'exact' }). This reduces database
+    // round-trips from 2 to 1.
     let query = client
       .from(DB_TABLES.AGENT_LOGS)
-      .select('*')
+      .select('*', { count: 'exact' })
       .order('timestamp', { ascending: false })
       .range(offset, offset + pageSize - 1);
 
@@ -154,7 +145,7 @@ export class ClarificationService {
       query = query.eq('agent', agent);
     }
 
-    const { data, error } = await query;
+    const { data, count, error } = await query;
 
     if (error) throw error;
 

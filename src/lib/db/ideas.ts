@@ -110,15 +110,12 @@ export class IdeaService {
     const offset = (page - 1) * pageSize;
 
     // Build the base query with common filters
-    let countQuery = client
+    // PERFORMANCE OPTIMIZATION: Combine count and data queries into a single request
+    // using Supabase's select('*', { count: 'exact' }). This reduces database
+    // round-trips from 2 to 1.
+    let query = client
       .from(DB_TABLES.IDEAS)
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .is('deleted_at', null);
-
-    let dataQuery = client
-      .from(DB_TABLES.IDEAS)
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('user_id', userId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
@@ -126,27 +123,17 @@ export class IdeaService {
 
     // Apply status filter if provided and not 'all'
     if (filters?.status && filters.status !== 'all') {
-      countQuery = countQuery.eq('status', filters.status);
-      dataQuery = dataQuery.eq('status', filters.status);
+      query = query.eq('status', filters.status);
     }
 
     // Apply search filter if provided (searches in title and raw_text)
     if (filters?.search && filters.search.trim()) {
       const searchTerm = `%${filters.search.trim().toLowerCase()}%`;
       // Use OR filter for searching across multiple columns
-      countQuery = countQuery.or(
-        `title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`
-      );
-      dataQuery = dataQuery.or(
-        `title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`
-      );
+      query = query.or(`title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`);
     }
 
-    const { count, error: countError } = await countQuery;
-
-    if (countError) throw countError;
-
-    const { data, error } = await dataQuery;
+    const { data, count, error } = await query;
 
     if (error) throw error;
 
