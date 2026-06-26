@@ -12,6 +12,7 @@ import {
   EXPORT_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
+  RESULTS_PAGE_CONTENT,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -296,11 +297,11 @@ function ResultsContent() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Alert type="error" title="Error">
+        <Alert type="error" title={RESULTS_PAGE_CONTENT.ERROR_TITLE}>
           {error}
           <div className="mt-4">
             <Button onClick={() => router.back()} variant="primary">
-              Go Back
+              {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
             </Button>
           </div>
         </Alert>
@@ -311,11 +312,11 @@ function ResultsContent() {
   if (!idea) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Alert type="warning" title="No Idea Found">
-          The idea you&apos;re looking for doesn&apos;t exist.
+        <Alert type="warning" title={RESULTS_PAGE_CONTENT.WARNING_TITLE}>
+          {RESULTS_PAGE_CONTENT.WARNING_MESSAGE}
           <div className="mt-4">
             <Button onClick={() => router.push('/')} variant="primary">
-              Go Home
+              {RESULTS_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
           </div>
         </Alert>
@@ -512,7 +513,7 @@ function ResultsContent() {
 
         {exportUrl && (
           <div className="mt-6">
-            <Alert type="success" title="Export Successful">
+            <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
               The file should download automatically.
             </Alert>
           </div>
