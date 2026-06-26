@@ -501,7 +501,7 @@ export default function DashboardPage() {
               className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
               aria-label="Clear filter"
             >
-              Clear
+              {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
             </button>
           </div>
         )}
@@ -511,7 +511,7 @@ export default function DashboardPage() {
           className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           aria-label="Show keyboard shortcuts (press ?)"
         >
-          Shortcuts
+          {DASHBOARD_PAGE_CONTENT.SHORTCUTS}
         </button>
         <button
           type="button"
@@ -522,7 +522,7 @@ export default function DashboardPage() {
           className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
           aria-label="Restart the onboarding tour"
         >
-          Restart Tour
+          {DASHBOARD_PAGE_CONTENT.RESTART_TOUR}
         </button>
       </div>
       {/* Ideas List */}
@@ -547,35 +547,39 @@ export default function DashboardPage() {
           {filter !== 'all' ? (
             <>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                No matching ideas
+                {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.NO_MATCHING_TITLE}
               </h2>
               <p className="text-gray-600 mb-6">
-                No ideas match the{' '}
-                {filter === 'breakdown'
-                  ? IDEA_STATUS_CONFIG.LABELS.breakdown
-                  : filter}{' '}
-                filter. Try clearing the filter to see all your ideas.
+                {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.NO_MATCHING_DESCRIPTION.replace(
+                  '{filter}',
+                  filter === 'breakdown'
+                    ? IDEA_STATUS_CONFIG.LABELS.breakdown
+                    : filter
+                )}
               </p>
               <div className="flex justify-center gap-3">
                 <Button variant="outline" onClick={() => setFilter('all')}>
-                  Clear Filter
+                  {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
                 </Button>
                 <Link href="/">
-                  <Button variant="primary">Create New Idea</Button>
+                  <Button variant="primary">
+                    {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.CREATE_NEW_IDEA}
+                  </Button>
                 </Link>
               </div>
             </>
           ) : (
             <>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                No ideas yet
+                {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.TITLE}
               </h2>
               <p className="text-gray-600 mb-6">
-                Start by creating your first idea to get AI-powered project
-                planning.
+                {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.DESCRIPTION}
               </p>
               <Link href="/">
-                <Button variant="primary">Create Your First Idea</Button>
+                <Button variant="primary">
+                  {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.BUTTON}
+                </Button>
               </Link>
             </>
           )}
@@ -591,13 +595,13 @@ export default function DashboardPage() {
               <thead className={TABLE_PATTERNS.header.container}>
                 <tr>
                   <th scope="col" className={TABLE_PATTERNS.header.cell}>
-                    Title
+                    {DASHBOARD_PAGE_CONTENT.TABLE.TITLE_HEADER}
                   </th>
                   <th scope="col" className={TABLE_PATTERNS.header.cell}>
-                    Status
+                    {DASHBOARD_PAGE_CONTENT.TABLE.STATUS_HEADER}
                   </th>
                   <th scope="col" className={TABLE_PATTERNS.header.cell}>
-                    Created
+                    {DASHBOARD_PAGE_CONTENT.TABLE.CREATED_HEADER}
                   </th>
                   <th
                     scope="col"
@@ -606,7 +610,7 @@ export default function DashboardPage() {
                       'text-right'
                     )}
                   >
-                    Actions
+                    {DASHBOARD_PAGE_CONTENT.TABLE.ACTIONS_HEADER}
                   </th>
                 </tr>
               </thead>

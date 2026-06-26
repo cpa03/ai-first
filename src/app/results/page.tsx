@@ -91,9 +91,9 @@ const BlueprintDisplay = dynamic(
         <LoadingSpinner
           size="md"
           className="mb-4"
-          ariaLabel="Loading blueprint"
+          ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
         />
-        <p className="text-gray-600">Loading blueprint...</p>
+        <p className="text-gray-600">{RESULTS_PAGE_CONTENT.LOADING}</p>
       </div>
     ),
   }
@@ -139,7 +139,7 @@ function ResultsContent() {
 
     if (!isAuthenticated) {
       setLoading(false);
-      setError('Please sign in to view results');
+      setError(RESULTS_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE);
       return;
     }
 
@@ -286,9 +286,9 @@ function ResultsContent() {
           <LoadingSpinner
             size="md"
             className="mb-4"
-            ariaLabel="Generating your project blueprint"
+            ariaLabel={RESULTS_PAGE_CONTENT.GENERATING}
           />
-          <p className="text-gray-600">Generating your project blueprint...</p>
+          <p className="text-gray-600">{RESULTS_PAGE_CONTENT.GENERATING}</p>
         </div>
       </div>
     );
@@ -328,13 +328,15 @@ function ResultsContent() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Project Blueprint</h1>
+        <h1 className="text-3xl font-bold text-gray-900">
+          {RESULTS_PAGE_CONTENT.HEADING}
+        </h1>
         <Button
           variant="secondary"
           onClick={() => router.back()}
           aria-label="Return to previous page"
         >
-          ← Back
+          {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
         </Button>
       </div>
 
@@ -348,7 +350,7 @@ function ResultsContent() {
       {/* Export Options */}
       <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          Export Your Blueprint
+          {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -390,7 +392,7 @@ function ResultsContent() {
             </Button>
           ) : (
             <Tooltip
-              content="Configure NOTION_API_KEY in environment to enable Notion export"
+              content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
               position="top"
             >
               <Button
@@ -400,7 +402,7 @@ function ResultsContent() {
               >
                 {EXPORT_LABELS.NOTION.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  Setup Required
+                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                 </span>
               </Button>
             </Tooltip>
@@ -420,7 +422,7 @@ function ResultsContent() {
             </Button>
           ) : (
             <Tooltip
-              content="Configure TRELLO_API_KEY in environment to enable Trello export"
+              content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
               position="top"
             >
               <Button
@@ -430,7 +432,7 @@ function ResultsContent() {
               >
                 {EXPORT_LABELS.TRELLO.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  Setup Required
+                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                 </span>
               </Button>
             </Tooltip>
@@ -450,7 +452,7 @@ function ResultsContent() {
             </Button>
           ) : (
             <Tooltip
-              content="Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in environment to enable Google Tasks export"
+              content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
               position="top"
             >
               <Button
@@ -460,7 +462,7 @@ function ResultsContent() {
               >
                 {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  Setup Required
+                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                 </span>
               </Button>
             </Tooltip>
@@ -480,7 +482,7 @@ function ResultsContent() {
             </Button>
           ) : (
             <Tooltip
-              content="Configure GITHUB_TOKEN in environment to enable GitHub Projects export"
+              content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
               position="top"
             >
               <Button
@@ -489,8 +491,9 @@ function ResultsContent() {
                 aria-label="Export to GitHub Projects - requires API configuration"
               >
                 {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full"></span>
-                Setup Required
+                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                </span>
               </Button>
             </Tooltip>
           )}
@@ -514,7 +517,7 @@ function ResultsContent() {
         {exportUrl && (
           <div className="mt-6">
             <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
-              The file should download automatically.
+              {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
             </Alert>
           </div>
         )}
@@ -523,18 +526,17 @@ function ResultsContent() {
       {/* Share Options - Growth: Viral sharing for user acquisition */}
       <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          Share Your Blueprint
+          {RESULTS_PAGE_CONTENT.SHARE_HEADING}
         </h2>
         <p className="text-gray-600 mb-6">
-          Love your project blueprint? Share it with your network to inspire
-          others!
+          {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
         </p>
         <div className="flex flex-wrap gap-4">
           <ShareButton
             shareTitle={`Check out my project blueprint on IdeaFlow!`}
             shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
-            label="Share Blueprint"
-            successLabel="Shared!"
+            label={RESULTS_PAGE_CONTENT.SHARE_BUTTON_LABEL}
+            successLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_SUCCESS_LABEL}
             ariaLabel="Share your project blueprint"
             onShare={() => {
               // Growth: Track social share event
@@ -560,9 +562,11 @@ export default function ResultsPage() {
             <LoadingSpinner
               size="md"
               className="mb-4"
-              ariaLabel="Loading results page"
+              ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
             />
-            <p className="text-gray-600">Loading...</p>
+            <p className="text-gray-600">
+              {RESULTS_PAGE_CONTENT.LOADING_SHORT}
+            </p>
           </div>
         </div>
       }

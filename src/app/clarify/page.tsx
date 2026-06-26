@@ -42,9 +42,9 @@ const DynamicClarificationFlow = dynamic(
           <LoadingSpinner
             size="md"
             className="mb-4"
-            ariaLabel="Loading clarification flow"
+            ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
           />
-          <p className="text-gray-600">Loading clarification flow...</p>
+          <p className="text-gray-600">{CLARIFY_PAGE_CONTENT.LOADING}</p>
         </div>
       </div>
     ),
@@ -59,9 +59,9 @@ function ClarifyPageLoading() {
         <LoadingSpinner
           size="md"
           className="mb-4"
-          ariaLabel="Loading clarification flow"
+          ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
         />
-        <p className="text-gray-600">Loading...</p>
+        <p className="text-gray-600">{CLARIFY_PAGE_CONTENT.LOADING_SHORT}</p>
       </div>
     </div>
   );
@@ -151,9 +151,9 @@ function ClarifyPageContent() {
           <LoadingSpinner
             size="md"
             className="mb-4"
-            ariaLabel="Loading clarification flow"
+            ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
           />
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{CLARIFY_PAGE_CONTENT.LOADING_SHORT}</p>
         </div>
       </div>
     );
@@ -162,11 +162,11 @@ function ClarifyPageContent() {
   if (!isAuthenticated) {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <Alert type="warning" title="Sign In Required">
-          <p>Please sign in to clarify your ideas.</p>
+        <Alert type="warning" title={CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_TITLE}>
+          <p>{CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE}</p>
           <div className="mt-4">
             <Button onClick={() => router.push('/')} variant="primary">
-              Go Home
+              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
           </div>
         </Alert>
@@ -221,10 +221,10 @@ function ClarifyPageContent() {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="slide-up">
-          <Alert type="warning" title="No Idea Provided">
-            <p className="mb-4">Please provide an idea to clarify.</p>
+          <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
+            <p className="mb-4">{CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}</p>
             <Button onClick={() => router.push('/')} variant="primary">
-              Go to Home
+              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_TO_HOME}
             </Button>
           </Alert>
         </div>
@@ -237,11 +237,10 @@ function ClarifyPageContent() {
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Let&apos;s Clarify Your Idea
+            {CLARIFY_PAGE_CONTENT.HEADING}
           </h1>
           <p className="text-lg text-gray-600">
-            Answer a few questions to help us create the perfect action plan for
-            your project.
+            {CLARIFY_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>
       </div>

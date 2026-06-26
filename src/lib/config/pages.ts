@@ -273,13 +273,22 @@ export const SIGNUP_PAGE_CONTENT = {
  */
 export const CLARIFY_PAGE_CONTENT = {
   HEADING: 'Clarify Your Idea',
+  SUBHEADING:
+    'Answer a few questions to help us create the perfect action plan for your project.',
   LOADING: 'Loading clarification flow...',
+  LOADING_SHORT: 'Loading...',
   ERROR_TITLE: 'Error',
   SUCCESS_TITLE: 'Clarification Complete!',
   SUCCESS_MESSAGE:
     'Your answers have been collected. Ready to generate your blueprint?',
+  AUTH_REQUIRED_TITLE: 'Sign In Required',
+  AUTH_REQUIRED_MESSAGE: 'Please sign in to clarify your ideas.',
+  NO_IDEA_TITLE: 'No Idea Provided',
+  NO_IDEA_MESSAGE: 'Please provide an idea to clarify.',
   BUTTONS: {
     GO_BACK: 'Go Back',
+    GO_HOME: 'Go Home',
+    GO_TO_HOME: 'Go to Home',
     GENERATE_BLUEPRINT: 'Generate Blueprint',
   },
 } as const;
@@ -291,14 +300,32 @@ export const CLARIFY_PAGE_CONTENT = {
 export const RESULTS_PAGE_CONTENT = {
   HEADING: 'Project Blueprint',
   LOADING: 'Loading blueprint...',
+  LOADING_SHORT: 'Loading...',
   GENERATING: 'Generating your project blueprint...',
   ERROR_TITLE: 'Error',
   SUCCESS_TITLE: 'Export Successful',
+  SUCCESS_MESSAGE: 'The file should download automatically.',
   WARNING_TITLE: 'No Idea Found',
   WARNING_MESSAGE: "The idea you're looking for doesn't exist.",
+  AUTH_REQUIRED_MESSAGE: 'Please sign in to view results',
+  EXPORT_HEADING: 'Export Your Blueprint',
+  SHARE_HEADING: 'Share Your Blueprint',
+  SHARE_MESSAGE:
+    'Love your project blueprint? Share it with your network to inspire others!',
+  SHARE_BUTTON_LABEL: 'Share Blueprint',
+  SHARE_BUTTON_SUCCESS_LABEL: 'Shared!',
+  SETUP_REQUIRED_LABEL: 'Setup Required',
   BUTTONS: {
-    GO_BACK: 'Go Back',
+    GO_BACK: '← Back',
     GO_HOME: 'Go Home',
+  },
+  TOOLTIPS: {
+    NOTION: 'Configure NOTION_API_KEY in environment to enable Notion export',
+    TRELLO: 'Configure TRELLO_API_KEY in environment to enable Trello export',
+    GOOGLE_TASKS:
+      'Configure GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in environment to enable Google Tasks export',
+    GITHUB_PROJECTS:
+      'Configure GITHUB_TOKEN in environment to enable GitHub Projects export',
   },
 } as const;
 
@@ -311,10 +338,24 @@ export const DASHBOARD_PAGE_CONTENT = {
   LOADING: 'Loading your ideas...',
   ERROR_TITLE: 'Error',
   TRY_AGAIN: 'Try Again',
+  CLEAR_FILTER: 'Clear Filter',
+  RESTART_TOUR: 'Restart Tour',
+  SHORTCUTS: 'Shortcuts',
   EMPTY_STATE: {
     TITLE: 'No ideas yet',
-    DESCRIPTION: 'Create your first idea to get started.',
-    BUTTON: '+ New Idea',
+    DESCRIPTION:
+      'Start by creating your first idea to get AI-powered project planning.',
+    BUTTON: 'Create Your First Idea',
+    NO_MATCHING_TITLE: 'No matching ideas',
+    NO_MATCHING_DESCRIPTION:
+      'No ideas match the {filter} filter. Try clearing the filter to see all your ideas.',
+    CREATE_NEW_IDEA: 'Create New Idea',
+  },
+  TABLE: {
+    TITLE_HEADER: 'Title',
+    STATUS_HEADER: 'Status',
+    CREATED_HEADER: 'Created',
+    ACTIONS_HEADER: 'Actions',
   },
   FILTER: {
     LABEL: 'Filter by status',
