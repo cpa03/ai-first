@@ -19,6 +19,8 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
+const { CONTEXT_LABELS, CONTEXT_ORDER } = KEYBOARD_SHORTCUTS_HELP_LABELS;
+
 export interface KeyboardShortcut {
   keys: string[];
   description: string;
@@ -136,21 +138,10 @@ const keyboardShortcuts: KeyboardShortcut[] = [
   },
 ];
 
-const contextLabels: Record<KeyboardShortcut['context'], string> = {
-  global: 'Global',
-  form: 'Forms',
-  navigation: 'Navigation',
-  modal: 'Modals',
-  command: 'Commands',
-};
+const contextLabels: Record<KeyboardShortcut['context'], string> =
+  CONTEXT_LABELS;
 
-const contextOrder: KeyboardShortcut['context'][] = [
-  'global',
-  'command',
-  'navigation',
-  'form',
-  'modal',
-];
+const contextOrder: KeyboardShortcut['context'][] = [...CONTEXT_ORDER];
 
 // Storage key for user preferences
 export const SHORTCUTS_STORAGE_KEY = LOCAL_STORAGE_KEYS.KEYBOARD_SHORTCUTS;
@@ -543,7 +534,7 @@ function KeyboardShortcutsHelpComponent({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-500"
-              aria-label="Search keyboard shortcuts"
+              aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.SEARCH_ARIA_LABEL}
             />
             {searchQuery && (
               <button
@@ -553,7 +544,7 @@ function KeyboardShortcutsHelpComponent({
                   searchInputRef.current?.focus();
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-600 hover:text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
-                aria-label="Clear search"
+                aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
                   className="w-4 h-4"
@@ -639,7 +630,7 @@ function KeyboardShortcutsHelpComponent({
             ref={closeButtonRef}
             onClick={handleClose}
             className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
-            aria-label="Close command palette"
+            aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLOSE_ARIA_LABEL}
           >
             <svg
               className="w-5 h-5"

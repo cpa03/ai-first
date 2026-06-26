@@ -58,39 +58,7 @@ interface TourStep {
   position: 'top' | 'bottom' | 'left' | 'right';
 }
 
-const TOUR_STEPS: TourStep[] = [
-  {
-    id: 'welcome',
-    title: 'Welcome to IdeaFlow! 👋',
-    content:
-      "Transform your ideas into actionable project plans with AI. Let's take a quick tour.",
-    targetSelector: 'h1',
-    position: 'bottom',
-  },
-  {
-    id: 'idea-input',
-    title: '1. Share Your Idea',
-    content:
-      'Enter your project idea in natural language. Our AI will help clarify details.',
-    targetSelector: '[aria-labelledby="idea-input-heading"]',
-    position: 'top',
-  },
-  {
-    id: 'breakdown',
-    title: '2. Get Your Project Plan',
-    content:
-      'We break down your idea into tasks, estimate effort, and create a realistic timeline.',
-    targetSelector: '[aria-labelledby="how-it-works-heading"]',
-    position: 'top',
-  },
-  {
-    id: 'share',
-    title: '3. Export or Share',
-    content: 'Export to Markdown, Notion, Trello, or share with your team!',
-    targetSelector: '[aria-label*="Share IdeaFlow"]',
-    position: 'left',
-  },
-];
+const TOUR_STEPS: TourStep[] = [...USER_ONBOARDING_LABELS.TOUR_STEPS];
 
 /**
  * Storage key for remembering if user has completed onboarding

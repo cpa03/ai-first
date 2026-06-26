@@ -117,8 +117,9 @@ export const SCROLL_TO_TOP_LABELS = {
  * Eliminates hardcoded strings in ToastContainer component
  */
 export const TOAST_CONTAINER_LABELS = {
-  /** Screen reader instruction to dismiss toast */
   DISMISS_INSTRUCTION: 'Press Escape to dismiss',
+  CLOSE_ARIA_LABEL: 'Close notification',
+  REGION_ARIA_LABEL: 'Notifications',
 } as const;
 
 /**
@@ -154,6 +155,20 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     'Try a different search term or clear the search to see all shortcuts.',
   /** Clear search button label */
   CLEAR_SEARCH_LABEL: 'Clear search',
+  /** Search input aria-label */
+  SEARCH_ARIA_LABEL: 'Search keyboard shortcuts',
+  /** Close button aria-label */
+  CLOSE_ARIA_LABEL: 'Close command palette',
+  /** Keyboard shortcut context labels */
+  CONTEXT_LABELS: {
+    global: 'Global',
+    form: 'Forms',
+    navigation: 'Navigation',
+    modal: 'Modals',
+    command: 'Commands',
+  } as const,
+  /** Keyboard shortcut context display order */
+  CONTEXT_ORDER: ['global', 'command', 'navigation', 'form', 'modal'] as const,
 } as const;
 
 /**
@@ -230,12 +245,42 @@ export const IDEA_INPUT_LABELS = {
  * Eliminates hardcoded aria-labels and strings in UserOnboarding component
  */
 export const USER_ONBOARDING_LABELS = {
-  /** Completion message aria-label */
   COMPLETION_ARIA_LABEL: 'Onboarding complete',
-  /** Progress aria-label */
   PROGRESS_ARIA_LABEL: 'Onboarding progress',
-  /** Skip button aria-label */
   SKIP_ARIA_LABEL: 'Skip onboarding tour',
+  TOUR_STEPS: [
+    {
+      id: 'welcome',
+      title: 'Welcome to IdeaFlow! 👋',
+      content:
+        "Transform your ideas into actionable project plans with AI. Let's take a quick tour.",
+      targetSelector: 'h1',
+      position: 'bottom',
+    },
+    {
+      id: 'idea-input',
+      title: '1. Share Your Idea',
+      content:
+        'Enter your project idea in natural language. Our AI will help clarify details.',
+      targetSelector: '[aria-labelledby="idea-input-heading"]',
+      position: 'top',
+    },
+    {
+      id: 'breakdown',
+      title: '2. Get Your Project Plan',
+      content:
+        'We break down your idea into tasks, estimate effort, and create a realistic timeline.',
+      targetSelector: '[aria-labelledby="how-it-works-heading"]',
+      position: 'top',
+    },
+    {
+      id: 'share',
+      title: '3. Export or Share',
+      content: 'Export to Markdown, Notion, Trello, or share with your team!',
+      targetSelector: '[aria-label*="Share IdeaFlow"]',
+      position: 'left',
+    },
+  ],
 } as const;
 
 /**

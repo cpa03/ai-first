@@ -234,7 +234,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       <button
         onClick={handleClose}
         className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
-        aria-label="Close notification"
+        aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
       >
         <svg
           className="w-4 h-4"
@@ -331,7 +331,7 @@ function ToastContainerComponent() {
     <div
       className={`fixed top-4 right-4 z-[${Z_INDEX_LAYERS.TOAST}] flex flex-col gap-2 max-h-screen overflow-y-auto`}
       role="region"
-      aria-label="Notifications"
+      aria-label={TOAST_CONTAINER_LABELS.REGION_ARIA_LABEL}
     >
       {showClearAll && (
         <button
