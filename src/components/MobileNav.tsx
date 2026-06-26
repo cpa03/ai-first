@@ -3,7 +3,12 @@
 import { memo, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UI_CONFIG, MOBILE_NAV_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  UI_CONFIG,
+  MOBILE_NAV_CONFIG,
+  SVG_STROKE_WIDTHS,
+  Z_INDEX_LAYERS,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
@@ -180,7 +185,7 @@ function MobileNavComponent() {
         <>
           {/* Backdrop overlay with close button */}
           <div
-            className="fixed inset-0 top-16 bg-black bg-opacity-50 backdrop-blur-sm z-[99] fade-in"
+            className={`fixed inset-0 top-16 bg-black bg-opacity-50 backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in`}
             onClick={closeMenu}
             onTouchEnd={closeMenu}
             aria-hidden="true"
@@ -211,7 +216,7 @@ function MobileNavComponent() {
           <div
             ref={menuRef}
             id="mobile-menu"
-            className="fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[100] animate-slide-down"
+            className={`fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
             <ul className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-2 bg-white">
               {navLinks.map((link, index) => {

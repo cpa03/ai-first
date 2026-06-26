@@ -899,10 +899,22 @@ export const Z_INDEX_LAYERS = {
   OVERLAY: EnvLoader.number('Z_INDEX_OVERLAY', 30, 10, 50),
 
   /**
+   * Mobile navigation overlay layer (35) - for mobile nav backdrop
+   * Env: Z_INDEX_MOBILE_OVERLAY (default: 35)
+   */
+  MOBILE_OVERLAY: EnvLoader.number('Z_INDEX_MOBILE_OVERLAY', 35, 20, 55),
+
+  /**
    * Modal layer (40) - for modals, drawers, and onboarding
    * Env: Z_INDEX_MODAL (default: 40)
    */
   MODAL: EnvLoader.number('Z_INDEX_MODAL', 40, 20, 60),
+
+  /**
+   * Mobile navigation menu layer (45) - for mobile nav menu
+   * Env: Z_INDEX_MOBILE_MENU (default: 45)
+   */
+  MOBILE_MENU: EnvLoader.number('Z_INDEX_MOBILE_MENU', 45, 30, 65),
 
   /**
    * Toast layer (50) - for toast notifications and tooltips
