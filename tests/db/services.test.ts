@@ -34,7 +34,9 @@ const createMockSupabaseClient = (): MockSupabaseChain => {
     from: jest.fn(),
     insert: jest.fn(),
     select: jest.fn(),
-    single: jest.fn().mockResolvedValue({ data: null, count: null, error: null }),
+    single: jest
+      .fn()
+      .mockResolvedValue({ data: null, count: null, error: null }),
     eq: jest.fn(),
     is: jest.fn(),
     order: jest.fn(),
@@ -196,7 +198,7 @@ describe('Database Services', () => {
           created_at: new Date().toISOString(),
         }));
 
-        mockClient._result = { data: expectedTasks, error: null };
+        mockClient._result = { data: expectedTasks, count: null, error: null };
 
         const result = await taskService.createTasks(tasks);
 
@@ -204,7 +206,7 @@ describe('Database Services', () => {
       });
 
       it('should return empty array when no data returned', async () => {
-        mockClient._result = { data: null, error: null };
+        mockClient._result = { data: null, count: null, error: null };
 
         const result = await taskService.createTasks([]);
 
@@ -219,7 +221,7 @@ describe('Database Services', () => {
           { id: 'task-2', deliverable_id: 'del-1', title: 'Task 2' },
         ];
 
-        mockClient._result = { data: tasks, error: null };
+        mockClient._result = { data: tasks, count: null, error: null };
 
         const result = await taskService.getDeliverableTasks('del-1');
 
@@ -231,7 +233,7 @@ describe('Database Services', () => {
       it('should exclude soft-deleted tasks', async () => {
         const tasks = [{ id: 'task-1', deleted_at: null }];
 
-        mockClient._result = { data: tasks, error: null };
+        mockClient._result = { data: tasks, count: null, error: null };
 
         await taskService.getDeliverableTasks('del-1');
 
@@ -286,7 +288,7 @@ describe('Database Services', () => {
 
     describe('softDeleteTask', () => {
       it('should soft delete a task', async () => {
-        mockAdmin._result = { data: null, error: null };
+        mockAdmin._result = { data: null, count: null, error: null };
 
         await taskService.softDeleteTask('task-1');
 
@@ -298,7 +300,7 @@ describe('Database Services', () => {
 
     describe('deleteTask', () => {
       it('should permanently delete a task', async () => {
-        mockClient._result = { data: null, error: null };
+        mockClient._result = { data: null, count: null, error: null };
 
         await taskService.deleteTask('task-1');
 
@@ -422,7 +424,7 @@ describe('Database Services', () => {
           created_at: new Date().toISOString(),
         }));
 
-        mockClient._result = { data: expected, error: null };
+        mockClient._result = { data: expected, count: null, error: null };
 
         const result =
           await deliverableService.createDeliverables(deliverables);
@@ -437,7 +439,7 @@ describe('Database Services', () => {
           { id: 'del-1', idea_id: 'idea-1', title: 'Deliverable 1' },
         ];
 
-        mockClient._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, count: null, error: null };
 
         const result = await deliverableService.getIdeaDeliverables('idea-1');
 
@@ -446,7 +448,7 @@ describe('Database Services', () => {
       });
 
       it('should order by priority descending', async () => {
-        mockClient._result = { data: [], error: null };
+        mockClient._result = { data: [], count: null, error: null };
 
         await deliverableService.getIdeaDeliverables('idea-1');
 
@@ -469,7 +471,7 @@ describe('Database Services', () => {
           },
         ];
 
-        mockClient._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, count: null, error: null };
 
         const result =
           await deliverableService.getIdeaDeliverablesWithTasks('idea-1');
@@ -489,7 +491,7 @@ describe('Database Services', () => {
           },
         ];
 
-        mockClient._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, count: null, error: null };
 
         const result =
           await deliverableService.getIdeaDeliverablesWithTasks('idea-1');
@@ -501,7 +503,7 @@ describe('Database Services', () => {
       it('should handle null tasks array', async () => {
         const deliverables = [{ id: 'del-1', tasks: null }];
 
-        mockClient._result = { data: deliverables, error: null };
+        mockClient._result = { data: deliverables, count: null, error: null };
 
         const result =
           await deliverableService.getIdeaDeliverablesWithTasks('idea-1');
@@ -559,7 +561,7 @@ describe('Database Services', () => {
 
     describe('softDeleteDeliverable', () => {
       it('should soft delete a deliverable', async () => {
-        mockAdmin._result = { data: null, error: null };
+        mockAdmin._result = { data: null, count: null, error: null };
 
         await deliverableService.softDeleteDeliverable('del-1');
 
@@ -571,7 +573,7 @@ describe('Database Services', () => {
 
     describe('deleteDeliverable', () => {
       it('should permanently delete a deliverable', async () => {
-        mockClient._result = { data: null, error: null };
+        mockClient._result = { data: null, count: null, error: null };
 
         await deliverableService.deleteDeliverable('del-1');
 
@@ -688,7 +690,7 @@ describe('Database Services', () => {
 
     describe('softDeleteIdea', () => {
       it('should soft delete an idea', async () => {
-        mockAdmin._result = { data: null, error: null };
+        mockAdmin._result = { data: null, count: null, error: null };
 
         await ideaService.softDeleteIdea('idea-1');
 
@@ -700,7 +702,7 @@ describe('Database Services', () => {
 
     describe('deleteIdea', () => {
       it('should permanently delete an idea', async () => {
-        mockClient._result = { data: null, error: null };
+        mockClient._result = { data: null, count: null, error: null };
 
         await ideaService.deleteIdea('idea-1');
 
@@ -717,7 +719,7 @@ describe('Database Services', () => {
           { id: 'idea-2', user_id: 'user-1', title: 'Idea 2' },
         ];
 
-        mockClient._result = { data: ideas, error: null };
+        mockClient._result = { data: ideas, count: null, error: null };
 
         const result = await ideaService.getUserIdeas('user-1');
 
@@ -726,7 +728,7 @@ describe('Database Services', () => {
       });
 
       it('should exclude soft-deleted ideas', async () => {
-        mockClient._result = { data: [], error: null };
+        mockClient._result = { data: [], count: null, error: null };
 
         await ideaService.getUserIdeas('user-1');
 
@@ -819,10 +821,14 @@ describe('Database Services', () => {
         ];
         mockClient._result = { data: vectors, count: 1, error: null };
 
-        const result = await vectorService.getVectorsPaginated('idea-1', 'context', {
-          page: 1,
-          pageSize: 10,
-        });
+        const result = await vectorService.getVectorsPaginated(
+          'idea-1',
+          'context',
+          {
+            page: 1,
+            pageSize: 10,
+          }
+        );
 
         expect(result.data).toEqual(vectors);
         expect(result.total).toBe(1);
@@ -850,10 +856,13 @@ describe('Database Services', () => {
         ];
         mockClient._result = { data: logs, count: 1, error: null };
 
-        const result = await clarificationService.getAgentLogsPaginated('test-agent', {
-          page: 1,
-          pageSize: 10,
-        });
+        const result = await clarificationService.getAgentLogsPaginated(
+          'test-agent',
+          {
+            page: 1,
+            pageSize: 10,
+          }
+        );
 
         expect(result.data).toEqual(logs);
         expect(result.total).toBe(1);
