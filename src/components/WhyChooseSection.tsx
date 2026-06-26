@@ -49,9 +49,12 @@ function WhyChooseSectionComponent() {
         {ARTICLES.map((article, index) => (
           <article
             key={article.id}
+            tabIndex={0}
+            role="region"
+            aria-label={article.TITLE}
             className={`group ${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG} ${
               isVisible ? animationClasses[index] : 'opacity-0'
-            }`}
+            } why-choose-focus`}
           >
             <div
               className={`${ARTICLE_STYLES.ICON_CONTAINER} ${article.ICON_BG} ${article.ICON_HOVER_BG}`}
