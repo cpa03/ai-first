@@ -5,6 +5,7 @@ import { isIdeaAnalysis } from '@/lib/type-guards';
 import { createLogger } from '@/lib/logger';
 import type { IdeaAnalysis } from './types';
 import { AGENT_CONFIG } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 
 const logger = createLogger('IdeaAnalyzer');
 const { IDEA_ANALYSIS_FALLBACK } = AGENT_CONFIG;
@@ -67,7 +68,7 @@ export class IdeaAnalyzer {
       return this.validateAnalysis(analysis);
     } catch (error) {
       logger.error('Failed to analyze idea:', error);
-      throw new Error('Idea analysis failed');
+      throw new Error(API_ERROR_MESSAGES.AGENT.IDEA_ANALYSIS_FAILED);
     }
   }
 

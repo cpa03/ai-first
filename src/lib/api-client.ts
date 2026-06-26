@@ -1,5 +1,6 @@
 import { ApiResponse } from '@/lib/api-handler';
 import { TIMEOUT_CONFIG } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config';
 
 /**
  * Error class for API request failures
@@ -34,10 +35,10 @@ export class ApiRequestError extends Error {
 
 export function unwrapApiResponse<T>(response: ApiResponse<T>): T {
   if (!response.success) {
-    throw new Error('Invalid API response: success must be true');
+    throw new Error(API_ERROR_MESSAGES.API_CLIENT.INVALID_RESPONSE_SUCCESS);
   }
   if (response.data === undefined) {
-    throw new Error('Invalid API response: data is undefined');
+    throw new Error(API_ERROR_MESSAGES.API_CLIENT.INVALID_RESPONSE_DATA);
   }
   return response.data;
 }
@@ -94,7 +95,9 @@ export async function fetchWithTimeout(
   } catch (error) {
     if (error instanceof Error && error.name === 'AbortError') {
       if (timedOut) {
-        throw new Error(`Request to ${url} timed out after ${timeoutMs}ms`);
+        throw new Error(
+          `${API_ERROR_MESSAGES.API_CLIENT.REQUEST_TIMEOUT} to ${url} after ${timeoutMs}ms`
+        );
       }
       throw new DOMException('The user aborted a request.', 'AbortError');
     }
