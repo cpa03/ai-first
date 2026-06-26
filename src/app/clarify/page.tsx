@@ -17,6 +17,7 @@ import {
   SPINNER_PATTERNS,
   IDEA_STATUS_CONFIG,
   HTTP_HEADERS,
+  CLARIFY_PAGE_CONTENT,
 } from '@/lib/config';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -177,10 +178,10 @@ function ClarifyPageContent() {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="slide-up">
-          <Alert type="error" title="Error">
+          <Alert type="error" title={CLARIFY_PAGE_CONTENT.ERROR_TITLE}>
             <p className="mb-4">{error}</p>
             <Button onClick={() => router.back()} variant="primary">
-              Go Back
+              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_BACK}
             </Button>
           </Alert>
         </div>
@@ -192,11 +193,8 @@ function ClarifyPageContent() {
     return (
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="slide-up">
-          <Alert type="success" title="Clarification Complete!">
-            <p className="mb-4">
-              Your answers have been collected. Ready to generate your
-              blueprint?
-            </p>
+          <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
+            <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
             <div className="bg-white border border-gray-200 rounded-md p-4 mb-4 space-y-2">
               {Object.entries(answers).map(([key, value]) => (
                 <div key={key} className="text-sm">
