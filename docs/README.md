@@ -61,7 +61,6 @@ Complete index of all IdeaFlow documentation.
 - [Events System](./events.md) - Event-driven architecture documentation
 - [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
 - [Skipped Tests](./skipped-tests.md) - Documentation for skipped tests
-- [Workflow Fix](./workflow-fix.md) - Workflow troubleshooting and fixes
 
 ## Specialist Guides
 
@@ -100,7 +99,7 @@ Complete index of all IdeaFlow documentation.
 - [Roadmap](./roadmap.md) - Project roadmap and milestones
 - [MVP Feature Status](./mvp-feature-status.md) - Current MVP progress dashboard
 - [Launch Readiness Checklist](./launch-readiness-checklist.md) - MVP launch go/no-go criteria
-- [Phase 1 Implementation Plan](./phase-1-implementation-plan.md) - Phase 1 detailed plan
+
 - [Breakdown Engine Architecture](./breakdown-engine-architecture.md) - Breakdown system design
 - [User Story Engineer](./user-story-engineer.md) - User story writing best practices
 - [User Personas](./user-stories/personas.md) - Primary user personas for writing user stories
