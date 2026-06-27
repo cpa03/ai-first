@@ -33,6 +33,47 @@
     --toast-error-icon: 220 38 38; /* red-600 #dc2626 */
     --toast-warning-icon: 202 138 4; /* yellow-600 #ca8a04 */
     --toast-info-icon: 37 99 235; /* blue-600 #2563eb */
+
+    /* Success/Task Completion color tokens */
+    --color-success-500: 34 197 94; /* #22c55e */
+    --shadow-success-light: rgb(34 197 94 / 0.15);
+    --shadow-success-medium: rgb(34 197 94 / 0.2);
+    --shadow-success-strong: rgb(34 197 94 / 0.35);
+
+    /* Share/Info success color tokens */
+    --color-share-success: 59 130 246; /* #3b82f6 */
+    --shadow-share-success: rgb(59 130 246 / 0.35);
+
+    /* Primary blue feedback color tokens */
+    --color-primary-feedback: 37 99 235; /* #2563eb */
+    --shadow-primary-feedback: rgb(37 99 235 / 0.3);
+    --shadow-primary-feedback-pulse: rgb(37 99 235 / 0.2);
+
+    /* Neutral shadow tokens */
+    --shadow-neutral-xs: rgb(0 0 0 / 0.05);
+    --shadow-neutral-sm: rgb(0 0 0 / 0.1);
+    --shadow-neutral-md: rgb(0 0 0 / 0.15);
+    --shadow-neutral-inset: rgb(255 255 255 / 0.1);
+
+    /* Z-index layer tokens */
+    --z-index-focus-ring: 10;
+    --z-index-skip-link: 9999;
+
+    /* Animation duration tokens */
+    --duration-fast: 0.15s;
+    --duration-normal: 0.3s;
+    --duration-slow: 0.5s;
+    --duration-extra-slow: 0.6s;
+    --duration-glow: 1.5s;
+    --duration-pulse: 2s;
+    --duration-gradient: 3s;
+
+    /* Easing tokens */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-gentle: cubic-bezier(0.25, 0.46, 0.45, 0.94);
   }
 
   html {
@@ -128,23 +169,23 @@
    Using Tailwind's focus-visible utilities prevents conflicts (Issue #620) */
 
   .fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn var(--duration-normal) ease-in-out;
   }
 
   .slide-up {
-    animation: slideUp 0.4s ease-out;
+    animation: slideUp var(--duration-slow) ease-out;
   }
 
   .scale-in {
-    animation: scaleIn 0.3s ease-out;
+    animation: scaleIn var(--duration-normal) ease-out;
   }
 
   .slide-down-enter {
-    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideDown 0.25s var(--ease-out-expo) forwards;
   }
 
   .animate-slide-down {
-    animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: slideDown 0.25s var(--ease-out-expo) forwards;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -219,7 +260,7 @@
 }
 
 .animate-draw-check {
-  animation: drawCheck 0.3s ease-out forwards;
+  animation: drawCheck var(--duration-normal) ease-out forwards;
 }
 
 /* Shimmer loading animation - adds life to skeleton screens */
@@ -250,7 +291,7 @@
 }
 
 .animate-hero-entrance {
-  animation: heroEntrance 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: heroEntrance var(--duration-slow) var(--ease-out-expo) both;
 }
 
 /* Reduced motion support for hero entrance */
@@ -279,7 +320,7 @@
 }
 
 .animate-ripple {
-  animation: ripple 0.6s ease-out;
+  animation: ripple var(--duration-extra-slow) ease-out;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -311,7 +352,7 @@
 }
 
 .animate-shake {
-  animation: shake 0.5s ease-in-out;
+  animation: shake var(--duration-slow) ease-in-out;
 }
 
 /* Reduced motion support for shake */
@@ -361,19 +402,19 @@
 }
 
 .animate-success-pop {
-  animation: success-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  animation: success-pop var(--duration-slow) var(--ease-bounce) forwards;
 }
 
 .animate-success-check {
-  animation: success-check 0.5s ease-out forwards;
+  animation: success-check var(--duration-slow) ease-out forwards;
 }
 
 .animate-ripple-ring-1 {
-  animation: ripple-ring 0.8s ease-out forwards;
+  animation: ripple-ring var(--duration-extra-slow) ease-out forwards;
 }
 
 .animate-ripple-ring-2 {
-  animation: ripple-ring 0.8s ease-out 0.2s forwards;
+  animation: ripple-ring var(--duration-extra-slow) ease-out 0.2s forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -398,17 +439,20 @@
 }
 
 .animate-stagger-1 {
-  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: staggerFadeInUp var(--duration-extra-slow) var(--ease-out-expo)
+    forwards;
   opacity: 0;
 }
 
 .animate-stagger-2 {
-  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+  animation: staggerFadeInUp var(--duration-extra-slow) var(--ease-out-expo)
+    0.15s forwards;
   opacity: 0;
 }
 
 .animate-stagger-3 {
-  animation: staggerFadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  animation: staggerFadeInUp var(--duration-extra-slow) var(--ease-out-expo)
+    0.3s forwards;
   opacity: 0;
 }
 
@@ -439,13 +483,13 @@
       border-box;
   background-size: 300% 100%;
   border: 2px solid transparent;
-  transition: all 0.3s ease;
+  transition: all var(--duration-normal) ease;
 }
 
 .gradient-border-hover:hover,
 .gradient-border-hover:focus-visible {
   background-position: 100% 0;
-  animation: gradientRotate 3s ease infinite;
+  animation: gradientRotate var(--duration-gradient) ease infinite;
   box-shadow: 0 10px 40px -10px var(--shadow-primary-medium);
 }
 
@@ -460,14 +504,14 @@
 /* Card lift effect */
 .card-lift {
   transition:
-    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.3s ease;
+    transform var(--duration-normal) var(--ease-spring),
+    box-shadow var(--duration-normal) ease;
 }
 
 .card-lift:hover,
 .card-lift:focus-visible {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 20px 40px -15px var(--shadow-neutral-md);
 }
 
 /* Number badge pulse on card hover */
@@ -483,7 +527,7 @@
 
 .group:hover .badge-animate,
 .group:focus-visible .badge-animate {
-  animation: badgePulse 0.6s ease-in-out;
+  animation: badgePulse var(--duration-extra-slow) ease-in-out;
 }
 
 /* Gentle pulse animation for current step indicator in ProgressStepper */
@@ -499,7 +543,7 @@
 }
 
 .animate-gentle-pulse {
-  animation: gentlePulse 2s ease-in-out infinite;
+  animation: gentlePulse var(--duration-pulse) ease-in-out infinite;
 }
 
 /* Reduced motion support for gentle pulse */
@@ -513,10 +557,10 @@
 .why-choose-focus:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 3px rgba(34, 197, 94, 0.4),
-    0 0 0 6px rgba(34, 197, 94, 0.15);
-  border-color: rgb(34, 197, 94);
-  z-index: 10;
+    0 0 0 3px var(--shadow-success-medium),
+    0 0 0 6px var(--shadow-success-light);
+  border-color: rgb(var(--color-success-500));
+  z-index: var(--z-index-focus-ring);
   position: relative;
 }
 
@@ -537,16 +581,16 @@
 }
 
 .btn-glow-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--duration-normal) var(--ease-smooth);
 }
 
 .btn-glow-hover:hover:not(:disabled) {
-  animation: glowPulse 2s ease-in-out infinite;
+  animation: glowPulse var(--duration-pulse) ease-in-out infinite;
   transform: translateY(-1px);
 }
 
 .btn-glow-hover:focus-visible:not(:disabled) {
-  animation: glowPulse 2s ease-in-out infinite;
+  animation: glowPulse var(--duration-pulse) ease-in-out infinite;
 }
 
 @keyframes focusRingPulse {
@@ -562,7 +606,7 @@
 }
 
 .animate-focus-ring:focus-visible {
-  animation: focusRingPulse 1.5s ease-in-out infinite;
+  animation: focusRingPulse var(--duration-glow) ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -589,36 +633,36 @@
   100% {
     box-shadow:
       0 0 0 0 var(--shadow-primary-600-medium),
-      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      0 4px 6px -1px var(--shadow-neutral-sm);
     transform: scale(1);
   }
   25% {
     box-shadow:
       0 0 0 6px var(--shadow-primary-600-light),
-      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      0 4px 6px -1px var(--shadow-neutral-sm);
     transform: scale(1.02);
   }
   50% {
     box-shadow:
       0 0 0 3px var(--shadow-primary-600-medium),
-      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      0 4px 6px -1px var(--shadow-neutral-sm);
     transform: scale(1.01);
   }
   75% {
     box-shadow:
       0 0 0 5px var(--shadow-primary-600-light),
-      0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      0 4px 6px -1px var(--shadow-neutral-sm);
     transform: scale(1.015);
   }
 }
 
 .btn-attention-pulse {
-  animation: attentionPulse 2s ease-in-out infinite;
+  animation: attentionPulse var(--duration-pulse) ease-in-out infinite;
 }
 
 /* Ensure attention pulse doesn't conflict with hover states */
 .btn-attention-pulse:hover:not(:disabled) {
-  animation: glowPulse 2s ease-in-out infinite;
+  animation: glowPulse var(--duration-pulse) ease-in-out infinite;
   transform: translateY(-1px);
 }
 
@@ -676,14 +720,14 @@ button[aria-disabled='true'].btn-glow-hover {
   border-radius: 0.5rem;
   font-weight: 500;
   font-size: 0.875rem;
-  z-index: 9999;
+  z-index: var(--z-index-skip-link);
   opacity: 0;
   transform: translateY(-10px);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--duration-normal) var(--ease-smooth);
   box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 4px 6px -1px var(--shadow-neutral-sm),
+    0 2px 4px -1px var(--shadow-neutral-xs),
+    0 0 0 1px var(--shadow-neutral-inset) inset;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   text-decoration: none;
@@ -696,10 +740,10 @@ button[aria-disabled='true'].btn-glow-hover {
   opacity: 1;
   transform: translateY(0);
   box-shadow:
-    0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 10px 15px -3px var(--shadow-neutral-sm),
+    0 4px 6px -2px var(--shadow-neutral-xs),
     0 0 0 3px rgb(var(--color-primary-500) / 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 0 0 1px var(--shadow-neutral-inset) inset;
 }
 
 .skip-link:focus-visible {
@@ -710,10 +754,10 @@ button[aria-disabled='true'].btn-glow-hover {
 .skip-link:hover {
   transform: translateY(0) scale(1.02);
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04),
+    0 20px 25px -5px var(--shadow-neutral-sm),
+    0 10px 10px -5px var(--shadow-neutral-xs),
     0 0 0 3px rgb(var(--color-primary-500) / 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+    0 0 0 1px var(--shadow-neutral-inset) inset;
 }
 
 /* Reduced motion support for skip link */
@@ -768,7 +812,7 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-counter-pulse {
-  animation: counterPulse 1.5s ease-in-out infinite;
+  animation: counterPulse var(--duration-glow) ease-in-out infinite;
 }
 
 /* Character counter glow animation - adds emphasis at warning threshold */
@@ -784,7 +828,7 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-counter-glow {
-  animation: counterGlow 2s ease-in-out infinite;
+  animation: counterGlow var(--duration-pulse) ease-in-out infinite;
 }
 
 /* Reduced motion support for character counter animations */
@@ -813,7 +857,7 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-coming-soon-badge {
-  animation: comingSoonPulse 2s ease-in-out infinite;
+  animation: comingSoonPulse var(--duration-pulse) ease-in-out infinite;
 }
 
 /* Reduced motion support for coming soon badge */
@@ -840,7 +884,7 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-ping-slow {
-  animation: pingSlow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation: pingSlow var(--duration-pulse) cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
 /* Reduced motion support for ping-slow */
@@ -866,7 +910,8 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-ping-once {
-  animation: pingOnce 0.6s cubic-bezier(0, 0, 0.2, 1) forwards;
+  animation: pingOnce var(--duration-extra-slow) cubic-bezier(0, 0, 0.2, 1)
+    forwards;
 }
 
 /* Reduced motion support for ping-once */
@@ -899,7 +944,7 @@ button[aria-disabled='true'].btn-glow-hover {
   width: 0;
   height: 2px;
   background-color: currentColor;
-  animation: strikethrough 0.4s ease-out forwards;
+  animation: strikethrough var(--duration-slow) ease-out forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -914,21 +959,21 @@ button[aria-disabled='true'].btn-glow-hover {
 @keyframes taskCompleteCelebration {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
   }
   50% {
     transform: scale(1.02);
-    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0.2);
+    box-shadow: 0 0 0 8px var(--shadow-success-medium);
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
   }
 }
 
 .animate-task-complete {
-  animation: taskCompleteCelebration 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)
-    forwards;
+  animation: taskCompleteCelebration var(--duration-extra-slow)
+    var(--ease-spring) forwards;
 }
 
 /* Reduced motion support for task completion celebration */
@@ -943,18 +988,19 @@ button[aria-disabled='true'].btn-glow-hover {
 /* Creates a brief, satisfying glow effect that confirms the action to users */
 @keyframes copySuccessGlow {
   0% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
   }
   30% {
-    box-shadow: 0 0 12px 4px rgba(34, 197, 94, 0.35);
+    box-shadow: 0 0 12px 4px var(--shadow-success-strong);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
   }
 }
 
 .animate-copy-success-glow {
-  animation: copySuccessGlow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: copySuccessGlow var(--duration-extra-slow) var(--ease-smooth)
+    forwards;
 }
 
 /* Reduced motion support for copy success glow */
@@ -969,18 +1015,19 @@ button[aria-disabled='true'].btn-glow-hover {
 /* Creates a brief, satisfying glow effect that confirms the action to users */
 @keyframes shareSuccessGlow {
   0% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    box-shadow: 0 0 0 0 var(--shadow-share-success);
   }
   30% {
-    box-shadow: 0 0 12px 4px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 0 12px 4px var(--shadow-share-success);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+    box-shadow: 0 0 0 0 var(--shadow-share-success);
   }
 }
 
 .animate-share-success-glow {
-  animation: shareSuccessGlow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: shareSuccessGlow var(--duration-extra-slow) var(--ease-smooth)
+    forwards;
 }
 
 /* Reduced motion support for share success glow */
@@ -1067,22 +1114,26 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-why-choose-1 {
-  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  animation: whyChooseFadeIn var(--duration-slow) var(--ease-out-expo) 0.1s
+    forwards;
   opacity: 0;
 }
 
 .animate-why-choose-2 {
-  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  animation: whyChooseFadeIn var(--duration-slow) var(--ease-out-expo) 0.2s
+    forwards;
   opacity: 0;
 }
 
 .animate-why-choose-3 {
-  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  animation: whyChooseFadeIn var(--duration-slow) var(--ease-out-expo) 0.3s
+    forwards;
   opacity: 0;
 }
 
 .animate-why-choose-4 {
-  animation: whyChooseFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  animation: whyChooseFadeIn var(--duration-slow) var(--ease-out-expo) 0.4s
+    forwards;
   opacity: 0;
 }
 
@@ -1104,21 +1155,21 @@ button[aria-disabled='true'].btn-glow-hover {
   0% {
     transform: scale(0.95);
     opacity: 0.7;
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 0 var(--shadow-primary-feedback);
   }
   50% {
     transform: scale(1.03);
-    box-shadow: 0 0 16px 4px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 0 16px 4px var(--shadow-primary-feedback);
   }
   100% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 0 var(--shadow-primary-feedback);
   }
 }
 
 .animate-enable-feedback {
-  animation: enableFeedback 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: enableFeedback var(--duration-slow) var(--ease-spring) forwards;
 }
 
 /* Reduced motion support for button enable feedback */
@@ -1136,20 +1187,21 @@ button[aria-disabled='true'].btn-glow-hover {
 @keyframes checkboxTogglePulse {
   0% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 0 var(--shadow-primary-feedback);
   }
   50% {
     transform: scale(1.15);
-    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 0 6px var(--shadow-primary-feedback-pulse);
   }
   100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+    box-shadow: 0 0 0 0 var(--shadow-primary-feedback);
   }
 }
 
 .animate-checkbox-pulse {
-  animation: checkboxTogglePulse 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: checkboxTogglePulse var(--duration-normal) var(--ease-spring)
+    forwards;
 }
 
 /* Reduced motion support for checkbox toggle pulse */
@@ -1175,7 +1227,7 @@ button[aria-disabled='true'].btn-glow-hover {
 }
 
 .animate-copy-confetti {
-  animation: confettiBurst 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: confettiBurst var(--duration-slow) var(--ease-gentle) forwards;
 }
 
 /* Reduced motion support for copy confetti */
