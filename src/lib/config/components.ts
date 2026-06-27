@@ -259,6 +259,8 @@ export const COMPONENT_CONFIG = {
       500,
       5000
     ),
+    /** Minimum height class for textarea */
+    MIN_HEIGHT_CLASS: 'min-h-[120px]',
   } as const,
 
   ONBOARDING: {

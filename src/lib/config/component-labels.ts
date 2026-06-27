@@ -233,11 +233,28 @@ export const KEYBOARD_SHORTCUTS_PROVIDER_LABELS = {
 
 /**
  * IdeaInput Labels
- * Eliminates hardcoded aria-labels in IdeaInput component
+ * Eliminates hardcoded aria-labels and strings in IdeaInput component
  */
 export const IDEA_INPUT_LABELS = {
   /** Writing progress aria-label */
   WRITING_PROGRESS_ARIA_LABEL: 'Writing progress',
+  /** Input label */
+  INPUT_LABEL: "What's your idea?",
+  /** Milestone reached message */
+  MILESTONE_MESSAGE: 'Great idea! Ready to submit',
+  /** Success message after submission */
+  SUCCESS_MESSAGE: 'Idea submitted successfully! Redirecting...',
+  /** Near minimum characters message */
+  NEAR_MINIMUM_MESSAGE: (charsNeeded: number) =>
+    `Almost there! Just ${charsNeeded} more to go`,
+  /** Characters needed message */
+  CHARS_NEEDED_MESSAGE: (charsNeeded: number) =>
+    `${charsNeeded} more character${charsNeeded !== 1 ? 's' : ''} needed`,
+  /** Help text prefix */
+  HELP_TEXT_PREFIX:
+    "Be as specific or as general as you'd like. We'll help you clarify details.",
+  /** Help text escape hint */
+  HELP_TEXT_ESCAPE_HINT: 'Press Escape to clear',
 } as const;
 
 /**

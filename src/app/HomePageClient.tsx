@@ -119,7 +119,11 @@ export default function HomePageClient() {
           className={`text-4xl font-bold text-gray-900 mb-4 ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
-          style={!prefersReducedMotion ? { animationDelay: '0ms' } : undefined}
+          style={
+            !prefersReducedMotion
+              ? { animationDelay: HOME_PAGE_CONFIG.HERO_ANIMATION_DELAYS.TITLE }
+              : undefined
+          }
         >
           {HOME_PAGE_CONFIG.HERO.TITLE}
         </h1>
@@ -128,7 +132,12 @@ export default function HomePageClient() {
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
-            !prefersReducedMotion ? { animationDelay: '100ms' } : undefined
+            !prefersReducedMotion
+              ? {
+                  animationDelay:
+                    HOME_PAGE_CONFIG.HERO_ANIMATION_DELAYS.DESCRIPTION,
+                }
+              : undefined
           }
         >
           {HOME_PAGE_CONFIG.HERO.DESCRIPTION}
@@ -138,7 +147,9 @@ export default function HomePageClient() {
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
-            !prefersReducedMotion ? { animationDelay: '200ms' } : undefined
+            !prefersReducedMotion
+              ? { animationDelay: HOME_PAGE_CONFIG.HERO_ANIMATION_DELAYS.CTA }
+              : undefined
           }
         >
           <ShareButton

@@ -286,6 +286,17 @@ export const SIZES = {
     MIN_HEIGHT: 100,
     MIN_HEIGHT_PX: '100px',
   },
+
+  /** Common component dimensions (Tailwind arbitrary values) */
+  COMPONENT: {
+    IDEA_INPUT_MIN_HEIGHT: 'min-h-[120px]',
+    TEXTAREA_MIN_HEIGHT: 'min-h-[100px]',
+    TOAST_BUTTON_MIN_SIZE: 'min-h-[32px] min-w-[32px]',
+    KEYBOARD_SHORTCUT_MIN_SIZE: 'min-w-[24px] min-h-[24px]',
+    MODAL_MAX_HEIGHT: 'max-h-[90vh]',
+    SCROLLABLE_MAX_HEIGHT: 'max-h-[60vh]',
+    ONBOARDING_TOOLTIP_WIDTH: 'w-[300px]',
+  },
 } as const;
 
 /**

@@ -176,7 +176,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         setSubmittedIdeaData({ idea: idea.trim(), ideaId });
         setShowCelebration(true);
-        setSuccessMessage('Idea submitted successfully! Redirecting...');
+        setSuccessMessage(IDEA_INPUT_LABELS.SUCCESS_MESSAGE);
       } catch (err) {
         logger.errorWithContext('Failed to save idea', {
           component: 'IdeaInput',
@@ -256,12 +256,12 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           ref={inputRef}
           id="idea-input"
           name="idea"
-          label="What's your idea?"
+          label={IDEA_INPUT_LABELS.INPUT_LABEL}
           value={idea}
           onChange={handleIdeaChange}
           onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDERS.IDEA_INPUT}
-          helpText={`Be as specific or as general as you'd like. We'll help you clarify details. ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. Press Escape to clear.`}
+          helpText={`${IDEA_INPUT_LABELS.HELP_TEXT_PREFIX} ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. ${IDEA_INPUT_LABELS.HELP_TEXT_ESCAPE_HINT}.`}
           multiline={true}
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}
@@ -271,7 +271,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           required={true}
           disabled={isSubmitting}
           autoFocus
-          className="min-h-[120px]"
+          className={COMPONENT_CONFIG.IDEA_INPUT.MIN_HEIGHT_CLASS}
         />
 
         {milestoneReached && (
@@ -295,7 +295,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 />
               </svg>
             </span>
-            Great idea! Ready to submit
+            {IDEA_INPUT_LABELS.MILESTONE_MESSAGE}
           </div>
         )}
 
@@ -313,8 +313,12 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               {charactersNeededData.charsNeeded}
             </span>
             {charactersNeededData.isNearMinimum
-              ? `Almost there! Just ${charactersNeededData.charsNeeded} more to go`
-              : `${charactersNeededData.charsNeeded} more character${charactersNeededData.charsNeeded !== 1 ? 's' : ''} needed`}
+              ? IDEA_INPUT_LABELS.NEAR_MINIMUM_MESSAGE(
+                  charactersNeededData.charsNeeded
+                )
+              : IDEA_INPUT_LABELS.CHARS_NEEDED_MESSAGE(
+                  charactersNeededData.charsNeeded
+                )}
           </p>
         ) : (
           !milestoneReached &&
