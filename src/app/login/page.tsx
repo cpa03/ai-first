@@ -183,16 +183,19 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
       <div className="max-w-md w-full space-y-8">
-        <div className="text-center">
+        <div className="text-center animate-hero-entrance">
           <h1 className="text-3xl font-bold text-gray-900">
             {LOGIN_PAGE_CONTENT.HEADING}
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600 animate-hero-entrance delay-75">
             {LOGIN_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form
+          className="mt-8 space-y-6 animate-hero-entrance delay-150"
+          onSubmit={handleSubmit}
+        >
           {error && (
             <Alert type="error" title={LOGIN_PAGE_CONTENT.ERRORS.TITLE}>
               {error}
@@ -327,7 +330,7 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="relative">
+        <div className="relative animate-hero-entrance delay-200">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300" />
           </div>
@@ -338,7 +341,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 animate-hero-entrance delay-250">
           <button
             onClick={() => handleOAuthSignIn('google')}
             disabled={oauthLoading !== null}
@@ -457,7 +460,7 @@ export default function LoginPage() {
           </button>
         </div>
 
-        <p className="text-center text-sm text-gray-600">
+        <p className="text-center text-sm text-gray-600 animate-hero-entrance delay-300">
           {LOGIN_PAGE_CONTENT.FOOTER.NO_ACCOUNT}{' '}
           <Link
             href={ROUTES.SIGNUP}
