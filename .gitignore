@@ -138,12 +138,11 @@ docs/archive/*.tar.gz
 # Note: docs/archive/README.md is intentionally tracked for documentation
 
 # Temporary agent reports (auto-generated, should not be committed)
-*BROCULA_AUDIT*.md
-*BROCULA-AUDIT*.md
-*BROCULA_VERIFICATION*.md
-*BROCULA-SCAN-REPORT*.md
-*CODEBASE_HEALTH_CHECK*.md
-*REPOKEEPER_MAINTENANCE_REPORT*.md
-*MAINTENANCE_REPORT*.md
-*AUDIT_REPORT*.md
-*HEALTH_CHECK*.md
+# Case-insensitive patterns for audit reports
+*[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Aa][Uu][Dd][Ii][Tt]*.md
+*[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Vv][Ee][Rr][Ii][Ff][Ii][Cc][Aa][Tt][Ii][Oo][Nn]*.md
+*[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Ss][Cc][Aa][Nn]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
+*[Cc][Oo][Dd][Ee][Bb][Aa][Ss][Ee]*[Hh][Ee][Aa][Ll][Tt][Hh]*[Cc][Hh][Ee][Cc][Kk]*.md
+*[Rr][Ee][Pp][Oo][Kk][Ee][Ee][Pp][Ee][Rr]*[Mm][Aa][Ii][Nn][Tt][Ee][Nn][Aa][Nn][Cc][Ee]*.md
+*[Aa][Uu][Dd][Ii][Tt]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
+*[Hh][Ee][Aa][Ll][Tt][Hh]*[Cc][Hh][Ee][Cc][Kk]*.md
