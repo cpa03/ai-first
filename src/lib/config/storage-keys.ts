@@ -55,8 +55,10 @@ export const SESSION_STORAGE_KEYS = {
  * Used by Supabase client library (prefixed differently)
  */
 export const SUPABASE_STORAGE_KEYS = {
-  /** Auth token storage key pattern */
-  AUTH_TOKEN: 'sb-',
+  /** Auth token storage key prefix (Supabase uses 'sb-{project-ref}-auth-token') */
+  AUTH_TOKEN_PREFIX: 'sb-',
+  /** Auth token storage key suffix */
+  AUTH_TOKEN_SUFFIX: '-auth-token',
 } as const;
 
 /**

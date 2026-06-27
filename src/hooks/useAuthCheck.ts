@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabaseClient } from '@/lib/db';
+import { SUPABASE_STORAGE_KEYS } from '@/lib/config';
 
 interface AuthState {
   isAuthenticated: boolean;
@@ -88,7 +89,9 @@ export function isAuthenticatedQuickCheck(): boolean {
   if (typeof window === 'undefined') return false;
 
   const supabaseAuthKey = Object.keys(localStorage).find(
-    (key) => key.startsWith('sb-') && key.endsWith('-auth-token')
+    (key) =>
+      key.startsWith(SUPABASE_STORAGE_KEYS.AUTH_TOKEN_PREFIX) &&
+      key.endsWith(SUPABASE_STORAGE_KEYS.AUTH_TOKEN_SUFFIX)
   );
 
   if (!supabaseAuthKey) return false;
