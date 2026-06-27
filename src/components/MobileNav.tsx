@@ -160,7 +160,7 @@ function MobileNavComponent() {
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className="text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} transition-all duration-200"
+        className={`text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} transition-all duration-200`}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="mobile-menu"
