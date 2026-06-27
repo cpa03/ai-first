@@ -222,7 +222,7 @@ export default async function RootLayout({
                             href={link.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-500 hover:text-gray-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-1"
+                            className="text-gray-500 hover:text-gray-900 hover:scale-110 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-1.5 hover:bg-gray-100"
                             aria-label={link.ariaLabel}
                           >
                             {link.label === 'Twitter' ? (
@@ -264,7 +264,7 @@ export default async function RootLayout({
                             <li key={item.href}>
                               <Link
                                 href={item.href}
-                                className="text-sm text-gray-600 hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md"
+                                className="text-sm text-gray-600 hover:text-primary-600 hover:translate-x-1 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md inline-block"
                               >
                                 {item.label}
                               </Link>
