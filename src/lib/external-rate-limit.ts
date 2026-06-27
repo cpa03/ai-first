@@ -10,7 +10,11 @@
 
 import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
-import { TIME_UNITS, RATE_LIMIT_CONFIG } from './config';
+import {
+  TIME_UNITS,
+  RATE_LIMIT_CONFIG,
+  EXTERNAL_RATE_LIMIT_TIMING,
+} from './config';
 import { TIMESTAMP_CONFIG } from './config/modular-constants';
 import { PLATFORM_ENV_KEYS } from './config/env-keys';
 
@@ -307,7 +311,7 @@ class ExternalRateLimitTracker {
 
     this.cleanupIntervalId = setInterval(
       () => this.cleanupExpired(),
-      5 * TIME_UNITS.MINUTE
+      EXTERNAL_RATE_LIMIT_TIMING.CLEANUP_INTERVAL
     );
 
     if (

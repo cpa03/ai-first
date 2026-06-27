@@ -153,6 +153,9 @@ export {
   UI_DURATIONS,
   CIRCUIT_BREAKER_TIMES,
   API_TIMEOUTS,
+  TIME_CONVERSION,
+  EXTERNAL_RATE_LIMIT_TIMING,
+  AI_TOKEN_ESTIMATION,
 } from './time';
 
 // API Error Messages Configuration
@@ -246,6 +249,9 @@ export type {
   UIDurations,
   CircuitBreakerTimes,
   APITimeouts,
+  TimeConversion,
+  ExternalRateLimitTiming,
+  AiTokenEstimation,
 } from './time';
 
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';

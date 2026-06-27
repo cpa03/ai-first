@@ -29,6 +29,7 @@ import {
   PLATFORM_ENV_KEYS,
   DATABASE_ENV_KEYS,
 } from './config/env-keys';
+import { AI_TOKEN_ESTIMATION } from './config/time';
 import { resourceCleanupManager } from './resource-cleanup';
 import { validateAIModelConfig } from './validation';
 
@@ -537,12 +538,15 @@ class AIService {
     let iterations = 0;
 
     // If context exceeds token limit, remove oldest non-system messages
-    if (Math.ceil(totalChars / 4) > maxTokens) {
+    if (
+      Math.ceil(totalChars / AI_TOKEN_ESTIMATION.CHARS_PER_TOKEN) > maxTokens
+    ) {
       const systemMessages = context.filter((m) => m.role === 'system');
       const nonSystemMessages = context.filter((m) => m.role !== 'system');
 
       while (
-        Math.ceil(totalChars / 4) > maxTokens &&
+        Math.ceil(totalChars / AI_TOKEN_ESTIMATION.CHARS_PER_TOKEN) >
+          maxTokens &&
         nonSystemMessages.length > 0 &&
         iterations < MAX_CONTEXT_ITERATIONS
       ) {
