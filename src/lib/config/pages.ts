@@ -107,6 +107,11 @@ export const HOME_PAGE_CONFIG = {
     SAVED_WITH_ID: 'Saved with ID:',
     REDIRECTING: 'Redirecting to clarification...',
   },
+  HERO_ANIMATION_DELAYS: {
+    TITLE: '0ms',
+    DESCRIPTION: '100ms',
+    CTA: '200ms',
+  },
 } as const;
 
 /**
@@ -193,8 +198,12 @@ export const LOGIN_PAGE_CONTENT = {
     SEPARATOR: 'Or continue with',
     GOOGLE: 'Google',
     GOOGLE_LOADING: 'Connecting...',
+    GOOGLE_ARIA_LABEL: 'Sign in with Google',
+    GOOGLE_LOADING_ARIA_LABEL: 'Connecting to Google...',
     GITHUB: 'GitHub',
     GITHUB_LOADING: 'Connecting...',
+    GITHUB_ARIA_LABEL: 'Sign in with GitHub',
+    GITHUB_LOADING_ARIA_LABEL: 'Connecting to GitHub...',
   },
   FOOTER: {
     NO_ACCOUNT: "Don't have an account?",
@@ -234,8 +243,12 @@ export const SIGNUP_PAGE_CONTENT = {
     SEPARATOR: 'Or sign up with',
     GOOGLE: 'Google',
     GOOGLE_LOADING: 'Connecting...',
+    GOOGLE_ARIA_LABEL: 'Sign up with Google',
+    GOOGLE_LOADING_ARIA_LABEL: 'Connecting to Google...',
     GITHUB: 'GitHub',
     GITHUB_LOADING: 'Connecting...',
+    GITHUB_ARIA_LABEL: 'Sign up with GitHub',
+    GITHUB_LOADING_ARIA_LABEL: 'Connecting to GitHub...',
   },
   FOOTER: {
     HAS_ACCOUNT: 'Already have an account?',
