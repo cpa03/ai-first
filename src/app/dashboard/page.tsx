@@ -528,24 +528,24 @@ export default function DashboardPage() {
       {/* Ideas List */}
       {ideas.length === 0 ? (
         <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-primary-50 rounded-full">
-            <svg
-              className="w-10 h-10 text-primary-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
-                d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-              />
-            </svg>
-          </div>
           {filter !== 'all' ? (
             <>
+              <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-primary-50 rounded-full">
+                <svg
+                  className="w-10 h-10 text-primary-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
+                </svg>
+              </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
                 {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.NO_MATCHING_TITLE}
               </h2>
@@ -576,8 +576,142 @@ export default function DashboardPage() {
               <p className="text-gray-600 mb-6">
                 {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.DESCRIPTION}
               </p>
+
+              {/* Micro-UX: Animated 3-step visual flow showing the IdeaFlow journey */}
+              {/* Helps users understand the product value proposition at a glance */}
+              <div
+                className="flex items-center justify-center gap-2 sm:gap-4 mb-8"
+                role="list"
+                aria-label="How IdeaFlow works: three steps"
+              >
+                {/* Step 1: Idea */}
+                <div
+                  className="flex flex-col items-center gap-2 animate-fade-in"
+                  role="listitem"
+                  style={{ animationDelay: '0ms' }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 transition-transform duration-200 hover:scale-110">
+                    <svg
+                      className="w-7 h-7 text-amber-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-medium text-gray-700">
+                    Share Idea
+                  </span>
+                </div>
+
+                {/* Arrow 1 */}
+                <div
+                  className="flex items-center animate-fade-in mt-[-1.5rem]"
+                  aria-hidden="true"
+                  style={{ animationDelay: '150ms' }}
+                >
+                  <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-amber-300 to-primary-300" />
+                  <svg
+                    className="w-4 h-4 text-primary-400 -ml-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+
+                {/* Step 2: Clarify */}
+                <div
+                  className="flex flex-col items-center gap-2 animate-fade-in"
+                  role="listitem"
+                  style={{ animationDelay: '300ms' }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-primary-50 border border-primary-200 transition-transform duration-200 hover:scale-110">
+                    <svg
+                      className="w-7 h-7 text-primary-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
+                        d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-medium text-gray-700">
+                    Get Clarified
+                  </span>
+                </div>
+
+                {/* Arrow 2 */}
+                <div
+                  className="flex items-center animate-fade-in mt-[-1.5rem]"
+                  aria-hidden="true"
+                  style={{ animationDelay: '450ms' }}
+                >
+                  <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-primary-300 to-green-300" />
+                  <svg
+                    className="w-4 h-4 text-green-400 -ml-1"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </div>
+
+                {/* Step 3: Blueprint */}
+                <div
+                  className="flex flex-col items-center gap-2 animate-fade-in"
+                  role="listitem"
+                  style={{ animationDelay: '600ms' }}
+                >
+                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-green-50 border border-green-200 transition-transform duration-200 hover:scale-110">
+                    <svg
+                      className="w-7 h-7 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                  </div>
+                  <span className="text-xs font-medium text-gray-700">
+                    Get Blueprint
+                  </span>
+                </div>
+              </div>
+
               <Link href="/">
-                <Button variant="primary">
+                <Button variant="primary" attention>
                   {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.BUTTON}
                 </Button>
               </Link>
