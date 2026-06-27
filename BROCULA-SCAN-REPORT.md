@@ -1,7 +1,7 @@
 # 🧛 BroCula Browser Console & Lighthouse Scan Report
 
-**Scan Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-**Branch**: brocula/browser-optimization
+**Scan Date**: 2026-06-27T10:03:59Z
+**Branch**: brocula/browser-optimization-session-20260627-0955
 **Agent**: BroCula (Browser Console & Lighthouse Specialist)
 
 ## Executive Summary
@@ -84,6 +84,27 @@ The IdeaFlow codebase demonstrates excellent browser health and performance opti
 | Focus Management    | ✅     | Focus visible rings                   |
 | Reduced Motion      | ✅     | `usePrefersReducedMotion` hook        |
 | Screen Reader       | ✅     | `LoadingAnnouncer`, `StatusAnnouncer` |
+
+---
+
+## 2.1 Lighthouse Scores (Fresh Scan)
+
+| Page    | Performance | Accessibility | Best Practices | SEO     |
+| ------- | ----------- | ------------- | -------------- | ------- |
+| /       | 93          | 100           | 100            | 100     |
+| /login  | 100         | 100           | 100            | 100     |
+| /signup | 99          | 100           | 100            | 100     |
+| **Avg** | **97.3**    | **100**       | **100**        | **100** |
+
+### Core Web Vitals (Home Page)
+
+| Metric                   | Value | Target   | Status |
+| ------------------------ | ----- | -------- | ------ |
+| First Contentful Paint   | 0.3 s | < 1.8 s  | ✅     |
+| Largest Contentful Paint | 1.6 s | < 2.5 s  | ✅     |
+| Total Blocking Time      | 20 ms | < 200 ms | ✅     |
+| Cumulative Layout Shift  | 0.059 | < 0.1    | ✅     |
+| Speed Index              | 1.4 s | < 3.4 s  | ✅     |
 
 ---
 
