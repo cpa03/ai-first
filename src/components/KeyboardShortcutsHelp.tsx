@@ -257,11 +257,38 @@ const ShortcutRow = memo(function ShortcutRow({
   isMac: boolean;
   isSelected?: boolean;
 }) {
+  const [copied, setCopied] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const displayKeys = shortcut.keys.map((key) => {
     if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
     if (key === '⌥') return isMac ? '⌥' : 'Alt';
     return key;
   });
+
+  // Micro-UX: Copy shortcut to clipboard with visual feedback
+  // Allows users to quickly copy keyboard shortcuts for reference or sharing
+  const handleCopyShortcut = useCallback(async () => {
+    const shortcutText = displayKeys.join(' + ');
+    try {
+      await navigator.clipboard.writeText(shortcutText);
+      triggerHapticFeedback();
+      setCopied(true);
+      timeoutRef.current = setTimeout(() => {
+        setCopied(false);
+      }, UI_CONFIG.FEEDBACK.COPY_FEEDBACK_DURATION_MS);
+    } catch {
+      // Clipboard API not available or denied - fail silently
+    }
+  }, [displayKeys]);
 
   return (
     <div
@@ -274,7 +301,12 @@ const ShortcutRow = memo(function ShortcutRow({
       >
         {shortcut.description}
       </span>
-      <div className="flex items-center gap-1.5 flex-shrink-0 ml-4">
+      <button
+        type="button"
+        onClick={handleCopyShortcut}
+        className="flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md hover:bg-gray-100 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1"
+        aria-label={`Copy shortcut: ${displayKeys.join(' plus ')}`}
+      >
         {displayKeys.map((key, index) => (
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
@@ -283,7 +315,24 @@ const ShortcutRow = memo(function ShortcutRow({
             )}
           </React.Fragment>
         ))}
-      </div>
+        {/* Micro-UX: Show brief checkmark feedback when copied */}
+        {copied && (
+          <svg
+            className="w-3.5 h-3.5 text-green-600 ml-1 animate-in fade-in zoom-in duration-150"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={SVG_STROKE_WIDTHS.THICK}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        )}
+      </button>
     </div>
   );
 });
