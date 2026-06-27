@@ -1,7 +1,7 @@
 # BroCula Browser Console & Lighthouse Audit Report
 
 **Date**: 2026-06-27  
-**Branch**: brocula/browser-console-fixes-20260627-165440  
+**Branch**: brocula/browser-console-fixes-20260627-204812  
 **Auditor**: BroCula (CMZ Agent)
 
 ## Executive Summary
@@ -28,10 +28,10 @@
 | Page | Performance | Accessibility | Best Practices | SEO |
 |------|-------------|---------------|----------------|-----|
 | `/` | 92 | 100 | 100 | 100 |
-| `/login` | 99 | 100 | 100 | 100 |
-| `/signup` | 98 | 100 | 100 | 100 |
+| `/login` | 93 | 100 | 100 | 100 |
+| `/signup` | 94 | 100 | 100 | 100 |
 
-**Average Performance**: 96.3  
+**Average Performance**: 93.0  
 **Average Accessibility**: 100.0  
 **Average Best Practices**: 100.0  
 **Average SEO**: 100.0
@@ -42,8 +42,8 @@
 |--------|-------|--------|
 | First Contentful Paint (FCP) | 0.3s | ✅ Good |
 | Largest Contentful Paint (LCP) | 1.6s | ✅ Good |
-| Total Blocking Time (TBT) | 20ms | ✅ Good |
-| Cumulative Layout Shift (CLS) | 0.062 | ✅ Good |
+| Total Blocking Time (TBT) | 10ms | ✅ Good |
+| Cumulative Layout Shift (CLS) | 0.059 | ✅ Good |
 | Speed Index | 1.4s | ✅ Good |
 
 ### Diagnostics (Informational)
@@ -69,7 +69,7 @@
 
 The codebase is in excellent health:
 - Zero console errors and warnings
-- Lighthouse scores well above thresholds (96.3 avg performance)
+- Lighthouse scores well above thresholds (93.0 avg performance)
 - All code quality checks pass
 - No code changes required
 
