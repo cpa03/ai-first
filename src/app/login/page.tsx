@@ -7,6 +7,8 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
+import { CapsLockWarning } from '@/components/CapsLockWarning';
+import { useCapsLock } from '@/hooks/useCapsLock';
 import {
   OAUTH_PROVIDER_COLORS,
   LOCAL_STORAGE_KEYS,
@@ -36,6 +38,12 @@ export default function LoginPage() {
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+  const {
+    isCapsLockOn: isPasswordCapsLockOn,
+    handleKeyDown: handlePasswordKeyDown,
+    handleKeyUp: handlePasswordKeyUp,
+    handleBlur: handlePasswordBlur,
+  } = useCapsLock();
 
   useEffect(() => {
     const savedEmail = localStorage.getItem(
@@ -208,25 +216,31 @@ export default function LoginPage() {
               autoFocus
             />
 
-            <InputWithValidation
-              ref={passwordInputRef}
-              id="password"
-              name="password"
-              type="password"
-              label={LOGIN_PAGE_CONTENT.FORM.PASSWORD_LABEL}
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (passwordError) setPasswordError(undefined);
-              }}
-              error={passwordError}
-              disabled={isLoading}
-              required
-              autoComplete="current-password"
-              placeholder={LOGIN_PAGE_CONTENT.FORM.PASSWORD_PLACEHOLDER}
-              showPasswordToggle
-              onEnterPress={submitForm}
-            />
+            <div className="space-y-1.5">
+              <InputWithValidation
+                ref={passwordInputRef}
+                id="password"
+                name="password"
+                type="password"
+                label={LOGIN_PAGE_CONTENT.FORM.PASSWORD_LABEL}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (passwordError) setPasswordError(undefined);
+                }}
+                onKeyDown={handlePasswordKeyDown}
+                onKeyUp={handlePasswordKeyUp}
+                onBlur={handlePasswordBlur}
+                error={passwordError}
+                disabled={isLoading}
+                required
+                autoComplete="current-password"
+                placeholder={LOGIN_PAGE_CONTENT.FORM.PASSWORD_PLACEHOLDER}
+                showPasswordToggle
+                onEnterPress={submitForm}
+              />
+              <CapsLockWarning isOn={isPasswordCapsLockOn} />
+            </div>
           </div>
 
           <div className="flex items-center justify-between">

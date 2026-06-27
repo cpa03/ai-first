@@ -6,6 +6,8 @@ import { supabaseClient } from '@/lib/db';
 import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
+import { CapsLockWarning } from '@/components/CapsLockWarning';
+import { useCapsLock } from '@/hooks/useCapsLock';
 import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
@@ -220,6 +222,18 @@ export default function SignupPage() {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
+  const {
+    isCapsLockOn: isPasswordCapsLockOn,
+    handleKeyDown: handlePasswordKeyDown,
+    handleKeyUp: handlePasswordKeyUp,
+    handleBlur: handlePasswordBlur,
+  } = useCapsLock();
+  const {
+    isCapsLockOn: isConfirmPasswordCapsLockOn,
+    handleKeyDown: handleConfirmPasswordKeyDown,
+    handleKeyUp: handleConfirmPasswordKeyUp,
+    handleBlur: handleConfirmPasswordBlur,
+  } = useCapsLock();
 
   useEffect(() => {
     if (emailError) {
@@ -423,6 +437,9 @@ export default function SignupPage() {
               label={SIGNUP_PAGE_CONTENT.FORM.PASSWORD_LABEL}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handlePasswordKeyDown}
+              onKeyUp={handlePasswordKeyUp}
+              onBlur={handlePasswordBlur}
               error={passwordError}
               disabled={isLoading}
               required
@@ -431,6 +448,8 @@ export default function SignupPage() {
               showPasswordToggle
               onEnterPress={submitForm}
             />
+
+            <CapsLockWarning isOn={isPasswordCapsLockOn} />
 
             {password && <PasswordStrengthIndicator password={password} />}
 
@@ -442,6 +461,9 @@ export default function SignupPage() {
               label={SIGNUP_PAGE_CONTENT.FORM.CONFIRM_PASSWORD_LABEL}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              onKeyDown={handleConfirmPasswordKeyDown}
+              onKeyUp={handleConfirmPasswordKeyUp}
+              onBlur={handleConfirmPasswordBlur}
               disabled={isLoading}
               required
               autoComplete="new-password"
@@ -451,6 +473,8 @@ export default function SignupPage() {
               showPasswordToggle
               onEnterPress={submitForm}
             />
+
+            <CapsLockWarning isOn={isConfirmPasswordCapsLockOn} />
 
             <PasswordMatchIndicator
               password={password}
