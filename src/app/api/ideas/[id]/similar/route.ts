@@ -9,6 +9,7 @@ import { ValidationError } from '@/lib/errors';
 import { APP_CONFIG } from '@/lib/config/app';
 import { SIMILARITY_CONFIG } from '@/lib/config/similarity-config';
 import { STATUS_CODES } from '@/lib/config/http';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 /**
  * GET /api/ideas/[id]/similar
@@ -85,7 +86,12 @@ async function handleGet(context: ApiContext) {
   const ideaId = segments.at(-2);
 
   if (!ideaId) {
-    throw new Error('Idea ID is required');
+    throw new ValidationError([
+      {
+        field: 'ideaId',
+        message: API_ERROR_MESSAGES.VALIDATION.IDEA_ID_REQUIRED,
+      },
+    ]);
   }
 
   // Authenticate user

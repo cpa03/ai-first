@@ -35,4 +35,19 @@ export const SECURITY_CONFIG = {
     'SECURITY_REFERRER_POLICY',
     'strict-origin-when-cross-origin'
   ),
+
+  CSP_LOG: {
+    SCRIPT_SAMPLE_MAX_LENGTH: EnvLoader.number(
+      'SECURITY_CSP_SCRIPT_SAMPLE_MAX_LENGTH',
+      200,
+      50,
+      1000
+    ),
+    POLICY_MAX_LENGTH: EnvLoader.number(
+      'SECURITY_CSP_POLICY_MAX_LENGTH',
+      500,
+      100,
+      2000
+    ),
+  },
 } as const;
