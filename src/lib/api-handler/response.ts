@@ -5,6 +5,8 @@ import type { ApiResponse } from './types';
 
 /**
  * Creates a successful JSON response with optional rate limit headers
+ * This is a simple wrapper that returns raw data for backward compatibility.
+ * For standardized responses with requestId/timestamp, use standardSuccessResponse.
  */
 export function successResponse<T>(
   data: T,
@@ -27,6 +29,8 @@ export function successResponse<T>(
 
 /**
  * Creates a 404 Not Found response
+ * This is a simple helper for quick responses. For standardized error responses,
+ * use toErrorResponse() which includes requestId, fingerprint, and suggestions.
  */
 export function notFoundResponse(
   message: string = 'Resource not found',
@@ -51,6 +55,8 @@ export function notFoundResponse(
 
 /**
  * Creates a 400 Bad Request response with optional details
+ * This is a simple helper for quick responses. For standardized error responses,
+ * use toErrorResponse() which includes requestId, fingerprint, and suggestions.
  */
 export function badRequestResponse(
   message: string,

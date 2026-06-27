@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import {
   generateRequestId,
   toErrorResponse,
@@ -123,19 +123,20 @@ export function withApiHandler(
             origin: csrfResult.origin,
           });
 
-          return NextResponse.json(
-            {
-              error: 'Forbidden: Invalid origin header',
-              code: 'CSRF_VALIDATION_FAILED',
-              timestamp: new Date().toISOString(),
-              requestId,
-            },
-            {
-              status: STATUS_CODES.FORBIDDEN,
-              headers: {
-                [HTTP_HEADERS.X_REQUEST_ID]: requestId,
-              },
-            }
+          return toErrorResponse(
+            new AppError(
+              'Forbidden: Invalid origin header',
+              ErrorCode.AUTHORIZATION_ERROR,
+              STATUS_CODES.FORBIDDEN,
+              [
+                {
+                  message: `Invalid origin: ${csrfResult.origin || 'unknown'}`,
+                },
+              ],
+              false
+            ),
+            requestId,
+            Date.now() - requestStartTime
           );
         }
       }
@@ -183,19 +184,20 @@ export function withApiHandler(
           patterns: suspiciousResult.patterns.map((p) => p.category),
         });
 
-        return NextResponse.json(
-          {
-            error: 'Forbidden: Security policy violation',
-            code: 'SECURITY_BLOCK',
-            timestamp: new Date().toISOString(),
-            requestId,
-          },
-          {
-            status: STATUS_CODES.FORBIDDEN,
-            headers: {
-              [HTTP_HEADERS.X_REQUEST_ID]: requestId,
-            },
-          }
+        return toErrorResponse(
+          new AppError(
+            'Forbidden: Security policy violation',
+            ErrorCode.AUTHORIZATION_ERROR,
+            STATUS_CODES.FORBIDDEN,
+            [
+              {
+                message: `Suspicious patterns detected: ${suspiciousResult.patterns.map((p) => p.category).join(', ')}`,
+              },
+            ],
+            false
+          ),
+          requestId,
+          Date.now() - requestStartTime
         );
       }
 
