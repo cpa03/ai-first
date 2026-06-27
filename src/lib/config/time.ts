@@ -73,6 +73,43 @@ export const API_TIMEOUTS = {
   DATABASE: 10 * TIME_UNITS.SECOND,
 } as const;
 
+/**
+ * Time Conversion Constants for Relative Time Formatting
+ * Centralizes magic numbers used in relative time calculations (e.g., "5 minutes ago")
+ */
+export const TIME_CONVERSION = {
+  /** Seconds per minute */
+  SECONDS_PER_MINUTE: 60,
+  /** Minutes per hour */
+  MINUTES_PER_HOUR: 60,
+  /** Hours per day */
+  HOURS_PER_DAY: 24,
+  /** Days per week */
+  DAYS_PER_WEEK: 7,
+  /** Days per month (approximate) */
+  DAYS_PER_MONTH: 30,
+  /** Days per year (approximate) */
+  DAYS_PER_YEAR: 365,
+} as const;
+
+/**
+ * External Rate Limit Cleanup Configuration
+ * Centralizes cleanup intervals for external rate limit tracking
+ */
+export const EXTERNAL_RATE_LIMIT_TIMING = {
+  /** Cleanup interval for expired rate limit entries */
+  CLEANUP_INTERVAL: 5 * TIME_UNITS.MINUTE,
+} as const;
+
+/**
+ * AI Token Estimation Configuration
+ * Centralizes magic numbers for token estimation from text
+ */
+export const AI_TOKEN_ESTIMATION = {
+  /** Average characters per token for English text */
+  CHARS_PER_TOKEN: 4,
+} as const;
+
 export type TimeUnits = typeof TIME_UNITS;
 export type CacheTTL = typeof CACHE_TTL;
 export type RateLimitWindows = typeof RATE_LIMIT_WINDOWS;
@@ -80,3 +117,6 @@ export type RetryDelays = typeof RETRY_DELAYS;
 export type UIDurations = typeof UI_DURATIONS;
 export type CircuitBreakerTimes = typeof CIRCUIT_BREAKER_TIMES;
 export type APITimeouts = typeof API_TIMEOUTS;
+export type TimeConversion = typeof TIME_CONVERSION;
+export type ExternalRateLimitTiming = typeof EXTERNAL_RATE_LIMIT_TIMING;
+export type AiTokenEstimation = typeof AI_TOKEN_ESTIMATION;

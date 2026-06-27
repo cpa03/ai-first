@@ -2,7 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { generateId } from './security/crypto';
 import { RETRY_CONFIG } from './config/constants';
-import { TIME_UNITS } from './config/time';
+import { TIME_UNITS, TIME_CONVERSION } from './config/time';
 
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Optimized fast-path for common empty or single-class cases.
@@ -345,9 +345,11 @@ export function getRelativeTime(
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffSeconds = Math.floor(diffMs / TIME_UNITS.SECOND);
-  const diffMinutes = Math.floor(diffSeconds / 60);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
+  const diffMinutes = Math.floor(
+    diffSeconds / TIME_CONVERSION.SECONDS_PER_MINUTE
+  );
+  const diffHours = Math.floor(diffMinutes / TIME_CONVERSION.MINUTES_PER_HOUR);
+  const diffDays = Math.floor(diffHours / TIME_CONVERSION.HOURS_PER_DAY);
 
   // Future dates: show absolute date
   if (diffMs < 0) {
@@ -355,37 +357,37 @@ export function getRelativeTime(
   }
 
   // Less than 1 minute: show "just now"
-  if (diffSeconds < 60) {
+  if (diffSeconds < TIME_CONVERSION.SECONDS_PER_MINUTE) {
     return 'just now';
   }
 
   // Less than 1 hour: show minutes
-  if (diffMinutes < 60) {
+  if (diffMinutes < TIME_CONVERSION.MINUTES_PER_HOUR) {
     const minutes = Math.floor(diffMinutes);
     return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
   }
 
   // Less than 24 hours: show hours
-  if (diffHours < 24) {
+  if (diffHours < TIME_CONVERSION.HOURS_PER_DAY) {
     const hours = Math.floor(diffHours);
     return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
   }
 
   // Less than 7 days: show days
-  if (diffDays < 7) {
+  if (diffDays < TIME_CONVERSION.DAYS_PER_WEEK) {
     const days = Math.floor(diffDays);
     return days === 1 ? '1 day ago' : `${days} days ago`;
   }
 
   // Less than 30 days: show weeks
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
+  if (diffDays < TIME_CONVERSION.DAYS_PER_MONTH) {
+    const weeks = Math.floor(diffDays / TIME_CONVERSION.DAYS_PER_WEEK);
     return weeks === 1 ? '1 week ago' : `${weeks} weeks ago`;
   }
 
   // Less than 365 days: show months
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
+  if (diffDays < TIME_CONVERSION.DAYS_PER_YEAR) {
+    const months = Math.floor(diffDays / TIME_CONVERSION.DAYS_PER_MONTH);
     return months === 1 ? '1 month ago' : `${months} months ago`;
   }
 
