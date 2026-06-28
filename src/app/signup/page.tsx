@@ -23,7 +23,12 @@ type PasswordMatch = 'empty' | 'match' | 'mismatch';
 interface PasswordStrengthResult {
   strength: PasswordStrength;
   score: number;
-  feedback: string[];
+  requirements: {
+    hasMinLength: boolean;
+    hasUpperLower: boolean;
+    hasNumber: boolean;
+    hasSpecial: boolean;
+  };
 }
 
 interface PasswordMatchIndicatorProps {
@@ -91,116 +96,57 @@ function PasswordMatchIndicator({
 }
 
 function calculatePasswordStrength(password: string): PasswordStrengthResult {
-  const feedback: string[] = [];
-  let score = 0;
-
-  if (password.length === 0) {
-    return { strength: 'empty', score: 0, feedback: [] };
-  }
-
-  const { MIN_LENGTH, MESSAGES, STRENGTH_THRESHOLDS } =
-    PASSWORD_VALIDATION_CONFIG;
-
-  if (password.length >= STRENGTH_THRESHOLDS.MIN_LENGTH) score++;
-  if (password.length >= STRENGTH_THRESHOLDS.MEDIUM_LENGTH) score++;
-  if (password.length >= STRENGTH_THRESHOLDS.STRONG_LENGTH) score++;
-
-  if (/[a-z]/.test(password)) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[^a-zA-Z0-9]/.test(password)) score++;
-
-  const normalizedScore = Math.min(Math.floor(score / 2), 4);
-
-  if (password.length < MIN_LENGTH) {
-    feedback.push(MESSAGES.MIN_LENGTH);
-  }
-  if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
-    feedback.push(MESSAGES.UPPERCASE_LOWERCASE);
-  }
-  if (!/[0-9]/.test(password)) {
-    feedback.push(MESSAGES.NUMBER);
-  }
-  if (!/[^a-zA-Z0-9]/.test(password)) {
-    feedback.push(MESSAGES.SPECIAL_CHARACTER);
-  }
-
-  let strength: PasswordStrength;
-  if (normalizedScore <= 1) strength = 'weak';
-  else if (normalizedScore <= 2) strength = 'medium';
-  else strength = 'strong';
-
-  return { strength, score: normalizedScore, feedback };
+  const { MIN_LENGTH, STRENGTH_THRESHOLDS } = PASSWORD_VALIDATION_CONFIG;
+  const reqs = {
+    hasMinLength: password.length >= MIN_LENGTH,
+    hasUpperLower: /[a-z]/.test(password) && /[A-Z]/.test(password),
+    hasNumber: /[0-9]/.test(password),
+    hasSpecial: /[^a-zA-Z0-9]/.test(password),
+  };
+  const score = Object.values(reqs).filter(Boolean).length +
+    (password.length >= STRENGTH_THRESHOLDS.MEDIUM_LENGTH ? 1 : 0) +
+    (password.length >= STRENGTH_THRESHOLDS.STRONG_LENGTH ? 1 : 0);
+  let strength: PasswordStrength = 'weak';
+  if (password.length === 0) strength = 'empty';
+  else if (score >= 5) strength = 'strong';
+  else if (score >= 3) strength = 'medium';
+  return { strength, score, requirements: reqs };
 }
 
+const RequirementItem = ({ met, label }: { met: boolean; label: string }) => (
+  <li className={`flex items-center gap-2 text-xs font-medium transition-colors ${met ? 'text-green-700' : 'text-gray-500'}`}>
+    <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-all ${met ? 'bg-green-100 border-green-500 animate-success-pop' : 'bg-white border-gray-300'}`}>
+      {met ? <svg className="w-2.5 h-2.5 text-green-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={SVG_STROKE_WIDTHS.THICK}><path d="M5 13l4 4L19 7" /></svg> : <div className="w-1 h-1 bg-gray-300 rounded-full" />}
+    </div>
+    {label}
+  </li>
+);
+
 function PasswordStrengthIndicator({ password }: { password: string }) {
-  const { strength, score, feedback } = useMemo(
-    () => calculatePasswordStrength(password),
-    [password]
-  );
-
-  const {
-    STRENGTH_LABELS,
-    STRENGTH_COLORS,
-    STRENGTH_WIDTHS,
-    STRENGTH_TEXT_COLORS,
-  } = PASSWORD_VALIDATION_CONFIG;
-
-  const strengthConfig = {
-    empty: { label: '', color: 'bg-gray-200', width: '0%', textColor: '' },
-    weak: {
-      label: STRENGTH_LABELS.WEAK,
-      color: STRENGTH_COLORS.WEAK,
-      width: STRENGTH_WIDTHS.WEAK,
-      textColor: STRENGTH_TEXT_COLORS.WEAK,
-    },
-    medium: {
-      label: STRENGTH_LABELS.MEDIUM,
-      color: STRENGTH_COLORS.MEDIUM,
-      width: STRENGTH_WIDTHS.MEDIUM,
-      textColor: STRENGTH_TEXT_COLORS.MEDIUM,
-    },
-    strong: {
-      label: STRENGTH_LABELS.STRONG,
-      color: STRENGTH_COLORS.STRONG,
-      width: STRENGTH_WIDTHS.STRONG,
-      textColor: STRENGTH_TEXT_COLORS.STRONG,
-    },
-  };
-
-  const config = strengthConfig[strength];
-
+  const { strength, requirements: reqs } = useMemo(() => calculatePasswordStrength(password), [password]);
+  const { STRENGTH_COLORS, STRENGTH_LABELS, STRENGTH_TEXT_COLORS, MESSAGES } = PASSWORD_VALIDATION_CONFIG;
+  const config = {
+    empty: { label: '', color: 'bg-gray-200', textColor: '' },
+    weak: { label: STRENGTH_LABELS.WEAK, color: STRENGTH_COLORS.WEAK, textColor: STRENGTH_TEXT_COLORS.WEAK },
+    medium: { label: STRENGTH_LABELS.MEDIUM, color: STRENGTH_COLORS.MEDIUM, textColor: STRENGTH_TEXT_COLORS.MEDIUM },
+    strong: { label: STRENGTH_LABELS.STRONG, color: STRENGTH_COLORS.STRONG, textColor: STRENGTH_TEXT_COLORS.STRONG },
+  }[strength];
   if (strength === 'empty') return null;
-
   return (
-    <div className="space-y-2">
-      <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className={`h-full ${config.color} transition-all duration-300 ease-out rounded-full`}
-            style={{ width: config.width }}
-            role="progressbar"
-            aria-valuenow={score}
-            aria-valuemin={0}
-            aria-valuemax={4}
-            aria-label={`Password strength: ${config.label}`}
-          />
-        </div>
-        <span className={`text-xs font-medium ${config.textColor}`}>
-          {config.label}
-        </span>
+    <div className="space-y-3 animate-hero-entrance delay-75">
+      <div className="space-y-1.5">
+        <div className="flex justify-between items-center"><span className="text-[10px] uppercase font-bold text-gray-500">Strength</span><span className={`text-xs font-bold ${config.textColor}`}>{config.label}</span></div>
+        <div className="flex gap-1 h-1.5">{[1, 2, 3].map(s => <div key={s} className={`flex-1 rounded-full transition-all duration-500 ${(strength==='weak' && s==1) || (strength==='medium' && s<=2) || strength==='strong' ? config.color : 'bg-gray-200'}`} />)}</div>
       </div>
-
-      {feedback.length > 0 && strength !== 'strong' && (
-        <ul className="text-xs text-gray-600 space-y-0.5" aria-live="polite">
-          {feedback.slice(0, 2).map((tip, idx) => (
-            <li key={idx} className="flex items-center gap-1">
-              <span className="text-gray-500">•</span>
-              {tip}
-            </li>
-          ))}
+      <div className="bg-gray-50/50 rounded-lg p-3 border border-gray-100">
+        <p className="text-[10px] uppercase font-bold text-gray-400 mb-2">Requirements</p>
+        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2" aria-live="polite">
+          <RequirementItem met={reqs.hasMinLength} label={MESSAGES.MIN_LENGTH} />
+          <RequirementItem met={reqs.hasUpperLower} label={MESSAGES.UPPERCASE_LOWERCASE} />
+          <RequirementItem met={reqs.hasNumber} label={MESSAGES.NUMBER} />
+          <RequirementItem met={reqs.hasSpecial} label={MESSAGES.SPECIAL_CHARACTER} />
         </ul>
-      )}
+      </div>
     </div>
   );
 }
