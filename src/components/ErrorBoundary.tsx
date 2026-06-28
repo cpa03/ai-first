@@ -23,6 +23,7 @@ interface State {
   error: Error | null;
   errorInfo: ErrorInfo | null;
   isCopied: boolean;
+  isMac: boolean;
 }
 
 export default class ErrorBoundary extends Component<Props, State> {
@@ -36,11 +37,21 @@ export default class ErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null,
       isCopied: false,
+      isMac: false,
     };
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
     return { hasError: true, error, errorInfo: null };
+  }
+
+  componentDidMount() {
+    this.setState({ isMac: navigator.platform.includes('Mac') });
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -68,6 +79,29 @@ export default class ErrorBoundary extends Component<Props, State> {
       errorInfo: null,
       isCopied: false,
     });
+  };
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (!this.state.hasError) return;
+
+    const target = e.target as HTMLElement;
+    const isInputFocused =
+      target.tagName === 'INPUT' ||
+      target.tagName === 'TEXTAREA' ||
+      target.tagName === 'SELECT' ||
+      target.isContentEditable;
+
+    if (isInputFocused) return;
+
+    if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
+      e.preventDefault();
+      this.handleReset();
+    }
+
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      window.location.href = '/';
+    }
   };
 
   render() {
@@ -104,21 +138,43 @@ export default class ErrorBoundary extends Component<Props, State> {
                   {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}
                 </p>
                 <div className="mt-6 space-y-4">
-                  <Button
-                    variant="primary"
-                    onClick={this.handleReset}
-                    className="w-full sm:w-auto"
-                  >
-                    {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
-                  </Button>
-                  <Link href="/" passHref>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <Button
-                      variant="secondary"
-                      className="w-full sm:w-auto ml-0 sm:ml-2"
+                      variant="primary"
+                      onClick={this.handleReset}
+                      className="w-full sm:w-auto"
                     >
-                      {BUTTON_LABELS.CANCEL}
+                      {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
                     </Button>
-                  </Link>
+                    <span
+                      className="hidden sm:flex items-center gap-1 text-xs text-gray-500"
+                      aria-hidden="true"
+                    >
+                      <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+                        Enter
+                      </kbd>
+                      <span>to retry</span>
+                    </span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                    <Link href="/" passHref>
+                      <Button
+                        variant="secondary"
+                        className="w-full sm:w-auto ml-0 sm:ml-2"
+                      >
+                        {BUTTON_LABELS.CANCEL}
+                      </Button>
+                    </Link>
+                    <span
+                      className="hidden sm:flex items-center gap-1 text-xs text-gray-500"
+                      aria-hidden="true"
+                    >
+                      <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+                        Esc
+                      </kbd>
+                      <span>to go home</span>
+                    </span>
+                  </div>
                 </div>
               </Alert>
 
