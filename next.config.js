@@ -160,7 +160,13 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
   experimental: {
-    optimizePackageImports: ['@supabase/supabase-js', 'googleapis', 'openai'],
+    optimizePackageImports: [
+      '@supabase/supabase-js',
+      'googleapis',
+      'openai',
+      '@anthropic-ai/sdk',
+      '@notionhq/client',
+    ],
   },
   compiler: {
     removeConsole:
