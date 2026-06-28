@@ -1,11 +1,13 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
 import { TaskManagementHeader, DeliverableCard } from './task-management';
 import { useTaskManagement } from '@/hooks/useTaskManagement';
+import { triggerHapticFeedback } from '@/lib/utils';
 import {
   MESSAGES,
   BUTTON_LABELS,
@@ -33,6 +35,43 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     expandAll,
     collapseAll,
   } = useTaskManagement(ideaId);
+
+  const [expandAnnouncement, setExpandAnnouncement] = useState('');
+  const [expandTriggered, setExpandTriggered] = useState(false);
+
+  // Micro-UX: Keyboard shortcuts for expand/collapse all deliverables
+  // [ = expand all, ] = collapse all (matches keyboard shortcuts help panel)
+  useEffect(() => {
+    if (!data || data.deliverables.length === 0) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable;
+
+      if (isInputFocused || e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === '[') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        expandAll();
+        setExpandAnnouncement('All deliverables expanded');
+        setExpandTriggered(true);
+      } else if (e.key === ']') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        collapseAll();
+        setExpandAnnouncement('All deliverables collapsed');
+        setExpandTriggered(true);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [data, expandAll, collapseAll]);
 
   // PERFORMANCE: Memoize reload handler to prevent function recreation on each render
   const handleRetry = useCallback(() => {
@@ -127,6 +166,11 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
 
   return (
     <div className="space-y-6">
+      <StatusAnnouncer
+        message={expandAnnouncement}
+        triggered={expandTriggered}
+        politeness="polite"
+      />
       <TaskManagementHeader
         totalDeliverables={summary.totalDeliverables}
         totalTasks={summary.totalTasks}
