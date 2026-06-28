@@ -12,8 +12,8 @@ const nextConfig = {
   },
   compress: true,
   poweredByHeader: false,
-  // Enable source maps in production for better debugging (Lighthouse optimization)
-  productionBrowserSourceMaps: true,
+  // Disable source maps in production for smaller bundles (Lighthouse optimization)
+  productionBrowserSourceMaps: false,
   // Suppress build-time logs that cause Lighthouse best-practices issues
   env: {
     SUPPRESS_BUILD_LOGS: 'true',
