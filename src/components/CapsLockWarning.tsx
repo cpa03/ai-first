@@ -1,35 +1,14 @@
 'use client';
 
-import { memo, useSyncExternalStore } from 'react';
+import { memo } from 'react';
 import { SVG_STROKE_WIDTHS } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface CapsLockWarningProps {
   /** Whether Caps Lock is currently on */
   isOn: boolean;
   /** Optional additional CSS classes */
   className?: string;
-}
-
-const subscribeToReducedMotion = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getReducedMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getReducedMotionServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot
-  );
 }
 
 /**
