@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### RepoKeeper Maintenance - 2026-06-28 (Session 15)
+
+**Repository Health Check & Documentation Sync:**
+
+- ✅ **Quality gates verified:**
+  - Lint: PASSED (0 errors, 0 warnings)
+  - TypeScript: PASSED (0 errors)
+  - Build: PASSED (production build successful)
+  - Documentation links: PASSED (299/299 valid)
+  - Circular dependencies: PASSED (none found)
+
+- ✅ **Documentation sync:**
+  - Updated `docs/README.md` to document all 29 missing npm scripts
+  - Added comprehensive script descriptions for build, test, deploy, and utility commands
+  - All 38 npm scripts now documented in Common Commands table
+
+- ✅ **Repository cleanliness:**
+  - No redundant/temporary files tracked in git
+  - No `.DS_Store`, `Thumbs.db`, or backup files
+  - `.gitignore` comprehensive and up to date
+  - No tracked log/temp files
+  - `.omo` directory contains only active loop state (no stale files)
+
+- ✅ **Code quality review:**
+  - All components/hooks have active references
+  - No unused exports detected
+  - GitHub Actions workflows properly configured
+
+**Impact:** Documentation updated to reflect all available npm scripts. No code changes required.
+
 ### RepoKeeper Maintenance - 2026-06-27 (Session 14)
 
 **Repository Health Check:**
