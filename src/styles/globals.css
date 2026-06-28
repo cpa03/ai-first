@@ -1238,3 +1238,37 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+/* ScrollToTop First Appearance Bounce - Micro-UX delight */
+/* Draws attention to the scroll-to-top button when it first appears after scrolling */
+/* Creates a subtle bounce effect that makes the button feel alive and inviting */
+@keyframes scrollToTopBounce {
+  0% {
+    transform: translateY(16px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-4px) scale(1.05);
+    opacity: 1;
+  }
+  70% {
+    transform: translateY(2px) scale(0.98);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-scroll-to-top-bounce {
+  animation: scrollToTopBounce 0.5s var(--ease-bounce) forwards;
+}
+
+/* Reduced motion support for scroll-to-top bounce */
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll-to-top-bounce {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
