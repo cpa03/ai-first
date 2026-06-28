@@ -329,6 +329,29 @@ export function getClientIdentifier(request: Request): string {
 const MAX_REQUESTS_PER_IDENTIFIER =
   RATE_LIMIT_VALUES.MAX_REQUESTS_PER_IDENTIFIER;
 
+/**
+ * Binary search to find the first index where requests[index] >= windowStart
+ * PERFORMANCE: O(log N) complexity compared to O(N) linear scan.
+ * This provides significant scaling guarantees for large request histories.
+ */
+function findFirstValidIndex(requests: number[], windowStart: number): number {
+  let low = 0;
+  let high = requests.length - 1;
+  let result = -1;
+
+  while (low <= high) {
+    const mid = (low + high) >>> 1; // PERFORMANCE: Use bitwise shift for faster division
+    if (requests[mid] >= windowStart) {
+      result = mid;
+      high = mid - 1;
+    } else {
+      low = mid + 1;
+    }
+  }
+
+  return result;
+}
+
 export function checkRateLimit(
   identifier: string,
   config: RateLimitConfig
@@ -349,15 +372,9 @@ export function checkRateLimit(
   const existingRequests = rateLimitStore.get(identifier);
   const requests = existingRequests || [];
 
-  // PERFORMANCE: Find the first index that is within the window without filter()
-  // This avoids O(N) allocation and reduces the number of checks in the common case.
-  let firstValidIndex = -1;
-  for (let i = 0; i < requests.length; i++) {
-    if (requests[i] >= windowStart) {
-      firstValidIndex = i;
-      break;
-    }
-  }
+  // PERFORMANCE: Find the first index that is within the window using binary search.
+  // This replaces the O(N) linear scan with an O(log N) lookup.
+  const firstValidIndex = findFirstValidIndex(requests, windowStart);
 
   let recentRequests: number[];
   if (firstValidIndex === -1) {
@@ -466,15 +483,9 @@ export function cleanupExpiredEntries(): void {
   const windowStart = now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS;
 
   for (const [key, requests] of rateLimitStore.entries()) {
-    // PERFORMANCE: Find the first index that is within the window without filter()
-    // This avoids O(N) allocation and reduces memory pressure during cleanup.
-    let firstValidIndex = -1;
-    for (let i = 0; i < requests.length; i++) {
-      if (requests[i] >= windowStart) {
-        firstValidIndex = i;
-        break;
-      }
-    }
+    // PERFORMANCE: Use O(log N) binary search instead of O(N) linear scan
+    // to find the first valid entry in the history.
+    const firstValidIndex = findFirstValidIndex(requests, windowStart);
 
     if (firstValidIndex === -1) {
       // All requests in this entry have expired
@@ -579,14 +590,9 @@ export function getRateLimitStats() {
   };
 
   for (const [identifier, requests] of rateLimitStore.entries()) {
-    // PERFORMANCE: Count valid requests without filter() to avoid O(N) allocation per entry.
-    let firstValidIndex = -1;
-    for (let i = 0; i < requests.length; i++) {
-      if (requests[i] >= windowStart) {
-        firstValidIndex = i;
-        break;
-      }
-    }
+    // PERFORMANCE: Use O(log N) binary search for stats collection.
+    // This provides a measurable speedup for admin dashboards when many requests are tracked.
+    const firstValidIndex = findFirstValidIndex(requests, windowStart);
 
     const recentCount =
       firstValidIndex === -1 ? 0 : requests.length - firstValidIndex;
