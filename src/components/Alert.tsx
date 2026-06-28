@@ -12,6 +12,7 @@ import {
   ALERT_STYLES,
   ALERT_BASE_STYLES,
   COMPONENT_CONFIG,
+  COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
   ALERT_LABELS,
 } from '@/lib/config';
@@ -100,11 +101,13 @@ const AlertComponent = function Alert({
   const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [progress, setProgress] = useState(100);
+  const [progress, setProgress] = useState(
+    COMPONENT_DEFAULTS.PROGRESS.COMPLETE
+  );
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
-  const progressValueRef = useRef(100);
+  const progressValueRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const shouldAutoDismiss =
@@ -141,7 +144,8 @@ const AlertComponent = function Alert({
       currentStep++;
       const remainingProgress = Math.max(
         0,
-        100 - (currentStep / totalSteps) * 100
+        COMPONENT_DEFAULTS.PROGRESS.COMPLETE -
+          (currentStep / totalSteps) * COMPONENT_DEFAULTS.PROGRESS.COMPLETE
       );
       progressValueRef.current = remainingProgress;
       setProgress(remainingProgress);

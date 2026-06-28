@@ -7,6 +7,7 @@ import {
   ANIMATION_PHYSICS,
   SVG_ANIMATION,
   ANIMATION_DELAYS,
+  COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   COMPONENT_CONFIG,
@@ -112,7 +113,9 @@ function StepCelebrationComponent({
 
   if (!isVisible) return null;
 
-  const progress = Math.round((stepNumber / totalSteps) * 100);
+  const progress = Math.round(
+    (stepNumber / totalSteps) * COMPONENT_DEFAULTS.PROGRESS.COMPLETE
+  );
   const circumference = SVG_ANIMATION.PROGRESS.getCircumference(
     CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS
   );
@@ -196,7 +199,8 @@ function StepCelebrationComponent({
                 strokeDasharray={circumference}
                 strokeDashoffset={SVG_ANIMATION.PROGRESS.getDashOffset(
                   circumference,
-                  (stepNumber / totalSteps) * 100
+                  (stepNumber / totalSteps) *
+                    COMPONENT_DEFAULTS.PROGRESS.COMPLETE
                 )}
                 className="transition-all duration-700 ease-out"
                 style={{
