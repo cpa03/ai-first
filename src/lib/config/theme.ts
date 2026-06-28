@@ -217,9 +217,11 @@ export const ANIMATION_DELAYS = {
   TAILWIND: {
     0: 'delay-0',
     50: 'delay-50',
+    75: 'delay-75',
     100: 'delay-100',
     150: 'delay-150',
     200: 'delay-200',
+    250: 'delay-250',
     300: 'delay-300',
     500: 'delay-500',
     700: 'delay-700',
@@ -240,6 +242,24 @@ export const ANIMATION_DELAYS = {
     STEP_TRANSITION: '800ms',
   } as const,
 } as const;
+
+/**
+ * Tailwind transition-duration class mapping
+ * Eliminates hardcoded duration-NN classes throughout components
+ * Usage: DURATION_TAILWIND[200] → 'duration-200'
+ */
+export const DURATION_TAILWIND = {
+  75: 'duration-75',
+  100: 'duration-100',
+  150: 'duration-150',
+  200: 'duration-200',
+  300: 'duration-300',
+  500: 'duration-500',
+  700: 'duration-700',
+  1000: 'duration-1000',
+} as const;
+
+export type DurationTailwind = typeof DURATION_TAILWIND;
 
 /**
  * Button ripple animation configuration

@@ -7,6 +7,7 @@ import {
 } from '@/lib/config/constants';
 import {
   TOAST_CONFIG,
+  COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   TOAST_CONTAINER_LABELS,
@@ -91,11 +92,13 @@ const toastColors = {
 
 function ToastComponent({ toast, onClose }: ToastProps) {
   const [isLeaving, setIsLeaving] = useState(false);
-  const [progress, setProgress] = useState(100);
+  const [progress, setProgress] = useState(
+    COMPONENT_DEFAULTS.PROGRESS.COMPLETE
+  );
   const [isPaused, setIsPaused] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
-  const progressRef = useRef(100);
+  const progressRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
   const toastRef = useRef<HTMLDivElement>(null);
@@ -114,7 +117,8 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       currentStep++;
       const remainingProgress = Math.max(
         0,
-        100 - (currentStep / totalSteps) * 100
+        COMPONENT_DEFAULTS.PROGRESS.COMPLETE -
+          (currentStep / totalSteps) * COMPONENT_DEFAULTS.PROGRESS.COMPLETE
       );
       progressRef.current = remainingProgress;
       setProgress(remainingProgress);

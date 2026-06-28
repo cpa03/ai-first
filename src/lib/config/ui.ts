@@ -457,7 +457,7 @@ export const COMPONENT_DEFAULTS = {
     COMPLETE: 100,
     /** Empty percentage */
     EMPTY: 0,
-  } as const,
+  },
 
   /**
    * ARIA labels for accessibility
@@ -491,8 +491,8 @@ export const COMPONENT_DEFAULTS = {
     KEYBOARD_SHORTCUT_TEXT: (isMac: boolean, isLastStep: boolean) =>
       `Press ${isMac ? '⌘' : 'Ctrl'} + Enter to ${isLastStep ? 'complete' : 'submit'}.`,
     SELECT_PLACEHOLDER: 'Select an option...',
-  } as const,
-} as const;
+  },
+};
 
 export type UiConfig = typeof UI_CONFIG;
 export type ToastConfig = typeof TOAST_CONFIG;

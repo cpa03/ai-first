@@ -103,6 +103,7 @@ export {
   INPUT_STYLES,
   ANIMATION_DURATIONS,
   ANIMATION_DELAYS,
+  DURATION_TAILWIND,
   SPACING_PX,
   SIZES,
   SVG_ANIMATION,
@@ -240,6 +241,7 @@ export type {
   InputStyles,
   ButtonStyles,
   AlertStyles,
+  DurationTailwind,
 } from './theme';
 
 // Time and Error Message Types
