@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabaseClient } from '@/lib/db';
-import { API_ERROR_MESSAGES, ROUTES } from '@/lib/config';
+import { API_ERROR_MESSAGES, ROUTES, PAGE_LAYOUT_CLASSES } from '@/lib/config';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -34,7 +34,9 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+    <div
+      className={`${PAGE_LAYOUT_CLASSES.AUTH_PAGE} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50`}
+    >
       <div className="max-w-md w-full text-center space-y-4">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
         <h2 className="text-xl font-semibold text-gray-900">

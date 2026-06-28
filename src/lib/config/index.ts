@@ -446,3 +446,13 @@ export {
   matchesPattern,
   type ErrorClassificationPatterns,
 } from './error-classification';
+
+// Page Layout Configuration
+// Centralizes hardcoded CSS layout values used across page components
+export {
+  PAGE_LAYOUT,
+  PAGE_LAYOUT_CLASSES,
+  OPACITY_CONFIG,
+  type PageLayout,
+  type OpacityConfig,
+} from './page-layout';
