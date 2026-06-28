@@ -19,6 +19,7 @@ import {
   STATE_SHADOWS,
   INPUT_VALIDATION_LABELS,
   SVG_STROKE_WIDTHS,
+  INPUT_HEIGHT_CLASSES,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -285,7 +286,7 @@ const InputWithValidationComponent = forwardRef<
               onBlur={handleBlur}
               onFocus={handleFocus}
               onKeyDown={handleKeyDown}
-              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''} ${textareaResizeClass} min-h-[100px] overflow-hidden`}
+              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''} ${textareaResizeClass} ${INPUT_HEIGHT_CLASSES.TEXTAREA} overflow-hidden`}
               aria-invalid={isInvalid}
               aria-required={props.required}
               aria-describedby={

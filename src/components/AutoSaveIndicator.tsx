@@ -6,6 +6,7 @@ import {
   ANIMATION_DELAYS,
   SVG_STROKE_WIDTHS,
   AUTO_SAVE_INDICATOR_LABELS,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -252,7 +253,9 @@ function AutoSaveIndicatorComponent({
                     <span className="font-medium">
                       {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
                     </span>
-                    <span className="text-[10px] text-gray-500 opacity-80">
+                    <span
+                      className={`${TEXT_SIZE_CLASSES.XS} text-gray-500 opacity-80`}
+                    >
                       {formatExactTimestamp(lastSaved)}
                     </span>
                   </div>

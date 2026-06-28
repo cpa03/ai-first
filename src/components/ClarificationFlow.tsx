@@ -19,6 +19,7 @@ import {
   ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
   UI_CONFIG,
+  INPUT_HEIGHT_CLASSES,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -275,7 +276,7 @@ function ClarificationFlow({
                 showCharCount={true}
                 helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} ${COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(isMac, currentStep === questions.length - 1)}`}
                 required={true}
-                className="min-h-[100px]"
+                className={INPUT_HEIGHT_CLASSES.TEXTAREA}
                 ref={textareaRef}
                 disabled={showCelebration || isSubmitting}
               />
@@ -326,7 +327,7 @@ function ClarificationFlow({
                       setCurrentAnswer(e.target.value);
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} min-h-[44px] cursor-pointer appearance-none bg-white pr-10 transition-all duration-200 hover:border-gray-400 ${
+                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none bg-white pr-10 transition-all duration-200 hover:border-gray-400 ${
                       currentAnswer
                         ? 'text-gray-900 font-medium'
                         : 'text-gray-500'

@@ -14,6 +14,8 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   SCROLL_TO_TOP_LABELS,
+  TEXT_SIZE_CLASSES,
+  TEXT_SIZE_PRESETS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -183,21 +185,29 @@ function ScrollToTopComponent({
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
       <span className="font-medium">{SCROLL_TO_TOP_LABELS.TITLE}</span>
-      <span className="text-[10px] text-gray-300 opacity-80">
-        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+      <span className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 opacity-80`}>
+        <kbd
+          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+        >
           {SCROLL_TO_TOP_LABELS.KEYS.UP}
         </kbd>{' '}
-        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+        <kbd
+          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+        >
           {SCROLL_TO_TOP_LABELS.KEYS.DOWN}
         </kbd>{' '}
         {SCROLL_TO_TOP_LABELS.SCROLL_INSTRUCTION}
         <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
-        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+        <kbd
+          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+        >
           {SCROLL_TO_TOP_LABELS.KEYS.HOME}
         </kbd>{' '}
         {SCROLL_TO_TOP_LABELS.TOP}
         <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
-        <kbd className="px-1 py-0.5 bg-gray-700 rounded text-[9px]">
+        <kbd
+          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+        >
           {SCROLL_TO_TOP_LABELS.KEYS.END}
         </kbd>{' '}
         {SCROLL_TO_TOP_LABELS.BOTTOM}
@@ -273,7 +283,7 @@ function ScrollToTopComponent({
           {/* Micro-UX: Show scroll percentage inside the button for at-a-glance feedback */}
           {showPercentage && !prefersReducedMotion ? (
             <span
-              className="relative z-10 text-[10px] font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors duration-200"
+              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors duration-200`}
               aria-hidden="true"
             >
               {Math.round(scrollProgress)}

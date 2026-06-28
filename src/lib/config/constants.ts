@@ -56,3 +56,19 @@ export { RESILIENCE_CONFIG } from './resilience-config';
 export { API_CACHE_CONFIG } from './api-cache-config';
 export { PLATFORM_ENV_VARS } from './platform-env-vars';
 export { SESSION_ANALYTICS_CONFIG } from './session-analytics-config';
+
+export {
+  INPUT_HEIGHTS,
+  CONTAINER_WIDTHS,
+  MIN_SIZES,
+  INPUT_HEIGHT_CLASSES,
+  CONTAINER_WIDTH_CLASSES,
+  MIN_SIZE_CLASSES,
+} from './ui-dimensions';
+
+export {
+  SMALL_TEXT_SIZES,
+  MEDIUM_TEXT_SIZES,
+  TEXT_SIZE_CLASSES,
+  TEXT_SIZE_PRESETS,
+} from './ui-text-sizes';
