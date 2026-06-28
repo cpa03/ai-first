@@ -414,8 +414,15 @@ export default function DashboardPage() {
               ref={filterSelectRef}
               id="status-filter"
               value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="block w-full sm:w-auto px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring"
+              onChange={(e) => {
+                triggerHapticFeedback();
+                setFilter(e.target.value);
+              }}
+              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all duration-200 ${
+                filter !== 'all'
+                  ? 'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm'
+                  : 'border-gray-300 bg-white text-gray-900'
+              }`}
               aria-label="Filter ideas by status"
             >
               <option
@@ -470,15 +477,23 @@ export default function DashboardPage() {
           </Tooltip>
           {ideas.length > 0 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <span className="flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 text-xs font-semibold bg-primary-100 text-primary-700 rounded-full">
+              <span
+                key={ideas.length}
+                className={`flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
+                  filter !== 'all'
+                    ? 'bg-primary-600 text-white'
+                    : 'bg-primary-100 text-primary-700'
+                }`}
+                aria-live="polite"
+              >
                 {ideas.length}
               </span>
             </div>
           )}
         </div>
         {filter !== 'all' && (
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+          <div className="flex items-center gap-2 animate-fade-in">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 ring-1 ring-primary-200">
               <svg
                 className="w-3 h-3 mr-1"
                 fill="currentColor"
@@ -495,14 +510,19 @@ export default function DashboardPage() {
                 ? DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL
                 : filter.charAt(0).toUpperCase() + filter.slice(1)}
             </span>
-            <button
-              type="button"
-              onClick={() => setFilter('all')}
-              className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
-              aria-label="Clear filter"
-            >
-              {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
-            </button>
+            <Tooltip content="Clear filter" shortcut={['/']}>
+              <button
+                type="button"
+                onClick={() => {
+                  triggerHapticFeedback();
+                  setFilter('all');
+                }}
+                className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+                aria-label="Clear filter"
+              >
+                {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
+              </button>
+            </Tooltip>
           </div>
         )}
         <button
