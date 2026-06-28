@@ -317,6 +317,27 @@ function ToastContainerComponent() {
   }, [toasts.length]);
 
   useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.key === 'Escape') {
+        const target = e.target as HTMLElement;
+        const isInputFocused =
+          target.tagName === 'INPUT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'SELECT' ||
+          target.isContentEditable;
+
+        if (!isInputFocused && toasts.length > 1) {
+          e.preventDefault();
+          clearAllToasts();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [toasts.length, clearAllToasts]);
+
+  useEffect(() => {
     if (typeof window === 'undefined') return;
 
     const win = window as Window & {
