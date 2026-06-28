@@ -1,13 +1,6 @@
 'use client';
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useSyncExternalStore,
-  memo,
-} from 'react';
+import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import {
   COMPONENT_DEFAULTS,
   COMPONENT_CONFIG,
@@ -18,34 +11,13 @@ import {
   TEXT_SIZE_PRESETS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from './Tooltip';
 
 interface ScrollToTopProps {
   showAt?: number;
   smooth?: boolean;
   className?: string;
-}
-
-const subscribeToReducedMotionMediaQuery = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getReducedMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getReducedMotionServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToReducedMotionMediaQuery,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot
-  );
 }
 
 // PERFORMANCE: Memoize ScrollToTop to prevent re-renders when parent components update
