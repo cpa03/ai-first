@@ -65,6 +65,12 @@ export const ROUTES = {
 
   /** Contact page */
   CONTACT: EnvLoader.string('ROUTE_CONTACT', '/contact'),
+
+  /** Forgot password page */
+  FORGOT_PASSWORD: EnvLoader.string(
+    'ROUTE_FORGOT_PASSWORD',
+    '/forgot-password'
+  ),
 } as const;
 
 /**

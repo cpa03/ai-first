@@ -18,6 +18,7 @@ import {
   SVG_STROKE_WIDTHS,
   LOGIN_ERROR_PATTERNS,
   matchesPattern,
+  PASSWORD_VALIDATION_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -76,7 +77,7 @@ export default function LoginPage() {
       return false;
     }
 
-    if (password.length < 8) {
+    if (password.length < PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
       setPasswordError(LOGIN_PAGE_CONTENT.ERRORS.PASSWORD_TOO_SHORT);
       return false;
     }
@@ -121,7 +122,9 @@ export default function LoginPage() {
         router.refresh();
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : 'Failed to sign in';
+          err instanceof Error
+            ? err.message
+            : LOGIN_PAGE_CONTENT.ERRORS.SIGN_IN_FAILED;
 
         if (
           matchesPattern(errorMessage, LOGIN_ERROR_PATTERNS.INVALID) ||
@@ -310,7 +313,7 @@ export default function LoginPage() {
             </div>
             <div className="text-sm">
               <Link
-                href="/forgot-password"
+                href={ROUTES.FORGOT_PASSWORD}
                 className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
               >
                 {LOGIN_PAGE_CONTENT.FORM.FORGOT_PASSWORD}
@@ -371,7 +374,7 @@ export default function LoginPage() {
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  strokeWidth="4"
+                  strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
                 />
                 <path
                   className="opacity-75"
@@ -433,7 +436,7 @@ export default function LoginPage() {
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  strokeWidth="4"
+                  strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
                 />
                 <path
                   className="opacity-75"

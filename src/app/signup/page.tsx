@@ -98,9 +98,12 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
     return { strength: 'empty', score: 0, feedback: [] };
   }
 
-  if (password.length >= 8) score++;
-  if (password.length >= 12) score++;
-  if (password.length >= 16) score++;
+  const { MIN_LENGTH, MESSAGES, STRENGTH_THRESHOLDS } =
+    PASSWORD_VALIDATION_CONFIG;
+
+  if (password.length >= STRENGTH_THRESHOLDS.MIN_LENGTH) score++;
+  if (password.length >= STRENGTH_THRESHOLDS.MEDIUM_LENGTH) score++;
+  if (password.length >= STRENGTH_THRESHOLDS.STRONG_LENGTH) score++;
 
   if (/[a-z]/.test(password)) score++;
   if (/[A-Z]/.test(password)) score++;
@@ -108,8 +111,6 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
   if (/[^a-zA-Z0-9]/.test(password)) score++;
 
   const normalizedScore = Math.min(Math.floor(score / 2), 4);
-
-  const { MIN_LENGTH, MESSAGES } = PASSWORD_VALIDATION_CONFIG;
 
   if (password.length < MIN_LENGTH) {
     feedback.push(MESSAGES.MIN_LENGTH);
@@ -538,7 +539,7 @@ export default function SignupPage() {
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  strokeWidth="4"
+                  strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
                 />
                 <path
                   className="opacity-75"
@@ -600,7 +601,7 @@ export default function SignupPage() {
                   cy="12"
                   r="10"
                   stroke="currentColor"
-                  strokeWidth="4"
+                  strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
                 />
                 <path
                   className="opacity-75"

@@ -7,7 +7,6 @@ import { EnvLoader } from './environment';
 
 export const UI_CONFIG = {
   FOCUS: {
-    /** Env: UI_FOCUS_DELAY_MS (default: 50) */
     DELAY_MS: EnvLoader.number('UI_FOCUS_DELAY_MS', 50, 10, 500),
   },
 
@@ -19,11 +18,8 @@ export const UI_CONFIG = {
 
   ANIMATION: {
     DURATION: {
-      /** Env: UI_ANIMATION_FAST (default: 150) */
       FAST: EnvLoader.number('UI_ANIMATION_FAST', 150, 50, 1000),
-      /** Env: UI_ANIMATION_NORMAL (default: 300) */
       NORMAL: EnvLoader.number('UI_ANIMATION_NORMAL', 300, 50, 2000),
-      /** Env: UI_ANIMATION_SLOW (default: 500) */
       SLOW: EnvLoader.number('UI_ANIMATION_SLOW', 500, 100, 5000),
     },
     EASING: {
@@ -71,12 +67,10 @@ export const UI_CONFIG = {
 
   SCROLL: {
     BEHAVIOR: 'smooth' as ScrollBehavior,
-    /** Env: UI_SCROLL_OFFSET (default: 80) */
     OFFSET: EnvLoader.number('UI_SCROLL_OFFSET', 80, 0, 500),
   },
 
   FEEDBACK: {
-    /** Env: UI_COPY_FEEDBACK_DURATION_MS (default: 2000) */
     COPY_FEEDBACK_DURATION_MS: EnvLoader.number(
       'UI_COPY_FEEDBACK_DURATION_MS',
       2000,
@@ -86,41 +80,37 @@ export const UI_CONFIG = {
   },
 
   ACCESSIBILITY: {
-    /** Env: UI_STATUS_ANNOUNCER_DELAY_MS (default: 100) */
     STATUS_ANNOUNCER_DELAY_MS: EnvLoader.number(
       'UI_STATUS_ANNOUNCER_DELAY_MS',
       100,
       0,
       1000
     ),
-    /**
-     * Touch target configurations for accessibility compliance
-     * WCAG 2.1 Level AA requires minimum 44x44px touch targets
-     */
     TOUCH_TARGET: {
-      /** Minimum touch target size in pixels (WCAG 2.1 Level AA) */
       MIN_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64),
-      /** Minimum touch target size in Tailwind format */
       MIN_SIZE: 'min-h-[44px] min-w-[44px]',
-      /** Small touch target (icons, compact buttons) */
       SMALL_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44),
       SMALL_SIZE: 'min-h-[32px] min-w-[32px]',
-      /** Large touch target (primary actions) */
       LARGE_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72),
       LARGE_SIZE: 'min-h-[56px] min-w-[56px]',
-      /** Keyboard focus minimum (same as touch for consistency) */
       KEYBOARD_SIZE_PX: EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64),
       KEYBOARD_SIZE: 'min-h-[44px]',
     },
-    /**
-     * Keyboard navigation minimums
-     */
     KEYBOARD: {
       FOCUS_RING_OFFSET: 'focus-visible:ring-2 focus-visible:ring-offset-2',
       MIN_HEIGHT: 'min-h-[44px]',
       MIN_WIDTH: 'min-w-[44px]',
       KBD_STYLE:
         'inline-flex items-center justify-center min-w-[28px] h-7 px-2 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-800 shadow-sm',
+      KBD_STYLE_COMPACT:
+        'inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center',
+      KBD_STYLE_COMPACT_WITH_GAP:
+        'inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center',
+      KBD_STYLE_DARK:
+        'min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded text-[10px] font-sans font-bold text-gray-300',
+      KBD_STYLE_MINI:
+        'px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600',
+      KBD_STYLE_MINI_DARK: 'px-1 py-0.5 bg-gray-700 rounded text-[9px]',
     },
   },
 } as const;
@@ -291,6 +281,11 @@ export const DASHBOARD_FILTER_LABELS = {
  */
 export const PASSWORD_VALIDATION_CONFIG = {
   MIN_LENGTH: 8,
+  STRENGTH_THRESHOLDS: {
+    MIN_LENGTH: 8,
+    MEDIUM_LENGTH: 12,
+    STRONG_LENGTH: 16,
+  },
   MESSAGES: {
     MIN_LENGTH: 'Use at least 8 characters',
     UPPERCASE_LOWERCASE: 'Add uppercase and lowercase letters',
