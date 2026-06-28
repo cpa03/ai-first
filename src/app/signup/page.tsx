@@ -8,6 +8,8 @@ import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
 import { CapsLockWarning } from '@/components/CapsLockWarning';
 import { useCapsLock } from '@/hooks/useCapsLock';
+import { triggerHapticFeedback } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
@@ -146,6 +148,23 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
     STRENGTH_TEXT_COLORS,
   } = PASSWORD_VALIDATION_CONFIG;
 
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [celebrating, setCelebrating] = useState(false);
+  const prevStrengthRef = useRef<PasswordStrength>('empty');
+
+  useEffect(() => {
+    if (strength === 'strong' && prevStrengthRef.current !== 'strong') {
+      triggerHapticFeedback();
+      setCelebrating(true);
+      const timer = setTimeout(() => setCelebrating(false), 600);
+      return () => clearTimeout(timer);
+    }
+    if (strength !== 'strong') {
+      setCelebrating(false);
+    }
+    prevStrengthRef.current = strength;
+  }, [strength]);
+
   const strengthConfig = {
     empty: { label: '', color: 'bg-gray-200', width: '0%', textColor: '' },
     weak: {
@@ -173,7 +192,9 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
   if (strength === 'empty') return null;
 
   return (
-    <div className="space-y-2">
+    <div
+      className={`space-y-2 ${celebrating && !prefersReducedMotion ? 'animate-password-strong-celebration' : ''}`}
+    >
       <div className="flex items-center gap-2">
         <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
           <div
@@ -189,6 +210,22 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <span className={`text-xs font-medium ${config.textColor}`}>
           {config.label}
         </span>
+        {celebrating && !prefersReducedMotion && (
+          <svg
+            className="w-4 h-4 text-green-600 animate-in zoom-in duration-200"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={SVG_STROKE_WIDTHS.THICK}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        )}
       </div>
 
       {feedback.length > 0 && strength !== 'strong' && (
@@ -200,6 +237,31 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             </li>
           ))}
         </ul>
+      )}
+      {strength === 'strong' && (
+        <div
+          className="flex items-center gap-1.5 text-xs text-green-700 font-medium animate-fade-in"
+          role="status"
+          aria-live="polite"
+        >
+          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-100">
+            <svg
+              className="w-2.5 h-2.5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.THICK}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </span>
+          Great password!
+        </div>
       )}
     </div>
   );

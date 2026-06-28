@@ -1272,3 +1272,37 @@ button[aria-disabled='true'].btn-glow-hover {
     opacity: 1;
   }
 }
+
+/* Password Strength Celebration - Micro-UX delight when password reaches "strong" */
+/* Provides positive reinforcement with a subtle glow + scale bounce effect */
+@keyframes passwordStrongCelebration {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
+  }
+  30% {
+    transform: scale(1.08);
+    box-shadow: 0 0 12px 4px var(--shadow-success-medium);
+  }
+  60% {
+    transform: scale(0.97);
+    box-shadow: 0 0 6px 2px var(--shadow-success-light);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
+  }
+}
+
+.animate-password-strong-celebration {
+  animation: passwordStrongCelebration 0.6s var(--ease-bounce) forwards;
+}
+
+/* Reduced motion support for password strength celebration */
+@media (prefers-reduced-motion: reduce) {
+  .animate-password-strong-celebration {
+    animation: none;
+    transform: none;
+    box-shadow: none;
+  }
+}
