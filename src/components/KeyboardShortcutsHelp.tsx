@@ -95,6 +95,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     action: 'close',
   },
   {
+    keys: ['Shift', 'Esc'],
+    description: 'Dismiss all notifications',
+    context: 'global',
+  },
+  {
     keys: ['Tab'],
     description: 'Navigate to next focusable element',
     context: 'global',
