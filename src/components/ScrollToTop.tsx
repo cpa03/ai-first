@@ -29,6 +29,7 @@ function ScrollToTopComponent({
 }: ScrollToTopProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [hasAppeared, setHasAppeared] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
 
@@ -41,17 +42,24 @@ function ScrollToTopComponent({
   }, []);
 
   const toggleVisibility = useCallback(() => {
-    if (window.scrollY > showAt) {
+    const shouldShow = window.scrollY > showAt;
+
+    if (shouldShow && !isVisible) {
       setIsVisible(true);
-    } else {
+      setHasAppeared(false);
+      requestAnimationFrame(() => {
+        setHasAppeared(true);
+      });
+    } else if (!shouldShow) {
       setIsVisible(false);
+      setHasAppeared(false);
     }
 
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
     }
     rafRef.current = requestAnimationFrame(calculateScrollProgress);
-  }, [showAt, calculateScrollProgress]);
+  }, [showAt, calculateScrollProgress, isVisible]);
 
   useEffect(() => {
     window.addEventListener('scroll', toggleVisibility, { passive: true });
@@ -207,7 +215,7 @@ function ScrollToTopComponent({
             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
             focus-visible:scale-110
             active:scale-95
-            ${prefersReducedMotion ? '' : 'animate-in fade-in slide-in-from-bottom-4 duration-300'}
+            ${prefersReducedMotion ? '' : hasAppeared ? 'animate-scroll-to-top-bounce' : 'opacity-0'}
             ${className}
           `}
           aria-label={SCROLL_TO_TOP_LABELS.ARIA_LABEL(
