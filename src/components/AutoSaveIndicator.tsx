@@ -7,6 +7,7 @@ import {
   SVG_STROKE_WIDTHS,
   AUTO_SAVE_INDICATOR_LABELS,
   TEXT_SIZE_CLASSES,
+  OPACITY_CONFIG,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -202,7 +203,7 @@ function AutoSaveIndicatorComponent({
               <path
                 fill="currentColor"
                 d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 110-16 8 8 0 010 16z"
-                opacity="0.3"
+                opacity={OPACITY_CONFIG.SVG_BACKGROUND}
               />
               <path
                 fill="currentColor"

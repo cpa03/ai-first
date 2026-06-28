@@ -12,6 +12,7 @@ import {
   Z_INDEX_LAYERS,
   COMPONENT_CONFIG,
   UI_CONFIG,
+  OPACITY_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -164,7 +165,9 @@ function StepCelebrationComponent({
                 className="absolute w-2 h-2 rounded-full bg-primary-500"
                 style={{
                   transform: `translate(${particle.x}px, ${particle.y}px) rotate(${particle.rotation}deg) scale(${isExiting ? 0 : particle.scale})`,
-                  opacity: isExiting ? 0 : 0.8,
+                  opacity: isExiting
+                    ? OPACITY_CONFIG.STEP_CELEBRATION_EXIT
+                    : OPACITY_CONFIG.STEP_CELEBRATION_VISIBLE,
                   transition: `all ${ANIMATION_CONFIG.STANDARD}ms ${UI_CONFIG.ANIMATION.EASING.SPRING}`,
                   transitionDelay: `${particle.delay}ms`,
                 }}
