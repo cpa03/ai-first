@@ -43,6 +43,8 @@ export {
   EXPORT_LABELS,
   KEYBOARD_SHORTCUTS_MESSAGES,
 } from './ui';
+
+export { UI_CONFIG as UI_TIMING_CONFIG } from './ui-config';
 export { ANIMATION_CONFIG } from './animation';
 
 // SEO Configuration

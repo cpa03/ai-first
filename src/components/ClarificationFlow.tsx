@@ -18,6 +18,7 @@ import {
   ANIMATION_DELAYS,
   ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
+  UI_CONFIG,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -409,20 +410,35 @@ function ClarificationFlow({
             >
               {currentStep > 0 && (
                 <span className="flex items-center gap-1.5">
-                  <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                  <kbd
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD
+                        .KBD_STYLE_COMPACT_WITH_GAP
+                    }
+                  >
                     {isMac ? '⌘' : 'Ctrl'}
                   </kbd>
-                  <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                  <kbd
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                    }
+                  >
                     ←
                   </kbd>
                   <span>prev</span>
                 </span>
               )}
               <span className="flex items-center gap-1.5">
-                <kbd className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                <kbd
+                  className={
+                    UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT_WITH_GAP
+                  }
+                >
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
-                <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center">
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
                   Enter
                 </kbd>
                 <span>
