@@ -11,6 +11,7 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   TOAST_CONTAINER_LABELS,
+  MIN_SIZE_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -237,7 +238,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </div>
       <button
         onClick={handleClose}
-        className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity`}
+        className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
         aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
       >
         <svg

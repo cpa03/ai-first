@@ -10,7 +10,11 @@ import React, {
   useSyncExternalStore,
 } from 'react';
 import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
-import { Z_INDEX_LAYERS } from '@/lib/config';
+import {
+  Z_INDEX_LAYERS,
+  CONTAINER_WIDTH_CLASSES,
+  TEXT_SIZE_CLASSES,
+} from '@/lib/config';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -210,7 +214,7 @@ function TooltipComponent({
               className={`
                 px-2.5 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md
                 shadow-lg border border-gray-700/50 whitespace-normal
-                w-max max-w-[240px] break-words
+                w-max ${CONTAINER_WIDTH_CLASSES.TOOLTIP} break-words
                 flex items-center gap-2.5
               `}
             >
@@ -219,11 +223,15 @@ function TooltipComponent({
                 <div className="flex items-center gap-1 border-l border-gray-700 pl-2 ml-auto">
                   {shortcut.map((key, i) => (
                     <React.Fragment key={i}>
-                      <kbd className="min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded text-[10px] font-sans font-bold text-gray-300">
+                      <kbd
+                        className={`min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-bold text-gray-300`}
+                      >
                         {key === '⌘' ? (isMac ? '⌘' : 'Ctrl') : key}
                       </kbd>
                       {i < shortcut.length - 1 && (
-                        <span className="text-[10px] text-gray-300 font-bold">
+                        <span
+                          className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 font-bold`}
+                        >
                           +
                         </span>
                       )}

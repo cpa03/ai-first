@@ -15,6 +15,9 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   USER_ONBOARDING_LABELS,
+  TEXT_SIZE_CLASSES,
+  TEXT_SIZE_PRESETS,
+  CONTAINER_WIDTH_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -392,7 +395,7 @@ export default function UserOnboarding() {
         aria-labelledby="onboarding-title"
         aria-describedby="onboarding-content"
         className={`
-          fixed z-[${Z_INDEX_LAYERS.MODAL}] w-[300px] bg-white rounded-xl shadow-2xl 
+          fixed z-[${Z_INDEX_LAYERS.MODAL}] ${CONTAINER_WIDTH_CLASSES.ONBOARDING} bg-white rounded-xl shadow-2xl 
           border border-gray-200 p-5
           transition-all duration-300 ease-out
           ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
@@ -458,16 +461,24 @@ export default function UserOnboarding() {
             <span className="text-xs text-gray-500">
               Step {currentStepIndex + 1} of {TOUR_STEPS.length}
             </span>
-            <span className="text-[10px] text-gray-500 hidden sm:inline">
-              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600">
+            <span
+              className={`${TEXT_SIZE_CLASSES.XS} text-gray-500 hidden sm:inline`}
+            >
+              <kbd
+                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
+              >
                 ←
               </kbd>{' '}
-              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600">
+              <kbd
+                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
+              >
                 →
               </kbd>{' '}
               navigate
               <span className="mx-1">·</span>
-              <kbd className="px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600">
+              <kbd
+                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
+              >
                 Esc
               </kbd>{' '}
               skip

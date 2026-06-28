@@ -11,6 +11,7 @@ import {
   BUTTON_LABELS,
   COMPONENT_DEFAULTS,
   Z_INDEX_LAYERS,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 
 interface Props {
@@ -150,7 +151,9 @@ export default class ErrorBoundary extends Component<Props, State> {
                       className="hidden sm:flex items-center gap-1 text-xs text-gray-500"
                       aria-hidden="true"
                     >
-                      <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+                      <kbd
+                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium text-gray-700`}
+                      >
                         Enter
                       </kbd>
                       <span>to retry</span>
@@ -169,7 +172,9 @@ export default class ErrorBoundary extends Component<Props, State> {
                       className="hidden sm:flex items-center gap-1 text-xs text-gray-500"
                       aria-hidden="true"
                     >
-                      <kbd className="inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded text-[10px] font-sans font-medium text-gray-700">
+                      <kbd
+                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium text-gray-700`}
+                      >
                         Esc
                       </kbd>
                       <span>to go home</span>
