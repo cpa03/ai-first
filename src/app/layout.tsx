@@ -16,6 +16,7 @@ import {
   Z_INDEX_LAYERS,
   FOOTER_NAV_CONFIG,
   DASHBOARD_PAGE_CONTENT,
+  PAGE_LAYOUT_CLASSES,
 } from '@/lib/config';
 import { safeJsonLd } from '@/lib/security/json-ld';
 import {
@@ -172,7 +173,7 @@ export default async function RootLayout({
               <header
                 className={`bg-white shadow-sm border-b border-gray-200 sticky top-0 z-[${Z_INDEX_LAYERS.OVERLAY}]`}
               >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
                   <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
                       <Link
@@ -202,7 +203,7 @@ export default async function RootLayout({
                 role="contentinfo"
                 aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SITE_FOOTER}
               >
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                     {/* Brand column */}
                     <div className="col-span-2 md:col-span-1">

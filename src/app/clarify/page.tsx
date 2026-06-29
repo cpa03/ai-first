@@ -18,6 +18,9 @@ import {
   IDEA_STATUS_CONFIG,
   HTTP_HEADERS,
   CLARIFY_PAGE_CONTENT,
+  PAGE_LAYOUT_CLASSES,
+  CONTAINER_WIDTHS,
+  RESPONSIVE_PADDING,
 } from '@/lib/config';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -37,7 +40,7 @@ const DynamicClarificationFlow = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <LoadingSpinner
             size="md"
@@ -54,7 +57,7 @@ const DynamicClarificationFlow = dynamic(
 // Loading fallback for Suspense
 function ClarifyPageLoading() {
   return (
-    <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
       <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
         <LoadingSpinner
           size="md"
@@ -146,7 +149,7 @@ function ClarifyPageContent() {
 
   if (authLoading || !hasLoaded) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
         <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
           <LoadingSpinner
             size="md"
@@ -161,7 +164,7 @@ function ClarifyPageContent() {
 
   if (!isAuthenticated) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="warning" title={CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_TITLE}>
           <p>{CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE}</p>
           <div className="mt-4">
@@ -176,7 +179,7 @@ function ClarifyPageContent() {
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="slide-up">
           <Alert type="error" title={CLARIFY_PAGE_CONTENT.ERROR_TITLE}>
             <p className="mb-4">{error}</p>
@@ -191,7 +194,7 @@ function ClarifyPageContent() {
 
   if (answers) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="slide-up">
           <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
             <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
@@ -219,7 +222,7 @@ function ClarifyPageContent() {
 
   if (!idea) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="slide-up">
           <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
             <p className="mb-4">{CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}</p>
@@ -234,7 +237,9 @@ function ClarifyPageContent() {
 
   return (
     <div className="py-12">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+      <div
+        className={`${CONTAINER_WIDTHS.SM} mx-auto ${RESPONSIVE_PADDING.CLASS} mb-8`}
+      >
         <div className="text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">
             {CLARIFY_PAGE_CONTENT.HEADING}

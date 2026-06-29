@@ -18,6 +18,7 @@ import {
   SIGNUP_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
   PAGE_LAYOUT_CLASSES,
+  CONTAINER_WIDTHS,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -421,10 +422,8 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div
-        className={`${PAGE_LAYOUT_CLASSES.AUTH_PAGE} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50`}
-      >
-        <div className="max-w-md w-full text-center space-y-6">
+      <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+        <div className={`${CONTAINER_WIDTHS.XS} w-full text-center space-y-6`}>
           <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
             <svg
               className="h-6 w-6 text-green-700"
@@ -460,10 +459,8 @@ export default function SignupPage() {
   }
 
   return (
-    <div
-      className={`${PAGE_LAYOUT_CLASSES.AUTH_PAGE} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50`}
-    >
-      <div className="max-w-md w-full space-y-8">
+    <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+      <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8`}>
         <div className="text-center animate-hero-entrance">
           <h1 className="text-3xl font-bold text-gray-900">
             {SIGNUP_PAGE_CONTENT.HEADING}

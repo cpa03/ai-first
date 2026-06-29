@@ -453,6 +453,8 @@ export {
   PAGE_LAYOUT,
   PAGE_LAYOUT_CLASSES,
   OPACITY_CONFIG,
+  RESPONSIVE_PADDING,
+  CONTAINER_WIDTHS,
   type PageLayout,
   type OpacityConfig,
 } from './page-layout';

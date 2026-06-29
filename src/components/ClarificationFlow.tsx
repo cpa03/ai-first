@@ -20,6 +20,7 @@ import {
   SVG_STROKE_WIDTHS,
   UI_CONFIG,
   INPUT_HEIGHT_CLASSES,
+  CONTAINER_WIDTHS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -66,7 +67,7 @@ function ClarificationFlow({
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto fade-in">
+      <div className={`${CONTAINER_WIDTHS.SM} mx-auto fade-in`}>
         <LoadingAnnouncer
           message={MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
         />
@@ -130,7 +131,7 @@ function ClarificationFlow({
 
   if (questions.length === 0) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className={`${CONTAINER_WIDTHS.SM} mx-auto`}>
         <Alert type="warning" title={MESSAGES.CLARIFICATION.NO_QUESTIONS_TITLE}>
           <p>{MESSAGES.CLARIFICATION.NO_QUESTIONS_DESCRIPTION}</p>
           <p className="text-sm mt-4">
@@ -143,7 +144,7 @@ function ClarificationFlow({
 
   if (!currentQuestion) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className={`${CONTAINER_WIDTHS.SM} mx-auto`}>
         <div className="flex flex-col items-center justify-center py-12">
           <LoadingSpinner size="lg" />
           <p className="mt-4 text-gray-600 text-sm">
@@ -155,7 +156,7 @@ function ClarificationFlow({
   }
 
   return (
-    <div className="max-w-2xl mx-auto fade-in">
+    <div className={`${CONTAINER_WIDTHS.SM} mx-auto fade-in`}>
       <StepCelebration
         stepNumber={currentStep}
         totalSteps={questions.length}

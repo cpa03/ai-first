@@ -8,6 +8,8 @@ import {
   MOBILE_NAV_CONFIG,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
+  CONTAINER_WIDTHS,
+  RESPONSIVE_PADDING,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -228,7 +230,9 @@ function MobileNavComponent() {
             id="mobile-menu"
             className={`fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
-            <ul className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-2 bg-white">
+            <ul
+              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 bg-white`}
+            >
               {navLinks.map((link, index) => {
                 const active = isActive(link.href);
                 return (
