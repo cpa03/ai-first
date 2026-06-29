@@ -355,28 +355,35 @@ function ResultsContent() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Markdown Export */}
-          <Button
-            variant="primary"
-            onClick={() => handleExport('markdown')}
-            disabled={exportLoading}
-            aria-label="Download project blueprint as Markdown file"
+          <Tooltip
+            content={RESULTS_PAGE_CONTENT.TOOLTIPS.MARKDOWN}
+            position="top"
           >
-            {exportingFormat === 'markdown'
-              ? EXPORT_LABELS.MARKDOWN.LOADING
-              : EXPORT_LABELS.MARKDOWN.DEFAULT}
-          </Button>
+            <Button
+              variant="primary"
+              onClick={() => handleExport('markdown')}
+              disabled={exportLoading}
+              aria-label="Download project blueprint as Markdown file"
+            >
+              {exportingFormat === 'markdown'
+                ? EXPORT_LABELS.MARKDOWN.LOADING
+                : EXPORT_LABELS.MARKDOWN.DEFAULT}
+            </Button>
+          </Tooltip>
 
           {/* JSON Export */}
-          <Button
-            variant="secondary"
-            onClick={() => handleExport('json')}
-            disabled={exportLoading}
-            aria-label="Export project blueprint as JSON data"
-          >
-            {exportingFormat === 'json'
-              ? EXPORT_LABELS.JSON.LOADING
-              : EXPORT_LABELS.JSON.DEFAULT}
-          </Button>
+          <Tooltip content={RESULTS_PAGE_CONTENT.TOOLTIPS.JSON} position="top">
+            <Button
+              variant="secondary"
+              onClick={() => handleExport('json')}
+              disabled={exportLoading}
+              aria-label="Export project blueprint as JSON data"
+            >
+              {exportingFormat === 'json'
+                ? EXPORT_LABELS.JSON.LOADING
+                : EXPORT_LABELS.JSON.DEFAULT}
+            </Button>
+          </Tooltip>
 
           {/* Notion Export */}
           {connectorHealth.notion?.configured ? (
