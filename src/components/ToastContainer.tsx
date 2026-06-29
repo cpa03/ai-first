@@ -259,19 +259,20 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       <span className="sr-only">
         {TOAST_CONTAINER_LABELS.DISMISS_INSTRUCTION}
       </span>
-      {isSwiping && swipeOffset > 20 && (
-        <div
-          className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
-          style={{
-            opacity:
-              Math.min(
-                swipeOffset / UI_CONSTANTS.TOAST_SWIPE_DISMISS_THRESHOLD,
-                1
-              ) * 0.5,
-          }}
-          aria-hidden="true"
-        />
-      )}
+      {isSwiping &&
+        swipeOffset > UI_CONSTANTS.TOAST_SWIPE_PROGRESS_THRESHOLD && (
+          <div
+            className="absolute left-0 top-0 bottom-0 w-1 bg-current opacity-50 rounded-l-lg"
+            style={{
+              opacity:
+                Math.min(
+                  swipeOffset / UI_CONSTANTS.TOAST_SWIPE_DISMISS_THRESHOLD,
+                  1
+                ) * 0.5,
+            }}
+            aria-hidden="true"
+          />
+        )}
 
       <div
         className="absolute bottom-0 left-0 h-1 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"

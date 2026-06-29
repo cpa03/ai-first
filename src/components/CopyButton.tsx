@@ -74,14 +74,18 @@ const CopyButtonComponent = function CopyButton({
     const particleCount = CONFETTI_COLORS.PARTICLE_COUNT;
     for (let i = 0; i < particleCount; i++) {
       const angle = (i / particleCount) * Math.PI * 2;
-      const distance = 20 + Math.random() * 20;
-      const size = 4 + Math.random() * 6;
+      const distance =
+        CONFETTI_COLORS.MIN_DISTANCE +
+        Math.random() * CONFETTI_COLORS.MAX_DISTANCE_VARIANCE;
+      const size =
+        CONFETTI_COLORS.MIN_SIZE +
+        Math.random() * CONFETTI_COLORS.MAX_SIZE_VARIANCE;
       particles.push({
         id: `confetti-${Date.now()}-${i}`,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance,
         color: CONFETTI_COLORS.PRIMARY[i % CONFETTI_COLORS.PRIMARY.length],
-        delay: i * 30,
+        delay: i * CONFETTI_COLORS.PARTICLE_DELAY_MS,
         size,
       });
     }

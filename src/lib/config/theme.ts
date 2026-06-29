@@ -453,6 +453,21 @@ export const CONFETTI_COLORS = {
   ] as readonly string[],
   /** Number of particles to generate per confetti burst */
   PARTICLE_COUNT: EnvLoader.number('CONFETTI_PARTICLE_COUNT', 6, 3, 12),
+  /** Minimum distance from center for confetti particles (px) */
+  MIN_DISTANCE: EnvLoader.number('CONFETTI_MIN_DISTANCE', 20, 5, 50),
+  /** Maximum additional random distance (px) */
+  MAX_DISTANCE_VARIANCE: EnvLoader.number(
+    'CONFETTI_MAX_DISTANCE_VARIANCE',
+    20,
+    5,
+    50
+  ),
+  /** Minimum particle size (px) */
+  MIN_SIZE: EnvLoader.number('CONFETTI_MIN_SIZE', 4, 2, 10),
+  /** Maximum additional random size (px) */
+  MAX_SIZE_VARIANCE: EnvLoader.number('CONFETTI_MAX_SIZE_VARIANCE', 6, 2, 10),
+  /** Delay between particle animations (ms) */
+  PARTICLE_DELAY_MS: EnvLoader.number('CONFETTI_PARTICLE_DELAY_MS', 30, 5, 100),
 } as const;
 
 /**

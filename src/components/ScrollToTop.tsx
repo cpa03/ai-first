@@ -10,6 +10,7 @@ import {
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
 } from '@/lib/config';
+import { UI_CONFIG as UI_TIMING_CONFIG } from '@/lib/config/ui-config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from './Tooltip';
@@ -160,7 +161,8 @@ function ScrollToTopComponent({
 
   // Micro-UX: Determine when to show percentage text vs arrow icon
   // Show percentage when scrolled past 10% for meaningful feedback
-  const showPercentage = scrollProgress >= 10;
+  const showPercentage =
+    scrollProgress >= UI_TIMING_CONFIG.SCROLL_PERCENTAGE_THRESHOLD;
 
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">

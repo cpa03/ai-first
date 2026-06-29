@@ -227,8 +227,10 @@ function StepCelebrationComponent({
                     d="M5 13l4 4L19 7"
                     className={shouldAnimate ? 'animate-draw-check' : ''}
                     style={{
-                      strokeDasharray: 24,
-                      strokeDashoffset: isExiting ? 24 : 0,
+                      strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
+                      strokeDashoffset: isExiting
+                        ? SVG_ANIMATION.CHECKMARK_PATH_LENGTH
+                        : 0,
                       transition: `stroke-dashoffset ${ANIMATION_DELAYS.INLINE.STANDARD} ease-out`,
                     }}
                   />
