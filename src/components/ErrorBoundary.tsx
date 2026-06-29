@@ -12,6 +12,7 @@ import {
   COMPONENT_DEFAULTS,
   Z_INDEX_LAYERS,
   TEXT_SIZE_CLASSES,
+  CONTAINER_WIDTHS,
 } from '@/lib/config';
 
 interface Props {
@@ -129,7 +130,9 @@ export default class ErrorBoundary extends Component<Props, State> {
             role="main"
             aria-labelledby="error-title"
           >
-            <div className="max-w-2xl w-full bg-white rounded-lg shadow-lg p-8">
+            <div
+              className={`${CONTAINER_WIDTHS.SM} w-full bg-white rounded-lg shadow-lg p-8`}
+            >
               <div role="alert" aria-live="assertive" className="sr-only">
                 {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}{' '}
                 {this.state.error?.message}

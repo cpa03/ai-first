@@ -13,6 +13,7 @@ import {
   API_ERROR_MESSAGES,
   ROUTES,
   RESULTS_PAGE_CONTENT,
+  PAGE_LAYOUT_CLASSES,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -281,7 +282,7 @@ function ResultsContent() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="bg-white rounded-lg shadow-lg p-8 text-center">
           <LoadingSpinner
             size="md"
@@ -296,7 +297,7 @@ function ResultsContent() {
 
   if (error) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="error" title={RESULTS_PAGE_CONTENT.ERROR_TITLE}>
           {error}
           <div className="mt-4">
@@ -311,7 +312,7 @@ function ResultsContent() {
 
   if (!idea) {
     return (
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="warning" title={RESULTS_PAGE_CONTENT.WARNING_TITLE}>
           {RESULTS_PAGE_CONTENT.WARNING_MESSAGE}
           <div className="mt-4">
@@ -326,7 +327,7 @@ function ResultsContent() {
 
   // Use the BlueprintDisplay component with real data
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">
           {RESULTS_PAGE_CONTENT.HEADING}
@@ -574,7 +575,7 @@ export default function ResultsPage() {
   return (
     <Suspense
       fallback={
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
           <div className="bg-white rounded-lg shadow-lg p-8 text-center">
             <LoadingSpinner
               size="md"

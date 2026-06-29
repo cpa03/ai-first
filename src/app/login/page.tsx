@@ -20,6 +20,7 @@ import {
   matchesPattern,
   PASSWORD_VALIDATION_CONFIG,
   PAGE_LAYOUT_CLASSES,
+  CONTAINER_WIDTHS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -185,10 +186,8 @@ export default function LoginPage() {
   );
 
   return (
-    <div
-      className={`${PAGE_LAYOUT_CLASSES.AUTH_PAGE} flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50`}
-    >
-      <div className="max-w-md w-full space-y-8">
+    <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+      <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8`}>
         <div className="text-center animate-hero-entrance">
           <h1 className="text-3xl font-bold text-gray-900">
             {LOGIN_PAGE_CONTENT.HEADING}

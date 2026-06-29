@@ -15,7 +15,7 @@ import {
   trackCopyAction,
   trackFunnelStep,
 } from '@/lib/analytics';
-import { HOME_PAGE_CONFIG } from '@/lib/config';
+import { HOME_PAGE_CONFIG, PAGE_LAYOUT_CLASSES } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
@@ -110,7 +110,7 @@ export default function HomePageClient() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
       {/* Micro-UX: Staggered entrance animation for hero section creates a polished first impression */}
       {/* Respects prefers-reduced-motion for accessibility */}
       <section aria-labelledby="hero-heading" className="text-center mb-12">

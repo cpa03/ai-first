@@ -4,7 +4,7 @@ import { memo } from 'react';
 import Alert from './Alert';
 import Button from './Button';
 import Link from 'next/link';
-import { LAYOUT_ERROR_LABELS } from '@/lib/config';
+import { LAYOUT_ERROR_LABELS, CONTAINER_WIDTHS } from '@/lib/config';
 
 interface LayoutErrorFallbackProps {
   title: string;
@@ -19,7 +19,9 @@ function LayoutErrorFallbackComponent({
 }: LayoutErrorFallbackProps) {
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+      <div
+        className={`${CONTAINER_WIDTHS.XS} w-full bg-white rounded-lg shadow-lg p-6 text-center`}
+      >
         <Alert type="error" title={title}>
           {message}
           <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
