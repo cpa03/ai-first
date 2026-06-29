@@ -8,6 +8,7 @@ import {
   COMPONENT_CONFIG,
   COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
+  SVG_SIZES,
   ALERT_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -202,7 +203,7 @@ const AlertComponent = function Alert({
       onBlur={handleMouseLeave}
     >
       <svg
-        className={`w-5 h-5 ${styles.iconColor} flex-shrink-0 mt-0.5`}
+        className={`${SVG_SIZES.LG} ${styles.iconColor} flex-shrink-0 mt-0.5`}
         fill="currentColor"
         viewBox="0 0 20 20"
         aria-hidden="true"
@@ -226,7 +227,7 @@ const AlertComponent = function Alert({
             type="button"
           >
             <svg
-              className="w-4 h-4"
+              className={SVG_SIZES.MD}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

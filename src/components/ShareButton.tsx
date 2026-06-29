@@ -7,6 +7,7 @@ import {
   APP_CONFIG,
   SHARE_BUTTON_LABELS,
   SVG_STROKE_WIDTHS,
+  SVG_SIZES,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -207,11 +208,13 @@ const ShareButtonComponent = function ShareButton({
           aria-label={ariaLabel}
           type="button"
         >
-          <span className="relative flex items-center justify-center w-4 h-4">
+          <span
+            className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
+          >
             {/* Share icon */}
             <svg
               className={`
-              absolute inset-0 w-4 h-4 transition-all duration-200
+              absolute inset-0 ${SVG_SIZES.MD} transition-all duration-200
               ${shared ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
               fill="none"
@@ -230,7 +233,7 @@ const ShareButtonComponent = function ShareButton({
             {/* Checkmark icon when shared */}
             <svg
               className={`
-              absolute inset-0 w-4 h-4 text-green-500 transition-all duration-200
+              absolute inset-0 ${SVG_SIZES.MD} text-green-500 transition-all duration-200
               ${shared ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
               fill="none"
