@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useRef, useState, useEffect, useCallback } from 'react';
 import {
   MIN_ANSWER_LENGTH,
   MAX_ANSWER_LENGTH,
@@ -28,6 +28,7 @@ import ProgressStepper from '@/components/ProgressStepper';
 import InputWithValidation from '@/components/InputWithValidation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import LoadingAnnouncer from '@/components/LoadingAnnouncer';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
 import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
 import Skeleton from '@/components/Skeleton';
@@ -64,6 +65,48 @@ function ClarificationFlow({
     handlePrevious,
     handleKeyDown,
   } = useClarificationSession(idea, ideaId, onComplete);
+
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  const [referenceAnnouncement, setReferenceAnnouncement] = useState('');
+  const [referenceTriggered, setReferenceTriggered] = useState(false);
+
+  const handleToggleReference = useCallback(() => {
+    const details = detailsRef.current;
+    if (!details) return;
+    triggerHapticFeedback();
+    setReferenceAnnouncement(
+      details.open ? 'Reference idea expanded' : 'Reference idea collapsed'
+    );
+    setReferenceTriggered(true);
+  }, []);
+
+  // Micro-UX: Keyboard shortcut Alt+R to toggle reference idea section
+  useEffect(() => {
+    if (loading || questions.length === 0) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable;
+
+      if (isInputFocused || e.metaKey || e.ctrlKey) return;
+
+      if (e.key === 'r' && e.altKey) {
+        e.preventDefault();
+        const details = detailsRef.current;
+        if (details) {
+          details.open = !details.open;
+          handleToggleReference();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [loading, questions.length, handleToggleReference]);
 
   if (loading) {
     return (
@@ -174,7 +217,16 @@ function ClarificationFlow({
         </div>
       )}
 
-      <details className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden transition-all duration-200">
+      <StatusAnnouncer
+        message={referenceAnnouncement}
+        triggered={referenceTriggered}
+        politeness="polite"
+      />
+      <details
+        ref={detailsRef}
+        onToggle={handleToggleReference}
+        className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden transition-all duration-200"
+      >
         <summary className="px-4 py-3 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none">
           <div className="flex items-center gap-2">
             <svg
@@ -191,6 +243,12 @@ function ClarificationFlow({
               />
             </svg>
             <span>{COMPONENT_DEFAULTS.CLARIFICATION_FLOW.REFERENCE_LABEL}</span>
+            <kbd
+              className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded text-xs font-mono"
+              aria-hidden="true"
+            >
+              Alt+R
+            </kbd>
           </div>
           <svg
             className="w-4 h-4 text-gray-400 transition-transform duration-200 transform group-open:rotate-180"

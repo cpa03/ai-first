@@ -33,7 +33,7 @@ interface KeyboardShortcutsHelpProps {
   onClose: () => void;
 }
 
-// Expanded shortcuts - 19 shortcuts total (exceeds "at least 10" requirement)
+// Expanded shortcuts - 20 shortcuts total (exceeds "at least 10" requirement)
 const keyboardShortcuts: KeyboardShortcut[] = [
   {
     keys: ['⌘', 'K'],
@@ -45,6 +45,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
   {
     keys: ['⌘', '←'],
     description: 'Previous question in clarification flow',
+    context: 'form',
+  },
+  {
+    keys: ['Alt', 'R'],
+    description: 'Toggle reference idea in clarification flow',
     context: 'form',
   },
   {
