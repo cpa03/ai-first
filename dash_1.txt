@@ -1,0 +1,300 @@
+'use client';
+
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { fetchWithTimeout } from '@/lib/api-client';
+import dynamic from 'next/dynamic';
+import { useAuthCheck } from '@/hooks/useAuthCheck';
+import {
+  ACTION_COLORS,
+  TABLE_PATTERNS,
+  MODAL_PATTERNS,
+  SPINNER_PATTERNS,
+  DASHBOARD_FILTER_LABELS,
+  API_ERROR_MESSAGES,
+  ROUTES,
+  DASHBOARD_PAGE_CONTENT,
+  SVG_STROKE_WIDTHS,
+  LOCAL_STORAGE_KEYS,
+  ANIMATION_CONFIG,
+  PAGE_LAYOUT_CLASSES,
+} from '@/lib/config';
+// Lazy load Button and LoadingSpinner for code splitting
+const Button = dynamic(() => import('@/components/Button'), {
+  ssr: false,
+  loading: () => (
+    <button className={SPINNER_PATTERNS.placeholder.container} disabled>
+      Loading...
+    </button>
+  ),
+});
+
+const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
+  ssr: false,
+  loading: () => (
+    <div className="flex justify-center items-center">
+      <div
+        className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.md} ${SPINNER_PATTERNS.default.border} ${SPINNER_PATTERNS.default.borderColor}`}
+      ></div>
+    </div>
+  ),
+});
+
+// Growth: Lazy load ReferralLink for code splitting
+const ReferralLink = dynamic(() => import('@/components/ReferralLink'), {
+  ssr: false,
+});
+
+// Lazy load Tooltip for code splitting - used for showing absolute date on hover
+const Tooltip = dynamic(() => import('@/components/Tooltip'), {
+  ssr: false,
+});
+import { createLogger } from '@/lib/logger';
+import Alert from '@/components/Alert';
+import Link from 'next/link';
+import { APP_CONFIG } from '@/lib/config';
+import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
+import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
+import {
+  triggerHapticFeedback,
+  getRelativeTime,
+  formatAbsoluteDate,
+} from '@/lib/utils';
+interface Idea {
+  id: string;
+  title: string;
+  status: IdeaStatus;
+  createdAt: string;
+  updatedAt?: string;
+}
+interface Pagination {
+  total: number;
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+}
+
+// Use centralized status configuration from constants.ts
+const statusColors = IDEA_STATUS_CONFIG.COLORS;
+const statusLabels = IDEA_STATUS_CONFIG.LABELS;
+const logger = createLogger('DashboardPage');
+
+// PERFORMANCE: Extract pure functions outside component to prevent recreation on every render
+// Using relative time for better UX - shows "2 hours ago" instead of requiring mental date math
+const formatDate = (dateString: string): string => {
+  return getRelativeTime(dateString);
+};
+
+// Also export absolute date for cases where it's needed.
+// PERFORMANCE: Uses the optimized formatAbsoluteDate from utils for maximum efficiency.
+const formatDateAbsolute = (dateString: string): string => {
+  return formatAbsoluteDate(new Date(dateString));
+};
+
+export default function DashboardPage() {
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('all');
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{
+    isOpen: boolean;
+    idea: Idea | null;
+  }>({
+    isOpen: false,
+    idea: null,
+  });
+  const filterSelectRef = useRef<HTMLSelectElement>(null);
+  const selectedRowRef = useRef<HTMLTableRowElement>(null);
+  const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
+  const { openHelp } = useKeyboardShortcuts();
+
+  // Set CSS custom properties for dashboard animation from config
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty(
+      '--dashboard-stagger-delay',
+      `${ANIMATION_CONFIG.DASHBOARD_STAGGER_DELAY}ms`
+    );
+    root.style.setProperty(
+      '--dashboard-row-duration',
+      `${ANIMATION_CONFIG.DASHBOARD_ROW_DURATION}ms`
+    );
+  }, []);
+
+  // Growth: Generate referral code from user ID (first 8 chars)
+  const referralCode = userId ? userId.slice(0, 8).toLowerCase() : '';
+
+  const fetchIdeas = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const params = new URLSearchParams();
+      if (filter !== 'all') {
+        params.set('status', filter);
+      }
+      params.set('limit', String(APP_CONFIG.PAGINATION.DEFAULT_LIMIT));
+
+      const queryString = params.toString();
+      const response = await fetchWithTimeout(
+        `/api/ideas${queryString ? `?${queryString}` : ''}`
+      );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError(DASHBOARD_PAGE_CONTENT.ERRORS.SIGN_IN_REQUIRED);
+          setIdeas([]);
+          setPagination(null);
+          return;
+        }
+        throw new Error(API_ERROR_MESSAGES.PAGE.FETCH_IDEAS_FAILED);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch ideas');
+      }
+
+      setIdeas(data.data.ideas);
+      setPagination(data.data.pagination);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : DASHBOARD_PAGE_CONTENT.ERRORS.UNKNOWN_ERROR;
+      if (!errorMessage.includes('sign in')) {
+        logger.error('Error fetching ideas:', err);
+      }
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      setLoading(false);
+      setError(DASHBOARD_PAGE_CONTENT.ERRORS.SIGN_IN_REQUIRED);
+      return;
+    }
+
+    if (!authLoading && isAuthenticated) {
+      fetchIdeas();
+    }
+  }, [fetchIdeas, authLoading, isAuthenticated]);
+
+  // PERFORMANCE: Memoize event handlers to prevent unnecessary re-renders
+  const openDeleteModal = useCallback((idea: Idea) => {
+    setDeleteModal({ isOpen: true, idea });
+  }, []);
+
+  const closeDeleteModal = useCallback(() => {
+    setDeleteModal({ isOpen: false, idea: null });
+  }, []);
+
+  const handleDelete = useCallback(async () => {
+    if (!deleteModal.idea) return;
+
+    const id = deleteModal.idea.id;
+    const ideaTitle = deleteModal.idea.title;
+
+    try {
+      setDeletingId(id);
+
+      const response = await fetchWithTimeout(`/api/ideas/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error(API_ERROR_MESSAGES.PAGE.DELETE_IDEA_FAILED);
+      }
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(
+          data.error || DASHBOARD_PAGE_CONTENT.ERRORS.DELETE_FAILED
+        );
+      }
+
+      setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+      setPagination((prev) =>
+        prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
+      );
+      closeDeleteModal();
+
+      if (typeof window !== 'undefined') {
+        const win = window as Window & {
+          showToast?: (options: { type: string; message: string }) => void;
+        };
+        win.showToast?.({
+          type: 'success',
+          message: `"${ideaTitle}" deleted successfully`,
+        });
+      }
+    } catch (err) {
+      logger.error('Error deleting idea:', err);
+      setError(err instanceof Error ? err.message : 'Failed to delete idea');
+    } finally {
+      setDeletingId(null);
+    }
+  }, [deleteModal.idea, closeDeleteModal]);
+
+  // Refs for focus management
+  const modalRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+  const cancelButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Handle focus when modal opens/closes
+  useEffect(() => {
+    let focusTimeoutId: ReturnType<typeof setTimeout> | null = null;
+
+    if (deleteModal.isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
+      focusTimeoutId = setTimeout(() => {
+        cancelButtonRef.current?.focus();
+      }, 0);
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+    }
+
+    return () => {
+      if (focusTimeoutId) {
+        clearTimeout(focusTimeoutId);
+      }
+    };
+  }, [deleteModal.isOpen]);
+
+  // Handle keyboard events for focus trap and escape
+  useEffect(() => {
+    if (!deleteModal.isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeDeleteModal();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === 'Tab' && modalRef.current) {
+        const focusableElements = modalRef.current.querySelectorAll(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+          }
