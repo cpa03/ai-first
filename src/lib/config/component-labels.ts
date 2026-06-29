@@ -169,6 +169,34 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   } as const,
   /** Keyboard shortcut context display order */
   CONTEXT_ORDER: ['global', 'command', 'navigation', 'form', 'modal'] as const,
+  /** Keyboard shortcut descriptions - eliminates hardcoded strings */
+  SHORTCUT_DESCRIPTIONS: {
+    OPEN_COMMAND_PALETTE: 'Open command palette',
+    SUBMIT_FORM: 'Submit form',
+    PREVIOUS_QUESTION: 'Previous question in clarification flow',
+    TOGGLE_REFERENCE: 'Toggle reference idea in clarification flow',
+    NEW_IDEA: 'New idea',
+    SAVE_WORK: 'Save current work',
+    TOGGLE_HELP: 'Toggle keyboard shortcuts help',
+    GO_TO_DASHBOARD: 'Go to dashboard',
+    GO_TO_BLUEPRINT: 'Go to blueprint/results',
+    GO_TO_DASHBOARD_VIM: 'Go to dashboard (vim)',
+    GO_TO_RESULTS_VIM: 'Go to results (vim)',
+    GO_TO_IDEAS_VIM: 'Go to ideas (vim)',
+    CLOSE_MODAL: 'Close modal or menu',
+    DISMISS_NOTIFICATIONS: 'Dismiss all notifications',
+    NAVIGATE_NEXT: 'Navigate to next focusable element',
+    NAVIGATE_PREVIOUS: 'Navigate to previous focusable element',
+    ACTIVATE_BUTTON: 'Activate button or link',
+    ACTIVATE_TOGGLE: 'Activate button or toggle checkbox',
+    NAVIGATE_MENU: 'Navigate menu items',
+    NAVIGATE_STEPPER: 'Navigate stepper or tabs',
+    NAVIGATE_VIM: 'Navigate up/down (vim)',
+    SHOW_SHORTCUTS: 'Show keyboard shortcuts',
+    COPY_BLUEPRINT: 'Copy blueprint (when no text selected)',
+    EXPAND_DELIVERABLES: 'Expand all deliverables',
+    COLLAPSE_DELIVERABLES: 'Collapse all deliverables',
+  } as const,
 } as const;
 
 /**
@@ -301,6 +329,15 @@ export const USER_ONBOARDING_LABELS = {
 } as const;
 
 /**
+ * Task Management Labels
+ * Eliminates hardcoded strings in TaskManagement component
+ */
+export const TASK_MANAGEMENT_LABELS = {
+  EXPAND_ALL_ANNOUNCEMENT: 'All deliverables expanded',
+  COLLAPSE_ALL_ANNOUNCEMENT: 'All deliverables collapsed',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -320,6 +357,7 @@ export const COMPONENT_LABELS = {
   KEYBOARD_SHORTCUTS_PROVIDER: KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
   IDEA_INPUT: IDEA_INPUT_LABELS,
   USER_ONBOARDING: USER_ONBOARDING_LABELS,
+  TASK_MANAGEMENT: TASK_MANAGEMENT_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -337,4 +375,5 @@ export type KeyboardShortcutsProviderLabels =
   typeof KEYBOARD_SHORTCUTS_PROVIDER_LABELS;
 export type IdeaInputLabels = typeof IDEA_INPUT_LABELS;
 export type UserOnboardingLabels = typeof USER_ONBOARDING_LABELS;
+export type TaskManagementLabels = typeof TASK_MANAGEMENT_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
