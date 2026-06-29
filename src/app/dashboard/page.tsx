@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchWithTimeout } from '@/lib/api-client';
 import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   ACTION_COLORS,
   TABLE_PATTERNS,
@@ -104,9 +105,12 @@ export default function DashboardPage() {
     isOpen: false,
     idea: null,
   });
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
   const filterSelectRef = useRef<HTMLSelectElement>(null);
+  const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Set CSS custom properties for dashboard animation from config
   useEffect(() => {
@@ -316,6 +320,45 @@ export default function DashboardPage() {
 
       if (isInputFocused) return;
 
+      if (
+        ideas.length > 0 &&
+        (e.key === 'j' || e.key === 'k') &&
+        !e.ctrlKey &&
+        !e.metaKey
+      ) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        setSelectedRowIndex((prev) => {
+          const next = e.key === 'j' ? prev + 1 : prev - 1;
+          return Math.max(0, Math.min(next, ideas.length - 1));
+        });
+        return;
+      }
+
+      if (
+        e.key === 'Enter' &&
+        selectedRowIndex >= 0 &&
+        selectedRowIndex < ideas.length
+      ) {
+        e.preventDefault();
+        const idea = ideas[selectedRowIndex];
+        if (idea) {
+          triggerHapticFeedback();
+          if (idea.status === 'completed') {
+            window.location.href = `/results?ideaId=${idea.id}`;
+          } else {
+            window.location.href = `/clarify?ideaId=${idea.id}`;
+          }
+        }
+        return;
+      }
+
+      if (e.key === 'Escape' && selectedRowIndex >= 0) {
+        e.preventDefault();
+        setSelectedRowIndex(-1);
+        return;
+      }
+
       if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         triggerHapticFeedback();
@@ -337,7 +380,20 @@ export default function DashboardPage() {
     document.addEventListener('keydown', handleKeyboardShortcuts);
     return () =>
       document.removeEventListener('keydown', handleKeyboardShortcuts);
-  }, [deleteModal.isOpen]);
+  }, [deleteModal.isOpen, ideas, selectedRowIndex]);
+
+  useEffect(() => {
+    if (selectedRowIndex >= 0 && tableBodyRef.current) {
+      const rows = tableBodyRef.current.querySelectorAll('tr');
+      const selectedRow = rows[selectedRowIndex];
+      if (selectedRow) {
+        selectedRow.scrollIntoView({
+          block: 'nearest',
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        });
+      }
+    }
+  }, [selectedRowIndex, prefersReducedMotion]);
 
   if (loading) {
     return (
@@ -375,6 +431,20 @@ export default function DashboardPage() {
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}>
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {selectedRowIndex >= 0 && ideas[selectedRowIndex]
+          ? `Row ${selectedRowIndex + 1} of ${ideas.length}: ${ideas[selectedRowIndex].title}. Press Enter to ${
+              ideas[selectedRowIndex].status === 'completed'
+                ? 'view blueprint'
+                : 'continue editing'
+            }.`
+          : ''}
+      </div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
@@ -771,11 +841,21 @@ export default function DashboardPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody
+                ref={tableBodyRef}
+                className="bg-white divide-y divide-gray-200"
+              >
                 {ideas.map((idea, index) => (
                   <tr
                     key={idea.id}
-                    className={`${TABLE_PATTERNS.row.hover} animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)}`}
+                    data-row-index={index}
+                    tabIndex={selectedRowIndex === index ? 0 : -1}
+                    aria-selected={selectedRowIndex === index}
+                    className={`${TABLE_PATTERNS.row.hover} animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors ${
+                      selectedRowIndex === index
+                        ? 'bg-primary-50 ring-2 ring-primary-400 ring-inset'
+                        : ''
+                    }`}
                   >
                     <td className={TABLE_PATTERNS.cell.padding}>
                       <div className={TABLE_PATTERNS.cell.primary}>
@@ -855,6 +935,31 @@ export default function DashboardPage() {
               </tbody>
             </table>
           </div>
+        </div>
+      )}
+      {ideas.length > 0 && !loading && (
+        <div className="mt-3 flex items-center gap-4 text-xs text-gray-400">
+          <span className="hidden sm:inline-flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+              j
+            </kbd>
+            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+              k
+            </kbd>
+            navigate
+          </span>
+          <span className="hidden sm:inline-flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+              Enter
+            </kbd>
+            open
+          </span>
+          <span className="hidden sm:inline-flex items-center gap-1">
+            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+              Esc
+            </kbd>
+            deselect
+          </span>
         </div>
       )}
       {/* Delete Confirmation Modal */}
