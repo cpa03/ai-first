@@ -6,10 +6,13 @@ export interface CircuitBreakerManagerOptions {
   maxSize?: number;
 }
 
+/**
+ * CircuitBreakerManager handles the lifecycle and management of circuit breakers.
+ * Implements a Least Recently Used (LRU) eviction policy to prevent memory leaks.
+ */
 export class CircuitBreakerManager {
   private static instance: CircuitBreakerManager;
   private circuitBreakers: Map<string, CircuitBreaker> = new Map();
-  private accessOrder: string[] = [];
   private maxSize: number;
 
   constructor(options?: CircuitBreakerManagerOptions) {
@@ -24,47 +27,60 @@ export class CircuitBreakerManager {
     return CircuitBreakerManager.instance;
   }
 
+  /**
+   * Get an existing circuit breaker or create a new one.
+   * PERFORMANCE: Implements O(1) LRU by using Map's insertion order.
+   */
   getOrCreate(name: string, config?: CircuitBreakerOptions): CircuitBreaker {
-    if (!this.circuitBreakers.has(name)) {
-      this.enforceSizeLimit();
-      this.circuitBreakers.set(name, new CircuitBreaker(name, config));
+    const existing = this.circuitBreakers.get(name);
+    if (existing) {
+      // PERFORMANCE: Move to end of Map to mark as most recently used
+      this.circuitBreakers.delete(name);
+      this.circuitBreakers.set(name, existing);
+      return existing;
     }
-    this.updateAccessOrder(name);
-    return this.circuitBreakers.get(name)!;
+
+    this.enforceSizeLimit();
+    const newBreaker = new CircuitBreaker(name, config);
+    this.circuitBreakers.set(name, newBreaker);
+    return newBreaker;
   }
 
+  /**
+   * Enforces the maximum number of circuit breakers to prevent memory leaks.
+   * PERFORMANCE: Uses O(1) eviction of the oldest entry (first in Map).
+   */
   private enforceSizeLimit(): void {
-    if (
-      this.circuitBreakers.size >= this.maxSize &&
-      this.accessOrder.length > 0
-    ) {
-      const oldestName = this.accessOrder[0];
-      this.remove(oldestName);
+    if (this.circuitBreakers.size >= this.maxSize) {
+      // PERFORMANCE: Map preserves insertion order. The first entry is the
+      // Least Recently Used (LRU) because we move entries to the end on every access.
+      const firstEntry = this.circuitBreakers.keys().next();
+      if (!firstEntry.done) {
+        this.remove(firstEntry.value);
+      }
     }
   }
 
-  private updateAccessOrder(name: string): void {
-    const index = this.accessOrder.indexOf(name);
-    if (index > -1) {
-      this.accessOrder.splice(index, 1);
-    }
-    this.accessOrder.push(name);
-  }
-
+  /**
+   * Get a circuit breaker by name.
+   * PERFORMANCE: Moves the accessed breaker to the end of the Map (O(1) MRU update).
+   */
   get(name: string): CircuitBreaker | undefined {
     const breaker = this.circuitBreakers.get(name);
     if (breaker) {
-      this.updateAccessOrder(name);
+      // PERFORMANCE: Move to end of Map to mark as most recently used
+      this.circuitBreakers.delete(name);
+      this.circuitBreakers.set(name, breaker);
     }
     return breaker;
   }
 
+  /**
+   * Remove a circuit breaker by name.
+   * PERFORMANCE: O(1) deletion from Map.
+   */
   remove(name: string): void {
     this.circuitBreakers.delete(name);
-    const index = this.accessOrder.indexOf(name);
-    if (index > -1) {
-      this.accessOrder.splice(index, 1);
-    }
   }
 
   getNames(): string[] {
