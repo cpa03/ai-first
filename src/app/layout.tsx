@@ -15,6 +15,7 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   FOOTER_NAV_CONFIG,
+  DASHBOARD_PAGE_CONTENT,
 } from '@/lib/config';
 import { safeJsonLd } from '@/lib/security/json-ld';
 import {
@@ -199,7 +200,7 @@ export default async function RootLayout({
               <footer
                 className="bg-gray-50 border-t border-gray-200"
                 role="contentinfo"
-                aria-label="Site footer"
+                aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SITE_FOOTER}
               >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
