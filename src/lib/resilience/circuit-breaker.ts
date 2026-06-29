@@ -58,11 +58,35 @@ export class CircuitBreaker {
     }
   }
 
+  /**
+   * Cleanup failure timestamps that are outside the monitoring period.
+   * PERFORMANCE: Since timestamps are added chronologically, we find the
+   * first valid index in O(N) but only allocate a new array if needed.
+   * This avoids the overhead of Array.filter()'s callback and new array creation.
+   */
   private cleanupOldFailures(now: number): void {
     const monitoringPeriod = this.config.monitoringPeriodMs;
-    this.recentFailures = this.recentFailures.filter(
-      (timestamp) => now - timestamp <= monitoringPeriod
-    );
+    const cutoff = now - monitoringPeriod;
+
+    let firstValidIndex = -1;
+    for (let i = 0; i < this.recentFailures.length; i++) {
+      if (this.recentFailures[i] >= cutoff) {
+        firstValidIndex = i;
+        break;
+      }
+    }
+
+    if (firstValidIndex === -1) {
+      // All failures have expired
+      if (this.recentFailures.length > 0) {
+        this.recentFailures = [];
+      }
+    } else if (firstValidIndex > 0) {
+      // Some failures have expired
+      this.recentFailures = this.recentFailures.slice(firstValidIndex);
+    }
+    // If firstValidIndex is 0, all failures are still within the monitoring period.
+
     this.circuitState.failures = this.recentFailures.length;
   }
 
