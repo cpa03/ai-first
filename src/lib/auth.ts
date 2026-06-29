@@ -1,22 +1,35 @@
 import { AppError, ErrorCode } from '@/lib/errors';
 import { getSupabaseAdmin } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
-import { AUTH_CONFIG } from '@/lib/config/constants';
-import { STATUS_CODES } from '@/lib/config/http';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
-import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
-import { API_ERROR_MESSAGES } from '@/lib/config';
+import { ENV_ACCESSORS } from '@/lib/config/env-keys';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { STATUS_CODES } from '@/lib/config/http';
+import { AUTH_CONFIG } from '@/lib/config/constants';
 
-const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
 
-if (
-  !ADMIN_API_KEY &&
-  process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
-) {
-  logger.warn(
-    'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
-  );
+
+/**
+ * Lazily retrieves the Admin API Key to avoid top-level process.env access,
+ * which is required for Cloudflare Workers build stability.
+ */
+function getAdminApiKey(): string | undefined {
+  const key = ENV_ACCESSORS.SECURITY.ADMIN_API_KEY();
+
+  // Defer warning to runtime to avoid scan:console build failures or top-level side effects
+  if (
+    !key &&
+    ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'development' &&
+    !(getAdminApiKey as any).warned
+  ) {
+    logger.warn(
+      'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
+    );
+    (getAdminApiKey as any).warned = true;
+  }
+
+  return key;
 }
 
 export interface AuthenticatedUser {
@@ -35,8 +48,8 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
-  if (!ADMIN_API_KEY) {
-    return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
+  if (!getAdminApiKey()) {
+    return ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development';
   }
 
   const authHeader = request.headers.get('authorization');
@@ -75,7 +88,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
 
     const expectedHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,
-      encoder.encode(ADMIN_API_KEY)
+      encoder.encode(getAdminApiKey())
     );
     const actualHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,

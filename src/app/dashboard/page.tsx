@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { fetchWithTimeout } from '@/lib/api-client';
 import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
@@ -108,6 +109,7 @@ export default function DashboardPage() {
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const selectedRowRef = useRef<HTMLTableRowElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
+  const router = useRouter();
   const { openHelp } = useKeyboardShortcuts();
 
   // Set CSS custom properties for dashboard animation from config
@@ -340,7 +342,7 @@ export default function DashboardPage() {
       ) {
         e.preventDefault();
         triggerHapticFeedback();
-        window.location.href = ROUTES.HOME;
+        router.push(ROUTES.HOME);
       }
 
       // List Navigation
@@ -356,7 +358,7 @@ export default function DashboardPage() {
           if (selectedIdea) {
             e.preventDefault();
             triggerHapticFeedback();
-            window.location.href = `/results?ideaId=${selectedIdea.id}`;
+            router.push(`/results?ideaId=${selectedIdea.id}`);
           }
         }
       }
