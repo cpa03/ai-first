@@ -423,7 +423,7 @@ export default function DashboardPage() {
                   ? 'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm'
                   : 'border-gray-300 bg-white text-gray-900'
               }`}
-              aria-label="Filter ideas by status"
+              aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.FILTER_STATUS}
             >
               <option
                 value="all"
@@ -518,7 +518,7 @@ export default function DashboardPage() {
                   setFilter('all');
                 }}
                 className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
-                aria-label="Clear filter"
+                aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.CLEAR_FILTER}
               >
                 {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
               </button>
@@ -529,7 +529,9 @@ export default function DashboardPage() {
           type="button"
           onClick={() => openHelp()}
           className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
-          aria-label="Show keyboard shortcuts (press ?)"
+          aria-label={
+            DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SHOW_KEYBOARD_SHORTCUTS
+          }
         >
           {DASHBOARD_PAGE_CONTENT.SHORTCUTS}
         </button>
@@ -540,7 +542,7 @@ export default function DashboardPage() {
             window.location.reload();
           }}
           className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
-          aria-label="Restart the onboarding tour"
+          aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.RESTART_ONBOARDING}
         >
           {DASHBOARD_PAGE_CONTENT.RESTART_TOUR}
         </button>
@@ -602,7 +604,7 @@ export default function DashboardPage() {
               <div
                 className="flex items-center justify-center gap-2 sm:gap-4 mb-8"
                 role="list"
-                aria-label="How IdeaFlow works: three steps"
+                aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.HOW_IT_WORKS}
               >
                 {/* Step 1: Idea */}
                 <div
@@ -744,7 +746,7 @@ export default function DashboardPage() {
             <table
               className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}
               role="table"
-              aria-label="List of your ideas"
+              aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.IDEAS_LIST}
             >
               <thead className={TABLE_PATTERNS.header.container}>
                 <tr>

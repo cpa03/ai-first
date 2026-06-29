@@ -342,6 +342,21 @@ export const RESULTS_PAGE_CONTENT = {
     GITHUB_PROJECTS:
       'Configure GITHUB_TOKEN in environment to enable GitHub Projects export',
   },
+  ARIA_LABELS: {
+    GO_BACK: 'Return to previous page',
+    DOWNLOAD_MARKDOWN: 'Download project blueprint as Markdown file',
+    EXPORT_JSON: 'Export project blueprint as JSON data',
+    EXPORT_NOTION: 'Export project to Notion',
+    EXPORT_NOTION_SETUP: 'Export to Notion - requires API configuration',
+    EXPORT_TRELLO: 'Export project to Trello',
+    EXPORT_TRELLO_SETUP: 'Export to Trello - requires API configuration',
+    EXPORT_GOOGLE_TASKS: 'Export tasks to Google Tasks',
+    EXPORT_GOOGLE_TASKS_SETUP:
+      'Export to Google Tasks - requires API configuration',
+    EXPORT_GITHUB_PROJECTS: 'Export tasks to GitHub Projects',
+    EXPORT_GITHUB_PROJECTS_SETUP:
+      'Export to GitHub Projects - requires API configuration',
+  },
 } as const;
 
 /**
@@ -402,6 +417,15 @@ export const DASHBOARD_PAGE_CONTENT = {
     DELETE_FAILED: 'Failed to delete idea',
     SIGN_IN_REQUIRED: 'Please sign in to view your ideas',
     UNKNOWN_ERROR: 'An unknown error occurred',
+  },
+  ARIA_LABELS: {
+    FILTER_STATUS: 'Filter ideas by status',
+    CLEAR_FILTER: 'Clear filter',
+    SHOW_KEYBOARD_SHORTCUTS: 'Show keyboard shortcuts (press ?)',
+    RESTART_ONBOARDING: 'Restart the onboarding tour',
+    HOW_IT_WORKS: 'How IdeaFlow works: three steps',
+    IDEAS_LIST: 'List of your ideas',
+    SITE_FOOTER: 'Site footer',
   },
 } as const;
 

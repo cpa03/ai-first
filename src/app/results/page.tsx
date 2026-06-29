@@ -334,7 +334,7 @@ function ResultsContent() {
         <Button
           variant="secondary"
           onClick={() => router.back()}
-          aria-label="Return to previous page"
+          aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.GO_BACK}
         >
           {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
         </Button>
@@ -363,7 +363,7 @@ function ResultsContent() {
               variant="primary"
               onClick={() => handleExport('markdown')}
               disabled={exportLoading}
-              aria-label="Download project blueprint as Markdown file"
+              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.DOWNLOAD_MARKDOWN}
             >
               {exportingFormat === 'markdown'
                 ? EXPORT_LABELS.MARKDOWN.LOADING
@@ -377,7 +377,7 @@ function ResultsContent() {
               variant="secondary"
               onClick={() => handleExport('json')}
               disabled={exportLoading}
-              aria-label="Export project blueprint as JSON data"
+              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_JSON}
             >
               {exportingFormat === 'json'
                 ? EXPORT_LABELS.JSON.LOADING
@@ -391,7 +391,7 @@ function ResultsContent() {
               variant="outline"
               onClick={() => handleExport('notion')}
               disabled={exportLoading}
-              aria-label="Export project to Notion"
+              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
             >
               {exportingFormat === 'notion'
                 ? EXPORT_LABELS.NOTION.LOADING
@@ -405,7 +405,9 @@ function ResultsContent() {
               <Button
                 variant="outline"
                 disabled={true}
-                aria-label="Export to Notion - requires API configuration"
+                aria-label={
+                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION_SETUP
+                }
               >
                 {EXPORT_LABELS.NOTION.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
@@ -421,7 +423,7 @@ function ResultsContent() {
               variant="outline"
               onClick={() => handleExport('trello')}
               disabled={exportLoading}
-              aria-label="Export project to Trello"
+              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
             >
               {exportingFormat === 'trello'
                 ? EXPORT_LABELS.TRELLO.LOADING
@@ -435,7 +437,9 @@ function ResultsContent() {
               <Button
                 variant="outline"
                 disabled={true}
-                aria-label="Export to Trello - requires API configuration"
+                aria-label={
+                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO_SETUP
+                }
               >
                 {EXPORT_LABELS.TRELLO.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
@@ -451,7 +455,7 @@ function ResultsContent() {
               variant="outline"
               onClick={() => handleExport('google-tasks')}
               disabled={exportLoading}
-              aria-label="Export tasks to Google Tasks"
+              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS}
             >
               {exportingFormat === 'google-tasks'
                 ? EXPORT_LABELS.GOOGLE_TASKS.LOADING
@@ -465,7 +469,9 @@ function ResultsContent() {
               <Button
                 variant="outline"
                 disabled={true}
-                aria-label="Export to Google Tasks - requires API configuration"
+                aria-label={
+                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS_SETUP
+                }
               >
                 {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
@@ -481,7 +487,9 @@ function ResultsContent() {
               variant="outline"
               onClick={() => handleExport('github-projects')}
               disabled={exportLoading}
-              aria-label="Export tasks to GitHub Projects"
+              aria-label={
+                RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
+              }
             >
               {exportingFormat === 'github-projects'
                 ? EXPORT_LABELS.GITHUB_PROJECTS.LOADING
@@ -495,7 +503,9 @@ function ResultsContent() {
               <Button
                 variant="outline"
                 disabled={true}
-                aria-label="Export to GitHub Projects - requires API configuration"
+                aria-label={
+                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS_SETUP
+                }
               >
                 {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
                 <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
