@@ -2,7 +2,6 @@
 
 import React, {
   useState,
-  useSyncExternalStore,
   useRef,
   useEffect,
   useCallback,
@@ -15,6 +14,7 @@ import LoadingAnnouncer from '@/components/LoadingAnnouncer';
 import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   MESSAGES,
   COMPONENT_DEFAULTS,
@@ -24,24 +24,6 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
-
-const subscribe = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-}
 
 interface BlueprintDisplayProps {
   idea: string;
@@ -321,11 +303,7 @@ function CopyCodeButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const logger = useMemo(() => createLogger('CopyCodeButton'), []);
-  const prefersReducedMotion = useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot
-  );
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     return () => {

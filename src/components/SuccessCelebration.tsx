@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useEffect,
-  useState,
-  useCallback,
-  memo,
-  useSyncExternalStore,
-} from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import {
   CELEBRATION_COLORS,
   ANIMATION_PHYSICS,
@@ -16,6 +10,7 @@ import {
   Z_INDEX_LAYERS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 // PERFORMANCE: Flatten particle interface to reduce object allocations per frame
 // velocity.x -> vx, velocity.y -> vy
@@ -39,30 +34,6 @@ interface SuccessCelebrationProps {
 
 const COLORS = CELEBRATION_COLORS.ALL;
 const PARTICLE_COUNT = ANIMATION_PHYSICS.PARTICLE_COUNT;
-
-// PERFORMANCE: Centralized reduced motion detection using useSyncExternalStore
-// This avoids redundant useState/useEffect cycles across components
-const subscribeToMotionPreference = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getServerMotionSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToMotionPreference,
-    getMotionSnapshot,
-    getServerMotionSnapshot
-  );
-}
 
 function SuccessCelebrationComponent({
   show,

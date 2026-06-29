@@ -1,12 +1,6 @@
 'use client';
 
-import React, {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useSyncExternalStore,
-} from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ANIMATION_CONFIG } from '@/lib/config/constants';
 import {
   ALERT_STYLES,
@@ -18,28 +12,7 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
-
-const subscribeToReducedMotion = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getReducedMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getReducedMotionServerSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot
-  );
-}
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface AlertProps {
   type: 'error' | 'warning' | 'info' | 'success';

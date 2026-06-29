@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useState,
-  useEffect,
-  useCallback,
-  useRef,
-  useSyncExternalStore,
-} from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
 import {
   COMPONENT_CONFIG,
@@ -20,29 +14,7 @@ import {
   CONTAINER_WIDTH_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
-
-// Reduced motion detection for celebration animation
-const subscribeToMotionPreference = (callback: () => void) => {
-  if (typeof window === 'undefined') return () => {};
-  const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQuery.addEventListener('change', callback);
-  return () => mediaQuery.removeEventListener('change', callback);
-};
-
-const getMotionSnapshot = () => {
-  if (typeof window === 'undefined') return false;
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-const getServerMotionSnapshot = () => false;
-
-function usePrefersReducedMotion() {
-  return useSyncExternalStore(
-    subscribeToMotionPreference,
-    getMotionSnapshot,
-    getServerMotionSnapshot
-  );
-}
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 /**
  * Onboarding Tour Steps
