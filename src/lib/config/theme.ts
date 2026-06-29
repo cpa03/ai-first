@@ -891,22 +891,108 @@ export const SVG_STROKE_WIDTHS = {
  */
 export const SVG_SIZES = {
   /**
-   * Small SVG icon (20x20px) - default for most icons
+   * Extra small icon (8x8px) - for dots, indicators
+   * Equivalent to: w-2 h-2
+   */
+  XS: 'w-2 h-2',
+
+  /**
+   * Small icon (12x12px) - for tiny indicators, bullets
+   * Equivalent to: w-3 h-3
+   */
+  SM: 'w-3 h-3',
+
+  /**
+   * Medium icon (16x16px) - default for inline icons
+   * Equivalent to: w-4 h-4
+   */
+  MD: 'w-4 h-4',
+
+  /**
+   * Large icon (20x20px) - for standard UI icons
    * Equivalent to: w-5 h-5
    */
-  SM: 'w-5 h-5',
+  LG: 'w-5 h-5',
 
   /**
-   * Medium SVG icon (24x24px) - for emphasis icons
+   * Extra large icon (24x24px) - for emphasis icons
    * Equivalent to: w-6 h-6
    */
-  MD: 'w-6 h-6',
+  XL: 'w-6 h-6',
 
   /**
-   * Large SVG icon (32x32px) - for prominent icons
+   * 2XL icon (32x32px) - for prominent icons
    * Equivalent to: w-8 h-8
    */
-  LG: 'w-8 h-8',
+  '2XL': 'w-8 h-8',
+
+  /**
+   * 3XL icon (40x40px) - for large buttons
+   * Equivalent to: w-10 h-10
+   */
+  '3XL': 'w-10 h-10',
+
+  /**
+   * 4XL icon (48x48px) - for featured icons
+   * Equivalent to: w-12 h-12
+   */
+  '4XL': 'w-12 h-12',
+
+  /**
+   * 5XL icon (64x64px) - for hero/celebration icons
+   * Equivalent to: w-16 h-16
+   */
+  '5XL': 'w-16 h-16',
+} as const;
+
+/**
+ * Gap Size Configuration
+ * Centralizes gap Tailwind classes used across all flex/grid layouts.
+ * Eliminates hardcoded gap-N classes in 15+ component files.
+ *
+ * Usage:
+ * ```typescript
+ * import { GAP_SIZES } from '@/lib/config';
+ * <div className={`flex ${GAP_SIZES.SM}`} />  // gap-2
+ * <div className={`flex ${GAP_SIZES.MD}`} />  // gap-4
+ * ```
+ */
+export const GAP_SIZES = {
+  /**
+   * Extra small gap (4px) - for tight inline elements
+   * Equivalent to: gap-1
+   */
+  XS: 'gap-1',
+
+  /**
+   * Small gap (6px) - for compact layouts
+   * Equivalent to: gap-1.5
+   */
+  SM: 'gap-1.5',
+
+  /**
+   * Medium gap (8px) - default for most layouts
+   * Equivalent to: gap-2
+   */
+  MD: 'gap-2',
+
+  /**
+   * Large gap (12px) - for spaced layouts
+   * Equivalent to: gap-3
+   */
+  LG: 'gap-3',
+
+  /**
+   * Extra large gap (16px) - for section spacing
+   * Equivalent to: gap-4
+   */
+  XL: 'gap-4',
+
+  /**
+   * 2XL gap (24px) - for major section separation
+   * Equivalent to: gap-6
+   */
+  '2XL': 'gap-6',
 } as const;
 
 /**

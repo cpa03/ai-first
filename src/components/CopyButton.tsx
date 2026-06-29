@@ -6,6 +6,7 @@ import { UI_CONFIG } from '@/lib/config/constants';
 import {
   COPY_BUTTON_LABELS,
   SVG_STROKE_WIDTHS,
+  SVG_SIZES,
   CONFETTI_COLORS,
   COMPONENT_CONFIG,
 } from '@/lib/config';
@@ -188,10 +189,12 @@ const CopyButtonComponent = function CopyButton({
             aria-label={ariaLabel}
             type="button"
           >
-            <span className="relative flex items-center justify-center w-4 h-4">
+            <span
+              className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
+            >
               <svg
                 className={`
-              absolute inset-0 w-4 h-4 transition-all duration-200
+              absolute inset-0 ${SVG_SIZES.MD} transition-all duration-200
               ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
                 fill="none"
@@ -206,7 +209,7 @@ const CopyButtonComponent = function CopyButton({
 
               <svg
                 className={`
-              absolute inset-0 w-4 h-4 text-green-700 transition-all duration-200
+              absolute inset-0 ${SVG_SIZES.MD} text-green-700 transition-all duration-200
               ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
                 fill="none"

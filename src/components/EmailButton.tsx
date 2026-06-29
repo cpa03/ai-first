@@ -6,7 +6,12 @@ import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { createLogger } from '@/lib/logger';
 import { triggerHapticFeedback } from '@/lib/utils';
-import { APP_CONFIG, UI_CONFIG, SVG_STROKE_WIDTHS } from '@/lib/config';
+import {
+  APP_CONFIG,
+  UI_CONFIG,
+  SVG_STROKE_WIDTHS,
+  SVG_SIZES,
+} from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface EmailButtonProps {
@@ -120,9 +125,11 @@ const EmailButtonComponent = function EmailButton({
           aria-label={ariaLabel}
           className={className}
         >
-          <span className="relative flex items-center justify-center w-4 h-4">
+          <span
+            className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
+          >
             <svg
-              className={`absolute inset-0 w-4 h-4 ${iconTransition} ${
+              className={`absolute inset-0 ${SVG_SIZES.MD} ${iconTransition} ${
                 state === 'success'
                   ? 'opacity-0 scale-75'
                   : 'opacity-100 scale-100'
@@ -141,7 +148,7 @@ const EmailButtonComponent = function EmailButton({
             </svg>
 
             <svg
-              className={`absolute inset-0 w-4 h-4 text-green-700 ${iconTransition} ${
+              className={`absolute inset-0 ${SVG_SIZES.MD} text-green-700 ${iconTransition} ${
                 state === 'success'
                   ? 'opacity-100 scale-100'
                   : 'opacity-0 scale-50'

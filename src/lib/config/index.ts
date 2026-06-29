@@ -123,6 +123,7 @@ export {
   SPINNER_PATTERNS,
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
+  GAP_SIZES,
   Z_INDEX_LAYERS,
 } from './theme';
 
