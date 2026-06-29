@@ -96,6 +96,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
@@ -105,6 +106,7 @@ export default function DashboardPage() {
     idea: null,
   });
   const filterSelectRef = useRef<HTMLSelectElement>(null);
+  const selectedRowRef = useRef<HTMLTableRowElement>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
 
@@ -304,6 +306,11 @@ export default function DashboardPage() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [deleteModal.isOpen, closeDeleteModal]);
 
+  // Reset selection when ideas or filter changes
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [ideas, filter]);
+
   useEffect(() => {
     const handleKeyboardShortcuts = (e: KeyboardEvent) => {
       if (deleteModal.isOpen) return;
@@ -312,16 +319,19 @@ export default function DashboardPage() {
       const isInputFocused =
         target.tagName === 'INPUT' ||
         target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
         target.isContentEditable;
 
       if (isInputFocused) return;
 
+      // Search/Filter focus
       if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         triggerHapticFeedback();
         filterSelectRef.current?.focus();
       }
 
+      // New Idea
       if (
         (e.key === 'n' || e.key === 'N') &&
         !e.ctrlKey &&
@@ -332,12 +342,40 @@ export default function DashboardPage() {
         triggerHapticFeedback();
         window.location.href = ROUTES.HOME;
       }
+
+      // List Navigation
+      if (ideas.length > 0) {
+        if (e.key === 'j' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev < ideas.length - 1 ? prev + 1 : prev));
+        } else if (e.key === 'k' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          const selectedIdea = ideas[selectedIndex];
+          if (selectedIdea) {
+            e.preventDefault();
+            triggerHapticFeedback();
+            window.location.href = `/results?ideaId=${selectedIdea.id}`;
+          }
+        }
+      }
     };
 
     document.addEventListener('keydown', handleKeyboardShortcuts);
     return () =>
       document.removeEventListener('keydown', handleKeyboardShortcuts);
-  }, [deleteModal.isOpen]);
+  }, [deleteModal.isOpen, ideas, selectedIndex]);
+
+  // Scroll selected row into view
+  useEffect(() => {
+    if (selectedIndex >= 0 && selectedRowRef.current) {
+      selectedRowRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [selectedIndex]);
 
   if (loading) {
     return (
@@ -775,7 +813,14 @@ export default function DashboardPage() {
                 {ideas.map((idea, index) => (
                   <tr
                     key={idea.id}
-                    className={`${TABLE_PATTERNS.row.hover} animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)}`}
+                    ref={index === selectedIndex ? selectedRowRef : null}
+                    className={`${TABLE_PATTERNS.row.hover} ${
+                      index === selectedIndex
+                        ? 'bg-primary-50 ring-2 ring-primary-500 ring-inset z-10'
+                        : ''
+                    } animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors duration-150`}
+                    aria-selected={index === selectedIndex}
+                    tabIndex={index === selectedIndex ? 0 : -1}
                   >
                     <td className={TABLE_PATTERNS.cell.padding}>
                       <div className={TABLE_PATTERNS.cell.primary}>
