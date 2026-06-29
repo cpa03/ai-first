@@ -42,6 +42,7 @@
     "docs:check-links": "node scripts/docs-link-validator.js",
     "user-stories:validate": "node scripts/validate-user-stories.js",
     "check:circular": "node scripts/check-circular-deps.js",
+    "bug:scan": "bash scripts/bug-scan.sh",
     "prepare": "husky"
   },
   "dependencies": {
