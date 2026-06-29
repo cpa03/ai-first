@@ -16,6 +16,7 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface StepCelebrationProps {
   stepNumber: number;
@@ -42,7 +43,8 @@ function StepCelebrationComponent({
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
-  const [shouldAnimate, setShouldAnimate] = useState(true);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const shouldAnimate = !prefersReducedMotion;
   const exitTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   React.useEffect(() => {
@@ -51,18 +53,6 @@ function StepCelebrationComponent({
         clearTimeout(exitTimeoutRef.current);
       }
     };
-  }, []);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setShouldAnimate(!mediaQuery.matches);
-
-    const handleChange = (e: MediaQueryListEvent) => {
-      setShouldAnimate(!e.matches);
-    };
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   const generateParticles = useCallback((): Particle[] => {
