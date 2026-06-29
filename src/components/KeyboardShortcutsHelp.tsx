@@ -19,7 +19,8 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
-const { CONTEXT_LABELS, CONTEXT_ORDER } = KEYBOARD_SHORTCUTS_HELP_LABELS;
+const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
+  KEYBOARD_SHORTCUTS_HELP_LABELS;
 
 export interface KeyboardShortcut {
   keys: string[];
@@ -37,123 +38,135 @@ interface KeyboardShortcutsHelpProps {
 const keyboardShortcuts: KeyboardShortcut[] = [
   {
     keys: ['⌘', 'K'],
-    description: 'Open command palette',
+    description: SHORTCUT_DESCRIPTIONS.OPEN_COMMAND_PALETTE,
     context: 'command',
     action: 'openCommandPalette',
   },
-  { keys: ['⌘', 'Enter'], description: 'Submit form', context: 'form' },
+  {
+    keys: ['⌘', 'Enter'],
+    description: SHORTCUT_DESCRIPTIONS.SUBMIT_FORM,
+    context: 'form',
+  },
   {
     keys: ['⌘', '←'],
-    description: 'Previous question in clarification flow',
+    description: SHORTCUT_DESCRIPTIONS.PREVIOUS_QUESTION,
     context: 'form',
   },
   {
     keys: ['Alt', 'R'],
-    description: 'Toggle reference idea in clarification flow',
+    description: SHORTCUT_DESCRIPTIONS.TOGGLE_REFERENCE,
     context: 'form',
   },
   {
     keys: ['⌘', 'N'],
-    description: 'New idea',
+    description: SHORTCUT_DESCRIPTIONS.NEW_IDEA,
     context: 'global',
     action: 'newIdea',
   },
   {
     keys: ['⌘', 'S'],
-    description: 'Save current work',
+    description: SHORTCUT_DESCRIPTIONS.SAVE_WORK,
     context: 'global',
     action: 'save',
   },
   {
     keys: ['⌘', '/'],
-    description: 'Toggle keyboard shortcuts help',
+    description: SHORTCUT_DESCRIPTIONS.TOGGLE_HELP,
     context: 'global',
     action: 'toggleHelp',
   },
   {
     keys: ['⌘', 'D'],
-    description: 'Go to dashboard',
+    description: SHORTCUT_DESCRIPTIONS.GO_TO_DASHBOARD,
     context: 'navigation',
     action: 'goToDashboard',
   },
   {
     keys: ['⌘', 'B'],
-    description: 'Go to blueprint/results',
+    description: SHORTCUT_DESCRIPTIONS.GO_TO_BLUEPRINT,
     context: 'navigation',
     action: 'goToResults',
   },
   {
     keys: ['g', 'd'],
-    description: 'Go to dashboard (vim)',
+    description: SHORTCUT_DESCRIPTIONS.GO_TO_DASHBOARD_VIM,
     context: 'navigation',
   },
   {
     keys: ['g', 'r'],
-    description: 'Go to results (vim)',
+    description: SHORTCUT_DESCRIPTIONS.GO_TO_RESULTS_VIM,
     context: 'navigation',
   },
-  { keys: ['g', 'i'], description: 'Go to ideas (vim)', context: 'navigation' },
+  {
+    keys: ['g', 'i'],
+    description: SHORTCUT_DESCRIPTIONS.GO_TO_IDEAS_VIM,
+    context: 'navigation',
+  },
   {
     keys: ['Esc'],
-    description: 'Close modal or menu',
+    description: SHORTCUT_DESCRIPTIONS.CLOSE_MODAL,
     context: 'global',
     action: 'close',
   },
   {
     keys: ['Shift', 'Esc'],
-    description: 'Dismiss all notifications',
+    description: SHORTCUT_DESCRIPTIONS.DISMISS_NOTIFICATIONS,
     context: 'global',
   },
   {
     keys: ['Tab'],
-    description: 'Navigate to next focusable element',
+    description: SHORTCUT_DESCRIPTIONS.NAVIGATE_NEXT,
     context: 'global',
   },
   {
     keys: ['Shift', 'Tab'],
-    description: 'Navigate to previous focusable element',
+    description: SHORTCUT_DESCRIPTIONS.NAVIGATE_PREVIOUS,
     context: 'global',
   },
   {
     keys: ['Enter'],
-    description: 'Activate button or link',
+    description: SHORTCUT_DESCRIPTIONS.ACTIVATE_BUTTON,
     context: 'global',
   },
   {
     keys: ['Space'],
-    description: 'Activate button or toggle checkbox',
+    description: SHORTCUT_DESCRIPTIONS.ACTIVATE_TOGGLE,
     context: 'global',
   },
   {
     keys: ['↑', '↓'],
-    description: 'Navigate menu items',
+    description: SHORTCUT_DESCRIPTIONS.NAVIGATE_MENU,
     context: 'navigation',
   },
   {
     keys: ['←', '→'],
-    description: 'Navigate stepper or tabs',
+    description: SHORTCUT_DESCRIPTIONS.NAVIGATE_STEPPER,
     context: 'navigation',
   },
   {
     keys: ['j', 'k'],
-    description: 'Navigate up/down (vim)',
+    description: SHORTCUT_DESCRIPTIONS.NAVIGATE_VIM,
     context: 'navigation',
   },
-  { keys: ['?'], description: 'Show keyboard shortcuts', context: 'global' },
+  {
+    keys: ['?'],
+    description: SHORTCUT_DESCRIPTIONS.SHOW_SHORTCUTS,
+    context: 'global',
+  },
   {
     keys: ['⌘', 'C'],
-    description: 'Copy blueprint (when no text selected)',
+    description: SHORTCUT_DESCRIPTIONS.COPY_BLUEPRINT,
     context: 'global',
     action: 'copyBlueprint',
   },
   {
     keys: ['['],
-    description: 'Expand all deliverables',
+    description: SHORTCUT_DESCRIPTIONS.EXPAND_DELIVERABLES,
     context: 'navigation',
   },
   {
     keys: [']'],
-    description: 'Collapse all deliverables',
+    description: SHORTCUT_DESCRIPTIONS.COLLAPSE_DELIVERABLES,
     context: 'navigation',
   },
 ];

@@ -14,6 +14,7 @@ import {
   COMPONENT_DEFAULTS,
   ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
+  TASK_MANAGEMENT_LABELS,
 } from '@/lib/config';
 
 interface TaskManagementProps {
@@ -58,13 +59,13 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         e.preventDefault();
         triggerHapticFeedback();
         expandAll();
-        setExpandAnnouncement('All deliverables expanded');
+        setExpandAnnouncement(TASK_MANAGEMENT_LABELS.EXPAND_ALL_ANNOUNCEMENT);
         setExpandTriggered(true);
       } else if (e.key === ']') {
         e.preventDefault();
         triggerHapticFeedback();
         collapseAll();
-        setExpandAnnouncement('All deliverables collapsed');
+        setExpandAnnouncement(TASK_MANAGEMENT_LABELS.COLLAPSE_ALL_ANNOUNCEMENT);
         setExpandTriggered(true);
       }
     };

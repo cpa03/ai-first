@@ -371,6 +371,7 @@ export {
   KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
   IDEA_INPUT_LABELS,
   USER_ONBOARDING_LABELS,
+  TASK_MANAGEMENT_LABELS,
   COMPONENT_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
@@ -386,6 +387,7 @@ export {
   type KeyboardShortcutsProviderLabels,
   type IdeaInputLabels,
   type UserOnboardingLabels,
+  type TaskManagementLabels,
   type ComponentLabels,
 } from './component-labels';
 
