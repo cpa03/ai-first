@@ -5,7 +5,7 @@ import {
 } from '@/lib/api-handler';
 import { circuitBreakerManager } from '@/lib/resilience';
 import { exportManager } from '@/lib/export-connectors';
-import { APP_CONFIG } from '@/lib/config';
+import { APP_CONFIG, EXTERNAL_RATE_LIMIT_CONFIG } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
 
@@ -110,7 +110,8 @@ async function handleGet(context: ApiContext): Promise<Response> {
     servicesTracked: rateLimitStats.servicesTracked,
     services: rateLimitStats.services.map((s) => ({
       ...s,
-      approaching: s.remaining / s.limit <= 0.2, // 20% threshold
+      approaching:
+        s.remaining / s.limit <= EXTERNAL_RATE_LIMIT_CONFIG.THROTTLE_THRESHOLD,
     })),
   };
 

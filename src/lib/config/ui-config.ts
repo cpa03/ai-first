@@ -108,4 +108,27 @@ export const UI_CONFIG = {
     20,
     200
   ),
+
+  /**
+   * Toast swipe progress indicator threshold (in pixels)
+   * Minimum swipe distance before showing the progress indicator
+   * Env: UI_TOAST_SWIPE_PROGRESS_THRESHOLD (default: 20)
+   */
+  TOAST_SWIPE_PROGRESS_THRESHOLD: EnvLoader.number(
+    'UI_TOAST_SWIPE_PROGRESS_THRESHOLD',
+    20,
+    5,
+    50
+  ),
+
+  /**
+   * Scroll percentage threshold for showing percentage text in ScrollToTop button
+   * Env: UI_SCROLL_PERCENTAGE_THRESHOLD (default: 10)
+   */
+  SCROLL_PERCENTAGE_THRESHOLD: EnvLoader.number(
+    'UI_SCROLL_PERCENTAGE_THRESHOLD',
+    10,
+    1,
+    50
+  ),
 } as const;
