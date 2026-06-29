@@ -104,6 +104,7 @@ const AlertComponent = function Alert({
   const [progress, setProgress] = useState(
     COMPONENT_DEFAULTS.PROGRESS.COMPLETE
   );
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
@@ -140,6 +141,9 @@ const AlertComponent = function Alert({
     const totalSteps = effectiveDelay / updateInterval;
     let currentStep = 0;
 
+    // Micro-UX: Initialize countdown display with remaining seconds
+    setRemainingSeconds(Math.ceil(effectiveDelay / 1000));
+
     progressRef.current = setInterval(() => {
       currentStep++;
       const remainingProgress = Math.max(
@@ -149,6 +153,11 @@ const AlertComponent = function Alert({
       );
       progressValueRef.current = remainingProgress;
       setProgress(remainingProgress);
+
+      // Micro-UX: Update countdown display every second for user feedback
+      const elapsedMs = currentStep * updateInterval;
+      const remainingMs = Math.max(0, effectiveDelay - elapsedMs);
+      setRemainingSeconds(Math.ceil(remainingMs / 1000));
 
       if (currentStep >= totalSteps) {
         cleanupTimers();
@@ -261,14 +270,45 @@ const AlertComponent = function Alert({
         </Tooltip>
       )}
       {shouldAutoDismiss && !prefersReducedMotion && (
-        <div
-          className="absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
-          style={{
-            width: `${progress}%`,
-            transitionDuration: isPaused ? '0ms' : '75ms',
-          }}
-          aria-hidden="true"
-        />
+        <>
+          <div
+            className="absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
+            style={{
+              width: `${progress}%`,
+              transitionDuration: isPaused ? '0ms' : '75ms',
+            }}
+            aria-hidden="true"
+          />
+          {/* Micro-UX: Show countdown timer for auto-dismiss alerts */}
+          {/* Gives users predictable timing and control over alert dismissal */}
+          {remainingSeconds > 0 && (
+            <div
+              className="absolute bottom-1.5 right-2 text-xs font-medium opacity-60 tabular-nums"
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {isPaused ? (
+                <span className="flex items-center gap-1">
+                  <svg
+                    className="w-3 h-3"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    aria-hidden="true"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Paused
+                </span>
+              ) : (
+                `${remainingSeconds}s`
+              )}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
