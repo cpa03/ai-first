@@ -13,6 +13,7 @@ import {
   API_ENDPOINTS,
   SVG_STROKE_WIDTHS,
   IDEA_INPUT_LABELS,
+  GRADIENT_PATTERNS,
 } from '@/lib/config';
 import Alert from './Alert';
 import Button from './Button';
@@ -339,8 +340,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               <div
                 className={`absolute left-0 top-0 h-full transition-all duration-300 ease-out rounded-full ${
                   idea.trim().length >= MIN_IDEA_LENGTH
-                    ? 'bg-gradient-to-r from-green-400 to-green-600'
-                    : 'bg-gradient-to-r from-primary-400 to-primary-600'
+                    ? GRADIENT_PATTERNS.SUCCESS_BUTTON
+                    : GRADIENT_PATTERNS.PRIMARY_BUTTON
                 }`}
                 style={{ width: `${writingProgress}%` }}
                 role="progressbar"

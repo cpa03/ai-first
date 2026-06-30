@@ -1123,3 +1123,59 @@ export const LOADING_PATTERNS = {
   /** Loading with text */
   TEXT: 'text-center text-gray-600',
 } as const;
+
+/**
+ * Skeleton Loading Patterns
+ * Centralizes skeleton loading component styling
+ * Eliminates hardcoded CSS values in Skeleton.tsx and other skeleton components
+ */
+export const SKELETON_PATTERNS = {
+  /** Base skeleton class for reduced motion preference */
+  BASE_REDUCED_MOTION: 'bg-gray-200',
+
+  /** Base skeleton class with shimmer animation */
+  BASE_ANIMATED:
+    'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]',
+
+  /** Rectangle variant (default) */
+  RECT: '',
+
+  /** Circle variant */
+  CIRCLE: 'rounded-full',
+
+  /** Text variant */
+  TEXT: 'h-4 rounded',
+} as const;
+
+/**
+ * Gradient Patterns
+ * Centralizes gradient styling used across components
+ * Eliminates hardcoded gradient classes in login, signup, and other pages
+ */
+export const GRADIENT_PATTERNS = {
+  /** Shimmer effect for buttons and interactive elements */
+  SHIMMER:
+    'absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer',
+
+  /** Progress bar gradient */
+  PROGRESS_BAR:
+    'bg-gradient-to-r from-primary-500 to-primary-400 rounded-full transition-all duration-700 ease-out',
+
+  /** Success button gradient */
+  SUCCESS_BUTTON: 'bg-gradient-to-r from-green-400 to-green-600',
+
+  /** Primary button gradient */
+  PRIMARY_BUTTON: 'bg-gradient-to-r from-primary-400 to-primary-600',
+
+  /** Decorative divider gradient */
+  DIVIDER_PRIMARY: 'bg-gradient-to-r from-primary-300 to-primary-100',
+
+  /** Decorative divider gradient (amber to primary) */
+  DIVIDER_AMBER_PRIMARY: 'bg-gradient-to-r from-amber-300 to-primary-300',
+
+  /** Decorative divider gradient (primary to green) */
+  DIVIDER_PRIMARY_GREEN: 'bg-gradient-to-r from-primary-300 to-green-300',
+} as const;
+
+export type SkeletonPatterns = typeof SKELETON_PATTERNS;
+export type GradientPatterns = typeof GRADIENT_PATTERNS;

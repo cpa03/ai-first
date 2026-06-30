@@ -127,6 +127,8 @@ export {
   Z_INDEX_LAYERS,
   CARD_PATTERNS,
   LOADING_PATTERNS,
+  SKELETON_PATTERNS,
+  GRADIENT_PATTERNS,
 } from './theme';
 
 // Page Configuration
@@ -245,6 +247,8 @@ export type {
   ButtonStyles,
   AlertStyles,
   DurationTailwind,
+  SkeletonPatterns,
+  GradientPatterns,
 } from './theme';
 
 // Time and Error Message Types

@@ -14,6 +14,7 @@ import {
   UI_CONFIG,
   OPACITY_CONFIG,
   STEP_CELEBRATION_LABELS,
+  GRADIENT_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -295,7 +296,7 @@ function StepCelebrationComponent({
             }}
           >
             <div
-              className="h-full bg-gradient-to-r from-primary-500 to-primary-400 rounded-full transition-all duration-700 ease-out"
+              className={`h-full ${GRADIENT_PATTERNS.PROGRESS_BAR}`}
               style={{
                 width: `${progress}%`,
                 boxShadow: `0 0 8px ${CELEBRATION_COLORS.SHADOWS.BOX_SHADOW}`,
