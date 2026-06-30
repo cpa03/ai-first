@@ -5,6 +5,7 @@ import {
   ANIMATION_DELAYS,
   FEATURE_CONFIG,
   FEATURE_GRID_LABELS,
+  UI_STRINGS,
 } from '@/lib/config';
 
 function FeatureGridComponent() {
@@ -32,11 +33,7 @@ function FeatureGridComponent() {
     return () => observer.disconnect();
   }, []);
 
-  const animationClasses = [
-    FEATURE_CONFIG.ANIMATION_DELAYS.STEP_1,
-    FEATURE_CONFIG.ANIMATION_DELAYS.STEP_2,
-    FEATURE_CONFIG.ANIMATION_DELAYS.STEP_3,
-  ];
+  const animationClasses = UI_STRINGS.ANIMATION.FEATURE_GRID;
 
   return (
     <section
