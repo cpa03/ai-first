@@ -42,6 +42,7 @@ export {
   PASSWORD_VALIDATION_CONFIG,
   EXPORT_LABELS,
   KEYBOARD_SHORTCUTS_MESSAGES,
+  UI_STRINGS,
 } from './ui';
 
 export { UI_CONFIG as UI_TIMING_CONFIG } from './ui-config';

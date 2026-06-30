@@ -494,6 +494,25 @@ export const COMPONENT_DEFAULTS = {
   },
 };
 
+/**
+ * UI Strings Configuration
+ * Centralizes hardcoded UI strings and class names
+ * Eliminates hardcoded animation classes from components
+ */
+export const UI_STRINGS = {
+  ANIMATION: {
+    /** Animation classes for WhyChooseSection component */
+    WHY_CHOOSE: [
+      'animate-why-choose-1',
+      'animate-why-choose-2',
+      'animate-why-choose-3',
+      'animate-why-choose-4',
+    ],
+    /** Animation classes for FeatureGrid component */
+    FEATURE_GRID: ['delay-100', 'delay-200', 'delay-300'],
+  },
+} as const;
+
 export type UiConfig = typeof UI_CONFIG;
 export type ToastConfig = typeof TOAST_CONFIG;
 export type MessagesConfig = typeof MESSAGES;

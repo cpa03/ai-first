@@ -232,7 +232,7 @@ class AIService {
           if (!this.openai) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'OpenAI client not initialized. Check OPENAI_API_KEY environment variable.',
+              API_ERROR_MESSAGES.AI.OPENAI_NOT_INITIALIZED,
               ErrorCode.SERVICE_UNAVAILABLE,
               STATUS_CODES.SERVICE_UNAVAILABLE,
               undefined,
@@ -257,7 +257,7 @@ class AIService {
           ) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'Invalid response from OpenAI: no choices returned',
+              API_ERROR_MESSAGES.AI.INVALID_RESPONSE_NO_CHOICES,
               ErrorCode.EXTERNAL_SERVICE_ERROR,
               STATUS_CODES.BAD_GATEWAY,
               undefined,
@@ -269,7 +269,7 @@ class AIService {
           if (!choice) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'Invalid response from OpenAI: missing choice',
+              API_ERROR_MESSAGES.AI.INVALID_RESPONSE_MISSING_CHOICE,
               ErrorCode.EXTERNAL_SERVICE_ERROR,
               STATUS_CODES.BAD_GATEWAY,
               undefined,
@@ -289,7 +289,7 @@ class AIService {
           if (!this.anthropic) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'Anthropic client not initialized. Check ANTHROPIC_API_KEY environment variable.',
+              API_ERROR_MESSAGES.AI.ANTHROPIC_NOT_INITIALIZED,
               ErrorCode.SERVICE_UNAVAILABLE,
               STATUS_CODES.SERVICE_UNAVAILABLE,
               undefined,
@@ -323,7 +323,7 @@ class AIService {
           if (!response || !response.content || response.content.length === 0) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'Invalid response from Anthropic: no content returned',
+              API_ERROR_MESSAGES.AI.INVALID_RESPONSE_NO_CONTENT,
               ErrorCode.EXTERNAL_SERVICE_ERROR,
               STATUS_CODES.BAD_GATEWAY,
               undefined,
@@ -335,7 +335,7 @@ class AIService {
           if (textContent.type !== 'text') {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
-              'Invalid response from Anthropic: expected text content',
+              API_ERROR_MESSAGES.AI.INVALID_RESPONSE_UNEXPECTED_TYPE,
               ErrorCode.EXTERNAL_SERVICE_ERROR,
               STATUS_CODES.BAD_GATEWAY,
               undefined,
@@ -357,7 +357,7 @@ class AIService {
         } else {
           const { AppError, ErrorCode } = await import('./errors');
           throw new AppError(
-            `Provider ${config.provider} not yet implemented`,
+            API_ERROR_MESSAGES.AI.PROVIDER_NOT_IMPLEMENTED(config.provider),
             ErrorCode.EXTERNAL_SERVICE_ERROR,
             STATUS_CODES.NOT_IMPLEMENTED,
             undefined,

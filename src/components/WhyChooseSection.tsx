@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config';
+import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG, UI_STRINGS } from '@/lib/config';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
@@ -29,12 +29,7 @@ function WhyChooseSectionComponent() {
     return () => observer.disconnect();
   }, []);
 
-  const animationClasses = [
-    'animate-why-choose-1',
-    'animate-why-choose-2',
-    'animate-why-choose-3',
-    'animate-why-choose-4',
-  ];
+  const animationClasses = UI_STRINGS.ANIMATION.WHY_CHOOSE;
 
   return (
     <section
