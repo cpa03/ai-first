@@ -91,6 +91,9 @@ function LoadingSpinnerComponent({
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}
       aria-label={ariaLabel}
     >
+      {/* Micro-UX: Screen reader-only text ensures aria-live announces loading state */}
+      {/* Without text content, aria-live regions are silent for assistive technology */}
+      <span className="sr-only">{ariaLabel}</span>
       {!prefersReducedMotion && (
         <div
           className="absolute rounded-full bg-primary-100/50 animate-ping-slow"
