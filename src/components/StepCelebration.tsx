@@ -13,6 +13,7 @@ import {
   COMPONENT_CONFIG,
   UI_CONFIG,
   OPACITY_CONFIG,
+  STEP_CELEBRATION_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -111,7 +112,10 @@ function StepCelebrationComponent({
     CELEBRATION_COLORS.PROGRESS_CIRCLE.RADIUS
   );
 
-  const announcement = `Step ${stepNumber} Complete! ${progress}% Complete.`;
+  const announcement = STEP_CELEBRATION_LABELS.ANNOUNCEMENT(
+    stepNumber,
+    progress
+  );
 
   return (
     <>
@@ -273,10 +277,10 @@ function StepCelebrationComponent({
             }}
           >
             <p className="text-lg font-bold text-gray-900">
-              Step {stepNumber} Complete!
+              {STEP_CELEBRATION_LABELS.STEP_COMPLETE(stepNumber)}
             </p>
             <p className="text-sm font-medium text-primary-600 mt-1">
-              {progress}% Complete
+              {STEP_CELEBRATION_LABELS.PROGRESS_COMPLETE(progress)}
             </p>
           </div>
 

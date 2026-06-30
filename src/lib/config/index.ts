@@ -372,6 +372,11 @@ export {
   IDEA_INPUT_LABELS,
   USER_ONBOARDING_LABELS,
   TASK_MANAGEMENT_LABELS,
+  IDEA_READY_INDICATOR_LABELS,
+  STEP_CELEBRATION_LABELS,
+  USER_ONBOARDING_COMPLETION_LABELS,
+  CLARIFICATION_FLOW_LABELS,
+  FEATURE_GRID_LABELS,
   COMPONENT_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
@@ -388,6 +393,11 @@ export {
   type IdeaInputLabels,
   type UserOnboardingLabels,
   type TaskManagementLabels,
+  type IdeaReadyIndicatorLabels,
+  type StepCelebrationLabels,
+  type UserOnboardingCompletionLabels,
+  type ClarificationFlowLabels,
+  type FeatureGridLabels,
   type ComponentLabels,
 } from './component-labels';
 

@@ -364,10 +364,12 @@ function ToastContainerComponent() {
         <button
           onClick={clearAllToasts}
           className="self-end mb-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-all duration-200 animate-fade-in"
-          aria-label={`Clear all ${toasts.length} notifications`}
+          aria-label={TOAST_CONTAINER_LABELS.CLEAR_ALL_ARIA_LABEL(
+            toasts.length
+          )}
           type="button"
         >
-          Clear all ({toasts.length})
+          {TOAST_CONTAINER_LABELS.CLEAR_ALL_BUTTON(toasts.length)}
         </button>
       )}
       {toasts.map((toast) => (

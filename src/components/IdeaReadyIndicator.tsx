@@ -6,6 +6,7 @@ import {
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
   SVG_ANIMATION,
+  IDEA_READY_INDICATOR_LABELS,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -100,7 +101,9 @@ function IdeaReadyIndicatorComponent({
           ${isReady ? 'text-green-700' : 'text-gray-500'}
         `}
       >
-        {isReady ? 'Ready to submit!' : 'Keep writing...'}
+        {isReady
+          ? IDEA_READY_INDICATOR_LABELS.READY_TEXT
+          : IDEA_READY_INDICATOR_LABELS.WRITING_TEXT}
       </span>
     </div>
   );

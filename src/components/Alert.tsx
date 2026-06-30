@@ -219,7 +219,7 @@ const AlertComponent = function Alert({
         <div className={styles.textColor}>{children}</div>
       </div>
       {onClose && (
-        <Tooltip content="Dismiss alert" position="top">
+        <Tooltip content={ALERT_LABELS.DISMISS_TOOLTIP} position="top">
           <button
             onClick={handleClose}
             className={`${ALERT_BASE_STYLES.closeButton} ${styles.textColor} ${styles.focusRing}`}
@@ -275,7 +275,7 @@ const AlertComponent = function Alert({
                       clipRule="evenodd"
                     />
                   </svg>
-                  Paused
+                  {ALERT_LABELS.PAUSED_LABEL}
                 </span>
               ) : (
                 `${remainingSeconds}s`

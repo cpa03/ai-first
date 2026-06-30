@@ -120,6 +120,8 @@ export const TOAST_CONTAINER_LABELS = {
   DISMISS_INSTRUCTION: 'Press Escape to dismiss',
   CLOSE_ARIA_LABEL: 'Close notification',
   REGION_ARIA_LABEL: 'Notifications',
+  CLEAR_ALL_ARIA_LABEL: (count: number) => `Clear all ${count} notifications`,
+  CLEAR_ALL_BUTTON: (count: number) => `Clear all (${count})`,
 } as const;
 
 /**
@@ -248,6 +250,10 @@ export const REFERRAL_LINK_LABELS = {
 export const ALERT_LABELS = {
   /** Dismiss button aria-label */
   DISMISS_ARIA_LABEL: 'Dismiss alert',
+  /** Tooltip content for dismiss button */
+  DISMISS_TOOLTIP: 'Dismiss alert',
+  /** Paused state label for countdown */
+  PAUSED_LABEL: 'Paused',
 } as const;
 
 /**
@@ -338,6 +344,59 @@ export const TASK_MANAGEMENT_LABELS = {
 } as const;
 
 /**
+ * IdeaReadyIndicator Labels
+ * Eliminates hardcoded strings in IdeaReadyIndicator component
+ */
+export const IDEA_READY_INDICATOR_LABELS = {
+  READY_TEXT: 'Ready to submit!',
+  WRITING_TEXT: 'Keep writing...',
+} as const;
+
+/**
+ * StepCelebration Labels
+ * Eliminates hardcoded strings in StepCelebration component
+ */
+export const STEP_CELEBRATION_LABELS = {
+  STEP_COMPLETE: (step: number) => `Step ${step} Complete!`,
+  PROGRESS_COMPLETE: (progress: number) => `${progress}% Complete`,
+  ANNOUNCEMENT: (step: number, progress: number) =>
+    `Step ${step} Complete! ${progress}% Complete.`,
+} as const;
+
+/**
+ * UserOnboarding Completion Labels
+ * Eliminates hardcoded strings in UserOnboarding completion dialog
+ */
+export const USER_ONBOARDING_COMPLETION_LABELS = {
+  TITLE: "You're all set!",
+  DESCRIPTION: "You're ready to turn your ideas into actionable plans.",
+  STEP_INDICATOR: (current: number, total: number) =>
+    `Step ${current} of ${total}`,
+  NAVIGATE_HINT: 'navigate',
+  SKIP_HINT: 'skip',
+  BACK_BUTTON: 'Back',
+  NEXT_BUTTON: 'Next',
+  GET_STARTED_BUTTON: 'Get Started!',
+} as const;
+
+/**
+ * ClarificationFlow Labels
+ * Eliminates hardcoded strings in ClarificationFlow component
+ */
+export const CLARIFICATION_FLOW_LABELS = {
+  PREPARING_QUESTIONS: 'Preparing questions...',
+} as const;
+
+/**
+ * FeatureGrid Labels
+ * Eliminates hardcoded aria-labels in FeatureGrid component
+ */
+export const FEATURE_GRID_LABELS = {
+  STEP_ARIA_LABEL: (step: number, title: string, description: string) =>
+    `Step ${step}: ${title}. ${description}`,
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -358,6 +417,11 @@ export const COMPONENT_LABELS = {
   IDEA_INPUT: IDEA_INPUT_LABELS,
   USER_ONBOARDING: USER_ONBOARDING_LABELS,
   TASK_MANAGEMENT: TASK_MANAGEMENT_LABELS,
+  IDEA_READY_INDICATOR: IDEA_READY_INDICATOR_LABELS,
+  STEP_CELEBRATION: STEP_CELEBRATION_LABELS,
+  USER_ONBOARDING_COMPLETION: USER_ONBOARDING_COMPLETION_LABELS,
+  CLARIFICATION_FLOW: CLARIFICATION_FLOW_LABELS,
+  FEATURE_GRID: FEATURE_GRID_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -376,4 +440,10 @@ export type KeyboardShortcutsProviderLabels =
 export type IdeaInputLabels = typeof IDEA_INPUT_LABELS;
 export type UserOnboardingLabels = typeof USER_ONBOARDING_LABELS;
 export type TaskManagementLabels = typeof TASK_MANAGEMENT_LABELS;
+export type IdeaReadyIndicatorLabels = typeof IDEA_READY_INDICATOR_LABELS;
+export type StepCelebrationLabels = typeof STEP_CELEBRATION_LABELS;
+export type UserOnboardingCompletionLabels =
+  typeof USER_ONBOARDING_COMPLETION_LABELS;
+export type ClarificationFlowLabels = typeof CLARIFICATION_FLOW_LABELS;
+export type FeatureGridLabels = typeof FEATURE_GRID_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
