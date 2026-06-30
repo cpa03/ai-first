@@ -79,7 +79,10 @@ function ClarificationFlow({
   // Ensures the new question is visible on screen after navigation,
   // especially important on mobile where the keyboard may be open
   useEffect(() => {
-    if (questionSectionRef.current) {
+    if (
+      questionSectionRef.current &&
+      typeof questionSectionRef.current.scrollIntoView === 'function'
+    ) {
       questionSectionRef.current.scrollIntoView({
         behavior: prefersReducedMotion ? 'auto' : 'smooth',
         block: 'nearest',
