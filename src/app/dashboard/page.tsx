@@ -10,6 +10,7 @@ import {
   TABLE_PATTERNS,
   MODAL_PATTERNS,
   SPINNER_PATTERNS,
+  CARD_PATTERNS,
   DASHBOARD_FILTER_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
@@ -402,7 +403,7 @@ export default function DashboardPage() {
         role="status"
         aria-live="polite"
       >
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className={CARD_PATTERNS.CENTERED}>
           <LoadingSpinner
             size="md"
             className="mb-4 mx-auto"
@@ -620,7 +621,7 @@ export default function DashboardPage() {
       </div>
       {/* Ideas List */}
       {ideas.length === 0 ? (
-        <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+        <div className={CARD_PATTERNS.CENTERED_LARGE}>
           {filter !== 'all' ? (
             <>
               <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-primary-50 rounded-full">
@@ -812,7 +813,7 @@ export default function DashboardPage() {
           )}
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
           <div className="overflow-x-auto">
             <table
               className={`${TABLE_PATTERNS.container} divide-y divide-gray-200`}

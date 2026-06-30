@@ -15,6 +15,7 @@ import {
   ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
   TASK_MANAGEMENT_LABELS,
+  CARD_PATTERNS,
 } from '@/lib/config';
 
 interface TaskManagementProps {
@@ -81,7 +82,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className={CARD_PATTERNS.BASE}>
         <div className="flex flex-col items-center justify-center py-12">
           <LoadingSpinner
             size="lg"
@@ -95,7 +96,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
 
   if (error) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className={CARD_PATTERNS.BASE}>
         <Alert type="error" title={MESSAGES.ERRORS.LOADING_TASKS}>
           <p>{error}</p>
           <Button onClick={handleRetry} variant="primary" className="mt-4">
@@ -108,7 +109,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
 
   if (!data || data.deliverables.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-8">
+      <div className={CARD_PATTERNS.BASE}>
         <div className="flex flex-col items-center text-center py-6">
           {/* Micro-UX improvement: Friendly animated empty state with visual guidance */}
           <div className="relative w-24 h-24 mb-6" aria-hidden="true">

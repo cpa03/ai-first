@@ -125,6 +125,8 @@ export {
   SVG_SIZES,
   GAP_SIZES,
   Z_INDEX_LAYERS,
+  CARD_PATTERNS,
+  LOADING_PATTERNS,
 } from './theme';
 
 // Page Configuration

@@ -21,6 +21,7 @@ import {
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
   UI_CONFIG,
+  CARD_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -127,7 +128,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
         <section
           aria-labelledby="skeleton-heading"
-          className="bg-white rounded-lg shadow-lg"
+          className={CARD_PATTERNS.BASE}
         >
           <header
             className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
@@ -177,7 +178,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     <div className={UI_CONFIG.LAYOUT.CONTAINER}>
       <section
         aria-labelledby="blueprint-heading"
-        className="bg-white rounded-lg shadow-lg"
+        className={CARD_PATTERNS.BASE}
       >
         <header
           className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}

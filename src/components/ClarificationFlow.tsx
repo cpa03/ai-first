@@ -22,6 +22,7 @@ import {
   INPUT_HEIGHT_CLASSES,
   CONTAINER_WIDTHS,
   CLARIFICATION_FLOW_LABELS,
+  CARD_PATTERNS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -125,7 +126,9 @@ function ClarificationFlow({
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 mt-6 space-y-6 animate-fade-in">
+        <div
+          className={`${CARD_PATTERNS.RESPONSIVE} mt-6 space-y-6 animate-fade-in`}
+        >
           <div className="space-y-3">
             <Skeleton className="h-6 w-3/4" variant="text" />
             <Skeleton className="h-4 w-full" variant="text" />
@@ -300,7 +303,7 @@ function ClarificationFlow({
         key={currentStep}
         aria-labelledby="question-heading"
         aria-describedby="question-description"
-        className="bg-white rounded-lg shadow-lg p-6 sm:p-8 scale-in"
+        className={`${CARD_PATTERNS.RESPONSIVE} scale-in`}
       >
         <form
           onSubmit={(e) => {

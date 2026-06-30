@@ -15,6 +15,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import {
   SPINNER_PATTERNS,
+  CARD_PATTERNS,
+  LOADING_PATTERNS,
   IDEA_STATUS_CONFIG,
   HTTP_HEADERS,
   CLARIFY_PAGE_CONTENT,
@@ -32,7 +34,7 @@ const Button = dynamic(() => import('@/components/Button'), {
 
 const Alert = dynamic(() => import('@/components/Alert'), {
   ssr: false,
-  loading: () => <div className="bg-gray-100 p-4">Loading...</div>,
+  loading: () => <div className={LOADING_PATTERNS.SIMPLE}>Loading...</div>,
 });
 
 const DynamicClarificationFlow = dynamic(
@@ -41,7 +43,7 @@ const DynamicClarificationFlow = dynamic(
     ssr: false,
     loading: () => (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className={CARD_PATTERNS.CENTERED}>
           <LoadingSpinner
             size="md"
             className="mb-4"
@@ -58,7 +60,7 @@ const DynamicClarificationFlow = dynamic(
 function ClarifyPageLoading() {
   return (
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
-      <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+      <div className={CARD_PATTERNS.ANIMATED}>
         <LoadingSpinner
           size="md"
           className="mb-4"
@@ -150,7 +152,7 @@ function ClarifyPageContent() {
   if (authLoading || !hasLoaded) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_SM}>
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center fade-in">
+        <div className={CARD_PATTERNS.ANIMATED}>
           <LoadingSpinner
             size="md"
             className="mb-4"
@@ -198,7 +200,7 @@ function ClarifyPageContent() {
         <div className="slide-up">
           <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
             <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
-            <div className="bg-white border border-gray-200 rounded-md p-4 mb-4 space-y-2">
+            <div className={CARD_PATTERNS.CONTENT}>
               {Object.entries(answers).map(([key, value]) => (
                 <div key={key} className="text-sm">
                   <span className="font-medium text-gray-700">

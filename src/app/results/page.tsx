@@ -9,6 +9,8 @@ import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import {
   SPINNER_PATTERNS,
+  CARD_PATTERNS,
+  LOADING_PATTERNS,
   EXPORT_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
@@ -40,7 +42,7 @@ const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
 
 const Alert = dynamic(() => import('@/components/Alert'), {
   ssr: false,
-  loading: () => <div className="bg-gray-100 p-4 rounded">Loading...</div>,
+  loading: () => <div className={LOADING_PATTERNS.ROUNDED}>Loading...</div>,
 });
 
 const Tooltip = dynamic(() => import('@/components/Tooltip'), {
@@ -88,7 +90,7 @@ const BlueprintDisplay = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className={CARD_PATTERNS.CENTERED}>
         <LoadingSpinner
           size="md"
           className="mb-4"
@@ -105,7 +107,7 @@ const TaskManagement = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="bg-white rounded-lg shadow-lg p-8 animate-pulse">
+      <div className={CARD_PATTERNS.SKELETON}>
         <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
         <div className="space-y-3">
           <div className="h-4 bg-gray-200 rounded"></div>
@@ -283,7 +285,7 @@ function ResultsContent() {
   if (loading) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+        <div className={CARD_PATTERNS.CENTERED}>
           <LoadingSpinner
             size="md"
             className="mb-4"
@@ -349,7 +351,7 @@ function ResultsContent() {
       </div>
 
       {/* Export Options */}
-      <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
+      <div className={CARD_PATTERNS.WITH_MARGIN}>
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
           {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
         </h2>
@@ -542,7 +544,7 @@ function ResultsContent() {
       </div>
 
       {/* Share Options - Growth: Viral sharing for user acquisition */}
-      <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
+      <div className={CARD_PATTERNS.WITH_MARGIN}>
         <h2 className="text-2xl font-semibold text-gray-900 mb-6">
           {RESULTS_PAGE_CONTENT.SHARE_HEADING}
         </h2>
@@ -576,7 +578,7 @@ export default function ResultsPage() {
     <Suspense
       fallback={
         <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-          <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+          <div className={CARD_PATTERNS.CENTERED}>
             <LoadingSpinner
               size="md"
               className="mb-4"
