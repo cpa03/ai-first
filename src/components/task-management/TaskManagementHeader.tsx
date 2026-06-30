@@ -5,6 +5,7 @@ import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
 import { MESSAGES, TASK_HEADER_STYLES } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { useCountUp } from '@/hooks/useCountUp';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -27,6 +28,26 @@ function TaskManagementHeaderComponent({
   onExpandAll,
   onCollapseAll,
 }: TaskManagementHeaderProps) {
+  // Micro-UX: Animate stats from 0 to actual values for a polished first impression
+  // Creates a delightful count-up effect that makes data feel alive
+  const { displayValue: animatedProgress } = useCountUp({
+    target: overallProgress,
+    duration: 800,
+    delay: 200,
+  });
+
+  const { displayValue: animatedCompletedTasks } = useCountUp({
+    target: completedTasks,
+    duration: 600,
+    delay: 300,
+  });
+
+  const { displayValue: animatedCompletedHours } = useCountUp({
+    target: completedHours,
+    duration: 600,
+    delay: 400,
+  });
+
   const progressStyle = useMemo(
     () => ({ width: `${overallProgress}%` }),
     [overallProgress]
@@ -45,13 +66,13 @@ function TaskManagementHeaderComponent({
         </div>
         <div className="text-right">
           <div className={TASK_HEADER_STYLES.STATS.VALUE}>
-            {overallProgress}%
+            {animatedProgress}%
           </div>
           <div className={TASK_HEADER_STYLES.STATS.LABEL}>
-            {completedTasks} of {totalTasks} tasks completed
+            {animatedCompletedTasks} of {totalTasks} tasks completed
           </div>
           <div className={TASK_HEADER_STYLES.STATS.PERCENTAGE}>
-            {completedHours}h of {totalHours}h estimated effort
+            {animatedCompletedHours}h of {totalHours}h estimated effort
           </div>
         </div>
       </div>
