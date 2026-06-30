@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   UI_CONFIG,
   SVG_STROKE_WIDTHS,
   PROGRESS_STEPPER_LABELS,
 } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface Step {
   id: string;
@@ -27,6 +28,20 @@ const ProgressStepperComponent = function ProgressStepper({
     ((currentStep + 1) / steps.length) * 100
   );
   const completedCount = steps.filter((step) => step.completed).length;
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [animatingStep, setAnimatingStep] = useState<number | null>(null);
+  const prevCurrentStepRef = useRef(currentStep);
+
+  useEffect(() => {
+    const prevStep = prevCurrentStepRef.current;
+    if (currentStep > prevStep && prevStep < steps.length) {
+      setAnimatingStep(prevStep);
+      const timer = setTimeout(() => setAnimatingStep(null), 400);
+      prevCurrentStepRef.current = currentStep;
+      return () => clearTimeout(timer);
+    }
+    prevCurrentStepRef.current = currentStep;
+  }, [currentStep, steps.length]);
 
   return (
     <nav
@@ -47,7 +62,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       step.current
                         ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200'
                         : step.completed
-                          ? 'w-3 h-3 bg-primary-600'
+                          ? `w-3 h-3 bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
                           : 'w-3 h-3 bg-gray-300'
                     }
                   `}
@@ -108,7 +123,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 >
                   {step.completed ? (
                     <svg
-                      className="w-6 h-6"
+                      className={`w-6 h-6 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`}
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"

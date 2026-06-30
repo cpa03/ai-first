@@ -426,6 +426,37 @@
   }
 }
 
+/* Step Completion Checkmark Pop - Micro-UX delight for ProgressStepper */
+/* Provides a satisfying scale+opacity pop when a step transitions to completed */
+/* Gives users immediate positive reinforcement at the exact moment of completion */
+@keyframes stepCheckPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-step-check-pop {
+  animation: stepCheckPop var(--duration-normal) var(--ease-spring) forwards;
+}
+
+/* Reduced motion support for step checkmark pop */
+@media (prefers-reduced-motion: reduce) {
+  .animate-step-check-pop {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+
 /* FeatureGrid staggered entrance animations */
 @keyframes staggerFadeInUp {
   0% {
