@@ -2,7 +2,7 @@
 
 import { memo } from 'react';
 import Skeleton from '@/components/Skeleton';
-import { CARD_PATTERNS, TABLE_PATTERNS } from '@/lib/config';
+import { CARD_PATTERNS, TABLE_PATTERNS, ANIMATION_DELAYS } from '@/lib/config';
 
 /**
  * DashboardSkeleton - Micro-UX improvement for perceived performance
@@ -81,7 +81,9 @@ function DashboardSkeletonComponent() {
                 <tr
                   key={index}
                   className={`animate-fade-in`}
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  style={{
+                    animationDelay: `${index * ANIMATION_DELAYS.MICRO}ms`,
+                  }}
                 >
                   {/* Title cell */}
                   <td className={TABLE_PATTERNS.cell.padding}>
