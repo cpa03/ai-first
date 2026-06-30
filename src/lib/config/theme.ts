@@ -1060,3 +1060,66 @@ export const Z_INDEX_LAYERS = {
    */
   CELEBRATION: EnvLoader.number('Z_INDEX_CELEBRATION', 50, 30, 70),
 } as const;
+
+/**
+ * Card Component Patterns
+ * Centralizes card/container styling used across pages and components
+ * Eliminates hardcoded 'bg-white rounded-lg shadow-lg' patterns in 24+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { CARD_PATTERNS } from '@/lib/config';
+ * <div className={CARD_PATTERNS.BASE}>...</div>
+ * <div className={CARD_PATTERNS.CENTERED}>...</div>
+ * ```
+ */
+export const CARD_PATTERNS = {
+  /** Base card: white background, rounded corners, shadow, padding */
+  BASE: 'bg-white rounded-lg shadow-lg p-8',
+
+  /** Centered card: base card with text-center */
+  CENTERED: 'bg-white rounded-lg shadow-lg p-8 text-center',
+
+  /** Large centered card: wider padding */
+  CENTERED_LARGE: 'bg-white rounded-lg shadow-lg p-12 text-center',
+
+  /** Card with overflow hidden: for tables and lists */
+  OVERFLOW_HIDDEN: 'bg-white rounded-lg shadow-lg overflow-hidden',
+
+  /** Responsive card: adjusts padding at sm breakpoint */
+  RESPONSIVE: 'bg-white rounded-lg shadow-lg p-6 sm:p-8',
+
+  /** Card with top margin */
+  WITH_MARGIN: 'bg-white rounded-lg shadow-lg p-8 mt-8',
+
+  /** Animated card with fade-in */
+  ANIMATED: 'bg-white rounded-lg shadow-lg p-8 text-center fade-in',
+
+  /** Skeleton loading card */
+  SKELETON: 'bg-white rounded-lg shadow-lg p-8 animate-pulse',
+
+  /** Compact card: smaller padding */
+  COMPACT: 'bg-white rounded-lg shadow-lg p-6',
+
+  /** Content card: for inline content like answers */
+  CONTENT: 'bg-white border border-gray-200 rounded-md p-4 mb-4 space-y-2',
+
+  /** Flat card: no shadow, subtle border */
+  FLAT: 'bg-white rounded-lg border border-gray-200 p-8',
+} as const;
+
+/**
+ * Loading State Patterns
+ * Centralizes loading placeholder styling
+ * Eliminates hardcoded 'bg-gray-100 p-4' loading patterns
+ */
+export const LOADING_PATTERNS = {
+  /** Simple loading placeholder */
+  SIMPLE: 'bg-gray-100 p-4',
+
+  /** Loading with rounded corners */
+  ROUNDED: 'bg-gray-100 p-4 rounded',
+
+  /** Loading with text */
+  TEXT: 'text-center text-gray-600',
+} as const;

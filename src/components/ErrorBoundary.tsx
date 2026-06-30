@@ -13,6 +13,7 @@ import {
   Z_INDEX_LAYERS,
   TEXT_SIZE_CLASSES,
   CONTAINER_WIDTHS,
+  CARD_PATTERNS,
 } from '@/lib/config';
 
 interface Props {
@@ -131,7 +132,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             aria-labelledby="error-title"
           >
             <div
-              className={`${CONTAINER_WIDTHS.SM} w-full bg-white rounded-lg shadow-lg p-8`}
+              className={`${CONTAINER_WIDTHS.SM} w-full ${CARD_PATTERNS.BASE}`}
             >
               <div role="alert" aria-live="assertive" className="sr-only">
                 {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}{' '}

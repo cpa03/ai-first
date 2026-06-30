@@ -15,7 +15,11 @@ import {
   trackCopyAction,
   trackFunnelStep,
 } from '@/lib/analytics';
-import { HOME_PAGE_CONFIG, PAGE_LAYOUT_CLASSES } from '@/lib/config';
+import {
+  HOME_PAGE_CONFIG,
+  PAGE_LAYOUT_CLASSES,
+  CARD_PATTERNS,
+} from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
@@ -168,7 +172,7 @@ export default function HomePageClient() {
 
       <section
         aria-labelledby="idea-input-heading"
-        className="bg-white rounded-lg shadow-lg p-8"
+        className={CARD_PATTERNS.BASE}
       >
         <h2 id="idea-input-heading" className="sr-only">
           Enter Your Idea
