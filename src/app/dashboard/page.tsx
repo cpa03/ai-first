@@ -30,17 +30,6 @@ const Button = dynamic(() => import('@/components/Button'), {
   ),
 });
 
-const LoadingSpinner = dynamic(() => import('@/components/LoadingSpinner'), {
-  ssr: false,
-  loading: () => (
-    <div className="flex justify-center items-center">
-      <div
-        className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.md} ${SPINNER_PATTERNS.default.border} ${SPINNER_PATTERNS.default.borderColor}`}
-      ></div>
-    </div>
-  ),
-});
-
 // Growth: Lazy load ReferralLink for code splitting
 const ReferralLink = dynamic(() => import('@/components/ReferralLink'), {
   ssr: false,
@@ -53,6 +42,7 @@ const Tooltip = dynamic(() => import('@/components/Tooltip'), {
 import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Link from 'next/link';
+import DashboardSkeleton from '@/components/DashboardSkeleton';
 import { APP_CONFIG } from '@/lib/config';
 import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
@@ -398,19 +388,8 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div
-        className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}
-        role="status"
-        aria-live="polite"
-      >
-        <div className={CARD_PATTERNS.CENTERED}>
-          <LoadingSpinner
-            size="md"
-            className="mb-4 mx-auto"
-            ariaLabel={DASHBOARD_PAGE_CONTENT.LOADING}
-          />
-          <p className="text-gray-600">{DASHBOARD_PAGE_CONTENT.LOADING}</p>
-        </div>
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}>
+        <DashboardSkeleton />
       </div>
     );
   }
