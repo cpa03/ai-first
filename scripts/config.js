@@ -73,8 +73,9 @@ const CONSOLE_SCANNER_CONFIG = {
 
   /**
    * Pages to scan (not configurable via env, but centralized)
+   * Includes all public and authenticated pages for comprehensive console error detection
    */
-  PAGES: ['/', '/dashboard', '/clarify', '/results'],
+  PAGES: ['/', '/login', '/signup', '/dashboard', '/clarify', '/results'],
 };
 
 /**
