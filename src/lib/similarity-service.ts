@@ -6,7 +6,6 @@
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { dbService } from './db';
 import { createLogger } from './logger';
 import { SIMILARITY_CONFIG } from './config/similarity-config';
 import {
@@ -119,36 +118,46 @@ export async function findSimilarIdeas(
     .filter((r: { idea_id: string }) => r.idea_id !== ideaId)
     .slice(0, limit);
 
-  // Get full idea details for each similar idea
-  const similarIdeas: SimilarIdea[] = await Promise.all(
-    filteredResults.map(
-      async (result: { idea_id: string; similarity: number }) => {
-        try {
-          const idea = await dbService.getIdea(result.idea_id);
+  // PERFORMANCE OPTIMIZATION (Issue #1928 - N+1 Query Resolution):
+  // ===========================================================================
+  // Resolve N+1 query pattern by fetching all idea details in a single bulk query
+  // using .in() filter. This reduces database round-trips from 1+N to exactly 2.
+  //
+  // OLD (N+1): 1 query for similarity + N queries for idea details (O(N) queries)
+  // NEW (Optimized): 1 query for similarity + 1 bulk query for details (O(1) queries)
+  const ideaIds = filteredResults.map((r: { idea_id: string }) => r.idea_id);
 
-          // Only include ideas belonging to the user and not deleted
-          if (idea && idea.user_id === userId && !idea.deleted_at) {
-            return {
-              id: idea.id,
-              title: idea.title,
-              status: idea.status,
-              similarity: result.similarity,
-              createdAt: idea.created_at,
-            };
-          }
-        } catch (error) {
-          logger.warn('Failed to get idea details', {
-            ideaId: result.idea_id,
-            error,
-          });
-        }
-        return null;
-      }
-    )
-  );
+  if (ideaIds.length === 0) return [];
 
-  // Filter out nulls
-  return similarIdeas.filter(Boolean) as SimilarIdea[];
+  const { data: ideasData, error: ideasError } = await supabase
+    .from(DB_TABLES.IDEAS)
+    .select('*')
+    .in(DB_COLUMNS.ID, ideaIds)
+    .eq(DB_COLUMNS.USER_ID, userId)
+    .is(DB_COLUMNS.DELETED_AT, null);
+
+  if (ideasError) {
+    logger.error('Failed to fetch similar ideas details:', ideasError);
+    return [];
+  }
+
+  // PERFORMANCE: Map results back to maintain original similarity sorting from RPC
+  const ideasMap = new Map((ideasData || []).map((idea) => [idea.id, idea]));
+
+  return filteredResults
+    .map((result: { idea_id: string; similarity: number }) => {
+      const idea = ideasMap.get(result.idea_id);
+      if (!idea) return null;
+
+      return {
+        id: idea.id,
+        title: idea.title,
+        status: idea.status,
+        similarity: result.similarity,
+        createdAt: idea.created_at,
+      };
+    })
+    .filter(Boolean) as SimilarIdea[];
 }
 
 /**
