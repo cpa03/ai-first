@@ -9,8 +9,8 @@ import {
   SCROLL_TO_TOP_LABELS,
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
+  UI_TIMING_CONFIG,
 } from '@/lib/config';
-import { UI_CONFIG as UI_TIMING_CONFIG } from '@/lib/config/ui-config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from './Tooltip';

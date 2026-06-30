@@ -194,19 +194,6 @@ export {
 // Legacy constants (backward compatibility)
 export * from './constants';
 
-// Domain-specific config modules (extracted from constants.ts)
-export {
-  STATUS_CODES,
-  AI_SERVICE_LIMITS,
-  RATE_LIMIT_VALUES,
-  CLARIFIER_VALUES,
-  TASK_VALIDATION,
-  RETRY_VALUES,
-  HTTP_HEADERS,
-  AUTH_CONFIG,
-  PII_REDACTION_CONFIG,
-} from './constants';
-
 // Configuration Validator
 export {
   validateConfiguration,
@@ -269,62 +256,40 @@ export type {
 export type { StatusCodes, HttpHeaders, AuthConfig } from './http';
 export type { HealthConfig, MemoryConfig } from './health';
 
-// Error Configuration (extracted from constants.ts)
-export {
-  ERROR_CONFIG,
-  REQUEST_ID_CONFIG,
-  RATE_LIMIT_ERROR_CONFIG,
-  type ErrorConfig,
-} from './error-config';
+export { type ErrorConfig } from './error-config';
 
 // CSP Configuration (extracted from constants.ts for modularity)
 export { CSP_CONFIG, type CspConfig } from './csp-config';
 
-// Edge Cache Control Configuration
 export {
-  EDGE_CACHE_CONFIG,
-  CACHE_CONTROL_CONFIG,
   generateApiCacheControl,
   generateStaticAssetCacheControl,
-  NO_STORE_CACHE_CONTROL,
   type EdgeCacheConfig,
 } from './cache-control';
 
-// Landing Page Configuration
 export {
   FEATURE_CONFIG,
-  HERO_CONFIG,
   WHY_CHOOSE_CONFIG,
   type FeatureConfig,
-  type HeroConfig,
   type WhyChooseConfig,
 } from './landing-page';
 
-// Navigation Configuration
 export {
-  MAIN_NAV_CONFIG,
   MOBILE_NAV_CONFIG,
   FOOTER_NAV_CONFIG,
   type NavItem,
-  type MainNavConfig,
   type MobileNavConfig,
   type FooterNavConfig,
 } from './navigation';
 
-// Modular Constants Configuration
-// Centralized magic numbers and constants for eliminating hardcoded values
 export {
-  MODULAR_CONSTANTS,
   HASH_CONFIG,
   TIMESTAMP_CONFIG,
-  SESSION_CONFIG,
   RATE_LIMIT_STORE_CONFIG,
   EXTERNAL_RATE_LIMIT_CONFIG,
   AB_TEST,
   ANALYTICS_CONFIG,
-  COST_TRACKING_CONFIG,
   AI_MODEL_CONFIG,
-  DATABASE_CONFIG,
   SECURITY_CONFIG,
   TASK_ANIMATION_CONFIG,
   AI_HEALTH_CHECK_CONFIG,
@@ -345,14 +310,8 @@ export {
   type StorageKeys,
 } from './storage-keys';
 
-// Notification Configuration
 export {
   NOTIFICATION_CONFIG,
-  BROWSER_SETTINGS_URLS,
-  NOTIFICATION_STATUS,
-  NOTIFICATION_LABELS,
-  NOTIFICATION_PROMPT_LABELS,
-  DEFAULT_NOTIFICATION_PREFERENCES,
   type NotificationConfig,
 } from './notification-config';
 
@@ -360,13 +319,10 @@ export {
 // Centralizes all client-side navigation paths
 export { ROUTES, type Routes } from './routes';
 
-// Component Labels Configuration
-// Centralizes hardcoded string labels, messages, and aria-labels for UI components
 export {
   SHARE_BUTTON_LABELS,
   COPY_BUTTON_LABELS,
   INPUT_VALIDATION_LABELS,
-  TOOLTIP_LABELS,
   LAYOUT_ERROR_LABELS,
   SCROLL_TO_TOP_LABELS,
   TOAST_CONTAINER_LABELS,
@@ -384,7 +340,6 @@ export {
   USER_ONBOARDING_COMPLETION_LABELS,
   CLARIFICATION_FLOW_LABELS,
   FEATURE_GRID_LABELS,
-  COMPONENT_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
   type InputValidationLabels,
@@ -405,7 +360,6 @@ export {
   type UserOnboardingCompletionLabels,
   type ClarificationFlowLabels,
   type FeatureGridLabels,
-  type ComponentLabels,
 } from './component-labels';
 
 // Embedding Configuration
@@ -423,35 +377,24 @@ export {
   type DbColumns,
 } from './database-tables';
 
-// Environment Keys Configuration
-// Centralizes all environment variable keys for modularity
 export {
   AI_ENV_KEYS,
   DATABASE_ENV_KEYS,
   EXPORT_ENV_KEYS,
   PLATFORM_ENV_KEYS,
   SECURITY_ENV_KEYS,
-  LOGGING_ENV_KEYS,
   APP_ENV_KEYS,
-  ALL_ENV_KEYS,
   ENV_ACCESSORS,
-  getEnvValue,
-  isEnvSet,
   getEnvNumber,
-  getEnvBoolean,
   type AiEnvKeys,
   type DatabaseEnvKeys,
   type ExportEnvKeys,
   type PlatformEnvKeys,
   type SecurityEnvKeys,
-  type LoggingEnvKeys,
   type AppEnvKeys,
-  type AllEnvKeys,
   type EnvAccessors,
 } from './env-keys';
 
-// Error Classification Patterns Configuration
-// Centralizes all error classification patterns for modularity
 export {
   RETRYABLE_PATTERNS,
   NETWORK_ERROR_PATTERNS,
@@ -461,8 +404,6 @@ export {
   RATE_LIMIT_ERROR_PATTERNS,
   VALIDATION_ERROR_PATTERNS,
   LOGIN_ERROR_PATTERNS,
-  ERROR_CLASSIFICATION_PATTERNS,
-  matchesAnyPattern,
   matchesPattern,
   type ErrorClassificationPatterns,
 } from './error-classification';
