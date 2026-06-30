@@ -19,6 +19,7 @@ import {
   LOCAL_STORAGE_KEYS,
   ANIMATION_CONFIG,
   PAGE_LAYOUT_CLASSES,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -661,7 +662,7 @@ export default function DashboardPage() {
                 <div
                   className="flex flex-col items-center gap-2 animate-fade-in"
                   role="listitem"
-                  style={{ animationDelay: '0ms' }}
+                  style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
                   <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 transition-transform duration-200 hover:scale-110">
                     <svg
@@ -688,7 +689,7 @@ export default function DashboardPage() {
                 <div
                   className="flex items-center animate-fade-in mt-[-1.5rem]"
                   aria-hidden="true"
-                  style={{ animationDelay: '150ms' }}
+                  style={{ animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }}
                 >
                   <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-amber-300 to-primary-300" />
                   <svg
@@ -710,7 +711,7 @@ export default function DashboardPage() {
                 <div
                   className="flex flex-col items-center gap-2 animate-fade-in"
                   role="listitem"
-                  style={{ animationDelay: '300ms' }}
+                  style={{ animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }}
                 >
                   <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-primary-50 border border-primary-200 transition-transform duration-200 hover:scale-110">
                     <svg
@@ -737,7 +738,7 @@ export default function DashboardPage() {
                 <div
                   className="flex items-center animate-fade-in mt-[-1.5rem]"
                   aria-hidden="true"
-                  style={{ animationDelay: '450ms' }}
+                  style={{ animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }}
                 >
                   <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-primary-300 to-green-300" />
                   <svg
@@ -759,7 +760,7 @@ export default function DashboardPage() {
                 <div
                   className="flex flex-col items-center gap-2 animate-fade-in"
                   role="listitem"
-                  style={{ animationDelay: '600ms' }}
+                  style={{ animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }}
                 >
                   <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-green-50 border border-green-200 transition-transform duration-200 hover:scale-110">
                     <svg
