@@ -213,6 +213,8 @@ export const ANIMATION_DELAYS = {
   SHAKE: 500,
   /** Progress bar transition duration */
   PROGRESS: 700,
+  /** Step animation transition duration */
+  STEP_ANIMATION: 400,
   /** Tailwind delay class mapping */
   TAILWIND: {
     0: 'delay-0',
@@ -238,6 +240,7 @@ export const ANIMATION_DELAYS = {
     MEDIUM: '150ms',
     LONG: '200ms',
     STANDARD: '300ms',
+    EXTENDED: '450ms',
     RIPPLE: '600ms',
     STEP_TRANSITION: '800ms',
   } as const,
