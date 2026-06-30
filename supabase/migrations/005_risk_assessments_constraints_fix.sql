@@ -3,6 +3,8 @@
 -- Version: 005
 -- Date: 2026-02-16
 -- Issue: #1134
+-- Status: SUPERSEDED by 20260226_consolidate_risk_assessments_migrations.sql
+-- Note: Retained for rollback safety. Do not remove.
 
 -- First, drop the broken constraint if it exists (references non-existent confidence_score column)
 ALTER TABLE risk_assessments DROP CONSTRAINT IF EXISTS risk_assessments_confidence_score_valid;

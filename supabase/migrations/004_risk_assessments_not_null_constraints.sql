@@ -2,6 +2,8 @@
 -- Description: Add NOT NULL constraints for impact_level and probability_level
 -- Version: 004
 -- Date: 2026-02-16
+-- Status: SUPERSEDED by 20260226_consolidate_risk_assessments_migrations.sql
+-- Note: Retained for rollback safety. Do not remove.
 
 -- Add NOT NULL constraint to impact_level
 ALTER TABLE risk_assessments 

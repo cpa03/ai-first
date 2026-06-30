@@ -4,9 +4,15 @@ This document catalogs the current database migrations and establishes naming co
 
 ## Current Migration Count
 
-- **Total migrations**: 22 (11 up + 11 down rollback scripts)
-- **Unique up migrations**: 11
-- **Consolidation Status**: Partially completed (62 → 11 up migrations)
+- **Total migrations**: 23 (12 up + 11 down rollback scripts)
+- **Unique up migrations**: 12
+- **Consolidation Status**: Partially completed (62 → 12 up migrations)
+
+### Migration Notes
+
+- Legacy migrations (001-005) are retained for rollback safety
+- Consolidation migrations (20260222, 20260223, 20260226) supersede individual migrations
+- Old migrations marked as "superseded" in comments
 
 ## Migration Catalog
 
@@ -122,20 +128,28 @@ Migrations can be categorized by type:
 Migration consolidation has been completed as part of Issue #1816:
 
 - **Before**: 62 migration files (31 up + 31 down)
-- **After**: 22 migration files (11 up + 11 down)
-- **Reduction**: 65% reduction in migration files
+- **After**: 23 migration files (12 up + 11 down)
+- **Reduction**: 63% reduction in migration files
 
 #### What Was Consolidated
 
 1. **Index-only migrations (15+ files)**: Consolidated into `20260223_consolidate_migrations.sql`
 2. **Performance indexes**: Consolidated into `20260222_consolidate_performance_indexes.sql`
 3. **RLS policies**: Consolidated into `20260218_add_missing_rls_policies.sql`
+4. **Risk assessment migrations**: Consolidated into `20260226_consolidate_risk_assessments_migrations.sql`
 
-### Remaining Opportunities
+### Retained Migrations
 
-The legacy migrations (001-005) could potentially be consolidated into a single baseline migration, but this is not recommended as they represent the foundational schema.
+Legacy migrations (001-005) are retained for rollback safety:
 
-> **Note**: Further consolidation should be done carefully with full testing and backup.
+- `001_breakdown_engine_extensions.sql` - Foundational schema
+- `002_data_integrity_constraints.sql` - Data integrity
+- `002b_schema_optimization.sql` - Performance optimization
+- `003_vectors_pgvector_support.sql` - Vector store support
+- `004_risk_assessments_not_null_constraints.sql` - Superseded by 20260226
+- `005_risk_assessments_constraints_fix.sql` - Superseded by 20260226
+
+> **Note**: Migrations 004 and 005 are superseded by `20260226_consolidate_risk_assessments_migrations.sql` but retained for rollback safety.
 
 ## Running Migrations
 
