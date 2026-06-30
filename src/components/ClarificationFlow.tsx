@@ -35,6 +35,7 @@ import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
 import Skeleton from '@/components/Skeleton';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface ClarificationFlowProps {
   idea: string;
@@ -69,8 +70,22 @@ function ClarificationFlow({
   } = useClarificationSession(idea, ideaId, onComplete);
 
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const questionSectionRef = useRef<HTMLDivElement>(null);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const [referenceAnnouncement, setReferenceAnnouncement] = useState('');
   const [referenceTriggered, setReferenceTriggered] = useState(false);
+
+  // Micro-UX: Smooth scroll to question section when step changes
+  // Ensures the new question is visible on screen after navigation,
+  // especially important on mobile where the keyboard may be open
+  useEffect(() => {
+    if (questionSectionRef.current) {
+      questionSectionRef.current.scrollIntoView({
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [currentStep, prefersReducedMotion]);
 
   const handleToggleReference = useCallback(() => {
     const details = detailsRef.current;
@@ -299,7 +314,8 @@ function ClarificationFlow({
         <ProgressStepper steps={steps} currentStep={currentStep} />
       </div>
 
-      <section
+      <div
+        ref={questionSectionRef}
         key={currentStep}
         aria-labelledby="question-heading"
         aria-describedby="question-description"
@@ -526,7 +542,7 @@ function ClarificationFlow({
             </Button>
           </div>
         </form>
-      </section>
+      </div>
     </div>
   );
 }
