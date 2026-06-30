@@ -20,6 +20,7 @@ import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
   GRADIENT_PATTERNS,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -159,7 +160,10 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
     if (strength === 'strong' && prevStrengthRef.current !== 'strong') {
       triggerHapticFeedback();
       setCelebrating(true);
-      const timer = setTimeout(() => setCelebrating(false), 600);
+      const timer = setTimeout(
+        () => setCelebrating(false),
+        ANIMATION_DELAYS.RIPPLE
+      );
       return () => clearTimeout(timer);
     }
     if (strength !== 'strong') {

@@ -5,6 +5,7 @@ import {
   UI_CONFIG,
   SVG_STROKE_WIDTHS,
   PROGRESS_STEPPER_LABELS,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -36,7 +37,10 @@ const ProgressStepperComponent = function ProgressStepper({
     const prevStep = prevCurrentStepRef.current;
     if (currentStep > prevStep && prevStep < steps.length) {
       setAnimatingStep(prevStep);
-      const timer = setTimeout(() => setAnimatingStep(null), 400);
+      const timer = setTimeout(
+        () => setAnimatingStep(null),
+        ANIMATION_DELAYS.STEP_ANIMATION
+      );
       prevCurrentStepRef.current = currentStep;
       return () => clearTimeout(timer);
     }
