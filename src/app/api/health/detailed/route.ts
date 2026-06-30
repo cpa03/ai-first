@@ -14,6 +14,7 @@ import {
   HEALTH_CONFIG,
   MEMORY_CONFIG,
   MEMORY_UNITS,
+  STATUS_CODES,
 } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
 import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
@@ -409,7 +410,10 @@ async function handleGet(context: ApiContext) {
     externalRateLimits: getExternalRateLimitStats(),
   };
 
-  const statusCode = overallStatus === 'healthy' ? 200 : 503;
+  const statusCode =
+    overallStatus === 'healthy'
+      ? STATUS_CODES.OK
+      : STATUS_CODES.SERVICE_UNAVAILABLE;
 
   return standardSuccessResponse(
     response,
