@@ -2,6 +2,7 @@
 
 import { memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { SKELETON_PATTERNS } from '@/lib/config';
 
 interface SkeletonProps {
   className?: string;
@@ -17,13 +18,13 @@ function SkeletonComponent({
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const baseClasses = prefersReducedMotion
-    ? 'bg-gray-200'
-    : 'animate-shimmer bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 bg-[length:200%_100%]';
+    ? SKELETON_PATTERNS.BASE_REDUCED_MOTION
+    : SKELETON_PATTERNS.BASE_ANIMATED;
 
   const variantClasses = {
-    rect: '',
-    circle: 'rounded-full',
-    text: 'h-4 rounded',
+    rect: SKELETON_PATTERNS.RECT,
+    circle: SKELETON_PATTERNS.CIRCLE,
+    text: SKELETON_PATTERNS.TEXT,
   };
 
   return (
