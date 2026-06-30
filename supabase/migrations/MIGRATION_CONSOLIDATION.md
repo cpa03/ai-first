@@ -77,6 +77,30 @@ The following index-only migrations were consolidated into the main index migrat
 - [x] Current schema is well documented
 - [x] Migration naming follows conventions
 
+## Additional Consolidation (2026-02-26)
+
+### Risk Assessments Consolidation
+
+- Created `20260226_consolidate_risk_assessments_migrations.sql` combining migrations 004 and 005
+- Created corresponding `.down.sql` for rollback support
+- Reduces migration count by 2 more files
+
+## Final Migration Count
+
+| Metric                | Count  |
+| --------------------- | ------ |
+| Total migration pairs | 12     |
+| Total migration files | 24     |
+| Consolidation doc     | 1      |
+| **Total files**       | **25** |
+
+## Acceptance Criteria Status
+
+- [x] Migration count reduced by at least 30% (62% achieved: 65 → 25 files)
+- [x] Current schema is well documented
+- [x] Migration naming follows conventions
+- [x] All migrations have rollback support
+
 ## Next Steps
 
 1. Verify migration applies cleanly in staging
