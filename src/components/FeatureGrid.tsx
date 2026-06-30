@@ -1,7 +1,11 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { ANIMATION_DELAYS, FEATURE_CONFIG } from '@/lib/config';
+import {
+  ANIMATION_DELAYS,
+  FEATURE_CONFIG,
+  FEATURE_GRID_LABELS,
+} from '@/lib/config';
 
 function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -53,7 +57,11 @@ function FeatureGridComponent() {
             motion-reduce:transition-none
             ${isVisible ? animationClasses[index] : 'opacity-0'}
           `}
-          aria-label={`Step ${feature.step}: ${feature.title}. ${feature.description}`}
+          aria-label={FEATURE_GRID_LABELS.STEP_ARIA_LABEL(
+            feature.step,
+            feature.title,
+            feature.description
+          )}
         >
           <div
             className="

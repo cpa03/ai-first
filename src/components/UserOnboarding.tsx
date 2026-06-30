@@ -9,6 +9,7 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   USER_ONBOARDING_LABELS,
+  USER_ONBOARDING_COMPLETION_LABELS,
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
   CONTAINER_WIDTH_CLASSES,
@@ -331,10 +332,10 @@ export default function UserOnboarding() {
             </svg>
           </div>
           <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            You&apos;re all set!
+            {USER_ONBOARDING_COMPLETION_LABELS.TITLE}
           </h3>
           <p className="text-sm text-gray-600">
-            You&apos;re ready to turn your ideas into actionable plans.
+            {USER_ONBOARDING_COMPLETION_LABELS.DESCRIPTION}
           </p>
         </div>
       </div>
@@ -431,7 +432,10 @@ export default function UserOnboarding() {
           {/* Step indicator with keyboard hint */}
           <div className="flex flex-col gap-1">
             <span className="text-xs text-gray-500">
-              Step {currentStepIndex + 1} of {TOUR_STEPS.length}
+              {USER_ONBOARDING_COMPLETION_LABELS.STEP_INDICATOR(
+                currentStepIndex + 1,
+                TOUR_STEPS.length
+              )}
             </span>
             <span
               className={`${TEXT_SIZE_CLASSES.XS} text-gray-500 hidden sm:inline`}
@@ -446,14 +450,14 @@ export default function UserOnboarding() {
               >
                 →
               </kbd>{' '}
-              navigate
+              {USER_ONBOARDING_COMPLETION_LABELS.NAVIGATE_HINT}
               <span className="mx-1">·</span>
               <kbd
                 className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
               >
                 Esc
               </kbd>{' '}
-              skip
+              {USER_ONBOARDING_COMPLETION_LABELS.SKIP_HINT}
             </span>
           </div>
 
@@ -464,14 +468,16 @@ export default function UserOnboarding() {
                 onClick={handlePrev}
                 className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
               >
-                Back
+                {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
               </button>
             )}
             <button
               onClick={handleNext}
               className="px-4 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium"
             >
-              {isLastStep ? 'Get Started!' : 'Next'}
+              {isLastStep
+                ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON
+                : USER_ONBOARDING_COMPLETION_LABELS.NEXT_BUTTON}
             </button>
           </div>
         </div>

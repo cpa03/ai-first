@@ -21,6 +21,7 @@ import {
   UI_CONFIG,
   INPUT_HEIGHT_CLASSES,
   CONTAINER_WIDTHS,
+  CLARIFICATION_FLOW_LABELS,
 } from '@/lib/config';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -155,7 +156,9 @@ function ClarificationFlow({
               />
             ))}
           </div>
-          <span className="text-xs text-gray-500">Preparing questions...</span>
+          <span className="text-xs text-gray-500">
+            {CLARIFICATION_FLOW_LABELS.PREPARING_QUESTIONS}
+          </span>
         </div>
 
         {error && (
