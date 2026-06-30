@@ -3,7 +3,7 @@
 import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
-import { MESSAGES, TASK_HEADER_STYLES } from '@/lib/config';
+import { MESSAGES, TASK_HEADER_STYLES, ANIMATION_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
 
@@ -32,20 +32,20 @@ function TaskManagementHeaderComponent({
   // Creates a delightful count-up effect that makes data feel alive
   const { displayValue: animatedProgress } = useCountUp({
     target: overallProgress,
-    duration: 800,
-    delay: 200,
+    duration: ANIMATION_CONFIG.TASK_MANAGEMENT.PROGRESS_DURATION,
+    delay: ANIMATION_CONFIG.TASK_MANAGEMENT.PROGRESS_DELAY,
   });
 
   const { displayValue: animatedCompletedTasks } = useCountUp({
     target: completedTasks,
-    duration: 600,
-    delay: 300,
+    duration: ANIMATION_CONFIG.TASK_MANAGEMENT.STATS_DURATION,
+    delay: ANIMATION_CONFIG.TASK_MANAGEMENT.COMPLETED_TASKS_DELAY,
   });
 
   const { displayValue: animatedCompletedHours } = useCountUp({
     target: completedHours,
-    duration: 600,
-    delay: 400,
+    duration: ANIMATION_CONFIG.TASK_MANAGEMENT.STATS_DURATION,
+    delay: ANIMATION_CONFIG.TASK_MANAGEMENT.COMPLETED_HOURS_DELAY,
   });
 
   const progressStyle = useMemo(

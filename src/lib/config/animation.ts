@@ -137,6 +137,48 @@ export const ANIMATION_CONFIG = {
     500,
     5000
   ),
+
+  /**
+   * Task Management Animation Values
+   * Centralizes animation durations and delays for task management components
+   */
+  TASK_MANAGEMENT: {
+    /** Duration for progress animation (ms) */
+    PROGRESS_DURATION: EnvLoader.number(
+      'UI_ANIMATION_TASK_PROGRESS_DURATION',
+      800,
+      100,
+      2000
+    ),
+    /** Delay for progress animation (ms) */
+    PROGRESS_DELAY: EnvLoader.number(
+      'UI_ANIMATION_TASK_PROGRESS_DELAY',
+      200,
+      0,
+      1000
+    ),
+    /** Duration for stats animation (ms) */
+    STATS_DURATION: EnvLoader.number(
+      'UI_ANIMATION_TASK_STATS_DURATION',
+      600,
+      100,
+      2000
+    ),
+    /** Delay for completed tasks animation (ms) */
+    COMPLETED_TASKS_DELAY: EnvLoader.number(
+      'UI_ANIMATION_TASK_COMPLETED_DELAY',
+      300,
+      0,
+      1000
+    ),
+    /** Delay for completed hours animation (ms) */
+    COMPLETED_HOURS_DELAY: EnvLoader.number(
+      'UI_ANIMATION_TASK_HOURS_DELAY',
+      400,
+      0,
+      1000
+    ),
+  },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
