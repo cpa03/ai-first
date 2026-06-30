@@ -137,6 +137,8 @@ Complete index of all IdeaFlow documentation.
 
 - [Cloudflare Deployment](./cloudflare-deploy.md) - Cloudflare-specific deployment
 - [Code Reviewer](./code-reviewer.md) - Code review guidelines
+- [Disaster Recovery](./disaster-recovery.md) - Disaster recovery procedures and backup strategies
+- [Modular Architecture Review](./modular-architecture-review.md) - Modular architecture analysis and recommendations
 
 ## Task Management
 
