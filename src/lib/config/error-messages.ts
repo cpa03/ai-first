@@ -169,6 +169,20 @@ export const API_ERROR_MESSAGES = {
     SECURITY_SIMILARITY_BROWSER_VIOLATION:
       'CRITICAL SECURITY VIOLATION: getSupabaseClient() was called in browser context.\nThe Supabase service role key bypasses RLS and must NEVER be exposed to clients.\nUse API routes for admin operations instead.',
     COST_LIMIT_EXCEEDED: 'Cost limit exceeded',
+    OPENAI_NOT_INITIALIZED:
+      'OpenAI client not initialized. Check OPENAI_API_KEY environment variable.',
+    ANTHROPIC_NOT_INITIALIZED:
+      'Anthropic client not initialized. Check ANTHROPIC_API_KEY environment variable.',
+    INVALID_RESPONSE_NO_CHOICES:
+      'Invalid response from OpenAI: no choices returned',
+    INVALID_RESPONSE_MISSING_CHOICE:
+      'Invalid response from OpenAI: missing choice',
+    INVALID_RESPONSE_NO_CONTENT:
+      'Invalid response from Anthropic: no content returned',
+    INVALID_RESPONSE_UNEXPECTED_TYPE:
+      'Invalid response from Anthropic: expected text content',
+    PROVIDER_NOT_IMPLEMENTED: (provider: string) =>
+      `Provider ${provider} not yet implemented`,
   },
 } as const;
 
