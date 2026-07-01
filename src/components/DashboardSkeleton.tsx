@@ -2,7 +2,12 @@
 
 import { memo } from 'react';
 import Skeleton from '@/components/Skeleton';
-import { CARD_PATTERNS, TABLE_PATTERNS, ANIMATION_DELAYS } from '@/lib/config';
+import {
+  CARD_PATTERNS,
+  TABLE_PATTERNS,
+  ANIMATION_DELAYS,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
 
 /**
  * DashboardSkeleton - Micro-UX improvement for perceived performance
@@ -18,8 +23,6 @@ import { CARD_PATTERNS, TABLE_PATTERNS, ANIMATION_DELAYS } from '@/lib/config';
  * 3. Animated shimmer creates a sense of progress
  * 4. Matches the exact structure of the loaded state
  */
-
-const TABLE_ROW_COUNT = 5;
 
 function DashboardSkeletonComponent() {
   return (
@@ -77,7 +80,9 @@ function DashboardSkeletonComponent() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {Array.from({ length: TABLE_ROW_COUNT }).map((_, index) => (
+              {Array.from({
+                length: COMPONENT_CONFIG.DASHBOARD.SKELETON_ROW_COUNT,
+              }).map((_, index) => (
                 <tr
                   key={index}
                   className={`animate-fade-in`}
