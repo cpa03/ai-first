@@ -429,7 +429,9 @@ export default function SignupPage() {
     return (
       <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
         <div className={`${CONTAINER_WIDTHS.XS} w-full text-center space-y-6`}>
-          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+          {/* Micro-UX: Staggered entrance animation for signup success creates a */}
+          {/* delightful celebration moment when account creation succeeds */}
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 animate-success-pop">
             <svg
               className="h-6 w-6 text-green-700"
               fill="none"
@@ -444,17 +446,17 @@ export default function SignupPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className="text-3xl font-bold text-gray-900 animate-hero-entrance">
             {SIGNUP_PAGE_CONTENT.SUCCESS.HEADING}
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 animate-hero-entrance delay-75">
             {SIGNUP_PAGE_CONTENT.SUCCESS.MESSAGE_PREFIX}{' '}
             <strong>{email}</strong>.{' '}
             {SIGNUP_PAGE_CONTENT.SUCCESS.MESSAGE_SUFFIX}
           </p>
           <Link
             href={ROUTES.LOGIN}
-            className="inline-block font-medium text-primary-600 hover:text-primary-500"
+            className="inline-block font-medium text-primary-600 hover:text-primary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded animate-hero-entrance delay-150"
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.RETURN_LINK}
           </Link>
