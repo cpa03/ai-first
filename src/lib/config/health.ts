@@ -46,10 +46,21 @@ export const HEALTH_CONFIG = {
    */
   THRESHOLDS: {
     /** Score >= this threshold is considered healthy */
-    HEALTHY_MIN: 80,
+    HEALTHY_MIN: EnvLoader.number('HEALTH_THRESHOLD_HEALTHY_MIN', 80, 50, 100),
     /** Score >= this threshold is considered degraded */
-    DEGRADED_MIN: 50,
+    DEGRADED_MIN: EnvLoader.number('HEALTH_THRESHOLD_DEGRADED_MIN', 50, 20, 80),
     /** Score < DEGRADED_MIN is considered unhealthy */
+  } as const,
+
+  /**
+   * External rate limit status thresholds (percent remaining)
+   * Used to determine health status for external API rate limits
+   */
+  RATE_LIMIT_THRESHOLDS: {
+    /** Percent remaining <= this is critical */
+    CRITICAL: EnvLoader.number('HEALTH_RATE_LIMIT_CRITICAL', 10, 1, 25),
+    /** Percent remaining <= this is warning */
+    WARNING: EnvLoader.number('HEALTH_RATE_LIMIT_WARNING', 20, 5, 50),
   } as const,
 } as const;
 
