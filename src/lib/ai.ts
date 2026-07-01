@@ -85,6 +85,7 @@ class AIService {
   private todayCostCache: Cache<number>;
   private responseCache: Cache<string>;
   private cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
+  private encoder = new TextEncoder();
 
   constructor() {
     this.todayCostCache = new Cache<number>({
@@ -405,11 +406,7 @@ class AIService {
     const content = messages.map((m) => `${m.role}:${m.content}`).join('|');
     const key = `${config.provider}:${config.model}:${config.temperature}:${config.maxTokens}:${content}`;
 
-    if (
-      typeof TextEncoder === 'undefined' ||
-      typeof crypto === 'undefined' ||
-      !crypto.subtle
-    ) {
+    if (typeof crypto === 'undefined' || !crypto.subtle) {
       const hash = btoa(key).substring(
         0,
         AI_SERVICE_LIMITS.CACHE_KEY_HASH_LENGTH
@@ -417,8 +414,7 @@ class AIService {
       return hash;
     }
 
-    const encoder = new TextEncoder();
-    const data = encoder.encode(key);
+    const data = this.encoder.encode(key);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
@@ -531,7 +527,7 @@ class AIService {
     context = [...context, ...newMessages];
 
     // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
-    let totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
+    const totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
 
     // Maximum iterations to prevent potential infinite loops (from config)
     const MAX_CONTEXT_ITERATIONS = AI_CONFIG.MAX_CONTEXT_ITERATIONS;
@@ -542,18 +538,33 @@ class AIService {
       Math.ceil(totalChars / AI_TOKEN_ESTIMATION.CHARS_PER_TOKEN) > maxTokens
     ) {
       const systemMessages = context.filter((m) => m.role === 'system');
-      const nonSystemMessages = context.filter((m) => m.role !== 'system');
+      let nonSystemMessages = context.filter((m) => m.role !== 'system');
 
-      while (
-        Math.ceil(totalChars / AI_TOKEN_ESTIMATION.CHARS_PER_TOKEN) >
-          maxTokens &&
-        nonSystemMessages.length > 0 &&
-        iterations < MAX_CONTEXT_ITERATIONS
+      // PERFORMANCE: Optimize truncation loop by using slice instead of shift().
+      // shift() is O(N) because it re-indexes the entire array, leading to O(N^2)
+      // in the truncation loop. slice() is O(N) and called once.
+      if (
+        Math.ceil(totalChars / AI_TOKEN_ESTIMATION.CHARS_PER_TOKEN) > maxTokens
       ) {
-        iterations++;
-        const removed = nonSystemMessages.shift();
-        if (removed) {
-          totalChars -= removed.content.length;
+        let charsToRemove = 0;
+        let splitIndex = -1;
+
+        for (let i = 0; i < nonSystemMessages.length; i++) {
+          iterations++;
+          charsToRemove += nonSystemMessages[i].content.length;
+          if (
+            Math.ceil(
+              (totalChars - charsToRemove) / AI_TOKEN_ESTIMATION.CHARS_PER_TOKEN
+            ) <= maxTokens ||
+            iterations >= MAX_CONTEXT_ITERATIONS
+          ) {
+            splitIndex = i + 1;
+            break;
+          }
+        }
+
+        if (splitIndex !== -1) {
+          nonSystemMessages = nonSystemMessages.slice(splitIndex);
         }
       }
 
@@ -647,24 +658,36 @@ class AIService {
   }
 
   /**
+   * Binary search to find the first index where costTracker.timestamp >= cutoffTime
+   * PERFORMANCE: O(log N) complexity compared to O(N) linear scan.
+   */
+  private findFirstValidIndex(cutoffTime: number): number {
+    let low = 0;
+    let high = this.costTrackers.length - 1;
+    let result = -1;
+
+    while (low <= high) {
+      const mid = (low + high) >>> 1;
+      if (this.costTrackers[mid].timestamp.getTime() >= cutoffTime) {
+        result = mid;
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Memory leak prevention: Clean up old cost tracker entries
    * Removes entries older than MAX_COST_TRACKER_AGE_MS (24 hours)
    */
   private cleanupOldCostTrackers(): void {
-    const now = Date.now();
-    const cutoffTime = now - MAX_COST_TRACKER_AGE_MS;
+    const cutoffTime = Date.now() - MAX_COST_TRACKER_AGE_MS;
 
-    // PERFORMANCE: Use a manual loop to find the first index that is within the window
-    // instead of filter(). Since costTrackers is naturally sorted by timestamp
-    // (new entries are always pushed to the end), we can find the split point in O(N).
-    // This avoids O(N) property lookups and reduces memory pressure.
-    let firstValidIndex = -1;
-    for (let i = 0; i < this.costTrackers.length; i++) {
-      if (this.costTrackers[i].timestamp.getTime() > cutoffTime) {
-        firstValidIndex = i;
-        break;
-      }
-    }
+    // PERFORMANCE: Use O(log N) binary search instead of O(N) linear scan.
+    const firstValidIndex = this.findFirstValidIndex(cutoffTime);
 
     if (firstValidIndex === -1) {
       // All entries are expired
@@ -688,24 +711,24 @@ class AIService {
   }
 
   private getTodayCost(): number {
-    const today = new Date().toDateString();
-    const cacheKey = `today:${today}`;
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    const dayStart = todayDate.getTime();
+    const cacheKey = `today:${dayStart}`;
 
     const cachedCost = this.todayCostCache.get(cacheKey);
     if (cachedCost !== null) {
       return cachedCost;
     }
 
-    // PERFORMANCE: Use a manual loop to iterate backwards from the latest entries.
-    // Since entries are added chronologically, we can stop as soon as we hit an
-    // entry from a previous day, avoiding O(N) traversal of the entire array.
+    // PERFORMANCE: Use O(log N) binary search to find the start of today's entries.
+    // This avoids O(N) traversal and expensive toDateString() formatting in a loop.
+    const firstTodayIndex = this.findFirstValidIndex(dayStart);
+
     let cost = 0;
-    for (let i = this.costTrackers.length - 1; i >= 0; i--) {
-      if (this.costTrackers[i].timestamp.toDateString() === today) {
+    if (firstTodayIndex !== -1) {
+      for (let i = firstTodayIndex; i < this.costTrackers.length; i++) {
         cost += this.costTrackers[i].cost;
-      } else {
-        // Found an entry from a previous day, can stop searching
-        break;
       }
     }
 
