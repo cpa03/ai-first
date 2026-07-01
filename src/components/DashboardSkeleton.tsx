@@ -2,24 +2,14 @@
 
 import { memo } from 'react';
 import Skeleton from '@/components/Skeleton';
-import { CARD_PATTERNS, TABLE_PATTERNS, ANIMATION_DELAYS } from '@/lib/config';
+import {
+  CARD_PATTERNS,
+  TABLE_PATTERNS,
+  ANIMATION_DELAYS,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
 
-/**
- * DashboardSkeleton - Micro-UX improvement for perceived performance
- *
- * Shows a skeleton layout that mirrors the actual dashboard structure:
- * - Header with title + button
- * - Filter controls
- * - Table with shimmering rows
- *
- * This provides better perceived performance than a spinner because:
- * 1. Users immediately see the layout they'll interact with
- * 2. Reduces layout shift when data loads (CLS improvement)
- * 3. Animated shimmer creates a sense of progress
- * 4. Matches the exact structure of the loaded state
- */
-
-const TABLE_ROW_COUNT = 5;
+const TABLE_ROW_COUNT = COMPONENT_CONFIG.DASHBOARD_SKELETON.TABLE_ROW_COUNT;
 
 function DashboardSkeletonComponent() {
   return (

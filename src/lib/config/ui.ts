@@ -57,12 +57,12 @@ export const UI_CONFIG = {
 
   Z_INDEX: {
     BASE: 0,
-    DROPDOWN: 100,
-    STICKY: 200,
-    MODAL: 300,
-    POPOVER: 400,
-    TOOLTIP: 500,
-    TOAST: 600,
+    DROPDOWN: EnvLoader.number('UI_Z_INDEX_DROPDOWN', 100, 0, 1000),
+    STICKY: EnvLoader.number('UI_Z_INDEX_STICKY', 200, 0, 1000),
+    MODAL: EnvLoader.number('UI_Z_INDEX_MODAL', 300, 0, 1000),
+    POPOVER: EnvLoader.number('UI_Z_INDEX_POPOVER', 400, 0, 1000),
+    TOOLTIP: EnvLoader.number('UI_Z_INDEX_TOOLTIP', 500, 0, 1000),
+    TOAST: EnvLoader.number('UI_Z_INDEX_TOAST', 600, 0, 1000),
   },
 
   SCROLL: {
@@ -413,49 +413,51 @@ export const TOAST_CONFIG = {
  * Centralizes hardcoded defaults from components
  */
 export const COMPONENT_DEFAULTS = {
-  /**
-   * SuccessCelebration component defaults
-   */
   SUCCESS_CELEBRATION: {
-    /** Default animation duration in milliseconds */
-    DURATION_MS: 2000,
-    /** Default particle count */
-    PARTICLE_COUNT: 30,
-    /** Default reduced motion duration */
-    REDUCED_MOTION_DURATION_MS: 500,
+    DURATION_MS: EnvLoader.number(
+      'COMPONENT_SUCCESS_CELEBRATION_DURATION_MS',
+      2000,
+      500,
+      5000
+    ),
+    PARTICLE_COUNT: EnvLoader.number(
+      'COMPONENT_SUCCESS_CELEBRATION_PARTICLES',
+      30,
+      5,
+      100
+    ),
+    REDUCED_MOTION_DURATION_MS: EnvLoader.number(
+      'COMPONENT_SUCCESS_CELEBRATION_REDUCED_MS',
+      500,
+      100,
+      2000
+    ),
   } as const,
 
-  /**
-   * ScrollToTop component defaults
-   */
   SCROLL_TO_TOP: {
-    /** Default scroll position (in pixels) to show button */
-    SHOW_AT_PX: 400,
-    /** Default smooth scroll behavior */
+    SHOW_AT_PX: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_TOP_SHOW_PX',
+      400,
+      50,
+      1000
+    ),
     SMOOTH: true,
-    /** Circle radius for progress indicator */
-    PROGRESS_RADIUS: 22,
-    /** Progress stroke width */
-    STROKE_WIDTH: 2,
+    PROGRESS_RADIUS: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_TOP_RADIUS',
+      22,
+      10,
+      50
+    ),
+    STROKE_WIDTH: EnvLoader.number('COMPONENT_SCROLL_TO_TOP_STROKE', 2, 1, 5),
   } as const,
 
-  /**
-   * AutoSaveIndicator component defaults
-   */
   AUTO_SAVE_INDICATOR: {
-    /** Maximum progress percentage */
     MAX_PROGRESS: 100,
-    /** Minimum progress percentage */
     MIN_PROGRESS: 0,
   } as const,
 
-  /**
-   * Progress calculation defaults
-   */
   PROGRESS: {
-    /** Full percentage */
     COMPLETE: 100,
-    /** Empty percentage */
     EMPTY: 0,
   },
 

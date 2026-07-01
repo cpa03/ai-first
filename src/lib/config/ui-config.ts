@@ -131,4 +131,11 @@ export const UI_CONFIG = {
     1,
     50
   ),
+
+  HAPTIC_FEEDBACK_DURATION_MS: EnvLoader.number(
+    'UI_HAPTIC_FEEDBACK_DURATION_MS',
+    50,
+    10,
+    500
+  ),
 } as const;

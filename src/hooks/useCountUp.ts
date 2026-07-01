@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
+import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface UseCountUpOptions {
   target: number;
@@ -10,15 +11,11 @@ interface UseCountUpOptions {
   decimals?: number;
 }
 
-/**
- * Smoothly animates a number from 0 to a target value.
- * Respects prefers-reduced-motion by instantly setting the value.
- */
 export function useCountUp({
   target,
-  duration = 600,
-  delay = 0,
-  decimals = 0,
+  duration = COMPONENT_CONFIG.COUNT_UP.DEFAULT_DURATION_MS,
+  delay = COMPONENT_CONFIG.COUNT_UP.DEFAULT_DELAY_MS,
+  decimals = COMPONENT_CONFIG.COUNT_UP.DEFAULT_DECIMALS,
 }: UseCountUpOptions) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [displayValue, setDisplayValue] = useState(0);
