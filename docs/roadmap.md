@@ -2,7 +2,7 @@
 
 This document outlines the strategic direction and planned releases for IdeaFlow.
 
-**Last Updated**: June 21, 2026
+**Last Updated**: July 1, 2026
 
 ---
 

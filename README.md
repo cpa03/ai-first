@@ -323,8 +323,8 @@ vercel --prod
 - ✅ Basic Next.js scaffold
 - ✅ Supabase database schema
 - ✅ GitHub Actions automation skeleton
-- 🚧 Clarification Agent (in progress)
-- 🚧 Blueprint export functionality (in progress)
+- ✅ Clarification Agent
+- ✅ Blueprint export functionality
 
 ## 🤝 Contributing & Issues
 
@@ -390,8 +390,8 @@ All automated work follows this pattern:
 - [x] Repository structure and automation
 - [x] Basic frontend scaffold
 - [x] Database schema
-- [ ] Clarification Agent MVP
-- [ ] Blueprint export functionality
+- [x] Clarification Agent MVP
+- [x] Blueprint export functionality
 
 ### Phase 1 - MVP
 
