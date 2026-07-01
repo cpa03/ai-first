@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   UI_CONFIG,
   SVG_STROKE_WIDTHS,
@@ -8,6 +8,7 @@ import {
   ANIMATION_DELAYS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 interface Step {
   id: string;
@@ -19,11 +20,13 @@ interface Step {
 interface ProgressStepperProps {
   steps: Step[];
   currentStep: number;
+  onStepClick?: (stepIndex: number) => void;
 }
 
 const ProgressStepperComponent = function ProgressStepper({
   steps,
   currentStep,
+  onStepClick,
 }: ProgressStepperProps) {
   const progressPercentage = Math.round(
     ((currentStep + 1) / steps.length) * 100
@@ -32,6 +35,26 @@ const ProgressStepperComponent = function ProgressStepper({
   const prefersReducedMotion = usePrefersReducedMotion();
   const [animatingStep, setAnimatingStep] = useState<number | null>(null);
   const prevCurrentStepRef = useRef(currentStep);
+
+  const handleStepClick = useCallback(
+    (index: number) => {
+      if (!onStepClick) return;
+      if (index === currentStep) return;
+      triggerHapticFeedback();
+      onStepClick(index);
+    },
+    [onStepClick, currentStep]
+  );
+
+  const handleStepKeyDown = useCallback(
+    (e: React.KeyboardEvent, index: number) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleStepClick(index);
+      }
+    },
+    [handleStepClick]
+  );
 
   useEffect(() => {
     const prevStep = prevCurrentStepRef.current;
@@ -57,22 +80,29 @@ const ProgressStepperComponent = function ProgressStepper({
         <div className="flex items-center justify-between px-2">
           <ol className="flex items-center space-x-2">
             {steps.map((step, index) => {
+              const isClickable = onStepClick && index !== currentStep;
               return (
-                <li
-                  key={step.id}
-                  className={`
-                    rounded-full transition-all duration-300 ease-out
-                    ${
-                      step.current
-                        ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200'
-                        : step.completed
-                          ? `w-3 h-3 bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
-                          : 'w-3 h-3 bg-gray-300'
-                    }
-                  `}
-                  aria-current={step.current ? 'step' : undefined}
-                  aria-label={`Question ${index + 1}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}`}
-                />
+                <li key={step.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleStepClick(index)}
+                    onKeyDown={(e) => handleStepKeyDown(e, index)}
+                    disabled={!isClickable}
+                    className={`
+                      rounded-full transition-all duration-300 ease-out
+                      ${isClickable ? 'cursor-pointer hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2' : 'cursor-default'}
+                      ${
+                        step.current
+                          ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200'
+                          : step.completed
+                            ? `w-3 h-3 bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
+                            : 'w-3 h-3 bg-gray-300'
+                      }
+                    `}
+                    aria-current={step.current ? 'step' : undefined}
+                    aria-label={`Question ${index + 1}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? ' - Click to jump' : ''}`}
+                  />
+                </li>
               );
             })}
           </ol>
@@ -101,72 +131,85 @@ const ProgressStepperComponent = function ProgressStepper({
       <ol className="hidden sm:flex items-center justify-between">
         {steps.map((step, index) => {
           const isLast = index === steps.length - 1;
+          const isClickable = onStepClick && index !== currentStep;
 
           return (
             <li
               key={step.id}
               className={`flex-1 ${!isLast ? 'flex items-center' : ''}`}
               aria-current={step.current ? 'step' : undefined}
-              aria-label={`${step.label}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}`}
+              aria-label={`${step.label}: ${step.current ? PROGRESS_STEPPER_LABELS.STEP_CURRENT : step.completed ? PROGRESS_STEPPER_LABELS.STEP_COMPLETED : PROGRESS_STEPPER_LABELS.STEP_UPCOMING}${isClickable ? ' - Click to jump' : ''}`}
             >
-              <div className="flex items-center w-full" aria-hidden="true">
-                <div
-                  className={`
-                    flex items-center justify-center
-                    w-10 h-10 rounded-full border-2
-                    font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
-                    transition-all duration-300
-                    ${
-                      step.completed
-                        ? 'border-primary-600 bg-primary-600 text-white'
-                        : step.current
-                          ? 'border-primary-600 text-primary-600 animate-gentle-pulse'
-                          : 'border-gray-300 text-gray-500'
-                    }
-                  `}
-                >
-                  {step.completed ? (
-                    <svg
-                      className={`w-6 h-6 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                      aria-label={PROGRESS_STEPPER_LABELS.CHECKMARK_ARIA_LABEL}
-                      role="img"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  ) : (
-                    index + 1
-                  )}
-                </div>
-                <div className="flex flex-col ml-3">
-                  <span
+              <button
+                type="button"
+                onClick={() => handleStepClick(index)}
+                onKeyDown={(e) => handleStepKeyDown(e, index)}
+                disabled={!isClickable}
+                className={`flex items-center w-full ${isClickable ? 'cursor-pointer group focus-visible:outline-none' : 'cursor-default'}`}
+              >
+                <div className="flex items-center w-full" aria-hidden="true">
+                  <div
                     className={`
-                      text-sm font-medium
+                      flex items-center justify-center
+                      w-10 h-10 rounded-full border-2
+                      font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
+                      transition-all duration-300
+                      ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
                       ${
-                        step.current
-                          ? 'text-primary-600'
-                          : step.completed
-                            ? 'text-gray-900'
-                            : 'text-gray-700'
+                        step.completed
+                          ? 'border-primary-600 bg-primary-600 text-white'
+                          : step.current
+                            ? 'border-primary-600 text-primary-600 animate-gentle-pulse'
+                            : 'border-gray-300 text-gray-500'
                       }
                     `}
                   >
-                    {step.label}
-                  </span>
-                  {step.current && (
-                    <span className="text-xs text-primary-500 font-medium">
-                      Step {currentStep + 1} of {steps.length}
+                    {step.completed ? (
+                      <svg
+                        className={`w-6 h-6 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`}
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                        aria-label={
+                          PROGRESS_STEPPER_LABELS.CHECKMARK_ARIA_LABEL
+                        }
+                        role="img"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : (
+                      index + 1
+                    )}
+                  </div>
+                  <div className="flex flex-col ml-3 text-left">
+                    <span
+                      className={`
+                        text-sm font-medium
+                        ${isClickable ? 'group-hover:text-primary-600 transition-colors' : ''}
+                        ${
+                          step.current
+                            ? 'text-primary-600'
+                            : step.completed
+                              ? 'text-gray-900'
+                              : 'text-gray-700'
+                        }
+                      `}
+                    >
+                      {step.label}
                     </span>
-                  )}
+                    {step.current && (
+                      <span className="text-xs text-primary-500 font-medium">
+                        Step {currentStep + 1} of {steps.length}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </button>
               {!isLast && (
                 <div
                   className={`

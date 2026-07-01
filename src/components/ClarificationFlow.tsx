@@ -67,6 +67,7 @@ function ClarificationFlow({
     handleNext,
     handlePrevious,
     handleKeyDown,
+    goToStep,
   } = useClarificationSession(idea, ideaId, onComplete);
 
   const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -122,11 +123,17 @@ function ClarificationFlow({
           handleToggleReference();
         }
       }
+
+      const stepNumber = parseInt(e.key, 10);
+      if (stepNumber >= 1 && stepNumber <= questions.length) {
+        e.preventDefault();
+        goToStep(stepNumber - 1);
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [loading, questions.length, handleToggleReference]);
+  }, [loading, questions.length, handleToggleReference, goToStep]);
 
   if (loading) {
     return (
@@ -314,7 +321,11 @@ function ClarificationFlow({
             {Math.round(progress)}%
           </span>
         </div>
-        <ProgressStepper steps={steps} currentStep={currentStep} />
+        <ProgressStepper
+          steps={steps}
+          currentStep={currentStep}
+          onStepClick={goToStep}
+        />
       </div>
 
       <div
