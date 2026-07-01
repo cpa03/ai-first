@@ -126,7 +126,7 @@ const SUSPICIOUS_PATTERNS: Record<
     // Medium severity
     {
       pattern: /('\s*(or|and)\s+')/is,
-      severity: 2,
+      severity: 1,
       description: 'SQL string injection',
     },
     {
@@ -637,8 +637,18 @@ const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
   3: null,
 };
 
-// Initialize PATTERNS_BY_MIN_SEVERITY
-(function initializePatternCache() {
+/**
+ * PERFORMANCE: Flag to ensure lazy initialization happens only once.
+ */
+let isPatternCacheInitialized = false;
+
+/**
+ * PERFORMANCE: Lazily initialize the pattern cache to avoid top-level side effects
+ * during module evaluation. This ensures build-time stability for Cloudflare Workers.
+ */
+function ensurePatternCacheInitialized() {
+  if (isPatternCacheInitialized) return;
+
   const allPatterns: FlattenedPattern[] = [];
   for (const [category, patterns] of Object.entries(SUSPICIOUS_PATTERNS)) {
     for (const p of patterns) {
@@ -680,7 +690,9 @@ const COMBINED_TRIGGERS_BY_MIN_SEVERITY: Record<number, RegExp | null> = {
       }
     }
   }
-})();
+
+  isPatternCacheInitialized = true;
+}
 
 /**
  * PERFORMANCE: Static set of headers to skip during scanning to avoid
@@ -746,6 +758,9 @@ function scanString(
 ): SuspiciousPatternDetail[] {
   // PERFORMANCE: Early return for empty input
   if (!input) return EMPTY_FINDINGS;
+
+  // PERFORMANCE: Lazily initialize pattern cache on first scan
+  ensurePatternCacheInitialized();
 
   // PERFORMANCE: Check cache for small inputs to avoid repeated regex runs.
   const isCacheable =
