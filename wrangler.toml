@@ -52,7 +52,7 @@ mode = "smart"
 main = ".open-next/worker.js"
 
 [build]
-command = "npm run build"
+command = "npm run build:cloudflare"
 watch_dir = ".next"
 
 # Assets binding for static files served by Cloudflare
