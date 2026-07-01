@@ -126,7 +126,7 @@ const SUSPICIOUS_PATTERNS: Record<
     // Medium severity
     {
       pattern: /('\s*(or|and)\s+')/is,
-      severity: 2,
+      severity: 1,
       description: 'SQL string injection',
     },
     {
