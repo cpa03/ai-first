@@ -3,6 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { generateId } from './security/crypto';
 import { RETRY_CONFIG } from './config/constants';
 import { TIME_UNITS, TIME_CONVERSION } from './config/time';
+import { UI_CONFIG } from './config/ui-config';
 
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Optimized fast-path for common empty or single-class cases.
@@ -236,7 +237,9 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
  *
  * @param duration - Duration of the vibration in milliseconds. Defaults to 50ms.
  */
-export const triggerHapticFeedback = (duration: number = 50): void => {
+export const triggerHapticFeedback = (
+  duration: number = UI_CONFIG.HAPTIC_FEEDBACK_DURATION_MS
+): void => {
   // Robust guard against non-browser environments (SSR/Edge Runtime)
   if (
     typeof window !== 'undefined' &&

@@ -314,6 +314,35 @@ export const COMPONENT_CONFIG = {
     ),
   } as const,
 
+  COUNT_UP: {
+    /** Default animation duration (ms) - Env: COMPONENT_COUNT_UP_DURATION_MS (default: 600) */
+    DEFAULT_DURATION_MS: EnvLoader.number(
+      'COMPONENT_COUNT_UP_DURATION_MS',
+      600,
+      100,
+      5000
+    ),
+    /** Default delay before animation starts (ms) - Env: COMPONENT_COUNT_UP_DELAY_MS (default: 0) */
+    DEFAULT_DELAY_MS: EnvLoader.number(
+      'COMPONENT_COUNT_UP_DELAY_MS',
+      0,
+      0,
+      5000
+    ),
+    /** Default decimal places - Env: COMPONENT_COUNT_UP_DECIMALS (default: 0) */
+    DEFAULT_DECIMALS: EnvLoader.number('COMPONENT_COUNT_UP_DECIMALS', 0, 0, 10),
+  } as const,
+
+  DASHBOARD_SKELETON: {
+    /** Number of table rows to show in skeleton - Env: COMPONENT_DASHBOARD_SKELETON_ROWS (default: 5) */
+    TABLE_ROW_COUNT: EnvLoader.number(
+      'COMPONENT_DASHBOARD_SKELETON_ROWS',
+      5,
+      1,
+      20
+    ),
+  } as const,
+
   ALERT: {
     /** Auto-dismiss delay for success alerts (ms) - Env: COMPONENT_ALERT_SUCCESS_DISMISS_MS (default: 5000) */
     SUCCESS_DISMISS_MS: EnvLoader.number(
