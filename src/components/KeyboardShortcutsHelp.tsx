@@ -58,6 +58,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     context: 'form',
   },
   {
+    keys: ['1', '-', '9'],
+    description: SHORTCUT_DESCRIPTIONS.JUMP_TO_QUESTION,
+    context: 'form',
+  },
+  {
     keys: ['⌘', 'N'],
     description: SHORTCUT_DESCRIPTIONS.NEW_IDEA,
     context: 'global',

@@ -177,6 +177,7 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     SUBMIT_FORM: 'Submit form',
     PREVIOUS_QUESTION: 'Previous question in clarification flow',
     TOGGLE_REFERENCE: 'Toggle reference idea in clarification flow',
+    JUMP_TO_QUESTION: 'Jump to question number (1-9)',
     NEW_IDEA: 'New idea',
     SAVE_WORK: 'Save current work',
     TOGGLE_HELP: 'Toggle keyboard shortcuts help',

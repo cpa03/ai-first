@@ -57,6 +57,7 @@ export interface UseClarificationSessionReturn {
   handleNext: () => Promise<void>;
   handlePrevious: () => void;
   handleKeyDown: (e: React.KeyboardEvent) => void;
+  goToStep: (stepIndex: number) => void;
 }
 
 const FALLBACK_QUESTIONS: readonly Question[] =
@@ -200,6 +201,20 @@ export function useClarificationSession(
     [currentAnswer, handleNext, handlePrevious]
   );
 
+  const goToStep = useCallback(
+    (stepIndex: number) => {
+      if (stepIndex < 0 || stepIndex >= questions.length) return;
+      if (stepIndex === currentStep) return;
+      if (showCelebration || isSubmitting) return;
+
+      triggerHapticFeedback();
+      setCurrentStep(stepIndex);
+      const targetQuestion = questions[stepIndex];
+      setCurrentAnswer(answers[targetQuestion.id] || '');
+    },
+    [questions, currentStep, answers, showCelebration, isSubmitting]
+  );
+
   useEffect(() => {
     if (!currentQuestion || questions.length === 0) return;
 
@@ -313,6 +328,7 @@ export function useClarificationSession(
       handleNext,
       handlePrevious,
       handleKeyDown,
+      goToStep,
     }),
     [
       loading,
@@ -334,6 +350,7 @@ export function useClarificationSession(
       handleNext,
       handlePrevious,
       handleKeyDown,
+      goToStep,
     ]
   );
 }
