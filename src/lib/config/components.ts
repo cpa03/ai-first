@@ -373,6 +373,16 @@ export const COMPONENT_CONFIG = {
       200
     ),
   },
+
+  DASHBOARD: {
+    /** Number of skeleton rows to show while loading - Env: COMPONENT_DASHBOARD_SKELETON_ROW_COUNT (default: 5) */
+    SKELETON_ROW_COUNT: EnvLoader.number(
+      'COMPONENT_DASHBOARD_SKELETON_ROW_COUNT',
+      5,
+      1,
+      20
+    ),
+  } as const,
 } as const;
 
 export type ComponentConfig = typeof COMPONENT_CONFIG;

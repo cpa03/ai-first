@@ -13,6 +13,7 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import Tooltip from './Tooltip';
 
 interface ScrollToTopProps {
@@ -33,6 +34,12 @@ function ScrollToTopComponent({
   const [hasAppeared, setHasAppeared] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
+
+  // Micro-UX: Smooth counter animation for scroll percentage
+  // Provides fluid visual feedback instead of abrupt number changes
+  const animatedPercentage = useAnimatedCounter(Math.round(scrollProgress), {
+    duration: 100,
+  });
 
   const calculateScrollProgress = useCallback(() => {
     const scrollTop = window.scrollY;
@@ -262,13 +269,12 @@ function ScrollToTopComponent({
             </svg>
           )}
 
-          {/* Micro-UX: Show scroll percentage inside the button for at-a-glance feedback */}
           {showPercentage && !prefersReducedMotion ? (
             <span
               className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors duration-200`}
               aria-hidden="true"
             >
-              {Math.round(scrollProgress)}
+              {animatedPercentage}
             </span>
           ) : (
             <svg
