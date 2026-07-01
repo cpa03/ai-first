@@ -147,6 +147,7 @@ export const MESSAGES = {
     PREVIOUS: '← Previous',
     NEXT: 'Next →',
     COMPLETE: 'Complete',
+    SUBMITTING: 'Submitting...',
   },
   LOADING: {
     DEFAULT: 'Loading...',

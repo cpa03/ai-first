@@ -387,13 +387,12 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             type="submit"
             variant="primary"
             loading={isSubmitting}
+            loadingText={MESSAGES.IDEA_INPUT.PROCESSING_BUTTON}
             disabled={!idea.trim() || !!validationError}
             attention={!!idea.trim() && !validationError && !isSubmitting}
             enableTransition
           >
-            {isSubmitting
-              ? MESSAGES.IDEA_INPUT.PROCESSING_BUTTON
-              : MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
+            {MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
           </Button>
         </div>
       </form>

@@ -25,6 +25,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   attention?: boolean;
   /** Shows a subtle animation when button transitions from disabled to enabled */
   enableTransition?: boolean;
+  /** Optional loading message to display next to the spinner (e.g., "Saving...", "Submitting...") */
+  loadingText?: string;
   children: React.ReactNode;
 }
 
@@ -44,6 +46,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       fullWidth = false,
       attention = false,
       enableTransition = false,
+      loadingText,
       disabled,
       children,
       className = '',
@@ -195,7 +198,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
             ></path>
           </svg>
         )}
-        {children}
+        {loading && loadingText ? loadingText : children}
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
