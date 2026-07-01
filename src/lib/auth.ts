@@ -7,16 +7,32 @@ import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config';
 
-const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
 
-if (
-  !ADMIN_API_KEY &&
-  process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
-) {
-  logger.warn(
-    'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
-  );
+/**
+ * Lazy initializer for ADMIN_API_KEY to prevent side effects during module load.
+ * Cloudflare Workers builds require side-effect-free top-levels.
+ */
+let cachedAdminApiKey: string | undefined;
+let hasWarnedMissingKey = false;
+
+function getAdminApiKey(): string | undefined {
+  if (cachedAdminApiKey === undefined) {
+    cachedAdminApiKey = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY] || '';
+  }
+
+  if (
+    !cachedAdminApiKey &&
+    !hasWarnedMissingKey &&
+    process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
+  ) {
+    logger.warn(
+      'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
+    );
+    hasWarnedMissingKey = true;
+  }
+
+  return cachedAdminApiKey || undefined;
 }
 
 export interface AuthenticatedUser {
@@ -35,7 +51,8 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
-  if (!ADMIN_API_KEY) {
+  const adminApiKey = getAdminApiKey();
+  if (!adminApiKey) {
     return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
   }
 
@@ -75,7 +92,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
 
     const expectedHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,
-      encoder.encode(ADMIN_API_KEY)
+      encoder.encode(adminApiKey)
     );
     const actualHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,
