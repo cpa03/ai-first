@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { createLogger } from '@/lib/logger';
+import { triggerHapticFeedback } from '@/lib/utils';
 import {
   UI_CONFIG,
   CLARIFIER_CONFIG,
@@ -59,19 +60,17 @@ export interface UseClarificationSessionReturn {
 }
 
 const FALLBACK_QUESTIONS: readonly Question[] =
-  CLARIFIER_CONFIG.FALLBACK_QUESTIONS.map(
-    (q): Question => ({
-      id: q.id,
-      question: q.question,
-      type:
-        q.type === 'multiple_choice'
-          ? 'select'
-          : q.type === 'open'
-            ? 'textarea'
-            : 'text',
-      ...('options' in q && q.options && { options: [...q.options] }),
-    })
-  ) as Question[];
+  CLARIFIER_CONFIG.FALLBACK_QUESTIONS.map((q): Question => ({
+    id: q.id,
+    question: q.question,
+    type:
+      q.type === 'multiple_choice'
+        ? 'select'
+        : q.type === 'open'
+          ? 'textarea'
+          : 'text',
+    ...('options' in q && q.options && { options: [...q.options] }),
+  })) as Question[];
 
 function formatQuestions(questionsData: readonly APIQuestion[]): Question[] {
   return questionsData.map((q, index) => ({
@@ -144,6 +143,7 @@ export function useClarificationSession(
 
     if (currentStep < questions.length - 1) {
       const nextStep = currentStep + 1;
+      triggerHapticFeedback();
       setShowCelebration(true);
       stepTransitionTimeoutRef.current = setTimeout(() => {
         setShowCelebration(false);
@@ -151,6 +151,7 @@ export function useClarificationSession(
         setCurrentAnswer('');
       }, ANIMATION_CONFIG.STEP_TRANSITION);
     } else {
+      triggerHapticFeedback();
       setIsSubmitting(true);
       try {
         await onComplete(newAnswers);
