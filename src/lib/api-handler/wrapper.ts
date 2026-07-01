@@ -178,7 +178,7 @@ export function withApiHandler(
         requestId,
       });
 
-      if (suspiciousResult.detected && suspiciousResult.maxSeverity === 3) {
+      if (suspiciousResult.detected && suspiciousResult.maxSeverity >= 2) {
         logger.warnWithContext('Blocking suspicious request', logContext, {
           maxSeverity: suspiciousResult.maxSeverity,
           patterns: suspiciousResult.patterns.map((p) => p.category),

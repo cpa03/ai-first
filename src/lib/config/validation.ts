@@ -62,6 +62,7 @@ export const SANITIZATION_CONFIG = {
       /(?:j\s*a\s*v\s*a\s*s\s*c\s*r\s*i\s*p\s*t|v\s*b\s*s\s*c\s*r\s*i\s*p\s*t|l\s*i\s*v\s*e\s*s\s*c\s*r\s*i\s*p\s*t)\s*:/gi,
     DATA_URI:
       /d\s*a\s*t\s*a\s*:\s*(?:t\s*e\s*x\s*t\s*\/\s*h\s*t\s*m\s*l|i\s*m\s*a\s*g\s*e\s*\/\s*s\s*v\s*g\s*\+\s*x\s*m\s*l)/gi,
+    STYLE: /(?:\s|[/])*style\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
   },
 
   PII: {
