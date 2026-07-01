@@ -169,9 +169,11 @@ function getExternalRateLimitStats(): ExternalRateLimitStats {
     const percentRemaining =
       s.limit > 0 ? Math.round((s.remaining / s.limit) * 100) : 0;
     let status: 'healthy' | 'warning' | 'critical' = 'healthy';
-    if (percentRemaining <= 10) {
+    if (percentRemaining <= HEALTH_CONFIG.RATE_LIMIT_THRESHOLDS.CRITICAL) {
       status = 'critical';
-    } else if (percentRemaining <= 20) {
+    } else if (
+      percentRemaining <= HEALTH_CONFIG.RATE_LIMIT_THRESHOLDS.WARNING
+    ) {
       status = 'warning';
     }
 

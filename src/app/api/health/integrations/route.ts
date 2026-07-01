@@ -124,7 +124,10 @@ async function handleGet(context: ApiContext): Promise<Response> {
     rateLimits,
   };
 
-  const statusCode = overallStatus === 'unhealthy' ? 503 : STATUS_CODES.OK;
+  const statusCode =
+    overallStatus === 'unhealthy'
+      ? STATUS_CODES.SERVICE_UNAVAILABLE
+      : STATUS_CODES.OK;
 
   return standardSuccessResponse(
     response,
