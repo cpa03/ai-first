@@ -4,21 +4,41 @@
  * Follows the "Flexy" principle: eliminate hardcoded values
  */
 
+import { EnvLoader } from './environment';
+
 /**
  * Browser settings URLs for different browsers
  * Eliminates hardcoded browser URLs in components
+ * All values support environment variable overrides via EnvLoader
  */
 export const BROWSER_SETTINGS_URLS = {
-  /** Chrome notification settings URL */
-  CHROME: 'chrome://settings',
-  /** Firefox notification settings URL */
-  FIREFOX: 'about:preferences#privacy',
-  /** Safari notification settings URL */
-  SAFARI: 'x-apple.systempreferences:com.apple.preference.notifications',
-  /** Edge notification settings URL */
-  EDGE: 'edge://settings/content/notifications',
-  /** Default fallback */
-  DEFAULT: 'chrome://settings',
+  /** Chrome notification settings URL
+   *  Env: BROWSER_SETTINGS_URL_CHROME (default: 'chrome://settings') */
+  CHROME: EnvLoader.string('BROWSER_SETTINGS_URL_CHROME', 'chrome://settings'),
+  /** Firefox notification settings URL
+   *  Env: BROWSER_SETTINGS_URL_FIREFOX (default: 'about:preferences#privacy') */
+  FIREFOX: EnvLoader.string(
+    'BROWSER_SETTINGS_URL_FIREFOX',
+    'about:preferences#privacy'
+  ),
+  /** Safari notification settings URL
+   *  Env: BROWSER_SETTINGS_URL_SAFARI (default: 'x-apple.systempreferences:com.apple.preference.notifications') */
+  SAFARI: EnvLoader.string(
+    'BROWSER_SETTINGS_URL_SAFARI',
+    'x-apple.systempreferences:com.apple.preference.notifications'
+  ),
+  /** Edge notification settings URL
+   *  Env: BROWSER_SETTINGS_URL_EDGE (default: 'edge://settings/content/notifications') */
+  EDGE: EnvLoader.string(
+    'BROWSER_SETTINGS_URL_EDGE',
+    'edge://settings/content/notifications'
+  ),
+  /** Default fallback
+   *  Env: BROWSER_SETTINGS_URL_DEFAULT (default: 'chrome://settings') */
+  DEFAULT: EnvLoader.string(
+    'BROWSER_SETTINGS_URL_DEFAULT',
+    'chrome://settings'
+  ),
 } as const;
 
 /**
