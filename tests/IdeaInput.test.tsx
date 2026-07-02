@@ -76,7 +76,7 @@ describe('IdeaInput', () => {
     expect(submitButton).toBeDisabled();
   });
 
-  it('enables submit button when idea is entered', () => {
+  it('enables submit button when idea is entered', async () => {
     const mockOnSubmit = jest.fn();
     render(<IdeaInput onSubmit={mockOnSubmit} />);
 
@@ -85,20 +85,24 @@ describe('IdeaInput', () => {
       name: /start clarifying/i,
     });
 
-    fireEvent.change(textarea, {
-      target: { value: 'Test idea with more details' },
+    await act(async () => {
+      fireEvent.change(textarea, {
+        target: { value: 'Test idea with more details' },
+      });
     });
     expect(submitButton).not.toBeDisabled();
   });
 
-  it('shows encouragement message after typing a few characters', () => {
+  it('shows encouragement message after typing a few characters', async () => {
     const mockOnSubmit = jest.fn();
     render(<IdeaInput onSubmit={mockOnSubmit} />);
 
     const textarea = screen.getByLabelText(/what's your idea/i);
 
-    fireEvent.change(textarea, {
-      target: { value: 'A' },
+    await act(async () => {
+      fireEvent.change(textarea, {
+        target: { value: 'A' },
+      });
     });
 
     const encouragementMessage = document.querySelector(
