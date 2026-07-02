@@ -416,6 +416,37 @@ export const DASHBOARD_LABELS = {
 };
 
 /**
+ * Email Button Labels
+ * Eliminates hardcoded strings in EmailButton component
+ */
+export const EMAIL_BUTTON_LABELS = {
+  /** Default button label */
+  DEFAULT_LABEL: 'Email to Self',
+  /** Success state label after email client opens */
+  SUCCESS_LABEL: 'Email Opened!',
+  /** ARIA label for the email button */
+  ARIA_LABEL: 'Email blueprint to yourself',
+  /** Default tooltip label */
+  TOOLTIP_LABEL: 'Send blueprint to your email',
+  /** Email subject prefix */
+  SUBJECT_PREFIX: 'My',
+  /** Email subject suffix */
+  SUBJECT_SUFFIX: 'Blueprint:',
+  /** Email body header */
+  BODY_HEADER: 'My Project Blueprint from',
+  /** Email body separator */
+  BODY_SEPARATOR: '================================',
+  /** Email body title label */
+  BODY_TITLE_LABEL: 'Title:',
+  /** Email body summary label */
+  BODY_SUMMARY_LABEL: 'Summary:',
+  /** Email body details label */
+  BODY_DETAILS_LABEL: 'Details:',
+  /** Email body footer */
+  BODY_FOOTER: 'Created with',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -442,6 +473,7 @@ export const COMPONENT_LABELS = {
   CLARIFICATION_FLOW: CLARIFICATION_FLOW_LABELS,
   FEATURE_GRID: FEATURE_GRID_LABELS,
   DASHBOARD: DASHBOARD_LABELS,
+  EMAIL_BUTTON: EMAIL_BUTTON_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -467,4 +499,5 @@ export type UserOnboardingCompletionLabels =
 export type ClarificationFlowLabels = typeof CLARIFICATION_FLOW_LABELS;
 export type FeatureGridLabels = typeof FEATURE_GRID_LABELS;
 export type DashboardLabels = typeof DASHBOARD_LABELS;
+export type EmailButtonLabels = typeof EMAIL_BUTTON_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
