@@ -119,11 +119,13 @@ class AIService {
     // Periodic cleanup of cost trackers to prevent memory leaks
     // Only start in production to avoid open handles in tests
     // RELIABILITY: Conditional interval start prevents Jest force exit warnings
+    // and ensures side-effect-free module load during "Workers Builds" phase.
     if (
       typeof process !== 'undefined' &&
       process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'production' &&
       !process.env[PLATFORM_ENV_KEYS.JEST_WORKER_ID] &&
-      !process.env[PLATFORM_ENV_KEYS.VITEST_WORKER_ID]
+      !process.env[PLATFORM_ENV_KEYS.VITEST_WORKER_ID] &&
+      process.env.NEXT_PHASE !== 'phase-production-build'
     ) {
       this.cleanupIntervalId = setInterval(() => {
         this.cleanupOldCostTrackers();
