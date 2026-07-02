@@ -70,6 +70,12 @@ export const UI_DURATIONS = {
     1000,
     30000
   ),
+  ANIMATED_COUNTER: EnvLoader.number(
+    'UI_DURATION_ANIMATED_COUNTER_MS',
+    100,
+    50,
+    1000
+  ),
 } as const;
 
 export const CIRCUIT_BREAKER_TIMES = {

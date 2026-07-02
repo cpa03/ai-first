@@ -398,6 +398,23 @@ export const FEATURE_GRID_LABELS = {
 } as const;
 
 /**
+ * Dashboard Labels
+ * Eliminates hardcoded tooltip content strings in Dashboard component
+ */
+export const DASHBOARD_LABELS = {
+  /** Tooltip for new idea button */
+  NEW_IDEA_TOOLTIP: 'Create a new idea',
+  /** Tooltip for filter button */
+  FILTER_TOOLTIP: 'Filter by status',
+  /** Tooltip for clear filter button */
+  CLEAR_FILTER_TOOLTIP: 'Clear filter',
+  /** Keyboard shortcut for new idea */
+  NEW_IDEA_SHORTCUT: ['N'],
+  /** Keyboard shortcut for filter */
+  FILTER_SHORTCUT: ['/'],
+};
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -423,6 +440,7 @@ export const COMPONENT_LABELS = {
   USER_ONBOARDING_COMPLETION: USER_ONBOARDING_COMPLETION_LABELS,
   CLARIFICATION_FLOW: CLARIFICATION_FLOW_LABELS,
   FEATURE_GRID: FEATURE_GRID_LABELS,
+  DASHBOARD: DASHBOARD_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -447,4 +465,5 @@ export type UserOnboardingCompletionLabels =
   typeof USER_ONBOARDING_COMPLETION_LABELS;
 export type ClarificationFlowLabels = typeof CLARIFICATION_FLOW_LABELS;
 export type FeatureGridLabels = typeof FEATURE_GRID_LABELS;
+export type DashboardLabels = typeof DASHBOARD_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

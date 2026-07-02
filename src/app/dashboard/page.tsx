@@ -20,6 +20,7 @@ import {
   ANIMATION_CONFIG,
   PAGE_LAYOUT_CLASSES,
   ANIMATION_DELAYS,
+  DASHBOARD_LABELS,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -440,7 +441,10 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Tooltip content="Create a new idea" shortcut={['N']}>
+          <Tooltip
+            content={DASHBOARD_LABELS.NEW_IDEA_TOOLTIP}
+            shortcut={DASHBOARD_LABELS.NEW_IDEA_SHORTCUT}
+          >
             <Link href="/">
               <Button variant="primary">
                 {DASHBOARD_PAGE_CONTENT.ACTIONS.NEW_IDEA}
@@ -461,7 +465,10 @@ export default function DashboardPage() {
           {DASHBOARD_PAGE_CONTENT.FILTER.LABEL}
         </label>
         <div className="relative">
-          <Tooltip content="Filter by status" shortcut={['/']}>
+          <Tooltip
+            content={DASHBOARD_LABELS.FILTER_TOOLTIP}
+            shortcut={DASHBOARD_LABELS.FILTER_SHORTCUT}
+          >
             <select
               ref={filterSelectRef}
               id="status-filter"
@@ -562,7 +569,10 @@ export default function DashboardPage() {
                 ? DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL
                 : filter.charAt(0).toUpperCase() + filter.slice(1)}
             </span>
-            <Tooltip content="Clear filter" shortcut={['/']}>
+            <Tooltip
+              content={DASHBOARD_LABELS.CLEAR_FILTER_TOOLTIP}
+              shortcut={DASHBOARD_LABELS.FILTER_SHORTCUT}
+            >
               <button
                 type="button"
                 onClick={() => {
