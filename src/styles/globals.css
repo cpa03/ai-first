@@ -1372,3 +1372,52 @@ button[aria-disabled='true'].btn-glow-hover {
     opacity: 1 !important;
   }
 }
+
+/* Mobile Menu Item Staggered Entrance - Micro-UX delight for mobile navigation */
+/* Creates a cascading fade-in effect when the mobile menu opens, guiding user attention */
+/* Each menu item enters after a brief delay, creating visual hierarchy and polish */
+@keyframes mobileMenuItemEntrance {
+  0% {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-mobile-menu-item {
+  animation: mobileMenuItemEntrance var(--duration-normal) var(--ease-out-expo)
+    forwards;
+  opacity: 0;
+}
+
+.animate-mobile-menu-item-1 {
+  animation-delay: 0ms;
+}
+
+.animate-mobile-menu-item-2 {
+  animation-delay: 40ms;
+}
+
+.animate-mobile-menu-item-3 {
+  animation-delay: 80ms;
+}
+
+.animate-mobile-menu-item-4 {
+  animation-delay: 120ms;
+}
+
+.animate-mobile-menu-item-5 {
+  animation-delay: 160ms;
+}
+
+/* Reduced motion support for mobile menu item entrance */
+@media (prefers-reduced-motion: reduce) {
+  .animate-mobile-menu-item {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
