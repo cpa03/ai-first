@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
-import { DASHBOARD_PAGE_CONFIG } from '@/lib/config';
+import { DASHBOARD_PAGE_CONFIG, DASHBOARD_ERROR_FALLBACK } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: DASHBOARD_PAGE_CONFIG.METADATA.title,
@@ -23,8 +23,8 @@ export default function DashboardLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Dashboard Unavailable"
-          message="We couldn't load your dashboard. Please try again to see your ideas."
+          title={DASHBOARD_ERROR_FALLBACK.TITLE}
+          message={DASHBOARD_ERROR_FALLBACK.MESSAGE}
         />
       }
     >

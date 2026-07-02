@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
-import { RESULTS_PAGE_CONFIG } from '@/lib/config';
+import { RESULTS_PAGE_CONFIG, RESULTS_ERROR_FALLBACK } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: RESULTS_PAGE_CONFIG.METADATA.title,
@@ -22,9 +22,9 @@ export default function ResultsLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Results Unavailable"
-          message="We couldn't load your project results. Please try again or start a new idea."
-          homeLabel="New Idea"
+          title={RESULTS_ERROR_FALLBACK.TITLE}
+          message={RESULTS_ERROR_FALLBACK.MESSAGE}
+          homeLabel={RESULTS_ERROR_FALLBACK.HOME_LABEL}
         />
       }
     >

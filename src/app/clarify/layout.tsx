@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
-import { CLARIFY_PAGE_CONFIG } from '@/lib/config';
+import { CLARIFY_PAGE_CONFIG, CLARIFY_ERROR_FALLBACK } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: CLARIFY_PAGE_CONFIG.METADATA.title,
@@ -22,8 +22,8 @@ export default function ClarifyLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Clarification Unavailable"
-          message="We encountered an issue while loading the clarification flow. Your progress has been saved."
+          title={CLARIFY_ERROR_FALLBACK.TITLE}
+          message={CLARIFY_ERROR_FALLBACK.MESSAGE}
         />
       }
     >

@@ -1,7 +1,10 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
-import { AUTH_CALLBACK_PAGE_CONFIG } from '@/lib/config';
+import {
+  AUTH_CALLBACK_PAGE_CONFIG,
+  AUTH_CALLBACK_ERROR_FALLBACK,
+} from '@/lib/config';
 
 export const metadata: Metadata = {
   title: AUTH_CALLBACK_PAGE_CONFIG.METADATA.title,
@@ -23,8 +26,8 @@ export default function AuthCallbackLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Authentication Unavailable"
-          message="We encountered an issue while processing your authentication. Please try again."
+          title={AUTH_CALLBACK_ERROR_FALLBACK.TITLE}
+          message={AUTH_CALLBACK_ERROR_FALLBACK.MESSAGE}
         />
       }
     >

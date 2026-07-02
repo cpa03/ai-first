@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import LayoutErrorFallback from '@/components/LayoutErrorFallback';
-import { SIGNUP_PAGE_CONFIG } from '@/lib/config';
+import { SIGNUP_PAGE_CONFIG, SIGNUP_ERROR_FALLBACK } from '@/lib/config';
 
 export const metadata: Metadata = {
   title: SIGNUP_PAGE_CONFIG.METADATA.title,
@@ -20,8 +20,8 @@ export default function SignupLayout({
     <ErrorBoundary
       fallback={
         <LayoutErrorFallback
-          title="Sign Up Unavailable"
-          message="We encountered an issue while loading the sign up page. Please try again."
+          title={SIGNUP_ERROR_FALLBACK.TITLE}
+          message={SIGNUP_ERROR_FALLBACK.MESSAGE}
         />
       }
     >
