@@ -365,12 +365,12 @@ function ResultsContent() {
             <Button
               variant="primary"
               onClick={() => handleExport('markdown')}
-              disabled={exportLoading}
+              loading={exportingFormat === 'markdown'}
+              loadingText={EXPORT_LABELS.MARKDOWN.LOADING}
+              disabled={exportLoading && exportingFormat !== 'markdown'}
               aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.DOWNLOAD_MARKDOWN}
             >
-              {exportingFormat === 'markdown'
-                ? EXPORT_LABELS.MARKDOWN.LOADING
-                : EXPORT_LABELS.MARKDOWN.DEFAULT}
+              {EXPORT_LABELS.MARKDOWN.DEFAULT}
             </Button>
           </Tooltip>
 
@@ -379,12 +379,12 @@ function ResultsContent() {
             <Button
               variant="secondary"
               onClick={() => handleExport('json')}
-              disabled={exportLoading}
+              loading={exportingFormat === 'json'}
+              loadingText={EXPORT_LABELS.JSON.LOADING}
+              disabled={exportLoading && exportingFormat !== 'json'}
               aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_JSON}
             >
-              {exportingFormat === 'json'
-                ? EXPORT_LABELS.JSON.LOADING
-                : EXPORT_LABELS.JSON.DEFAULT}
+              {EXPORT_LABELS.JSON.DEFAULT}
             </Button>
           </Tooltip>
 
@@ -393,12 +393,12 @@ function ResultsContent() {
             <Button
               variant="outline"
               onClick={() => handleExport('notion')}
-              disabled={exportLoading}
+              loading={exportingFormat === 'notion'}
+              loadingText={EXPORT_LABELS.NOTION.LOADING}
+              disabled={exportLoading && exportingFormat !== 'notion'}
               aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
             >
-              {exportingFormat === 'notion'
-                ? EXPORT_LABELS.NOTION.LOADING
-                : EXPORT_LABELS.NOTION.DEFAULT}
+              {EXPORT_LABELS.NOTION.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -425,12 +425,12 @@ function ResultsContent() {
             <Button
               variant="outline"
               onClick={() => handleExport('trello')}
-              disabled={exportLoading}
+              loading={exportingFormat === 'trello'}
+              loadingText={EXPORT_LABELS.TRELLO.LOADING}
+              disabled={exportLoading && exportingFormat !== 'trello'}
               aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
             >
-              {exportingFormat === 'trello'
-                ? EXPORT_LABELS.TRELLO.LOADING
-                : EXPORT_LABELS.TRELLO.DEFAULT}
+              {EXPORT_LABELS.TRELLO.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -457,12 +457,12 @@ function ResultsContent() {
             <Button
               variant="outline"
               onClick={() => handleExport('google-tasks')}
-              disabled={exportLoading}
+              loading={exportingFormat === 'google-tasks'}
+              loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
+              disabled={exportLoading && exportingFormat !== 'google-tasks'}
               aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS}
             >
-              {exportingFormat === 'google-tasks'
-                ? EXPORT_LABELS.GOOGLE_TASKS.LOADING
-                : EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
+              {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
             </Button>
           ) : (
             <Tooltip
@@ -489,14 +489,14 @@ function ResultsContent() {
             <Button
               variant="outline"
               onClick={() => handleExport('github-projects')}
-              disabled={exportLoading}
+              loading={exportingFormat === 'github-projects'}
+              loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
+              disabled={exportLoading && exportingFormat !== 'github-projects'}
               aria-label={
                 RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
               }
             >
-              {exportingFormat === 'github-projects'
-                ? EXPORT_LABELS.GITHUB_PROJECTS.LOADING
-                : EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
+              {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
             </Button>
           ) : (
             <Tooltip
