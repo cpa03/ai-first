@@ -11,6 +11,7 @@ import {
   RESPONSIVE_PADDING,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
 
@@ -22,6 +23,7 @@ function MobileNavComponent() {
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const lastMenuItemRef = useRef<HTMLAnchorElement>(null);
   const pathname = usePathname();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const isActive = useCallback(
     (href: string): boolean => {
@@ -219,7 +221,14 @@ function MobileNavComponent() {
               {navLinks.map((link, index) => {
                 const active = isActive(link.href);
                 return (
-                  <li key={link.href}>
+                  <li
+                    key={link.href}
+                    className={
+                      !prefersReducedMotion
+                        ? `animate-mobile-menu-item animate-mobile-menu-item-${index + 1}`
+                        : ''
+                    }
+                  >
                     <Link
                       href={link.href}
                       ref={
