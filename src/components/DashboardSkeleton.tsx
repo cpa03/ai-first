@@ -7,22 +7,8 @@ import {
   TABLE_PATTERNS,
   ANIMATION_DELAYS,
   COMPONENT_CONFIG,
+  DASHBOARD_LABELS,
 } from '@/lib/config';
-
-/**
- * DashboardSkeleton - Micro-UX improvement for perceived performance
- *
- * Shows a skeleton layout that mirrors the actual dashboard structure:
- * - Header with title + button
- * - Filter controls
- * - Table with shimmering rows
- *
- * This provides better perceived performance than a spinner because:
- * 1. Users immediately see the layout they'll interact with
- * 2. Reduces layout shift when data loads (CLS improvement)
- * 3. Animated shimmer creates a sense of progress
- * 4. Matches the exact structure of the loaded state
- */
 
 function DashboardSkeletonComponent() {
   return (
@@ -30,12 +16,10 @@ function DashboardSkeletonComponent() {
       className="animate-fade-in"
       role="status"
       aria-live="polite"
-      aria-label="Loading dashboard"
+      aria-label={DASHBOARD_LABELS.SKELETON_ARIA_LABEL}
     >
-      {/* Screen reader announcement */}
-      <span className="sr-only">Loading your ideas...</span>
+      <span className="sr-only">{DASHBOARD_LABELS.SKELETON_SR_TEXT}</span>
 
-      {/* Header skeleton */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div className="space-y-2">
           <Skeleton className="h-8 w-48" variant="text" />
@@ -44,13 +28,11 @@ function DashboardSkeletonComponent() {
         <Skeleton className="h-10 w-28" variant="rect" />
       </div>
 
-      {/* Filter skeleton */}
       <div className="mb-6 flex flex-wrap items-center gap-4">
         <Skeleton className="h-10 w-40" variant="rect" />
         <Skeleton className="h-4 w-20" variant="text" />
       </div>
 
-      {/* Table skeleton */}
       <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
         <div className="overflow-x-auto">
           <table
@@ -60,13 +42,13 @@ function DashboardSkeletonComponent() {
             <thead className={TABLE_PATTERNS.header.container}>
               <tr>
                 <th scope="col" className={TABLE_PATTERNS.header.cell}>
-                  Title
+                  {DASHBOARD_LABELS.TABLE_HEADERS.TITLE}
                 </th>
                 <th scope="col" className={TABLE_PATTERNS.header.cell}>
-                  Status
+                  {DASHBOARD_LABELS.TABLE_HEADERS.STATUS}
                 </th>
                 <th scope="col" className={TABLE_PATTERNS.header.cell}>
-                  Created
+                  {DASHBOARD_LABELS.TABLE_HEADERS.CREATED}
                 </th>
                 <th
                   scope="col"
@@ -75,7 +57,7 @@ function DashboardSkeletonComponent() {
                     'text-right'
                   )}
                 >
-                  Actions
+                  {DASHBOARD_LABELS.TABLE_HEADERS.ACTIONS}
                 </th>
               </tr>
             </thead>
@@ -90,19 +72,15 @@ function DashboardSkeletonComponent() {
                     animationDelay: `${index * ANIMATION_DELAYS.MICRO}ms`,
                   }}
                 >
-                  {/* Title cell */}
                   <td className={TABLE_PATTERNS.cell.padding}>
                     <Skeleton className="h-4 w-48 max-w-full" variant="text" />
                   </td>
-                  {/* Status cell */}
                   <td className={TABLE_PATTERNS.cell.padding}>
                     <Skeleton className="h-5 w-20" variant="rect" />
                   </td>
-                  {/* Created cell */}
                   <td className={TABLE_PATTERNS.cell.padding}>
                     <Skeleton className="h-4 w-24" variant="text" />
                   </td>
-                  {/* Actions cell */}
                   <td className={TABLE_PATTERNS.actions.container}>
                     <div className={TABLE_PATTERNS.actions.buttonGroup}>
                       <Skeleton className="h-6 w-16" variant="text" />
@@ -117,7 +95,6 @@ function DashboardSkeletonComponent() {
         </div>
       </div>
 
-      {/* Pagination skeleton */}
       <div className="mt-3 flex items-center gap-4">
         <Skeleton className="h-3 w-32" variant="text" />
       </div>
