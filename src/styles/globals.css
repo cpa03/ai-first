@@ -1337,3 +1337,29 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Hamburger Menu Animation - Micro-UX delight for mobile navigation */
+/* Creates a smooth morphing effect when hamburger icon transitions to X */
+/* Uses transform-based animations for 60fps performance */
+@keyframes hamburgerOpen {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.hamburger-open {
+  animation: hamburgerOpen 0.3s var(--ease-spring) forwards;
+}
+
+/* Reduced motion support for hamburger animation */
+@media (prefers-reduced-motion: reduce) {
+  .hamburger-open {
+    animation: none;
+  }
+}
