@@ -12,6 +12,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
 } from '@/lib/config';
+import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 export interface EmailButtonProps {
@@ -46,10 +47,10 @@ const EmailButtonComponent = function EmailButton({
   ideaTitle,
   ideaContent,
   sessionAnswers = {},
-  label = 'Email to Self',
-  successLabel = 'Email Opened!',
-  ariaLabel = 'Email blueprint to yourself',
-  tooltipLabel = 'Send blueprint to your email',
+  label = EMAIL_BUTTON_LABELS.DEFAULT_LABEL,
+  successLabel = EMAIL_BUTTON_LABELS.SUCCESS_LABEL,
+  ariaLabel = EMAIL_BUTTON_LABELS.ARIA_LABEL,
+  tooltipLabel = EMAIL_BUTTON_LABELS.TOOLTIP_LABEL,
   className = '',
   onEmailSent,
 }: EmailButtonProps) {
@@ -77,7 +78,7 @@ const EmailButtonComponent = function EmailButton({
 
       // Create mailto link
       const subject = encodeURIComponent(
-        `My ${APP_CONFIG.NAME} Blueprint: ${ideaTitle}`
+        `${EMAIL_BUTTON_LABELS.SUBJECT_PREFIX} ${APP_CONFIG.NAME} ${EMAIL_BUTTON_LABELS.SUBJECT_SUFFIX} ${ideaTitle}`
       );
       const body = encodeURIComponent(emailBody);
       const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
@@ -188,14 +189,14 @@ function buildEmailBody(
   content: string,
   answers: Record<string, string>
 ): string {
-  let body = `My Project Blueprint from ${APP_CONFIG.NAME}\n`;
-  body += `================================\n\n`;
-  body += `Title: ${title}\n\n`;
-  body += `Summary:\n${content}\n\n`;
+  let body = `${EMAIL_BUTTON_LABELS.BODY_HEADER} ${APP_CONFIG.NAME}\n`;
+  body += `${EMAIL_BUTTON_LABELS.BODY_SEPARATOR}\n\n`;
+  body += `${EMAIL_BUTTON_LABELS.BODY_TITLE_LABEL} ${title}\n\n`;
+  body += `${EMAIL_BUTTON_LABELS.BODY_SUMMARY_LABEL}\n${content}\n\n`;
 
   // Add answers if available
   if (Object.keys(answers).length > 0) {
-    body += `Details:\n`;
+    body += `${EMAIL_BUTTON_LABELS.BODY_DETAILS_LABEL}\n`;
     for (const [key, value] of Object.entries(answers)) {
       // Format key as readable text
       const formattedKey = key
@@ -207,7 +208,7 @@ function buildEmailBody(
   }
 
   body += `---\n`;
-  body += `Created with ${APP_CONFIG.NAME} - ${APP_CONFIG.TAGLINE}\n`;
+  body += `${EMAIL_BUTTON_LABELS.BODY_FOOTER} ${APP_CONFIG.NAME} - ${APP_CONFIG.TAGLINE}\n`;
   body += `${APP_CONFIG.URLS.BASE}`;
 
   return body;
