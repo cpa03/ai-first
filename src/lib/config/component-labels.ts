@@ -403,16 +403,19 @@ export const FEATURE_GRID_LABELS = {
  * Eliminates hardcoded tooltip content strings in Dashboard component
  */
 export const DASHBOARD_LABELS = {
-  /** Tooltip for new idea button */
   NEW_IDEA_TOOLTIP: 'Create a new idea',
-  /** Tooltip for filter button */
   FILTER_TOOLTIP: 'Filter by status',
-  /** Tooltip for clear filter button */
   CLEAR_FILTER_TOOLTIP: 'Clear filter',
-  /** Keyboard shortcut for new idea */
   NEW_IDEA_SHORTCUT: ['N'],
-  /** Keyboard shortcut for filter */
   FILTER_SHORTCUT: ['/'],
+  SKELETON_ARIA_LABEL: 'Loading dashboard',
+  SKELETON_SR_TEXT: 'Loading your ideas...',
+  TABLE_HEADERS: {
+    TITLE: 'Title',
+    STATUS: 'Status',
+    CREATED: 'Created',
+    ACTIONS: 'Actions',
+  },
 };
 
 /**

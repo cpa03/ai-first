@@ -430,6 +430,59 @@ export const DASHBOARD_PAGE_CONTENT = {
 } as const;
 
 /**
+ * Layout Error Fallback Configurations
+ * Centralizes error titles and messages for layout error boundaries
+ */
+export const LOGIN_ERROR_FALLBACK = {
+  TITLE: 'Login Unavailable',
+  MESSAGE:
+    'We encountered an issue while loading the login page. Please try again.',
+} as const;
+
+export const SIGNUP_ERROR_FALLBACK = {
+  TITLE: 'Sign Up Unavailable',
+  MESSAGE:
+    'We encountered an issue while loading the sign up page. Please try again.',
+} as const;
+
+export const DASHBOARD_ERROR_FALLBACK = {
+  TITLE: 'Dashboard Unavailable',
+  MESSAGE:
+    "We couldn't load your dashboard. Please try again to see your ideas.",
+} as const;
+
+export const CLARIFY_ERROR_FALLBACK = {
+  TITLE: 'Clarification Unavailable',
+  MESSAGE:
+    'We encountered an issue while loading the clarification flow. Your progress has been saved.',
+} as const;
+
+export const RESULTS_ERROR_FALLBACK = {
+  TITLE: 'Results Unavailable',
+  MESSAGE:
+    "We couldn't load your project results. Please try again or start a new idea.",
+  HOME_LABEL: 'New Idea',
+} as const;
+
+export const AUTH_CALLBACK_ERROR_FALLBACK = {
+  TITLE: 'Authentication Unavailable',
+  MESSAGE:
+    'We encountered an issue while processing your authentication. Please try again.',
+} as const;
+
+/**
+ * All layout error fallbacks exported as a single object
+ */
+export const LAYOUT_ERROR_FALLBACKS = {
+  LOGIN: LOGIN_ERROR_FALLBACK,
+  SIGNUP: SIGNUP_ERROR_FALLBACK,
+  DASHBOARD: DASHBOARD_ERROR_FALLBACK,
+  CLARIFY: CLARIFY_ERROR_FALLBACK,
+  RESULTS: RESULTS_ERROR_FALLBACK,
+  AUTH_CALLBACK: AUTH_CALLBACK_ERROR_FALLBACK,
+} as const;
+
+/**
  * All page configurations exported as a single object
  */
 export const PAGE_CONFIG = {
@@ -450,3 +503,10 @@ export type HomePageConfig = typeof HOME_PAGE_CONFIG;
 export type LoginPageConfig = typeof LOGIN_PAGE_CONFIG;
 export type SignupPageConfig = typeof SIGNUP_PAGE_CONFIG;
 export type AuthCallbackPageConfig = typeof AUTH_CALLBACK_PAGE_CONFIG;
+export type LayoutErrorFallback = typeof LAYOUT_ERROR_FALLBACKS;
+export type LoginErrorFallback = typeof LOGIN_ERROR_FALLBACK;
+export type SignupErrorFallback = typeof SIGNUP_ERROR_FALLBACK;
+export type DashboardErrorFallback = typeof DASHBOARD_ERROR_FALLBACK;
+export type ClarifyErrorFallback = typeof CLARIFY_ERROR_FALLBACK;
+export type ResultsErrorFallback = typeof RESULTS_ERROR_FALLBACK;
+export type AuthCallbackErrorFallback = typeof AUTH_CALLBACK_ERROR_FALLBACK;
