@@ -310,12 +310,27 @@ function ClarificationFlow({
 
       <div aria-live="polite" aria-atomic="true">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-900">
-            {LABELS.QUESTION(currentStep)} of {questions.length}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-gray-900">
+              {LABELS.QUESTION(currentStep)} of {questions.length}
+            </span>
+            {currentStep === questions.length - 1 && (
+              <span
+                className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 animate-in fade-in zoom-in duration-300"
+                role="status"
+                aria-label={CLARIFICATION_FLOW_LABELS.FINAL_STEP}
+              >
+                {CLARIFICATION_FLOW_LABELS.FINAL_STEP}
+              </span>
+            )}
+          </div>
           <span
             key={currentStep}
-            className="text-sm text-gray-900 font-medium animate-scale-in tabular-nums"
+            className={`text-sm font-medium animate-scale-in tabular-nums ${
+              currentStep === questions.length - 1
+                ? 'text-green-600'
+                : 'text-gray-900'
+            }`}
             aria-label={`Progress: ${Math.round(progress)} percent`}
           >
             {Math.round(progress)}%
