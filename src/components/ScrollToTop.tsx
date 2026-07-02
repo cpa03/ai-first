@@ -10,6 +10,7 @@ import {
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
   UI_TIMING_CONFIG,
+  UI_DURATIONS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -38,7 +39,7 @@ function ScrollToTopComponent({
   // Micro-UX: Smooth counter animation for scroll percentage
   // Provides fluid visual feedback instead of abrupt number changes
   const animatedPercentage = useAnimatedCounter(Math.round(scrollProgress), {
-    duration: 100,
+    duration: UI_DURATIONS.ANIMATED_COUNTER,
   });
 
   const calculateScrollProgress = useCallback(() => {
