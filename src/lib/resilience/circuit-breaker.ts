@@ -59,22 +59,38 @@ export class CircuitBreaker {
   }
 
   /**
+   * Binary search to find the first index where failures[index] >= cutoff
+   * PERFORMANCE: O(log N) complexity compared to O(N) linear scan.
+   */
+  private findFirstValidIndex(cutoff: number): number {
+    let low = 0;
+    let high = this.recentFailures.length - 1;
+    let result = -1;
+
+    while (low <= high) {
+      const mid = (low + high) >>> 1;
+      if (this.recentFailures[mid] >= cutoff) {
+        result = mid;
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+
+    return result;
+  }
+
+  /**
    * Cleanup failure timestamps that are outside the monitoring period.
    * PERFORMANCE: Since timestamps are added chronologically, we find the
-   * first valid index in O(N) but only allocate a new array if needed.
-   * This avoids the overhead of Array.filter()'s callback and new array creation.
+   * first valid index in O(log N) via binary search and only allocate a new
+   * array if needed. This avoids O(N) linear scans and unnecessary allocations.
    */
   private cleanupOldFailures(now: number): void {
     const monitoringPeriod = this.config.monitoringPeriodMs;
     const cutoff = now - monitoringPeriod;
 
-    let firstValidIndex = -1;
-    for (let i = 0; i < this.recentFailures.length; i++) {
-      if (this.recentFailures[i] >= cutoff) {
-        firstValidIndex = i;
-        break;
-      }
-    }
+    const firstValidIndex = this.findFirstValidIndex(cutoff);
 
     if (firstValidIndex === -1) {
       // All failures have expired
@@ -82,7 +98,7 @@ export class CircuitBreaker {
         this.recentFailures = [];
       }
     } else if (firstValidIndex > 0) {
-      // Some failures have expired
+      // Some failures have expired, remove them
       this.recentFailures = this.recentFailures.slice(firstValidIndex);
     }
     // If firstValidIndex is 0, all failures are still within the monitoring period.

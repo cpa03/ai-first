@@ -624,8 +624,11 @@ class AIService {
 
     // PERFORMANCE: Update cache with the new total instead of clearing it.
     // This keeps subsequent calls to getTodayCost() as O(1).
-    const today = new Date().toDateString();
-    const cacheKey = `today:${today}`;
+    // We use the day-start numeric timestamp as the key to match getTodayCost.
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+    const dayStart = todayDate.getTime();
+    const cacheKey = `today:${dayStart}`;
     this.todayCostCache.set(cacheKey, totalTodayCost);
 
     const dailyLimit = parseFloat(
