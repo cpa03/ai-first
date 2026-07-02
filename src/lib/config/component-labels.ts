@@ -386,6 +386,7 @@ export const USER_ONBOARDING_COMPLETION_LABELS = {
  */
 export const CLARIFICATION_FLOW_LABELS = {
   PREPARING_QUESTIONS: 'Preparing questions...',
+  FINAL_STEP: 'Final Step',
 } as const;
 
 /**
