@@ -113,8 +113,10 @@
     /AutoSaveIndicator.tsx  ← Auto-save status indicator
     /BlueprintDisplay.tsx   ← Blueprint display UI
     /Button.tsx            ← Reusable button component
+    /CapsLockWarning.tsx   ← Caps lock warning indicator
     /ClarificationFlow.tsx  ← Clarification workflow UI
     /CopyButton.tsx         ← Copy to clipboard button
+    /DashboardSkeleton.tsx  ← Dashboard loading skeleton
     /EmailButton.tsx         ← Email send-to-self button
     /ErrorBoundary.tsx      ← Error boundary component
     /FeatureGrid.tsx        ← Feature showcase grid
@@ -212,8 +214,12 @@
       /config.ts            ← Resilience config
       /types.ts             ← Resilience types
     /security/           ← Security utilities
+      /audit-log.ts      ← Audit logging
       /crypto.ts         ← Cryptographic functions
       /csrf.ts           ← CSRF protection
+      /env-validation.ts ← Environment variable validation
+      /index.ts          ← Security module exports
+      /json-ld.ts        ← JSON-LD structured data
       /request-signer.ts ← Request signing
       /suspicious-patterns.ts ← Threat detection
   /types/                   ← TypeScript type definitions
@@ -246,6 +252,10 @@
   /docs-link-validator.js   ← Documentation link checker
   /setup.js                 ← Project setup script
   /config.js                ← Configuration loader
+  /bug-scan.sh             ← Bug scanning script
+  /backup.sh               ← Backup script
+  /backup-verify.sh        ← Backup verification script
+  /security/               ← Security scripts directory
 /tests/                     ← Test files
   /api/                    ← API tests
   /utils/                   ← Test utilities

@@ -31,6 +31,12 @@
     "atlas": {
       "model": "opencode/mimo-v2.5-free"
     },
+    "frontend_ui_ux": {
+      "model": "opencode/glm-4.7-free"
+    },
+    "minimax_agent": {
+      "model": "opencode/minimax-m2.1-free"
+    },
     "repokeeper": {
       "model": "opencode/mimo-v2.5-free"
     }
