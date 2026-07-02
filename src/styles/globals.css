@@ -1363,3 +1363,12 @@ button[aria-disabled='true'].btn-glow-hover {
     animation: none;
   }
 }
+
+/* Micro-UX: Touch device visibility for hover-dependent UI elements */
+/* On touch devices, hover states don't persist, so hover-only elements are invisible */
+/* This utility ensures elements remain visible on devices that don't support hover */
+@media (hover: none) and (pointer: coarse) {
+  .touch-device-visible {
+    opacity: 1 !important;
+  }
+}
