@@ -105,10 +105,6 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     return `${baseClasses} ${stateClasses}`;
   }, [isCompleted]);
 
-  const tooltipContent = isCompleted
-    ? TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_INCOMPLETE
-    : TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_COMPLETE;
-
   const containerClasses = useMemo(() => {
     const base = isCompleted
       ? TASK_ITEM_STYLES.CONTAINER_COMPLETED
@@ -134,7 +130,14 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
         }
         triggered={isToggled}
       />
-      <Tooltip content={tooltipContent}>
+      <Tooltip
+        content={
+          isCompleted
+            ? TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_INCOMPLETE
+            : TASK_MANAGEMENT_MESSAGES.TOOLTIP.MARK_COMPLETE
+        }
+        shortcut={['Space']}
+      >
         <button
           onClick={handleClick}
           onKeyDown={handleKeyDown}
