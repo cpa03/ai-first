@@ -4,6 +4,7 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService, Task } from '@/lib/db';
+import { sanitizeHtml } from '@/lib/validation';
 import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -114,8 +115,12 @@ async function handlePut(context: ApiContext) {
     // Update the task
     const updates: Partial<Task> = {};
 
-    if (body.title !== undefined) updates.title = body.title;
-    if (body.description !== undefined) updates.description = body.description;
+    if (body.title !== undefined) {
+      updates.title = sanitizeHtml(body.title);
+    }
+    if (body.description !== undefined) {
+      updates.description = body.description ? sanitizeHtml(body.description) : body.description;
+    }
     if (body.status !== undefined) updates.status = body.status;
     if (body.assignee !== undefined) updates.assignee = body.assignee;
     if (body.estimate !== undefined) updates.estimate = body.estimate;
