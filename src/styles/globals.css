@@ -1411,3 +1411,39 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+/* Floating Animation - Micro-UX delight for idle icons */
+/* Creates a gentle bobbing effect that makes static icons feel alive and inviting */
+/* Used in dashboard empty state 3-step flow to guide user attention */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Staggered float delays for sequential visual flow */
+.animate-float-delay-1 {
+  animation: float 3s ease-in-out 0.3s infinite;
+}
+
+.animate-float-delay-2 {
+  animation: float 3s ease-in-out 0.6s infinite;
+}
+
+/* Reduced motion support for floating animation */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-delay-1,
+  .animate-float-delay-2 {
+    animation: none;
+    transform: none;
+  }
+}
