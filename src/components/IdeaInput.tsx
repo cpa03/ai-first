@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { triggerHapticFeedback } from '@/lib/utils';
-import { MIN_IDEA_LENGTH, MAX_IDEA_LENGTH } from '@/lib/validation';
+import {
+  MIN_IDEA_LENGTH,
+  MAX_IDEA_LENGTH,
+  validateIdea as validateIdeaCentral,
+} from '@/lib/validation';
 import {
   MESSAGES,
   PLACEHOLDERS,
@@ -28,11 +32,12 @@ interface IdeaInputProps {
 }
 
 const validateIdea = (idea: string): string | null => {
-  if (idea.trim().length < MIN_IDEA_LENGTH) {
-    return `Idea must be at least ${MIN_IDEA_LENGTH} characters.`;
-  }
-  if (idea.length > MAX_IDEA_LENGTH) {
-    return `Idea must be at most ${MAX_IDEA_LENGTH} characters.`;
+  const result = validateIdeaCentral(idea);
+  if (!result.valid && result.errors.length > 0) {
+    // Maintain backward compatibility with the component's expected error format (string | null)
+    // and capitalization if necessary, though centralized messages are usually fine.
+    const message = result.errors[0].message;
+    return message.charAt(0).toUpperCase() + message.slice(1);
   }
   return null;
 };
@@ -197,7 +202,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   // Micro-UX improvement: Add Escape key to clear input field
   // This provides a quick way for keyboard users to reset the input
-  const handleClearWithKeyboard = useCallback(() => {
+  const handleClear = useCallback(() => {
     if (idea.trim()) {
       triggerHapticFeedback();
       setIdea('');
@@ -223,10 +228,10 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       // Only if input has content and not currently submitting
       if (e.key === 'Escape' && idea.trim() && !isSubmitting) {
         e.preventDefault();
-        handleClearWithKeyboard();
+        handleClear();
       }
     },
-    [isSubmitting, idea, validationError, handleSubmit, handleClearWithKeyboard]
+    [isSubmitting, idea, validationError, handleSubmit, handleClear]
   );
 
   const handleCelebrationComplete = useCallback(() => {
@@ -383,17 +388,31 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             </div>
             <AutoSaveIndicator value={idea} />
           </div>
-          <Button
-            type="submit"
-            variant="primary"
-            loading={isSubmitting}
-            loadingText={MESSAGES.IDEA_INPUT.PROCESSING_BUTTON}
-            disabled={!idea.trim() || !!validationError}
-            attention={!!idea.trim() && !validationError && !isSubmitting}
-            enableTransition
-          >
-            {MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
-          </Button>
+          <div className="flex items-center gap-3">
+            {idea.trim() && !isSubmitting && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handleClear}
+                aria-label="Clear input"
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              >
+                Clear
+              </Button>
+            )}
+            <Button
+              type="submit"
+              variant="primary"
+              loading={isSubmitting}
+              loadingText={MESSAGES.IDEA_INPUT.PROCESSING_BUTTON}
+              disabled={!idea.trim() || !!validationError}
+              attention={!!idea.trim() && !validationError && !isSubmitting}
+              enableTransition
+            >
+              {MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
+            </Button>
+          </div>
         </div>
       </form>
     </>

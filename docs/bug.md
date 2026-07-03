@@ -8,7 +8,26 @@ _None - all bugs fixed!_
 
 ---
 
+## Active Bugs
+
+_None - all bugs fixed!_
+
+---
+
 ## Fixed Bugs
+
+### [x] bug: direct console.error call in src/lib/security/suspicious-patterns.ts
+
+**File:** `src/lib/security/suspicious-patterns.ts:675` (approximate)
+**Severity:** LOW
+**Status:** ✅ FIXED
+
+**Description:**
+Direct `console.error` call used during pattern initialization instead of the standardized `logger` service.
+
+**Fix:**
+Replaced `console.error` with `logger.error`.
+
 
 ### [x] Bug 1: RetryExhaustedError duplicates "after X attempts" message
 
