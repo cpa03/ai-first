@@ -8,8 +8,12 @@ import React, {
   useId,
   memo,
 } from 'react';
-import { ANIMATION_CONFIG, UI_CONFIG } from '@/lib/config/constants';
 import {
+  ANIMATION_CONFIG,
+  UI_CONFIG as UI_CONFIG_CONSTANTS,
+} from '@/lib/config/constants';
+import {
+  UI_CONFIG,
   Z_INDEX_LAYERS,
   CONTAINER_WIDTH_CLASSES,
   TEXT_SIZE_CLASSES,
@@ -36,7 +40,7 @@ function TooltipComponent({
   content,
   shortcut,
   position = 'top',
-  delay = UI_CONFIG.TOOLTIP_DELAY,
+  delay = UI_CONFIG_CONSTANTS.TOOLTIP_DELAY,
   disabled = false,
   className = '',
 }: TooltipProps) {
@@ -86,7 +90,7 @@ function TooltipComponent({
     touchStartRef.current = Date.now();
     touchTimeoutRef.current = setTimeout(() => {
       showTooltip();
-    }, UI_CONFIG.TOOLTIP_TOUCH_PRESS_MS);
+    }, UI_CONFIG_CONSTANTS.TOOLTIP_TOUCH_PRESS_MS);
   }, [showTooltip]);
 
   const handleTouchEnd = useCallback(() => {
@@ -94,8 +98,8 @@ function TooltipComponent({
       clearTimeout(touchTimeoutRef.current);
     }
     const pressDuration = Date.now() - touchStartRef.current;
-    if (pressDuration >= UI_CONFIG.TOOLTIP_TOUCH_PRESS_MS) {
-      setTimeout(hideTooltip, UI_CONFIG.TOOLTIP_HIDE_DELAY_MS);
+    if (pressDuration >= UI_CONFIG_CONSTANTS.TOOLTIP_TOUCH_PRESS_MS) {
+      setTimeout(hideTooltip, UI_CONFIG_CONSTANTS.TOOLTIP_HIDE_DELAY_MS);
     }
   }, [hideTooltip]);
 
@@ -202,7 +206,7 @@ function TooltipComponent({
                   {shortcut.map((key, i) => (
                     <React.Fragment key={i}>
                       <kbd
-                        className={`min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-bold text-gray-300`}
+                        className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_DARK} ${TEXT_SIZE_CLASSES.XS}`}
                       >
                         {key === '⌘' ? (isMac ? '⌘' : 'Ctrl') : key}
                       </kbd>

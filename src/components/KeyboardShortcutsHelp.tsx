@@ -16,6 +16,7 @@ import {
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
   KEYBOARD_SHORTCUTS_HELP_LABELS,
+  SIZES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -596,7 +597,7 @@ function KeyboardShortcutsHelpComponent({
       />
       <div
         ref={modalRef}
-        className={`relative bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-hidden transform transition-all duration-300 ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`relative bg-white rounded-xl shadow-2xl max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform transition-all duration-300 ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
       >
         {/* Search */}
         <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
@@ -736,7 +737,9 @@ function KeyboardShortcutsHelpComponent({
         </div>
 
         {/* Shortcuts List */}
-        <div className="overflow-y-auto max-h-[60vh] p-6">
+        <div
+          className={`overflow-y-auto ${SIZES.COMPONENT.SCROLLABLE_MAX_HEIGHT} p-6`}
+        >
           {flatShortcuts.length === 0 && searchQuery ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
