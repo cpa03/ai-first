@@ -44,7 +44,6 @@ function WhyChooseSectionComponent() {
         {ARTICLES.map((article, index) => (
           <article
             key={article.id}
-            role="group"
             aria-label={article.TITLE}
             className={`group ${ARTICLE_STYLES.CONTAINER} ${article.HOVER_BORDER} ${article.HOVER_BG} ${
               isVisible ? animationClasses[index] : 'opacity-0'

@@ -803,11 +803,7 @@ function KeyboardShortcutsHelpComponent({
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
           <p className="text-xs text-gray-600 text-center flex items-center justify-center gap-2">
-            <span
-              role="img"
-              aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.TIP_ARIA_LABEL}
-              className="text-base"
-            >
+            <span aria-hidden="true" className="text-base">
               💡
             </span>
             <span>{KEYBOARD_SHORTCUTS_HELP_LABELS.TIP_TEXT}</span>
