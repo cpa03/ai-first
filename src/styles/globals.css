@@ -585,16 +585,6 @@
   }
 }
 
-.why-choose-focus:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 3px var(--shadow-success-medium),
-    0 0 0 6px var(--shadow-success-light);
-  border-color: rgb(var(--color-success-500));
-  z-index: var(--z-index-focus-ring);
-  position: relative;
-}
-
 /* Button glow pulse animation - adds delightful hover effect to primary CTAs */
 /* Creates a soft breathing glow that draws attention and adds modern polish */
 @keyframes glowPulse {
