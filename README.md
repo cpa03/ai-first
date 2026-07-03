@@ -149,11 +149,14 @@
       /TaskItem.tsx           ← Individual task item with status toggle
       /TaskManagementHeader.tsx ← Header with progress stats
   /hooks/                  ← React custom hooks
+    /useAnimatedCounter.ts  ← Animated counter hook
     /useAuthCheck.ts        ← Authentication check hook
     /useBlueprintGeneration.ts ← Blueprint generation hook
+    /useCapsLock.ts         ← Caps lock detection hook
     /useClarificationSession.ts ← Clarification session hook
+    /useCountUp.ts          ← Count up animation hook
     /usePrefersReducedMotion.ts ← Reduced motion preference hook
-    /useSessionDuration.ts   ← Session duration tracking hook
+    /useSessionDuration.ts  ← Session duration tracking hook
     /useTaskManagement.ts   ← Task management hook
   /lib/                    ← Core utilities
     /ai.ts                ← AI provider abstraction
