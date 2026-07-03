@@ -268,12 +268,12 @@
 
 IdeaFlow uses specialized AI agents that automate repository management:
 
-1. **Clarification Agent** - Asks targeted questions to refine raw ideas
-2. **Breakdown Agent** - Decomposes ideas into deliverables and tasks
-3. **Timeline Agent** - Generates realistic project timelines
-4. **Export Agent** - Creates downloadable plans and integrates with external tools
+1. **Clarification Agent** - Asks targeted questions to refine raw ideas with session management
+2. **Breakdown Agent** - Decomposes ideas into deliverables and tasks with dependency analysis
+3. **Timeline Agent** - Generates realistic project timelines with confidence scoring
+4. **Export Agent** - Creates downloadable plans and integrates with Notion, Trello, GitHub Projects
 
-Agents operate through GitHub Actions, creating branches, making commits, and opening PRs for human review.
+Agents operate through GitHub Actions with OpenCode CLI orchestration, creating branches, making commits, and opening PRs for human review. The system includes parallel testing, automated issue/PR triage, and multi-agent coordination.
 
 ## 🛠️ Development Guidelines
 
@@ -327,14 +327,21 @@ vercel --prod
 - **Hosting**: Vercel (free tier)
 - **CI/CD**: GitHub Actions with OpenCode CLI agents
 
-### Phase 0 Current Capabilities
+### Current Capabilities
 
 - ✅ Repository structure and agent workflows
-- ✅ Basic Next.js scaffold
-- ✅ Supabase database schema
-- ✅ GitHub Actions automation skeleton
-- ✅ Clarification Agent
-- ✅ Blueprint export functionality
+- ✅ Next.js App Router with full page structure
+- ✅ Supabase database schema and migrations
+- ✅ GitHub Actions automation (CI/CD, parallel testing, issue/PR triage)
+- ✅ Clarification Agent with session management
+- ✅ Breakdown Engine with task decomposition and timeline generation
+- ✅ Task Management UI with deliverables and task tracking
+- ✅ Vector store integration for similarity matching
+- ✅ Export connectors (Notion, Trello, GitHub Projects)
+- ✅ Resilience framework (circuit breaker, retry, timeout)
+- ✅ Security utilities (CSRF, audit logging, threat detection)
+- ✅ Health monitoring and metrics collection
+- ✅ Multi-agent orchestration (OpenCode CLI integration)
 
 ## 🤝 Contributing & Issues
 
@@ -395,32 +402,34 @@ All automated work follows this pattern:
 
 ## 🗺️ Roadmap
 
-### Phase 0 (Current) - Foundation
+### Phase 0 - Foundation ✅
 
 - [x] Repository structure and automation
-- [x] Basic frontend scaffold
-- [x] Database schema
+- [x] Next.js App Router scaffold
+- [x] Supabase database schema
 - [x] Clarification Agent MVP
 - [x] Blueprint export functionality
 
-### Phase 1 - MVP
+### Phase 1 - MVP ✅
 
-- [ ] Automatic breakdown engine
-- [ ] Timeline generator
-- [ ] Task management UI
-- [ ] Vector store integration
+- [x] Breakdown Engine with task decomposition
+- [x] Timeline Generator
+- [x] Task Management UI with deliverables
+- [x] Vector store integration for similarity matching
 
-### Phase 2 - Integrations
+### Phase 2 - Integrations ✅
 
-- [ ] Notion/Trello exports
-- [ ] Advanced agent orchestration
-- [ ] Progress analytics
+- [x] Notion/Trello/GitHub Projects export connectors
+- [x] Multi-agent orchestration (OpenCode CLI)
+- [x] Resilience framework (circuit breaker, retry, timeout)
+- [x] Security utilities (CSRF, audit logging, threat detection)
 
-### Phase 3 - Scale
+### Phase 3 - Scale (In Progress)
 
 - [ ] Team collaboration features
-- [ ] Advanced analytics
-- [ ] Paid plans and billing
+- [ ] Advanced analytics dashboard
+- [ ] Performance optimization (caching, CDN)
+- [ ] Comprehensive test coverage expansion
 
 ## 📄 License
 
