@@ -704,7 +704,9 @@ export default function DashboardPage() {
                   role="listitem"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
-                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 transition-transform duration-200 hover:scale-110">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float'}`}
+                  >
                     <svg
                       className="w-7 h-7 text-amber-500"
                       fill="none"
@@ -753,7 +755,9 @@ export default function DashboardPage() {
                   role="listitem"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }}
                 >
-                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-primary-50 border border-primary-200 transition-transform duration-200 hover:scale-110">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-primary-50 border border-primary-200 transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float-delay-1'}`}
+                  >
                     <svg
                       className="w-7 h-7 text-primary-500"
                       fill="none"
@@ -802,7 +806,9 @@ export default function DashboardPage() {
                   role="listitem"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }}
                 >
-                  <div className="w-14 h-14 flex items-center justify-center rounded-2xl bg-green-50 border border-green-200 transition-transform duration-200 hover:scale-110">
+                  <div
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-green-50 border border-green-200 transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float-delay-2'}`}
+                  >
                     <svg
                       className="w-7 h-7 text-green-500"
                       fill="none"
