@@ -6,6 +6,7 @@ import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import {
   SPINNER_PATTERNS,
@@ -17,6 +18,7 @@ import {
   API_ROUTES,
   RESULTS_PAGE_CONTENT,
   PAGE_LAYOUT_CLASSES,
+  ANIMATION_DELAYS,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -137,6 +139,7 @@ function ResultsContent() {
     Record<string, { configured: boolean; name: string }>
   >({});
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     if (authLoading) return;
@@ -357,182 +360,256 @@ function ResultsContent() {
           {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
         </h2>
 
+        {/* Micro-UX: Staggered entrance animation for export buttons */}
+        {/* Creates a cascading fade-in effect that guides user attention to available export options */}
+        {/* Respects prefers-reduced-motion for accessibility */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Markdown Export */}
-          <Tooltip
-            content={RESULTS_PAGE_CONTENT.TOOLTIPS.MARKDOWN}
-            position="top"
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
+                : undefined
+            }
           >
-            <Button
-              variant="primary"
-              onClick={() => handleExport('markdown')}
-              loading={exportingFormat === 'markdown'}
-              loadingText={EXPORT_LABELS.MARKDOWN.LOADING}
-              disabled={exportLoading && exportingFormat !== 'markdown'}
-              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.DOWNLOAD_MARKDOWN}
+            <Tooltip
+              content={RESULTS_PAGE_CONTENT.TOOLTIPS.MARKDOWN}
+              position="top"
             >
-              {EXPORT_LABELS.MARKDOWN.DEFAULT}
-            </Button>
-          </Tooltip>
+              <Button
+                variant="primary"
+                onClick={() => handleExport('markdown')}
+                loading={exportingFormat === 'markdown'}
+                loadingText={EXPORT_LABELS.MARKDOWN.LOADING}
+                disabled={exportLoading && exportingFormat !== 'markdown'}
+                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.DOWNLOAD_MARKDOWN}
+              >
+                {EXPORT_LABELS.MARKDOWN.DEFAULT}
+              </Button>
+            </Tooltip>
+          </div>
 
           {/* JSON Export */}
-          <Tooltip content={RESULTS_PAGE_CONTENT.TOOLTIPS.JSON} position="top">
-            <Button
-              variant="secondary"
-              onClick={() => handleExport('json')}
-              loading={exportingFormat === 'json'}
-              loadingText={EXPORT_LABELS.JSON.LOADING}
-              disabled={exportLoading && exportingFormat !== 'json'}
-              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_JSON}
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.SHORT }
+                : undefined
+            }
+          >
+            <Tooltip
+              content={RESULTS_PAGE_CONTENT.TOOLTIPS.JSON}
+              position="top"
             >
-              {EXPORT_LABELS.JSON.DEFAULT}
-            </Button>
-          </Tooltip>
+              <Button
+                variant="secondary"
+                onClick={() => handleExport('json')}
+                loading={exportingFormat === 'json'}
+                loadingText={EXPORT_LABELS.JSON.LOADING}
+                disabled={exportLoading && exportingFormat !== 'json'}
+                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_JSON}
+              >
+                {EXPORT_LABELS.JSON.DEFAULT}
+              </Button>
+            </Tooltip>
+          </div>
 
           {/* Notion Export */}
-          {connectorHealth.notion?.configured ? (
-            <Button
-              variant="outline"
-              onClick={() => handleExport('notion')}
-              loading={exportingFormat === 'notion'}
-              loadingText={EXPORT_LABELS.NOTION.LOADING}
-              disabled={exportLoading && exportingFormat !== 'notion'}
-              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
-            >
-              {EXPORT_LABELS.NOTION.DEFAULT}
-            </Button>
-          ) : (
-            <Tooltip
-              content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
-              position="top"
-            >
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }
+                : undefined
+            }
+          >
+            {connectorHealth.notion?.configured ? (
               <Button
                 variant="outline"
-                disabled={true}
-                aria-label={
-                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION_SETUP
-                }
+                onClick={() => handleExport('notion')}
+                loading={exportingFormat === 'notion'}
+                loadingText={EXPORT_LABELS.NOTION.LOADING}
+                disabled={exportLoading && exportingFormat !== 'notion'}
+                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
               >
                 {EXPORT_LABELS.NOTION.DEFAULT}
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                </span>
               </Button>
-            </Tooltip>
-          )}
+            ) : (
+              <Tooltip
+                content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
+                position="top"
+              >
+                <Button
+                  variant="outline"
+                  disabled={true}
+                  aria-label={
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION_SETUP
+                  }
+                >
+                  {EXPORT_LABELS.NOTION.DEFAULT}
+                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                  </span>
+                </Button>
+              </Tooltip>
+            )}
+          </div>
 
           {/* Trello Export */}
-          {connectorHealth.trello?.configured ? (
-            <Button
-              variant="outline"
-              onClick={() => handleExport('trello')}
-              loading={exportingFormat === 'trello'}
-              loadingText={EXPORT_LABELS.TRELLO.LOADING}
-              disabled={exportLoading && exportingFormat !== 'trello'}
-              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
-            >
-              {EXPORT_LABELS.TRELLO.DEFAULT}
-            </Button>
-          ) : (
-            <Tooltip
-              content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
-              position="top"
-            >
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.LONG }
+                : undefined
+            }
+          >
+            {connectorHealth.trello?.configured ? (
               <Button
                 variant="outline"
-                disabled={true}
-                aria-label={
-                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO_SETUP
-                }
+                onClick={() => handleExport('trello')}
+                loading={exportingFormat === 'trello'}
+                loadingText={EXPORT_LABELS.TRELLO.LOADING}
+                disabled={exportLoading && exportingFormat !== 'trello'}
+                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
               >
                 {EXPORT_LABELS.TRELLO.DEFAULT}
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                </span>
               </Button>
-            </Tooltip>
-          )}
+            ) : (
+              <Tooltip
+                content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
+                position="top"
+              >
+                <Button
+                  variant="outline"
+                  disabled={true}
+                  aria-label={
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO_SETUP
+                  }
+                >
+                  {EXPORT_LABELS.TRELLO.DEFAULT}
+                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                  </span>
+                </Button>
+              </Tooltip>
+            )}
+          </div>
 
           {/* Google Tasks Export */}
-          {connectorHealth['google-tasks']?.configured ? (
-            <Button
-              variant="outline"
-              onClick={() => handleExport('google-tasks')}
-              loading={exportingFormat === 'google-tasks'}
-              loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
-              disabled={exportLoading && exportingFormat !== 'google-tasks'}
-              aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS}
-            >
-              {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
-            </Button>
-          ) : (
-            <Tooltip
-              content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
-              position="top"
-            >
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }
+                : undefined
+            }
+          >
+            {connectorHealth['google-tasks']?.configured ? (
               <Button
                 variant="outline"
-                disabled={true}
+                onClick={() => handleExport('google-tasks')}
+                loading={exportingFormat === 'google-tasks'}
+                loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
+                disabled={exportLoading && exportingFormat !== 'google-tasks'}
                 aria-label={
-                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS_SETUP
+                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS
                 }
               >
                 {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                </span>
               </Button>
-            </Tooltip>
-          )}
+            ) : (
+              <Tooltip
+                content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
+                position="top"
+              >
+                <Button
+                  variant="outline"
+                  disabled={true}
+                  aria-label={
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS_SETUP
+                  }
+                >
+                  {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
+                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                  </span>
+                </Button>
+              </Tooltip>
+            )}
+          </div>
 
           {/* GitHub Projects Export */}
-          {connectorHealth['github-projects']?.configured ? (
-            <Button
-              variant="outline"
-              onClick={() => handleExport('github-projects')}
-              loading={exportingFormat === 'github-projects'}
-              loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
-              disabled={exportLoading && exportingFormat !== 'github-projects'}
-              aria-label={
-                RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
-              }
-            >
-              {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-            </Button>
-          ) : (
-            <Tooltip
-              content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
-              position="top"
-            >
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }
+                : undefined
+            }
+          >
+            {connectorHealth['github-projects']?.configured ? (
               <Button
                 variant="outline"
-                disabled={true}
+                onClick={() => handleExport('github-projects')}
+                loading={exportingFormat === 'github-projects'}
+                loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
+                disabled={
+                  exportLoading && exportingFormat !== 'github-projects'
+                }
                 aria-label={
-                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS_SETUP
+                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
                 }
               >
                 {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-                <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                  {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                </span>
               </Button>
-            </Tooltip>
-          )}
+            ) : (
+              <Tooltip
+                content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
+                position="top"
+              >
+                <Button
+                  variant="outline"
+                  disabled={true}
+                  aria-label={
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS
+                      .EXPORT_GITHUB_PROJECTS_SETUP
+                  }
+                >
+                  {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
+                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                  </span>
+                </Button>
+              </Tooltip>
+            )}
+          </div>
 
           {/* Email to Self - Growth: User retention and accessibility */}
-          <EmailButton
-            ideaTitle={idea.title}
-            ideaContent={idea.raw_text}
-            sessionAnswers={formattedAnswers}
-            onEmailSent={() => {
-              // Growth: Track email send event
-              trackEvent(ANALYTICS_EVENTS.CTA_CLICK, {
-                cta_name: 'email_send_to_self',
-                idea_id: idea.id,
-                page_path: '/results',
-              });
-            }}
-          />
+          <div
+            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }
+                : undefined
+            }
+          >
+            <EmailButton
+              ideaTitle={idea.title}
+              ideaContent={idea.raw_text}
+              sessionAnswers={formattedAnswers}
+              onEmailSent={() => {
+                // Growth: Track email send event
+                trackEvent(ANALYTICS_EVENTS.CTA_CLICK, {
+                  cta_name: 'email_send_to_self',
+                  idea_id: idea.id,
+                  page_path: '/results',
+                });
+              }}
+            />
+          </div>
         </div>
 
         {exportUrl && (
