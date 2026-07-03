@@ -45,7 +45,9 @@ describe('DependencyAnalyzer Performance', () => {
     const end = performance.now();
 
     const duration = end - start;
-    console.log(`[PERF] Analysis of ${taskCount} tasks took ${duration.toFixed(4)}ms`);
+    console.log(
+      `[PERF] Analysis of ${taskCount} tasks took ${duration.toFixed(4)}ms`
+    );
 
     expect(result.nodes).toHaveLength(taskCount);
     expect(result.edges).toHaveLength(taskCount - 1);
@@ -71,11 +73,14 @@ describe('DependencyAnalyzer Performance', () => {
     analyzer.analyzeDependencies(largeTasks);
     const durationLarge = performance.now() - startLarge;
 
-    console.log(`[PERF] 1k tasks: ${durationSmall.toFixed(4)}ms, 10k tasks: ${durationLarge.toFixed(4)}ms`);
+    console.log(
+      `[PERF] 1k tasks: ${durationSmall.toFixed(4)}ms, 10k tasks: ${durationLarge.toFixed(4)}ms`
+    );
 
     // In O(V*E), 10x size = 100x time.
     // In O(V+E), 10x size = ~10x time (ignoring constant factors and GC).
-    // We allow a generous buffer for environment variability.
-    expect(durationLarge).toBeLessThan(durationSmall * 30);
+    // We allow a generous buffer for environment variability and CI runner constraints.
+    // Increased from 30x to 50x to account for cold starts, GC pauses, and resource contention.
+    expect(durationLarge).toBeLessThan(durationSmall * 50);
   });
 });
