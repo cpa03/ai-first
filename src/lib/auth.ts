@@ -43,18 +43,21 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
   if (!authHeader) {
     SecurityAuditLog.logAuthAttempt({
       success: false,
-      reason: 'missing_credentials',
-      method: 'bearer_token',
+      reason: AUTH_CONFIG.FAILURE_REASONS.MISSING_CREDENTIALS,
+      method: AUTH_CONFIG.METHODS.BEARER_TOKEN,
     });
     return false;
   }
 
   const parts = authHeader.split(' ');
-  if (parts.length !== 2 || parts[0].toLowerCase() !== 'bearer') {
+  if (
+    parts.length !== 2 ||
+    parts[0].toLowerCase() !== AUTH_CONFIG.BEARER_SCHEME
+  ) {
     SecurityAuditLog.logAuthAttempt({
       success: false,
-      reason: 'invalid_credentials',
-      method: 'bearer_token',
+      reason: AUTH_CONFIG.FAILURE_REASONS.INVALID_CREDENTIALS,
+      method: AUTH_CONFIG.METHODS.BEARER_TOKEN,
     });
     return false;
   }
@@ -64,8 +67,8 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
   if (!credentials || credentials.length > AUTH_CONFIG.MAX_CREDENTIAL_LENGTH) {
     SecurityAuditLog.logAuthAttempt({
       success: false,
-      reason: 'invalid_credentials',
-      method: 'bearer_token',
+      reason: AUTH_CONFIG.FAILURE_REASONS.INVALID_CREDENTIALS,
+      method: AUTH_CONFIG.METHODS.BEARER_TOKEN,
     });
     return false;
   }
@@ -89,8 +92,10 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
 
     SecurityAuditLog.logAuthAttempt({
       success: authenticated,
-      reason: authenticated ? undefined : 'invalid_credentials',
-      method: 'bearer_token',
+      reason: authenticated
+        ? undefined
+        : AUTH_CONFIG.FAILURE_REASONS.INVALID_CREDENTIALS,
+      method: AUTH_CONFIG.METHODS.BEARER_TOKEN,
     });
 
     return authenticated;
@@ -99,7 +104,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
     SecurityAuditLog.logAuthAttempt({
       success: false,
       reason: 'other',
-      method: 'bearer_token',
+      method: AUTH_CONFIG.METHODS.BEARER_TOKEN,
     });
     return false;
   }

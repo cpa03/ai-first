@@ -105,6 +105,30 @@ export const DB_REFERENCE_TYPES = {
    * Env: DB_REF_TYPE_IDEA (default: 'idea')
    */
   IDEA: EnvLoader.string('DB_REF_TYPE_IDEA', 'idea'),
+
+  /**
+   * Reference type for clarification session embeddings
+   * Env: DB_REF_TYPE_CLARIFICATION_SESSION (default: 'clarification_session')
+   */
+  CLARIFICATION_SESSION: EnvLoader.string(
+    'DB_REF_TYPE_CLARIFICATION_SESSION',
+    'clarification_session'
+  ),
+
+  /**
+   * Reference type for breakdown session embeddings
+   * Env: DB_REF_TYPE_BREAKDOWN_SESSION (default: 'breakdown_session')
+   */
+  BREAKDOWN_SESSION: EnvLoader.string(
+    'DB_REF_TYPE_BREAKDOWN_SESSION',
+    'breakdown_session'
+  ),
+
+  /**
+   * Reference type for context embeddings
+   * Env: DB_REF_TYPE_CONTEXT (default: 'context')
+   */
+  CONTEXT: EnvLoader.string('DB_REF_TYPE_CONTEXT', 'context'),
 } as const;
 
 /**

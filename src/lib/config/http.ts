@@ -76,6 +76,24 @@ export const AUTH_CONFIG = {
    * Authorization header scheme
    */
   BEARER_SCHEME: 'bearer',
+
+  /**
+   * Authentication failure reasons
+   */
+  FAILURE_REASONS: {
+    MISSING_CREDENTIALS: 'missing_credentials',
+    INVALID_CREDENTIALS: 'invalid_credentials',
+  } as const,
+
+  /**
+   * Authentication methods
+   */
+  METHODS: {
+    BEARER_TOKEN: 'bearer_token',
+    API_KEY: 'api_key',
+    SESSION: 'session',
+    OAUTH: 'oauth',
+  } as const,
 } as const;
 
 // Type exports
