@@ -100,8 +100,10 @@ export default function DashboardPage() {
     idea: null,
   });
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
+  const [isFilterClearing, setIsFilterClearing] = useState(false);
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+  const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -181,6 +183,30 @@ export default function DashboardPage() {
       fetchIdeas();
     }
   }, [fetchIdeas, authLoading, isAuthenticated]);
+
+  // Cleanup filter clear timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (filterClearTimeoutRef.current) {
+        clearTimeout(filterClearTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  // Micro-UX: Smooth fade-out animation when clearing filter badge
+  // Provides visual continuity instead of abrupt disappearance
+  const handleClearFilter = useCallback(() => {
+    triggerHapticFeedback();
+    if (prefersReducedMotion) {
+      setFilter('all');
+      return;
+    }
+    setIsFilterClearing(true);
+    filterClearTimeoutRef.current = setTimeout(() => {
+      setFilter('all');
+      setIsFilterClearing(false);
+    }, 200); // Match transition duration
+  }, [prefersReducedMotion]);
 
   // PERFORMANCE: Memoize event handlers to prevent unnecessary re-renders
   const openDeleteModal = useCallback((idea: Idea) => {
@@ -552,7 +578,13 @@ export default function DashboardPage() {
           )}
         </div>
         {filter !== 'all' && (
-          <div className="flex items-center gap-2 animate-fade-in">
+          <div
+            className={`flex items-center gap-2 transition-all duration-200 ease-out ${
+              isFilterClearing
+                ? 'opacity-0 scale-95 -translate-x-2'
+                : 'animate-fade-in'
+            }`}
+          >
             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 ring-1 ring-primary-200">
               <svg
                 className="w-3 h-3 mr-1"
@@ -576,10 +608,7 @@ export default function DashboardPage() {
             >
               <button
                 type="button"
-                onClick={() => {
-                  triggerHapticFeedback();
-                  setFilter('all');
-                }}
+                onClick={handleClearFilter}
                 className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
                 aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.CLEAR_FILTER}
               >
