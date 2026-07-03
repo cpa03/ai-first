@@ -14,6 +14,7 @@ import {
   EXPORT_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
+  API_ROUTES,
   RESULTS_PAGE_CONTENT,
   PAGE_LAYOUT_CLASSES,
 } from '@/lib/config';
@@ -158,8 +159,8 @@ function ResultsContent() {
         }
 
         const [ideaResponse, sessionResponse] = await Promise.all([
-          fetchWithTimeout(`/api/ideas/${ideaId}`),
-          fetchWithTimeout(`/api/ideas/${ideaId}/session`),
+          fetchWithTimeout(`${API_ROUTES.IDEAS}/${ideaId}`),
+          fetchWithTimeout(`${API_ROUTES.IDEAS}/${ideaId}/session`),
         ]);
 
         if (!ideaResponse.ok) {
@@ -318,7 +319,7 @@ function ResultsContent() {
         <Alert type="warning" title={RESULTS_PAGE_CONTENT.WARNING_TITLE}>
           {RESULTS_PAGE_CONTENT.WARNING_MESSAGE}
           <div className="mt-4">
-            <Button onClick={() => router.push('/')} variant="primary">
+            <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
           </div>

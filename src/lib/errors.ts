@@ -3,6 +3,7 @@ import { ERROR_CONFIG, STATUS_CODES } from './config/constants';
 import { APP_CONFIG } from './config/app';
 import { HTTP_HEADERS } from './config/http';
 import { ENV_ACCESSORS } from './config/env-keys';
+import { API_ROUTES } from './config/api-routes';
 import { generateId, simpleHash } from './security/crypto';
 import { HASH_CONFIG } from './config/modular-constants';
 import {
@@ -231,7 +232,7 @@ export class CircuitBreakerError extends AppError {
       `Wait until ${resetTime.toISOString()} before retrying`,
       `The ${service} service is currently experiencing issues`,
       'System will automatically test service recovery',
-      'Use /api/health/detailed to monitor service status',
+      `Use ${API_ROUTES.HEALTH_DETAILED} to monitor service status`,
     ];
     const details: ErrorDetail[] = [
       {
@@ -264,7 +265,7 @@ export class RetryExhaustedError extends AppError {
   ) {
     const suggestions = [
       `The operation failed after ${attempts} retry attempts`,
-      'Check /api/health/detailed for service status',
+      `Check ${API_ROUTES.HEALTH_DETAILED} for service status`,
       `Verify your ${service} API credentials and quotas`,
       'Contact support with the requestId if this persists',
     ];
@@ -366,14 +367,14 @@ export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
   ],
   INTERNAL_ERROR: [
     'An unexpected error occurred on the server',
-    'Check /api/health/detailed for system status',
+    `Check ${API_ROUTES.HEALTH_DETAILED} for system status`,
     'Contact support with the requestId for assistance',
   ],
   EXTERNAL_SERVICE_ERROR: [
     'An external service (AI provider, database, etc.) returned an error',
     'The system will automatically retry this operation',
     'Check your API credentials for external services',
-    'Monitor /api/health/detailed for service status',
+    `Monitor ${API_ROUTES.HEALTH_DETAILED} for service status`,
   ],
   TIMEOUT_ERROR: [
     'The operation exceeded the time limit and was terminated',
@@ -408,25 +409,25 @@ export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
   SERVICE_UNAVAILABLE: [
     'The service is temporarily unavailable',
     'Wait and retry with exponential backoff',
-    'Check /api/health/detailed for system status and ETA',
+    `Check ${API_ROUTES.HEALTH_DETAILED} for system status and ETA`,
     'Monitor for service recovery announcements',
   ],
   CIRCUIT_BREAKER_OPEN: [
     'The circuit breaker is open due to repeated failures',
     'Wait until the reset time specified in the error message',
     'The system will automatically test service recovery',
-    'Use /api/health/detailed to monitor circuit breaker status',
+    `Use ${API_ROUTES.HEALTH_DETAILED} to monitor circuit breaker status`,
   ],
   RETRY_EXHAUSTED: [
     'All retry attempts for the operation failed',
-    'Check /api/health/detailed for service status',
+    `Check ${API_ROUTES.HEALTH_DETAILED} for service status`,
     'Verify your API credentials and quotas for external services',
     'Contact support with the requestId if this persists',
   ],
   NOT_READY: [
     'Service is initializing or dependencies are unavailable',
     'Wait briefly and retry the request',
-    'Check /api/health/detailed for specific dependency status',
+    `Check ${API_ROUTES.HEALTH_DETAILED} for specific dependency status`,
     'This is typically returned during service startup or maintenance',
   ],
 };

@@ -14,6 +14,7 @@ import {
   TEXT_SIZE_CLASSES,
   CONTAINER_WIDTHS,
   CARD_PATTERNS,
+  ROUTES,
 } from '@/lib/config';
 
 interface Props {
@@ -103,7 +104,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
     if (e.key === 'Escape') {
       e.preventDefault();
-      window.location.href = '/';
+      window.location.href = ROUTES.HOME;
     }
   };
 
@@ -164,7 +165,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                     </span>
                   </div>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                    <Link href="/" passHref>
+                    <Link href={ROUTES.HOME} passHref>
                       <Button
                         variant="secondary"
                         className="w-full sm:w-auto ml-0 sm:ml-2"

@@ -8,6 +8,7 @@ import {
   LAYOUT_ERROR_LABELS,
   CONTAINER_WIDTHS,
   CARD_PATTERNS,
+  ROUTES,
 } from '@/lib/config';
 
 interface LayoutErrorFallbackProps {
@@ -32,7 +33,7 @@ function LayoutErrorFallbackComponent({
             <Button variant="primary" onClick={() => window.location.reload()}>
               {LAYOUT_ERROR_LABELS.RETRY_BUTTON}
             </Button>
-            <Link href="/" passHref>
+            <Link href={ROUTES.HOME} passHref>
               <Button variant="secondary">{homeLabel}</Button>
             </Link>
           </div>

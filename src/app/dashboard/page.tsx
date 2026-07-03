@@ -14,6 +14,7 @@ import {
   DASHBOARD_FILTER_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
+  API_ROUTES,
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
   LOCAL_STORAGE_KEYS,
@@ -134,7 +135,7 @@ export default function DashboardPage() {
 
       const queryString = params.toString();
       const response = await fetchWithTimeout(
-        `/api/ideas${queryString ? `?${queryString}` : ''}`
+        `${API_ROUTES.IDEAS}${queryString ? `?${queryString}` : ''}`
       );
 
       if (!response.ok) {
@@ -199,7 +200,7 @@ export default function DashboardPage() {
     try {
       setDeletingId(id);
 
-      const response = await fetchWithTimeout(`/api/ideas/${id}`, {
+      const response = await fetchWithTimeout(`${API_ROUTES.IDEAS}/${id}`, {
         method: 'DELETE',
       });
 
@@ -645,7 +646,7 @@ export default function DashboardPage() {
                 <Button variant="outline" onClick={() => setFilter('all')}>
                   {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
                 </Button>
-                <Link href="/">
+                <Link href={ROUTES.HOME}>
                   <Button variant="primary">
                     {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.CREATE_NEW_IDEA}
                   </Button>
@@ -794,7 +795,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <Link href="/">
+              <Link href={ROUTES.HOME}>
                 <Button variant="primary" attention>
                   {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.BUTTON}
                 </Button>
