@@ -24,6 +24,7 @@ import {
 } from './config/modular-constants';
 import { API_ERROR_MESSAGES } from './config';
 import { DB_TABLES } from './config/database-tables';
+import { DB_REFERENCE_TYPES } from './config/database-tables';
 import {
   AI_ENV_KEYS,
   PLATFORM_ENV_KEYS,
@@ -511,7 +512,7 @@ class AIService {
         .from(DB_TABLES.VECTORS)
         .select('vector_data')
         .eq('idea_id', ideaId)
-        .eq('reference_type', 'context')
+        .eq('reference_type', DB_REFERENCE_TYPES.CONTEXT)
         .single();
 
       if (existingContext?.vector_data) {
@@ -527,7 +528,10 @@ class AIService {
     context = [...context, ...newMessages];
 
     // Optimize: Pre-calculate total characters to avoid O(n^2) in the truncation loop
-    const totalChars = context.reduce((sum, msg) => sum + msg.content.length, 0);
+    const totalChars = context.reduce(
+      (sum, msg) => sum + msg.content.length,
+      0
+    );
 
     // Maximum iterations to prevent potential infinite loops (from config)
     const MAX_CONTEXT_ITERATIONS = AI_CONFIG.MAX_CONTEXT_ITERATIONS;
@@ -579,7 +583,7 @@ class AIService {
 
     await supabase.from(DB_TABLES.VECTORS).upsert({
       idea_id: ideaId,
-      reference_type: 'context',
+      reference_type: DB_REFERENCE_TYPES.CONTEXT,
       vector_data: { messages: context } as unknown as Record<string, unknown>,
     });
 

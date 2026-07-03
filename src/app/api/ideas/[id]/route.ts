@@ -8,11 +8,13 @@ import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { dbService, Idea } from '@/lib/db';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
-import { IDEA_CONFIG, STATUS_CODES } from '@/lib/config';
+import { IDEA_CONFIG, IDEA_STATUS_CONFIG, STATUS_CODES } from '@/lib/config';
 
 // Type guard for valid idea status values
 function isValidStatus(status: string): status is Idea['status'] {
-  return ['draft', 'clarified', 'breakdown', 'completed'].includes(status);
+  return IDEA_STATUS_CONFIG.ALL_STATUSES.includes(
+    status as (typeof IDEA_STATUS_CONFIG.ALL_STATUSES)[number]
+  );
 }
 
 async function handleGet(context: ApiContext) {

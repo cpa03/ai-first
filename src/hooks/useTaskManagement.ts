@@ -6,7 +6,12 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import type { Task, Deliverable } from '@/lib/db';
 import { triggerHapticFeedback } from '@/lib/utils';
 import type { TaskStatus } from '@/types/task';
-import { API_ENDPOINTS, HTTP_HEADERS, API_ERROR_MESSAGES } from '@/lib/config';
+import {
+  API_ENDPOINTS,
+  HTTP_HEADERS,
+  API_ERROR_MESSAGES,
+  TASK_CONFIG,
+} from '@/lib/config';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -157,10 +162,16 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       let deltaTasks = 0;
       let deltaHours = 0;
 
-      if (newStatus === 'completed' && task.status !== 'completed') {
+      if (
+        newStatus === TASK_CONFIG.STATUSES.COMPLETED &&
+        task.status !== TASK_CONFIG.STATUSES.COMPLETED
+      ) {
         deltaTasks = 1;
         deltaHours = est;
-      } else if (newStatus !== 'completed' && task.status === 'completed') {
+      } else if (
+        newStatus !== TASK_CONFIG.STATUSES.COMPLETED &&
+        task.status === TASK_CONFIG.STATUSES.COMPLETED
+      ) {
         deltaTasks = -1;
         deltaHours = -est;
       }
@@ -171,7 +182,8 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
       updatedTasks[taskIndex] = {
         ...task,
         status: newStatus,
-        completion_percentage: newStatus === 'completed' ? 100 : 0,
+        completion_percentage:
+          newStatus === TASK_CONFIG.STATUSES.COMPLETED ? 100 : 0,
       };
 
       const newCompletedCount = deliverable.completedCount + deltaTasks;
@@ -220,7 +232,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const handleToggleTaskStatus = useCallback(
     async (taskId: string, currentStatus: TaskStatus) => {
       const newStatus: TaskStatus =
-        currentStatus === 'completed' ? 'todo' : 'completed';
+        currentStatus === TASK_CONFIG.STATUSES.COMPLETED
+          ? TASK_CONFIG.STATUSES.TODO
+          : TASK_CONFIG.STATUSES.COMPLETED;
 
       previousDataByTaskRef.current.set(taskId, dataRef.current);
 
@@ -237,7 +251,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           applyTaskStatusUpdate(prevData, taskId, newStatus)
         );
 
-        if (newStatus === 'completed' && typeof window !== 'undefined') {
+        if (
+          newStatus === TASK_CONFIG.STATUSES.COMPLETED &&
+          typeof window !== 'undefined'
+        ) {
           triggerHapticFeedback();
           const task = findTask();
           if (task) {

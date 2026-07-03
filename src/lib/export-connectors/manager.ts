@@ -14,7 +14,12 @@ import {
   GitHubProjectsExporter,
 } from './connectors';
 import { Deliverable, Task, Idea } from '../db/service';
-import { TASK_CONFIG, IDEA_CONFIG, APP_CONFIG } from '../config';
+import {
+  TASK_CONFIG,
+  IDEA_CONFIG,
+  IDEA_STATUS_CONFIG,
+  APP_CONFIG,
+} from '../config';
 import { generateId } from '@/lib/security/crypto';
 
 export interface ExportManagerOptions {
@@ -233,7 +238,7 @@ export const IdeaFlowExportSchema = {
         raw_text: { type: 'string' },
         status: {
           type: 'string',
-          enum: ['draft', 'clarified', 'breakdown', 'completed'],
+          enum: [...IDEA_STATUS_CONFIG.ALL_STATUSES],
         },
         created_at: { type: 'string', format: 'date-time' },
       },
@@ -265,7 +270,7 @@ export const IdeaFlowExportSchema = {
           assignee: { type: 'string' },
           status: {
             type: 'string',
-            enum: ['todo', 'in_progress', 'completed'],
+            enum: Object.values(TASK_CONFIG.STATUSES),
           },
           estimate: { type: 'integer' },
         },

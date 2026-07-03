@@ -1,7 +1,11 @@
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import type { BreakdownSession } from './types';
-import { TASK_CONFIG, IDEA_STATUS_CONFIG } from '@/lib/config';
+import {
+  TASK_CONFIG,
+  IDEA_STATUS_CONFIG,
+  DB_REFERENCE_TYPES,
+} from '@/lib/config';
 
 const logger = createLogger('SessionManager');
 
@@ -10,14 +14,17 @@ export class SessionManager {
     await dbService.storeVector({
       idea_id: session.ideaId,
       vector_data: session as unknown as Record<string, unknown>,
-      reference_type: 'breakdown_session',
+      reference_type: DB_REFERENCE_TYPES.BREAKDOWN_SESSION,
       reference_id: session.id,
     });
   }
 
   async getBreakdownSession(ideaId: string): Promise<BreakdownSession | null> {
     try {
-      const vectors = await dbService.getVectors(ideaId, 'breakdown_session');
+      const vectors = await dbService.getVectors(
+        ideaId,
+        DB_REFERENCE_TYPES.BREAKDOWN_SESSION
+      );
       if (vectors.length === 0) return null;
 
       const session = vectors[0].vector_data as unknown as BreakdownSession;

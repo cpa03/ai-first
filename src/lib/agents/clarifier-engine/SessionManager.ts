@@ -1,5 +1,6 @@
 import { dbService, type Idea } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
+import { DB_REFERENCE_TYPES } from '@/lib/config';
 import type { ClarifierQuestion } from './QuestionGenerator';
 
 const logger = createLogger('ClarifierSessionManager');
@@ -22,7 +23,7 @@ export class SessionManager {
       await dbService.storeVector({
         idea_id: session.ideaId,
         vector_data: session as unknown as Record<string, unknown>,
-        reference_type: 'clarification_session',
+        reference_type: DB_REFERENCE_TYPES.CLARIFICATION_SESSION,
         reference_id: session.ideaId,
       });
     } catch (error) {
@@ -35,7 +36,7 @@ export class SessionManager {
     try {
       const vectors = await dbService.getVectors(
         ideaId,
-        'clarification_session'
+        DB_REFERENCE_TYPES.CLARIFICATION_SESSION
       );
 
       if (vectors.length === 0) {
@@ -70,7 +71,7 @@ export class SessionManager {
 
       const vectorsByIdeaId = await dbService.getVectorsByIdeaIds(
         ideaIds,
-        'clarification_session'
+        DB_REFERENCE_TYPES.CLARIFICATION_SESSION
       );
 
       for (const ideaId of ideaIds) {
