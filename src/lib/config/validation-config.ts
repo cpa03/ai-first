@@ -80,17 +80,49 @@ export const AGENT_CONFIG = {
   } as const,
 
   BREAKDOWN_FALLBACK_CONFIDENCE: {
-    DEPENDENCIES: 0.8,
-    TIMELINE: 0.7,
+    /** Fallback confidence for dependency analysis - Env: AGENT_BREAKDOWN_FALLBACK_DEPENDENCIES (default: 0.8) */
+    DEPENDENCIES: EnvLoader.number(
+      'AGENT_BREAKDOWN_FALLBACK_DEPENDENCIES',
+      0.8,
+      0,
+      1
+    ),
+    /** Fallback confidence for timeline analysis - Env: AGENT_BREAKDOWN_FALLBACK_TIMELINE (default: 0.7) */
+    TIMELINE: EnvLoader.number('AGENT_BREAKDOWN_FALLBACK_TIMELINE', 0.7, 0, 1),
   } as const,
 
   IDEA_ANALYSIS_FALLBACK: {
-    COMPLEXITY_SCORE: 5,
-    COMPLEXITY_LEVEL: 'medium' as const,
-    SCOPE_SIZE: 'medium' as const,
-    ESTIMATED_WEEKS: 8,
-    TEAM_SIZE: 2,
-    OVERALL_CONFIDENCE: 0.7,
+    /** Default complexity score when analysis fails - Env: AGENT_IDEA_FALLBACK_COMPLEXITY_SCORE (default: 5) */
+    COMPLEXITY_SCORE: EnvLoader.number(
+      'AGENT_IDEA_FALLBACK_COMPLEXITY_SCORE',
+      5,
+      1,
+      10
+    ),
+    /** Default complexity level when analysis fails - Env: AGENT_IDEA_FALLBACK_COMPLEXITY_LEVEL (default: 'medium') */
+    COMPLEXITY_LEVEL: EnvLoader.string(
+      'AGENT_IDEA_FALLBACK_COMPLEXITY_LEVEL',
+      'medium'
+    ) as 'simple' | 'medium' | 'complex',
+    /** Default scope size when analysis fails - Env: AGENT_IDEA_FALLBACK_SCOPE_SIZE (default: 'medium') */
+    SCOPE_SIZE: EnvLoader.string('AGENT_IDEA_FALLBACK_SCOPE_SIZE', 'medium') as
+      'small' | 'medium' | 'large',
+    /** Default estimated weeks when analysis fails - Env: AGENT_IDEA_FALLBACK_ESTIMATED_WEEKS (default: 8) */
+    ESTIMATED_WEEKS: EnvLoader.number(
+      'AGENT_IDEA_FALLBACK_ESTIMATED_WEEKS',
+      8,
+      1,
+      52
+    ),
+    /** Default team size when analysis fails - Env: AGENT_IDEA_FALLBACK_TEAM_SIZE (default: 2) */
+    TEAM_SIZE: EnvLoader.number('AGENT_IDEA_FALLBACK_TEAM_SIZE', 2, 1, 100),
+    /** Default overall confidence when analysis fails - Env: AGENT_IDEA_FALLBACK_CONFIDENCE (default: 0.7) */
+    OVERALL_CONFIDENCE: EnvLoader.number(
+      'AGENT_IDEA_FALLBACK_CONFIDENCE',
+      0.7,
+      0,
+      1
+    ),
   } as const,
 
   QUESTION_GENERATOR: {
@@ -131,7 +163,8 @@ export const AGENT_CONFIG = {
       EnvLoader.number('AGENT_CLARIFIER_INCREMENT', 60, 0, 100) / 100,
     MAX_CONFIDENCE:
       EnvLoader.number('AGENT_CLARIFIER_MAX_CONFIDENCE', 90, 50, 100) / 100,
-    DEFAULT_CONFIDENCE: 0.5,
+    DEFAULT_CONFIDENCE:
+      EnvLoader.number('AGENT_CLARIFIER_DEFAULT_CONFIDENCE', 50, 0, 100) / 100,
   } as const,
 
   DATABASE: {
