@@ -17,6 +17,7 @@ import {
   FOOTER_NAV_CONFIG,
   DASHBOARD_PAGE_CONTENT,
   PAGE_LAYOUT_CLASSES,
+  ROUTES,
 } from '@/lib/config';
 import { safeJsonLd } from '@/lib/security/json-ld';
 import {
@@ -177,7 +178,7 @@ export default async function RootLayout({
                   <div className="flex justify-between items-center h-16">
                     <div className="flex items-center">
                       <Link
-                        href="/"
+                        href={ROUTES.HOME}
                         className="text-xl font-semibold text-gray-900 hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md px-2 py-1"
                       >
                         IdeaFlow
@@ -208,7 +209,7 @@ export default async function RootLayout({
                     {/* Brand column */}
                     <div className="col-span-2 md:col-span-1">
                       <Link
-                        href="/"
+                        href={ROUTES.HOME}
                         className="text-lg font-semibold text-gray-900 hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md"
                       >
                         {APP_CONFIG.NAME}

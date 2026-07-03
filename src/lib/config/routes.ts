@@ -74,6 +74,43 @@ export const ROUTES = {
 } as const;
 
 /**
+ * Helper function to create route with query parameters
+ * @param route - Base route from ROUTES constant
+ * @param params - Query parameters to append
+ * @returns Route string with query parameters
+ */
+export function createRouteWithParams(
+  route: string,
+  params: Record<string, string | number | undefined>
+): string {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined) {
+      searchParams.append(key, String(value));
+    }
+  });
+  const queryString = searchParams.toString();
+  return queryString ? `${route}?${queryString}` : route;
+}
+
+/**
+ * Helper function to create route with path parameters
+ * @param route - Base route with :param placeholders
+ * @param params - Path parameters to replace
+ * @returns Route string with path parameters replaced
+ */
+export function createRouteWithPathParams(
+  route: string,
+  params: Record<string, string | number>
+): string {
+  let result = route;
+  Object.entries(params).forEach(([key, value]) => {
+    result = result.replace(`:${key}`, String(value));
+  });
+  return result;
+}
+
+/**
  * TypeScript type for ROUTES
  */
 export type Routes = typeof ROUTES;

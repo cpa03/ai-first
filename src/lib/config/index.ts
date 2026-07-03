@@ -331,7 +331,16 @@ export {
 
 // Page Routes Configuration
 // Centralizes all client-side navigation paths
-export { ROUTES, type Routes } from './routes';
+export {
+  ROUTES,
+  createRouteWithParams,
+  createRouteWithPathParams,
+  type Routes,
+} from './routes';
+
+// API Routes Configuration
+// Centralizes all API endpoint paths
+export { API_ROUTES, type ApiRoutes } from './api-routes';
 
 export {
   SHARE_BUTTON_LABELS,

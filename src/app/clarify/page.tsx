@@ -23,6 +23,9 @@ import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
   RESPONSIVE_PADDING,
+  ROUTES,
+  API_ROUTES,
+  createRouteWithParams,
 } from '@/lib/config';
 
 const Button = dynamic(() => import('@/components/Button'), {
@@ -114,13 +117,16 @@ function ClarifyPageContent() {
     async (completedAnswers: Record<string, string>) => {
       try {
         if (ideaId) {
-          const response = await fetchWithTimeout(`/api/ideas/${ideaId}`, {
-            method: 'PUT',
-            headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
-            body: JSON.stringify({
-              status: IDEA_STATUS_CONFIG.TYPES.CLARIFIED,
-            }),
-          });
+          const response = await fetchWithTimeout(
+            `${API_ROUTES.IDEAS}/${ideaId}`,
+            {
+              method: 'PUT',
+              headers: HTTP_HEADERS.JSON_CONTENT_TYPE,
+              body: JSON.stringify({
+                status: IDEA_STATUS_CONFIG.TYPES.CLARIFIED,
+              }),
+            }
+          );
 
           if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
@@ -170,7 +176,7 @@ function ClarifyPageContent() {
         <Alert type="warning" title={CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_TITLE}>
           <p>{CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE}</p>
           <div className="mt-4">
-            <Button onClick={() => router.push('/')} variant="primary">
+            <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {CLARIFY_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
           </div>
@@ -211,7 +217,9 @@ function ClarifyPageContent() {
               ))}
             </div>
             <Button
-              onClick={() => router.push(`/results?ideaId=${ideaId}`)}
+              onClick={() =>
+                router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId }))
+              }
               variant="primary"
             >
               Generate Blueprint
@@ -228,7 +236,7 @@ function ClarifyPageContent() {
         <div className="slide-up">
           <Alert type="warning" title={CLARIFY_PAGE_CONTENT.NO_IDEA_TITLE}>
             <p className="mb-4">{CLARIFY_PAGE_CONTENT.NO_IDEA_MESSAGE}</p>
-            <Button onClick={() => router.push('/')} variant="primary">
+            <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {CLARIFY_PAGE_CONTENT.BUTTONS.GO_TO_HOME}
             </Button>
           </Alert>
