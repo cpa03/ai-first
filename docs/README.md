@@ -216,10 +216,6 @@ Complete index of all IdeaFlow documentation.
 - [Flexy Modularity Plan](./plans/flexy-modularity-plan.md) - Modular architecture plan
 - [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
 
-## Maintenance Reports
-
-- [Maintenance Report 2026-07-02 (Session 32)](./maintenance-report-2026-07-02-session-32.md) — Repository health check and stale branch analysis
-
 ## Security Reports
 
 - [Security Audit P0](./security/SECURITY_AUDIT_P0_1135.md) - Priority-0 security audit
