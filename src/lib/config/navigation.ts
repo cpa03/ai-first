@@ -64,6 +64,8 @@ export const HAMBURGER_MENU_CONFIG = {
     HEIGHT_CLASS: 'h-0.5',
     /** Width of close icon line (Tailwind class) */
     CLOSE_WIDTH_CLASS: 'w-4',
+    /** Margin between hamburger lines (Tailwind class) */
+    SPACING_CLASS: 'mt-1.5',
   },
   /** Container dimensions for hamburger menu */
   CONTAINER: {

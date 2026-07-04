@@ -105,6 +105,21 @@ export const MIN_SIZE_CLASSES = {
   KBD: `min-w-[${MIN_SIZES.KBD_MIN_WIDTH}px] min-h-[${MIN_SIZES.KBD_MIN_HEIGHT}px]`,
 } as const;
 
+/**
+ * Badge Dimensions
+ * Used for count badges in dashboard and other components
+ */
+export const BADGE_DIMENSIONS = {
+  MIN_WIDTH: EnvLoader.number('UI_BADGE_MIN_WIDTH', 24, 16, 40),
+  HEIGHT: EnvLoader.number('UI_BADGE_HEIGHT', 20, 12, 32),
+  PADDING_X: EnvLoader.number('UI_BADGE_PADDING_X', 6, 4, 12),
+} as const;
+
+export const BADGE_CLASSES = {
+  BASE: `min-w-[${BADGE_DIMENSIONS.MIN_WIDTH}px] h-[${BADGE_DIMENSIONS.HEIGHT}px] px-[${BADGE_DIMENSIONS.PADDING_X}px] text-xs font-semibold rounded-full transition-all duration-300`,
+} as const;
+
 export type InputHeights = typeof INPUT_HEIGHTS;
 export type ContainerWidths = typeof CONTAINER_WIDTHS;
 export type MinSizes = typeof MIN_SIZES;
+export type BadgeDimensions = typeof BADGE_DIMENSIONS;

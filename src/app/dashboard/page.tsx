@@ -22,6 +22,7 @@ import {
   PAGE_LAYOUT_CLASSES,
   ANIMATION_DELAYS,
   DASHBOARD_LABELS,
+  BADGE_CLASSES,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -565,7 +566,7 @@ export default function DashboardPage() {
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <span
                 key={ideas.length}
-                className={`flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
+                className={`flex items-center justify-center ${BADGE_CLASSES.BASE} ${
                   filter !== 'all'
                     ? 'bg-primary-600 text-white'
                     : 'bg-primary-100 text-primary-700'

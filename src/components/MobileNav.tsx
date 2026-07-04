@@ -180,10 +180,10 @@ function MobileNavComponent() {
             className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out ${isOpen ? `rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out ${HAMBURGER_MENU_CONFIG.LINE.SPACING_CLASS} ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out mt-1.5 ${isOpen ? `-rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out ${HAMBURGER_MENU_CONFIG.LINE.SPACING_CLASS} ${isOpen ? `-rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
           />
         </div>
       </button>

@@ -64,6 +64,8 @@ export {
   INPUT_HEIGHT_CLASSES,
   CONTAINER_WIDTH_CLASSES,
   MIN_SIZE_CLASSES,
+  BADGE_DIMENSIONS,
+  BADGE_CLASSES,
 } from './ui-dimensions';
 
 export {
