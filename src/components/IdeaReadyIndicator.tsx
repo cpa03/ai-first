@@ -6,6 +6,7 @@ import {
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
   SVG_ANIMATION,
+  SVG_VIEWBOX,
   IDEA_READY_INDICATOR_LABELS,
 } from '@/lib/config';
 
@@ -62,7 +63,7 @@ function IdeaReadyIndicatorComponent({
             ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
           `}
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.THICK}
           aria-hidden="true"

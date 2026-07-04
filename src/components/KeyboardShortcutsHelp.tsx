@@ -14,6 +14,7 @@ import {
   KEYBOARD_SHORTCUTS_MESSAGES,
   LOCAL_STORAGE_KEYS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   Z_INDEX_LAYERS,
   KEYBOARD_SHORTCUTS_HELP_LABELS,
   SIZES,
@@ -349,7 +350,7 @@ const ShortcutRow = memo(function ShortcutRow({
           <svg
             className="w-3.5 h-3.5 text-green-600 ml-1 animate-in fade-in zoom-in duration-150"
             fill="none"
-            viewBox="0 0 24 24"
+            viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
             strokeWidth={SVG_STROKE_WIDTHS.THICK}
             aria-hidden="true"
@@ -605,7 +606,7 @@ function KeyboardShortcutsHelpComponent({
             <svg
               className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
             >
               <path
@@ -637,7 +638,7 @@ function KeyboardShortcutsHelpComponent({
                 <svg
                   className="w-4 h-4"
                   fill="none"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
                   strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 >
@@ -689,7 +690,7 @@ function KeyboardShortcutsHelpComponent({
               <svg
                 className="w-5 h-5 text-primary-600"
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               >
@@ -723,7 +724,7 @@ function KeyboardShortcutsHelpComponent({
             <svg
               className="w-5 h-5"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
             >
@@ -746,7 +747,7 @@ function KeyboardShortcutsHelpComponent({
                 <svg
                   className="w-8 h-8 text-gray-600"
                   fill="none"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
                   strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   aria-hidden="true"

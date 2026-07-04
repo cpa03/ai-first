@@ -1,7 +1,12 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG, UI_STRINGS } from '@/lib/config';
+import {
+  WHY_CHOOSE_CONFIG,
+  FEATURE_CONFIG,
+  UI_STRINGS,
+  SVG_VIEWBOX,
+} from '@/lib/config';
 
 function WhyChooseSectionComponent() {
   const { TITLE, SECTION_STYLES, ARTICLES, ARTICLE_STYLES } = WHY_CHOOSE_CONFIG;
@@ -56,7 +61,7 @@ function WhyChooseSectionComponent() {
               <svg
                 className={`${ARTICLE_STYLES.ICON_SVG} ${article.ICON_COLOR}`}
                 fill="currentColor"
-                viewBox="0 0 20 20"
+                viewBox={SVG_VIEWBOX.SMALL}
               >
                 <path
                   fillRule="evenodd"

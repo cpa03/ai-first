@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_MESSAGES,
   TASK_ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -157,7 +158,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                 className={TASK_ITEM_STYLES.CHECKMARK.CONTAINER}
                 fill="none"
                 stroke="currentColor"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 style={checkmarkStyle}
               >
                 <path
@@ -172,7 +173,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
               <svg
                 className={TASK_ITEM_STYLES.LOADING_SPINNER.CONTAINER}
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
               >
                 <circle
                   className="opacity-25"
@@ -217,7 +218,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                     className={TASK_ITEM_STYLES.METADATA.ICON}
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     aria-hidden="true"
                   >
                     <path
@@ -236,7 +237,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                     className={TASK_ITEM_STYLES.METADATA.ICON}
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     aria-hidden="true"
                   >
                     <path

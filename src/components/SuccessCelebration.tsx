@@ -7,6 +7,7 @@ import {
   COMPONENT_DEFAULTS,
   SVG_ANIMATION,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   Z_INDEX_LAYERS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -154,7 +155,7 @@ function SuccessCelebrationComponent({
               shouldAnimate ? 'animate-success-check' : ''
             }`}
             fill="none"
-            viewBox="0 0 24 24"
+            viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
             strokeWidth={SVG_STROKE_WIDTHS.THICK}
           >

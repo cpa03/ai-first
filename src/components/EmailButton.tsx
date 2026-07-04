@@ -11,6 +11,7 @@ import {
   UI_CONFIG,
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -136,7 +137,7 @@ const EmailButtonComponent = function EmailButton({
                   : 'opacity-100 scale-100'
               }`}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
@@ -155,7 +156,7 @@ const EmailButtonComponent = function EmailButton({
                   : 'opacity-0 scale-50'
               }`}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
               aria-hidden="true"

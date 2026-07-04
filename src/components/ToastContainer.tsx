@@ -9,6 +9,7 @@ import {
   TOAST_CONFIG,
   COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   Z_INDEX_LAYERS,
   TOAST_CONTAINER_LABELS,
   MIN_SIZE_CLASSES,
@@ -226,7 +227,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         className="w-5 h-5 flex-shrink-0 mt-0.5"
         style={{ color: styles.iconColor }}
         fill="currentColor"
-        viewBox="0 0 20 20"
+        viewBox={SVG_VIEWBOX.SMALL}
         aria-hidden="true"
       >
         {toastIcons[toast.type]}
@@ -244,7 +245,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         <svg
           className="w-4 h-4"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"

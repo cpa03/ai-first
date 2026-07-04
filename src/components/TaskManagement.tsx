@@ -14,6 +14,7 @@ import {
   COMPONENT_DEFAULTS,
   ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   TASK_MANAGEMENT_LABELS,
   CARD_PATTERNS,
 } from '@/lib/config';
@@ -124,7 +125,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               <svg
                 className="w-10 h-10 text-primary-500"
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
               >
@@ -146,7 +147,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             <svg
               className="w-4 h-4 text-primary-500 flex-shrink-0"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"

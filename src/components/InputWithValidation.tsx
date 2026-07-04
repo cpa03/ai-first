@@ -19,6 +19,7 @@ import {
   STATE_SHADOWS,
   INPUT_VALIDATION_LABELS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   INPUT_HEIGHT_CLASSES,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -341,7 +342,7 @@ const InputWithValidationComponent = forwardRef<
                   <svg
                     className="w-5 h-5 text-green-800 animate-in fade-in duration-200 animate-draw-check"
                     fill="none"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
                     strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                     aria-hidden="true"
@@ -374,7 +375,7 @@ const InputWithValidationComponent = forwardRef<
                   <svg
                     className="w-5 h-5 text-red-700 animate-in fade-in duration-200"
                     fill="none"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
                     strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                     aria-hidden="true"
@@ -404,7 +405,7 @@ const InputWithValidationComponent = forwardRef<
                   <svg
                     className="w-3.5 h-3.5"
                     fill="none"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
                     strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                     aria-hidden="true"
@@ -455,7 +456,7 @@ const InputWithValidationComponent = forwardRef<
                           : 'opacity-0 scale-75 -rotate-45'
                       }`}
                       fill="none"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
                       strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-hidden="true"
@@ -479,7 +480,7 @@ const InputWithValidationComponent = forwardRef<
                           : 'opacity-100 scale-100 rotate-0'
                       }`}
                       fill="none"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
                       strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-hidden="true"

@@ -5,6 +5,7 @@ import {
   COMPONENT_CONFIG,
   ANIMATION_DELAYS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   AUTO_SAVE_INDICATOR_LABELS,
   TEXT_SIZE_CLASSES,
   OPACITY_CONFIG,
@@ -161,7 +162,7 @@ function AutoSaveIndicatorComponent({
         {/* Background ring */}
         <svg
           className="w-4 h-4 -rotate-90"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           fill="none"
           aria-hidden="true"
         >
@@ -197,7 +198,7 @@ function AutoSaveIndicatorComponent({
             <svg
               className="w-2.5 h-2.5 text-primary-500 animate-spin"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               aria-hidden="true"
             >
               <path
@@ -215,7 +216,7 @@ function AutoSaveIndicatorComponent({
             <svg
               className="w-2.5 h-2.5 text-green-500 animate-in zoom-in duration-200"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.THICK}
               aria-hidden="true"

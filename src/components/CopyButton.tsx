@@ -7,6 +7,7 @@ import {
   COPY_BUTTON_LABELS,
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
+  SVG_VIEWBOX,
   CONFETTI_COLORS,
   COMPONENT_CONFIG,
 } from '@/lib/config';
@@ -198,7 +199,7 @@ const CopyButtonComponent = function CopyButton({
               ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 aria-hidden="true"
@@ -213,7 +214,7 @@ const CopyButtonComponent = function CopyButton({
               ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.THICK}
                 aria-hidden="true"

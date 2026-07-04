@@ -7,6 +7,7 @@ import Tooltip from '@/components/Tooltip';
 import SessionTracker from '@/components/SessionTracker';
 import {
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
 } from '@/lib/config';
 import { createContext, useContext, ReactNode, useMemo, memo } from 'react';
@@ -71,7 +72,7 @@ function KeyboardShortcutsButtonComponent() {
         <svg
           className="w-5 h-5"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
