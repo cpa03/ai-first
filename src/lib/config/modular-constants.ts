@@ -182,6 +182,14 @@ export const EXTERNAL_RATE_LIMIT_CONFIG = {
    */
   THROTTLE_THRESHOLD:
     EnvLoader.number('EXTERNAL_RATE_LIMIT_THROTTLE_THRESHOLD', 20, 5, 50) / 100,
+
+  /**
+   * Percentage of max services to clean when store is full
+   * Prevents unbounded memory growth for external rate limit tracking
+   * Env: EXTERNAL_RATE_LIMIT_CLEANUP_PERCENTAGE (default: 20)
+   */
+  CLEANUP_PERCENTAGE:
+    EnvLoader.number('EXTERNAL_RATE_LIMIT_CLEANUP_PERCENTAGE', 20, 5, 50) / 100,
 } as const;
 
 /**

@@ -15,7 +15,10 @@ import {
   RATE_LIMIT_CONFIG,
   EXTERNAL_RATE_LIMIT_TIMING,
 } from './config';
-import { TIMESTAMP_CONFIG } from './config/modular-constants';
+import {
+  TIMESTAMP_CONFIG,
+  EXTERNAL_RATE_LIMIT_CONFIG,
+} from './config/modular-constants';
 import { PLATFORM_ENV_KEYS } from './config/env-keys';
 
 const logger = createLogger('ExternalRateLimit');
@@ -194,8 +197,14 @@ class ExternalRateLimitTracker {
       this.rateLimitStore.size >= this.config.maxServices &&
       !this.rateLimitStore.has(info.service)
     ) {
-      // Remove at least 1 entry, up to 20% of max
-      const toRemove = Math.max(1, Math.floor(this.config.maxServices * 0.2));
+      // Remove at least 1 entry, up to CLEANUP_PERCENTAGE of max
+      const toRemove = Math.max(
+        1,
+        Math.floor(
+          this.config.maxServices *
+            EXTERNAL_RATE_LIMIT_CONFIG.CLEANUP_PERCENTAGE
+        )
+      );
       this.cleanupOldestEntries(toRemove);
     }
 
