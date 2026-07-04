@@ -8,13 +8,12 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
   SVG_VIEWBOX,
-  CONFETTI_COLORS,
-  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
+import { useConfetti } from '@/hooks/useConfetti';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -31,15 +30,6 @@ export interface CopyButtonProps {
 
 const logger = createLogger('CopyButton');
 
-interface ConfettiParticle {
-  id: string;
-  x: number;
-  y: number;
-  color: string;
-  delay: number;
-  size: number; // Size variation for more natural confetti effect
-}
-
 const CopyButtonComponent = function CopyButton({
   textToCopy,
   label = COPY_BUTTON_LABELS.DEFAULT_LABEL,
@@ -52,50 +42,15 @@ const CopyButtonComponent = function CopyButton({
   onCopy,
 }: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
-  const [confetti, setConfetti] = useState<ConfettiParticle[]>([]);
+  const { particles, fire } = useConfetti();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const confettiTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      if (confettiTimeoutRef.current) {
-        clearTimeout(confettiTimeoutRef.current);
-      }
     };
-  }, []);
-
-  const generateConfetti = useCallback(() => {
-    if (confettiTimeoutRef.current) {
-      clearTimeout(confettiTimeoutRef.current);
-    }
-
-    const particles: ConfettiParticle[] = [];
-    const particleCount = CONFETTI_COLORS.PARTICLE_COUNT;
-    for (let i = 0; i < particleCount; i++) {
-      const angle = (i / particleCount) * Math.PI * 2;
-      const distance =
-        CONFETTI_COLORS.MIN_DISTANCE +
-        Math.random() * CONFETTI_COLORS.MAX_DISTANCE_VARIANCE;
-      const size =
-        CONFETTI_COLORS.MIN_SIZE +
-        Math.random() * CONFETTI_COLORS.MAX_SIZE_VARIANCE;
-      particles.push({
-        id: `confetti-${Date.now()}-${i}`,
-        x: Math.cos(angle) * distance,
-        y: Math.sin(angle) * distance,
-        color: CONFETTI_COLORS.PRIMARY[i % CONFETTI_COLORS.PRIMARY.length],
-        delay: i * CONFETTI_COLORS.PARTICLE_DELAY_MS,
-        size,
-      });
-    }
-    setConfetti(particles);
-    confettiTimeoutRef.current = setTimeout(
-      () => setConfetti([]),
-      COMPONENT_CONFIG.CONFETTI.CLEANUP_MS
-    );
   }, []);
 
   const handleCopy = useCallback(async () => {
@@ -107,7 +62,7 @@ const CopyButtonComponent = function CopyButton({
       await navigator.clipboard.writeText(textToCopy);
       triggerHapticFeedback();
       setCopied(true);
-      generateConfetti();
+      fire();
 
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
@@ -140,7 +95,7 @@ const CopyButtonComponent = function CopyButton({
         });
       }
     }
-  }, [textToCopy, showToast, toastMessage, onCopy, generateConfetti]);
+  }, [textToCopy, showToast, toastMessage, onCopy, fire]);
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
@@ -238,7 +193,7 @@ const CopyButtonComponent = function CopyButton({
               </span>
             )}
           </button>
-          {confetti.map((particle) => (
+          {particles.map((particle) => (
             <span
               key={particle.id}
               className="absolute rounded-full pointer-events-none animate-copy-confetti"
