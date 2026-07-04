@@ -712,6 +712,8 @@ function KeyboardShortcutsHelpComponent({
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[0]}
                 <KeyboardKey>Esc</KeyboardKey>
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[1]}
+                <span className="mx-1.5">·</span>
+                Press <KeyboardKey>?</KeyboardKey> to open
               </p>
             </div>
           </div>
