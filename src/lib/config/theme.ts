@@ -373,6 +373,36 @@ export const SVG_ANIMATION = {
 } as const;
 
 /**
+ * SVG ViewBox Configuration
+ * Centralizes SVG viewBox values used across all icon components.
+ * Eliminates hardcoded viewBox="0 0 24 24" in 47+ component files.
+ *
+ * Usage:
+ * ```typescript
+ * import { SVG_VIEWBOX } from '@/lib/config';
+ * <svg viewBox={SVG_VIEWBOX.STANDARD} />
+ * ```
+ */
+export const SVG_VIEWBOX = {
+  /**
+   * Standard viewBox for most icons (24x24)
+   * Used by Lucide/Feather icon set and custom SVG icons
+   */
+  STANDARD: '0 0 24 24',
+
+  /**
+   * Small viewBox for smaller icons (20x20)
+   * Used by some utility icons (Info, Alert)
+   */
+  SMALL: '0 0 20 20',
+
+  /**
+   * Large viewBox for scroll arrows and custom icons (48x48)
+   */
+  LARGE: '0 0 48 48',
+} as const;
+
+/**
  * Celebration animation colors
  * Used for success/confetti animations
  * Eliminates hardcoded color values in SuccessCelebration component

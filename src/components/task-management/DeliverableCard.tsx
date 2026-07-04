@@ -9,6 +9,7 @@ import {
   DELIVERABLE_CARD_STYLES,
   DELIVERABLE_PROGRESS_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -122,7 +123,7 @@ function DeliverableCardComponent({
             className={iconClasses}
             fill="none"
             stroke="currentColor"
-            viewBox="0 0 24 24"
+            viewBox={SVG_VIEWBOX.STANDARD}
             aria-hidden="true"
           >
             <path

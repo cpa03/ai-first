@@ -16,6 +16,7 @@ import {
   HTTP_HEADERS,
   API_ENDPOINTS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   IDEA_INPUT_LABELS,
   GRADIENT_PATTERNS,
 } from '@/lib/config';
@@ -290,7 +291,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               <svg
                 className="w-3 h-3"
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.THICK}
               >

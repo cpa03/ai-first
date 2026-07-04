@@ -8,6 +8,7 @@ import {
   SHARE_BUTTON_LABELS,
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -218,7 +219,7 @@ const ShareButtonComponent = function ShareButton({
               ${shared ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
@@ -237,7 +238,7 @@ const ShareButtonComponent = function ShareButton({
               ${shared ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.THICK}
               aria-hidden="true"

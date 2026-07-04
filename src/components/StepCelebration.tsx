@@ -9,6 +9,7 @@ import {
   ANIMATION_DELAYS,
   COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   Z_INDEX_LAYERS,
   COMPONENT_CONFIG,
   UI_CONFIG,
@@ -222,7 +223,7 @@ function StepCelebrationComponent({
                 <svg
                   className="w-6 h-6 text-white"
                   fill="none"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
                   strokeWidth={SVG_STROKE_WIDTHS.THICK}
                 >

@@ -1,7 +1,7 @@
 'use client';
 
 import { memo } from 'react';
-import { SVG_STROKE_WIDTHS } from '@/lib/config';
+import { SVG_STROKE_WIDTHS, SVG_VIEWBOX } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface CapsLockWarningProps {
@@ -42,7 +42,7 @@ function CapsLockWarningComponent({
       <svg
         className="w-3.5 h-3.5 flex-shrink-0"
         fill="none"
-        viewBox="0 0 24 24"
+        viewBox={SVG_VIEWBOX.STANDARD}
         stroke="currentColor"
         strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
         aria-hidden="true"

@@ -4,7 +4,11 @@ import React, { useMemo } from 'react';
 import CopyButton from './CopyButton';
 import { createLogger } from '@/lib/logger';
 import { APP_CONFIG } from '@/lib/config/app';
-import { SVG_STROKE_WIDTHS, REFERRAL_LINK_LABELS } from '@/lib/config';
+import {
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
+  REFERRAL_LINK_LABELS,
+} from '@/lib/config';
 
 // Logger for growth tracking events
 const logger = createLogger('ReferralLink');
@@ -102,7 +106,7 @@ export default function ReferralLink({
             <svg
               className="w-6 h-6 text-primary-600"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               aria-hidden="true"
             >

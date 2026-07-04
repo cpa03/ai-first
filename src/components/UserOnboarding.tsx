@@ -7,6 +7,7 @@ import {
   ANIMATION_CONFIG,
   LOCAL_STORAGE_KEYS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   Z_INDEX_LAYERS,
   USER_ONBOARDING_LABELS,
   USER_ONBOARDING_COMPLETION_LABELS,
@@ -320,7 +321,7 @@ export default function UserOnboarding() {
             <svg
               className={`w-10 h-10 text-green-700 ${prefersReducedMotion ? '' : 'animate-success-check'}`}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.THICK}
             >
@@ -399,7 +400,7 @@ export default function UserOnboarding() {
             className="w-5 h-5"
             fill="none"
             stroke="currentColor"
-            viewBox="0 0 24 24"
+            viewBox={SVG_VIEWBOX.STANDARD}
             aria-hidden="true"
           >
             <path

@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import {
   UI_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   PROGRESS_STEPPER_LABELS,
   ANIMATION_DELAYS,
 } from '@/lib/config';
@@ -168,7 +169,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       <svg
                         className={`w-6 h-6 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`}
                         fill="none"
-                        viewBox="0 0 24 24"
+                        viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"
                         strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                         aria-label={

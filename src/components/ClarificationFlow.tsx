@@ -18,6 +18,7 @@ import {
   ANIMATION_DELAYS,
   ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   UI_CONFIG,
   INPUT_HEIGHT_CLASSES,
   CONTAINER_WIDTHS,
@@ -263,7 +264,7 @@ function ClarificationFlow({
             <svg
               className="w-4 h-4 text-gray-500"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
             >
               <path
@@ -284,7 +285,7 @@ function ClarificationFlow({
           <svg
             className="w-4 h-4 text-gray-400 transition-transform duration-200 transform group-open:rotate-180"
             fill="none"
-            viewBox="0 0 24 24"
+            viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
           >
             <path
@@ -465,7 +466,7 @@ function ClarificationFlow({
                     <svg
                       className="w-5 h-5 text-gray-400 transition-transform duration-200"
                       fill="none"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
                       strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-hidden="true"
@@ -487,7 +488,7 @@ function ClarificationFlow({
                     <svg
                       className="w-4 h-4"
                       fill="none"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
                       strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                       aria-hidden="true"

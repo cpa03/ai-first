@@ -20,6 +20,7 @@ import {
   COMPONENT_DEFAULTS,
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   UI_CONFIG,
   CARD_PATTERNS,
 } from '@/lib/config';
@@ -354,7 +355,7 @@ function CopyCodeButton({ text }: { text: string }) {
         <svg
           className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
           aria-hidden="true"
@@ -369,7 +370,7 @@ function CopyCodeButton({ text }: { text: string }) {
         <svg
           className="w-3.5 h-3.5"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"

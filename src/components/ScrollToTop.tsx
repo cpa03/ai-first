@@ -5,6 +5,7 @@ import {
   COMPONENT_DEFAULTS,
   COMPONENT_CONFIG,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   Z_INDEX_LAYERS,
   SCROLL_TO_TOP_LABELS,
   TEXT_SIZE_CLASSES,
@@ -237,7 +238,7 @@ function ScrollToTopComponent({
           {!prefersReducedMotion && (
             <svg
               className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
-              viewBox="0 0 48 48"
+              viewBox={SVG_VIEWBOX.LARGE}
               aria-hidden="true"
               role="progressbar"
               aria-valuenow={Math.round(scrollProgress)}
@@ -284,7 +285,7 @@ function ScrollToTopComponent({
                 ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
               `}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"

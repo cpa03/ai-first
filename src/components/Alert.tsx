@@ -9,6 +9,7 @@ import {
   COMPONENT_DEFAULTS,
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
+  SVG_VIEWBOX,
   ALERT_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -205,7 +206,7 @@ const AlertComponent = function Alert({
       <svg
         className={`${SVG_SIZES.LG} ${styles.iconColor} flex-shrink-0 mt-0.5`}
         fill="currentColor"
-        viewBox="0 0 20 20"
+        viewBox={SVG_VIEWBOX.SMALL}
         aria-hidden="true"
       >
         {ALERT_ICONS[type]}
@@ -229,7 +230,7 @@ const AlertComponent = function Alert({
             <svg
               className={SVG_SIZES.MD}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
@@ -266,7 +267,7 @@ const AlertComponent = function Alert({
                   <svg
                     className="w-3 h-3"
                     fill="currentColor"
-                    viewBox="0 0 20 20"
+                    viewBox={SVG_VIEWBOX.SMALL}
                     aria-hidden="true"
                   >
                     <path
