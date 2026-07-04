@@ -82,6 +82,7 @@ Complete index of all IdeaFlow documentation.
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
 - [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
 - [Environment Setup](./environment-setup.md) - Development environment setup
+- [Configuration Guide](./configuration-guide.md) - Configurable options and environment variables
 - [FAQ](./faq.md) - Frequently asked questions
 - [Database Migrations](./database-migrations.md) - Database migration guide and conventions
 - [Events System](./events.md) - Event-driven architecture documentation
@@ -214,6 +215,7 @@ Complete index of all IdeaFlow documentation.
 ## Implementation Plans
 
 - [Flexy Modularity Plan](./plans/flexy-modularity-plan.md) - Modular architecture plan
+- [Flexy Modularization (2026-06-30)](./plans/2026-06-30-flexy-modularization.md) - Modularization implementation plan
 - [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
 
 ## Security Reports
@@ -221,6 +223,11 @@ Complete index of all IdeaFlow documentation.
 - [Security Audit P0](./security/SECURITY_AUDIT_P0_1135.md) - Priority-0 security audit
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
+
+## Reports & Maintenance
+
+- [Browser Console Audit](./reports/browser-console-audit-2026-07-04.md) - Browser console health audit
+- [Stale Branches Report](./stale-branches-report.md) - Stale branch analysis and cleanup recommendations
 
 ---
 
