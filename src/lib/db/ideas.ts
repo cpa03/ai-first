@@ -128,9 +128,16 @@ export class IdeaService {
 
     // Apply search filter if provided (searches in title and raw_text)
     if (filters?.search && filters.search.trim()) {
-      const searchTerm = `%${filters.search.trim().toLowerCase()}%`;
+      // SECURITY: Sanitize and quote the search term to prevent Supabase filter injection.
+      // Since PostgREST uses commas as separators in .or() filters, unquoted search
+      // terms containing commas can cause syntax errors or unintended query logic.
+      // Wrapping the search term in double quotes and escaping existing double quotes
+      // ensures the term is treated as a single value.
+      const safeSearchTerm = `"%${filters.search.trim().toLowerCase().replace(/"/g, '""')}%"`;
       // Use OR filter for searching across multiple columns
-      query = query.or(`title.ilike.${searchTerm},raw_text.ilike.${searchTerm}`);
+      query = query.or(
+        `title.ilike.${safeSearchTerm},raw_text.ilike.${safeSearchTerm}`
+      );
     }
 
     const { data, count, error } = await query;
