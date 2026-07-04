@@ -9,20 +9,19 @@ import { EnvLoader } from './environment';
 export const VALIDATION_CONFIG = {
   IDEA_ID: {
     REGEX: /^[a-zA-Z0-9_-]+$/,
-    MIN_LENGTH: 3,
-    MAX_LENGTH: 50,
+    MIN_LENGTH: EnvLoader.number('VALIDATION_IDEA_ID_MIN_LENGTH', 3, 1, 20),
+    MAX_LENGTH: EnvLoader.number('VALIDATION_IDEA_ID_MAX_LENGTH', 50, 10, 200),
     ALLOWED_CHARS: 'alphanumeric, hyphens, underscores',
   },
 
   TEXT: {
-    /** Env: VALIDATION_TEXT_MAX_LENGTH (default: 10000) */
     MAX_LENGTH: EnvLoader.number(
       'VALIDATION_TEXT_MAX_LENGTH',
       10000,
       100,
       100000
     ),
-    MIN_LENGTH: 1,
+    MIN_LENGTH: EnvLoader.number('VALIDATION_TEXT_MIN_LENGTH', 1, 1, 100),
     TRIM_WHITESPACE: true,
   },
 
@@ -33,9 +32,13 @@ export const VALIDATION_CONFIG = {
 
   NUMBER: {
     MIN: 0,
-    /** Env: VALIDATION_NUMBER_MAX (default: 999999) */
     MAX: EnvLoader.number('VALIDATION_NUMBER_MAX', 999999, 1000, 9999999),
-    DECIMAL_PLACES: 2,
+    DECIMAL_PLACES: EnvLoader.number(
+      'VALIDATION_NUMBER_DECIMAL_PLACES',
+      2,
+      0,
+      10
+    ),
   },
 } as const;
 

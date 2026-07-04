@@ -1,12 +1,18 @@
 /**
  * Timeline & Task Configuration
  * Centralizes timeline generation and task decomposition constants
+ * Supports environment variable overrides via EnvLoader
  */
+
+import { EnvLoader } from './environment';
+import { generateId } from '@/lib/security/crypto';
 
 export const TIMELINE_CONFIG = {
   HOURS: {
-    PER_WEEK: 40,
-    PER_DAY: 8,
+    /** Hours per work week - Env: TIMELINE_HOURS_PER_WEEK (default: 40) */
+    PER_WEEK: EnvLoader.number('TIMELINE_HOURS_PER_WEEK', 40, 1, 168),
+    /** Hours per work day - Env: TIMELINE_HOURS_PER_DAY (default: 8) */
+    PER_DAY: EnvLoader.number('TIMELINE_HOURS_PER_DAY', 8, 1, 24),
   },
 
   MILLISECONDS: {
@@ -19,10 +25,16 @@ export const TIMELINE_CONFIG = {
 
   PHASES: {
     RATIOS: {
-      PLANNING: 0.2,
-      DEVELOPMENT: 0.5,
-      TESTING: 0.2,
-      DEPLOYMENT: 0.1,
+      /** Planning phase ratio (0.0-1.0) - Env: TIMELINE_RATIO_PLANNING (default: 0.2) */
+      PLANNING: EnvLoader.number('TIMELINE_RATIO_PLANNING', 20, 0, 100) / 100,
+      /** Development phase ratio (0.0-1.0) - Env: TIMELINE_RATIO_DEVELOPMENT (default: 0.5) */
+      DEVELOPMENT:
+        EnvLoader.number('TIMELINE_RATIO_DEVELOPMENT', 50, 0, 100) / 100,
+      /** Testing phase ratio (0.0-1.0) - Env: TIMELINE_RATIO_TESTING (default: 0.2) */
+      TESTING: EnvLoader.number('TIMELINE_RATIO_TESTING', 20, 0, 100) / 100,
+      /** Deployment phase ratio (0.0-1.0) - Env: TIMELINE_RATIO_DEPLOYMENT (default: 0.1) */
+      DEPLOYMENT:
+        EnvLoader.number('TIMELINE_RATIO_DEPLOYMENT', 10, 0, 100) / 100,
     },
     NAMES: {
       PLANNING: 'Planning & Setup',
@@ -34,8 +46,20 @@ export const TIMELINE_CONFIG = {
 
   MILESTONES: {
     SPACING_MULTIPLIER: 1,
-    MIN_DURATION_DAYS: 1,
-    MAX_DURATION_DAYS: 90,
+    /** Minimum milestone duration in days - Env: TIMELINE_MILESTONE_MIN_DAYS (default: 1) */
+    MIN_DURATION_DAYS: EnvLoader.number(
+      'TIMELINE_MILESTONE_MIN_DAYS',
+      1,
+      1,
+      30
+    ),
+    /** Maximum milestone duration in days - Env: TIMELINE_MILESTONE_MAX_DAYS (default: 90) */
+    MAX_DURATION_DAYS: EnvLoader.number(
+      'TIMELINE_MILESTONE_MAX_DAYS',
+      90,
+      7,
+      365
+    ),
   },
 
   DATE_FORMATS: {
@@ -76,8 +100,10 @@ export const TASK_CONFIG = {
   },
 
   COMPLEXITY: {
-    MIN: 1,
-    MAX: 10,
+    /** Minimum complexity score - Env: TASK_COMPLEXITY_MIN (default: 1) */
+    MIN: EnvLoader.number('TASK_COMPLEXITY_MIN', 1, 0, 10),
+    /** Maximum complexity score - Env: TASK_COMPLEXITY_MAX (default: 10) */
+    MAX: EnvLoader.number('TASK_COMPLEXITY_MAX', 10, 1, 20),
     WEIGHTS: {
       LOW: 1,
       MEDIUM: 3,
@@ -86,8 +112,11 @@ export const TASK_CONFIG = {
   },
 
   CONFIDENCE: {
-    DEFAULT: 0.8,
-    MULTIPLIER: 0.9,
+    /** Default confidence score - Env: TASK_CONFIDENCE_DEFAULT (default: 0.8) */
+    DEFAULT: EnvLoader.number('TASK_CONFIDENCE_DEFAULT', 80, 0, 100) / 100,
+    /** Confidence multiplier - Env: TASK_CONFIDENCE_MULTIPLIER (default: 0.9) */
+    MULTIPLIER:
+      EnvLoader.number('TASK_CONFIDENCE_MULTIPLIER', 90, 0, 100) / 100,
     THRESHOLD: {
       HIGH: 0.8,
       MEDIUM: 0.5,
@@ -96,7 +125,8 @@ export const TASK_CONFIG = {
   },
 
   DEPENDENCIES: {
-    MAX_DEPTH: 10,
+    /** Maximum dependency depth - Env: TASK_MAX_DEPENDENCY_DEPTH (default: 10) */
+    MAX_DEPTH: EnvLoader.number('TASK_MAX_DEPENDENCY_DEPTH', 10, 1, 50),
     SEPARATOR: ',',
   },
 
@@ -123,8 +153,6 @@ export const TASK_CONFIG = {
   },
 } as const;
 
-import { generateId } from '@/lib/security/crypto';
-
 export const IDEA_CONFIG = {
   ID: {
     PREFIX: 'idea_',
@@ -134,9 +162,17 @@ export const IDEA_CONFIG = {
   },
 
   VALIDATION: {
-    MAX_TITLE_LENGTH: 100,
-    MAX_DESCRIPTION_LENGTH: 5000,
-    MIN_TITLE_LENGTH: 3,
+    /** Maximum title length - Env: IDEA_MAX_TITLE_LENGTH (default: 100) */
+    MAX_TITLE_LENGTH: EnvLoader.number('IDEA_MAX_TITLE_LENGTH', 100, 10, 500),
+    /** Maximum description length - Env: IDEA_MAX_DESCRIPTION_LENGTH (default: 5000) */
+    MAX_DESCRIPTION_LENGTH: EnvLoader.number(
+      'IDEA_MAX_DESCRIPTION_LENGTH',
+      5000,
+      100,
+      50000
+    ),
+    /** Minimum title length - Env: IDEA_MIN_TITLE_LENGTH (default: 3) */
+    MIN_TITLE_LENGTH: EnvLoader.number('IDEA_MIN_TITLE_LENGTH', 3, 1, 50),
   },
 
   DEFAULTS: {
