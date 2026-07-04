@@ -44,6 +44,44 @@ export const MAIN_NAV_CONFIG = {
 } as const;
 
 /**
+ * Hamburger Menu Animation Configuration
+ * Centralizes hardcoded pixel values for hamburger menu transforms
+ * Eliminates hardcoded translate-y-[4px] and translate-y-[2px] in MobileNav
+ */
+export const HAMBURGER_MENU_CONFIG = {
+  /** Translate offset for hamburger line transform (in Tailwind arbitrary value format) */
+  TRANSLATE_OFFSET: {
+    /** Large offset for main hamburger lines (open state) */
+    LARGE: '4px',
+    /** Small offset for close icon lines */
+    SMALL: '2px',
+  },
+  /** Line dimensions for hamburger menu */
+  LINE: {
+    /** Width of hamburger line (Tailwind class) */
+    WIDTH_CLASS: 'w-5',
+    /** Height of hamburger line (Tailwind class) */
+    HEIGHT_CLASS: 'h-0.5',
+    /** Width of close icon line (Tailwind class) */
+    CLOSE_WIDTH_CLASS: 'w-4',
+  },
+  /** Container dimensions for hamburger menu */
+  CONTAINER: {
+    /** Width class */
+    WIDTH_CLASS: 'w-6',
+    /** Height class */
+    HEIGHT_CLASS: 'h-6',
+  },
+  /** Close button dimensions */
+  CLOSE_BUTTON: {
+    /** Width/height class */
+    SIZE_CLASS: 'w-10 h-10',
+    /** Icon container width/height class */
+    ICON_SIZE_CLASS: 'w-5 h-5',
+  },
+} as const;
+
+/**
  * Mobile navigation configuration
  */
 export const MOBILE_NAV_CONFIG = {
