@@ -1,4 +1,4 @@
-import { SuspiciousPatternCategory } from '../security/suspicious-patterns';
+import { SuspiciousPatternCategory } from '@/types/security';
 
 /**
  * Suspicious pattern definitions

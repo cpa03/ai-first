@@ -30,25 +30,12 @@ import { getClientIdentifier } from '@/lib/rate-limit';
 import { CACHE_CONFIG } from '@/lib/config/cache';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { SUSPICIOUS_PATTERNS_CONFIG } from '@/lib/config/security-patterns';
+import { SuspiciousPatternCategory } from '@/types/security';
+
+// Re-export for backward compatibility
+export type { SuspiciousPatternCategory } from '@/types/security';
 
 const logger = createLogger('SuspiciousPatterns');
-
-/**
- * Categories of suspicious patterns
- */
-export type SuspiciousPatternCategory =
-  | 'sql_injection'
-  | 'xss'
-  | 'path_traversal'
-  | 'command_injection'
-  | 'ssrf'
-  | 'header_injection'
-  | 'encoding_attack'
-  | 'nosql_injection'
-  | 'prototype_pollution'
-  | 'log_injection'
-  | 'ssti'
-  | 'insecure_deserialization';
 
 /**
  * Details about a detected suspicious pattern
