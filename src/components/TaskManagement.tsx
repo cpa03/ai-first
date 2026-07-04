@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useCallback, useEffect, useState } from 'react';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import TaskManagementSkeleton from '@/components/TaskManagementSkeleton';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
 import StatusAnnouncer from '@/components/StatusAnnouncer';
@@ -11,11 +11,10 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import {
   MESSAGES,
   BUTTON_LABELS,
-  COMPONENT_DEFAULTS,
-  ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
   TASK_MANAGEMENT_LABELS,
   CARD_PATTERNS,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 
 interface TaskManagementProps {
@@ -81,17 +80,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
   }, []);
 
   if (loading) {
-    return (
-      <div className={CARD_PATTERNS.BASE}>
-        <div className="flex flex-col items-center justify-center py-12">
-          <LoadingSpinner
-            size="lg"
-            ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.LOADING_TASKS}
-          />
-          <p className="mt-4 text-gray-600">{MESSAGES.LOADING.TASKS}</p>
-        </div>
-      </div>
-    );
+    return <TaskManagementSkeleton />;
   }
 
   if (error) {

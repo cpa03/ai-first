@@ -383,6 +383,16 @@ export const COMPONENT_CONFIG = {
       20
     ),
   } as const,
+
+  TASK_MANAGEMENT: {
+    /** Number of skeleton deliverable cards to show while loading - Env: COMPONENT_TASK_MANAGEMENT_SKELETON_DELIVERABLES (default: 3) */
+    SKELETON_DELIVERABLE_COUNT: EnvLoader.number(
+      'COMPONENT_TASK_MANAGEMENT_SKELETON_DELIVERABLES',
+      3,
+      1,
+      10
+    ),
+  } as const,
 } as const;
 
 export type ComponentConfig = typeof COMPONENT_CONFIG;
