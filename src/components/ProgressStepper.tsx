@@ -93,7 +93,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${isClickable ? 'cursor-pointer hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2' : 'cursor-default'}
                       ${
                         step.current
-                          ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200'
+                          ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200 animate-gentle-pulse'
                           : step.completed
                             ? `w-3 h-3 bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
                             : 'w-3 h-3 bg-gray-300'
