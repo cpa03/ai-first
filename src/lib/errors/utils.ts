@@ -6,45 +6,20 @@ import { redactPII } from '../pii-redaction';
 import { ERROR_CONFIG, STATUS_CODES } from '../config/constants';
 import { APP_CONFIG } from '../config/app';
 import { HTTP_HEADERS } from '../config/http';
-import { generateId, simpleHash } from '../security/crypto';
-import { HASH_CONFIG } from '../config/modular-constants';
+import { generateId } from '../security/crypto';
 import {
   RETRYABLE_PATTERNS,
   matchesPattern,
 } from '../config/error-classification';
 import { ErrorCode, ERROR_SUGGESTIONS } from './codes';
 import { AppError, RateLimitError } from './classes';
+import { ErrorDetail } from './types';
+import { generateErrorFingerprint } from './fingerprint';
+
+// Re-export for backward compatibility
+export { generateErrorFingerprint };
 
 const API_VERSION = APP_CONFIG.VERSION;
-
-const LONG_NUMBER_PATTERN = /\d{4,}/g;
-const UUID_PATTERN =
-  /[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/gi;
-const IP_ADDRESS_PATTERN = /\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g;
-
-export function generateErrorFingerprint(
-  code: ErrorCode | string,
-  message: string,
-  stackFirstLine?: string
-): string {
-  const normalizedMessage = message
-    .replace(UUID_PATTERN, 'UUID')
-    .replace(IP_ADDRESS_PATTERN, 'IP')
-    .replace(LONG_NUMBER_PATTERN, 'N')
-    .toLowerCase()
-    .trim();
-
-  const fingerprintInput = stackFirstLine
-    ? `${code}:${normalizedMessage}:${stackFirstLine}`
-    : `${code}:${normalizedMessage}`;
-
-  const hash = simpleHash(fingerprintInput).substring(
-    0,
-    HASH_CONFIG.FINGERPRINT_LENGTH
-  );
-
-  return `fp_${hash}`;
-}
 
 export function toErrorResponse(
   error: unknown,
@@ -147,6 +122,4 @@ export function isRetryableError(error: unknown): boolean {
   return false;
 }
 
-// Re-export ErrorDetail from classes for convenience
-import { ErrorDetail } from './classes';
 export type { ErrorDetail };

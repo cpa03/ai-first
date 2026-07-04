@@ -6,24 +6,11 @@ import { redactPII, redactPIIInObject } from '../pii-redaction';
 import { STATUS_CODES } from '../config/constants';
 import { API_ROUTES } from '../config/api-routes';
 import { ErrorCode } from './codes';
-import { generateErrorFingerprint } from './utils';
+import { generateErrorFingerprint } from './fingerprint';
+import { ErrorDetail, ErrorResponse } from './types';
 
-export interface ErrorDetail {
-  field?: string;
-  message: string;
-  code?: string;
-}
-
-export interface ErrorResponse {
-  error: string;
-  code: string;
-  fingerprint?: string;
-  details?: ErrorDetail[];
-  timestamp: string;
-  requestId?: string;
-  retryable?: boolean;
-  suggestions?: string[];
-}
+// Re-export types for backward compatibility
+export type { ErrorDetail, ErrorResponse };
 
 export class AppError extends Error {
   private _fingerprint?: string;
