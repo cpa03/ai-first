@@ -6,6 +6,7 @@ import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { createLogger } from '@/lib/logger';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { useConfetti } from '@/hooks/useConfetti';
 import {
   APP_CONFIG,
   UI_CONFIG,
@@ -56,6 +57,7 @@ const EmailButtonComponent = function EmailButton({
   onEmailSent,
 }: EmailButtonProps) {
   const [state, setState] = useState<'idle' | 'loading' | 'success'>('idle');
+  const { particles, fire } = useConfetti();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -93,6 +95,7 @@ const EmailButtonComponent = function EmailButton({
       });
 
       setState('success');
+      fire();
 
       timeoutRef.current = setTimeout(() => {
         setState('idle');
@@ -106,7 +109,7 @@ const EmailButtonComponent = function EmailButton({
       logger.error('Failed to open email client', error);
       setState('idle');
     }
-  }, [ideaTitle, ideaContent, sessionAnswers, onEmailSent, state]);
+  }, [ideaTitle, ideaContent, sessionAnswers, onEmailSent, state, fire]);
 
   const iconTransition = prefersReducedMotion
     ? ''
@@ -120,63 +123,84 @@ const EmailButtonComponent = function EmailButton({
         disabled={false}
         position="top"
       >
-        <Button
-          variant="primary"
-          loading={state === 'loading'}
-          onClick={handleEmailClick}
-          aria-label={ariaLabel}
-          className={className}
-        >
-          <span
-            className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
+        <span className="relative inline-flex">
+          <Button
+            variant="primary"
+            loading={state === 'loading'}
+            onClick={handleEmailClick}
+            aria-label={ariaLabel}
+            className={className}
           >
-            <svg
-              className={`absolute inset-0 ${SVG_SIZES.MD} ${iconTransition} ${
-                state === 'success'
-                  ? 'opacity-0 scale-75'
-                  : 'opacity-100 scale-100'
-              }`}
-              fill="none"
-              viewBox={SVG_VIEWBOX.STANDARD}
-              stroke="currentColor"
-              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-              aria-hidden="true"
+            <span
+              className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
+              <svg
+                className={`absolute inset-0 ${SVG_SIZES.MD} ${iconTransition} ${
+                  state === 'success'
+                    ? 'opacity-0 scale-75'
+                    : 'opacity-100 scale-100'
+                }`}
+                fill="none"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                />
+              </svg>
 
-            <svg
-              className={`absolute inset-0 ${SVG_SIZES.MD} text-green-700 ${iconTransition} ${
-                state === 'success'
-                  ? 'opacity-100 scale-100'
-                  : 'opacity-0 scale-50'
+              <svg
+                className={`absolute inset-0 ${SVG_SIZES.MD} text-green-700 ${iconTransition} ${
+                  state === 'success'
+                    ? 'opacity-100 scale-100'
+                    : 'opacity-0 scale-50'
+                }`}
+                fill="none"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </span>
+
+            <span
+              className={`${iconTransition} ${
+                state === 'success' ? 'text-green-100' : ''
               }`}
-              fill="none"
-              viewBox={SVG_VIEWBOX.STANDARD}
-              stroke="currentColor"
-              strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
-              aria-hidden="true"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </span>
-
-          <span
-            className={`${iconTransition} ${
-              state === 'success' ? 'text-green-100' : ''
-            }`}
-          >
-            {state === 'success' ? successLabel : label}
-          </span>
-        </Button>
+              {state === 'success' ? successLabel : label}
+            </span>
+          </Button>
+          {particles.map((particle) => (
+            <span
+              key={particle.id}
+              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              style={
+                {
+                  left: '50%',
+                  top: '50%',
+                  width: `${particle.size}px`,
+                  height: `${particle.size}px`,
+                  backgroundColor: particle.color,
+                  '--confetti-x': `${particle.x}px`,
+                  '--confetti-y': `${particle.y}px`,
+                  animationDelay: `${particle.delay}ms`,
+                } as React.CSSProperties
+              }
+              aria-hidden="true"
+            />
+          ))}
+        </span>
       </Tooltip>
     </>
   );

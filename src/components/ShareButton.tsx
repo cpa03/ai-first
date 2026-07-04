@@ -14,6 +14,7 @@ import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
+import { useConfetti } from '@/hooks/useConfetti';
 
 export interface ShareButtonProps {
   shareUrl?: string;
@@ -54,6 +55,7 @@ const ShareButtonComponent = function ShareButton({
   onShare,
 }: ShareButtonProps) {
   const [shared, setShared] = useState(false);
+  const { particles, fire } = useConfetti();
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Cleanup timeout on unmount
@@ -112,6 +114,7 @@ const ShareButtonComponent = function ShareButton({
         triggerHapticFeedback();
         await navigator.share(shareData);
         setShared(true);
+        fire();
         logger.debug('Successfully shared via Web Share API', {
           shareTitle,
           shareUrl,
@@ -140,6 +143,7 @@ const ShareButtonComponent = function ShareButton({
         triggerHapticFeedback();
         await navigator.clipboard.writeText(shareUrl);
         setShared(true);
+        fire();
         logger.debug('Successfully copied share URL to clipboard', {
           shareUrl,
         });
@@ -167,6 +171,7 @@ const ShareButtonComponent = function ShareButton({
     showSuccessToast,
     showErrorToast,
     onShare,
+    fire,
   ]);
 
   const baseClasses = `
@@ -203,65 +208,86 @@ const ShareButtonComponent = function ShareButton({
         disabled={false}
         position="top"
       >
-        <button
-          onClick={handleShare}
-          className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
-          aria-label={ariaLabel}
-          type="button"
-        >
-          <span
-            className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
+        <span className="relative inline-flex">
+          <button
+            onClick={handleShare}
+            className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
+            aria-label={ariaLabel}
+            type="button"
           >
-            {/* Share icon */}
-            <svg
-              className={`
+            <span
+              className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
+            >
+              {/* Share icon */}
+              <svg
+                className={`
               absolute inset-0 ${SVG_SIZES.MD} transition-all duration-200
               ${shared ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
-              fill="none"
-              viewBox={SVG_VIEWBOX.STANDARD}
-              stroke="currentColor"
-              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-              />
-            </svg>
+                fill="none"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                />
+              </svg>
 
-            {/* Checkmark icon when shared */}
-            <svg
-              className={`
+              {/* Checkmark icon when shared */}
+              <svg
+                className={`
               absolute inset-0 ${SVG_SIZES.MD} text-green-500 transition-all duration-200
               ${shared ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
-              fill="none"
-              viewBox={SVG_VIEWBOX.STANDARD}
-              stroke="currentColor"
-              strokeWidth={SVG_STROKE_WIDTHS.THICK}
-              aria-hidden="true"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </span>
+                fill="none"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </span>
 
-          {variant !== 'icon-only' && (
-            <span
-              className={`
+            {variant !== 'icon-only' && (
+              <span
+                className={`
               transition-all duration-200
               ${shared ? 'text-green-400' : ''}
             `}
-            >
-              {shared ? successLabel : label}
-            </span>
-          )}
-        </button>
+              >
+                {shared ? successLabel : label}
+              </span>
+            )}
+          </button>
+          {particles.map((particle) => (
+            <span
+              key={particle.id}
+              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              style={
+                {
+                  left: '50%',
+                  top: '50%',
+                  width: `${particle.size}px`,
+                  height: `${particle.size}px`,
+                  backgroundColor: particle.color,
+                  '--confetti-x': `${particle.x}px`,
+                  '--confetti-y': `${particle.y}px`,
+                  animationDelay: `${particle.delay}ms`,
+                } as React.CSSProperties
+              }
+              aria-hidden="true"
+            />
+          ))}
+        </span>
       </Tooltip>
     </>
   );
