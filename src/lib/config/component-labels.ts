@@ -149,7 +149,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   /** Tip aria-label */
   TIP_ARIA_LABEL: 'Tip',
   /** Tip text content */
-  TIP_TEXT: 'Tip: Enable vim mode to navigate with j/k keys',
+  TIP_TEXT:
+    'Tip: Press ? anywhere to open this dialog. Enable vim mode to navigate with j/k keys',
   /** No results title */
   NO_RESULTS_TITLE: 'No shortcuts found',
   /** No results description */
