@@ -292,6 +292,7 @@ export {
 export {
   MOBILE_NAV_CONFIG,
   FOOTER_NAV_CONFIG,
+  HAMBURGER_MENU_CONFIG,
   type NavItem,
   type MobileNavConfig,
   type FooterNavConfig,

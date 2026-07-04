@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   UI_CONFIG,
   MOBILE_NAV_CONFIG,
+  HAMBURGER_MENU_CONFIG,
   Z_INDEX_LAYERS,
   CONTAINER_WIDTHS,
   RESPONSIVE_PADDING,
@@ -172,17 +173,17 @@ function MobileNavComponent() {
         {/* Micro-UX: Animated hamburger icon that morphs between menu and close states */}
         {/* Uses CSS transforms for smooth 60fps animation instead of swapping SVG elements */}
         <div
-          className={`w-6 h-6 flex flex-col justify-center items-center ${isOpen ? 'hamburger-open' : ''}`}
+          className={`${HAMBURGER_MENU_CONFIG.CONTAINER.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.CONTAINER.HEIGHT_CLASS} flex flex-col justify-center items-center ${isOpen ? 'hamburger-open' : ''}`}
           aria-hidden="true"
         >
           <span
-            className={`block w-5 h-0.5 bg-current rounded-full transition-all duration-300 ease-in-out ${isOpen ? 'rotate-45 translate-y-[4px]' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out ${isOpen ? `rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
           />
           <span
-            className={`block w-5 h-0.5 bg-current rounded-full transition-all duration-300 ease-in-out mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block w-5 h-0.5 bg-current rounded-full transition-all duration-300 ease-in-out mt-1.5 ${isOpen ? '-rotate-45 -translate-y-[4px]' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out mt-1.5 ${isOpen ? `-rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
           />
         </div>
       </button>
@@ -200,13 +201,18 @@ function MobileNavComponent() {
             <button
               type="button"
               onClick={closeMenu}
-              className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/90 shadow-lg text-gray-600 hover:text-gray-900 hover:bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className={`absolute top-4 right-4 ${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.SIZE_CLASS} flex items-center justify-center rounded-full bg-white/90 shadow-lg text-gray-600 hover:text-gray-900 hover:bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
               aria-label={MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL}
             >
-              {/* Micro-UX: Animated close icon with smooth rotation */}
-              <div className="w-5 h-5 flex flex-col justify-center items-center">
-                <span className="block w-4 h-0.5 bg-current rounded-full rotate-45 translate-y-[2px] transition-transform duration-200" />
-                <span className="block w-4 h-0.5 bg-current rounded-full -rotate-45 -translate-y-[2px] transition-transform duration-200" />
+              <div
+                className={`${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.ICON_SIZE_CLASS} flex flex-col justify-center items-center`}
+              >
+                <span
+                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform duration-200`}
+                />
+                <span
+                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full -rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform duration-200`}
+                />
               </div>
             </button>
           </div>
