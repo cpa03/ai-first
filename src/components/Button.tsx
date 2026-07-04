@@ -38,6 +38,22 @@ interface Ripple {
   size: number;
 }
 
+const getRippleColorClass = (
+  variant: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'
+): string => {
+  switch (variant) {
+    case 'primary':
+    case 'danger':
+      return 'bg-white/30';
+    case 'secondary':
+    case 'outline':
+    case 'ghost':
+      return 'bg-gray-700/15';
+    default:
+      return 'bg-white/30';
+  }
+};
+
 const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
@@ -203,7 +219,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
-            className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
+            className={`absolute rounded-full ${getRippleColorClass(variant)} pointer-events-none animate-ripple`}
             style={{
               left: ripple.x,
               top: ripple.y,
