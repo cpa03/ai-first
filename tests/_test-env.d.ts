@@ -39,6 +39,9 @@ declare global {
 
   // WebSocket mock
   var WebSocket: jest.Mock;
+
+  // showToast function for toast notifications
+  var showToast: (options: { type: string; message: string }) => void;
 }
 
 // Type augmentations for Jest mocks

@@ -103,10 +103,8 @@ describe('BlueprintDisplay', () => {
       configurable: true,
     });
 
-    // Mock showToast
     const mockShowToast = jest.fn();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (window as any).showToast = mockShowToast;
+    window.showToast = mockShowToast;
 
     render(<BlueprintDisplay idea={idea} answers={answers} />);
 
