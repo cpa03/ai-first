@@ -94,9 +94,11 @@ export default function DashboardPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
+    isExiting: boolean;
     idea: Idea | null;
   }>({
     isOpen: false,
+    isExiting: false,
     idea: null,
   });
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
@@ -210,12 +212,19 @@ export default function DashboardPage() {
 
   // PERFORMANCE: Memoize event handlers to prevent unnecessary re-renders
   const openDeleteModal = useCallback((idea: Idea) => {
-    setDeleteModal({ isOpen: true, idea });
+    setDeleteModal({ isOpen: true, isExiting: false, idea });
   }, []);
 
   const closeDeleteModal = useCallback(() => {
-    setDeleteModal({ isOpen: false, idea: null });
-  }, []);
+    if (prefersReducedMotion) {
+      setDeleteModal({ isOpen: false, isExiting: false, idea: null });
+      return;
+    }
+    setDeleteModal((prev) => ({ ...prev, isExiting: true }));
+    setTimeout(() => {
+      setDeleteModal({ isOpen: false, isExiting: false, idea: null });
+    }, 200);
+  }, [prefersReducedMotion]);
 
   const handleDelete = useCallback(async () => {
     if (!deleteModal.idea) return;
@@ -993,7 +1002,7 @@ export default function DashboardPage() {
       {deleteModal.isOpen && deleteModal.idea && (
         <div
           ref={modalRef}
-          className={MODAL_PATTERNS.overlay}
+          className={`${MODAL_PATTERNS.overlay} transition-opacity duration-200 ${deleteModal.isExiting ? 'opacity-0' : 'opacity-100'}`}
           role="dialog"
           aria-modal="true"
           aria-labelledby="delete-modal-title"
@@ -1006,7 +1015,7 @@ export default function DashboardPage() {
           }}
         >
           <div
-            className={`${MODAL_PATTERNS.content.container} ${MODAL_PATTERNS.content.transition}`}
+            className={`${MODAL_PATTERNS.content.container} ${deleteModal.isExiting ? MODAL_PATTERNS.content.exiting : MODAL_PATTERNS.content.entering}`}
           >
             <div className={MODAL_PATTERNS.header.container}>
               <div className={MODAL_PATTERNS.dangerIcon.container}>

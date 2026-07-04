@@ -808,34 +808,29 @@ export const TABLE_PATTERNS = {
  * Eliminates hardcoded Tailwind classes in modal components
  */
 export const MODAL_PATTERNS = {
-  /** Overlay/backdrop */
-  overlay: 'fixed inset-0 bg-gray-900/50',
-  /** Modal container */
-  container: 'fixed inset-0 z-50 flex items-center justify-center p-4',
-  /** Modal content box */
+  overlay:
+    'fixed inset-0 bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-50',
   content: {
-    container: 'bg-white rounded-lg shadow-lg p-8 max-w-md w-full',
-    transition: 'transition-all duration-200',
+    container:
+      'bg-white rounded-lg shadow-2xl p-8 max-w-md w-full transform transition-all duration-200 ease-out',
+    entering: 'opacity-100 scale-100 translate-y-0',
+    exiting: 'opacity-0 scale-95 translate-y-4',
   },
-  /** Modal header */
   header: {
     container: 'mb-6',
     title: 'text-lg font-semibold text-gray-900',
     description: 'text-gray-600 mb-6',
   },
-  /** Modal footer with buttons */
   footer: {
     container: 'flex justify-end gap-3',
     button: 'px-4 py-2 rounded-md transition-colors',
     cancelButton: 'bg-gray-200 text-gray-600 hover:bg-gray-300',
     confirmButton: 'bg-red-600 text-white hover:bg-red-700',
   },
-  /** Close button */
   closeButton: {
     iconSize: 'w-5 h-5',
     iconColor: 'text-red-600',
   },
-  /** Danger zone icon */
   dangerIcon: {
     container:
       'w-10 h-10 rounded-full bg-red-100 flex items-center justify-center',
