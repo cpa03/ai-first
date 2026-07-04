@@ -82,6 +82,7 @@ Complete index of all IdeaFlow documentation.
 - [Troubleshooting](./troubleshooting.md) - Common issues and solutions
 - [Integration Hardening](./integration-hardening.md) - Resilience patterns and best practices
 - [Environment Setup](./environment-setup.md) - Development environment setup
+- [Configuration Guide](./configuration-guide.md) - All configurable options and environment variables
 - [FAQ](./faq.md) - Frequently asked questions
 - [Database Migrations](./database-migrations.md) - Database migration guide and conventions
 - [Events System](./events.md) - Event-driven architecture documentation
@@ -139,6 +140,7 @@ Complete index of all IdeaFlow documentation.
 - [Code Reviewer](./code-reviewer.md) - Code review guidelines
 - [Disaster Recovery](./disaster-recovery.md) - Disaster recovery procedures and backup strategies
 - [Modular Architecture Review](./modular-architecture-review.md) - Modular architecture analysis and recommendations
+- [Stale Branches Report](./stale-branches-report.md) - Current stale branch status and cleanup recommendations
 
 ## Task Management
 
@@ -214,6 +216,7 @@ Complete index of all IdeaFlow documentation.
 ## Implementation Plans
 
 - [Flexy Modularity Plan](./plans/flexy-modularity-plan.md) - Modular architecture plan
+- [Flexy Modularization (2026-06-30)](./plans/2026-06-30-flexy-modularization.md) - Hardcoded values elimination plan
 - [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
 
 ## Security Reports
