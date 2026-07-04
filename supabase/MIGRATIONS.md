@@ -4,30 +4,28 @@ This document catalogs the current database migrations and establishes naming co
 
 ## Current Migration Count
 
-- **Total migrations**: 23 (12 up + 11 down rollback scripts)
-- **Unique up migrations**: 12
-- **Consolidation Status**: Partially completed (62 → 12 up migrations)
+- **Total migrations**: 18 (9 up + 9 down rollback scripts)
+- **Unique up migrations**: 9
+- **Consolidation Status**: Completed (62 → 9 up migrations, 85% reduction)
 
 ### Migration Notes
 
-- Legacy migrations (001-005) are retained for rollback safety
+- Legacy migrations (001-003) are retained for foundational schema support
+- Migrations 004 and 005 have been removed (superseded by `20260226_consolidate_risk_assessments_migrations.sql`)
 - Consolidation migrations (20260222, 20260223, 20260226) supersede individual migrations
-- Old migrations marked as "superseded" in comments
+- Old migrations marked as "superseded" in comments have been removed
 
 ## Migration Catalog
 
-### Legacy Numbered Migrations (001-005)
+### Legacy Numbered Migrations (001-003)
 
-| File                                            | Description                                                                | Date       |
-| ----------------------------------------------- | -------------------------------------------------------------------------- | ---------- |
-| `001_breakdown_engine_extensions.sql`           | Core schema extensions for task dependencies, milestones, task assignments | Pre-2025   |
-| `002_schema_optimization.sql`                   | Database schema optimization - indexes for performance                     | 2025-01-07 |
-| `002_data_integrity_constraints.sql`            | Data integrity constraints                                                 | -          |
-| `003_vectors_pgvector_support.sql`              | Vector store support with pgvector extension                               | -          |
-| `004_risk_assessments_not_null_constraints.sql` | Risk assessments NOT NULL constraints                                      | -          |
-| `005_risk_assessments_constraints_fix.sql`      | Risk assessments constraints fix                                           | -          |
+| File                                          | Description                                                                          | Date       |
+| --------------------------------------------- | ------------------------------------------------------------------------------------ | ---------- |
+| `001_breakdown_engine_extensions.sql`         | Core schema extensions for task dependencies, milestones, task assignments           | Pre-2025   |
+| `002_schema_optimization_and_constraints.sql` | Consolidated: Performance indexes, soft-delete mechanism, data integrity constraints | 2025-01-07 |
+| `003_vectors_pgvector_support.sql`            | Vector store support with pgvector extension                                         | 2025-01-07 |
 
-### Dated Migrations (20260113 - 20260222)
+### Dated Migrations (20260113 - 20260226)
 
 #### January 2026
 
@@ -36,43 +34,25 @@ This document catalogs the current database migrations and establishes naming co
 | `20260113_add_missing_tables_and_columns.sql`       | Missing tables and columns            |
 | `20260120_add_clarification_tables_and_indexes.sql` | Clarification flow tables and indexes |
 
-#### February 2026 - Early (20260218)
+#### February 2026
 
-| File                                            | Description                    |
-| ----------------------------------------------- | ------------------------------ |
-| `20260218_add_missing_rls_policies.sql`         | Row Level Security policies    |
-| `20260218_add_task_comments_soft_delete.sql`    | Task comments with soft delete |
-| `20260218_add_ideas_updated_at.sql`             | Ideas updated_at timestamp     |
-| `20260218_add_task_dependencies_updated_at.sql` | Task dependencies updated_at   |
-| `20260218_vector_index_maintenance.sql`         | Vector index maintenance       |
+| File                                                   | Description                             |
+| ------------------------------------------------------ | --------------------------------------- |
+| `20260218_add_missing_rls_policies.sql`                | Row Level Security policies             |
+| `20260222_consolidate_performance_indexes.sql`         | Consolidated performance indexes        |
+| `20260223_consolidate_migrations.sql`                  | Consolidated index-only migrations      |
+| `20260226_consolidate_risk_assessments_migrations.sql` | Consolidated risk assessment migrations |
 
-#### February 2026 - Mid (20260219-20260220)
+## Removed Migrations
 
-| File                                                | Description                  |
-| --------------------------------------------------- | ---------------------------- |
-| `20260219_add_date_integrity_constraints.sql`       | Date integrity constraints   |
-| `20260219_add_task_assignments_updated_at.sql`      | Task assignments updated_at  |
-| `20260219_add_idea_sessions_updated_at_trigger.sql` | Idea sessions update trigger |
-| `20260220_fix_risk_score_data_type.sql`             | Risk score data type fix     |
-| `20260220_add_task_assignments_indexes.sql`         | Task assignments indexes     |
-| `20260220_add_agent_logs_action_index.sql`          | Agent logs action index      |
+The following migrations have been removed as part of consolidation:
 
-#### February 2026 - Late (20260221-20260222)
-
-| File                                                     | Description                           |
-| -------------------------------------------------------- | ------------------------------------- |
-| `20260221_add_clarification_question_index.sql`          | Clarification question index          |
-| `20260221_add_risk_assessments_risk_score_index.sql`     | Risk assessments risk score index     |
-| `20260221_add_tasks_updated_at.sql`                      | Tasks updated_at timestamp            |
-| `20260221_add_time_tracking_task_user_index.sql`         | Time tracking task-user index         |
-| `20260221_add_missing_fk_indexes.sql`                    | Missing foreign key indexes           |
-| `20260222_add_ideas_pagination_composite_index.sql`      | Ideas pagination composite index      |
-| `20260222_add_deliverables_composite_priority_index.sql` | Deliverables priority composite index |
-| `20260222_consolidate_performance_indexes.sql`           | Consolidated performance indexes      |
-| `20260222_add_agent_logs_agent_action_index.sql`         | Agent logs agent-action index         |
-| `20260222_add_time_tracking_user_date_index.sql`         | Time tracking user-date index         |
-| `20260222_add_risk_assessments_status_score_index.sql`   | Risk assessments status-score index   |
-| `20260222_add_idea_sessions_agent_updated_index.sql`     | Idea sessions agent-updated index     |
+| Original File                                   | Reason                       | Replacement                                            |
+| ----------------------------------------------- | ---------------------------- | ------------------------------------------------------ |
+| `002_data_integrity_constraints.sql`            | Merged into consolidated 002 | `002_schema_optimization_and_constraints.sql`          |
+| `002b_schema_optimization.sql`                  | Merged into consolidated 002 | `002_schema_optimization_and_constraints.sql`          |
+| `004_risk_assessments_not_null_constraints.sql` | Superseded                   | `20260226_consolidate_risk_assessments_migrations.sql` |
+| `005_risk_assessments_constraints_fix.sql`      | Superseded                   | `20260226_consolidate_risk_assessments_migrations.sql` |
 
 ## Migration Naming Conventions
 
@@ -84,7 +64,7 @@ YYYYMMDD_description.sql
 
 Examples:
 
-- `20260219_add_date_integrity_constraints.sql`
+- `20260119_add_date_integrity_constraints.sql`
 - `20260222_consolidate_performance_indexes.sql`
 
 ### Down Migrations
@@ -120,36 +100,6 @@ Migrations can be categorized by type:
 5. **Test in staging first**: Always test migrations against staging data
 6. **Backup before running**: Especially for destructive operations
 7. **Monitor after deployment**: Watch for errors in production logs
-
-## Consolidation Status
-
-### Completed (2026-02-23)
-
-Migration consolidation has been completed as part of Issue #1816:
-
-- **Before**: 62 migration files (31 up + 31 down)
-- **After**: 23 migration files (12 up + 11 down)
-- **Reduction**: 63% reduction in migration files
-
-#### What Was Consolidated
-
-1. **Index-only migrations (15+ files)**: Consolidated into `20260223_consolidate_migrations.sql`
-2. **Performance indexes**: Consolidated into `20260222_consolidate_performance_indexes.sql`
-3. **RLS policies**: Consolidated into `20260218_add_missing_rls_policies.sql`
-4. **Risk assessment migrations**: Consolidated into `20260226_consolidate_risk_assessments_migrations.sql`
-
-### Retained Migrations
-
-Legacy migrations (001-005) are retained for rollback safety:
-
-- `001_breakdown_engine_extensions.sql` - Foundational schema
-- `002_data_integrity_constraints.sql` - Data integrity
-- `002b_schema_optimization.sql` - Performance optimization
-- `003_vectors_pgvector_support.sql` - Vector store support
-- `004_risk_assessments_not_null_constraints.sql` - Superseded by 20260226
-- `005_risk_assessments_constraints_fix.sql` - Superseded by 20260226
-
-> **Note**: Migrations 004 and 005 are superseded by `20260226_consolidate_risk_assessments_migrations.sql` but retained for rollback safety.
 
 ## Running Migrations
 

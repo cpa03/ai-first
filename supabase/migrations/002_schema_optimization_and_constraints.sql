@@ -1,10 +1,11 @@
--- Migration 002: Database Schema Optimization
--- This migration adds missing indexes, soft-delete mechanism, and additional constraints
--- Author: Data Architect
--- Date: 2025-01-07
+-- Migration 002: Schema Optimization and Data Integrity Constraints
+-- Consolidated from: 002_data_integrity_constraints.sql + 002b_schema_optimization.sql
+-- Description: Indexes for performance, soft-delete mechanism, and data integrity constraints
+-- Date: 2025-01-07 (original) / 2026-07-04 (consolidated)
+-- Status: Consolidated - replaces 002_data_integrity_constraints.sql and 002b_schema_optimization.sql
 
 -- ============================================================================
--- PART 1: Missing Indexes for Performance Optimization
+-- PART 1: Performance Indexes
 -- ============================================================================
 
 -- Indexes for ideas table (frequently queried by user_id, status, and created_at)
@@ -86,23 +87,84 @@ CREATE INDEX IF NOT EXISTS idx_deliverables_deleted_at ON deliverables(deleted_a
 CREATE INDEX IF NOT EXISTS idx_tasks_deleted_at ON tasks(deleted_at);
 
 -- ============================================================================
--- PART 3: Additional NOT NULL and CHECK Constraints
+-- PART 3: Data Integrity Constraints
 -- ============================================================================
+
+-- Ensure task estimates are non-negative
+ALTER TABLE tasks 
+ADD CONSTRAINT tasks_estimate_non_negative 
+CHECK (estimate >= 0);
+
+-- Ensure task priority is within reasonable range
+ALTER TABLE tasks 
+ADD CONSTRAINT tasks_priority_valid 
+CHECK (priority >= 0 AND priority <= 100);
+
+-- Ensure deliverable estimate_hours is non-negative
+ALTER TABLE deliverables 
+ADD CONSTRAINT deliverables_estimate_hours_non_negative 
+CHECK (estimate_hours >= 0);
+
+-- Ensure deliverable priority is within reasonable range
+ALTER TABLE deliverables 
+ADD CONSTRAINT deliverables_priority_valid 
+CHECK (priority >= 0 AND priority <= 100);
+
+-- Ensure task allocation_percentage is valid
+ALTER TABLE task_assignments 
+ADD CONSTRAINT task_assignments_allocation_percentage_valid 
+CHECK (allocation_percentage > 0 AND allocation_percentage <= 100);
+
+-- Ensure time tracking hours_logged is valid
+ALTER TABLE time_tracking 
+ADD CONSTRAINT time_tracking_hours_logged_valid 
+CHECK (hours_logged > 0);
+
+-- Ensure risk score is within valid range (0-100 scale)
+ALTER TABLE risk_assessments 
+ADD CONSTRAINT risk_assessments_risk_score_valid 
+CHECK (risk_score >= 0 AND risk_score <= 100);
+
+-- Ensure task complexity_score is valid
+ALTER TABLE tasks 
+ADD CONSTRAINT tasks_complexity_score_valid 
+CHECK (complexity_score >= 1 AND complexity_score <= 10);
+
+-- Ensure task priority_score is non-negative
+ALTER TABLE tasks 
+ADD CONSTRAINT tasks_priority_score_valid 
+CHECK (priority_score >= 0);
+
+-- Ensure deliverable completion_percentage is valid
+ALTER TABLE deliverables 
+ADD CONSTRAINT deliverables_completion_percentage_valid 
+CHECK (completion_percentage >= 0 AND completion_percentage <= 100);
+
+-- Ensure task completion_percentage is valid
+ALTER TABLE tasks 
+ADD CONSTRAINT tasks_completion_percentage_valid 
+CHECK (completion_percentage >= 0 AND completion_percentage <= 100);
+
+-- Ensure task actual_hours is non-negative
+ALTER TABLE tasks 
+ADD CONSTRAINT tasks_actual_hours_non_negative 
+CHECK (actual_hours >= 0);
+
+-- Ensure deliverable business_value is non-negative
+ALTER TABLE deliverables 
+ADD CONSTRAINT deliverables_business_value_valid 
+CHECK (business_value >= 0);
+
+-- Ensure milestone priority is within reasonable range
+ALTER TABLE milestones 
+ADD CONSTRAINT milestones_priority_valid 
+CHECK (priority >= 0 AND priority <= 100);
 
 -- Add NOT NULL constraints to critical fields
 ALTER TABLE ideas ALTER COLUMN title SET NOT NULL;
 ALTER TABLE ideas ALTER COLUMN raw_text SET NOT NULL;
-
 ALTER TABLE deliverables ALTER COLUMN title SET NOT NULL;
-
 ALTER TABLE tasks ALTER COLUMN title SET NOT NULL;
-
--- Add CHECK constraints for data validation
-ALTER TABLE deliverables ADD CONSTRAINT check_estimate_hours_positive
-    CHECK (estimate_hours >= 0);
-
-ALTER TABLE tasks ADD CONSTRAINT check_estimate_positive
-    CHECK (estimate >= 0);
 
 -- ============================================================================
 -- PART 4: Update Database Service Methods
