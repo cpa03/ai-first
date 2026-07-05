@@ -469,10 +469,26 @@ function KeyboardShortcutsHelpComponent({
   }, [isOpen]);
 
   // Handle escape and click outside
+  // Micro-UX: When search input is focused with content, Escape clears the search
+  // instead of closing the modal. This follows modern search UX patterns (VS Code, Spotlight).
+  // Only closes modal when search is empty or input is not focused.
   useEffect(() => {
     if (!isOpen) return;
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
+      if (e.key === 'Escape') {
+        const searchInput = searchInputRef.current;
+        const isSearchFocused = document.activeElement === searchInput;
+        const hasSearchContent = searchQuery.length > 0;
+
+        if (isSearchFocused && hasSearchContent) {
+          e.preventDefault();
+          e.stopPropagation();
+          setSearchQuery('');
+          triggerHapticFeedback();
+        } else {
+          handleClose();
+        }
+      }
     };
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node))
@@ -484,7 +500,7 @@ function KeyboardShortcutsHelpComponent({
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, handleClose]);
+  }, [isOpen, handleClose, searchQuery]);
 
   useEffect(() => {
     if (!isOpen) return;
