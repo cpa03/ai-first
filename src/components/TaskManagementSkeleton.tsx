@@ -6,6 +6,7 @@ import {
   CARD_PATTERNS,
   SVG_STROKE_WIDTHS,
   COMPONENT_CONFIG,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 
 /**
@@ -68,7 +69,7 @@ function TaskManagementSkeletonComponent() {
             key={index}
             className="animate-fade-in"
             style={{
-              animationDelay: `${index * 100}ms`,
+              animationDelay: `${index * ANIMATION_CONFIG.DASHBOARD_STAGGER_DELAY}ms`,
             }}
           >
             <div
