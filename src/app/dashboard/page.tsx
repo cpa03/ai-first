@@ -22,6 +22,7 @@ import {
   PAGE_LAYOUT_CLASSES,
   ANIMATION_DELAYS,
   DASHBOARD_LABELS,
+  DASHBOARD_TAILWIND,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -565,7 +566,7 @@ export default function DashboardPage() {
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <span
                 key={ideas.length}
-                className={`flex items-center justify-center min-w-[1.5rem] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
+                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
                   filter !== 'all'
                     ? 'bg-primary-600 text-white'
                     : 'bg-primary-100 text-primary-700'
@@ -967,22 +968,30 @@ export default function DashboardPage() {
       {ideas.length > 0 && !loading && (
         <div className="mt-3 flex items-center gap-4 text-xs text-gray-400">
           <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+            >
               j
             </kbd>
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+            >
               k
             </kbd>
             navigate
           </span>
           <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+            >
               Enter
             </kbd>
             open
           </span>
           <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+            >
               Esc
             </kbd>
             deselect

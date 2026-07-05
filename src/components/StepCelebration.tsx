@@ -16,6 +16,7 @@ import {
   OPACITY_CONFIG,
   STEP_CELEBRATION_LABELS,
   GRADIENT_PATTERNS,
+  STEP_CELEBRATION_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -138,7 +139,7 @@ function StepCelebrationComponent({
       >
         <div
           className={`
-          absolute inset-0 bg-white/30 backdrop-blur-[2px]
+          absolute inset-0 bg-white/30 backdrop-blur-[${STEP_CELEBRATION_TAILWIND.BACKDROP_BLUR}]
           transition-opacity duration-300
           ${isExiting ? 'opacity-0' : 'opacity-100'}
         `}

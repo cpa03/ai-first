@@ -10,6 +10,7 @@ import {
   Z_INDEX_LAYERS,
   CONTAINER_WIDTHS,
   RESPONSIVE_PADDING,
+  MOBILE_NAV_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -248,7 +249,7 @@ function MobileNavComponent() {
                       className={`
                         w-full text-left px-6 py-4 text-lg font-semibold
                         transition-all duration-300 ease-out rounded-md
-                        border-l-[3px] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
+                        border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center
                       `}
                       aria-label={link.ariaLabel}

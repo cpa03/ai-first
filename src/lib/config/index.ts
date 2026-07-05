@@ -445,3 +445,16 @@ export {
   type PageLayout,
   type OpacityConfig,
 } from './page-layout';
+
+// Tailwind Arbitrary Values Configuration
+// Centralizes hardcoded Tailwind arbitrary values (e.g., text-[10px], min-w-[1.5rem])
+export {
+  TAILWIND_ARBITRARY,
+  DASHBOARD_TAILWIND,
+  MOBILE_NAV_TAILWIND,
+  SKELETON_TAILWIND,
+  SPINNER_TAILWIND,
+  INPUT_TAILWIND,
+  STEP_CELEBRATION_TAILWIND,
+  type TailwindArbitrary,
+} from './tailwind-arbitrary';
