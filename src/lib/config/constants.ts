@@ -72,3 +72,9 @@ export {
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
 } from './ui-text-sizes';
+
+export {
+  PRECISION_CONFIG,
+  ID_PREFIX_CONFIG,
+  ERROR_CONTEXT_CONFIG,
+} from './modular-constants';

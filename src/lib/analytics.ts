@@ -19,7 +19,7 @@ import { createLogger } from '@/lib/logger';
 import { EnvLoader } from '@/lib/config/environment';
 import { HTTP_HEADERS } from '@/lib/config/http';
 import { generateId, secureRandom } from '@/lib/security/crypto';
-import { SESSION_STORAGE_KEYS } from '@/lib/config';
+import { SESSION_STORAGE_KEYS, ID_PREFIX_CONFIG } from '@/lib/config';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 /**
@@ -222,7 +222,7 @@ function getSessionId(): string {
     let sessionId = sessionStorage.getItem(SESSION_STORAGE_KEYS.SESSION_ID);
     if (!sessionId) {
       // SECURITY: Use generateId() for cryptographically secure session IDs
-      sessionId = `session_${generateId()}`;
+      sessionId = `${ID_PREFIX_CONFIG.SESSION}_${generateId()}`;
       sessionStorage.setItem(SESSION_STORAGE_KEYS.SESSION_ID, sessionId);
     }
     return sessionId;

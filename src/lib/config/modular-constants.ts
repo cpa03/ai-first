@@ -423,6 +423,75 @@ export const AI_HEALTH_CHECK_CONFIG = {
 } as const;
 
 /**
+ * ID Prefix Configuration
+ * Centralizes all ID prefixes used for generating unique identifiers
+ * All prefixes follow the pattern: prefix_timestamp_random
+ */
+export const ID_PREFIX_CONFIG = {
+  /**
+   * Session ID prefix for analytics tracking
+   * Env: ID_PREFIX_SESSION (default: 'session')
+   */
+  SESSION: EnvLoader.string('ID_PREFIX_SESSION', 'session'),
+
+  /**
+   * Subscription ID prefix for event bus subscriptions
+   * Env: ID_PREFIX_SUBSCRIPTION (default: 'sub')
+   */
+  SUBSCRIPTION: EnvLoader.string('ID_PREFIX_SUBSCRIPTION', 'sub'),
+
+  /**
+   * Export operation ID prefix
+   * Env: ID_PREFIX_EXPORT (default: 'export')
+   */
+  EXPORT: EnvLoader.string('ID_PREFIX_EXPORT', 'export'),
+
+  /**
+   * Request ID prefix for correlation tracking
+   * Env: ID_PREFIX_REQUEST (default: 'req')
+   */
+  REQUEST: EnvLoader.string('ID_PREFIX_REQUEST', 'req'),
+} as const;
+
+/**
+ * Error Context Configuration
+ * Settings for error context extraction and formatting
+ */
+export const ERROR_CONTEXT_CONFIG = {
+  /**
+   * Maximum number of stack trace lines to include in error preview
+   * Env: ERROR_STACK_PREVIEW_LINES (default: 3)
+   */
+  STACK_PREVIEW_LINES: EnvLoader.number('ERROR_STACK_PREVIEW_LINES', 3, 1, 10),
+} as const;
+
+/**
+ * Precision Rounding Configuration
+ * Settings for numeric precision and rounding operations
+ */
+export const PRECISION_CONFIG = {
+  /**
+   * Default decimal places for confidence score rounding
+   * Env: PRECISION_CONFIDENCE_DECIMALS (default: 2)
+   */
+  CONFIDENCE_DECIMALS: EnvLoader.number(
+    'PRECISION_CONFIDENCE_DECIMALS',
+    2,
+    0,
+    10
+  ),
+
+  /**
+   * Multiplier for rounding (10^decimals)
+   * Computed from CONFIDENCE_DECIMALS
+   */
+  CONFIDENCE_MULTIPLIER: Math.pow(
+    10,
+    EnvLoader.number('PRECISION_CONFIDENCE_DECIMALS', 2, 0, 10)
+  ),
+} as const;
+
+/**
  * Export all configurations as a combined object for convenience
  */
 export const MODULAR_CONSTANTS = {
@@ -439,6 +508,9 @@ export const MODULAR_CONSTANTS = {
   SECURITY: SECURITY_CONFIG,
   TASK_ANIMATION: TASK_ANIMATION_CONFIG,
   AI_HEALTH_CHECK: AI_HEALTH_CHECK_CONFIG,
+  ID_PREFIX: ID_PREFIX_CONFIG,
+  ERROR_CONTEXT: ERROR_CONTEXT_CONFIG,
+  PRECISION: PRECISION_CONFIG,
 } as const;
 
 export type ModularConstants = typeof MODULAR_CONSTANTS;

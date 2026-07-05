@@ -6,7 +6,7 @@
  */
 
 import type { AgentEvent, EventPayloadMap, EventType } from './types';
-import { EVENT_BUS_CONFIG } from '@/lib/config';
+import { EVENT_BUS_CONFIG, ID_PREFIX_CONFIG } from '@/lib/config';
 import { dbService } from '@/lib/db';
 import { createLogger } from '@/lib/logger';
 import { generateId } from '@/lib/security/crypto';
@@ -42,7 +42,7 @@ class EventBus {
     eventType: T,
     handler: EventHandler<Extract<AgentEvent, { type: T }>>
   ): string {
-    const id = `sub_${Date.now()}_${generateId()}`;
+    const id = `${ID_PREFIX_CONFIG.SUBSCRIPTION}_${Date.now()}_${generateId()}`;
     const subscription: Subscription = {
       id,
       eventType,
@@ -64,7 +64,7 @@ class EventBus {
    * @returns Subscription ID for unsubscribing
    */
   subscribeAll(handler: EventHandler): string {
-    const id = `sub_${Date.now()}_${generateId()}`;
+    const id = `${ID_PREFIX_CONFIG.SUBSCRIPTION}_${Date.now()}_${generateId()}`;
     const subscription: Subscription = {
       id,
       eventType: '*',
