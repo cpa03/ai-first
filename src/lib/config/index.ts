@@ -309,6 +309,9 @@ export {
   SECURITY_CONFIG,
   TASK_ANIMATION_CONFIG,
   AI_HEALTH_CHECK_CONFIG,
+  ID_PREFIX_CONFIG,
+  ERROR_CONTEXT_CONFIG,
+  PRECISION_CONFIG,
   type ModularConstants,
 } from './modular-constants';
 

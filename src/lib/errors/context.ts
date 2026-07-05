@@ -4,6 +4,7 @@
 
 import { redactPII } from '../pii-redaction';
 import { ENV_ACCESSORS } from '../config/env-keys';
+import { ERROR_CONTEXT_CONFIG } from '../config/modular-constants';
 import {
   NETWORK_ERROR_PATTERNS,
   TIMEOUT_ERROR_PATTERNS,
@@ -236,13 +237,12 @@ function classifyStandardError(error: Error): ErrorClassification {
   return 'unknown_error';
 }
 
-/**
- * Get a preview of the stack trace (first 3 lines, redacted)
- */
 function getStackPreview(stack?: string): string | undefined {
   if (!stack) return undefined;
 
-  const lines = stack.split('\n').slice(0, 3);
+  const lines = stack
+    .split('\n')
+    .slice(0, ERROR_CONTEXT_CONFIG.STACK_PREVIEW_LINES);
   return lines.map((line) => redactPII(line.trim())).join('\n');
 }
 

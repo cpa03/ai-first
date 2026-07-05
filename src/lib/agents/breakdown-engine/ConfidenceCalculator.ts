@@ -1,5 +1,5 @@
 import type { BreakdownSession } from './types';
-import { AGENT_CONFIG } from '@/lib/config/constants';
+import { AGENT_CONFIG, PRECISION_CONFIG } from '@/lib/config/constants';
 
 const { BREAKDOWN_CONFIDENCE_WEIGHTS, BREAKDOWN_FALLBACK_CONFIDENCE } =
   AGENT_CONFIG;
@@ -23,6 +23,9 @@ export class ConfidenceCalculator {
         BREAKDOWN_FALLBACK_CONFIDENCE.TIMELINE *
         BREAKDOWN_CONFIDENCE_WEIGHTS.TIMELINE;
 
-    return Math.round(confidence * 100) / 100;
+    return (
+      Math.round(confidence * PRECISION_CONFIG.CONFIDENCE_MULTIPLIER) /
+      PRECISION_CONFIG.CONFIDENCE_MULTIPLIER
+    );
   }
 }

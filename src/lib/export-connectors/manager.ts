@@ -20,6 +20,7 @@ import {
   IDEA_STATUS_CONFIG,
   APP_CONFIG,
   API_ERROR_MESSAGES,
+  ID_PREFIX_CONFIG,
 } from '../config';
 import { generateId } from '@/lib/security/crypto';
 
@@ -390,6 +391,6 @@ export const exportUtils = {
 
   generateExportId(): string {
     // SECURITY: Use centralized generateId() which is Edge-compatible
-    return `export_${generateId()}`;
+    return `${ID_PREFIX_CONFIG.EXPORT}_${generateId()}`;
   },
 };

@@ -94,9 +94,11 @@ export const TASK_CONFIG = {
   },
 
   ID: {
-    PREFIX: 't_',
+    /** Task ID prefix - Env: TASK_ID_PREFIX (default: 't_') */
+    PREFIX: EnvLoader.string('TASK_ID_PREFIX', 't_'),
     SEPARATOR: '_',
-    GENERATOR: (index: number) => `t_${index + 1}`,
+    GENERATOR: (index: number) =>
+      `${EnvLoader.string('TASK_ID_PREFIX', 't_')}${index + 1}`,
   },
 
   COMPLEXITY: {
@@ -155,10 +157,12 @@ export const TASK_CONFIG = {
 
 export const IDEA_CONFIG = {
   ID: {
-    PREFIX: 'idea_',
+    /** Idea ID prefix - Env: IDEA_ID_PREFIX (default: 'idea_') */
+    PREFIX: EnvLoader.string('IDEA_ID_PREFIX', 'idea_'),
     SEPARATOR: '_',
     // SECURITY: Use centralized generateId() for cryptographically secure IDs
-    GENERATOR: () => `idea_${generateId()}`,
+    GENERATOR: () =>
+      `${EnvLoader.string('IDEA_ID_PREFIX', 'idea_')}${generateId()}`,
   },
 
   VALIDATION: {
