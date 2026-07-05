@@ -23,6 +23,7 @@ import {
   ANIMATION_DELAYS,
   DASHBOARD_LABELS,
 } from '@/lib/config';
+import { UI_CONFIG } from '@/lib/config/ui-config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -205,7 +206,7 @@ export default function DashboardPage() {
     filterClearTimeoutRef.current = setTimeout(() => {
       setFilter('all');
       setIsFilterClearing(false);
-    }, 200); // Match transition duration
+    }, UI_CONFIG.FILTER_CLEAR_DURATION_MS);
   }, [prefersReducedMotion]);
 
   // PERFORMANCE: Memoize event handlers to prevent unnecessary re-renders

@@ -138,4 +138,16 @@ export const UI_CONFIG = {
     10,
     500
   ),
+
+  /**
+   * Filter clear animation duration (in milliseconds)
+   * Controls the fade-out animation when clearing filter badges
+   * Env: UI_FILTER_CLEAR_DURATION_MS (default: 200)
+   */
+  FILTER_CLEAR_DURATION_MS: EnvLoader.number(
+    'UI_FILTER_CLEAR_DURATION_MS',
+    200,
+    50,
+    1000
+  ),
 } as const;
