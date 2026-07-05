@@ -118,7 +118,7 @@ function WhyChooseSectionComponent() {
         aria-label={WHY_CHOOSE_SECTION_LABELS.BENEFITS_LIST_ARIA_LABEL}
       >
         {ARTICLES.map((article, index) => (
-          <article
+          <div
             key={article.id}
             data-why-choose-article
             data-article-id={article.id}
@@ -160,7 +160,7 @@ function WhyChooseSectionComponent() {
                 {article.DESCRIPTION}
               </p>
             </div>
-          </article>
+          </div>
         ))}
       </div>
     </section>
