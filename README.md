@@ -140,6 +140,7 @@
     /StepCelebration.tsx    ← Step completion celebration
     /SuccessCelebration.tsx  ← Success celebration animation
     /TaskManagement.tsx     ← Task management UI
+    /TaskManagementSkeleton.tsx ← Task management loading skeleton
     /ToastContainer.tsx     ← Toast notification container
     /Tooltip.tsx            ← Accessible tooltip component
     /UserOnboarding.tsx     ← User onboarding flow
@@ -154,6 +155,7 @@
     /useBlueprintGeneration.ts ← Blueprint generation hook
     /useCapsLock.ts         ← Caps lock detection hook
     /useClarificationSession.ts ← Clarification session hook
+    /useConfetti.ts          ← Confetti animation hook
     /useCountUp.ts          ← Count up animation hook
     /usePrefersReducedMotion.ts ← Reduced motion preference hook
     /useSessionDuration.ts  ← Session duration tracking hook
@@ -181,13 +183,15 @@
     /utils.ts            ← General utilities
     /validation.ts       ← Input validation utilities
     /agents/             ← AI agent implementations
+      /breakdown-engine.ts ← Breakdown engine entry
       /breakdown-engine/  ← Breakdown engine agent
+      /clarifier.ts       ← Clarifier entry
       /clarifier-engine/  ← Clarifier engine agent
       /events/           ← Event handling agents
     /api-handler/        ← API handler utilities
       /wrapper.ts        ← API request wrapper
       /response.ts       ← Response formatting
-    /config/             ← Configuration modules (40+ files)
+    /config/             ← Configuration modules (64 files)
       /constants.ts      ← Centralized constants
       /environment.ts    ← Environment configuration
       /database-tables.ts ← Database table names
@@ -228,6 +232,8 @@
   /types/                   ← TypeScript type definitions
     /api.ts               ← API response types
     /database.ts          ← Database types
+    /index.ts             ← Type exports
+    /security.ts          ← Security types
     /task.ts              ← Task types
     /cloudflare.d.ts      ← Cloudflare types
   /styles/                  ← Global styles
