@@ -385,7 +385,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
                 Enter
               </kbd>
-              <span className="hidden sm:inline text-gray-600">to submit</span>
+              <span className="hidden sm:inline text-gray-600">
+                {IDEA_INPUT_LABELS.KEYBOARD_SHORTCUT_HINT}
+              </span>
             </div>
             <AutoSaveIndicator value={idea} />
           </div>
@@ -396,10 +398,10 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleClear}
-                aria-label="Clear input"
+                aria-label={IDEA_INPUT_LABELS.CLEAR_ARIA_LABEL}
                 className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
               >
-                Clear
+                {IDEA_INPUT_LABELS.CLEAR_BUTTON}
               </Button>
             )}
             <Button

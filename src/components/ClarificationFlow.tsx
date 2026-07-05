@@ -97,7 +97,9 @@ function ClarificationFlow({
     if (!details) return;
     triggerHapticFeedback();
     setReferenceAnnouncement(
-      details.open ? 'Reference idea expanded' : 'Reference idea collapsed'
+      details.open
+        ? CLARIFICATION_FLOW_LABELS.REFERENCE_EXPANDED
+        : CLARIFICATION_FLOW_LABELS.REFERENCE_COLLAPSED
     );
     setReferenceTriggered(true);
   }, []);

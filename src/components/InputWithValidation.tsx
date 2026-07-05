@@ -426,7 +426,11 @@ const InputWithValidationComponent = forwardRef<
               className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-20' : 'right-14'}`}
             >
               <Tooltip
-                content={passwordVisible ? 'Hide password' : 'Show password'}
+                content={
+                  passwordVisible
+                    ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
+                    : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
+                }
                 position="top"
               >
                 <button
