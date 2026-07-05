@@ -149,3 +149,5 @@ docs/archive/*.tar.gz
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Cc][Hh][Ee][Cc][Kk]*.md
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
 docs/audits/
+docs/reports/
+docs/stale-branches-report.md
