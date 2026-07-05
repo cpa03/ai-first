@@ -117,7 +117,7 @@ function WhyChooseSectionComponent() {
         aria-label="Why choose IdeaFlow benefits"
       >
         {ARTICLES.map((article, index) => (
-          <article
+          <div
             key={article.id}
             data-why-choose-article
             data-article-id={article.id}
@@ -159,7 +159,7 @@ function WhyChooseSectionComponent() {
                 {article.DESCRIPTION}
               </p>
             </div>
-          </article>
+          </div>
         ))}
       </div>
     </section>
