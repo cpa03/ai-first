@@ -1,6 +1,11 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task, Deliverable, Idea } from '../db/service';
-import { GITHUB_CONFIG, TASK_CONFIG, HTTP_HEADERS } from '@/lib/config';
+import {
+  GITHUB_CONFIG,
+  TASK_CONFIG,
+  HTTP_HEADERS,
+  API_ERROR_MESSAGES,
+} from '@/lib/config';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
 import { createLogger } from '../logger';
@@ -145,7 +150,10 @@ export class GitHubProjectsExporter extends ExportConnector {
       logger.error('Unknown export error:', _error);
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error:
+          _error instanceof Error
+            ? _error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
       };
     }
   }

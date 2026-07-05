@@ -101,7 +101,10 @@ export class ClarifierAgent {
         payload: {
           ideaId,
           agent: 'clarifier',
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           context: { method: 'startClarification' },
         },
         timestamp: new Date(),
@@ -165,7 +168,10 @@ export class ClarifierAgent {
         payload: {
           ideaId,
           agent: 'clarifier',
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           context: { method: 'submitAnswer', questionId },
         },
         timestamp: new Date(),
@@ -241,7 +247,10 @@ export class ClarifierAgent {
         payload: {
           ideaId,
           agent: 'clarifier',
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           context: { method: 'completeClarification' },
         },
         timestamp: new Date(),
@@ -253,7 +262,10 @@ export class ClarifierAgent {
         'clarification-completed-error',
         {
           ideaId,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         }
       );
       throw error;

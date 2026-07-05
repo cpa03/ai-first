@@ -1,6 +1,6 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Task } from '../db/service';
-import { TRELLO_CONFIG, TASK_CONFIG } from '../config';
+import { TRELLO_CONFIG, TASK_CONFIG, API_ERROR_MESSAGES } from '../config';
 import { ENV_ACCESSORS } from '../config/env-keys';
 
 import { createLogger } from '../logger';
@@ -102,7 +102,10 @@ export class TrelloExporter extends ExportConnector {
       logger.error('Unknown export error:', _error);
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error:
+          _error instanceof Error
+            ? _error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
       };
     }
   }

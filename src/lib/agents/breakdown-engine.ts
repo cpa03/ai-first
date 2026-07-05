@@ -214,7 +214,10 @@ class BreakdownEngine {
         payload: {
           ideaId,
           agent: 'breakdown-engine',
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           context: { method: 'startBreakdown', options },
         },
         timestamp: new Date(),

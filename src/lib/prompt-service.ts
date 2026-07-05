@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Cache } from './cache';
-import { CACHE_CONFIG } from './config';
+import { CACHE_CONFIG, API_ERROR_MESSAGES } from './config';
 
 export interface PromptVariable {
   [key: string]: string | number | object;
@@ -52,7 +52,7 @@ export class PromptService {
       return content;
     } catch (error) {
       throw new Error(
-        `Failed to load prompt template: ${templatePath}. ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Failed to load prompt template: ${templatePath}. ${error instanceof Error ? error.message : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR}`
       );
     }
   }

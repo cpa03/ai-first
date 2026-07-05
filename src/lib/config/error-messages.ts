@@ -184,6 +184,17 @@ export const API_ERROR_MESSAGES = {
     PROVIDER_NOT_IMPLEMENTED: (provider: string) =>
       `Provider ${provider} not yet implemented`,
   },
+
+  /**
+   * Fallback error messages
+   * Centralizes generic fallback messages used throughout the codebase
+   * Eliminates hardcoded strings like 'Unknown error', 'Request failed'
+   */
+  FALLBACK: {
+    UNKNOWN_ERROR: 'Unknown error',
+    REQUEST_FAILED: 'Request failed',
+    INTERNAL_ERROR: 'An internal error occurred',
+  },
 } as const;
 
 export type APIErrorMessages = typeof API_ERROR_MESSAGES;

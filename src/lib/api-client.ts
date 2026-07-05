@@ -208,7 +208,9 @@ export async function apiRequest<T = unknown>(
     }
 
     throw new ApiRequestError(
-      errorBody.error || response.statusText || 'Request failed',
+      errorBody.error ||
+        response.statusText ||
+        API_ERROR_MESSAGES.FALLBACK.REQUEST_FAILED,
       response.status,
       {
         code: errorBody.code,
