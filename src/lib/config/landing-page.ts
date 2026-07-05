@@ -189,10 +189,10 @@ export const WHY_CHOOSE_CONFIG = {
 
   ARTICLE_STYLES: {
     CONTAINER:
-      'flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out motion-reduce:transition-none',
+      'flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 transition-all duration-200 ease-out motion-reduce:transition-none cursor-pointer',
     ICON_CONTAINER:
-      'rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-200 group-hover:scale-110',
-    ICON_SVG: 'w-4 h-4',
+      'rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 group-hover:bg-green-200',
+    ICON_SVG: 'w-4 h-4 transition-transform duration-300 group-hover:scale-110',
     TITLE:
       'font-semibold text-gray-900 mb-1 group-hover:text-green-800 transition-colors duration-200',
     DESCRIPTION: 'text-gray-700 text-sm',
