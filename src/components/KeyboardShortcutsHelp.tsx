@@ -278,14 +278,50 @@ const KeyboardKey = memo(function KeyboardKey({
   );
 });
 
+const HighlightedText = memo(function HighlightedText({
+  text,
+  query,
+}: {
+  text: string;
+  query: string;
+}) {
+  if (!query.trim()) {
+    return <>{text}</>;
+  }
+
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedQuery})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <>
+      {parts.map((part, index) =>
+        regex.test(part) ? (
+          <span
+            key={index}
+            className="bg-yellow-200 text-yellow-900 px-0.5 rounded-sm font-medium"
+            aria-hidden="true"
+          >
+            {part}
+          </span>
+        ) : (
+          <span key={index}>{part}</span>
+        )
+      )}
+    </>
+  );
+});
+
 const ShortcutRow = memo(function ShortcutRow({
   shortcut,
   isMac,
   isSelected = false,
+  searchQuery = '',
 }: {
   shortcut: KeyboardShortcut;
   isMac: boolean;
   isSelected?: boolean;
+  searchQuery?: string;
 }) {
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -329,7 +365,7 @@ const ShortcutRow = memo(function ShortcutRow({
       <span
         className={`text-sm transition-colors ${isSelected ? 'text-primary-700 font-medium' : 'text-gray-700 group-hover:text-gray-900'}`}
       >
-        {shortcut.description}
+        <HighlightedText text={shortcut.description} query={searchQuery} />
       </span>
       <button
         type="button"
@@ -797,6 +833,7 @@ function KeyboardShortcutsHelpComponent({
                         isSelected={
                           preferences.vimMode && globalIndex === selectedIndex
                         }
+                        searchQuery={searchQuery}
                       />
                     );
                   })}
