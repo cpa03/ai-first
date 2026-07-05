@@ -366,6 +366,7 @@ export {
   CLARIFICATION_FLOW_LABELS,
   FEATURE_GRID_LABELS,
   DASHBOARD_LABELS,
+  BLUEPRINT_DISPLAY_LABELS,
   type ShareButtonLabels,
   type CopyButtonLabels,
   type InputValidationLabels,

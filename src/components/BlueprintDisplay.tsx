@@ -23,6 +23,7 @@ import {
   SVG_VIEWBOX,
   UI_CONFIG,
   CARD_PATTERNS,
+  BLUEPRINT_DISPLAY_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -346,7 +347,9 @@ function CopyCodeButton({ text }: { text: string }) {
         }
       `}
       aria-label={
-        copied ? 'Copied to clipboard' : 'Copy blueprint to clipboard'
+        copied
+          ? BLUEPRINT_DISPLAY_LABELS.COPY_ARIA_SUCCESS
+          : BLUEPRINT_DISPLAY_LABELS.COPY_ARIA_DEFAULT
       }
       aria-live="polite"
       type="button"
@@ -379,7 +382,11 @@ function CopyCodeButton({ text }: { text: string }) {
           <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
         </svg>
       )}
-      <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>
+      <span className="hidden sm:inline">
+        {copied
+          ? BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_SUCCESS
+          : BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_DEFAULT}
+      </span>
     </button>
   );
 }

@@ -7,6 +7,7 @@ import {
   SVG_STROKE_WIDTHS,
   COMPONENT_CONFIG,
   ANIMATION_CONFIG,
+  TASK_MANAGEMENT_LABELS,
 } from '@/lib/config';
 
 /**
@@ -29,9 +30,9 @@ function TaskManagementSkeletonComponent() {
       className="animate-fade-in"
       role="status"
       aria-live="polite"
-      aria-label="Loading task management data"
+      aria-label={TASK_MANAGEMENT_LABELS.SKELETON_ARIA_LABEL}
     >
-      <span className="sr-only">Loading task management data...</span>
+      <span className="sr-only">{TASK_MANAGEMENT_LABELS.SKELETON_SR_TEXT}</span>
 
       {/* Header skeleton - mirrors TaskManagementHeader layout */}
       <div className={CARD_PATTERNS.BASE}>

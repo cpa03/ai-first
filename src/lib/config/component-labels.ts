@@ -291,6 +291,12 @@ export const IDEA_INPUT_LABELS = {
     "Be as specific or as general as you'd like. We'll help you clarify details.",
   /** Help text escape hint */
   HELP_TEXT_ESCAPE_HINT: 'Press Escape to clear',
+  /** Keyboard shortcut hint text */
+  KEYBOARD_SHORTCUT_HINT: 'to submit',
+  /** Clear input button aria-label */
+  CLEAR_ARIA_LABEL: 'Clear input',
+  /** Clear input button text */
+  CLEAR_BUTTON: 'Clear',
 } as const;
 
 /**
@@ -343,6 +349,8 @@ export const USER_ONBOARDING_LABELS = {
 export const TASK_MANAGEMENT_LABELS = {
   EXPAND_ALL_ANNOUNCEMENT: 'All deliverables expanded',
   COLLAPSE_ALL_ANNOUNCEMENT: 'All deliverables collapsed',
+  SKELETON_ARIA_LABEL: 'Loading task management data',
+  SKELETON_SR_TEXT: 'Loading task management data...',
 } as const;
 
 /**
@@ -388,6 +396,8 @@ export const USER_ONBOARDING_COMPLETION_LABELS = {
 export const CLARIFICATION_FLOW_LABELS = {
   PREPARING_QUESTIONS: 'Preparing questions...',
   FINAL_STEP: 'Final Step',
+  REFERENCE_EXPANDED: 'Reference idea expanded',
+  REFERENCE_COLLAPSED: 'Reference idea collapsed',
 } as const;
 
 /**
@@ -453,6 +463,17 @@ export const EMAIL_BUTTON_LABELS = {
 } as const;
 
 /**
+ * Blueprint Display Labels
+ * Eliminates hardcoded strings in BlueprintDisplay CopyCodeButton component
+ */
+export const BLUEPRINT_DISPLAY_LABELS = {
+  COPY_BUTTON_DEFAULT: 'Copy',
+  COPY_BUTTON_SUCCESS: 'Copied!',
+  COPY_ARIA_DEFAULT: 'Copy blueprint to clipboard',
+  COPY_ARIA_SUCCESS: 'Copied to clipboard',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -480,6 +501,7 @@ export const COMPONENT_LABELS = {
   FEATURE_GRID: FEATURE_GRID_LABELS,
   DASHBOARD: DASHBOARD_LABELS,
   EMAIL_BUTTON: EMAIL_BUTTON_LABELS,
+  BLUEPRINT_DISPLAY: BLUEPRINT_DISPLAY_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -506,4 +528,5 @@ export type ClarificationFlowLabels = typeof CLARIFICATION_FLOW_LABELS;
 export type FeatureGridLabels = typeof FEATURE_GRID_LABELS;
 export type DashboardLabels = typeof DASHBOARD_LABELS;
 export type EmailButtonLabels = typeof EMAIL_BUTTON_LABELS;
+export type BlueprintDisplayLabels = typeof BLUEPRINT_DISPLAY_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
