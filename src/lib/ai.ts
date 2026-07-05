@@ -392,7 +392,10 @@ class AIService {
           provider: config.provider,
           model: config.model,
           duration: Date.now() - startTime,
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         });
       }
 

@@ -21,7 +21,10 @@ export class MarkdownExporter extends ExportConnector {
     } catch (_error) {
       return {
         success: false,
-        error: _error instanceof Error ? _error.message : 'Unknown error',
+        error:
+          _error instanceof Error
+            ? _error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
       };
     }
   }

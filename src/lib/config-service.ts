@@ -72,7 +72,10 @@ class ConfigurationService {
 
       return config;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Unknown error';
+      const message =
+        error instanceof Error
+          ? error.message
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR;
       throw new Error(
         `${API_ERROR_MESSAGES.CONFIG.LOAD_FAILED} ${agentName}: ${message}`
       );

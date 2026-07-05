@@ -19,6 +19,7 @@ import {
   IDEA_CONFIG,
   IDEA_STATUS_CONFIG,
   APP_CONFIG,
+  API_ERROR_MESSAGES,
 } from '../config';
 import { generateId } from '@/lib/security/crypto';
 
@@ -178,7 +179,10 @@ export class ExportManager {
           isExternal:
             ExportManager.EXTERNAL_CONNECTORS_REQUIRING_API_ACCESS.has(type),
           lastChecked: new Date().toISOString(),
-          error: error instanceof Error ? error.message : 'Unknown error',
+          error:
+            error instanceof Error
+              ? error.message
+              : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         };
       }
     }
