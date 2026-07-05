@@ -135,7 +135,9 @@ async function handlePut(context: ApiContext) {
     if (body.complexity_score !== undefined)
       updates.complexity_score = body.complexity_score;
     if (body.risk_level !== undefined) updates.risk_level = body.risk_level;
-    if (body.tags !== undefined) updates.tags = body.tags;
+    if (body.tags !== undefined) {
+      updates.tags = Array.isArray(body.tags) ? body.tags.map((tag) => sanitizeHtml(tag)) : null;
+    }
     if (body.custom_fields !== undefined)
       updates.custom_fields = body.custom_fields;
     if (body.milestone_id !== undefined)

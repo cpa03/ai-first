@@ -4,6 +4,7 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService } from '@/lib/db';
+import { sanitizeHtml } from '@/lib/validation';
 import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_VALIDATION, STATUS_CODES } from '@/lib/config/constants';
@@ -124,8 +125,8 @@ async function handlePost(context: ApiContext) {
 
     const newTask = await dbService.createTask({
       deliverable_id: deliverableId,
-      title: body.title.trim(),
-      description: body.description,
+      title: sanitizeHtml(body.title.trim()),
+      description: body.description ? sanitizeHtml(body.description) : body.description,
       status: body.status || TASK_CONFIG.STATUSES.TODO,
       assignee: body.assignee,
       estimate: body.estimate || TASK_CONFIG.DEFAULTS.ESTIMATE,
@@ -136,7 +137,7 @@ async function handlePost(context: ApiContext) {
       priority_score: TASK_CONFIG.DEFAULTS.PRIORITY_SCORE,
       complexity_score: TASK_CONFIG.DEFAULTS.COMPLEXITY_SCORE,
       risk_level: body.risk_level || TASK_CONFIG.DEFAULTS.RISK_LEVEL,
-      tags: body.tags || null,
+      tags: body.tags ? body.tags.map(tag => sanitizeHtml(tag)) : null,
       custom_fields: null,
       milestone_id: null,
     });
