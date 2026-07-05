@@ -212,6 +212,22 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     }
   }, [idea]);
 
+  // Micro-UX improvement: Quick paste from clipboard when input is empty
+  // Reduces friction for users who have their idea already copied
+  const handlePasteFromClipboard = useCallback(async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        triggerHapticFeedback();
+        setIdea(text);
+        setValidationError(validateIdea(text));
+        inputRef.current?.focus();
+      }
+    } catch {
+      // Clipboard API may be denied - fail silently
+    }
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
       // Submit on Cmd/Ctrl + Enter
@@ -392,6 +408,32 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             <AutoSaveIndicator value={idea} />
           </div>
           <div className="flex items-center gap-3">
+            {!idea.trim() && !isSubmitting && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={handlePasteFromClipboard}
+                aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
+                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+              >
+                <svg
+                  className="w-4 h-4 mr-1"
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+                {IDEA_INPUT_LABELS.PASTE_BUTTON}
+              </Button>
+            )}
             {idea.trim() && !isSubmitting && (
               <Button
                 type="button"
