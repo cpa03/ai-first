@@ -42,12 +42,14 @@ export {
 
 // Re-export utility functions
 export {
-  generateErrorFingerprint,
   toErrorResponse,
   generateRequestId,
   createErrorWithSuggestions,
   isRetryableError,
 } from './utils';
+
+// Re-export fingerprint generation
+export { generateErrorFingerprint } from './fingerprint';
 
 // Re-export context and classification
 export {
