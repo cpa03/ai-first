@@ -193,7 +193,7 @@ Launch readiness requires sign-off from:
 
 - [Roadmap](./roadmap.md) - Strategic direction
 - [MVP Feature Status](./mvp-feature-status.md) - Feature progress
-- [Flexy Modularity Plan](./plans/flexy-modularity-plan.md) - Modular architecture plan
+- [Flexy Modularity Plan](./plans/2026-06-30-flexy-modularization.md) - Hardcoded values elimination (completed)
 - [Issue #1176](https://github.com/cpa03/ai-first/issues/1176) - Timeline risk
 - [Issue #905](https://github.com/cpa03/ai-first/issues/905) - Integration issues
 

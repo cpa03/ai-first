@@ -213,7 +213,7 @@ Complete index of all IdeaFlow documentation.
 
 ## Implementation Plans
 
-- [Flexy Modularity Plan](./plans/flexy-modularity-plan.md) - Modular architecture plan
+- [Flexy Modularity Plan](./plans/2026-06-30-flexy-modularization.md) - Hardcoded values elimination (completed)
 - [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
 
 ## Security Reports
