@@ -474,6 +474,15 @@ export const BLUEPRINT_DISPLAY_LABELS = {
 } as const;
 
 /**
+ * WhyChooseSection Labels
+ * Eliminates hardcoded aria-labels in WhyChooseSection component
+ */
+export const WHY_CHOOSE_SECTION_LABELS = {
+  /** ARIA label for the benefits list */
+  BENEFITS_LIST_ARIA_LABEL: 'Why choose IdeaFlow benefits',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -529,4 +538,5 @@ export type FeatureGridLabels = typeof FEATURE_GRID_LABELS;
 export type DashboardLabels = typeof DASHBOARD_LABELS;
 export type EmailButtonLabels = typeof EMAIL_BUTTON_LABELS;
 export type BlueprintDisplayLabels = typeof BLUEPRINT_DISPLAY_LABELS;
+export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

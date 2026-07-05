@@ -6,6 +6,7 @@ import {
   FEATURE_CONFIG,
   UI_STRINGS,
   SVG_VIEWBOX,
+  WHY_CHOOSE_SECTION_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -114,7 +115,7 @@ function WhyChooseSectionComponent() {
       <div
         className={SECTION_STYLES.GRID}
         role="list"
-        aria-label="Why choose IdeaFlow benefits"
+        aria-label={WHY_CHOOSE_SECTION_LABELS.BENEFITS_LIST_ARIA_LABEL}
       >
         {ARTICLES.map((article, index) => (
           <article
