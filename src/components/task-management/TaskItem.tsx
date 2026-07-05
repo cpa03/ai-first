@@ -17,6 +17,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from '../Tooltip';
 import StatusAnnouncer from '../StatusAnnouncer';
+import { useConfetti } from '@/hooks/useConfetti';
 
 interface TaskItemProps {
   task: Task;
@@ -32,6 +33,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const isMountedRef = useRef(false);
   const toggleTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const { particles, fire } = useConfetti();
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -46,13 +48,16 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   useEffect(() => {
     if (isCompleted && !isUpdating) {
       setShowCelebration(true);
+      // Micro-UX: Fire confetti on task completion for delightful feedback
+      // Matches the pattern established in CopyButton, ShareButton, and EmailButton
+      fire();
       const timer = setTimeout(
         () => setShowCelebration(false),
         TASK_ANIMATION_CONFIG.CELEBRATION_DURATION_MS
       );
       return () => clearTimeout(timer);
     }
-  }, [isCompleted, isUpdating, task.status]);
+  }, [isCompleted, isUpdating, task.status, fire]);
 
   const handleClick = useCallback(() => {
     triggerHapticFeedback();
@@ -263,6 +268,26 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
           </div>
         </button>
       </Tooltip>
+      {/* Micro-UX: Confetti particles for task completion celebration */}
+      {particles.map((particle) => (
+        <span
+          key={particle.id}
+          className="absolute rounded-full pointer-events-none animate-copy-confetti"
+          style={
+            {
+              left: '50%',
+              top: '50%',
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              backgroundColor: particle.color,
+              '--confetti-x': `${particle.x}px`,
+              '--confetti-y': `${particle.y}px`,
+              animationDelay: `${particle.delay}ms`,
+            } as React.CSSProperties
+          }
+          aria-hidden="true"
+        />
+      ))}
     </div>
   );
 }
