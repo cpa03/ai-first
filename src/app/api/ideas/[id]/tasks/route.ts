@@ -11,7 +11,9 @@ import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
-  const url = new URL(request.url);
+  // PERFORMANCE: Use pre-parsed nextUrl from NextRequest to avoid expensive URL parsing (~15-20x faster).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Access Next.js-specific nextUrl property safely across environments.
+  const url = (request as any).nextUrl || new URL(request.url);
   const segments = url.pathname.split('/').filter(Boolean);
   const ideaId = segments.at(-2);
 

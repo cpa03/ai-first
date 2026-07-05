@@ -352,12 +352,14 @@ export function detectSuspiciousPatterns(
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
-        if (!SKIP_HEADERS.has(key.toLowerCase())) {
+        // Normalize key once for comparison and scanning
+        const lowerKey = key.toLowerCase();
+        if (!SKIP_HEADERS.has(lowerKey)) {
           // Scan BOTH key and value for injection patterns
-          const keyFindings = scanString(key, 'header', minSeverity, key);
+          const keyFindings = scanString(lowerKey, 'header', minSeverity, lowerKey);
           patterns.push(...keyFindings);
 
-          const headerFindings = scanString(value, 'header', minSeverity, key);
+          const headerFindings = scanString(value, 'header', minSeverity, lowerKey);
           patterns.push(...headerFindings);
         }
       }
