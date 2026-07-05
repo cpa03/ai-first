@@ -111,6 +111,18 @@ const EmailButtonComponent = function EmailButton({
     }
   }, [ideaTitle, ideaContent, sessionAnswers, onEmailSent, state, fire]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+        e.preventDefault();
+        handleEmailClick();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleEmailClick]);
+
   const iconTransition = prefersReducedMotion
     ? ''
     : 'transition-all duration-200';
@@ -120,6 +132,11 @@ const EmailButtonComponent = function EmailButton({
       <StatusAnnouncer message={successLabel} triggered={state === 'success'} />
       <Tooltip
         content={state === 'success' ? successLabel : tooltipLabel}
+        shortcut={
+          state === 'success'
+            ? undefined
+            : [...EMAIL_BUTTON_LABELS.KEYBOARD_SHORTCUT]
+        }
         disabled={false}
         position="top"
       >
