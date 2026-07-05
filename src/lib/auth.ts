@@ -7,16 +7,33 @@ import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config';
 
-const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
 
-if (
-  !ADMIN_API_KEY &&
-  process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
-) {
-  logger.warn(
-    'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
-  );
+// SECURITY: Lazy-loaded admin API key to prevent side effects at module top-level.
+// Top-level process.env access or logging during build-time scans (e.g. Cloudflare Workers)
+// can trigger failures.
+let _adminApiKey: string | undefined;
+let _adminApiKeyChecked = false;
+
+/**
+ * Get the admin API key lazily.
+ * Performs environment validation and logging only when first called.
+ */
+function getAdminApiKey(): string | undefined {
+  if (!_adminApiKeyChecked) {
+    _adminApiKey = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
+    _adminApiKeyChecked = true;
+
+    if (
+      !_adminApiKey &&
+      process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
+    ) {
+      logger.warn(
+        'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
+      );
+    }
+  }
+  return _adminApiKey;
 }
 
 export interface AuthenticatedUser {
@@ -35,7 +52,8 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
-  if (!ADMIN_API_KEY) {
+  const adminApiKey = getAdminApiKey();
+  if (!adminApiKey) {
     return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
   }
 
@@ -78,7 +96,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
 
     const expectedHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,
-      encoder.encode(ADMIN_API_KEY)
+      encoder.encode(adminApiKey)
     );
     const actualHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,

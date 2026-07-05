@@ -77,8 +77,8 @@ export interface ContextWindow {
 }
 
 class AIService {
-  private openai: OpenAI | null = null;
-  private anthropic: Anthropic | null = null;
+  private _openai: OpenAI | null = null;
+  private _anthropic: Anthropic | null = null;
   // SECURITY: Lazy-loaded Supabase client to prevent service role key exposure in client bundle
   // The client is only initialized when explicitly needed in server-side contexts
   private _supabase: SupabaseClient | null = null;
@@ -103,19 +103,8 @@ class AIService {
     // to prevent SUPABASE_SERVICE_ROLE_KEY from being accessed at module load time
     // Use getSupabase() method instead for lazy initialization
 
-    if (process.env[AI_ENV_KEYS.OPENAI_API_KEY]) {
-      this.openai = new OpenAI({
-        apiKey: process.env[AI_ENV_KEYS.OPENAI_API_KEY],
-        timeout: DEFAULT_TIMEOUTS.openai,
-      });
-    }
-
-    if (process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY]) {
-      this.anthropic = new Anthropic({
-        apiKey: process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY],
-        timeout: DEFAULT_TIMEOUTS.openai,
-      });
-    }
+    // PERFORMANCE/ENVIRONMENT: OpenAI and Anthropic clients are now lazy-loaded
+    // to prevent side-effects (like process.env access) during build-time module scans.
 
     // Periodic cleanup of cost trackers to prevent memory leaks
     // Only start in production to avoid open handles in tests
@@ -180,14 +169,40 @@ class AIService {
     return this._supabase;
   }
 
+  /**
+   * Get the OpenAI client lazily.
+   */
+  private getOpenAI(): OpenAI | null {
+    if (!this._openai && process.env[AI_ENV_KEYS.OPENAI_API_KEY]) {
+      this._openai = new OpenAI({
+        apiKey: process.env[AI_ENV_KEYS.OPENAI_API_KEY],
+        timeout: DEFAULT_TIMEOUTS.openai,
+      });
+    }
+    return this._openai;
+  }
+
+  /**
+   * Get the Anthropic client lazily.
+   */
+  private getAnthropic(): Anthropic | null {
+    if (!this._anthropic && process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY]) {
+      this._anthropic = new Anthropic({
+        apiKey: process.env[AI_ENV_KEYS.ANTHROPIC_API_KEY],
+        timeout: DEFAULT_TIMEOUTS.openai,
+      });
+    }
+    return this._anthropic;
+  }
+
   // Initialize AI service with provider-specific config
   async initialize(config: AIModelConfig): Promise<void> {
     // Validate API keys and configuration
-    if (config.provider === 'openai' && !this.openai) {
+    if (config.provider === 'openai' && !this.getOpenAI()) {
       throw new Error(API_ERROR_MESSAGES.AI.OPENAI_API_KEY_NOT_CONFIGURED);
     }
 
-    if (config.provider === 'anthropic' && !this.anthropic) {
+    if (config.provider === 'anthropic' && !this.getAnthropic()) {
       throw new Error(API_ERROR_MESSAGES.AI.ANTHROPIC_API_KEY_NOT_CONFIGURED);
     }
 
@@ -231,7 +246,8 @@ class AIService {
     try {
       const response = await this.executeWithResilience(async () => {
         if (config.provider === 'openai') {
-          if (!this.openai) {
+          const openai = this.getOpenAI();
+          if (!openai) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
               API_ERROR_MESSAGES.AI.OPENAI_NOT_INITIALIZED,
@@ -245,7 +261,7 @@ class AIService {
               ]
             );
           }
-          const completion = await this.openai.chat.completions.create({
+          const completion = await openai.chat.completions.create({
             model: config.model,
             messages,
             max_tokens: config.maxTokens,
@@ -288,7 +304,8 @@ class AIService {
 
           return response;
         } else if (config.provider === 'anthropic') {
-          if (!this.anthropic) {
+          const anthropic = this.getAnthropic();
+          if (!anthropic) {
             const { AppError, ErrorCode } = await import('./errors');
             throw new AppError(
               API_ERROR_MESSAGES.AI.ANTHROPIC_NOT_INITIALIZED,
@@ -314,7 +331,7 @@ class AIService {
             })
           );
 
-          const response = await this.anthropic.messages.create({
+          const response = await anthropic.messages.create({
             model: config.model,
             max_tokens: config.maxTokens,
             temperature: config.temperature,
@@ -818,9 +835,10 @@ class AIService {
   }> {
     const providers: string[] = [];
 
-    if (this.openai?.models) {
+    const openai = this.getOpenAI();
+    if (openai?.models) {
       try {
-        await withTimeout(() => this.openai!.models.list(), {
+        await withTimeout(() => openai.models.list(), {
           timeoutMs:
             DEFAULT_TIMEOUTS.openai / AI_HEALTH_CHECK_CONFIG.TIMEOUT_DIVISOR,
         });
@@ -830,11 +848,12 @@ class AIService {
       }
     }
 
-    if (this.anthropic) {
+    const anthropic = this.getAnthropic();
+    if (anthropic) {
       try {
         await withTimeout(
           async () => {
-            await this.anthropic!.messages.create({
+            await anthropic.messages.create({
               model: AI_MODEL_CONFIG.HEALTH_CHECK_MODEL,
               max_tokens: 1,
               messages: [{ role: 'user', content: 'ping' }],
