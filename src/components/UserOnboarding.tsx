@@ -2,19 +2,23 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { trackEvent, ANALYTICS_EVENTS } from '@/lib/analytics';
+import { COMPONENT_CONFIG } from '@/lib/config/components';
+import { ANIMATION_CONFIG } from '@/lib/config/animation';
+import { LOCAL_STORAGE_KEYS } from '@/lib/config/storage-keys';
 import {
-  COMPONENT_CONFIG,
-  ANIMATION_CONFIG,
-  LOCAL_STORAGE_KEYS,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
+} from '@/lib/config/theme';
+import {
   USER_ONBOARDING_LABELS,
   USER_ONBOARDING_COMPLETION_LABELS,
+} from '@/lib/config/component-labels';
+import {
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
-  CONTAINER_WIDTH_CLASSES,
-} from '@/lib/config';
+} from '@/lib/config/ui-text-sizes';
+import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 

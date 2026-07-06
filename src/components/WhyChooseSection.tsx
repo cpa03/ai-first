@@ -1,13 +1,10 @@
 'use client';
 
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
-import {
-  WHY_CHOOSE_CONFIG,
-  FEATURE_CONFIG,
-  UI_STRINGS,
-  SVG_VIEWBOX,
-  WHY_CHOOSE_SECTION_LABELS,
-} from '@/lib/config';
+import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config/landing-page';
+import { UI_STRINGS } from '@/lib/config/ui';
+import { SVG_VIEWBOX } from '@/lib/config/theme';
+import { WHY_CHOOSE_SECTION_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 function WhyChooseSectionComponent() {

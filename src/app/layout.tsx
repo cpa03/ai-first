@@ -8,17 +8,17 @@ import ToastContainer from '@/components/ToastContainer';
 import ScrollToTop from '@/components/ScrollToTop';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import { SEO_CONFIG } from '@/lib/config/seo';
+import { APP_CONFIG } from '@/lib/config/app';
 import {
-  SEO_CONFIG,
-  APP_CONFIG,
   BRAND_COLORS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
-  FOOTER_NAV_CONFIG,
-  DASHBOARD_PAGE_CONTENT,
-  PAGE_LAYOUT_CLASSES,
-  ROUTES,
-} from '@/lib/config';
+} from '@/lib/config/theme';
+import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
+import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
+import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
+import { ROUTES } from '@/lib/config/routes';
 import { safeJsonLd } from '@/lib/security/json-ld';
 import {
   KeyboardShortcutsProvider,

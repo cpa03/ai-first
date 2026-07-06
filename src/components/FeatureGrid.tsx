@@ -1,12 +1,10 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import {
-  ANIMATION_DELAYS,
-  FEATURE_CONFIG,
-  FEATURE_GRID_LABELS,
-  UI_STRINGS,
-} from '@/lib/config';
+import { ANIMATION_DELAYS } from '@/lib/config/theme';
+import { FEATURE_CONFIG } from '@/lib/config/landing-page';
+import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
+import { UI_STRINGS } from '@/lib/config/ui';
 
 function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
