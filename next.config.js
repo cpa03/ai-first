@@ -14,8 +14,6 @@ const nextConfig = {
   poweredByHeader: false,
   // Disable source maps in production for smaller bundles (Lighthouse optimization)
   productionBrowserSourceMaps: false,
-  // Explicitly enable SWC minification for optimal JS compression
-  swcMinify: true,
   // Suppress build-time logs that cause Lighthouse best-practices issues
   env: {
     SUPPRESS_BUILD_LOGS: 'true',
