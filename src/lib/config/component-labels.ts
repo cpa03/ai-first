@@ -301,6 +301,10 @@ export const IDEA_INPUT_LABELS = {
   PASTE_ARIA_LABEL: 'Paste from clipboard',
   /** Paste from clipboard button text */
   PASTE_BUTTON: 'Paste',
+  /** Submit button tooltip text */
+  SUBMIT_TOOLTIP: 'Submit your idea',
+  /** Submit button tooltip keyboard shortcut */
+  SUBMIT_SHORTCUT: ['⌘', 'Enter'],
 } as const;
 
 /**

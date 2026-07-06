@@ -27,6 +27,7 @@ import AutoSaveIndicator from './AutoSaveIndicator';
 import SuccessCelebration from './SuccessCelebration';
 import StatusAnnouncer from './StatusAnnouncer';
 import IdeaReadyIndicator from './IdeaReadyIndicator';
+import Tooltip from './Tooltip';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
@@ -446,17 +447,27 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 {IDEA_INPUT_LABELS.CLEAR_BUTTON}
               </Button>
             )}
-            <Button
-              type="submit"
-              variant="primary"
-              loading={isSubmitting}
-              loadingText={MESSAGES.IDEA_INPUT.PROCESSING_BUTTON}
-              disabled={!idea.trim() || !!validationError}
-              attention={!!idea.trim() && !validationError && !isSubmitting}
-              enableTransition
+            <Tooltip
+              content={IDEA_INPUT_LABELS.SUBMIT_TOOLTIP}
+              shortcut={
+                isSubmitting
+                  ? undefined
+                  : [...IDEA_INPUT_LABELS.SUBMIT_SHORTCUT]
+              }
+              position="top"
             >
-              {MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
-            </Button>
+              <Button
+                type="submit"
+                variant="primary"
+                loading={isSubmitting}
+                loadingText={MESSAGES.IDEA_INPUT.PROCESSING_BUTTON}
+                disabled={!idea.trim() || !!validationError}
+                attention={!!idea.trim() && !validationError && !isSubmitting}
+                enableTransition
+              >
+                {MESSAGES.IDEA_INPUT.SUBMIT_BUTTON}
+              </Button>
+            </Tooltip>
           </div>
         </div>
       </form>
