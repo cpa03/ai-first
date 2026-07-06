@@ -10,12 +10,11 @@ import {
   MESSAGES,
   BUTTON_LABELS,
   COMPONENT_DEFAULTS,
-  Z_INDEX_LAYERS,
-  TEXT_SIZE_CLASSES,
-  CONTAINER_WIDTHS,
-  CARD_PATTERNS,
-  ROUTES,
-} from '@/lib/config';
+} from '@/lib/config/ui';
+import { Z_INDEX_LAYERS, CARD_PATTERNS } from '@/lib/config/theme';
+import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
+import { CONTAINER_WIDTHS } from '@/lib/config/page-layout';
+import { ROUTES } from '@/lib/config/routes';
 
 interface Props {
   children: ReactNode;

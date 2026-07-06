@@ -15,11 +15,9 @@ import {
   trackCopyAction,
   trackFunnelStep,
 } from '@/lib/analytics';
-import {
-  HOME_PAGE_CONFIG,
-  PAGE_LAYOUT_CLASSES,
-  CARD_PATTERNS,
-} from '@/lib/config';
+import { HOME_PAGE_CONFIG } from '@/lib/config/pages';
+import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
+import { CARD_PATTERNS } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {

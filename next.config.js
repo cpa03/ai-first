@@ -162,10 +162,11 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: [
       '@supabase/supabase-js',
-      'googleapis',
       'openai',
       '@anthropic-ai/sdk',
       '@notionhq/client',
+      'clsx',
+      'tailwind-merge',
     ],
   },
   compiler: {

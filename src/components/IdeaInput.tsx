@@ -9,17 +9,16 @@ import {
   MAX_IDEA_LENGTH,
   validateIdea as validateIdeaCentral,
 } from '@/lib/validation';
+import { MESSAGES, PLACEHOLDERS } from '@/lib/config/ui';
+import { COMPONENT_CONFIG } from '@/lib/config/components';
+import { HTTP_HEADERS } from '@/lib/config/http';
+import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
-  MESSAGES,
-  PLACEHOLDERS,
-  COMPONENT_CONFIG,
-  HTTP_HEADERS,
-  API_ENDPOINTS,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
-  IDEA_INPUT_LABELS,
   GRADIENT_PATTERNS,
-} from '@/lib/config';
+} from '@/lib/config/theme';
+import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
