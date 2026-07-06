@@ -13,6 +13,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   MESSAGES,
+  IDEA_STATUS_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -28,7 +29,7 @@ interface TaskItemProps {
 
 function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
-  const isCompleted = task.status === 'completed';
+  const isCompleted = task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED;
   const [showCelebration, setShowCelebration] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const isMountedRef = useRef(false);

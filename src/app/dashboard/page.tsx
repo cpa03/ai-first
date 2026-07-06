@@ -24,6 +24,7 @@ import {
   DASHBOARD_LABELS,
   DASHBOARD_TAILWIND,
   STATUS_CODES,
+  IDEA_STATUS_CONFIG,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -49,7 +50,7 @@ import Alert from '@/components/Alert';
 import Link from 'next/link';
 import DashboardSkeleton from '@/components/DashboardSkeleton';
 import { APP_CONFIG } from '@/lib/config';
-import { IDEA_STATUS_CONFIG, type IdeaStatus } from '@/lib/config/constants';
+import { type IdeaStatus } from '@/lib/config/constants';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import {
   triggerHapticFeedback,
@@ -366,7 +367,7 @@ export default function DashboardPage() {
         const idea = ideas[selectedRowIndex];
         if (idea) {
           triggerHapticFeedback();
-          if (idea.status === 'completed') {
+          if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
             window.location.href = `/results?ideaId=${idea.id}`;
           } else {
             window.location.href = `/clarify?ideaId=${idea.id}`;
@@ -450,7 +451,8 @@ export default function DashboardPage() {
       >
         {selectedRowIndex >= 0 && ideas[selectedRowIndex]
           ? `Row ${selectedRowIndex + 1} of ${ideas.length}: ${ideas[selectedRowIndex].title}. Press Enter to ${
-              ideas[selectedRowIndex].status === 'completed'
+              ideas[selectedRowIndex].status ===
+              IDEA_STATUS_CONFIG.TYPES.COMPLETED
                 ? 'view blueprint'
                 : 'continue editing'
             }.`
@@ -515,49 +517,61 @@ export default function DashboardPage() {
             >
               <option
                 value="all"
-                className={filter === 'all' ? 'bg-primary-50 font-medium' : ''}
+                className={
+                  filter === IDEA_STATUS_CONFIG.FILTERS.ALL
+                    ? 'bg-primary-50 font-medium'
+                    : ''
+                }
               >
-                {filter === 'all'
+                {filter === IDEA_STATUS_CONFIG.FILTERS.ALL
                   ? DASHBOARD_FILTER_LABELS.ALL.SELECTED_LABEL
                   : DASHBOARD_FILTER_LABELS.ALL.LABEL}
               </option>
               <option
                 value="draft"
                 className={
-                  filter === 'draft' ? 'bg-primary-50 font-medium' : ''
+                  filter === IDEA_STATUS_CONFIG.FILTERS.DRAFT
+                    ? 'bg-primary-50 font-medium'
+                    : ''
                 }
               >
-                {filter === 'draft'
+                {filter === IDEA_STATUS_CONFIG.FILTERS.DRAFT
                   ? DASHBOARD_FILTER_LABELS.DRAFT.SELECTED_LABEL
                   : DASHBOARD_FILTER_LABELS.DRAFT.LABEL}
               </option>
               <option
                 value="clarified"
                 className={
-                  filter === 'clarified' ? 'bg-primary-50 font-medium' : ''
+                  filter === IDEA_STATUS_CONFIG.FILTERS.CLARIFIED
+                    ? 'bg-primary-50 font-medium'
+                    : ''
                 }
               >
-                {filter === 'clarified'
+                {filter === IDEA_STATUS_CONFIG.FILTERS.CLARIFIED
                   ? DASHBOARD_FILTER_LABELS.CLARIFIED.SELECTED_LABEL
                   : DASHBOARD_FILTER_LABELS.CLARIFIED.LABEL}
               </option>
               <option
                 value="breakdown"
                 className={
-                  filter === 'breakdown' ? 'bg-primary-50 font-medium' : ''
+                  filter === IDEA_STATUS_CONFIG.FILTERS.BREAKDOWN
+                    ? 'bg-primary-50 font-medium'
+                    : ''
                 }
               >
-                {filter === 'breakdown'
+                {filter === IDEA_STATUS_CONFIG.FILTERS.BREAKDOWN
                   ? DASHBOARD_FILTER_LABELS.BREAKDOWN.SELECTED_LABEL
                   : DASHBOARD_FILTER_LABELS.BREAKDOWN.LABEL}
               </option>
               <option
                 value="completed"
                 className={
-                  filter === 'completed' ? 'bg-primary-50 font-medium' : ''
+                  filter === IDEA_STATUS_CONFIG.FILTERS.COMPLETED
+                    ? 'bg-primary-50 font-medium'
+                    : ''
                 }
               >
-                {filter === 'completed'
+                {filter === IDEA_STATUS_CONFIG.FILTERS.COMPLETED
                   ? DASHBOARD_FILTER_LABELS.COMPLETED.SELECTED_LABEL
                   : DASHBOARD_FILTER_LABELS.COMPLETED.LABEL}
               </option>
@@ -568,7 +582,7 @@ export default function DashboardPage() {
               <span
                 key={ideas.length}
                 className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
-                  filter !== 'all'
+                  filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
                     ? 'bg-primary-600 text-white'
                     : 'bg-primary-100 text-primary-700'
                 }`}

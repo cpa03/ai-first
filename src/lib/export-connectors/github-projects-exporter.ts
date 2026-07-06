@@ -5,6 +5,7 @@ import {
   TASK_CONFIG,
   HTTP_HEADERS,
   API_ERROR_MESSAGES,
+  IDEA_STATUS_CONFIG,
 } from '@/lib/config';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
@@ -481,7 +482,8 @@ export class GitHubProjectsExporter extends ExportConnector {
     if (tasks.length > 0) {
       readme += `## ✅ Tasks\n\n`;
       tasks.forEach((task) => {
-        const status = task.status === 'completed' ? 'x' : ' ';
+        const status =
+          task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED ? 'x' : ' ';
         readme += `- [${status}] ${task.title} — ${task.assignee || 'Unassigned'} — ${task.estimate || 0}h\n`;
       });
       readme += '\n';

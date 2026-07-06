@@ -1,6 +1,7 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { Deliverable, Task } from '../db/service';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
+import { IDEA_STATUS_CONFIG } from '../config';
 
 export class MarkdownExporter extends ExportConnector {
   readonly type = 'markdown';
@@ -74,7 +75,8 @@ export class MarkdownExporter extends ExportConnector {
     if (tasks && tasks.length > 0) {
       markdown += `## Tasks\n`;
       tasks.forEach((task: Task) => {
-        const status = task.status === 'completed' ? 'x' : ' ';
+        const status =
+          task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED ? 'x' : ' ';
         markdown += `- [${status}] ${task.title} — ${task.assignee || 'Unassigned'} — ${task.estimate}h\n`;
       });
       markdown += `\n`;
