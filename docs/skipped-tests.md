@@ -39,11 +39,11 @@ All marked with "BUG: mocking issue" - require test refactoring to fix.
 ## Current Test Status
 
 ```
-Test Suites: 4 skipped, 90 passed, 90 of 94 total
-Tests:       16 skipped, 1667 passed, 1683 total
+Test Suites: 4 skipped, 91 passed, 91 of 95 total
+Tests:       16 skipped, 1669 passed, 1685 total
 ```
 
-**Last Updated**: 2026-07-05
+**Last Updated**: 2026-07-06
 
 ## Recommendations
 

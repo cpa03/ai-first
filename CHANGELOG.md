@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
+- **Stored XSS in Task API** (HIGH): Fixed stored cross-site scripting vulnerability in task creation endpoint
 - **Dependency security updates**: Updated minimatch and fast-xml-parser to patched versions resolving ReDoS and DoS vulnerabilities
 - Enhanced PII redaction with additional patterns
 - Fixed timing leak in authentication endpoints
