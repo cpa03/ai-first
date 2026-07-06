@@ -60,8 +60,10 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   } | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [milestoneReached, setMilestoneReached] = useState(false);
+  const [pasteSuccess, setPasteSuccess] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const prevMeetsMinimumRef = useRef(false);
+  const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const encouragementMessages = MESSAGES.IDEA_INPUT.ENCOURAGEMENT;
 
@@ -118,6 +120,15 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   // Detect platform for keyboard shortcut display
   useEffect(() => {
     setIsMac(navigator.platform.includes('Mac'));
+  }, []);
+
+  // Cleanup paste success timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (pasteSuccessTimeoutRef.current) {
+        clearTimeout(pasteSuccessTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Micro-UX: Milestone celebration when user first reaches minimum length
@@ -215,6 +226,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   // Micro-UX improvement: Quick paste from clipboard when input is empty
   // Reduces friction for users who have their idea already copied
+  // Shows brief success feedback to confirm the paste action
   const handlePasteFromClipboard = useCallback(async () => {
     try {
       const text = await navigator.clipboard.readText();
@@ -222,6 +234,16 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         triggerHapticFeedback();
         setIdea(text);
         setValidationError(validateIdea(text));
+        setPasteSuccess(true);
+
+        // Clear paste success state after brief feedback
+        if (pasteSuccessTimeoutRef.current) {
+          clearTimeout(pasteSuccessTimeoutRef.current);
+        }
+        pasteSuccessTimeoutRef.current = setTimeout(() => {
+          setPasteSuccess(false);
+        }, 1500);
+
         inputRef.current?.focus();
       }
     } catch {
@@ -416,23 +438,44 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 size="sm"
                 onClick={handlePasteFromClipboard}
                 aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                className={`transition-all duration-200 ${
+                  pasteSuccess
+                    ? 'text-green-600 bg-green-50 hover:bg-green-100'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
               >
-                <svg
-                  className="w-4 h-4 mr-1"
-                  fill="none"
-                  viewBox={SVG_VIEWBOX.STANDARD}
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                  />
-                </svg>
-                {IDEA_INPUT_LABELS.PASTE_BUTTON}
+                {pasteSuccess ? (
+                  <svg
+                    className="w-4 h-4 mr-1 text-green-600"
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
+                )}
+                {pasteSuccess ? 'Pasted!' : IDEA_INPUT_LABELS.PASTE_BUTTON}
               </Button>
             )}
             {idea.trim() && !isSubmitting && (
