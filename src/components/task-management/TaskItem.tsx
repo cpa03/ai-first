@@ -12,6 +12,7 @@ import {
   TASK_ANIMATION_CONFIG,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  MESSAGES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -233,7 +234,8 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                       d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  {task.estimate}h
+                  {task.estimate}
+                  {MESSAGES.TASK_MANAGEMENT.TASK_HOURS_SUFFIX}
                 </span>
               )}
               {task.assignee && (
@@ -261,7 +263,7 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
                     RISK_LEVEL_CONFIG[task.risk_level].bgColor
                   } ${RISK_LEVEL_CONFIG[task.risk_level].textColor}`}
                 >
-                  {task.risk_level} risk
+                  {task.risk_level} {MESSAGES.TASK_MANAGEMENT.TASK_RISK_SUFFIX}
                 </span>
               )}
             </div>
