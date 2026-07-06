@@ -61,7 +61,7 @@ function TaskManagementHeaderComponent({
             {MESSAGES.TASK_MANAGEMENT.TITLE}
           </h2>
           <p className={TASK_HEADER_STYLES.SUBTITLE}>
-            Track your progress across {totalDeliverables} deliverables
+            {MESSAGES.TASK_MANAGEMENT.HEADER_SUBTITLE(totalDeliverables)}
           </p>
         </div>
         <div className="text-right">
@@ -69,10 +69,16 @@ function TaskManagementHeaderComponent({
             {animatedProgress}%
           </div>
           <div className={TASK_HEADER_STYLES.STATS.LABEL}>
-            {animatedCompletedTasks} of {totalTasks} tasks completed
+            {MESSAGES.TASK_MANAGEMENT.STATS_COMPLETED(
+              animatedCompletedTasks,
+              totalTasks
+            )}
           </div>
           <div className={TASK_HEADER_STYLES.STATS.PERCENTAGE}>
-            {animatedCompletedHours}h of {totalHours}h estimated effort
+            {MESSAGES.TASK_MANAGEMENT.STATS_HOURS(
+              animatedCompletedHours,
+              totalHours
+            )}
           </div>
         </div>
       </div>

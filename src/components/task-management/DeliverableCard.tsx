@@ -10,6 +10,7 @@ import {
   DELIVERABLE_PROGRESS_CONFIG,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  MESSAGES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -115,8 +116,12 @@ function DeliverableCardComponent({
               {deliverable.progress}%
             </div>
             <div className={DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.LABEL}>
-              {deliverable.completedCount}/{deliverable.totalCount} tasks (
-              {deliverable.completedHours}/{deliverable.totalHours}h)
+              {MESSAGES.TASK_MANAGEMENT.DELIVERABLE_PROGRESS(
+                deliverable.completedCount,
+                deliverable.totalCount,
+                deliverable.completedHours,
+                deliverable.totalHours
+              )}
             </div>
           </div>
           <svg
@@ -162,7 +167,7 @@ function DeliverableCardComponent({
           <div className="space-y-2">
             {deliverable.tasks.length === 0 ? (
               <p className={DELIVERABLE_CARD_STYLES.CONTENT.EMPTY_STATE}>
-                No tasks in this deliverable.
+                {MESSAGES.TASK_MANAGEMENT.DELIVERABLE_EMPTY}
               </p>
             ) : (
               deliverable.tasks.map((task) => (

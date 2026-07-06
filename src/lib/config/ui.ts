@@ -168,10 +168,27 @@ export const MESSAGES = {
     TITLE: 'Task Management',
     NO_TASKS_TITLE: 'No Tasks Found',
     NO_TASKS_DESCRIPTION: 'Get started by creating your first task.',
+    NO_TASKS_HINT: 'Complete the clarification process to generate tasks',
     RETRY_BUTTON: 'Retry',
     EXPAND_ALL: 'Expand All',
     COLLAPSE_ALL: 'Collapse All',
     PROGRESS_LABEL: 'Overall project progress',
+    HEADER_SUBTITLE: (totalDeliverables: number) =>
+      `Track your progress across ${totalDeliverables} deliverables`,
+    STATS_COMPLETED: (completedTasks: number, totalTasks: number) =>
+      `${completedTasks} of ${totalTasks} tasks completed`,
+    STATS_HOURS: (completedHours: number, totalHours: number) =>
+      `${completedHours}h of ${totalHours}h estimated effort`,
+    DELIVERABLE_PROGRESS: (
+      completedCount: number,
+      totalCount: number,
+      completedHours: number,
+      totalHours: number
+    ) =>
+      `${completedCount}/${totalCount} tasks (${completedHours}/${totalHours}h)`,
+    DELIVERABLE_EMPTY: 'No tasks in this deliverable.',
+    TASK_HOURS_SUFFIX: 'h',
+    TASK_RISK_SUFFIX: 'risk',
   },
   IDEA_INPUT: {
     SUBMIT_BUTTON: 'Start Clarifying →',
