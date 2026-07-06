@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { UI_CONFIG } from '@/lib/config';
 
 interface UseAnimatedCounterOptions {
   /** Duration of the animation in milliseconds */
@@ -21,7 +22,10 @@ export function useAnimatedCounter(
   targetValue: number,
   options: UseAnimatedCounterOptions = {}
 ): number {
-  const { duration = 150, respectReducedMotion = true } = options;
+  const {
+    duration = UI_CONFIG.ANIMATION.DURATION.FAST,
+    respectReducedMotion = true,
+  } = options;
   const [displayValue, setDisplayValue] = useState(targetValue);
   const animationRef = useRef<number | null>(null);
   const previousValueRef = useRef(targetValue);
