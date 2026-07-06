@@ -1447,3 +1447,35 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+/* Deliverable Card Expand Animation - Micro-UX delight for task management */
+/* Creates a smooth slide-down + fade-in effect when deliverable content is revealed */
+/* Gives users visual continuity and makes the expand interaction feel polished */
+@keyframes expandContent {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 1000px;
+  }
+}
+
+.animate-expand-content {
+  animation: expandContent var(--duration-normal) var(--ease-out-expo) forwards;
+  overflow: hidden;
+}
+
+/* Reduced motion support for deliverable expand animation */
+@media (prefers-reduced-motion: reduce) {
+  .animate-expand-content {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    max-height: none;
+    overflow: visible;
+  }
+}

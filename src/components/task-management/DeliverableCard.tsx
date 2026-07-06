@@ -139,7 +139,7 @@ function DeliverableCardComponent({
       {isExpanded && (
         <div
           id={`deliverable-tasks-${deliverable.id}`}
-          className={DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER}
+          className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : 'animate-expand-content'}`}
         >
           <div className="mt-4 mb-4">
             <div
