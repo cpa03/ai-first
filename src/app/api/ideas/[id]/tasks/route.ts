@@ -8,6 +8,7 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { STATUS_CODES } from '@/lib/config/constants';
+import { IDEA_STATUS_CONFIG } from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
   const { request } = context;
@@ -66,7 +67,7 @@ async function handleGet(context: ApiContext) {
       tasks.forEach((t) => {
         const est = Number(t.estimate) || 0;
         deliverableTotalHours += est;
-        if (t.status === 'completed') {
+        if (t.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
           deliverableCompleted++;
           deliverableCompletedHours += est;
         }

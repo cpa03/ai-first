@@ -59,6 +59,22 @@ export const IDEA_STATUS_CONFIG = {
    * Default status for new ideas
    */
   DEFAULT_STATUS: 'draft' as const,
+
+  /**
+   * Status filter values for dashboard filtering
+   */
+  FILTERS: {
+    ALL: 'all',
+    DRAFT: 'draft',
+    CLARIFIED: 'clarified',
+    BREAKDOWN: 'breakdown',
+    COMPLETED: 'completed',
+  } as const,
+
+  /**
+   * All valid filter values
+   */
+  ALL_FILTERS: ['all', 'draft', 'clarified', 'breakdown', 'completed'] as const,
 } as const;
 
 /**

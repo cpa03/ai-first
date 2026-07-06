@@ -1,5 +1,5 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
-import { TIMEOUT_CONFIG, NOTION_CONFIG } from '../config';
+import { TIMEOUT_CONFIG, NOTION_CONFIG, IDEA_STATUS_CONFIG } from '../config';
 import { ENV_ACCESSORS } from '../config/env-keys';
 import { createLogger } from '../logger';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
@@ -240,7 +240,8 @@ export class NotionExporter extends ExportConnector {
       });
 
       tasks.forEach((task) => {
-        const statusIcon = task.status === 'completed' ? '✅' : '⬜';
+        const statusIcon =
+          task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED ? '✅' : '⬜';
         blocks.push({
           object: 'block',
           type: 'to_do',
@@ -253,7 +254,7 @@ export class NotionExporter extends ExportConnector {
                 },
               },
             ],
-            checked: task.status === 'completed',
+            checked: task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED,
           },
         });
       });
