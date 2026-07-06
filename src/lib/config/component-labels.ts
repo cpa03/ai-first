@@ -200,6 +200,7 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     COPY_BLUEPRINT: 'Copy blueprint (when no text selected)',
     EXPAND_DELIVERABLES: 'Expand all deliverables',
     COLLAPSE_DELIVERABLES: 'Collapse all deliverables',
+    DELETE_SELECTED_IDEA: 'Delete currently selected idea',
   } as const,
 } as const;
 

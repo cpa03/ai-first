@@ -176,6 +176,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     description: SHORTCUT_DESCRIPTIONS.COLLAPSE_DELIVERABLES,
     context: 'navigation',
   },
+  {
+    keys: ['Del'],
+    description: SHORTCUT_DESCRIPTIONS.DELETE_SELECTED_IDEA,
+    context: 'global',
+  },
 ];
 
 const contextLabels: Record<KeyboardShortcut['context'], string> =
@@ -472,7 +477,13 @@ function KeyboardShortcutsHelpComponent({
   useEffect(() => {
     if (!isOpen) return;
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') handleClose();
+      if (e.key === 'Escape') {
+        if (searchQuery) {
+          setSearchQuery('');
+        } else {
+          handleClose();
+        }
+      }
     };
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node))
@@ -484,7 +495,7 @@ function KeyboardShortcutsHelpComponent({
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, handleClose]);
+  }, [isOpen, handleClose, searchQuery]);
 
   useEffect(() => {
     if (!isOpen) return;
