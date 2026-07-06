@@ -352,6 +352,9 @@ export default function DashboardPage() {
         e.preventDefault();
         triggerHapticFeedback();
         setSelectedRowIndex((prev) => {
+          if (prev === -1) {
+            return e.key === 'j' ? 0 : ideas.length - 1;
+          }
           const next = e.key === 'j' ? prev + 1 : prev - 1;
           return Math.max(0, Math.min(next, ideas.length - 1));
         });
@@ -382,6 +385,20 @@ export default function DashboardPage() {
         return;
       }
 
+      if (
+        (e.key === 'Delete' || e.key === 'Backspace') &&
+        selectedRowIndex >= 0 &&
+        selectedRowIndex < ideas.length
+      ) {
+        const idea = ideas[selectedRowIndex];
+        if (idea) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          openDeleteModal(idea);
+        }
+        return;
+      }
+
       if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         triggerHapticFeedback();
@@ -403,7 +420,7 @@ export default function DashboardPage() {
     document.addEventListener('keydown', handleKeyboardShortcuts);
     return () =>
       document.removeEventListener('keydown', handleKeyboardShortcuts);
-  }, [deleteModal.isOpen, ideas, selectedRowIndex]);
+  }, [deleteModal.isOpen, ideas, selectedRowIndex, openDeleteModal]);
 
   useEffect(() => {
     if (selectedRowIndex >= 0 && tableBodyRef.current) {
@@ -1010,6 +1027,14 @@ export default function DashboardPage() {
               Esc
             </kbd>
             deselect
+          </span>
+          <span className="hidden sm:inline-flex items-center gap-1">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+            >
+              Del
+            </kbd>
+            delete
           </span>
         </div>
       )}
