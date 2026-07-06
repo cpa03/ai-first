@@ -115,14 +115,29 @@ async function handlePut(context: ApiContext) {
     // Update the task
     const updates: Partial<Task> = {};
 
+    // Sanitize user-controllable text fields (Issue # stored-xss-task-api)
     if (body.title !== undefined) {
-      updates.title = sanitizeHtml(body.title);
+      updates.title = sanitizeHtml(
+        typeof body.title === 'string' ? body.title.trim() : String(body.title)
+      );
     }
     if (body.description !== undefined) {
-      updates.description = body.description ? sanitizeHtml(body.description) : body.description;
+      updates.description = body.description
+        ? sanitizeHtml(body.description)
+        : body.description;
     }
+    if (body.assignee !== undefined) {
+      updates.assignee = body.assignee
+        ? sanitizeHtml(body.assignee)
+        : body.assignee;
+    }
+    if (body.tags !== undefined) {
+      updates.tags = body.tags
+        ? body.tags.map((tag) => sanitizeHtml(tag))
+        : body.tags;
+    }
+
     if (body.status !== undefined) updates.status = body.status;
-    if (body.assignee !== undefined) updates.assignee = body.assignee;
     if (body.estimate !== undefined) updates.estimate = body.estimate;
     if (body.start_date !== undefined) updates.start_date = body.start_date;
     if (body.end_date !== undefined) updates.end_date = body.end_date;
@@ -135,7 +150,6 @@ async function handlePut(context: ApiContext) {
     if (body.complexity_score !== undefined)
       updates.complexity_score = body.complexity_score;
     if (body.risk_level !== undefined) updates.risk_level = body.risk_level;
-    if (body.tags !== undefined) updates.tags = body.tags;
     if (body.custom_fields !== undefined)
       updates.custom_fields = body.custom_fields;
     if (body.milestone_id !== undefined)
