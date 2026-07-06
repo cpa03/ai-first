@@ -206,7 +206,7 @@ export default function DashboardPage() {
     filterClearTimeoutRef.current = setTimeout(() => {
       setFilter('all');
       setIsFilterClearing(false);
-    }, 200); // Match transition duration
+    }, ANIMATION_CONFIG.FAST); // Match transition duration
   }, [prefersReducedMotion]);
 
   // PERFORMANCE: Memoize event handlers to prevent unnecessary re-renders
