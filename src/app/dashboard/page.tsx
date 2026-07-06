@@ -23,6 +23,7 @@ import {
   ANIMATION_DELAYS,
   DASHBOARD_LABELS,
   DASHBOARD_TAILWIND,
+  STATUS_CODES,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -142,7 +143,7 @@ export default function DashboardPage() {
       );
 
       if (!response.ok) {
-        if (response.status === 401) {
+        if (response.status === STATUS_CODES.UNAUTHORIZED) {
           setError(DASHBOARD_PAGE_CONTENT.ERRORS.SIGN_IN_REQUIRED);
           setIdeas([]);
           setPagination(null);
