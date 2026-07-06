@@ -27,6 +27,7 @@ import SuccessCelebration from './SuccessCelebration';
 import StatusAnnouncer from './StatusAnnouncer';
 import IdeaReadyIndicator from './IdeaReadyIndicator';
 import Tooltip from './Tooltip';
+import { useConfetti } from '@/hooks/useConfetti';
 
 interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
@@ -60,6 +61,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   const [successMessage, setSuccessMessage] = useState('');
   const [milestoneReached, setMilestoneReached] = useState(false);
   const [pasteSuccess, setPasteSuccess] = useState(false);
+  const { particles: milestoneParticles, fire: fireMilestoneConfetti } =
+    useConfetti();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const prevMeetsMinimumRef = useRef(false);
   const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -139,6 +142,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     if (justReachedMinimum && !milestoneReached) {
       setMilestoneReached(true);
       triggerHapticFeedback();
+      fireMilestoneConfetti();
 
       // Auto-clear the milestone celebration after a brief moment
       const timer = setTimeout(() => {
@@ -153,7 +157,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     }
 
     prevMeetsMinimumRef.current = meetsMinimum;
-  }, [idea, milestoneReached]);
+  }, [idea, milestoneReached, fireMilestoneConfetti]);
 
   const handleIdeaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -320,27 +324,49 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         />
 
         {milestoneReached && (
-          <div
-            className="flex items-center gap-2 text-sm text-green-700 font-medium animate-fade-in"
-            role="status"
-            aria-live="polite"
-          >
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 animate-success-pop">
-              <svg
-                className="w-3 h-3"
-                fill="none"
-                viewBox={SVG_VIEWBOX.STANDARD}
-                stroke="currentColor"
-                strokeWidth={SVG_STROKE_WIDTHS.THICK}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </span>
-            {IDEA_INPUT_LABELS.MILESTONE_MESSAGE}
+          <div className="relative">
+            <div
+              className="flex items-center gap-2 text-sm text-green-700 font-medium animate-fade-in"
+              role="status"
+              aria-live="polite"
+            >
+              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 animate-success-pop">
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </span>
+              {IDEA_INPUT_LABELS.MILESTONE_MESSAGE}
+            </div>
+            {/* Micro-UX: Confetti burst at milestone moment for delightful positive feedback */}
+            {milestoneParticles.map((particle) => (
+              <span
+                key={particle.id}
+                className="absolute rounded-full pointer-events-none animate-copy-confetti"
+                style={
+                  {
+                    left: '50%',
+                    top: '50%',
+                    width: `${particle.size}px`,
+                    height: `${particle.size}px`,
+                    backgroundColor: particle.color,
+                    '--confetti-x': `${particle.x}px`,
+                    '--confetti-y': `${particle.y}px`,
+                    animationDelay: `${particle.delay}ms`,
+                  } as React.CSSProperties
+                }
+                aria-hidden="true"
+              />
+            ))}
           </div>
         )}
 
