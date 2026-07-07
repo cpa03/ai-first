@@ -221,7 +221,10 @@ export class GitHubProjectsExporter extends ExportConnector {
       return {
         available: false,
         latencyMs,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         checkedAt,
       };
     }
@@ -474,7 +477,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     if (deliverables.length > 0) {
       readme += `## 📋 Deliverables\n\n`;
       deliverables.forEach((deliverable, index) => {
-        readme += `${index + 1}. **${deliverable.title}** — ${deliverable.description || 'No description'} — ${deliverable.estimate_hours || 0}h estimated\n`;
+        readme += `${index + 1}. **${deliverable.title}** — ${deliverable.description || API_ERROR_MESSAGES.FALLBACK.NO_DESCRIPTION} — ${deliverable.estimate_hours || 0}h estimated\n`;
       });
       readme += '\n';
     }

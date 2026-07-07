@@ -28,6 +28,7 @@ import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { validateCSRF } from '@/lib/security/csrf';
 import { TimeoutManager } from '@/lib/resilience/timeout-manager';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TIMEOUT_CONFIG } from '@/lib/config/constants';
 import { TimeoutError } from '@/lib/errors';
 import type {
@@ -325,7 +326,10 @@ export function withApiHandler(
 
       logger.errorWithContext('API request failed', logContext, {
         duration,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         errorType: error?.constructor?.name || 'Unknown',
         stack: error instanceof Error ? error.stack : undefined,
       });

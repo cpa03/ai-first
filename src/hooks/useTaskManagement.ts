@@ -122,7 +122,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           action: 'fetchTasks',
           metadata: {
             ideaId,
-            error: err instanceof Error ? err.message : 'Unknown error',
+            error:
+              err instanceof Error
+                ? err.message
+                : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
         setError(err instanceof Error ? err.message : 'Failed to fetch tasks');
@@ -298,7 +301,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
             taskId,
             currentStatus,
             newStatus,
-            error: err instanceof Error ? err.message : 'Unknown error',
+            error:
+              err instanceof Error
+                ? err.message
+                : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
 

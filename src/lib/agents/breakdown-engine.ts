@@ -226,7 +226,10 @@ class BreakdownEngine {
 
       await dbService.logAgentAction('breakdown-engine', 'breakdown-error', {
         ideaId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
       });
       throw error;
     }

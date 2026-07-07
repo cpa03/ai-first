@@ -171,7 +171,10 @@ export class TrelloExporter extends ExportConnector {
       return {
         available: false,
         latencyMs,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         checkedAt,
       };
     }

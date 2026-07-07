@@ -194,6 +194,9 @@ export const API_ERROR_MESSAGES = {
     UNKNOWN_ERROR: 'Unknown error',
     REQUEST_FAILED: 'Request failed',
     INTERNAL_ERROR: 'An internal error occurred',
+    NO_DESCRIPTION: 'No description',
+    NO_TITLE: 'No title',
+    UNTITLED: 'Untitled',
   },
 } as const;
 

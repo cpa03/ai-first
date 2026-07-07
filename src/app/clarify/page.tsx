@@ -27,6 +27,7 @@ import {
   API_ROUTES,
   createRouteWithParams,
 } from '@/lib/config';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -146,7 +147,10 @@ function ClarifyPageContent() {
           action: 'handleClarificationComplete',
           metadata: {
             ideaId,
-            error: err instanceof Error ? err.message : 'Unknown error',
+            error:
+              err instanceof Error
+                ? err.message
+                : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
         setError('Failed to save your answers. Please try again.');

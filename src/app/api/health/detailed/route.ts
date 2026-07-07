@@ -18,6 +18,7 @@ import {
 } from '@/lib/config/constants';
 import { APP_CONFIG } from '@/lib/config';
 import { getExternalRateLimitTracker } from '@/lib/external-rate-limit';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 interface HealthCheckResult {
   service: string;
@@ -303,7 +304,7 @@ async function handleGet(context: ApiContext) {
       error: redactPII(
         dbResult.reason instanceof Error
           ? dbResult.reason.message
-          : 'Unknown error'
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR
       ),
     };
   }
@@ -322,7 +323,7 @@ async function handleGet(context: ApiContext) {
       error: redactPII(
         aiResult.reason instanceof Error
           ? aiResult.reason.message
-          : 'Unknown error'
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR
       ),
     };
   }
@@ -341,7 +342,7 @@ async function handleGet(context: ApiContext) {
       error: redactPII(
         exportResult.reason instanceof Error
           ? exportResult.reason.message
-          : 'Unknown error'
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR
       ),
     };
   }

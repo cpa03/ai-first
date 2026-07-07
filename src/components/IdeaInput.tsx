@@ -19,6 +19,7 @@ import {
   GRADIENT_PATTERNS,
 } from '@/lib/config/theme';
 import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -205,7 +206,10 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           action: 'handleSubmit',
           metadata: {
             ideaLength: idea.length,
-            error: err instanceof Error ? err.message : 'Unknown error',
+            error:
+              err instanceof Error
+                ? err.message
+                : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
         setError(MESSAGES.ERRORS.FAILED_SAVE_IDEA);
