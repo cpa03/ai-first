@@ -1479,3 +1479,44 @@ button[aria-disabled='true'].btn-glow-hover {
     overflow: visible;
   }
 }
+
+/* Dashboard Table Row Lift - Micro-UX delight for table interactions */
+/* Creates a subtle lift effect when hovering over table rows, making the table feel more interactive */
+/* Provides tactile visual feedback that helps users identify which row they're about to click */
+/* Uses transform + shadow for GPU-accelerated 60fps performance */
+.table-row-lift {
+  transition:
+    transform var(--duration-fast) var(--ease-smooth),
+    box-shadow var(--duration-fast) var(--ease-smooth),
+    background-color var(--duration-fast) var(--ease-smooth);
+}
+
+.table-row-lift:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 6px -1px var(--shadow-neutral-sm),
+    0 2px 4px -1px var(--shadow-neutral-xs);
+  z-index: 1;
+  position: relative;
+}
+
+/* Enhanced lift effect for keyboard-selected rows */
+.table-row-lift[aria-selected='true'] {
+  transform: translateY(-1px);
+  box-shadow:
+    0 4px 8px -2px var(--shadow-primary-600-light),
+    0 0 0 2px var(--shadow-primary-600-light);
+}
+
+/* Reduced motion support for table row lift */
+@media (prefers-reduced-motion: reduce) {
+  .table-row-lift {
+    transition: background-color var(--duration-fast) var(--ease-smooth);
+  }
+
+  .table-row-lift:hover,
+  .table-row-lift[aria-selected='true'] {
+    transform: none;
+    box-shadow: none;
+  }
+}

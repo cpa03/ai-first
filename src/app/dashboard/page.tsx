@@ -911,7 +911,7 @@ export default function DashboardPage() {
                     data-row-index={index}
                     tabIndex={selectedRowIndex === index ? 0 : -1}
                     aria-selected={selectedRowIndex === index}
-                    className={`${TABLE_PATTERNS.row.hover} animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors ${
+                    className={`${TABLE_PATTERNS.row.hover} table-row-lift animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors ${
                       selectedRowIndex === index
                         ? 'bg-primary-50 ring-2 ring-primary-400 ring-inset'
                         : ''
