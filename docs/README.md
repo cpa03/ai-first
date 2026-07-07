@@ -225,8 +225,8 @@ Complete index of all IdeaFlow documentation.
 
 ## Maintenance Reports
 
-- [Repository Health Report - 2026-07-07](./maintenance/2026-07-07-repo-health-report.md) - Current repository health status
-- [Stale Branches Report - 2026-07-07](./maintenance/2026-07-07-stale-branches-report.md) - Detailed analysis of 83 unmerged branches
+- [Repository Health Report - 2026-07-07 (Repocheck)](./maintenance/2026-07-07-repo-health-report.md) - Latest repository health status
+- [Stale Branches Report - 2026-07-07](./maintenance/2026-07-07-stale-branches-report.md) - Detailed analysis of 65 unmerged branches
 - [Repository Health Report - 2026-07-06](./maintenance/2026-07-06-repo-health-report.md) - Previous health report
 
 ---
