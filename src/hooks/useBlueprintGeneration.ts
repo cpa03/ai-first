@@ -5,6 +5,7 @@ import { generateBlueprintTemplate } from '@/templates/blueprint-template';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { ANIMATION_DELAYS } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { ToastOptions } from '@/components/ToastContainer';
 
 const logger = createLogger('useBlueprintGeneration');
@@ -174,7 +175,7 @@ export function useBlueprintGeneration(
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'success',
-          message: 'Blueprint copied to clipboard!',
+          message: API_ERROR_MESSAGES.HOOKS.BLUEPRINT_COPIED,
           duration: UI_CONFIG.TOAST_DURATION,
         });
       }
@@ -183,7 +184,7 @@ export function useBlueprintGeneration(
       if (typeof window !== 'undefined' && win.showToast) {
         win.showToast({
           type: 'error',
-          message: 'Failed to copy. Please try selecting and copying manually.',
+          message: API_ERROR_MESSAGES.HOOKS.BLUEPRINT_COPY_FAILED,
           duration: UI_CONFIG.TOAST_DURATION,
         });
       }

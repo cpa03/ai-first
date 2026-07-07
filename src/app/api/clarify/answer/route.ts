@@ -28,14 +28,17 @@ async function handlePost(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'questionId',
-        message: 'questionId is required and must be a non-empty string',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.QUESTION_ID_REQUIRED,
       },
     ]);
   }
 
   if (!answer || typeof answer !== 'string') {
     throw new ValidationError([
-      { field: 'answer', message: 'answer is required and must be a string' },
+      {
+        field: 'answer',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.ANSWER_REQUIRED,
+      },
     ]);
   }
 

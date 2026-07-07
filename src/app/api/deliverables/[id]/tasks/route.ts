@@ -42,7 +42,10 @@ async function handlePost(context: ApiContext) {
 
   if (!deliverableId) {
     throw new ValidationError([
-      { field: 'deliverableId', message: 'Deliverable ID is required' },
+      {
+        field: 'deliverableId',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.DELIVERABLE_ID_REQUIRED,
+      },
     ]);
   }
 
@@ -51,14 +54,20 @@ async function handlePost(context: ApiContext) {
     body = await request.json();
   } catch {
     throw new ValidationError([
-      { field: 'body', message: 'Invalid JSON body' },
+      {
+        field: 'body',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_JSON_BODY,
+      },
     ]);
   }
 
   // Validate required fields
   if (!body.title || body.title.trim().length === 0) {
     throw new ValidationError([
-      { field: 'title', message: 'Task title is required' },
+      {
+        field: 'title',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TITLE_REQUIRED,
+      },
     ]);
   }
 
@@ -95,7 +104,10 @@ async function handlePost(context: ApiContext) {
   if (body.estimate !== undefined) {
     if (typeof body.estimate !== 'number' || body.estimate < 0) {
       throw new ValidationError([
-        { field: 'estimate', message: 'Estimate must be a positive number' },
+        {
+          field: 'estimate',
+          message: API_ERROR_MESSAGES.VALIDATION.INVALID_ESTIMATE,
+        },
       ]);
     }
   }
@@ -126,7 +138,9 @@ async function handlePost(context: ApiContext) {
     const newTask = await dbService.createTask({
       deliverable_id: deliverableId,
       title: sanitizeHtml(body.title.trim()),
-      description: body.description ? sanitizeHtml(body.description) : body.description,
+      description: body.description
+        ? sanitizeHtml(body.description)
+        : body.description,
       status: body.status || TASK_CONFIG.STATUSES.TODO,
       assignee: body.assignee ? sanitizeHtml(body.assignee) : body.assignee,
       estimate: body.estimate || TASK_CONFIG.DEFAULTS.ESTIMATE,
@@ -145,7 +159,7 @@ async function handlePost(context: ApiContext) {
     return standardSuccessResponse(
       {
         task: newTask,
-        message: 'Task created successfully',
+        message: API_ERROR_MESSAGES.ROUTE_SUCCESS.TASK_CREATED,
       },
       context.requestId,
       STATUS_CODES.CREATED,

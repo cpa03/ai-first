@@ -1,6 +1,7 @@
 import { APP_CONFIG } from '@/lib/config/app';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 /**
  * PERFORMANCE: Lazy-initialized trusted origins to avoid expensive array creation
@@ -148,7 +149,7 @@ export function validateCSRF(
       timestamp: new Date().toISOString(),
       category: 'authentication',
       severity: 'high',
-      message: 'CSRF validation failed: missing origin/referer headers',
+      message: API_ERROR_MESSAGES.CSRF.MISSING_HEADERS,
       requestId: requestId || undefined,
       metadata: {
         method,
@@ -171,7 +172,7 @@ export function validateCSRF(
     timestamp: new Date().toISOString(),
     category: 'authentication',
     severity: 'high',
-    message: 'CSRF validation failed: untrusted origin',
+    message: API_ERROR_MESSAGES.CSRF.UNTRUSTED_ORIGIN,
     requestId: requestId || undefined,
     metadata: {
       method,

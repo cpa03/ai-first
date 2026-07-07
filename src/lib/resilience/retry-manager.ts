@@ -9,6 +9,7 @@ import {
   STATUS_CODES,
   RETRY_VALUES,
 } from '../config/constants';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { RetryOptions } from './types';
 import { CircuitBreaker } from './circuit-breaker';
 import { CircuitBreakerState } from './types';
@@ -99,6 +100,6 @@ export class RetryManager {
       }
     }
 
-    throw lastError || new Error('Retry loop exhausted without error');
+    throw lastError || new Error(API_ERROR_MESSAGES.CLEANUP.RETRY_EXHAUSTED);
   }
 }

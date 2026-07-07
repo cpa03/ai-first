@@ -36,7 +36,10 @@ async function handlePut(context: ApiContext) {
 
   if (!taskId) {
     throw new ValidationError([
-      { field: 'taskId', message: 'Task ID is required' },
+      {
+        field: 'taskId',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TASK_ID_REQUIRED,
+      },
     ]);
   }
 
@@ -45,7 +48,10 @@ async function handlePut(context: ApiContext) {
     body = await request.json();
   } catch {
     throw new ValidationError([
-      { field: 'body', message: 'Invalid JSON body' },
+      {
+        field: 'body',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_JSON_BODY,
+      },
     ]);
   }
 
@@ -73,7 +79,10 @@ async function handlePut(context: ApiContext) {
   if (body.estimate !== undefined) {
     if (typeof body.estimate !== 'number' || body.estimate < 0) {
       throw new ValidationError([
-        { field: 'estimate', message: 'Estimate must be a positive number' },
+        {
+          field: 'estimate',
+          message: API_ERROR_MESSAGES.VALIDATION.INVALID_ESTIMATE,
+        },
       ]);
     }
   }
@@ -183,7 +192,10 @@ async function handleDelete(context: ApiContext) {
 
   if (!taskId) {
     throw new ValidationError([
-      { field: 'taskId', message: 'Task ID is required' },
+      {
+        field: 'taskId',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TASK_ID_REQUIRED,
+      },
     ]);
   }
 
@@ -209,7 +221,7 @@ async function handleDelete(context: ApiContext) {
     await dbService.softDeleteTask(taskId);
 
     return standardSuccessResponse(
-      { message: 'Task deleted successfully', taskId },
+      { message: API_ERROR_MESSAGES.ROUTE_SUCCESS.TASK_DELETED, taskId },
       context.requestId,
       STATUS_CODES.OK,
       context.rateLimit
@@ -234,7 +246,10 @@ async function handleGet(context: ApiContext) {
 
   if (!taskId) {
     throw new ValidationError([
-      { field: 'taskId', message: 'Task ID is required' },
+      {
+        field: 'taskId',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TASK_ID_REQUIRED,
+      },
     ]);
   }
 

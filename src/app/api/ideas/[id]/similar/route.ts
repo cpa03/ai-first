@@ -39,7 +39,7 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'limit',
-        message: 'Invalid limit parameter: must be a valid number',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_LIMIT,
       },
     ]);
   }
@@ -65,7 +65,7 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'threshold',
-        message: 'Invalid threshold parameter: must be a valid number',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_THRESHOLD,
       },
     ]);
   }
