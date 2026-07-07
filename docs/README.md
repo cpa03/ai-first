@@ -150,6 +150,7 @@ Complete index of all IdeaFlow documentation.
 ## Project Meta
 
 - [Changelog](../CHANGELOG.md) - Project changelog and version history
+- [Configuration Guide](./configuration-guide.md) - Environment variables and configuration options
 
 ## Architecture Decision Records
 
