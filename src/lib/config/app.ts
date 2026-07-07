@@ -13,7 +13,7 @@ export const APP_CONFIG = {
    * Env: APP_VERSION (default: '1.0.0')
    * Allows for dynamic versioning in different deployment environments
    */
-  VERSION: EnvLoader.string('APP_VERSION', '1.0.0'),
+  VERSION: EnvLoader.string('APP_VERSION', '0.1.1'),
   DESCRIPTION: 'Turn ideas into action with AI-powered project planning',
   TAGLINE: 'Turn ideas into action.',
 
