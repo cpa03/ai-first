@@ -6,6 +6,7 @@
  */
 
 import { CLEANUP_CONFIG } from './config/cleanup';
+import { API_ERROR_MESSAGES } from './config/error-messages';
 import { createLogger } from './logger';
 
 const logger = createLogger('ResourceCleanupManager');
@@ -128,7 +129,7 @@ export function createAbortableTimeout(
         'abort',
         () => {
           clearTimeout(timeoutId);
-          reject(new Error('Timeout aborted'));
+          reject(new Error(API_ERROR_MESSAGES.CLEANUP.TIMEOUT_ABORTED));
         },
         { once: true }
       );

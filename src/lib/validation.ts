@@ -7,6 +7,7 @@ import {
 } from './config/constants';
 import { USER_STORY_CONFIG } from './config/user-story-config';
 import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config/validation';
+import { API_ERROR_MESSAGES } from './config/error-messages';
 import { isString } from './type-guards';
 
 export interface ValidationError {
@@ -114,7 +115,8 @@ export function validateUserResponses(responses: unknown): ValidationResult {
   if (typeof responses !== 'object' || Array.isArray(responses)) {
     errors.push({
       field: 'userResponses',
-      message: 'userResponses must be an object',
+      message:
+        API_ERROR_MESSAGES.ROUTE_VALIDATION.USER_RESPONSES_MUST_BE_OBJECT,
     });
     return { valid: false, errors };
   }
@@ -470,12 +472,13 @@ export function validateIdeaWithUserStory(
   };
 }
 
-
 /**
  * Validate AI model temperature parameter
  * SECURITY: Prevents extreme temperature values
  */
-export function validateModelTemperature(temperature: unknown): ValidationResult {
+export function validateModelTemperature(
+  temperature: unknown
+): ValidationResult {
   const errors: ValidationError[] = [];
   const { VALIDATION } = AI_CONFIG;
 
@@ -484,16 +487,29 @@ export function validateModelTemperature(temperature: unknown): ValidationResult
   }
 
   if (typeof temperature !== 'number' || isNaN(temperature)) {
-    errors.push({ field: 'temperature', message: 'temperature must be a valid number' });
+    errors.push({
+      field: 'temperature',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_TEMPERATURE,
+    });
     return { valid: false, errors };
   }
 
   if (temperature < VALIDATION.TEMPERATURE_MIN) {
-    errors.push({ field: 'temperature', message: 'temperature must be at least ' + VALIDATION.TEMPERATURE_MIN });
+    errors.push({
+      field: 'temperature',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TEMPERATURE_TOO_LOW(
+        VALIDATION.TEMPERATURE_MIN
+      ),
+    });
   }
 
   if (temperature > VALIDATION.TEMPERATURE_MAX) {
-    errors.push({ field: 'temperature', message: 'temperature must not exceed ' + VALIDATION.TEMPERATURE_MAX });
+    errors.push({
+      field: 'temperature',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TEMPERATURE_TOO_HIGH(
+        VALIDATION.TEMPERATURE_MAX
+      ),
+    });
   }
 
   return { valid: errors.length === 0, errors };
@@ -511,20 +527,36 @@ export function validateModelMaxTokens(maxTokens: unknown): ValidationResult {
   }
 
   if (typeof maxTokens !== 'number' || isNaN(maxTokens)) {
-    errors.push({ field: 'maxTokens', message: 'maxTokens must be a valid number' });
+    errors.push({
+      field: 'maxTokens',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_MAX_TOKENS,
+    });
     return { valid: false, errors };
   }
 
   if (!Number.isInteger(maxTokens)) {
-    errors.push({ field: 'maxTokens', message: 'maxTokens must be an integer' });
+    errors.push({
+      field: 'maxTokens',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MAX_TOKENS_NOT_INTEGER,
+    });
   }
 
   if (maxTokens < VALIDATION.MAX_TOKENS_MIN) {
-    errors.push({ field: 'maxTokens', message: 'maxTokens must be at least ' + VALIDATION.MAX_TOKENS_MIN });
+    errors.push({
+      field: 'maxTokens',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MAX_TOKENS_TOO_LOW(
+        VALIDATION.MAX_TOKENS_MIN
+      ),
+    });
   }
 
   if (maxTokens > VALIDATION.MAX_TOKENS_MAX) {
-    errors.push({ field: 'maxTokens', message: 'maxTokens must not exceed ' + VALIDATION.MAX_TOKENS_MAX });
+    errors.push({
+      field: 'maxTokens',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MAX_TOKENS_TOO_HIGH(
+        VALIDATION.MAX_TOKENS_MAX
+      ),
+    });
   }
 
   return { valid: errors.length === 0, errors };
@@ -538,23 +570,39 @@ export function validateModelName(model: unknown): ValidationResult {
   const { VALIDATION } = AI_CONFIG;
 
   if (!model || typeof model !== 'string') {
-    errors.push({ field: 'model', message: 'model is required and must be a string' });
+    errors.push({
+      field: 'model',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_REQUIRED,
+    });
     return { valid: false, errors };
   }
 
   const trimmed = model.trim();
   if (trimmed.length === 0) {
-    errors.push({ field: 'model', message: 'model cannot be empty' });
+    errors.push({
+      field: 'model',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_EMPTY,
+    });
     return { valid: false, errors };
   }
 
   if (!VALIDATION.MODEL_NAME_PATTERN.test(trimmed)) {
-    errors.push({ field: 'model', message: 'model must contain only alphanumeric characters, dashes, and dots' });
+    errors.push({
+      field: 'model',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_INVALID_CHARS,
+    });
   }
 
-  const hasAllowedPrefix = VALIDATION.ALLOWED_MODEL_PREFIXES.some(prefix => trimmed.toLowerCase().startsWith(prefix));
+  const hasAllowedPrefix = VALIDATION.ALLOWED_MODEL_PREFIXES.some((prefix) =>
+    trimmed.toLowerCase().startsWith(prefix)
+  );
   if (!hasAllowedPrefix) {
-    errors.push({ field: 'model', message: 'model must start with one of: ' + VALIDATION.ALLOWED_MODEL_PREFIXES.join(', ') });
+    errors.push({
+      field: 'model',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_INVALID_PREFIX([
+        ...VALIDATION.ALLOWED_MODEL_PREFIXES,
+      ]),
+    });
   }
 
   return { valid: errors.length === 0, errors };
@@ -567,7 +615,10 @@ export function validateAIModelConfig(config: unknown): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!config || typeof config !== 'object') {
-    errors.push({ field: 'config', message: 'AI model config must be an object' });
+    errors.push({
+      field: 'config',
+      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.CONFIG_MUST_BE_OBJECT,
+    });
     return { valid: false, errors };
   }
 

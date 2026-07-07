@@ -10,6 +10,7 @@ import { requireAuth } from '@/lib/auth';
 import { APP_CONFIG } from '@/lib/config/app';
 import { STATUS_CODES } from '@/lib/config/http';
 import { IDEA_STATUS_CONFIG } from '@/lib/config';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { generateEmbedding } from '@/lib/embedding-service';
 import { storeIdeaEmbedding } from '@/lib/similarity-service';
 import { createLogger } from '@/lib/logger';
@@ -50,7 +51,7 @@ async function handleGet(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'limit',
-        message: 'Invalid limit parameter: must be a valid number',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_LIMIT,
       },
     ]);
   }
@@ -72,7 +73,10 @@ async function handleGet(context: ApiContext) {
   }
   if (Number.isNaN(page) || !Number.isFinite(page) || page < 1) {
     throw new ValidationError([
-      { field: 'page', message: 'Page must be a valid positive number' },
+      {
+        field: 'page',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.PAGE_REQUIRED,
+      },
     ]);
   }
 
@@ -87,12 +91,7 @@ async function handleGet(context: ApiContext) {
     { page, pageSize: limit },
     {
       status: status as
-        | 'draft'
-        | 'clarified'
-        | 'breakdown'
-        | 'completed'
-        | 'all'
-        | undefined,
+        'draft' | 'clarified' | 'breakdown' | 'completed' | 'all' | undefined,
       search: search || undefined,
     }
   );
@@ -147,7 +146,10 @@ async function handlePost(context: ApiContext) {
   const newIdea = {
     user_id: userId,
     title:
-      sanitizedIdea.substring(0, APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH) +
+      sanitizedIdea.substring(
+        0,
+        APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
+      ) +
       (sanitizedIdea.length > APP_CONFIG.STRING_LIMITS.TITLE_PREVIEW_LENGTH
         ? '...'
         : ''),

@@ -62,7 +62,10 @@ async function handleGet(context: ApiContext) {
 
   if (!ideaId) {
     throw new ValidationError([
-      { field: 'ideaId', message: 'ideaId is required' },
+      {
+        field: 'ideaId',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.IDEA_ID_REQUIRED,
+      },
     ]);
   }
 

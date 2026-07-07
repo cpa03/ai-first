@@ -11,6 +11,7 @@ import {
 } from '@/lib/rate-limit';
 import { requireAdminAuth } from '@/lib/auth';
 import { STATUS_CODES } from '@/lib/config/constants';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 async function handleGet(context: ApiContext) {
   await requireAdminAuth(context.request);
@@ -55,7 +56,7 @@ async function handleDelete(context: ApiContext) {
   clearRateLimitStore();
 
   const data = {
-    message: 'Rate limit store cleared successfully',
+    message: API_ERROR_MESSAGES.ROUTE_SUCCESS.RATE_LIMIT_CLEARED,
     timestamp: new Date().toISOString(),
   };
 

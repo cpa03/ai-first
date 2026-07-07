@@ -72,7 +72,10 @@ async function handlePut(context: ApiContext) {
     body = await request.json();
   } catch {
     throw new ValidationError([
-      { field: 'body', message: 'Invalid JSON body' },
+      {
+        field: 'body',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_JSON_BODY,
+      },
     ]);
   }
   const { title, status } = body as { title?: unknown; status?: unknown };
@@ -163,7 +166,7 @@ async function handleDelete(context: ApiContext) {
 
   return standardSuccessResponse(
     {
-      message: 'Idea deleted successfully',
+      message: API_ERROR_MESSAGES.ROUTE_SUCCESS.IDEA_DELETED,
       id: ideaId,
     },
     context.requestId,

@@ -198,6 +198,80 @@ export const API_ERROR_MESSAGES = {
     NO_TITLE: 'No title',
     UNTITLED: 'Untitled',
   },
+
+  /**
+   * API Route Validation Messages
+   * Centralizes inline validation messages used in API route handlers
+   */
+  ROUTE_VALIDATION: {
+    IDEA_ID_REQUIRED: 'ideaId parameter is required',
+    QUESTION_ID_REQUIRED:
+      'questionId is required and must be a non-empty string',
+    ANSWER_REQUIRED: 'answer is required and must be a string',
+    TASK_ID_REQUIRED: 'Task ID is required',
+    DELIVERABLE_ID_REQUIRED: 'Deliverable ID is required',
+    INVALID_JSON_BODY: 'Invalid JSON body',
+    TITLE_REQUIRED: 'Task title is required',
+    STATUS_REQUIRED: 'Status is required',
+    PAGE_REQUIRED: 'Page must be a valid positive number',
+    INVALID_LIMIT: 'Invalid limit parameter: must be a valid number',
+    INVALID_THRESHOLD: 'Invalid threshold parameter: must be a valid number',
+    INVALID_TEMPERATURE: 'temperature must be a valid number',
+    TEMPERATURE_TOO_LOW: (min: number) => `temperature must be at least ${min}`,
+    TEMPERATURE_TOO_HIGH: (max: number) => `temperature must not exceed ${max}`,
+    INVALID_MAX_TOKENS: 'maxTokens must be a valid number',
+    MAX_TOKENS_NOT_INTEGER: 'maxTokens must be an integer',
+    MAX_TOKENS_TOO_LOW: (min: number) => `maxTokens must be at least ${min}`,
+    MAX_TOKENS_TOO_HIGH: (max: number) => `maxTokens must not exceed ${max}`,
+    MODEL_REQUIRED: 'model is required and must be a string',
+    MODEL_EMPTY: 'model cannot be empty',
+    MODEL_INVALID_CHARS:
+      'model must contain only alphanumeric characters, dashes, and dots',
+    MODEL_INVALID_PREFIX: (prefixes: string[]) =>
+      `model must start with one of: ${prefixes.join(', ')}`,
+    CONFIG_MUST_BE_OBJECT: 'AI model config must be an object',
+    USER_RESPONSES_MUST_BE_OBJECT: 'userResponses must be an object',
+  },
+
+  /**
+   * API Route Success Messages
+   * Centralizes inline success messages used in API route handlers
+   */
+  ROUTE_SUCCESS: {
+    RATE_LIMIT_CLEARED: 'Rate limit store cleared successfully',
+    IDEA_DELETED: 'Idea deleted successfully',
+    TASK_DELETED: 'Task deleted successfully',
+    TASK_CREATED: 'Task created successfully',
+    TASK_STATUS_UPDATED: 'Task status updated successfully',
+  },
+
+  /**
+   * CSRF Security Messages
+   * Centralizes CSRF-related error messages
+   */
+  CSRF: {
+    MISSING_HEADERS: 'CSRF validation failed: missing origin/referer headers',
+    UNTRUSTED_ORIGIN: 'CSRF validation failed: untrusted origin',
+  },
+
+  /**
+   * Resource Cleanup Messages
+   * Centralizes cleanup-related messages
+   */
+  CLEANUP: {
+    TIMEOUT_ABORTED: 'Timeout aborted',
+    RETRY_EXHAUSTED: 'Retry loop exhausted without error',
+  },
+
+  /**
+   * Hook Messages
+   * Centralizes messages used in React hooks
+   */
+  HOOKS: {
+    BLUEPRINT_COPIED: 'Blueprint copied to clipboard!',
+    BLUEPRINT_COPY_FAILED:
+      'Failed to copy. Please try selecting and copying manually.',
+  },
 } as const;
 
 export type APIErrorMessages = typeof API_ERROR_MESSAGES;

@@ -29,7 +29,10 @@ async function handlePatch(context: ApiContext) {
 
   if (!taskId) {
     throw new ValidationError([
-      { field: 'taskId', message: 'Task ID is required' },
+      {
+        field: 'taskId',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TASK_ID_REQUIRED,
+      },
     ]);
   }
 
@@ -38,14 +41,20 @@ async function handlePatch(context: ApiContext) {
     body = await request.json();
   } catch {
     throw new ValidationError([
-      { field: 'body', message: 'Invalid JSON body' },
+      {
+        field: 'body',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_JSON_BODY,
+      },
     ]);
   }
 
   // Validate required fields
   if (!body.status) {
     throw new ValidationError([
-      { field: 'status', message: 'Status is required' },
+      {
+        field: 'status',
+        message: API_ERROR_MESSAGES.ROUTE_VALIDATION.STATUS_REQUIRED,
+      },
     ]);
   }
 
