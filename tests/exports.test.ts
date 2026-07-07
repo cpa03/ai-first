@@ -119,7 +119,7 @@ describe('Export Services', () => {
       const json = JSON.parse(decodeURIComponent(result.url!.split(',')[1]));
 
       expect(json.metadata).toHaveProperty('exported_at');
-      expect(json.metadata).toHaveProperty('version', '1.0.0');
+      expect(json.metadata).toHaveProperty('version', '0.1.1');
       expect(json.metadata.customFields).toHaveProperty('customField', 'test');
     });
 
@@ -588,7 +588,7 @@ describe('Export Services', () => {
         expect(result.tasks).toEqual([]);
         if (result.metadata) {
           expect(result.metadata).toHaveProperty('exported_at');
-          expect(result.metadata.version).toBe('1.0.0');
+          expect(result.metadata.version).toBe('0.1.1');
         }
       });
 
