@@ -10,7 +10,15 @@ import {
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
 } from '@/lib/config';
-import { createContext, useContext, ReactNode, useMemo, memo } from 'react';
+import {
+  createContext,
+  useContext,
+  ReactNode,
+  useMemo,
+  memo,
+  useState,
+  useEffect,
+} from 'react';
 
 interface KeyboardShortcutsContextValue {
   openHelp: () => void;
@@ -56,11 +64,20 @@ export function KeyboardShortcutsProvider({
 
 function KeyboardShortcutsButtonComponent() {
   const { openHelp } = useKeyboardShortcuts();
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(
+      typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
+    );
+  }, []);
+
+  const shortcutKeys = useMemo(() => [isMac ? '⌘' : 'Ctrl', 'K'], [isMac]);
 
   return (
     <Tooltip
       content="Keyboard shortcuts"
-      shortcut={['⌘', 'K']}
+      shortcut={shortcutKeys}
       position="bottom"
     >
       <button
