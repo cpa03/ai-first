@@ -222,6 +222,12 @@ Complete index of all IdeaFlow documentation.
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
 
+## Maintenance Reports
+
+- [Repository Health Report - 2026-07-07](./maintenance/2026-07-07-repo-health-report.md) - Current repository health status
+- [Stale Branches Report - 2026-07-07](./maintenance/2026-07-07-stale-branches-report.md) - Detailed analysis of 83 unmerged branches
+- [Repository Health Report - 2026-07-06](./maintenance/2026-07-06-repo-health-report.md) - Previous health report
+
 ---
 
 _This index is maintained by RepoKeeper to ensure documentation discoverability._
