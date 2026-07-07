@@ -307,11 +307,17 @@ function getCachedFormatter(
   options: Intl.DateTimeFormatOptions
 ): Intl.DateTimeFormat {
   // PERFORMANCE: Use a pre-computed key for the most common case (default options)
-  const isDefault = options === DEFAULT_ABS_DATE_OPTIONS;
-  const cacheKey = isDefault
-    ? `${locale}:default`
-    : `${locale}:${JSON.stringify(options)}`;
+  if (options === DEFAULT_ABS_DATE_OPTIONS) {
+    const cacheKey = `${locale}:default`;
+    let formatter = dateFormattingCache.get(cacheKey);
+    if (!formatter) {
+      formatter = new Intl.DateTimeFormat(locale, options);
+      dateFormattingCache.set(cacheKey, formatter);
+    }
+    return formatter;
+  }
 
+  const cacheKey = `${locale}:${JSON.stringify(options)}`;
   let formatter = dateFormattingCache.get(cacheKey);
 
   if (!formatter) {
@@ -345,41 +351,44 @@ export function getRelativeTime(
 ): string {
   const date =
     typeof dateString === 'string' ? new Date(dateString) : dateString;
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffSeconds = Math.floor(diffMs / TIME_UNITS.SECOND);
-  const diffMinutes = Math.floor(
-    diffSeconds / TIME_CONVERSION.SECONDS_PER_MINUTE
-  );
-  const diffHours = Math.floor(diffMinutes / TIME_CONVERSION.MINUTES_PER_HOUR);
-  const diffDays = Math.floor(diffHours / TIME_CONVERSION.HOURS_PER_DAY);
+  const diffMs = Date.now() - date.getTime();
 
   // Future dates: show absolute date
   if (diffMs < 0) {
     return formatAbsoluteDate(date, locale);
   }
 
+  // PERFORMANCE: Lazy evaluation of time units to avoid redundant divisions
+  // and Math.floor calls for recent dates. Using Math.floor instead of
+  // bitwise operators to prevent 32-bit integer overflow for old dates.
+  const diffSeconds = Math.floor(diffMs / TIME_UNITS.SECOND);
+
   // Less than 1 minute: show "just now"
   if (diffSeconds < TIME_CONVERSION.SECONDS_PER_MINUTE) {
     return 'just now';
   }
 
+  const diffMinutes = Math.floor(
+    diffSeconds / TIME_CONVERSION.SECONDS_PER_MINUTE
+  );
+
   // Less than 1 hour: show minutes
   if (diffMinutes < TIME_CONVERSION.MINUTES_PER_HOUR) {
-    const minutes = Math.floor(diffMinutes);
-    return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`;
+    return diffMinutes === 1 ? '1 minute ago' : `${diffMinutes} minutes ago`;
   }
+
+  const diffHours = Math.floor(diffMinutes / TIME_CONVERSION.MINUTES_PER_HOUR);
 
   // Less than 24 hours: show hours
   if (diffHours < TIME_CONVERSION.HOURS_PER_DAY) {
-    const hours = Math.floor(diffHours);
-    return hours === 1 ? '1 hour ago' : `${hours} hours ago`;
+    return diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
   }
+
+  const diffDays = Math.floor(diffHours / TIME_CONVERSION.HOURS_PER_DAY);
 
   // Less than 7 days: show days
   if (diffDays < TIME_CONVERSION.DAYS_PER_WEEK) {
-    const days = Math.floor(diffDays);
-    return days === 1 ? '1 day ago' : `${days} days ago`;
+    return diffDays === 1 ? '1 day ago' : `${diffDays} days ago`;
   }
 
   // Less than 30 days: show weeks
