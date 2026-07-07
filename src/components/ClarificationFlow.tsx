@@ -575,6 +575,26 @@ function ClarificationFlow({
             </Button>
           </div>
         </form>
+
+        {/* Micro-UX: Keyboard shortcut hints for question navigation */}
+        {/* Improves discoverability of number key shortcuts (1-9) to jump between questions */}
+        {questions.length > 1 && (
+          <div className="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
+            <span className="hidden sm:inline-flex items-center gap-1.5">
+              <span className="text-gray-500">Jump to:</span>
+              {questions.slice(0, 9).map((_, index) => (
+                <span key={index} className="inline-flex items-center">
+                  <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+                    {index + 1}
+                  </kbd>
+                  {index < Math.min(questions.length, 9) - 1 && (
+                    <span className="text-gray-300 mx-0.5">/</span>
+                  )}
+                </span>
+              ))}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
