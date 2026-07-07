@@ -1,5 +1,5 @@
 import { clarifierAgent } from '@/lib/agents/clarifier';
-import { validateIdeaId } from '@/lib/validation';
+import { validateIdeaId, sanitizeHtml } from '@/lib/validation';
 import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
   withApiHandler,
@@ -64,10 +64,13 @@ async function handlePost(context: ApiContext) {
 
   verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
+  // SECURITY: Sanitize user input to prevent XSS
+  const sanitizedAnswer = sanitizeHtml(trimmedAnswer);
+
   const session = await clarifierAgent.submitAnswer(
     ideaId.trim(),
     questionId.trim(),
-    trimmedAnswer
+    sanitizedAnswer
   );
 
   return standardSuccessResponse(

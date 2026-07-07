@@ -3,6 +3,7 @@ import {
   validateIdea,
   validateIdeaId,
   validateUserResponses,
+  sanitizeHtml,
 } from '@/lib/validation';
 import { ValidationError, AppError, ErrorCode } from '@/lib/errors';
 import {
@@ -49,12 +50,26 @@ async function handlePost(context: ApiContext) {
 
   verifyResourceOwnership(user.id, idea.user_id, 'idea');
 
+  // SECURITY: Sanitize user input to prevent XSS
+  const sanitizedRefinedIdea = sanitizeHtml(refinedIdea.trim());
+  const sanitizedUserResponses: Record<string, string> = {};
+
+  if (userResponses && typeof userResponses === 'object') {
+    for (const [key, value] of Object.entries(userResponses)) {
+      if (typeof value === 'string') {
+        sanitizedUserResponses[key] = sanitizeHtml(value);
+      } else {
+        sanitizedUserResponses[key] = String(value);
+      }
+    }
+  }
+
   await breakdownEngine.initialize();
 
   const session = await breakdownEngine.startBreakdown(
     ideaId.trim(),
-    refinedIdea.trim(),
-    userResponses || {},
+    sanitizedRefinedIdea,
+    sanitizedUserResponses,
     options || {}
   );
 
