@@ -113,7 +113,10 @@ export class ClarifierAgent {
 
       await dbService.logAgentAction('clarifier', 'start-clarification-error', {
         ideaId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
       });
       throw error;
     }
@@ -181,7 +184,10 @@ export class ClarifierAgent {
       await dbService.logAgentAction('clarifier', 'answer-submitted-error', {
         ideaId,
         questionId,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
       });
       throw error;
     }

@@ -161,7 +161,10 @@ export class NotionExporter extends ExportConnector {
       return {
         available: false,
         latencyMs,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error:
+          error instanceof Error
+            ? error.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         checkedAt,
       };
     }
@@ -182,7 +185,10 @@ export class NotionExporter extends ExportConnector {
           {
             type: 'text',
             text: {
-              content: idea.raw_text || idea.title || 'No description',
+              content:
+                idea.raw_text ||
+                idea.title ||
+                API_ERROR_MESSAGES.FALLBACK.NO_DESCRIPTION,
             },
           },
         ],

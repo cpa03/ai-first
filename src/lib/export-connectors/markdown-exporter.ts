@@ -67,7 +67,7 @@ export class MarkdownExporter extends ExportConnector {
     if (deliverables && deliverables.length > 0) {
       markdown += `## Deliverables\n`;
       deliverables.forEach((deliverable: Deliverable, index: number) => {
-        markdown += `${index + 1}. **${deliverable.title}** — ${deliverable.description || 'No description'} — ${deliverable.estimate_hours}h estimated\n`;
+        markdown += `${index + 1}. **${deliverable.title}** — ${deliverable.description || API_ERROR_MESSAGES.FALLBACK.NO_DESCRIPTION} — ${deliverable.estimate_hours}h estimated\n`;
       });
       markdown += `\n`;
     }

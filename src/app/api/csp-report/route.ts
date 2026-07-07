@@ -3,6 +3,7 @@ import { createLogger } from '@/lib/logger';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { STATUS_CODES } from '@/lib/config';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const logger = createLogger('CSPReport');
 
@@ -60,7 +61,9 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
     } catch (parseError) {
       logger.warn('Failed to parse CSP report', {
         error:
-          parseError instanceof Error ? parseError.message : 'Unknown error',
+          parseError instanceof Error
+            ? parseError.message
+            : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
         contentType,
       });
       // Return 204 anyway - don't block browser reporting
@@ -105,7 +108,10 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
     return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });
   } catch (error) {
     logger.error('Error processing CSP report', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error:
+        error instanceof Error
+          ? error.message
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
     });
     // Still return 204 to avoid blocking browser reporting
     return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });

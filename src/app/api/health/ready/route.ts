@@ -9,6 +9,7 @@ import { AppError, ErrorCode } from '@/lib/errors';
 import { STATUS_CODES } from '@/lib/config/http';
 import { API_CACHE_CONFIG } from '@/lib/config/constants';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const logger = createLogger('readiness');
 
@@ -43,10 +44,16 @@ async function handleGet(context: ApiContext) {
     checks.database = {
       status: 'not_ready',
       responseTime: Date.now() - dbStartTime,
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error:
+        error instanceof Error
+          ? error.message
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
     };
     logger.error('Readiness check failed: Database connection error', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+      error:
+        error instanceof Error
+          ? error.message
+          : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
     });
   }
 

@@ -12,6 +12,7 @@ import {
   API_ENDPOINTS,
   HTTP_HEADERS,
 } from '@/lib/config';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const logger = createLogger('useClarificationSession');
 
@@ -285,7 +286,10 @@ export function useClarificationSession(
           metadata: {
             ideaId,
             ideaLength: idea.length,
-            error: err instanceof Error ? err.message : 'Unknown error',
+            error:
+              err instanceof Error
+                ? err.message
+                : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
         setError(
