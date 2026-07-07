@@ -44,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated documentation index for better discoverability
 - Updated `docs/mvp-feature-status.md` with accurate progress (July 6, 2026)
 - Corrected API route count from 19 to 22 in roadmap documentation
-- Updated test stats to reflect 1669 passing tests across 91 suites
+- Updated test stats to reflect 1671 passing tests across 92 suites
 
 ## [0.1.1] - 2026-02-13
 
