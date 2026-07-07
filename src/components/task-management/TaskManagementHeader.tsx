@@ -3,6 +3,7 @@
 import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
+import CopyButton from '@/components/CopyButton';
 import { MESSAGES, TASK_HEADER_STYLES, ANIMATION_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -52,6 +53,24 @@ function TaskManagementHeaderComponent({
     () => ({ width: `${overallProgress}%` }),
     [overallProgress]
   );
+
+  const summaryText = useMemo(() => {
+    return [
+      `📊 Task Progress Summary`,
+      ``,
+      `Progress: ${overallProgress}%`,
+      `Tasks: ${completedTasks}/${totalTasks} completed`,
+      `Hours: ${completedHours}/${totalHours} logged`,
+      `Deliverables: ${totalDeliverables}`,
+    ].join('\n');
+  }, [
+    overallProgress,
+    completedTasks,
+    totalTasks,
+    completedHours,
+    totalHours,
+    totalDeliverables,
+  ]);
 
   return (
     <div className={TASK_HEADER_STYLES.CONTAINER}>
@@ -128,6 +147,13 @@ function TaskManagementHeaderComponent({
             {MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
           </Button>
         </Tooltip>
+        <CopyButton
+          textToCopy={summaryText}
+          label="Copy Summary"
+          successLabel="Copied!"
+          variant="subtle"
+          showToast={true}
+        />
       </div>
     </div>
   );
