@@ -305,6 +305,3 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-content>
-<line_count>207</line_count>
-</write_to_file>
