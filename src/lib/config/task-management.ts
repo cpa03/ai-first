@@ -98,7 +98,7 @@ export const TASK_ITEM_STYLES = {
     DISABLED: 'opacity-50 cursor-not-allowed',
   },
   CHECKMARK: {
-    CONTAINER: 'w-3 h-3 text-white animate-draw-check',
+    CONTAINER: 'w-3 h-3 text-white animate-draw-check animate-checkmark-pop',
     STROKE_WIDTH: 3,
     PATH: 'M5 13l4 4L19 7',
   },
