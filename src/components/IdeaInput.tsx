@@ -245,7 +245,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         }
         pasteSuccessTimeoutRef.current = setTimeout(() => {
           setPasteSuccess(false);
-        }, 1500);
+        }, COMPONENT_CONFIG.IDEA_INPUT.PASTE_SUCCESS_DURATION_MS);
 
         inputRef.current?.focus();
       }
