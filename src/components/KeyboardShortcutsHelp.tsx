@@ -376,7 +376,9 @@ const ShortcutRow = memo(function ShortcutRow({
         type="button"
         onClick={handleCopyShortcut}
         className="flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md hover:bg-gray-100 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1"
-        aria-label={`Copy shortcut: ${displayKeys.join(' plus ')}`}
+        aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.COPY_SHORTCUT_ARIA_LABEL(
+          displayKeys
+        )}
       >
         {displayKeys.map((key, index) => (
           <React.Fragment key={index}>

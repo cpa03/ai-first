@@ -160,8 +160,9 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   CLEAR_SEARCH_LABEL: 'Clear search',
   /** Search input aria-label */
   SEARCH_ARIA_LABEL: 'Search keyboard shortcuts',
-  /** Close button aria-label */
   CLOSE_ARIA_LABEL: 'Close command palette',
+  COPY_SHORTCUT_ARIA_LABEL: (keys: string[]) =>
+    `Copy shortcut: ${keys.join(' plus ')}`,
   /** Keyboard shortcut context labels */
   CONTEXT_LABELS: {
     global: 'Global',
@@ -409,6 +410,9 @@ export const CLARIFICATION_FLOW_LABELS = {
   FINAL_STEP: 'Final Step',
   REFERENCE_EXPANDED: 'Reference idea expanded',
   REFERENCE_COLLAPSED: 'Reference idea collapsed',
+  PROGRESS_ARIA_LABEL: (progress: number) => `Progress: ${progress} percent`,
+  QUESTION_ARIA_LABEL: (current: number, total: number) =>
+    `Question ${current} of ${total}`,
 } as const;
 
 /**
