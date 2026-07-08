@@ -263,11 +263,17 @@ function ResultsContent() {
           document.body.removeChild(link);
         }
       } else {
-        throw new Error(result.error || 'Export failed');
+        throw new Error(
+          result.error || API_ERROR_MESSAGES.SERVICE.EXPORT_FAILED
+        );
       }
     } catch (err) {
       logger.error('Export error:', err);
-      setError(err instanceof Error ? err.message : 'Export failed');
+      setError(
+        err instanceof Error
+          ? err.message
+          : API_ERROR_MESSAGES.SERVICE.EXPORT_FAILED
+      );
     } finally {
       setExportLoading(false);
       setExportingFormat(null);
