@@ -334,7 +334,9 @@ function ClarificationFlow({
                 ? 'text-green-600'
                 : 'text-gray-900'
             }`}
-            aria-label={`Progress: ${Math.round(progress)} percent`}
+            aria-label={CLARIFICATION_FLOW_LABELS.PROGRESS_ARIA_LABEL(
+              Math.round(progress)
+            )}
           >
             {Math.round(progress)}%
           </span>
@@ -358,7 +360,10 @@ function ClarificationFlow({
             e.preventDefault();
             handleNext();
           }}
-          aria-label={`Question ${currentStep + 1} of ${questions.length}`}
+          aria-label={CLARIFICATION_FLOW_LABELS.QUESTION_ARIA_LABEL(
+            currentStep + 1,
+            questions.length
+          )}
         >
           <h2
             id="question-heading"
