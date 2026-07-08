@@ -261,11 +261,13 @@ export const ALERT_LABELS = {
 
 /**
  * KeyboardShortcutsProvider Labels
- * Eliminates hardcoded aria-labels in KeyboardShortcutsProvider component
+ * Eliminates hardcoded aria-labels and tooltip content in KeyboardShortcutsProvider component
  */
 export const KEYBOARD_SHORTCUTS_PROVIDER_LABELS = {
   /** Help button aria-label */
   HELP_BUTTON_ARIA_LABEL: 'Open keyboard shortcuts help',
+  /** Tooltip content for the keyboard shortcuts button */
+  TOOLTIP_CONTENT: 'Keyboard shortcuts',
 } as const;
 
 /**
