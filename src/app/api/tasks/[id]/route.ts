@@ -4,7 +4,7 @@ import {
   ApiContext,
 } from '@/lib/api-handler';
 import { dbService, Task } from '@/lib/db';
-import { sanitizeHtml } from '@/lib/validation';
+import { sanitizeHtml, sanitizeObject } from '@/lib/validation';
 import { AppError, ErrorCode, ValidationError } from '@/lib/errors';
 import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -159,8 +159,11 @@ async function handlePut(context: ApiContext) {
     if (body.complexity_score !== undefined)
       updates.complexity_score = body.complexity_score;
     if (body.risk_level !== undefined) updates.risk_level = body.risk_level;
-    if (body.custom_fields !== undefined)
-      updates.custom_fields = body.custom_fields;
+    if (body.custom_fields !== undefined) {
+      updates.custom_fields = body.custom_fields
+        ? sanitizeObject(body.custom_fields)
+        : body.custom_fields;
+    }
     if (body.milestone_id !== undefined)
       updates.milestone_id = body.milestone_id;
 

@@ -289,6 +289,34 @@ export function sanitizeHtml(input: string): string {
   return sanitized;
 }
 
+/**
+ * Recursively sanitizes all string values within an object or array.
+ * Useful for flexible JSON fields like custom_fields.
+ */
+export function sanitizeObject<T>(input: T): T {
+  if (input === null || input === undefined) {
+    return input;
+  }
+
+  if (typeof input === 'string') {
+    return sanitizeHtml(input) as unknown as T;
+  }
+
+  if (Array.isArray(input)) {
+    return input.map((item) => sanitizeObject(item)) as unknown as T;
+  }
+
+  if (typeof input === 'object' && input.constructor === Object) {
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(input)) {
+      sanitized[key] = sanitizeObject(value);
+    }
+    return sanitized as unknown as T;
+  }
+
+  return input;
+}
+
 export function buildErrorResponse(errors: ValidationError[]): Response {
   return new Response(
     JSON.stringify({
