@@ -178,7 +178,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && (
           <svg
-            className="animate-spin -ml-1 mr-2 h-4 w-4 inline-block"
+            className={`${prefersReducedMotion ? '' : 'animate-spin'} -ml-1 mr-2 h-4 w-4 inline-block`}
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
