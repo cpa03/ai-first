@@ -140,7 +140,20 @@ These values are intentionally static and should NOT be configurable:
 4. **SVG Path Data**: Icon paths - Static by nature
 5. **Error Patterns**: Regex patterns for error classification
 
-### Potentially Configurable Values
+### Recently Modularized (PR #2989)
+
+These values were recently moved to config:
+
+1. **Clarification Flow Aria-Labels** (`component-labels.ts`)
+   - `PROGRESS_ARIA_LABEL` - Progress bar aria-label template
+   - `QUESTION_ARIA_LABEL` - Question counter aria-label template
+   - Updated `ClarificationFlow.tsx` to use config labels
+
+2. **Keyboard Shortcut Copy Aria-Label** (`component-labels.ts`)
+   - `COPY_SHORTCUT_ARIA_LABEL` - Copy shortcut button aria-label template
+   - Updated `KeyboardShortcutsHelp.tsx` to use config label
+
+### Remaining Low Priority Items
 
 These could be moved to config but are low priority:
 
@@ -155,6 +168,7 @@ These could be moved to config but are low priority:
 3. **Keyboard Shortcut Keys** (`KeyboardShortcutsHelp.tsx`)
    - `['⌘', 'K']`, `['⌘', 'Enter']`
    - Consider: Platform-specific shortcuts
+   - Note: Already has platform-specific logic for Mac/Windows
 
 ## Migration Guide
 
