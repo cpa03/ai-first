@@ -76,7 +76,7 @@ function KeyboardShortcutsButtonComponent() {
 
   return (
     <Tooltip
-      content="Keyboard shortcuts"
+      content={KEYBOARD_SHORTCUTS_PROVIDER_LABELS.TOOLTIP_CONTENT}
       shortcut={shortcutKeys}
       position="bottom"
     >
