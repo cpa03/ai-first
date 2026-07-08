@@ -14,6 +14,10 @@ import {
   BRAND_COLORS,
   SVG_STROKE_WIDTHS,
   Z_INDEX_LAYERS,
+  BG_COLOR_CLASSES,
+  BORDER_COLOR_CLASSES,
+  SHADOW_CLASSES,
+  LAYOUT_CLASSES,
 } from '@/lib/config/theme';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
 import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
@@ -144,7 +148,9 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
         />
       </head>
-      <body className="min-h-screen bg-gray-50 font-sans">
+      <body
+        className={`${LAYOUT_CLASSES.MIN_HEIGHT_SCREEN} ${BG_COLOR_CLASSES.PAGE} font-sans`}
+      >
         <ErrorBoundary>
           <GlobalErrorHandler />
           <KeyboardShortcutsProvider>
@@ -173,7 +179,7 @@ export default async function RootLayout({
             <div className="min-h-screen flex flex-col">
               <ToastContainer />
               <header
-                className={`bg-white shadow-sm border-b border-gray-200 sticky top-0 z-[${Z_INDEX_LAYERS.OVERLAY}]`}
+                className={`${BG_COLOR_CLASSES.CARD} ${SHADOW_CLASSES.SMALL} ${BORDER_COLOR_CLASSES.TOP} sticky top-0 z-[${Z_INDEX_LAYERS.OVERLAY}]`}
               >
                 <div className={PAGE_LAYOUT_CLASSES.CONTAINER_XL}>
                   <div className="flex justify-between items-center h-16">

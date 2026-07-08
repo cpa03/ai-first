@@ -1212,3 +1212,435 @@ export const GRADIENT_PATTERNS = {
 
 export type SkeletonPatterns = typeof SKELETON_PATTERNS;
 export type GradientPatterns = typeof GRADIENT_PATTERNS;
+
+/**
+ * Text Color Utility Classes
+ * Centralizes text color Tailwind classes used across all components
+ * Eliminates hardcoded text-gray-* and text-primary-* classes in 50+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { TEXT_COLOR_CLASSES } from '@/lib/config';
+ * <h1 className={TEXT_COLOR_CLASSES.HEADING}>...</h1>
+ * <p className={TEXT_COLOR_CLASSES.BODY}>...</p>
+ * ```
+ */
+export const TEXT_COLOR_CLASSES = {
+  /** Primary heading text (gray-900) */
+  HEADING: 'text-gray-900',
+
+  /** Secondary/subheading text (gray-600) */
+  BODY: 'text-gray-600',
+
+  /** Tertiary/muted text (gray-500) */
+  MUTED: 'text-gray-500',
+
+  /** Disabled/placeholder text (gray-400) */
+  PLACEHOLDER: 'text-gray-400',
+
+  /** Primary brand text (primary-600) */
+  BRAND: 'text-primary-600',
+
+  /** Primary brand text hover (primary-900) */
+  BRAND_HOVER: 'hover:text-primary-900',
+
+  /** Error text (red-700) */
+  ERROR: 'text-red-700',
+
+  /** Success text (green-800) */
+  SUCCESS: 'text-green-800',
+
+  /** Warning text (amber-700) */
+  WARNING: 'text-amber-700',
+
+  /** Inverse text (white) */
+  INVERSE: 'text-white',
+
+  /** Link text with underline (gray-500 hover:primary-600) */
+  LINK: 'text-gray-500 hover:text-primary-600 underline',
+
+  /** Small label text (gray-400) */
+  LABEL: 'text-gray-400',
+
+  /** Input text (gray-800) */
+  INPUT: 'text-gray-800',
+} as const;
+
+/**
+ * Background Color Utility Classes
+ * Centralizes background color Tailwind classes used across all components
+ * Eliminates hardcoded bg-gray-* and bg-primary-* classes in 40+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { BG_COLOR_CLASSES } from '@/lib/config';
+ * <div className={BG_COLOR_CLASSES.PAGE}>...</div>
+ * <div className={BG_COLOR_CLASSES.CARD}>...</div>
+ * ```
+ */
+export const BG_COLOR_CLASSES = {
+  /** Page background (gray-50) */
+  PAGE: 'bg-gray-50',
+
+  /** Card background (white) */
+  CARD: 'bg-white',
+
+  /** Subtle background (gray-100) */
+  SUBTLE: 'bg-gray-100',
+
+  /** Light background (gray-200) */
+  LIGHT: 'bg-gray-200',
+
+  /** Primary brand background (primary-600) */
+  BRAND: 'bg-primary-600',
+
+  /** Primary brand background hover (primary-700) */
+  BRAND_HOVER: 'hover:bg-primary-700',
+
+  /** Success background (green-600) */
+  SUCCESS: 'bg-green-600',
+
+  /** Error background (red-500) */
+  ERROR: 'bg-red-500',
+
+  /** Warning background (amber-600) */
+  WARNING: 'bg-amber-600',
+
+  /** Transparent background */
+  TRANSPARENT: 'bg-transparent',
+
+  /** Skeleton loading background (gray-200) */
+  SKELETON: 'bg-gray-200',
+} as const;
+
+/**
+ * Border Color Utility Classes
+ * Centralizes border color Tailwind classes used across all components
+ * Eliminates hardcoded border-gray-* classes in 30+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { BORDER_COLOR_CLASSES } from '@/lib/config';
+ * <div className={BORDER_COLOR_CLASSES.DEFAULT}>...</div>
+ * <div className={BORDER_COLOR_CLASSES.FOCUS}>...</div>
+ * ```
+ */
+export const BORDER_COLOR_CLASSES = {
+  /** Default border (gray-300) */
+  DEFAULT: 'border-gray-300',
+
+  /** Light border (gray-200) */
+  LIGHT: 'border-gray-200',
+
+  /** Focus border (primary-500) */
+  FOCUS: 'border-primary-500',
+
+  /** Error border (red-300) */
+  ERROR: 'border-red-300',
+
+  /** Success border (green-500) */
+  SUCCESS: 'border-green-500',
+
+  /** Warning border (amber-500) */
+  WARNING: 'border-amber-500',
+
+  /** No border */
+  NONE: 'border-0',
+
+  /** Top border only */
+  TOP: 'border-t border-gray-200',
+} as const;
+
+/**
+ * Focus Ring Utility Classes
+ * Centralizes focus ring Tailwind classes used across all components
+ * Eliminates hardcoded focus-visible:ring-* classes in 25+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { FOCUS_RING_CLASSES } from '@/lib/config';
+ * <button className={FOCUS_RING_CLASSES.PRIMARY}>...</button>
+ * ```
+ */
+export const FOCUS_RING_CLASSES = {
+  /** Primary focus ring (primary-500) */
+  PRIMARY: 'focus-visible:ring-primary-500',
+
+  /** Error focus ring (red-500) */
+  ERROR: 'focus-visible:ring-red-500',
+
+  /** Success focus ring (green-500) */
+  SUCCESS: 'focus-visible:ring-green-500',
+
+  /** No focus ring */
+  NONE: 'focus-visible:ring-0',
+} as const;
+
+/**
+ * Spacing Utility Classes
+ * Centralizes spacing Tailwind classes used across all components
+ * Eliminates hardcoded m-*, p-*, gap-* classes in 40+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { SPACING_CLASSES } from '@/lib/config';
+ * <div className={SPACING_CLASSES.SECTION}>...</div>
+ * ```
+ */
+export const SPACING_CLASSES = {
+  /** Section spacing (mb-8) */
+  SECTION: 'mb-8',
+
+  /** Component spacing (mb-6) */
+  COMPONENT: 'mb-6',
+
+  /** Element spacing (mb-4) */
+  ELEMENT: 'mb-4',
+
+  /** Small spacing (mb-2) */
+  SMALL: 'mb-2',
+
+  /** Extra small spacing (mb-1) */
+  EXTRA_SMALL: 'mb-1',
+
+  /** No spacing */
+  NONE: 'mb-0',
+
+  /** Top margin (mt-8) */
+  TOP: 'mt-8',
+
+  /** Top margin small (mt-2) */
+  TOP_SMALL: 'mt-2',
+
+  /** Page padding (p-8) */
+  PAGE: 'p-8',
+
+  /** Card padding (p-6) */
+  CARD: 'p-6',
+
+  /** Component padding (p-4) */
+  COMPONENT_PADDING: 'p-4',
+
+  /** Small padding (p-2) */
+  PADDING_SMALL: 'p-2',
+} as const;
+
+/**
+ * Typography Utility Classes
+ * Centralizes typography Tailwind classes used across all components
+ * Eliminates hardcoded text-*, font-* classes in 30+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { TYPOGRAPHY_CLASSES } from '@/lib/config';
+ * <h1 className={TYPOGRAPHY_CLASSES.HEADING}>...</h1>
+ * ```
+ */
+export const TYPOGRAPHY_CLASSES = {
+  /** Page heading (text-3xl font-bold) */
+  PAGE_HEADING: 'text-3xl font-bold',
+
+  /** Section heading (text-2xl font-semibold) */
+  SECTION_HEADING: 'text-2xl font-semibold',
+
+  /** Component heading (text-xl font-semibold) */
+  COMPONENT_HEADING: 'text-xl font-semibold',
+
+  /** Subheading (text-lg font-semibold) */
+  SUBHEADING: 'text-lg font-semibold',
+
+  /** Body text (text-base) */
+  BODY: 'text-base',
+
+  /** Small text (text-sm) */
+  SMALL: 'text-sm',
+
+  /** Extra small text (text-xs) */
+  EXTRA_SMALL: 'text-xs',
+
+  /** Code text (font-mono) */
+  CODE: 'font-mono',
+
+  /** Bold text (font-medium) */
+  BOLD: 'font-medium',
+
+  /** Semibold text (font-semibold) */
+  SEMIBOLD: 'font-semibold',
+} as const;
+
+/**
+ * Layout Utility Classes
+ * Centralizes layout Tailwind classes used across all components
+ * Eliminates hardcoded flex, grid, and positioning classes in 30+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { LAYOUT_CLASSES } from '@/lib/config';
+ * <div className={LAYOUT_CLASSES.CENTER}>...</div>
+ * ```
+ */
+export const LAYOUT_CLASSES = {
+  /** Center content (flex items-center justify-center) */
+  CENTER: 'flex items-center justify-center',
+
+  /** Flex row (flex items-center) */
+  FLEX_ROW: 'flex items-center',
+
+  /** Flex column (flex flex-col) */
+  FLEX_COL: 'flex flex-col',
+
+  /** Grid layout (grid grid-cols-1) */
+  GRID: 'grid grid-cols-1',
+
+  /** Responsive grid (grid grid-cols-1 sm:grid-cols-2) */
+  RESPONSIVE_GRID: 'grid grid-cols-1 sm:grid-cols-2',
+
+  /** Full width (w-full) */
+  FULL_WIDTH: 'w-full',
+
+  /** Full height (h-full) */
+  FULL_HEIGHT: 'h-full',
+
+  /** Min height screen (min-h-screen) */
+  MIN_HEIGHT_SCREEN: 'min-h-screen',
+
+  /** Text center */
+  TEXT_CENTER: 'text-center',
+
+  /** Overflow hidden */
+  OVERFLOW_HIDDEN: 'overflow-hidden',
+
+  /** Overflow auto */
+  OVERFLOW_AUTO: 'overflow-auto',
+} as const;
+
+/**
+ * Transition Utility Classes
+ * Centralizes transition Tailwind classes used across all components
+ * Eliminates hardcoded transition-* classes in 20+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { TRANSITION_CLASSES } from '@/lib/config';
+ * <div className={TRANSITION_CLASSES.DEFAULT}>...</div>
+ * ```
+ */
+export const TRANSITION_CLASSES = {
+  /** Default transition (transition-all duration-200) */
+  DEFAULT: 'transition-all duration-200',
+
+  /** Fast transition (transition-all duration-150) */
+  FAST: 'transition-all duration-150',
+
+  /** Slow transition (transition-all duration-300) */
+  SLOW: 'transition-all duration-300',
+
+  /** Color transition (transition-colors) */
+  COLOR: 'transition-colors',
+
+  /** Transform transition (transition-transform) */
+  TRANSFORM: 'transition-transform',
+
+  /** No transition */
+  NONE: 'transition-none',
+
+  /** Ease out timing */
+  EASE_OUT: 'ease-out',
+
+  /** Ease in out timing */
+  EASE_IN_OUT: 'ease-in-out',
+} as const;
+
+/**
+ * Shadow Utility Classes
+ * Centralizes shadow Tailwind classes used across all components
+ * Eliminates hardcoded shadow-* classes in 15+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { SHADOW_CLASSES } from '@/lib/config';
+ * <div className={SHADOW_CLASSES.CARD}>...</div>
+ * ```
+ */
+export const SHADOW_CLASSES = {
+  /** Small shadow (shadow-sm) */
+  SMALL: 'shadow-sm',
+
+  /** Default shadow (shadow-md) */
+  DEFAULT: 'shadow-md',
+
+  /** Large shadow (shadow-lg) */
+  LARGE: 'shadow-lg',
+
+  /** Extra large shadow (shadow-xl) */
+  EXTRA_LARGE: 'shadow-xl',
+
+  /** No shadow */
+  NONE: 'shadow-none',
+} as const;
+
+/**
+ * Rounded Corner Utility Classes
+ * Centralizes rounded corner Tailwind classes used across all components
+ * Eliminates hardcoded rounded-* classes in 20+ locations
+ *
+ * Usage:
+ * ```typescript
+ * import { ROUNDED_CLASSES } from '@/lib/config';
+ * <div className={ROUNDED_CLASSES.DEFAULT}>...</div>
+ * ```
+ */
+export const ROUNDED_CLASSES = {
+  /** Small rounded corners (rounded) */
+  DEFAULT: 'rounded',
+
+  /** Medium rounded corners (rounded-md) */
+  MEDIUM: 'rounded-md',
+
+  /** Large rounded corners (rounded-lg) */
+  LARGE: 'rounded-lg',
+
+  /** Extra large rounded corners (rounded-xl) */
+  EXTRA_LARGE: 'rounded-xl',
+
+  /** Full rounded corners (rounded-full) */
+  FULL: 'rounded-full',
+
+  /** No rounded corners */
+  NONE: 'rounded-none',
+} as const;
+
+/**
+ * Combined Tailwind Utility Classes
+ * Provides all utility classes in a single object for convenience
+ *
+ * Usage:
+ * ```typescript
+ * import { TAILWIND_UTILS } from '@/lib/config';
+ * <div className={TAILWIND_UTILS.TEXT.HEADING}>...</div>
+ * ```
+ */
+export const TAILWIND_UTILS = {
+  TEXT: TEXT_COLOR_CLASSES,
+  BG: BG_COLOR_CLASSES,
+  BORDER: BORDER_COLOR_CLASSES,
+  FOCUS: FOCUS_RING_CLASSES,
+  SPACING: SPACING_CLASSES,
+  TYPOGRAPHY: TYPOGRAPHY_CLASSES,
+  LAYOUT: LAYOUT_CLASSES,
+  TRANSITION: TRANSITION_CLASSES,
+  SHADOW: SHADOW_CLASSES,
+  ROUNDED: ROUNDED_CLASSES,
+} as const;
+
+export type TextColorClasses = typeof TEXT_COLOR_CLASSES;
+export type BgColorClasses = typeof BG_COLOR_CLASSES;
+export type BorderColorClasses = typeof BORDER_COLOR_CLASSES;
+export type FocusRingClasses = typeof FOCUS_RING_CLASSES;
+export type SpacingClasses = typeof SPACING_CLASSES;
+export type TypographyClasses = typeof TYPOGRAPHY_CLASSES;
+export type LayoutClasses = typeof LAYOUT_CLASSES;
+export type TransitionClasses = typeof TRANSITION_CLASSES;
+export type ShadowClasses = typeof SHADOW_CLASSES;
+export type RoundedClasses = typeof ROUNDED_CLASSES;
+export type TailwindUtils = typeof TAILWIND_UTILS;
