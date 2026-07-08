@@ -269,6 +269,14 @@ export const COMPONENT_CONFIG = {
       100,
       2000
     ),
+    /** Duration for paste success feedback (ms) */
+    /** Env: COMPONENT_IDEA_INPUT_PASTE_SUCCESS_DURATION_MS (default: 1500) */
+    PASTE_SUCCESS_DURATION_MS: EnvLoader.number(
+      'COMPONENT_IDEA_INPUT_PASTE_SUCCESS_DURATION_MS',
+      1500,
+      500,
+      5000
+    ),
   } as const,
 
   ONBOARDING: {
