@@ -1,6 +1,8 @@
 'use client';
 
+import { useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
@@ -9,21 +11,23 @@ import {
   SVG_STROKE_WIDTHS,
 } from '@/lib/config';
 
-/**
- * Custom 404 Not Found page
- *
- * Provides a branded, helpful experience when users navigate to
- * a non-existent URL. Includes clear navigation back to known routes
- * instead of the generic Next.js default 404 page.
- */
 export default function NotFound() {
+  const router = useRouter();
+
+  const handleGoBack = useCallback(() => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      window.location.href = ROUTES.HOME;
+    }
+  }, [router]);
+
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
       <div className={`${CONTAINER_WIDTHS.XS} w-full`}>
         <div
           className={`${CARD_PATTERNS.CENTERED_LARGE} animate-hero-entrance`}
         >
-          {/* Animated 404 number with visual flair */}
           <div className="relative mb-6">
             <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-100">
               <span className="text-4xl font-bold text-gray-300 select-none">
@@ -42,9 +46,31 @@ export default function NotFound() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center animate-hero-entrance delay-200">
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              Go back
+            </button>
+
             <Link
               href={ROUTES.HOME}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary-600 text-white font-medium rounded-lg hover:bg-primary-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
             >
               <svg
                 className="w-4 h-4"
