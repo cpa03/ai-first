@@ -131,6 +131,17 @@ export {
   LOADING_PATTERNS,
   SKELETON_PATTERNS,
   GRADIENT_PATTERNS,
+  TEXT_COLOR_CLASSES,
+  BG_COLOR_CLASSES,
+  BORDER_COLOR_CLASSES,
+  FOCUS_RING_CLASSES,
+  SPACING_CLASSES,
+  TYPOGRAPHY_CLASSES,
+  LAYOUT_CLASSES,
+  TRANSITION_CLASSES,
+  SHADOW_CLASSES,
+  ROUNDED_CLASSES,
+  TAILWIND_UTILS,
 } from './theme';
 
 // Page Configuration
@@ -252,6 +263,17 @@ export type {
   DurationTailwind,
   SkeletonPatterns,
   GradientPatterns,
+  TextColorClasses,
+  BgColorClasses,
+  BorderColorClasses,
+  FocusRingClasses,
+  SpacingClasses,
+  TypographyClasses,
+  LayoutClasses,
+  TransitionClasses,
+  ShadowClasses,
+  RoundedClasses,
+  TailwindUtils,
 } from './theme';
 
 // Time and Error Message Types

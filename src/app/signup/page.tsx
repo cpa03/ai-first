@@ -21,6 +21,10 @@ import {
   CONTAINER_WIDTHS,
   GRADIENT_PATTERNS,
   ANIMATION_DELAYS,
+  TEXT_COLOR_CLASSES,
+  TYPOGRAPHY_CLASSES,
+  SPACING_CLASSES,
+  LAYOUT_CLASSES,
 } from '@/lib/config';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -446,10 +450,14 @@ export default function SignupPage() {
               />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 animate-hero-entrance">
+          <h1
+            className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} animate-hero-entrance`}
+          >
             {SIGNUP_PAGE_CONTENT.SUCCESS.HEADING}
           </h1>
-          <p className="text-gray-600 animate-hero-entrance delay-75">
+          <p
+            className={`${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance delay-75`}
+          >
             {SIGNUP_PAGE_CONTENT.SUCCESS.MESSAGE_PREFIX}{' '}
             <strong>{email}</strong>.{' '}
             {SIGNUP_PAGE_CONTENT.SUCCESS.MESSAGE_SUFFIX}
@@ -468,11 +476,15 @@ export default function SignupPage() {
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
       <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8`}>
-        <div className="text-center animate-hero-entrance">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className={`${LAYOUT_CLASSES.TEXT_CENTER} animate-hero-entrance`}>
+          <h1
+            className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
+          >
             {SIGNUP_PAGE_CONTENT.HEADING}
           </h1>
-          <p className="mt-2 text-sm text-gray-600 animate-hero-entrance delay-75">
+          <p
+            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance delay-75`}
+          >
             {SIGNUP_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>

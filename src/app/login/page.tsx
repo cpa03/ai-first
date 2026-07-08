@@ -22,6 +22,10 @@ import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
   GRADIENT_PATTERNS,
+  TEXT_COLOR_CLASSES,
+  TYPOGRAPHY_CLASSES,
+  SPACING_CLASSES,
+  LAYOUT_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -189,11 +193,15 @@ export default function LoginPage() {
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
       <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8`}>
-        <div className="text-center animate-hero-entrance">
-          <h1 className="text-3xl font-bold text-gray-900">
+        <div className={`${LAYOUT_CLASSES.TEXT_CENTER} animate-hero-entrance`}>
+          <h1
+            className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
+          >
             {LOGIN_PAGE_CONTENT.HEADING}
           </h1>
-          <p className="mt-2 text-sm text-gray-600 animate-hero-entrance delay-75">
+          <p
+            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance delay-75`}
+          >
             {LOGIN_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>

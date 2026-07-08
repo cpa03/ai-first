@@ -16,6 +16,12 @@ import {
   TASK_MANAGEMENT_LABELS,
   CARD_PATTERNS,
   ANIMATION_CONFIG,
+  TEXT_COLOR_CLASSES,
+  BG_COLOR_CLASSES,
+  LAYOUT_CLASSES,
+  TYPOGRAPHY_CLASSES,
+  SPACING_CLASSES,
+  ROUNDED_CLASSES,
 } from '@/lib/config';
 
 interface TaskManagementProps {
@@ -126,13 +132,19 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               </svg>
             </div>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          <h3
+            className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLOR_CLASSES.HEADING} ${SPACING_CLASSES.SMALL}`}
+          >
             {MESSAGES.TASK_MANAGEMENT.NO_TASKS_TITLE}
           </h3>
-          <p className="text-gray-600 mb-4 max-w-sm">
+          <p
+            className={`${TEXT_COLOR_CLASSES.BODY} ${SPACING_CLASSES.ELEMENT} max-w-sm`}
+          >
             {MESSAGES.TASK_MANAGEMENT.NO_TASKS_DESCRIPTION}
           </p>
-          <div className="flex items-center gap-2 text-sm text-gray-500 bg-gray-50 px-4 py-2 rounded-lg">
+          <div
+            className={`${LAYOUT_CLASSES.FLEX_ROW} gap-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.PAGE} px-4 py-2 ${ROUNDED_CLASSES.LARGE}`}
+          >
             <svg
               className="w-4 h-4 text-primary-500 flex-shrink-0"
               fill="none"
