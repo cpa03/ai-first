@@ -293,7 +293,6 @@ export default function DashboardPage() {
     };
   }, [deleteModal.isOpen]);
 
-  // Handle keyboard events for focus trap and escape
   useEffect(() => {
     if (!deleteModal.isOpen) return;
 
@@ -303,7 +302,20 @@ export default function DashboardPage() {
         return;
       }
 
-      // Focus trap
+      if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
+        const activeElement = document.activeElement as HTMLElement;
+        const elementText = activeElement?.textContent || '';
+        const elementLabel = activeElement?.getAttribute('aria-label') || '';
+        const isCancelButton =
+          elementText.includes('Cancel') || elementLabel.includes('Cancel');
+
+        if (!isCancelButton) {
+          e.preventDefault();
+          handleDelete();
+        }
+        return;
+      }
+
       if (e.key === 'Tab' && modalRef.current) {
         const focusableElements = modalRef.current.querySelectorAll(
           'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
@@ -329,7 +341,7 @@ export default function DashboardPage() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [deleteModal.isOpen, closeDeleteModal]);
+  }, [deleteModal.isOpen, closeDeleteModal, handleDelete]);
 
   useEffect(() => {
     const handleKeyboardShortcuts = (e: KeyboardEvent) => {
@@ -1099,13 +1111,19 @@ export default function DashboardPage() {
               >
                 Cancel
               </Button>
-              <Button
-                variant="danger"
-                onClick={handleDelete}
-                loading={!!deletingId}
+              <Tooltip
+                content="Confirm deletion"
+                shortcut={['Enter']}
+                position="top"
               >
-                Delete Idea
-              </Button>
+                <Button
+                  variant="danger"
+                  onClick={handleDelete}
+                  loading={!!deletingId}
+                >
+                  Delete Idea
+                </Button>
+              </Tooltip>
             </div>
           </div>
         </div>
