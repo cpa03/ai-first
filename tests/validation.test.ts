@@ -1,5 +1,6 @@
 import {
   validateIdea,
+  validateIdeaToMessage,
   validateIdeaId,
   validateUserResponses,
   validateRequestSize,
@@ -176,6 +177,30 @@ describe('validateIdea', () => {
       const result = validateIdea(idea);
 
       expect(result.valid).toBe(false);
+    });
+  });
+
+  describe('validateIdeaToMessage', () => {
+    it('should return null for a valid idea', () => {
+      const result = validateIdeaToMessage(
+        'This is a valid idea that meets all requirements.'
+      );
+      expect(result).toBeNull();
+    });
+
+    it('should return a capitalized error message for an invalid idea', () => {
+      const result = validateIdeaToMessage('too short');
+      expect(result).toBe('Idea must be at least 10 characters');
+    });
+
+    it('should return a message for empty string', () => {
+      const result = validateIdeaToMessage('');
+      expect(result).toBe('Idea is required and must be a string');
+    });
+
+    it('should handle non-string types', () => {
+      const result = validateIdeaToMessage(123);
+      expect(result).toBe('Idea is required and must be a string');
     });
   });
 });

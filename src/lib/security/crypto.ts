@@ -104,6 +104,8 @@ export function secureRandom(): number {
   }
 
   // Fallback to Math.random if Web Crypto API is unavailable
+  // Note: We use console.warn directly to avoid circular dependencies
+  // with the logger module (logger -> crypto -> logger).
   console.warn(
     'CRITICAL SECURITY WARNING: Using insecure random generator as Web Crypto API is unavailable.'
   );

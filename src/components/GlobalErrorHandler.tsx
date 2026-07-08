@@ -24,9 +24,8 @@ function GlobalErrorHandlerComponent() {
       });
 
       if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
-        console.error(
-          '[GlobalErrorHandler] Unhandled Promise Rejection:',
-          reason
+        logger.error(
+          `[GlobalErrorHandler] Unhandled Promise Rejection: ${reason instanceof Error ? reason.message : String(reason)}`
         );
       }
 
@@ -49,7 +48,9 @@ function GlobalErrorHandlerComponent() {
       });
 
       if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
-        console.error('[GlobalErrorHandler] Uncaught Exception:', event.error);
+        logger.error(
+          `[GlobalErrorHandler] Uncaught Exception: ${event.error?.message || event.message}`
+        );
       }
 
       event.preventDefault();

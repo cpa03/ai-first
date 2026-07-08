@@ -7,7 +7,7 @@ import { triggerHapticFeedback } from '@/lib/utils';
 import {
   MIN_IDEA_LENGTH,
   MAX_IDEA_LENGTH,
-  validateIdea as validateIdeaCentral,
+  validateIdeaToMessage,
 } from '@/lib/validation';
 import { MESSAGES, PLACEHOLDERS } from '@/lib/config/ui';
 import { COMPONENT_CONFIG } from '@/lib/config/components';
@@ -34,23 +34,13 @@ interface IdeaInputProps {
   onSubmit: (idea: string, ideaId: string) => void;
 }
 
-const validateIdea = (idea: string): string | null => {
-  const result = validateIdeaCentral(idea);
-  if (!result.valid && result.errors.length > 0) {
-    // Maintain backward compatibility with the component's expected error format (string | null)
-    // and capitalization if necessary, though centralized messages are usually fine.
-    const message = result.errors[0].message;
-    return message.charAt(0).toUpperCase() + message.slice(1);
-  }
-  return null;
-};
-
 // PERFORMANCE: Memoize IdeaInput to prevent re-renders when parent components update
 // This component only needs to re-render when its own state changes or onSubmit prop changes
 function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   const logger = createLogger('IdeaInput');
   const [idea, setIdea] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isMac, setIsMac] = useState(false);
@@ -163,7 +153,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   const handleIdeaChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setIdea(e.target.value);
-      setValidationError(validateIdea(e.target.value));
+      setValidationError(validateIdeaToMessage(e.target.value));
     },
     []
   );
@@ -173,9 +163,15 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     async (e: React.FormEvent) => {
       e.preventDefault();
 
-      const validationError = validateIdea(idea);
+      const validationError = validateIdeaToMessage(idea);
       if (validationError) {
         setValidationError(validationError);
+        // Micro-UX: Trigger shake animation on validation error
+        setIsShaking(true);
+        setTimeout(
+          () => setIsShaking(false),
+          COMPONENT_CONFIG.IDEA_INPUT.SHAKE_DURATION_MS
+        );
         return;
       }
 
@@ -240,7 +236,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       if (text) {
         triggerHapticFeedback();
         setIdea(text);
-        setValidationError(validateIdea(text));
+        setValidationError(validateIdeaToMessage(text));
         setPasteSuccess(true);
 
         // Clear paste success state after brief feedback
@@ -324,7 +320,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           required={true}
           disabled={isSubmitting}
           autoFocus
-          className={COMPONENT_CONFIG.IDEA_INPUT.MIN_HEIGHT_CLASS}
+          className={`${COMPONENT_CONFIG.IDEA_INPUT.MIN_HEIGHT_CLASS} ${isShaking ? 'animate-shake' : ''}`}
         />
 
         {milestoneReached && (
