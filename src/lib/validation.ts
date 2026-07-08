@@ -66,6 +66,19 @@ export function validateIdea(idea: unknown): ValidationResult {
   return { valid: errors.length === 0, errors };
 }
 
+/**
+ * Validates an idea and returns a single formatted error message if invalid.
+ * Centralizes UI-facing error feedback.
+ */
+export function validateIdeaToMessage(idea: unknown): string | null {
+  const result = validateIdea(idea);
+  if (!result.valid && result.errors.length > 0) {
+    const message = result.errors[0].message;
+    return message.charAt(0).toUpperCase() + message.slice(1);
+  }
+  return null;
+}
+
 export function validateIdeaId(ideaId: unknown): ValidationResult {
   const errors: ValidationError[] = [];
 

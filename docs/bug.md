@@ -8,13 +8,33 @@ _None - all bugs fixed!_
 
 ---
 
-## Active Bugs
-
-_None - all bugs fixed!_
-
 ---
 
 ## Fixed Bugs
+
+### [x] bug: direct console.error call in src/components/GlobalErrorHandler.tsx
+
+**File:** `src/components/GlobalErrorHandler.tsx`
+**Severity:** LOW
+**Status:** ✅ FIXED
+
+**Description:**
+Direct `console.error` calls were used in development mode instead of the standardized `logger` service.
+
+**Fix:**
+Replaced `console.error` with `logger.error`.
+
+### [ ] bug: direct console.warn call in src/lib/security/crypto.ts
+
+**File:** `src/lib/security/crypto.ts`
+**Severity:** HIGH
+**Status:** ⏸️ BY DESIGN (Circular Dependency)
+
+**Description:**
+Direct `console.warn` call is used for a critical security warning. Attempting to use the standardized `logger` service causes a circular dependency because `logger.ts` depends on `crypto.ts` for sampling logic.
+
+**Resolution:**
+Retained `console.warn` to maintain system stability, consistent with `src/lib/config/environment.ts`. Added explanatory comment in source.
 
 ### [x] bug: direct console.error call in src/lib/security/suspicious-patterns.ts
 

@@ -261,6 +261,14 @@ export const COMPONENT_CONFIG = {
     ),
     /** Minimum height class for textarea */
     MIN_HEIGHT_CLASS: 'min-h-[120px]',
+    /** Duration for shake animation on validation error (ms) */
+    /** Env: COMPONENT_IDEA_INPUT_SHAKE_DURATION_MS (default: 500) */
+    SHAKE_DURATION_MS: EnvLoader.number(
+      'COMPONENT_IDEA_INPUT_SHAKE_DURATION_MS',
+      500,
+      100,
+      2000
+    ),
   } as const,
 
   ONBOARDING: {
