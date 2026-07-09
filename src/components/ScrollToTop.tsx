@@ -24,8 +24,6 @@ interface ScrollToTopProps {
   className?: string;
 }
 
-// PERFORMANCE: Memoize ScrollToTop to prevent re-renders when parent components update
-// This component only needs to re-render when its own state changes
 function ScrollToTopComponent({
   showAt = COMPONENT_DEFAULTS.SCROLL_TO_TOP.SHOW_AT_PX,
   smooth = COMPONENT_DEFAULTS.SCROLL_TO_TOP.SMOOTH,
@@ -37,8 +35,6 @@ function ScrollToTopComponent({
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
 
-  // Micro-UX: Smooth counter animation for scroll percentage
-  // Provides fluid visual feedback instead of abrupt number changes
   const animatedPercentage = useAnimatedCounter(Math.round(scrollProgress), {
     duration: UI_DURATIONS.ANIMATED_COUNTER,
   });
@@ -92,19 +88,35 @@ function ScrollToTopComponent({
       });
     }
 
-    // A11y Pattern: Restore keyboard focus to main content after scroll to top (Issue #942)
-    // This prevents keyboard users from being "lost" at the bottom of the document
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.focus({ preventScroll: true });
     }
   }, [smooth, prefersReducedMotion]);
 
+  const scrollToBottom = useCallback(() => {
+    triggerHapticFeedback();
+    if (prefersReducedMotion) {
+      window.scrollTo(0, document.documentElement.scrollHeight);
+    } else {
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: smooth ? 'smooth' : 'auto',
+      });
+    }
+  }, [smooth, prefersReducedMotion]);
+
+  const isNearBottom = scrollProgress >= 85;
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        scrollToTop();
+        if (isNearBottom) {
+          scrollToBottom();
+        } else {
+          scrollToTop();
+        }
         return;
       }
 
@@ -158,7 +170,7 @@ function ScrollToTopComponent({
           break;
       }
     },
-    [scrollToTop, prefersReducedMotion]
+    [scrollToTop, scrollToBottom, prefersReducedMotion, isNearBottom]
   );
 
   if (!isVisible) return null;
@@ -168,14 +180,16 @@ function ScrollToTopComponent({
   const strokeDashoffset =
     circumference - (scrollProgress / 100) * circumference;
 
-  // Micro-UX: Determine when to show percentage text vs arrow icon
-  // Show percentage when scrolled past 10% for meaningful feedback
   const showPercentage =
     scrollProgress >= UI_TIMING_CONFIG.SCROLL_PERCENTAGE_THRESHOLD;
 
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
-      <span className="font-medium">{SCROLL_TO_TOP_LABELS.TITLE}</span>
+      <span className="font-medium">
+        {isNearBottom
+          ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
+          : SCROLL_TO_TOP_LABELS.TITLE}
+      </span>
       <span className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 opacity-80`}>
         <kbd
           className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
@@ -210,7 +224,7 @@ function ScrollToTopComponent({
     <div className={`fixed bottom-8 right-8 z-[${Z_INDEX_LAYERS.TOAST}]`}>
       <Tooltip content={tooltipContent} position="top">
         <button
-          onClick={scrollToTop}
+          onClick={isNearBottom ? scrollToBottom : scrollToTop}
           onKeyDown={handleKeyDown}
           tabIndex={0}
           className={`
@@ -229,9 +243,13 @@ function ScrollToTopComponent({
             ${prefersReducedMotion ? '' : hasAppeared ? 'animate-scroll-to-top-bounce' : 'opacity-0'}
             ${className}
           `}
-          aria-label={SCROLL_TO_TOP_LABELS.ARIA_LABEL(
-            Math.round(scrollProgress)
-          )}
+          aria-label={
+            isNearBottom
+              ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_BOTTOM(
+                  Math.round(scrollProgress)
+                )
+              : SCROLL_TO_TOP_LABELS.ARIA_LABEL(Math.round(scrollProgress))
+          }
           aria-live="polite"
           type="button"
         >
@@ -281,8 +299,8 @@ function ScrollToTopComponent({
           ) : (
             <svg
               className={`
-                relative z-10 w-5 h-5 transition-transform duration-200
-                ${prefersReducedMotion ? '' : 'group-hover:-translate-y-0.5'}
+                relative z-10 w-5 h-5 transition-all duration-200
+                ${prefersReducedMotion ? '' : isNearBottom ? 'group-hover:translate-y-0.5' : 'group-hover:-translate-y-0.5'}
               `}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
@@ -290,15 +308,27 @@ function ScrollToTopComponent({
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M5 10l7-7m0 0l7 7m-7-7v18"
-              />
+              {isNearBottom ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 10l7-7m0 0l7 7m-7-7v18"
+                />
+              )}
             </svg>
           )}
 
-          <span className="sr-only">{SCROLL_TO_TOP_LABELS.SR_TEXT}</span>
+          <span className="sr-only">
+            {isNearBottom
+              ? SCROLL_TO_TOP_LABELS.SR_TEXT_BOTTOM
+              : SCROLL_TO_TOP_LABELS.SR_TEXT}
+          </span>
         </button>
       </Tooltip>
     </div>
