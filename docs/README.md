@@ -223,6 +223,14 @@ Complete index of all IdeaFlow documentation.
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
 
+## Audit Reports
+
+- [BroCula Browser Audit Summary](./audit/2026-07-08-brocula-audit-summary.md) - Browser console and Lighthouse audit
+- [Modularization Audit](./audit/2026-07-08-modularization-audit.md) - Code modularization assessment
+- [Comprehensive Audit](./audit/2026-07-08-comprehensive-audit.md) - Full codebase audit
+- [Phase 2 Feature Hardening](./audit/2026-07-08-phase2-feature-hardening.md) - Feature hardening report
+- [Phase 3 Strategic Expansion](./audit/2026-07-08-phase3-strategic-expansion.md) - Strategic expansion proposal
+
 ## Maintenance Reports
 
 - [Repository Health Report - 2026-07-08](./maintenance/2026-07-08-repo-health-report.md) - Latest repository health status
