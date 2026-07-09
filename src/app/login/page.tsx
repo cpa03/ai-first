@@ -21,7 +21,6 @@ import {
   PASSWORD_VALIDATION_CONFIG,
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
-  GRADIENT_PATTERNS,
   TEXT_COLOR_CLASSES,
   TYPOGRAPHY_CLASSES,
   SPACING_CLASSES,
@@ -356,41 +355,21 @@ export default function LoginPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-3 animate-hero-entrance delay-250">
-          <button
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => handleOAuthSignIn('google')}
             disabled={oauthLoading !== null}
+            loading={oauthLoading === 'google'}
+            loadingText={LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
             aria-label={
               oauthLoading === 'google'
                 ? LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING_ARIA_LABEL
                 : LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_ARIA_LABEL
             }
-            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden transition-all duration-200"
+            className="justify-center"
           >
-            {oauthLoading === 'google' && (
-              <span className={GRADIENT_PATTERNS.SHIMMER} aria-hidden="true" />
-            )}
-            {oauthLoading === 'google' ? (
-              <svg
-                className="h-5 w-5 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-            ) : (
+            {oauthLoading !== 'google' && (
               <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
                 <path
                   fill={OAUTH_PROVIDER_COLORS.GOOGLE.BLUE}
@@ -410,46 +389,24 @@ export default function LoginPage() {
                 />
               </svg>
             )}
-            {oauthLoading === 'google'
-              ? LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING
-              : LOGIN_PAGE_CONTENT.OAUTH.GOOGLE}
-          </button>
+            {LOGIN_PAGE_CONTENT.OAUTH.GOOGLE}
+          </Button>
 
-          <button
+          <Button
+            type="button"
+            variant="outline"
             onClick={() => handleOAuthSignIn('github')}
             disabled={oauthLoading !== null}
+            loading={oauthLoading === 'github'}
+            loadingText={LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
             aria-label={
               oauthLoading === 'github'
                 ? LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING_ARIA_LABEL
                 : LOGIN_PAGE_CONTENT.OAUTH.GITHUB_ARIA_LABEL
             }
-            className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden transition-all duration-200"
+            className="justify-center"
           >
-            {oauthLoading === 'github' && (
-              <span className={GRADIENT_PATTERNS.SHIMMER} aria-hidden="true" />
-            )}
-            {oauthLoading === 'github' ? (
-              <svg
-                className="h-5 w-5 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-            ) : (
+            {oauthLoading !== 'github' && (
               <svg
                 className="h-5 w-5 mr-2"
                 fill="currentColor"
@@ -462,10 +419,8 @@ export default function LoginPage() {
                 />
               </svg>
             )}
-            {oauthLoading === 'github'
-              ? LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING
-              : LOGIN_PAGE_CONTENT.OAUTH.GITHUB}
-          </button>
+            {LOGIN_PAGE_CONTENT.OAUTH.GITHUB}
+          </Button>
         </div>
 
         <p className="text-center text-sm text-gray-600 animate-hero-entrance delay-300">
