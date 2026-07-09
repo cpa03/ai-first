@@ -1,7 +1,7 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { ANIMATION_DELAYS } from '@/lib/config/theme';
+import { ANIMATION_DELAYS, DURATION_TAILWIND } from '@/lib/config/theme';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
 import { UI_STRINGS } from '@/lib/config/ui';
@@ -62,7 +62,7 @@ function FeatureGridComponent() {
             className="
               bg-primary-100 rounded-full w-16 h-16 
               flex items-center justify-center mx-auto mb-4
-              transition-all duration-300 group-hover:scale-110
+              transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
               group-hover:bg-primary-200
               motion-reduce:transition-none motion-reduce:group-hover:scale-100
             "
@@ -73,10 +73,14 @@ function FeatureGridComponent() {
             </span>
           </div>
 
-          <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors duration-300">
+          <h3
+            className={`text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[300]}`}
+          >
             {feature.title}
           </h3>
-          <p className="text-gray-700 group-hover:text-gray-800 transition-colors duration-300">
+          <p
+            className={`text-gray-700 group-hover:text-gray-800 transition-colors ${DURATION_TAILWIND[300]}`}
+          >
             {feature.description}
           </p>
 
@@ -90,7 +94,7 @@ function FeatureGridComponent() {
                   w-8 h-0.5 bg-gradient-to-r from-primary-300 to-primary-100
                   transform -translate-y-1/2
                   opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100
-                  transition-opacity duration-500 ${ANIMATION_DELAYS.TAILWIND[100]}
+                  transition-opacity ${DURATION_TAILWIND[500]} ${ANIMATION_DELAYS.TAILWIND[100]}
                   motion-reduce:opacity-0
                 `}
                 aria-hidden="true"

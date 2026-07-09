@@ -6,6 +6,7 @@ import { COMPONENT_CONFIG } from '@/lib/config/components';
 import { ANIMATION_CONFIG } from '@/lib/config/animation';
 import { LOCAL_STORAGE_KEYS } from '@/lib/config/storage-keys';
 import {
+  DURATION_TAILWIND,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
@@ -318,7 +319,7 @@ export default function UserOnboarding() {
           className={`relative ${BG_COLORS.DEFAULT} rounded-2xl ${SHADOW_CLASSES.EXTRA_LARGE} p-8 text-center max-w-sm mx-4 ${
             prefersReducedMotion
               ? ''
-              : 'animate-in fade-in zoom-in duration-300'
+              : `animate-in fade-in zoom-in ${DURATION_TAILWIND[300]}`
           }`}
         >
           <div
@@ -361,14 +362,14 @@ export default function UserOnboarding() {
     <>
       {/* Backdrop overlay */}
       <div
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[${Z_INDEX_LAYERS.OVERLAY}] transition-opacity duration-300`}
+        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[${Z_INDEX_LAYERS.OVERLAY}] transition-opacity ${DURATION_TAILWIND[300]}`}
         aria-hidden="true"
         onClick={handleSkip}
       />
 
       {/* Highlighted area indicator (simplified) */}
       <div
-        className={`fixed pointer-events-none z-[${Z_INDEX_LAYERS.CONTENT}] border-2 border-primary-500 rounded-lg transition-all duration-300`}
+        className={`fixed pointer-events-none z-[${Z_INDEX_LAYERS.CONTENT}] border-2 border-primary-500 rounded-lg transition-all ${DURATION_TAILWIND[300]}`}
         style={{
           opacity: 0,
         }}
@@ -393,7 +394,7 @@ export default function UserOnboarding() {
       >
         {/* Progress bar */}
         <div
-          className="absolute top-0 left-0 h-1 bg-primary-500 rounded-t-xl transition-all duration-300"
+          className={`absolute top-0 left-0 h-1 bg-primary-500 rounded-t-xl transition-all ${DURATION_TAILWIND[300]}`}
           style={{ width: `${progress}%` }}
           role="progressbar"
           aria-valuenow={progress}

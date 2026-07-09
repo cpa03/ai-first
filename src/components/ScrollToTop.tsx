@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import {
   COMPONENT_DEFAULTS,
   COMPONENT_CONFIG,
+  DURATION_TAILWIND,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
@@ -285,7 +286,7 @@ function ScrollToTopComponent({
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 strokeLinecap="round"
-                className="text-primary-500 transition-all duration-150 ease-out"
+                className={`text-primary-500 transition-all ${DURATION_TAILWIND[150]} ease-out`}
                 style={{
                   strokeDasharray: circumference,
                   strokeDashoffset: strokeDashoffset,
@@ -296,7 +297,7 @@ function ScrollToTopComponent({
 
           {showPercentage && !prefersReducedMotion ? (
             <span
-              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors duration-200`}
+              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[200]}`}
               aria-hidden="true"
             >
               {animatedPercentage}
@@ -304,7 +305,7 @@ function ScrollToTopComponent({
           ) : (
             <svg
               className={`
-                relative z-10 w-5 h-5 transition-all duration-200
+                relative z-10 w-5 h-5 transition-all ${DURATION_TAILWIND[200]}
                 ${prefersReducedMotion ? '' : isNearBottom ? 'group-hover:translate-y-0.5' : 'group-hover:-translate-y-0.5'}
               `}
               fill="none"

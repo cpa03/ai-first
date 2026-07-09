@@ -13,6 +13,7 @@ import {
   UI_CONFIG,
   KEYBOARD_SHORTCUTS_MESSAGES,
   LOCAL_STORAGE_KEYS,
+  DURATION_TAILWIND,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
@@ -397,7 +398,7 @@ const ShortcutRow = memo(function ShortcutRow({
         {/* Micro-UX: Show brief checkmark feedback when copied */}
         {copied && (
           <svg
-            className={`w-3.5 h-3.5 ${TEXT_COLORS.SUCCESS} ml-1 animate-in fade-in zoom-in duration-150`}
+            className={`w-3.5 h-3.5 ${TEXT_COLORS.SUCCESS} ml-1 animate-in fade-in zoom-in ${DURATION_TAILWIND[150]}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -648,7 +649,7 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black backdrop-blur-sm transition-opacity duration-300 ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 bg-black backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
         aria-hidden="true"
       />
       <div
