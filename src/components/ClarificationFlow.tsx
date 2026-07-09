@@ -589,7 +589,11 @@ function ClarificationFlow({
               <span className="text-gray-500">Jump to:</span>
               {questions.slice(0, 9).map((_, index) => (
                 <span key={index} className="inline-flex items-center">
-                  <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+                  <kbd
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                    }
+                  >
                     {index + 1}
                   </kbd>
                   {index < Math.min(questions.length, 9) - 1 && (
