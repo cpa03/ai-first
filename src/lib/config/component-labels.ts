@@ -420,6 +420,8 @@ export const CLARIFICATION_FLOW_LABELS = {
   PROGRESS_ARIA_LABEL: (progress: number) => `Progress: ${progress} percent`,
   QUESTION_ARIA_LABEL: (current: number, total: number) =>
     `Question ${current} of ${total}`,
+  BACK_TO_EDIT_BUTTON: 'Edit Idea',
+  BACK_TO_EDIT_TOOLTIP: 'Go back to edit your original idea',
 } as const;
 
 /**

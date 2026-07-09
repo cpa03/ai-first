@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useRef, useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   MIN_ANSWER_LENGTH,
   MAX_ANSWER_LENGTH,
@@ -35,6 +36,7 @@ import StatusAnnouncer from '@/components/StatusAnnouncer';
 import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
 import Skeleton from '@/components/Skeleton';
+import Tooltip from '@/components/Tooltip';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -42,13 +44,16 @@ interface ClarificationFlowProps {
   idea: string;
   ideaId?: string;
   onComplete: (answers: Record<string, string>) => Promise<void>;
+  onBackToEdit?: () => void;
 }
 
 function ClarificationFlow({
   idea,
   ideaId,
   onComplete,
+  onBackToEdit,
 }: ClarificationFlowProps) {
+  const router = useRouter();
   const {
     loading,
     error,
@@ -239,6 +244,44 @@ function ClarificationFlow({
         totalSteps={questions.length}
         show={showCelebration}
       />
+
+      <div className="mb-6 flex items-center justify-between">
+        <Tooltip
+          content={CLARIFICATION_FLOW_LABELS.BACK_TO_EDIT_TOOLTIP}
+          position="top"
+        >
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              triggerHapticFeedback();
+              if (onBackToEdit) {
+                onBackToEdit();
+              } else {
+                router.push('/');
+              }
+            }}
+            className="text-gray-600 hover:text-gray-900"
+          >
+            <svg
+              className="w-4 h-4 mr-1.5"
+              fill="none"
+              viewBox={SVG_VIEWBOX.STANDARD}
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            {CLARIFICATION_FLOW_LABELS.BACK_TO_EDIT_BUTTON}
+          </Button>
+        </Tooltip>
+      </div>
 
       {error && (
         <div className="mb-6 slide-up">
