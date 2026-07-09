@@ -312,13 +312,15 @@ export const SIZES = {
 
   /** Common component dimensions (Tailwind arbitrary values) */
   COMPONENT: {
-    IDEA_INPUT_MIN_HEIGHT: 'min-h-[120px]',
-    TEXTAREA_MIN_HEIGHT: 'min-h-[100px]',
-    TOAST_BUTTON_MIN_SIZE: 'min-h-[32px] min-w-[32px]',
-    KEYBOARD_SHORTCUT_MIN_SIZE: 'min-w-[24px] min-h-[24px]',
+    IDEA_INPUT_MIN_HEIGHT: `min-h-[${EnvLoader.number('UI_IDEA_INPUT_MIN_HEIGHT', 120, 80, 200)}px]`,
+    TEXTAREA_MIN_HEIGHT: `min-h-[${EnvLoader.number('UI_TEXTAREA_MIN_HEIGHT', 100, 50, 300)}px]`,
+    TOAST_BUTTON_MIN_SIZE: `min-h-[${EnvLoader.number('UI_TOAST_BUTTON_MIN_SIZE', 32, 24, 48)}px] min-w-[${EnvLoader.number('UI_TOAST_BUTTON_MIN_SIZE', 32, 24, 48)}px]`,
+    KEYBOARD_SHORTCUT_MIN_SIZE: `min-w-[${EnvLoader.number('UI_KBD_MIN_WIDTH', 20, 16, 32)}px] min-h-[${EnvLoader.number('UI_KBD_MIN_HEIGHT', 20, 16, 32)}px]`,
     MODAL_MAX_HEIGHT: 'max-h-[90vh]',
     SCROLLABLE_MAX_HEIGHT: 'max-h-[60vh]',
-    ONBOARDING_TOOLTIP_WIDTH: 'w-[300px]',
+    ONBOARDING_TOOLTIP_WIDTH: `w-[${EnvLoader.number('UI_ONBOARDING_WIDTH', 300, 200, 500)}px]`,
+    /** Negative margin for dashboard arrows - Env: UI_ARROW_NEGATIVE_MARGIN (default: '-1.5rem') */
+    ARROW_NEGATIVE_MARGIN: `mt-[${EnvLoader.string('UI_ARROW_NEGATIVE_MARGIN', '-1.5rem')}]`,
   },
 } as const;
 

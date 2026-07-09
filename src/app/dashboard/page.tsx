@@ -25,6 +25,7 @@ import {
   DASHBOARD_TAILWIND,
   STATUS_CODES,
   IDEA_STATUS_CONFIG,
+  SIZES,
 } from '@/lib/config';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -774,7 +775,7 @@ export default function DashboardPage() {
 
                 {/* Arrow 1 */}
                 <div
-                  className="flex items-center animate-fade-in mt-[-1.5rem]"
+                  className={`flex items-center animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
                   aria-hidden="true"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }}
                 >
@@ -825,7 +826,7 @@ export default function DashboardPage() {
 
                 {/* Arrow 2 */}
                 <div
-                  className="flex items-center animate-fade-in mt-[-1.5rem]"
+                  className={`flex items-center animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
                   aria-hidden="true"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }}
                 >

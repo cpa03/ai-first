@@ -88,29 +88,24 @@ export const UI_CONFIG = {
     ),
     TOUCH_TARGET: {
       MIN_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64),
-      MIN_SIZE: 'min-h-[44px] min-w-[44px]',
+      MIN_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64)}px]`,
       SMALL_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44),
-      SMALL_SIZE: 'min-h-[32px] min-w-[32px]',
+      SMALL_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44)}px]`,
       LARGE_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72),
-      LARGE_SIZE: 'min-h-[56px] min-w-[56px]',
+      LARGE_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72)}px]`,
       KEYBOARD_SIZE_PX: EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64),
-      KEYBOARD_SIZE: 'min-h-[44px]',
+      KEYBOARD_SIZE: `min-h-[${EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64)}px]`,
     },
     KEYBOARD: {
       FOCUS_RING_OFFSET: 'focus-visible:ring-2 focus-visible:ring-offset-2',
-      MIN_HEIGHT: 'min-h-[44px]',
-      MIN_WIDTH: 'min-w-[44px]',
-      KBD_STYLE:
-        'inline-flex items-center justify-center min-w-[28px] h-7 px-2 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-800 shadow-sm',
-      KBD_STYLE_COMPACT:
-        'inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center',
-      KBD_STYLE_COMPACT_WITH_GAP:
-        'inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[10px] font-sans font-medium text-gray-800 min-w-[24px] min-h-[24px] justify-center',
-      KBD_STYLE_DARK:
-        'min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded text-[10px] font-sans font-bold text-gray-300',
-      KBD_STYLE_MINI:
-        'px-1 py-0.5 bg-gray-100 rounded text-[9px] text-gray-600',
-      KBD_STYLE_MINI_DARK: 'px-1 py-0.5 bg-gray-700 rounded text-[9px]',
+      MIN_HEIGHT: `min-h-[${EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64)}px]`,
+      MIN_WIDTH: `min-w-[${EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64)}px]`,
+      KBD_STYLE: `inline-flex items-center justify-center min-w-[${EnvLoader.number('UI_KBD_MIN_WIDTH', 20, 16, 32)}px] h-7 px-2 bg-gray-100 border border-gray-300 rounded text-xs font-sans font-medium text-gray-800 shadow-sm`,
+      KBD_STYLE_COMPACT: `inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[${EnvLoader.number('UI_TEXT_SIZE_KBD', 10, 8, 14)}px] font-sans font-medium text-gray-800 min-w-[${EnvLoader.number('UI_KBD_MIN_WIDTH', 20, 16, 32)}px] min-h-[${EnvLoader.number('UI_KBD_MIN_HEIGHT', 20, 16, 32)}px] justify-center`,
+      KBD_STYLE_COMPACT_WITH_GAP: `inline-flex items-center gap-1 px-1.5 py-0.5 bg-gray-100 border border-gray-400 rounded text-[${EnvLoader.number('UI_TEXT_SIZE_KBD', 10, 8, 14)}px] font-sans font-medium text-gray-800 min-w-[${EnvLoader.number('UI_KBD_MIN_WIDTH', 20, 16, 32)}px] min-h-[${EnvLoader.number('UI_KBD_MIN_HEIGHT', 20, 16, 32)}px] justify-center`,
+      KBD_STYLE_DARK: `min-w-[1.25rem] h-5 px-1 flex items-center justify-center bg-gray-700 border border-gray-600 rounded text-[${EnvLoader.number('UI_TEXT_SIZE_KBD', 10, 8, 14)}px] font-sans font-bold text-gray-300`,
+      KBD_STYLE_MINI: `px-1 py-0.5 bg-gray-100 rounded text-[${EnvLoader.number('UI_TEXT_SIZE_MINI', 9, 7, 12)}px] text-gray-600`,
+      KBD_STYLE_MINI_DARK: `px-1 py-0.5 bg-gray-700 rounded text-[${EnvLoader.number('UI_TEXT_SIZE_MINI', 9, 7, 12)}px]`,
     },
   },
 } as const;
