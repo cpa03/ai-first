@@ -407,10 +407,13 @@ export const DASHBOARD_PAGE_CONTENT = {
   },
   DELETE_MODAL: {
     TITLE: 'Delete Idea',
-    CONFIRM: 'Are you sure you want to delete this idea?',
+    CONFIRM: (title: string) =>
+      `Are you sure you want to delete "${title}"? This action cannot be undone.`,
     CANCEL: 'Cancel',
-    DELETE: 'Delete',
+    DELETE: 'Delete Idea',
     DELETING: 'Deleting...',
+    CONFIRM_TOOLTIP: 'Confirm deletion',
+    CONFIRM_SHORTCUT: ['Enter'] as string[],
   },
   ERRORS: {
     FETCH_FAILED: 'Failed to fetch ideas',

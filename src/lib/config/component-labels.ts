@@ -442,6 +442,32 @@ export const DASHBOARD_LABELS = {
     CREATED: 'Created',
     ACTIONS: 'Actions',
   },
+  ACTIONS: {
+    CONTINUE: 'Continue',
+    VIEW: 'View',
+    DELETE: 'Delete',
+    DELETING: 'Deleting...',
+  },
+  ACTION_ARIA: {
+    CONTINUE: (title: string) => `Continue working on ${title}`,
+    VIEW: (title: string) => `View blueprint for ${title}`,
+    DELETE: (title: string) => `Delete ${title}`,
+  },
+  KEYBOARD_HINTS: {
+    NAVIGATE: 'navigate',
+    OPEN: 'open',
+    DESELECT: 'deselect',
+    DELETE: 'delete',
+  },
+  DELETE_MODAL: {
+    TITLE: 'Delete Idea',
+    DESCRIPTION: (title: string) =>
+      `Are you sure you want to delete "${title}"? This action cannot be undone.`,
+    CANCEL: 'Cancel',
+    CONFIRM: 'Delete Idea',
+    CONFIRM_TOOLTIP: 'Confirm deletion',
+    CONFIRM_SHORTCUT: ['Enter'],
+  },
 };
 
 /**

@@ -31,7 +31,7 @@ const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
   loading: () => (
     <button className={SPINNER_PATTERNS.placeholder.container} disabled>
-      Loading...
+      {DASHBOARD_PAGE_CONTENT.LOADING}
     </button>
   ),
 });
@@ -307,7 +307,8 @@ export default function DashboardPage() {
         const elementText = activeElement?.textContent || '';
         const elementLabel = activeElement?.getAttribute('aria-label') || '';
         const isCancelButton =
-          elementText.includes('Cancel') || elementLabel.includes('Cancel');
+          elementText.includes(DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CANCEL) ||
+          elementLabel.includes(DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CANCEL);
 
         if (!isCancelButton) {
           e.preventDefault();
@@ -958,22 +959,28 @@ export default function DashboardPage() {
                         <Link
                           href={`/clarify?ideaId=${idea.id}`}
                           className={`${ACTION_COLORS.CONTINUE.text} ${ACTION_COLORS.CONTINUE.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.CONTINUE.hoverBg} transition-colors`}
-                          aria-label={`Continue working on ${idea.title}`}
+                          aria-label={DASHBOARD_LABELS.ACTION_ARIA.CONTINUE(
+                            idea.title
+                          )}
                         >
-                          Continue
+                          {DASHBOARD_LABELS.ACTIONS.CONTINUE}
                         </Link>
                         <Link
                           href={`/results?ideaId=${idea.id}`}
                           className={`${ACTION_COLORS.VIEW.text} ${ACTION_COLORS.VIEW.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.VIEW.hoverBg} transition-colors`}
-                          aria-label={`View blueprint for ${idea.title}`}
+                          aria-label={DASHBOARD_LABELS.ACTION_ARIA.VIEW(
+                            idea.title
+                          )}
                         >
-                          View
+                          {DASHBOARD_LABELS.ACTIONS.VIEW}
                         </Link>
                         <button
                           onClick={() => openDeleteModal(idea)}
                           disabled={deletingId === idea.id}
                           className={`${ACTION_COLORS.DELETE.text} ${ACTION_COLORS.DELETE.hoverText} ${TABLE_PATTERNS.actions.buttonBase} ${ACTION_COLORS.DELETE.hoverBg} transition-colors disabled:opacity-50 inline-flex items-center gap-1`}
-                          aria-label={`Delete ${idea.title}`}
+                          aria-label={DASHBOARD_LABELS.ACTION_ARIA.DELETE(
+                            idea.title
+                          )}
                         >
                           {deletingId === idea.id && (
                             <svg
@@ -998,7 +1005,9 @@ export default function DashboardPage() {
                               />
                             </svg>
                           )}
-                          {deletingId === idea.id ? 'Deleting...' : 'Delete'}
+                          {deletingId === idea.id
+                            ? DASHBOARD_LABELS.ACTIONS.DELETING
+                            : DASHBOARD_LABELS.ACTIONS.DELETE}
                         </button>
                       </div>
                     </td>
@@ -1022,7 +1031,7 @@ export default function DashboardPage() {
             >
               k
             </kbd>
-            navigate
+            {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE}
           </span>
           <span className="hidden sm:inline-flex items-center gap-1">
             <kbd
@@ -1030,7 +1039,7 @@ export default function DashboardPage() {
             >
               Enter
             </kbd>
-            open
+            {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN}
           </span>
           <span className="hidden sm:inline-flex items-center gap-1">
             <kbd
@@ -1038,7 +1047,7 @@ export default function DashboardPage() {
             >
               Esc
             </kbd>
-            deselect
+            {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT}
           </span>
           <span className="hidden sm:inline-flex items-center gap-1">
             <kbd
@@ -1046,7 +1055,7 @@ export default function DashboardPage() {
             >
               Del
             </kbd>
-            delete
+            {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE}
           </span>
         </div>
       )}
@@ -1090,7 +1099,7 @@ export default function DashboardPage() {
                 id="delete-modal-title"
                 className={MODAL_PATTERNS.header.title}
               >
-                Delete Idea
+                {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.TITLE}
               </h3>
             </div>
 
@@ -1098,8 +1107,9 @@ export default function DashboardPage() {
               id="delete-modal-description"
               className={MODAL_PATTERNS.header.description}
             >
-              Are you sure you want to delete &quot;{deleteModal.idea.title}
-              &quot;? This action cannot be undone.
+              {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM(
+                deleteModal.idea.title
+              )}
             </p>
 
             <div className={MODAL_PATTERNS.footer.container}>
@@ -1109,11 +1119,11 @@ export default function DashboardPage() {
                 onClick={closeDeleteModal}
                 disabled={!!deletingId}
               >
-                Cancel
+                {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CANCEL}
               </Button>
               <Tooltip
-                content="Confirm deletion"
-                shortcut={['Enter']}
+                content={DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM_TOOLTIP}
+                shortcut={DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM_SHORTCUT}
                 position="top"
               >
                 <Button
@@ -1121,7 +1131,7 @@ export default function DashboardPage() {
                   onClick={handleDelete}
                   loading={!!deletingId}
                 >
-                  Delete Idea
+                  {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.DELETE}
                 </Button>
               </Tooltip>
             </div>
