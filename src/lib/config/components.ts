@@ -260,7 +260,7 @@ export const COMPONENT_CONFIG = {
       5000
     ),
     /** Minimum height class for textarea */
-    MIN_HEIGHT_CLASS: 'min-h-[120px]',
+    MIN_HEIGHT_CLASS: `min-h-[${EnvLoader.number('UI_IDEA_INPUT_MIN_HEIGHT', 120, 80, 200)}px]`,
     /** Duration for shake animation on validation error (ms) */
     /** Env: COMPONENT_IDEA_INPUT_SHAKE_DURATION_MS (default: 500) */
     SHAKE_DURATION_MS: EnvLoader.number(
