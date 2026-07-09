@@ -223,9 +223,18 @@ Complete index of all IdeaFlow documentation.
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
 
+## Audit Reports
+
+- [BroCula Browser Audit - 2026-07-08](./audit/2026-07-08-brocula-browser-audit.md) - Browser console and Lighthouse audit
+- [Flexy Modularization Audit - 2026-07-08](./audit/2026-07-08-flexy-modularization-audit.md) - Code modularization assessment
+- [Comprehensive Audit - 2026-07-08](./audit/2026-07-08-comprehensive-audit.md) - Full repository audit
+- [Phase 2 Feature Hardening - 2026-07-08](./audit/2026-07-08-phase2-feature-hardening.md) - Feature hardening audit
+- [Phase 3 Strategic Expansion - 2026-07-08](./audit/2026-07-08-phase3-strategic-expansion.md) - Strategic expansion audit
+
 ## Maintenance Reports
 
-- [Repository Health Report - 2026-07-08](./maintenance/2026-07-08-repo-health-report.md) - Latest repository health status
+- [Repository Health Report - 2026-07-09](./maintenance/2026-07-09-repo-health-report.md) - Latest repository health status
+- [Repository Health Report - 2026-07-08](./maintenance/2026-07-08-repo-health-report.md) - Previous health status
 - [Repository Health Report - 2026-07-07 (Repocheck)](./maintenance/2026-07-07-repo-health-report.md) - Previous health status
 - [Stale Branches Report - 2026-07-07](./maintenance/2026-07-07-stale-branches-report.md) - Detailed analysis of 65 unmerged branches
 - [Repository Health Report - 2026-07-06](./maintenance/2026-07-06-repo-health-report.md) - Previous health report
