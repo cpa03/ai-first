@@ -11,7 +11,12 @@ import {
   BUTTON_LABELS,
   COMPONENT_DEFAULTS,
 } from '@/lib/config/ui';
-import { Z_INDEX_LAYERS, CARD_PATTERNS } from '@/lib/config/theme';
+import {
+  Z_INDEX_LAYERS,
+  CARD_PATTERNS,
+  TEXT_COLORS,
+  BORDER_COLORS,
+} from '@/lib/config/theme';
 import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTHS } from '@/lib/config/page-layout';
 import { ROUTES } from '@/lib/config/routes';
@@ -127,7 +132,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             id="error-content"
             ref={this.errorRef}
             tabIndex={-1}
-            className="min-h-screen bg-gray-50 flex items-center justify-center p-4"
+            className={`min-h-screen bg-gray-50 flex items-center justify-center p-4`}
             role="main"
             aria-labelledby="error-title"
           >
@@ -139,7 +144,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                 {this.state.error?.message}
               </div>
               <Alert type="error" title={MESSAGES.ERROR_BOUNDARY.TITLE}>
-                <p className="text-gray-700 mb-4">
+                <p className={`${TEXT_COLORS.SECONDARY} mb-4`}>
                   {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}
                 </p>
                 <div className="mt-6 space-y-4">
@@ -152,11 +157,11 @@ export default class ErrorBoundary extends Component<Props, State> {
                       {MESSAGES.ERROR_BOUNDARY.RETRY_BUTTON}
                     </Button>
                     <span
-                      className="hidden sm:flex items-center gap-1 text-xs text-gray-500"
+                      className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium text-gray-700`}
+                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
                       >
                         Enter
                       </kbd>
@@ -173,11 +178,11 @@ export default class ErrorBoundary extends Component<Props, State> {
                       </Button>
                     </Link>
                     <span
-                      className="hidden sm:flex items-center gap-1 text-xs text-gray-500"
+                      className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border border-gray-300 rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium text-gray-700`}
+                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
                       >
                         Esc
                       </kbd>
@@ -188,11 +193,15 @@ export default class ErrorBoundary extends Component<Props, State> {
               </Alert>
 
               {this.state.error && (
-                <details className="mt-6 p-4 bg-gray-50 rounded-md">
-                  <summary className="cursor-pointer text-sm font-medium text-gray-700">
+                <details className={`mt-6 p-4 bg-gray-50 rounded-md`}>
+                  <summary
+                    className={`cursor-pointer text-sm font-medium ${TEXT_COLORS.SECONDARY}`}
+                  >
                     {MESSAGES.ERROR_BOUNDARY.DETAILS_BUTTON}
                   </summary>
-                  <div className="mt-3 text-xs text-gray-600 font-mono whitespace-pre-wrap overflow-auto max-h-48">
+                  <div
+                    className={`mt-3 text-xs ${TEXT_COLORS.SECONDARY} font-mono whitespace-pre-wrap overflow-auto max-h-48`}
+                  >
                     <strong>Error:</strong> {this.state.error.toString()}
                     {this.state.errorInfo && (
                       <>

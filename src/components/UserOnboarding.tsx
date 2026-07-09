@@ -9,6 +9,12 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
+  TEXT_COLORS,
+  BG_COLORS,
+  BORDER_COLORS,
+  SHADOW_CLASSES,
+  TRANSITION_CLASSES,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config/theme';
 import {
   USER_ONBOARDING_LABELS,
@@ -309,7 +315,7 @@ export default function UserOnboarding() {
           aria-hidden="true"
         />
         <div
-          className={`relative bg-white rounded-2xl shadow-2xl p-8 text-center max-w-sm mx-4 ${
+          className={`relative ${BG_COLORS.DEFAULT} rounded-2xl ${SHADOW_CLASSES.EXTRA_LARGE} p-8 text-center max-w-sm mx-4 ${
             prefersReducedMotion
               ? ''
               : 'animate-in fade-in zoom-in duration-300'
@@ -336,10 +342,12 @@ export default function UserOnboarding() {
               />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3
+            className={`${TYPOGRAPHY_CLASSES.COMPONENT_HEADING} ${TEXT_COLORS.PRIMARY} mb-2`}
+          >
             {USER_ONBOARDING_COMPLETION_LABELS.TITLE}
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className={`text-sm ${TEXT_COLORS.SECONDARY}`}>
             {USER_ONBOARDING_COMPLETION_LABELS.DESCRIPTION}
           </p>
         </div>
@@ -373,9 +381,9 @@ export default function UserOnboarding() {
         aria-labelledby="onboarding-title"
         aria-describedby="onboarding-content"
         className={`
-          fixed z-[${Z_INDEX_LAYERS.MODAL}] ${CONTAINER_WIDTH_CLASSES.ONBOARDING} bg-white rounded-xl shadow-2xl 
-          border border-gray-200 p-5
-          transition-all duration-300 ease-out
+          fixed z-[${Z_INDEX_LAYERS.MODAL}] ${CONTAINER_WIDTH_CLASSES.ONBOARDING} ${BG_COLORS.DEFAULT} rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} 
+          border ${BORDER_COLORS.LIGHT} p-5
+          ${TRANSITION_CLASSES.SLOW} ease-out
           ${isAnimating ? 'opacity-0 scale-95' : 'opacity-100 scale-100'}
         `}
         style={{
@@ -397,7 +405,7 @@ export default function UserOnboarding() {
         {/* Close button */}
         <button
           onClick={handleSkip}
-          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 transition-colors p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md"
+          className={`absolute top-3 right-3 text-gray-400 hover:text-gray-600 ${TRANSITION_CLASSES.COLOR} p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md`}
           aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
         >
           <svg
@@ -420,13 +428,13 @@ export default function UserOnboarding() {
         <div className="mt-2">
           <h3
             id="onboarding-title"
-            className="text-lg font-semibold text-gray-900 mb-2"
+            className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY} mb-2`}
           >
             {currentStep.title}
           </h3>
           <p
             id="onboarding-content"
-            className="text-gray-600 text-sm leading-relaxed"
+            className={`${TEXT_COLORS.SECONDARY} text-sm leading-relaxed`}
           >
             {currentStep.content}
           </p>
@@ -436,29 +444,29 @@ export default function UserOnboarding() {
         <div className="flex items-center justify-between mt-5">
           {/* Step indicator with keyboard hint */}
           <div className="flex flex-col gap-1">
-            <span className="text-xs text-gray-500">
+            <span className={`text-xs ${TEXT_COLORS.MUTED}`}>
               {USER_ONBOARDING_COMPLETION_LABELS.STEP_INDICATOR(
                 currentStepIndex + 1,
                 TOUR_STEPS.length
               )}
             </span>
             <span
-              className={`${TEXT_SIZE_CLASSES.XS} text-gray-500 hidden sm:inline`}
+              className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} hidden sm:inline`}
             >
               <kbd
-                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
+                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
                 ←
               </kbd>{' '}
               <kbd
-                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
+                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
                 →
               </kbd>{' '}
               {USER_ONBOARDING_COMPLETION_LABELS.NAVIGATE_HINT}
               <span className="mx-1">·</span>
               <kbd
-                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} text-gray-600`}
+                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
                 Esc
               </kbd>{' '}
@@ -471,14 +479,14 @@ export default function UserOnboarding() {
             {currentStepIndex > 0 && (
               <button
                 onClick={handlePrev}
-                className="px-3 py-1.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+                className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} hover:text-gray-900 hover:bg-gray-100 rounded-lg ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
               >
                 {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
               </button>
             )}
             <button
               onClick={handleNext}
-              className="px-4 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+              className={`px-4 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 ${TRANSITION_CLASSES.COLOR} font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
             >
               {isLastStep
                 ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON

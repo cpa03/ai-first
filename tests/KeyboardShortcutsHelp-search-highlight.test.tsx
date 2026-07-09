@@ -20,8 +20,7 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       fireEvent.change(searchInput, { target: { value: 'submit' } });
 
       // HighlightedText splits "Submit form" into segments with highlighted "Submit"
-      // The highlighted span should have the yellow background class
-      const highlightSpans = document.querySelectorAll('span.bg-yellow-200');
+      const highlightSpans = document.querySelectorAll('span.bg-amber-600');
       expect(highlightSpans.length).toBeGreaterThan(0);
       expect(highlightSpans[0].textContent).toBe('Submit');
     });
@@ -33,7 +32,7 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       fireEvent.change(searchInput, { target: { value: 'SUBMIT' } });
 
       // Should still find matching text despite different case
-      const highlightSpans = document.querySelectorAll('span.bg-yellow-200');
+      const highlightSpans = document.querySelectorAll('span.bg-amber-600');
       expect(highlightSpans.length).toBeGreaterThan(0);
       expect(highlightSpans[0].textContent).toBe('Submit');
     });
@@ -42,7 +41,7 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       render(<KeyboardShortcutsHelp {...defaultProps} />);
 
       // No highlight spans should exist when there's no search query
-      const highlightSpans = document.querySelectorAll('span.bg-yellow-200');
+      const highlightSpans = document.querySelectorAll('span.bg-amber-600');
       expect(highlightSpans.length).toBe(0);
     });
 
@@ -52,7 +51,7 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
 
       fireEvent.change(searchInput, { target: { value: 'Submit' } });
 
-      const highlightSpans = document.querySelectorAll('span.bg-yellow-200');
+      const highlightSpans = document.querySelectorAll('span.bg-amber-600');
       expect(highlightSpans.length).toBe(1);
       expect(highlightSpans[0].textContent).toBe('Submit');
     });
@@ -69,7 +68,7 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       expect(screen.getByText(/result/)).toBeInTheDocument();
 
       // Should have highlighted text
-      const highlightSpans = document.querySelectorAll('span.bg-yellow-200');
+      const highlightSpans = document.querySelectorAll('span.bg-amber-600');
       expect(highlightSpans.length).toBeGreaterThan(0);
     });
 
@@ -80,12 +79,12 @@ describe('KeyboardShortcutsHelp - Search Term Highlighting', () => {
       // Type search
       fireEvent.change(searchInput, { target: { value: 'submit' } });
       expect(
-        document.querySelectorAll('span.bg-yellow-200').length
+        document.querySelectorAll('span.bg-amber-600').length
       ).toBeGreaterThan(0);
 
       // Clear search
       fireEvent.change(searchInput, { target: { value: '' } });
-      expect(document.querySelectorAll('span.bg-yellow-200').length).toBe(0);
+      expect(document.querySelectorAll('span.bg-amber-600').length).toBe(0);
     });
   });
 });
