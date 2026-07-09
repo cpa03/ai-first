@@ -1,17 +1,11 @@
-import { dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { FlatCompat } from '@eslint/eslintrc';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTypescript from 'eslint-config-next/typescript'
 
 /** @type {import('eslint').Linter.FlatConfig[]} */
-const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTypescript,
   {
     files: ['**/*.{ts,tsx}'],
     rules: {
@@ -51,17 +45,15 @@ const eslintConfig = [
       'no-undef': 'off',
     },
   },
-  {
-    ignores: [
-      'node_modules/',
-      '.next/',
-      'out/',
-      'dist/',
-      'coverage/',
-      'scripts/',
-      '**/.opencode/**',
-    ],
-  },
-];
+  globalIgnores([
+    'node_modules/',
+    '.next/',
+    'out/',
+    'dist/',
+    'coverage/',
+    'scripts/',
+    '**/.opencode/**',
+  ]),
+])
 
-export default eslintConfig;
+export default eslintConfig
