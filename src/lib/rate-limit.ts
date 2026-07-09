@@ -49,9 +49,16 @@ export interface UserRateLimitInfo {
  */
 function extractUserIdFromRequest(request: Request): string | null {
   // Try to get user ID from custom header (set by authenticated Supabase clients)
+  // SECURITY: Only trust this header in non-production or if an internal secret matches.
   const xUserId = request.headers.get('x-supabase-user-id');
   if (xUserId) {
-    return xUserId.trim() || null;
+    const isDev = ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development';
+    const internalSecret = request.headers.get('x-internal-secret');
+    const expectedSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
+
+    if (isDev || (internalSecret && expectedSecret && internalSecret === expectedSecret)) {
+      return xUserId.trim() || null;
+    }
   }
 
   // Try Authorization header with Bearer token
@@ -94,29 +101,37 @@ function determineUserRole(request: Request, userId: string | null): UserRole {
 
   // Check for tier override headers (useful for testing, development,
   // or when tier is determined by upstream proxy/gateway)
-  const tierHeader = request.headers.get('x-user-tier');
-  if (tierHeader) {
-    const normalizedTier = tierHeader.toLowerCase().trim();
-    if (normalizedTier === 'premium') {
-      return 'premium';
-    }
-    if (normalizedTier === 'enterprise') {
-      return 'enterprise';
-    }
-    if (normalizedTier === 'authenticated' || normalizedTier === 'standard') {
-      return 'authenticated';
-    }
-  }
+  // SECURITY: Only trust these headers in non-production or if an internal secret matches.
+  const isDev = ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development';
+  const internalSecret = request.headers.get('x-internal-secret');
+  const expectedSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
+  const isTrusted = isDev || (internalSecret && expectedSecret && internalSecret === expectedSecret);
 
-  // Alternative header for subscription status
-  const subscriptionHeader = request.headers.get('x-user-subscription');
-  if (subscriptionHeader) {
-    const normalizedSub = subscriptionHeader.toLowerCase().trim();
-    if (normalizedSub === 'premium' || normalizedSub === 'pro') {
-      return 'premium';
+  if (isTrusted) {
+    const tierHeader = request.headers.get('x-user-tier');
+    if (tierHeader) {
+      const normalizedTier = tierHeader.toLowerCase().trim();
+      if (normalizedTier === 'premium') {
+        return 'premium';
+      }
+      if (normalizedTier === 'enterprise') {
+        return 'enterprise';
+      }
+      if (normalizedTier === 'authenticated' || normalizedTier === 'standard') {
+        return 'authenticated';
+      }
     }
-    if (normalizedSub === 'enterprise' || normalizedSub === 'business') {
-      return 'enterprise';
+
+    // Alternative header for subscription status
+    const subscriptionHeader = request.headers.get('x-user-subscription');
+    if (subscriptionHeader) {
+      const normalizedSub = subscriptionHeader.toLowerCase().trim();
+      if (normalizedSub === 'premium' || normalizedSub === 'pro') {
+        return 'premium';
+      }
+      if (normalizedSub === 'enterprise' || normalizedSub === 'business') {
+        return 'enterprise';
+      }
     }
   }
 
