@@ -310,5 +310,5 @@ export function summarizeError(error: unknown): string {
 
   parts.push(` (retryable: ${context.retryable})`);
 
-  return `[${parts.join('')}`;
+  return `[${parts.join('')}]`;
 }
