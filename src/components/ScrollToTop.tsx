@@ -12,6 +12,11 @@ import {
   TEXT_SIZE_PRESETS,
   UI_TIMING_CONFIG,
   UI_DURATIONS,
+  TEXT_COLORS,
+  BG_COLORS,
+  BORDER_COLORS,
+  SHADOW_CLASSES,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -178,26 +183,26 @@ function ScrollToTopComponent({
       <span className="font-medium">{SCROLL_TO_TOP_LABELS.TITLE}</span>
       <span className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 opacity-80`}>
         <kbd
-          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
         >
           {SCROLL_TO_TOP_LABELS.KEYS.UP}
         </kbd>{' '}
         <kbd
-          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
         >
           {SCROLL_TO_TOP_LABELS.KEYS.DOWN}
         </kbd>{' '}
         {SCROLL_TO_TOP_LABELS.SCROLL_INSTRUCTION}
         <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
         <kbd
-          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
         >
           {SCROLL_TO_TOP_LABELS.KEYS.HOME}
         </kbd>{' '}
         {SCROLL_TO_TOP_LABELS.TOP}
         <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
         <kbd
-          className={`px-1 py-0.5 bg-gray-700 rounded ${TEXT_SIZE_PRESETS.KBD}`}
+          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
         >
           {SCROLL_TO_TOP_LABELS.KEYS.END}
         </kbd>{' '}
@@ -217,11 +222,11 @@ function ScrollToTopComponent({
             group
             w-12 h-12
             flex items-center justify-center
-            bg-white text-gray-700
-            rounded-full shadow-lg
-            border border-gray-200
-            transition-all duration-300 ease-out
-            hover:bg-gray-50 hover:text-primary-600 hover:shadow-xl hover:scale-110
+            ${BG_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}
+            rounded-full ${SHADOW_CLASSES.LARGE}
+            border ${BORDER_COLORS.LIGHT}
+            ${TRANSITION_CLASSES.SLOW} ease-out
+            hover:bg-gray-50 hover:text-primary-600 hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
             hover:border-primary-200
             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
             focus-visible:scale-110

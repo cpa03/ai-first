@@ -18,6 +18,12 @@ import {
   Z_INDEX_LAYERS,
   KEYBOARD_SHORTCUTS_HELP_LABELS,
   SIZES,
+  TEXT_COLORS,
+  BORDER_COLORS,
+  BG_COLORS,
+  TYPOGRAPHY_CLASSES,
+  TRANSITION_CLASSES,
+  SHADOW_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -304,7 +310,7 @@ const HighlightedText = memo(function HighlightedText({
         regex.test(part) ? (
           <span
             key={index}
-            className="bg-yellow-200 text-yellow-900 px-0.5 rounded-sm font-medium"
+            className={`${BG_COLORS.WARNING} ${TEXT_COLORS.WARNING} px-0.5 rounded-sm font-medium`}
             aria-hidden="true"
           >
             {part}
@@ -363,19 +369,19 @@ const ShortcutRow = memo(function ShortcutRow({
 
   return (
     <div
-      className={`flex items-center justify-between py-3 px-2 -mx-2 rounded-lg transition-all duration-200 border-b border-gray-100 last:border-b-0 group ${
+      className={`flex items-center justify-between py-3 px-2 -mx-2 rounded-lg ${TRANSITION_CLASSES.DEFAULT} border-b border-gray-100 last:border-b-0 group ${
         isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
       }`}
     >
       <span
-        className={`text-sm transition-colors ${isSelected ? 'text-primary-700 font-medium' : 'text-gray-700 group-hover:text-gray-900'}`}
+        className={`text-sm ${TRANSITION_CLASSES.COLOR} ${isSelected ? 'text-primary-700 font-medium' : `${TEXT_COLORS.SECONDARY} group-hover:${TEXT_COLORS.PRIMARY}`}`}
       >
         <HighlightedText text={shortcut.description} query={searchQuery} />
       </span>
       <button
         type="button"
         onClick={handleCopyShortcut}
-        className="flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md hover:bg-gray-100 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1"
+        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md hover:bg-gray-100 ${TRANSITION_CLASSES.FAST} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1`}
         aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.COPY_SHORTCUT_ARIA_LABEL(
           displayKeys
         )}
@@ -384,14 +390,14 @@ const ShortcutRow = memo(function ShortcutRow({
           <React.Fragment key={index}>
             <KeyboardKey>{key}</KeyboardKey>
             {index < displayKeys.length - 1 && (
-              <span className="text-gray-600 text-xs">+</span>
+              <span className={`${TEXT_COLORS.SECONDARY} text-xs`}>+</span>
             )}
           </React.Fragment>
         ))}
         {/* Micro-UX: Show brief checkmark feedback when copied */}
         {copied && (
           <svg
-            className="w-3.5 h-3.5 text-green-600 ml-1 animate-in fade-in zoom-in duration-150"
+            className={`w-3.5 h-3.5 ${TEXT_COLORS.SUCCESS} ml-1 animate-in fade-in zoom-in duration-150`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -647,13 +653,15 @@ function KeyboardShortcutsHelpComponent({
       />
       <div
         ref={modalRef}
-        className={`relative bg-white rounded-xl shadow-2xl max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform transition-all duration-300 ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`relative bg-white rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
       >
         {/* Search */}
-        <div className="px-6 py-3 border-b border-gray-200 bg-gray-50">
+        <div
+          className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} bg-gray-50`}
+        >
           <div className="relative">
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600"
+              className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${TEXT_COLORS.SECONDARY}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -671,7 +679,7 @@ function KeyboardShortcutsHelpComponent({
               placeholder={KEYBOARD_SHORTCUTS_MESSAGES.SEARCH_PLACEHOLDER}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-10 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:text-gray-500"
+              className={`w-full pl-10 pr-10 py-2 text-sm border ${BORDER_COLORS.DEFAULT} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:${TEXT_COLORS.MUTED}`}
               aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.SEARCH_ARIA_LABEL}
             />
             {searchQuery && (
@@ -681,7 +689,7 @@ function KeyboardShortcutsHelpComponent({
                   setSearchQuery('');
                   searchInputRef.current?.focus();
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 text-gray-600 hover:text-gray-700 rounded-full hover:bg-gray-200 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1"
+                className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} hover:text-gray-700 rounded-full hover:bg-gray-200 ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1`}
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
@@ -701,21 +709,23 @@ function KeyboardShortcutsHelpComponent({
             )}
           </div>
           <div className="mt-2 flex items-center justify-between">
-            <label className="flex items-center gap-2 text-xs text-gray-600 cursor-pointer">
+            <label
+              className={`flex items-center gap-2 text-xs ${TEXT_COLORS.SECONDARY} cursor-pointer`}
+            >
               <input
                 type="checkbox"
                 checked={preferences.vimMode}
                 onChange={(e) =>
                   updatePreferences({ vimMode: e.target.checked })
                 }
-                className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                className={`rounded ${BORDER_COLORS.DEFAULT} text-primary-600 focus:ring-primary-500`}
               />
               {KEYBOARD_SHORTCUTS_MESSAGES.VIM_MODE_LABEL}
             </label>
             <div className="flex items-center gap-2">
               {searchQuery && (
                 <span
-                  className="text-xs text-primary-600 font-medium px-2 py-0.5 bg-primary-50 rounded-full"
+                  className={`text-xs text-primary-600 font-medium px-2 py-0.5 bg-primary-50 rounded-full`}
                   aria-live="polite"
                   aria-atomic="true"
                 >
@@ -723,7 +733,7 @@ function KeyboardShortcutsHelpComponent({
                   {flatShortcuts.length === 1 ? 'result' : 'results'}
                 </span>
               )}
-              <span className="text-xs text-gray-600">
+              <span className={`text-xs ${TEXT_COLORS.SECONDARY}`}>
                 {searchQuery
                   ? KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.HAS_QUERY
                   : KEYBOARD_SHORTCUTS_MESSAGES.FILTER_STATUS.NO_QUERY}
@@ -733,7 +743,9 @@ function KeyboardShortcutsHelpComponent({
         </div>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div
+          className={`flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} bg-gray-50`}
+        >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary-100 rounded-lg">
               <svg
@@ -753,11 +765,11 @@ function KeyboardShortcutsHelpComponent({
             <div>
               <h2
                 id="keyboard-shortcuts-title"
-                className="text-lg font-semibold text-gray-900"
+                className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY}`}
               >
                 {KEYBOARD_SHORTCUTS_MESSAGES.TITLE}
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className={`text-sm ${TEXT_COLORS.SECONDARY}`}>
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[0]}
                 <KeyboardKey>Esc</KeyboardKey>
                 {KEYBOARD_SHORTCUTS_MESSAGES.CLOSE_INSTRUCTION.split('Esc')[1]}
@@ -769,7 +781,7 @@ function KeyboardShortcutsHelpComponent({
           <button
             ref={closeButtonRef}
             onClick={handleClose}
-            className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+            className={`p-2 ${TEXT_COLORS.SECONDARY} hover:text-gray-800 hover:bg-gray-100 rounded-lg ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
             aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLOSE_ARIA_LABEL}
           >
             <svg
@@ -794,9 +806,11 @@ function KeyboardShortcutsHelpComponent({
         >
           {flatShortcuts.length === 0 && searchQuery ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4">
+              <div
+                className={`w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4`}
+              >
                 <svg
-                  className="w-8 h-8 text-gray-600"
+                  className={`w-8 h-8 ${TEXT_COLORS.SECONDARY}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -810,10 +824,12 @@ function KeyboardShortcutsHelpComponent({
                   />
                 </svg>
               </div>
-              <h3 className="text-sm font-semibold text-gray-900 mb-1">
+              <h3
+                className={`text-sm font-semibold ${TEXT_COLORS.PRIMARY} mb-1`}
+              >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_TITLE}
               </h3>
-              <p className="text-sm text-gray-500 max-w-xs mb-4">
+              <p className={`text-sm ${TEXT_COLORS.MUTED} max-w-xs mb-4`}>
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.NO_RESULTS_DESCRIPTION}
               </p>
               <button
@@ -822,7 +838,7 @@ function KeyboardShortcutsHelpComponent({
                   setSearchQuery('');
                   searchInputRef.current?.focus();
                 }}
-                className="text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+                className={`text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded`}
               >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               </button>
@@ -830,7 +846,9 @@ function KeyboardShortcutsHelpComponent({
           ) : (
             Object.entries(groupedShortcuts).map(([context, shortcuts]) => (
               <div key={context} className="mb-6 last:mb-0">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                <h3
+                  className={`text-xs font-semibold ${TEXT_COLORS.MUTED} uppercase tracking-wider mb-3`}
+                >
                   {contextLabels[context as KeyboardShortcut['context']]}
                 </h3>
                 <div className="space-y-1">

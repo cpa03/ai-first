@@ -66,20 +66,12 @@ export const FOCUS_SHADOWS = {
  * Border color utilities for form states
  */
 export const BORDER_COLORS = {
-  /** Default border */
   DEFAULT: 'border-gray-300',
-
-  /** Primary/brand border */
+  LIGHT: 'border-gray-200',
   PRIMARY: 'border-primary-500',
-
-  /** Error state border */
   ERROR: 'border-red-300',
   ERROR_FOCUS: 'focus-visible:border-red-500',
-
-  /** Success state border */
   SUCCESS: 'border-green-500',
-
-  /** Warning state border */
   WARNING: 'border-amber-500',
 } as const;
 
@@ -101,22 +93,12 @@ export const RING_COLORS = {
  * Text color utilities
  */
 export const TEXT_COLORS = {
-  /** Primary text */
   PRIMARY: 'text-gray-900',
-
-  /** Secondary/muted text */
   SECONDARY: 'text-gray-600',
-
-  /** Error text */
+  MUTED: 'text-gray-500',
   ERROR: 'text-red-700',
-
-  /** Success text */
   SUCCESS: 'text-green-800',
-
-  /** Warning text */
   WARNING: 'text-amber-700',
-
-  /** Brand primary text */
   BRAND: 'text-primary-600',
 } as const;
 
@@ -126,17 +108,11 @@ export const TEXT_COLORS = {
 export const BG_COLORS = {
   /** Default background */
   DEFAULT: 'bg-white',
-
-  /** Success background */
+  DARK: 'bg-gray-700',
+  LIGHT: 'bg-gray-50',
   SUCCESS: 'bg-green-600',
-
-  /** Warning background */
   WARNING: 'bg-amber-600',
-
-  /** Error background */
   ERROR: 'bg-red-500',
-
-  /** Progress bar neutral */
   PROGRESS_NEUTRAL: 'bg-gray-200',
 } as const;
 
