@@ -138,7 +138,7 @@ docs/archive/*.tar.gz
 # Note: docs/archive/README.md is intentionally tracked for documentation
 
 # Temporary agent reports (auto-generated, should not be committed)
-# Case-insensitive patterns for audit reports
+# Case-insensitive patterns for audit reports (excluding docs/audit/ which tracks legitimate reports)
 *[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Aa][Uu][Dd][Ii][Tt]*.md
 *[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Vv][Ee][Rr][Ii][Ff][Ii][Cc][Aa][Tt][Ii][Oo][Nn]*.md
 *[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Ss][Cc][Aa][Nn]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
@@ -148,6 +148,8 @@ docs/archive/*.tar.gz
 *[Aa][Uu][Dd][Ii][Tt]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Cc][Hh][Ee][Cc][Kk]*.md
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
+# Exceptions for docs/audit/ - legitimate tracked audit reports
+!docs/audit/
 docs/audits/
 docs/reports/
 docs/stale-branches-report.md
