@@ -28,6 +28,7 @@ import SuccessCelebration from './SuccessCelebration';
 import StatusAnnouncer from './StatusAnnouncer';
 import IdeaReadyIndicator from './IdeaReadyIndicator';
 import Tooltip from './Tooltip';
+import TypingIndicator from './TypingIndicator';
 import { useConfetti } from '@/hooks/useConfetti';
 
 interface IdeaInputProps {
@@ -52,11 +53,13 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   const [successMessage, setSuccessMessage] = useState('');
   const [milestoneReached, setMilestoneReached] = useState(false);
   const [pasteSuccess, setPasteSuccess] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const { particles: milestoneParticles, fire: fireMilestoneConfetti } =
     useConfetti();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const prevMeetsMinimumRef = useRef(false);
   const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const encouragementMessages = MESSAGES.IDEA_INPUT.ENCOURAGEMENT;
 
@@ -121,6 +124,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       if (pasteSuccessTimeoutRef.current) {
         clearTimeout(pasteSuccessTimeoutRef.current);
       }
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -154,6 +160,14 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       setIdea(e.target.value);
       setValidationError(validateIdeaToMessage(e.target.value));
+
+      setIsTyping(true);
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      typingTimeoutRef.current = setTimeout(() => {
+        setIsTyping(false);
+      }, 300);
     },
     []
   );
@@ -403,6 +417,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             </p>
           )
         )}
+
+        <TypingIndicator isTyping={isTyping} hideDelay={300} className="ml-2" />
 
         {writingProgress > 5 && (
           <div className="space-y-2">

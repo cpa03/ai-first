@@ -1551,3 +1551,31 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Typing Indicator Dot Animation - Micro-UX delight for active typing feedback */
+/* Creates a subtle bouncing effect that confirms user input is being registered */
+/* Provides delightful visual feedback that makes the typing experience feel alive */
+@keyframes typingDot {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+.animate-typing-dot {
+  animation: typingDot 0.6s ease-in-out infinite;
+}
+
+/* Reduced motion support for typing indicator */
+@media (prefers-reduced-motion: reduce) {
+  .animate-typing-dot {
+    animation: none;
+    opacity: 0.6;
+    transform: none;
+  }
+}
