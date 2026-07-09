@@ -268,6 +268,7 @@ function ClarifyPageContent() {
         idea={idea}
         ideaId={ideaId}
         onComplete={handleClarificationComplete}
+        onBackToEdit={() => router.push('/')}
       />
     </div>
   );
