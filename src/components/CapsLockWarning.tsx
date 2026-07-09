@@ -1,7 +1,11 @@
 'use client';
 
 import { memo } from 'react';
-import { SVG_STROKE_WIDTHS, SVG_VIEWBOX } from '@/lib/config';
+import {
+  DURATION_TAILWIND,
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
+} from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface CapsLockWarningProps {
@@ -33,7 +37,7 @@ function CapsLockWarningComponent({
 
   return (
     <div
-      className={`flex items-center gap-1.5 text-amber-600 text-xs font-medium transition-all duration-200 ease-out ${
+      className={`flex items-center gap-1.5 text-amber-600 text-xs font-medium transition-all ${DURATION_TAILWIND[200]} ease-out ${
         prefersReducedMotion ? '' : 'animate-fade-in'
       } ${className}`}
       role="status"

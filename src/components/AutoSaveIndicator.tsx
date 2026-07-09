@@ -4,6 +4,7 @@ import { memo, useEffect, useRef, useState } from 'react';
 import {
   COMPONENT_CONFIG,
   ANIMATION_DELAYS,
+  DURATION_TAILWIND,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   AUTO_SAVE_INDICATOR_LABELS,
@@ -153,7 +154,7 @@ function AutoSaveIndicatorComponent({
 
   return (
     <div
-      className={`flex items-center gap-2 text-xs transition-all duration-300 ${className}`}
+      className={`flex items-center gap-2 text-xs transition-all ${DURATION_TAILWIND[300]} ${className}`}
       aria-live="polite"
       aria-atomic="true"
     >
@@ -182,7 +183,7 @@ function AutoSaveIndicatorComponent({
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               strokeLinecap="round"
-              className="text-primary-500 transition-all duration-100"
+              className={`text-primary-500 transition-all ${DURATION_TAILWIND[100]}`}
               strokeDasharray={`${2 * Math.PI * 10}`}
               strokeDashoffset={`${2 * Math.PI * 10 * (1 - progress / 100)}`}
             />
@@ -214,7 +215,7 @@ function AutoSaveIndicatorComponent({
           )}
           {saveState === 'saved' && (
             <svg
-              className="w-2.5 h-2.5 text-green-500 animate-in zoom-in duration-200"
+              className={`w-2.5 h-2.5 text-green-500 animate-in zoom-in ${DURATION_TAILWIND[200]}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -233,7 +234,7 @@ function AutoSaveIndicatorComponent({
 
       {/* Text */}
       <span
-        className={`font-medium transition-colors duration-200 ${
+        className={`font-medium transition-colors ${DURATION_TAILWIND[200]} ${
           saveState === 'typing'
             ? 'text-gray-500'
             : saveState === 'saving'
@@ -245,7 +246,7 @@ function AutoSaveIndicatorComponent({
         {saveState === 'saving' && AUTO_SAVE_INDICATOR_LABELS.SAVING}
         {saveState === 'saved' && (
           <span className="flex items-center gap-1">
-            <span className="animate-in fade-in duration-200">
+            <span className={`animate-in fade-in ${DURATION_TAILWIND[200]}`}>
               {AUTO_SAVE_INDICATOR_LABELS.SAVED}
             </span>
             {lastSaved && (
@@ -265,7 +266,7 @@ function AutoSaveIndicatorComponent({
                 position="top"
               >
                 <span
-                  className={`text-gray-500 animate-in fade-in slide-in-from-left-1 duration-300 cursor-help border-b border-dotted border-gray-400 hover:text-gray-600 transition-colors duration-200 ${ANIMATION_DELAYS.TAILWIND[100]}`}
+                  className={`text-gray-500 animate-in fade-in slide-in-from-left-1 ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted border-gray-400 hover:text-gray-600 transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]}`}
                 >
                   • {formatLastSaved(lastSaved)}
                 </span>
