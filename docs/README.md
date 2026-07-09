@@ -225,6 +225,7 @@ Complete index of all IdeaFlow documentation.
 
 ## Audit Reports
 
+- [BroCula Browser Audit - 2026-07-09](./audit/brocula-audit-20260709.md) - Browser console and Lighthouse audit
 - [BroCula Browser Audit - 2026-07-08](./audit/2026-07-08-brocula-browser-audit.md) - Browser console and Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-08](./audit/2026-07-08-flexy-modularization-audit.md) - Code modularization assessment
 - [Comprehensive Audit - 2026-07-08](./audit/2026-07-08-comprehensive-audit.md) - Full repository audit
