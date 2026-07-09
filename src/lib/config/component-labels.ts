@@ -88,10 +88,14 @@ export const LAYOUT_ERROR_LABELS = {
  * Eliminates hardcoded strings in ScrollToTop component
  */
 export const SCROLL_TO_TOP_LABELS = {
-  /** Main tooltip title */
+  /** Main tooltip title for scroll-to-top action */
   TITLE: 'Back to top',
-  /** Screen reader text */
+  /** Tooltip title for scroll-to-bottom action */
+  TITLE_BOTTOM: 'Back to bottom',
+  /** Screen reader text for scroll-to-top */
   SR_TEXT: 'Back to top',
+  /** Screen reader text for scroll-to-bottom */
+  SR_TEXT_BOTTOM: 'Back to bottom',
   /** Scroll instruction label */
   SCROLL_INSTRUCTION: 'Scroll 25%',
   /** Top position label */
@@ -107,9 +111,12 @@ export const SCROLL_TO_TOP_LABELS = {
   },
   /** Separator between keyboard shortcuts */
   SEPARATOR: '·',
-  /** ARIA label template for the button */
+  /** ARIA label template for scroll-to-top button */
   ARIA_LABEL: (progress: number) =>
     `Scroll to top (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
+  /** ARIA label template for scroll-to-bottom button */
+  ARIA_LABEL_BOTTOM: (progress: number) =>
+    `Scroll to bottom (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
 } as const;
 
 /**
