@@ -81,6 +81,10 @@ function ClarificationFlow({
   const prefersReducedMotion = usePrefersReducedMotion();
   const [referenceAnnouncement, setReferenceAnnouncement] = useState('');
   const [referenceTriggered, setReferenceTriggered] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<'forward' | 'backward'>(
+    'forward'
+  );
+  const prevStepRef = useRef(currentStep);
 
   // Micro-UX: Smooth scroll to question section when step changes
   // Ensures the new question is visible on screen after navigation,
@@ -96,6 +100,46 @@ function ClarificationFlow({
       });
     }
   }, [currentStep, prefersReducedMotion]);
+
+  // Micro-UX: Track navigation direction for directional slide animation
+  // Gives users visual context about whether they're moving forward or backward
+  useEffect(() => {
+    if (currentStep > prevStepRef.current) {
+      setSlideDirection('forward');
+    } else if (currentStep < prevStepRef.current) {
+      setSlideDirection('backward');
+    }
+    prevStepRef.current = currentStep;
+  }, [currentStep]);
+
+  // Micro-UX: Apply directional slide animation after DOM updates
+  // Uses double requestAnimationFrame to ensure browser has painted new content
+  // before applying the animation class, preventing animation skip
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const animationFrame = requestAnimationFrame(() => {
+      const frame = requestAnimationFrame(() => {
+        const el = questionSectionRef.current;
+        if (!el) return;
+
+        const animClass =
+          slideDirection === 'forward'
+            ? 'animate-slide-from-right'
+            : 'animate-slide-from-left';
+
+        el.classList.add(animClass);
+
+        const handleAnimationEnd = () => {
+          el.classList.remove(animClass);
+          el.removeEventListener('animationend', handleAnimationEnd);
+        };
+        el.addEventListener('animationend', handleAnimationEnd);
+      });
+      return () => cancelAnimationFrame(frame);
+    });
+    return () => cancelAnimationFrame(animationFrame);
+  }, [currentStep, slideDirection, prefersReducedMotion]);
 
   // Micro-UX: Auto-focus input when step changes for seamless keyboard navigation
   // Users can immediately type their answer without clicking/tapping the input field.
@@ -434,7 +478,7 @@ function ClarificationFlow({
         key={currentStep}
         aria-labelledby="question-heading"
         aria-describedby="question-description"
-        className={`${CARD_PATTERNS.RESPONSIVE} scale-in`}
+        className={CARD_PATTERNS.RESPONSIVE}
       >
         <form
           onSubmit={(e) => {
