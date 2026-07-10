@@ -27,6 +27,7 @@ import {
   LAYOUT_CLASSES,
   SIGNUP_PAGE_CONFIG,
 } from '@/lib/config';
+import { useScrollToError } from '@/hooks/useScrollToError';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
 type PasswordMatch = 'empty' | 'match' | 'mismatch';
@@ -293,6 +294,7 @@ export default function SignupPage() {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
+  const { scrollToError } = useScrollToError();
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
@@ -330,21 +332,24 @@ export default function SignupPage() {
 
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
       setEmailError(SIGNUP_PAGE_CONTENT.ERRORS.INVALID_EMAIL);
+      requestAnimationFrame(() => scrollToError());
       return false;
     }
 
     if (password.length < PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
       setPasswordError(SIGNUP_PAGE_CONTENT.ERRORS.PASSWORD_TOO_SHORT);
+      requestAnimationFrame(() => scrollToError());
       return false;
     }
 
     if (password !== confirmPassword) {
       setError(SIGNUP_PAGE_CONTENT.ERRORS.PASSWORDS_DO_NOT_MATCH);
+      requestAnimationFrame(() => scrollToError());
       return false;
     }
 
     return true;
-  }, [email, password, confirmPassword]);
+  }, [email, password, confirmPassword, scrollToError]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
