@@ -153,3 +153,6 @@ docs/archive/*.tar.gz
 docs/audits/
 docs/reports/
 docs/stale-branches-report.md
+
+# Exception for docs/maintenance/ - legitimate tracked maintenance reports
+!docs/maintenance/
