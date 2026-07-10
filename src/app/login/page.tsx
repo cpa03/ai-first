@@ -28,8 +28,10 @@ import {
   LOGIN_PAGE_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { useScrollToError } from '@/hooks/useScrollToError';
 
 export default function LoginPage() {
+  const { scrollToError } = useScrollToError();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -81,16 +83,18 @@ export default function LoginPage() {
 
     if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
       setEmailError(LOGIN_PAGE_CONTENT.ERRORS.INVALID_EMAIL);
+      requestAnimationFrame(() => scrollToError());
       return false;
     }
 
     if (password.length < PASSWORD_VALIDATION_CONFIG.MIN_LENGTH) {
       setPasswordError(LOGIN_PAGE_CONTENT.ERRORS.PASSWORD_TOO_SHORT);
+      requestAnimationFrame(() => scrollToError());
       return false;
     }
 
     return true;
-  }, [email, password]);
+  }, [email, password, scrollToError]);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
