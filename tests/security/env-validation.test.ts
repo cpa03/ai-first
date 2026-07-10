@@ -57,8 +57,12 @@ describe('Environment Validation', () => {
       const result = validateEnvironment();
 
       expect(result.valid).toBe(false);
-      expect(result.errors.some(e => e.includes('NEXT_PUBLIC_INTERNAL_API_SECRET'))).toBe(true);
-      expect(result.errors.some(e => e.includes('NEXT_PUBLIC_JWT_SECRET'))).toBe(true);
+      expect(
+        result.errors.some((e) => e.includes('NEXT_PUBLIC_INTERNAL_API_SECRET'))
+      ).toBe(true);
+      expect(
+        result.errors.some((e) => e.includes('NEXT_PUBLIC_JWT_SECRET'))
+      ).toBe(true);
     });
 
     it('should detect missing required variables', () => {

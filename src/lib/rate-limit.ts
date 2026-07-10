@@ -56,7 +56,10 @@ function extractUserIdFromRequest(request: Request): string | null {
     const internalSecret = request.headers.get('x-internal-secret');
     const expectedSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
 
-    if (isDev || (internalSecret && expectedSecret && internalSecret === expectedSecret)) {
+    if (
+      isDev ||
+      (internalSecret && expectedSecret && internalSecret === expectedSecret)
+    ) {
       return xUserId.trim() || null;
     }
   }
@@ -105,7 +108,9 @@ function determineUserRole(request: Request, userId: string | null): UserRole {
   const isDev = ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development';
   const internalSecret = request.headers.get('x-internal-secret');
   const expectedSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
-  const isTrusted = isDev || (internalSecret && expectedSecret && internalSecret === expectedSecret);
+  const isTrusted =
+    isDev ||
+    (internalSecret && expectedSecret && internalSecret === expectedSecret);
 
   if (isTrusted) {
     const tierHeader = request.headers.get('x-user-tier');

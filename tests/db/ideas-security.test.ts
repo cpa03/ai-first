@@ -33,7 +33,10 @@ const createMockSupabaseClient = (): MockSupabaseChain => {
       resolve: (value: unknown) => unknown,
       reject?: (reason: unknown) => unknown
     ) {
-      return Promise.resolve({ data: [], count: 0, error: null }).then(resolve, reject);
+      return Promise.resolve({ data: [], count: 0, error: null }).then(
+        resolve,
+        reject
+      );
     },
   };
 
@@ -63,7 +66,11 @@ describe('IdeaService Security', () => {
   describe('getUserIdeasPaginated search term escaping', () => {
     it('should correctly handle search terms with commas', async () => {
       const searchTerm = 'foo,bar';
-      await ideaService.getUserIdeasPaginated('user-1', {}, { search: searchTerm });
+      await ideaService.getUserIdeasPaginated(
+        'user-1',
+        {},
+        { search: searchTerm }
+      );
 
       // Current (vulnerable) implementation will produce:
       // title.ilike.%foo,bar%,raw_text.ilike.%foo,bar%
@@ -78,7 +85,11 @@ describe('IdeaService Security', () => {
 
     it('should correctly handle search terms with double quotes', async () => {
       const searchTerm = 'foo"bar';
-      await ideaService.getUserIdeasPaginated('user-1', {}, { search: searchTerm });
+      await ideaService.getUserIdeasPaginated(
+        'user-1',
+        {},
+        { search: searchTerm }
+      );
 
       const orCall = mockClient.or.mock.calls[0][0];
 

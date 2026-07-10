@@ -2,7 +2,9 @@ import { findSimilarIdeas } from '@/lib/similarity-service';
 
 // Mock Supabase client
 const mockSingle = jest.fn();
-const mockEq = jest.fn().mockReturnValue({ eq: jest.fn().mockReturnValue({ single: mockSingle }) });
+const mockEq = jest
+  .fn()
+  .mockReturnValue({ eq: jest.fn().mockReturnValue({ single: mockSingle }) });
 const mockRpc = jest.fn();
 const mockIn = jest.fn().mockReturnThis();
 
@@ -88,8 +90,20 @@ describe('SimilarityService', () => {
 
       // 3. Mock bulk ideas retrieval
       const mockIdeas = [
-        { id: 'similar-2', title: 'Idea 2', status: 'draft', created_at: '2026-01-02', user_id: userId },
-        { id: 'similar-1', title: 'Idea 1', status: 'completed', created_at: '2026-01-01', user_id: userId },
+        {
+          id: 'similar-2',
+          title: 'Idea 2',
+          status: 'draft',
+          created_at: '2026-01-02',
+          user_id: userId,
+        },
+        {
+          id: 'similar-1',
+          title: 'Idea 1',
+          status: 'completed',
+          created_at: '2026-01-01',
+          user_id: userId,
+        },
       ];
 
       mockIn.mockReturnValueOnce({
@@ -97,8 +111,8 @@ describe('SimilarityService', () => {
           is: jest.fn().mockResolvedValueOnce({
             data: mockIdeas,
             error: null,
-          })
-        })
+          }),
+        }),
       });
 
       const result = await findSimilarIdeas(ideaId, userId);
@@ -127,8 +141,14 @@ describe('SimilarityService', () => {
     });
 
     it('should handle RPC errors', async () => {
-      mockSingle.mockResolvedValueOnce({ data: { embedding: [0.1] }, error: null });
-      mockRpc.mockResolvedValueOnce({ data: null, error: { message: 'RPC Error' } });
+      mockSingle.mockResolvedValueOnce({
+        data: { embedding: [0.1] },
+        error: null,
+      });
+      mockRpc.mockResolvedValueOnce({
+        data: null,
+        error: { message: 'RPC Error' },
+      });
 
       await expect(findSimilarIdeas(ideaId, userId)).rejects.toThrow();
     });

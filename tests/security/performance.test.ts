@@ -16,10 +16,13 @@ describe('Suspicious Pattern Detection Performance', () => {
     'X-Client-Version': '1.0.0',
   });
 
-  const suspiciousRequest = createMockRequest('https://example.com/api/tasks?id=1;DROP TABLE users', {
-    'User-Agent': 'Mozilla/5.0',
-    'X-Custom-Header': '<script>alert(1)</script>',
-  });
+  const suspiciousRequest = createMockRequest(
+    'https://example.com/api/tasks?id=1;DROP TABLE users',
+    {
+      'User-Agent': 'Mozilla/5.0',
+      'X-Custom-Header': '<script>alert(1)</script>',
+    }
+  );
 
   it('measures performance for safe requests', () => {
     const iterations = 10000;

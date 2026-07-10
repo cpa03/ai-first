@@ -25,7 +25,9 @@ describe('CircuitBreakerManager Performance', () => {
     const duration = end - start;
     const avgPerCall = duration / ITERATIONS;
 
-    console.log(`Average getOrCreate (access existing) time: ${avgPerCall.toFixed(6)}ms`);
+    console.log(
+      `Average getOrCreate (access existing) time: ${avgPerCall.toFixed(6)}ms`
+    );
 
     // Expect very fast execution (typically < 0.01ms per call in V8)
     expect(avgPerCall).toBeLessThan(0.1);
@@ -45,7 +47,9 @@ describe('CircuitBreakerManager Performance', () => {
     const duration = end - start;
     const avgPerCall = duration / ITERATIONS;
 
-    console.log(`Average getOrCreate (with eviction) time: ${avgPerCall.toFixed(6)}ms`);
+    console.log(
+      `Average getOrCreate (with eviction) time: ${avgPerCall.toFixed(6)}ms`
+    );
 
     expect(avgPerCall).toBeLessThan(0.1);
   });

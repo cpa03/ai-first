@@ -96,11 +96,7 @@ export interface Database {
           risk_factors: string[] | null;
           acceptance_criteria: Json | null;
           deliverable_type:
-            | 'feature'
-            | 'documentation'
-            | 'testing'
-            | 'deployment'
-            | 'research';
+            'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
           deleted_at: string | null;
         };
         Insert: {
@@ -117,11 +113,7 @@ export interface Database {
           risk_factors?: string[] | null;
           acceptance_criteria?: Json | null;
           deliverable_type?:
-            | 'feature'
-            | 'documentation'
-            | 'testing'
-            | 'deployment'
-            | 'research';
+            'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
           deleted_at?: string | null;
         };
         Update: {
@@ -138,11 +130,7 @@ export interface Database {
           risk_factors?: string[] | null;
           acceptance_criteria?: Json | null;
           deliverable_type?:
-            | 'feature'
-            | 'documentation'
-            | 'testing'
-            | 'deployment'
-            | 'research';
+            'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
           deleted_at?: string | null;
         };
       };
@@ -451,11 +439,7 @@ export interface Database {
           processing_time_ms: number | null;
           session_data: Json;
           status:
-            | 'analyzing'
-            | 'decomposing'
-            | 'scheduling'
-            | 'completed'
-            | 'failed';
+            'analyzing' | 'decomposing' | 'scheduling' | 'completed' | 'failed';
           updated_at: string;
         };
         Insert: {
@@ -467,11 +451,7 @@ export interface Database {
           processing_time_ms?: number | null;
           session_data: Json;
           status?:
-            | 'analyzing'
-            | 'decomposing'
-            | 'scheduling'
-            | 'completed'
-            | 'failed';
+            'analyzing' | 'decomposing' | 'scheduling' | 'completed' | 'failed';
           updated_at?: string;
         };
         Update: {
@@ -483,11 +463,7 @@ export interface Database {
           processing_time_ms?: number | null;
           session_data?: Json;
           status?:
-            | 'analyzing'
-            | 'decomposing'
-            | 'scheduling'
-            | 'completed'
-            | 'failed';
+            'analyzing' | 'decomposing' | 'scheduling' | 'completed' | 'failed';
           updated_at?: string;
         };
       };
@@ -540,11 +516,7 @@ export interface Database {
           impact_level: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
           mitigation_strategy: string | null;
           probability_level:
-            | 'very_low'
-            | 'low'
-            | 'medium'
-            | 'high'
-            | 'very_high';
+            'very_low' | 'low' | 'medium' | 'high' | 'very_high';
           risk_factor: string;
           risk_score: number | null;
           status: 'open' | 'mitigated' | 'accepted' | 'closed';
@@ -558,11 +530,7 @@ export interface Database {
           impact_level: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
           mitigation_strategy?: string | null;
           probability_level:
-            | 'very_low'
-            | 'low'
-            | 'medium'
-            | 'high'
-            | 'very_high';
+            'very_low' | 'low' | 'medium' | 'high' | 'very_high';
           risk_factor: string;
           risk_score?: number | null;
           status?: 'open' | 'mitigated' | 'accepted' | 'closed';
@@ -576,11 +544,7 @@ export interface Database {
           impact_level?: 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
           mitigation_strategy?: string | null;
           probability_level?:
-            | 'very_low'
-            | 'low'
-            | 'medium'
-            | 'high'
-            | 'very_high';
+            'very_low' | 'low' | 'medium' | 'high' | 'very_high';
           risk_factor?: string;
           risk_score?: number | null;
           status?: 'open' | 'mitigated' | 'accepted' | 'closed';

@@ -186,7 +186,7 @@ describe('auth', () => {
 
   describe('requireAdminAuth', () => {
     beforeEach(() => {
-        setProcessEnv('NODE_ENV', 'production');
+      setProcessEnv('NODE_ENV', 'production');
       process.env.ADMIN_API_KEY = MOCK_SECRETS.ADMIN_API_KEY;
     });
 
@@ -245,7 +245,7 @@ describe('auth', () => {
 
   describe('development mode bypass', () => {
     beforeEach(() => {
-        setProcessEnv('NODE_ENV', 'development');
+      setProcessEnv('NODE_ENV', 'development');
       delete process.env.ADMIN_API_KEY;
     });
 

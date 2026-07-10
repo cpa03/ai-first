@@ -378,9 +378,7 @@ describe('Integration Tests', () => {
             description: `Description for task ${i}`,
             assignee: `User ${i % 10}`,
             status: ['todo', 'in_progress', 'completed'][i % 3] as
-              | 'todo'
-              | 'in_progress'
-              | 'completed',
+              'todo' | 'in_progress' | 'completed',
             estimate: (i % 4) + 1,
           })
         ),

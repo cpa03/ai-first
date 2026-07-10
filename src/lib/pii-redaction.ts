@@ -52,13 +52,7 @@ interface PIIPatterns {
  * Redaction result type for type safety
  */
 export type RedactionResult =
-  | string
-  | number
-  | boolean
-  | null
-  | undefined
-  | RedactedObject
-  | RedactedArray;
+  string | number | boolean | null | undefined | RedactedObject | RedactedArray;
 
 interface RedactedObject {
   [key: string]: RedactionResult;

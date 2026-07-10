@@ -210,7 +210,13 @@ describe('Suspicious Pattern Detection Improvements', () => {
     });
 
     it('should detect advanced Windows and recon commands', () => {
-      const commands = ['powershell', 'cmd.exe', 'tasklist', 'netstat', 'ipconfig'];
+      const commands = [
+        'powershell',
+        'cmd.exe',
+        'tasklist',
+        'netstat',
+        'ipconfig',
+      ];
       for (const cmd of commands) {
         const request = createMockRequest(
           `https://example.com/api/test?cmd=;${cmd}`

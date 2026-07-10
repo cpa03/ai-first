@@ -1,4 +1,8 @@
-import { getUserRateLimitInfo, checkUserRateLimit, rateLimitConfigs } from '@/lib/rate-limit';
+import {
+  getUserRateLimitInfo,
+  checkUserRateLimit,
+  rateLimitConfigs,
+} from '@/lib/rate-limit';
 import { BASE_URL } from '../config/test-config';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 
@@ -16,8 +20,8 @@ jest.mock('@/lib/config/env-keys', () => {
       SECURITY: {
         ...actual.ENV_ACCESSORS.SECURITY,
         INTERNAL_API_SECRET: jest.fn().mockReturnValue('secret-123'),
-      }
-    }
+      },
+    },
   };
 });
 
@@ -30,12 +34,14 @@ describe('Rate Limit Header Spoofing (Security)', () => {
 
   it('FIXED: should ignore spoofed user ID via x-supabase-user-id in production', () => {
     // Simulated production environment (via mock)
-    (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue('production');
+    (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue(
+      'production'
+    );
 
     const request = new Request(BASE_URL, {
       headers: {
-        'x-supabase-user-id': 'spoofed-user-id'
-      }
+        'x-supabase-user-id': 'spoofed-user-id',
+      },
     });
 
     const userInfo = getUserRateLimitInfo(request);
@@ -47,13 +53,15 @@ describe('Rate Limit Header Spoofing (Security)', () => {
 
   it('FIXED: should ignore spoofed user tier via x-user-tier in production', () => {
     // Simulated production environment
-    (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue('production');
+    (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue(
+      'production'
+    );
 
     const request = new Request(BASE_URL, {
       headers: {
         'x-supabase-user-id': 'any-user',
-        'x-user-tier': 'enterprise'
-      }
+        'x-user-tier': 'enterprise',
+      },
     });
 
     const userInfo = getUserRateLimitInfo(request);
@@ -68,17 +76,21 @@ describe('Rate Limit Header Spoofing (Security)', () => {
   });
 
   it('PROTECTION: should allow internal headers if valid secret is provided', () => {
-     // This test ensures that legitimate internal traffic (e.g. from a proxy) can still use these headers
-     // once we implement the fix.
-    (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue('production');
-    (ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET as jest.Mock).mockReturnValue('secret-123');
+    // This test ensures that legitimate internal traffic (e.g. from a proxy) can still use these headers
+    // once we implement the fix.
+    (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue(
+      'production'
+    );
+    (ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET as jest.Mock).mockReturnValue(
+      'secret-123'
+    );
 
     const request = new Request(BASE_URL, {
       headers: {
         'x-supabase-user-id': 'trusted-user',
         'x-user-tier': 'premium',
-        'x-internal-secret': 'secret-123'
-      }
+        'x-internal-secret': 'secret-123',
+      },
     });
 
     const userInfo = getUserRateLimitInfo(request);

@@ -135,7 +135,8 @@ describe('Cache Performance', () => {
       // We use a tolerance factor to account for this.
       // The test passes if cached time is within the tolerance of uncached time,
       // or if caching actually shows improvement.
-      const maxAcceptableCachedTime = uncachedTime * PERFORMANCE_TOLERANCE_FACTOR;
+      const maxAcceptableCachedTime =
+        uncachedTime * PERFORMANCE_TOLERANCE_FACTOR;
       expect(cachedTime).toBeLessThan(maxAcceptableCachedTime);
     });
   });

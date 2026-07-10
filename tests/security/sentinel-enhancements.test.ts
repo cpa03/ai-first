@@ -38,8 +38,14 @@ describe('Sentinel Security Enhancements', () => {
   describe('HTML Sanitization (Style Redaction)', () => {
     it('should redact style attributes in various formats', () => {
       const cases = [
-        { input: '<div style="color: red">', expected: '<div [REDACTED_STYLE]>' },
-        { input: "<div style='color: red'>", expected: '<div [REDACTED_STYLE]>' },
+        {
+          input: '<div style="color: red">',
+          expected: '<div [REDACTED_STYLE]>',
+        },
+        {
+          input: "<div style='color: red'>",
+          expected: '<div [REDACTED_STYLE]>',
+        },
         { input: '<div style=color:red>', expected: '<div [REDACTED_STYLE]>' },
         { input: '<img/style="border:0">', expected: '<img [REDACTED_STYLE]>' },
       ];
@@ -54,8 +60,12 @@ describe('Sentinel Security Enhancements', () => {
     });
 
     it('should still redact dangerous protocols', () => {
-      expect(sanitizeHtml('javascript:alert(1)')).toBe('[REDACTED_PROTOCOL]alert(1)');
-      expect(sanitizeHtml('data:text/html,abc')).toBe('[REDACTED_DATA_URI],abc');
+      expect(sanitizeHtml('javascript:alert(1)')).toBe(
+        '[REDACTED_PROTOCOL]alert(1)'
+      );
+      expect(sanitizeHtml('data:text/html,abc')).toBe(
+        '[REDACTED_DATA_URI],abc'
+      );
     });
   });
 
@@ -69,7 +79,9 @@ describe('Sentinel Security Enhancements', () => {
     it('should block requests with severity 3 patterns (High)', async () => {
       const wrapped = withApiHandler(mockHandler);
       // Severity 3 pattern (SQL injection UNION SELECT)
-      const request = new NextRequest('http://localhost/api/test?q=UNION SELECT * FROM users');
+      const request = new NextRequest(
+        'http://localhost/api/test?q=UNION SELECT * FROM users'
+      );
 
       const response = await wrapped(request);
       expect(response.status).toBe(403);
@@ -79,7 +91,9 @@ describe('Sentinel Security Enhancements', () => {
     it('should block requests with severity 2 patterns (Medium)', async () => {
       const wrapped = withApiHandler(mockHandler);
       // Severity 2 pattern (Path traversal ../)
-      const request = new NextRequest('http://localhost/api/test?file=../../etc/passwd');
+      const request = new NextRequest(
+        'http://localhost/api/test?file=../../etc/passwd'
+      );
 
       const response = await wrapped(request);
       expect(response.status).toBe(403);

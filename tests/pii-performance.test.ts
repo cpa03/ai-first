@@ -51,13 +51,13 @@ describe('PII Redaction Performance', () => {
     config: {
       retries: 3,
       enabled: true,
-      mode: 'production'
+      mode: 'production',
     },
     items: [
       { id: 'item_1', name: 'Setup' },
       { id: 'item_2', name: 'Code' },
-      { id: 'item_3', name: 'Test' }
-    ]
+      { id: 'item_3', name: 'Test' },
+    ],
   };
 
   it('measures redaction performance for a large object with PII', () => {

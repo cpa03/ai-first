@@ -355,12 +355,7 @@ describe('AppRetryExhaustedError', () => {
   });
 
   it('should handle null original error', () => {
-    const error = new AppRetryExhaustedError(
-      'Failed',
-      'GitHub',
-      2,
-      null
-    );
+    const error = new AppRetryExhaustedError('Failed', 'GitHub', 2, null);
 
     expect(error.originalError).toBeNull();
   });
