@@ -1412,6 +1412,49 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* ClarificationFlow Directional Slide Animations - Micro-UX delight for question navigation */
+/* Provides visual context about navigation direction: slide-from-right when going forward, slide-from-left when going backward */
+/* Helps users intuitively understand the flow direction and creates a more polished navigation experience */
+@keyframes slideFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-from-right {
+  animation: slideFromRight var(--duration-normal) var(--ease-out-expo) forwards;
+}
+
+.animate-slide-from-left {
+  animation: slideFromLeft var(--duration-normal) var(--ease-out-expo) forwards;
+}
+
+/* Reduced motion support for directional slide animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-from-right,
+  .animate-slide-from-left {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Micro-UX: Touch device visibility for hover-dependent UI elements */
 /* On touch devices, hover states don't persist, so hover-only elements are invisible */
 /* This utility ensures elements remain visible on devices that don't support hover */
