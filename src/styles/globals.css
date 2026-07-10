@@ -1289,6 +1289,38 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Input First-Time Valid Celebration - Micro-UX delight for form validation */
+/* Provides satisfying visual feedback when an input first becomes valid,
+   especially after being invalid. Creates a subtle scale + glow effect
+   that rewards users for fixing errors and makes form completion feel rewarding */
+@keyframes inputFirstValidCelebration {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
+  }
+  40% {
+    transform: scale(1.015);
+    box-shadow: 0 0 0 4px var(--shadow-success-medium);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
+  }
+}
+
+.animate-input-valid-celebration {
+  animation: inputFirstValidCelebration 0.5s var(--ease-spring) forwards;
+}
+
+/* Reduced motion support for input valid celebration */
+@media (prefers-reduced-motion: reduce) {
+  .animate-input-valid-celebration {
+    animation: none;
+    transform: none;
+    box-shadow: none;
+  }
+}
+
 /* Copy Confetti Burst Animation - Micro-UX delight for successful copy actions */
 /* Creates small particles that burst outward from the button for a satisfying celebration */
 @keyframes confettiBurst {
