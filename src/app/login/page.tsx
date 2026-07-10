@@ -25,6 +25,7 @@ import {
   TYPOGRAPHY_CLASSES,
   SPACING_CLASSES,
   LAYOUT_CLASSES,
+  LOGIN_PAGE_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -199,14 +200,14 @@ export default function LoginPage() {
             {LOGIN_PAGE_CONTENT.HEADING}
           </h1>
           <p
-            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance delay-75`}
+            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
           >
             {LOGIN_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>
 
         <form
-          className="mt-8 space-y-6 animate-hero-entrance delay-150"
+          className={`mt-8 space-y-6 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
           {error && (
@@ -343,7 +344,9 @@ export default function LoginPage() {
           </Button>
         </form>
 
-        <div className="relative animate-hero-entrance delay-200">
+        <div
+          className={`relative animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+        >
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300" />
           </div>
@@ -354,7 +357,9 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 animate-hero-entrance delay-250">
+        <div
+          className={`grid grid-cols-2 gap-3 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+        >
           <Button
             type="button"
             variant="outline"
@@ -423,7 +428,9 @@ export default function LoginPage() {
           </Button>
         </div>
 
-        <p className="text-center text-sm text-gray-600 animate-hero-entrance delay-300">
+        <p
+          className={`text-center text-sm text-gray-600 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+        >
           {LOGIN_PAGE_CONTENT.FOOTER.NO_ACCOUNT}{' '}
           <Link
             href={ROUTES.SIGNUP}
