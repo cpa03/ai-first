@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useState, useRef } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { ANIMATION_CONFIG } from '@/lib/config';
 
 interface TypingIndicatorProps {
   /** Whether the user is currently typing */
@@ -26,7 +27,7 @@ interface TypingIndicatorProps {
  */
 function TypingIndicatorComponent({
   isTyping,
-  hideDelay = 300,
+  hideDelay = ANIMATION_CONFIG.TYPING_INDICATOR.HIDE_DELAY,
   className = '',
 }: TypingIndicatorProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -90,7 +91,7 @@ function TypingIndicatorComponent({
             ${isAnimating && !prefersReducedMotion ? 'animate-typing-dot' : 'opacity-40'}
           `}
           style={{
-            animationDelay: `${index * 150}ms`,
+            animationDelay: `${index * ANIMATION_CONFIG.TYPING_INDICATOR.DOT_STAGGER}ms`,
           }}
         />
       ))}

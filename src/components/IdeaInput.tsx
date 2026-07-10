@@ -10,8 +10,7 @@ import {
   validateIdeaToMessage,
 } from '@/lib/validation';
 import { MESSAGES, PLACEHOLDERS } from '@/lib/config/ui';
-import { COMPONENT_CONFIG } from '@/lib/config/components';
-import { HTTP_HEADERS } from '@/lib/config/http';
+import { ANIMATION_CONFIG, COMPONENT_CONFIG, HTTP_HEADERS } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
   SVG_STROKE_WIDTHS,
@@ -167,7 +166,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       }
       typingTimeoutRef.current = setTimeout(() => {
         setIsTyping(false);
-      }, 300);
+      }, ANIMATION_CONFIG.TYPING_INDICATOR.STATE_DURATION);
     },
     []
   );
@@ -418,7 +417,11 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           )
         )}
 
-        <TypingIndicator isTyping={isTyping} hideDelay={300} className="ml-2" />
+        <TypingIndicator
+          isTyping={isTyping}
+          hideDelay={ANIMATION_CONFIG.TYPING_INDICATOR.HIDE_DELAY}
+          className="ml-2"
+        />
 
         {writingProgress > 5 && (
           <div className="space-y-2">
