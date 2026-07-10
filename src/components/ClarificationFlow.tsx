@@ -120,7 +120,7 @@ function ClarificationFlow({
       } else if (currentQuestion.type === 'select' && selectRef.current) {
         selectRef.current.focus();
       }
-    }, 50);
+    }, ANIMATION_CONFIG.INPUT_FOCUS_DELAY);
 
     return () => clearTimeout(timer);
   }, [

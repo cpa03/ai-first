@@ -139,6 +139,37 @@ export const ANIMATION_CONFIG = {
   ),
 
   /**
+   * Typing Indicator Animation Values
+   * Centralizes timing for the typing indicator component
+   */
+  TYPING_INDICATOR: {
+    /** Delay in ms before the indicator disappears after typing stops */
+    /** Env: UI_ANIMATION_TYPING_HIDE_DELAY (default: 300) */
+    HIDE_DELAY: EnvLoader.number(
+      'UI_ANIMATION_TYPING_HIDE_DELAY',
+      300,
+      50,
+      2000
+    ),
+    /** Delay between each dot's animation (stagger) */
+    /** Env: UI_ANIMATION_TYPING_DOT_STAGGER (default: 150) */
+    DOT_STAGGER: EnvLoader.number(
+      'UI_ANIMATION_TYPING_DOT_STAGGER',
+      150,
+      50,
+      500
+    ),
+    /** Duration for the typing state transition */
+    /** Env: UI_ANIMATION_TYPING_STATE_DURATION (default: 200) */
+    STATE_DURATION: EnvLoader.number(
+      'UI_ANIMATION_TYPING_STATE_DURATION',
+      200,
+      50,
+      1000
+    ),
+  } as const,
+
+  /**
    * Task Management Animation Values
    * Centralizes animation durations and delays for task management components
    */
