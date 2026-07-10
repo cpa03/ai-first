@@ -481,8 +481,7 @@ describe('NotionExporter.buildNotionBlocks', () => {
         title: `Task ${i}`,
         estimate: i + 1,
         status: (i % 2 === 0 ? 'completed' : 'pending') as
-          | 'completed'
-          | 'pending',
+          'completed' | 'pending',
       }));
 
       const startTime = Date.now();

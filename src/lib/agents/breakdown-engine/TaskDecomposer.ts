@@ -114,7 +114,8 @@ export class TaskDecomposer {
     return {
       tasks,
       totalEstimatedHours: totalHours,
-      confidence: analysis.overallConfidence * TASK_CONFIG.CONFIDENCE.MULTIPLIER,
+      confidence:
+        analysis.overallConfidence * TASK_CONFIG.CONFIDENCE.MULTIPLIER,
     };
   }
 }

@@ -6,9 +6,14 @@ export type {
 } from '@/lib/errors';
 export { ErrorCode } from '@/lib/errors';
 
-export type { ApiResponse, ApiContext, ApiHandlerOptions } from '@/lib/api-handler';
+export type {
+  ApiResponse,
+  ApiContext,
+  ApiHandlerOptions,
+} from '@/lib/api-handler';
 
-export type HttpStatus = 200 | 201 | 204 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 502 | 503 | 504;
+export type HttpStatus =
+  200 | 201 | 204 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 502 | 503 | 504;
 
 export interface ApiSuccessResponse<T = unknown> {
   success: true;

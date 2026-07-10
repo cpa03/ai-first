@@ -65,5 +65,5 @@ export const resilienceManager = {
    */
   getCircuitBreakerNames(): string[] {
     return cbManager.getNames();
-  }, 
+  },
 };

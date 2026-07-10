@@ -17,7 +17,9 @@ describe('JSON-LD Security', () => {
     const result = safeJsonLd(obj);
 
     // Should contain escaped version of <
-    expect(result).toContain('\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e');
+    expect(result).toContain(
+      '\\u003c/script\\u003e\\u003cscript\\u003ealert(1)\\u003c/script\\u003e'
+    );
     // Should NOT contain raw </script>
     expect(result).not.toContain('</script>');
     // Should NOT contain raw <script>
@@ -42,8 +44,8 @@ describe('JSON-LD Security', () => {
     const obj = {
       '@context': 'https://schema.org',
       nested: {
-        payload: '<img src=x onerror=alert(1)>'
-      }
+        payload: '<img src=x onerror=alert(1)>',
+      },
     };
     const result = safeJsonLd(obj);
     expect(result).toContain('\\u003cimg src=x onerror=alert(1)\\u003e');

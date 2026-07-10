@@ -44,7 +44,7 @@ describe('Task Custom Fields Sanitization', () => {
           list: ['<iframe src="javascript:alert(1)"></iframe>', 'safe'],
         },
         number: 123,
-        bool: true
+        bool: true,
       },
     };
 

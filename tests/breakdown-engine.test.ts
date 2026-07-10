@@ -146,10 +146,51 @@ describe('BreakdownEngine', () => {
 
       dbService.storeVector.mockResolvedValue(createMockVector());
       dbService.createDeliverables.mockResolvedValue([
-        { id: 'del-1', title: 'User Interface', idea_id: 'idea-123', description: '', priority: 1, estimate_hours: 8, milestone_id: null, completion_percentage: 0, business_value: 5, risk_factors: null, acceptance_criteria: null, deliverable_type: 'feature', created_at: new Date().toISOString() },
+        {
+          id: 'del-1',
+          title: 'User Interface',
+          idea_id: 'idea-123',
+          description: '',
+          priority: 1,
+          estimate_hours: 8,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          created_at: new Date().toISOString(),
+        },
       ]);
-      dbService.createTasks.mockResolvedValue([{ id: 'task-1', deliverable_id: 'del-1', title: 'Task 1', status: 'todo', estimate: 4, start_date: null, end_date: null, actual_hours: null, completion_percentage: 0, priority_score: 1, complexity_score: 1, risk_level: 'low', tags: null, custom_fields: null, milestone_id: null, created_at: new Date().toISOString() }]);
-      dbService.updateIdea.mockResolvedValue({ id: 'idea-123', title: 'Test', status: 'breakdown', created_at: new Date().toISOString(), raw_text: 'Test', user_id: 'default_user', deleted_at: null });
+      dbService.createTasks.mockResolvedValue([
+        {
+          id: 'task-1',
+          deliverable_id: 'del-1',
+          title: 'Task 1',
+          status: 'todo',
+          estimate: 4,
+          start_date: null,
+          end_date: null,
+          actual_hours: null,
+          completion_percentage: 0,
+          priority_score: 1,
+          complexity_score: 1,
+          risk_level: 'low',
+          tags: null,
+          custom_fields: null,
+          milestone_id: null,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.updateIdea.mockResolvedValue({
+        id: 'idea-123',
+        title: 'Test',
+        status: 'breakdown',
+        created_at: new Date().toISOString(),
+        raw_text: 'Test',
+        user_id: 'default_user',
+        deleted_at: null,
+      });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
       const session = await breakdownEngine.startBreakdown(
@@ -228,9 +269,52 @@ describe('BreakdownEngine', () => {
         .mockRejectedValueOnce(new Error('Task decomposition failed'));
 
       dbService.storeVector.mockResolvedValue(createMockVector());
-      dbService.createDeliverables.mockResolvedValue([{ id: 'del-1', title: 'Test Deliverable', idea_id: 'idea-123', description: '', priority: 1, estimate_hours: 8, milestone_id: null, completion_percentage: 0, business_value: 5, risk_factors: null, acceptance_criteria: null, deliverable_type: 'feature', created_at: new Date().toISOString() }]);
-      dbService.createTasks.mockResolvedValue([{ id: 'task-1', deliverable_id: 'del-1', title: 'Task', status: 'todo', estimate: 4, start_date: null, end_date: null, actual_hours: null, completion_percentage: 0, priority_score: 1, complexity_score: 1, risk_level: 'low', tags: null, custom_fields: null, milestone_id: null, created_at: new Date().toISOString() }]);
-      dbService.updateIdea.mockResolvedValue({ id: 'idea-123', title: 'Test', status: 'breakdown', created_at: new Date().toISOString(), raw_text: 'Test', user_id: 'default_user', deleted_at: null });
+      dbService.createDeliverables.mockResolvedValue([
+        {
+          id: 'del-1',
+          title: 'Test Deliverable',
+          idea_id: 'idea-123',
+          description: '',
+          priority: 1,
+          estimate_hours: 8,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.createTasks.mockResolvedValue([
+        {
+          id: 'task-1',
+          deliverable_id: 'del-1',
+          title: 'Task',
+          status: 'todo',
+          estimate: 4,
+          start_date: null,
+          end_date: null,
+          actual_hours: null,
+          completion_percentage: 0,
+          priority_score: 1,
+          complexity_score: 1,
+          risk_level: 'low',
+          tags: null,
+          custom_fields: null,
+          milestone_id: null,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.updateIdea.mockResolvedValue({
+        id: 'idea-123',
+        title: 'Test',
+        status: 'breakdown',
+        created_at: new Date().toISOString(),
+        raw_text: 'Test',
+        user_id: 'default_user',
+        deleted_at: null,
+      });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
       const session = await breakdownEngine.startBreakdown(
@@ -272,12 +356,12 @@ describe('BreakdownEngine', () => {
       };
 
       dbService.getVectors.mockResolvedValue([
-        { 
-          id: 'vector-1', 
-          idea_id: 'idea-123', 
-          vector_data: mockSession, 
+        {
+          id: 'vector-1',
+          idea_id: 'idea-123',
+          vector_data: mockSession,
           reference_type: 'session',
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         },
       ]);
 
@@ -344,9 +428,52 @@ describe('BreakdownEngine', () => {
 
       aiService.callModel.mockResolvedValue(JSON.stringify(mockAnalysis));
       dbService.storeVector.mockResolvedValue(createMockVector());
-      dbService.createDeliverables.mockResolvedValue([{ id: 'del-1', title: 'Task', idea_id: 'idea-123', description: '', priority: 1, estimate_hours: 8, milestone_id: null, completion_percentage: 0, business_value: 5, risk_factors: null, acceptance_criteria: null, deliverable_type: 'feature', created_at: new Date().toISOString() }]);
-      dbService.createTasks.mockResolvedValue([{ id: 'task-1', deliverable_id: 'del-1', title: 'Task', status: 'todo', estimate: 4, start_date: null, end_date: null, actual_hours: null, completion_percentage: 0, priority_score: 1, complexity_score: 1, risk_level: 'low', tags: null, custom_fields: null, milestone_id: null, created_at: new Date().toISOString() }]);
-      dbService.updateIdea.mockResolvedValue({ id: 'idea-123', title: 'Test', status: 'breakdown', created_at: new Date().toISOString(), raw_text: 'Test', user_id: 'default_user', deleted_at: null });
+      dbService.createDeliverables.mockResolvedValue([
+        {
+          id: 'del-1',
+          title: 'Task',
+          idea_id: 'idea-123',
+          description: '',
+          priority: 1,
+          estimate_hours: 8,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.createTasks.mockResolvedValue([
+        {
+          id: 'task-1',
+          deliverable_id: 'del-1',
+          title: 'Task',
+          status: 'todo',
+          estimate: 4,
+          start_date: null,
+          end_date: null,
+          actual_hours: null,
+          completion_percentage: 0,
+          priority_score: 1,
+          complexity_score: 1,
+          risk_level: 'low',
+          tags: null,
+          custom_fields: null,
+          milestone_id: null,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.updateIdea.mockResolvedValue({
+        id: 'idea-123',
+        title: 'Test',
+        status: 'breakdown',
+        created_at: new Date().toISOString(),
+        raw_text: 'Test',
+        user_id: 'default_user',
+        deleted_at: null,
+      });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
       const session = await breakdownEngine.startBreakdown(
@@ -386,8 +513,32 @@ describe('BreakdownEngine', () => {
         .mockResolvedValueOnce(JSON.stringify([]));
 
       dbService.storeVector.mockResolvedValue(createMockVector());
-      dbService.createDeliverables.mockResolvedValue([{ id: 'del-1', title: 'Task', idea_id: 'idea-123', description: '', priority: 1, estimate_hours: 8, milestone_id: null, completion_percentage: 0, business_value: 5, risk_factors: null, acceptance_criteria: null, deliverable_type: 'feature', created_at: new Date().toISOString() }]);
-      dbService.updateIdea.mockResolvedValue({ id: 'idea-123', title: 'Test', status: 'breakdown', created_at: new Date().toISOString(), raw_text: 'Test', user_id: 'default_user', deleted_at: null });
+      dbService.createDeliverables.mockResolvedValue([
+        {
+          id: 'del-1',
+          title: 'Task',
+          idea_id: 'idea-123',
+          description: '',
+          priority: 1,
+          estimate_hours: 8,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.updateIdea.mockResolvedValue({
+        id: 'idea-123',
+        title: 'Test',
+        status: 'breakdown',
+        created_at: new Date().toISOString(),
+        raw_text: 'Test',
+        user_id: 'default_user',
+        deleted_at: null,
+      });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
       const session = await breakdownEngine.startBreakdown(
@@ -438,9 +589,52 @@ describe('BreakdownEngine', () => {
         );
 
       dbService.storeVector.mockResolvedValue(createMockVector());
-      dbService.createDeliverables.mockResolvedValue([{ id: 'del-1', title: 'Deliverable 0', idea_id: 'idea-123', description: '', priority: 1, estimate_hours: 8, milestone_id: null, completion_percentage: 0, business_value: 5, risk_factors: null, acceptance_criteria: null, deliverable_type: 'feature', created_at: new Date().toISOString() }]);
-      dbService.createTasks.mockResolvedValue([{ id: 'task-1', deliverable_id: 'del-1', title: 'Task', status: 'todo', estimate: 4, start_date: null, end_date: null, actual_hours: null, completion_percentage: 0, priority_score: 1, complexity_score: 1, risk_level: 'low', tags: null, custom_fields: null, milestone_id: null, created_at: new Date().toISOString() }]);
-      dbService.updateIdea.mockResolvedValue({ id: 'idea-123', title: 'Test', status: 'breakdown', created_at: new Date().toISOString(), raw_text: 'Test', user_id: 'default_user', deleted_at: null });
+      dbService.createDeliverables.mockResolvedValue([
+        {
+          id: 'del-1',
+          title: 'Deliverable 0',
+          idea_id: 'idea-123',
+          description: '',
+          priority: 1,
+          estimate_hours: 8,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.createTasks.mockResolvedValue([
+        {
+          id: 'task-1',
+          deliverable_id: 'del-1',
+          title: 'Task',
+          status: 'todo',
+          estimate: 4,
+          start_date: null,
+          end_date: null,
+          actual_hours: null,
+          completion_percentage: 0,
+          priority_score: 1,
+          complexity_score: 1,
+          risk_level: 'low',
+          tags: null,
+          custom_fields: null,
+          milestone_id: null,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.updateIdea.mockResolvedValue({
+        id: 'idea-123',
+        title: 'Test',
+        status: 'breakdown',
+        created_at: new Date().toISOString(),
+        raw_text: 'Test',
+        user_id: 'default_user',
+        deleted_at: null,
+      });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
       const session = await breakdownEngine.startBreakdown(
@@ -479,9 +673,52 @@ describe('BreakdownEngine', () => {
 
       aiService.callModel.mockResolvedValue(JSON.stringify(mockAnalysis));
       dbService.storeVector.mockResolvedValue(createMockVector());
-      dbService.createDeliverables.mockResolvedValue([{ id: 'del-1', title: 'Task', idea_id: 'idea-123', description: '', priority: 1, estimate_hours: 8, milestone_id: null, completion_percentage: 0, business_value: 5, risk_factors: null, acceptance_criteria: null, deliverable_type: 'feature', created_at: new Date().toISOString() }]);
-      dbService.createTasks.mockResolvedValue([{ id: 'task-1', deliverable_id: 'del-1', title: 'Task', status: 'todo', estimate: 4, start_date: null, end_date: null, actual_hours: null, completion_percentage: 0, priority_score: 1, complexity_score: 1, risk_level: 'low', tags: null, custom_fields: null, milestone_id: null, created_at: new Date().toISOString() }]);
-      dbService.updateIdea.mockResolvedValue({ id: 'idea-123', title: 'Test', status: 'breakdown', created_at: new Date().toISOString(), raw_text: 'Test', user_id: 'default_user', deleted_at: null });
+      dbService.createDeliverables.mockResolvedValue([
+        {
+          id: 'del-1',
+          title: 'Task',
+          idea_id: 'idea-123',
+          description: '',
+          priority: 1,
+          estimate_hours: 8,
+          milestone_id: null,
+          completion_percentage: 0,
+          business_value: 5,
+          risk_factors: null,
+          acceptance_criteria: null,
+          deliverable_type: 'feature',
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.createTasks.mockResolvedValue([
+        {
+          id: 'task-1',
+          deliverable_id: 'del-1',
+          title: 'Task',
+          status: 'todo',
+          estimate: 4,
+          start_date: null,
+          end_date: null,
+          actual_hours: null,
+          completion_percentage: 0,
+          priority_score: 1,
+          complexity_score: 1,
+          risk_level: 'low',
+          tags: null,
+          custom_fields: null,
+          milestone_id: null,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+      dbService.updateIdea.mockResolvedValue({
+        id: 'idea-123',
+        title: 'Test',
+        status: 'breakdown',
+        created_at: new Date().toISOString(),
+        raw_text: 'Test',
+        user_id: 'default_user',
+        deleted_at: null,
+      });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
       const startTime = Date.now();

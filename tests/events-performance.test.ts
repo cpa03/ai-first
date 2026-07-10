@@ -27,7 +27,7 @@ describe('EventBus Performance', () => {
 
     // Simulate DB latency
     (dbService.logAgentAction as jest.Mock).mockImplementation(async () => {
-      await new Promise(resolve => setTimeout(resolve, DB_LATENCY_MS));
+      await new Promise((resolve) => setTimeout(resolve, DB_LATENCY_MS));
     });
   });
 
@@ -48,7 +48,9 @@ describe('EventBus Performance', () => {
     const end = performance.now();
 
     const duration = end - start;
-    console.log(`EventBus.emit took ${duration.toFixed(2)}ms with ${DB_LATENCY_MS}ms simulated DB latency`);
+    console.log(
+      `EventBus.emit took ${duration.toFixed(2)}ms with ${DB_LATENCY_MS}ms simulated DB latency`
+    );
 
     // In the new non-blocking implementation, duration should be significantly LESS than DB_LATENCY_MS
     expect(duration).toBeLessThan(DB_LATENCY_MS);
@@ -74,7 +76,9 @@ describe('EventBus Performance', () => {
     const end = performance.now();
 
     const duration = end - start;
-    console.log(`${iterations} sequential emits took ${duration.toFixed(2)}ms (avg: ${(duration / iterations).toFixed(2)}ms)`);
+    console.log(
+      `${iterations} sequential emits took ${duration.toFixed(2)}ms (avg: ${(duration / iterations).toFixed(2)}ms)`
+    );
 
     // Even 10 sequential emits should be faster than a single DB call latency
     expect(duration).toBeLessThan(DB_LATENCY_MS);

@@ -41,7 +41,7 @@ describe('sanitizeHtml Comprehensive Security', () => {
       '<img src=x onerror=alert(1)>',
       '<img/src="x"/onerror=alert(1)>',
       '<svg onload=alert(1)>',
-      '<details open ontoggle=alert(1)>'
+      '<details open ontoggle=alert(1)>',
     ];
 
     for (const input of cases) {

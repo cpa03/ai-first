@@ -32,11 +32,7 @@ export interface Deliverable {
   risk_factors: string[] | null;
   acceptance_criteria: Record<string, unknown> | null;
   deliverable_type:
-    | 'feature'
-    | 'documentation'
-    | 'testing'
-    | 'deployment'
-    | 'research';
+    'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
   created_at: string;
   updated_at?: string;
   deleted_at?: string | null;
