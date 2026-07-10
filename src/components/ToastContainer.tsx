@@ -15,6 +15,7 @@ import {
   MIN_SIZE_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { generateId } from '@/lib/security/crypto';
 
 export interface Toast {
   id: string;
@@ -300,7 +301,7 @@ function ToastContainerComponent() {
   const [isClearingAll, setIsClearingAll] = useState(false);
 
   const showToast = useCallback((options: ToastOptions) => {
-    const id = Math.random().toString(36).substring(2, 9);
+    const id = generateId();
     const newToast: Toast = { ...options, id };
     setToasts((prev) => [...prev, newToast]);
   }, []);

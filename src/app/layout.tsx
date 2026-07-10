@@ -143,6 +143,7 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
+        {/* JSON-LD structured data for SEO - sanitized via safeJsonLd() to prevent XSS */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
