@@ -102,9 +102,11 @@ export default function UserOnboarding() {
 
     const targetElement = document.querySelector(currentStep.targetSelector);
     if (!targetElement) {
-      // Default position if element not found
       const tooltipWidth = COMPONENT_CONFIG.ONBOARDING.TOOLTIP.WIDTH;
-      return { top: 200, left: window.innerWidth / 2 - tooltipWidth / 2 };
+      return {
+        top: COMPONENT_CONFIG.ONBOARDING.FALLBACK_POSITION.TOP,
+        left: window.innerWidth / 2 - tooltipWidth / 2,
+      };
     }
 
     const rect = targetElement.getBoundingClientRect();

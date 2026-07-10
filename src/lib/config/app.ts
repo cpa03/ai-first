@@ -53,6 +53,10 @@ export const APP_CONFIG = {
     FAVICON_PATH: '/favicon.ico',
   },
 
+  CURRENCY: {
+    CODE: EnvLoader.string('APP_CURRENCY_CODE', 'USD'),
+  },
+
   CONTACT: {
     /** Support email address - Env: APP_SUPPORT_EMAIL (default: 'support@ideaflow.ai') */
     SUPPORT_EMAIL: EnvLoader.string('APP_SUPPORT_EMAIL', 'support@ideaflow.ai'),
