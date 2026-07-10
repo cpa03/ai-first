@@ -9,6 +9,7 @@ import React, {
   memo,
 } from 'react';
 import { cn } from '@/lib/utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   INPUT_STYLES,
   TEXT_COLORS,
@@ -81,7 +82,10 @@ const InputWithValidationComponent = forwardRef<
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [showSuccessFlash, setShowSuccessFlash] = useState(false);
+    const [showValidCelebration, setShowValidCelebration] = useState(false);
     const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
+    const prevValidRef = useRef(false);
+    const prefersReducedMotion = usePrefersReducedMotion();
     const currentValue = typeof value === 'string' ? value : '';
     const charCount = currentValue.length;
     const isValid = !error && touched;
@@ -143,6 +147,22 @@ const InputWithValidationComponent = forwardRef<
       }
     }, [isValid, charCount]);
 
+    useEffect(() => {
+      if (
+        isValid &&
+        !prevValidRef.current &&
+        charCount > 0 &&
+        !prefersReducedMotion
+      ) {
+        setShowValidCelebration(true);
+        const timeout = setTimeout(() => {
+          setShowValidCelebration(false);
+        }, 500);
+        return () => clearTimeout(timeout);
+      }
+      prevValidRef.current = isValid && charCount > 0;
+    }, [isValid, charCount, prefersReducedMotion]);
+
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         onChange?.(e);
@@ -190,6 +210,7 @@ const InputWithValidationComponent = forwardRef<
       shouldShake && 'animate-shake',
       showSuccessFlash &&
         `border-green-500 ring-green-500 ${STATE_SHADOWS.SUCCESS}`,
+      showValidCelebration && 'animate-input-valid-celebration',
       className
     );
 
