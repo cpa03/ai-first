@@ -17,21 +17,13 @@ describe('generateId Fallback', () => {
     warnSpy.mockRestore();
   });
 
-  it('should use secureRandom() fallback and log warning when crypto is unavailable', () => {
+  it('should throw error when crypto is unavailable instead of insecure fallback', () => {
     // Force fallback by making crypto undefined
     Object.defineProperty(globalThis, 'crypto', {
       value: undefined,
       configurable: true,
     });
 
-    const id = generateId();
-
-    expect(id).toBeDefined();
-    expect(typeof id).toBe('string');
-    expect(id.includes('-')).toBe(true);
-    // Should have logged a warning from secureRandom()
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining('CRITICAL SECURITY WARNING: Using insecure random generator')
-    );
+    expect(() => generateId()).toThrow(/CRITICAL SECURITY/);
   });
 });

@@ -50,12 +50,11 @@ export function generateId(): string {
     return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
   }
 
-  // 3. Last resort fallback (non-cryptographic)
-  // This should only be reached in extremely restricted legacy environments
-  // We use secureRandom() which provides a centralized fallback with security logging
-  const timestamp = Date.now().toString(36);
-  const randomPart = secureRandom().toString(36).substring(2, 11);
-  return `${timestamp}-${randomPart}`;
+  // 3. No crypto available - throw error instead of insecure fallback
+  throw new Error(
+    'CRITICAL SECURITY: Web Crypto API is unavailable. Cannot generate cryptographically secure IDs. ' +
+      'Ensure globalThis.crypto or crypto is available, or use a polyfill.'
+  );
 }
 
 /**
@@ -103,12 +102,17 @@ export function secureRandom(): number {
     return array[0] / HASH_CONFIG.TWO_POWER_32;
   }
 
-  // Fallback to Math.random if Web Crypto API is unavailable
+  // Web Crypto API is unavailable - this is a critical security failure.
+  // Math.random() is NOT cryptographically secure and must NEVER be used
+  // for security-sensitive operations (tokens, IDs, keys, etc.).
   // Note: We use console.warn directly to avoid circular dependencies
   // with the logger module (logger -> crypto -> logger).
   console.warn(
-    'CRITICAL SECURITY WARNING: Using insecure random generator as Web Crypto API is unavailable.'
+    'CRITICAL SECURITY WARNING: Web Crypto API is unavailable. Refusing to use insecure fallback.'
   );
-  // This is a last resort and will be flagged by security scripts
-  return Math.random();
+  throw new Error(
+    'CRITICAL SECURITY: Web Crypto API is unavailable. Cannot generate cryptographically secure random values. ' +
+      'This environment does not support secure random generation. ' +
+      'Ensure globalThis.crypto or crypto is available, or use a polyfill.'
+  );
 }
