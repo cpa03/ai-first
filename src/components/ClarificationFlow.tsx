@@ -97,6 +97,44 @@ function ClarificationFlow({
     }
   }, [currentStep, prefersReducedMotion]);
 
+  // Micro-UX: Auto-focus input when step changes for seamless keyboard navigation
+  // Users can immediately type their answer without clicking/tapping the input field.
+  // On mobile this is especially important — it keeps the keyboard open between questions
+  // instead of forcing users to tap the input again to reopen it.
+  useEffect(() => {
+    if (
+      loading ||
+      questions.length === 0 ||
+      !currentQuestion ||
+      showCelebration ||
+      isSubmitting
+    )
+      return;
+
+    // Brief delay ensures DOM is ready after key-triggered remount
+    const timer = setTimeout(() => {
+      if (currentQuestion.type === 'textarea' && textareaRef.current) {
+        textareaRef.current.focus();
+      } else if (currentQuestion.type === 'text' && textInputRef.current) {
+        textInputRef.current.focus();
+      } else if (currentQuestion.type === 'select' && selectRef.current) {
+        selectRef.current.focus();
+      }
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [
+    currentStep,
+    loading,
+    questions.length,
+    currentQuestion,
+    showCelebration,
+    isSubmitting,
+    textareaRef,
+    textInputRef,
+    selectRef,
+  ]);
+
   const handleToggleReference = useCallback(() => {
     const details = detailsRef.current;
     if (!details) return;
