@@ -12,6 +12,7 @@ import {
   ROUTES,
   SVG_STROKE_WIDTHS,
   UI_CONFIG,
+  NOT_FOUND_PAGE_CONFIG,
 } from '@/lib/config';
 
 // Enhanced 404 page with keyboard shortcuts, focus management, and consistent component usage
@@ -87,17 +88,21 @@ export default function NotFound() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className="text-2xl font-bold text-gray-900 mb-2 animate-hero-entrance delay-75 focus:outline-none"
+            className={`text-2xl font-bold text-gray-900 mb-2 animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
           >
             Page not found
           </h1>
 
-          <p className="text-gray-600 mb-8 max-w-sm mx-auto animate-hero-entrance delay-150">
+          <p
+            className={`text-gray-600 mb-8 max-w-sm mx-auto animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+          >
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It
             may have been moved or doesn&apos;t exist.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center animate-hero-entrance delay-200">
+          <div
+            className={`flex flex-col sm:flex-row gap-3 justify-center animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+          >
             <Button
               variant="primary"
               onClick={handleGoBack}
@@ -169,7 +174,7 @@ export default function NotFound() {
 
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           <div
-            className="mt-6 flex items-center justify-center gap-4 text-xs text-gray-400 animate-hero-entrance delay-300"
+            className={`mt-6 flex items-center justify-center gap-4 text-xs text-gray-400 animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
             aria-hidden="true"
           >
             <span className="hidden sm:inline-flex items-center gap-1.5">

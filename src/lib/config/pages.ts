@@ -136,6 +136,18 @@ export const LOGIN_PAGE_CONFIG = {
       url: `${APP_CONFIG.URLS.BASE}/login`,
     },
   },
+  /**
+   * Hero entrance animation stagger delays
+   * Eliminates hardcoded delay-75, delay-150, delay-200, delay-250, delay-300 classes
+   */
+  HERO_ANIMATION_DELAYS: {
+    NONE: 'delay-0',
+    STEP_1: 'delay-75',
+    STEP_2: 'delay-150',
+    STEP_3: 'delay-200',
+    STEP_4: 'delay-250',
+    STEP_5: 'delay-300',
+  } as const,
 } as const;
 
 /**
@@ -160,6 +172,14 @@ export const SIGNUP_PAGE_CONFIG = {
       url: `${APP_CONFIG.URLS.BASE}/signup`,
     },
   },
+  HERO_ANIMATION_DELAYS: {
+    NONE: 'delay-0',
+    STEP_1: 'delay-75',
+    STEP_2: 'delay-150',
+    STEP_3: 'delay-200',
+    STEP_4: 'delay-250',
+    STEP_5: 'delay-300',
+  } as const,
 } as const;
 
 /**
@@ -482,9 +502,16 @@ export const LAYOUT_ERROR_FALLBACKS = {
   AUTH_CALLBACK: AUTH_CALLBACK_ERROR_FALLBACK,
 } as const;
 
-/**
- * All page configurations exported as a single object
- */
+export const NOT_FOUND_PAGE_CONFIG = {
+  HERO_ANIMATION_DELAYS: {
+    NONE: 'delay-0',
+    STEP_1: 'delay-75',
+    STEP_2: 'delay-150',
+    STEP_3: 'delay-200',
+    STEP_5: 'delay-300',
+  } as const,
+} as const;
+
 export const PAGE_CONFIG = {
   HOME: HOME_PAGE_CONFIG,
   RESULTS: RESULTS_PAGE_CONFIG,
@@ -493,6 +520,7 @@ export const PAGE_CONFIG = {
   LOGIN: LOGIN_PAGE_CONFIG,
   SIGNUP: SIGNUP_PAGE_CONFIG,
   AUTH_CALLBACK: AUTH_CALLBACK_PAGE_CONFIG,
+  NOT_FOUND: NOT_FOUND_PAGE_CONFIG,
 } as const;
 
 export type PageConfig = typeof PAGE_CONFIG;
