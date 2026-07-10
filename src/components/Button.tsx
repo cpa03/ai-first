@@ -17,6 +17,7 @@ import {
   COMPONENT_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { generateId } from '@/lib/security/crypto';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -123,7 +124,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           y = mouseEvent.clientY - rect.top - size / 2;
         }
 
-        const rippleId = `ripple-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+        const rippleId = `ripple-${Date.now()}-${generateId()}`;
         const newRipple: Ripple = {
           id: rippleId,
           x,

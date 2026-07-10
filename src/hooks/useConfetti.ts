@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { CONFETTI_COLORS, COMPONENT_CONFIG } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { generateId } from '@/lib/security/crypto';
 
 export interface ConfettiParticle {
   id: string;
@@ -57,7 +58,7 @@ export function useConfetti() {
         Math.random() * CONFETTI_COLORS.MAX_SIZE_VARIANCE;
 
       newParticles.push({
-        id: `confetti-${Date.now()}-${i}-${Math.random().toString(36).substring(2, 7)}`,
+        id: `confetti-${Date.now()}-${i}-${generateId()}`,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance,
         color: CONFETTI_COLORS.PRIMARY[i % CONFETTI_COLORS.PRIMARY.length],
