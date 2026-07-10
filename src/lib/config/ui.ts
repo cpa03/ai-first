@@ -293,11 +293,31 @@ export const DASHBOARD_FILTER_LABELS = {
  * Used in signup page for password strength validation messages
  */
 export const PASSWORD_VALIDATION_CONFIG = {
-  MIN_LENGTH: 8,
+  MIN_LENGTH: EnvLoader.number('PASSWORD_MIN_LENGTH', 8, 4, 32),
   STRENGTH_THRESHOLDS: {
-    MIN_LENGTH: 8,
-    MEDIUM_LENGTH: 12,
-    STRONG_LENGTH: 16,
+    MIN_LENGTH: EnvLoader.number('PASSWORD_STRENGTH_MIN_LENGTH', 8, 4, 32),
+    MEDIUM_LENGTH: EnvLoader.number(
+      'PASSWORD_STRENGTH_MEDIUM_LENGTH',
+      12,
+      6,
+      48
+    ),
+    STRONG_LENGTH: EnvLoader.number(
+      'PASSWORD_STRENGTH_STRONG_LENGTH',
+      16,
+      8,
+      64
+    ),
+  },
+  NORMALIZATION: {
+    /** Divisor for normalizing raw score to 0-4 range */
+    DIVISOR: EnvLoader.number('PASSWORD_SCORE_DIVISOR', 2, 1, 4),
+    /** Maximum normalized score value */
+    MAX_SCORE: EnvLoader.number('PASSWORD_MAX_SCORE', 4, 2, 8),
+    /** Threshold for weak strength (normalizedScore <= threshold) */
+    WEAK_THRESHOLD: EnvLoader.number('PASSWORD_WEAK_THRESHOLD', 1, 1, 2),
+    /** Threshold for medium strength (normalizedScore <= threshold) */
+    MEDIUM_THRESHOLD: EnvLoader.number('PASSWORD_MEDIUM_THRESHOLD', 2, 2, 4),
   },
   MESSAGES: {
     MIN_LENGTH: 'Use at least 8 characters',

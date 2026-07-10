@@ -121,7 +121,11 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
   if (/[0-9]/.test(password)) score++;
   if (/[^a-zA-Z0-9]/.test(password)) score++;
 
-  const normalizedScore = Math.min(Math.floor(score / 2), 4);
+  const { NORMALIZATION } = PASSWORD_VALIDATION_CONFIG;
+  const normalizedScore = Math.min(
+    Math.floor(score / NORMALIZATION.DIVISOR),
+    NORMALIZATION.MAX_SCORE
+  );
 
   if (password.length < MIN_LENGTH) {
     feedback.push(MESSAGES.MIN_LENGTH);
@@ -137,8 +141,9 @@ function calculatePasswordStrength(password: string): PasswordStrengthResult {
   }
 
   let strength: PasswordStrength;
-  if (normalizedScore <= 1) strength = 'weak';
-  else if (normalizedScore <= 2) strength = 'medium';
+  if (normalizedScore <= NORMALIZATION.WEAK_THRESHOLD) strength = 'weak';
+  else if (normalizedScore <= NORMALIZATION.MEDIUM_THRESHOLD)
+    strength = 'medium';
   else strength = 'strong';
 
   return { strength, score: normalizedScore, feedback };

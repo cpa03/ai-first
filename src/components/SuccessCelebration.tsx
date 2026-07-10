@@ -47,17 +47,18 @@ function SuccessCelebrationComponent({
   const shouldAnimate = !prefersReducedMotion;
 
   const generateParticles = useCallback((): Particle[] => {
+    const center = ANIMATION_PHYSICS.CENTER_POSITION;
     return Array.from({ length: PARTICLE_COUNT }, (_, i) => ({
       id: i,
-      x: 50 + (Math.random() - 0.5) * ANIMATION_PHYSICS.CENTER_OFFSET,
-      y: 50 + (Math.random() - 0.5) * ANIMATION_PHYSICS.CENTER_OFFSET,
+      x: center + (Math.random() - 0.5) * ANIMATION_PHYSICS.CENTER_OFFSET,
+      y: center + (Math.random() - 0.5) * ANIMATION_PHYSICS.CENTER_OFFSET,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
       size:
         Math.random() *
           (ANIMATION_PHYSICS.PARTICLE_SIZE.MAX -
             ANIMATION_PHYSICS.PARTICLE_SIZE.MIN) +
         ANIMATION_PHYSICS.PARTICLE_SIZE.MIN,
-      rotation: Math.random() * 360,
+      rotation: Math.random() * ANIMATION_PHYSICS.FULL_ROTATION_DEGREES,
       vx: (Math.random() - 0.5) * ANIMATION_PHYSICS.MAX_HORIZONTAL_VELOCITY,
       vy:
         -Math.random() * ANIMATION_PHYSICS.MAX_VERTICAL_VELOCITY -

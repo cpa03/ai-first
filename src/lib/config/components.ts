@@ -293,6 +293,10 @@ export const COMPONENT_CONFIG = {
       50,
       1000
     ),
+    FALLBACK_POSITION: {
+      /** Fallback top position when target element not found (px) */
+      TOP: EnvLoader.number('COMPONENT_ONBOARDING_FALLBACK_TOP', 200, 50, 500),
+    },
     TOOLTIP: {
       /** Tooltip width in pixels - Env: COMPONENT_ONBOARDING_TOOLTIP_WIDTH (default: 300) */
       WIDTH: EnvLoader.number(

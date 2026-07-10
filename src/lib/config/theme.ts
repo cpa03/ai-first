@@ -543,6 +543,13 @@ export const ANIMATION_PHYSICS = {
   VELOCITY_MULTIPLIER: 0.5,
   /** Center position offset range (percentage) */
   CENTER_OFFSET: 20,
+  /** Center position for particle generation (percentage) */
+  CENTER_POSITION: EnvLoader.number(
+    'THEME_ANIMATION_CENTER_POSITION',
+    50,
+    25,
+    75
+  ),
   /** Maximum horizontal velocity */
   MAX_HORIZONTAL_VELOCITY: 30,
   /** Maximum vertical velocity (negative = upward) */
@@ -556,6 +563,13 @@ export const ANIMATION_PHYSICS = {
   },
   /** Rotation velocity multiplier */
   ROTATION_MULTIPLIER: 2,
+  /** Degrees in a full rotation */
+  FULL_ROTATION_DEGREES: 360,
+  /** Particle scale range */
+  SCALE_RANGE: {
+    MIN: 0.5,
+    MAX: 1.0,
+  },
 } as const;
 
 /**

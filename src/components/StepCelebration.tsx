@@ -69,8 +69,12 @@ function StepCelebrationComponent({
       y:
         Math.sin((i / count) * Math.PI * 2) *
         COMPONENT_CONFIG.STEP_CELEBRATION.RADIUS_MULTIPLIER,
-      rotation: (i / count) * 360,
-      scale: 0.5 + Math.random() * 0.5,
+      rotation: (i / count) * ANIMATION_PHYSICS.FULL_ROTATION_DEGREES,
+      scale:
+        ANIMATION_PHYSICS.SCALE_RANGE.MIN +
+        Math.random() *
+          (ANIMATION_PHYSICS.SCALE_RANGE.MAX -
+            ANIMATION_PHYSICS.SCALE_RANGE.MIN),
       delay: i * ANIMATION_DELAYS.PARTICLE_STAGGER,
     }));
   }, []);
