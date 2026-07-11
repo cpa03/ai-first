@@ -48,7 +48,6 @@ Direct `console.error` call used during pattern initialization instead of the st
 **Fix:**
 Replaced `console.error` with `logger.error`.
 
-
 ### [x] Bug 1: RetryExhaustedError duplicates "after X attempts" message
 
 **File:** `src/lib/resilience/retry-manager.ts:75`  
@@ -129,8 +128,8 @@ Changed the condition from `if (this.openai)` to `if (this.openai?.models)` to p
 
 ## Test Results
 
-- **Total Tests:** 989 (924 passed, 65 skipped)
-- **Test Suites:** 44 (38 passed, 6 skipped)
+- **Total Tests:** 1699 (1683 passed, 16 skipped)
+- **Test Suites:** 99 (95 passed, 4 skipped)
 - **Failures:** 0
 - **Lint:** 0 errors, 3 warnings (test file `any` types)
 - **Type-check:** 0 errors
