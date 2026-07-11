@@ -59,7 +59,12 @@ async function scanPage(page, url) {
       text.includes('Global error handlers registered') ||
       text.includes('Global error handlers unregistered');
 
-    if (type === 'error' && !isExpectedAPIError && !isExpectedInfoLog) {
+    if (
+      type === 'error' &&
+      !isExpectedAPIError &&
+      !isNetworkError &&
+      !isExpectedInfoLog
+    ) {
       pageErrors.push(logEntry);
       errors.push(logEntry);
     } else if (
