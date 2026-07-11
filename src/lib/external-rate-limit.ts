@@ -12,7 +12,7 @@ import { createLogger } from './logger';
 import { resourceCleanupManager } from './resource-cleanup';
 import {
   TIME_UNITS,
-  RATE_LIMIT_CONFIG,
+  RATE_LIMIT_CONFIG_WITH_EXTERNAL as RATE_LIMIT_CONFIG,
   EXTERNAL_RATE_LIMIT_TIMING,
 } from './config';
 import {
