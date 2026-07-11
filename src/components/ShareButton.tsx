@@ -9,6 +9,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
   SVG_VIEWBOX,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -187,13 +188,13 @@ const ShareButtonComponent = function ShareButton({
       px-3 py-1.5 text-sm
       bg-primary-600 text-white hover:bg-primary-700
       rounded-md
-      active:scale-[0.95]
+      ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     'icon-only': `
       p-1.5
       text-gray-500 hover:text-primary-600 hover:bg-primary-50
       rounded-full
-      active:scale-[0.9]
+      ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
       ${shared ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : ''}
     `,
   };

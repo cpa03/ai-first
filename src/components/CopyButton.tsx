@@ -8,6 +8,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
   SVG_VIEWBOX,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -110,7 +111,7 @@ const CopyButtonComponent = function CopyButton({
       px-3 py-1.5 text-sm
       bg-primary-100 text-primary-700 hover:bg-primary-200
       rounded-md
-      active:scale-[0.95]
+      ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     subtle: `
       px-2 py-1 text-xs
@@ -122,7 +123,7 @@ const CopyButtonComponent = function CopyButton({
       p-1.5
       text-gray-500 hover:text-primary-600 hover:bg-primary-50
       rounded-full
-      active:scale-[0.9]
+      ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
       ${copied ? 'text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800' : ''}
     `,
   };

@@ -13,6 +13,7 @@ import {
   Z_INDEX_LAYERS,
   TOAST_CONTAINER_LABELS,
   MIN_SIZE_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { generateId } from '@/lib/security/crypto';
@@ -277,7 +278,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         )}
 
       <div
-        className="absolute bottom-0 left-0 h-1 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
+        className={`absolute bottom-0 left-0 h-1 bg-current opacity-30 transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
         style={{
           width: `${progress}%`,
           transitionDuration: isPaused

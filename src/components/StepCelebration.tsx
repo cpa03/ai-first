@@ -17,6 +17,7 @@ import {
   STEP_CELEBRATION_LABELS,
   GRADIENT_PATTERNS,
   STEP_CELEBRATION_TAILWIND,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -206,7 +207,7 @@ function StepCelebrationComponent({
                   (stepNumber / totalSteps) *
                     COMPONENT_DEFAULTS.PROGRESS.COMPLETE
                 )}
-                className="transition-all duration-700 ease-out"
+                className={`transition-all ${DURATION_TAILWIND[700]} ease-out`}
                 style={{
                   filter: `drop-shadow(0 0 6px ${CELEBRATION_COLORS.SHADOWS.DROP_SHADOW})`,
                 }}
