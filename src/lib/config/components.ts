@@ -146,6 +146,22 @@ export const COMPONENT_CONFIG = {
     ANIMATION: {
       HOVER_SCALE: 1.02,
       ACTIVE_SCALE: 0.98,
+      /** Active scale for compact buttons (CopyButton, ShareButton icon-only variant) */
+      /** Env: COMPONENT_BUTTON_COMPACT_ACTIVE_SCALE (default: 0.9) */
+      COMPACT_ACTIVE_SCALE: EnvLoader.number(
+        'COMPONENT_BUTTON_COMPACT_ACTIVE_SCALE',
+        0.9,
+        0.85,
+        0.95
+      ),
+      /** Active scale for default buttons (CopyButton, ShareButton default variant) */
+      /** Env: COMPONENT_BUTTON_DEFAULT_ACTIVE_SCALE (default: 0.95) */
+      DEFAULT_ACTIVE_SCALE: EnvLoader.number(
+        'COMPONENT_BUTTON_DEFAULT_ACTIVE_SCALE',
+        0.95,
+        0.9,
+        1.0
+      ),
       /** Env: COMPONENT_BUTTON_ANIMATION_DURATION_MS (default: 200) */
       DURATION_MS: EnvLoader.number(
         'COMPONENT_BUTTON_ANIMATION_DURATION_MS',
@@ -161,6 +177,13 @@ export const COMPONENT_CONFIG = {
         100,
         2000
       ),
+    },
+    /** Tailwind scale classes for button press feedback */
+    SCALE_CLASSES: {
+      /** Default variant: active:scale-[0.95] */
+      DEFAULT: `active:scale-[${EnvLoader.number('COMPONENT_BUTTON_DEFAULT_ACTIVE_SCALE', 0.95, 0.9, 1.0)}]`,
+      /** Icon-only/compact variant: active:scale-[0.9] */
+      COMPACT: `active:scale-[${EnvLoader.number('COMPONENT_BUTTON_COMPACT_ACTIVE_SCALE', 0.9, 0.85, 0.95)}]`,
     },
   } as const,
 

@@ -990,7 +990,7 @@ export default function DashboardPage() {
                                 cy="12"
                                 r="10"
                                 stroke="currentColor"
-                                strokeWidth="4"
+                                strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
                               />
                               <path
                                 className="opacity-75"

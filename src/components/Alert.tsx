@@ -11,6 +11,7 @@ import {
   SVG_SIZES,
   SVG_VIEWBOX,
   ALERT_LABELS,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -247,7 +248,7 @@ const AlertComponent = function Alert({
       {shouldAutoDismiss && !prefersReducedMotion && (
         <>
           <div
-            className="absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all duration-75 ease-linear rounded-b-lg"
+            className={`absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
             style={{
               width: `${progress}%`,
               transitionDuration: isPaused ? '0ms' : '75ms',
