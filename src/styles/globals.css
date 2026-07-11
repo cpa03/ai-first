@@ -1689,3 +1689,39 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+/* Keyboard Shortcuts Discoverability Animation - Micro-UX delight */
+/* Creates a subtle attention pulse that helps users discover the keyboard shortcuts button */
+/* Pulses twice on first render, then stops - enough to catch attention without being annoying */
+@keyframes discoverPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+  20% {
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+  }
+  40% {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+  }
+  60% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.25);
+  }
+  80% {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+.animate-discover-pulse {
+  animation: discoverPulse 1.5s var(--ease-out-expo) forwards;
+}
+
+/* Reduced motion support for discoverability pulse */
+@media (prefers-reduced-motion: reduce) {
+  .animate-discover-pulse {
+    animation: none;
+    box-shadow: none;
+  }
+}
