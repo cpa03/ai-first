@@ -27,7 +27,11 @@ export const API_ERROR_MESSAGES = {
     COMPLETION_PERCENTAGE_RANGE:
       'Completion percentage must be between 0 and 100',
     INVALID_STATUS: 'Invalid task status',
+    INVALID_STATUS_WITH_VALUES: (validValues: readonly string[]) =>
+      `Invalid status. Must be one of: ${validValues.join(', ')}`,
     INVALID_RISK_LEVEL: 'Invalid risk level. Must be one of: low, medium, high',
+    INVALID_RISK_LEVEL_WITH_VALUES: (validValues: readonly string[]) =>
+      `Invalid risk_level. Must be one of: ${validValues.join(', ')}`,
     INVALID_DELIVERABLE_TYPE:
       'Invalid deliverable type. Must be one of: feature, documentation, testing, deployment, research',
     INVALID_PRIORITY: 'Priority must be a positive integer',
@@ -39,6 +43,7 @@ export const API_ERROR_MESSAGES = {
   },
   INTERNAL: {
     UPDATE_TASK_FAILED: 'Failed to update task',
+    UPDATE_TASK_STATUS_FAILED: 'Failed to update task status',
     DELETE_TASK_FAILED: 'Failed to delete task',
     FETCH_TASK_FAILED: 'Failed to fetch task',
     CREATE_TASK_FAILED: 'Failed to create task',
