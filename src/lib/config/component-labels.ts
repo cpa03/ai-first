@@ -451,6 +451,16 @@ export const DASHBOARD_LABELS = {
     CREATED: 'Created',
     ACTIONS: 'Actions',
   },
+  KEYBOARD_HINTS: {
+    NAVIGATE_KEYS: ['j', 'k'],
+    NAVIGATE_LABEL: 'navigate',
+    OPEN_KEY: 'Enter',
+    OPEN_LABEL: 'open',
+    DESELECT_KEY: 'Esc',
+    DESELECT_LABEL: 'deselect',
+    DELETE_KEY: 'Del',
+    DELETE_LABEL: 'delete',
+  },
 };
 
 /**
