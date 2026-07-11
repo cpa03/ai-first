@@ -49,6 +49,10 @@
     --shadow-primary-feedback: rgb(37 99 235 / 0.3);
     --shadow-primary-feedback-pulse: rgb(37 99 235 / 0.2);
 
+    /* Ring color tokens for focus ring animations */
+    --ring-primary-600: rgb(var(--color-primary-600) / 0.6);
+    --ring-primary-400: rgb(var(--color-primary-500) / 0.4);
+
     /* Neutral shadow tokens */
     --shadow-neutral-xs: rgb(0 0 0 / 0.05);
     --shadow-neutral-sm: rgb(0 0 0 / 0.1);
