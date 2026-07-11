@@ -138,11 +138,17 @@ export const TASK_CONFIG = {
     COMPLETED: 'completed',
   } as const,
 
+  /** All valid task statuses as an array - use for validation */
+  VALID_STATUSES: ['todo', 'in_progress', 'completed'] as const,
+
   RISK_LEVELS: {
     LOW: 'low',
     MEDIUM: 'medium',
     HIGH: 'high',
   } as const,
+
+  /** All valid risk levels as an array - use for validation */
+  VALID_RISK_LEVELS: ['low', 'medium', 'high'] as const,
 
   COMPLETION: {
     MIN: 0,

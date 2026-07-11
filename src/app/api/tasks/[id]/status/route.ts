@@ -9,12 +9,9 @@ import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_CONFIG } from '@/lib/config';
 import { STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
-const VALID_STATUSES = [
-  TASK_CONFIG.STATUSES.TODO,
-  TASK_CONFIG.STATUSES.IN_PROGRESS,
-  TASK_CONFIG.STATUSES.COMPLETED,
-] as const;
+const VALID_STATUSES = TASK_CONFIG.VALID_STATUSES;
 type TaskStatus = (typeof VALID_STATUSES)[number];
 
 interface StatusUpdateBody {
@@ -63,7 +60,10 @@ async function handlePatch(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'status',
-        message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+        message:
+          API_ERROR_MESSAGES.VALIDATION.INVALID_STATUS_WITH_VALUES(
+            VALID_STATUSES
+          ),
       },
     ]);
   }
@@ -84,7 +84,11 @@ async function handlePatch(context: ApiContext) {
     }
 
     // Verify ownership
-    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+    verifyResourceOwnership(
+      user.id,
+      taskWithOwnership.idea.user_id,
+      RESOURCE_TYPES.TASK
+    );
 
     // Calculate completion percentage based on status
     const completionPercentage =
@@ -113,7 +117,7 @@ async function handlePatch(context: ApiContext) {
       throw error;
     }
     throw new AppError(
-      'Failed to update task status',
+      API_ERROR_MESSAGES.INTERNAL.UPDATE_TASK_STATUS_FAILED,
       ErrorCode.INTERNAL_ERROR,
       STATUS_CODES.INTERNAL_ERROR
     );

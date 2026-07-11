@@ -10,19 +10,12 @@ import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { TASK_VALIDATION, STATUS_CODES } from '@/lib/config/constants';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TASK_CONFIG } from '@/lib/config';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
-const VALID_STATUSES = [
-  TASK_CONFIG.STATUSES.TODO,
-  TASK_CONFIG.STATUSES.IN_PROGRESS,
-  TASK_CONFIG.STATUSES.COMPLETED,
-] as const;
+const VALID_STATUSES = TASK_CONFIG.VALID_STATUSES;
 type TaskStatus = (typeof VALID_STATUSES)[number];
 
-const VALID_RISK_LEVELS = [
-  TASK_CONFIG.RISK_LEVELS.LOW,
-  TASK_CONFIG.RISK_LEVELS.MEDIUM,
-  TASK_CONFIG.RISK_LEVELS.HIGH,
-] as const;
+const VALID_RISK_LEVELS = TASK_CONFIG.VALID_RISK_LEVELS;
 
 interface CreateTaskBody {
   title: string;
@@ -85,7 +78,10 @@ async function handlePost(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'status',
-        message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+        message:
+          API_ERROR_MESSAGES.VALIDATION.INVALID_STATUS_WITH_VALUES(
+            VALID_STATUSES
+          ),
       },
     ]);
   }
@@ -95,7 +91,10 @@ async function handlePost(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'risk_level',
-        message: `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`,
+        message:
+          API_ERROR_MESSAGES.VALIDATION.INVALID_RISK_LEVEL_WITH_VALUES(
+            VALID_RISK_LEVELS
+          ),
       },
     ]);
   }
@@ -132,7 +131,7 @@ async function handlePost(context: ApiContext) {
     verifyResourceOwnership(
       user.id,
       deliverableWithIdea.idea.user_id,
-      'deliverable'
+      RESOURCE_TYPES.DELIVERABLE
     );
 
     const newTask = await dbService.createTask({

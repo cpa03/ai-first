@@ -492,6 +492,18 @@ export const PRECISION_CONFIG = {
 } as const;
 
 /**
+ * Resource Type Constants
+ * Centralizes resource type strings used in verifyResourceOwnership() and similar functions
+ */
+export const RESOURCE_TYPES = {
+  IDEA: 'idea',
+  TASK: 'task',
+  DELIVERABLE: 'deliverable',
+} as const;
+
+export type ResourceType = (typeof RESOURCE_TYPES)[keyof typeof RESOURCE_TYPES];
+
+/**
  * Export all configurations as a combined object for convenience
  */
 export const MODULAR_CONSTANTS = {

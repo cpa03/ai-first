@@ -10,19 +10,12 @@ import { requireAuth, verifyResourceOwnership } from '@/lib/auth';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { TASK_CONFIG } from '@/lib/config';
 import { STATUS_CODES } from '@/lib/config/constants';
+import { RESOURCE_TYPES } from '@/lib/config/modular-constants';
 
-const VALID_STATUSES = [
-  TASK_CONFIG.STATUSES.TODO,
-  TASK_CONFIG.STATUSES.IN_PROGRESS,
-  TASK_CONFIG.STATUSES.COMPLETED,
-] as const;
+const VALID_STATUSES = TASK_CONFIG.VALID_STATUSES;
 type TaskStatus = (typeof VALID_STATUSES)[number];
 
-const VALID_RISK_LEVELS = [
-  TASK_CONFIG.RISK_LEVELS.LOW,
-  TASK_CONFIG.RISK_LEVELS.MEDIUM,
-  TASK_CONFIG.RISK_LEVELS.HIGH,
-] as const;
+const VALID_RISK_LEVELS = TASK_CONFIG.VALID_RISK_LEVELS;
 
 type TaskUpdateBody = Partial<
   Omit<Task, 'id' | 'created_at' | 'deliverable_id'>
@@ -60,7 +53,10 @@ async function handlePut(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'status',
-        message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+        message:
+          API_ERROR_MESSAGES.VALIDATION.INVALID_STATUS_WITH_VALUES(
+            VALID_STATUSES
+          ),
       },
     ]);
   }
@@ -70,7 +66,10 @@ async function handlePut(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'risk_level',
-        message: `Invalid risk_level. Must be one of: ${VALID_RISK_LEVELS.join(', ')}`,
+        message:
+          API_ERROR_MESSAGES.VALIDATION.INVALID_RISK_LEVEL_WITH_VALUES(
+            VALID_RISK_LEVELS
+          ),
       },
     ]);
   }
@@ -119,7 +118,11 @@ async function handlePut(context: ApiContext) {
     }
 
     // Verify ownership
-    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+    verifyResourceOwnership(
+      user.id,
+      taskWithOwnership.idea.user_id,
+      RESOURCE_TYPES.TASK
+    );
 
     // Update the task
     const updates: Partial<Task> = {};
@@ -218,7 +221,11 @@ async function handleDelete(context: ApiContext) {
     }
 
     // Verify ownership
-    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+    verifyResourceOwnership(
+      user.id,
+      taskWithOwnership.idea.user_id,
+      RESOURCE_TYPES.TASK
+    );
 
     // Soft delete the task
     await dbService.softDeleteTask(taskId);
@@ -272,7 +279,11 @@ async function handleGet(context: ApiContext) {
     }
 
     // Verify ownership
-    verifyResourceOwnership(user.id, taskWithOwnership.idea.user_id, 'task');
+    verifyResourceOwnership(
+      user.id,
+      taskWithOwnership.idea.user_id,
+      RESOURCE_TYPES.TASK
+    );
 
     return standardSuccessResponse(
       { task: taskWithOwnership },
