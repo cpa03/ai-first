@@ -98,6 +98,7 @@ export interface Database {
           deliverable_type:
             'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
           deleted_at: string | null;
+          updated_at: string;
         };
         Insert: {
           created_at?: string;
@@ -115,6 +116,7 @@ export interface Database {
           deliverable_type?:
             'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
           deleted_at?: string | null;
+          updated_at?: string;
         };
         Update: {
           created_at?: string;
@@ -132,6 +134,7 @@ export interface Database {
           deliverable_type?:
             'feature' | 'documentation' | 'testing' | 'deployment' | 'research';
           deleted_at?: string | null;
+          updated_at?: string;
         };
       };
       idea_sessions: {
