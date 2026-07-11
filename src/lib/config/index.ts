@@ -194,7 +194,7 @@ export {
   AI_TOKEN_ESTIMATION,
 } from './time';
 
-// API Error Messages Configuration
+// Legacy API Error Messages Configuration (backward compatibility)
 export { API_ERROR_MESSAGES } from './error-messages';
 
 // Health Monitoring Configuration (extracted from constants.ts for modularity)
@@ -487,3 +487,97 @@ export {
   STEP_CELEBRATION_TAILWIND,
   type TailwindArbitrary,
 } from './tailwind-arbitrary';
+
+// Comprehensive API Error Messages Configuration
+// Centralizes all hardcoded error messages used in API routes and handlers
+export {
+  API_ERROR_MESSAGES as COMPREHENSIVE_API_ERROR_MESSAGES,
+  getApiErrorMessage,
+  createApiError,
+  type ApiErrorMessages,
+} from './api-error-messages';
+
+// Comprehensive UI Strings Configuration
+// Centralizes all hardcoded UI strings used in components
+export {
+  UI_STRINGS as COMPREHENSIVE_UI_STRINGS,
+  getUiString,
+  getUiStringWithParams,
+  BUTTON_LABELS as COMPREHENSIVE_BUTTON_LABELS,
+  FORM_LABELS,
+  PLACEHOLDER_TEXT,
+  ERROR_MESSAGES,
+  SUCCESS_MESSAGES,
+  WARNING_MESSAGES,
+  INFO_MESSAGES,
+  type UiStrings,
+} from './ui-strings';
+
+// Validation Limits Configuration
+// Centralizes all hardcoded validation limits used throughout the application
+export {
+  VALIDATION_LIMITS,
+  getValidationLimit,
+  validateAgainstLimits,
+  clampToLimits,
+  TITLE_LIMITS,
+  DESCRIPTION_LIMITS,
+  CONTENT_LIMITS,
+  EMAIL_LIMITS,
+  PASSWORD_LIMITS,
+  USERNAME_LIMITS,
+  FILE_SIZE_LIMITS,
+  PAGINATION_LIMITS,
+  RATE_LIMIT_CONFIG,
+  RATE_LIMIT_CONFIG_WITH_EXTERNAL,
+  TIMEOUT_LIMITS,
+  RETRY_LIMITS,
+  CACHE_LIMITS,
+  API_LIMITS,
+  DATABASE_LIMITS,
+  AI_LIMITS,
+  EXPORT_LIMITS,
+  IMPORT_LIMITS,
+  NOTIFICATION_LIMITS,
+  SESSION_LIMITS,
+  SECURITY_LIMITS,
+  ANALYTICS_LIMITS,
+  type ValidationLimits,
+} from './validation-limits';
+
+// Animation Values Configuration
+// Centralizes all hardcoded animation values used throughout the application
+export {
+  ANIMATION_VALUES,
+  getDurationClass,
+  getDelayClass,
+  getEasingClass,
+  getScaleClass,
+  getRotateClass,
+  getTranslateClass,
+  getOpacityClass,
+  getBlurClass,
+  getBorderRadiusClass,
+  getShadowClass,
+  getTransitionClass,
+  getKeyframeClass,
+  getAnimationPreset,
+  DURATION_VALUES,
+  DELAY_VALUES,
+  EASING_VALUES,
+  SCALE_VALUES,
+  ROTATE_VALUES,
+  TRANSLATE_VALUES,
+  OPACITY_VALUES,
+  BLUR_VALUES,
+  BORDER_RADIUS_VALUES,
+  SHADOW_VALUES,
+  TRANSITION_VALUES,
+  KEYFRAME_VALUES,
+  ITERATION_COUNT_VALUES,
+  FILL_MODE_VALUES,
+  PLAY_STATE_VALUES,
+  DIRECTION_VALUES,
+  ANIMATION_PRESETS,
+  type AnimationValues,
+} from './animation-values';
