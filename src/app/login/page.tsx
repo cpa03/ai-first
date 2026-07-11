@@ -196,6 +196,14 @@ export default function LoginPage() {
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+      {/* Micro-UX: Skip to content link for keyboard users - improves accessibility */}
+      <a
+        href="#login-form"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md"
+      >
+        Skip to login form
+      </a>
+
       <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8`}>
         <div className={`${LAYOUT_CLASSES.TEXT_CENTER} animate-hero-entrance`}>
           <h1
@@ -211,6 +219,7 @@ export default function LoginPage() {
         </div>
 
         <form
+          id="login-form"
           className={`mt-8 space-y-6 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
