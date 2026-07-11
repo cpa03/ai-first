@@ -55,6 +55,38 @@ function MobileNavComponent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
+  // Micro-UX: Keyboard shortcuts for quick navigation between menu items
+  // Number keys 1-5 allow users to jump directly to menu items
+  // This improves keyboard accessibility and discoverability
+  useEffect(() => {
+    if (!isOpen || !isMobile) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      const isInputFocused =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable;
+
+      if (isInputFocused || e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const stepNumber = parseInt(e.key, 10);
+      if (stepNumber >= 1 && stepNumber <= navLinks.length) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        const linkIndex = stepNumber - 1;
+        const link = navLinks[linkIndex];
+        if (link) {
+          window.location.href = link.href;
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isMobile]);
+
   useEffect(() => {
     if (isOpen && isMobile) {
       document.body.style.overflow = 'hidden';
@@ -250,7 +282,7 @@ function MobileNavComponent() {
                         w-full text-left px-6 py-4 text-lg font-semibold
                         transition-all duration-300 ease-out rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}
                       aria-label={link.ariaLabel}
                       aria-current={active ? 'page' : undefined}
@@ -264,6 +296,12 @@ function MobileNavComponent() {
                         )}
                         {link.label}
                       </span>
+                      <kbd
+                        className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded text-xs font-mono opacity-60"
+                        aria-hidden="true"
+                      >
+                        {index + 1}
+                      </kbd>
                     </Link>
                   </li>
                 );
