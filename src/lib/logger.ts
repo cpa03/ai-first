@@ -198,11 +198,17 @@ export class Logger {
     if (isStructuredLogging) {
       const entry = this.createStructuredEntry(levelName, message, logContext);
       const output = JSON.stringify(entry);
-      // Use console.error for ALL structured log output to ensure logs survive
-      // Next.js's removeConsole configuration in production (Issue #949).
-      // The JSON "level" field indicates actual severity for log aggregators.
-      // This preserves production observability while maintaining structured format.
-      console.error(output);
+      // Use appropriate console method based on log level.
+      // Next.js removeConsole only preserves 'error' and 'warn' in production.
+      // Structured logs with level field enable proper filtering in log aggregators.
+      if (level === LogLevel.ERROR) {
+        console.error(output);
+      } else if (level === LogLevel.WARN) {
+        console.warn(output);
+      } else {
+        // INFO/DEBUG logs removed in production by removeConsole config
+        console.info(output);
+      }
     } else {
       const formattedMessage = this.formatMessage(message, logContext);
 
@@ -213,16 +219,10 @@ export class Logger {
 
       const prefix = `[${this.getTimestamp()}] [${this.context}]`;
 
-      // Use console.error for ALL logs in production to ensure they survive
-      // Next.js's removeConsole configuration (Issue #949).
-      // This preserves production observability for incident response.
-      if (IS_PRODUCTION) {
-        // In production, ALL logs go to console.error to survive removeConsole
-        console.error(
-          `${prefix} ${redactPII(formattedMessage)}`,
-          ...sanitizedArgs
-        );
-      } else if (level === LogLevel.ERROR) {
+      // Use appropriate console method based on log level.
+      // Next.js removeConsole only preserves 'error' and 'warn' in production.
+      // INFO/DEBUG logs are intentionally removed in production to reduce noise.
+      if (level === LogLevel.ERROR) {
         console.error(
           `${prefix} ${redactPII(formattedMessage)}`,
           ...sanitizedArgs

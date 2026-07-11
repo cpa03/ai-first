@@ -617,7 +617,6 @@ export default function DashboardPage() {
           {ideas.length > 0 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <span
-                key={ideas.length}
                 className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
                   filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
                     ? 'bg-primary-600 text-white'
