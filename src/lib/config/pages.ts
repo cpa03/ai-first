@@ -386,6 +386,7 @@ export const RESULTS_PAGE_CONTENT = {
 export const DASHBOARD_PAGE_CONTENT = {
   HEADING: 'Your Ideas',
   LOADING: 'Loading your ideas...',
+  LOADING_SHORT: 'Loading...',
   ERROR_TITLE: 'Error',
   TRY_AGAIN: 'Try Again',
   CLEAR_FILTER: 'Clear Filter',
@@ -421,16 +422,33 @@ export const DASHBOARD_PAGE_CONTENT = {
   },
   ACTIONS: {
     NEW_IDEA: '+ New Idea',
+    CONTINUE: 'Continue',
     VIEW: 'View',
+    VIEW_BLUEPRINT: 'View blueprint',
     EDIT: 'Edit',
     DELETE: 'Delete',
+    DELETE_IDEA: 'Delete Idea',
   },
   DELETE_MODAL: {
     TITLE: 'Delete Idea',
     CONFIRM: 'Are you sure you want to delete this idea?',
+    CONFIRM_DELETION: 'Confirm deletion',
     CANCEL: 'Cancel',
     DELETE: 'Delete',
     DELETING: 'Deleting...',
+  },
+  KEYBOARD_SHORTCUTS: {
+    NAVIGATE: 'navigate',
+    OPEN: 'open',
+    DESELECT: 'deselect',
+    DELETE: 'delete',
+    KEYS: {
+      J: 'j',
+      K: 'k',
+      ENTER: 'Enter',
+      ESC: 'Esc',
+      DEL: 'Del',
+    },
   },
   ERRORS: {
     FETCH_FAILED: 'Failed to fetch ideas',
