@@ -225,19 +225,24 @@ Complete index of all IdeaFlow documentation.
 
 ## Audit Reports
 
+- [BroCula Browser Audit - 2026-07-10](./audit/browser-console-audit-20260710.md) - Browser console and Lighthouse audit (moved from root)
+- [BroCula Browser Audit - 2026-07-09](./audit/browser-console-audit-20260709.md) - Browser console and Lighthouse audit (moved from root)
 - [BroCula Browser Audit - 2026-07-09](./audit/2026-07-09-brocula-browser-audit.md) - Browser console and Lighthouse audit
 - [Browser Audit Report - 2026-07-09](./audit/2026-07-09-browser-audit-report.md) - Browser console and Lighthouse audit (detailed)
 - [Console Lighthouse Check - 2026-07-09](./audit/2026-07-09-console-lighthouse-check.md) - Console and Lighthouse verification
 - [BroCula Browser Audit - 2026-07-08](./audit/2026-07-08-brocula-browser-audit.md) - Browser console and Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-08](./audit/2026-07-08-flexy-modularization-audit.md) - Code modularization assessment
+- [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment (moved from root)
 - [Comprehensive Audit - 2026-07-08](./audit/2026-07-08-comprehensive-audit.md) - Full repository audit
 - [Phase 2 Feature Hardening - 2026-07-08](./audit/2026-07-08-phase2-feature-hardening.md) - Feature hardening audit
 - [Phase 3 Strategic Expansion - 2026-07-08](./audit/2026-07-08-phase3-strategic-expansion.md) - Strategic expansion audit
+- [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation (moved from root)
 
 ## Maintenance Reports
 
+- [Repository Health Report - 2026-07-11](./maintenance/2026-07-11-stale-branches-report.md) - Latest stale branches analysis (67 branches, 2 merged)
 - [Repository Health Report - 2026-07-10](./maintenance/2026-07-10-repo-health-report.md) - Latest repository health status
-- [Stale Branches Report - 2026-07-10](./maintenance/2026-07-10-stale-branches-report.md) - Latest branch analysis (90 branches, 15 stale)
+- [Stale Branches Report - 2026-07-10](./maintenance/2026-07-10-stale-branches-report.md) - Previous branch analysis (90 branches, 15 stale)
 - [Repository Health Report - 2026-07-09](./maintenance/2026-07-09-repo-health-report.md) - Previous health status
 - [Repository Health Report - 2026-07-08](./maintenance/2026-07-08-repo-health-report.md) - Previous health status
 - [Repository Health Report - 2026-07-07 (Repocheck)](./maintenance/2026-07-07-repo-health-report.md) - Previous health status
