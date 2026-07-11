@@ -101,6 +101,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
   const [isPaused, setIsPaused] = useState(false);
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
+  const [remainingSeconds, setRemainingSeconds] = useState(0);
   const progressRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
@@ -114,6 +115,8 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     const totalSteps = duration / updateInterval;
     let currentStep = 0;
 
+    setRemainingSeconds(Math.ceil(duration / 1000));
+
     const progressTimer = setInterval(() => {
       if (isPaused) return;
 
@@ -125,6 +128,10 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       );
       progressRef.current = remainingProgress;
       setProgress(remainingProgress);
+
+      const elapsedMs = currentStep * updateInterval;
+      const remainingMs = Math.max(0, duration - elapsedMs);
+      setRemainingSeconds(Math.ceil(remainingMs / 1000));
 
       if (currentStep >= totalSteps) {
         clearInterval(progressTimer);
@@ -261,6 +268,33 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       <span className="sr-only">
         {TOAST_CONTAINER_LABELS.DISMISS_INSTRUCTION}
       </span>
+      {remainingSeconds > 0 && !prefersReducedMotion && (
+        <div
+          className="absolute bottom-1.5 right-2 text-xs font-medium opacity-60 tabular-nums"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {isPaused ? (
+            <span className="flex items-center gap-1">
+              <svg
+                className="w-3 h-3"
+                fill="currentColor"
+                viewBox={SVG_VIEWBOX.SMALL}
+                aria-hidden="true"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Paused
+            </span>
+          ) : (
+            `${remainingSeconds}s`
+          )}
+        </div>
+      )}
       {isSwiping &&
         swipeOffset > UI_CONSTANTS.TOAST_SWIPE_PROGRESS_THRESHOLD && (
           <div
