@@ -10,6 +10,7 @@ import {
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
 } from '@/lib/config';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   createContext,
   useContext,
@@ -65,12 +66,21 @@ export function KeyboardShortcutsProvider({
 function KeyboardShortcutsButtonComponent() {
   const { openHelp } = useKeyboardShortcuts();
   const [isMac, setIsMac] = useState(false);
+  const [showDiscoverPulse, setShowDiscoverPulse] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
     setIsMac(
       typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
     );
   }, []);
+
+  useEffect(() => {
+    if (!prefersReducedMotion) {
+      const timer = setTimeout(() => setShowDiscoverPulse(true), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [prefersReducedMotion]);
 
   const shortcutKeys = useMemo(() => [isMac ? '⌘' : 'Ctrl', 'K'], [isMac]);
 
@@ -82,7 +92,7 @@ function KeyboardShortcutsButtonComponent() {
     >
       <button
         onClick={openHelp}
-        className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2"
+        className={`p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${showDiscoverPulse ? 'animate-discover-pulse' : ''}`}
         aria-label={KEYBOARD_SHORTCUTS_PROVIDER_LABELS.HELP_BUTTON_ARIA_LABEL}
         type="button"
       >
