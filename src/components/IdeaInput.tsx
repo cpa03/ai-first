@@ -286,8 +286,27 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         e.preventDefault();
         handleClear();
       }
+      // Micro-UX: Paste from clipboard on Ctrl/Cmd + Shift + V when input is empty
+      // Provides quick keyboard access to paste functionality
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key === 'V' &&
+        !idea.trim() &&
+        !isSubmitting
+      ) {
+        e.preventDefault();
+        handlePasteFromClipboard();
+      }
     },
-    [isSubmitting, idea, validationError, handleSubmit, handleClear]
+    [
+      isSubmitting,
+      idea,
+      validationError,
+      handleSubmit,
+      handleClear,
+      handlePasteFromClipboard,
+    ]
   );
 
   const handleCelebrationComplete = useCallback(() => {
@@ -323,7 +342,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           onChange={handleIdeaChange}
           onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDERS.IDEA_INPUT}
-          helpText={`${IDEA_INPUT_LABELS.HELP_TEXT_PREFIX} ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. ${IDEA_INPUT_LABELS.HELP_TEXT_ESCAPE_HINT}.`}
+          helpText={`${IDEA_INPUT_LABELS.HELP_TEXT_PREFIX} ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. ${IDEA_INPUT_LABELS.HELP_TEXT_ESCAPE_HINT}. ${IDEA_INPUT_LABELS.HELP_TEXT_PASTE_HINT}.`}
           multiline={true}
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}
@@ -476,51 +495,57 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           </div>
           <div className="flex items-center gap-3">
             {!idea.trim() && !isSubmitting && (
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={handlePasteFromClipboard}
-                aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
-                className={`transition-all duration-200 ${
-                  pasteSuccess
-                    ? 'text-green-600 bg-green-50 hover:bg-green-100'
-                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-                }`}
+              <Tooltip
+                content={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
+                shortcut={isMac ? ['⌘', '⇧', 'V'] : ['Ctrl', 'Shift', 'V']}
+                position="top"
               >
-                {pasteSuccess ? (
-                  <svg
-                    className="w-4 h-4 mr-1 text-green-600"
-                    fill="none"
-                    viewBox={SVG_VIEWBOX.STANDARD}
-                    stroke="currentColor"
-                    strokeWidth={SVG_STROKE_WIDTHS.THICK}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-4 h-4 mr-1"
-                    fill="none"
-                    viewBox={SVG_VIEWBOX.STANDARD}
-                    stroke="currentColor"
-                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                    />
-                  </svg>
-                )}
-                {pasteSuccess ? 'Pasted!' : IDEA_INPUT_LABELS.PASTE_BUTTON}
-              </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePasteFromClipboard}
+                  aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
+                  className={`transition-all duration-200 ${
+                    pasteSuccess
+                      ? 'text-green-600 bg-green-50 hover:bg-green-100'
+                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                  }`}
+                >
+                  {pasteSuccess ? (
+                    <svg
+                      className="w-4 h-4 mr-1 text-green-600"
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="none"
+                      viewBox={SVG_VIEWBOX.STANDARD}
+                      stroke="currentColor"
+                      strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                      aria-hidden="true"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                      />
+                    </svg>
+                  )}
+                  {pasteSuccess ? 'Pasted!' : IDEA_INPUT_LABELS.PASTE_BUTTON}
+                </Button>
+              </Tooltip>
             )}
             {idea.trim() && !isSubmitting && (
               <Button
