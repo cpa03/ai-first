@@ -11,6 +11,7 @@
 import crypto from 'node:crypto';
 import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 export interface SignedRequestOptions {
   /** The request payload (body) */
@@ -82,7 +83,7 @@ function getInternalApiSecret(): string {
   if (!secret) {
     if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production') {
       throw new Error(
-        'INTERNAL_API_SECRET environment variable is required in production'
+        API_ERROR_MESSAGES.REQUEST_SIGNER.INTERNAL_SECRET_MISSING
       );
     }
     return ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development'
@@ -92,7 +93,9 @@ function getInternalApiSecret(): string {
 
   if (secret.length < SECURITY_CONFIG.MIN_SECRET_LENGTH) {
     throw new Error(
-      `INTERNAL_API_SECRET must be at least ${SECURITY_CONFIG.MIN_SECRET_LENGTH} characters for adequate security`
+      API_ERROR_MESSAGES.REQUEST_SIGNER.SECRET_TOO_SHORT(
+        SECURITY_CONFIG.MIN_SECRET_LENGTH
+      )
     );
   }
 
@@ -197,7 +200,7 @@ export function verifySignature(
   if (!isTimestampValid(timestamp, tolerance)) {
     return {
       valid: false,
-      error: 'Request timestamp outside acceptable window',
+      error: API_ERROR_MESSAGES.REQUEST_SIGNER.TIMESTAMP_OUTSIDE_WINDOW,
     };
   }
 
@@ -224,7 +227,7 @@ export function verifySignature(
     // If buffers are different lengths, timingSafeEqual throws
     return {
       valid: false,
-      error: 'Invalid signature format',
+      error: API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_SIGNATURE_FORMAT,
     };
   }
 }
@@ -369,7 +372,7 @@ export async function verifyInternalRequest(
   if (!signatureHeader || !timestampHeader) {
     return {
       verified: false,
-      error: 'Missing required signature headers',
+      error: API_ERROR_MESSAGES.REQUEST_SIGNER.MISSING_SIGNATURE_HEADERS,
     };
   }
 
@@ -378,7 +381,7 @@ export async function verifyInternalRequest(
   if (!parsed) {
     return {
       verified: false,
-      error: 'Invalid signature header format',
+      error: API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_SIGNATURE_HEADER_FORMAT,
     };
   }
 
@@ -386,7 +389,7 @@ export async function verifyInternalRequest(
   if (options.requireNonce && !parsed.nonce) {
     return {
       verified: false,
-      error: 'Nonce required but not provided',
+      error: API_ERROR_MESSAGES.REQUEST_SIGNER.NONCE_REQUIRED,
     };
   }
 
@@ -479,17 +482,27 @@ export function verifySignedUrl(url: string): VerificationResult & {
     const nonce = urlObj.searchParams.get('_nonce');
 
     if (!timestampStr || !signature) {
-      return { valid: false, error: 'Missing signature parameters' };
+      return {
+        valid: false,
+        error: API_ERROR_MESSAGES.REQUEST_SIGNER.MISSING_SIGNATURE_PARAMS,
+      };
     }
 
     const timestamp = parseInt(timestampStr, 10);
     if (isNaN(timestamp)) {
-      return { valid: false, error: 'Invalid timestamp format' };
+      return {
+        valid: false,
+        error: API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_TIMESTAMP_FORMAT,
+      };
     }
 
     // Check if expired
     if (timestamp < Date.now()) {
-      return { valid: false, error: 'URL has expired', expiresAt: timestamp };
+      return {
+        valid: false,
+        error: API_ERROR_MESSAGES.REQUEST_SIGNER.URL_EXPIRED,
+        expiresAt: timestamp,
+      };
     }
 
     // Verify signature
@@ -506,7 +519,10 @@ export function verifySignedUrl(url: string): VerificationResult & {
   } catch (error) {
     return {
       valid: false,
-      error: error instanceof Error ? error.message : 'Invalid URL',
+      error:
+        error instanceof Error
+          ? error.message
+          : API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_URL,
     };
   }
 }

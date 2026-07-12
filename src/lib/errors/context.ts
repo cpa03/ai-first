@@ -25,6 +25,7 @@ import {
 } from './classes';
 import { ErrorCode } from './codes';
 import { isRetryableError } from './utils';
+import { API_ERROR_MESSAGES } from '../config/error-messages';
 
 /**
  * Classification of error types for debugging and monitoring
@@ -130,7 +131,7 @@ export function extractErrorContext(
   // Handle unknown error types
   return {
     name: 'UnknownError',
-    message: 'An unknown error occurred',
+    message: API_ERROR_MESSAGES.FALLBACK.INTERNAL_ERROR,
     retryable: false,
     classification: 'unknown_error',
     timestamp,
