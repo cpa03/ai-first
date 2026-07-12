@@ -436,6 +436,42 @@ export const COMPONENT_CONFIG = {
       10
     ),
   } as const,
+
+  SCROLL_TO_ERROR: {
+    /** Default scroll offset from error element (px) - Env: COMPONENT_SCROLL_TO_ERROR_OFFSET (default: 80) */
+    DEFAULT_OFFSET: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_ERROR_OFFSET',
+      80,
+      0,
+      500
+    ),
+    /** Debounce timeout for error scroll deduplication (ms) - Env: COMPONENT_SCROLL_TO_ERROR_DEBOUNCE_MS (default: 1000) */
+    DEBOUNCE_MS: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_ERROR_DEBOUNCE_MS',
+      1000,
+      100,
+      5000
+    ),
+    /** Fallback scroll delay for reduced motion (ms) - Env: COMPONENT_SCROLL_TO_ERROR_REDUCED_MOTION_DELAY_MS (default: 50) */
+    REDUCED_MOTION_DELAY_MS: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_ERROR_REDUCED_MOTION_DELAY_MS',
+      50,
+      10,
+      500
+    ),
+    /** Default error element selector */
+    DEFAULT_SELECTOR: '[aria-invalid="true"], .text-red-700',
+  } as const,
+
+  KEYBOARD_SHORTCUTS: {
+    /** Delay before discover pulse animation appears (ms) - Env: COMPONENT_KEYBOARD_SHORTCUTS_DISCOVER_DELAY_MS (default: 1000) */
+    DISCOVER_PULSE_DELAY_MS: EnvLoader.number(
+      'COMPONENT_KEYBOARD_SHORTCUTS_DISCOVER_DELAY_MS',
+      1000,
+      500,
+      5000
+    ),
+  } as const,
 } as const;
 
 export type ComponentConfig = typeof COMPONENT_CONFIG;
