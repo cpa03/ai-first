@@ -7,6 +7,7 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import {
   SPINNER_PATTERNS,
@@ -140,6 +141,9 @@ function ResultsContent() {
   >({});
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
   const prefersReducedMotion = usePrefersReducedMotion();
+  // Micro-UX: Confetti celebration on successful export for delightful feedback
+  const { particles, fire } = useConfetti();
+  const [showExportSuccess, setShowExportSuccess] = useState(false);
 
   useEffect(() => {
     if (authLoading) return;
@@ -252,8 +256,10 @@ function ResultsContent() {
 
       if (result.success && result.url) {
         setExportUrl(result.url);
+        fire();
+        setShowExportSuccess(true);
+        setTimeout(() => setShowExportSuccess(false), 2000);
 
-        // For markdown, we'll create a download link
         if (format === 'markdown') {
           const link = document.createElement('a');
           link.href = result.url;
@@ -619,10 +625,30 @@ function ResultsContent() {
         </div>
 
         {exportUrl && (
-          <div className="mt-6">
+          <div className="mt-6 relative">
             <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
               {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
             </Alert>
+            {showExportSuccess &&
+              particles.map((particle) => (
+                <span
+                  key={particle.id}
+                  className="absolute rounded-full pointer-events-none animate-copy-confetti"
+                  style={
+                    {
+                      left: '50%',
+                      top: '50%',
+                      width: `${particle.size}px`,
+                      height: `${particle.size}px`,
+                      backgroundColor: particle.color,
+                      '--confetti-x': `${particle.x}px`,
+                      '--confetti-y': `${particle.y}px`,
+                      animationDelay: `${particle.delay}ms`,
+                    } as React.CSSProperties
+                  }
+                  aria-hidden="true"
+                />
+              ))}
           </div>
         )}
       </div>
