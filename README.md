@@ -143,6 +143,7 @@
     /TaskManagementSkeleton.tsx ← Task management loading skeleton
     /ToastContainer.tsx     ← Toast notification container
     /Tooltip.tsx            ← Accessible tooltip component
+    /TypingIndicator.tsx    ← Typing indicator animation
     /UserOnboarding.tsx     ← User onboarding flow
     /WhyChooseSection.tsx   ← Why choose section
     /task-management/       ← Task management components
@@ -158,6 +159,7 @@
     /useConfetti.ts          ← Confetti animation hook
     /useCountUp.ts          ← Count up animation hook
     /usePrefersReducedMotion.ts ← Reduced motion preference hook
+    /useScrollToError.ts    ← Scroll to error hook
     /useSessionDuration.ts  ← Session duration tracking hook
     /useTaskManagement.ts   ← Task management hook
   /lib/                    ← Core utilities
