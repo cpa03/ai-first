@@ -34,6 +34,12 @@ jest.mock('@/lib/config', () => ({
   HTTP_HEADERS: {
     JSON_CONTENT_TYPE: { 'Content-Type': 'application/json' },
   },
+  PROGRESS_PERCENTAGE: {
+    MAX: 100,
+    MIN: 0,
+    COMPLETE: 100,
+    ZERO: 0,
+  },
 }));
 
 const mockFetch = require('@/lib/api-client').fetchWithTimeout as jest.Mock;

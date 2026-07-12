@@ -24,6 +24,7 @@ import {
   httpRequestTotal,
 } from '@/lib/metrics';
 import { APP_CONFIG } from '@/lib/config/app';
+import { TIME_CONVERSIONS } from '@/lib/config/modular-constants';
 import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { validateCSRF } from '@/lib/security/csrf';
@@ -286,7 +287,7 @@ export function withApiHandler(
       const statusCode = String(response.status);
       httpRequestDuration.observe(
         { method: request.method, route, status_code: statusCode },
-        duration / 1000
+        duration / TIME_CONVERSIONS.MS_PER_SECOND
       );
       httpRequestTotal.inc({
         method: request.method,
@@ -311,7 +312,7 @@ export function withApiHandler(
 
       httpRequestDuration.observe(
         { method: request.method, route, status_code: errorStatusCode },
-        duration / 1000
+        duration / TIME_CONVERSIONS.MS_PER_SECOND
       );
       httpRequestErrors.inc({
         method: request.method,

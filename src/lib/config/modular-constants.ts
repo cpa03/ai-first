@@ -492,6 +492,70 @@ export const PRECISION_CONFIG = {
 } as const;
 
 /**
+ * Progress Percentage Configuration
+ * Centralizes percentage-related constants used throughout the codebase
+ * Replaces hardcoded "100" values for progress bars, completion tracking, etc.
+ */
+export const PROGRESS_PERCENTAGE = {
+  /**
+   * Maximum percentage value (100%)
+   * Used for progress bars, completion tracking, scroll progress, etc.
+   * Env: PROGRESS_PERCENTAGE_MAX (default: 100)
+   */
+  MAX: EnvLoader.number('PROGRESS_PERCENTAGE_MAX', 100, 50, 200),
+
+  /**
+   * Minimum percentage value (0%)
+   * Env: PROGRESS_PERCENTAGE_MIN (default: 0)
+   */
+  MIN: EnvLoader.number('PROGRESS_PERCENTAGE_MIN', 0, 0, 50),
+
+  /**
+   * Complete percentage value (100%)
+   * Alias for MAX, used for semantic clarity
+   */
+  COMPLETE: EnvLoader.number('PROGRESS_PERCENTAGE_COMPLETE', 100, 50, 200),
+
+  /**
+   * Zero percentage value (0%)
+   * Alias for MIN, used for semantic clarity
+   */
+  ZERO: EnvLoader.number('PROGRESS_PERCENTAGE_ZERO', 0, 0, 50),
+} as const;
+
+/**
+ * Time Conversion Configuration
+ * Centralizes time unit conversion constants
+ * Replaces hardcoded "1000" for ms-to-seconds conversions, etc.
+ */
+export const TIME_CONVERSIONS = {
+  /**
+   * Milliseconds per second (1000)
+   * Used for converting millisecond durations to seconds for metrics, logging, etc.
+   * Env: TIME_MS_PER_SECOND (default: 1000)
+   */
+  MS_PER_SECOND: EnvLoader.number('TIME_MS_PER_SECOND', 1000, 1, 10000),
+
+  /**
+   * Seconds per minute (60)
+   * Env: TIME_SECONDS_PER_MINUTE (default: 60)
+   */
+  SECONDS_PER_MINUTE: EnvLoader.number('TIME_SECONDS_PER_MINUTE', 60, 1, 3600),
+
+  /**
+   * Minutes per hour (60)
+   * Env: TIME_MINUTES_PER_HOUR (default: 60)
+   */
+  MINUTES_PER_HOUR: EnvLoader.number('TIME_MINUTES_PER_HOUR', 60, 1, 1440),
+
+  /**
+   * Hours per day (24)
+   * Env: TIME_HOURS_PER_DAY (default: 24)
+   */
+  HOURS_PER_DAY: EnvLoader.number('TIME_HOURS_PER_DAY', 24, 1, 48),
+} as const;
+
+/**
  * Resource Type Constants
  * Centralizes resource type strings used in verifyResourceOwnership() and similar functions
  */

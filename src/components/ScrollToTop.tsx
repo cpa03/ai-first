@@ -18,6 +18,7 @@ import {
   BORDER_COLORS,
   SHADOW_CLASSES,
   TRANSITION_CLASSES,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -49,8 +50,11 @@ function ScrollToTopComponent({
     const scrollTop = window.scrollY;
     const docHeight =
       document.documentElement.scrollHeight - window.innerHeight;
-    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    setScrollProgress(Math.min(progress, 100));
+    const progress =
+      docHeight > 0
+        ? (scrollTop / docHeight) * PROGRESS_PERCENTAGE.MAX
+        : PROGRESS_PERCENTAGE.MIN;
+    setScrollProgress(Math.min(progress, PROGRESS_PERCENTAGE.MAX));
   }, []);
 
   const toggleVisibility = useCallback(() => {
@@ -184,7 +188,7 @@ function ScrollToTopComponent({
   const circumference =
     2 * Math.PI * COMPONENT_DEFAULTS.SCROLL_TO_TOP.PROGRESS_RADIUS;
   const strokeDashoffset =
-    circumference - (scrollProgress / 100) * circumference;
+    circumference - (scrollProgress / PROGRESS_PERCENTAGE.MAX) * circumference;
 
   const showPercentage =
     scrollProgress >= UI_TIMING_CONFIG.SCROLL_PERCENTAGE_THRESHOLD;
@@ -266,8 +270,8 @@ function ScrollToTopComponent({
               aria-hidden="true"
               role="progressbar"
               aria-valuenow={Math.round(scrollProgress)}
-              aria-valuemin={0}
-              aria-valuemax={100}
+              aria-valuemin={PROGRESS_PERCENTAGE.MIN}
+              aria-valuemax={PROGRESS_PERCENTAGE.MAX}
             >
               <circle
                 cx="24"

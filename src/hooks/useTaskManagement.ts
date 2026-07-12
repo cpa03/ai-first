@@ -11,6 +11,7 @@ import {
   HTTP_HEADERS,
   API_ERROR_MESSAGES,
   TASK_CONFIG,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 
 export interface DeliverableWithTasks extends Deliverable {
@@ -186,7 +187,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         ...task,
         status: newStatus,
         completion_percentage:
-          newStatus === TASK_CONFIG.STATUSES.COMPLETED ? 100 : 0,
+          newStatus === TASK_CONFIG.STATUSES.COMPLETED
+            ? PROGRESS_PERCENTAGE.MAX
+            : PROGRESS_PERCENTAGE.MIN,
       };
 
       const newCompletedCount = deliverable.completedCount + deltaTasks;
@@ -200,8 +203,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         completedHours: newCompletedHours,
         progress: Math.round(
           updatedTasks.length > 0
-            ? (newCompletedCount / updatedTasks.length) * 100
-            : 0
+            ? (newCompletedCount / updatedTasks.length) *
+                PROGRESS_PERCENTAGE.MAX
+            : PROGRESS_PERCENTAGE.MIN
         ),
       };
 
@@ -222,8 +226,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           completedHours: newOverallCompletedHours,
           overallProgress: Math.round(
             summary.totalTasks > 0
-              ? (newOverallCompletedTasks / summary.totalTasks) * 100
-              : 0
+              ? (newOverallCompletedTasks / summary.totalTasks) *
+                  PROGRESS_PERCENTAGE.MAX
+              : PROGRESS_PERCENTAGE.MIN
           ),
         },
       };

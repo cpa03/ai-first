@@ -11,6 +11,7 @@ import {
   ANIMATION_CONFIG,
   API_ENDPOINTS,
   HTTP_HEADERS,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -118,7 +119,7 @@ export function useClarificationSession(
   );
 
   const progress = useMemo(
-    () => ((currentStep + 1) / questions.length) * 100,
+    () => ((currentStep + 1) / questions.length) * PROGRESS_PERCENTAGE.MAX,
     [currentStep, questions.length]
   );
 

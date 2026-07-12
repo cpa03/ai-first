@@ -10,6 +10,7 @@ import {
   AUTO_SAVE_INDICATOR_LABELS,
   TEXT_SIZE_CLASSES,
   OPACITY_CONFIG,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -65,14 +66,15 @@ function AutoSaveIndicatorComponent({
 
       // Start progress animation
       const progressStep =
-        100 / (delay / COMPONENT_CONFIG.AUTO_SAVE.PROGRESS_INTERVAL_MS);
+        PROGRESS_PERCENTAGE.MAX /
+        (delay / COMPONENT_CONFIG.AUTO_SAVE.PROGRESS_INTERVAL_MS);
       progressIntervalRef.current = setInterval(() => {
         setProgress((prev) => {
-          if (prev >= 100) {
+          if (prev >= PROGRESS_PERCENTAGE.MAX) {
             if (progressIntervalRef.current) {
               clearInterval(progressIntervalRef.current);
             }
-            return 100;
+            return PROGRESS_PERCENTAGE.MAX;
           }
           return prev + progressStep;
         });
@@ -88,7 +90,7 @@ function AutoSaveIndicatorComponent({
           queueMicrotask(() => {
             setSaveState('saved');
             setLastSaved(new Date());
-            setProgress(100);
+            setProgress(PROGRESS_PERCENTAGE.MAX);
           });
         }, COMPONENT_CONFIG.AUTO_SAVE.SAVE_DURATION_MS);
       }, delay);
