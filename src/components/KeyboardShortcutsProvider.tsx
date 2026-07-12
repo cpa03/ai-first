@@ -9,6 +9,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
@@ -77,7 +78,10 @@ function KeyboardShortcutsButtonComponent() {
 
   useEffect(() => {
     if (!prefersReducedMotion) {
-      const timer = setTimeout(() => setShowDiscoverPulse(true), 1000);
+      const timer = setTimeout(
+        () => setShowDiscoverPulse(true),
+        COMPONENT_CONFIG.KEYBOARD_SHORTCUTS.DISCOVER_PULSE_DELAY_MS
+      );
       return () => clearTimeout(timer);
     }
   }, [prefersReducedMotion]);

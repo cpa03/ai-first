@@ -3,6 +3,7 @@
 import { useCallback, useRef } from 'react';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
+import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface ScrollToErrorOptions {
   offset?: number;
@@ -10,12 +11,15 @@ interface ScrollToErrorOptions {
 }
 
 export function useScrollToError(options: ScrollToErrorOptions = {}) {
-  const { offset = 80, haptic = true } = options;
+  const {
+    offset = COMPONENT_CONFIG.SCROLL_TO_ERROR.DEFAULT_OFFSET,
+    haptic = true,
+  } = options;
   const prefersReducedMotion = usePrefersReducedMotion();
   const lastErrorRef = useRef<string | null>(null);
 
   const scrollToError = useCallback(
-    (errorSelector = '[aria-invalid="true"], .text-red-700') => {
+    (errorSelector = COMPONENT_CONFIG.SCROLL_TO_ERROR.DEFAULT_SELECTOR) => {
       const errorElement = document.querySelector(errorSelector);
 
       if (!errorElement) return;
@@ -26,7 +30,7 @@ export function useScrollToError(options: ScrollToErrorOptions = {}) {
 
       setTimeout(() => {
         lastErrorRef.current = null;
-      }, 1000);
+      }, COMPONENT_CONFIG.SCROLL_TO_ERROR.DEBOUNCE_MS);
 
       if (haptic) {
         triggerHapticFeedback();
@@ -50,7 +54,7 @@ export function useScrollToError(options: ScrollToErrorOptions = {}) {
       } else {
         setTimeout(() => {
           window.scrollBy({ top: -offset, behavior: 'auto' });
-        }, 50);
+        }, COMPONENT_CONFIG.SCROLL_TO_ERROR.REDUCED_MOTION_DELAY_MS);
       }
 
       if (errorElement instanceof HTMLElement) {
