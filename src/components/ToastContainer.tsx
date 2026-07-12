@@ -14,6 +14,7 @@ import {
   TOAST_CONTAINER_LABELS,
   MIN_SIZE_CLASSES,
   DURATION_TAILWIND,
+  TIME_CONVERSIONS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { generateId } from '@/lib/security/crypto';
@@ -116,7 +117,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     const totalSteps = duration / updateInterval;
     let currentStep = 0;
 
-    setRemainingSeconds(Math.ceil(duration / 1000));
+    setRemainingSeconds(Math.ceil(duration / TIME_CONVERSIONS.MS_PER_SECOND));
 
     const progressTimer = setInterval(() => {
       if (isPaused) return;
@@ -132,7 +133,9 @@ function ToastComponent({ toast, onClose }: ToastProps) {
 
       const elapsedMs = currentStep * updateInterval;
       const remainingMs = Math.max(0, duration - elapsedMs);
-      setRemainingSeconds(Math.ceil(remainingMs / 1000));
+      setRemainingSeconds(
+        Math.ceil(remainingMs / TIME_CONVERSIONS.MS_PER_SECOND)
+      );
 
       if (currentStep >= totalSteps) {
         clearInterval(progressTimer);

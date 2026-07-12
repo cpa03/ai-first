@@ -11,6 +11,7 @@ import {
   TEXT_SIZE_CLASSES,
   OPACITY_CONFIG,
   PROGRESS_PERCENTAGE,
+  TIME_CONVERSIONS,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -132,7 +133,7 @@ function AutoSaveIndicatorComponent({
   const formatLastSaved = (date: Date): string => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    const seconds = Math.floor(diff / 1000);
+    const seconds = Math.floor(diff / TIME_CONVERSIONS.MS_PER_SECOND);
 
     if (seconds < 10) return AUTO_SAVE_INDICATOR_LABELS.JUST_NOW;
     if (seconds < 60) return `${seconds}s ago`;

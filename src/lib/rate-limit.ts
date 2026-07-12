@@ -12,6 +12,7 @@ import { HTTP_HEADERS } from './config/http';
 import { ENV_ACCESSORS } from './config/env-keys';
 import { generateRequestId } from './errors';
 import { simpleHash } from './security/crypto';
+import { TIME_CONVERSIONS } from './config/modular-constants';
 
 export interface RateLimitInfo {
   limit: number;
@@ -576,7 +577,9 @@ export function rateLimitResponse(
   const responseBody = {
     error: 'Too many requests',
     code: ERROR_CONFIG.RATE_LIMIT.ERROR_CODE,
-    retryAfter: Math.ceil((resetTime - Date.now()) / 1000),
+    retryAfter: Math.ceil(
+      (resetTime - Date.now()) / TIME_CONVERSIONS.MS_PER_SECOND
+    ),
     timestamp: new Date().toISOString(),
     requestId: requestId || generateRequestId(),
     retryable: true,
@@ -584,7 +587,9 @@ export function rateLimitResponse(
 
   const headers: Record<string, string> = {
     [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,
-    'Retry-After': String(Math.ceil((resetTime - Date.now()) / 1000)),
+    'Retry-After': String(
+      Math.ceil((resetTime - Date.now()) / TIME_CONVERSIONS.MS_PER_SECOND)
+    ),
     'X-RateLimit-Limit': String(rateLimitInfo.limit),
     'X-RateLimit-Remaining': String(rateLimitInfo.remaining),
     'X-RateLimit-Reset': String(new Date(resetTime).toISOString()),
