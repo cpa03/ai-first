@@ -240,7 +240,8 @@ Complete index of all IdeaFlow documentation.
 
 ## Maintenance Reports
 
-- [Stale Branches Report - 2026-07-11 (Latest)](./maintenance/2026-07-11-stale-branches-report.md) - Latest stale branches analysis (76 total, 4 merged, 72 unmerged)
+- [Stale Branches Report - 2026-07-12 (Latest)](./maintenance/2026-07-12-stale-branches-report.md) - Latest stale branches analysis (74 total, 4 merged, 70 unmerged)
+- [Stale Branches Report - 2026-07-11](./maintenance/2026-07-11-stale-branches-report.md) - Previous stale branches analysis (76 total, 4 merged, 72 unmerged)
 - [Repository Health Report - 2026-07-10](./maintenance/2026-07-10-repo-health-report.md) - Repository health status
 - [Stale Branches Report - 2026-07-10](./maintenance/2026-07-10-stale-branches-report.md) - Previous branch analysis (90 branches, 15 stale)
 - [Repository Health Report - 2026-07-09](./maintenance/2026-07-09-repo-health-report.md) - Previous health status
