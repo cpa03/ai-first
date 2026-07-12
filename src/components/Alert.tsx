@@ -12,6 +12,7 @@ import {
   SVG_VIEWBOX,
   ALERT_LABELS,
   DURATION_TAILWIND,
+  TIME_CONVERSIONS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -118,7 +119,9 @@ const AlertComponent = function Alert({
     let currentStep = 0;
 
     // Micro-UX: Initialize countdown display with remaining seconds
-    setRemainingSeconds(Math.ceil(effectiveDelay / 1000));
+    setRemainingSeconds(
+      Math.ceil(effectiveDelay / TIME_CONVERSIONS.MS_PER_SECOND)
+    );
 
     progressRef.current = setInterval(() => {
       currentStep++;
@@ -133,7 +136,9 @@ const AlertComponent = function Alert({
       // Micro-UX: Update countdown display every second for user feedback
       const elapsedMs = currentStep * updateInterval;
       const remainingMs = Math.max(0, effectiveDelay - elapsedMs);
-      setRemainingSeconds(Math.ceil(remainingMs / 1000));
+      setRemainingSeconds(
+        Math.ceil(remainingMs / TIME_CONVERSIONS.MS_PER_SECOND)
+      );
 
       if (currentStep >= totalSteps) {
         cleanupTimers();

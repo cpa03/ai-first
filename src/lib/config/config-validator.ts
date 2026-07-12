@@ -6,6 +6,10 @@
 import { APP_CONFIG } from './app';
 import { TIMEOUT_CONFIG } from './constants';
 import { createLogger } from '../logger';
+import {
+  TIMEOUT_VALIDATION_LIMITS,
+  APP_METADATA_VALIDATION_LIMITS,
+} from './config-validator-limits';
 
 const logger = createLogger('ConfigValidator');
 
@@ -57,62 +61,62 @@ const TIMEOUT_VALIDATION_CHECKS = [
   {
     value: TIMEOUT_CONFIG.DEFAULT,
     name: 'TIMEOUT_CONFIG.DEFAULT',
-    min: 1000,
-    max: 300000,
+    min: TIMEOUT_VALIDATION_LIMITS.DEFAULT.min,
+    max: TIMEOUT_VALIDATION_LIMITS.DEFAULT.max,
   },
   {
     value: TIMEOUT_CONFIG.QUICK,
     name: 'TIMEOUT_CONFIG.QUICK',
-    min: 500,
-    max: 60000,
+    min: TIMEOUT_VALIDATION_LIMITS.QUICK.min,
+    max: TIMEOUT_VALIDATION_LIMITS.QUICK.max,
   },
   {
     value: TIMEOUT_CONFIG.STANDARD,
     name: 'TIMEOUT_CONFIG.STANDARD',
-    min: 1000,
-    max: 120000,
+    min: TIMEOUT_VALIDATION_LIMITS.STANDARD.min,
+    max: TIMEOUT_VALIDATION_LIMITS.STANDARD.max,
   },
   {
     value: TIMEOUT_CONFIG.LONG,
     name: 'TIMEOUT_CONFIG.LONG',
-    min: 5000,
-    max: 600000,
+    min: TIMEOUT_VALIDATION_LIMITS.LONG.min,
+    max: TIMEOUT_VALIDATION_LIMITS.LONG.max,
   },
   {
     value: TIMEOUT_CONFIG.TRELLO.CREATE_BOARD,
     name: 'TIMEOUT_CONFIG.TRELLO.CREATE_BOARD',
-    min: 1000,
-    max: 60000,
+    min: TIMEOUT_VALIDATION_LIMITS.TRELLO.CREATE_BOARD.min,
+    max: TIMEOUT_VALIDATION_LIMITS.TRELLO.CREATE_BOARD.max,
   },
   {
     value: TIMEOUT_CONFIG.TRELLO.CREATE_LIST,
     name: 'TIMEOUT_CONFIG.TRELLO.CREATE_LIST',
-    min: 1000,
-    max: 60000,
+    min: TIMEOUT_VALIDATION_LIMITS.TRELLO.CREATE_LIST.min,
+    max: TIMEOUT_VALIDATION_LIMITS.TRELLO.CREATE_LIST.max,
   },
   {
     value: TIMEOUT_CONFIG.TRELLO.CREATE_CARD,
     name: 'TIMEOUT_CONFIG.TRELLO.CREATE_CARD',
-    min: 1000,
-    max: 60000,
+    min: TIMEOUT_VALIDATION_LIMITS.TRELLO.CREATE_CARD.min,
+    max: TIMEOUT_VALIDATION_LIMITS.TRELLO.CREATE_CARD.max,
   },
   {
     value: TIMEOUT_CONFIG.GITHUB.GET_USER,
     name: 'TIMEOUT_CONFIG.GITHUB.GET_USER',
-    min: 1000,
-    max: 60000,
+    min: TIMEOUT_VALIDATION_LIMITS.GITHUB.GET_USER.min,
+    max: TIMEOUT_VALIDATION_LIMITS.GITHUB.GET_USER.max,
   },
   {
     value: TIMEOUT_CONFIG.GITHUB.CREATE_REPO,
     name: 'TIMEOUT_CONFIG.GITHUB.CREATE_REPO',
-    min: 1000,
-    max: 300000,
+    min: TIMEOUT_VALIDATION_LIMITS.GITHUB.CREATE_REPO.min,
+    max: TIMEOUT_VALIDATION_LIMITS.GITHUB.CREATE_REPO.max,
   },
   {
     value: TIMEOUT_CONFIG.NOTION.CLIENT_TIMEOUT,
     name: 'TIMEOUT_CONFIG.NOTION.CLIENT_TIMEOUT',
-    min: 1000,
-    max: 300000,
+    min: TIMEOUT_VALIDATION_LIMITS.NOTION.CLIENT_TIMEOUT.min,
+    max: TIMEOUT_VALIDATION_LIMITS.NOTION.CLIENT_TIMEOUT.max,
   },
 ];
 
@@ -146,17 +150,17 @@ const APP_METADATA_CHECKS = [
   {
     value: APP_CONFIG.NAME,
     name: 'APP_CONFIG.NAME',
-    options: { required: true, minLength: 1, maxLength: 100 },
+    options: APP_METADATA_VALIDATION_LIMITS.NAME,
   },
   {
     value: APP_CONFIG.VERSION,
     name: 'APP_CONFIG.VERSION',
-    options: { required: true, minLength: 1, maxLength: 20 },
+    options: APP_METADATA_VALIDATION_LIMITS.VERSION,
   },
   {
     value: APP_CONFIG.DESCRIPTION,
     name: 'APP_CONFIG.DESCRIPTION',
-    options: { required: true, minLength: 1, maxLength: 500 },
+    options: APP_METADATA_VALIDATION_LIMITS.DESCRIPTION,
   },
 ];
 

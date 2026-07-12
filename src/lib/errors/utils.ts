@@ -13,6 +13,7 @@ import {
 } from '../config/error-classification';
 import { ErrorCode, ERROR_SUGGESTIONS } from './codes';
 import { AppError, RateLimitError, type ErrorDetail } from './classes';
+import { TIME_CONVERSIONS } from '../config/modular-constants';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
@@ -66,7 +67,8 @@ export function toErrorResponse(
     headers['X-RateLimit-Limit'] = String(appError.limit);
     headers['X-RateLimit-Remaining'] = String(appError.remaining);
     headers['X-RateLimit-Reset'] = String(
-      Math.ceil(Date.now() / 1000) + appError.retryAfter
+      Math.ceil(Date.now() / TIME_CONVERSIONS.MS_PER_SECOND) +
+        appError.retryAfter
     );
   }
 
