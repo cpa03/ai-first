@@ -7,6 +7,7 @@ import Button from '@/components/Button';
 import InputWithValidation from '@/components/InputWithValidation';
 import Alert from '@/components/Alert';
 import { CapsLockWarning } from '@/components/CapsLockWarning';
+import { PasswordRequirementsChecklist } from '@/components/PasswordRequirementsChecklist';
 import { useCapsLock } from '@/hooks/useCapsLock';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -556,6 +557,8 @@ export default function SignupPage() {
             />
 
             <CapsLockWarning isOn={isPasswordCapsLockOn} />
+
+            {password && <PasswordRequirementsChecklist password={password} />}
 
             {password && <PasswordStrengthIndicator password={password} />}
 
