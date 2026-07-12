@@ -302,6 +302,8 @@ export const IDEA_INPUT_LABELS = {
     "Be as specific or as general as you'd like. We'll help you clarify details.",
   /** Help text escape hint */
   HELP_TEXT_ESCAPE_HINT: 'Press Escape to clear',
+  /** Help text paste shortcut hint */
+  HELP_TEXT_PASTE_HINT: 'Ctrl+Shift+V to paste from clipboard',
   /** Keyboard shortcut hint text */
   KEYBOARD_SHORTCUT_HINT: 'to submit',
   /** Clear input button aria-label */
