@@ -1,6 +1,7 @@
 import { ExportConnector, ExportResult, ExportData } from './base';
 import { GOOGLE_TASKS_CONFIG } from '@/lib/config';
 import { EXPORT_ENV_KEYS, APP_ENV_KEYS } from '@/lib/config/env-keys';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 export class GoogleTasksExporter extends ExportConnector {
   readonly type = 'google-tasks';
@@ -35,7 +36,7 @@ export class GoogleTasksExporter extends ExportConnector {
     if (!clientId || !clientSecret) {
       return {
         available: false,
-        error: 'Google Tasks OAuth credentials not configured',
+        error: API_ERROR_MESSAGES.EXPORT_CONNECTORS.GOOGLE_TASKS_NOT_CONFIGURED,
         checkedAt,
       };
     }

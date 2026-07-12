@@ -320,7 +320,7 @@ export function sanitizeObject<T>(input: T): T {
 export function buildErrorResponse(errors: ValidationError[]): Response {
   return new Response(
     JSON.stringify({
-      error: 'Validation failed',
+      error: API_ERROR_MESSAGES.VALIDATION_MESSAGES.VALIDATION_FAILED,
       details: errors,
     }),
     {

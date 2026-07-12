@@ -20,7 +20,7 @@ export class NotionExporter extends ExportConnector {
     if (!apiKey) {
       return {
         success: false,
-        error: 'Notion API key is required',
+        error: API_ERROR_MESSAGES.EXPORT_CONNECTORS.NOTION_API_KEY_REQUIRED,
       };
     }
 
@@ -137,7 +137,7 @@ export class NotionExporter extends ExportConnector {
       if (!apiKey) {
         return {
           available: false,
-          error: 'Notion API key not configured',
+          error: API_ERROR_MESSAGES.EXPORT_CONNECTORS.NOTION_NOT_CONFIGURED,
           checkedAt,
         };
       }

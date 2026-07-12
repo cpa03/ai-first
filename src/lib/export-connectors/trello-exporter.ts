@@ -23,7 +23,7 @@ export class TrelloExporter extends ExportConnector {
     if (!apiKey || !token) {
       return {
         success: false,
-        error: 'Trello API key and token are required',
+        error: API_ERROR_MESSAGES.EXPORT_CONNECTORS.TRELLO_CREDENTIALS_REQUIRED,
       };
     }
 
@@ -140,7 +140,7 @@ export class TrelloExporter extends ExportConnector {
       if (!apiKey || !token) {
         return {
           available: false,
-          error: 'Trello API key and token not configured',
+          error: API_ERROR_MESSAGES.EXPORT_CONNECTORS.TRELLO_NOT_CONFIGURED,
           checkedAt,
         };
       }

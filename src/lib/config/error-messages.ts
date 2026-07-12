@@ -256,7 +256,55 @@ export const API_ERROR_MESSAGES = {
    */
   CSRF: {
     MISSING_HEADERS: 'CSRF validation failed: missing origin/referer headers',
+    MISSING_HEADERS_USER: 'Missing Origin or Referer header.',
     UNTRUSTED_ORIGIN: 'CSRF validation failed: untrusted origin',
+    UNTRUSTED_ORIGIN_USER:
+      'Invalid origin header. Cross-origin requests are not allowed.',
+    VALIDATION_FAILED: 'CSRF validation failed',
+  },
+
+  /**
+   * Request Signer Messages
+   * Centralizes request signing error messages
+   */
+  REQUEST_SIGNER: {
+    TIMESTAMP_OUTSIDE_WINDOW: 'Request timestamp outside acceptable window',
+    INVALID_SIGNATURE_FORMAT: 'Invalid signature format',
+    MISSING_SIGNATURE_HEADERS: 'Missing required signature headers',
+    INVALID_SIGNATURE_HEADER_FORMAT: 'Invalid signature header format',
+    NONCE_REQUIRED: 'Nonce required but not provided',
+    MISSING_SIGNATURE_PARAMS: 'Missing signature parameters',
+    INVALID_TIMESTAMP_FORMAT: 'Invalid timestamp format',
+    URL_EXPIRED: 'URL has expired',
+    INVALID_URL: 'Invalid URL',
+    INTERNAL_SECRET_MISSING:
+      'INTERNAL_API_SECRET environment variable is required in production',
+    SECRET_TOO_SHORT: (minLength: number) =>
+      `INTERNAL_API_SECRET must be at least ${minLength} characters for adequate security`,
+  },
+
+  /**
+   * Export Connector Messages
+   * Centralizes export connector error messages
+   */
+  EXPORT_CONNECTORS: {
+    GITHUB_TOKEN_REQUIRED: 'GitHub token is required',
+    GITHUB_TOKEN_NOT_CONFIGURED: 'GitHub token not configured',
+    TRELLO_CREDENTIALS_REQUIRED: 'Trello API key and token are required',
+    TRELLO_NOT_CONFIGURED: 'Trello API key and token not configured',
+    NOTION_API_KEY_REQUIRED: 'Notion API key is required',
+    NOTION_NOT_CONFIGURED: 'Notion API key not configured',
+    GOOGLE_TASKS_NOT_CONFIGURED:
+      'Google Tasks OAuth credentials not configured',
+  },
+
+  /**
+   * Validation Messages
+   * Centralizes validation error messages
+   */
+  VALIDATION_MESSAGES: {
+    VALIDATION_FAILED: 'Validation failed',
+    TOO_MANY_REQUESTS: 'Too many requests',
   },
 
   /**

@@ -35,7 +35,7 @@ export class GitHubProjectsExporter extends ExportConnector {
     if (!token) {
       return {
         success: false,
-        error: 'GitHub token is required',
+        error: API_ERROR_MESSAGES.EXPORT_CONNECTORS.GITHUB_TOKEN_REQUIRED,
       };
     }
 
@@ -190,7 +190,8 @@ export class GitHubProjectsExporter extends ExportConnector {
       if (!token) {
         return {
           available: false,
-          error: 'GitHub token not configured',
+          error:
+            API_ERROR_MESSAGES.EXPORT_CONNECTORS.GITHUB_TOKEN_NOT_CONFIGURED,
           checkedAt,
         };
       }

@@ -160,7 +160,7 @@ export function validateCSRF(
 
     return {
       valid: false,
-      error: 'Missing Origin or Referer header.',
+      error: API_ERROR_MESSAGES.CSRF.MISSING_HEADERS_USER,
     };
   }
 
@@ -185,7 +185,7 @@ export function validateCSRF(
 
   return {
     valid: false,
-    error: 'Invalid origin header. Cross-origin requests are not allowed.',
+    error: API_ERROR_MESSAGES.CSRF.UNTRUSTED_ORIGIN_USER,
     origin,
   };
 }
@@ -194,7 +194,9 @@ export function requireCSRF(request: Request): void {
   const result = validateCSRF(request);
 
   if (!result.valid) {
-    const error = new Error(result.error || 'CSRF validation failed');
+    const error = new Error(
+      result.error || API_ERROR_MESSAGES.CSRF.VALIDATION_FAILED
+    );
     (error as Error & { code: string }).code = 'CSRF_ERROR';
     throw error;
   }

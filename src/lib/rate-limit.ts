@@ -13,6 +13,7 @@ import { ENV_ACCESSORS } from './config/env-keys';
 import { generateRequestId } from './errors';
 import { simpleHash } from './security/crypto';
 import { TIME_CONVERSIONS } from './config/modular-constants';
+import { API_ERROR_MESSAGES } from './config/error-messages';
 
 export interface RateLimitInfo {
   limit: number;
@@ -575,7 +576,7 @@ export function rateLimitResponse(
 ): Response {
   const resetTime = Math.max(rateLimitInfo.reset, Date.now());
   const responseBody = {
-    error: 'Too many requests',
+    error: API_ERROR_MESSAGES.VALIDATION_MESSAGES.TOO_MANY_REQUESTS,
     code: ERROR_CONFIG.RATE_LIMIT.ERROR_CODE,
     retryAfter: Math.ceil(
       (resetTime - Date.now()) / TIME_CONVERSIONS.MS_PER_SECOND
