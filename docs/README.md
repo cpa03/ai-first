@@ -225,29 +225,20 @@ Complete index of all IdeaFlow documentation.
 
 ## Audit Reports
 
-- [BroCula Browser Audit - 2026-07-10](./audit/browser-console-audit-20260710.md) - Browser console and Lighthouse audit (moved from root)
-- [BroCula Browser Audit - 2026-07-09](./audit/browser-console-audit-20260709.md) - Browser console and Lighthouse audit (moved from root)
-- [BroCula Browser Audit - 2026-07-09](./audit/2026-07-09-brocula-browser-audit.md) - Browser console and Lighthouse audit
-- [Browser Audit Report - 2026-07-09](./audit/2026-07-09-browser-audit-report.md) - Browser console and Lighthouse audit (detailed)
-- [Console Lighthouse Check - 2026-07-09](./audit/2026-07-09-console-lighthouse-check.md) - Console and Lighthouse verification
-- [BroCula Browser Audit - 2026-07-08](./audit/2026-07-08-brocula-browser-audit.md) - Browser console and Lighthouse audit
-- [Flexy Modularization Audit - 2026-07-08](./audit/2026-07-08-flexy-modularization-audit.md) - Code modularization assessment
-- [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment (moved from root)
+- [Browser Console Audit - 2026-07-12 (Latest)](./audit/browser-console-audit-2026-07-12.md) - Latest browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-11](./audit/browser-console-audit-20260711.md) - Browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-10](./audit/browser-console-audit-20260710.md) - Browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-09](./audit/browser-console-audit-20260709.md) - Browser console and Lighthouse audit
+- [Flexy Modularization Audit - 2026-07-11](./audit/2026-07-11-flexy-modularity-status.md) - Code modularization assessment
 - [Comprehensive Audit - 2026-07-08](./audit/2026-07-08-comprehensive-audit.md) - Full repository audit
 - [Phase 2 Feature Hardening - 2026-07-08](./audit/2026-07-08-phase2-feature-hardening.md) - Feature hardening audit
 - [Phase 3 Strategic Expansion - 2026-07-08](./audit/2026-07-08-phase3-strategic-expansion.md) - Strategic expansion audit
-- [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation (moved from root)
+- [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
 
 ## Maintenance Reports
 
-- [Stale Branches Report - 2026-07-12 (Latest)](./maintenance/2026-07-12-stale-branches-report.md) - Latest stale branches analysis (74 total, 4 merged, 70 unmerged)
-- [Stale Branches Report - 2026-07-11](./maintenance/2026-07-11-stale-branches-report.md) - Previous stale branches analysis (76 total, 4 merged, 72 unmerged)
+- [Stale Branches Report - 2026-07-12 (Latest)](./maintenance/2026-07-12-stale-branches-report.md) - Latest stale branches analysis (67 total, 2 merged, 65 unmerged)
 - [Repository Health Report - 2026-07-10](./maintenance/2026-07-10-repo-health-report.md) - Repository health status
-- [Stale Branches Report - 2026-07-10](./maintenance/2026-07-10-stale-branches-report.md) - Previous branch analysis (90 branches, 15 stale)
-- [Repository Health Report - 2026-07-09](./maintenance/2026-07-09-repo-health-report.md) - Previous health status
-- [Repository Health Report - 2026-07-08](./maintenance/2026-07-08-repo-health-report.md) - Previous health status
-- [Repository Health Report - 2026-07-07 (Repocheck)](./maintenance/2026-07-07-repo-health-report.md) - Previous health status
-- [Stale Branches Report - 2026-07-07](./maintenance/2026-07-07-stale-branches-report.md) - Previous analysis of 65 unmerged branches
 
 ---
 
