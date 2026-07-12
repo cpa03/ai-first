@@ -15,6 +15,7 @@ import SuccessCelebration from '@/components/SuccessCelebration';
 import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 import {
   MESSAGES,
   COMPONENT_DEFAULTS,
@@ -307,6 +308,7 @@ function CopyCodeButton({ text }: { text: string }) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const logger = useMemo(() => createLogger('CopyCodeButton'), []);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const { particles, fire } = useConfetti();
 
   useEffect(() => {
     return () => {
@@ -321,6 +323,7 @@ function CopyCodeButton({ text }: { text: string }) {
       await navigator.clipboard.writeText(text);
       triggerHapticFeedback();
       setCopied(true);
+      fire();
 
       timeoutRef.current = setTimeout(() => {
         setCopied(false);
@@ -328,66 +331,87 @@ function CopyCodeButton({ text }: { text: string }) {
     } catch (err) {
       logger.error('Failed to copy blueprint', err as Error);
     }
-  }, [text, logger]);
+  }, [text, logger, fire]);
 
   return (
-    <button
-      onClick={handleCopy}
-      className={`
-        absolute top-3 right-3 
-        flex items-center gap-1.5 px-2.5 py-1.5 
-        text-xs font-medium rounded-md
-        transition-all duration-200 ease-out
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
-        ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
-        ${
+    <>
+      <button
+        onClick={handleCopy}
+        className={`
+          absolute top-3 right-3 
+          flex items-center gap-1.5 px-2.5 py-1.5 
+          text-xs font-medium rounded-md
+          transition-all duration-200 ease-out
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+          ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
+          ${
+            copied
+              ? 'bg-green-100 text-green-700 border border-green-200'
+              : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 focus-visible:opacity-100 touch-device-visible'
+          }
+        `}
+        aria-label={
           copied
-            ? 'bg-green-100 text-green-700 border border-green-200'
-            : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 focus-visible:opacity-100 touch-device-visible'
+            ? BLUEPRINT_DISPLAY_LABELS.COPY_ARIA_SUCCESS
+            : BLUEPRINT_DISPLAY_LABELS.COPY_ARIA_DEFAULT
         }
-      `}
-      aria-label={
-        copied
-          ? BLUEPRINT_DISPLAY_LABELS.COPY_ARIA_SUCCESS
-          : BLUEPRINT_DISPLAY_LABELS.COPY_ARIA_DEFAULT
-      }
-      aria-live="polite"
-      type="button"
-    >
-      {copied ? (
-        <svg
-          className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}
-          fill="none"
-          viewBox={SVG_VIEWBOX.STANDARD}
-          stroke="currentColor"
-          strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
+        aria-live="polite"
+        type="button"
+      >
+        {copied ? (
+          <svg
+            className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}
+            fill="none"
+            viewBox={SVG_VIEWBOX.STANDARD}
+            stroke="currentColor"
+            strokeWidth={SVG_STROKE_WIDTHS.EXTRA_THICK}
+            aria-hidden="true"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        ) : (
+          <svg
+            className="w-3.5 h-3.5"
+            fill="none"
+            viewBox={SVG_VIEWBOX.STANDARD}
+            stroke="currentColor"
+            strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+            aria-hidden="true"
+          >
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
+          </svg>
+        )}
+        <span className="hidden sm:inline">
+          {copied
+            ? BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_SUCCESS
+            : BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_DEFAULT}
+        </span>
+      </button>
+      {particles.map((particle) => (
+        <span
+          key={particle.id}
+          className="absolute rounded-full pointer-events-none animate-copy-confetti"
+          style={
+            {
+              left: '50%',
+              top: '50%',
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              backgroundColor: particle.color,
+              '--confetti-x': `${particle.x}px`,
+              '--confetti-y': `${particle.y}px`,
+              animationDelay: `${particle.delay}ms`,
+            } as React.CSSProperties
+          }
           aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M5 13l4 4L19 7"
-          />
-        </svg>
-      ) : (
-        <svg
-          className="w-3.5 h-3.5"
-          fill="none"
-          viewBox={SVG_VIEWBOX.STANDARD}
-          stroke="currentColor"
-          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-          aria-hidden="true"
-        >
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-          <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-        </svg>
-      )}
-      <span className="hidden sm:inline">
-        {copied
-          ? BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_SUCCESS
-          : BLUEPRINT_DISPLAY_LABELS.COPY_BUTTON_DEFAULT}
-      </span>
-    </button>
+        />
+      ))}
+    </>
   );
 }
 
