@@ -422,6 +422,9 @@ export const CLARIFICATION_FLOW_LABELS = {
     `Question ${current} of ${total}`,
   BACK_TO_EDIT_BUTTON: 'Edit Idea',
   BACK_TO_EDIT_TOOLTIP: 'Go back to edit your original idea',
+  PASTE_BUTTON: 'Paste',
+  PASTE_SUCCESS: 'Pasted!',
+  PASTE_ARIA_LABEL: 'Paste answer from clipboard',
 } as const;
 
 /**

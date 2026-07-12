@@ -85,6 +85,17 @@ function ClarificationFlow({
     'forward'
   );
   const prevStepRef = useRef(currentStep);
+  const [pasteSuccess, setPasteSuccess] = useState(false);
+  const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Micro-UX: Clean up paste success timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (pasteSuccessTimeoutRef.current) {
+        clearTimeout(pasteSuccessTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Micro-UX: Smooth scroll to question section when step changes
   // Ensures the new question is visible on screen after navigation,
@@ -190,6 +201,28 @@ function ClarificationFlow({
     );
     setReferenceTriggered(true);
   }, []);
+
+  const handlePasteFromClipboard = useCallback(async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text) {
+        triggerHapticFeedback();
+        setCurrentAnswer(text);
+        setPasteSuccess(true);
+        if (pasteSuccessTimeoutRef.current) {
+          clearTimeout(pasteSuccessTimeoutRef.current);
+        }
+        pasteSuccessTimeoutRef.current = setTimeout(() => {
+          setPasteSuccess(false);
+        }, ANIMATION_CONFIG.TASK_MANAGEMENT.PROGRESS_DURATION);
+        const ref =
+          currentQuestion?.type === 'textarea' ? textareaRef : textInputRef;
+        ref?.current?.focus();
+      }
+    } catch {
+      // Clipboard API may be denied - fail silently
+    }
+  }, [currentQuestion, setCurrentAnswer, textareaRef, textInputRef]);
 
   // Micro-UX: Keyboard shortcut Alt+R to toggle reference idea section
   useEffect(() => {
@@ -545,6 +578,62 @@ function ClarificationFlow({
                 disabled={showCelebration || isSubmitting}
               />
             )}
+
+            {(currentQuestion.type === 'textarea' ||
+              currentQuestion.type === 'text') &&
+              !currentAnswer.trim() &&
+              !showCelebration &&
+              !isSubmitting && (
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handlePasteFromClipboard}
+                    aria-label={CLARIFICATION_FLOW_LABELS.PASTE_ARIA_LABEL}
+                    className={`transition-all duration-200 ${
+                      pasteSuccess
+                        ? 'text-green-600 bg-green-50 hover:bg-green-100'
+                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    {pasteSuccess ? (
+                      <svg
+                        className="w-4 h-4 mr-1 text-green-600"
+                        fill="none"
+                        viewBox={SVG_VIEWBOX.STANDARD}
+                        stroke="currentColor"
+                        strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        viewBox={SVG_VIEWBOX.STANDARD}
+                        stroke="currentColor"
+                        strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                        />
+                      </svg>
+                    )}
+                    {pasteSuccess
+                      ? CLARIFICATION_FLOW_LABELS.PASTE_SUCCESS
+                      : CLARIFICATION_FLOW_LABELS.PASTE_BUTTON}
+                  </Button>
+                </div>
+              )}
 
             {currentQuestion.type === 'select' && currentQuestion.options && (
               <div className="space-y-2">
