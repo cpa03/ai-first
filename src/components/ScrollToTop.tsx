@@ -19,6 +19,7 @@ import {
   SHADOW_CLASSES,
   TRANSITION_CLASSES,
   PROGRESS_PERCENTAGE,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -195,7 +196,7 @@ function ScrollToTopComponent({
 
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
-      <span className="font-medium">
+      <span className={TYPOGRAPHY_CLASSES.BOLD}>
         {isNearBottom
           ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
           : SCROLL_TO_TOP_LABELS.TITLE}
