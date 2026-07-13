@@ -1453,11 +1453,20 @@ export const TYPOGRAPHY_CLASSES = {
   /** Code text (font-mono) */
   CODE: 'font-mono',
 
-  /** Bold text (font-medium) */
-  BOLD: 'font-medium',
+  /** Normal weight text (font-normal) */
+  NORMAL: 'font-normal',
+
+  /** Medium weight text (font-medium) */
+  MEDIUM: 'font-medium',
 
   /** Semibold text (font-semibold) */
   SEMIBOLD: 'font-semibold',
+
+  /** Bold text (font-bold) */
+  BOLD: 'font-bold',
+
+  /** Light weight text (font-light) */
+  LIGHT: 'font-light',
 } as const;
 
 /**

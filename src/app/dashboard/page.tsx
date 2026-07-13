@@ -17,6 +17,7 @@ import {
   API_ROUTES,
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   LOCAL_STORAGE_KEYS,
   ANIMATION_CONFIG,
   PAGE_LAYOUT_CLASSES,
@@ -701,7 +702,7 @@ export default function DashboardPage() {
                   className="w-10 h-10 text-primary-600"
                   fill="none"
                   stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   aria-hidden="true"
                 >
                   <path
@@ -763,7 +764,7 @@ export default function DashboardPage() {
                       className="w-7 h-7 text-amber-500"
                       fill="none"
                       stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       aria-hidden="true"
                     >
                       <path
@@ -789,7 +790,7 @@ export default function DashboardPage() {
                   <svg
                     className="w-4 h-4 text-primary-400 -ml-1"
                     fill="none"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
                     strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   >
@@ -814,7 +815,7 @@ export default function DashboardPage() {
                       className="w-7 h-7 text-primary-500"
                       fill="none"
                       stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       aria-hidden="true"
                     >
                       <path
@@ -840,7 +841,7 @@ export default function DashboardPage() {
                   <svg
                     className="w-4 h-4 text-green-400 -ml-1"
                     fill="none"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
                     strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   >
@@ -865,7 +866,7 @@ export default function DashboardPage() {
                       className="w-7 h-7 text-green-500"
                       fill="none"
                       stroke="currentColor"
-                      viewBox="0 0 24 24"
+                      viewBox={SVG_VIEWBOX.STANDARD}
                       aria-hidden="true"
                     >
                       <path
@@ -987,7 +988,7 @@ export default function DashboardPage() {
                               className="animate-spin h-3 w-3"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
-                              viewBox="0 0 24 24"
+                              viewBox={SVG_VIEWBOX.STANDARD}
                               aria-hidden="true"
                             >
                               <circle
@@ -1084,7 +1085,7 @@ export default function DashboardPage() {
                   className={MODAL_PATTERNS.dangerIcon.icon}
                   fill="none"
                   stroke="currentColor"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   aria-hidden="true"
                 >
                   <path

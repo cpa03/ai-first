@@ -86,8 +86,7 @@ Complete index of all IdeaFlow documentation.
 - [Database Migrations](./database-migrations.md) - Database migration guide and conventions
 - [Events System](./events.md) - Event-driven architecture documentation
 - [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
-- [Skipped Tests](./skipped-tests.md) - Documentation for skipped tests
-- [Skipped Tests Inventory](./skipped-tests-inventory.md) - Complete inventory of skipped tests with recommendations
+- [Skipped Tests Inventory](./skipped-tests-inventory.md) - Complete inventory of skipped tests with investigation status
 
 ## Specialist Guides
 

@@ -257,7 +257,7 @@ function AutoSaveIndicatorComponent({
               <Tooltip
                 content={
                   <div className="flex flex-col gap-1">
-                    <span className={TYPOGRAPHY_CLASSES.BOLD}>
+                    <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
                       {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
                     </span>
                     <span

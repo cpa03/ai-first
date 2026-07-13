@@ -11,6 +11,7 @@ import {
   CARD_PATTERNS,
   ROUTES,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   UI_CONFIG,
   NOT_FOUND_PAGE_CONFIG,
 } from '@/lib/config';
@@ -111,7 +112,7 @@ export default function NotFound() {
               <svg
                 className="w-4 h-4"
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 aria-hidden="true"
@@ -133,7 +134,7 @@ export default function NotFound() {
                 <svg
                   className="w-4 h-4"
                   fill="none"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
                   strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   aria-hidden="true"
@@ -156,7 +157,7 @@ export default function NotFound() {
                 <svg
                   className="w-4 h-4"
                   fill="none"
-                  viewBox="0 0 24 24"
+                  viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
                   strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                   aria-hidden="true"

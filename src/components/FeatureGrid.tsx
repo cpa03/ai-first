@@ -1,7 +1,11 @@
 'use client';
 
 import { memo, useEffect, useRef, useState } from 'react';
-import { ANIMATION_DELAYS, DURATION_TAILWIND } from '@/lib/config/theme';
+import {
+  ANIMATION_DELAYS,
+  DURATION_TAILWIND,
+  TYPOGRAPHY_CLASSES,
+} from '@/lib/config/theme';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
 import { UI_STRINGS } from '@/lib/config/ui';
@@ -68,7 +72,9 @@ function FeatureGridComponent() {
             "
             aria-hidden="true"
           >
-            <span className="badge-animate text-primary-600 text-2xl font-bold">
+            <span
+              className={`badge-animate text-primary-600 text-2xl ${TYPOGRAPHY_CLASSES.BOLD}`}
+            >
               {feature.step}
             </span>
           </div>
