@@ -18,6 +18,7 @@ import {
   ROUTES,
   SIGNUP_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
   ANIMATION_DELAYS,
@@ -66,7 +67,7 @@ function PasswordMatchIndicator({
         <svg
           className="w-4 h-4 text-green-700"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
@@ -81,7 +82,7 @@ function PasswordMatchIndicator({
         <svg
           className="w-4 h-4 text-amber-500"
           fill="none"
-          viewBox="0 0 24 24"
+          viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
           strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
           aria-hidden="true"
@@ -232,7 +233,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           <svg
             className="w-4 h-4 text-green-600 animate-in zoom-in duration-200"
             fill="none"
-            viewBox="0 0 24 24"
+            viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
             strokeWidth={SVG_STROKE_WIDTHS.THICK}
             aria-hidden="true"
@@ -266,7 +267,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             <svg
               className="w-2.5 h-2.5"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.THICK}
               aria-hidden="true"
@@ -450,7 +451,7 @@ export default function SignupPage() {
             <svg
               className="h-6 w-6 text-green-700"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
             >
               <path
@@ -634,7 +635,7 @@ export default function SignupPage() {
             className="justify-center"
           >
             {oauthLoading !== 'google' && (
-              <svg className="h-5 w-5 mr-2" viewBox="0 0 24 24">
+              <svg className="h-5 w-5 mr-2" viewBox={SVG_VIEWBOX.STANDARD}>
                 <path
                   fill={OAUTH_PROVIDER_COLORS.GOOGLE.BLUE}
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"

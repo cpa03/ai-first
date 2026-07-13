@@ -5,6 +5,7 @@ import Skeleton from '@/components/Skeleton';
 import {
   CARD_PATTERNS,
   SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
   COMPONENT_CONFIG,
   ANIMATION_CONFIG,
   TASK_MANAGEMENT_LABELS,
@@ -94,7 +95,7 @@ function TaskManagementSkeletonComponent() {
                     className="w-5 h-5 text-gray-300"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    viewBox={SVG_VIEWBOX.STANDARD}
                     aria-hidden="true"
                   >
                     <path
