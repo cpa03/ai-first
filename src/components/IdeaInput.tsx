@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { useClipboard } from '@/hooks/useClipboard';
 import {
   MIN_IDEA_LENGTH,
   MAX_IDEA_LENGTH,
@@ -17,6 +18,7 @@ import {
   SVG_VIEWBOX,
   GRADIENT_PATTERNS,
   TYPOGRAPHY_CLASSES,
+  KBD_CLASSES,
 } from '@/lib/config/theme';
 import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -52,14 +54,23 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   } | null>(null);
   const [successMessage, setSuccessMessage] = useState('');
   const [milestoneReached, setMilestoneReached] = useState(false);
-  const [pasteSuccess, setPasteSuccess] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const { particles: milestoneParticles, fire: fireMilestoneConfetti } =
     useConfetti();
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const prevMeetsMinimumRef = useRef(false);
-  const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleOnPaste = useCallback((text: string) => {
+    setIdea(text);
+    setValidationError(validateIdeaToMessage(text));
+    inputRef.current?.focus();
+  }, []);
+
+  const { paste, hasPasted: pasteSuccess } = useClipboard({
+    onPaste: handleOnPaste,
+    duration: COMPONENT_CONFIG.IDEA_INPUT.PASTE_SUCCESS_DURATION_MS,
+  });
 
   const encouragementMessages = MESSAGES.IDEA_INPUT.ENCOURAGEMENT;
 
@@ -121,9 +132,6 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   // Cleanup paste success timeout on unmount
   useEffect(() => {
     return () => {
-      if (pasteSuccessTimeoutRef.current) {
-        clearTimeout(pasteSuccessTimeoutRef.current);
-      }
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
@@ -245,28 +253,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
   // Reduces friction for users who have their idea already copied
   // Shows brief success feedback to confirm the paste action
   const handlePasteFromClipboard = useCallback(async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      if (text) {
-        triggerHapticFeedback();
-        setIdea(text);
-        setValidationError(validateIdeaToMessage(text));
-        setPasteSuccess(true);
-
-        // Clear paste success state after brief feedback
-        if (pasteSuccessTimeoutRef.current) {
-          clearTimeout(pasteSuccessTimeoutRef.current);
-        }
-        pasteSuccessTimeoutRef.current = setTimeout(() => {
-          setPasteSuccess(false);
-        }, COMPONENT_CONFIG.IDEA_INPUT.PASTE_SUCCESS_DURATION_MS);
-
-        inputRef.current?.focus();
-      }
-    } catch {
-      // Clipboard API may be denied - fail silently
-    }
-  }, []);
+    await paste();
+  }, [paste]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -484,10 +472,10 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               className="flex items-center gap-2 text-sm text-gray-600"
               aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
             >
-              <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
+              <kbd className={KBD_CLASSES}>
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
-              <kbd className="hidden sm:inline-flex items-center px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800">
+              <kbd className={KBD_CLASSES}>
                 Enter
               </kbd>
               <span className="hidden sm:inline text-gray-600">

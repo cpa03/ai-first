@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { createLogger } from '@/lib/logger';
 import { UI_CONFIG } from '@/lib/config/constants';
 import {
@@ -11,10 +11,10 @@ import {
   COMPONENT_CONFIG,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
-import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
+import { useClipboard } from '@/hooks/useClipboard';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -42,61 +42,37 @@ const CopyButtonComponent = function CopyButton({
   toastMessage = COPY_BUTTON_LABELS.CLIPBOARD_TOAST,
   onCopy,
 }: CopyButtonProps) {
-  const [copied, setCopied] = useState(false);
-  const { particles, fire } = useConfetti();
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { fire, particles } = useConfetti();
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, []);
+  const handleOnCopy = useCallback(() => {
+    fire();
+    if (onCopy) onCopy();
 
-  const handleCopy = useCallback(async () => {
-    const win = window as unknown as Window & {
-      showToast?: (options: ToastOptions) => void;
-    };
-
-    try {
-      await navigator.clipboard.writeText(textToCopy);
-      triggerHapticFeedback();
-      setCopied(true);
-      fire();
-
-      timeoutRef.current = setTimeout(() => {
-        setCopied(false);
-      }, UI_CONFIG.COPY_FEEDBACK_DURATION);
-
-      if (showToast && typeof window !== 'undefined' && win.showToast) {
+    if (showToast && typeof window !== 'undefined') {
+      const win = window as unknown as Window & {
+        showToast?: (options: ToastOptions) => void;
+      };
+      if (win.showToast) {
         win.showToast({
           type: 'success',
           message: toastMessage,
           duration: UI_CONFIG.TOAST_DURATION,
         });
       }
-
-      // Growth: Fire onCopy callback for analytics
-      if (onCopy) {
-        onCopy();
-      }
-
-      logger.debug('Successfully copied text to clipboard', {
-        textLength: textToCopy.length,
-      });
-    } catch (err) {
-      logger.error('Failed to copy text', err);
-
-      if (showToast && typeof window !== 'undefined' && win.showToast) {
-        win.showToast({
-          type: 'error',
-          message: COPY_BUTTON_LABELS.CLIPBOARD_ERROR,
-          duration: UI_CONFIG.TOAST_DURATION,
-        });
-      }
     }
-  }, [textToCopy, showToast, toastMessage, onCopy, fire]);
+    logger.debug('Successfully copied text to clipboard', {
+      textLength: textToCopy.length,
+    });
+  }, [fire, onCopy, showToast, toastMessage, textToCopy.length]);
+
+  const { copy, hasCopied: copied } = useClipboard({
+    onCopy: handleOnCopy,
+    duration: UI_CONFIG.COPY_FEEDBACK_DURATION,
+  });
+
+  const handleCopy = useCallback(() => {
+    copy(textToCopy);
+  }, [copy, textToCopy]);
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2

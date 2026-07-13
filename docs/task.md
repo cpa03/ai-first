@@ -71,9 +71,9 @@ Browser console checks require a real browser environment with the application r
 
 #### Checklist
 
-- [CONSOLIDATE] Centralize `validateIdea` in `IdeaInput.tsx` by using `src/lib/validation.ts`
-- [ ] error: consolidate validation logic in `IdeaInput.tsx` by using a new `validateIdeaToMessage` utility
-- [REMOVE] Duplicate `validateIdea` local function from `IdeaInput.tsx`
+- [x] [CONSOLIDATE] Centralize `validateIdea` in `IdeaInput.tsx` by using `src/lib/validation.ts`
+- [x] error: consolidate validation logic in `IdeaInput.tsx` by using a new `validateIdeaToMessage` utility
+- [x] [REMOVE] Duplicate `validateIdea` local function from `IdeaInput.tsx`
 - [ ] Run `npm run dev`
 - [ ] Open browser DevTools (F12)
 - [ ] Check Console tab for errors/warnings
