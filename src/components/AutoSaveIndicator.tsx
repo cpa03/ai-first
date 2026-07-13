@@ -12,6 +12,7 @@ import {
   OPACITY_CONFIG,
   PROGRESS_PERCENTAGE,
   TIME_CONVERSIONS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -256,7 +257,7 @@ function AutoSaveIndicatorComponent({
               <Tooltip
                 content={
                   <div className="flex flex-col gap-1">
-                    <span className="font-medium">
+                    <span className={TYPOGRAPHY_CLASSES.BOLD}>
                       {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
                     </span>
                     <span
