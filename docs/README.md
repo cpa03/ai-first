@@ -240,8 +240,9 @@ Older audit reports are archived in [audit/archive/](./audit/archive/).
 
 ## Maintenance Reports
 
-- [Stale Branches Report - 2026-07-12 (Latest)](./maintenance/2026-07-12-stale-branches-report.md) - Latest stale branches analysis
-- [Stale Branches Report - 2026-07-11](./maintenance/2026-07-11-stale-branches-report.md) - Previous stale branches analysis
+- [Stale Branches Report - 2026-07-13 (Latest)](./maintenance/2026-07-13-stale-branches-report.md) - Latest stale branches analysis
+- [Stale Branches Report - 2026-07-12](./maintenance/2026-07-12-stale-branches-report.md) - Previous stale branches analysis
+- [Stale Branches Report - 2026-07-11](./maintenance/2026-07-11-stale-branches-report.md) - Stale branches analysis
 - [Repository Health Report - 2026-07-10](./maintenance/2026-07-10-repo-health-report.md) - Repository health status
 
 ### Archived Reports
