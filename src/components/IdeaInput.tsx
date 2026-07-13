@@ -16,6 +16,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   GRADIENT_PATTERNS,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config/theme';
 import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -412,7 +413,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             role="status"
             aria-live="polite"
           >
-            <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 text-primary-700 text-xs font-bold">
+            <span
+              className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 text-primary-700 text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
+            >
               {charactersNeededData.charsNeeded}
             </span>
             {charactersNeededData.isNearMinimum
