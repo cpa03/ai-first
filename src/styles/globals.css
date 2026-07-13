@@ -110,6 +110,51 @@
     @apply bg-gray-50 text-gray-900 font-sans;
   }
 
+  /* Micro-UX: Custom scrollbar styling - adds branded polish to scroll interactions */
+  /* Provides visual consistency and makes scrollbars feel like part of the design system */
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgb(243 244 246); /* gray-100 */
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgb(209 213 219); /* gray-300 */
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(156 163 175); /* gray-400 */
+  }
+
+  ::-webkit-scrollbar-thumb:active {
+    background: rgb(107 114 128); /* gray-500 */
+  }
+
+  /* Firefox */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(209 213 219) rgb(243 244 246); /* gray-300 on gray-100 */
+  }
+
+  /* Micro-UX: Custom text selection styling - provides branded visual feedback */
+  /* Makes text selection feel intentional and part of the design system */
+  ::selection {
+    background-color: rgb(59 130 246 / 0.2); /* primary-500 with 20% opacity */
+    color: rgb(30 58 138); /* primary-900 for contrast */
+  }
+
+  ::-moz-selection {
+    background-color: rgb(59 130 246 / 0.2);
+    color: rgb(30 58 138);
+  }
+
   /* Micro-UX improvement: Add subtle cursor change for clickable elements */
   /* This helps users identify interactive elements more easily */
   a,
