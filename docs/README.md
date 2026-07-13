@@ -87,6 +87,7 @@ Complete index of all IdeaFlow documentation.
 - [Events System](./events.md) - Event-driven architecture documentation
 - [CI Parallel Tests](./ci-parallel-tests-implementation.md) - Parallel test execution in CI
 - [Skipped Tests](./skipped-tests.md) - Documentation for skipped tests
+- [Skipped Tests Inventory](./skipped-tests-inventory.md) - Complete inventory of skipped tests with recommendations
 
 ## Specialist Guides
 
@@ -227,7 +228,9 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Browser Console Audit - 2026-07-12 (Latest)](./audit/browser-console-audit-2026-07-12.md) - Latest browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-13 (Latest)](./audit/browser-console-audit-2026-07-13.md) - Latest browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-13 (BroCula)](./audit/brocula-browser-console-audit-20260713.md) - BroCula browser console audit report
+- [Browser Console Audit - 2026-07-12](./audit/browser-console-audit-2026-07-12.md) - Browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-11](./audit/browser-console-audit-20260711.md) - Browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-10](./audit/browser-console-audit-20260710.md) - Browser console and Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-11](./audit/2026-07-11-flexy-modularity-status.md) - Code modularization assessment
