@@ -157,7 +157,7 @@ const InputWithValidationComponent = forwardRef<
         setShowValidCelebration(true);
         const timeout = setTimeout(() => {
           setShowValidCelebration(false);
-        }, 500);
+        }, COMPONENT_CONFIG.INPUT_VALIDATION.CELEBRATION_HIDE_MS);
         return () => clearTimeout(timeout);
       }
       prevValidRef.current = isValid && charCount > 0;
