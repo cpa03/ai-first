@@ -33,6 +33,13 @@ export const STATE_SHADOWS = {
 } as const;
 
 /**
+ * Standard classes for <kbd> elements across the application
+ * Eliminates hardcoded keyboard shortcut styling in component files
+ */
+export const KBD_CLASSES =
+  'hidden sm:inline-flex items-center gap-1 px-2 py-1 bg-gray-100 border border-gray-400 rounded text-xs font-sans font-medium text-gray-800';
+
+/**
  * Focus ring shadow utilities for form inputs
  * Pre-defined shadow classes for consistent focus states
  */

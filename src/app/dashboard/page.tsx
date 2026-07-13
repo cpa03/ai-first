@@ -38,6 +38,11 @@ const Button = dynamic(() => import('@/components/Button'), {
   ),
 });
 
+// Micro-UX: Lazy load CopyButton for idea titles
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
+
 // Growth: Lazy load ReferralLink for code splitting
 const ReferralLink = dynamic(() => import('@/components/ReferralLink'), {
   ssr: false,
@@ -938,8 +943,16 @@ export default function DashboardPage() {
                     }`}
                   >
                     <td className={TABLE_PATTERNS.cell.padding}>
-                      <div className={TABLE_PATTERNS.cell.primary}>
-                        {idea.title}
+                      <div className={`${TABLE_PATTERNS.cell.primary} flex items-center gap-2 group`}>
+                        <span className="truncate max-w-[200px] sm:max-w-md">
+                          {idea.title}
+                        </span>
+                        <CopyButton
+                          textToCopy={idea.title}
+                          variant="icon-only"
+                          className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 focus:opacity-100 transition-opacity"
+                          showToast={false}
+                        />
                       </div>
                     </td>
                     <td className={TABLE_PATTERNS.cell.padding}>
