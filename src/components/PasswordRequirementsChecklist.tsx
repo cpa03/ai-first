@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, memo } from 'react';
+import React, { useMemo, useRef, useEffect, useState, memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { SVG_STROKE_WIDTHS, SVG_VIEWBOX } from '@/lib/config';
 
@@ -51,6 +51,9 @@ function PasswordRequirementsChecklistComponent({
   className = '',
 }: PasswordRequirementsChecklistProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [showCompleteCelebration, setShowCompleteCelebration] = useState(false);
+  const prevAllMetRef = useRef(false);
+  const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const requirements = useMemo(
     () =>
@@ -64,8 +67,47 @@ function PasswordRequirementsChecklistComponent({
   const allMet = requirements.every((req) => req.met);
   const metCount = requirements.filter((req) => req.met).length;
   const total = requirements.length;
+  const progressPercent = total > 0 ? (metCount / total) * 100 : 0;
+
+  // Micro-UX: Celebrate when user first meets ALL password requirements
+  // Provides delightful positive feedback at the exact moment of full compliance
+  useEffect(() => {
+    if (allMet && !prevAllMetRef.current) {
+      setShowCompleteCelebration(true);
+      celebrationTimeoutRef.current = setTimeout(() => {
+        setShowCompleteCelebration(false);
+      }, 1500);
+    }
+    prevAllMetRef.current = allMet;
+
+    return () => {
+      if (celebrationTimeoutRef.current) {
+        clearTimeout(celebrationTimeoutRef.current);
+      }
+    };
+  }, [allMet]);
 
   if (!password && !showWhenEmpty) return null;
+
+  // Micro-UX: Dynamic progress bar color based on completion
+  // Provides visual feedback about how close the user is to a valid password
+  const progressColor = allMet
+    ? 'bg-green-500'
+    : metCount >= 3
+      ? 'bg-amber-400'
+      : 'bg-primary-500';
+
+  const progressBgColor = allMet
+    ? 'bg-green-100'
+    : metCount >= 3
+      ? 'bg-amber-100'
+      : 'bg-gray-200';
+
+  const countTextColor = allMet
+    ? 'text-green-700'
+    : metCount >= 3
+      ? 'text-amber-600'
+      : 'text-gray-600';
 
   return (
     <div
@@ -73,9 +115,34 @@ function PasswordRequirementsChecklistComponent({
       role="group"
       aria-label={`Password requirements: ${metCount} of ${total} met`}
     >
-      <p className="text-xs font-medium text-gray-700">
-        Password must contain:
-      </p>
+      {/* Micro-UX: Progress bar with count for at-a-glance completion status */}
+      <div className="space-y-1.5">
+        <div className="flex items-center justify-between">
+          <p className="text-xs font-medium text-gray-700">
+            Password must contain:
+          </p>
+          <span
+            className={`text-xs font-medium tabular-nums transition-colors duration-200 ${countTextColor}`}
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {metCount} of {total}
+          </span>
+        </div>
+        <div
+          className={`h-1.5 ${progressBgColor} rounded-full overflow-hidden transition-colors duration-300`}
+          role="progressbar"
+          aria-valuenow={metCount}
+          aria-valuemin={0}
+          aria-valuemax={total}
+          aria-label={`Password requirements progress: ${metCount} of ${total} met`}
+        >
+          <div
+            className={`h-full ${progressColor} rounded-full transition-all duration-300 ease-out`}
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
       <ul className="space-y-1.5" aria-live="polite" aria-atomic="true">
         {requirements.map((req) => (
           <li
@@ -127,7 +194,7 @@ function PasswordRequirementsChecklistComponent({
       </ul>
       {allMet && (
         <p
-          className="text-xs text-green-700 font-medium flex items-center gap-1.5 mt-2"
+          className={`text-xs text-green-700 font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
           role="status"
           aria-live="polite"
         >
