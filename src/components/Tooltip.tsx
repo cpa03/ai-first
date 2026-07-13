@@ -17,6 +17,7 @@ import {
   Z_INDEX_LAYERS,
   CONTAINER_WIDTH_CLASSES,
   TEXT_SIZE_CLASSES,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -212,7 +213,7 @@ function TooltipComponent({
                       </kbd>
                       {i < shortcut.length - 1 && (
                         <span
-                          className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 font-bold`}
+                          className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 ${TYPOGRAPHY_CLASSES.BOLD}`}
                         >
                           +
                         </span>

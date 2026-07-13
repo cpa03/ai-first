@@ -18,6 +18,7 @@ import {
   GRADIENT_PATTERNS,
   STEP_CELEBRATION_TAILWIND,
   DURATION_TAILWIND,
+  TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -284,10 +285,12 @@ function StepCelebrationComponent({
               transitionDelay: ANIMATION_DELAYS.INLINE.MEDIUM,
             }}
           >
-            <p className="text-lg font-bold text-gray-900">
+            <p className={`text-lg ${TYPOGRAPHY_CLASSES.BOLD} text-gray-900`}>
               {STEP_CELEBRATION_LABELS.STEP_COMPLETE(stepNumber)}
             </p>
-            <p className="text-sm font-medium text-primary-600 mt-1">
+            <p
+              className={`text-sm ${TYPOGRAPHY_CLASSES.MEDIUM} text-primary-600 mt-1`}
+            >
               {STEP_CELEBRATION_LABELS.PROGRESS_COMPLETE(progress)}
             </p>
           </div>

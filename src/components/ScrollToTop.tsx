@@ -196,7 +196,7 @@ function ScrollToTopComponent({
 
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
-      <span className={TYPOGRAPHY_CLASSES.BOLD}>
+      <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
         {isNearBottom
           ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
           : SCROLL_TO_TOP_LABELS.TITLE}
