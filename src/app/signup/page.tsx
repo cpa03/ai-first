@@ -159,8 +159,8 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
   const {
     STRENGTH_LABELS,
     STRENGTH_COLORS,
-    STRENGTH_WIDTHS,
     STRENGTH_TEXT_COLORS,
+    NORMALIZATION,
   } = PASSWORD_VALIDATION_CONFIG;
 
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -183,24 +183,26 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
     prevStrengthRef.current = strength;
   }, [strength]);
 
+  // Micro-UX: Granular progress bar width based on actual score (0-4)
+  // Instead of fixed widths (33%/66%/100%), show precise percentage
+  // giving users fine-grained feedback about password strength gains
+  const percentage = Math.round((score / NORMALIZATION.MAX_SCORE) * 100);
+
   const strengthConfig = {
-    empty: { label: '', color: 'bg-gray-200', width: '0%', textColor: '' },
+    empty: { label: '', color: 'bg-gray-200', textColor: '' },
     weak: {
       label: STRENGTH_LABELS.WEAK,
       color: STRENGTH_COLORS.WEAK,
-      width: STRENGTH_WIDTHS.WEAK,
       textColor: STRENGTH_TEXT_COLORS.WEAK,
     },
     medium: {
       label: STRENGTH_LABELS.MEDIUM,
       color: STRENGTH_COLORS.MEDIUM,
-      width: STRENGTH_WIDTHS.MEDIUM,
       textColor: STRENGTH_TEXT_COLORS.MEDIUM,
     },
     strong: {
       label: STRENGTH_LABELS.STRONG,
       color: STRENGTH_COLORS.STRONG,
-      width: STRENGTH_WIDTHS.STRONG,
       textColor: STRENGTH_TEXT_COLORS.STRONG,
     },
   };
@@ -213,21 +215,29 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
     <div
       className={`space-y-2 ${celebrating && !prefersReducedMotion ? 'animate-password-strong-celebration' : ''}`}
     >
+      {/* Micro-UX: Granular progress bar with percentage label */}
+      {/* Shows precise strength score (e.g., "75% Medium") instead of fixed widths */}
+      {/* Matches the PasswordRequirementsChecklist pattern of showing "3 of 5" */}
       <div className="flex items-center gap-2">
         <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
           <div
             className={`h-full ${config.color} transition-all duration-300 ease-out rounded-full`}
-            style={{ width: config.width }}
+            style={{ width: `${percentage}%` }}
             role="progressbar"
             aria-valuenow={score}
             aria-valuemin={0}
-            aria-valuemax={4}
-            aria-label={`Password strength: ${config.label}`}
+            aria-valuemax={NORMALIZATION.MAX_SCORE}
+            aria-label={`Password strength: ${percentage}% ${config.label}`}
           />
         </div>
-        <span className={`text-xs font-medium ${config.textColor}`}>
-          {config.label}
+        <span
+          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors duration-200`}
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {percentage}%
         </span>
+        <span className={`text-xs ${config.textColor}`}>{config.label}</span>
         {celebrating && !prefersReducedMotion && (
           <svg
             className="w-4 h-4 text-green-600 animate-in zoom-in duration-200"
