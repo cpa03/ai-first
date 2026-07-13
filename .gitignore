@@ -156,3 +156,4 @@ docs/stale-branches-report.md
 
 # Exception for docs/maintenance/ - legitimate tracked maintenance reports
 !docs/maintenance/
+!docs/maintenance/archive/

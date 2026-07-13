@@ -108,7 +108,7 @@ Complete index of all IdeaFlow documentation.
 - [Security Assessment](./security-assessment.md) - Security audit guidelines
 - [Security Headers](./security-headers.md) - HTTP security headers reference
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log and lessons learned
-- [Security Validation](./SECURITY_VALIDATION.md) - Credential exposure prevention and validation
+- [Security Validation](./security/SECURITY_VALIDATION.md) - Credential exposure prevention and validation
 - [Quality Assurance](./quality-assurance.md) - Testing and quality standards
 - [Performance Engineer](./performance-engineer.md) - Performance optimization
 - [Performance Optimization](./performance-optimization.md) - Detailed optimization guide
@@ -244,12 +244,10 @@ Older audit reports are archived in [audit/archive/](./audit/archive/).
 
 - [Stale Branches Report - 2026-07-13 (Latest)](./maintenance/2026-07-13-stale-branches-report.md) - Latest stale branches analysis
 - [Stale Branches Report - 2026-07-12](./maintenance/2026-07-12-stale-branches-report.md) - Previous stale branches analysis
-- [Stale Branches Report - 2026-07-11](./maintenance/2026-07-11-stale-branches-report.md) - Stale branches analysis
-- [Repository Health Report - 2026-07-10](./maintenance/2026-07-10-repo-health-report.md) - Repository health status
 
 ### Archived Reports
 
-Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/) (2026-07-10, 2026-07-11).
 
 ---
 
