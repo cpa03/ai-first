@@ -188,7 +188,11 @@ function PasswordRequirementsChecklistComponent({
                 </svg>
               )}
             </span>
-            <span className="leading-none">{req.label}</span>
+            <span
+              className={`leading-none ${req.met && !prefersReducedMotion ? 'animate-strikethrough' : ''}`}
+            >
+              {req.label}
+            </span>
           </li>
         ))}
       </ul>
