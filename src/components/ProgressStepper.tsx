@@ -35,7 +35,38 @@ const ProgressStepperComponent = function ProgressStepper({
   const completedCount = steps.filter((step) => step.completed).length;
   const prefersReducedMotion = usePrefersReducedMotion();
   const [animatingStep, setAnimatingStep] = useState<number | null>(null);
+  const [animatedProgress, setAnimatedProgress] = useState(0);
+  const animatedProgressRef = useRef(0);
   const prevCurrentStepRef = useRef(currentStep);
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setAnimatedProgress(progressPercentage);
+      animatedProgressRef.current = progressPercentage;
+      return;
+    }
+
+    const startValue = animatedProgressRef.current;
+    const endValue = progressPercentage;
+    const duration = 400;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const currentValue = startValue + (endValue - startValue) * eased;
+
+      setAnimatedProgress(Math.round(currentValue));
+      animatedProgressRef.current = Math.round(currentValue);
+
+      if (progress < 1) {
+        requestAnimationFrame(animate);
+      }
+    };
+
+    requestAnimationFrame(animate);
+  }, [progressPercentage, prefersReducedMotion]);
 
   const handleStepClick = useCallback(
     (index: number) => {
@@ -114,10 +145,10 @@ const ProgressStepperComponent = function ProgressStepper({
             {currentStep + 1} / {steps.length}
           </span>
         </div>
-        {/* Micro-UX: ARIA progress indicator for screen readers */}
         <div
+          className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-2"
           role="progressbar"
-          aria-valuenow={progressPercentage}
+          aria-valuenow={animatedProgress}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-label={PROGRESS_STEPPER_LABELS.PROGRESS_ARIA_LABEL(
@@ -125,8 +156,12 @@ const ProgressStepperComponent = function ProgressStepper({
             steps.length,
             progressPercentage
           )}
-          className="sr-only"
-        />
+        >
+          <div
+            className="h-full bg-primary-600 rounded-full transition-all duration-300 ease-out"
+            style={{ width: `${animatedProgress}%` }}
+          />
+        </div>
       </div>
 
       <ol className="hidden sm:flex items-center justify-between">
