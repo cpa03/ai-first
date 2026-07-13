@@ -2,7 +2,7 @@
 
 import React, { useMemo, useRef, useEffect, useState, memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { SVG_STROKE_WIDTHS, SVG_VIEWBOX } from '@/lib/config';
+import { SVG_STROKE_WIDTHS, SVG_VIEWBOX, COMPONENT_CONFIG } from '@/lib/config';
 
 interface PasswordRequirement {
   id: string;
@@ -76,7 +76,7 @@ function PasswordRequirementsChecklistComponent({
       setShowCompleteCelebration(true);
       celebrationTimeoutRef.current = setTimeout(() => {
         setShowCompleteCelebration(false);
-      }, 1500);
+      }, COMPONENT_CONFIG.PASSWORD_REQUIREMENTS.CELEBRATION_DURATION_MS);
     }
     prevAllMetRef.current = allMet;
 

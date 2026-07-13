@@ -244,12 +244,19 @@ export const COMPONENT_CONFIG = {
   } as const,
 
   INPUT_VALIDATION: {
-    /** Duration for success flash animation (ms) - Env: COMPONENT_INPUT_SUCCESS_FLASH_MS (default: 1500) */
+    /** Env: COMPONENT_INPUT_SUCCESS_FLASH_MS (default: 1500) */
     SUCCESS_FLASH_DURATION_MS: EnvLoader.number(
       'COMPONENT_INPUT_SUCCESS_FLASH_MS',
       1500,
       200,
       5000
+    ),
+    /** Env: COMPONENT_INPUT_CELEBRATION_HIDE_MS (default: 500) */
+    CELEBRATION_HIDE_MS: EnvLoader.number(
+      'COMPONENT_INPUT_CELEBRATION_HIDE_MS',
+      500,
+      100,
+      2000
     ),
   } as const,
 
@@ -468,6 +475,16 @@ export const COMPONENT_CONFIG = {
     DISCOVER_PULSE_DELAY_MS: EnvLoader.number(
       'COMPONENT_KEYBOARD_SHORTCUTS_DISCOVER_DELAY_MS',
       1000,
+      500,
+      5000
+    ),
+  } as const,
+
+  PASSWORD_REQUIREMENTS: {
+    /** Env: COMPONENT_PASSWORD_CELEBRATION_DURATION_MS (default: 1500) */
+    CELEBRATION_DURATION_MS: EnvLoader.number(
+      'COMPONENT_PASSWORD_CELEBRATION_DURATION_MS',
+      1500,
       500,
       5000
     ),
