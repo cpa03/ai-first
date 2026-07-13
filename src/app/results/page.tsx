@@ -20,6 +20,7 @@ import {
   RESULTS_PAGE_CONTENT,
   PAGE_LAYOUT_CLASSES,
   ANIMATION_DELAYS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -258,7 +259,10 @@ function ResultsContent() {
         setExportUrl(result.url);
         fire();
         setShowExportSuccess(true);
-        setTimeout(() => setShowExportSuccess(false), 2000);
+        setTimeout(
+          () => setShowExportSuccess(false),
+          COMPONENT_CONFIG.COPY_FEEDBACK.DURATION_MS
+        );
 
         if (format === 'markdown') {
           const link = document.createElement('a');
