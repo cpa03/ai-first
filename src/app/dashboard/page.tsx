@@ -489,7 +489,7 @@ export default function DashboardPage() {
         LOCAL_STORAGE_KEYS.DASHBOARD_KEYBOARD_HINT_SHOWN,
         'true'
       );
-    }, 1500);
+    }, ANIMATION_CONFIG.DASHBOARD_KEYBOARD_HINT_DELAY);
 
     return () => clearTimeout(timer);
   }, [loading, error, ideas.length]);
