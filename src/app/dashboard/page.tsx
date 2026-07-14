@@ -468,6 +468,32 @@ export default function DashboardPage() {
     }
   }, [selectedRowIndex, prefersReducedMotion]);
 
+  useEffect(() => {
+    if (loading || error || ideas.length === 0) return;
+    if (typeof window === 'undefined') return;
+
+    const hintShown = localStorage.getItem(
+      LOCAL_STORAGE_KEYS.DASHBOARD_KEYBOARD_HINT_SHOWN
+    );
+    if (hintShown) return;
+
+    const timer = setTimeout(() => {
+      const win = window as Window & {
+        showToast?: (options: { type: string; message: string }) => void;
+      };
+      win.showToast?.({
+        type: 'info',
+        message: 'Tip: Press j/k to navigate ideas, Enter to open',
+      });
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.DASHBOARD_KEYBOARD_HINT_SHOWN,
+        'true'
+      );
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, [loading, error, ideas.length]);
+
   if (loading) {
     return (
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}>
