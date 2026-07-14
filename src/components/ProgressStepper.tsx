@@ -7,6 +7,7 @@ import {
   SVG_VIEWBOX,
   PROGRESS_STEPPER_LABELS,
   ANIMATION_DELAYS,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -48,7 +49,7 @@ const ProgressStepperComponent = function ProgressStepper({
 
     const startValue = animatedProgressRef.current;
     const endValue = progressPercentage;
-    const duration = 400;
+    const duration = ANIMATION_CONFIG.PROGRESS_STEPPER.PROGRESS_DURATION;
     const startTime = performance.now();
 
     const animate = (currentTime: number) => {

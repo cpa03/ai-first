@@ -210,6 +210,21 @@ export const ANIMATION_CONFIG = {
       1000
     ),
   },
+
+  /**
+   * Progress Stepper Animation Values
+   * Centralizes animation durations for the ProgressStepper component
+   */
+  PROGRESS_STEPPER: {
+    /** Duration for progress bar animation (ms) */
+    /** Env: UI_ANIMATION_STEPPER_PROGRESS_DURATION (default: 400) */
+    PROGRESS_DURATION: EnvLoader.number(
+      'UI_ANIMATION_STEPPER_PROGRESS_DURATION',
+      400,
+      100,
+      1000
+    ),
+  },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
