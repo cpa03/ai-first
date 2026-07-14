@@ -2,7 +2,12 @@
 
 import React, { useMemo, useRef, useEffect, useState, memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { SVG_STROKE_WIDTHS, SVG_VIEWBOX, COMPONENT_CONFIG } from '@/lib/config';
+import {
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
+  COMPONENT_CONFIG,
+  PASSWORD_VALIDATION_CONFIG,
+} from '@/lib/config';
 
 interface PasswordRequirement {
   id: string;
@@ -20,27 +25,29 @@ interface PasswordRequirementsChecklistProps {
 const PASSWORD_REQUIREMENTS: PasswordRequirement[] = [
   {
     id: 'length',
-    label: 'At least 8 characters',
-    test: (password) => password.length >= 8,
+    label: PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.LENGTH,
+    test: (password) =>
+      password.length >=
+      PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LENGTHS.MIN_PASSWORD_LENGTH,
   },
   {
     id: 'uppercase',
-    label: 'Contains uppercase letter',
+    label: PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.UPPERCASE,
     test: (password) => /[A-Z]/.test(password),
   },
   {
     id: 'lowercase',
-    label: 'Contains lowercase letter',
+    label: PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.LOWERCASE,
     test: (password) => /[a-z]/.test(password),
   },
   {
     id: 'number',
-    label: 'Contains a number',
+    label: PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.NUMBER,
     test: (password) => /[0-9]/.test(password),
   },
   {
     id: 'special',
-    label: 'Contains special character (!@#$%^&*)',
+    label: PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.SPECIAL,
     test: (password) => /[^a-zA-Z0-9]/.test(password),
   },
 ];
@@ -218,7 +225,7 @@ function PasswordRequirementsChecklistComponent({
               />
             </svg>
           </span>
-          All requirements met
+          {PASSWORD_VALIDATION_CONFIG.REQUIREMENTS_LABELS.ALL_MET}
         </p>
       )}
     </div>
