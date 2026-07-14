@@ -228,6 +228,7 @@ Complete index of all IdeaFlow documentation.
 ### Active Reports
 
 - [Bug Scan Report - 2026-07-14 (Latest)](./bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
+- [Browser Console Audit - 2026-07-14 (Latest)](./audit/brocula-browser-audit-20260714.md) - Latest browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-13 (Latest)](./audit/browser-console-audit-2026-07-13.md) - Latest browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-13 (BroCula)](./audit/brocula-browser-console-audit-20260713.md) - BroCula browser console audit report
 - [Browser Console Audit - 2026-07-12](./audit/browser-console-audit-2026-07-12.md) - Browser console and Lighthouse audit
