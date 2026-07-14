@@ -9,7 +9,7 @@ import { HTTP_HEADERS } from '../config/http';
 import { generateId } from '../security/crypto';
 import {
   RETRYABLE_PATTERNS,
-  matchesPattern,
+  matchesAnyPattern,
 } from '../config/error-classification';
 import { ErrorCode, ERROR_SUGGESTIONS } from './codes';
 import { AppError, RateLimitError, type ErrorDetail } from './classes';
@@ -105,15 +105,8 @@ export function isRetryableError(error: unknown): boolean {
   }
 
   if (error instanceof Error) {
-    const message = error.message;
-    return (
-      matchesPattern(message, RETRYABLE_PATTERNS.TIMEOUT) ||
-      matchesPattern(message, RETRYABLE_PATTERNS.RATE_LIMIT) ||
-      matchesPattern(message, RETRYABLE_PATTERNS.ECONNRESET) ||
-      matchesPattern(message, RETRYABLE_PATTERNS.ECONNREFUSED) ||
-      matchesPattern(message, RETRYABLE_PATTERNS.ETIMEDOUT) ||
-      matchesPattern(message, RETRYABLE_PATTERNS.ENOTFOUND)
-    );
+    // PERFORMANCE: Use optimized matchesAnyPattern for faster classification
+    return matchesAnyPattern(error.message, RETRYABLE_PATTERNS);
   }
 
   return false;
