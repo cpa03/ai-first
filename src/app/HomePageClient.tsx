@@ -3,22 +3,27 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import IdeaInput from '@/components/IdeaInput';
-import CopyButton from '@/components/CopyButton';
 import ShareButton from '@/components/ShareButton';
 import Skeleton from '@/components/Skeleton';
-import {
-  trackEvent,
-  trackPageView,
-  ANALYTICS_EVENTS,
-  trackIdeaSubmit,
-  trackCopyAction,
-  trackFunnelStep,
-} from '@/lib/analytics';
 import { HOME_PAGE_CONFIG } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
 import { CARD_PATTERNS } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+
+// Dynamic imports for heavy components to reduce initial bundle size
+const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
+  loading: () => (
+    <div className="space-y-4">
+      <Skeleton variant="text" className="h-32 w-full" />
+      <Skeleton variant="rect" className="h-10 w-32" />
+    </div>
+  ),
+  ssr: false,
+});
+
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
@@ -75,34 +80,25 @@ export default function HomePageClient() {
   const [ideaId, setIdeaId] = useState('');
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  // Growth: Track page view on mount
   useEffect(() => {
-    trackPageView();
+    import('@/lib/analytics').then(({ trackPageView }) => trackPageView());
 
-    // Flush events before page hide (bfcache-friendly)
-    // Using 'pagehide' instead of 'beforeunload' for bfcache compatibility
-    // This improves Lighthouse best-practices score
     const handlePageHide = () => {
-      // Import flush dynamically to avoid issues
       import('@/lib/analytics').then(({ flush }) => flush());
     };
     window.addEventListener('pagehide', handlePageHide);
     return () => window.removeEventListener('pagehide', handlePageHide);
   }, []);
 
-  // PERFORMANCE: Memoize handler to prevent unnecessary re-renders of IdeaInput
-  // which receives this function as a prop
-  // Growth: Track idea submission event
   const handleIdeaSubmit = useCallback(
     (submittedIdea: string, submittedIdeaId: string) => {
       setIdea(submittedIdea);
       setIdeaId(submittedIdeaId);
 
-      // Growth: Track idea submission
-      trackIdeaSubmit(submittedIdeaId);
-
-      // Growth: Track funnel step - idea submission started (step 1 of 4)
-      trackFunnelStep('idea_submission', 1, 4);
+      import('@/lib/analytics').then(({ trackIdeaSubmit, trackFunnelStep }) => {
+        trackIdeaSubmit(submittedIdeaId);
+        trackFunnelStep('idea_submission', 1, 4);
+      });
 
       router.push(
         `/clarify?idea=${encodeURIComponent(submittedIdea)}&ideaId=${submittedIdeaId}`
@@ -160,9 +156,12 @@ export default function HomePageClient() {
             label={HOME_PAGE_CONFIG.SHARE.LABEL}
             ariaLabel={HOME_PAGE_CONFIG.SHARE.ARIA_LABEL}
             onShare={() =>
-              trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE_CLICK, {
-                share_platform: 'web_share_api',
-              })
+              import('@/lib/analytics').then(
+                ({ trackEvent, ANALYTICS_EVENTS }) =>
+                  trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE_CLICK, {
+                    share_platform: 'web_share_api',
+                  })
+              )
             }
           />
         </div>
@@ -206,7 +205,11 @@ export default function HomePageClient() {
               ariaLabel="Copy idea ID to clipboard"
               variant="default"
               toastMessage="Idea ID copied to clipboard!"
-              onCopy={() => trackCopyAction('idea_id')}
+              onCopy={() =>
+                import('@/lib/analytics').then(({ trackCopyAction }) =>
+                  trackCopyAction('idea_id')
+                )
+              }
             />
           </div>
           <p className="text-sm text-blue-600 mt-3">
