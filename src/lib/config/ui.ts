@@ -346,6 +346,25 @@ export const PASSWORD_VALIDATION_CONFIG = {
     MEDIUM: 'text-amber-700',
     STRONG: 'text-green-700',
   },
+  /**
+   * Password requirement labels
+   * Centralizes hardcoded password requirement strings for PasswordRequirementsChecklist component
+   */
+  REQUIREMENTS_LABELS: {
+    LENGTH: 'At least 8 characters',
+    UPPERCASE: 'Contains uppercase letter',
+    LOWERCASE: 'Contains lowercase letter',
+    NUMBER: 'Contains a number',
+    SPECIAL: 'Contains special character (!@#$%^&*)',
+    ALL_MET: 'All requirements met',
+  },
+  /**
+   * Password requirement minimum lengths
+   * Centralizes hardcoded numeric values for password requirements
+   */
+  REQUIREMENTS_LENGTHS: {
+    MIN_PASSWORD_LENGTH: 8,
+  },
 } as const;
 
 /**
