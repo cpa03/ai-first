@@ -227,14 +227,18 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Bug Scan Report - 2026-07-14 (Latest)](./bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
-- [Browser Console Audit - 2026-07-14 (Latest)](./audit/brocula-browser-audit-20260714.md) - Latest browser console and Lighthouse audit
+- [Bug Scan Report - 2026-07-14 (Latest)](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
+- [Browser Console Audit - 2026-07-14 (Latest)](./audit/browser-audit-2026-07-14.md) - Latest browser console and Lighthouse audit
+- [BroCula Browser Lighthouse Report - 2026-07-14](./audit/brocula-browser-lighthouse-report-2026-07-14.md) - BroCula Lighthouse performance report
+- [Browser Console Audit - 2026-07-14 (BroCula)](./audit/brocula-browser-audit-20260714.md) - BroCula browser console audit
 - [Browser Console Audit - 2026-07-13 (Latest)](./audit/browser-console-audit-2026-07-13.md) - Latest browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-13 (BroCula)](./audit/brocula-browser-console-audit-20260713.md) - BroCula browser console audit report
 - [Browser Console Audit - 2026-07-12](./audit/browser-console-audit-2026-07-12.md) - Browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-11](./audit/browser-console-audit-20260711.md) - Browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-10](./audit/browser-console-audit-20260710.md) - Browser console and Lighthouse audit
-- [Flexy Modularization Audit - 2026-07-11](./audit/2026-07-11-flexy-modularity-status.md) - Code modularization assessment
+- [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment
+- [Flexy Modularization Status - 2026-07-11](./audit/2026-07-11-flexy-modularity-status.md) - Code modularization status
+- [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
 - [Comprehensive Audit - 2026-07-08](./audit/2026-07-08-comprehensive-audit.md) - Full repository audit
 - [Bug Scan Report - 2026-07-13](./audit/bug-scan-report-20260713.md) - Bug scan and error detection results
 - [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
