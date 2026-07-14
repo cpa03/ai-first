@@ -10,6 +10,8 @@ interface LoadingSpinnerProps {
   ariaLabel?: string;
   /** Delay animation start by N ms for staggered multi-spinner effects */
   animationDelay?: number;
+  /** Optional visible text label to display next to the spinner (e.g., "Loading dashboard...") */
+  label?: string;
 }
 
 function LoadingSpinnerComponent({
@@ -17,6 +19,7 @@ function LoadingSpinnerComponent({
   className = '',
   ariaLabel = COMPONENT_CONFIG.LOADING.DEFAULT_ARIA_LABEL,
   animationDelay = 0,
+  label,
 }: LoadingSpinnerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -86,13 +89,11 @@ function LoadingSpinnerComponent({
 
   return (
     <div
-      className={`flex justify-center relative ${className}`}
+      className={`flex justify-center items-center gap-2.5 ${className}`}
       role={COMPONENT_CONFIG.ARIA.STATUS}
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}
       aria-label={ariaLabel}
     >
-      {/* Micro-UX: Screen reader-only text ensures aria-live announces loading state */}
-      {/* Without text content, aria-live regions are silent for assistive technology */}
       <span className="sr-only">{ariaLabel}</span>
       {!prefersReducedMotion && (
         <div
@@ -134,6 +135,11 @@ function LoadingSpinnerComponent({
           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
         />
       </svg>
+      {label && (
+        <span className="text-sm text-gray-600 font-medium animate-fade-in">
+          {label}
+        </span>
+      )}
     </div>
   );
 }
