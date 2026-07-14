@@ -184,6 +184,8 @@ export const MESSAGES = {
     DELIVERABLE_EMPTY: 'No tasks in this deliverable.',
     TASK_HOURS_SUFFIX: 'h',
     TASK_RISK_SUFFIX: 'risk',
+    TASK_COMPLETED_SUCCESS: (taskTitle: string) =>
+      `Nicely done! "${taskTitle}" is complete.`,
   },
   IDEA_INPUT: {
     SUBMIT_BUTTON: 'Start Clarifying →',

@@ -153,7 +153,7 @@ function ClarifyPageContent() {
                 : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
-        setError('Failed to save your answers. Please try again.');
+        setError(CLARIFY_PAGE_CONTENT.FAILED_SAVE_ANSWERS);
       }
     },
     [ideaId, logger]

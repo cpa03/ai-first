@@ -12,6 +12,7 @@ import {
   API_ERROR_MESSAGES,
   TASK_CONFIG,
   PROGRESS_PERCENTAGE,
+  MESSAGES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -94,7 +95,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to fetch tasks');
+          throw new Error(
+            errorData.error || API_ERROR_MESSAGES.INTERNAL.FETCH_TASKS_FAILED
+          );
         }
 
         const result = await response.json();
@@ -130,7 +133,11 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
                 : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
           },
         });
-        setError(err instanceof Error ? err.message : 'Failed to fetch tasks');
+        setError(
+          err instanceof Error
+            ? err.message
+            : API_ERROR_MESSAGES.INTERNAL.FETCH_TASKS_FAILED
+        );
       } finally {
         setLoading(false);
       }
@@ -272,7 +279,9 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
             };
             win.showToast?.({
               type: 'success',
-              message: `Nicely done! "${task.title}" is complete.`,
+              message: MESSAGES.TASK_MANAGEMENT.TASK_COMPLETED_SUCCESS(
+                task.title
+              ),
             });
           }
         }
@@ -288,7 +297,10 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to update task status');
+          throw new Error(
+            errorData.error ||
+              API_ERROR_MESSAGES.INTERNAL.UPDATE_TASK_STATUS_FAILED
+          );
         }
 
         const result = await response.json();
@@ -327,12 +339,16 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           win.showToast?.({
             type: 'error',
             message:
-              err instanceof Error ? err.message : 'Failed to update task',
+              err instanceof Error
+                ? err.message
+                : API_ERROR_MESSAGES.INTERNAL.UPDATE_TASK_FAILED,
           });
         }
 
         setError(
-          err instanceof Error ? err.message : 'Failed to update task status'
+          err instanceof Error
+            ? err.message
+            : API_ERROR_MESSAGES.INTERNAL.UPDATE_TASK_STATUS_FAILED
         );
       } finally {
         setUpdatingTaskId(null);

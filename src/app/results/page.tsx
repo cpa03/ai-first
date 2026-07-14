@@ -173,7 +173,9 @@ function ResultsContent() {
 
         if (!ideaResponse.ok) {
           const errorData = await ideaResponse.json();
-          throw new Error(errorData.error || 'Failed to fetch idea');
+          throw new Error(
+            errorData.error || API_ERROR_MESSAGES.INTERNAL.FETCH_IDEA_FAILED
+          );
         }
 
         const ideaData = await ideaResponse.json();
