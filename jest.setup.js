@@ -137,20 +137,22 @@ global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   disconnect: jest.fn(),
 }));
 
-// Mock window.matchMedia for media query tests
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation((query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+// Mock window.matchMedia for media query tests (jsdom only)
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation((query) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
 
 // Setup fetch mock helper
 global.mockFetch = (response, ok = true, status = 200) => {
@@ -161,25 +163,27 @@ global.mockFetch = (response, ok = true, status = 200) => {
   });
 };
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-};
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+// Mock localStorage (jsdom only)
+if (typeof window !== 'undefined') {
+  const localStorageMock = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  };
+  Object.defineProperty(window, 'localStorage', { value: localStorageMock });
 
-// Mock sessionStorage
-global.sessionStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-};
-Object.defineProperty(window, 'sessionStorage', {
-  value: global.sessionStorageMock,
-});
+  // Mock sessionStorage
+  global.sessionStorageMock = {
+    getItem: jest.fn(),
+    setItem: jest.fn(),
+    removeItem: jest.fn(),
+    clear: jest.fn(),
+  };
+  Object.defineProperty(window, 'sessionStorage', {
+    value: global.sessionStorageMock,
+  });
+}
 
 // Mock window.open
 global.open = jest.fn();
@@ -404,24 +408,17 @@ global.clearInterval = ((intervalId) => {
 
 // Cleanup after each test
 afterEach(() => {
-  // Clear storage
-  localStorage.clear();
-  sessionStorage.clear();
-  
-  // Clear all mock calls and instances
+  if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    localStorage.clear();
+    sessionStorage.clear();
+  }
+
   jest.clearAllMocks();
-  
-  // Note: We do NOT call jest.useRealTimers() here because it
-  // interferes with tests that use jest.useFakeTimers().
-  // Each test should manage its own timer state.
-  
-  // Clear any pending intervals tracked
+
   activeHandles.forEach((handle) => {
     try {
       originalClearInterval(handle);
-    } catch {
-      // Ignore errors during cleanup
-    }
+    } catch {}
   });
   activeHandles.clear();
 });
@@ -431,7 +428,7 @@ afterAll(() => {
   // Final cleanup to ensure no handles are left
   jest.clearAllMocks();
   jest.useRealTimers();
-  
+
   // Clear all tracked handles
   activeHandles.forEach((handle) => {
     try {
@@ -441,7 +438,7 @@ afterAll(() => {
     }
   });
   activeHandles.clear();
-  
+
   // Force garbage collection hint (if available)
   if (global.gc) {
     global.gc();

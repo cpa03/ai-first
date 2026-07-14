@@ -54,8 +54,17 @@ jest.mock('js-yaml', () => ({
   })),
 }));
 
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
   readFileSync: jest.fn(() => 'test config'),
+  promises: {
+    readFile: jest.fn(() => Promise.resolve('test config')),
+  },
+  default: {
+    readFileSync: jest.fn(() => 'test config'),
+    promises: {
+      readFile: jest.fn(() => Promise.resolve('test config')),
+    },
+  },
 }));
 
 describe('BreakdownEngine', () => {

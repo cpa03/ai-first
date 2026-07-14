@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { findSimilarIdeas } from '@/lib/similarity-service';
 
 // Mock Supabase client

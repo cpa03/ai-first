@@ -1,20 +1,15 @@
 /**
+ * @jest-environment node
+ */
+
+/**
  * Comprehensive AIService Tests
  *
  * Tests critical infrastructure for AI model calls, cost tracking,
  * context management, and health checks.
- *
- * NOTE: These tests simulate server-side environment by removing the
- * `window` object. The AIService has a security check that prevents
- * getSupabase() from being called in browser context (where window exists).
  */
 
 import 'openai/shims/node';
-
-// Simulate server-side environment for security checks
-// The AIService.getSupabase() method throws if window is defined
-// because the service role key must NEVER be exposed to clients
-delete (global as Record<string, unknown>).window;
 
 import { AIService, AIModelConfig } from '@/lib/ai';
 import { createClient } from '@supabase/supabase-js';
