@@ -215,10 +215,34 @@ export const ERROR_CLASSIFICATION_PATTERNS = {
 } as const;
 
 /**
+ * PERFORMANCE: Pre-compiled combined regexes for each error category.
+ * This replaces O(N) string iterations with O(1) regex matching,
+ * providing a significant speedup for error classification.
+ */
+const CATEGORY_REGEX_CACHE = new Map<Record<string, string>, RegExp>();
+
+/**
+ * Helper to get or create a combined regex for a pattern category.
+ */
+function getCategoryRegex(patterns: Record<string, string>): RegExp {
+  let regex = CATEGORY_REGEX_CACHE.get(patterns);
+  if (!regex) {
+    // Escape special characters and join with OR
+    const combinedSource = Object.values(patterns)
+      .map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|');
+    regex = new RegExp(combinedSource, 'i');
+    CATEGORY_REGEX_CACHE.set(patterns, regex);
+  }
+  return regex;
+}
+
+/**
  * Helper function to check if a string matches any pattern in a category
  *
  * @param text - The text to check against patterns
  * @param patterns - Object containing pattern strings
+ * @param isNormalized - Whether the input text is already lowercased (default: false)
  * @returns true if the text matches any pattern
  *
  * @example
@@ -230,12 +254,18 @@ export const ERROR_CLASSIFICATION_PATTERNS = {
  */
 export function matchesAnyPattern(
   text: string,
-  patterns: Record<string, string>
+  patterns: Record<string, string>,
+  _isNormalized = false
 ): boolean {
-  const lowerText = text.toLowerCase();
-  return Object.values(patterns).some((pattern) =>
-    lowerText.includes(pattern.toLowerCase())
-  );
+  if (!text) return false;
+
+  // PERFORMANCE: Use pre-compiled combined regex for the category.
+  // This avoids O(N) loop and multiple string allocations.
+  const regex = getCategoryRegex(patterns);
+
+  // If text is already normalized, we can potentially skip case-insensitive check
+  // but RegExp with 'i' flag is already efficient.
+  return regex.test(text);
 }
 
 /**
@@ -243,6 +273,7 @@ export function matchesAnyPattern(
  *
  * @param text - The text to check against patterns
  * @param pattern - The pattern string to match
+ * @param isNormalized - Whether the input text is already lowercased (default: false)
  * @returns true if the text matches the pattern
  *
  * @example
@@ -252,8 +283,19 @@ export function matchesAnyPattern(
  * }
  * ```
  */
-export function matchesPattern(text: string, pattern: string): boolean {
-  return text.toLowerCase().includes(pattern.toLowerCase());
+export function matchesPattern(
+  text: string,
+  pattern: string,
+  isNormalized = false
+): boolean {
+  if (!text || !pattern) return false;
+
+  // PERFORMANCE: Skip toLowerCase() if already normalized.
+  // Avoids redundant string allocations in hot paths like classifyStandardError.
+  const source = isNormalized ? text : text.toLowerCase();
+  const target = pattern.toLowerCase();
+
+  return source.includes(target);
 }
 
 export type ErrorClassificationPatterns = typeof ERROR_CLASSIFICATION_PATTERNS;

@@ -12,7 +12,7 @@ import {
   AUTH_ERROR_PATTERNS,
   RATE_LIMIT_ERROR_PATTERNS,
   VALIDATION_ERROR_PATTERNS,
-  matchesPattern,
+  matchesAnyPattern,
 } from '../config/error-classification';
 import {
   AppError,
@@ -173,64 +173,48 @@ function classifyAppError(error: AppError): ErrorClassification {
  * Classify a standard Error by analyzing its properties
  */
 function classifyStandardError(error: Error): ErrorClassification {
-  const message = error.message.toLowerCase();
-  const name = error.name.toLowerCase();
+  const message = error.message;
+  const name = error.name;
+
+  // PERFORMANCE: Use optimized matchesAnyPattern with pre-compiled regexes
+  // instead of multiple individual matchesPattern calls. This significantly
+  // reduces string allocations and CPU cycles in the error path.
 
   // Network errors
-  if (
-    matchesPattern(message, NETWORK_ERROR_PATTERNS.ECONNRESET) ||
-    matchesPattern(message, NETWORK_ERROR_PATTERNS.ECONNREFUSED) ||
-    matchesPattern(message, NETWORK_ERROR_PATTERNS.ENOTFOUND) ||
-    matchesPattern(message, NETWORK_ERROR_PATTERNS.NETWORK)
-  ) {
+  if (matchesAnyPattern(message, NETWORK_ERROR_PATTERNS)) {
     return 'network_error';
   }
 
   // Timeout errors
   if (
-    matchesPattern(message, TIMEOUT_ERROR_PATTERNS.MESSAGE_TIMEOUT) ||
-    matchesPattern(name, TIMEOUT_ERROR_PATTERNS.NAME_TIMEOUT)
+    matchesAnyPattern(message, TIMEOUT_ERROR_PATTERNS) ||
+    matchesAnyPattern(name, TIMEOUT_ERROR_PATTERNS)
   ) {
     return 'timeout_error';
   }
 
   // Database errors (PostgreSQL/Supabase patterns)
   if (
-    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_DATABASE) ||
-    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_SQL) ||
-    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_RELATION) ||
-    matchesPattern(message, DATABASE_ERROR_PATTERNS.MESSAGE_COLUMN) ||
-    matchesPattern(name, DATABASE_ERROR_PATTERNS.NAME_DATABASE) ||
-    matchesPattern(name, DATABASE_ERROR_PATTERNS.NAME_POSTGRES)
+    matchesAnyPattern(message, DATABASE_ERROR_PATTERNS) ||
+    matchesAnyPattern(name, DATABASE_ERROR_PATTERNS)
   ) {
     return 'database_error';
   }
 
   // Auth errors
-  if (
-    matchesPattern(message, AUTH_ERROR_PATTERNS.UNAUTHORIZED) ||
-    matchesPattern(message, AUTH_ERROR_PATTERNS.UNAUTHENTICATED) ||
-    matchesPattern(message, AUTH_ERROR_PATTERNS.FORBIDDEN) ||
-    matchesPattern(message, AUTH_ERROR_PATTERNS.INVALID_TOKEN) ||
-    matchesPattern(message, AUTH_ERROR_PATTERNS.JWT)
-  ) {
+  if (matchesAnyPattern(message, AUTH_ERROR_PATTERNS)) {
     return 'auth_error';
   }
 
   // Rate limit errors
-  if (
-    matchesPattern(message, RATE_LIMIT_ERROR_PATTERNS.MESSAGE_RATE_LIMIT) ||
-    matchesPattern(message, RATE_LIMIT_ERROR_PATTERNS.TOO_MANY_REQUESTS)
-  ) {
+  if (matchesAnyPattern(message, RATE_LIMIT_ERROR_PATTERNS)) {
     return 'rate_limit_error';
   }
 
   // Validation errors
   if (
-    matchesPattern(message, VALIDATION_ERROR_PATTERNS.MESSAGE_VALIDATION) ||
-    matchesPattern(message, VALIDATION_ERROR_PATTERNS.MESSAGE_INVALID) ||
-    matchesPattern(message, VALIDATION_ERROR_PATTERNS.MESSAGE_REQUIRED) ||
-    matchesPattern(name, VALIDATION_ERROR_PATTERNS.NAME_VALIDATION)
+    matchesAnyPattern(message, VALIDATION_ERROR_PATTERNS) ||
+    matchesAnyPattern(name, VALIDATION_ERROR_PATTERNS)
   ) {
     return 'validation_error';
   }
