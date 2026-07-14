@@ -23,6 +23,7 @@ import {
   SPACING_CLASSES,
   ROUNDED_CLASSES,
 } from '@/lib/config';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 
 interface TaskManagementProps {
   ideaId: string;
@@ -53,14 +54,8 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     if (!data || data.deliverables.length === 0) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable;
-
-      if (isInputFocused || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isFocusedOnInput(e.target) || e.metaKey || e.ctrlKey || e.altKey)
+        return;
 
       if (e.key === '[') {
         e.preventDefault();

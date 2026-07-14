@@ -27,6 +27,7 @@ import {
 } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 /**
@@ -261,12 +262,7 @@ export default function UserOnboarding() {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't handle if user is typing in an input
-      const target = e.target as HTMLElement;
-      if (
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
+      if (isFocusedOnInput(e.target)) {
         return;
       }
 

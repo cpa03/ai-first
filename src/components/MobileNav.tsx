@@ -13,6 +13,7 @@ import {
   MOBILE_NAV_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
@@ -62,14 +63,8 @@ function MobileNavComponent() {
     if (!isOpen || !isMobile) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable;
-
-      if (isInputFocused || e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isFocusedOnInput(e.target) || e.metaKey || e.ctrlKey || e.altKey)
+        return;
 
       const stepNumber = parseInt(e.key, 10);
       if (stepNumber >= 1 && stepNumber <= navLinks.length) {

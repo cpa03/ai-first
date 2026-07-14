@@ -15,6 +15,7 @@ import {
   UI_CONFIG,
   NOT_FOUND_PAGE_CONFIG,
 } from '@/lib/config';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 
 // Enhanced 404 page with keyboard shortcuts, focus management, and consistent component usage
 export default function NotFound() {
@@ -39,14 +40,7 @@ export default function NotFound() {
   // Enter = Go back, Escape = Go home (matches ErrorBoundary pattern)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable;
-
-      if (isInputFocused) return;
+      if (isFocusedOnInput(e.target)) return;
 
       if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();

@@ -20,6 +20,7 @@ import {
   TYPOGRAPHY_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { PLATFORM } from '@/lib/dom-utils';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -111,10 +112,7 @@ function TooltipComponent({
   }, []);
 
   useEffect(() => {
-    setIsMac(
-      typeof navigator !== 'undefined' &&
-        /Mac|iPhone|iPad|iPod/.test(navigator.platform)
-    );
+    setIsMac(PLATFORM.isMac());
 
     return () => {
       if (showTimeoutRef.current) {

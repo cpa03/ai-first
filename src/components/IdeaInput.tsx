@@ -22,6 +22,7 @@ import {
 } from '@/lib/config/theme';
 import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { PLATFORM } from '@/lib/dom-utils';
 import Alert from './Alert';
 import Button from './Button';
 import InputWithValidation from './InputWithValidation';
@@ -126,7 +127,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
-    setIsMac(navigator.platform.includes('Mac'));
+    setIsMac(PLATFORM.isMac());
   }, []);
 
   // Cleanup paste success timeout on unmount
@@ -472,12 +473,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               className="flex items-center gap-2 text-sm text-gray-600"
               aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
             >
-              <kbd className={KBD_CLASSES}>
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              <kbd className={KBD_CLASSES}>
-                Enter
-              </kbd>
+              <kbd className={KBD_CLASSES}>{isMac ? '⌘' : 'Ctrl'}</kbd>
+              <kbd className={KBD_CLASSES}>Enter</kbd>
               <span className="hidden sm:inline text-gray-600">
                 {IDEA_INPUT_LABELS.KEYBOARD_SHORTCUT_HINT}
               </span>

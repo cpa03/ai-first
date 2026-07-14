@@ -13,6 +13,7 @@ import {
   TASK_CONFIG,
   PROGRESS_PERCENTAGE,
 } from '@/lib/config';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -370,14 +371,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   // Micro-UX: Global keyboard shortcuts for Task Management
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable;
-
-      if (isInputFocused) return;
+      if (isFocusedOnInput(e.target)) return;
 
       // [ for Expand All, ] for Collapse All
       if (e.key === '[' && !e.ctrlKey && !e.metaKey && !e.shiftKey) {

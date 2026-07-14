@@ -12,6 +12,7 @@ import {
   COMPONENT_CONFIG,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { PLATFORM } from '@/lib/dom-utils';
 import {
   createContext,
   useContext,
@@ -71,9 +72,7 @@ function KeyboardShortcutsButtonComponent() {
   const prefersReducedMotion = usePrefersReducedMotion();
 
   useEffect(() => {
-    setIsMac(
-      typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
-    );
+    setIsMac(PLATFORM.isMac());
   }, []);
 
   useEffect(() => {

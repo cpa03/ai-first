@@ -17,6 +17,7 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
 } from '@/lib/config/theme';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTHS } from '@/lib/config/page-layout';
 import { ROUTES } from '@/lib/config/routes';
@@ -54,7 +55,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.setState({ isMac: navigator.platform.includes('Mac') });
+    this.setState({ isMac: PLATFORM.isMac() });
     document.addEventListener('keydown', this.handleKeyDown);
   }
 
@@ -92,14 +93,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   handleKeyDown = (e: KeyboardEvent) => {
     if (!this.state.hasError) return;
 
-    const target = e.target as HTMLElement;
-    const isInputFocused =
-      target.tagName === 'INPUT' ||
-      target.tagName === 'TEXTAREA' ||
-      target.tagName === 'SELECT' ||
-      target.isContentEditable;
-
-    if (isInputFocused) return;
+    if (isFocusedOnInput(e.target)) return;
 
     if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
       e.preventDefault();

@@ -17,6 +17,7 @@ import {
   TIME_CONVERSIONS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 import { generateId } from '@/lib/security/crypto';
 
 export interface Toast {
@@ -361,14 +362,7 @@ function ToastContainerComponent() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.shiftKey && e.key === 'Escape') {
-        const target = e.target as HTMLElement;
-        const isInputFocused =
-          target.tagName === 'INPUT' ||
-          target.tagName === 'TEXTAREA' ||
-          target.tagName === 'SELECT' ||
-          target.isContentEditable;
-
-        if (!isInputFocused && toasts.length > 1) {
+        if (!isFocusedOnInput(e.target) && toasts.length > 1) {
           e.preventDefault();
           clearAllToasts();
         }
