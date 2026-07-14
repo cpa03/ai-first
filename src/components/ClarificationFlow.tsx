@@ -26,6 +26,7 @@ import {
   CLARIFICATION_FLOW_LABELS,
   CARD_PATTERNS,
 } from '@/lib/config';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
 import ProgressStepper from '@/components/ProgressStepper';
@@ -229,14 +230,7 @@ function ClarificationFlow({
     if (loading || questions.length === 0) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable;
-
-      if (isInputFocused || e.metaKey || e.ctrlKey) return;
+      if (isFocusedOnInput(e.target) || e.metaKey || e.ctrlKey) return;
 
       if (e.key === 'r' && e.altKey) {
         e.preventDefault();

@@ -14,6 +14,7 @@ import {
   PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { PLATFORM } from '@/lib/dom-utils';
 
 const logger = createLogger('useClarificationSession');
 
@@ -108,10 +109,7 @@ export function useClarificationSession(
   const stepTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
 
-  const isMac = useMemo(
-    () => typeof window !== 'undefined' && navigator.platform.includes('Mac'),
-    []
-  );
+  const isMac = useMemo(() => PLATFORM.isMac(), []);
 
   const currentQuestion = useMemo(
     () => questions[currentStep],

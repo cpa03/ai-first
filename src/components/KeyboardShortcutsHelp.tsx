@@ -27,6 +27,7 @@ import {
   SHADOW_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -249,13 +250,6 @@ export function useKeyboardShortcutsHelp() {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.tagName === 'SELECT' ||
-        target.isContentEditable;
-
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         toggleHelp();
@@ -267,7 +261,7 @@ export function useKeyboardShortcutsHelp() {
         !e.ctrlKey &&
         !e.metaKey &&
         !e.shiftKey &&
-        !isInputFocused
+        !isFocusedOnInput(e.target)
       ) {
         e.preventDefault();
         toggleHelp();
@@ -445,9 +439,7 @@ function KeyboardShortcutsHelpComponent({
 
   // Detect Mac
   useEffect(() => {
-    setIsMac(
-      typeof navigator !== 'undefined' && navigator.platform.includes('Mac')
-    );
+    setIsMac(PLATFORM.isMac());
   }, []);
 
   // Micro-UX: Close handler with focus restoration

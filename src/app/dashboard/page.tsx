@@ -28,6 +28,7 @@ import {
   IDEA_STATUS_CONFIG,
   SIZES,
 } from '@/lib/config';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
@@ -361,13 +362,7 @@ export default function DashboardPage() {
     const handleKeyboardShortcuts = (e: KeyboardEvent) => {
       if (deleteModal.isOpen) return;
 
-      const target = e.target as HTMLElement;
-      const isInputFocused =
-        target.tagName === 'INPUT' ||
-        target.tagName === 'TEXTAREA' ||
-        target.isContentEditable;
-
-      if (isInputFocused) return;
+      if (isFocusedOnInput(e.target)) return;
 
       if (
         ideas.length > 0 &&
@@ -943,7 +938,9 @@ export default function DashboardPage() {
                     }`}
                   >
                     <td className={TABLE_PATTERNS.cell.padding}>
-                      <div className={`${TABLE_PATTERNS.cell.primary} flex items-center gap-2 group`}>
+                      <div
+                        className={`${TABLE_PATTERNS.cell.primary} flex items-center gap-2 group`}
+                      >
                         <span className="truncate max-w-[200px] sm:max-w-md">
                           {idea.title}
                         </span>
