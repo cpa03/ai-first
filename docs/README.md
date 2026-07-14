@@ -243,7 +243,8 @@ Older audit reports are archived in [audit/archive/](./audit/archive/).
 
 ## Maintenance Reports
 
-- [Stale Branches Report - 2026-07-13 (Latest)](./maintenance/2026-07-13-stale-branches-report.md) - Latest stale branches analysis
+- [Stale Branches Report - 2026-07-14 (Latest)](./maintenance/2026-07-14-stale-branches-report.md) - Latest stale branches analysis
+- [Stale Branches Report - 2026-07-13](./maintenance/2026-07-13-stale-branches-report.md) - Previous stale branches analysis
 - [Stale Branches Report - 2026-07-12](./maintenance/2026-07-12-stale-branches-report.md) - Previous stale branches analysis
 
 ### Archived Reports
