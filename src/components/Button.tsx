@@ -18,6 +18,7 @@ import {
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { generateId } from '@/lib/security/crypto';
+import Tooltip from './Tooltip';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -29,6 +30,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   enableTransition?: boolean;
   /** Optional loading message to display next to the spinner (e.g., "Saving...", "Submitting...") */
   loadingText?: string;
+  /** Optional tooltip text to display when button is disabled, explaining why it's disabled */
+  disabledTooltip?: string;
   children: React.ReactNode;
 }
 
@@ -49,6 +52,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       attention = false,
       enableTransition = false,
       loadingText,
+      disabledTooltip,
       disabled,
       children,
       className = '',
@@ -158,7 +162,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         ? BUTTON_STYLES.STATES.disabled
         : BUTTON_STYLES.STATES.enabled;
 
-    return (
+    const buttonElement = (
       <button
         ref={ref}
         disabled={disabled || loading}
@@ -216,6 +220,16 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         ))}
       </button>
     );
+
+    if (disabled && disabledTooltip) {
+      return (
+        <Tooltip content={disabledTooltip} position="top">
+          {buttonElement}
+        </Tooltip>
+      );
+    }
+
+    return buttonElement;
   }
 );
 
