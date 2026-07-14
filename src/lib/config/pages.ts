@@ -318,6 +318,7 @@ export const CLARIFY_PAGE_CONTENT = {
   AUTH_REQUIRED_MESSAGE: 'Please sign in to clarify your ideas.',
   NO_IDEA_TITLE: 'No Idea Provided',
   NO_IDEA_MESSAGE: 'Please provide an idea to clarify.',
+  FAILED_SAVE_ANSWERS: 'Failed to save your answers. Please try again.',
   BUTTONS: {
     GO_BACK: 'Go Back',
     GO_HOME: 'Go Home',
