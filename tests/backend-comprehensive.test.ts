@@ -1,4 +1,8 @@
 /**
+ * @jest-environment node
+ */
+
+/**
  * Comprehensive Backend Service Tests
  */
 
@@ -30,9 +34,6 @@ import {
   waitForAsync,
   createMockFetch,
 } from './utils/_testHelpers';
-
-// Mock window to be undefined (server-side)
-delete (global as Record<string, unknown>).window;
 
 // Get mocked constructors
 const mockCreateClient = createClient as jest.MockedFunction<

@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 import { clarifierAgent, ClarifierQuestion } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
 import { createMockVector } from './utils/_testHelpers';
@@ -26,8 +30,17 @@ jest.mock('js-yaml', () => ({
   })),
 }));
 
-jest.mock('fs', () => ({
+jest.mock('node:fs', () => ({
   readFileSync: jest.fn(() => 'test config'),
+  promises: {
+    readFile: jest.fn(() => Promise.resolve('test config')),
+  },
+  default: {
+    readFileSync: jest.fn(() => 'test config'),
+    promises: {
+      readFile: jest.fn(() => Promise.resolve('test config')),
+    },
+  },
 }));
 
 describe('ClarifierAgent', () => {
