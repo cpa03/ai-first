@@ -193,7 +193,7 @@
     /api-handler/        ← API handler utilities
       /wrapper.ts        ← API request wrapper
       /response.ts       ← Response formatting
-    /config/             ← Configuration modules (64 files)
+    /config/             ← Configuration modules (69 files)
       /constants.ts      ← Centralized constants
       /environment.ts    ← Environment configuration
       /database-tables.ts ← Database table names
