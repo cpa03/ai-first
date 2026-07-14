@@ -424,6 +424,12 @@ export default function DashboardPage() {
         e.preventDefault();
         triggerHapticFeedback();
         filterSelectRef.current?.focus();
+        // Micro-UX: Scroll filter into view when focused via keyboard shortcut
+        // Ensures the filter is visible on mobile or when user has scrolled down
+        filterSelectRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'nearest',
+        });
       }
 
       if (
@@ -441,7 +447,13 @@ export default function DashboardPage() {
     document.addEventListener('keydown', handleKeyboardShortcuts);
     return () =>
       document.removeEventListener('keydown', handleKeyboardShortcuts);
-  }, [deleteModal.isOpen, ideas, selectedRowIndex, openDeleteModal]);
+  }, [
+    deleteModal.isOpen,
+    ideas,
+    selectedRowIndex,
+    openDeleteModal,
+    prefersReducedMotion,
+  ]);
 
   useEffect(() => {
     if (selectedRowIndex >= 0 && tableBodyRef.current) {
@@ -1067,6 +1079,14 @@ export default function DashboardPage() {
               {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_KEY}
             </kbd>
             {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_LABEL}
+          </span>
+          <span className="hidden sm:inline-flex items-center gap-1">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+            >
+              {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
+            </kbd>
+            {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
           </span>
         </div>
       )}

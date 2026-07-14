@@ -465,6 +465,8 @@ export const DASHBOARD_LABELS = {
     DESELECT_LABEL: 'deselect',
     DELETE_KEY: 'Del',
     DELETE_LABEL: 'delete',
+    FILTER_KEY: '/',
+    FILTER_LABEL: 'filter',
   },
 };
 
