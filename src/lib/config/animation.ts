@@ -115,6 +115,18 @@ export const ANIMATION_CONFIG = {
   ),
 
   /**
+   * Dashboard keyboard hint delay (ms)
+   * Delay before showing keyboard shortcut hint to user
+   * Env: UI_ANIMATION_DASHBOARD_KEYBOARD_HINT_DELAY (default: 1500)
+   */
+  DASHBOARD_KEYBOARD_HINT_DELAY: EnvLoader.number(
+    'UI_ANIMATION_DASHBOARD_KEYBOARD_HINT_DELAY',
+    1500,
+    500,
+    5000
+  ),
+
+  /**
    * Onboarding celebration delay with reduced motion (ms)
    * Shorter delay for users who prefer reduced motion
    * Env: UI_ANIMATION_ONBOARDING_CELEBRATION_REDUCED (default: 1200)
