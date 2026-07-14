@@ -100,8 +100,8 @@ const BlueprintDisplay = dynamic(
           size="md"
           className="mb-4"
           ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
+          label={RESULTS_PAGE_CONTENT.LOADING}
         />
-        <p className="text-gray-600">{RESULTS_PAGE_CONTENT.LOADING}</p>
       </div>
     ),
   }
@@ -312,8 +312,8 @@ function ResultsContent() {
             size="md"
             className="mb-4"
             ariaLabel={RESULTS_PAGE_CONTENT.GENERATING}
+            label={RESULTS_PAGE_CONTENT.GENERATING}
           />
-          <p className="text-gray-600">{RESULTS_PAGE_CONTENT.GENERATING}</p>
         </div>
       </div>
     );
@@ -699,10 +699,8 @@ export default function ResultsPage() {
               size="md"
               className="mb-4"
               ariaLabel={RESULTS_PAGE_CONTENT.LOADING}
+              label={RESULTS_PAGE_CONTENT.LOADING_SHORT}
             />
-            <p className="text-gray-600">
-              {RESULTS_PAGE_CONTENT.LOADING_SHORT}
-            </p>
           </div>
         </div>
       }

@@ -52,8 +52,8 @@ const DynamicClarificationFlow = dynamic(
             size="md"
             className="mb-4"
             ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
+            label={CLARIFY_PAGE_CONTENT.LOADING}
           />
-          <p className="text-gray-600">{CLARIFY_PAGE_CONTENT.LOADING}</p>
         </div>
       </div>
     ),
@@ -69,8 +69,8 @@ function ClarifyPageLoading() {
           size="md"
           className="mb-4"
           ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
+          label={CLARIFY_PAGE_CONTENT.LOADING_SHORT}
         />
-        <p className="text-gray-600">{CLARIFY_PAGE_CONTENT.LOADING_SHORT}</p>
       </div>
     </div>
   );
@@ -167,8 +167,8 @@ function ClarifyPageContent() {
             size="md"
             className="mb-4"
             ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
+            label={CLARIFY_PAGE_CONTENT.LOADING_SHORT}
           />
-          <p className="text-gray-600">{CLARIFY_PAGE_CONTENT.LOADING_SHORT}</p>
         </div>
       </div>
     );
