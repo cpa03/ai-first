@@ -28,10 +28,11 @@ interface CreateTaskBody {
 }
 
 async function handlePost(context: ApiContext) {
-  const { request } = context;
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const deliverableId = segments.at(-2);
+  const { request, params } = context;
+
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const deliverableId = params.id;
 
   if (!deliverableId) {
     throw new ValidationError([

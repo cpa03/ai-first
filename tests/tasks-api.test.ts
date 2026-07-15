@@ -46,9 +46,11 @@ describe('/api/ideas/[id]/tasks GET', () => {
     );
 
     const request = new Request(buildApiUrl(`/ideas/${ideaId}/tasks`));
-    const response = await GET(
-      request as unknown as import('next/server').NextRequest
-    );
+    const nextRequest = request as unknown as import('next/server').NextRequest;
+    // @ts-expect-error - Mocking nextUrl for tests
+    nextRequest.nextUrl = new URL(request.url);
+
+    const response = await GET(nextRequest, { params: { id: ideaId } });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -80,9 +82,11 @@ describe('/api/ideas/[id]/tasks GET', () => {
     );
 
     const request = new Request(buildApiUrl(`/ideas/${ideaId}/tasks`));
-    const response = await GET(
-      request as unknown as import('next/server').NextRequest
-    );
+    const nextRequest = request as unknown as import('next/server').NextRequest;
+    // @ts-expect-error - Mocking nextUrl for tests
+    nextRequest.nextUrl = new URL(request.url);
+
+    const response = await GET(nextRequest, { params: { id: ideaId } });
     const data = await response.json();
 
     expect(response.status).toBe(200);

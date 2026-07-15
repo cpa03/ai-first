@@ -11,10 +11,11 @@ import { STATUS_CODES } from '@/lib/config/constants';
 import { IDEA_STATUS_CONFIG } from '@/lib/config';
 
 async function handleGet(context: ApiContext) {
-  const { request } = context;
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const ideaId = segments.at(-2);
+  const { request, params } = context;
+
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const ideaId = params.id;
 
   if (!ideaId) {
     throw new AppError(

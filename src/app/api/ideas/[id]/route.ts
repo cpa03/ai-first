@@ -18,11 +18,11 @@ function isValidStatus(status: string): status is Idea['status'] {
 }
 
 async function handleGet(context: ApiContext) {
-  const { request } = context;
+  const { request, params } = context;
 
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const ideaId = segments.at(-1);
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const ideaId = params.id;
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
@@ -54,11 +54,11 @@ async function handleGet(context: ApiContext) {
 }
 
 async function handlePut(context: ApiContext) {
-  const { request } = context;
+  const { request, params } = context;
 
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const ideaId = segments.at(-1);
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const ideaId = params.id;
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {
@@ -136,11 +136,11 @@ async function handlePut(context: ApiContext) {
 }
 
 async function handleDelete(context: ApiContext) {
-  const { request } = context;
+  const { request, params } = context;
 
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const ideaId = segments.at(-1);
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const ideaId = params.id;
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {

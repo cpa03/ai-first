@@ -22,10 +22,11 @@ type TaskUpdateBody = Partial<
 >;
 
 async function handlePut(context: ApiContext) {
-  const { request } = context;
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const taskId = segments.at(-1);
+  const { request, params } = context;
+
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const taskId = params.id;
 
   if (!taskId) {
     throw new ValidationError([
@@ -191,10 +192,11 @@ async function handlePut(context: ApiContext) {
 }
 
 async function handleDelete(context: ApiContext) {
-  const { request } = context;
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const taskId = segments.at(-1);
+  const { request, params } = context;
+
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const taskId = params.id;
 
   if (!taskId) {
     throw new ValidationError([
@@ -249,10 +251,11 @@ async function handleDelete(context: ApiContext) {
 }
 
 async function handleGet(context: ApiContext) {
-  const { request } = context;
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const taskId = segments.at(-1);
+  const { request, params } = context;
+
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const taskId = params.id;
 
   if (!taskId) {
     throw new ValidationError([
