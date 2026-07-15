@@ -144,6 +144,14 @@ export default async function RootLayout({
       data-scroll-behavior="smooth"
     >
       <head>
+        {/* Preconnect to external API domains for faster initial connections */}
+        {/* BroCula: Improves Lighthouse performance by reducing connection latency */}
+        <link rel="preconnect" href="https://*.supabase.co" />
+        <link rel="preconnect" href="https://api.openai.com" />
+        <link rel="preconnect" href="https://api.anthropic.com" />
+        <link rel="preconnect" href="https://api.notion.com" />
+        <link rel="preconnect" href="https://api.trello.com" />
+        <link rel="preconnect" href="https://api.github.com" />
         {/* JSON-LD structured data for SEO - sanitized via safeJsonLd() to prevent XSS */}
         <script
           type="application/ld+json"
