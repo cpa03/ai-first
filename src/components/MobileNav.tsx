@@ -2,7 +2,7 @@
 
 import { memo, useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   UI_CONFIG,
   MOBILE_NAV_CONFIG,
@@ -13,6 +13,7 @@ import {
   MOBILE_NAV_TAILWIND,
   BG_COLORS,
   BORDER_COLORS,
+  TEXT_COLORS,
   TRANSITION_CLASSES,
   DURATION_TAILWIND,
 } from '@/lib/config';
@@ -30,6 +31,7 @@ function MobileNavComponent() {
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const lastMenuItemRef = useRef<HTMLAnchorElement>(null);
   const pathname = usePathname();
+  const router = useRouter();
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const isActive = useCallback(
@@ -77,14 +79,14 @@ function MobileNavComponent() {
         const linkIndex = stepNumber - 1;
         const link = navLinks[linkIndex];
         if (link) {
-          window.location.href = link.href;
+          router.push(link.href);
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, isMobile]);
+  }, [isOpen, isMobile, router]);
 
   useEffect(() => {
     if (isOpen && isMobile) {
@@ -296,7 +298,7 @@ function MobileNavComponent() {
                         {link.label}
                       </span>
                       <kbd
-                        className="hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono opacity-60"
+                        className={`hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono opacity-60`}
                         aria-hidden="true"
                       >
                         {index + 1}
