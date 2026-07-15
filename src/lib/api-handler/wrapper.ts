@@ -61,8 +61,18 @@ const logger = createLogger('ApiHandler');
 export function withApiHandler(
   handler: ApiHandler,
   options: ApiHandlerOptions = {}
-): (request: NextRequest, routeContext: any) => Promise<Response> {
-  return async (request: NextRequest, routeContext?: any) => {
+): (
+  request: NextRequest,
+  routeContext?: {
+    params?: Promise<Record<string, string>> | Record<string, string>;
+  }
+) => Promise<Response> {
+  return async (
+    request: NextRequest,
+    routeContext?: {
+      params?: Promise<Record<string, string>> | Record<string, string>;
+    }
+  ) => {
     const requestId = generateRequestId();
     const requestStartTime = Date.now();
     const correlationId = generateCorrelationId();
@@ -206,8 +216,7 @@ export function withApiHandler(
       // PERFORMANCE: Extract route parameters efficiently.
       // Next.js 15+ may pass params as a Promise.
       const rawParams = routeContext?.params || {};
-      const params =
-        rawParams instanceof Promise ? await rawParams : rawParams;
+      const params = rawParams instanceof Promise ? await rawParams : rawParams;
 
       const context: ApiContext = {
         requestId,
