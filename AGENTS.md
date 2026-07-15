@@ -18,18 +18,18 @@ This repository uses a sophisticated multi-agent system powered by OpenCode CLI 
 
 | Agent                 | Model                      | Purpose                                    |
 | --------------------- | -------------------------- | ------------------------------------------ |
-| **Sisyphus**          | opencode/mimo-v2.5-free | Main orchestrator, ultrawork loop          |
+| **Sisyphus**          | opencode/mimo-v2.5-free    | Main orchestrator, ultrawork loop          |
 | **Hephaestus**        | opencode/glm-4.7-free      | Autonomous deep worker, goal-oriented      |
-| **Oracle**            | opencode/mimo-v2.5-free | Architecture, debugging, complex reasoning |
+| **Oracle**            | opencode/mimo-v2.5-free    | Architecture, debugging, complex reasoning |
 | **Librarian**         | opencode/glm-4.7-free      | Documentation, codebase exploration        |
 | **Explore**           | opencode/glm-4.7-free      | Fast codebase search                       |
 | **Frontend UI/UX**    | opencode/glm-4.7-free      | Frontend development                       |
 | **Minimax Agent**     | opencode/minimax-m2.1-free | Balanced performance tasks                 |
-| **RepoKeeper**        | opencode/mimo-v2.5-free | Repository maintenance and cleanup agent   |
-| **Prometheus**        | opencode/mimo-v2.5-free | Planning and task orchestration            |
-| **Metis**             | opencode/mimo-v2.5-free | Knowledge management and reasoning         |
-| **Momus**             | opencode/mimo-v2.5-free | Creative writing and content generation    |
-| **Atlas**             | opencode/mimo-v2.5-free | System architecture and analysis           |
+| **RepoKeeper**        | opencode/mimo-v2.5-free    | Repository maintenance and cleanup agent   |
+| **Prometheus**        | opencode/mimo-v2.5-free    | Planning and task orchestration            |
+| **Metis**             | opencode/mimo-v2.5-free    | Knowledge management and reasoning         |
+| **Momus**             | opencode/mimo-v2.5-free    | Creative writing and content generation    |
+| **Atlas**             | opencode/mimo-v2.5-free    | System architecture and analysis           |
 | **Multimodal Looker** | opencode/glm-4.7-free      | Visual content analysis and processing     |
 
 ## Model Configuration
@@ -53,7 +53,7 @@ CMZ automatically delegates based on task type:
 
 ## Skills Library
 
-33 specialized skills available in `.opencode/skills/`:
+28 specialized skills available in `.opencode/skills/`:
 
 ### Process Skills
 
@@ -61,9 +61,8 @@ CMZ automatically delegates based on task type:
 - `superpowers-writing-plans` - Implementation planning
 - `superpowers-executing-plans` - Plan execution
 - `superpowers-tdd` - Test-driven development
-- `systematic-debugging` - Root cause analysis
 - `superpowers-using` - How to access and use skills
-- `superpowers-debugging` - Debugging strategies and approaches
+- `superpowers-debugging` - Systematic debugging and root cause analysis
 
 ### Development Skills
 
@@ -80,9 +79,7 @@ CMZ automatically delegates based on task type:
 - `git-master` - Git operations
 - `planning` - Task planning
 - `skill-creator` - Create new skills
-- `skill-builder` - Build skills with templates
 - `codepro-backend-standards` - Backend standards
-- `claude-codepro-backend` - Enterprise backend development standards
 - `superpowers-writing-skills` - Creating and editing skills
 - `ai-agent-engineer` - AI agent engineering and configuration
 
@@ -90,22 +87,20 @@ CMZ automatically delegates based on task type:
 
 - `github-issue-triage` - Triage GitHub issues with streaming analysis
 - `github-pr-triage` - Triage GitHub PRs with streaming analysis
-- `git-commit-message` - Auto-generate conventional commit messages
 
 ### Context & Memory Skills
 
 - `context-memory-systems` - Agent memory and knowledge graphs
-- `context-engineering-memory` - Context engineering for memory
 
 ### Testing & Debugging Skills
 
 - `proffesor-testing-qe` - Quality engineering and testing
 - `claude-code-debugging` - Claude Code debugging strategies
-- `debugging-strategies` - Systematic debugging approaches
+- `debugging-strategies` - Universal debugging approaches
 
 ### Tools & Integration Skills
 
-- `moai-adk-tool` / `adk-moai-tool` - OpenCode ADK tool references
+- `adk-moai-tool` - OpenCode ADK tool reference
 - `ai-agents-git-commit` - AI-powered git commit automation
 
 ## Usage
