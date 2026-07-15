@@ -1,7 +1,7 @@
-// COMPREHENSIVE TEST SUITE SKIPPED - Needs rework
-// These tests have complex mocking issues and timing problems
-// Individual component tests pass - core functionality is working
-// See bug.md for details
+// SKIPPED: E2E Tests - Needs rework due to complex mocking issues
+// REASON: Complex mocking issues and timing problems with async operations
+// Individual component tests pass, indicating core functionality works
+// TODO: Rework with proper mocking strategy (MSW, React Testing Library patterns)
 
 describe.skip('E2E Tests - SKIPPED', () => {
   it('placeholder - suite needs rework', () => {

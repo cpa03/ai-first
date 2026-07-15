@@ -72,7 +72,9 @@ describe('Resilience Edge Cases', () => {
         expect(circuitBreaker.getState()).toBe(CircuitBreakerState.CLOSED);
       });
 
-      // NOTE: Timing-dependent test - may be flaky due to 1ms monitoring period
+      // SKIPPED: Timing-dependent test - may be flaky due to 1ms monitoring period
+      // The test environment's timer resolution may not be precise enough for such short durations
+      // TODO: Consider using fake timers or increasing the monitoring period for more reliable testing
       it.skip('should handle very short monitoring period', async () => {
         const circuitBreaker = new CircuitBreaker('test-short-monitoring', {
           failureThreshold: 3,
@@ -407,7 +409,9 @@ describe('Resilience Edge Cases', () => {
     });
 
     describe('retry timing', () => {
-      // NOTE: Timing-dependent test - delay measurements can be flaky in test environments
+      // SKIPPED: Timing-dependent test - delay measurements can be flaky in test environments
+      // The test measures actual delays which may vary based on system load and timer resolution
+      // TODO: Consider using fake timers or mocking Date.now() for more reliable testing
       it.skip('should increase delay exponentially', async () => {
         const delays: number[] = [];
         const operation = jest.fn().mockImplementation(() => {
