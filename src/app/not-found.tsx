@@ -172,7 +172,7 @@ export default function NotFound() {
             className={`mt-6 flex items-center justify-center gap-4 text-xs text-gray-400 animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
             aria-hidden="true"
           >
-            <span className="hidden sm:inline-flex items-center gap-1.5">
+            <span className="hidden sm:inline-flex items-center gap-1.5 animate-breathe">
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
@@ -180,7 +180,10 @@ export default function NotFound() {
               </kbd>
               <span>go back</span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5">
+            <span
+              className="hidden sm:inline-flex items-center gap-1.5 animate-breathe"
+              style={{ animationDelay: '0.5s' }}
+            >
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
