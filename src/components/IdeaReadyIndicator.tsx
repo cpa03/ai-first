@@ -8,6 +8,7 @@ import {
   SVG_ANIMATION,
   SVG_VIEWBOX,
   IDEA_READY_INDICATOR_LABELS,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -52,14 +53,14 @@ function IdeaReadyIndicatorComponent({
       <div
         className={`
           relative flex items-center justify-center w-5 h-5 rounded-full
-          transition-all duration-300 ease-out
+          ${TRANSITION_CLASSES.SLOW_EASE_OUT}
           ${isReady ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}
         `}
       >
         {/* Checkmark SVG with draw animation */}
         <svg
           className={`
-            w-3 h-3 transition-all duration-300
+            w-3 h-3 ${TRANSITION_CLASSES.SLOW}
             ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
           `}
           fill="none"
@@ -98,7 +99,7 @@ function IdeaReadyIndicatorComponent({
       </div>
       <span
         className={`
-          text-xs font-medium transition-colors duration-300
+          text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isReady ? 'text-green-700' : 'text-gray-500'}
         `}
       >

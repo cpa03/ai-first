@@ -21,6 +21,7 @@ import {
   TYPOGRAPHY_CLASSES,
   TEXT_COLORS,
   BG_COLORS,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -156,7 +157,7 @@ function StepCelebrationComponent({
         <div
           className={`
           relative flex flex-col items-center justify-center
-          transform transition-all duration-500
+          transform ${TRANSITION_CLASSES.ULTRA_SLOW}
           ${isExiting ? 'scale-90 opacity-0' : 'scale-100 opacity-100'}
         `}
           style={{
@@ -222,7 +223,7 @@ function StepCelebrationComponent({
                 className={`
                 w-10 h-10 rounded-full bg-green-500 flex items-center justify-center
                 shadow-lg shadow-green-500/30
-                transform transition-all duration-500
+                transform ${TRANSITION_CLASSES.ULTRA_SLOW}
                 ${isExiting ? 'scale-50 opacity-0' : 'scale-100 opacity-100'}
               `}
                 style={{
@@ -280,7 +281,7 @@ function StepCelebrationComponent({
           <div
             className={`
             mt-4 text-center
-            transform transition-all duration-500
+            transform ${TRANSITION_CLASSES.ULTRA_SLOW}
             ${isExiting ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}
           `}
             style={{
@@ -302,7 +303,7 @@ function StepCelebrationComponent({
           <div
             className={`
               mt-3 w-32 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden
-            transform transition-all duration-500
+            transform ${TRANSITION_CLASSES.ULTRA_SLOW}
             ${isExiting ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'}
           `}
             style={{
