@@ -83,26 +83,27 @@ export const MIN_SIZES = {
  * Returns Tailwind class strings with centralized values
  */
 export const INPUT_HEIGHT_CLASSES = {
-  /** Textarea min-h class */
   TEXTAREA: `min-h-[${INPUT_HEIGHTS.TEXTAREA_MIN}px]`,
-  /** Select min-h class */
   SELECT: `min-h-[${INPUT_HEIGHTS.SELECT_MIN}px]`,
-  /** Button min-h class */
   BUTTON: `min-h-[${INPUT_HEIGHTS.BUTTON_MIN}px]`,
 } as const;
 
 export const CONTAINER_WIDTH_CLASSES = {
-  /** Tooltip max-w class */
   TOOLTIP: `max-w-[${CONTAINER_WIDTHS.TOOLTIP_MAX}px]`,
-  /** Onboarding w class */
   ONBOARDING: `w-[${CONTAINER_WIDTHS.ONBOARDING}px]`,
 } as const;
 
 export const MIN_SIZE_CLASSES = {
-  /** Toast button min-h + min-w class */
   TOAST_BUTTON: `min-h-[${MIN_SIZES.TOAST_BUTTON}px] min-w-[${MIN_SIZES.TOAST_BUTTON}px]`,
-  /** KBD min-w + min-h class */
   KBD: `min-w-[${MIN_SIZES.KBD_MIN_WIDTH}px] min-h-[${MIN_SIZES.KBD_MIN_HEIGHT}px]`,
+} as const;
+
+export const TABLE_DIMENSIONS = {
+  TITLE_MAX_WIDTH: EnvLoader.number('UI_TABLE_TITLE_MAX_WIDTH', 200, 100, 400),
+} as const;
+
+export const TABLE_CLASSES = {
+  TITLE_MAX_WIDTH: `max-w-[${TABLE_DIMENSIONS.TITLE_MAX_WIDTH}px]`,
 } as const;
 
 export type InputHeights = typeof INPUT_HEIGHTS;
