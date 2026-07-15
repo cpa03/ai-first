@@ -8,6 +8,8 @@ import {
   ANIMATION_DELAYS,
   COMPONENT_CONFIG,
   DASHBOARD_LABELS,
+  BG_COLORS,
+  BORDER_COLORS,
 } from '@/lib/config';
 
 function DashboardSkeletonComponent() {
@@ -61,7 +63,9 @@ function DashboardSkeletonComponent() {
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody
+              className={`${BG_COLORS.DEFAULT} divide-y ${BORDER_COLORS.LIGHT}`}
+            >
               {Array.from({
                 length: COMPONENT_CONFIG.DASHBOARD.SKELETON_ROW_COUNT,
               }).map((_, index) => (

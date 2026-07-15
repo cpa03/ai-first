@@ -11,6 +11,8 @@ import {
   CONTAINER_WIDTHS,
   RESPONSIVE_PADDING,
   MOBILE_NAV_TAILWIND,
+  BG_COLORS,
+  BORDER_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -220,7 +222,7 @@ function MobileNavComponent() {
         <>
           {/* Backdrop overlay with close button */}
           <div
-            className={`fixed inset-0 top-16 bg-black bg-opacity-50 backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in`}
+            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in`}
             onClick={closeMenu}
             onTouchEnd={closeMenu}
             aria-hidden="true"
@@ -247,10 +249,10 @@ function MobileNavComponent() {
           <div
             ref={menuRef}
             id="mobile-menu"
-            className={`fixed top-16 left-0 right-0 bg-white border-b border-gray-200 shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
+            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
             <ul
-              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 bg-white`}
+              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 ${BG_COLORS.DEFAULT}`}
             >
               {navLinks.map((link, index) => {
                 const active = isActive(link.href);
@@ -292,7 +294,7 @@ function MobileNavComponent() {
                         {link.label}
                       </span>
                       <kbd
-                        className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded text-xs font-mono opacity-60"
+                        className="hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono opacity-60"
                         aria-hidden="true"
                       >
                         {index + 1}

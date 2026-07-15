@@ -5,6 +5,7 @@ import {
   DURATION_TAILWIND,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -37,7 +38,7 @@ function CapsLockWarningComponent({
 
   return (
     <div
-      className={`flex items-center gap-1.5 text-amber-600 text-xs font-medium transition-all ${DURATION_TAILWIND[200]} ease-out ${
+      className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} text-xs font-medium transition-all ${DURATION_TAILWIND[200]} ease-out ${
         prefersReducedMotion ? '' : 'animate-fade-in'
       } ${className}`}
       role="status"

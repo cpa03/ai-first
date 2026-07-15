@@ -16,6 +16,7 @@ import {
   CARD_PATTERNS,
   TEXT_COLORS,
   BORDER_COLORS,
+  BG_COLORS,
 } from '@/lib/config/theme';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
@@ -126,7 +127,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             id="error-content"
             ref={this.errorRef}
             tabIndex={-1}
-            className={`min-h-screen bg-gray-50 flex items-center justify-center p-4`}
+            className={`min-h-screen ${BG_COLORS.LIGHT} flex items-center justify-center p-4`}
             role="main"
             aria-labelledby="error-title"
           >
@@ -155,7 +156,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
                       >
                         Enter
                       </kbd>
@@ -176,7 +177,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                       aria-hidden="true"
                     >
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 bg-gray-100 border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.LIGHTER} border ${BORDER_COLORS.DEFAULT} rounded ${TEXT_SIZE_CLASSES.XS} font-sans font-medium ${TEXT_COLORS.SECONDARY}`}
                       >
                         Esc
                       </kbd>
@@ -187,7 +188,7 @@ export default class ErrorBoundary extends Component<Props, State> {
               </Alert>
 
               {this.state.error && (
-                <details className={`mt-6 p-4 bg-gray-50 rounded-md`}>
+                <details className={`mt-6 p-4 ${BG_COLORS.LIGHT} rounded-md`}>
                   <summary
                     className={`cursor-pointer text-sm font-medium ${TEXT_COLORS.SECONDARY}`}
                   >

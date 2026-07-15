@@ -9,6 +9,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -152,7 +153,7 @@ function SuccessCelebrationComponent({
           }`}
         >
           <svg
-            className={`w-12 h-12 text-green-700 ${
+            className={`w-12 h-12 ${TEXT_COLORS.SUCCESS_DARK} ${
               shouldAnimate ? 'animate-success-check' : ''
             }`}
             fill="none"

@@ -19,6 +19,8 @@ import {
   STEP_CELEBRATION_TAILWIND,
   DURATION_TAILWIND,
   TYPOGRAPHY_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -285,11 +287,13 @@ function StepCelebrationComponent({
               transitionDelay: ANIMATION_DELAYS.INLINE.MEDIUM,
             }}
           >
-            <p className={`text-lg ${TYPOGRAPHY_CLASSES.BOLD} text-gray-900`}>
+            <p
+              className={`text-lg ${TYPOGRAPHY_CLASSES.BOLD} ${TEXT_COLORS.PRIMARY}`}
+            >
               {STEP_CELEBRATION_LABELS.STEP_COMPLETE(stepNumber)}
             </p>
             <p
-              className={`text-sm ${TYPOGRAPHY_CLASSES.MEDIUM} text-primary-600 mt-1`}
+              className={`text-sm ${TYPOGRAPHY_CLASSES.MEDIUM} ${TEXT_COLORS.BRAND} mt-1`}
             >
               {STEP_CELEBRATION_LABELS.PROGRESS_COMPLETE(progress)}
             </p>
@@ -297,7 +301,7 @@ function StepCelebrationComponent({
 
           <div
             className={`
-            mt-3 w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden
+              mt-3 w-32 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden
             transform transition-all duration-500
             ${isExiting ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'}
           `}

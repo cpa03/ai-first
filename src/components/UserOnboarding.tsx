@@ -310,7 +310,7 @@ export default function UserOnboarding() {
         aria-label={USER_ONBOARDING_LABELS.COMPLETION_ARIA_LABEL}
       >
         <div
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          className={`absolute inset-0 ${BG_COLORS.OVERLAY} backdrop-blur-sm`}
           aria-hidden="true"
         />
         <div
@@ -328,7 +328,7 @@ export default function UserOnboarding() {
             }`}
           >
             <svg
-              className={`w-10 h-10 text-green-700 ${prefersReducedMotion ? '' : 'animate-success-check'}`}
+              className={`w-10 h-10 ${TEXT_COLORS.SUCCESS_DARK} ${prefersReducedMotion ? '' : 'animate-success-check'}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -360,7 +360,7 @@ export default function UserOnboarding() {
     <>
       {/* Backdrop overlay */}
       <div
-        className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[${Z_INDEX_LAYERS.OVERLAY}] transition-opacity ${DURATION_TAILWIND[300]}`}
+        className={`fixed inset-0 ${BG_COLORS.OVERLAY} backdrop-blur-sm z-[${Z_INDEX_LAYERS.OVERLAY}] transition-opacity ${DURATION_TAILWIND[300]}`}
         aria-hidden="true"
         onClick={handleSkip}
       />
@@ -404,7 +404,7 @@ export default function UserOnboarding() {
         {/* Close button */}
         <button
           onClick={handleSkip}
-          className={`absolute top-3 right-3 text-gray-400 hover:text-gray-600 ${TRANSITION_CLASSES.COLOR} p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md`}
+          className={`absolute top-3 right-3 ${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md`}
           aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
         >
           <svg
@@ -453,19 +453,19 @@ export default function UserOnboarding() {
               className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} hidden sm:inline`}
             >
               <kbd
-                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
+                className={`px-1 py-0.5 ${BG_COLORS.LIGHTER} rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
                 ←
               </kbd>{' '}
               <kbd
-                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
+                className={`px-1 py-0.5 ${BG_COLORS.LIGHTER} rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
                 →
               </kbd>{' '}
               {USER_ONBOARDING_COMPLETION_LABELS.NAVIGATE_HINT}
               <span className="mx-1">·</span>
               <kbd
-                className={`px-1 py-0.5 bg-gray-100 rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
+                className={`px-1 py-0.5 ${BG_COLORS.LIGHTER} rounded ${TEXT_SIZE_PRESETS.KBD} ${TEXT_COLORS.SECONDARY}`}
               >
                 Esc
               </kbd>{' '}
@@ -478,14 +478,14 @@ export default function UserOnboarding() {
             {currentStepIndex > 0 && (
               <button
                 onClick={handlePrev}
-                className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} hover:text-gray-900 hover:bg-gray-100 rounded-lg ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+                className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
               >
                 {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
               </button>
             )}
             <button
               onClick={handleNext}
-              className={`px-4 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 ${TRANSITION_CLASSES.COLOR} font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+              className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
             >
               {isLastStep
                 ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON
