@@ -350,9 +350,7 @@ describe('Resilience Edge Cases', () => {
     });
 
     describe('retry with custom conditions', () => {
-      // NOTE: Test expectation incorrect - when shouldRetry returns false,
-      // the loop continues until maxRetries is exhausted, not stops immediately
-      it.skip('should retry only when shouldRetry returns true', async () => {
+      it('should retry only when shouldRetry returns true', async () => {
         let callCount = 0;
         const operation = jest.fn().mockImplementation(() => {
           callCount++;
@@ -369,7 +367,7 @@ describe('Resilience Edge Cases', () => {
             maxRetries: 5,
             baseDelay: 0,
             maxDelay: 0,
-            shouldRetry: (error) => error.message.includes('retryable'),
+            shouldRetry: (error) => error.message === 'retryable error',
           })
         ).rejects.toBeInstanceOf(RetryExhaustedError);
 
