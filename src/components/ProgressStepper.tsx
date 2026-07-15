@@ -8,6 +8,7 @@ import {
   PROGRESS_STEPPER_LABELS,
   ANIMATION_DELAYS,
   ANIMATION_CONFIG,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -252,7 +253,7 @@ const ProgressStepperComponent = function ProgressStepper({
                   className={`
                     flex-1 h-0.5 mx-4
                     ${step.completed ? 'bg-primary-600' : 'bg-gray-300'}
-                    transition-colors duration-300
+                    ${TRANSITION_CLASSES.COLOR_SLOW}
                   `}
                   aria-hidden="true"
                 />

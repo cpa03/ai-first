@@ -7,6 +7,7 @@ import {
   SVG_VIEWBOX,
   COMPONENT_CONFIG,
   PASSWORD_VALIDATION_CONFIG,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 
 interface PasswordRequirement {
@@ -129,7 +130,7 @@ function PasswordRequirementsChecklistComponent({
             Password must contain:
           </p>
           <span
-            className={`text-xs font-medium tabular-nums transition-colors duration-200 ${countTextColor}`}
+            className={`text-xs font-medium tabular-nums ${TRANSITION_CLASSES.COLOR_DEFAULT} ${countTextColor}`}
             aria-live="polite"
             aria-atomic="true"
           >
@@ -137,7 +138,7 @@ function PasswordRequirementsChecklistComponent({
           </span>
         </div>
         <div
-          className={`h-1.5 ${progressBgColor} rounded-full overflow-hidden transition-colors duration-300`}
+          className={`h-1.5 ${progressBgColor} rounded-full overflow-hidden ${TRANSITION_CLASSES.COLOR_SLOW}`}
           role="progressbar"
           aria-valuenow={metCount}
           aria-valuemin={0}

@@ -1572,6 +1572,12 @@ export const TRANSITION_CLASSES = {
   /** Color transition (transition-colors) */
   COLOR: 'transition-colors',
 
+  /** Color transition with duration-200 (transition-colors duration-200) */
+  COLOR_DEFAULT: 'transition-colors duration-200',
+
+  /** Color transition with duration-300 (transition-colors duration-300) */
+  COLOR_SLOW: 'transition-colors duration-300',
+
   /** Transform transition (transition-transform) */
   TRANSFORM: 'transition-transform',
 

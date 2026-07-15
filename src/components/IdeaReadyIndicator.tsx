@@ -99,7 +99,7 @@ function IdeaReadyIndicatorComponent({
       </div>
       <span
         className={`
-          text-xs font-medium transition-colors duration-300
+          text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isReady ? 'text-green-700' : 'text-gray-500'}
         `}
       >
