@@ -27,6 +27,7 @@ import {
   STATUS_CODES,
   IDEA_STATUS_CONFIG,
   SIZES,
+  TABLE_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
@@ -988,7 +989,9 @@ export default function DashboardPage() {
                       <div
                         className={`${TABLE_PATTERNS.cell.primary} flex items-center gap-2 group`}
                       >
-                        <span className="truncate max-w-[200px] sm:max-w-md">
+                        <span
+                          className={`truncate ${TABLE_CLASSES.TITLE_MAX_WIDTH} sm:max-w-md`}
+                        >
                           {idea.title}
                         </span>
                         <CopyButton

@@ -517,21 +517,14 @@ export const CONFETTI_COLORS = {
  * Eliminates hardcoded brand colors in login/signup pages
  */
 export const OAUTH_PROVIDER_COLORS = {
-  /** Google brand colors for OAuth button SVG paths */
   GOOGLE: {
-    /** Google Blue - used for "G" letter part */
-    BLUE: '#4285F4',
-    /** Google Green - used for "L" part */
-    GREEN: '#34A853',
-    /** Google Yellow - used for "E" part */
-    YELLOW: '#FBBC05',
-    /** Google Red - used for "G" curved part */
-    RED: '#EA4335',
+    BLUE: EnvLoader.string('GOOGLE_OAUTH_BLUE', '#4285F4'),
+    GREEN: EnvLoader.string('GOOGLE_OAUTH_GREEN', '#34A853'),
+    YELLOW: EnvLoader.string('GOOGLE_OAUTH_YELLOW', '#FBBC05'),
+    RED: EnvLoader.string('GOOGLE_OAUTH_RED', '#EA4335'),
   } as const,
-  /** GitHub brand color (for future use) */
   GITHUB: {
-    /** GitHub brand black */
-    BLACK: '#24292F',
+    BLACK: EnvLoader.string('GITHUB_OAUTH_BLACK', '#24292F'),
   } as const,
 } as const;
 
@@ -631,11 +624,10 @@ export const BUTTON_STYLES = {
     danger: 'focus-visible:ring-red-500',
   } as const,
 
-  /** Size classes for button dimensions */
   SIZES: {
-    sm: 'px-3 py-1.5 text-sm min-h-[36px]',
-    md: 'px-4 py-2 text-base min-h-[44px]',
-    lg: 'px-6 py-3 text-lg min-h-[48px]',
+    sm: `px-3 py-1.5 text-sm min-h-[${EnvLoader.number('UI_BUTTON_SM_HEIGHT', 36, 28, 48)}px]`,
+    md: `px-4 py-2 text-base min-h-[${EnvLoader.number('UI_BUTTON_MD_HEIGHT', 44, 36, 56)}px]`,
+    lg: `px-6 py-3 text-lg min-h-[${EnvLoader.number('UI_BUTTON_LG_HEIGHT', 48, 40, 64)}px]`,
   } as const,
 
   /** State classes for disabled/loading states */
@@ -697,8 +689,7 @@ export const ALERT_BASE_STYLES = {
     'transition-all duration-200 ease-out motion-reduce:transition-none',
   visible: 'opacity-100 scale-100 translate-y-0',
   exiting: 'opacity-0 scale-[0.98] translate-y-[-8px]',
-  closeButton:
-    'flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none rounded-md p-1 min-h-[32px] min-w-[32px] transition-opacity',
+  closeButton: `flex-shrink-0 ml-2 hover:opacity-75 focus:outline-none rounded-md p-1 min-h-[${EnvLoader.number('UI_ALERT_CLOSE_BUTTON_SIZE', 32, 24, 48)}px] min-w-[${EnvLoader.number('UI_ALERT_CLOSE_BUTTON_SIZE', 32, 24, 48)}px] transition-opacity`,
 } as const;
 
 /**

@@ -64,6 +64,8 @@ export {
   INPUT_HEIGHT_CLASSES,
   CONTAINER_WIDTH_CLASSES,
   MIN_SIZE_CLASSES,
+  TABLE_DIMENSIONS,
+  TABLE_CLASSES,
 } from './ui-dimensions';
 
 export {

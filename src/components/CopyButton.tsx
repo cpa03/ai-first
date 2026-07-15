@@ -9,6 +9,7 @@ import {
   SVG_SIZES,
   SVG_VIEWBOX,
   COMPONENT_CONFIG,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
@@ -76,7 +77,7 @@ const CopyButtonComponent = function CopyButton({
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
-    font-medium transition-all duration-200 ease-out
+    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     focus-visible:ring-primary-500 focus-visible:ring-offset-white
     motion-reduce:transition-none
@@ -127,7 +128,7 @@ const CopyButtonComponent = function CopyButton({
             >
               <svg
                 className={`
-              absolute inset-0 ${SVG_SIZES.MD} transition-all duration-200
+              absolute inset-0 ${SVG_SIZES.MD} ${TRANSITION_CLASSES.DEFAULT}
               ${copied ? 'opacity-0 scale-75' : 'opacity-100 scale-100'}
             `}
                 fill="none"
@@ -142,7 +143,7 @@ const CopyButtonComponent = function CopyButton({
 
               <svg
                 className={`
-              absolute inset-0 ${SVG_SIZES.MD} text-green-700 transition-all duration-200
+              absolute inset-0 ${SVG_SIZES.MD} text-green-700 ${TRANSITION_CLASSES.DEFAULT}
               ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
                 fill="none"
@@ -162,7 +163,7 @@ const CopyButtonComponent = function CopyButton({
             {variant !== 'icon-only' && (
               <span
                 className={`
-              transition-all duration-200
+              ${TRANSITION_CLASSES.DEFAULT}
               ${copied ? 'text-green-700' : ''}
             `}
               >

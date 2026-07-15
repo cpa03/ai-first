@@ -13,6 +13,8 @@ import {
   MOBILE_NAV_TAILWIND,
   BG_COLORS,
   BORDER_COLORS,
+  TRANSITION_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -171,7 +173,7 @@ function MobileNavComponent() {
                   href={link.href}
                   className={`
                     px-4 py-3 text-sm sm:text-base font-medium
-                    transition-all duration-300 ease-out
+                    ${TRANSITION_CLASSES.SLOW} ease-out
                     border-b-2 ${active ? 'border-primary-600 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:border-primary-300'}
                     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
                     ${active ? 'bg-primary-50/30' : 'hover:bg-gray-50'}
@@ -194,7 +196,7 @@ function MobileNavComponent() {
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className={`text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} transition-all duration-200`}
+        className={`text-gray-700 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} ${TRANSITION_CLASSES.DEFAULT}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="mobile-menu"
@@ -207,13 +209,13 @@ function MobileNavComponent() {
           aria-hidden="true"
         >
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out motion-reduce:transition-none ${isOpen ? `rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? `rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full transition-all duration-300 ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? `-rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? `-rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
           />
         </div>
       </button>
@@ -231,17 +233,17 @@ function MobileNavComponent() {
             <button
               type="button"
               onClick={closeMenu}
-              className={`absolute top-4 right-4 ${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.SIZE_CLASS} flex items-center justify-center rounded-full bg-white/90 shadow-lg text-gray-600 hover:text-gray-900 hover:bg-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+              className={`absolute top-4 right-4 ${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.SIZE_CLASS} flex items-center justify-center rounded-full bg-white/90 shadow-lg text-gray-600 hover:text-gray-900 hover:bg-white ${TRANSITION_CLASSES.DEFAULT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
               aria-label={MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL}
             >
               <div
                 className={`${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.ICON_SIZE_CLASS} flex flex-col justify-center items-center`}
               >
                 <span
-                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform duration-200`}
+                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform ${DURATION_TAILWIND[200]}`}
                 />
                 <span
-                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full -rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform duration-200`}
+                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full -rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform ${DURATION_TAILWIND[200]}`}
                 />
               </div>
             </button>
@@ -277,7 +279,7 @@ function MobileNavComponent() {
                       onClick={closeMenu}
                       className={`
                         w-full text-left px-6 py-4 text-lg font-semibold
-                        transition-all duration-300 ease-out rounded-md
+                        ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}
