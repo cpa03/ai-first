@@ -148,6 +148,7 @@ docs/archive/*.tar.gz
 *[Aa][Uu][Dd][Ii][Tt]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Cc][Hh][Ee][Cc][Kk]*.md
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
+*[Bb][Uu][Gg]*[Ss][Cc][Aa][Nn]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
 # Exceptions for docs/audit/ - legitimate tracked audit reports
 !docs/audit/
 docs/audits/
@@ -157,3 +158,4 @@ docs/stale-branches-report.md
 # Exception for docs/maintenance/ - legitimate tracked maintenance reports
 !docs/maintenance/
 !docs/maintenance/archive/
+!docs/maintenance/archive/*
