@@ -103,8 +103,11 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // NOTE: These tests mock resilienceManager.execute which handles retry logic internally.
-      // To properly test retry behavior, integration tests with actual resilience manager needed.
+      // SKIPPED: These tests mock resilienceManager.execute which handles retry logic internally.
+      // The mock prevents the actual retry mechanism from being tested.
+      // To properly test retry behavior, we need integration tests with the actual resilience manager,
+      // not unit tests with mocked execute function.
+      // TODO: Create integration test suite that uses real resilience manager
       it.skip('should retry on transient network errors', async () => {
         const networkError = new Error('ETIMEDOUT');
         mockExecute
@@ -122,6 +125,7 @@ describe('Export Connector Resilience Integration', () => {
         expect(result.success).toBe(true);
       });
 
+      // SKIPPED: Same reason as above - mocked execute prevents testing actual retry exhaustion
       it.skip('should fail after exhausting retries', async () => {
         const networkError = new Error('ETIMEDOUT');
         mockExecute.mockRejectedValue(networkError);
@@ -136,7 +140,9 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('circuit breaker behavior', () => {
-      // NOTE: Circuit breaker tests require proper integration with resilience manager
+      // SKIPPED: Circuit breaker tests require proper integration with resilience manager
+      // The mocked execute function doesn't trigger actual circuit breaker state changes
+      // TODO: Create integration tests with real circuit breaker implementation
       it.skip('should fail fast when circuit is open', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker notion-create-page is OPEN'
@@ -317,7 +323,7 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // NOTE: These tests mock resilienceManager.execute which handles retry logic internally.
+      // SKIPPED: Same reason as Notion exporter - mocked execute prevents testing actual retry behavior
       it.skip('should retry on Trello API rate limits', async () => {
         const rateLimitError = new Error('429 Too Many Requests');
         mockExecute
@@ -337,6 +343,7 @@ describe('Export Connector Resilience Integration', () => {
         expect(mockExecute).toHaveBeenCalledTimes(3);
       });
 
+      // SKIPPED: Same reason - mocked execute prevents testing independent failure handling
       it.skip('should handle multiple API call failures independently', async () => {
         mockExecute
           .mockResolvedValueOnce({
@@ -364,7 +371,7 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('circuit breaker behavior', () => {
-      // NOTE: Circuit breaker tests require proper integration with resilience manager
+      // SKIPPED: Same reason as Notion exporter - mocked execute prevents testing actual circuit breaker behavior
       it.skip('should fail fast when circuit is open for board creation', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker trello-create-board is OPEN'
@@ -378,6 +385,7 @@ describe('Export Connector Resilience Integration', () => {
         expect(result.error).toContain('circuit breaker');
       });
 
+      // SKIPPED: Same reason - mocked execute prevents testing independent circuit breaker behavior
       it.skip('should use circuit breaker for each API context independently', async () => {
         const circuitOpenError = new Error('Circuit breaker is OPEN');
 
@@ -540,7 +548,7 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // NOTE: These tests mock resilienceManager.execute which handles retry logic internally.
+      // SKIPPED: Same reason as other exporters - mocked execute prevents testing actual retry behavior
       it.skip('should retry on GitHub API transient failures', async () => {
         const transientError = new Error('ETIMEDOUT');
         mockExecute

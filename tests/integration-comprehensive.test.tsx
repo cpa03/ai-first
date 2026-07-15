@@ -1,12 +1,18 @@
 /**
  * Integration Tests - Complete User Workflows
  * SKIPPED - Needs rework due to complex mocking issues
+ *
+ * REASON FOR SKIPPING:
+ * - Complex mocking issues with React components and external services
+ * - Timing problems with async operations and state updates
+ * - Individual component tests pass, indicating core functionality works
+ * - The mocking approach needs to be reworked to properly test integration workflows
+ *
+ * TODO: Rework this test suite with proper mocking strategy
+ * - Consider using MSW (Mock Service Worker) for API mocking
+ * - Use React Testing Library's recommended patterns
+ * - Focus on testing user workflows rather than implementation details
  */
-
-// COMPREHENSIVE TEST SUITE SKIPPED - Needs rework
-// These tests have complex mocking issues and timing problems
-// Individual component tests pass - core functionality is working
-// See bug.md for details
 
 describe.skip('Integration Comprehensive Tests - SKIPPED', () => {
   it('placeholder - suite needs rework', () => {
