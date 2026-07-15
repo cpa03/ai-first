@@ -55,7 +55,7 @@ logger.warn('Warning message');
 
 ### 3. Code Style
 
-- ESLint with Next.js configuration (`.eslintrc.json`)
+- ESLint with Next.js configuration (`eslint.config.mjs`)
 - Prettier for code formatting (`.prettierrc`)
 - Import organization with specific patterns
 - Maximum line length: 80-100 characters

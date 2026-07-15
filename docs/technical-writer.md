@@ -251,7 +251,7 @@ const [value] = useState(() => computeInitialValue());
 
 - Always run lint/type-check/build before committing
 - Check CI/CD pipeline configuration
-- Keep dependencies in sync with .eslintrc.json
+- Keep dependencies in sync with eslint.config.mjs
 
 ---
 

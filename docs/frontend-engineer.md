@@ -75,7 +75,7 @@ A comprehensive frontend code audit was performed on the IdeaFlow application. T
 - `tailwind.config.js` - Tailwind configuration
 - `next.config.js` - Next.js configuration
 - `tsconfig.json` - TypeScript configuration
-- `.eslintrc.json` - ESLint configuration
+- `eslint.config.mjs` - ESLint configuration (flat config format)
 
 ## Build & Lint Results
 
