@@ -11,11 +11,11 @@ import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { STATUS_CODES } from '@/lib/config/constants';
 
 async function handleGet(context: ApiContext) {
-  const { request } = context;
+  const { request, params } = context;
 
-  const url = new URL(request.url);
-  const segments = url.pathname.split('/').filter(Boolean);
-  const ideaId = segments.at(-2);
+  // PERFORMANCE: Use context.params.id for faster access
+  // instead of manual URL parsing and segment extraction.
+  const ideaId = params.id;
 
   const idValidation = validateIdeaId(ideaId || '');
   if (!idValidation.valid) {

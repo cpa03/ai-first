@@ -56,7 +56,7 @@ describe('Task Custom Fields Sanitization', () => {
       json: async () => body,
     } as unknown as NextRequest;
 
-    await PUT(req);
+    await PUT(req, { params: { id: 't1' } });
 
     const call = (dbService.updateTask as jest.Mock).mock.calls[0][1];
     expect(call.custom_fields.meta).not.toContain('<script');
