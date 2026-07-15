@@ -1557,6 +1557,18 @@ export const TRANSITION_CLASSES = {
   /** Slow transition (transition-all duration-300) */
   SLOW: 'transition-all duration-300',
 
+  /** Ultra slow transition (transition-all duration-500) */
+  ULTRA_SLOW: 'transition-all duration-500',
+
+  /** Default with ease-out (transition-all duration-200 ease-out) */
+  DEFAULT_EASE_OUT: 'transition-all duration-200 ease-out',
+
+  /** Slow with ease-out (transition-all duration-300 ease-out) */
+  SLOW_EASE_OUT: 'transition-all duration-300 ease-out',
+
+  /** Slow with ease-in-out (transition-all duration-300 ease-in-out) */
+  SLOW_EASE_IN_OUT: 'transition-all duration-300 ease-in-out',
+
   /** Color transition (transition-colors) */
   COLOR: 'transition-colors',
 
