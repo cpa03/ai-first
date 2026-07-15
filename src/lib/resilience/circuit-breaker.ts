@@ -18,6 +18,7 @@ export class CircuitBreaker {
     failures: 0,
   };
   private recentFailures: number[] = [];
+  private halfOpenLock = false;
 
   constructor(
     private readonly name: string,
@@ -39,6 +40,16 @@ export class CircuitBreaker {
       }
     }
 
+    if (this.circuitState.state === 'half-open') {
+      if (this.halfOpenLock) {
+        throw new CircuitBreakerError(
+          this.name,
+          new Date(this.circuitState.nextAttemptTime || 0)
+        );
+      }
+      this.halfOpenLock = true;
+    }
+
     const now = Date.now();
     this.cleanupOldFailures(now);
 
@@ -55,6 +66,10 @@ export class CircuitBreaker {
         (errorMessage?.includes('stopped due to circuit breaker') ? 0 : 1);
       this.onError(normalizedError, now, attemptCount);
       throw normalizedError;
+    } finally {
+      if (this.circuitState.state === 'half-open') {
+        this.halfOpenLock = false;
+      }
     }
   }
 

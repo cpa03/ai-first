@@ -234,41 +234,27 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
 }
 
 /**
- * Generate a request fingerprint for fallback rate limiting
- *
- * ⚠️ SECURITY WARNING: This fallback uses client-controlled headers which can be spoofed.
- * This is used ONLY as a last resort when no trusted IP source is available.
- * The fingerprint is made more robust by:
- * 1. Including request path to prevent cross-endpoint bypass
- * 2. Using crypto.subtle for stronger hashing when available
- * 3. Adding a timestamp component to prevent pre-computed attacks
- *
- * For production deployments, always ensure platform-specific headers are available:
- * - Cloudflare: cf-connecting-ip
- * - Vercel: x-vercel-forwarded-for
- * - Generic: x-forwarded-for, x-real-ip
+ * Generate a request fingerprint for fallback rate limiting.
+ * Uses client-controlled headers (can be spoofed) as a last resort.
+ * Includes server-side secret to prevent header rotation attacks.
  */
 function generateRequestFingerprint(request: Request): string {
   const userAgent = request.headers.get('user-agent') || '';
   const acceptLang = request.headers.get('accept-language') || '';
   const acceptEncoding = request.headers.get('accept-encoding') || '';
 
-  // Include request path to make fingerprint endpoint-specific
-  // This prevents an attacker from reusing the same fingerprint across different endpoints
-  // PERFORMANCE: Use pre-parsed nextUrl if available (from NextRequest)
-  // nextUrl is 15-20x faster than new URL(request.url)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let urlPath = (request as any).nextUrl?.pathname || '';
   if (!urlPath) {
     try {
       urlPath = new URL(request.url).pathname;
     } catch {
-      // URL parsing failed, use empty string
+      // URL parsing failed
     }
   }
 
-  // Combine characteristics with path
-  const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}`;
+  const serverSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET() || '';
+  const combined = `${urlPath}:${userAgent}:${acceptLang}:${acceptEncoding}:${serverSecret}`;
 
   return `fp:${simpleHash(combined)}`;
 }
