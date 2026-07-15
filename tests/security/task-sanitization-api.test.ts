@@ -54,7 +54,7 @@ describe('Task API Sanitization', () => {
         json: async () => body,
       } as unknown as NextRequest;
 
-      await POST(req);
+      await POST(req, { params: { id: 'd1' } });
 
       const call = (dbService.createTask as jest.Mock).mock.calls[0][0];
       expect(call.title).not.toContain('<script');
@@ -91,7 +91,7 @@ describe('Task API Sanitization', () => {
         json: async () => body,
       } as unknown as NextRequest;
 
-      await PUT(req);
+      await PUT(req, { params: { id: 't1' } });
 
       const call = (dbService.updateTask as jest.Mock).mock.calls[0][1];
       expect(call.title).not.toContain('<script');

@@ -51,6 +51,12 @@ export interface ApiContext {
   request: NextRequest;
   rateLimit: RateLimitInfo;
   /**
+   * Route parameters (e.g., { id: '123' } for /api/ideas/[id])
+   * PERFORMANCE: Using pre-extracted params from Next.js is faster than
+   * manual URL parsing or regex-based segment extraction.
+   */
+  params: Record<string, string>;
+  /**
    * User ID if authenticated, null for anonymous requests
    */
   userId: string | null;
