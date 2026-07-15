@@ -122,8 +122,20 @@ const InputWithValidationComponent = forwardRef<
           e.preventDefault();
           onEnterPress();
         }
+        // Micro-UX: Toggle password visibility with Ctrl+Shift+P
+        // Allows keyboard users to quickly verify password input without clicking the toggle button
+        if (
+          showPasswordToggle &&
+          (e.metaKey || e.ctrlKey) &&
+          e.shiftKey &&
+          e.key === 'P'
+        ) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          setPasswordVisible((prev) => !prev);
+        }
       },
-      [onEnterPress]
+      [onEnterPress, showPasswordToggle]
     );
 
     // Trigger shake animation when validation error appears

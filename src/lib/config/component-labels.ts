@@ -209,6 +209,7 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     EXPAND_DELIVERABLES: 'Expand all deliverables',
     COLLAPSE_DELIVERABLES: 'Collapse all deliverables',
     DELETE_SELECTED_IDEA: 'Delete currently selected idea',
+    TOGGLE_PASSWORD_VISIBILITY: 'Toggle password visibility',
   } as const,
 } as const;
 
