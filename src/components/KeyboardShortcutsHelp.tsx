@@ -189,6 +189,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     description: SHORTCUT_DESCRIPTIONS.DELETE_SELECTED_IDEA,
     context: 'global',
   },
+  {
+    keys: ['Ctrl', 'Shift', 'P'],
+    description: SHORTCUT_DESCRIPTIONS.TOGGLE_PASSWORD_VISIBILITY,
+    context: 'form',
+  },
 ];
 
 const contextLabels: Record<KeyboardShortcut['context'], string> =
