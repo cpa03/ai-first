@@ -400,9 +400,16 @@ export default function DashboardPage() {
         return;
       }
 
-      if (e.key === 'Escape' && selectedRowIndex >= 0) {
+      if (e.key === 'Escape') {
         e.preventDefault();
-        setSelectedRowIndex(-1);
+        // Micro-UX: Escape key clears active filter or deselects row
+        // Priority: 1) Deselect row if selected, 2) Clear filter if active
+        if (selectedRowIndex >= 0) {
+          setSelectedRowIndex(-1);
+        } else if (filter !== 'all') {
+          triggerHapticFeedback();
+          handleClearFilter();
+        }
         return;
       }
 
@@ -453,6 +460,8 @@ export default function DashboardPage() {
     selectedRowIndex,
     openDeleteModal,
     prefersReducedMotion,
+    filter,
+    handleClearFilter,
   ]);
 
   useEffect(() => {

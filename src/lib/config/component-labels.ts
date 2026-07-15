@@ -463,7 +463,7 @@ export const DASHBOARD_LABELS = {
     OPEN_KEY: 'Enter',
     OPEN_LABEL: 'open',
     DESELECT_KEY: 'Esc',
-    DESELECT_LABEL: 'deselect',
+    DESELECT_LABEL: 'dismiss',
     DELETE_KEY: 'Del',
     DELETE_LABEL: 'delete',
     FILTER_KEY: '/',
