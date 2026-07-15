@@ -293,7 +293,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
                   clipRule="evenodd"
                 />
               </svg>
-              Paused
+              {TOAST_CONTAINER_LABELS.PAUSED_LABEL}
             </span>
           ) : (
             `${remainingSeconds}s`

@@ -129,6 +129,7 @@ export const TOAST_CONTAINER_LABELS = {
   REGION_ARIA_LABEL: 'Notifications',
   CLEAR_ALL_ARIA_LABEL: (count: number) => `Clear all ${count} notifications`,
   CLEAR_ALL_BUTTON: (count: number) => `Clear all (${count})`,
+  PAUSED_LABEL: 'Paused',
 } as const;
 
 /**
