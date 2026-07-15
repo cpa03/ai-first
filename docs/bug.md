@@ -8,6 +8,23 @@ _None - all bugs fixed!_
 
 ---
 
+### [x] Bug 4: shouldRetry string matching bug in resilience test
+
+**File:** `tests/resilience-edge-cases.test.ts:355`  
+**Severity:** MEDIUM  
+**Status:** ✅ FIXED
+
+**Description:**  
+The `shouldRetry` function in the test used `.includes('retryable')` which incorrectly matched both `"retryable error"` AND `"non-retryable error"` because `"non-retryable"` contains `"retryable"` as a substring.
+
+This caused the test to be skipped with an incorrect comment claiming the retry manager had a bug, when in fact the test's own `shouldRetry` function was broken.
+
+**Root Cause:**  
+String matching with `.includes()` is too permissive - `"non-retryable error".includes('retryable')` returns `true`.
+
+**Fix:**  
+Changed `shouldRetry` from `error.message.includes('retryable')` to `error.message === 'retryable error'` (exact match). Removed the incorrect test comment that misdiagnosed the issue. Un-skipped the test (it now passes).
+
 ---
 
 ## Fixed Bugs
@@ -128,7 +145,7 @@ Changed the condition from `if (this.openai)` to `if (this.openai?.models)` to p
 
 ## Test Results
 
-- **Total Tests:** 1708 (1692 passed, 16 skipped)
+- **Total Tests:** 1708 (1693 passed, 15 skipped)
 - **Test Suites:** 100 (96 passed, 4 skipped)
 - **Failures:** 0
 - **Lint:** 0 errors, 0 warnings
@@ -136,14 +153,14 @@ Changed the condition from `if (this.openai)` to `if (this.openai?.models)` to p
 - **Build:** ✓ Passed
 - **Circular Dependencies:** None found
 
-### Health Check Date: 2026-07-14
+### Health Check Date: 2026-07-15
 
 All core checks pass:
 
 - ✅ ESLint: 0 warnings, 0 errors
 - ✅ TypeScript: No type errors
 - ✅ Build: Compiled successfully (Next.js 16.2.9 Turbopack)
-- ✅ Tests: 1692 passed, 16 skipped, 4 test suites skipped
+- ✅ Tests: 1693 passed, 15 skipped, 4 test suites skipped
 - ✅ Bug Scan: All checks passed
 
 ---
@@ -156,7 +173,7 @@ All core checks pass:
 | Export Connectors Resilience | `tests/export-connectors-resilience.test.ts` | 8 tests skipped - retry/circuit breaker edge cases    | Needs investigation |
 | Security Request Signer      | `tests/security-request-signer.test.ts`      | 1 test skipped - Jest Request mock lacks body support | Known limitation    |
 
-**Total Skipped:** 16 tests across 4 test suites
+**Total Skipped:** 15 tests across 4 test suites
 
 ---
 
