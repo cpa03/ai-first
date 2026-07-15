@@ -54,6 +54,7 @@ function FeatureGridComponent() {
             group relative text-center p-6 rounded-xl
             gradient-border-hover card-lift feature-card-focus
             bg-white
+            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
             motion-reduce:transition-none
             ${isVisible ? animationClasses[index] : 'opacity-0'}
           `}
@@ -69,6 +70,7 @@ function FeatureGridComponent() {
               flex items-center justify-center mx-auto mb-4
               transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
               group-hover:bg-primary-200
+              group-focus-visible:scale-110 group-focus-visible:bg-primary-200 group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50
               motion-reduce:transition-none motion-reduce:group-hover:scale-100
             "
             aria-hidden="true"
