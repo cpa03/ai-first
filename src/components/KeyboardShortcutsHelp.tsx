@@ -369,8 +369,8 @@ const ShortcutRow = memo(function ShortcutRow({
 
   return (
     <div
-      className={`flex items-center justify-between py-3 px-2 -mx-2 rounded-lg ${TRANSITION_CLASSES.DEFAULT} border-b border-gray-100 last:border-b-0 group ${
-        isSelected ? 'bg-primary-50' : 'hover:bg-gray-50'
+      className={`flex items-center justify-between py-3 px-2 -mx-2 rounded-lg ${TRANSITION_CLASSES.DEFAULT} border-b ${BORDER_COLORS.LIGHT} last:border-b-0 group ${
+        isSelected ? BG_COLORS.BRAND_LIGHT : 'hover:bg-gray-50'
       }`}
     >
       <span
@@ -646,16 +646,16 @@ function KeyboardShortcutsHelpComponent({
       aria-labelledby="keyboard-shortcuts-title"
     >
       <div
-        className={`absolute inset-0 bg-black backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
+        className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
         aria-hidden="true"
       />
       <div
         ref={modalRef}
-        className={`relative bg-white rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
+        className={`relative ${BG_COLORS.DEFAULT} rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} max-w-lg w-full ${SIZES.COMPONENT.MODAL_MAX_HEIGHT} overflow-hidden transform ${TRANSITION_CLASSES.DEFAULT} ${isLeaving ? 'opacity-0 scale-95 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}`}
       >
         {/* Search */}
         <div
-          className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} bg-gray-50`}
+          className={`px-6 py-3 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
         >
           <div className="relative">
             <svg
@@ -742,7 +742,7 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Header */}
         <div
-          className={`flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} bg-gray-50`}
+          className={`flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary-100 rounded-lg">
@@ -805,7 +805,7 @@ function KeyboardShortcutsHelpComponent({
           {flatShortcuts.length === 0 && searchQuery ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div
-                className={`w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-4`}
+                className={`w-16 h-16 rounded-full ${BG_COLORS.LIGHTER} flex items-center justify-center mb-4`}
               >
                 <svg
                   className={`w-8 h-8 ${TEXT_COLORS.SECONDARY}`}
@@ -874,7 +874,9 @@ function KeyboardShortcutsHelpComponent({
 
         {/* Footer */}
         <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <p className="text-xs text-gray-600 text-center flex items-center justify-center gap-2">
+          <p
+            className={`text-xs ${TEXT_COLORS.SECONDARY} text-center flex items-center justify-center gap-2`}
+          >
             <span aria-hidden="true" className="text-base">
               💡
             </span>

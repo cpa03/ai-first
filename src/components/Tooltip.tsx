@@ -18,6 +18,7 @@ import {
   CONTAINER_WIDTH_CLASSES,
   TEXT_SIZE_CLASSES,
   TYPOGRAPHY_CLASSES,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -211,7 +212,7 @@ function TooltipComponent({
                       </kbd>
                       {i < shortcut.length - 1 && (
                         <span
-                          className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 ${TYPOGRAPHY_CLASSES.BOLD}`}
+                          className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED_LIGHT} ${TYPOGRAPHY_CLASSES.BOLD}`}
                         >
                           +
                         </span>

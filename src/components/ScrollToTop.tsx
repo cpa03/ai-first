@@ -201,7 +201,9 @@ function ScrollToTopComponent({
           ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
           : SCROLL_TO_TOP_LABELS.TITLE}
       </span>
-      <span className={`${TEXT_SIZE_CLASSES.XS} text-gray-300 opacity-80`}>
+      <span
+        className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED_LIGHT} opacity-80`}
+      >
         <kbd
           className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
         >
@@ -291,7 +293,7 @@ function ScrollToTopComponent({
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 strokeLinecap="round"
-                className={`text-primary-500 transition-all ${DURATION_TAILWIND[150]} ease-out`}
+                className={`${TEXT_COLORS.BRAND_LIGHT} transition-all ${DURATION_TAILWIND[150]} ease-out`}
                 style={{
                   strokeDasharray: circumference,
                   strokeDashoffset: strokeDashoffset,
@@ -302,7 +304,7 @@ function ScrollToTopComponent({
 
           {showPercentage && !prefersReducedMotion ? (
             <span
-              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold text-primary-600 tabular-nums leading-none group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[200]}`}
+              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${TEXT_COLORS.BRAND} tabular-nums leading-none group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[200]}`}
               aria-hidden="true"
             >
               {animatedPercentage}

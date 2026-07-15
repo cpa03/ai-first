@@ -13,6 +13,8 @@ import {
   PROGRESS_PERCENTAGE,
   TIME_CONVERSIONS,
   TYPOGRAPHY_CLASSES,
+  TEXT_COLORS,
+  BORDER_COLORS,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -177,7 +179,7 @@ function AutoSaveIndicatorComponent({
             r="10"
             stroke="currentColor"
             strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-            className="text-gray-200"
+            className={TEXT_COLORS.MUTED_LIGHT}
           />
           {(saveState === 'typing' || saveState === 'saving') && (
             <circle
@@ -219,7 +221,7 @@ function AutoSaveIndicatorComponent({
           )}
           {saveState === 'saved' && (
             <svg
-              className={`w-2.5 h-2.5 text-green-500 animate-in zoom-in ${DURATION_TAILWIND[200]}`}
+              className={`w-2.5 h-2.5 ${TEXT_COLORS.SUCCESS_LIGHT} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -240,10 +242,10 @@ function AutoSaveIndicatorComponent({
       <span
         className={`font-medium transition-colors ${DURATION_TAILWIND[200]} ${
           saveState === 'typing'
-            ? 'text-gray-500'
+            ? TEXT_COLORS.MUTED
             : saveState === 'saving'
-              ? 'text-primary-600'
-              : 'text-green-700'
+              ? TEXT_COLORS.BRAND
+              : TEXT_COLORS.SUCCESS_DARK
         }`}
       >
         {saveState === 'typing' && AUTO_SAVE_INDICATOR_LABELS.TYPING}
@@ -261,7 +263,7 @@ function AutoSaveIndicatorComponent({
                       {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
                     </span>
                     <span
-                      className={`${TEXT_SIZE_CLASSES.XS} text-gray-500 opacity-80`}
+                      className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} opacity-80`}
                     >
                       {formatExactTimestamp(lastSaved)}
                     </span>
@@ -270,7 +272,7 @@ function AutoSaveIndicatorComponent({
                 position="top"
               >
                 <span
-                  className={`text-gray-500 animate-in fade-in slide-in-from-left-1 ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted border-gray-400 hover:text-gray-600 transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]}`}
+                  className={`${TEXT_COLORS.MUTED} animate-in fade-in slide-in-from-left-1 ${DURATION_TAILWIND[300]} cursor-help border-b border-dotted ${BORDER_COLORS.MUTED} ${TEXT_COLORS.HOVER_SECONDARY} transition-colors ${DURATION_TAILWIND[200]} ${ANIMATION_DELAYS.TAILWIND[100]}`}
                 >
                   • {formatLastSaved(lastSaved)}
                 </span>

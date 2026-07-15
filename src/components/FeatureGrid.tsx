@@ -5,6 +5,7 @@ import {
   ANIMATION_DELAYS,
   DURATION_TAILWIND,
   TYPOGRAPHY_CLASSES,
+  TEXT_COLORS,
 } from '@/lib/config/theme';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
@@ -73,14 +74,14 @@ function FeatureGridComponent() {
             aria-hidden="true"
           >
             <span
-              className={`badge-animate text-primary-600 text-2xl ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`badge-animate ${TEXT_COLORS.BRAND} text-2xl ${TYPOGRAPHY_CLASSES.BOLD}`}
             >
               {feature.step}
             </span>
           </div>
 
           <h3
-            className={`text-lg font-semibold text-gray-900 mb-2 group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[300]}`}
+            className={`text-lg font-semibold ${TEXT_COLORS.PRIMARY} mb-2 group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[300]}`}
           >
             {feature.title}
           </h3>

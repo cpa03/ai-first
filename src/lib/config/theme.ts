@@ -75,10 +75,14 @@ export const FOCUS_SHADOWS = {
 export const BORDER_COLORS = {
   DEFAULT: 'border-gray-300',
   LIGHT: 'border-gray-200',
+  MUTED: 'border-gray-400',
   PRIMARY: 'border-primary-500',
+  PRIMARY_LIGHT: 'border-primary-200',
+  PRIMARY_DARK: 'border-primary-300',
   ERROR: 'border-red-300',
   ERROR_FOCUS: 'focus-visible:border-red-500',
   SUCCESS: 'border-green-500',
+  SUCCESS_LIGHT: 'border-green-100',
   WARNING: 'border-amber-500',
 } as const;
 
@@ -103,10 +107,19 @@ export const TEXT_COLORS = {
   PRIMARY: 'text-gray-900',
   SECONDARY: 'text-gray-600',
   MUTED: 'text-gray-500',
+  MUTED_LIGHT: 'text-gray-200',
+  MUTED_DARK: 'text-gray-400',
   ERROR: 'text-red-700',
+  ERROR_LIGHT: 'text-red-500',
   SUCCESS: 'text-green-800',
+  SUCCESS_LIGHT: 'text-green-500',
+  SUCCESS_DARK: 'text-green-700',
   WARNING: 'text-amber-700',
+  WARNING_LIGHT: 'text-amber-600',
   BRAND: 'text-primary-600',
+  BRAND_LIGHT: 'text-primary-500',
+  HOVER_SECONDARY: 'hover:text-gray-600',
+  HOVER_PRIMARY: 'hover:text-gray-900',
 } as const;
 
 /**
@@ -117,10 +130,20 @@ export const BG_COLORS = {
   DEFAULT: 'bg-white',
   DARK: 'bg-gray-700',
   LIGHT: 'bg-gray-50',
+  LIGHTER: 'bg-gray-100',
+  LIGHT_DARK: 'bg-gray-200',
   SUCCESS: 'bg-green-600',
+  SUCCESS_LIGHT: 'bg-green-100',
   WARNING: 'bg-amber-600',
   ERROR: 'bg-red-500',
   PROGRESS_NEUTRAL: 'bg-gray-200',
+  OVERLAY: 'bg-black/40',
+  OVERLAY_DARK: 'bg-black/50',
+  BRAND_LIGHT: 'bg-primary-50',
+  BRAND_LIGHTER: 'bg-primary-50/30',
+  BRAND_LIGHT_HALF: 'bg-primary-50/50',
+  BRAND: 'bg-primary-600',
+  BRAND_HOVER: 'hover:bg-primary-700',
 } as const;
 
 /**
