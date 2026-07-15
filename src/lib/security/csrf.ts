@@ -55,7 +55,8 @@ export const CSRF_CONFIG = {
   STATE_CHANGING_METHODS: ['POST', 'PUT', 'DELETE', 'PATCH'] as const,
 
   get TRUSTED_ORIGINS(): string[] {
-    return getOriginsConfig().array;
+    // Return a shallow copy to prevent external mutation of the internal list
+    return [...getOriginsConfig().array];
   },
 
   ENABLED: ENV_ACCESSORS.PLATFORM.NODE_ENV() !== 'test',
