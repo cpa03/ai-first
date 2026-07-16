@@ -239,7 +239,7 @@ Complete index of all IdeaFlow documentation.
 - [Phase 2 Feature Hardening - 2026-07-15](./audit/phase2-feature-hardening-20260715.md) - Phase 2 feature hardening audit
 - [Phase 3 Strategic Expansion - 2026-07-15](./audit/phase3-strategic-expansion-20260715.md) - Phase 3 strategic expansion audit
 - [Ultrawork Summary - 2026-07-15](./audit/ultrawork-summary-20260715.md) - Ultrawork session summary
-- [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment
+- [Flexy Modularization Audit](./flexy-modularity-audit.md) - Code modularization assessment
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
 - [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
 
