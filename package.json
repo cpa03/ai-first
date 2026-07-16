@@ -43,6 +43,10 @@
     "user-stories:validate": "node scripts/validate-user-stories.js",
     "check:circular": "node scripts/check-circular-deps.js",
     "bug:scan": "bash scripts/bug-scan.sh",
+    "backup": "bash scripts/backup.sh",
+    "backup:verify": "bash scripts/backup-verify.sh",
+    "backup:monitor": "bash scripts/backup-monitor.sh",
+    "backup:report": "bash scripts/backup-monitor.sh --report",
     "prepare": "husky"
   },
   "dependencies": {
