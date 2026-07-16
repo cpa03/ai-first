@@ -27,6 +27,7 @@ import {
   SPACING_CLASSES,
   LAYOUT_CLASSES,
   SIGNUP_PAGE_CONFIG,
+  UI_CONFIG,
 } from '@/lib/config';
 import { useScrollToError } from '@/hooks/useScrollToError';
 
@@ -500,7 +501,7 @@ export default function SignupPage() {
       {/* Micro-UX: Skip to content link for keyboard users - improves accessibility */}
       <a
         href="#signup-form"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md"
+        className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
       >
         Skip to signup form
       </a>

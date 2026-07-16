@@ -1,7 +1,12 @@
 'use client';
 
 import { memo, useMemo } from 'react';
-import { COMPONENT_CONFIG, UI_CONFIG, SPINNER_TAILWIND } from '@/lib/config';
+import {
+  COMPONENT_CONFIG,
+  UI_CONFIG,
+  SPINNER_TAILWIND,
+  TEXT_COLOR_CLASSES,
+} from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -136,7 +141,9 @@ function LoadingSpinnerComponent({
         />
       </svg>
       {label && (
-        <span className="text-sm text-gray-600 font-medium animate-fade-in">
+        <span
+          className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium animate-fade-in`}
+        >
           {label}
         </span>
       )}

@@ -9,6 +9,7 @@ import {
   ANIMATION_DELAYS,
   ANIMATION_CONFIG,
   TRANSITION_CLASSES,
+  TEXT_COLOR_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -141,7 +142,7 @@ const ProgressStepperComponent = function ProgressStepper({
             })}
           </ol>
           <span
-            className="text-xs text-gray-700 font-medium tabular-nums"
+            className={`text-xs ${TEXT_COLOR_CLASSES.BODY} font-medium tabular-nums`}
             aria-hidden="true"
           >
             {currentStep + 1} / {steps.length}
@@ -198,7 +199,7 @@ const ProgressStepperComponent = function ProgressStepper({
                           ? 'border-primary-600 bg-primary-600 text-white'
                           : step.current
                             ? 'border-primary-600 text-primary-600 animate-gentle-pulse'
-                            : 'border-gray-300 text-gray-500'
+                            : `border-gray-300 ${TEXT_COLOR_CLASSES.MUTED}`
                       }
                     `}
                   >
@@ -233,8 +234,8 @@ const ProgressStepperComponent = function ProgressStepper({
                           step.current
                             ? 'text-primary-600'
                             : step.completed
-                              ? 'text-gray-900'
-                              : 'text-gray-700'
+                              ? TEXT_COLOR_CLASSES.HEADING
+                              : TEXT_COLOR_CLASSES.BODY
                         }
                       `}
                     >

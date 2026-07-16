@@ -26,6 +26,7 @@ import {
   CARD_PATTERNS,
   BLUEPRINT_DISPLAY_LABELS,
   TRANSITION_CLASSES,
+  TEXT_COLOR_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -122,10 +123,12 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             className="mb-4"
             ariaLabel={MESSAGES.BLUEPRINT.ARIA_LABEL_GENERATING}
           />
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 mb-2">
+          <h2
+            className={`text-xl sm:text-2xl font-semibold ${TEXT_COLOR_CLASSES.HEADING} mb-2`}
+          >
             {MESSAGES.BLUEPRINT.GENERATING_TITLE}
           </h2>
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className={`text-sm sm:text-base ${TEXT_COLOR_CLASSES.BODY}`}>
             {MESSAGES.BLUEPRINT.GENERATING_DESCRIPTION}
           </p>
         </div>
@@ -191,7 +194,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             <h2
               id="blueprint-heading"
               ref={headingRef}
-              className="text-xl sm:text-2xl font-semibold text-gray-900"
+              className={`text-xl sm:text-2xl font-semibold ${TEXT_COLOR_CLASSES.HEADING}`}
               tabIndex={-1}
               aria-live="polite"
             >
@@ -237,7 +240,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <div className="prose prose-sm sm:prose-lg max-w-none">
             <div className="relative group">
               <pre
-                className="whitespace-pre-wrap font-mono text-xs sm:text-sm text-gray-800 bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto"
+                className={`whitespace-pre-wrap font-mono text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto`}
                 aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
               >
                 {blueprint}
@@ -251,7 +254,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
               {MESSAGES.BLUEPRINT.FOOTER_TEXT}
             </p>
             <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
