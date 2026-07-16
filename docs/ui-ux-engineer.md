@@ -1292,69 +1292,19 @@ npm test -- --testNamePattern="loading"
    - **Impact:** None currently (client-side only)
    - **Status:** Low priority - consider React Context refactor
 
-3. **Auth Pages Hardcoded Styles (RESOLVED)**
-   - Login and signup pages used hardcoded Tailwind classes instead of Alert component
-   - **Files:** `src/app/login/page.tsx`, `src/app/signup/page.tsx`
-   - **Fix:** Replaced hardcoded error divs with Alert component for consistency
-   - **Status:** Resolved in PR #1963
-
-4. **Results Page Hardcoded Styles (RESOLVED)**
-   - Some error states use hardcoded Tailwind classes instead of Alert component
-   - **File:** `src/app/results/page.tsx:169-178`
-   - **Status:** Resolved - error states now use Alert component consistently
-
-5. **Clarify Page Hardcoded Styles (RESOLVED)**
-   - Sign In Required message used hardcoded Tailwind classes instead of Alert component
-   - **File:** `src/app/clarify/page.tsx`
-   - **Fix:** Replaced hardcoded error div with Alert component for consistency
-   - **Status:** Resolved in PR #1972
-   - Some error states use hardcoded Tailwind classes instead of Alert component
-   - **File:** `src/app/results/page.tsx:169-178`
-   - **Status:** Should be refactored for consistency
-6. **TypeScript Metrics Type Errors (RESOLVED)**
-   - Metrics variables in `src/lib/metrics.ts` were typed as `unknown`
-   - **Impact:** Blocked all production builds (Issue #1913)
-   - **Fix:** Added proper Registry and NoOpMetric interfaces
-   - **Status:** Resolved in PR #1918
-
-7. **Dashboard Delete Button Hardcoded Styles (RESOLVED)**
-   - Delete button in dashboard used hardcoded red Tailwind classes instead of Button variant
-   - **File:** `src/app/dashboard/page.tsx`
-   - **Fix:** Added 'danger' variant to Button component and updated dashboard to use it
-   - **Status:** Resolved in this PR
-
-8. **Dashboard Action Buttons Hardcoded Styles (PENDING)**
+3. **Dashboard Action Buttons Hardcoded Styles (PENDING)**
    - Continue, View, and Delete buttons in dashboard table use hardcoded Tailwind color classes
    - **Files:** `src/app/dashboard/page.tsx` (lines 405, 412, 420)
    - **Issue:** Uses `text-indigo-600`, `text-green-600`, `text-red-600` instead of Button component variants
    - **Recommendation:** Refactor to use Button component with `variant="ghost"`, `variant="outline"`, `variant="danger"`
    - **Status:** Pending - requires JSX refactoring
 
-9. **NotificationPreferences Button Hardcoded Styles (PENDING)**
+4. **NotificationPreferences Button Hardcoded Styles (PENDING)**
    - Browser notification enable/disable buttons use hardcoded Tailwind classes
    - **File:** `src/components/NotificationPreferences.tsx` (lines 166, 175, 189)
    - **Issue:** Uses `text-red-600`, `text-primary-600` instead of Button component variants
    - **Recommendation:** Refactor to use Button component with appropriate variants
    - **Status:** Pending - requires JSX refactoring
-   - Delete button in dashboard used hardcoded red Tailwind classes instead of Button variant
-   - **File:** `src/app/dashboard/page.tsx`
-   - **Fix:** Added 'danger' variant to Button component and updated dashboard to use it
-   - **Status:** Resolved in this PR
-
-### Technical Debt
-
-4. **Hardcoded Button Colors in Table Actions**
-   - Table action buttons (Continue, View, Delete) use hardcoded Tailwind color classes
-   - **Files:** `src/app/dashboard/page.tsx`, `src/components/NotificationPreferences.tsx`
-   - **Action:** Replace with Button component variants for consistency and maintainability
-
-5. **TypeScript Metrics Type Errors (RESOLVED)**
-
-6. **TypeScript Metrics Type Errors (RESOLVED)**
-   - Metrics variables in `src/lib/metrics.ts` were typed as `unknown`
-   - **Impact:** Blocked all production builds (Issue #1913)
-   - **Fix:** Added proper Registry and NoOpMetric interfaces
-   - **Status:** Resolved in PR #1918
 
 ### Technical Debt
 
