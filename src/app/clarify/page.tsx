@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useState,
-  useRef,
-  useLayoutEffect,
-  useCallback,
-  Suspense,
-} from 'react';
+import { useState, useRef, useEffect, useCallback, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { createLogger } from '@/lib/logger';
@@ -94,9 +88,9 @@ function ClarifyPageContent() {
   });
   const logger = createLogger('ClarifyPage');
 
-  // Use useLayoutEffect to safely read params after hydration
+  // Use useEffect to safely read params after hydration
   // This is necessary to avoid hydration mismatches when reading URL params
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (hasHydratedRef.current) return;
     hasHydratedRef.current = true;
 
