@@ -734,16 +734,6 @@ export default function DashboardPage() {
         )}
         <button
           type="button"
-          onClick={() => openHelp()}
-          className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
-          aria-label={
-            DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SHOW_KEYBOARD_SHORTCUTS
-          }
-        >
-          {DASHBOARD_PAGE_CONTENT.SHORTCUTS}
-        </button>
-        <button
-          type="button"
           onClick={() => {
             localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED);
             window.location.reload();
@@ -1094,52 +1084,75 @@ export default function DashboardPage() {
         </div>
       )}
       {ideas.length > 0 && !loading && (
-        <div className="mt-3 flex items-center gap-4 text-xs text-gray-400">
-          <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd
-              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+        <div className="mt-4 flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg animate-fade-in">
+          <div className="flex items-center gap-4 text-xs text-gray-500">
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[0]}
+              </kbd>
+              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[1]}
+              </kbd>
+              <span className="text-gray-400">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_LABEL}
+              </span>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_KEY}
+              </kbd>
+              <span className="text-gray-400">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_LABEL}
+              </span>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_KEY}
+              </kbd>
+              <span className="text-gray-400">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_LABEL}
+              </span>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_KEY}
+              </kbd>
+              <span className="text-gray-400">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_LABEL}
+              </span>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
+              </kbd>
+              <span className="text-gray-400">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
+              </span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => openHelp()}
+            className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-200"
+            aria-label={
+              DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SHOW_KEYBOARD_SHORTCUTS
+            }
+          >
+            <span>View all shortcuts</span>
+            <svg
+              className="w-3 h-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
             >
-              {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[0]}
-            </kbd>
-            <kbd
-              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-            >
-              {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[1]}
-            </kbd>
-            {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_LABEL}
-          </span>
-          <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd
-              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-            >
-              {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_KEY}
-            </kbd>
-            {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_LABEL}
-          </span>
-          <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd
-              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-            >
-              {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_KEY}
-            </kbd>
-            {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_LABEL}
-          </span>
-          <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd
-              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-            >
-              {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_KEY}
-            </kbd>
-            {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_LABEL}
-          </span>
-          <span className="hidden sm:inline-flex items-center gap-1">
-            <kbd
-              className={`px-1.5 py-0.5 font-mono text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-            >
-              {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
-            </kbd>
-            {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
-          </span>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
         </div>
       )}
       {/* Delete Confirmation Modal */}
