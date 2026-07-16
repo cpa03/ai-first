@@ -211,6 +211,7 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     COLLAPSE_DELIVERABLES: 'Collapse all deliverables',
     DELETE_SELECTED_IDEA: 'Delete currently selected idea',
     TOGGLE_PASSWORD_VISIBILITY: 'Toggle password visibility',
+    DOWNLOAD_MARKDOWN: 'Download blueprint as Markdown',
   } as const,
 } as const;
 

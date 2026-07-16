@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense, useMemo } from 'react';
+import { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
@@ -220,77 +220,93 @@ function ResultsContent() {
     checkConnectorHealth();
   }, []);
 
-  const handleExport = async (
-    format:
-      | 'markdown'
-      | 'json'
-      | 'notion'
-      | 'trello'
-      | 'google-tasks'
-      | 'github-projects'
-  ) => {
-    if (!idea) return;
+  const handleExport = useCallback(
+    async (
+      format:
+        | 'markdown'
+        | 'json'
+        | 'notion'
+        | 'trello'
+        | 'google-tasks'
+        | 'github-projects'
+    ) => {
+      if (!idea) return;
 
-    setExportLoading(true);
-    setExportingFormat(format);
+      setExportLoading(true);
+      setExportingFormat(format);
 
-    try {
-      // Prepare data for export
-      const exportData = exportUtils.normalizeData({
-        ...idea,
-        deleted_at: idea.deleted_at ?? null,
-      });
+      try {
+        const exportData = exportUtils.normalizeData({
+          ...idea,
+          deleted_at: idea.deleted_at ?? null,
+        });
 
-      if (
-        session &&
-        session.state.answers &&
-        typeof session.state.answers === 'object'
-      ) {
-        const answers = session.state.answers as Record<string, unknown>;
-        exportData.goals = [(answers.main_goal as string) || ''];
-        exportData.target_audience = (answers.target_audience as string) || '';
-      }
-
-      // Export the data
-      const result = await exportManager.export({
-        type: format,
-        data: exportData,
-      });
-
-      if (result.success && result.url) {
-        setExportUrl(result.url);
-        fire();
-        setShowExportSuccess(true);
-        setTimeout(
-          () => setShowExportSuccess(false),
-          COMPONENT_CONFIG.COPY_FEEDBACK.DURATION_MS
-        );
-
-        if (format === 'markdown') {
-          const link = document.createElement('a');
-          link.href = result.url;
-          link.download = `project-blueprint-${idea.id}.md`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+        if (
+          session &&
+          session.state.answers &&
+          typeof session.state.answers === 'object'
+        ) {
+          const answers = session.state.answers as Record<string, unknown>;
+          exportData.goals = [(answers.main_goal as string) || ''];
+          exportData.target_audience =
+            (answers.target_audience as string) || '';
         }
-      } else {
-        throw new Error(
-          result.error || API_ERROR_MESSAGES.SERVICE.EXPORT_FAILED
+
+        const result = await exportManager.export({
+          type: format,
+          data: exportData,
+        });
+
+        if (result.success && result.url) {
+          setExportUrl(result.url);
+          fire();
+          setShowExportSuccess(true);
+          setTimeout(
+            () => setShowExportSuccess(false),
+            COMPONENT_CONFIG.COPY_FEEDBACK.DURATION_MS
+          );
+
+          if (format === 'markdown') {
+            const link = document.createElement('a');
+            link.href = result.url;
+            link.download = `project-blueprint-${idea.id}.md`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+        } else {
+          throw new Error(
+            result.error || API_ERROR_MESSAGES.SERVICE.EXPORT_FAILED
+          );
+        }
+      } catch (err) {
+        logger.error('Export error:', err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : API_ERROR_MESSAGES.SERVICE.EXPORT_FAILED
         );
+      } finally {
+        setExportLoading(false);
+        setExportingFormat(null);
       }
-    } catch (err) {
-      logger.error('Export error:', err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : API_ERROR_MESSAGES.SERVICE.EXPORT_FAILED
-      );
-    } finally {
-      setExportLoading(false);
-      setExportingFormat(null);
-    }
-  };
+    },
+    [idea, session, fire]
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+        e.preventDefault();
+        if (!exportLoading && idea) {
+          handleExport('markdown');
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [exportLoading, idea, handleExport]);
 
   // PERFORMANCE: Memoize formatted answers to prevent unnecessary re-renders of memoized
   // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
