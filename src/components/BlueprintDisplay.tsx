@@ -25,6 +25,7 @@ import {
   UI_CONFIG,
   CARD_PATTERNS,
   BLUEPRINT_DISPLAY_LABELS,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -356,7 +357,7 @@ function CopyCodeButton({ text }: { text: string }) {
             absolute top-3 right-3 
             flex items-center gap-1.5 px-2.5 py-1.5 
             text-xs font-medium rounded-md
-            transition-all duration-200 ease-out
+            ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
             ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
             ${
@@ -375,7 +376,7 @@ function CopyCodeButton({ text }: { text: string }) {
         >
           {copied ? (
             <svg
-              className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in duration-200'}`}
+              className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}'}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

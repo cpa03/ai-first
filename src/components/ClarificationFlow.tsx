@@ -25,6 +25,7 @@ import {
   CONTAINER_WIDTHS,
   CLARIFICATION_FLOW_LABELS,
   CARD_PATTERNS,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import Alert from '@/components/Alert';
@@ -411,7 +412,7 @@ function ClarificationFlow({
       <details
         ref={detailsRef}
         onToggle={handleToggleReference}
-        className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden transition-all duration-200"
+        className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden ${TRANSITION_CLASSES.DEFAULT}"
       >
         <summary className="px-4 py-3 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none">
           <div className="flex items-center gap-2">
@@ -437,7 +438,7 @@ function ClarificationFlow({
             </kbd>
           </div>
           <svg
-            className="w-4 h-4 text-gray-400 transition-transform duration-200 transform group-open:rotate-180"
+            className="w-4 h-4 text-gray-400 ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180"
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -471,7 +472,7 @@ function ClarificationFlow({
             </span>
             {currentStep === questions.length - 1 && (
               <span
-                className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 animate-in fade-in zoom-in duration-300"
+                className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 animate-in fade-in zoom-in ${TRANSITION_CLASSES.SLOW}"
                 role="status"
                 aria-label={CLARIFICATION_FLOW_LABELS.FINAL_STEP}
               >
@@ -585,7 +586,7 @@ function ClarificationFlow({
                     size="sm"
                     onClick={handlePasteFromClipboard}
                     aria-label={CLARIFICATION_FLOW_LABELS.PASTE_ARIA_LABEL}
-                    className={`transition-all duration-200 ${
+                    className={`${TRANSITION_CLASSES.DEFAULT} ${
                       pasteSuccess
                         ? 'text-green-600 bg-green-50 hover:bg-green-100'
                         : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
@@ -653,7 +654,7 @@ function ClarificationFlow({
                       setCurrentAnswer(e.target.value);
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none bg-white pr-10 transition-all duration-200 hover:border-gray-400 ${
+                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none bg-white pr-10 ${TRANSITION_CLASSES.DEFAULT} hover:border-gray-400 ${
                       currentAnswer
                         ? 'text-gray-900 font-medium'
                         : 'text-gray-500'
@@ -679,7 +680,7 @@ function ClarificationFlow({
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg
-                      className="w-5 h-5 text-gray-400 transition-transform duration-200"
+                      className="w-5 h-5 text-gray-400 ${TRANSITION_CLASSES.TRANSFORM}"
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"

@@ -13,6 +13,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
   SVG_VIEWBOX,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -123,9 +124,7 @@ const EmailButtonComponent = function EmailButton({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleEmailClick]);
 
-  const iconTransition = prefersReducedMotion
-    ? ''
-    : 'transition-all duration-200';
+  const iconTransition = prefersReducedMotion ? '' : TRANSITION_CLASSES.DEFAULT;
 
   return (
     <>

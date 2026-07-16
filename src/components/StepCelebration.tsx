@@ -140,7 +140,7 @@ function StepCelebrationComponent({
         className={`
           fixed inset-0 pointer-events-none z-[${Z_INDEX_LAYERS.OVERLAY}]
           flex items-center justify-center
-          transition-opacity duration-300
+          ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isExiting ? 'opacity-0' : 'opacity-100'}
         `}
         aria-hidden="true"
@@ -149,7 +149,7 @@ function StepCelebrationComponent({
         <div
           className={`
           absolute inset-0 bg-white/30 backdrop-blur-[${STEP_CELEBRATION_TAILWIND.BACKDROP_BLUR}]
-          transition-opacity duration-300
+          ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isExiting ? 'opacity-0' : 'opacity-100'}
         `}
         />
