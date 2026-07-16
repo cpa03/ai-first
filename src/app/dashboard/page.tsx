@@ -113,6 +113,7 @@ export default function DashboardPage() {
   });
   const [selectedRowIndex, setSelectedRowIndex] = useState<number>(-1);
   const [isFilterClearing, setIsFilterClearing] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -229,6 +230,7 @@ export default function DashboardPage() {
 
   const closeDeleteModal = useCallback(() => {
     setDeleteModal({ isOpen: false, idea: null });
+    setDeleteConfirmText('');
   }, []);
 
   const handleDelete = useCallback(async () => {
@@ -287,6 +289,7 @@ export default function DashboardPage() {
   const modalRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
+  const deleteConfirmInputRef = useRef<HTMLInputElement>(null);
 
   // Handle focus when modal opens/closes
   useEffect(() => {
@@ -295,7 +298,7 @@ export default function DashboardPage() {
     if (deleteModal.isOpen) {
       previousFocusRef.current = document.activeElement as HTMLElement;
       focusTimeoutId = setTimeout(() => {
-        cancelButtonRef.current?.focus();
+        deleteConfirmInputRef.current?.focus();
       }, 0);
     } else if (previousFocusRef.current) {
       previousFocusRef.current.focus();
@@ -324,10 +327,15 @@ export default function DashboardPage() {
         const isCancelButton =
           elementText.includes(DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CANCEL) ||
           elementLabel.includes(DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CANCEL);
+        const isConfirmInput = activeElement?.id === 'delete-confirm-input';
 
-        if (!isCancelButton) {
+        // Only allow Enter to delete if confirmation text matches
+        if (!isCancelButton && deleteConfirmText === deleteModal.idea?.title) {
           e.preventDefault();
           handleDelete();
+        } else if (isConfirmInput) {
+          // Prevent form submission from the input, but don't delete unless confirmed
+          e.preventDefault();
         }
         return;
       }
@@ -357,7 +365,13 @@ export default function DashboardPage() {
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [deleteModal.isOpen, closeDeleteModal, handleDelete]);
+  }, [
+    deleteModal.isOpen,
+    deleteModal.idea?.title,
+    closeDeleteModal,
+    handleDelete,
+    deleteConfirmText,
+  ]);
 
   useEffect(() => {
     const handleKeyboardShortcuts = (e: KeyboardEvent) => {
@@ -1180,6 +1194,39 @@ export default function DashboardPage() {
               {deleteModal.idea.title}&quot;? This action cannot be undone.
             </p>
 
+            <div className="mt-4">
+              <label
+                htmlFor="delete-confirm-input"
+                className="block text-sm font-medium text-gray-700 mb-1.5"
+              >
+                Type the idea name to confirm deletion:
+              </label>
+              <input
+                ref={deleteConfirmInputRef}
+                id="delete-confirm-input"
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder={deleteModal.idea.title}
+                className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
+                  deleteConfirmText === deleteModal.idea.title
+                    ? 'border-green-300 bg-green-50 focus:ring-green-500 focus:border-green-500'
+                    : 'border-gray-300 focus:ring-primary-500 focus:border-primary-500'
+                }`}
+                aria-describedby="delete-confirm-hint"
+                autoComplete="off"
+                spellCheck="false"
+              />
+              <p
+                id="delete-confirm-hint"
+                className="mt-1.5 text-xs text-gray-500"
+              >
+                {deleteConfirmText === deleteModal.idea.title
+                  ? '✓ Confirmed - you may now delete'
+                  : `Enter "${deleteModal.idea.title}" to enable the delete button`}
+              </p>
+            </div>
+
             <div className={MODAL_PATTERNS.footer.container}>
               <Button
                 ref={cancelButtonRef}
@@ -1190,14 +1237,23 @@ export default function DashboardPage() {
                 {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CANCEL}
               </Button>
               <Tooltip
-                content={DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM_DELETION}
-                shortcut={['Enter']}
+                content={
+                  deleteConfirmText === deleteModal.idea.title
+                    ? DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM_DELETION
+                    : 'Type the idea name to confirm'
+                }
+                shortcut={
+                  deleteConfirmText === deleteModal.idea.title
+                    ? ['Enter']
+                    : undefined
+                }
                 position="top"
               >
                 <Button
                   variant="danger"
                   onClick={handleDelete}
                   loading={!!deletingId}
+                  disabled={deleteConfirmText !== deleteModal.idea.title}
                 >
                   {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.TITLE}
                 </Button>
