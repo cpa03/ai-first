@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import CopyButton from './CopyButton';
 import { createLogger } from '@/lib/logger';
 import { APP_CONFIG } from '@/lib/config/app';
@@ -9,6 +9,7 @@ import {
   SVG_VIEWBOX,
   REFERRAL_LINK_LABELS,
 } from '@/lib/config';
+import { triggerHapticFeedback } from '@/lib/utils';
 
 // Logger for growth tracking events
 const logger = createLogger('ReferralLink');
@@ -71,6 +72,35 @@ export default function ReferralLink({
     }
   };
 
+  // Micro-UX: Click or focus + Enter/Space to select all text for easy custom copy
+  const handleCodeClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    triggerHapticFeedback();
+    const selection = window.getSelection();
+    if (selection) {
+      const range = document.createRange();
+      range.selectNodeContents(e.currentTarget);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }, []);
+
+  const handleCodeKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        const selection = window.getSelection();
+        if (selection) {
+          const range = document.createRange();
+          range.selectNodeContents(e.currentTarget);
+          selection.removeAllRanges();
+          selection.addRange(range);
+        }
+      }
+    },
+    []
+  );
+
   return (
     <div
       className={`bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-4 border border-primary-100 ${className}`}
@@ -86,7 +116,13 @@ export default function ReferralLink({
             {REFERRAL_LINK_LABELS.DESCRIPTION}
           </p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 min-w-0 px-3 py-2 bg-white border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono">
+            <code
+              onClick={handleCodeClick}
+              onKeyDown={handleCodeKeyDown}
+              tabIndex={0}
+              title="Click or press Enter/Space to select all"
+              className="flex-1 min-w-0 px-3 py-2 bg-white border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer hover:bg-gray-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 transition-colors duration-200"
+            >
               {referralUrl}
             </code>
             <CopyButton
