@@ -16,6 +16,7 @@ import {
   COMPONENT_CONFIG,
   HTTP_HEADERS,
   TRANSITION_CLASSES,
+  TEXT_COLOR_CLASSES,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -475,12 +476,12 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <div
-              className="flex items-center gap-2 text-sm text-gray-600"
+              className={`flex items-center gap-2 text-sm ${TEXT_COLOR_CLASSES.BODY}`}
               aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
             >
               <kbd className={KBD_CLASSES}>{isMac ? '⌘' : 'Ctrl'}</kbd>
               <kbd className={KBD_CLASSES}>Enter</kbd>
-              <span className="hidden sm:inline text-gray-600">
+              <span className={`hidden sm:inline ${TEXT_COLOR_CLASSES.BODY}`}>
                 {IDEA_INPUT_LABELS.KEYBOARD_SHORTCUT_HINT}
               </span>
             </div>
@@ -502,7 +503,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                   className={`${TRANSITION_CLASSES.DEFAULT} ${
                     pasteSuccess
                       ? 'text-green-600 bg-green-50 hover:bg-green-100'
-                      : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                      : `${TEXT_COLOR_CLASSES.MUTED} hover:text-gray-700 hover:bg-gray-100`
                   }`}
                 >
                   {pasteSuccess ? (
@@ -547,7 +548,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 size="sm"
                 onClick={handleClear}
                 aria-label={IDEA_INPUT_LABELS.CLEAR_ARIA_LABEL}
-                className="text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                className={`${TEXT_COLOR_CLASSES.MUTED} hover:text-gray-700 hover:bg-gray-100`}
               >
                 {IDEA_INPUT_LABELS.CLEAR_BUTTON}
               </Button>

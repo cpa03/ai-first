@@ -380,8 +380,10 @@ export class TrelloExporter extends ExportConnector {
   }
 
   private getPriorityLabel(priority: number): string {
-    if (priority >= TRELLO_CONFIG.PRIORITY.HIGH_THRESHOLD) return 'red';
-    if (priority >= TRELLO_CONFIG.PRIORITY.MEDIUM_THRESHOLD) return 'orange';
-    return 'green';
+    if (priority >= TRELLO_CONFIG.PRIORITY.HIGH_THRESHOLD)
+      return TRELLO_CONFIG.PRIORITY.COLORS.HIGH;
+    if (priority >= TRELLO_CONFIG.PRIORITY.MEDIUM_THRESHOLD)
+      return TRELLO_CONFIG.PRIORITY.COLORS.MEDIUM;
+    return TRELLO_CONFIG.PRIORITY.COLORS.LOW;
   }
 }

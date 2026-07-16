@@ -86,6 +86,13 @@ export const UI_CONFIG = {
       0,
       1000
     ),
+    SKIP_LINK: {
+      BASE: 'sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:rounded-md',
+      COLORS: {
+        BG: EnvLoader.string('UI_SKIP_LINK_BG', 'bg-blue-600'),
+        TEXT: EnvLoader.string('UI_SKIP_LINK_TEXT', 'text-white'),
+      },
+    },
     TOUCH_TARGET: {
       MIN_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64),
       MIN_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64)}px]`,

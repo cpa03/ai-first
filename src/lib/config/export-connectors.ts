@@ -45,6 +45,11 @@ export const TRELLO_CONFIG = {
       MEDIUM: 'Medium Priority',
       LOW: 'Low Priority',
     },
+    COLORS: {
+      HIGH: EnvLoader.string('TRELLO_PRIORITY_COLOR_HIGH', 'red'),
+      MEDIUM: EnvLoader.string('TRELLO_PRIORITY_COLOR_MEDIUM', 'orange'),
+      LOW: EnvLoader.string('TRELLO_PRIORITY_COLOR_LOW', 'green'),
+    },
   },
 
   APP: {

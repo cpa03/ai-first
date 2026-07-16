@@ -14,6 +14,7 @@ import {
   PLACEHOLDERS,
   INPUT_STYLES,
   TEXT_COLORS,
+  TEXT_COLOR_CLASSES,
   COMPONENT_DEFAULTS,
   LABELS,
   ANIMATION_DELAYS,
@@ -264,7 +265,7 @@ function ClarificationFlow({
             size="lg"
             ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.LOADING_QUESTIONS}
           />
-          <p className="mt-4 text-gray-600 text-sm">
+          <p className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} text-sm`}>
             {MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
           </p>
         </div>
@@ -302,7 +303,7 @@ function ClarificationFlow({
               />
             ))}
           </div>
-          <span className="text-xs text-gray-500">
+          <span className={`text-xs ${TEXT_COLOR_CLASSES.MUTED}`}>
             {CLARIFICATION_FLOW_LABELS.PREPARING_QUESTIONS}
           </span>
         </div>
@@ -339,7 +340,7 @@ function ClarificationFlow({
       <div className={`${CONTAINER_WIDTHS.SM} mx-auto`}>
         <div className="flex flex-col items-center justify-center py-12">
           <LoadingSpinner size="lg" />
-          <p className="mt-4 text-gray-600 text-sm">
+          <p className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} text-sm`}>
             {MESSAGES.CLARIFICATION.LOADING_QUESTION}
           </p>
         </div>
@@ -372,7 +373,7 @@ function ClarificationFlow({
                 router.push('/');
               }
             }}
-            className="text-gray-600 hover:text-gray-900"
+            className={`${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.BRAND_HOVER}`}
           >
             <svg
               className="w-4 h-4 mr-1.5"
@@ -414,10 +415,12 @@ function ClarificationFlow({
         onToggle={handleToggleReference}
         className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden ${TRANSITION_CLASSES.DEFAULT}"
       >
-        <summary className="px-4 py-3 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none">
+        <summary
+          className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none`}
+        >
           <div className="flex items-center gap-2">
             <svg
-              className="w-4 h-4 text-gray-500"
+              className={`w-4 h-4 ${TEXT_COLOR_CLASSES.MUTED}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -431,14 +434,14 @@ function ClarificationFlow({
             </svg>
             <span>{COMPONENT_DEFAULTS.CLARIFICATION_FLOW.REFERENCE_LABEL}</span>
             <kbd
-              className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200 text-gray-500 rounded text-xs font-mono"
+              className={`hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200 ${TEXT_COLOR_CLASSES.MUTED} rounded text-xs font-mono`}
               aria-hidden="true"
             >
               Alt+R
             </kbd>
           </div>
           <svg
-            className="w-4 h-4 text-gray-400 ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180"
+            className={`w-4 h-4 ${TEXT_COLOR_CLASSES.PLACEHOLDER} ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -451,7 +454,9 @@ function ClarificationFlow({
             />
           </svg>
         </summary>
-        <div className="px-4 pb-4 pt-2 text-sm text-gray-600 border-t border-gray-100 bg-white">
+        <div
+          className={`px-4 pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t border-gray-100 bg-white`}
+        >
           <div className="flex justify-between items-start gap-4">
             <p className="italic leading-relaxed">&quot;{idea}&quot;</p>
             <CopyButton
