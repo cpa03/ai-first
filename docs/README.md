@@ -222,17 +222,23 @@ Complete index of all IdeaFlow documentation.
 - [Security Audit P0](./security/SECURITY_AUDIT_P0_1135.md) - Priority-0 security audit
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
+- [Minimatch Audit - 2026-07-15](./security/minimatch-audit-2026-07-15.md) - Minimatch regex security audit
 
 ## Audit Reports
 
 ### Active Reports
 
 - [Bug Scan Report - 2026-07-14 (Latest)](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
-- [Browser Console Audit - 2026-07-14 (Latest)](./audit/browser-audit-2026-07-14.md) - Latest browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-15 (Latest)](./audit/browser-console-audit-2026-07-15.md) - Latest browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-14 (Latest)](./audit/browser-audit-2026-07-14.md) - Browser console and Lighthouse audit
 - [BroCula Browser Lighthouse Report - 2026-07-14](./audit/brocula-browser-lighthouse-report-2026-07-14.md) - BroCula Lighthouse performance report
 - [Browser Console Audit - 2026-07-14 (BroCula)](./audit/brocula-browser-audit-20260714.md) - BroCula browser console audit
-- [Browser Console Audit - 2026-07-13 (Latest)](./audit/browser-console-audit-2026-07-13.md) - Latest browser console and Lighthouse audit
+- [Browser Console Audit - 2026-07-13 (Latest)](./audit/browser-console-audit-2026-07-13.md) - Browser console and Lighthouse audit
 - [Browser Console Audit - 2026-07-13 (BroCula)](./audit/brocula-browser-console-audit-20260713.md) - BroCula browser console audit report
+- [Phase 1 Comprehensive Audit - 2026-07-15](./audit/phase1-comprehensive-audit-2026-07-15.md) - Phase 1 comprehensive audit
+- [Phase 2 Feature Hardening - 2026-07-15](./audit/phase2-feature-hardening-20260715.md) - Phase 2 feature hardening audit
+- [Phase 3 Strategic Expansion - 2026-07-15](./audit/phase3-strategic-expansion-20260715.md) - Phase 3 strategic expansion audit
+- [Ultrawork Summary - 2026-07-15](./audit/ultrawork-summary-20260715.md) - Ultrawork session summary
 - [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
 - [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
@@ -240,6 +246,15 @@ Complete index of all IdeaFlow documentation.
 ### Archived Reports
 
 Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-12 reports).
+
+## Database Reports
+
+- [DBService Audit - 2026-07-15](./database/dbservice-audit-2026-07-15.md) - Database service decomposition audit
+- [Migration Audit - 2026-07-15](./database/migration-audit-2026-07-15.md) - Database migration audit
+
+## Product Reports
+
+- [MVP Timeline Audit - 2026-07-15](./product/mvp-timeline-audit-2026-07-15.md) - MVP timeline and feature status audit
 
 ## Maintenance Reports
 
