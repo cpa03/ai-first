@@ -60,6 +60,7 @@ function PasswordRequirementsChecklistComponent({
 }: PasswordRequirementsChecklistProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [showCompleteCelebration, setShowCompleteCelebration] = useState(false);
+  const [hasAppeared, setHasAppeared] = useState(false);
   const prevAllMetRef = useRef(false);
   const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -94,6 +95,19 @@ function PasswordRequirementsChecklistComponent({
       }
     };
   }, [allMet]);
+
+  // Micro-UX: Track when checklist first becomes visible for staggered entrance animation
+  // Creates a delightful cascading reveal that guides user attention through requirements
+  useEffect(() => {
+    if (password && !hasAppeared && !prefersReducedMotion) {
+      requestAnimationFrame(() => {
+        setHasAppeared(true);
+      });
+    }
+    if (!password) {
+      setHasAppeared(false);
+    }
+  }, [password, hasAppeared, prefersReducedMotion]);
 
   if (!password && !showWhenEmpty) return null;
 
@@ -152,12 +166,12 @@ function PasswordRequirementsChecklistComponent({
         </div>
       </div>
       <ul className="space-y-1.5" aria-live="polite" aria-atomic="true">
-        {requirements.map((req) => (
+        {requirements.map((req, index) => (
           <li
             key={req.id}
             className={`flex items-center gap-2 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
               req.met ? 'text-green-700 font-medium' : 'text-gray-500'
-            }`}
+            } ${hasAppeared && !prefersReducedMotion ? `animate-checklist-item animate-checklist-item-${index + 1}` : ''}`}
             aria-label={`${req.label}: ${req.met ? 'met' : 'not met'}`}
           >
             <span
