@@ -354,7 +354,8 @@ export const RESULTS_PAGE_CONTENT = {
     GO_HOME: 'Go Home',
   },
   TOOLTIPS: {
-    MARKDOWN: 'Best for documentation, README files, and sharing with teams',
+    MARKDOWN:
+      'Best for documentation, README files, and sharing with teams · Ctrl+E',
     JSON: 'Best for importing into other tools and automation workflows',
     NOTION: 'Configure NOTION_API_KEY in environment to enable Notion export',
     TRELLO: 'Configure TRELLO_API_KEY in environment to enable Trello export',

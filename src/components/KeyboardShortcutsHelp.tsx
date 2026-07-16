@@ -194,6 +194,12 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     description: SHORTCUT_DESCRIPTIONS.TOGGLE_PASSWORD_VISIBILITY,
     context: 'form',
   },
+  {
+    keys: ['Ctrl', 'E'],
+    description: SHORTCUT_DESCRIPTIONS.DOWNLOAD_MARKDOWN,
+    context: 'global',
+    action: 'downloadMarkdown',
+  },
 ];
 
 const contextLabels: Record<KeyboardShortcut['context'], string> =
