@@ -22,7 +22,6 @@ CHECK_STATUS=false
 GENERATE_REPORT=false
 SEND_ALERTS=false
 BACKUP_DIR="./backups"
-LOG_FILE="./logs/backup-monitor.log"
 
 # Colors for output
 RED='\033[0;31m'
@@ -191,7 +190,7 @@ generate_report() {
 EOF
     
     # Add recent backups to report
-    find "$BACKUP_DIR" -name "ideaflow_backup_*.tar.gz" -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -10 | while read line; do
+    find "$BACKUP_DIR" -name "ideaflow_backup_*.tar.gz" -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -10 | while read -r line; do
         FILE=$(echo "$line" | cut -d' ' -f2-)
         DATE=$(stat -c %y "$FILE" 2>/dev/null | cut -d'.' -f1 || stat -f %Sm "$FILE" 2>/dev/null | cut -d'.' -f1)
         SIZE=$(du -h "$FILE" | cut -f1)
