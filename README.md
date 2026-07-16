@@ -130,6 +130,7 @@
     /LoadingAnnouncer.tsx   ← Screen reader announcements
     /LoadingSpinner.tsx     ← Spinner component
     /MobileNav.tsx         ← Responsive navigation
+    /PasswordRequirementsChecklist.tsx ← Password requirements display
     /ProgressStepper.tsx    ← Progress indicator
     /ReferralLink.tsx       ← Referral link component
     /ScrollToTop.tsx        ← Scroll to top button
@@ -155,6 +156,7 @@
     /useAuthCheck.ts        ← Authentication check hook
     /useBlueprintGeneration.ts ← Blueprint generation hook
     /useCapsLock.ts         ← Caps lock detection hook
+    /useClipboard.ts        ← Clipboard operations hook
     /useClarificationSession.ts ← Clarification session hook
     /useConfetti.ts          ← Confetti animation hook
     /useCountUp.ts          ← Count up animation hook
@@ -171,7 +173,7 @@
     /cloudflare.ts        ← Cloudflare integration
     /config-service.ts    ← Configuration service
     /embedding-service.ts ← Embedding service
-    /errors.ts            ← Error handling
+    /errors/              ← Error handling (classes, codes, utils)
     /external-rate-limit.ts ← External rate limit service
     /logger.ts           ← Logging utilities
     /metrics.ts          ← Metrics collection
