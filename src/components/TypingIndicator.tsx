@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useState, useRef } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { ANIMATION_CONFIG } from '@/lib/config';
+import { ANIMATION_CONFIG, TRANSITION_CLASSES } from '@/lib/config';
 
 interface TypingIndicatorProps {
   /** Whether the user is currently typing */
@@ -87,7 +87,7 @@ function TypingIndicatorComponent({
           key={index}
           className={`
             w-1.5 h-1.5 rounded-full bg-primary-400
-            transition-opacity duration-200
+            ${TRANSITION_CLASSES.COLOR}
             ${isAnimating && !prefersReducedMotion ? 'animate-typing-dot' : 'opacity-40'}
           `}
           style={{

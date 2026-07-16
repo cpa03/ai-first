@@ -44,7 +44,7 @@ function IdeaReadyIndicatorComponent({
 
   return (
     <div
-      className={`inline-flex items-center gap-1.5 transition-all duration-300 ${
+      className={`inline-flex items-center gap-1.5 ${TRANSITION_CLASSES.SLOW} ${
         isReady ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
       } ${className}`}
       role="status"

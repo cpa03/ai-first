@@ -22,6 +22,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   INPUT_HEIGHT_CLASSES,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -373,7 +374,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className="w-5 h-5 text-green-800 animate-in fade-in duration-200 animate-draw-check"
+                    className="w-5 h-5 text-green-800 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} animate-draw-check"
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -406,7 +407,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className="w-5 h-5 text-red-700 animate-in fade-in duration-200"
+                    className="w-5 h-5 text-red-700 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}"
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -432,7 +433,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200 disabled:opacity-0"
+                  className="w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0"
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -472,7 +473,7 @@ const InputWithValidationComponent = forwardRef<
                     triggerHapticFeedback();
                     setPasswordVisible(!passwordVisible);
                   }}
-                  className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:text-gray-800 rounded-md hover:bg-gray-100 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in duration-200"
+                  className="flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:text-gray-800 rounded-md hover:bg-gray-100 ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}"
                   aria-label={
                     passwordVisible
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
@@ -487,7 +488,7 @@ const InputWithValidationComponent = forwardRef<
                   <span className="relative inline-flex w-3.5 h-3.5">
                     {/* Eye icon (show state) - fades/slides out when toggling to hidden */}
                     <svg
-                      className={`absolute inset-0 w-3.5 h-3.5 transition-all duration-300 ease-out ${
+                      className={`absolute inset-0 w-3.5 h-3.5 ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                         passwordVisible
                           ? 'opacity-100 scale-100 rotate-0'
                           : 'opacity-0 scale-75 -rotate-45'
@@ -511,7 +512,7 @@ const InputWithValidationComponent = forwardRef<
                     </svg>
                     {/* Eye-slash icon (hide state) - fades/slides in when toggling to visible */}
                     <svg
-                      className={`absolute inset-0 w-3.5 h-3.5 transition-all duration-300 ease-out ${
+                      className={`absolute inset-0 w-3.5 h-3.5 ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                         passwordVisible
                           ? 'opacity-0 scale-75 rotate-45'
                           : 'opacity-100 scale-100 rotate-0'
@@ -570,7 +571,7 @@ const InputWithValidationComponent = forwardRef<
                   aria-label={INPUT_VALIDATION_LABELS.CHAR_LIMIT_PROGRESS_ARIA}
                 >
                   <div
-                    className={`h-full transition-all duration-300 rounded-full ${
+                    className={`h-full ${TRANSITION_CLASSES.SLOW} rounded-full ${
                       charCount > maxLength
                         ? `${BG_COLORS.ERROR} animate-counter-pulse`
                         : charCount >=
@@ -589,7 +590,7 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <span
-                className={`text-sm font-medium transition-all duration-300 ${
+                className={`text-sm font-medium ${TRANSITION_CLASSES.SLOW} ${
                   maxLength && charCount > maxLength
                     ? `${TEXT_COLORS.ERROR} animate-counter-pulse`
                     : maxLength &&

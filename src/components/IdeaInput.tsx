@@ -11,7 +11,12 @@ import {
   validateIdeaToMessage,
 } from '@/lib/validation';
 import { MESSAGES, PLACEHOLDERS } from '@/lib/config/ui';
-import { ANIMATION_CONFIG, COMPONENT_CONFIG, HTTP_HEADERS } from '@/lib/config';
+import {
+  ANIMATION_CONFIG,
+  COMPONENT_CONFIG,
+  HTTP_HEADERS,
+  TRANSITION_CLASSES,
+} from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
   SVG_STROKE_WIDTHS,
@@ -438,7 +443,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           <div className="space-y-2">
             <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div
-                className={`absolute left-0 top-0 h-full transition-all duration-300 ease-out rounded-full ${
+                className={`absolute left-0 top-0 h-full ${TRANSITION_CLASSES.SLOW_EASE_OUT} rounded-full ${
                   idea.trim().length >= MIN_IDEA_LENGTH
                     ? GRADIENT_PATTERNS.SUCCESS_BUTTON
                     : GRADIENT_PATTERNS.PRIMARY_BUTTON
@@ -494,7 +499,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                   size="sm"
                   onClick={handlePasteFromClipboard}
                   aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
-                  className={`transition-all duration-200 ${
+                  className={`${TRANSITION_CLASSES.DEFAULT} ${
                     pasteSuccess
                       ? 'text-green-600 bg-green-50 hover:bg-green-100'
                       : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'

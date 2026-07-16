@@ -15,6 +15,7 @@ import {
   MIN_SIZE_CLASSES,
   DURATION_TAILWIND,
   TIME_CONVERSIONS,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -223,7 +224,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       className={`
         ${styles.container} border rounded-lg shadow-lg p-4
         flex items-start gap-3 max-w-md relative overflow-hidden
-        transform transition-all duration-300 ease-in-out
+        transform ${TRANSITION_CLASSES.SLOW_EASE_IN_OUT}
         ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}
         ${prefersReducedMotion ? '' : 'touch-pan-y'}
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2

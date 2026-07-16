@@ -146,7 +146,7 @@ function PasswordRequirementsChecklistComponent({
           aria-label={`Password requirements progress: ${metCount} of ${total} met`}
         >
           <div
-            className={`h-full ${progressColor} rounded-full transition-all duration-300 ease-out`}
+            className={`h-full ${progressColor} rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}`}
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -155,13 +155,13 @@ function PasswordRequirementsChecklistComponent({
         {requirements.map((req) => (
           <li
             key={req.id}
-            className={`flex items-center gap-2 text-xs transition-all duration-200 ${
+            className={`flex items-center gap-2 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
               req.met ? 'text-green-700 font-medium' : 'text-gray-500'
             }`}
             aria-label={`${req.label}: ${req.met ? 'met' : 'not met'}`}
           >
             <span
-              className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center transition-all duration-200 ${
+              className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
                 req.met ? 'bg-green-100' : 'bg-gray-100'
               }`}
               aria-hidden="true"

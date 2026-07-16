@@ -123,7 +123,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     onKeyDown={(e) => handleStepKeyDown(e, index)}
                     disabled={!isClickable}
                     className={`
-                      rounded-full transition-all duration-300 ease-out
+                      rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}
                       ${isClickable ? 'cursor-pointer hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2' : 'cursor-default'}
                       ${
                         step.current
@@ -160,7 +160,7 @@ const ProgressStepperComponent = function ProgressStepper({
           )}
         >
           <div
-            className="h-full bg-primary-600 rounded-full transition-all duration-300 ease-out"
+            className="h-full bg-primary-600 rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}"
             style={{ width: `${animatedProgress}%` }}
           />
         </div>
@@ -191,7 +191,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       flex items-center justify-center
                       w-10 h-10 rounded-full border-2
                       font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
-                      transition-all duration-300
+                      ${TRANSITION_CLASSES.SLOW}
                       ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
                       ${
                         step.completed
