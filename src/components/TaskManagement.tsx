@@ -193,6 +193,32 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           />
         ))}
       </div>
+
+      {/* Micro-UX: Keyboard shortcut hints for discoverability */}
+      {/* Matches the pattern established on the dashboard page */}
+      <div
+        className="mt-2 flex items-center gap-4 text-xs text-gray-400"
+        aria-hidden="true"
+      >
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            [
+          </kbd>
+          expand all
+        </span>
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            ]
+          </kbd>
+          collapse all
+        </span>
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            Space
+          </kbd>
+          toggle task
+        </span>
+      </div>
     </div>
   );
 }
