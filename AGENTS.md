@@ -94,9 +94,12 @@ CMZ automatically delegates based on task type:
 
 ### Testing & Debugging Skills
 
-- `proffesor-testing-qe` - Quality engineering and testing
 - `claude-code-debugging` - Claude Code debugging strategies
 - `debugging-strategies` - Universal debugging approaches
+
+### Skill Development
+
+- `skill-builder` - Create new Claude Code Skills with proper structure
 
 ### Tools & Integration Skills
 
