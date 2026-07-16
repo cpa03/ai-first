@@ -3,6 +3,7 @@ import { dbService, type Idea } from '@/lib/db';
 import { configurationService, AgentConfig } from '@/lib/config-service';
 import { CLARIFIER_VALUES } from '@/lib/config/constants';
 import { IDEA_STATUS_CONFIG, API_ERROR_MESSAGES } from '@/lib/config';
+import { generateId } from '@/lib/security/crypto';
 import {
   QuestionGenerator,
   IdeaRefiner,
@@ -66,7 +67,7 @@ export class ClarifierAgent {
         payload: {
           ideaId,
           ideaText,
-          sessionId: `clar_${Date.now()}`,
+          sessionId: `clar_${generateId()}`,
         },
         timestamp: new Date(),
         source: 'clarifier',

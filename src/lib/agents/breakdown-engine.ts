@@ -2,6 +2,7 @@ import { aiService, AIModelConfig } from '@/lib/ai';
 import { dbService } from '@/lib/db';
 import { configurationService } from '@/lib/config-service';
 import { API_ERROR_MESSAGES } from '@/lib/config';
+import { generateId } from '@/lib/security/crypto';
 import {
   IdeaAnalyzer,
   TaskDecomposer,
@@ -111,7 +112,7 @@ class BreakdownEngine {
       });
 
       const session: BreakdownSession = {
-        id: `bd_${Date.now()}`,
+        id: `bd_${generateId()}`,
         ideaId,
         analysis: null,
         tasks: null,
