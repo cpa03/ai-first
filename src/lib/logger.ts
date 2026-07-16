@@ -214,14 +214,15 @@ export class Logger {
       const entry = this.createStructuredEntry(levelName, message, logContext);
       const output = JSON.stringify(entry);
       // Use appropriate console method based on log level.
-      // Next.js removeConsole only preserves 'error' and 'warn' in production.
-      // Structured logs with level field enable proper filtering in log aggregators.
-      if (level === LogLevel.ERROR) {
+      // Next.js removeConsole only preserves 'error' and 'warn' in production (Issue #949).
+      // For structured logging, we output ALL production logs to console.error
+      // to ensure they are preserved for log aggregation, while still allowing
+      // the JSON 'level' field to indicate actual severity.
+      if (level === LogLevel.ERROR || IS_PRODUCTION) {
         console.error(output);
       } else if (level === LogLevel.WARN) {
         console.warn(output);
       } else {
-        // INFO/DEBUG logs removed in production by removeConsole config
         console.info(output);
       }
     } else {

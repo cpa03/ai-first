@@ -245,17 +245,11 @@ function checkKeySafety(): string[] {
 }
 
 /**
- * Check ADMIN_API_KEY strength requirements
- * Enforces the security requirements documented in config/.env.example
+ * Check secret strength requirements for critical keys (Issue #1171)
+ * Enforces minimum length, complexity, and pattern requirements.
  */
-function checkAdminApiKeyStrength(): string[] {
+function checkSecretStrength(keyName: string, value: string): string[] {
   const warnings: string[] = [];
-  const adminKey = ENV_ACCESSORS.SECURITY.ADMIN_API_KEY();
-
-  // Skip validation if not set (already warned elsewhere)
-  if (!adminKey) {
-    return warnings;
-  }
 
   // Skip validation in development mode to allow easier local development
   if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development') {
@@ -264,19 +258,19 @@ function checkAdminApiKeyStrength(): string[] {
 
   // Check minimum length (uses centralized security config)
   const minLength = SECURITY_CONFIG.MIN_SECRET_LENGTH;
-  if (adminKey.length < minLength) {
+  if (value.length < minLength) {
     warnings.push(
-      `SECURITY WARNING: ADMIN_API_KEY is too short (${adminKey.length} chars). ` +
+      `SECURITY WARNING: ${keyName} is too short (${value.length} chars). ` +
         `Minimum required: ${minLength} characters. ` +
         `Generate a secure key with: openssl rand -base64 32`
     );
   }
 
   // Check complexity requirements
-  const hasUppercase = /[A-Z]/.test(adminKey);
-  const hasLowercase = /[a-z]/.test(adminKey);
-  const hasNumber = /[0-9]/.test(adminKey);
-  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(adminKey);
+  const hasUppercase = /[A-Z]/.test(value);
+  const hasLowercase = /[a-z]/.test(value);
+  const hasNumber = /[0-9]/.test(value);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
 
   const missingRequirements: string[] = [];
   if (!hasUppercase) missingRequirements.push('uppercase letters');
@@ -286,7 +280,7 @@ function checkAdminApiKeyStrength(): string[] {
 
   if (missingRequirements.length > 0) {
     warnings.push(
-      `SECURITY WARNING: ADMIN_API_KEY lacks complexity. ` +
+      `SECURITY WARNING: ${keyName} lacks complexity. ` +
         `Missing: ${missingRequirements.join(', ')}. ` +
         `A strong key should contain uppercase, lowercase, numbers, and special characters.`
     );
@@ -302,13 +296,36 @@ function checkAdminApiKeyStrength(): string[] {
   ];
 
   for (const pattern of weakPatterns) {
-    if (pattern.test(adminKey)) {
+    if (pattern.test(value)) {
       warnings.push(
-        `SECURITY WARNING: ADMIN_API_KEY matches a weak pattern. ` +
+        `SECURITY WARNING: ${keyName} matches a weak pattern. ` +
           `Please use a cryptographically secure random key.`
       );
       break;
     }
+  }
+
+  return warnings;
+}
+
+/**
+ * Check AI provider key format to prevent misconfiguration
+ */
+function checkAiProviderKeyFormat(): string[] {
+  const warnings: string[] = [];
+
+  const openaiKey = ENV_ACCESSORS.AI.OPENAI_API_KEY();
+  if (openaiKey && !openaiKey.startsWith('sk-')) {
+    warnings.push(
+      'SECURITY WARNING: OPENAI_API_KEY does not start with expected "sk-" prefix.'
+    );
+  }
+
+  const anthropicKey = ENV_ACCESSORS.AI.ANTHROPIC_API_KEY();
+  if (anthropicKey && !anthropicKey.startsWith('sk-ant-')) {
+    warnings.push(
+      'SECURITY WARNING: ANTHROPIC_API_KEY does not start with expected "sk-ant-" prefix.'
+    );
   }
 
   return warnings;
@@ -351,7 +368,20 @@ export function validateEnvironment(): ValidationResult {
   errors.push(...checkNextPublicExposure());
   errors.push(...checkRequiredEnvVars());
   warnings.push(...checkKeySafety());
-  warnings.push(...checkAdminApiKeyStrength());
+
+  // Generalized secret strength validation
+  const adminKey = ENV_ACCESSORS.SECURITY.ADMIN_API_KEY();
+  if (adminKey) {
+    warnings.push(...checkSecretStrength('ADMIN_API_KEY', adminKey));
+  }
+
+  const internalSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
+  if (internalSecret) {
+    warnings.push(...checkSecretStrength('INTERNAL_API_SECRET', internalSecret));
+  }
+
+  // AI key format validation
+  warnings.push(...checkAiProviderKeyFormat());
 
   const valid = errors.length === 0;
 
