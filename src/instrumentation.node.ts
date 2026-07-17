@@ -81,10 +81,21 @@ function registerNodejsHandlers(logger: ReturnType<typeof createLogger>): void {
 }
 
 export async function registerNodejsInstrumentation(): Promise<void> {
-  const { validateEnvironmentStrict } =
-    await import('./lib/security/env-validation');
-  validateEnvironmentStrict();
-
   const logger = createLogger('Instrumentation');
+
+  try {
+    const { validateEnvironmentStrict } =
+      await import('./lib/security/env-validation');
+    validateEnvironmentStrict();
+  } catch (error) {
+    logger.error(
+      'Environment validation failed:',
+      error instanceof Error ? error.message : String(error)
+    );
+    if (ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'production') {
+      throw error;
+    }
+  }
+
   registerNodejsHandlers(logger);
 }

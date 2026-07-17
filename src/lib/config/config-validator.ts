@@ -202,6 +202,14 @@ function validateEnvironmentConfig(): { errors: string[]; warnings: string[] } {
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  // Skip required env var validation in CI environments
+  // CI runs build/test without production credentials - same pattern as env-validation.ts
+  const isCI =
+    process.env.CI === 'true' ||
+    process.env.GITHUB_ACTIONS === 'true' ||
+    process.env.VERCEL === '1' ||
+    process.env.CF_WORKER === 'true';
+
   const requiredEnvVars = APP_CONFIG.ENV_VARS.REQUIRED;
   const missingVars: string[] = [];
 
@@ -210,7 +218,12 @@ function validateEnvironmentConfig(): { errors: string[]; warnings: string[] } {
     const hasValue = process.env[varName];
 
     if (!hasValue) {
-      if (typeof window === 'undefined' && isClientVar) {
+      if (isCI) {
+        // In CI, missing required vars are warnings, not errors
+        warnings.push(
+          `Environment variable ${varName} not set (expected in CI environment)`
+        );
+      } else if (typeof window === 'undefined' && isClientVar) {
         warnings.push(
           `Environment variable ${varName} not set (may be expected in server context)`
         );
