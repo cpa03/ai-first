@@ -33,8 +33,7 @@ async function handleGet(context: ApiContext) {
     10
   );
   const threshold = parseFloat(
-    searchParams.get('threshold') ||
-      String(SIMILARITY_CONFIG.DEFAULT_THRESHOLD)
+    searchParams.get('threshold') || String(SIMILARITY_CONFIG.DEFAULT_THRESHOLD)
   );
 
   // Validate pagination parameters to prevent DoS attacks
