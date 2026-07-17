@@ -308,6 +308,18 @@ function MobileNavComponent() {
                 );
               })}
             </ul>
+            {/* Micro-UX: Keyboard hint for closing menu */}
+            {/* Helps keyboard users discover the Escape key shortcut for closing the mobile menu */}
+            <div
+              className={`${RESPONSIVE_PADDING.CLASS} py-4 border-t border-gray-200 ${BG_COLORS.DEFAULT}`}
+            >
+              <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
+                <kbd className="px-1.5 py-0.5 text-xs font-mono text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+                  Esc
+                </kbd>
+                <span>to close</span>
+              </p>
+            </div>
           </div>
         </>
       )}
