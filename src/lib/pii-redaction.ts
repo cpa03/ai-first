@@ -388,7 +388,7 @@ const MAX_RECURSION_DEPTH = PII_REDACTION_CONFIG.MAX_RECURSION_DEPTH;
 
 export function redactPIIInObject(
   obj: unknown,
-  seen = new WeakSet<object>(),
+  seen?: WeakSet<object>,
   depth = 0
 ): RedactionResult {
   if (depth > MAX_RECURSION_DEPTH) {
@@ -407,6 +407,11 @@ export function redactPIIInObject(
   // property iteration over numeric indices. These never contain PII strings.
   if (ArrayBuffer.isView(obj)) {
     return obj as unknown as RedactionResult;
+  }
+
+  // PERFORMANCE: Lazily allocate WeakSet only when actual object traversal is required
+  if (!seen) {
+    seen = new WeakSet<object>();
   }
 
   if (seen.has(obj)) {
