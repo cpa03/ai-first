@@ -243,6 +243,17 @@ Complete index of all IdeaFlow documentation.
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
 - [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
 
+### July 16 Audit (Latest)
+
+- [Phase 1 Scoring Report - 2026-07-16](./audit-2026-07-16/PHASE1-SCORING-REPORT.md) - Comprehensive scoring and diagnostic report
+- [Phase 2 Feature Hardening - 2026-07-16](./audit-2026-07-16/PHASE2-FEATURE-HARDENING.md) - Feature hardening audit
+- [Phase 3 Strategic Expansion - 2026-07-16](./audit-2026-07-16/PHASE3-STRATEGIC-EXPANSION.md) - Strategic expansion audit
+- [Issue: Large Files](./audit-2026-07-16/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
+- [Issue: API Test Coverage](./audit-2026-07-16/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
+- [Issue: CSRF Protection](./audit-2026-07-16/ISSUE-03-csrf-protection.md) - CSRF protection audit
+- [Issue: Structured Logging](./audit-2026-07-16/ISSUE-04-structured-logging.md) - Structured logging implementation
+- [Issue: Cloudflare Deployment](./audit-2026-07-16/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
+
 ### Archived Reports
 
 Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-12 reports).
