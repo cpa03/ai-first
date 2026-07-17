@@ -377,7 +377,9 @@ export function validateEnvironment(): ValidationResult {
 
   const internalSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
   if (internalSecret) {
-    warnings.push(...checkSecretStrength('INTERNAL_API_SECRET', internalSecret));
+    warnings.push(
+      ...checkSecretStrength('INTERNAL_API_SECRET', internalSecret)
+    );
   }
 
   // AI key format validation
