@@ -27,7 +27,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -46,7 +46,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('X-Request-ID')).toBeTruthy();
     });
@@ -56,7 +56,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('X-RateLimit-Limit')).toBeTruthy();
       expect(response.headers.get('X-RateLimit-Remaining')).toBeTruthy();
@@ -68,7 +68,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('X-API-Version')).toBeTruthy();
     });
@@ -78,7 +78,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
 
       const responseTime = response.headers.get('X-Response-Time');
       expect(responseTime).toBeTruthy();
@@ -94,7 +94,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -116,7 +116,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -134,7 +134,7 @@ describe('/api/health', () => {
         },
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -148,7 +148,7 @@ describe('/api/health', () => {
         method: 'GET',
       });
 
-      const response = await GET(request);
+      const response = await GET(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(data).toHaveProperty('success', true);

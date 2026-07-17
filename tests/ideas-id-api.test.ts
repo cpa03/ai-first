@@ -101,7 +101,9 @@ describe('/api/ideas/[id]', () => {
         url: buildApiUrl(`/ideas/${ideaId}`),
       });
 
-      const response = await GET(request, { params: { id: ideaId } });
+      const response = await GET(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -118,7 +120,9 @@ describe('/api/ideas/[id]', () => {
         url: buildApiUrl(`/ideas/${ideaId}`),
       });
 
-      const response = await GET(request, { params: { id: ideaId } });
+      const response = await GET(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
 
       expect(response.status).toBe(404);
     });
@@ -138,7 +142,9 @@ describe('/api/ideas/[id]', () => {
         json: async () => ({ title: 'Updated Title' }),
       });
 
-      const response = await PUT(request, { params: { id: ideaId } });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -159,7 +165,9 @@ describe('/api/ideas/[id]', () => {
         json: async () => ({ status: 'clarified' }),
       });
 
-      const response = await PUT(request, { params: { id: ideaId } });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -175,7 +183,9 @@ describe('/api/ideas/[id]', () => {
         json: async () => ({ title: 'Updated' }),
       });
 
-      const response = await PUT(request, { params: { id: ideaId } });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
 
       expect(response.status).toBe(404);
     });
@@ -189,7 +199,9 @@ describe('/api/ideas/[id]', () => {
         },
       });
 
-      const response = await PUT(request, { params: { id: ideaId } });
+      const response = await PUT(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
 
       expect(response.status).toBe(400);
     });
@@ -205,7 +217,9 @@ describe('/api/ideas/[id]', () => {
         url: buildApiUrl(`/ideas/${ideaId}`),
       });
 
-      const response = await DELETE(request, { params: { id: ideaId } });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -221,7 +235,9 @@ describe('/api/ideas/[id]', () => {
         url: buildApiUrl(`/ideas/${ideaId}`),
       });
 
-      const response = await DELETE(request, { params: { id: ideaId } });
+      const response = await DELETE(request, {
+        params: Promise.resolve({ id: ideaId }),
+      });
 
       expect(response.status).toBe(404);
     });

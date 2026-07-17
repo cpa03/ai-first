@@ -50,7 +50,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -93,7 +93,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(200);
       expect(mockClarifierAgent.startClarification).toHaveBeenCalledWith(
@@ -109,7 +109,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -123,7 +123,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -141,7 +141,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -158,7 +158,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -193,7 +193,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(200);
       expect(mockClarifierAgent.startClarification).toHaveBeenCalled();
@@ -226,7 +226,7 @@ describe('/api/clarify', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('Content-Type')).toBe('application/json');
     });
