@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useMemo, useState, useEffect } from 'react';
+import { memo, useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import type { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import type { TaskStatus } from '@/types/task';
@@ -48,6 +48,8 @@ function DeliverableCardComponent({
   );
   const prefersReducedMotion = usePrefersReducedMotion();
   const [animatedProgress, setAnimatedProgress] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const prevExpandedRef = useRef(isExpanded);
 
   // Micro-UX: Animate progress bar from 0 to actual value when card expands
   // Creates a delightful visual feedback that draws attention to progress
@@ -65,6 +67,23 @@ function DeliverableCardComponent({
       setAnimatedProgress(deliverable.progress);
     }
   }, [isExpanded, deliverable.progress, prefersReducedMotion]);
+
+  // Micro-UX: Smooth scroll newly revealed tasks into view when expanding a deliverable
+  // Especially important on mobile where expanded content may be below the fold
+  // Matches the pattern established in ClarificationFlow for step changes
+  useEffect(() => {
+    if (isExpanded && !prevExpandedRef.current && contentRef.current) {
+      // Brief delay ensures the content has rendered after expand
+      const timer = setTimeout(() => {
+        contentRef.current?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'nearest',
+        });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+    prevExpandedRef.current = isExpanded;
+  }, [isExpanded, prefersReducedMotion]);
 
   const handleToggleExpand = useCallback(() => {
     triggerHapticFeedback();
@@ -143,6 +162,7 @@ function DeliverableCardComponent({
 
       {isExpanded && (
         <div
+          ref={contentRef}
           id={`deliverable-tasks-${deliverable.id}`}
           className={`${DELIVERABLE_CARD_STYLES.CONTENT.CONTAINER} ${prefersReducedMotion ? '' : 'animate-expand-content'}`}
         >
