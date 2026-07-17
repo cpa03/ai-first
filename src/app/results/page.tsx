@@ -9,6 +9,7 @@ import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
+import { PLATFORM } from '@/lib/dom-utils';
 import {
   SPINNER_PATTERNS,
   CARD_PATTERNS,
@@ -142,9 +143,16 @@ function ResultsContent() {
   >({});
   const { isAuthenticated, isLoading: authLoading } = useAuthCheck();
   const prefersReducedMotion = usePrefersReducedMotion();
+  // Micro-UX: Detect platform for keyboard shortcut display (Mac vs Windows/Linux)
+  const [isMac, setIsMac] = useState(false);
   // Micro-UX: Confetti celebration on successful export for delightful feedback
   const { particles, fire } = useConfetti();
   const [showExportSuccess, setShowExportSuccess] = useState(false);
+
+  // Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
 
   useEffect(() => {
     if (authLoading) return;
@@ -409,6 +417,7 @@ function ResultsContent() {
           >
             <Tooltip
               content={RESULTS_PAGE_CONTENT.TOOLTIPS.MARKDOWN}
+              shortcut={[isMac ? '⌘' : 'Ctrl', 'E']}
               position="top"
             >
               <Button
