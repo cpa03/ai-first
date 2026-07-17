@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - RepoKeeper automated maintenance workflow
 - Branch cleanup automation
 - Repository health report - 2026-07-14 (comprehensive analysis)
+- Animated counter to Dashboard idea count (#3185)
+- API route test coverage for ideas/[id], tasks/[id]/status, health/live, health/ready (#3183)
+- CMZ agent setup and agent skills configuration for OpenCode CLI
+- Select-all micro-interaction to ReferralLink code block (#3181)
+- Enhanced keyboard hints UX with polished visual design (#3179)
 
 ### Changed
 
@@ -46,6 +51,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `docs/mvp-feature-status.md` with accurate progress (July 6, 2026)
 - Corrected API route count from 19 to 22 in roadmap documentation
 - Updated test stats to reflect 1671 passing tests across 92 suites
+- Eliminated hardcoded text-[10px] and tooltip strings (#3184)
+- Cleanup redundant docs and fix UI/UX engineer documentation (#3180)
+- Added modularity audit report (#3178)
+- Removed tracked .jules/bolt.md temporary file
+- Added BroCula browser console audit report
 
 ## [0.1.1] - 2026-02-13
 
