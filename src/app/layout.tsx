@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG } from '@/lib/config/seo';
 import { APP_CONFIG } from '@/lib/config/app';
+import { PRECONNECT_URLS } from '@/lib/config/external-api-domains';
 import {
   BRAND_COLORS,
   SVG_STROKE_WIDTHS,
@@ -145,13 +146,9 @@ export default async function RootLayout({
     >
       <head>
         {/* Preconnect to external API domains for faster initial connections */}
-        {/* BroCula: Improves Lighthouse performance by reducing connection latency */}
-        <link rel="preconnect" href="https://*.supabase.co" />
-        <link rel="preconnect" href="https://api.openai.com" />
-        <link rel="preconnect" href="https://api.anthropic.com" />
-        <link rel="preconnect" href="https://api.notion.com" />
-        <link rel="preconnect" href="https://api.trello.com" />
-        <link rel="preconnect" href="https://api.github.com" />
+        {PRECONNECT_URLS.map((url) => (
+          <link key={url} rel="preconnect" href={url} />
+        ))}
         {/* JSON-LD structured data for SEO - sanitized via safeJsonLd() to prevent XSS */}
         <script
           type="application/ld+json"
