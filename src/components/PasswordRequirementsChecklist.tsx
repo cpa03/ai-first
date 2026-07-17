@@ -8,6 +8,8 @@ import {
   COMPONENT_CONFIG,
   PASSWORD_VALIDATION_CONFIG,
   TRANSITION_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 
 interface PasswordRequirement {
@@ -114,22 +116,22 @@ function PasswordRequirementsChecklistComponent({
   // Micro-UX: Dynamic progress bar color based on completion
   // Provides visual feedback about how close the user is to a valid password
   const progressColor = allMet
-    ? 'bg-green-500'
+    ? BG_COLORS.SUCCESS
     : metCount >= 3
-      ? 'bg-amber-400'
-      : 'bg-primary-500';
+      ? BG_COLORS.WARNING
+      : BG_COLORS.BRAND;
 
   const progressBgColor = allMet
-    ? 'bg-green-100'
+    ? BG_COLORS.SUCCESS_LIGHT
     : metCount >= 3
-      ? 'bg-amber-100'
-      : 'bg-gray-200';
+      ? BG_COLORS.WARNING_LIGHT
+      : BG_COLORS.LIGHT_DARK;
 
   const countTextColor = allMet
-    ? 'text-green-700'
+    ? TEXT_COLORS.SUCCESS_DARK
     : metCount >= 3
-      ? 'text-amber-600'
-      : 'text-gray-600';
+      ? TEXT_COLORS.WARNING_LIGHT
+      : TEXT_COLORS.SECONDARY;
 
   return (
     <div
@@ -170,13 +172,15 @@ function PasswordRequirementsChecklistComponent({
           <li
             key={req.id}
             className={`flex items-center gap-2 text-xs ${TRANSITION_CLASSES.DEFAULT} ${
-              req.met ? 'text-green-700 font-medium' : 'text-gray-500'
+              req.met
+                ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
+                : TEXT_COLORS.MUTED
             } ${hasAppeared && !prefersReducedMotion ? `animate-checklist-item animate-checklist-item-${index + 1}` : ''}`}
             aria-label={`${req.label}: ${req.met ? 'met' : 'not met'}`}
           >
             <span
               className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
-                req.met ? 'bg-green-100' : 'bg-gray-100'
+                req.met ? BG_COLORS.SUCCESS_LIGHT : BG_COLORS.LIGHTER
               }`}
               aria-hidden="true"
             >
@@ -220,11 +224,13 @@ function PasswordRequirementsChecklistComponent({
       </ul>
       {allMet && (
         <p
-          className={`text-xs text-green-700 font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
+          className={`text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium flex items-center gap-1.5 mt-2 ${showCompleteCelebration && !prefersReducedMotion ? 'animate-fade-in' : ''}`}
           role="status"
           aria-live="polite"
         >
-          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-100">
+          <span
+            className={`inline-flex items-center justify-center w-4 h-4 rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
+          >
             <svg
               className="w-3 h-3"
               fill="none"

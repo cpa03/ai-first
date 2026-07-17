@@ -109,11 +109,15 @@ export const TEXT_COLORS = {
   MUTED: 'text-gray-500',
   MUTED_LIGHT: 'text-gray-200',
   MUTED_DARK: 'text-gray-400',
+  MUTED_LIGHTER: 'text-gray-100',
   ERROR: 'text-red-700',
   ERROR_LIGHT: 'text-red-500',
   SUCCESS: 'text-green-800',
   SUCCESS_LIGHT: 'text-green-500',
+  SUCCESS_LIGHTER: 'text-green-100',
+  SUCCESS_MEDIUM: 'text-green-600',
   SUCCESS_DARK: 'text-green-700',
+  SUCCESS_VERY_LIGHT: 'text-green-400',
   WARNING: 'text-amber-700',
   WARNING_LIGHT: 'text-amber-600',
   BRAND: 'text-primary-600',
@@ -134,7 +138,9 @@ export const BG_COLORS = {
   LIGHT_DARK: 'bg-gray-200',
   SUCCESS: 'bg-green-600',
   SUCCESS_LIGHT: 'bg-green-100',
+  SUCCESS_LIGHTER: 'bg-green-200',
   WARNING: 'bg-amber-600',
+  WARNING_LIGHT: 'bg-amber-100',
   ERROR: 'bg-red-500',
   PROGRESS_NEUTRAL: 'bg-gray-200',
   OVERLAY: 'bg-black/40',
@@ -1263,8 +1269,14 @@ export const TEXT_COLOR_CLASSES = {
   /** Success text (green-800) */
   SUCCESS: 'text-green-800',
 
+  /** Success dark text (green-700) */
+  SUCCESS_DARK: 'text-green-700',
+
   /** Warning text (amber-700) */
   WARNING: 'text-amber-700',
+
+  /** Warning light text (amber-600) */
+  WARNING_LIGHT: 'text-amber-600',
 
   /** Inverse text (white) */
   INVERSE: 'text-white',

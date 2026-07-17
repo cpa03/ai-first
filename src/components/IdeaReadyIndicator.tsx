@@ -9,6 +9,8 @@ import {
   SVG_VIEWBOX,
   IDEA_READY_INDICATOR_LABELS,
   TRANSITION_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -92,7 +94,7 @@ function IdeaReadyIndicatorComponent({
         {/* Subtle pulse ring on ready */}
         {isReady && !prefersReducedMotion && (
           <div
-            className="absolute inset-0 rounded-full bg-green-200 animate-ping-once opacity-30"
+            className={`absolute inset-0 rounded-full ${BG_COLORS.SUCCESS_LIGHTER} animate-ping-once opacity-30`}
             aria-hidden="true"
           />
         )}
@@ -100,7 +102,7 @@ function IdeaReadyIndicatorComponent({
       <span
         className={`
           text-xs font-medium ${TRANSITION_CLASSES.COLOR_SLOW}
-          ${isReady ? 'text-green-700' : 'text-gray-500'}
+          ${isReady ? TEXT_COLORS.SUCCESS_DARK : TEXT_COLORS.MUTED}
         `}
       >
         {isReady

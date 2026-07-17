@@ -10,6 +10,7 @@ import {
   SVG_VIEWBOX,
   COMPONENT_CONFIG,
   TRANSITION_CLASSES,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
@@ -164,7 +165,7 @@ const CopyButtonComponent = function CopyButton({
               <span
                 className={`
               ${TRANSITION_CLASSES.DEFAULT}
-              ${copied ? 'text-green-700' : ''}
+              ${copied ? TEXT_COLORS.SUCCESS_DARK : ''}
             `}
               >
                 {copied ? successLabel : label}

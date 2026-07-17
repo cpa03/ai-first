@@ -402,8 +402,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           <p
             className={`text-sm animate-fade-in flex items-center gap-2 ${
               charactersNeededData.isNearMinimum
-                ? 'text-amber-600 font-medium'
-                : 'text-primary-600'
+                ? `${TEXT_COLOR_CLASSES.WARNING_LIGHT} font-medium`
+                : TEXT_COLOR_CLASSES.BRAND
             }`}
             role="status"
             aria-live="polite"
