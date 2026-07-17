@@ -64,7 +64,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('X-Request-ID')).toBeTruthy();
       expect(response.headers.get('X-Request-ID')).toMatch(
@@ -83,7 +83,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      await wrapped(request);
+      await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockHandler).toHaveBeenCalledTimes(1);
       const context: ApiContext = mockHandler.mock.calls[0][0];
@@ -103,7 +103,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockHandler).toHaveBeenCalledTimes(1);
       expect(response.status).toBe(200);
@@ -127,7 +127,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('X-Custom-Header')).toBe('custom-value');
     });
@@ -145,7 +145,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      await wrapped(request);
+      await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
@@ -166,7 +166,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      await wrapped(request);
+      await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
@@ -187,7 +187,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      await wrapped(request);
+      await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
@@ -210,7 +210,7 @@ describe('withApiHandler', () => {
         new Response('Too many requests', { status: 429 })
       );
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(429);
       expect(mockHandler).not.toHaveBeenCalled();
@@ -240,7 +240,7 @@ describe('withApiHandler', () => {
         new Response('Too many requests', { status: 429 })
       );
 
-      await wrapped(request);
+      await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockHandler).not.toHaveBeenCalled();
     });
@@ -262,7 +262,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(400);
       const body = await response.json();
@@ -285,7 +285,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('X-Request-ID')).toBeTruthy();
     });
@@ -303,7 +303,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(500);
       const body = await response.json();
@@ -321,7 +321,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(500);
       const body = await response.json();
@@ -342,7 +342,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(500);
       const body = await response.json();
@@ -360,7 +360,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(500);
       const body = await response.json();
@@ -383,7 +383,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(200);
     });
@@ -404,7 +404,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(200);
     });
@@ -424,7 +424,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(413);
       const body = await response.json();
@@ -454,7 +454,7 @@ describe('withApiHandler', () => {
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
       });
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockCheckUserRateLimit).toHaveBeenCalledWith(
         request,
@@ -478,7 +478,7 @@ describe('withApiHandler', () => {
         new Response('Too many requests', { status: 429 })
       );
 
-      await wrapped(request);
+      await wrapped(request, { params: Promise.resolve({}) });
 
       expect(mockHandler).not.toHaveBeenCalled();
     });

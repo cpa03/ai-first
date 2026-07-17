@@ -83,7 +83,7 @@ describe('Sentinel Security Enhancements', () => {
         'http://localhost/api/test?q=UNION SELECT * FROM users'
       );
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
       expect(response.status).toBe(403);
       expect(mockHandler).not.toHaveBeenCalled();
     });
@@ -95,7 +95,7 @@ describe('Sentinel Security Enhancements', () => {
         'http://localhost/api/test?file=../../etc/passwd'
       );
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
       expect(response.status).toBe(403);
       expect(mockHandler).not.toHaveBeenCalled();
     });
@@ -106,7 +106,7 @@ describe('Sentinel Security Enhancements', () => {
       // We need to make sure this doesn't match a higher severity pattern by accident.
       const request = new NextRequest("http://localhost/api/test?q=' or '");
 
-      const response = await wrapped(request);
+      const response = await wrapped(request, { params: Promise.resolve({}) });
       expect(response.status).toBe(200);
       expect(mockHandler).toHaveBeenCalled();
     });
