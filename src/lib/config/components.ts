@@ -489,6 +489,32 @@ export const COMPONENT_CONFIG = {
       5000
     ),
   } as const,
+
+  /**
+   * DeliverableCard component settings
+   */
+  DELIVERABLE_CARD: {
+    /** Delay before scrolling to expanded content (ms) - Env: COMPONENT_DELIVERABLE_EXPAND_SCROLL_DELAY_MS (default: 100) */
+    EXPAND_SCROLL_DELAY_MS: EnvLoader.number(
+      'COMPONENT_DELIVERABLE_EXPAND_SCROLL_DELAY_MS',
+      100,
+      50,
+      500
+    ),
+  } as const,
+
+  /**
+   * ClarificationFlow component settings
+   */
+  CLARIFICATION_FLOW: {
+    /** Maximum number of questions to show keyboard shortcuts for - Env: COMPONENT_CLARIFICATION_MAX_KEYBOARD_SHORTCUTS (default: 9) */
+    MAX_KEYBOARD_SHORTCUTS: EnvLoader.number(
+      'COMPONENT_CLARIFICATION_MAX_KEYBOARD_SHORTCUTS',
+      9,
+      1,
+      20
+    ),
+  } as const,
 } as const;
 
 export type ComponentConfig = typeof COMPONENT_CONFIG;

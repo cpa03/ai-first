@@ -138,4 +138,16 @@ export const UI_CONFIG = {
     10,
     500
   ),
+
+  /**
+   * Scroll percentage threshold for detecting near-bottom position
+   * Used by ScrollToTop to determine when to show "scroll to top" vs "scroll to bottom"
+   * Env: UI_SCROLL_NEAR_BOTTOM_THRESHOLD (default: 85)
+   */
+  SCROLL_NEAR_BOTTOM_THRESHOLD: EnvLoader.number(
+    'UI_SCROLL_NEAR_BOTTOM_THRESHOLD',
+    85,
+    50,
+    99
+  ),
 } as const;
