@@ -11,8 +11,6 @@ jest.mock('@/lib/logger', () => ({
 
 interface MockQueryChain {
   from: jest.Mock;
-  select: jest.Mock;
-  limit: jest.Mock;
 }
 
 const createMockClient = (error: Error | null = null): MockQueryChain => ({
