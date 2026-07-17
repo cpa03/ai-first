@@ -22,16 +22,19 @@ describe('checkRateLimit', () => {
   });
 
   describe('new identifier', () => {
-    it('should allow first request', () => {
-      const result = checkRateLimit('test-user', rateLimitConfigs.lenient);
+    it('should allow first request', async () => {
+      const result = await checkRateLimit(
+        'test-user',
+        rateLimitConfigs.lenient
+      );
 
       expect(result.allowed).toBe(true);
       expect(result.info.remaining).toBe(rateLimitConfigs.lenient.limit - 1);
       expect(result.info.reset).toBeGreaterThan(Date.now());
     });
 
-    it('should set reset time based on windowMs', () => {
-      const result = checkRateLimit('test-user', rateLimitConfigs.strict);
+    it('should set reset time based on windowMs', async () => {
+      const result = await checkRateLimit('test-user', rateLimitConfigs.strict);
 
       const expectedResetTime =
         result.info.reset - rateLimitConfigs.strict.windowMs;
@@ -40,9 +43,9 @@ describe('checkRateLimit', () => {
       );
     });
 
-    it('should work with different identifiers', () => {
-      const result1 = checkRateLimit('user-1', rateLimitConfigs.moderate);
-      const result2 = checkRateLimit('user-2', rateLimitConfigs.moderate);
+    it('should work with different identifiers', async () => {
+      const result1 = await checkRateLimit('user-1', rateLimitConfigs.moderate);
+      const result2 = await checkRateLimit('user-2', rateLimitConfigs.moderate);
 
       expect(result1.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
       expect(result2.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
@@ -50,32 +53,43 @@ describe('checkRateLimit', () => {
   });
 
   describe('within window', () => {
-    it('should increment count for subsequent requests', () => {
+    it('should increment count for subsequent requests', async () => {
       const identifier = 'test-user-2';
 
-      checkRateLimit(identifier, rateLimitConfigs.lenient);
-      const result2 = checkRateLimit(identifier, rateLimitConfigs.lenient);
+      await checkRateLimit(identifier, rateLimitConfigs.lenient);
+      const result2 = await checkRateLimit(
+        identifier,
+        rateLimitConfigs.lenient
+      );
 
       expect(result2.allowed).toBe(true);
       expect(result2.info.remaining).toBe(rateLimitConfigs.lenient.limit - 2);
     });
 
-    it('should keep same reset time for requests within window', () => {
+    it('should keep same reset time for requests within window', async () => {
       const identifier = 'test-user-3';
 
-      const result1 = checkRateLimit(identifier, rateLimitConfigs.moderate);
-      const result2 = checkRateLimit(identifier, rateLimitConfigs.moderate);
+      const result1 = await checkRateLimit(
+        identifier,
+        rateLimitConfigs.moderate
+      );
+      const result2 = await checkRateLimit(
+        identifier,
+        rateLimitConfigs.moderate
+      );
 
       expect(result1.info.reset).toBe(result2.info.reset);
     });
 
-    it('should return correct remaining count', () => {
+    it('should return correct remaining count', async () => {
       const identifier = 'test-user-4';
       const maxRequests = rateLimitConfigs.lenient.limit;
 
       const results = [];
       for (let i = 0; i < maxRequests; i++) {
-        results.push(checkRateLimit(identifier, rateLimitConfigs.lenient));
+        results.push(
+          await checkRateLimit(identifier, rateLimitConfigs.lenient)
+        );
       }
 
       expect(results[0].info.remaining).toBe(maxRequests - 1);
@@ -85,151 +99,164 @@ describe('checkRateLimit', () => {
   });
 
   describe('limit exceeded', () => {
-    it('should deny request when limit is reached', () => {
+    it('should deny request when limit is reached', async () => {
       const identifier = 'test-user-5';
       const config = rateLimitConfigs.strict;
 
       for (let i = 0; i < config.limit; i++) {
-        checkRateLimit(identifier, config);
+        await checkRateLimit(identifier, config);
       }
 
-      const result = checkRateLimit(identifier, config);
+      const result = await checkRateLimit(identifier, config);
 
       expect(result.allowed).toBe(false);
       expect(result.info.remaining).toBe(0);
     });
 
-    it('should return same reset time when limit exceeded', () => {
+    it('should return same reset time when limit exceeded', async () => {
       const identifier = 'test-user-6';
       const config = rateLimitConfigs.moderate;
 
-      checkRateLimit(identifier, config);
-      const initialResetTime = checkRateLimit(identifier, config).info.reset;
+      await checkRateLimit(identifier, config);
+      const result = await checkRateLimit(identifier, config);
+      const initialResetTime = result.info.reset;
 
       for (let i = 2; i <= config.limit; i++) {
-        checkRateLimit(identifier, config);
+        await checkRateLimit(identifier, config);
       }
 
-      const exceededResult = checkRateLimit(identifier, config);
+      const exceededResult = await checkRateLimit(identifier, config);
       expect(exceededResult.info.reset).toBe(initialResetTime);
     });
 
-    it('should continue to deny until window expires', () => {
+    it('should continue to deny until window expires', async () => {
       const identifier = 'test-user-7';
       const config = rateLimitConfigs.strict;
 
       for (let i = 0; i < config.limit; i++) {
-        checkRateLimit(identifier, config);
+        await checkRateLimit(identifier, config);
       }
 
-      const result1 = checkRateLimit(identifier, config);
+      const result1 = await checkRateLimit(identifier, config);
       expect(result1.allowed).toBe(false);
 
-      const result2 = checkRateLimit(identifier, config);
+      const result2 = await checkRateLimit(identifier, config);
       expect(result2.allowed).toBe(false);
 
-      const result3 = checkRateLimit(identifier, config);
+      const result3 = await checkRateLimit(identifier, config);
       expect(result3.allowed).toBe(false);
     });
   });
 
   describe('window expired', () => {
-    it('should reset count after window expires', () => {
+    it('should reset count after window expires', async () => {
       const identifier = 'test-user-8';
       const config = rateLimitConfigs.lenient;
 
       for (let i = 0; i < config.limit; i++) {
-        checkRateLimit(identifier, config);
+        await checkRateLimit(identifier, config);
       }
 
-      const resultBeforeExpiry = checkRateLimit(identifier, config);
+      const resultBeforeExpiry = await checkRateLimit(identifier, config);
       expect(resultBeforeExpiry.allowed).toBe(false);
 
       jest.advanceTimersByTime(config.windowMs + 100);
 
-      const resultAfterExpiry = checkRateLimit(identifier, config);
+      const resultAfterExpiry = await checkRateLimit(identifier, config);
 
       expect(resultAfterExpiry.allowed).toBe(true);
       expect(resultAfterExpiry.info.remaining).toBe(config.limit - 1);
     });
 
-    it('should set new reset time after window expires', () => {
+    it('should set new reset time after window expires', async () => {
       const identifier = 'test-user-9';
       const config = rateLimitConfigs.moderate;
 
-      const result1 = checkRateLimit(identifier, config);
+      const result1 = await checkRateLimit(identifier, config);
       jest.advanceTimersByTime(config.windowMs + 100);
 
-      const result2 = checkRateLimit(identifier, config);
+      const result2 = await checkRateLimit(identifier, config);
 
       expect(result2.info.reset).toBeGreaterThan(result1.info.reset);
     });
 
-    it('should handle requests crossing window boundary', () => {
+    it('should handle requests crossing window boundary', async () => {
       const identifier = 'test-user-10';
       const config = rateLimitConfigs.strict;
       const halfWindow = Math.floor(config.windowMs / 2);
 
-      checkRateLimit(identifier, config);
+      await checkRateLimit(identifier, config);
       jest.advanceTimersByTime(halfWindow);
 
       for (let i = 1; i < config.limit; i++) {
-        checkRateLimit(identifier, config);
+        await checkRateLimit(identifier, config);
       }
 
-      const result = checkRateLimit(identifier, config);
+      const result = await checkRateLimit(identifier, config);
       expect(result.allowed).toBe(false);
 
       jest.advanceTimersByTime(halfWindow + 100);
 
-      const resultAfter = checkRateLimit(identifier, config);
+      const resultAfter = await checkRateLimit(identifier, config);
       expect(resultAfter.allowed).toBe(true);
     });
   });
 
   describe('different configs', () => {
-    it('should work with strict config', () => {
+    it('should work with strict config', async () => {
       const identifier = 'test-user-11';
 
       for (let i = 0; i < rateLimitConfigs.strict.limit; i++) {
-        const result = checkRateLimit(identifier, rateLimitConfigs.strict);
+        const result = await checkRateLimit(
+          identifier,
+          rateLimitConfigs.strict
+        );
         expect(result.allowed).toBe(true);
       }
 
-      const result = checkRateLimit(identifier, rateLimitConfigs.strict);
+      const result = await checkRateLimit(identifier, rateLimitConfigs.strict);
       expect(result.allowed).toBe(false);
     });
 
-    it('should work with moderate config', () => {
+    it('should work with moderate config', async () => {
       const identifier = 'test-user-12';
 
       for (let i = 0; i < rateLimitConfigs.moderate.limit; i++) {
-        const result = checkRateLimit(identifier, rateLimitConfigs.moderate);
+        const result = await checkRateLimit(
+          identifier,
+          rateLimitConfigs.moderate
+        );
         expect(result.allowed).toBe(true);
       }
 
-      const result = checkRateLimit(identifier, rateLimitConfigs.moderate);
+      const result = await checkRateLimit(
+        identifier,
+        rateLimitConfigs.moderate
+      );
       expect(result.allowed).toBe(false);
     });
 
-    it('should work with lenient config', () => {
+    it('should work with lenient config', async () => {
       const identifier = 'test-user-13';
 
       for (let i = 0; i < rateLimitConfigs.lenient.limit; i++) {
-        const result = checkRateLimit(identifier, rateLimitConfigs.lenient);
+        const result = await checkRateLimit(
+          identifier,
+          rateLimitConfigs.lenient
+        );
         expect(result.allowed).toBe(true);
       }
 
-      const result = checkRateLimit(identifier, rateLimitConfigs.lenient);
+      const result = await checkRateLimit(identifier, rateLimitConfigs.lenient);
       expect(result.allowed).toBe(false);
     });
 
-    it('should handle different identifiers with same config', () => {
+    it('should handle different identifiers with same config', async () => {
       const config = rateLimitConfigs.lenient;
 
-      const result1 = checkRateLimit('user-1', config);
-      const result2 = checkRateLimit('user-2', config);
-      const result3 = checkRateLimit('user-3', config);
+      const result1 = await checkRateLimit('user-1', config);
+      const result2 = await checkRateLimit('user-2', config);
+      const result3 = await checkRateLimit('user-3', config);
 
       expect(result1.allowed).toBe(true);
       expect(result2.allowed).toBe(true);
@@ -238,13 +265,13 @@ describe('checkRateLimit', () => {
   });
 
   describe('edge cases', () => {
-    it('should allow exact max requests', () => {
+    it('should allow exact max requests', async () => {
       const identifier = 'test-user-14';
       const config = rateLimitConfigs.strict;
 
       const results = [];
       for (let i = 0; i < config.limit; i++) {
-        const result = checkRateLimit(identifier, config);
+        const result = await checkRateLimit(identifier, config);
         results.push(result);
       }
 
@@ -253,18 +280,18 @@ describe('checkRateLimit', () => {
       });
     });
 
-    it('should maintain separation between identifiers', () => {
+    it('should maintain separation between identifiers', async () => {
       const config = rateLimitConfigs.moderate;
 
       const results1 = [];
       for (let i = 0; i < config.limit; i++) {
-        results1.push(checkRateLimit('user-1', config));
+        results1.push(await checkRateLimit('user-1', config));
       }
 
-      const result2 = checkRateLimit('user-2', config);
+      const result2 = await checkRateLimit('user-2', config);
       expect(result2.allowed).toBe(true);
 
-      const result1Final = checkRateLimit('user-1', config);
+      const result1Final = await checkRateLimit('user-1', config);
       expect(result1Final.allowed).toBe(false);
     });
   });
@@ -525,28 +552,28 @@ describe('createRateLimitMiddleware', () => {
     expect(typeof middleware).toBe('function');
   });
 
-  it('should call checkRateLimit with client identifier', () => {
+  it('should call checkRateLimit with client identifier', async () => {
     process.env.VERCEL = '1';
     const middleware = createRateLimitMiddleware(rateLimitConfigs.moderate);
     const request = new Request(BASE_URL, {
       headers: { 'x-vercel-forwarded-for': '192.168.1.1' },
     });
 
-    const result = middleware(request);
+    const result = await middleware(request);
 
     expect(result.allowed).toBe(true);
     expect(result.info.remaining).toBe(rateLimitConfigs.moderate.limit - 1);
     delete process.env.VERCEL;
   });
 
-  it('should work with different config', () => {
+  it('should work with different config', async () => {
     process.env.CLOUDFLARE = '1';
     const middleware = createRateLimitMiddleware(rateLimitConfigs.strict);
     const request = new Request(BASE_URL, {
       headers: { 'cf-connecting-ip': '10.0.0.1' },
     });
 
-    const result = middleware(request);
+    const result = await middleware(request);
 
     expect(result.allowed).toBe(true);
     expect(result.info.remaining).toBe(rateLimitConfigs.strict.limit - 1);
@@ -571,10 +598,10 @@ describe('cleanupExpiredEntries', () => {
     expect(() => cleanupExpiredEntries()).not.toThrow();
   });
 
-  it('should handle multiple calls', () => {
+  it('should handle multiple calls', async () => {
     const config = rateLimitConfigs.lenient;
 
-    checkRateLimit('user-1', config);
+    await checkRateLimit('user-1', config);
     jest.advanceTimersByTime(config.windowMs + 100);
 
     cleanupExpiredEntries();
@@ -733,22 +760,22 @@ describe('getRateLimitStats', () => {
     expect(stats.topUsers).toHaveLength(0);
   });
 
-  it('should count entries correctly', () => {
-    checkRateLimit('user-1', rateLimitConfigs.lenient);
-    checkRateLimit('user-2', rateLimitConfigs.moderate);
-    checkRateLimit('user-3', rateLimitConfigs.strict);
+  it('should count entries correctly', async () => {
+    await checkRateLimit('user-1', rateLimitConfigs.lenient);
+    await checkRateLimit('user-2', rateLimitConfigs.moderate);
+    await checkRateLimit('user-3', rateLimitConfigs.strict);
 
     const stats = getRateLimitStats();
 
     expect(stats.totalEntries).toBe(3);
   });
 
-  it('should identify top users by request count', () => {
+  it('should identify top users by request count', async () => {
     const identifier = 'top-user';
     const config = rateLimitConfigs.lenient;
 
     for (let i = 0; i < 10; i++) {
-      checkRateLimit(identifier, config);
+      await checkRateLimit(identifier, config);
     }
 
     const stats = getRateLimitStats();

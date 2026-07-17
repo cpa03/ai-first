@@ -51,7 +51,7 @@ describe('Rate Limit Header Spoofing (Security)', () => {
     expect(userInfo.identifier).not.toBe('user:spoofed-user-id');
   });
 
-  it('FIXED: should ignore spoofed user tier via x-user-tier in production', () => {
+  it('FIXED: should ignore spoofed user tier via x-user-tier in production', async () => {
     // Simulated production environment
     (ENV_ACCESSORS.PLATFORM.NODE_ENV as jest.Mock).mockReturnValue(
       'production'
@@ -69,7 +69,7 @@ describe('Rate Limit Header Spoofing (Security)', () => {
     // In production, an untrusted client should NOT be able to elevate their tier via this header
     expect(userInfo.role).toBe('anonymous');
 
-    const result = checkUserRateLimit(request, productionConfig);
+    const result = await checkUserRateLimit(request, productionConfig);
     // Standard limit (strict) is 10. Anonymous limit is 30.
     // effectiveConfig = Math.max(strict.limit=10, anonymous.limit=30) = 30.
     expect(result.info.limit).toBe(30);

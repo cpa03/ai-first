@@ -29,6 +29,13 @@ export interface RateLimitConfig {
 export type UserRole = 'anonymous' | 'authenticated' | 'premium' | 'enterprise';
 
 /**
+ * Lock mechanism for rate limit store operations.
+ * Prevents race conditions in concurrent request environments.
+ * Maps identifier to a promise chain ensuring atomic read-modify-write operations.
+ */
+const rateLimitLocks = new Map<string, Promise<void>>();
+
+/**
  * User info extracted from request for rate limiting
  */
 export interface UserRateLimitInfo {
@@ -200,23 +207,24 @@ export function getUserRateLimitInfo(request: Request): UserRateLimitInfo {
  * @param config - Rate limit configuration for the endpoint
  * @returns Rate limit result with allowed status and info
  */
-export function checkUserRateLimit(
+export async function checkUserRateLimit(
   request: Request,
   config: RateLimitConfig
-): { allowed: boolean; info: RateLimitInfo; userInfo: UserRateLimitInfo } {
+): Promise<{
+  allowed: boolean;
+  info: RateLimitInfo;
+  userInfo: UserRateLimitInfo;
+}> {
   const userInfo = getUserRateLimitInfo(request);
 
-  // Get tier-specific rate limit config
   const tierConfig = tieredRateLimits[userInfo.role];
 
-  // Use the higher of endpoint config limit or tier config limit
-  // This gives premium users more capacity while still respecting endpoint restrictions
   const effectiveConfig: RateLimitConfig = {
     limit: Math.max(config.limit, tierConfig.limit),
     windowMs: Math.max(config.windowMs, tierConfig.windowMs),
   };
 
-  const result = checkRateLimit(userInfo.identifier, effectiveConfig);
+  const result = await checkRateLimit(userInfo.identifier, effectiveConfig);
 
   return {
     ...result,
@@ -235,8 +243,16 @@ function detectPlatform(): 'vercel' | 'cloudflare' | 'unknown' {
 
 /**
  * Generate a request fingerprint for fallback rate limiting.
- * Uses client-controlled headers (can be spoofed) as a last resort.
- * Includes server-side secret to prevent header rotation attacks.
+ *
+ * SECURITY WARNING: This uses client-controlled headers (user-agent, accept-language,
+ * accept-encoding) which CAN be spoofed by attackers. The server-side secret provides
+ * some protection against simple header rotation, but determined attackers can still
+ * bypass this by obtaining or guessing the secret.
+ *
+ * USE ONLY WHEN: Platform-specific trusted headers (CF-Connecting-IP, x-vercel-forwarded-for)
+ * are not available. Prefer IP-based identification when possible.
+ *
+ * @see getClientIdentifier for the recommended identification strategy
  */
 function generateRequestFingerprint(request: Request): string {
   const userAgent = request.headers.get('user-agent') || '';
@@ -360,14 +376,17 @@ function findFirstValidIndex(requests: number[], windowStart: number): number {
   return result;
 }
 
-export function checkRateLimit(
+/**
+ * Core rate limit check with atomic operations.
+ * This function is called within a lock to prevent race conditions.
+ */
+function checkRateLimitInternal(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
+  now: number
 ): { allowed: boolean; info: RateLimitInfo } {
-  const now = Date.now();
   const windowStart = now - config.windowMs;
 
-  // Memory leak prevention: Clear oldest entries if store is too large
   if (rateLimitStore.size >= RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE) {
     cleanupOldestEntries(
       Math.floor(
@@ -380,20 +399,17 @@ export function checkRateLimit(
   const existingRequests = rateLimitStore.get(identifier);
   const requests = existingRequests || [];
 
-  // PERFORMANCE: Find the first index that is within the window using binary search.
-  // This replaces the O(N) linear scan with an O(log N) lookup.
   const firstValidIndex = findFirstValidIndex(requests, windowStart);
 
   let recentRequests: number[];
   if (firstValidIndex === -1) {
     recentRequests = [];
   } else if (firstValidIndex === 0) {
-    recentRequests = requests; // No allocation if all requests are still valid
+    recentRequests = requests;
   } else {
     recentRequests = requests.slice(firstValidIndex);
   }
 
-  // Memory leak prevention: Limit requests per identifier to prevent unbounded growth
   if (recentRequests.length > MAX_REQUESTS_PER_IDENTIFIER) {
     recentRequests = recentRequests.slice(-MAX_REQUESTS_PER_IDENTIFIER);
   }
@@ -412,8 +428,6 @@ export function checkRateLimit(
 
   recentRequests.push(now);
 
-  // PERFORMANCE: Only update the store if we created a new array (via slice or empty array).
-  // If we're using the existing array reference, it's already in the Map.
   if (recentRequests !== existingRequests) {
     rateLimitStore.set(identifier, recentRequests);
   }
@@ -426,6 +440,47 @@ export function checkRateLimit(
       reset: now + config.windowMs,
     },
   };
+}
+
+/**
+ * Acquires a lock for the given identifier and executes the callback atomically.
+ * Uses promise chaining to ensure sequential access per identifier.
+ */
+async function withRateLimitLock<T>(
+  identifier: string,
+  callback: () => T | Promise<T>
+): Promise<T> {
+  const previousLock = rateLimitLocks.get(identifier);
+
+  const currentLock = (previousLock || Promise.resolve()).then(() => {
+    return callback();
+  });
+
+  rateLimitLocks.set(
+    identifier,
+    currentLock.then(
+      () => {},
+      () => {}
+    )
+  );
+
+  try {
+    return await currentLock;
+  } finally {
+    if (rateLimitLocks.get(identifier) === currentLock) {
+      rateLimitLocks.delete(identifier);
+    }
+  }
+}
+
+export async function checkRateLimit(
+  identifier: string,
+  config: RateLimitConfig
+): Promise<{ allowed: boolean; info: RateLimitInfo }> {
+  const now = Date.now();
+  return withRateLimitLock(identifier, () =>
+    checkRateLimitInternal(identifier, config, now)
+  );
 }
 
 // Helper function to remove oldest entries when store reaches capacity
@@ -480,7 +535,7 @@ export const tieredRateLimits: Record<UserRole, RateLimitConfig> = {
 };
 
 export function createRateLimitMiddleware(config: RateLimitConfig) {
-  return (request: Request) => {
+  return async (request: Request) => {
     const identifier = getClientIdentifier(request);
     return checkRateLimit(identifier, config);
   };
