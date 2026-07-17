@@ -374,13 +374,32 @@ export const exportUtils = {
     const errors: string[] = [];
 
     if (!data.idea) {
-      errors.push('Missing required field: idea');
+      errors.push(API_ERROR_MESSAGES.EXPORT_CONNECTORS.VALIDATION_MISSING_IDEA);
     } else {
-      if (!data.idea.id) errors.push('Missing required field: idea.id');
-      if (!data.idea.title) errors.push('Missing required field: idea.title');
+      if (!data.idea.id)
+        errors.push(
+          API_ERROR_MESSAGES.EXPORT_CONNECTORS.VALIDATION_MISSING_FIELD(
+            'idea.id'
+          )
+        );
+      if (!data.idea.title)
+        errors.push(
+          API_ERROR_MESSAGES.EXPORT_CONNECTORS.VALIDATION_MISSING_FIELD(
+            'idea.title'
+          )
+        );
       if (!data.idea.raw_text)
-        errors.push('Missing required field: idea.raw_text');
-      if (!data.idea.status) errors.push('Missing required field: idea.status');
+        errors.push(
+          API_ERROR_MESSAGES.EXPORT_CONNECTORS.VALIDATION_MISSING_FIELD(
+            'idea.raw_text'
+          )
+        );
+      if (!data.idea.status)
+        errors.push(
+          API_ERROR_MESSAGES.EXPORT_CONNECTORS.VALIDATION_MISSING_FIELD(
+            'idea.status'
+          )
+        );
     }
 
     return {

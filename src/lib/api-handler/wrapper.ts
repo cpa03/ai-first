@@ -137,7 +137,7 @@ export function withApiHandler(
 
           return toErrorResponse(
             new AppError(
-              'Forbidden: Invalid origin header',
+              API_ERROR_MESSAGES.CSRF.INVALID_ORIGIN,
               ErrorCode.AUTHORIZATION_ERROR,
               STATUS_CODES.FORBIDDEN,
               [
@@ -198,7 +198,7 @@ export function withApiHandler(
 
         return toErrorResponse(
           new AppError(
-            'Forbidden: Security policy violation',
+            API_ERROR_MESSAGES.CSRF.SECURITY_VIOLATION,
             ErrorCode.AUTHORIZATION_ERROR,
             STATUS_CODES.FORBIDDEN,
             [

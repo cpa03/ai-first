@@ -65,7 +65,11 @@ export const API_ERROR_MESSAGES = {
   },
   AUTH: {
     UNAUTHORIZED: 'Authentication required',
+    UNAUTHORIZED_ADMIN_KEY: 'Unauthorized. Valid admin API key required.',
+    UNAUTHORIZED_TOKEN: 'Unauthorized. Valid authentication token required.',
     FORBIDDEN: 'Access denied',
+    FORBIDDEN_RESOURCE: (resourceType: string = 'resource') =>
+      `Forbidden. You do not have access to this ${resourceType}.`,
     INVALID_TOKEN: 'Invalid authentication token',
     EXPIRED_TOKEN: 'Authentication token has expired',
     TOKEN_MISSING: 'Authorization token is missing',
@@ -290,6 +294,8 @@ export const API_ERROR_MESSAGES = {
     UNTRUSTED_ORIGIN_USER:
       'Invalid origin header. Cross-origin requests are not allowed.',
     VALIDATION_FAILED: 'CSRF validation failed',
+    INVALID_ORIGIN: 'Forbidden: Invalid origin header',
+    SECURITY_VIOLATION: 'Forbidden: Security policy violation',
   },
 
   /**
@@ -298,6 +304,7 @@ export const API_ERROR_MESSAGES = {
    */
   REQUEST_SIGNER: {
     TIMESTAMP_OUTSIDE_WINDOW: 'Request timestamp outside acceptable window',
+    INVALID_SIGNATURE: 'Invalid signature',
     INVALID_SIGNATURE_FORMAT: 'Invalid signature format',
     MISSING_SIGNATURE_HEADERS: 'Missing required signature headers',
     INVALID_SIGNATURE_HEADER_FORMAT: 'Invalid signature header format',
@@ -325,6 +332,9 @@ export const API_ERROR_MESSAGES = {
     NOTION_NOT_CONFIGURED: 'Notion API key not configured',
     GOOGLE_TASKS_NOT_CONFIGURED:
       'Google Tasks OAuth credentials not configured',
+    VALIDATION_MISSING_FIELD: (field: string) =>
+      `Missing required field: ${field}`,
+    VALIDATION_MISSING_IDEA: 'Missing required field: idea',
   },
 
   /**

@@ -221,7 +221,9 @@ export function verifySignature(
 
     return {
       valid: result,
-      error: result ? undefined : 'Invalid signature',
+      error: result
+        ? undefined
+        : API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_SIGNATURE,
     };
   } catch {
     // If buffers are different lengths, timingSafeEqual throws
