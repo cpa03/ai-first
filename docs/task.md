@@ -17,6 +17,14 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ---
 
+## StorX Feature Analysis & Integration Tasks
+
+### [CONNECT] Connect API endpoints to central config validation
+- **Priority**: LOW
+- **Status**: COMPLETE
+- **Date**: 2026-07-17
+- **Details**: Checked all endpoints in `src/app/api/` (admin, breakdown, clarify, csp-report, deliverables, health, ideas, metrics, tasks) for consistent routing structure, robust rate limiting, error categorization, and API handlers. All features are fully consolidated and share common logic.
+
 ## Browser/QA Tasks
 
 ### Task: Browser Console Health Check
