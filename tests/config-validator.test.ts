@@ -62,6 +62,13 @@ jest.mock('@/lib/logger', () => ({
 }));
 
 describe('ConfigValidator', () => {
+  beforeEach(() => {
+    delete process.env.CI;
+    delete process.env.GITHUB_ACTIONS;
+    delete process.env.VERCEL;
+    delete process.env.CF_WORKER;
+  });
+
   describe('validateConfiguration', () => {
     it('should return valid result when all configs are valid', () => {
       // Set required environment variables
@@ -130,6 +137,12 @@ describe('ConfigValidator', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+      // Ensure we're not in CI for this test
+      delete process.env.CI;
+      delete process.env.GITHUB_ACTIONS;
+      delete process.env.VERCEL;
+      delete process.env.CF_WORKER;
+
       const originalEnv = setProcessEnv('NODE_ENV', 'production');
 
       expect(() => validateConfigurationOrThrow()).toThrow();
@@ -163,6 +176,12 @@ describe('ConfigValidator', () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
       delete process.env.OPENAI_API_KEY;
       delete process.env.ANTHROPIC_API_KEY;
+
+      // Ensure we're not in CI for this test
+      delete process.env.CI;
+      delete process.env.GITHUB_ACTIONS;
+      delete process.env.VERCEL;
+      delete process.env.CF_WORKER;
 
       expect(isConfigurationHealthy()).toBe(false);
     });
