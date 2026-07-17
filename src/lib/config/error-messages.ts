@@ -205,6 +205,35 @@ export const API_ERROR_MESSAGES = {
   },
 
   /**
+   * Health and readiness check messages
+   * Centralizes messages used in health check API routes
+   */
+  HEALTH: {
+    SERVICE_NOT_READY: 'Service not ready',
+    SERVICE_NOT_READY_RETRY: 'Wait briefly and retry the request',
+    SERVICE_NOT_READY_CHECK_DETAILED:
+      'Check /api/health/detailed for specific dependency status',
+    MISSING_ENV_VARS: 'Missing required environment variables',
+    NO_AI_PROVIDER: 'No AI provider configured',
+  },
+
+  /**
+   * Metrics API messages
+   * Centralizes messages used in metrics API routes
+   */
+  METRICS: {
+    FAILED_TO_GENERATE: 'Failed to generate metrics',
+  },
+
+  /**
+   * Deliverable messages
+   * Centralizes messages used in deliverable API routes
+   */
+  DELIVERABLE: {
+    NO_DELIVERABLES_FOUND: 'No deliverables found for this idea',
+  },
+
+  /**
    * API Route Validation Messages
    * Centralizes inline validation messages used in API route handlers
    */
@@ -305,6 +334,8 @@ export const API_ERROR_MESSAGES = {
   VALIDATION_MESSAGES: {
     VALIDATION_FAILED: 'Validation failed',
     TOO_MANY_REQUESTS: 'Too many requests',
+    ANSWER_TOO_LONG: (maxLength: number) =>
+      `answer must not exceed ${maxLength} characters`,
   },
 
   /**

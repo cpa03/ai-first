@@ -47,7 +47,9 @@ async function handlePost(context: ApiContext) {
     throw new ValidationError([
       {
         field: 'answer',
-        message: `answer must not exceed ${VALIDATION_CONFIG.MAX_ANSWER_LENGTH} characters`,
+        message: API_ERROR_MESSAGES.VALIDATION_MESSAGES.ANSWER_TOO_LONG(
+          VALIDATION_CONFIG.MAX_ANSWER_LENGTH
+        ),
       },
     ]);
   }

@@ -1,9 +1,10 @@
 import { register } from '@/lib/metrics';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { AppError, ErrorCode } from '@/lib/errors';
-import { STATUS_CODES } from '@/lib/config/http';
+import { STATUS_CODES, HTTP_HEADERS } from '@/lib/config/http';
 import { createLogger } from '@/lib/logger';
 import { requireAdminAuth } from '@/lib/auth';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 const logger = createLogger('MetricsAPI');
 
@@ -21,7 +22,7 @@ async function handleGet(context: ApiContext) {
 
   if (!metrics) {
     throw new AppError(
-      'Failed to generate metrics',
+      API_ERROR_MESSAGES.METRICS.FAILED_TO_GENERATE,
       ErrorCode.INTERNAL_ERROR,
       STATUS_CODES.INTERNAL_ERROR,
       undefined,
@@ -32,11 +33,11 @@ async function handleGet(context: ApiContext) {
   return new Response(metrics, {
     status: STATUS_CODES.OK,
     headers: {
-      'Content-Type': register.contentType,
-      'X-Request-ID': context.requestId,
-      'X-RateLimit-Limit': String(context.rateLimit.limit),
-      'X-RateLimit-Remaining': String(context.rateLimit.remaining),
-      'X-RateLimit-Reset': String(
+      [HTTP_HEADERS.CONTENT_TYPE]: register.contentType,
+      [HTTP_HEADERS.X_REQUEST_ID]: context.requestId,
+      [HTTP_HEADERS.X_RATELIMIT_LIMIT]: String(context.rateLimit.limit),
+      [HTTP_HEADERS.X_RATELIMIT_REMAINING]: String(context.rateLimit.remaining),
+      [HTTP_HEADERS.X_RATELIMIT_RESET]: String(
         new Date(context.rateLimit.reset).toISOString()
       ),
     },
