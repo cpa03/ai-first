@@ -36,7 +36,7 @@ describe('API Sanitization', () => {
         answer: '<script>alert(1)</script>Ans',
       }),
     } as unknown as NextRequest;
-    await answerPOST(req);
+    await answerPOST(req, { params: Promise.resolve({}) });
     expect((clarifierAgent.submitAnswer as jest.Mock).mock.calls[0][2]).toBe(
       'Ans'
     );
@@ -57,7 +57,7 @@ describe('API Sanitization', () => {
         userResponses: { q1: '<script>alert(1)</script>X' },
       }),
     } as unknown as NextRequest;
-    await breakdownPOST(req);
+    await breakdownPOST(req, { params: Promise.resolve({}) });
     const calls = (breakdownEngine.startBreakdown as jest.Mock).mock.calls[0];
     expect(calls[1]).toBe('Refined');
     expect(calls[2].q1).toBe('X');

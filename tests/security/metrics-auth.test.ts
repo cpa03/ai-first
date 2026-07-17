@@ -37,7 +37,7 @@ describe('Metrics API Security', () => {
       method: 'GET',
     });
 
-    const response = await GET(request);
+    const response = await GET(request, { params: Promise.resolve({}) });
 
     // Should be 401 Unauthorized
     expect(response.status).toBe(401);
@@ -60,7 +60,7 @@ describe('Metrics API Security', () => {
       },
     });
 
-    const response = await GET(request);
+    const response = await GET(request, { params: Promise.resolve({}) });
 
     // Should be 401 Unauthorized
     expect(response.status).toBe(401);

@@ -41,7 +41,7 @@ describe('Idea Creation XSS', () => {
       headers: new Headers(),
       json: async () => ({ idea: xss }),
     } as unknown as NextRequest;
-    await POST(req);
+    await POST(req, { params: Promise.resolve({}) });
 
     const call = (dbService.createIdea as jest.Mock).mock.calls[0][0];
     expect(call.title).not.toContain('onerror');
@@ -64,7 +64,7 @@ describe('Idea Creation XSS', () => {
       headers: new Headers(),
       json: async () => ({ idea: longXss }),
     } as unknown as NextRequest;
-    await POST(req);
+    await POST(req, { params: Promise.resolve({}) });
 
     const call = (dbService.createIdea as jest.Mock).mock.calls[0][0];
     expect(call.title).not.toContain('<script');

@@ -102,7 +102,9 @@ describe('/api/tasks/[id]/status PATCH', () => {
       json: async () => ({ status: 'in_progress' }),
     });
 
-    const response = await PATCH(request, { params: { id: taskId } });
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: taskId }),
+    });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -130,7 +132,9 @@ describe('/api/tasks/[id]/status PATCH', () => {
       json: async () => ({ status: 'completed' }),
     });
 
-    const response = await PATCH(request, { params: { id: taskId } });
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: taskId }),
+    });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -148,7 +152,9 @@ describe('/api/tasks/[id]/status PATCH', () => {
       json: async () => ({}),
     });
 
-    const response = await PATCH(request, { params: { id: taskId } });
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: taskId }),
+    });
 
     expect(response.status).toBe(400);
   });
@@ -160,7 +166,9 @@ describe('/api/tasks/[id]/status PATCH', () => {
       json: async () => ({ status: 'invalid_status' }),
     });
 
-    const response = await PATCH(request, { params: { id: taskId } });
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: taskId }),
+    });
 
     expect(response.status).toBe(400);
   });
@@ -174,7 +182,9 @@ describe('/api/tasks/[id]/status PATCH', () => {
       json: async () => ({ status: 'completed' }),
     });
 
-    const response = await PATCH(request, { params: { id: taskId } });
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: taskId }),
+    });
 
     expect(response.status).toBe(404);
   });
@@ -188,7 +198,9 @@ describe('/api/tasks/[id]/status PATCH', () => {
       },
     });
 
-    const response = await PATCH(request, { params: { id: taskId } });
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: taskId }),
+    });
 
     expect(response.status).toBe(400);
   });

@@ -63,14 +63,14 @@ export function withApiHandler(
   options: ApiHandlerOptions = {}
 ): (
   request: NextRequest,
-  routeContext?: {
-    params?: Promise<Record<string, string>> | Record<string, string>;
+  routeContext: {
+    params: Promise<Record<string, string>>;
   }
 ) => Promise<Response> {
   return async (
     request: NextRequest,
-    routeContext?: {
-      params?: Promise<Record<string, string>> | Record<string, string>;
+    routeContext: {
+      params: Promise<Record<string, string>>;
     }
   ) => {
     const requestId = generateRequestId();
@@ -214,9 +214,8 @@ export function withApiHandler(
       }
 
       // PERFORMANCE: Extract route parameters efficiently.
-      // Next.js 15+ may pass params as a Promise.
-      const rawParams = routeContext?.params || {};
-      const params = rawParams instanceof Promise ? await rawParams : rawParams;
+      // Next.js 15+ passes params as a Promise.
+      const params = await routeContext.params;
 
       const context: ApiContext = {
         requestId,

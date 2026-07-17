@@ -52,7 +52,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -78,7 +78,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -98,7 +98,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -118,7 +118,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -139,7 +139,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -164,7 +164,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -207,7 +207,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(200);
       expect(mockClarifierAgent.submitAnswer).toHaveBeenCalledWith(
@@ -252,7 +252,7 @@ describe('/api/clarify/answer', () => {
         }
       );
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(200);
       expect(mockClarifierAgent.submitAnswer).toHaveBeenCalledWith(

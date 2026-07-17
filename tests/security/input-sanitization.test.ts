@@ -41,7 +41,7 @@ describe('Task Update Sanitization', () => {
       json: async () => ({ title: xss, description: xss }),
     } as unknown as NextRequest;
 
-    await updateTaskPUT(req, { params: { id: 't1' } });
+    await updateTaskPUT(req, { params: Promise.resolve({ id: 't1' }) });
 
     const call = (dbService.updateTask as jest.Mock).mock.calls[0][1];
     expect(call.title).not.toContain('<script');
