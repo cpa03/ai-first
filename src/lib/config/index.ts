@@ -218,6 +218,13 @@ export {
   type ExternalApiVersionInfo,
 } from './external-api-versions';
 
+export {
+  EXTERNAL_API_DOMAINS,
+  PRECONNECT_URLS,
+  type ExternalApiDomains,
+  type PreconnectUrls,
+} from './external-api-domains';
+
 // Legacy constants (backward compatibility)
 export * from './constants';
 

@@ -1,9 +1,3 @@
-/**
- * Navigation Configuration
- * Centralizes navigation items and labels for all nav components
- * Supports environment variable overrides for social links
- */
-
 import { EnvLoader } from './environment';
 
 export interface NavItem {
@@ -92,17 +86,20 @@ export const MOBILE_NAV_CONFIG = {
     isOpen ? 'Close navigation menu' : 'Open navigation menu',
 } as const;
 
-/**
- * Default social links
- */
 const DEFAULT_SOCIAL_LINKS: NavItem[] = [
   {
-    href: 'https://twitter.com/ideaflowai',
+    href: EnvLoader.string(
+      'SOCIAL_TWITTER_URL',
+      'https://twitter.com/ideaflowai'
+    ),
     label: 'Twitter',
     ariaLabel: 'Follow us on Twitter',
   },
   {
-    href: 'https://github.com/cpa03/ai-first',
+    href: EnvLoader.string(
+      'SOCIAL_GITHUB_URL',
+      'https://github.com/cpa03/ai-first'
+    ),
     label: 'GitHub',
     ariaLabel: 'View on GitHub',
   },
@@ -126,7 +123,10 @@ export const FOOTER_NAV_CONFIG = {
       title: 'Resources',
       items: [
         {
-          href: 'https://github.com/cpa03/ai-first',
+          href: EnvLoader.string(
+            'SOCIAL_GITHUB_URL',
+            'https://github.com/cpa03/ai-first'
+          ),
           label: 'GitHub',
           ariaLabel: 'View source code on GitHub',
         },
