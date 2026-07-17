@@ -75,6 +75,7 @@
   /user-stories/            ← User story specifications
 /src/
   /app/                    ← Next.js app (app router)
+    /HomePageClient.tsx    ← Home page client component
     /clarify/              ← Clarification flow pages
     /results/              ← Results display pages
     /dashboard/            ← Dashboard and analytics pages
@@ -172,8 +173,9 @@
     /cache.ts             ← Caching utilities
     /cloudflare.ts        ← Cloudflare integration
     /config-service.ts    ← Configuration service
+    /dom-utils.ts         ← DOM utility functions
     /embedding-service.ts ← Embedding service
-    /errors/              ← Error handling (classes, codes, utils)
+    /errors/              ← Error handling (classes, codes, utils, fingerprint, context)
     /external-rate-limit.ts ← External rate limit service
     /logger.ts           ← Logging utilities
     /metrics.ts          ← Metrics collection
@@ -203,15 +205,25 @@
     /db/                  ← Database service module
       /service.ts        ← Database service
       /client.ts         ← Database client
+      /server.ts         ← Server-side database utilities
       /ideas.ts          ← Ideas repository
       /tasks.ts          ← Tasks repository
       /deliverables.ts   ← Deliverables repository
       /clarification.ts  ← Clarification repository
       /vectors.ts        ← Vector store repository
+      /health.ts         ← Database health checks
+      /types.ts          ← Database type definitions
     /export-connectors/  ← Export integrations
+      /base.ts           ← Base exporter class
+      /connectors.ts     ← Connector registry
+      /manager.ts        ← Export manager
+      /sync.ts           ← Sync utilities
       /notion-exporter.ts ← Notion export
       /trello-exporter.ts ← Trello export
       /github-projects-exporter.ts ← GitHub Projects export
+      /google-tasks-exporter.ts ← Google Tasks export
+      /json-exporter.ts  ← JSON export
+      /markdown-exporter.ts ← Markdown export
     /prompts/            ← AI prompt templates
       /breakdown/        ← Breakdown prompts
       /clarifier/        ← Clarifier prompts

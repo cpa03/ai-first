@@ -284,21 +284,36 @@ AGENT=frontend-engineer
 
 ## Development Scripts
 
-| Script                 | Description                          |
-| ---------------------- | ------------------------------------ |
-| `npm run dev`          | Start development server             |
-| `npm run dev:check`    | Start dev server with env validation |
-| `npm run build`        | Build for production                 |
-| `npm run build:check`  | Build with env validation            |
-| `npm run lint`         | Run ESLint                           |
-| `npm run lint:fix`     | Run ESLint with auto-fix             |
-| `npm run type-check`   | Run TypeScript type checking         |
-| `npm test`             | Run tests                            |
-| `npm run test:ci`      | Run tests with coverage (CI mode)    |
-| `npm run test:watch`   | Run tests in watch mode              |
-| `npm run test:changed` | Run only tests for changed files     |
-| `npm run env:check`    | Validate environment configuration   |
-| `npm run check`        | Run lint, type-check, and tests      |
+| Script                       | Description                                |
+| ---------------------------- | ------------------------------------------ |
+| `npm run dev`                | Start development server                   |
+| `npm run dev:check`          | Start dev server with env validation       |
+| `npm run build`              | Build for production                       |
+| `npm run build:check`        | Build with env validation                  |
+| `npm run lint`               | Run ESLint                                 |
+| `npm run lint:fix`           | Run ESLint with auto-fix                   |
+| `npm run type-check`         | Run TypeScript type checking               |
+| `npm test`                   | Run tests                                  |
+| `npm run test:ci`            | Run tests with coverage (CI mode)          |
+| `npm run test:watch`         | Run tests in watch mode                    |
+| `npm run test:changed`       | Run only tests for changed files           |
+| `npm run test:coverage`      | Run tests with coverage report             |
+| `npm run test:comprehensive` | Run comprehensive backend/frontend tests   |
+| `npm run test:integration`   | Run integration tests                      |
+| `npm run test:e2e`           | Run end-to-end tests                       |
+| `npm run test:a11y`          | Run accessibility tests                    |
+| `npm run test:all`           | Run all test suites                        |
+| `npm run test:mutation`      | Run mutation testing with Stryker          |
+| `npm run env:check`          | Validate environment configuration         |
+| `npm run check`              | Run lint, type-check, and tests            |
+| `npm run setup`              | Run project setup script                   |
+| `npm run db:migrate`         | Apply database migrations via Supabase CLI |
+| `npm run db:reset`           | Reset database via Supabase CLI            |
+| `npm run scan:console`       | Scan for console.log statements            |
+| `npm run audit:lighthouse`   | Run Lighthouse performance audit           |
+| `npm run build:verify`       | Build + console scan + Lighthouse audit    |
+| `npm run docs:check-links`   | Validate documentation links               |
+| `npm run check:circular`     | Check for circular dependencies            |
 
 ## IDE Setup
 
