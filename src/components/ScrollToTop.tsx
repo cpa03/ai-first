@@ -283,7 +283,7 @@ function ScrollToTopComponent({
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                className="text-gray-100"
+                className={TEXT_COLORS.MUTED_LIGHTER}
               />
               <circle
                 cx="24"

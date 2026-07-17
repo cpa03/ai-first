@@ -14,6 +14,7 @@ import {
   SVG_SIZES,
   SVG_VIEWBOX,
   TRANSITION_CLASSES,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -191,7 +192,7 @@ const EmailButtonComponent = function EmailButton({
 
             <span
               className={`${iconTransition} ${
-                state === 'success' ? 'text-green-100' : ''
+                state === 'success' ? TEXT_COLORS.SUCCESS_LIGHTER : ''
               }`}
             >
               {state === 'success' ? successLabel : label}

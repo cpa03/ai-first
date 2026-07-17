@@ -15,6 +15,7 @@ import {
   INPUT_STYLES,
   TEXT_COLORS,
   TEXT_COLOR_CLASSES,
+  BG_COLORS,
   COMPONENT_DEFAULTS,
   LABELS,
   ANIMATION_DELAYS,
@@ -477,7 +478,7 @@ function ClarificationFlow({
             </span>
             {currentStep === questions.length - 1 && (
               <span
-                className="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 animate-in fade-in zoom-in ${TRANSITION_CLASSES.SLOW}"
+                className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} animate-in fade-in zoom-in ${TRANSITION_CLASSES.SLOW}`}
                 role="status"
                 aria-label={CLARIFICATION_FLOW_LABELS.FINAL_STEP}
               >
@@ -489,8 +490,8 @@ function ClarificationFlow({
             key={currentStep}
             className={`text-sm font-medium animate-scale-in tabular-nums ${
               currentStep === questions.length - 1
-                ? 'text-green-600'
-                : 'text-gray-900'
+                ? TEXT_COLORS.SUCCESS_MEDIUM
+                : TEXT_COLORS.PRIMARY
             }`}
             aria-label={CLARIFICATION_FLOW_LABELS.PROGRESS_ARIA_LABEL(
               Math.round(progress)

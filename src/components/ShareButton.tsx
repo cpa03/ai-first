@@ -11,6 +11,7 @@ import {
   SVG_VIEWBOX,
   COMPONENT_CONFIG,
   TRANSITION_CLASSES,
+  TEXT_COLORS,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -263,7 +264,7 @@ const ShareButtonComponent = function ShareButton({
               <span
                 className={`
               ${TRANSITION_CLASSES.DEFAULT}
-              ${shared ? 'text-green-400' : ''}
+              ${shared ? TEXT_COLORS.SUCCESS_VERY_LIGHT : ''}
             `}
               >
                 {shared ? successLabel : label}

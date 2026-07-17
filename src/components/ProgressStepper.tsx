@@ -10,6 +10,8 @@ import {
   ANIMATION_CONFIG,
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -229,10 +231,10 @@ const ProgressStepperComponent = function ProgressStepper({
                     <span
                       className={`
                         text-sm font-medium
-                        ${isClickable ? 'group-hover:text-primary-600 transition-colors' : ''}
+                        ${isClickable ? `group-hover:${TEXT_COLORS.BRAND} transition-colors` : ''}
                         ${
                           step.current
-                            ? 'text-primary-600'
+                            ? TEXT_COLORS.BRAND
                             : step.completed
                               ? TEXT_COLOR_CLASSES.HEADING
                               : TEXT_COLOR_CLASSES.BODY
@@ -242,7 +244,9 @@ const ProgressStepperComponent = function ProgressStepper({
                       {step.label}
                     </span>
                     {step.current && (
-                      <span className="text-xs text-primary-500 font-medium">
+                      <span
+                        className={`text-xs ${TEXT_COLORS.BRAND_LIGHT} font-medium`}
+                      >
                         Step {currentStep + 1} of {steps.length}
                       </span>
                     )}
@@ -253,7 +257,7 @@ const ProgressStepperComponent = function ProgressStepper({
                 <div
                   className={`
                     flex-1 h-0.5 mx-4
-                    ${step.completed ? 'bg-primary-600' : 'bg-gray-300'}
+                    ${step.completed ? BG_COLORS.BRAND : BG_COLORS.PROGRESS_NEUTRAL}
                     ${TRANSITION_CLASSES.COLOR_SLOW}
                   `}
                   aria-hidden="true"

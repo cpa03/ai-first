@@ -323,8 +323,8 @@ export default function UserOnboarding() {
           <div
             className={`w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center ${
               prefersReducedMotion
-                ? 'bg-green-100'
-                : 'bg-green-100 animate-success-pop'
+                ? BG_COLORS.SUCCESS_LIGHT
+                : `${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`
             }`}
           >
             <svg
