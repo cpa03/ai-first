@@ -46,7 +46,7 @@ async function handleGet(context: ApiContext) {
 
     if (!deliverablesWithTasks || deliverablesWithTasks.length === 0) {
       throw new AppError(
-        'No deliverables found for this idea',
+        API_ERROR_MESSAGES.DELIVERABLE.NO_DELIVERABLES_FOUND,
         ErrorCode.NOT_FOUND,
         STATUS_CODES.NOT_FOUND
       );
@@ -113,7 +113,7 @@ async function handleGet(context: ApiContext) {
         },
       },
       context.requestId,
-      200,
+      STATUS_CODES.OK,
       context.rateLimit
     );
   } catch (error) {

@@ -7,6 +7,7 @@ import { APP_CONFIG, ENV_ACCESSORS } from '@/lib/config';
 import { STATUS_CODES, API_CACHE_CONFIG } from '@/lib/config/constants';
 import { getCloudflareRequestInfo } from '@/lib/cloudflare';
 import { isSensitiveVar } from '@/lib/security/env-validation';
+import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
 async function handleGet(context: ApiContext) {
   const { rateLimit, request } = context;
@@ -82,10 +83,10 @@ async function handleGet(context: ApiContext) {
 
   if (missingVars.length > 0) {
     envStatus.status = APP_CONFIG.HEALTH_STATUS.UNHEALTHY;
-    envStatus.error = `Missing required environment variables`;
+    envStatus.error = API_ERROR_MESSAGES.HEALTH.MISSING_ENV_VARS;
   } else if (!hasAIProvider) {
     envStatus.status = APP_CONFIG.HEALTH_STATUS.WARNING;
-    envStatus.warning = 'No AI provider configured';
+    envStatus.warning = API_ERROR_MESSAGES.HEALTH.NO_AI_PROVIDER;
   }
 
   envStatus.summary = {

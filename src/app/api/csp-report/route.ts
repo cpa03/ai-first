@@ -4,6 +4,7 @@ import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { STATUS_CODES } from '@/lib/config';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
+import { SECURITY_CONFIG } from '@/lib/config/security-config';
 
 const logger = createLogger('CSPReport');
 
@@ -134,9 +135,9 @@ export async function OPTIONS(): Promise<Response> {
   return new NextResponse(null, {
     status: STATUS_CODES.NO_CONTENT,
     headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Origin': SECURITY_CONFIG.CORS.ALLOW_ORIGIN,
+      'Access-Control-Allow-Methods': SECURITY_CONFIG.CORS.ALLOW_METHODS,
+      'Access-Control-Allow-Headers': SECURITY_CONFIG.CORS.ALLOW_HEADERS,
     },
   });
 }

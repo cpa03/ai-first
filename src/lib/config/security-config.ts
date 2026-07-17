@@ -36,6 +36,22 @@ export const SECURITY_CONFIG = {
     'strict-origin-when-cross-origin'
   ),
 
+  /**
+   * CORS configuration for CSP report endpoint
+   * Centralizes Access-Control-Allow-* headers
+   */
+  CORS: {
+    ALLOW_ORIGIN: EnvLoader.string('SECURITY_CORS_ALLOW_ORIGIN', '*'),
+    ALLOW_METHODS: EnvLoader.string(
+      'SECURITY_CORS_ALLOW_METHODS',
+      'POST, OPTIONS'
+    ),
+    ALLOW_HEADERS: EnvLoader.string(
+      'SECURITY_CORS_ALLOW_HEADERS',
+      'Content-Type'
+    ),
+  },
+
   CSP_LOG: {
     SCRIPT_SAMPLE_MAX_LENGTH: EnvLoader.number(
       'SECURITY_CSP_SCRIPT_SAMPLE_MAX_LENGTH',

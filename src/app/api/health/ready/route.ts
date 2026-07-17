@@ -82,7 +82,7 @@ async function handleGet(context: ApiContext) {
     }));
 
   throw new AppError(
-    'Service not ready',
+    API_ERROR_MESSAGES.HEALTH.SERVICE_NOT_READY,
     ErrorCode.NOT_READY,
     STATUS_CODES.SERVICE_UNAVAILABLE,
     notReadyChecks.map((check) => ({
@@ -91,8 +91,8 @@ async function handleGet(context: ApiContext) {
     })),
     true,
     [
-      'Wait briefly and retry the request',
-      'Check /api/health/detailed for specific dependency status',
+      API_ERROR_MESSAGES.HEALTH.SERVICE_NOT_READY_RETRY,
+      API_ERROR_MESSAGES.HEALTH.SERVICE_NOT_READY_CHECK_DETAILED,
     ]
   );
 }
