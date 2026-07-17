@@ -114,7 +114,7 @@ export async function requireAdminAuth(request: Request): Promise<void> {
   const authenticated = await isAdminAuthenticated(request);
   if (!authenticated) {
     throw new AppError(
-      'Unauthorized. Valid admin API key required.',
+      API_ERROR_MESSAGES.AUTH.UNAUTHORIZED_ADMIN_KEY,
       ErrorCode.AUTHENTICATION_ERROR,
       STATUS_CODES.UNAUTHORIZED
     );
@@ -168,7 +168,7 @@ export async function requireAuth(
 
   if (!user) {
     throw new AppError(
-      'Unauthorized. Valid authentication token required.',
+      API_ERROR_MESSAGES.AUTH.UNAUTHORIZED_TOKEN,
       ErrorCode.AUTHENTICATION_ERROR,
       STATUS_CODES.UNAUTHORIZED
     );
@@ -184,7 +184,7 @@ export function verifyResourceOwnership(
 ): void {
   if (userId !== resourceOwnerId) {
     throw new AppError(
-      `Forbidden. You do not have access to this ${resourceType}.`,
+      API_ERROR_MESSAGES.AUTH.FORBIDDEN_RESOURCE(resourceType),
       ErrorCode.AUTHORIZATION_ERROR,
       STATUS_CODES.FORBIDDEN
     );

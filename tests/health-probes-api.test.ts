@@ -75,7 +75,7 @@ describe('/api/health/live GET', () => {
     });
 
     const response = await liveGET(request, {
-      params: {},
+      params: Promise.resolve({}),
     });
     const data = await response.json();
 
@@ -93,7 +93,7 @@ describe('/api/health/live GET', () => {
     });
 
     const response = await liveGET(request, {
-      params: {},
+      params: Promise.resolve({}),
     });
     const data = await response.json();
 
@@ -118,7 +118,7 @@ describe('/api/health/ready GET', () => {
     });
 
     const response = await readyGET(request, {
-      params: {},
+      params: Promise.resolve({}),
     });
     const data = await response.json();
 
@@ -141,7 +141,7 @@ describe('/api/health/ready GET', () => {
     });
 
     const response = await readyGET(request, {
-      params: {},
+      params: Promise.resolve({}),
     });
 
     expect(response.status).toBe(503);
@@ -158,7 +158,7 @@ describe('/api/health/ready GET', () => {
     });
 
     const response = await readyGET(request, {
-      params: {},
+      params: Promise.resolve({}),
     });
 
     expect(response.status).toBe(503);
@@ -176,7 +176,7 @@ describe('/api/health/ready GET', () => {
     });
 
     const response = await readyGET(request, {
-      params: {},
+      params: Promise.resolve({}),
     });
     const data = await response.json();
 

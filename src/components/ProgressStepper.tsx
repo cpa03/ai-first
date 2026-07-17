@@ -15,6 +15,7 @@ import {
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 
 interface Step {
   id: string;
@@ -106,6 +107,32 @@ const ProgressStepperComponent = function ProgressStepper({
     }
     prevCurrentStepRef.current = currentStep;
   }, [currentStep, steps.length]);
+
+  useEffect(() => {
+    if (!onStepClick) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (currentStep < steps.length - 1) {
+          triggerHapticFeedback();
+          onStepClick(currentStep + 1);
+        }
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentStep > 0) {
+          triggerHapticFeedback();
+          onStepClick(currentStep - 1);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onStepClick, currentStep, steps.length]);
 
   return (
     <nav
@@ -280,6 +307,23 @@ const ProgressStepperComponent = function ProgressStepper({
         )}
         className="sr-only"
       />
+      {/* Micro-UX: Keyboard navigation hints for step navigation */}
+      {onStepClick && steps.length > 1 && (
+        <div
+          className="hidden sm:flex items-center justify-center gap-2 mt-2 text-xs text-gray-400"
+          aria-label={PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_ARIA_LABEL}
+        >
+          <span className="flex items-center gap-1.5">
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              ←
+            </kbd>
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              →
+            </kbd>
+            <span>{PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_HINT}</span>
+          </span>
+        </div>
+      )}
     </nav>
   );
 };

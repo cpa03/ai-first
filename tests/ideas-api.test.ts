@@ -48,7 +48,7 @@ describe('/api/ideas POST', () => {
         }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(201);
@@ -84,7 +84,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: '  Valid idea  ' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(201);
       expect(mockCreateIdea).toHaveBeenCalledWith(
@@ -114,7 +114,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: longIdea }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(201);
@@ -143,7 +143,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: exactLengthIdea }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(201);
@@ -158,7 +158,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({}),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -179,7 +179,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: null }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -192,7 +192,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: undefined }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -205,7 +205,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: { text: 'object' } }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -218,7 +218,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: 'Too short' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -239,7 +239,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: longIdea }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -258,7 +258,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: '     ' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -275,7 +275,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: 'Test idea for error handling' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -293,7 +293,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: 'Test idea' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(data.requestId).toMatch(
@@ -320,7 +320,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: 'Test idea for response structure' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(data).toHaveProperty('success');
@@ -356,7 +356,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: '1234567890' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(201);
       expect(mockCreateIdea).toHaveBeenCalled();
@@ -367,7 +367,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: '123456789' }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(400);
       expect(mockCreateIdea).not.toHaveBeenCalled();
@@ -392,7 +392,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: longIdea }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(201);
       expect(mockCreateIdea).toHaveBeenCalled();
@@ -405,7 +405,7 @@ describe('/api/ideas POST', () => {
         json: async () => ({ idea: longIdea }),
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.status).toBe(400);
       expect(mockCreateIdea).not.toHaveBeenCalled();

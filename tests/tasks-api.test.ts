@@ -50,7 +50,9 @@ describe('/api/ideas/[id]/tasks GET', () => {
     // @ts-expect-error - Mocking nextUrl for tests
     nextRequest.nextUrl = new URL(request.url);
 
-    const response = await GET(nextRequest, { params: { id: ideaId } });
+    const response = await GET(nextRequest, {
+      params: Promise.resolve({ id: ideaId }),
+    });
     const data = await response.json();
 
     expect(response.status).toBe(200);
@@ -86,7 +88,9 @@ describe('/api/ideas/[id]/tasks GET', () => {
     // @ts-expect-error - Mocking nextUrl for tests
     nextRequest.nextUrl = new URL(request.url);
 
-    const response = await GET(nextRequest, { params: { id: ideaId } });
+    const response = await GET(nextRequest, {
+      params: Promise.resolve({ id: ideaId }),
+    });
     const data = await response.json();
 
     expect(response.status).toBe(200);

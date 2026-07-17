@@ -42,7 +42,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -60,7 +60,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -74,7 +74,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(400);
@@ -92,7 +92,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -111,7 +111,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -126,7 +126,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -144,7 +144,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -180,7 +180,7 @@ describe('/api/clarify/complete', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const response = await POST(request);
+      const response = await POST(request, { params: Promise.resolve({}) });
 
       expect(response.headers.get('Content-Type')).toBe('application/json');
     });
