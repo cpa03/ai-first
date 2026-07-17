@@ -5,6 +5,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
 import {
   ACTION_COLORS,
   TABLE_PATTERNS,
@@ -120,6 +121,11 @@ export default function DashboardPage() {
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
   const prefersReducedMotion = usePrefersReducedMotion();
+  // Micro-UX: Animated counter for idea count provides a delightful count-up effect
+  // when the dashboard loads, giving users a sense of their data at a glance
+  const animatedIdeaCount = useAnimatedCounter(pagination?.total || 0, {
+    duration: 600,
+  });
 
   // Set CSS custom properties for dashboard animation from config
   useEffect(() => {
@@ -564,7 +570,9 @@ export default function DashboardPage() {
             {DASHBOARD_PAGE_CONTENT.HEADING}
           </h1>
           <p className="text-gray-600 mt-1">
-            {pagination?.total || 0}{' '}
+            <span className="tabular-nums font-medium">
+              {animatedIdeaCount}
+            </span>{' '}
             {pagination?.total !== 1
               ? DASHBOARD_PAGE_CONTENT.IDEA_COUNT.PLURAL
               : DASHBOARD_PAGE_CONTENT.IDEA_COUNT.SINGULAR}{' '}
