@@ -25,6 +25,7 @@ import {
   ANIMATION_DELAYS,
   DASHBOARD_LABELS,
   DASHBOARD_TAILWIND,
+  TEXT_SIZE_CLASSES,
   STATUS_CODES,
   IDEA_STATUS_CONFIG,
   SIZES,
@@ -1095,10 +1096,14 @@ export default function DashboardPage() {
         <div className="mt-4 flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg animate-fade-in">
           <div className="flex items-center gap-4 text-xs text-gray-500">
             <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
-              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[0]}
               </kbd>
-              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[1]}
               </kbd>
               <span className="text-gray-400">
@@ -1106,7 +1111,9 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
-              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_KEY}
               </kbd>
               <span className="text-gray-400">
@@ -1114,7 +1121,9 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
-              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_KEY}
               </kbd>
               <span className="text-gray-400">
@@ -1122,7 +1131,9 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
-              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_KEY}
               </kbd>
               <span className="text-gray-400">
@@ -1130,7 +1141,9 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
-              <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
               </kbd>
               <span className="text-gray-400">

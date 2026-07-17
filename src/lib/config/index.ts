@@ -545,6 +545,32 @@ export {
   type ValidationLimits,
 } from './validation-limits';
 
+// UI Text Sizes Configuration
+// Centralizes all hardcoded text sizes used across components
+export {
+  SMALL_TEXT_SIZES,
+  MEDIUM_TEXT_SIZES,
+  TEXT_SIZE_CLASSES,
+  TEXT_SIZE_PRESETS,
+  type SmallTextSizes,
+  type MediumTextSizes,
+} from './ui-text-sizes';
+
+// UI Dimensions Configuration
+// Centralizes all hardcoded pixel dimensions used across components
+export {
+  INPUT_HEIGHTS,
+  CONTAINER_WIDTHS as UI_CONTAINER_WIDTHS,
+  MIN_SIZES,
+  INPUT_HEIGHT_CLASSES,
+  CONTAINER_WIDTH_CLASSES,
+  MIN_SIZE_CLASSES,
+  TABLE_DIMENSIONS,
+  TABLE_CLASSES as UI_TABLE_CLASSES,
+  type InputHeights,
+  type MinSizes,
+} from './ui-dimensions';
+
 // Animation Values Configuration
 // Centralizes all hardcoded animation values used throughout the application
 export {

@@ -255,6 +255,8 @@ export const REFERRAL_LINK_LABELS = {
   COPY_ARIA_LABEL: 'Copy referral link',
   /** Copy button toast message */
   COPY_TOAST_MESSAGE: 'Referral link copied!',
+  /** Code element title attribute */
+  CODE_TITLE: 'Click or press Enter/Space to select all',
 } as const;
 
 /**

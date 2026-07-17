@@ -22,6 +22,7 @@ import {
   TYPOGRAPHY_CLASSES,
   SPACING_CLASSES,
   ROUNDED_CLASSES,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -201,19 +202,25 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         aria-hidden="true"
       >
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd
+            className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+          >
             [
           </kbd>
           expand all
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd
+            className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+          >
             ]
           </kbd>
           collapse all
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd
+            className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
+          >
             Space
           </kbd>
           toggle task
