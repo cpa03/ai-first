@@ -10,6 +10,7 @@ import {
 } from '@/lib/validation';
 import { triggerHapticFeedback } from '@/lib/utils';
 import {
+  COMPONENT_CONFIG,
   MESSAGES,
   PLACEHOLDERS,
   INPUT_STYLES,
@@ -806,20 +807,29 @@ function ClarificationFlow({
           <div className="mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs text-gray-400 animate-fade-in">
             <span className="inline-flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
               <span className="text-gray-500 font-medium">Jump to:</span>
-              {questions.slice(0, 9).map((_, index) => (
-                <span key={index} className="inline-flex items-center">
-                  <kbd
-                    className={
-                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
-                    }
-                  >
-                    {index + 1}
-                  </kbd>
-                  {index < Math.min(questions.length, 9) - 1 && (
-                    <span className="text-gray-300 mx-0.5">/</span>
-                  )}
-                </span>
-              ))}
+              {questions
+                .slice(
+                  0,
+                  COMPONENT_CONFIG.CLARIFICATION_FLOW.MAX_KEYBOARD_SHORTCUTS
+                )
+                .map((_, index) => (
+                  <span key={index} className="inline-flex items-center">
+                    <kbd
+                      className={
+                        UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                      }
+                    >
+                      {index + 1}
+                    </kbd>
+                    {index <
+                      Math.min(
+                        questions.length,
+                        COMPONENT_CONFIG.CLARIFICATION_FLOW
+                          .MAX_KEYBOARD_SHORTCUTS
+                      ) -
+                        1 && <span className="text-gray-300 mx-0.5">/</span>}
+                  </span>
+                ))}
             </span>
           </div>
         )}

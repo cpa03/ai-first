@@ -117,7 +117,8 @@ function ScrollToTopComponent({
     }
   }, [smooth, prefersReducedMotion]);
 
-  const isNearBottom = scrollProgress >= 85;
+  const isNearBottom =
+    scrollProgress >= UI_TIMING_CONFIG.SCROLL_NEAR_BOTTOM_THRESHOLD;
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {

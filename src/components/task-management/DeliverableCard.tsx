@@ -5,6 +5,7 @@ import type { Task } from '@/lib/db';
 import { TaskItem } from './TaskItem';
 import type { TaskStatus } from '@/types/task';
 import {
+  COMPONENT_CONFIG,
   DELIVERABLE_STYLES,
   DELIVERABLE_CARD_STYLES,
   DELIVERABLE_PROGRESS_CONFIG,
@@ -79,7 +80,7 @@ function DeliverableCardComponent({
           behavior: prefersReducedMotion ? 'auto' : 'smooth',
           block: 'nearest',
         });
-      }, 100);
+      }, COMPONENT_CONFIG.DELIVERABLE_CARD.EXPAND_SCROLL_DELAY_MS);
       return () => clearTimeout(timer);
     }
     prevExpandedRef.current = isExpanded;
