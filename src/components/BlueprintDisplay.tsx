@@ -258,42 +258,34 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               {MESSAGES.BLUEPRINT.FOOTER_TEXT}
             </p>
             <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
-              <Tooltip
-                content={MESSAGES.BLUEPRINT.TOOLTIP_START_OVER}
-                position="top"
+              <Button
+                variant="secondary"
+                fullWidth={false}
+                aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_START_OVER}
+                disabled
+                disabledTooltip={MESSAGES.BLUEPRINT.TOOLTIP_START_OVER}
               >
-                <Button
-                  variant="secondary"
-                  fullWidth={false}
-                  aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_START_OVER}
-                  disabled
+                {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
+                <span
+                  className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
                 >
-                  {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
-                  <span
-                    className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
-                  >
-                    {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
-                  </span>
-                </Button>
-              </Tooltip>
-              <Tooltip
-                content={MESSAGES.BLUEPRINT.TOOLTIP_EXPORT}
-                position="top"
+                  {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
+                </span>
+              </Button>
+              <Button
+                variant="primary"
+                fullWidth={false}
+                aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_EXPORT}
+                disabled
+                disabledTooltip={MESSAGES.BLUEPRINT.TOOLTIP_EXPORT}
               >
-                <Button
-                  variant="primary"
-                  fullWidth={false}
-                  aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_EXPORT}
-                  disabled
+                {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
+                <span
+                  className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
                 >
-                  {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
-                  <span
-                    className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
-                  >
-                    {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
-                  </span>
-                </Button>
-              </Tooltip>
+                  {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
+                </span>
+              </Button>
             </div>
           </div>
         </footer>
