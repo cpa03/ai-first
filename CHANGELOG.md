@@ -66,6 +66,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added BroCula browser console audit report
 - Modularized remaining hardcoded values in components
 - Removed stale duplicate agent directory and updated docs index
+- Removed tracked `.jules/sentinel.md` from git (already in .gitignore)
+- Archived older browser console audit (2026-07-15) to audit/archive/
+- Updated docs/README.md audit references
 
 ## [0.1.1] - 2026-02-13
 
