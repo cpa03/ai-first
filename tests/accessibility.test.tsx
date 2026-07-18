@@ -7,7 +7,7 @@
  * Run with: npm run test:a11y
  */
 
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 
@@ -172,6 +172,39 @@ describe('Accessibility Tests - WCAG 2.1 Compliance', () => {
       );
       const input = screen.getByRole('textbox');
       expect(input).toHaveAttribute('required');
+    });
+
+    it('should invoke custom event handlers passed in props', () => {
+      const handleBlur = jest.fn();
+      const handleFocus = jest.fn();
+      const handleKeyDown = jest.fn();
+
+      render(
+        <InputWithValidation
+          label="Test Prop Handlers"
+          name="prop_handlers"
+          type="text"
+          value=""
+          onChange={jest.fn()}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+          onKeyDown={handleKeyDown}
+        />
+      );
+
+      const input = screen.getByRole('textbox');
+
+      // Trigger focus using fireEvent to ensure React compatibility
+      fireEvent.focus(input);
+      expect(handleFocus).toHaveBeenCalled();
+
+      // Trigger keydown using fireEvent
+      fireEvent.keyDown(input, { key: 'a' });
+      expect(handleKeyDown).toHaveBeenCalled();
+
+      // Trigger blur using fireEvent
+      fireEvent.blur(input);
+      expect(handleBlur).toHaveBeenCalled();
     });
   });
 

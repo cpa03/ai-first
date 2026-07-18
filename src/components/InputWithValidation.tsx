@@ -116,14 +116,22 @@ const InputWithValidationComponent = forwardRef<
       }
     }, [currentValue, multiline, autoResize, adjustTextareaHeight]);
 
-    const handleBlur = useCallback(() => {
+    const { onBlur: propOnBlur, onFocus: propOnFocus, onKeyDown: propOnKeyDown } = props;
+
+    const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setTouched(true);
       setIsFocused(false);
-    }, []);
+      if (propOnBlur) {
+        propOnBlur(e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>);
+      }
+    }, [propOnBlur]);
 
-    const handleFocus = useCallback(() => {
+    const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setIsFocused(true);
-    }, []);
+      if (propOnFocus) {
+        propOnFocus(e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>);
+      }
+    }, [propOnFocus]);
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -143,8 +151,11 @@ const InputWithValidationComponent = forwardRef<
           triggerHapticFeedback();
           setPasswordVisible((prev) => !prev);
         }
+        if (propOnKeyDown) {
+          propOnKeyDown(e as React.KeyboardEvent<HTMLInputElement & HTMLTextAreaElement>);
+        }
       },
-      [onEnterPress, showPasswordToggle]
+      [onEnterPress, showPasswordToggle, propOnKeyDown]
     );
 
     // Trigger shake animation when validation error appears
@@ -326,9 +337,6 @@ const InputWithValidationComponent = forwardRef<
               id={props.id}
               value={value}
               onChange={handleChange}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              onKeyDown={handleKeyDown}
               className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''} ${textareaResizeClass} ${INPUT_HEIGHT_CLASSES.TEXTAREA} overflow-hidden`}
               aria-invalid={isInvalid}
               aria-required={props.required}
@@ -340,6 +348,9 @@ const InputWithValidationComponent = forwardRef<
                     : undefined
               }
               {...props}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+              onKeyDown={handleKeyDown}
             />
           ) : (
             <input
@@ -347,9 +358,6 @@ const InputWithValidationComponent = forwardRef<
               id={props.id}
               value={value}
               onChange={handleChange}
-              onBlur={handleBlur}
-              onFocus={handleFocus}
-              onKeyDown={handleKeyDown}
               className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''}`}
               type={
                 showPasswordToggle && inputType === 'password'
@@ -368,6 +376,9 @@ const InputWithValidationComponent = forwardRef<
                     : undefined
               }
               {...props}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
+              onKeyDown={handleKeyDown}
             />
           )}
 
