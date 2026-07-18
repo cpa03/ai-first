@@ -23,6 +23,7 @@ import {
   SVG_VIEWBOX,
   INPUT_HEIGHT_CLASSES,
   TRANSITION_CLASSES,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -566,7 +567,7 @@ const InputWithValidationComponent = forwardRef<
                   className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative`}
                   role="progressbar"
                   aria-valuenow={charCount}
-                  aria-valuemin={0}
+                  aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
                   aria-valuemax={maxLength}
                   aria-label={INPUT_VALIDATION_LABELS.CHAR_LIMIT_PROGRESS_ARIA}
                 >

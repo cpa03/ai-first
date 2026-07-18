@@ -17,6 +17,7 @@ import {
   HTTP_HEADERS,
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -452,8 +453,8 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 style={{ width: `${writingProgress}%` }}
                 role="progressbar"
                 aria-valuenow={Math.round(writingProgress)}
-                aria-valuemin={0}
-                aria-valuemax={100}
+                aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
+                aria-valuemax={PROGRESS_BAR_A11Y.VALUE_MAX}
                 aria-label={IDEA_INPUT_LABELS.WRITING_PROGRESS_ARIA_LABEL}
               />
             </div>

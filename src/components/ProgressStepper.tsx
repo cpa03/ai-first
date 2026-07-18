@@ -12,6 +12,7 @@ import {
   TEXT_COLOR_CLASSES,
   TEXT_COLORS,
   BG_COLORS,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -181,8 +182,8 @@ const ProgressStepperComponent = function ProgressStepper({
           className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-2"
           role="progressbar"
           aria-valuenow={animatedProgress}
-          aria-valuemin={0}
-          aria-valuemax={100}
+          aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
+          aria-valuemax={PROGRESS_BAR_A11Y.VALUE_MAX}
           aria-label={PROGRESS_STEPPER_LABELS.PROGRESS_ARIA_LABEL(
             completedCount,
             steps.length,
@@ -298,8 +299,8 @@ const ProgressStepperComponent = function ProgressStepper({
       <div
         role="progressbar"
         aria-valuenow={progressPercentage}
-        aria-valuemin={0}
-        aria-valuemax={100}
+        aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
+        aria-valuemax={PROGRESS_BAR_A11Y.VALUE_MAX}
         aria-label={PROGRESS_STEPPER_LABELS.PROGRESS_ARIA_LABEL(
           completedCount,
           steps.length,

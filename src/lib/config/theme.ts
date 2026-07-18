@@ -1663,6 +1663,31 @@ export const ROUNDED_CLASSES = {
 } as const;
 
 /**
+ * Progress Bar Accessibility Constants
+ * Centralizes hardcoded ARIA attribute values for progress bars
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ *
+ * Usage:
+ * ```typescript
+ * import { PROGRESS_BAR_A11Y } from '@/lib/config';
+ * <div aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN} aria-valuemax={PROGRESS_BAR_A11Y.VALUE_MAX}>...</div>
+ * ```
+ */
+export const PROGRESS_BAR_A11Y = {
+  /**
+   * Minimum value for aria-valuemin
+   * Replaces hardcoded aria-valuemin={0} in 6+ components
+   */
+  VALUE_MIN: 0,
+
+  /**
+   * Maximum value for aria-valuemax
+   * Replaces hardcoded aria-valuemax={100} in 4+ components
+   */
+  VALUE_MAX: 100,
+} as const;
+
+/**
  * Combined Tailwind Utility Classes
  * Provides all utility classes in a single object for convenience
  *

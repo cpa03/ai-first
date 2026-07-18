@@ -10,6 +10,7 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLORS,
   BG_COLORS,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config';
 
 interface PasswordRequirement {
@@ -157,7 +158,7 @@ function PasswordRequirementsChecklistComponent({
           className={`h-1.5 ${progressBgColor} rounded-full overflow-hidden ${TRANSITION_CLASSES.COLOR_SLOW}`}
           role="progressbar"
           aria-valuenow={metCount}
-          aria-valuemin={0}
+          aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
           aria-valuemax={total}
           aria-label={`Password requirements progress: ${metCount} of ${total} met`}
         >

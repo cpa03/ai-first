@@ -16,6 +16,7 @@ import {
   SHADOW_CLASSES,
   TRANSITION_CLASSES,
   TYPOGRAPHY_CLASSES,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config/theme';
 import {
   USER_ONBOARDING_LABELS,
@@ -396,8 +397,8 @@ export default function UserOnboarding() {
           style={{ width: `${progress}%` }}
           role="progressbar"
           aria-valuenow={progress}
-          aria-valuemin={0}
-          aria-valuemax={100}
+          aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
+          aria-valuemax={PROGRESS_BAR_A11Y.VALUE_MAX}
           aria-label={USER_ONBOARDING_LABELS.PROGRESS_ARIA_LABEL}
         />
 
