@@ -228,25 +228,17 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Phase 1 Scoring Report - 2026-07-16 (Latest)](./audit/PHASE1-SCORING-REPORT.md) - Comprehensive scoring and diagnostic report
-- [Phase 2 Feature Hardening - 2026-07-16](./audit/PHASE2-FEATURE-HARDENING.md) - Feature hardening audit
-- [Phase 3 Strategic Expansion - 2026-07-16](./audit/PHASE3-STRATEGIC-EXPANSION.md) - Strategic expansion audit
+- [Phase 1 Comprehensive Audit - 2026-07-15](./audit/phase1-comprehensive-audit-2026-07-15.md) - Phase 1 comprehensive audit and scoring
+- [Phase 2 Feature Hardening - 2026-07-15](./audit/phase2-feature-hardening-20260715.md) - Phase 2 feature hardening audit
+- [Phase 3 Strategic Expansion - 2026-07-15](./audit/phase3-strategic-expansion-20260715.md) - Phase 3 strategic expansion audit
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
 - [Issue: Structured Logging](./audit/ISSUE-04-structured-logging.md) - Structured logging implementation
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
 - [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
-- [Browser Console Audit - 2026-07-15](./audit/browser-console-audit-2026-07-15.md) - Latest browser console and Lighthouse audit
-- [Browser Console Audit - 2026-07-16](./audit/brocula-browser-audit-2026-07-16.md) - BroCula browser audit
-- [Browser Console Audit - 2026-07-14](./audit/browser-audit-2026-07-14.md) - Browser console and Lighthouse audit
-- [BroCula Browser Lighthouse Report - 2026-07-14](./audit/brocula-browser-lighthouse-report-2026-07-14.md) - BroCula Lighthouse performance report
-- [Browser Console Audit - 2026-07-14 (BroCula)](./audit/brocula-browser-audit-20260714.md) - BroCula browser console audit
-- [Browser Console Audit - 2026-07-13](./audit/browser-console-audit-2026-07-13.md) - Browser console and Lighthouse audit
-- [Browser Console Audit - 2026-07-13 (BroCula)](./audit/brocula-browser-console-audit-20260713.md) - BroCula browser console audit report
-- [Phase 1 Comprehensive Audit - 2026-07-15](./audit/phase1-comprehensive-audit-2026-07-15.md) - Phase 1 comprehensive audit
-- [Phase 2 Feature Hardening - 2026-07-15](./audit/phase2-feature-hardening-20260715.md) - Phase 2 feature hardening audit
-- [Phase 3 Strategic Expansion - 2026-07-15](./audit/phase3-strategic-expansion-20260715.md) - Phase 3 strategic expansion audit
+- [Browser Console Audit - 2026-07-16](./audit/brocula-browser-audit-2026-07-16.md) - BroCula browser audit (latest)
+- [Browser Console Audit - 2026-07-15](./audit/browser-console-audit-2026-07-15.md) - Browser console and Lighthouse audit
 - [Ultrawork Summary - 2026-07-15](./audit/ultrawork-summary-20260715.md) - Ultrawork session summary
 - [Flexy Modularization Audit](./flexy-modularity-audit.md) - Code modularization assessment
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
