@@ -29,6 +29,8 @@ import {
   SIGNUP_PAGE_CONFIG,
   UI_CONFIG,
   PROGRESS_BAR_A11Y,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 import { useScrollToError } from '@/hooks/useScrollToError';
 
@@ -60,14 +62,16 @@ function PasswordMatchIndicator({
   return (
     <div
       className={`flex items-center gap-2 text-sm transition-all duration-200 animate-fade-in ${
-        matchStatus === 'match' ? 'text-green-700' : 'text-amber-600'
+        matchStatus === 'match'
+          ? TEXT_COLORS.SUCCESS_DARK
+          : TEXT_COLORS.WARNING_LIGHT
       }`}
       role="status"
       aria-live="polite"
     >
       {matchStatus === 'match' ? (
         <svg
-          className="w-4 h-4 text-green-700"
+          className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_DARK}`}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
@@ -82,7 +86,7 @@ function PasswordMatchIndicator({
         </svg>
       ) : (
         <svg
-          className="w-4 h-4 text-amber-500"
+          className={`w-4 h-4 ${TEXT_COLORS.WARNING_MEDIUM}`}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
@@ -243,7 +247,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <span className={`text-xs ${config.textColor}`}>{config.label}</span>
         {celebrating && !prefersReducedMotion && (
           <svg
-            className="w-4 h-4 text-green-600 animate-in zoom-in duration-200"
+            className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in duration-200`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -271,11 +275,13 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       )}
       {strength === 'strong' && (
         <div
-          className="flex items-center gap-1.5 text-xs text-green-700 font-medium animate-fade-in"
+          className={`flex items-center gap-1.5 text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium animate-fade-in`}
           role="status"
           aria-live="polite"
         >
-          <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-green-100">
+          <span
+            className={`inline-flex items-center justify-center w-4 h-4 rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
+          >
             <svg
               className="w-2.5 h-2.5"
               fill="none"
@@ -459,9 +465,11 @@ export default function SignupPage() {
         <div className={`${CONTAINER_WIDTHS.XS} w-full text-center space-y-6`}>
           {/* Micro-UX: Staggered entrance animation for signup success creates a */}
           {/* delightful celebration moment when account creation succeeds */}
-          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 animate-success-pop">
+          <div
+            className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
+          >
             <svg
-              className="h-6 w-6 text-green-700"
+              className={`h-6 w-6 ${TEXT_COLORS.SUCCESS_DARK}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

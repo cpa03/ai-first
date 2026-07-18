@@ -83,7 +83,11 @@ export const BORDER_COLORS = {
   ERROR_FOCUS: 'focus-visible:border-red-500',
   SUCCESS: 'border-green-500',
   SUCCESS_LIGHT: 'border-green-100',
+  SUCCESS_LIGHTER: 'border-green-200',
+  SUCCESS_MEDIUM: 'border-green-300',
   WARNING: 'border-amber-500',
+  WARNING_LIGHT: 'border-amber-200',
+  INFO: 'border-blue-200',
 } as const;
 
 /**
@@ -98,6 +102,9 @@ export const RING_COLORS = {
 
   /** Success ring color */
   SUCCESS: 'focus-visible:ring-green-500',
+
+  /** Success medium ring color */
+  SUCCESS_MEDIUM: 'focus-visible:ring-green-500',
 } as const;
 
 /**
@@ -120,6 +127,10 @@ export const TEXT_COLORS = {
   SUCCESS_VERY_LIGHT: 'text-green-400',
   WARNING: 'text-amber-700',
   WARNING_LIGHT: 'text-amber-600',
+  WARNING_MEDIUM: 'text-amber-500',
+  INFO: 'text-blue-800',
+  INFO_LIGHT: 'text-blue-600',
+  INFO_DARK: 'text-blue-900',
   BRAND: 'text-primary-600',
   BRAND_LIGHT: 'text-primary-500',
   HOVER_SECONDARY: 'hover:text-gray-600',
@@ -139,9 +150,13 @@ export const BG_COLORS = {
   SUCCESS: 'bg-green-600',
   SUCCESS_LIGHT: 'bg-green-100',
   SUCCESS_LIGHTER: 'bg-green-200',
+  SUCCESS_VERY_LIGHT: 'bg-green-50',
   WARNING: 'bg-amber-600',
   WARNING_LIGHT: 'bg-amber-100',
+  WARNING_LIGHTER: 'bg-amber-50',
   ERROR: 'bg-red-500',
+  INFO: 'bg-blue-100',
+  INFO_LIGHT: 'bg-blue-50',
   PROGRESS_NEUTRAL: 'bg-gray-200',
   OVERLAY: 'bg-black/40',
   OVERLAY_DARK: 'bg-black/50',
@@ -1272,11 +1287,26 @@ export const TEXT_COLOR_CLASSES = {
   /** Success dark text (green-700) */
   SUCCESS_DARK: 'text-green-700',
 
+  /** Success medium text (green-600) */
+  SUCCESS_MEDIUM: 'text-green-600',
+
   /** Warning text (amber-700) */
   WARNING: 'text-amber-700',
 
   /** Warning light text (amber-600) */
   WARNING_LIGHT: 'text-amber-600',
+
+  /** Warning medium text (amber-500) */
+  WARNING_MEDIUM: 'text-amber-500',
+
+  /** Info text (blue-800) */
+  INFO: 'text-blue-800',
+
+  /** Info light text (blue-600) */
+  INFO_LIGHT: 'text-blue-600',
+
+  /** Info dark text (blue-900) */
+  INFO_DARK: 'text-blue-900',
 
   /** Inverse text (white) */
   INVERSE: 'text-white',
@@ -1325,11 +1355,20 @@ export const BG_COLOR_CLASSES = {
   /** Success background (green-600) */
   SUCCESS: 'bg-green-600',
 
+  /** Success light background (green-100) */
+  SUCCESS_LIGHT: 'bg-green-100',
+
   /** Error background (red-500) */
   ERROR: 'bg-red-500',
 
   /** Warning background (amber-600) */
   WARNING: 'bg-amber-600',
+
+  /** Info background (blue-100) */
+  INFO: 'bg-blue-100',
+
+  /** Info light background (blue-50) */
+  INFO_LIGHT: 'bg-blue-50',
 
   /** Transparent background */
   TRANSPARENT: 'bg-transparent',
@@ -1368,6 +1407,12 @@ export const BORDER_COLOR_CLASSES = {
 
   /** Warning border (amber-500) */
   WARNING: 'border-amber-500',
+
+  /** Warning light border (amber-200) */
+  WARNING_LIGHT: 'border-amber-200',
+
+  /** Info border (blue-200) */
+  INFO: 'border-blue-200',
 
   /** No border */
   NONE: 'border-0',

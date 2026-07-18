@@ -595,13 +595,13 @@ function ClarificationFlow({
                     aria-label={CLARIFICATION_FLOW_LABELS.PASTE_ARIA_LABEL}
                     className={`${TRANSITION_CLASSES.DEFAULT} ${
                       pasteSuccess
-                        ? 'text-green-600 bg-green-50 hover:bg-green-100'
+                        ? `${TEXT_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} hover:${BG_COLORS.SUCCESS_LIGHT}`
                         : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                     }`}
                   >
                     {pasteSuccess ? (
                       <svg
-                        className="w-4 h-4 mr-1 text-green-600"
+                        className={`w-4 h-4 mr-1 ${TEXT_COLORS.SUCCESS_MEDIUM}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"
@@ -704,7 +704,7 @@ function ClarificationFlow({
                 </div>
                 {currentAnswer && (
                   <p
-                    className="text-sm text-green-700 flex items-center gap-1.5 animate-fade-in"
+                    className={`text-sm ${TEXT_COLORS.SUCCESS_DARK} flex items-center gap-1.5 animate-fade-in`}
                     role="status"
                     aria-live="polite"
                   >

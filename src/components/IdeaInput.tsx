@@ -26,6 +26,8 @@ import {
   GRADIENT_PATTERNS,
   TYPOGRAPHY_CLASSES,
   KBD_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config/theme';
 import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
@@ -355,11 +357,13 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         {milestoneReached && (
           <div className="relative">
             <div
-              className="flex items-center gap-2 text-sm text-green-700 font-medium animate-fade-in"
+              className={`flex items-center gap-2 text-sm ${TEXT_COLORS.SUCCESS_DARK} font-medium animate-fade-in`}
               role="status"
               aria-live="polite"
             >
-              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-100 animate-success-pop">
+              <span
+                className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
+              >
                 <svg
                   className="w-3 h-3"
                   fill="none"
@@ -503,13 +507,13 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                   aria-label={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
                   className={`${TRANSITION_CLASSES.DEFAULT} ${
                     pasteSuccess
-                      ? 'text-green-600 bg-green-50 hover:bg-green-100'
+                      ? `${TEXT_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} hover:${BG_COLORS.SUCCESS_LIGHT}`
                       : `${TEXT_COLOR_CLASSES.MUTED} hover:text-gray-700 hover:bg-gray-100`
                   }`}
                 >
                   {pasteSuccess ? (
                     <svg
-                      className="w-4 h-4 mr-1 text-green-600"
+                      className={`w-4 h-4 mr-1 ${TEXT_COLORS.SUCCESS_MEDIUM}`}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
