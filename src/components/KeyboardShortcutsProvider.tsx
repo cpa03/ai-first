@@ -10,6 +10,8 @@ import {
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_PROVIDER_LABELS,
   COMPONENT_CONFIG,
+  GRAY_TEXT_COMBOS,
+  FOCUS_RING_PATTERNS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -95,7 +97,7 @@ function KeyboardShortcutsButtonComponent() {
     >
       <button
         onClick={openHelp}
-        className={`p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${showDiscoverPulse ? 'animate-discover-pulse' : ''}`}
+        className={`p-2 ${GRAY_TEXT_COMBOS.MUTED_HOVER} hover:bg-gray-100 rounded-lg transition-colors ${FOCUS_RING_PATTERNS.DEFAULT} ${showDiscoverPulse ? 'animate-discover-pulse' : ''}`}
         aria-label={KEYBOARD_SHORTCUTS_PROVIDER_LABELS.HELP_BUTTON_ARIA_LABEL}
         type="button"
       >

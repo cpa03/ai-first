@@ -615,3 +615,28 @@ export {
   ANIMATION_PRESETS,
   type AnimationValues,
 } from './animation-values';
+
+// Remaining Hardcoded Styles Configuration
+// Centralizes remaining hardcoded Tailwind classes throughout components
+export {
+  GRAY_CLASSES,
+  GRAY_TEXT_COMBOS,
+  GRAY_BG_COMBOS,
+  FOCUS_RING_PATTERNS,
+  BUTTON_HOVER_PATTERNS,
+  ELEMENT_PATTERNS,
+  WHITE_BG_PATTERNS,
+  LAYOUT_PATTERNS,
+  ANIMATION_PATTERNS,
+  TRANSITION_PATTERNS,
+  TYPOGRAPHY_PATTERNS,
+  SPACING_PATTERNS,
+  BORDER_PATTERNS,
+  SHADOW_PATTERNS,
+  ROUNDED_PATTERNS,
+  POSITION_PATTERNS,
+  FLEX_PATTERNS,
+  GRID_PATTERNS,
+  COMPONENT_PATTERNS,
+  REMAINING_STYLES,
+} from './remaining-styles';
