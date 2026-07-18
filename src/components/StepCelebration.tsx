@@ -22,6 +22,7 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   TRANSITION_CLASSES,
+  WHITE_BG_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -148,7 +149,7 @@ function StepCelebrationComponent({
       >
         <div
           className={`
-          absolute inset-0 bg-white/30 backdrop-blur-[${STEP_CELEBRATION_TAILWIND.BACKDROP_BLUR}]
+absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRATION_TAILWIND.BACKDROP_BLUR}]
           ${TRANSITION_CLASSES.COLOR_SLOW}
           ${isExiting ? 'opacity-0' : 'opacity-100'}
         `}

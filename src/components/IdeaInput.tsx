@@ -18,6 +18,8 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
   PROGRESS_BAR_A11Y,
+  GRAY_CLASSES,
+  GRAY_TEXT_COMBOS,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -447,7 +449,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
 
         {writingProgress > 5 && (
           <div className="space-y-2">
-            <div className="relative h-1.5 bg-gray-200 rounded-full overflow-hidden">
+            <div
+              className={`relative h-1.5 ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`}
+            >
               <div
                 className={`absolute left-0 top-0 h-full ${TRANSITION_CLASSES.SLOW_EASE_OUT} rounded-full ${
                   idea.trim().length >= MIN_IDEA_LENGTH
@@ -508,7 +512,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                   className={`${TRANSITION_CLASSES.DEFAULT} ${
                     pasteSuccess
                       ? `${TEXT_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} hover:${BG_COLORS.SUCCESS_LIGHT}`
-                      : `${TEXT_COLOR_CLASSES.MUTED} hover:text-gray-700 hover:bg-gray-100`
+                      : `${TEXT_COLOR_CLASSES.MUTED} ${GRAY_TEXT_COMBOS.SUBTLE}`
                   }`}
                 >
                   {pasteSuccess ? (
@@ -553,7 +557,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 size="sm"
                 onClick={handleClear}
                 aria-label={IDEA_INPUT_LABELS.CLEAR_ARIA_LABEL}
-                className={`${TEXT_COLOR_CLASSES.MUTED} hover:text-gray-700 hover:bg-gray-100`}
+                className={`${TEXT_COLOR_CLASSES.MUTED} ${GRAY_TEXT_COMBOS.SUBTLE}`}
               >
                 {IDEA_INPUT_LABELS.CLEAR_BUTTON}
               </Button>
