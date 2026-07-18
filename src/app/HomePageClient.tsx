@@ -7,7 +7,12 @@ import ShareButton from '@/components/ShareButton';
 import Skeleton from '@/components/Skeleton';
 import { HOME_PAGE_CONFIG } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
-import { CARD_PATTERNS } from '@/lib/config/theme';
+import {
+  CARD_PATTERNS,
+  BG_COLORS,
+  TEXT_COLORS,
+  BORDER_COLORS,
+} from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 // Dynamic imports for heavy components to reduce initial bundle size
@@ -181,20 +186,22 @@ export default function HomePageClient() {
         <section
           aria-live="polite"
           aria-labelledby="idea-confirmation-heading"
-          className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6"
+          className={`mt-8 ${BG_COLORS.INFO_LIGHT} ${BORDER_COLORS.INFO} rounded-lg p-6`}
         >
           <h3
             id="idea-confirmation-heading"
-            className="text-lg font-semibold text-blue-900 mb-2"
+            className={`text-lg font-semibold ${TEXT_COLORS.INFO_DARK} mb-2`}
           >
             {HOME_PAGE_CONFIG.CONFIRMATION.LABEL}
           </h3>
-          <p className="text-blue-900">{idea}</p>
+          <p className={TEXT_COLORS.INFO_DARK}>{idea}</p>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-4">
-            <p className="text-sm text-blue-800">
+            <p className={`text-sm ${TEXT_COLORS.INFO}`}>
               {HOME_PAGE_CONFIG.CONFIRMATION.SAVED_WITH_ID}
               {` `}
-              <code className="bg-blue-100 px-1.5 py-0.5 rounded text-blue-900 font-mono text-xs">
+              <code
+                className={`${BG_COLORS.INFO} px-1.5 py-0.5 rounded ${TEXT_COLORS.INFO_DARK} font-mono text-xs`}
+              >
                 {ideaId}
               </code>
             </p>
@@ -212,7 +219,7 @@ export default function HomePageClient() {
               }
             />
           </div>
-          <p className="text-sm text-blue-600 mt-3">
+          <p className={`text-sm ${TEXT_COLORS.INFO_LIGHT} mt-3`}>
             {HOME_PAGE_CONFIG.CONFIRMATION.REDIRECTING}
           </p>
         </section>

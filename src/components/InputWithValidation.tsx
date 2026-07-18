@@ -408,7 +408,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className={`w-5 h-5 text-red-700 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    className={`w-5 h-5 ${TEXT_COLORS.ERROR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -553,7 +553,10 @@ const InputWithValidationComponent = forwardRef<
             )}
             {isInvalid && (
               <div role="alert" aria-live="assertive">
-                <p id={`${props.id}-error`} className="text-sm text-red-700">
+                <p
+                  id={`${props.id}-error`}
+                  className={`text-sm ${TEXT_COLORS.ERROR}`}
+                >
                   {error}
                 </p>
               </div>

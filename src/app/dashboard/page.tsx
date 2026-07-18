@@ -30,6 +30,10 @@ import {
   IDEA_STATUS_CONFIG,
   SIZES,
   TABLE_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
+  BORDER_COLORS,
+  RING_COLORS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
@@ -829,10 +833,10 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
                   <div
-                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-amber-50 border border-amber-200 transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float'}`}
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float'}`}
                   >
                     <svg
-                      className="w-7 h-7 text-amber-500"
+                      className={`w-7 h-7 ${TEXT_COLORS.WARNING_MEDIUM}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox={SVG_VIEWBOX.STANDARD}
@@ -910,7 +914,7 @@ export default function DashboardPage() {
                 >
                   <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-primary-300 to-green-300" />
                   <svg
-                    className="w-4 h-4 text-green-400 -ml-1"
+                    className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_VERY_LIGHT} -ml-1`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -931,10 +935,10 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }}
                 >
                   <div
-                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-green-50 border border-green-200 transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float-delay-2'}`}
+                    className={`w-14 h-14 flex items-center justify-center rounded-2xl ${BG_COLORS.SUCCESS_VERY_LIGHT} ${BORDER_COLORS.SUCCESS_LIGHTER} transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float-delay-2'}`}
                   >
                     <svg
-                      className="w-7 h-7 text-green-500"
+                      className={`w-7 h-7 ${TEXT_COLORS.SUCCESS_LIGHT}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox={SVG_VIEWBOX.STANDARD}
@@ -1264,8 +1268,8 @@ export default function DashboardPage() {
                 placeholder={deleteModal.idea.title}
                 className={`w-full px-3 py-2 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-colors ${
                   deleteConfirmText === deleteModal.idea.title
-                    ? 'border-green-300 bg-green-50 focus:ring-green-500 focus:border-green-500'
-                    : 'border-gray-300 focus:ring-primary-500 focus:border-primary-500'
+                    ? `${BORDER_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} ${RING_COLORS.SUCCESS_MEDIUM} ${BORDER_COLORS.SUCCESS}`
+                    : `${BORDER_COLORS.DEFAULT} ${RING_COLORS.PRIMARY} ${BORDER_COLORS.PRIMARY}`
                 }`}
                 aria-describedby="delete-confirm-hint"
                 autoComplete="off"
