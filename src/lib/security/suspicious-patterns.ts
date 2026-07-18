@@ -309,8 +309,7 @@ export function detectSuspiciousPatterns(
 
   // PERFORMANCE: Use pre-parsed nextUrl if available (from NextRequest)
   // nextUrl is 15-20x faster than new URL(request.url)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const nextUrl = (request as any).nextUrl;
+  const nextUrl = (request as NextRequestExtension).nextUrl;
   let pathname = nextUrl?.pathname;
   let searchParams = nextUrl?.searchParams;
 
