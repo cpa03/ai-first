@@ -78,28 +78,31 @@ const CopyButtonComponent = function CopyButton({
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
-    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out
+    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     focus-visible:ring-primary-500 focus-visible:ring-offset-white
-    motion-reduce:transition-none
+    motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
   `;
 
   const variantClasses = {
     default: `
       px-3 py-1.5 text-sm
       bg-primary-100 text-primary-700 hover:bg-primary-200
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     subtle: `
       px-2 py-1 text-xs
       text-primary-600 hover:text-primary-800 hover:bg-primary-50
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.SUBTLE_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded
       underline-offset-2 hover:underline
     `,
     'icon-only': `
       p-1.5
       text-gray-500 hover:text-primary-600 hover:bg-primary-50
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
       ${copied ? 'text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800' : ''}

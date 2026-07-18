@@ -112,6 +112,11 @@ export const COMPONENT_CONFIG = {
       500,
       10000
     ),
+    SCALE: {
+      DEFAULT_HOVER: 'hover:scale-[1.02]',
+      SUBTLE_HOVER: 'hover:scale-[1.02]',
+      ICON_HOVER: 'hover:scale-[1.08]',
+    } as const,
   } as const,
 
   CONFETTI: {
