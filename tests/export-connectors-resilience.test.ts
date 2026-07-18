@@ -103,47 +103,33 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // SKIPPED: These tests mock resilienceManager.execute which handles retry logic internally.
-      // The mock prevents the actual retry mechanism from being tested.
-      // To properly test retry behavior, we need integration tests with the actual resilience manager,
-      // not unit tests with mocked execute function.
-      // TODO: Create integration test suite that uses real resilience manager
-      it.skip('should retry on transient network errors', async () => {
+      it('should handle transient network errors from resilience layer', async () => {
         const networkError = new Error('ETIMEDOUT');
-        mockExecute
-          .mockRejectedValueOnce(networkError)
-          .mockRejectedValueOnce(networkError)
-          .mockResolvedValueOnce({
-            url: 'https://notion.so/test-page',
-            id: 'page-id-123',
-          });
+        mockExecute.mockRejectedValueOnce(networkError);
 
         const testData = createMockExportData();
         const result = await exporter.export(testData);
 
-        expect(mockExecute).toHaveBeenCalledTimes(3);
-        expect(result.success).toBe(true);
+        expect(mockExecute).toHaveBeenCalled();
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('ETIMEDOUT');
       });
 
-      // SKIPPED: Same reason as above - mocked execute prevents testing actual retry exhaustion
-      it.skip('should fail after exhausting retries', async () => {
+      it('should return failure when resilience layer rejects', async () => {
         const networkError = new Error('ETIMEDOUT');
         mockExecute.mockRejectedValue(networkError);
 
         const testData = createMockExportData();
         const result = await exporter.export(testData);
 
-        expect(mockExecute).toHaveBeenCalledTimes(4);
+        expect(mockExecute).toHaveBeenCalled();
         expect(result.success).toBe(false);
         expect(result.error).toContain('ETIMEDOUT');
       });
     });
 
     describe('circuit breaker behavior', () => {
-      // SKIPPED: Circuit breaker tests require proper integration with resilience manager
-      // The mocked execute function doesn't trigger actual circuit breaker state changes
-      // TODO: Create integration tests with real circuit breaker implementation
-      it.skip('should fail fast when circuit is open', async () => {
+      it('should fail fast when circuit is open', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker notion-create-page is OPEN'
         );
@@ -154,7 +140,7 @@ describe('Export Connector Resilience Integration', () => {
 
         expect(mockExecute).toHaveBeenCalledTimes(1);
         expect(result.success).toBe(false);
-        expect(result.error).toContain('circuit breaker');
+        expect(result.error).toContain('Circuit breaker');
       });
 
       it('should not attempt operation after circuit opens', async () => {
@@ -323,56 +309,45 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // SKIPPED: Same reason as Notion exporter - mocked execute prevents testing actual retry behavior
-      it.skip('should retry on Trello API rate limits', async () => {
+      it('should handle Trello API rate limit errors from resilience layer', async () => {
         const rateLimitError = new Error('429 Too Many Requests');
-        mockExecute
-          .mockRejectedValueOnce(rateLimitError)
-          .mockRejectedValueOnce(rateLimitError)
-          .mockResolvedValue({
-            ok: true,
-            json: async () => ({
-              id: 'board-123',
-              url: 'https://trello.com/b/123',
-            }),
-          });
-
-        const testData = createMockExportData();
-        await exporter.export(testData);
-
-        expect(mockExecute).toHaveBeenCalledTimes(3);
-      });
-
-      // SKIPPED: Same reason - mocked execute prevents testing independent failure handling
-      it.skip('should handle multiple API call failures independently', async () => {
-        mockExecute
-          .mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-              id: 'board-123',
-              url: 'https://trello.com/b/123',
-            }),
-          })
-          .mockRejectedValueOnce(new Error('Network error'))
-          .mockRejectedValueOnce(new Error('Network error'))
-          .mockResolvedValue({ ok: true, json: async () => ({ id: 'list-1' }) })
-          .mockResolvedValue({ ok: true, json: async () => ({ id: 'list-2' }) })
-          .mockResolvedValue({
-            ok: true,
-            json: async () => ({ id: 'list-3' }),
-          });
+        mockExecute.mockRejectedValueOnce(rateLimitError);
 
         const testData = createMockExportData();
         const result = await exporter.export(testData);
 
-        expect(result.success).toBe(true);
-        expect(mockExecute).toHaveBeenCalledTimes(5);
+        expect(mockExecute).toHaveBeenCalled();
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('429');
+      });
+
+      it('should handle multiple API call failures independently', async () => {
+        mockExecute.mockImplementation(async (operation, _config, context) => {
+          if (context === 'trello-create-board') {
+            return {
+              ok: true,
+              json: async () => ({
+                id: 'board-123',
+                url: 'https://trello.com/b/123',
+              }),
+            };
+          }
+          if (context === 'trello-create-list') {
+            throw new Error('Network error');
+          }
+          return { ok: true, json: async () => ({ id: 'list-1' }) };
+        });
+
+        const testData = createMockExportData();
+        const result = await exporter.export(testData);
+
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('Network error');
       });
     });
 
     describe('circuit breaker behavior', () => {
-      // SKIPPED: Same reason as Notion exporter - mocked execute prevents testing actual circuit breaker behavior
-      it.skip('should fail fast when circuit is open for board creation', async () => {
+      it('should fail fast when circuit is open for board creation', async () => {
         const circuitOpenError = new Error(
           'Circuit breaker trello-create-board is OPEN'
         );
@@ -382,30 +357,30 @@ describe('Export Connector Resilience Integration', () => {
         const result = await exporter.export(testData);
 
         expect(result.success).toBe(false);
-        expect(result.error).toContain('circuit breaker');
+        expect(result.error).toContain('Circuit breaker');
       });
 
-      // SKIPPED: Same reason - mocked execute prevents testing independent circuit breaker behavior
-      it.skip('should use circuit breaker for each API context independently', async () => {
+      it('should handle circuit breaker errors for independent API contexts', async () => {
         const circuitOpenError = new Error('Circuit breaker is OPEN');
 
-        mockExecute
-          .mockResolvedValueOnce({
-            ok: true,
-            json: async () => ({
-              id: 'board-123',
-              url: 'https://trello.com/b/123',
-            }),
-          })
-          .mockRejectedValueOnce(circuitOpenError);
+        mockExecute.mockImplementation(async (operation, _config, context) => {
+          if (context === 'trello-create-board') {
+            return {
+              ok: true,
+              json: async () => ({
+                id: 'board-123',
+                url: 'https://trello.com/b/123',
+              }),
+            };
+          }
+          throw circuitOpenError;
+        });
 
         const testData = createMockExportData();
         const result = await exporter.export(testData);
 
-        expect(mockExecute).toHaveBeenCalled();
-        if (!result.success) {
-          expect(result.error).toContain('circuit breaker');
-        }
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('Circuit breaker');
       });
     });
 
@@ -548,21 +523,16 @@ describe('Export Connector Resilience Integration', () => {
     });
 
     describe('retry behavior', () => {
-      // SKIPPED: Same reason as other exporters - mocked execute prevents testing actual retry behavior
-      it.skip('should retry on GitHub API transient failures', async () => {
+      it('should handle GitHub API transient failures from resilience layer', async () => {
         const transientError = new Error('ETIMEDOUT');
-        mockExecute
-          .mockRejectedValueOnce(transientError)
-          .mockRejectedValueOnce(transientError)
-          .mockResolvedValue({
-            ok: true,
-            json: async () => ({ login: 'testuser' }),
-          });
+        mockExecute.mockRejectedValueOnce(transientError);
 
         const testData = createMockExportData();
-        await exporter.export(testData);
+        const result = await exporter.export(testData);
 
-        expect(mockExecute).toHaveBeenCalledTimes(3);
+        expect(mockExecute).toHaveBeenCalled();
+        expect(result.success).toBe(false);
+        expect(result.error).toContain('ETIMEDOUT');
       });
 
       it('should handle repository creation fallback when repo already exists', async () => {
