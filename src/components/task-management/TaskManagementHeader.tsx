@@ -4,7 +4,14 @@ import { memo, useMemo } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
 import CopyButton from '@/components/CopyButton';
-import { MESSAGES, TASK_HEADER_STYLES, ANIMATION_CONFIG } from '@/lib/config';
+import {
+  MESSAGES,
+  TASK_HEADER_STYLES,
+  ANIMATION_CONFIG,
+  UI_CONFIG,
+  TEXT_COLORS,
+  TRANSITION_CLASSES,
+} from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
 
@@ -114,46 +121,73 @@ function TaskManagementHeaderComponent({
         />
       </div>
 
-      <div className="flex gap-2 mt-4">
-        <Tooltip
-          content={MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
-          shortcut={['[']}
-          position="bottom"
-        >
-          <Button
-            onClick={() => {
-              triggerHapticFeedback();
-              onExpandAll();
-            }}
-            variant="outline"
-            size="sm"
+      <div className="mt-4">
+        <div className="flex gap-2">
+          <Tooltip
+            content={MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
+            shortcut={['[']}
+            position="bottom"
           >
-            {MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
-          </Button>
-        </Tooltip>
-        <Tooltip
-          content={MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
-          shortcut={[']']}
-          position="bottom"
-        >
-          <Button
-            onClick={() => {
-              triggerHapticFeedback();
-              onCollapseAll();
-            }}
-            variant="outline"
-            size="sm"
+            <Button
+              onClick={() => {
+                triggerHapticFeedback();
+                onExpandAll();
+              }}
+              variant="outline"
+              size="sm"
+            >
+              {MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
+            </Button>
+          </Tooltip>
+          <Tooltip
+            content={MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
+            shortcut={[']']}
+            position="bottom"
           >
-            {MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
-          </Button>
-        </Tooltip>
-        <CopyButton
-          textToCopy={summaryText}
-          label="Copy Summary"
-          successLabel="Copied!"
-          variant="subtle"
-          showToast={true}
-        />
+            <Button
+              onClick={() => {
+                triggerHapticFeedback();
+                onCollapseAll();
+              }}
+              variant="outline"
+              size="sm"
+            >
+              {MESSAGES.TASK_MANAGEMENT.COLLAPSE_ALL}
+            </Button>
+          </Tooltip>
+          <CopyButton
+            textToCopy={summaryText}
+            label="Copy Summary"
+            successLabel="Copied!"
+            variant="subtle"
+            showToast={true}
+          />
+        </div>
+        {/* Micro-UX: Keyboard shortcut hints for discoverability */}
+        {/* Makes [ and ] shortcuts visible without requiring hover, following the ProgressStepper pattern */}
+        <div
+          className="hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-400 animate-breathe"
+          aria-label="Keyboard shortcuts: [ to expand all, ] to collapse all"
+        >
+          <span className="flex items-center gap-1.5">
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              [
+            </kbd>
+            <span className={TRANSITION_CLASSES.COLOR}>expand all</span>
+          </span>
+          <span
+            className={`${TEXT_COLORS.MUTED_LIGHT} opacity-50`}
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <span className="flex items-center gap-1.5">
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              ]
+            </kbd>
+            <span className={TRANSITION_CLASSES.COLOR}>collapse all</span>
+          </span>
+        </div>
       </div>
     </div>
   );
