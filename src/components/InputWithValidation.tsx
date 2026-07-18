@@ -28,6 +28,7 @@ import {
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { PLATFORM } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
 
 export interface InputWithValidationProps extends React.InputHTMLAttributes<
@@ -85,6 +86,7 @@ const InputWithValidationComponent = forwardRef<
     const [isFocused, setIsFocused] = useState(false);
     const [showSuccessFlash, setShowSuccessFlash] = useState(false);
     const [showValidCelebration, setShowValidCelebration] = useState(false);
+    const [isMac, setIsMac] = useState(false);
     const internalTextareaRef = useRef<HTMLTextAreaElement>(null);
     const prevValidRef = useRef(false);
     const prefersReducedMotion = usePrefersReducedMotion();
@@ -92,6 +94,11 @@ const InputWithValidationComponent = forwardRef<
     const charCount = currentValue.length;
     const isValid = !error && touched;
     const isInvalid = !!error && touched;
+
+    // Micro-UX: Detect platform for keyboard shortcut display
+    useEffect(() => {
+      setIsMac(PLATFORM.isMac());
+    }, []);
 
     const adjustTextareaHeight = useCallback(() => {
       const textarea = internalTextareaRef.current;
@@ -466,6 +473,7 @@ const InputWithValidationComponent = forwardRef<
                     ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
                     : INPUT_VALIDATION_LABELS.SHOW_PASSWORD_ARIA
                 }
+                shortcut={isMac ? ['⌘', 'Shift', 'P'] : ['Ctrl', 'Shift', 'P']}
                 position="top"
               >
                 <button
