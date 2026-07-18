@@ -259,8 +259,7 @@ function generateRequestFingerprint(request: Request): string {
   const acceptLang = request.headers.get('accept-language') || '';
   const acceptEncoding = request.headers.get('accept-encoding') || '';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let urlPath = (request as any).nextUrl?.pathname || '';
+  let urlPath = (request as NextRequestExtension).nextUrl?.pathname || '';
   if (!urlPath) {
     try {
       urlPath = new URL(request.url).pathname;
