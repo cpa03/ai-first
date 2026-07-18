@@ -95,11 +95,11 @@ function isTrustedOrigin(origin: string, trustedOrigins?: string[]): boolean {
   const normalizedOrigin = origin.toLowerCase().replace(/\/$/, '');
   const config = getOriginsConfig();
 
-  // If custom trusted origins are provided, use the O(N) fallback loop.
-  // This is rare and typically only happens in tests.
+  // If custom trusted origins are provided, check if it's identical to our pre-configured array
+  // to avoid O(N) lookup. Since TRUSTED_ORIGINS getter returns config.array, they are identical.
   if (trustedOrigins && trustedOrigins !== config.array) {
-    for (const trusted of trustedOrigins) {
-      const normalizedTrusted = trusted.toLowerCase().replace(/\/$/, '');
+    for (let i = 0; i < trustedOrigins.length; i++) {
+      const normalizedTrusted = trustedOrigins[i].toLowerCase().replace(/\/$/, '');
       if (normalizedOrigin === normalizedTrusted) {
         return true;
       }
@@ -122,7 +122,8 @@ export function validateCSRF(
     return { valid: true };
   }
 
-  const trustedOrigins = options?.trustedOrigins ?? CSRF_CONFIG.TRUSTED_ORIGINS;
+  const config = getOriginsConfig();
+  const trustedOrigins = options?.trustedOrigins ?? config.array;
   const stateChangingMethods: readonly string[] =
     options?.stateChangingMethods ?? CSRF_CONFIG.STATE_CHANGING_METHODS;
 
