@@ -28,6 +28,7 @@ import {
   LAYOUT_CLASSES,
   SIGNUP_PAGE_CONFIG,
   UI_CONFIG,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config';
 import { useScrollToError } from '@/hooks/useScrollToError';
 
@@ -227,7 +228,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             style={{ width: `${percentage}%` }}
             role="progressbar"
             aria-valuenow={score}
-            aria-valuemin={0}
+            aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
             aria-valuemax={NORMALIZATION.MAX_SCORE}
             aria-label={`Password strength: ${percentage}% ${config.label}`}
           />
