@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed timing leak in authentication endpoints
 - Added secure logging to prevent sensitive data exposure
 - Restricted detailed health endpoint to authorized users
+- **Rate limiting race condition**: Resolved race condition and fingerprint spoofing vulnerability
 
 ### Fixed
 
@@ -23,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected rate limiting edge cases with IP spoofing
 - Improved PII redaction for hyphenated keys
 - Fixed failing cache test (`has()` method now properly tracks cache hits)
+- Restored template literal interpolation for animations and focus rings
+- Fixed Next.js 16 RouteContext type compatibility
+- Modularized hardcoded error messages in auth, API handler, and export connectors
 
 ### Added
 
@@ -41,6 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CMZ agent setup and agent skills configuration for OpenCode CLI
 - Select-all micro-interaction to ReferralLink code block (#3181)
 - Enhanced keyboard hints UX with polished visual design (#3179)
+- Arrow-key navigation to ProgressStepper for keyboard users
+- Escape key hint to mobile navigation menu
+- Centralized CopyButton hover scale and micro-UX transitions
+- Extracted hardcoded external API domains to centralized config
 
 ### Changed
 
@@ -56,6 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added modularity audit report (#3178)
 - Removed tracked .jules/bolt.md temporary file
 - Added BroCula browser console audit report
+- Modularized remaining hardcoded values in components
+- Removed stale duplicate agent directory and updated docs index
 
 ## [0.1.1] - 2026-02-13
 
