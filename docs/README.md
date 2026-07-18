@@ -238,7 +238,6 @@ Complete index of all IdeaFlow documentation.
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
 - [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
 - [Browser Console Audit - 2026-07-16](./audit/brocula-browser-audit-2026-07-16.md) - BroCula browser audit (latest)
-- [Browser Console Audit - 2026-07-15](./audit/browser-console-audit-2026-07-15.md) - Browser console and Lighthouse audit
 - [Ultrawork Summary - 2026-07-15](./audit/ultrawork-summary-20260715.md) - Ultrawork session summary
 - [Flexy Modularization Audit](./flexy-modularity-audit.md) - Code modularization assessment
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
@@ -246,7 +245,7 @@ Complete index of all IdeaFlow documentation.
 
 ### Archived Reports
 
-Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-12 reports).
+Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-15 reports).
 
 ## Database Reports
 
