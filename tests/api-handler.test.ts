@@ -58,7 +58,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -77,7 +77,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -97,7 +97,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -121,7 +121,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -139,7 +139,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -160,7 +160,7 @@ describe('withApiHandler', () => {
       });
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -181,7 +181,7 @@ describe('withApiHandler', () => {
         headers: { 'x-forwarded-for': '192.168.1.1' },
       });
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -201,7 +201,7 @@ describe('withApiHandler', () => {
       const request = new NextRequest(buildApiUrl('/test'));
       const resetTime = Date.now() + 60000;
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: false,
         info: { limit: 60, remaining: 0, reset: resetTime },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -231,7 +231,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: false,
         info: { limit: 60, remaining: 0, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -256,7 +256,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -279,7 +279,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -297,7 +297,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -315,7 +315,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -336,7 +336,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -354,7 +354,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -377,7 +377,7 @@ describe('withApiHandler', () => {
         body: JSON.stringify({ data: 'test' }),
       });
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -398,7 +398,7 @@ describe('withApiHandler', () => {
         body: JSON.stringify({ data: 'test' }),
       });
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -418,7 +418,7 @@ describe('withApiHandler', () => {
         headers: { 'content-length': String(10 * 1024 * 1024 + 1) },
       });
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 60, remaining: 59, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -448,7 +448,7 @@ describe('withApiHandler', () => {
         headers: { 'x-forwarded-for': '10.0.0.1' },
       });
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: true,
         info: { limit: 30, remaining: 29, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
@@ -469,7 +469,7 @@ describe('withApiHandler', () => {
       const wrapped = withApiHandler(mockHandler);
       const request = new NextRequest(buildApiUrl('/test'));
 
-      mockCheckUserRateLimit.mockReturnValue({
+      mockCheckUserRateLimit.mockResolvedValue({
         allowed: false,
         info: { limit: 60, remaining: 0, reset: Date.now() + 60000 },
         userInfo: { userId: null, role: 'anonymous', identifier: 'unknown' },
