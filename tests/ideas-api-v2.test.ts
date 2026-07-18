@@ -23,6 +23,7 @@ import { GET, POST } from '@/app/api/ideas/route';
 import { dbService } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 import { createMockRequest } from './utils/_testHelpers';
+import type { IdeaStatus } from '@/lib/config';
 
 const mockDbService = dbService as jest.Mocked<typeof dbService>;
 const mockRequireAuth = requireAuth as jest.MockedFunction<typeof requireAuth>;
@@ -40,15 +41,21 @@ describe('/api/ideas', () => {
       const mockIdeas = [
         {
           id: 'idea-1',
+          user_id: 'user-123',
           title: 'Test Idea 1',
-          status: 'draft',
+          raw_text: 'Test idea 1 content',
+          status: 'draft' as IdeaStatus,
+          deleted_at: null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
         {
           id: 'idea-2',
+          user_id: 'user-123',
           title: 'Test Idea 2',
-          status: 'clarified',
+          raw_text: 'Test idea 2 content',
+          status: 'clarified' as IdeaStatus,
+          deleted_at: null,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -169,8 +176,11 @@ describe('/api/ideas', () => {
 
       const mockIdea = {
         id: 'idea-new',
+        user_id: 'user-123',
         title: 'Test Idea',
-        status: 'draft',
+        raw_text: 'Test idea content',
+        status: 'draft' as IdeaStatus,
+        deleted_at: null,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
