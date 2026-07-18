@@ -7,6 +7,9 @@ import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import {
   SPINNER_PATTERNS,
   CARD_PATTERNS,
@@ -20,6 +23,7 @@ import {
   ROUTES,
   API_ROUTES,
   createRouteWithParams,
+  UI_CONFIG,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -65,6 +69,85 @@ function ClarifyPageLoading() {
           ariaLabel={CLARIFY_PAGE_CONTENT.LOADING}
           label={CLARIFY_PAGE_CONTENT.LOADING_SHORT}
         />
+      </div>
+    </div>
+  );
+}
+
+// Micro-UX: Success state with keyboard shortcut hint and Enter key handler
+// Provides discoverable keyboard navigation consistent with dashboard and not-found patterns
+function ClarifySuccessState({
+  answers,
+  ideaId,
+}: {
+  answers: Record<string, string>;
+  ideaId: string;
+}) {
+  const router = useRouter();
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [isMac, setIsMac] = useState(false);
+
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
+
+  // Micro-UX: Enter key to navigate to blueprint generation
+  // Matches dashboard pattern where Enter opens the selected item
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId }));
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [router, ideaId]);
+
+  const handleGenerateBlueprint = useCallback(() => {
+    triggerHapticFeedback();
+    router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId }));
+  }, [router, ideaId]);
+
+  return (
+    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
+      <div className="slide-up">
+        <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
+          <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
+          <div className={CARD_PATTERNS.CONTENT}>
+            {Object.entries(answers).map(([key, value]) => (
+              <div key={key} className="text-sm">
+                <span className="font-medium text-gray-700">
+                  {key.replace(/_/g, ' ')}:
+                </span>{' '}
+                <span className="text-gray-600">{value}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
+            <Button onClick={handleGenerateBlueprint} variant="primary">
+              {CLARIFY_PAGE_CONTENT.BUTTONS.GENERATE_BLUEPRINT}
+            </Button>
+            {/* Micro-UX: Keyboard shortcut hint for blueprint generation */}
+            {/* Matches the keyboard hint patterns in dashboard, not-found, and clarification flow */}
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-400 ${prefersReducedMotion ? '' : 'animate-breathe'}`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '↵' : 'Enter'}
+              </kbd>
+              <span>to generate</span>
+            </span>
+          </div>
+        </Alert>
       </div>
     </div>
   );
@@ -199,33 +282,7 @@ function ClarifyPageContent() {
   }
 
   if (answers) {
-    return (
-      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-        <div className="slide-up">
-          <Alert type="success" title={CLARIFY_PAGE_CONTENT.SUCCESS_TITLE}>
-            <p className="mb-4">{CLARIFY_PAGE_CONTENT.SUCCESS_MESSAGE}</p>
-            <div className={CARD_PATTERNS.CONTENT}>
-              {Object.entries(answers).map(([key, value]) => (
-                <div key={key} className="text-sm">
-                  <span className="font-medium text-gray-700">
-                    {key.replace(/_/g, ' ')}:
-                  </span>{' '}
-                  <span className="text-gray-600">{value}</span>
-                </div>
-              ))}
-            </div>
-            <Button
-              onClick={() =>
-                router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId }))
-              }
-              variant="primary"
-            >
-              Generate Blueprint
-            </Button>
-          </Alert>
-        </div>
-      </div>
-    );
+    return <ClarifySuccessState answers={answers} ideaId={ideaId} />;
   }
 
   if (!idea) {
