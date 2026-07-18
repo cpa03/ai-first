@@ -22,13 +22,6 @@ declare global {
      */
     nextUrl?: URL;
   }
-
-  /**
-   * Type guard to check if a Request has Next.js extensions
-   * @param request - The request to check
-   * @returns True if the request has nextUrl property
-   */
-  function isNextRequest(request: Request): request is NextRequestExtension;
 }
 
 export {};
