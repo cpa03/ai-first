@@ -7,16 +7,17 @@ import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config';
 
-const ADMIN_API_KEY = process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY];
 const logger = createLogger('auth');
+let warnedAboutMissingKey = false;
 
-if (
-  !ADMIN_API_KEY &&
-  process.env[PLATFORM_ENV_KEYS.NODE_ENV] !== 'development'
-) {
-  logger.warn(
-    'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
-  );
+function getIsDevelopment(): boolean {
+  if (typeof process === 'undefined') return false;
+  return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
+}
+
+function getAdminApiKey(): string {
+  if (typeof process === 'undefined') return '';
+  return process.env[SECURITY_ENV_KEYS.ADMIN_API_KEY] || '';
 }
 
 export interface AuthenticatedUser {
@@ -35,8 +36,17 @@ function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
-  if (!ADMIN_API_KEY) {
-    return process.env[PLATFORM_ENV_KEYS.NODE_ENV] === 'development';
+  const adminApiKey = getAdminApiKey();
+  const isDev = getIsDevelopment();
+
+  if (!adminApiKey) {
+    if (!isDev && !warnedAboutMissingKey) {
+      logger.warn(
+        'ADMIN_API_KEY not set. Admin routes will be disabled in production.'
+      );
+      warnedAboutMissingKey = true;
+    }
+    return isDev;
   }
 
   const authHeader = request.headers.get('authorization');
@@ -78,7 +88,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
 
     const expectedHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,
-      encoder.encode(ADMIN_API_KEY)
+      encoder.encode(adminApiKey)
     );
     const actualHash = await crypto.subtle.digest(
       AUTH_CONFIG.HASH_ALGORITHM,
