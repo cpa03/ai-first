@@ -1857,3 +1857,38 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+/* FeatureGrid Badge Entrance Glow - Micro-UX delight for "How It Works" section */
+/* Creates a brief, satisfying glow + scale effect when step badges first appear */
+/* Draws user attention to the step numbers and makes the entrance feel alive */
+@keyframes badgeEntranceGlow {
+  0% {
+    transform: scale(0.8);
+    box-shadow: 0 0 0 0 var(--shadow-primary-light);
+  }
+  40% {
+    transform: scale(1.15);
+    box-shadow: 0 0 16px 4px var(--shadow-primary-medium);
+  }
+  70% {
+    transform: scale(0.95);
+    box-shadow: 0 0 6px 2px var(--shadow-primary-light);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--shadow-primary-light);
+  }
+}
+
+.animate-badge-entrance-glow {
+  animation: badgeEntranceGlow 0.6s var(--ease-bounce) forwards;
+}
+
+/* Reduced motion support for badge entrance glow */
+@media (prefers-reduced-motion: reduce) {
+  .animate-badge-entrance-glow {
+    animation: none;
+    transform: none;
+    box-shadow: none;
+  }
+}
