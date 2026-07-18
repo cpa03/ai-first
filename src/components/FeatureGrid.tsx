@@ -76,7 +76,14 @@ function FeatureGridComponent() {
             aria-hidden="true"
           >
             <span
-              className={`badge-animate ${TEXT_COLORS.BRAND} text-2xl ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`badge-animate ${TEXT_COLORS.BRAND} text-2xl ${TYPOGRAPHY_CLASSES.BOLD} ${
+                isVisible ? `animate-badge-entrance-glow` : 'opacity-0'
+              }`}
+              style={{
+                animationDelay: isVisible
+                  ? `${index * 200 + 300}ms`
+                  : undefined,
+              }}
             >
               {feature.step}
             </span>
