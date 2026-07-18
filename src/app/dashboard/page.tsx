@@ -461,6 +461,15 @@ export default function DashboardPage() {
         });
       }
 
+      // Micro-UX: ? key opens keyboard shortcuts help panel
+      // Provides discoverability for users who want to see all available shortcuts
+      if (e.key === '?' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        openHelp();
+        return;
+      }
+
       if (
         (e.key === 'n' || e.key === 'N') &&
         !e.ctrlKey &&
@@ -484,6 +493,7 @@ export default function DashboardPage() {
     prefersReducedMotion,
     filter,
     handleClearFilter,
+    openHelp,
   ]);
 
   useEffect(() => {
@@ -1148,6 +1158,16 @@ export default function DashboardPage() {
               </kbd>
               <span className="text-gray-400">
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
+              </span>
+            </span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+              >
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HELP_KEY}
+              </kbd>
+              <span className="text-gray-400">
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HELP_LABEL}
               </span>
             </span>
           </div>
