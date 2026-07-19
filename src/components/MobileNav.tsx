@@ -23,13 +23,17 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
 
+const KEYBOARD_HINTS_VISIBLE_DURATION_MS = 2000;
+
 function MobileNavComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hintsVisible, setHintsVisible] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const firstMenuItemRef = useRef<HTMLAnchorElement>(null);
   const lastMenuItemRef = useRef<HTMLAnchorElement>(null);
+  const hintsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const pathname = usePathname();
   const router = useRouter();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -88,17 +92,39 @@ function MobileNavComponent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, isMobile, router]);
 
+  // Cleanup hints timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hintsTimeoutRef.current) {
+        clearTimeout(hintsTimeoutRef.current);
+      }
+    };
+  }, []);
+
   useEffect(() => {
     if (isOpen && isMobile) {
       document.body.style.overflow = 'hidden';
       firstMenuItemRef.current?.focus();
+
+      if (!prefersReducedMotion) {
+        setHintsVisible(true);
+        if (hintsTimeoutRef.current) clearTimeout(hintsTimeoutRef.current);
+        hintsTimeoutRef.current = setTimeout(() => {
+          setHintsVisible(false);
+        }, KEYBOARD_HINTS_VISIBLE_DURATION_MS);
+      }
     } else {
       document.body.style.overflow = 'unset';
+      setHintsVisible(false);
+      if (hintsTimeoutRef.current) {
+        clearTimeout(hintsTimeoutRef.current);
+        hintsTimeoutRef.current = null;
+      }
     }
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen, isMobile]);
+  }, [isOpen, isMobile, prefersReducedMotion]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -298,7 +324,9 @@ function MobileNavComponent() {
                         {link.label}
                       </span>
                       <kbd
-                        className={`hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono opacity-60`}
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono transition-opacity duration-300 ${
+                          hintsVisible ? 'opacity-60' : 'opacity-0'
+                        }`}
                         aria-hidden="true"
                       >
                         {index + 1}
