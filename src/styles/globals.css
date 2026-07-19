@@ -1919,3 +1919,33 @@ button[aria-disabled='true'].btn-glow-hover {
     box-shadow: none;
   }
 }
+
+/* Password Requirement Met Animation - Micro-UX delight for individual requirement satisfaction */
+/* Creates a subtle scale + background color flash when a single requirement transitions from unmet to met */
+/* Provides immediate positive feedback at the exact moment of individual requirement compliance */
+@keyframes requirementMet {
+  0% {
+    transform: scale(1);
+    background-color: transparent;
+  }
+  30% {
+    transform: scale(1.05);
+    background-color: rgb(220 252 231); /* green-100 */
+  }
+  100% {
+    transform: scale(1);
+    background-color: transparent;
+  }
+}
+
+.animate-requirement-met {
+  animation: requirementMet 0.4s var(--ease-spring) forwards;
+}
+
+/* Reduced motion support for requirement met animation */
+@media (prefers-reduced-motion: reduce) {
+  .animate-requirement-met {
+    animation: none;
+    transform: none;
+  }
+}
