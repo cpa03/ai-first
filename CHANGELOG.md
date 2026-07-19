@@ -64,6 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added modularity audit report (#3178)
 - Removed tracked .jules/bolt.md temporary file
 - Added BroCula browser console audit report
+- Moved BROCULA-AUDIT-2026-07-19.md from root to docs/audit/ (proper organization)
 - Modularized remaining hardcoded values in components
 - Removed stale duplicate agent directory and updated docs index
 - Removed tracked `.jules/sentinel.md` from git (already in .gitignore)

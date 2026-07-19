@@ -262,7 +262,7 @@
 /ai/
   /agent-configs/           ← Agent configuration files
     clarifier.yml           ← Clarifier agent config
-    breakdown-engine.yml     ← Breakdown engine config
+    breakdown-engine.yml    ← Breakdown engine config
 /config/
   /.env.example             ← Environment variable template
   /.env.test.example       ← Test environment template
