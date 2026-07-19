@@ -1,8 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import Button from '@/components/Button';
 import { triggerHapticFeedback } from '@/lib/utils';
 import {
@@ -14,17 +15,30 @@ import {
   SVG_VIEWBOX,
   UI_CONFIG,
   NOT_FOUND_PAGE_CONFIG,
+  NOT_FOUND_LABELS,
 } from '@/lib/config';
-import { isFocusedOnInput } from '@/lib/dom-utils';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import Tooltip from '@/components/Tooltip';
+
+// Lazy load CopyButton for code splitting
+const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  ssr: false,
+});
 
 // Enhanced 404 page with keyboard shortcuts, focus management, and consistent component usage
 export default function NotFound() {
   const router = useRouter();
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const [isMac, setIsMac] = useState(false);
 
   // Micro-UX: Focus management - focus heading on mount for screen readers
   useEffect(() => {
     headingRef.current?.focus();
+  }, []);
+
+  // Micro-UX: Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
   }, []);
 
   const handleGoBack = useCallback(() => {
@@ -37,7 +51,7 @@ export default function NotFound() {
   }, [router]);
 
   // Micro-UX: Keyboard shortcuts for quick navigation
-  // Enter = Go back, Escape = Go home (matches ErrorBoundary pattern)
+  // Enter = Go back, Escape = Go home, Ctrl/Cmd+C = Copy URL (matches ErrorBoundary pattern)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFocusedOnInput(e.target)) return;
@@ -50,6 +64,14 @@ export default function NotFound() {
       if (e.key === 'Escape') {
         e.preventDefault();
         window.location.href = ROUTES.HOME;
+      }
+
+      // Micro-UX: Ctrl/Cmd+C copies page URL for easy sharing of broken links
+      if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+        const selection = window.getSelection()?.toString();
+        if (!selection && typeof navigator !== 'undefined') {
+          navigator.clipboard.writeText(window.location.href).catch(() => {});
+        }
       }
     };
 
@@ -167,6 +189,38 @@ export default function NotFound() {
             </Link>
           </div>
 
+          <div
+            className={`mt-6 flex flex-col sm:flex-row items-center justify-center gap-3 animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+          >
+            <CopyButton
+              textToCopy={
+                typeof window !== 'undefined' ? window.location.href : ''
+              }
+              label={NOT_FOUND_LABELS.COPY_URL_BUTTON}
+              successLabel={NOT_FOUND_LABELS.COPY_URL_SUCCESS}
+              ariaLabel={NOT_FOUND_LABELS.COPY_URL_ARIA_LABEL}
+              variant="subtle"
+            />
+            <Tooltip
+              content={NOT_FOUND_LABELS.COPY_URL_HINT}
+              shortcut={[isMac ? '⌘' : 'Ctrl', 'C']}
+              position="top"
+            >
+              <span className="text-xs text-gray-400 hidden sm:inline-flex items-center gap-1.5">
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  C
+                </kbd>
+              </span>
+            </Tooltip>
+          </div>
+
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           <div
             className={`mt-6 flex items-center justify-center gap-4 text-xs text-gray-400 animate-hero-entrance ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
@@ -190,6 +244,22 @@ export default function NotFound() {
                 Esc
               </kbd>
               <span>go home</span>
+            </span>
+            <span
+              className="hidden sm:inline-flex items-center gap-1.5 animate-breathe"
+              style={{ animationDelay: '1s' }}
+            >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                C
+              </kbd>
+              <span>{NOT_FOUND_LABELS.COPY_URL_HINT}</span>
             </span>
           </div>
         </div>
