@@ -153,7 +153,7 @@ export function Button({
 ### Error Handling
 
 - Use the `AppError` class for custom errors
-- Include error codes from `src/lib/errors.ts`
+- Include error codes from `src/lib/errors/codes.ts`
 - Log errors with context using the logger
 
 ## Testing Guidelines

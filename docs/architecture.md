@@ -36,11 +36,27 @@ The project follows a Next.js 16+ app router structure with Supabase integration
 ├── hooks/              # React custom hooks
 ├── lib/                 # Utility functions
 │   ├── auth.ts         # Authentication service
-│   ├── db.ts          # Database service
+│   ├── db/             # Database service module
+│   │   ├── service.ts  # Database service
+│   │   ├── client.ts   # Database client
+│   │   ├── server.ts   # Server-side database utilities
+│   │   ├── ideas.ts    # Ideas repository
+│   │   ├── tasks.ts    # Tasks repository
+│   │   ├── deliverables.ts # Deliverables repository
+│   │   ├── clarification.ts # Clarification repository
+│   │   ├── vectors.ts  # Vector store repository
+│   │   ├── health.ts   # Database health checks
+│   │   └── types.ts    # Database type definitions
 │   ├── api-client.ts  # API client utilities
-│   ├── errors.ts      # Error handling
+│   ├── errors/         # Error handling module
+│   │   ├── classes.ts  # Error classes
+│   │   ├── codes.ts    # Error codes
+│   │   ├── context.ts  # Error context
+│   │   ├── fingerprint.ts # Error fingerprinting
+│   │   ├── index.ts    # Module exports
+│   │   └── utils.ts    # Error utilities
 │   ├── rate-limit.ts  # Rate limiting
-│   ├── use-cache.ts   # Caching utilities
+│   ├── cache.ts       # Caching utilities
 │   ├── metrics.ts     # Metrics collection
 │   ├── logger.ts      # Logging utilities
 │   ├── config-service.ts # Configuration service
@@ -57,7 +73,6 @@ The project follows a Next.js 16+ app router structure with Supabase integration
 ├── types/              # TypeScript type definitions
 ├── styles/             # Global styles
 ├── templates/           # Template files
-├── middleware.ts      # Next.js middleware (legacy)
 ├── instrumentation.ts # Next.js instrumentation
 └── instrumentation.node.ts # Node instrumentation
 supabase/
