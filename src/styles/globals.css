@@ -1019,6 +1019,33 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Loading Spinner Entrance Animation - Micro-UX delight for loading states */
+/* Creates a subtle fade-in + scale effect when spinner first appears */
+/* Makes the loading state feel more polished and intentional */
+@keyframes spinnerEntrance {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-spinner-entrance {
+  animation: spinnerEntrance var(--duration-slow) var(--ease-out-expo) forwards;
+}
+
+/* Reduced motion support for spinner entrance */
+@media (prefers-reduced-motion: reduce) {
+  .animate-spinner-entrance {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Ping Once Animation - Micro-UX delight for single pulse feedback */
 /* Used in IdeaReadyIndicator for a subtle celebration when idea becomes ready */
 @keyframes pingOnce {
