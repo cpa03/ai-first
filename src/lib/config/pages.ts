@@ -106,6 +106,9 @@ export const HOME_PAGE_CONFIG = {
     LABEL: 'Your Idea:',
     SAVED_WITH_ID: 'Saved with ID:',
     REDIRECTING: 'Redirecting to clarification...',
+    COPY_ID_BUTTON: 'Copy ID',
+    COPY_ID_SUCCESS: 'Copied!',
+    COPY_ID_TOAST: 'Idea ID copied to clipboard!',
   },
   HERO_ANIMATION_DELAYS: {
     TITLE: '0ms',

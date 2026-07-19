@@ -207,11 +207,11 @@ export default function HomePageClient() {
             </p>
             <CopyButton
               textToCopy={ideaId}
-              label="Copy ID"
-              successLabel="Copied!"
+              label={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_BUTTON}
+              successLabel={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_SUCCESS}
               ariaLabel="Copy idea ID to clipboard"
               variant="default"
-              toastMessage="Idea ID copied to clipboard!"
+              toastMessage={HOME_PAGE_CONFIG.CONFIRMATION.COPY_ID_TOAST}
               onCopy={() =>
                 import('@/lib/analytics').then(({ trackCopyAction }) =>
                   trackCopyAction('idea_id')

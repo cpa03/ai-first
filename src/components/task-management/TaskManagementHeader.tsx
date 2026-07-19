@@ -158,8 +158,8 @@ function TaskManagementHeaderComponent({
           </Tooltip>
           <CopyButton
             textToCopy={summaryText}
-            label="Copy Summary"
-            successLabel="Copied!"
+            label={TASK_MANAGEMENT_LABELS.COPY_SUMMARY_BUTTON}
+            successLabel={TASK_MANAGEMENT_LABELS.COPY_SUMMARY_SUCCESS}
             variant="subtle"
             showToast={true}
           />
