@@ -64,8 +64,19 @@ function PasswordRequirementsChecklistComponent({
   const prefersReducedMotion = usePrefersReducedMotion();
   const [showCompleteCelebration, setShowCompleteCelebration] = useState(false);
   const [hasAppeared, setHasAppeared] = useState(false);
+  const [newlyMetIds, setNewlyMetIds] = useState<Set<string>>(new Set());
   const prevAllMetRef = useRef(false);
+  const prevMetIdsRef = useRef<Set<string>>(new Set());
   const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const newlyMetTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+
+  useEffect(() => {
+    const timeouts = newlyMetTimeoutsRef;
+    return () => {
+      timeouts.current.forEach((timeout) => clearTimeout(timeout));
+      timeouts.current.clear();
+    };
+  }, []);
 
   const requirements = useMemo(
     () =>
@@ -98,6 +109,47 @@ function PasswordRequirementsChecklistComponent({
       }
     };
   }, [allMet]);
+
+  // Micro-UX: Track individual requirement transitions and trigger animation
+  // Provides delightful positive feedback when each individual requirement is satisfied
+  useEffect(() => {
+    const currentMetIds = new Set(
+      requirements.filter((req) => req.met).map((req) => req.id)
+    );
+    const prevMetIds = prevMetIdsRef.current;
+
+    const newlyMet = new Set<string>();
+    currentMetIds.forEach((id) => {
+      if (!prevMetIds.has(id)) {
+        newlyMet.add(id);
+      }
+    });
+
+    if (newlyMet.size > 0 && !prefersReducedMotion) {
+      setNewlyMetIds((prev) => {
+        const next = new Set(prev);
+        newlyMet.forEach((id) => next.add(id));
+        return next;
+      });
+
+      newlyMet.forEach((id) => {
+        const existingTimeout = newlyMetTimeoutsRef.current.get(id);
+        if (existingTimeout) clearTimeout(existingTimeout);
+
+        const timeout = setTimeout(() => {
+          setNewlyMetIds((prev) => {
+            const next = new Set(prev);
+            next.delete(id);
+            return next;
+          });
+          newlyMetTimeoutsRef.current.delete(id);
+        }, 400);
+        newlyMetTimeoutsRef.current.set(id, timeout);
+      });
+    }
+
+    prevMetIdsRef.current = currentMetIds;
+  }, [requirements, prefersReducedMotion]);
 
   // Micro-UX: Track when checklist first becomes visible for staggered entrance animation
   // Creates a delightful cascading reveal that guides user attention through requirements
@@ -176,7 +228,7 @@ function PasswordRequirementsChecklistComponent({
               req.met
                 ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
                 : TEXT_COLORS.MUTED
-            } ${hasAppeared && !prefersReducedMotion ? `animate-checklist-item animate-checklist-item-${index + 1}` : ''}`}
+            } ${hasAppeared && !prefersReducedMotion ? `animate-checklist-item animate-checklist-item-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? 'animate-requirement-met' : ''}`}
             aria-label={`${req.label}: ${req.met ? 'met' : 'not met'}`}
           >
             <span
