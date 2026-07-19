@@ -11,7 +11,7 @@ import {
 import { HTTP_HEADERS } from './config/http';
 import { ENV_ACCESSORS } from './config/env-keys';
 import { generateRequestId } from './errors';
-import { simpleHash } from './security/crypto';
+import { simpleHash, timingSafeEqualStrings } from './security/crypto';
 import { TIME_CONVERSIONS } from './config/modular-constants';
 import { API_ERROR_MESSAGES } from './config/error-messages';
 
@@ -67,7 +67,9 @@ function extractUserIdFromRequest(request: Request): string | null {
 
     if (
       isDev ||
-      (internalSecret && expectedSecret && internalSecret === expectedSecret)
+      (internalSecret &&
+        expectedSecret &&
+        timingSafeEqualStrings(internalSecret, expectedSecret))
     ) {
       return xUserId.trim() || null;
     }
@@ -119,7 +121,9 @@ function determineUserRole(request: Request, userId: string | null): UserRole {
   const expectedSecret = ENV_ACCESSORS.SECURITY.INTERNAL_API_SECRET();
   const isTrusted =
     isDev ||
-    (internalSecret && expectedSecret && internalSecret === expectedSecret);
+    (internalSecret &&
+      expectedSecret &&
+      timingSafeEqualStrings(internalSecret, expectedSecret));
 
   if (isTrusted) {
     const tierHeader = request.headers.get('x-user-tier');
