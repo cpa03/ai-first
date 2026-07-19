@@ -34,7 +34,9 @@ export function toErrorResponse(
       ErrorCode.INTERNAL_ERROR,
       STATUS_CODES.INTERNAL_ERROR,
       undefined,
-      false
+      false,
+      undefined,
+      requestId
     );
   } else {
     appError = new AppError(
@@ -42,12 +44,20 @@ export function toErrorResponse(
       ErrorCode.INTERNAL_ERROR,
       STATUS_CODES.INTERNAL_ERROR,
       undefined,
-      false
+      false,
+      undefined,
+      requestId
     );
   }
 
+  if (requestId && !appError.requestId) {
+    appError.setRequestId(requestId);
+  }
+
   const errorResponse = appError.toJSON();
-  errorResponse.requestId = requestId || generateRequestId();
+  if (!errorResponse.requestId) {
+    errorResponse.requestId = requestId || generateRequestId();
+  }
 
   const headers: Record<string, string> = {
     [HTTP_HEADERS.CONTENT_TYPE]: HTTP_HEADERS.APPLICATION_JSON,

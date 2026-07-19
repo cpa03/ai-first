@@ -560,19 +560,64 @@ export function cleanupExpiredEntries(): void {
   }
 }
 
-// Store interval ID to allow cleanup (prevents memory leaks in tests/HMR)
 let cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
+let lastCleanupTime = Date.now();
+let cleanupCount = 0;
 
-/**
- * Starts the cleanup interval for expired rate limit entries.
- * Idempotent - safe to call multiple times.
- */
+const AGGRESSIVE_CLEANUP_PERCENTAGE = 0.3;
+const WARNING_THRESHOLD_PERCENTAGE = 0.8;
+const MAX_ORPHANED_LOCKS = 1000;
+
+function performEnhancedCleanup(): void {
+  cleanupExpiredEntries();
+  cleanupCount++;
+  lastCleanupTime = Date.now();
+
+  const storeSize = rateLimitStore.size;
+  const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
+  const warningThreshold = maxSize * WARNING_THRESHOLD_PERCENTAGE;
+
+  if (storeSize > warningThreshold) {
+    const entriesToRemove = Math.floor(
+      storeSize * AGGRESSIVE_CLEANUP_PERCENTAGE
+    );
+    cleanupOldestEntries(entriesToRemove);
+
+    if (
+      typeof process !== 'undefined' &&
+      process.env?.NODE_ENV === 'development'
+    ) {
+      console.warn(
+        `[RateLimit] Store approaching capacity: ${storeSize}/${maxSize}. ` +
+          `Removed ${entriesToRemove} entries. Cleanup #${cleanupCount}`
+      );
+    }
+  }
+
+  cleanupOrphanedLocks();
+}
+
+function cleanupOrphanedLocks(): void {
+  if (rateLimitLocks.size > MAX_ORPHANED_LOCKS) {
+    rateLimitLocks.clear();
+
+    if (
+      typeof process !== 'undefined' &&
+      process.env?.NODE_ENV === 'development'
+    ) {
+      console.warn(
+        `[RateLimit] Cleared ${MAX_ORPHANED_LOCKS} orphaned locks as safety measure`
+      );
+    }
+  }
+}
+
 export function startCleanupInterval(): void {
   if (cleanupIntervalId) {
-    return; // Already running
+    return;
   }
   cleanupIntervalId = setInterval(
-    cleanupExpiredEntries,
+    performEnhancedCleanup,
     RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_INTERVAL_MS
   );
 }
@@ -685,4 +730,31 @@ export function getRateLimitStats() {
 
 export function clearRateLimitStore(): void {
   rateLimitStore.clear();
+}
+
+export interface StoreHealthMetrics {
+  currentSize: number;
+  maxSize: number;
+  utilizationPercent: number;
+  lockCount: number;
+  cleanupCount: number;
+  lastCleanupTime: number;
+  isHealthy: boolean;
+}
+
+export function getStoreHealthMetrics(): StoreHealthMetrics {
+  const currentSize = rateLimitStore.size;
+  const maxSize = RATE_LIMIT_STORE_CONFIG.MAX_STORE_SIZE;
+  const utilizationPercent = (currentSize / maxSize) * 100;
+
+  return {
+    currentSize,
+    maxSize,
+    utilizationPercent,
+    lockCount: rateLimitLocks.size,
+    cleanupCount,
+    lastCleanupTime,
+    isHealthy:
+      utilizationPercent < 80 && rateLimitLocks.size < MAX_ORPHANED_LOCKS,
+  };
 }

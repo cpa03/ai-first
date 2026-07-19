@@ -27,6 +27,7 @@ export interface ErrorResponse {
 
 export class AppError extends Error {
   private _fingerprint?: string;
+  private _requestId?: string;
 
   constructor(
     message: string,
@@ -34,10 +35,12 @@ export class AppError extends Error {
     public readonly statusCode: number = STATUS_CODES.INTERNAL_ERROR,
     public readonly details?: ErrorDetail[],
     public readonly retryable: boolean = false,
-    public readonly suggestions?: string[]
+    public readonly suggestions?: string[],
+    requestId?: string
   ) {
     super(message);
     this.name = 'AppError';
+    this._requestId = requestId;
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, this.constructor);
     }
@@ -64,9 +67,19 @@ export class AppError extends Error {
         ? (redactPIIInObject(this.details) as unknown as ErrorDetail[])
         : undefined,
       timestamp: new Date().toISOString(),
+      requestId: this._requestId,
       retryable: this.retryable,
       suggestions: this.suggestions,
     };
+  }
+
+  get requestId(): string | undefined {
+    return this._requestId;
+  }
+
+  setRequestId(requestId: string): this {
+    this._requestId = requestId;
+    return this;
   }
 }
 
