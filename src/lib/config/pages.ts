@@ -528,8 +528,16 @@ export const NOT_FOUND_PAGE_CONFIG = {
     STEP_1: 'delay-75',
     STEP_2: 'delay-150',
     STEP_3: 'delay-200',
+    STEP_4: 'delay-250',
     STEP_5: 'delay-300',
   } as const,
+} as const;
+
+export const NOT_FOUND_LABELS = {
+  COPY_URL_BUTTON: 'Copy page URL',
+  COPY_URL_SUCCESS: 'URL copied!',
+  COPY_URL_ARIA_LABEL: 'Copy broken page URL to clipboard for reporting',
+  COPY_URL_HINT: 'copy URL',
 } as const;
 
 export const PAGE_CONFIG = {
