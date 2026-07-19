@@ -1,11 +1,12 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useState, useEffect } from 'react';
 import {
   COMPONENT_CONFIG,
   UI_CONFIG,
   SPINNER_TAILWIND,
   TEXT_COLOR_CLASSES,
+  TRANSITION_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -27,6 +28,17 @@ function LoadingSpinnerComponent({
   label,
 }: LoadingSpinnerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [hasAppeared, setHasAppeared] = useState(false);
+
+  // Micro-UX: Track when spinner first becomes visible for entrance animation
+  // Creates a subtle fade-in + scale effect that makes the loading state feel more polished
+  useEffect(() => {
+    if (!prefersReducedMotion) {
+      requestAnimationFrame(() => {
+        setHasAppeared(true);
+      });
+    }
+  }, [prefersReducedMotion]);
 
   // PERFORMANCE: Memoize spinner dimensions to prevent recalculation on every render
   // These values only change when the size prop changes
@@ -94,7 +106,11 @@ function LoadingSpinnerComponent({
 
   return (
     <div
-      className={`flex justify-center items-center gap-2.5 ${className}`}
+      className={`flex justify-center items-center gap-2.5 ${className} ${
+        !prefersReducedMotion && !hasAppeared
+          ? 'opacity-0 scale-90'
+          : `opacity-100 scale-100 ${TRANSITION_CLASSES.SLOW_EASE_OUT}`
+      }`}
       role={COMPONENT_CONFIG.ARIA.STATUS}
       aria-live={COMPONENT_CONFIG.ARIA.POLITE}
       aria-label={ariaLabel}
