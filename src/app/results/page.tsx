@@ -655,6 +655,23 @@ function ResultsContent() {
           </div>
         </div>
 
+        {/* Micro-UX: Keyboard shortcut hint for export discoverability */}
+        {/* Helps users discover Ctrl+E shortcut for quick markdown export */}
+        <div
+          className="mt-4 flex items-center gap-2 text-xs text-gray-400"
+          aria-hidden="true"
+        >
+          <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
+            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm">
+              {isMac ? '⌘' : 'Ctrl'}
+            </kbd>
+            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm">
+              E
+            </kbd>
+            <span className="text-gray-400">quick export markdown</span>
+          </span>
+        </div>
+
         {exportUrl && (
           <div className="mt-6 relative">
             <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
