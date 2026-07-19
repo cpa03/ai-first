@@ -34,6 +34,7 @@ import {
   BG_COLORS,
   BORDER_COLORS,
   RING_COLORS,
+  UI_DURATIONS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
@@ -130,7 +131,7 @@ export default function DashboardPage() {
   // Micro-UX: Animated counter for idea count provides a delightful count-up effect
   // when the dashboard loads, giving users a sense of their data at a glance
   const animatedIdeaCount = useAnimatedCounter(pagination?.total || 0, {
-    duration: 600,
+    duration: UI_DURATIONS.DASHBOARD_COUNTER,
   });
 
   // Set CSS custom properties for dashboard animation from config

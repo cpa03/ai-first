@@ -493,6 +493,13 @@ export const COMPONENT_CONFIG = {
       500,
       5000
     ),
+    /** Duration for individual requirement met animation (ms) - Env: COMPONENT_PASSWORD_NEWLY_MET_ANIMATION_MS (default: 400) */
+    NEWLY_MET_ANIMATION_MS: EnvLoader.number(
+      'COMPONENT_PASSWORD_NEWLY_MET_ANIMATION_MS',
+      400,
+      100,
+      1000
+    ),
   } as const,
 
   /**

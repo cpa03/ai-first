@@ -143,7 +143,7 @@ function PasswordRequirementsChecklistComponent({
             return next;
           });
           newlyMetTimeoutsRef.current.delete(id);
-        }, 400);
+        }, COMPONENT_CONFIG.PASSWORD_REQUIREMENTS.NEWLY_MET_ANIMATION_MS);
         newlyMetTimeoutsRef.current.set(id, timeout);
       });
     }
