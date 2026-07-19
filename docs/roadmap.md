@@ -2,7 +2,7 @@
 
 This document outlines the strategic direction and planned releases for IdeaFlow.
 
-**Last Updated**: July 1, 2026
+**Last Updated**: July 19, 2026
 
 ---
 
@@ -766,7 +766,7 @@ This roadmap is a living document. It will be reviewed and updated:
 
 **Roadmap Owner**: Principal Product Strategist (Agent 00)
 
-**Last Updated**: June 16, 2026
+**Last Updated**: July 19, 2026
 **Next Review**: Monthly (aligned with sprint reviews)
 
 ---

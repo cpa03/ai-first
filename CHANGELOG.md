@@ -52,6 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Fixed inconsistent "Last Updated" dates in `docs/roadmap.md`
+- Deleted merged branches: `flexy/modularize-remaining-hardcoded-styles`, `brocula/browser-console-audit-20260719-1246`
 - Updated `docs/roadmap.md` with accurate Phase 1 progress tracking
 - Consolidated duplicate RepoKeeper maintenance reports
 - Compressed archive files to reduce repository size (saved 419KB)
