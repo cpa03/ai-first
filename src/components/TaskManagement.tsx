@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState, useRef, useMemo } from 'react';
 import TaskManagementSkeleton from '@/components/TaskManagementSkeleton';
 import Button from '@/components/Button';
 import Alert from '@/components/Alert';
@@ -22,9 +22,9 @@ import {
   TYPOGRAPHY_CLASSES,
   SPACING_CLASSES,
   ROUNDED_CLASSES,
-  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import type { Task } from '@/lib/db';
 
 interface TaskManagementProps {
   ideaId: string;
@@ -48,9 +48,45 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
 
   const [expandAnnouncement, setExpandAnnouncement] = useState('');
   const [expandTriggered, setExpandTriggered] = useState(false);
+  const [focusedTaskIndex, setFocusedTaskIndex] = useState<number>(-1);
+  const taskRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const allTasks = useMemo(() => {
+    if (!data || data.deliverables.length === 0) return [];
+    const tasks: Task[] = [];
+    for (const deliverable of data.deliverables) {
+      for (const task of deliverable.tasks) {
+        tasks.push(task);
+      }
+    }
+    return tasks;
+  }, [data]);
+
+  const focusedTaskId = useMemo(
+    () =>
+      focusedTaskIndex >= 0 && focusedTaskIndex < allTasks.length
+        ? allTasks[focusedTaskIndex].id
+        : null,
+    [focusedTaskIndex, allTasks]
+  );
+
+  useEffect(() => {
+    if (focusedTaskIndex >= 0 && focusedTaskIndex < allTasks.length) {
+      const taskId = allTasks[focusedTaskIndex].id;
+      const taskElement = taskRefs.current.get(taskId);
+      if (taskElement) {
+        taskElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+        taskElement.focus();
+      }
+    }
+  }, [focusedTaskIndex, allTasks]);
 
   // Micro-UX: Keyboard shortcuts for expand/collapse all deliverables
   // [ = expand all, ] = collapse all (matches keyboard shortcuts help panel)
+  // Arrow keys = navigate between tasks, Enter/Space = toggle focused task
   useEffect(() => {
     if (!data || data.deliverables.length === 0) return;
 
@@ -70,12 +106,43 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         collapseAll();
         setExpandAnnouncement(TASK_MANAGEMENT_LABELS.COLLAPSE_ALL_ANNOUNCEMENT);
         setExpandTriggered(true);
+      } else if (e.key === 'ArrowDown' || e.key === 'j') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        setFocusedTaskIndex((prev) => {
+          const nextIndex = prev < allTasks.length - 1 ? prev + 1 : 0;
+          return nextIndex;
+        });
+      } else if (e.key === 'ArrowUp' || e.key === 'k') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        setFocusedTaskIndex((prev) => {
+          const nextIndex = prev > 0 ? prev - 1 : allTasks.length - 1;
+          return nextIndex;
+        });
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        if (focusedTaskIndex >= 0 && focusedTaskIndex < allTasks.length) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          const task = allTasks[focusedTaskIndex];
+          handleToggleTaskStatus(task.id, task.status);
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        setFocusedTaskIndex(-1);
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [data, expandAll, collapseAll]);
+  }, [
+    data,
+    expandAll,
+    collapseAll,
+    allTasks,
+    focusedTaskIndex,
+    handleToggleTaskStatus,
+  ]);
 
   // PERFORMANCE: Memoize reload handler to prevent function recreation on each render
   const handleRetry = useCallback(() => {
@@ -189,6 +256,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             deliverable={deliverable}
             isExpanded={expandedDeliverables.has(deliverable.id)}
             updatingTaskId={updatingTaskId}
+            focusedTaskId={focusedTaskId}
             onToggleExpand={toggleDeliverable}
             onToggleTask={handleToggleTaskStatus}
           />
@@ -198,32 +266,38 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
       {/* Micro-UX: Keyboard shortcut hints for discoverability */}
       {/* Matches the pattern established on the dashboard page */}
       <div
-        className="mt-2 flex items-center gap-4 text-xs text-gray-400"
+        className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400"
         aria-hidden="true"
       >
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd
-            className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-          >
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            ↑↓
+          </kbd>
+          navigate
+        </span>
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            Enter
+          </kbd>
+          toggle task
+        </span>
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
             [
           </kbd>
           expand all
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd
-            className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-          >
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
             ]
           </kbd>
           collapse all
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd
-            className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded`}
-          >
-            Space
+          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+            Esc
           </kbd>
-          toggle task
+          clear focus
         </span>
       </div>
     </div>

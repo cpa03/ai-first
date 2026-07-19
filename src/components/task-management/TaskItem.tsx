@@ -24,10 +24,16 @@ import { useConfetti } from '@/hooks/useConfetti';
 interface TaskItemProps {
   task: Task;
   isUpdating: boolean;
+  focused?: boolean;
   onToggle: (taskId: string, currentStatus: TaskStatus) => void;
 }
 
-function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
+function TaskItemComponent({
+  task,
+  isUpdating,
+  focused = false,
+  onToggle,
+}: TaskItemProps) {
   const taskStatus = TASK_STATUS_CONFIG[task.status];
   const isCompleted = task.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED;
   const [showCelebration, setShowCelebration] = useState(false);
@@ -125,8 +131,15 @@ function TaskItemComponent({ task, isUpdating, onToggle }: TaskItemProps) {
     const reducedMotionClass = prefersReducedMotion
       ? 'motion-reduce:transition-none motion-reduce:hover:transform-none'
       : '';
-    return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass}`;
-  }, [isCompleted, showCelebration, task.risk_level, prefersReducedMotion]);
+    const focusClass = focused ? 'ring-2 ring-primary-400 ring-offset-1' : '';
+    return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass} ${focusClass}`;
+  }, [
+    isCompleted,
+    showCelebration,
+    task.risk_level,
+    prefersReducedMotion,
+    focused,
+  ]);
 
   return (
     <div className="relative group">
