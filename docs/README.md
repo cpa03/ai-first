@@ -259,7 +259,8 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 
 ## Maintenance Reports
 
-- [Repository Audit Report - 2026-07-19 (Latest)](./maintenance/2026-07-19-repository-audit.md) - Comprehensive repository audit
+- [Repository Maintenance Report - 2026-07-19 (Latest)](./maintenance/2026-07-19-repository-maintenance.md) - Documentation update and branch cleanup
+- [Repository Audit Report - 2026-07-19](./maintenance/2026-07-19-repository-audit.md) - Comprehensive repository audit
 - [Repository Audit Report - 2026-07-18](./maintenance/2026-07-18-repository-audit.md) - Repository audit
 - [Repository Audit Report - 2026-07-17](./maintenance/2026-07-17-repository-audit.md) - Repository audit
 - [Repository Audit Report - 2026-07-15](./maintenance/2026-07-15-repository-audit.md) - Repository audit
