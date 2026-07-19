@@ -22,6 +22,7 @@ import {
   TYPOGRAPHY_CLASSES,
   SPACING_CLASSES,
   ROUNDED_CLASSES,
+  UI_CONFIG,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import type { Task } from '@/lib/db';
@@ -270,31 +271,31 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         aria-hidden="true"
       >
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ↑↓
           </kbd>
           navigate
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             Enter
           </kbd>
           toggle task
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             [
           </kbd>
           expand all
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ]
           </kbd>
           collapse all
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
-          <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             Esc
           </kbd>
           clear focus
