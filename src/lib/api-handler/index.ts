@@ -26,7 +26,10 @@ export {
   notFoundResponse,
   badRequestResponse,
   standardSuccessResponse,
+  standardErrorResponse,
 } from './response';
+
+export type { StandardErrorResponse } from './response';
 
 // Re-export main wrapper
 export { withApiHandler } from './wrapper';

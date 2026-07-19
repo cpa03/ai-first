@@ -4,6 +4,7 @@
 
 export enum ErrorCode {
   VALIDATION_ERROR = 'VALIDATION_ERROR',
+  BAD_REQUEST = 'BAD_REQUEST',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
   INTERNAL_ERROR = 'INTERNAL_ERROR',
   EXTERNAL_SERVICE_ERROR = 'EXTERNAL_SERVICE_ERROR',
@@ -24,6 +25,12 @@ export const ERROR_SUGGESTIONS: Record<ErrorCode, string[]> = {
     'Ensure field values match the expected format',
     'Verify that string lengths are within the allowed limits',
     'Check that UUIDs are properly formatted',
+  ],
+  BAD_REQUEST: [
+    'Check that all required fields are present in your request',
+    'Ensure field values match the expected format',
+    'Verify that the request body is valid JSON',
+    'Check that all parameters are within allowed ranges',
   ],
   RATE_LIMIT_EXCEEDED: [
     'Wait for the specified number of seconds before retrying',
