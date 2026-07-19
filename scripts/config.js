@@ -112,13 +112,17 @@ const LIGHTHOUSE_CONFIG = {
 
     // Fallback paths for common CI environments
     const fallbackPaths = [
-      // GitHub Actions (Linux)
+      // GitHub Actions (Linux) - Playwright v1.58+ (chromium-1228)
+      '/home/runner/.cache/ms-playwright/chromium-1228/chrome-linux/chrome',
+      // GitHub Actions (Linux) - Playwright v1.50+ (chromium-1208)
       '/home/runner/.cache/ms-playwright/chromium-1208/chrome-linux/chrome',
-      // GitHub Actions (alternative versions)
+      // GitHub Actions (Linux) - older versions
       '/home/runner/.cache/ms-playwright/chromium-1155/chrome-linux/chrome',
       // macOS
+      '/Users/runner/.cache/ms-playwright/chromium-1228/chrome-mac/Chromium.app/Contents/MacOS/Chromium',
       '/Users/runner/.cache/ms-playwright/chromium-1208/chrome-mac/Chromium.app/Contents/MacOS/Chromium',
       // Windows
+      'C:\\Users\\runneradmin\\.cache\\ms-playwright\\chromium-1228\\chrome-win\\chrome.exe',
       'C:\\Users\\runneradmin\\.cache\\ms-playwright\\chromium-1208\\chrome-win\\chrome.exe',
     ];
 
