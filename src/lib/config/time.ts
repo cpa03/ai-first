@@ -76,6 +76,12 @@ export const UI_DURATIONS = {
     50,
     1000
   ),
+  DASHBOARD_COUNTER: EnvLoader.number(
+    'UI_DURATION_DASHBOARD_COUNTER_MS',
+    600,
+    100,
+    2000
+  ),
 } as const;
 
 export const CIRCUIT_BREAKER_TIMES = {
