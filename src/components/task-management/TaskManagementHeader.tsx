@@ -11,6 +11,7 @@ import {
   UI_CONFIG,
   TEXT_COLORS,
   TRANSITION_CLASSES,
+  TASK_MANAGEMENT_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -167,7 +168,7 @@ function TaskManagementHeaderComponent({
         {/* Makes [ and ] shortcuts visible without requiring hover, following the ProgressStepper pattern */}
         <div
           className="hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-400 animate-breathe"
-          aria-label="Keyboard shortcuts: [ to expand all, ] to collapse all"
+          aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>

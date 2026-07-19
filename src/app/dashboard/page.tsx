@@ -727,7 +727,7 @@ export default function DashboardPage() {
               <svg
                 className="w-3 h-3 mr-1"
                 fill="currentColor"
-                viewBox="0 0 20 20"
+                viewBox={SVG_VIEWBOX.SMALL}
                 aria-hidden="true"
               >
                 <path
@@ -1187,9 +1187,9 @@ export default function DashboardPage() {
             <svg
               className="w-3 h-3"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
             >
               <path
                 strokeLinecap="round"
