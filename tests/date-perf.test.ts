@@ -1,4 +1,4 @@
-import { getRelativeTime } from '@/lib/utils';
+import { getRelativeTime, parseDate } from '@/lib/utils';
 
 describe('Date Formatting Performance and Correctness', () => {
   // Use a fixed "now" date
@@ -54,6 +54,28 @@ describe('Date Formatting Performance and Correctness', () => {
     });
   });
 
+  describe('parseDate Correctness', () => {
+    it('should parse date strings correctly', () => {
+      const dateStr = '2026-05-15T10:00:00Z';
+      const parsed = parseDate(dateStr);
+      expect(Object.prototype.toString.call(parsed)).toBe('[object Date]');
+      expect(parsed.getTime()).toBe(new Date(dateStr).getTime());
+    });
+
+    it('should return exact same Date reference from cache for identical string inputs', () => {
+      const dateStr = '2026-05-15T10:00:00Z';
+      const parsed1 = parseDate(dateStr);
+      const parsed2 = parseDate(dateStr);
+      expect(parsed1).toBe(parsed2); // Checks reference equality
+    });
+
+    it('should return the input unchanged if already a Date object', () => {
+      const dateObj = new Date();
+      const result = parseDate(dateObj);
+      expect(result).toBe(dateObj);
+    });
+  });
+
   describe('Performance Benchmark', () => {
     it('benchmarks getRelativeTime for old dates (cold path)', () => {
       const oldDate = new Date('2025-01-01T12:00:00Z');
@@ -67,7 +89,26 @@ describe('Date Formatting Performance and Correctness', () => {
       const duration = end - start;
 
       console.log(
-        `[Benchmark] getRelativeTime (${iterations} iterations): ${duration.toFixed(2)}ms`
+        `[Benchmark] getRelativeTime with Date object (${iterations} iterations): ${duration.toFixed(2)}ms`
+      );
+
+      // Basic sanity check
+      expect(duration).toBeDefined();
+    });
+
+    it('benchmarks getRelativeTime for string inputs (caching path)', () => {
+      const dateStr = '2025-01-01T12:00:00Z';
+      const iterations = 1000;
+
+      const start = performance.now();
+      for (let i = 0; i < iterations; i++) {
+        getRelativeTime(dateStr);
+      }
+      const end = performance.now();
+      const duration = end - start;
+
+      console.log(
+        `[Benchmark] getRelativeTime with String inputs (${iterations} iterations with cache): ${duration.toFixed(2)}ms`
       );
 
       // Basic sanity check

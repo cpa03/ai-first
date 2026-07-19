@@ -71,6 +71,7 @@ import {
   triggerHapticFeedback,
   getRelativeTime,
   formatAbsoluteDate,
+  parseDate,
 } from '@/lib/utils';
 interface Idea {
   id: string;
@@ -100,7 +101,7 @@ const formatDate = (dateString: string): string => {
 // Also export absolute date for cases where it's needed.
 // PERFORMANCE: Uses the optimized formatAbsoluteDate from utils for maximum efficiency.
 const formatDateAbsolute = (dateString: string): string => {
-  return formatAbsoluteDate(new Date(dateString));
+  return formatAbsoluteDate(parseDate(dateString));
 };
 
 export default function DashboardPage() {
