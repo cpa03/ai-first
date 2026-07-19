@@ -382,6 +382,8 @@ export const TASK_MANAGEMENT_LABELS = {
   SKELETON_SR_TEXT: 'Loading task management data...',
   KEYBOARD_SHORTCUTS_ARIA_LABEL:
     'Keyboard shortcuts: [ to expand all, ] to collapse all',
+  COPY_SUMMARY_BUTTON: 'Copy Summary',
+  COPY_SUMMARY_SUCCESS: 'Copied!',
 } as const;
 
 /**

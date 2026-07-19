@@ -22,6 +22,7 @@ import {
   PAGE_LAYOUT_CLASSES,
   ANIMATION_DELAYS,
   COMPONENT_CONFIG,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -662,10 +663,14 @@ function ResultsContent() {
           aria-hidden="true"
         >
           <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
+            >
               {isMac ? '⌘' : 'Ctrl'}
             </kbd>
-            <kbd className="px-1.5 py-0.5 font-mono text-[10px] font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm">
+            <kbd
+              className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
+            >
               E
             </kbd>
             <span className="text-gray-400">quick export markdown</span>
