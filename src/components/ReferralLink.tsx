@@ -9,7 +9,6 @@ import {
   SVG_VIEWBOX,
   REFERRAL_LINK_LABELS,
   GRAY_CLASSES,
-  FOCUS_RING_PATTERNS,
   WHITE_BG_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -124,7 +123,8 @@ export default function ReferralLink({
               onKeyDown={handleCodeKeyDown}
               tabIndex={0}
               title={REFERRAL_LINK_LABELS.CODE_TITLE}
-              className={`flex-1 min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} ${FOCUS_RING_PATTERNS.DEFAULT} transition-colors duration-200`}
+              aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
+              className={`flex-1 min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
             >
               {referralUrl}
             </code>

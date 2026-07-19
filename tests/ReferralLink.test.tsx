@@ -24,14 +24,22 @@ describe('ReferralLink', () => {
     jest.clearAllMocks();
   });
 
-  it('renders the referral title, description, and link correctly', () => {
+  it('renders the referral title, description, and link correctly with focus-visible and aria attributes', () => {
     render(<ReferralLink referralCode="testcode123" />);
 
     expect(screen.getByText(/Share Your Referral Link/i)).toBeInTheDocument();
     expect(
       screen.getByText(/Invite friends and earn rewards when they sign up!/i)
     ).toBeInTheDocument();
-    expect(screen.getByText(/signup\?ref=testcode123/i)).toBeInTheDocument();
+
+    const codeElement = screen.getByText(/signup\?ref=testcode123/i);
+    expect(codeElement).toBeInTheDocument();
+    expect(codeElement).toHaveAttribute(
+      'aria-label',
+      'http://localhost/signup?ref=testcode123. Press Space or Enter to select the link.'
+    );
+    expect(codeElement.className).toContain('focus-visible:ring-2');
+    expect(codeElement.className).toContain('focus-visible:ring-primary-500');
   });
 
   it('selects the entire code container content on click', () => {
