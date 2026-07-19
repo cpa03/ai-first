@@ -695,7 +695,7 @@ export default function SignupPage() {
               <svg
                 className="h-5 w-5 mr-2"
                 fill="currentColor"
-                viewBox="0 0 20 20"
+                viewBox={SVG_VIEWBOX.SMALL}
               >
                 <path
                   fillRule="evenodd"

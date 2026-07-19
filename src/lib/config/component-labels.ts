@@ -380,6 +380,8 @@ export const TASK_MANAGEMENT_LABELS = {
   COLLAPSE_ALL_ANNOUNCEMENT: 'All deliverables collapsed',
   SKELETON_ARIA_LABEL: 'Loading task management data',
   SKELETON_SR_TEXT: 'Loading task management data...',
+  KEYBOARD_SHORTCUTS_ARIA_LABEL:
+    'Keyboard shortcuts: [ to expand all, ] to collapse all',
 } as const;
 
 /**
