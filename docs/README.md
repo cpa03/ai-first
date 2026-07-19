@@ -237,7 +237,8 @@ Complete index of all IdeaFlow documentation.
 - [Issue: Structured Logging](./audit/ISSUE-04-structured-logging.md) - Structured logging implementation
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
 - [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
-- [Browser Console Audit - 2026-07-16](./audit/brocula-browser-audit-2026-07-16.md) - BroCula browser audit (latest)
+- [Browser Console Audit - 2026-07-19](./audit/2026-07-19-brocula-browser-console-lighthouse.md) - BroCula browser console & Lighthouse audit (latest)
+- [Browser Console Audit - 2026-07-16](./audit/brocula-browser-audit-2026-07-16.md) - BroCula browser audit (previous)
 - [Ultrawork Summary - 2026-07-15](./audit/ultrawork-summary-20260715.md) - Ultrawork session summary
 - [Flexy Modularization Audit](./flexy-modularity-audit.md) - Code modularization assessment
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
