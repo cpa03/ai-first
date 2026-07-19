@@ -32,6 +32,7 @@ interface DeliverableCardProps {
   deliverable: DeliverableWithTasks;
   isExpanded: boolean;
   updatingTaskId: string | null;
+  focusedTaskId?: string | null;
   onToggleExpand: (deliverableId: string) => void;
   onToggleTask: (taskId: string, currentStatus: TaskStatus) => Promise<void>;
 }
@@ -40,6 +41,7 @@ function DeliverableCardComponent({
   deliverable,
   isExpanded,
   updatingTaskId,
+  focusedTaskId = null,
   onToggleExpand,
   onToggleTask,
 }: DeliverableCardProps) {
@@ -196,6 +198,7 @@ function DeliverableCardComponent({
                   key={task.id}
                   task={task}
                   isUpdating={updatingTaskId === task.id}
+                  focused={focusedTaskId === task.id}
                   onToggle={onToggleTask}
                 />
               ))
