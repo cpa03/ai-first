@@ -92,7 +92,7 @@ async function scanPage(page, url) {
   // Navigate to page and wait for load
   try {
     await page.goto(`${BASE_URL}${url}`, {
-      waitUntil: 'networkidle',
+      waitUntil: 'domcontentloaded',
       timeout: CONSOLE_SCANNER_CONFIG.NAVIGATION_TIMEOUT,
     });
 
