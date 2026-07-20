@@ -15,6 +15,7 @@ import {
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
@@ -177,6 +178,23 @@ const ShareButtonComponent = function ShareButton({
     fire,
   ]);
 
+  // Micro-UX: Keyboard shortcut for quick sharing (Ctrl/Cmd + Shift + S)
+  // Matches the pattern of CopyButton (⌘C) and EmailButton (⌘E)
+  // Uses Shift to avoid conflict with browser save (⌘S)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'S') {
+        if (!isFocusedOnInput(e.target)) {
+          e.preventDefault();
+          handleShare();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [handleShare]);
+
   const baseClasses = `
     inline-flex items-center justify-center gap-2
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out
@@ -208,6 +226,7 @@ const ShareButtonComponent = function ShareButton({
       <StatusAnnouncer message={toastMessage} triggered={shared} />
       <Tooltip
         content={shared ? successLabel : ariaLabel}
+        shortcut={shared ? undefined : ['⌘', '⇧', 'S']}
         disabled={false}
         position="top"
       >
