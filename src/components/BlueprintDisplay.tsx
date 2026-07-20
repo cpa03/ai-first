@@ -372,7 +372,7 @@ function CopyCodeButton({ text }: { text: string }) {
         >
           {copied ? (
             <svg
-              className={`${SVG_SIZES.SMD} ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}'}`}
+              className={`${SVG_SIZES.SMD} ${prefersReducedMotion ? '' : `animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
