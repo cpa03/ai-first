@@ -477,6 +477,8 @@ export const DASHBOARD_LABELS = {
     DESELECT_LABEL: 'dismiss',
     DELETE_KEY: 'Del',
     DELETE_LABEL: 'delete',
+    NEW_IDEA_KEY: 'n',
+    NEW_IDEA_LABEL: 'new idea',
     FILTER_KEY: '/',
     FILTER_LABEL: 'filter',
     HELP_KEY: '?',

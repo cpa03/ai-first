@@ -1168,6 +1168,16 @@ export default function DashboardPage() {
               <kbd
                 className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.NEW_IDEA_KEY}
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.NEW_IDEA_LABEL}
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
