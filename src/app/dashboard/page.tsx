@@ -35,6 +35,8 @@ import {
   BORDER_COLORS,
   RING_COLORS,
   UI_DURATIONS,
+  DASHBOARD_PATTERNS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
@@ -583,10 +585,10 @@ export default function DashboardPage() {
       </div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className={DASHBOARD_PATTERNS.PAGE_HEADING}>
             {DASHBOARD_PAGE_CONTENT.HEADING}
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className={DASHBOARD_PATTERNS.PAGE_SUBHEADING}>
             <span className="tabular-nums font-medium">
               {animatedIdeaCount}
             </span>{' '}
@@ -644,7 +646,7 @@ export default function DashboardPage() {
                 value="all"
                 className={
                   filter === IDEA_STATUS_CONFIG.FILTERS.ALL
-                    ? 'bg-primary-50 font-medium'
+                    ? DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE
                     : ''
                 }
               >
@@ -656,7 +658,7 @@ export default function DashboardPage() {
                 value="draft"
                 className={
                   filter === IDEA_STATUS_CONFIG.FILTERS.DRAFT
-                    ? 'bg-primary-50 font-medium'
+                    ? DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE
                     : ''
                 }
               >
@@ -668,7 +670,7 @@ export default function DashboardPage() {
                 value="clarified"
                 className={
                   filter === IDEA_STATUS_CONFIG.FILTERS.CLARIFIED
-                    ? 'bg-primary-50 font-medium'
+                    ? DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE
                     : ''
                 }
               >
@@ -680,7 +682,7 @@ export default function DashboardPage() {
                 value="breakdown"
                 className={
                   filter === IDEA_STATUS_CONFIG.FILTERS.BREAKDOWN
-                    ? 'bg-primary-50 font-medium'
+                    ? DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE
                     : ''
                 }
               >
@@ -692,7 +694,7 @@ export default function DashboardPage() {
                 value="completed"
                 className={
                   filter === IDEA_STATUS_CONFIG.FILTERS.COMPLETED
-                    ? 'bg-primary-50 font-medium'
+                    ? DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE
                     : ''
                 }
               >
@@ -725,7 +727,7 @@ export default function DashboardPage() {
                 : 'animate-fade-in'
             }`}
           >
-            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 ring-1 ring-primary-200">
+            <span className={DASHBOARD_PATTERNS.STATUS_BADGE_ACTIVE}>
               <svg
                 className="w-3 h-3 mr-1"
                 fill="currentColor"
@@ -749,7 +751,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={handleClearFilter}
-                className="text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+                className={DASHBOARD_PATTERNS.ACTION_LINK}
                 aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.CLEAR_FILTER}
               >
                 {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
@@ -763,7 +765,7 @@ export default function DashboardPage() {
             localStorage.removeItem(LOCAL_STORAGE_KEYS.ONBOARDING_COMPLETED);
             window.location.reload();
           }}
-          className="ml-2 text-xs text-gray-500 hover:text-primary-600 underline cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
+          className={`ml-2 ${DASHBOARD_PATTERNS.ACTION_LINK} cursor-pointer`}
           aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.RESTART_ONBOARDING}
         >
           {DASHBOARD_PAGE_CONTENT.RESTART_TOUR}
@@ -774,9 +776,11 @@ export default function DashboardPage() {
         <div className={CARD_PATTERNS.CENTERED_LARGE}>
           {filter !== 'all' ? (
             <>
-              <div className="inline-flex items-center justify-center w-20 h-20 mb-6 bg-primary-50 rounded-full">
+              <div
+                className={`${DASHBOARD_PATTERNS.EMPTY_STATE_ICON} ${BG_COLORS.BRAND_LIGHT} ${BORDER_COLORS.PRIMARY_LIGHT}`}
+              >
                 <svg
-                  className="w-10 h-10 text-primary-600"
+                  className={`${DASHBOARD_PATTERNS.EMPTY_STATE_ICON_INNER} ${TEXT_COLORS.BRAND}`}
                   fill="none"
                   stroke="currentColor"
                   viewBox={SVG_VIEWBOX.STANDARD}
@@ -790,10 +794,10 @@ export default function DashboardPage() {
                   />
                 </svg>
               </div>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <h2 className={DASHBOARD_PATTERNS.SECTION_HEADING}>
                 {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.NO_MATCHING_TITLE}
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className={DASHBOARD_PATTERNS.SECTION_SUBHEADING}>
                 {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.NO_MATCHING_DESCRIPTION.replace(
                   '{filter}',
                   filter === 'breakdown'
@@ -814,10 +818,10 @@ export default function DashboardPage() {
             </>
           ) : (
             <>
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">
+              <h2 className={DASHBOARD_PATTERNS.SECTION_HEADING}>
                 {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.TITLE}
               </h2>
-              <p className="text-gray-600 mb-6">
+              <p className={DASHBOARD_PATTERNS.SECTION_SUBHEADING}>
                 {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.DESCRIPTION}
               </p>
 
@@ -835,10 +839,10 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
                   <div
-                    className={`w-14 h-14 flex items-center justify-center rounded-2xl ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.WARNING_LIGHTER} ${BORDER_COLORS.WARNING_LIGHT} ${prefersReducedMotion ? '' : 'animate-float'}`}
                   >
                     <svg
-                      className={`w-7 h-7 ${TEXT_COLORS.WARNING_MEDIUM}`}
+                      className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.WARNING_MEDIUM}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox={SVG_VIEWBOX.STANDARD}
@@ -852,20 +856,22 @@ export default function DashboardPage() {
                       />
                     </svg>
                   </div>
-                  <span className="text-xs font-medium text-gray-700">
-                    Share Idea
+                  <span className={DASHBOARD_PATTERNS.STEP_LABEL}>
+                    {DASHBOARD_PAGE_CONTENT.HOW_IT_WORKS_STEPS.SHARE_IDEA}
                   </span>
                 </div>
 
                 {/* Arrow 1 */}
                 <div
-                  className={`flex items-center animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
+                  className={`${DASHBOARD_PATTERNS.ARROW_CONTAINER} animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
                   aria-hidden="true"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }}
                 >
-                  <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-amber-300 to-primary-300" />
+                  <div
+                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} bg-gradient-to-r from-amber-300 to-primary-300`}
+                  />
                   <svg
-                    className="w-4 h-4 text-primary-400 -ml-1"
+                    className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.BRAND_LIGHT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -886,10 +892,10 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }}
                 >
                   <div
-                    className={`w-14 h-14 flex items-center justify-center rounded-2xl bg-primary-50 border border-primary-200 transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float-delay-1'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} bg-primary-50 border border-primary-200 ${prefersReducedMotion ? '' : 'animate-float-delay-1'}`}
                   >
                     <svg
-                      className="w-7 h-7 text-primary-500"
+                      className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.BRAND_LIGHT}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox={SVG_VIEWBOX.STANDARD}
@@ -903,20 +909,22 @@ export default function DashboardPage() {
                       />
                     </svg>
                   </div>
-                  <span className="text-xs font-medium text-gray-700">
-                    Get Clarified
+                  <span className={DASHBOARD_PATTERNS.STEP_LABEL}>
+                    {DASHBOARD_PAGE_CONTENT.HOW_IT_WORKS_STEPS.GET_CLARIFIED}
                   </span>
                 </div>
 
                 {/* Arrow 2 */}
                 <div
-                  className={`flex items-center animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
+                  className={`${DASHBOARD_PATTERNS.ARROW_CONTAINER} animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
                   aria-hidden="true"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }}
                 >
-                  <div className="w-8 sm:w-12 h-px bg-gradient-to-r from-primary-300 to-green-300" />
+                  <div
+                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} bg-gradient-to-r from-primary-300 to-green-300`}
+                  />
                   <svg
-                    className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_VERY_LIGHT} -ml-1`}
+                    className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.SUCCESS_LIGHT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -937,10 +945,10 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }}
                 >
                   <div
-                    className={`w-14 h-14 flex items-center justify-center rounded-2xl ${BG_COLORS.SUCCESS_VERY_LIGHT} ${BORDER_COLORS.SUCCESS_LIGHTER} transition-transform duration-200 hover:scale-110 ${prefersReducedMotion ? '' : 'animate-float-delay-2'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.SUCCESS_VERY_LIGHT} ${BORDER_COLORS.SUCCESS_LIGHTER} ${prefersReducedMotion ? '' : 'animate-float-delay-2'}`}
                   >
                     <svg
-                      className={`w-7 h-7 ${TEXT_COLORS.SUCCESS_LIGHT}`}
+                      className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.SUCCESS_LIGHT}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox={SVG_VIEWBOX.STANDARD}
@@ -954,8 +962,8 @@ export default function DashboardPage() {
                       />
                     </svg>
                   </div>
-                  <span className="text-xs font-medium text-gray-700">
-                    Get Blueprint
+                  <span className={DASHBOARD_PATTERNS.STEP_LABEL}>
+                    {DASHBOARD_PAGE_CONTENT.HOW_IT_WORKS_STEPS.GET_BLUEPRINT}
                   </span>
                 </div>
               </div>
@@ -1010,7 +1018,7 @@ export default function DashboardPage() {
                     aria-selected={selectedRowIndex === index}
                     className={`${TABLE_PATTERNS.row.hover} table-row-lift animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors ${
                       selectedRowIndex === index
-                        ? 'bg-primary-50 ring-2 ring-primary-400 ring-inset'
+                        ? `${DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE} ring-2 ring-primary-400 ring-inset`
                         : ''
                     }`}
                   >
@@ -1045,7 +1053,7 @@ export default function DashboardPage() {
                         content={formatDateAbsolute(idea.createdAt)}
                         position="top"
                       >
-                        <span className="cursor-help border-b border-dotted border-gray-400">
+                        <span className={DASHBOARD_PATTERNS.TOOLTIP_LINK}>
                           {formatDate(idea.createdAt)}
                         </span>
                       </Tooltip>
@@ -1109,70 +1117,70 @@ export default function DashboardPage() {
         </div>
       )}
       {ideas.length > 0 && !loading && (
-        <div className="mt-4 flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg animate-fade-in">
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+        <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+          <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[0]}
               </kbd>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[1]}
               </kbd>
-              <span className="text-gray-400">
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_LABEL}
               </span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_KEY}
               </kbd>
-              <span className="text-gray-400">
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_LABEL}
               </span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_KEY}
               </kbd>
-              <span className="text-gray-400">
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_LABEL}
               </span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_KEY}
               </kbd>
-              <span className="text-gray-400">
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_LABEL}
               </span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
               </kbd>
-              <span className="text-gray-400">
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
               </span>
             </span>
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200">
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
               <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold text-gray-600 bg-white border border-gray-200 rounded shadow-sm`}
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
               >
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.HELP_KEY}
               </kbd>
-              <span className="text-gray-400">
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.HELP_LABEL}
               </span>
             </span>
@@ -1180,12 +1188,12 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => openHelp()}
-            className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-200"
+            className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
             aria-label={
               DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SHOW_KEYBOARD_SHORTCUTS
             }
           >
-            <span>View all shortcuts</span>
+            <span>{DASHBOARD_PAGE_CONTENT.VIEW_ALL_SHORTCUTS}</span>
             <svg
               className="w-3 h-3"
               fill="none"
@@ -1257,9 +1265,9 @@ export default function DashboardPage() {
             <div className="mt-4">
               <label
                 htmlFor="delete-confirm-input"
-                className="block text-sm font-medium text-gray-700 mb-1.5"
+                className={DASHBOARD_PATTERNS.DELETE_CONFIRM_LABEL}
               >
-                Type the idea name to confirm deletion:
+                {DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM.INPUT_LABEL}
               </label>
               <input
                 ref={deleteConfirmInputRef}
@@ -1279,11 +1287,14 @@ export default function DashboardPage() {
               />
               <p
                 id="delete-confirm-hint"
-                className="mt-1.5 text-xs text-gray-500"
+                className={DASHBOARD_PATTERNS.DELETE_CONFIRM_HINT}
               >
                 {deleteConfirmText === deleteModal.idea.title
-                  ? '✓ Confirmed - you may now delete'
-                  : `Enter "${deleteModal.idea.title}" to enable the delete button`}
+                  ? DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM.CONFIRMED_HINT
+                  : DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM.ENTER_HINT.replace(
+                      '{title}',
+                      deleteModal.idea.title
+                    )}
               </p>
             </div>
 
@@ -1300,7 +1311,7 @@ export default function DashboardPage() {
                 content={
                   deleteConfirmText === deleteModal.idea.title
                     ? DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM_DELETION
-                    : 'Type the idea name to confirm'
+                    : DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM.TOOLTIP_DISABLE
                 }
                 shortcut={
                   deleteConfirmText === deleteModal.idea.title

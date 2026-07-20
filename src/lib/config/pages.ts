@@ -461,6 +461,19 @@ export const DASHBOARD_PAGE_CONTENT = {
     SIGN_IN_REQUIRED: 'Please sign in to view your ideas',
     UNKNOWN_ERROR: 'An unknown error occurred',
   },
+  HOW_IT_WORKS_STEPS: {
+    SHARE_IDEA: 'Share Idea',
+    GET_CLARIFIED: 'Get Clarified',
+    GET_BLUEPRINT: 'Get Blueprint',
+  },
+  VIEW_ALL_SHORTCUTS: 'View all shortcuts',
+  DELETE_CONFIRM: {
+    INPUT_LABEL: 'Type the idea name to confirm deletion:',
+    CONFIRMED_HINT: '\u2713 Confirmed - you may now delete',
+    ENTER_HINT: 'Enter "{title}" to enable the delete button',
+    TOOLTIP_DISABLE: 'Type the idea name to confirm',
+    CONFIRM_DELETION: 'Confirm deletion',
+  },
   ARIA_LABELS: {
     FILTER_STATUS: 'Filter ideas by status',
     CLEAR_FILTER: 'Clear filter',

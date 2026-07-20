@@ -286,6 +286,59 @@ export const COMPONENT_PATTERNS = {
 } as const;
 
 /**
+ * Dashboard-specific patterns
+ * Eliminates hardcoded Tailwind classes in dashboard page
+ */
+export const DASHBOARD_PATTERNS = {
+  STEP_ICON:
+    'w-14 h-14 flex items-center justify-center rounded-2xl transition-transform duration-200 hover:scale-110',
+  STEP_ICON_SIZE: 'w-7 h-7',
+  STEP_LABEL: 'text-xs font-medium text-gray-700',
+
+  ARROW_CONTAINER: 'flex items-center',
+  ARROW_LINE: 'w-8 sm:w-12 h-px',
+  ARROW_ICON: 'w-4 h-4 -ml-1',
+
+  FILTER_BADGE:
+    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium',
+
+  ACTION_LINK:
+    'text-xs text-gray-500 hover:text-primary-600 underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded',
+
+  EMPTY_STATE_ICON:
+    'inline-flex items-center justify-center w-20 h-20 mb-6 rounded-full',
+  EMPTY_STATE_ICON_INNER: 'w-10 h-10',
+
+  SECTION_HEADING: 'text-xl font-semibold text-gray-900 mb-2',
+  SECTION_SUBHEADING: 'text-gray-600 mb-6',
+  PAGE_HEADING: 'text-3xl font-bold text-gray-900',
+  PAGE_SUBHEADING: 'text-gray-600 mt-1',
+
+  KEYBOARD_HINTS_BAR:
+    'mt-4 flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg animate-fade-in',
+  KEYBOARD_HINTS_GROUP: 'flex items-center gap-4 text-xs text-gray-500',
+  KEYBOARD_HINT_ITEM:
+    'hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200',
+  KEYBOARD_HINT_LABEL: 'text-gray-400',
+
+  VIEW_SHORTCUTS_BTN:
+    'text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-200',
+
+  DELETE_CONFIRM_LABEL: 'block text-sm font-medium text-gray-700 mb-1.5',
+  DELETE_CONFIRM_HINT: 'mt-1.5 text-xs text-gray-500',
+
+  SELECT_OPTION_ACTIVE: 'bg-primary-50 font-medium',
+
+  FILTER_CLEAR_GROUP:
+    'flex items-center gap-2 transition-all duration-200 ease-out',
+
+  TOOLTIP_LINK: 'cursor-help border-b border-dotted border-gray-400',
+
+  STATUS_BADGE_ACTIVE:
+    'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800 ring-1 ring-primary-200',
+} as const;
+
+/**
  * Export all patterns for easy access
  */
 export const REMAINING_STYLES = {
