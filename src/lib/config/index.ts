@@ -639,5 +639,6 @@ export {
   FLEX_PATTERNS,
   GRID_PATTERNS,
   COMPONENT_PATTERNS,
+  DASHBOARD_PATTERNS,
   REMAINING_STYLES,
 } from './remaining-styles';
