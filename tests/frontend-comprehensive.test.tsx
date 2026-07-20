@@ -8,6 +8,17 @@
  * - Individual component tests pass, indicating core functionality works
  * - The mocking approach needs to be reworked to properly test component behavior
  *
+ * REWORK PLAN:
+ * 1. Set up MSW (Mock Service Worker) for API mocking
+ *    - See: https://mswjs.io/docs/getting-started/intro
+ * 2. Use React Testing Library's recommended patterns
+ *    - See: https://testing-library.com/docs/guiding-principles
+ * 3. Focus on testing user interactions rather than implementation details
+ * 4. Remove complex mock setup and use MSW handlers instead
+ *
+ * RELATED ISSUES:
+ * - Issue #1903: Investigate and Enable Skipped Tests
+ *
  * TODO: Rework this test suite with proper mocking strategy
  * - Consider using MSW (Mock Service Worker) for API mocking
  * - Use React Testing Library's recommended patterns
