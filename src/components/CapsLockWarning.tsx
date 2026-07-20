@@ -3,6 +3,7 @@
 import { memo } from 'react';
 import {
   DURATION_TAILWIND,
+  SVG_SIZES,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   TEXT_COLORS,
@@ -45,7 +46,7 @@ function CapsLockWarningComponent({
       aria-live="polite"
     >
       <svg
-        className="w-3.5 h-3.5 flex-shrink-0"
+        className={`${SVG_SIZES.SMD} flex-shrink-0`}
         fill="none"
         viewBox={SVG_VIEWBOX.STANDARD}
         stroke="currentColor"
