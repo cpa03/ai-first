@@ -1,7 +1,22 @@
-// SKIPPED: E2E Tests - Needs rework due to complex mocking issues
-// REASON: Complex mocking issues and timing problems with async operations
-// Individual component tests pass, indicating core functionality works
-// TODO: Rework with proper mocking strategy (MSW, React Testing Library patterns)
+/**
+ * E2E Tests - Basic User Workflows
+ * SKIPPED - Needs rework due to complex mocking issues
+ *
+ * REASON FOR SKIPPING:
+ * - Complex mocking issues with React components and external services
+ * - Timing problems with async operations and state updates
+ * - Individual component tests pass, indicating core functionality works
+ *
+ * REWORK PLAN:
+ * 1. Set up MSW (Mock Service Worker) for API mocking
+ * 2. Use React Testing Library's recommended patterns
+ * 3. Focus on testing user interactions rather than implementation details
+ *
+ * RELATED ISSUES:
+ * - Issue #1903: Investigate and Enable Skipped Tests
+ *
+ * TODO: Rework with proper mocking strategy (MSW, React Testing Library patterns)
+ */
 
 describe.skip('E2E Tests - SKIPPED', () => {
   it('placeholder - suite needs rework', () => {
