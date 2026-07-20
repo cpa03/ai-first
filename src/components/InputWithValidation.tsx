@@ -214,9 +214,13 @@ const InputWithValidationComponent = forwardRef<
 
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        // Micro-UX: Reset touched on change so error clears immediately when correcting
+        if (isInvalid) {
+          setTouched(false);
+        }
         onChange?.(e);
       },
-      [onChange]
+      [onChange, isInvalid]
     );
 
     const handleClear = useCallback(() => {
