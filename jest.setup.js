@@ -292,6 +292,7 @@ if (typeof Request === 'undefined') {
       this._url = typeof input === 'string' ? input : input.url;
       this._method = init.method || 'GET';
       this._headers = new Headers(init.headers);
+      this._body = init.body || null;
     }
 
     get url() {
@@ -304,6 +305,33 @@ if (typeof Request === 'undefined') {
 
     get headers() {
       return this._headers;
+    }
+
+    get body() {
+      return this._body;
+    }
+
+    async text() {
+      if (this._body === null || this._body === undefined) {
+        return '';
+      }
+      if (typeof this._body === 'string') {
+        return this._body;
+      }
+      return String(this._body);
+    }
+
+    async json() {
+      const text = await this.text();
+      return JSON.parse(text);
+    }
+
+    clone() {
+      return new Request(this._url, {
+        method: this._method,
+        headers: this._headers,
+        body: this._body,
+      });
     }
   };
 }
