@@ -117,14 +117,14 @@ function ScrollToTopComponent({
     }
   }, [smooth, prefersReducedMotion]);
 
-  const isNearBottom =
-    scrollProgress >= UI_TIMING_CONFIG.SCROLL_NEAR_BOTTOM_THRESHOLD;
+  const isNearTop =
+    scrollProgress <= (PROGRESS_PERCENTAGE.MAX - UI_TIMING_CONFIG.SCROLL_NEAR_BOTTOM_THRESHOLD);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        if (isNearBottom) {
+        if (isNearTop) {
           scrollToBottom();
         } else {
           scrollToTop();
@@ -182,7 +182,7 @@ function ScrollToTopComponent({
           break;
       }
     },
-    [scrollToTop, scrollToBottom, prefersReducedMotion, isNearBottom]
+    [scrollToTop, scrollToBottom, prefersReducedMotion, isNearTop]
   );
 
   if (!isVisible) return null;
@@ -198,7 +198,7 @@ function ScrollToTopComponent({
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
       <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
-        {isNearBottom
+        {isNearTop
           ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
           : SCROLL_TO_TOP_LABELS.TITLE}
       </span>
@@ -238,7 +238,7 @@ function ScrollToTopComponent({
     <div className={`fixed bottom-8 right-8 z-[${Z_INDEX_LAYERS.TOAST}]`}>
       <Tooltip content={tooltipContent} position="top">
         <button
-          onClick={isNearBottom ? scrollToBottom : scrollToTop}
+          onClick={isNearTop ? scrollToBottom : scrollToTop}
           onKeyDown={handleKeyDown}
           tabIndex={0}
           className={`
@@ -258,7 +258,7 @@ function ScrollToTopComponent({
             ${className}
           `}
           aria-label={
-            isNearBottom
+            isNearTop
               ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_BOTTOM(
                   Math.round(scrollProgress)
                 )
@@ -314,7 +314,7 @@ function ScrollToTopComponent({
             <svg
               className={`
                 relative z-10 w-5 h-5 transition-all ${DURATION_TAILWIND[200]}
-                ${prefersReducedMotion ? '' : isNearBottom ? 'group-hover:translate-y-0.5' : 'group-hover:-translate-y-0.5'}
+                ${prefersReducedMotion ? '' : isNearTop ? 'group-hover:translate-y-0.5' : 'group-hover:-translate-y-0.5'}
               `}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
@@ -322,7 +322,7 @@ function ScrollToTopComponent({
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
-              {isNearBottom ? (
+              {isNearTop ? (
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -339,7 +339,7 @@ function ScrollToTopComponent({
           )}
 
           <span className="sr-only">
-            {isNearBottom
+            {isNearTop
               ? SCROLL_TO_TOP_LABELS.SR_TEXT_BOTTOM
               : SCROLL_TO_TOP_LABELS.SR_TEXT}
           </span>

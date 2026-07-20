@@ -12,7 +12,29 @@ describe('ScrollToTop', () => {
     jest.clearAllMocks();
     Object.defineProperty(window, 'scrollY', {
       writable: true,
+      configurable: true,
       value: 0,
+    });
+    jest.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(2000);
+    Object.defineProperty(window, 'innerHeight', {
+      writable: true,
+      configurable: true,
+      value: 1000,
+    });
+    const requestAnimationFrameMock = jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const win = window as any;
+      if (win.isAnimating) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return setTimeout(() => cb(Date.now()), 0) as any;
+      }
+      win.isAnimating = true;
+      try {
+        cb(Date.now());
+      } finally {
+        win.isAnimating = false;
+      }
+      return 1;
     });
   });
 
@@ -22,7 +44,7 @@ describe('ScrollToTop', () => {
   });
 
   it('should render when scroll position is above threshold', () => {
-    Object.defineProperty(window, 'scrollY', { value: 500, writable: true });
+    Object.defineProperty(window, 'scrollY', { value: 500, writable: true, configurable: true });
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
@@ -126,5 +148,30 @@ describe('ScrollToTop', () => {
       'scroll',
       expect.any(Function)
     );
+  });
+
+  it('should render Scroll to Bottom button when scroll position is near the top', () => {
+    Object.defineProperty(window, 'scrollY', { value: 100, writable: true, configurable: true });
+    render(<ScrollToTop showAt={50} />);
+
+    fireEvent.scroll(window);
+
+    const button = screen.getByLabelText(/Scroll to bottom/);
+    expect(button).toBeInTheDocument();
+    expect(screen.getByText('Back to bottom')).toBeInTheDocument();
+  });
+
+  it('should scroll to bottom when clicked in near-top zone', () => {
+    Object.defineProperty(window, 'scrollY', { value: 100, writable: true, configurable: true });
+    render(<ScrollToTop showAt={50} smooth={true} />);
+
+    fireEvent.scroll(window);
+    const button = screen.getByLabelText(/Scroll to bottom/);
+    fireEvent.click(button);
+
+    expect(mockScrollTo).toHaveBeenCalledWith({
+      top: 2000,
+      behavior: 'smooth',
+    });
   });
 });
