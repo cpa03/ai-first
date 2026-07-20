@@ -1,12 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import yaml from 'js-yaml';
 import {
   ConfigurationService,
   configurationService,
   AgentConfig,
 } from '@/lib/config-service';
-import { AIModelConfig } from '@/lib/ai';
 
 describe('ConfigurationService', () => {
   let service: ConfigurationService;

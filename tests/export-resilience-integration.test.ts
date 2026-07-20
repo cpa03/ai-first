@@ -1,8 +1,6 @@
 import {
   ExportManager,
   NotionExporter,
-  TrelloExporter,
-  GitHubProjectsExporter,
   type ExportData,
 } from '@/lib/export-connectors';
 import { resilienceManager, circuitBreakerManager } from '@/lib/resilience';

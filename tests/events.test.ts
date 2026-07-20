@@ -3,9 +3,6 @@ import type {
   ClarificationStartedEvent,
   ClarificationCompletedEvent,
   BreakdownStartedEvent,
-  BreakdownCompletedEvent,
-  BreakdownTaskGeneratedEvent,
-  AgentErrorEvent,
   AgentEvent,
 } from '@/lib/agents/events/types';
 
@@ -27,14 +24,7 @@ jest.mock('@/lib/logger', () => ({
 }));
 
 describe('EventBus', () => {
-  // Store original subscriptions to restore after tests
-  let originalSubscriptions: Map<string, unknown[]>;
-
   beforeEach(() => {
-    // Store original subscriptions before each test
-    originalSubscriptions = new Map(
-      eventBus.getHistory(0).length > 0 ? [] : []
-    );
     // Clear subscriptions by getting all event types and unsubscribing
     eventBus.clearHistory();
     // Clear all subscriptions by creating a new event bus instance behavior

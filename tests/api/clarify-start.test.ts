@@ -9,7 +9,6 @@ jest.mock('@/lib/agents/clarifier');
 jest.mock('@/lib/db');
 
 const mockClarifierAgent = clarifierAgent as jest.Mocked<typeof clarifierAgent>;
-const mockDbService = dbService as jest.Mocked<typeof dbService>;
 
 describe('/api/clarify/start', () => {
   beforeEach(() => {

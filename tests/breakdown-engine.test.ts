@@ -19,7 +19,7 @@
  */
 
 import { breakdownEngine } from '@/lib/agents/breakdown-engine';
-import { createMockVector, createMockDbSuccess } from './utils/_testHelpers';
+import { createMockVector } from './utils/_testHelpers';
 
 jest.mock('@/lib/ai', () => ({
   aiService: {

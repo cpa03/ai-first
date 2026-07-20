@@ -130,7 +130,7 @@ describe('AIService', () => {
 
     it('should not initialize OpenAI client when API key is missing', () => {
       delete process.env.OPENAI_API_KEY;
-      const service = new AIService();
+      new AIService();
 
       expect(OpenAI).toHaveBeenCalledTimes(1);
     });

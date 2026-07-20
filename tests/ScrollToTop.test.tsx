@@ -1,5 +1,4 @@
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import ScrollToTop from '../src/components/ScrollToTop';
 
 const mockScrollTo = jest.fn();

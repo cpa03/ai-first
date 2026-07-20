@@ -1,4 +1,4 @@
-import { AppError, ErrorCode } from '@/lib/errors';
+import { ErrorCode } from '@/lib/errors';
 import { buildApiUrl } from './config/test-config';
 import { MOCK_SECRETS } from './utils/test-secrets';
 import { setProcessEnv } from './utils/_testHelpers';
