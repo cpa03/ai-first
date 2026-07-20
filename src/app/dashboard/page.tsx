@@ -66,6 +66,7 @@ const Tooltip = dynamic(() => import('@/components/Tooltip'), {
 import { createLogger } from '@/lib/logger';
 import Alert from '@/components/Alert';
 import Link from 'next/link';
+import ScrollProgress from '@/components/ScrollProgress';
 import DashboardSkeleton from '@/components/DashboardSkeleton';
 import { APP_CONFIG } from '@/lib/config';
 import { type IdeaStatus } from '@/lib/config/constants';
@@ -568,6 +569,8 @@ export default function DashboardPage() {
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_LG}>
+      {/* Micro-UX: Scroll progress indicator for spatial awareness on long dashboard lists */}
+      <ScrollProgress />
       <div
         role="status"
         aria-live="polite"
