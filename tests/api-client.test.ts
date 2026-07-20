@@ -5,7 +5,6 @@ import {
   apiRequest,
   ApiRequestError,
 } from '@/lib/api-client';
-import { buildApiUrl } from './config/test-config';
 
 interface TestData {
   message: string;

@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils';
-import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 // Mock tailwind-merge to verify when it's called

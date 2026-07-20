@@ -3,9 +3,8 @@ import {
   TrelloExporter,
   GitHubProjectsExporter,
   GoogleTasksExporter,
-  ExportConnector,
 } from '@/lib/export-connectors';
-import { resilienceManager, CircuitBreaker } from '@/lib/resilience';
+import { resilienceManager } from '@/lib/resilience';
 import { ExportData } from '@/lib/export-connectors/base';
 import { TEST_NOTION_API_KEY, MOCK_SECRETS } from './utils/test-secrets';
 

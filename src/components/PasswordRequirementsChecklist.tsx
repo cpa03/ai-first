@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useRef, useEffect, useState, memo } from 'react';
+import { useMemo, useRef, useEffect, useState, memo } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import {
   SVG_STROKE_WIDTHS,

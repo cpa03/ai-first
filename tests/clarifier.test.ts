@@ -2,7 +2,7 @@
  * @jest-environment node
  */
 
-import { clarifierAgent, ClarifierQuestion } from '@/lib/agents/clarifier';
+import { clarifierAgent } from '@/lib/agents/clarifier';
 import { dbService } from '@/lib/db';
 import { createMockVector } from './utils/_testHelpers';
 
