@@ -14,6 +14,7 @@ import {
   KEYBOARD_SHORTCUTS_MESSAGES,
   LOCAL_STORAGE_KEYS,
   DURATION_TAILWIND,
+  SVG_SIZES,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
@@ -403,7 +404,7 @@ const ShortcutRow = memo(function ShortcutRow({
         {/* Micro-UX: Show brief checkmark feedback when copied */}
         {copied && (
           <svg
-            className={`w-3.5 h-3.5 ${TEXT_COLORS.SUCCESS} ml-1 animate-in fade-in zoom-in ${DURATION_TAILWIND[150]}`}
+            className={`${SVG_SIZES.SMD} ${TEXT_COLORS.SUCCESS} ml-1 animate-in fade-in zoom-in ${DURATION_TAILWIND[150]}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"

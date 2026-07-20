@@ -970,6 +970,12 @@ export const SVG_SIZES = {
   SM: 'w-3 h-3',
 
   /**
+   * Small-Medium icon (14x14px) - for compact inline icons
+   * Equivalent to: w-3.5 h-3.5
+   */
+  SMD: 'w-3.5 h-3.5',
+
+  /**
    * Medium icon (16x16px) - default for inline icons
    * Equivalent to: w-4 h-4
    */

@@ -20,6 +20,7 @@ import {
   MESSAGES,
   COMPONENT_DEFAULTS,
   COMPONENT_CONFIG,
+  SVG_SIZES,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   UI_CONFIG,
@@ -371,7 +372,7 @@ function CopyCodeButton({ text }: { text: string }) {
         >
           {copied ? (
             <svg
-              className={`w-3.5 h-3.5 ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}'}`}
+              className={`${SVG_SIZES.SMD} ${prefersReducedMotion ? '' : 'animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}'}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -386,7 +387,7 @@ function CopyCodeButton({ text }: { text: string }) {
             </svg>
           ) : (
             <svg
-              className="w-3.5 h-3.5"
+              className={SVG_SIZES.SMD}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

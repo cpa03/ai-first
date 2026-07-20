@@ -16,6 +16,7 @@ import {
   BG_COLORS,
   SIZES,
   SVG_ANIMATION,
+  SVG_SIZES,
   ANIMATION_DELAYS,
   STATE_SHADOWS,
   INPUT_VALIDATION_LABELS,
@@ -116,22 +117,36 @@ const InputWithValidationComponent = forwardRef<
       }
     }, [currentValue, multiline, autoResize, adjustTextareaHeight]);
 
-    const { onBlur: propOnBlur, onFocus: propOnFocus, onKeyDown: propOnKeyDown } = props;
+    const {
+      onBlur: propOnBlur,
+      onFocus: propOnFocus,
+      onKeyDown: propOnKeyDown,
+    } = props;
 
-    const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setTouched(true);
-      setIsFocused(false);
-      if (propOnBlur) {
-        propOnBlur(e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>);
-      }
-    }, [propOnBlur]);
+    const handleBlur = useCallback(
+      (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setTouched(true);
+        setIsFocused(false);
+        if (propOnBlur) {
+          propOnBlur(
+            e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>
+          );
+        }
+      },
+      [propOnBlur]
+    );
 
-    const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setIsFocused(true);
-      if (propOnFocus) {
-        propOnFocus(e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>);
-      }
-    }, [propOnFocus]);
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setIsFocused(true);
+        if (propOnFocus) {
+          propOnFocus(
+            e as React.FocusEvent<HTMLInputElement & HTMLTextAreaElement>
+          );
+        }
+      },
+      [propOnFocus]
+    );
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -152,7 +167,9 @@ const InputWithValidationComponent = forwardRef<
           setPasswordVisible((prev) => !prev);
         }
         if (propOnKeyDown) {
-          propOnKeyDown(e as React.KeyboardEvent<HTMLInputElement & HTMLTextAreaElement>);
+          propOnKeyDown(
+            e as React.KeyboardEvent<HTMLInputElement & HTMLTextAreaElement>
+          );
         }
       },
       [onEnterPress, showPasswordToggle, propOnKeyDown]
@@ -456,7 +473,7 @@ const InputWithValidationComponent = forwardRef<
                   aria-label={`Clear ${label}`}
                 >
                   <svg
-                    className="w-3.5 h-3.5"
+                    className={SVG_SIZES.SMD}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -505,10 +522,10 @@ const InputWithValidationComponent = forwardRef<
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD
                       : INPUT_VALIDATION_LABELS.SHOW_PASSWORD}
                   </span>
-                  <span className="relative inline-flex w-3.5 h-3.5">
+                  <span className={`relative inline-flex ${SVG_SIZES.SMD}`}>
                     {/* Eye icon (show state) - fades/slides out when toggling to hidden */}
                     <svg
-                      className={`absolute inset-0 w-3.5 h-3.5 ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
+                      className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                         passwordVisible
                           ? 'opacity-100 scale-100 rotate-0'
                           : 'opacity-0 scale-75 -rotate-45'
@@ -532,7 +549,7 @@ const InputWithValidationComponent = forwardRef<
                     </svg>
                     {/* Eye-slash icon (hide state) - fades/slides in when toggling to visible */}
                     <svg
-                      className={`absolute inset-0 w-3.5 h-3.5 ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
+                      className={`absolute inset-0 ${SVG_SIZES.SMD} ${TRANSITION_CLASSES.SLOW_EASE_OUT} ${
                         passwordVisible
                           ? 'opacity-0 scale-75 rotate-45'
                           : 'opacity-100 scale-100 rotate-0'
