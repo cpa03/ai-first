@@ -99,7 +99,9 @@ function isTrustedOrigin(origin: string, trustedOrigins?: string[]): boolean {
   // to avoid O(N) lookup. Since TRUSTED_ORIGINS getter returns config.array, they are identical.
   if (trustedOrigins && trustedOrigins !== config.array) {
     for (let i = 0; i < trustedOrigins.length; i++) {
-      const normalizedTrusted = trustedOrigins[i].toLowerCase().replace(/\/$/, '');
+      const normalizedTrusted = trustedOrigins[i]
+        .toLowerCase()
+        .replace(/\/$/, '');
       if (normalizedOrigin === normalizedTrusted) {
         return true;
       }
