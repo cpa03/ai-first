@@ -16,6 +16,8 @@ import {
   DURATION_TAILWIND,
   TIME_CONVERSIONS,
   TRANSITION_CLASSES,
+  TOAST_CLEAR_ALL_BUTTON,
+  TOAST_DISMISS_BUTTON,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -276,7 +278,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </span>
       {remainingSeconds > 0 && !prefersReducedMotion && (
         <div
-          className="absolute bottom-1.5 right-2 text-xs font-medium opacity-60 tabular-nums"
+          className={TOAST_DISMISS_BUTTON}
           aria-live="polite"
           aria-atomic="true"
         >
@@ -398,7 +400,7 @@ function ToastContainerComponent() {
       {showClearAll && (
         <button
           onClick={clearAllToasts}
-          className="self-end mb-1 px-3 py-1.5 text-xs font-medium text-gray-600 bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1 transition-all duration-200 animate-fade-in"
+          className={TOAST_CLEAR_ALL_BUTTON}
           aria-label={TOAST_CONTAINER_LABELS.CLEAR_ALL_ARIA_LABEL(
             toasts.length
           )}

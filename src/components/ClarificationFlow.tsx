@@ -29,6 +29,13 @@ import {
   CLARIFICATION_FLOW_LABELS,
   CARD_PATTERNS,
   TRANSITION_CLASSES,
+  CLARIFICATION_FLOW_QUESTION_HEADING,
+  CLARIFICATION_FLOW_INFO_TEXT,
+  CLARIFICATION_FLOW_KEYBOARD_HINT,
+  CLARIFICATION_FLOW_STEP_INDICATOR,
+  CLARIFICATION_FLOW_STEP_TEXT,
+  CLARIFICATION_FLOW_STEP_SEPARATOR,
+  CLARIFICATION_FLOW_INPUT_LABEL,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import Alert from '@/components/Alert';
@@ -314,7 +321,7 @@ function ClarificationFlow({
           <div className="mb-6 slide-up">
             <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
               <p>{error}</p>
-              <p className="text-sm mt-4">
+              <p className={CLARIFICATION_FLOW_INFO_TEXT}>
                 {MESSAGES.CLARIFICATION.FALLBACK_ERROR}
               </p>
             </Alert>
@@ -329,7 +336,7 @@ function ClarificationFlow({
       <div className={`${CONTAINER_WIDTHS.SM} mx-auto`}>
         <Alert type="warning" title={MESSAGES.CLARIFICATION.NO_QUESTIONS_TITLE}>
           <p>{MESSAGES.CLARIFICATION.NO_QUESTIONS_DESCRIPTION}</p>
-          <p className="text-sm mt-4">
+          <p className={CLARIFICATION_FLOW_INFO_TEXT}>
             {MESSAGES.CLARIFICATION.NO_QUESTIONS_SUGGESTION}
           </p>
         </Alert>
@@ -400,7 +407,7 @@ function ClarificationFlow({
         <div className="mb-6 slide-up">
           <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
             <p>{error}</p>
-            <p className="text-sm mt-4">
+            <p className={CLARIFICATION_FLOW_INFO_TEXT}>
               {MESSAGES.CLARIFICATION.FALLBACK_ERROR}
             </p>
           </Alert>
@@ -527,7 +534,7 @@ function ClarificationFlow({
         >
           <h2
             id="question-heading"
-            className="text-xl sm:text-2xl font-semibold text-gray-900 mb-6"
+            className={CLARIFICATION_FLOW_QUESTION_HEADING}
           >
             {currentQuestion.question}
           </h2>
@@ -641,7 +648,7 @@ function ClarificationFlow({
               <div className="space-y-2">
                 <label
                   htmlFor="answer-select"
-                  className="block text-sm font-medium text-gray-900 cursor-pointer"
+                  className={CLARIFICATION_FLOW_INPUT_LABEL}
                 >
                   {currentQuestion.question}
                   <span
@@ -740,7 +747,7 @@ function ClarificationFlow({
             </Button>
 
             <div
-              className="hidden sm:flex items-center gap-3 text-xs text-gray-600 mr-4"
+              className={CLARIFICATION_FLOW_KEYBOARD_HINT}
               aria-hidden="true"
             >
               {currentStep > 0 && (
@@ -804,9 +811,9 @@ function ClarificationFlow({
         {/* Now visible on all screen sizes for improved discoverability */}
         {/* Number key shortcuts (1-9) allow quick jumping between questions */}
         {questions.length > 1 && (
-          <div className="mt-4 flex items-center justify-center gap-2 sm:gap-4 text-xs text-gray-400 animate-fade-in">
+          <div className={CLARIFICATION_FLOW_STEP_INDICATOR}>
             <span className="inline-flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
-              <span className="text-gray-500 font-medium">Jump to:</span>
+              <span className={CLARIFICATION_FLOW_STEP_TEXT}>Jump to:</span>
               {questions
                 .slice(
                   0,
@@ -827,7 +834,11 @@ function ClarificationFlow({
                         COMPONENT_CONFIG.CLARIFICATION_FLOW
                           .MAX_KEYBOARD_SHORTCUTS
                       ) -
-                        1 && <span className="text-gray-300 mx-0.5">/</span>}
+                        1 && (
+                      <span className={CLARIFICATION_FLOW_STEP_SEPARATOR}>
+                        /
+                      </span>
+                    )}
                   </span>
                 ))}
             </span>

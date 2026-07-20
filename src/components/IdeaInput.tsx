@@ -20,6 +20,14 @@ import {
   PROGRESS_BAR_A11Y,
   GRAY_CLASSES,
   GRAY_TEXT_COMBOS,
+  IDEA_INPUT_FORM,
+  IDEA_INPUT_FEEDBACK_TEXT,
+  IDEA_INPUT_ERROR_CONTAINER,
+  IDEA_INPUT_ERROR_TEXT,
+  IDEA_INPUT_STATUS_CONTAINER,
+  IDEA_INPUT_STATUS_ITEMS,
+  IDEA_INPUT_STATUS_ITEM,
+  IDEA_INPUT_SEND_ICON,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -333,7 +341,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         politeness="polite"
         triggered={!!successMessage}
       />
-      <form onSubmit={handleSubmit} className="space-y-6 fade-in" noValidate>
+      <form onSubmit={handleSubmit} className={IDEA_INPUT_FORM} noValidate>
         <InputWithValidation
           ref={inputRef}
           id="idea-input"
@@ -432,7 +440,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           !milestoneReached &&
           getEncouragementMessage() && (
             <p
-              className="text-sm text-primary-600 animate-fade-in"
+              className={IDEA_INPUT_FEEDBACK_TEXT}
               role="status"
               aria-live="polite"
             >
@@ -475,15 +483,15 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         )}
 
         {error && (
-          <div className="slide-up">
+          <div className={IDEA_INPUT_ERROR_CONTAINER}>
             <Alert type="error" onClose={handleErrorClose}>
-              <p className="text-sm">{error}</p>
+              <p className={IDEA_INPUT_ERROR_TEXT}>{error}</p>
             </Alert>
           </div>
         )}
 
-        <div className="flex justify-between items-center">
-          <div className="flex items-center gap-4">
+        <div className={IDEA_INPUT_STATUS_CONTAINER}>
+          <div className={IDEA_INPUT_STATUS_ITEMS}>
             <div
               className={`flex items-center gap-2 text-sm ${TEXT_COLOR_CLASSES.BODY}`}
               aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
@@ -496,7 +504,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             </div>
             <AutoSaveIndicator value={idea} />
           </div>
-          <div className="flex items-center gap-3">
+          <div className={IDEA_INPUT_STATUS_ITEM}>
             {!idea.trim() && !isSubmitting && (
               <Tooltip
                 content={IDEA_INPUT_LABELS.PASTE_ARIA_LABEL}
@@ -532,7 +540,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                     </svg>
                   ) : (
                     <svg
-                      className="w-4 h-4 mr-1"
+                      className={IDEA_INPUT_SEND_ICON}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"

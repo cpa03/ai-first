@@ -9,6 +9,7 @@ import {
   COMPONENT_CONFIG,
   ANIMATION_CONFIG,
   TASK_MANAGEMENT_LABELS,
+  SKELETON_PROGRESS,
 } from '@/lib/config';
 
 /**
@@ -50,7 +51,7 @@ function TaskManagementSkeletonComponent() {
         </div>
 
         {/* Progress bar skeleton */}
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
+        <div className={SKELETON_PROGRESS}>
           <Skeleton className="h-full w-1/3" variant="rect" />
         </div>
 

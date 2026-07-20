@@ -13,6 +13,7 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   PROGRESS_BAR_A11Y,
+  PROGRESS_BAR_TRACK,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -179,7 +180,7 @@ const ProgressStepperComponent = function ProgressStepper({
           </span>
         </div>
         <div
-          className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden mx-2"
+          className={`mt-2 ${PROGRESS_BAR_TRACK} mx-2`}
           role="progressbar"
           aria-valuenow={animatedProgress}
           aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
