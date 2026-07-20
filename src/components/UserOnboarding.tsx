@@ -442,14 +442,41 @@ export default function UserOnboarding() {
 
         {/* Navigation buttons */}
         <div className="flex items-center justify-between mt-5">
-          {/* Step indicator with keyboard hint */}
-          <div className="flex flex-col gap-1">
-            <span className={`text-xs ${TEXT_COLORS.MUTED}`}>
-              {USER_ONBOARDING_COMPLETION_LABELS.STEP_INDICATOR(
-                currentStepIndex + 1,
-                TOUR_STEPS.length
-              )}
-            </span>
+          <div className="flex flex-col gap-1.5">
+            <div
+              className="flex items-center gap-1.5"
+              role="group"
+              aria-label={USER_ONBOARDING_LABELS.PROGRESS_ARIA_LABEL}
+            >
+              {TOUR_STEPS.map((step, index) => (
+                <button
+                  key={step.id}
+                  onClick={() => {
+                    if (index < currentStepIndex) {
+                      setCurrentStepIndex(index);
+                    }
+                  }}
+                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${
+                    index === currentStepIndex
+                      ? `w-6 h-2 ${BG_COLORS.BRAND}`
+                      : index < currentStepIndex
+                        ? `w-2 h-2 ${BG_COLORS.BRAND} opacity-60 hover:opacity-80 cursor-pointer`
+                        : `w-2 h-2 ${BG_COLORS.LIGHTER} ${TEXT_COLORS.MUTED}`
+                  }`}
+                  aria-label={
+                    index === currentStepIndex
+                      ? USER_ONBOARDING_COMPLETION_LABELS.STEP_INDICATOR(
+                          index + 1,
+                          TOUR_STEPS.length
+                        )
+                      : `Go to step ${index + 1}`
+                  }
+                  aria-current={index === currentStepIndex ? 'step' : undefined}
+                  disabled={index > currentStepIndex}
+                  type="button"
+                />
+              ))}
+            </div>
             <span
               className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED} hidden sm:inline`}
             >
