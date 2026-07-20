@@ -8,6 +8,7 @@ import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
+import ScrollProgress from '@/components/ScrollProgress';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import { PLATFORM } from '@/lib/dom-utils';
 import {
@@ -376,362 +377,367 @@ function ResultsContent() {
 
   // Use the BlueprintDisplay component with real data
   return (
-    <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
-          {RESULTS_PAGE_CONTENT.HEADING}
-        </h1>
-        <Button
-          variant="secondary"
-          onClick={() => router.back()}
-          aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.GO_BACK}
-        >
-          {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
-        </Button>
-      </div>
-
-      <BlueprintDisplay idea={idea.raw_text} answers={formattedAnswers} />
-
-      {/* Task Management */}
-      <div className="mt-8">
-        <TaskManagement ideaId={idea.id} />
-      </div>
-
-      {/* Export Options */}
-      <div className={CARD_PATTERNS.WITH_MARGIN}>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
-        </h2>
-
-        {/* Micro-UX: Staggered entrance animation for export buttons */}
-        {/* Creates a cascading fade-in effect that guides user attention to available export options */}
-        {/* Respects prefers-reduced-motion for accessibility */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Markdown Export */}
-          <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
-                : undefined
-            }
+    <>
+      <ScrollProgress />
+      <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">
+            {RESULTS_PAGE_CONTENT.HEADING}
+          </h1>
+          <Button
+            variant="secondary"
+            onClick={() => router.back()}
+            aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.GO_BACK}
           >
-            <Tooltip
-              content={RESULTS_PAGE_CONTENT.TOOLTIPS.MARKDOWN}
-              shortcut={[isMac ? '⌘' : 'Ctrl', 'E']}
-              position="top"
+            {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
+          </Button>
+        </div>
+
+        <BlueprintDisplay idea={idea.raw_text} answers={formattedAnswers} />
+
+        {/* Task Management */}
+        <div className="mt-8">
+          <TaskManagement ideaId={idea.id} />
+        </div>
+
+        {/* Export Options */}
+        <div className={CARD_PATTERNS.WITH_MARGIN}>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
+          </h2>
+
+          {/* Micro-UX: Staggered entrance animation for export buttons */}
+          {/* Creates a cascading fade-in effect that guides user attention to available export options */}
+          {/* Respects prefers-reduced-motion for accessibility */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Markdown Export */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
+                  : undefined
+              }
             >
-              <Button
-                variant="primary"
-                onClick={() => handleExport('markdown')}
-                loading={exportingFormat === 'markdown'}
-                loadingText={EXPORT_LABELS.MARKDOWN.LOADING}
-                disabled={exportLoading && exportingFormat !== 'markdown'}
-                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.DOWNLOAD_MARKDOWN}
-              >
-                {EXPORT_LABELS.MARKDOWN.DEFAULT}
-              </Button>
-            </Tooltip>
-          </div>
-
-          {/* JSON Export */}
-          <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.SHORT }
-                : undefined
-            }
-          >
-            <Tooltip
-              content={RESULTS_PAGE_CONTENT.TOOLTIPS.JSON}
-              position="top"
-            >
-              <Button
-                variant="secondary"
-                onClick={() => handleExport('json')}
-                loading={exportingFormat === 'json'}
-                loadingText={EXPORT_LABELS.JSON.LOADING}
-                disabled={exportLoading && exportingFormat !== 'json'}
-                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_JSON}
-              >
-                {EXPORT_LABELS.JSON.DEFAULT}
-              </Button>
-            </Tooltip>
-          </div>
-
-          {/* Notion Export */}
-          <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }
-                : undefined
-            }
-          >
-            {connectorHealth.notion?.configured ? (
-              <Button
-                variant="outline"
-                onClick={() => handleExport('notion')}
-                loading={exportingFormat === 'notion'}
-                loadingText={EXPORT_LABELS.NOTION.LOADING}
-                disabled={exportLoading && exportingFormat !== 'notion'}
-                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
-              >
-                {EXPORT_LABELS.NOTION.DEFAULT}
-              </Button>
-            ) : (
               <Tooltip
-                content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
+                content={RESULTS_PAGE_CONTENT.TOOLTIPS.MARKDOWN}
+                shortcut={[isMac ? '⌘' : 'Ctrl', 'E']}
                 position="top"
               >
                 <Button
-                  variant="outline"
-                  disabled={true}
+                  variant="primary"
+                  onClick={() => handleExport('markdown')}
+                  loading={exportingFormat === 'markdown'}
+                  loadingText={EXPORT_LABELS.MARKDOWN.LOADING}
+                  disabled={exportLoading && exportingFormat !== 'markdown'}
                   aria-label={
-                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION_SETUP
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS.DOWNLOAD_MARKDOWN
                   }
+                >
+                  {EXPORT_LABELS.MARKDOWN.DEFAULT}
+                </Button>
+              </Tooltip>
+            </div>
+
+            {/* JSON Export */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.SHORT }
+                  : undefined
+              }
+            >
+              <Tooltip
+                content={RESULTS_PAGE_CONTENT.TOOLTIPS.JSON}
+                position="top"
+              >
+                <Button
+                  variant="secondary"
+                  onClick={() => handleExport('json')}
+                  loading={exportingFormat === 'json'}
+                  loadingText={EXPORT_LABELS.JSON.LOADING}
+                  disabled={exportLoading && exportingFormat !== 'json'}
+                  aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_JSON}
+                >
+                  {EXPORT_LABELS.JSON.DEFAULT}
+                </Button>
+              </Tooltip>
+            </div>
+
+            {/* Notion Export */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }
+                  : undefined
+              }
+            >
+              {connectorHealth.notion?.configured ? (
+                <Button
+                  variant="outline"
+                  onClick={() => handleExport('notion')}
+                  loading={exportingFormat === 'notion'}
+                  loadingText={EXPORT_LABELS.NOTION.LOADING}
+                  disabled={exportLoading && exportingFormat !== 'notion'}
+                  aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
                 >
                   {EXPORT_LABELS.NOTION.DEFAULT}
-                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                  </span>
                 </Button>
-              </Tooltip>
-            )}
-          </div>
+              ) : (
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
+                  position="top"
+                >
+                  <Button
+                    variant="outline"
+                    disabled={true}
+                    aria-label={
+                      RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION_SETUP
+                    }
+                  >
+                    {EXPORT_LABELS.NOTION.DEFAULT}
+                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                    </span>
+                  </Button>
+                </Tooltip>
+              )}
+            </div>
 
-          {/* Trello Export */}
-          <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.LONG }
-                : undefined
-            }
-          >
-            {connectorHealth.trello?.configured ? (
-              <Button
-                variant="outline"
-                onClick={() => handleExport('trello')}
-                loading={exportingFormat === 'trello'}
-                loadingText={EXPORT_LABELS.TRELLO.LOADING}
-                disabled={exportLoading && exportingFormat !== 'trello'}
-                aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
-              >
-                {EXPORT_LABELS.TRELLO.DEFAULT}
-              </Button>
-            ) : (
-              <Tooltip
-                content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
-                position="top"
-              >
+            {/* Trello Export */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.LONG }
+                  : undefined
+              }
+            >
+              {connectorHealth.trello?.configured ? (
                 <Button
                   variant="outline"
-                  disabled={true}
-                  aria-label={
-                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO_SETUP
-                  }
+                  onClick={() => handleExport('trello')}
+                  loading={exportingFormat === 'trello'}
+                  loadingText={EXPORT_LABELS.TRELLO.LOADING}
+                  disabled={exportLoading && exportingFormat !== 'trello'}
+                  aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
                 >
                   {EXPORT_LABELS.TRELLO.DEFAULT}
-                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                  </span>
                 </Button>
-              </Tooltip>
-            )}
-          </div>
+              ) : (
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
+                  position="top"
+                >
+                  <Button
+                    variant="outline"
+                    disabled={true}
+                    aria-label={
+                      RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO_SETUP
+                    }
+                  >
+                    {EXPORT_LABELS.TRELLO.DEFAULT}
+                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                    </span>
+                  </Button>
+                </Tooltip>
+              )}
+            </div>
 
-          {/* Google Tasks Export */}
-          <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }
-                : undefined
-            }
-          >
-            {connectorHealth['google-tasks']?.configured ? (
-              <Button
-                variant="outline"
-                onClick={() => handleExport('google-tasks')}
-                loading={exportingFormat === 'google-tasks'}
-                loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
-                disabled={exportLoading && exportingFormat !== 'google-tasks'}
-                aria-label={
-                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS
-                }
-              >
-                {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
-              </Button>
-            ) : (
-              <Tooltip
-                content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
-                position="top"
-              >
+            {/* Google Tasks Export */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }
+                  : undefined
+              }
+            >
+              {connectorHealth['google-tasks']?.configured ? (
                 <Button
                   variant="outline"
-                  disabled={true}
+                  onClick={() => handleExport('google-tasks')}
+                  loading={exportingFormat === 'google-tasks'}
+                  loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
+                  disabled={exportLoading && exportingFormat !== 'google-tasks'}
                   aria-label={
-                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS_SETUP
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS
                   }
                 >
                   {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
-                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                  </span>
                 </Button>
-              </Tooltip>
-            )}
-          </div>
+              ) : (
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
+                  position="top"
+                >
+                  <Button
+                    variant="outline"
+                    disabled={true}
+                    aria-label={
+                      RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS_SETUP
+                    }
+                  >
+                    {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
+                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                    </span>
+                  </Button>
+                </Tooltip>
+              )}
+            </div>
 
-          {/* GitHub Projects Export */}
-          <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }
-                : undefined
-            }
-          >
-            {connectorHealth['github-projects']?.configured ? (
-              <Button
-                variant="outline"
-                onClick={() => handleExport('github-projects')}
-                loading={exportingFormat === 'github-projects'}
-                loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
-                disabled={
-                  exportLoading && exportingFormat !== 'github-projects'
-                }
-                aria-label={
-                  RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
-                }
-              >
-                {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-              </Button>
-            ) : (
-              <Tooltip
-                content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
-                position="top"
-              >
+            {/* GitHub Projects Export */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }
+                  : undefined
+              }
+            >
+              {connectorHealth['github-projects']?.configured ? (
                 <Button
                   variant="outline"
-                  disabled={true}
+                  onClick={() => handleExport('github-projects')}
+                  loading={exportingFormat === 'github-projects'}
+                  loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
+                  disabled={
+                    exportLoading && exportingFormat !== 'github-projects'
+                  }
                   aria-label={
-                    RESULTS_PAGE_CONTENT.ARIA_LABELS
-                      .EXPORT_GITHUB_PROJECTS_SETUP
+                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
                   }
                 >
                   {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-                  <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
-                    {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
-                  </span>
                 </Button>
-              </Tooltip>
-            )}
+              ) : (
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
+                  position="top"
+                >
+                  <Button
+                    variant="outline"
+                    disabled={true}
+                    aria-label={
+                      RESULTS_PAGE_CONTENT.ARIA_LABELS
+                        .EXPORT_GITHUB_PROJECTS_SETUP
+                    }
+                  >
+                    {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
+                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                      {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
+                    </span>
+                  </Button>
+                </Tooltip>
+              )}
+            </div>
+
+            {/* Email to Self - Growth: User retention and accessibility */}
+            <div
+              className={`${prefersReducedMotion ? '' : 'fade-in'}`}
+              style={
+                !prefersReducedMotion
+                  ? { animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }
+                  : undefined
+              }
+            >
+              <EmailButton
+                ideaTitle={idea.title}
+                ideaContent={idea.raw_text}
+                sessionAnswers={formattedAnswers}
+                onEmailSent={() => {
+                  // Growth: Track email send event
+                  trackEvent(ANALYTICS_EVENTS.CTA_CLICK, {
+                    cta_name: 'email_send_to_self',
+                    idea_id: idea.id,
+                    page_path: '/results',
+                  });
+                }}
+              />
+            </div>
           </div>
 
-          {/* Email to Self - Growth: User retention and accessibility */}
+          {/* Micro-UX: Keyboard shortcut hint for export discoverability */}
+          {/* Helps users discover Ctrl+E shortcut for quick markdown export */}
           <div
-            className={`${prefersReducedMotion ? '' : 'fade-in'}`}
-            style={
-              !prefersReducedMotion
-                ? { animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }
-                : undefined
-            }
+            className="mt-4 flex items-center gap-2 text-xs text-gray-400"
+            aria-hidden="true"
           >
-            <EmailButton
-              ideaTitle={idea.title}
-              ideaContent={idea.raw_text}
-              sessionAnswers={formattedAnswers}
-              onEmailSent={() => {
-                // Growth: Track email send event
-                trackEvent(ANALYTICS_EVENTS.CTA_CLICK, {
-                  cta_name: 'email_send_to_self',
+            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
+              >
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
+              >
+                E
+              </kbd>
+              <span className="text-gray-400">quick export markdown</span>
+            </span>
+          </div>
+
+          {exportUrl && (
+            <div className="mt-6 relative">
+              <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
+                {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
+              </Alert>
+              {showExportSuccess &&
+                particles.map((particle) => (
+                  <span
+                    key={particle.id}
+                    className="absolute rounded-full pointer-events-none animate-copy-confetti"
+                    style={
+                      {
+                        left: '50%',
+                        top: '50%',
+                        width: `${particle.size}px`,
+                        height: `${particle.size}px`,
+                        backgroundColor: particle.color,
+                        '--confetti-x': `${particle.x}px`,
+                        '--confetti-y': `${particle.y}px`,
+                        animationDelay: `${particle.delay}ms`,
+                      } as React.CSSProperties
+                    }
+                    aria-hidden="true"
+                  />
+                ))}
+            </div>
+          )}
+        </div>
+
+        {/* Share Options - Growth: Viral sharing for user acquisition */}
+        <div className={CARD_PATTERNS.WITH_MARGIN}>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            {RESULTS_PAGE_CONTENT.SHARE_HEADING}
+          </h2>
+          <p className="text-gray-600 mb-6">
+            {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
+          </p>
+          <div className="flex flex-wrap gap-4">
+            <ShareButton
+              shareTitle={`Check out my project blueprint on IdeaFlow!`}
+              shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
+              label={RESULTS_PAGE_CONTENT.SHARE_BUTTON_LABEL}
+              successLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_SUCCESS_LABEL}
+              ariaLabel="Share your project blueprint"
+              onShare={() => {
+                // Growth: Track social share event
+                trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
+                  share_platform: 'web_share',
                   idea_id: idea.id,
-                  page_path: '/results',
                 });
               }}
             />
           </div>
         </div>
-
-        {/* Micro-UX: Keyboard shortcut hint for export discoverability */}
-        {/* Helps users discover Ctrl+E shortcut for quick markdown export */}
-        <div
-          className="mt-4 flex items-center gap-2 text-xs text-gray-400"
-          aria-hidden="true"
-        >
-          <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
-            <kbd
-              className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
-            >
-              {isMac ? '⌘' : 'Ctrl'}
-            </kbd>
-            <kbd
-              className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
-            >
-              E
-            </kbd>
-            <span className="text-gray-400">quick export markdown</span>
-          </span>
-        </div>
-
-        {exportUrl && (
-          <div className="mt-6 relative">
-            <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
-              {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
-            </Alert>
-            {showExportSuccess &&
-              particles.map((particle) => (
-                <span
-                  key={particle.id}
-                  className="absolute rounded-full pointer-events-none animate-copy-confetti"
-                  style={
-                    {
-                      left: '50%',
-                      top: '50%',
-                      width: `${particle.size}px`,
-                      height: `${particle.size}px`,
-                      backgroundColor: particle.color,
-                      '--confetti-x': `${particle.x}px`,
-                      '--confetti-y': `${particle.y}px`,
-                      animationDelay: `${particle.delay}ms`,
-                    } as React.CSSProperties
-                  }
-                  aria-hidden="true"
-                />
-              ))}
-          </div>
-        )}
       </div>
-
-      {/* Share Options - Growth: Viral sharing for user acquisition */}
-      <div className={CARD_PATTERNS.WITH_MARGIN}>
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">
-          {RESULTS_PAGE_CONTENT.SHARE_HEADING}
-        </h2>
-        <p className="text-gray-600 mb-6">
-          {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
-        </p>
-        <div className="flex flex-wrap gap-4">
-          <ShareButton
-            shareTitle={`Check out my project blueprint on IdeaFlow!`}
-            shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
-            label={RESULTS_PAGE_CONTENT.SHARE_BUTTON_LABEL}
-            successLabel={RESULTS_PAGE_CONTENT.SHARE_BUTTON_SUCCESS_LABEL}
-            ariaLabel="Share your project blueprint"
-            onShare={() => {
-              // Growth: Track social share event
-              trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
-                share_platform: 'web_share',
-                idea_id: idea.id,
-              });
-            }}
-          />
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 

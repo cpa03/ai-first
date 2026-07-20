@@ -538,6 +538,15 @@ export const WHY_CHOOSE_SECTION_LABELS = {
 } as const;
 
 /**
+ * ScrollProgress Labels
+ * Eliminates hardcoded aria-labels in ScrollProgress component
+ */
+export const SCROLL_PROGRESS_LABELS = {
+  /** ARIA label for the scroll progress bar */
+  ARIA_LABEL: 'Page scroll progress',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -566,6 +575,7 @@ export const COMPONENT_LABELS = {
   DASHBOARD: DASHBOARD_LABELS,
   EMAIL_BUTTON: EMAIL_BUTTON_LABELS,
   BLUEPRINT_DISPLAY: BLUEPRINT_DISPLAY_LABELS,
+  SCROLL_PROGRESS: SCROLL_PROGRESS_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -594,4 +604,5 @@ export type DashboardLabels = typeof DASHBOARD_LABELS;
 export type EmailButtonLabels = typeof EMAIL_BUTTON_LABELS;
 export type BlueprintDisplayLabels = typeof BLUEPRINT_DISPLAY_LABELS;
 export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
+export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;
