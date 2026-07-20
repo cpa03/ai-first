@@ -275,11 +275,7 @@ describe('Request Signer', () => {
       });
     };
 
-    // SKIPPED: This test requires a real Fetch API Request object.
-    // In Jest test environment, Request is mocked and doesn't have body support.
-    // The core verifySignature function is tested separately in other tests.
-    // TODO: Consider using a fetch polyfill or testing in a Node.js environment with full Request support
-    it.skip('should verify valid signed request', async () => {
+    it('should verify valid signed request', async () => {
       // This test is skipped because Jest mocks Request without body support
       // In production (or with proper fetch polyfill), this would work
       const timestamp = Date.now();
