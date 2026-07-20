@@ -23,6 +23,8 @@ import {
   SPACING_CLASSES,
   ROUNDED_CLASSES,
   UI_CONFIG,
+  PRIMARY_PULSE_CONTAINER,
+  PRIMARY_PULSE_INNER,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import type { Task } from '@/lib/db';
@@ -174,12 +176,12 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           {/* Micro-UX improvement: Friendly animated empty state with visual guidance */}
           <div className="relative w-24 h-24 mb-6" aria-hidden="true">
             <div
-              className="absolute inset-0 bg-primary-50 rounded-full animate-pulse"
+              className={PRIMARY_PULSE_CONTAINER}
               style={{
                 animationDuration: `${ANIMATION_CONFIG.ERROR_RELOAD_DELAY / 1000}s`,
               }}
             />
-            <div className="absolute inset-2 bg-primary-100 rounded-full" />
+            <div className={PRIMARY_PULSE_INNER} />
             <div className="absolute inset-0 flex items-center justify-center">
               <svg
                 className="w-10 h-10 text-primary-500"

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { Z_INDEX_LAYERS } from '@/lib/config';
+import { Z_INDEX_LAYERS, SCROLL_PROGRESS_BAR } from '@/lib/config';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
 
 /**
@@ -59,7 +59,7 @@ function ScrollProgressComponent() {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 h-1 bg-gray-100/80 backdrop-blur-sm"
+      className={SCROLL_PROGRESS_BAR}
       style={{ zIndex: Z_INDEX_LAYERS.STICKY }}
       role="progressbar"
       aria-valuenow={Math.round(scrollPercent)}

@@ -16,6 +16,10 @@ import {
   TEXT_COLORS,
   TRANSITION_CLASSES,
   DURATION_TAILWIND,
+  MOBILE_NAV_ACTIVE_INDICATOR,
+  MOBILE_NAV_CLOSE_HINT,
+  MOBILE_NAV_CLOSE_HINT_TEXT,
+  MOBILE_NAV_CLOSE_HINT_KBD,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -317,7 +321,7 @@ function MobileNavComponent() {
                       <span className="flex items-center gap-3">
                         {active && (
                           <span
-                            className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"
+                            className={MOBILE_NAV_ACTIVE_INDICATOR}
                             aria-hidden="true"
                           />
                         )}
@@ -339,12 +343,10 @@ function MobileNavComponent() {
             {/* Micro-UX: Keyboard hint for closing menu */}
             {/* Helps keyboard users discover the Escape key shortcut for closing the mobile menu */}
             <div
-              className={`${RESPONSIVE_PADDING.CLASS} py-4 border-t border-gray-200 ${BG_COLORS.DEFAULT}`}
+              className={`${RESPONSIVE_PADDING.CLASS} ${MOBILE_NAV_CLOSE_HINT}`}
             >
-              <p className="text-xs text-gray-500 text-center flex items-center justify-center gap-2">
-                <kbd className="px-1.5 py-0.5 text-xs font-mono text-gray-600 bg-white border border-gray-200 rounded shadow-sm">
-                  Esc
-                </kbd>
+              <p className={MOBILE_NAV_CLOSE_HINT_TEXT}>
+                <kbd className={MOBILE_NAV_CLOSE_HINT_KBD}>Esc</kbd>
                 <span>to close</span>
               </p>
             </div>

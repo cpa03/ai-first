@@ -10,6 +10,7 @@ import {
   REFERRAL_LINK_LABELS,
   GRAY_CLASSES,
   WHITE_BG_PATTERNS,
+  REFERRAL_ICON_CONTAINER,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -141,7 +142,7 @@ export default function ReferralLink({
         </div>
 
         <div className="flex-shrink-0 hidden sm:block">
-          <div className="w-12 h-12 rounded-full bg-primary-100 flex items-center justify-center">
+          <div className={REFERRAL_ICON_CONTAINER}>
             <svg
               className="w-6 h-6 text-primary-600"
               fill="none"

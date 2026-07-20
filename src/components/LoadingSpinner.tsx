@@ -7,6 +7,7 @@ import {
   SPINNER_TAILWIND,
   TEXT_COLOR_CLASSES,
   TRANSITION_CLASSES,
+  LOADING_SPINNER_RIPPLE,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -118,7 +119,7 @@ function LoadingSpinnerComponent({
       <span className="sr-only">{ariaLabel}</span>
       {!prefersReducedMotion && (
         <div
-          className="absolute rounded-full bg-primary-100/50 animate-ping-slow"
+          className={LOADING_SPINNER_RIPPLE}
           style={pulseRingStyle}
           aria-hidden="true"
         />

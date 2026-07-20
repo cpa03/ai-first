@@ -15,6 +15,7 @@ import {
   TYPOGRAPHY_CLASSES,
   TEXT_COLORS,
   BORDER_COLORS,
+  PULSE_DOT,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -198,9 +199,7 @@ function AutoSaveIndicatorComponent({
 
         {/* State Icon */}
         <div className="absolute inset-0 flex items-center justify-center">
-          {saveState === 'typing' && (
-            <span className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse" />
-          )}
+          {saveState === 'typing' && <span className={PULSE_DOT} />}
           {saveState === 'saving' && (
             <svg
               className="w-2.5 h-2.5 text-primary-500 animate-spin"

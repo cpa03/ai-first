@@ -15,6 +15,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   COMPONENT_CONFIG,
+  BUTTON_RIPPLE,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { generateId } from '@/lib/security/crypto';
@@ -208,7 +209,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
-            className="absolute rounded-full bg-white/30 pointer-events-none animate-ripple"
+            className={BUTTON_RIPPLE}
             style={{
               left: ripple.x,
               top: ripple.y,

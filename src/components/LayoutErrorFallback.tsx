@@ -9,6 +9,7 @@ import {
   CONTAINER_WIDTHS,
   CARD_PATTERNS,
   ROUTES,
+  ERROR_FALLBACK_CONTAINER,
 } from '@/lib/config';
 
 interface LayoutErrorFallbackProps {
@@ -23,7 +24,7 @@ function LayoutErrorFallbackComponent({
   homeLabel = LAYOUT_ERROR_LABELS.HOME_LINK,
 }: LayoutErrorFallbackProps) {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className={ERROR_FALLBACK_CONTAINER}>
       <div
         className={`${CONTAINER_WIDTHS.XS} w-full ${CARD_PATTERNS.COMPACT} text-center`}
       >

@@ -18,11 +18,17 @@ import {
   GRADIENT_PATTERNS,
   STEP_CELEBRATION_TAILWIND,
   DURATION_TAILWIND,
-  TYPOGRAPHY_CLASSES,
-  TEXT_COLORS,
-  BG_COLORS,
   TRANSITION_CLASSES,
   WHITE_BG_PATTERNS,
+  STEP_CELEBRATION_CHECKMARK_CONTAINER,
+  STEP_CELEBRATION_CHECKMARK_ICON,
+  STEP_CELEBRATION_RIPPLE_1,
+  STEP_CELEBRATION_RIPPLE_2,
+  STEP_CELEBRATION_PROGRESS_TRACK,
+  STEP_CELEBRATION_PARTICLE,
+  STEP_CELEBRATION_TEXT_CONTAINER,
+  STEP_CELEBRATION_STEP_COMPLETE,
+  STEP_CELEBRATION_PROGRESS_COMPLETE,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -169,7 +175,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
             particles.map((particle) => (
               <div
                 key={particle.id}
-                className="absolute w-2 h-2 rounded-full bg-primary-500"
+                className={STEP_CELEBRATION_PARTICLE}
                 style={{
                   transform: `translate(${particle.x}px, ${particle.y}px) rotate(${particle.rotation}deg) scale(${isExiting ? 0 : particle.scale})`,
                   opacity: isExiting
@@ -222,8 +228,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <div
                 className={`
-                w-10 h-10 rounded-full bg-green-500 flex items-center justify-center
-                shadow-lg shadow-green-500/30
+                ${STEP_CELEBRATION_CHECKMARK_CONTAINER}
                 transform ${TRANSITION_CLASSES.ULTRA_SLOW}
                 ${isExiting ? 'scale-50 opacity-0' : 'scale-100 opacity-100'}
               `}
@@ -232,7 +237,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 }}
               >
                 <svg
-                  className="w-6 h-6 text-white"
+                  className={STEP_CELEBRATION_CHECKMARK_ICON}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -259,7 +264,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
               <>
                 <div
                   className={`
-                  absolute inset-0 rounded-full border-4 border-primary-400/30
+                  ${STEP_CELEBRATION_RIPPLE_1}
                   ${isExiting ? 'scale-150 opacity-0' : 'scale-100 opacity-100'}
                 `}
                   style={{
@@ -268,7 +273,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 />
                 <div
                   className={`
-                  absolute inset-0 rounded-full border-4 border-primary-400/20
+                  ${STEP_CELEBRATION_RIPPLE_2}
                   ${isExiting ? 'scale-175 opacity-0' : 'scale-100 opacity-100'}
                 `}
                   style={{
@@ -281,7 +286,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
 
           <div
             className={`
-            mt-4 text-center
+            ${STEP_CELEBRATION_TEXT_CONTAINER}
             transform ${TRANSITION_CLASSES.ULTRA_SLOW}
             ${isExiting ? 'translate-y-4 opacity-0' : 'translate-y-0 opacity-100'}
           `}
@@ -289,21 +294,17 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
               transitionDelay: ANIMATION_DELAYS.INLINE.MEDIUM,
             }}
           >
-            <p
-              className={`text-lg ${TYPOGRAPHY_CLASSES.BOLD} ${TEXT_COLORS.PRIMARY}`}
-            >
+            <p className={STEP_CELEBRATION_STEP_COMPLETE}>
               {STEP_CELEBRATION_LABELS.STEP_COMPLETE(stepNumber)}
             </p>
-            <p
-              className={`text-sm ${TYPOGRAPHY_CLASSES.MEDIUM} ${TEXT_COLORS.BRAND} mt-1`}
-            >
+            <p className={STEP_CELEBRATION_PROGRESS_COMPLETE}>
               {STEP_CELEBRATION_LABELS.PROGRESS_COMPLETE(progress)}
             </p>
           </div>
 
           <div
             className={`
-              mt-3 w-32 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden
+              ${STEP_CELEBRATION_PROGRESS_TRACK}
             transform ${TRANSITION_CLASSES.ULTRA_SLOW}
             ${isExiting ? 'scale-x-0 opacity-0' : 'scale-x-100 opacity-100'}
           `}

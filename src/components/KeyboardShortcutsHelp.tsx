@@ -26,6 +26,8 @@ import {
   TYPOGRAPHY_CLASSES,
   TRANSITION_CLASSES,
   SHADOW_CLASSES,
+  KEYBOARD_SHORTCUT_CATEGORY_ICON,
+  KEYBOARD_SHORTCUT_FOOTER,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -752,7 +754,7 @@ function KeyboardShortcutsHelpComponent({
           className={`flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
         >
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary-100 rounded-lg">
+            <div className={KEYBOARD_SHORTCUT_CATEGORY_ICON}>
               <svg
                 className="w-5 h-5 text-primary-600"
                 fill="none"
@@ -880,7 +882,7 @@ function KeyboardShortcutsHelpComponent({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div className={KEYBOARD_SHORTCUT_FOOTER}>
           <p
             className={`text-xs ${TEXT_COLORS.SECONDARY} text-center flex items-center justify-center gap-2`}
           >
