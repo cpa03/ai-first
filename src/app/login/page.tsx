@@ -256,10 +256,7 @@ export default function LoginPage() {
                 type="password"
                 label={LOGIN_PAGE_CONTENT.FORM.PASSWORD_LABEL}
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                  if (passwordError) setPasswordError(undefined);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={handlePasswordKeyDown}
                 onKeyUp={handlePasswordKeyUp}
                 onBlur={handlePasswordBlur}
