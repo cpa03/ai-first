@@ -1,4 +1,8 @@
-import { generateId, secureRandom, timingSafeEqualStrings } from '@/lib/security/crypto';
+import {
+  generateId,
+  secureRandom,
+  timingSafeEqualStrings,
+} from '@/lib/security/crypto';
 
 describe('generateId Fallback', () => {
   let originalCrypto: unknown;
@@ -33,7 +37,9 @@ describe('timingSafeEqualStrings', () => {
     expect(timingSafeEqualStrings('hello', 'hello')).toBe(true);
     expect(timingSafeEqualStrings('', '')).toBe(true);
     expect(timingSafeEqualStrings('a', 'a')).toBe(true);
-    expect(timingSafeEqualStrings('super-secret-key-123!', 'super-secret-key-123!')).toBe(true);
+    expect(
+      timingSafeEqualStrings('super-secret-key-123!', 'super-secret-key-123!')
+    ).toBe(true);
   });
 
   it('should return false for different strings of the same length', () => {

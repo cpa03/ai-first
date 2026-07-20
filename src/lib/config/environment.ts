@@ -7,9 +7,12 @@
  * with the logger module (logger → pii-redaction → config/constants).
  */
 
-export const isDevelopment = typeof process !== 'undefined' && process.env.NODE_ENV === 'development';
-export const isProduction = typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
-export const isTest = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+export const isDevelopment =
+  typeof process !== 'undefined' && process.env.NODE_ENV === 'development';
+export const isProduction =
+  typeof process !== 'undefined' && process.env.NODE_ENV === 'production';
+export const isTest =
+  typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 
 /**
  * Type-safe environment variable loader

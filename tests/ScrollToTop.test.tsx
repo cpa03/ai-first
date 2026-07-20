@@ -15,27 +15,31 @@ describe('ScrollToTop', () => {
       configurable: true,
       value: 0,
     });
-    jest.spyOn(document.documentElement, 'scrollHeight', 'get').mockReturnValue(2000);
+    jest
+      .spyOn(document.documentElement, 'scrollHeight', 'get')
+      .mockReturnValue(2000);
     Object.defineProperty(window, 'innerHeight', {
       writable: true,
       configurable: true,
       value: 1000,
     });
-    const requestAnimationFrameMock = jest.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const win = window as any;
-      if (win.isAnimating) {
+    const requestAnimationFrameMock = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((cb) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return setTimeout(() => cb(Date.now()), 0) as any;
-      }
-      win.isAnimating = true;
-      try {
-        cb(Date.now());
-      } finally {
-        win.isAnimating = false;
-      }
-      return 1;
-    });
+        const win = window as any;
+        if (win.isAnimating) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return setTimeout(() => cb(Date.now()), 0) as any;
+        }
+        win.isAnimating = true;
+        try {
+          cb(Date.now());
+        } finally {
+          win.isAnimating = false;
+        }
+        return 1;
+      });
   });
 
   it('should not render when scroll position is below threshold', () => {
@@ -44,7 +48,11 @@ describe('ScrollToTop', () => {
   });
 
   it('should render when scroll position is above threshold', () => {
-    Object.defineProperty(window, 'scrollY', { value: 500, writable: true, configurable: true });
+    Object.defineProperty(window, 'scrollY', {
+      value: 500,
+      writable: true,
+      configurable: true,
+    });
     render(<ScrollToTop showAt={400} />);
 
     fireEvent.scroll(window);
@@ -151,7 +159,11 @@ describe('ScrollToTop', () => {
   });
 
   it('should render Scroll to Bottom button when scroll position is near the top', () => {
-    Object.defineProperty(window, 'scrollY', { value: 100, writable: true, configurable: true });
+    Object.defineProperty(window, 'scrollY', {
+      value: 100,
+      writable: true,
+      configurable: true,
+    });
     render(<ScrollToTop showAt={50} />);
 
     fireEvent.scroll(window);
@@ -162,7 +174,11 @@ describe('ScrollToTop', () => {
   });
 
   it('should scroll to bottom when clicked in near-top zone', () => {
-    Object.defineProperty(window, 'scrollY', { value: 100, writable: true, configurable: true });
+    Object.defineProperty(window, 'scrollY', {
+      value: 100,
+      writable: true,
+      configurable: true,
+    });
     render(<ScrollToTop showAt={50} smooth={true} />);
 
     fireEvent.scroll(window);

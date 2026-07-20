@@ -21,7 +21,9 @@ describe('CSRF_CONFIG mutability', () => {
 
     // The internal list should remain unchanged
     expect(CSRF_CONFIG.TRUSTED_ORIGINS).toEqual(originalOrigins);
-    expect(CSRF_CONFIG.TRUSTED_ORIGINS).not.toContain('https://malicious-site.com');
+    expect(CSRF_CONFIG.TRUSTED_ORIGINS).not.toContain(
+      'https://malicious-site.com'
+    );
   });
 
   it('should verify that mutation does not affect validation', () => {
@@ -31,8 +33,8 @@ describe('CSRF_CONFIG mutability', () => {
     const request = new Request('https://api.example.com/data', {
       method: 'POST',
       headers: {
-        'origin': 'https://attacker.com'
-      }
+        origin: 'https://attacker.com',
+      },
     });
 
     const result = validateCSRF(request);
