@@ -120,10 +120,24 @@ const API_KEY_SPECIFIC_TRIGGER_REGEX =
   /api[-_ ]?key|secret|token|password|passphrase|credential|auth|authorization|bearer/i;
 
 /**
+ * PERFORMANCE: Cache for the results of the complex _redactPII function.
+ * Since _redactPII contains multiple sequential regex replacements, caching
+ * the results for identical input strings provides an immense speedup
+ * when identical logs or messages are processed repeatedly.
+ */
+const REDACT_PII_CACHE = new Map<string, string>();
+const MAX_REDACT_PII_CACHE_SIZE = 1000;
+
+/**
  * Internal redaction logic that skips fast-path checks.
  * Use this when the fast-path check has already been performed.
  */
 function _redactPII(text: string): string {
+  const cached = REDACT_PII_CACHE.get(text);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   let redacted = text;
   const originalLength = text.length;
   const labels = PII_REDACTION_CONFIG.REDACTION_LABELS;
@@ -196,6 +210,15 @@ function _redactPII(text: string): string {
   ) {
     redacted = redacted.replace(PII_REGEX_PATTERNS.apiKey, labels.API_KEY);
   }
+
+  // At the end, cache the result
+  if (REDACT_PII_CACHE.size >= MAX_REDACT_PII_CACHE_SIZE) {
+    const firstKey = REDACT_PII_CACHE.keys().next().value;
+    if (firstKey !== undefined) {
+      REDACT_PII_CACHE.delete(firstKey);
+    }
+  }
+  REDACT_PII_CACHE.set(text, redacted);
 
   return redacted;
 }
@@ -705,4 +728,5 @@ export function getRedactionStats(): {
 
 export function clearRedactionCache(): void {
   KEY_ACTION_CACHE.clear();
+  REDACT_PII_CACHE.clear();
 }
