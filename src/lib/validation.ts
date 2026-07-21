@@ -208,6 +208,21 @@ export function sanitizeString(
 }
 
 /**
+ * PERFORMANCE: Cache for the results of sanitizeHtml to avoid redundant regex
+ * execution and string replacement on identical input strings.
+ */
+const SANITIZE_HTML_CACHE = new Map<string, string>();
+const MAX_SANITIZE_HTML_CACHE_SIZE = 1000;
+
+/**
+ * Clears the sanitizeHtml cache.
+ * Useful for testing and memory management.
+ */
+export function clearSanitizeHtmlCache(): void {
+  SANITIZE_HTML_CACHE.clear();
+}
+
+/**
  * Sanitizes HTML content by removing script tags and escaping HTML entities
  * to prevent XSS attacks. This is a basic sanitization suitable for
  * simple text fields like titles.
@@ -238,8 +253,9 @@ const NEEDS_SANITIZATION_REGEX =
  *
  * PERFORMANCE: Uses a tiered strategy:
  * 1. Fast-path for non-strings/empty strings.
- * 2. Trim and check if sanitization is even needed via trigger regex.
- * 3. Use pre-compiled regexes for the actual replacement work.
+ * 2. Trim and check cache for already processed strings.
+ * 3. Fast-path check if sanitization is even needed via trigger regex.
+ * 4. Use pre-compiled regexes for the actual replacement work.
  */
 export function sanitizeHtml(input: string): string {
   if (!input || typeof input !== 'string') {
@@ -251,9 +267,24 @@ export function sanitizeHtml(input: string): string {
     return '';
   }
 
+  // PERFORMANCE: Cache lookup first. Identical strings will bypass
+  // all regex operations and return immediately.
+  const cached = SANITIZE_HTML_CACHE.get(trimmed);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   // PERFORMANCE: Fast-path for plain text without special characters.
   // This avoids multiple expensive regex replacements for the 99% case.
   if (!NEEDS_SANITIZATION_REGEX.test(trimmed)) {
+    // Cache the fast-path result as well
+    if (SANITIZE_HTML_CACHE.size >= MAX_SANITIZE_HTML_CACHE_SIZE) {
+      const firstKey = SANITIZE_HTML_CACHE.keys().next().value;
+      if (firstKey !== undefined) {
+        SANITIZE_HTML_CACHE.delete(firstKey);
+      }
+    }
+    SANITIZE_HTML_CACHE.set(trimmed, trimmed);
     return trimmed;
   }
 
@@ -285,6 +316,15 @@ export function sanitizeHtml(input: string): string {
     (char) =>
       (HTML_ESCAPE_MAP as unknown as Record<string, string>)[char] || char
   );
+
+  // Cache the sanitized result
+  if (SANITIZE_HTML_CACHE.size >= MAX_SANITIZE_HTML_CACHE_SIZE) {
+    const firstKey = SANITIZE_HTML_CACHE.keys().next().value;
+    if (firstKey !== undefined) {
+      SANITIZE_HTML_CACHE.delete(firstKey);
+    }
+  }
+  SANITIZE_HTML_CACHE.set(trimmed, sanitized);
 
   return sanitized;
 }
