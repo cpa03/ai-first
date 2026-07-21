@@ -192,7 +192,7 @@ const ProgressStepperComponent = function ProgressStepper({
           )}
         >
           <div
-            className="h-full bg-primary-600 rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}"
+            className={`h-full bg-primary-600 rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}`}
             style={{ width: `${animatedProgress}%` }}
           />
         </div>
