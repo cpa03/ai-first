@@ -243,6 +243,52 @@ export const CACHE_CONFIG = {
   } as const,
 
   /**
+   * Parsed date cache configuration
+   * Controls caching behavior for parsed Date objects
+   */
+  PARSED_DATE: {
+    /**
+     * Maximum number of parsed date objects to cache
+     * Env: CACHE_PARSED_DATE_MAX_SIZE (default: 1000)
+     */
+    MAX_SIZE: EnvLoader.number('CACHE_PARSED_DATE_MAX_SIZE', 1000, 100, 10000),
+  } as const,
+
+  /**
+   * PII redaction cache configuration
+   * Controls caching behavior for PII redaction results
+   */
+  PII_REDACTION: {
+    /**
+     * Maximum number of PII redaction results to cache
+     * Env: CACHE_PII_REDACTION_MAX_SIZE (default: 1000)
+     */
+    MAX_SIZE: EnvLoader.number(
+      'CACHE_PII_REDACTION_MAX_SIZE',
+      1000,
+      100,
+      10000
+    ),
+  } as const,
+
+  /**
+   * Sanitize HTML cache configuration
+   * Controls caching behavior for HTML sanitization results
+   */
+  SANITIZE_HTML: {
+    /**
+     * Maximum number of sanitize HTML results to cache
+     * Env: CACHE_SANITIZE_HTML_MAX_SIZE (default: 1000)
+     */
+    MAX_SIZE: EnvLoader.number(
+      'CACHE_SANITIZE_HTML_MAX_SIZE',
+      1000,
+      100,
+      10000
+    ),
+  } as const,
+
+  /**
    * Cache health monitoring thresholds
    * Controls when cache health status changes
    */

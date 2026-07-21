@@ -4,6 +4,7 @@ import { generateId } from './security/crypto';
 import { RETRY_CONFIG } from './config/constants';
 import { TIME_UNITS, TIME_CONVERSION } from './config/time';
 import { UI_CONFIG } from './config/ui-config';
+import { CACHE_CONFIG } from './config/cache';
 
 export function cn(...inputs: ClassValue[]) {
   // PERFORMANCE: Early-return fast-path for single non-empty string without spaces.
@@ -363,7 +364,6 @@ export function formatAbsoluteDate(
  * Benchmarks show up to ~13x speedup when repeatedly formatting identical date strings.
  */
 const parsedDateCache = new Map<string, Date>();
-const MAX_PARSED_DATE_CACHE_SIZE = 1000;
 
 /**
  * Safely parses a date string or returns the Date object directly.
@@ -386,7 +386,7 @@ export function parseDate(dateInput: string | Date): Date {
   let cached = parsedDateCache.get(dateInput);
   if (!cached) {
     cached = new Date(dateInput);
-    if (parsedDateCache.size >= MAX_PARSED_DATE_CACHE_SIZE) {
+    if (parsedDateCache.size >= CACHE_CONFIG.PARSED_DATE.MAX_SIZE) {
       const firstKey = parsedDateCache.keys().next().value;
       if (firstKey !== undefined) {
         parsedDateCache.delete(firstKey);
