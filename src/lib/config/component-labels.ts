@@ -550,6 +550,11 @@ export const WHY_CHOOSE_SECTION_LABELS = {
 export const SCROLL_PROGRESS_LABELS = {
   /** ARIA label for the scroll progress bar */
   ARIA_LABEL: 'Page scroll progress',
+  /** ARIA label template for scroll progress with percentage */
+  ARIA_LABEL_WITH_PERCENTAGE: (percentage: number) =>
+    `Page scroll progress: ${percentage}%`,
+  /** Screen reader text for scroll progress */
+  SR_TEXT: (percentage: number) => `${percentage}% scrolled`,
 } as const;
 
 /**

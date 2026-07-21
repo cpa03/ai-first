@@ -2,8 +2,14 @@
 
 import { useState, useEffect, useCallback, memo, useRef } from 'react';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { Z_INDEX_LAYERS, SCROLL_PROGRESS_BAR } from '@/lib/config';
+import {
+  Z_INDEX_LAYERS,
+  SCROLL_PROGRESS_BAR,
+  TEXT_SIZE_CLASSES,
+} from '@/lib/config';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
+
+const SHOW_PERCENTAGE_THRESHOLD = 75;
 
 /**
  * ScrollProgress - Visual scroll position indicator
@@ -23,6 +29,9 @@ function ScrollProgressComponent() {
   const [scrollPercent, setScrollPercent] = useState(0);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
+
+  const showPercentage = scrollPercent >= SHOW_PERCENTAGE_THRESHOLD;
+  const displayPercentage = Math.round(scrollPercent);
 
   const handleScroll = useCallback(() => {
     if (rafRef.current !== null) return;
@@ -62,10 +71,14 @@ function ScrollProgressComponent() {
       className={SCROLL_PROGRESS_BAR}
       style={{ zIndex: Z_INDEX_LAYERS.STICKY }}
       role="progressbar"
-      aria-valuenow={Math.round(scrollPercent)}
+      aria-valuenow={displayPercentage}
       aria-valuemin={0}
       aria-valuemax={100}
-      aria-label={SCROLL_PROGRESS_LABELS.ARIA_LABEL}
+      aria-label={
+        showPercentage
+          ? SCROLL_PROGRESS_LABELS.ARIA_LABEL_WITH_PERCENTAGE(displayPercentage)
+          : SCROLL_PROGRESS_LABELS.ARIA_LABEL
+      }
     >
       <div
         className={`h-full rounded-r-full bg-gradient-to-r from-primary-500 to-primary-600 ${
@@ -73,6 +86,18 @@ function ScrollProgressComponent() {
         }`}
         style={{ width: `${scrollPercent}%` }}
       />
+      {showPercentage && !prefersReducedMotion && (
+        <div
+          className={`absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 animate-fade-in`}
+          aria-hidden="true"
+        >
+          <span
+            className={`${TEXT_SIZE_CLASSES.XS} font-semibold text-white tabular-nums leading-none drop-shadow-sm`}
+          >
+            {displayPercentage}%
+          </span>
+        </div>
+      )}
     </div>
   );
 }
