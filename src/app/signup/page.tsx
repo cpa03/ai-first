@@ -31,7 +31,9 @@ import {
   PROGRESS_BAR_A11Y,
   TEXT_COLORS,
   BG_COLORS,
+  VALIDATION_CONFIG,
 } from '@/lib/config';
+import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
 
 type PasswordStrength = 'empty' | 'weak' | 'medium' | 'strong';
@@ -267,7 +269,9 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <ul className="text-xs text-gray-600 space-y-0.5" aria-live="polite">
           {feedback.slice(0, 2).map((tip, idx) => (
             <li key={idx} className="flex items-center gap-1">
-              <span className="text-gray-500">•</span>
+              <span className="text-gray-500">
+                {USER_ONBOARDING_LABELS.BULLET}
+              </span>
               {tip}
             </li>
           ))}
@@ -297,7 +301,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
               />
             </svg>
           </span>
-          Great password!
+          {SIGNUP_PAGE_CONTENT.PASSWORD_STRENGTH.GREAT_PASSWORD}
         </div>
       )}
     </div>
@@ -352,9 +356,11 @@ export default function SignupPage() {
     setError(null);
 
     const trimmedEmail = email.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+    if (
+      !trimmedEmail ||
+      !VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(trimmedEmail)
+    ) {
       setEmailError(SIGNUP_PAGE_CONTENT.ERRORS.INVALID_EMAIL);
       requestAnimationFrame(() => scrollToError());
       return false;

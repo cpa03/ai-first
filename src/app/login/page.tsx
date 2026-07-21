@@ -28,6 +28,7 @@ import {
   LAYOUT_CLASSES,
   LOGIN_PAGE_CONFIG,
   UI_CONFIG,
+  VALIDATION_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -81,9 +82,11 @@ export default function LoginPage() {
     setError(null);
 
     const trimmedEmail = email.trim();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!trimmedEmail || !emailRegex.test(trimmedEmail)) {
+    if (
+      !trimmedEmail ||
+      !VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(trimmedEmail)
+    ) {
       setEmailError(LOGIN_PAGE_CONTENT.ERRORS.INVALID_EMAIL);
       requestAnimationFrame(() => scrollToError());
       return false;

@@ -171,6 +171,8 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
   CLOSE_ARIA_LABEL: 'Close command palette',
   COPY_SHORTCUT_ARIA_LABEL: (keys: string[]) =>
     `Copy shortcut: ${keys.join(' plus ')}`,
+  /** Separator between keyboard shortcut key combinations */
+  SEPARATOR: '·',
   /** Keyboard shortcut context labels */
   CONTEXT_LABELS: {
     global: 'Global',
@@ -336,6 +338,8 @@ export const USER_ONBOARDING_LABELS = {
   COMPLETION_ARIA_LABEL: 'Onboarding complete',
   PROGRESS_ARIA_LABEL: 'Onboarding progress',
   SKIP_ARIA_LABEL: 'Skip onboarding tour',
+  SEPARATOR: '·',
+  BULLET: '•',
   TOUR_STEPS: [
     {
       id: 'welcome',

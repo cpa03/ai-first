@@ -288,6 +288,9 @@ export const SIGNUP_PAGE_CONTENT = {
     MATCH: 'Passwords match',
     MISMATCH: 'Passwords do not match',
   },
+  PASSWORD_STRENGTH: {
+    GREAT_PASSWORD: 'Great password!',
+  },
   ERRORS: {
     TITLE: 'Sign Up Error',
     INVALID_EMAIL: 'Please enter a valid email address',
