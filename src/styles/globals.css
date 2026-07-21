@@ -1949,3 +1949,47 @@ button[aria-disabled='true'].btn-glow-hover {
     transform: none;
   }
 }
+
+@media print {
+  body {
+    background: white !important;
+  }
+
+  header,
+  footer,
+  nav,
+  .skip-link,
+  button:not(.print-show),
+  [role='toolbar'],
+  [role='navigation'],
+  .fixed,
+  .sticky {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  pre {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    font-size: 10pt !important;
+    border: 1px solid #ccc !important;
+    padding: 1rem !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4;
+  }
+}

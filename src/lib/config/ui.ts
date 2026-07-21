@@ -216,6 +216,8 @@ export const MESSAGES = {
     COPY_BUTTON: 'Copy to Clipboard',
     COPIED_BUTTON: 'Copied!',
     DOWNLOAD_BUTTON: 'Download Markdown',
+    PRINT_BUTTON: 'Print',
+    PRINT_ARIA_LABEL: 'Print blueprint or save as PDF',
     GENERATING_TITLE: 'Generating Your Blueprint...',
     GENERATING_DESCRIPTION:
       'Our AI is analyzing your answers and creating a detailed action plan.',
