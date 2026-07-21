@@ -27,8 +27,6 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const navLinks = MOBILE_NAV_CONFIG.ITEMS;
 
-const KEYBOARD_HINTS_VISIBLE_DURATION_MS = 2000;
-
 function MobileNavComponent() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -115,7 +113,7 @@ function MobileNavComponent() {
         if (hintsTimeoutRef.current) clearTimeout(hintsTimeoutRef.current);
         hintsTimeoutRef.current = setTimeout(() => {
           setHintsVisible(false);
-        }, KEYBOARD_HINTS_VISIBLE_DURATION_MS);
+        }, MOBILE_NAV_CONFIG.KEYBOARD_HINTS_VISIBLE_DURATION_MS);
       }
     } else {
       document.body.style.overflow = 'unset';

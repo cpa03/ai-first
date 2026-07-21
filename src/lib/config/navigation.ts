@@ -84,6 +84,17 @@ export const MOBILE_NAV_CONFIG = {
   CLOSE_ARIA_LABEL: 'Close navigation menu',
   TOGGLE_ARIA_LABEL: (isOpen: boolean) =>
     isOpen ? 'Close navigation menu' : 'Open navigation menu',
+
+  /**
+   * Duration for keyboard hints visibility in mobile navigation
+   * Env: MOBILE_NAV_KEYBOARD_HINTS_VISIBLE_DURATION_MS (default: 2000)
+   */
+  KEYBOARD_HINTS_VISIBLE_DURATION_MS: EnvLoader.number(
+    'MOBILE_NAV_KEYBOARD_HINTS_VISIBLE_DURATION_MS',
+    2000,
+    500,
+    5000
+  ),
 } as const;
 
 const DEFAULT_SOCIAL_LINKS: NavItem[] = [

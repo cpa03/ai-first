@@ -12,6 +12,7 @@
  */
 
 import { PII_REDACTION_CONFIG } from './config/pii-redaction-config';
+import { CACHE_CONFIG } from './config/cache';
 
 // ============================================================================
 // TYPE DEFINITIONS
@@ -126,7 +127,6 @@ const API_KEY_SPECIFIC_TRIGGER_REGEX =
  * when identical logs or messages are processed repeatedly.
  */
 const REDACT_PII_CACHE = new Map<string, string>();
-const MAX_REDACT_PII_CACHE_SIZE = 1000;
 
 /**
  * Internal redaction logic that skips fast-path checks.
@@ -212,7 +212,7 @@ function _redactPII(text: string): string {
   }
 
   // At the end, cache the result
-  if (REDACT_PII_CACHE.size >= MAX_REDACT_PII_CACHE_SIZE) {
+  if (REDACT_PII_CACHE.size >= CACHE_CONFIG.PII_REDACTION.MAX_SIZE) {
     const firstKey = REDACT_PII_CACHE.keys().next().value;
     if (firstKey !== undefined) {
       REDACT_PII_CACHE.delete(firstKey);

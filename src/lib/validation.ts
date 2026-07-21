@@ -9,6 +9,7 @@ import { USER_STORY_CONFIG } from './config/user-story-config';
 import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config/validation';
 import { API_ERROR_MESSAGES } from './config/error-messages';
 import { isString } from './type-guards';
+import { CACHE_CONFIG } from './config/cache';
 
 export interface ValidationError {
   field: string;
@@ -212,7 +213,6 @@ export function sanitizeString(
  * execution and string replacement on identical input strings.
  */
 const SANITIZE_HTML_CACHE = new Map<string, string>();
-const MAX_SANITIZE_HTML_CACHE_SIZE = 1000;
 
 /**
  * Clears the sanitizeHtml cache.
@@ -278,7 +278,7 @@ export function sanitizeHtml(input: string): string {
   // This avoids multiple expensive regex replacements for the 99% case.
   if (!NEEDS_SANITIZATION_REGEX.test(trimmed)) {
     // Cache the fast-path result as well
-    if (SANITIZE_HTML_CACHE.size >= MAX_SANITIZE_HTML_CACHE_SIZE) {
+    if (SANITIZE_HTML_CACHE.size >= CACHE_CONFIG.SANITIZE_HTML.MAX_SIZE) {
       const firstKey = SANITIZE_HTML_CACHE.keys().next().value;
       if (firstKey !== undefined) {
         SANITIZE_HTML_CACHE.delete(firstKey);
@@ -318,7 +318,7 @@ export function sanitizeHtml(input: string): string {
   );
 
   // Cache the sanitized result
-  if (SANITIZE_HTML_CACHE.size >= MAX_SANITIZE_HTML_CACHE_SIZE) {
+  if (SANITIZE_HTML_CACHE.size >= CACHE_CONFIG.SANITIZE_HTML.MAX_SIZE) {
     const firstKey = SANITIZE_HTML_CACHE.keys().next().value;
     if (firstKey !== undefined) {
       SANITIZE_HTML_CACHE.delete(firstKey);
