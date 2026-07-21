@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import { cn } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useAnnouncement } from '@/hooks/useAnnouncement';
 import {
   INPUT_STYLES,
   TEXT_COLORS,
@@ -80,9 +81,7 @@ const InputWithValidationComponent = forwardRef<
     ref
   ) => {
     const [touched, setTouched] = useState(false);
-    const [errorAnnounced, setErrorAnnounced] = useState(false);
     const [shouldShake, setShouldShake] = useState(false);
-    const [successAnnounced, setSuccessAnnounced] = useState(false);
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [isFocused, setIsFocused] = useState(false);
     const [showSuccessFlash, setShowSuccessFlash] = useState(false);
@@ -95,6 +94,14 @@ const InputWithValidationComponent = forwardRef<
     const charCount = currentValue.length;
     const isValid = !error && touched;
     const isInvalid = !!error && touched;
+
+    const { announced: errorAnnounced } = useAnnouncement(isInvalid, {
+      useMicrotask: true,
+    });
+    const { announced: successAnnounced } = useAnnouncement(
+      isValid && charCount > 0,
+      { useMicrotask: true }
+    );
 
     // Micro-UX: Detect platform for keyboard shortcut display
     useEffect(() => {
@@ -266,61 +273,6 @@ const InputWithValidationComponent = forwardRef<
       showValidCelebration && 'animate-input-valid-celebration',
       className
     );
-
-    const errorAnnouncedRef = React.useRef(errorAnnounced);
-    const successAnnouncedRef = React.useRef(successAnnounced);
-
-    useEffect(() => {
-      errorAnnouncedRef.current = errorAnnounced;
-    }, [errorAnnounced]);
-
-    useEffect(() => {
-      successAnnouncedRef.current = successAnnounced;
-    }, [successAnnounced]);
-
-    useEffect(() => {
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-      if (isInvalid && !errorAnnouncedRef.current) {
-        timeoutId = setTimeout(
-          () => setErrorAnnounced(true),
-          ANIMATION_DELAYS.IMMEDIATE
-        );
-      } else if (!isInvalid && errorAnnouncedRef.current) {
-        timeoutId = setTimeout(
-          () => setErrorAnnounced(false),
-          ANIMATION_DELAYS.IMMEDIATE
-        );
-      }
-
-      return () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-      };
-    }, [isInvalid]);
-
-    useEffect(() => {
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-      if (isValid && !successAnnouncedRef.current && charCount > 0) {
-        timeoutId = setTimeout(
-          () => setSuccessAnnounced(true),
-          ANIMATION_DELAYS.IMMEDIATE
-        );
-      } else if (!isValid && successAnnouncedRef.current) {
-        timeoutId = setTimeout(
-          () => setSuccessAnnounced(false),
-          ANIMATION_DELAYS.IMMEDIATE
-        );
-      }
-
-      return () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-      };
-    }, [isValid, charCount]);
 
     const setTextareaRef = (element: HTMLTextAreaElement | null) => {
       (
@@ -591,7 +543,7 @@ const InputWithValidationComponent = forwardRef<
                 </p>
               </div>
             )}
-            {isInvalid && (
+            {isInvalid && errorAnnounced && (
               <div role="alert" aria-live="assertive">
                 <p
                   id={`${props.id}-error`}
