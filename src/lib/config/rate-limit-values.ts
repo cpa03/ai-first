@@ -41,4 +41,34 @@ export const RATE_LIMIT_VALUES = {
     100,
     10000
   ),
+
+  /**
+   * Aggressive cleanup percentage when store is near capacity
+   * Used when store exceeds warning threshold
+   * Env: RATE_LIMIT_AGGRESSIVE_CLEANUP_PERCENTAGE (default: 30)
+   */
+  AGGRESSIVE_CLEANUP_PERCENTAGE:
+    EnvLoader.number('RATE_LIMIT_AGGRESSIVE_CLEANUP_PERCENTAGE', 30, 10, 50) /
+    100,
+
+  /**
+   * Warning threshold percentage for store capacity
+   * When store size exceeds this percentage, aggressive cleanup is triggered
+   * Env: RATE_LIMIT_WARNING_THRESHOLD_PERCENTAGE (default: 80)
+   */
+  WARNING_THRESHOLD_PERCENTAGE:
+    EnvLoader.number('RATE_LIMIT_WARNING_THRESHOLD_PERCENTAGE', 80, 50, 95) /
+    100,
+
+  /**
+   * Maximum number of orphaned locks before cleanup
+   * Prevents memory leaks from abandoned lock promises
+   * Env: RATE_LIMIT_MAX_ORPHANED_LOCKS (default: 1000)
+   */
+  MAX_ORPHANED_LOCKS: EnvLoader.number(
+    'RATE_LIMIT_MAX_ORPHANED_LOCKS',
+    1000,
+    100,
+    10000
+  ),
 } as const;

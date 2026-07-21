@@ -568,9 +568,11 @@ let cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
 let lastCleanupTime = Date.now();
 let cleanupCount = 0;
 
-const AGGRESSIVE_CLEANUP_PERCENTAGE = 0.3;
-const WARNING_THRESHOLD_PERCENTAGE = 0.8;
-const MAX_ORPHANED_LOCKS = 1000;
+const AGGRESSIVE_CLEANUP_PERCENTAGE =
+  RATE_LIMIT_VALUES.AGGRESSIVE_CLEANUP_PERCENTAGE;
+const WARNING_THRESHOLD_PERCENTAGE =
+  RATE_LIMIT_VALUES.WARNING_THRESHOLD_PERCENTAGE;
+const MAX_ORPHANED_LOCKS = RATE_LIMIT_VALUES.MAX_ORPHANED_LOCKS;
 
 function performEnhancedCleanup(): void {
   cleanupExpiredEntries();
