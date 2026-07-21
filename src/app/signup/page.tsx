@@ -585,7 +585,7 @@ export default function SignupPage() {
 
             <CapsLockWarning isOn={isPasswordCapsLockOn} />
 
-            {password && <PasswordRequirementsChecklist password={password} />}
+            <PasswordRequirementsChecklist password={password} showWhenEmpty={true} />
 
             {password && <PasswordStrengthIndicator password={password} />}
 
