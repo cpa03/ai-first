@@ -42,12 +42,14 @@ describe('BlueprintDisplay', () => {
 
     await waitFor(
       () => {
-        expect(screen.getByText(/your project blueprint/i)).toBeInTheDocument();
+        expect(
+          screen.getAllByText(/your project blueprint/i).length
+        ).toBeGreaterThan(0);
       },
       { timeout: 3000 }
     );
 
-    expect(screen.getByText(/test idea/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/test idea/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/developers/i)).toBeInTheDocument();
     expect(screen.getByText(/2 weeks/i)).toBeInTheDocument();
     expect(screen.getByText(/\$1000/i)).toBeInTheDocument();
@@ -63,7 +65,9 @@ describe('BlueprintDisplay', () => {
 
     await waitFor(
       () => {
-        expect(screen.getByText(/your project blueprint/i)).toBeInTheDocument();
+        expect(
+          screen.getAllByText(/your project blueprint/i).length
+        ).toBeGreaterThan(0);
       },
       { timeout: 3000 }
     );

@@ -110,6 +110,11 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     handleDownload();
   };
 
+  const handlePrint = useCallback(() => {
+    triggerHapticFeedback();
+    window.print();
+  }, []);
+
   const comingSoonBadgeClass = prefersReducedMotion
     ? ''
     : 'animate-coming-soon-badge';
@@ -184,9 +189,16 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
   return (
     <div className={UI_CONFIG.LAYOUT.CONTAINER}>
+      <div className="print-only hidden">
+        <h1 className="text-2xl font-bold mb-4">
+          {MESSAGES.BLUEPRINT.PAGE_TITLE}
+        </h1>
+        <p className="text-sm text-gray-600 mb-2">{idea}</p>
+        <hr className="my-4" />
+      </div>
       <section
         aria-labelledby="blueprint-heading"
-        className={CARD_PATTERNS.BASE}
+        className={`${CARD_PATTERNS.BASE} no-print`}
       >
         <header
           className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
@@ -225,6 +237,33 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                     : MESSAGES.BLUEPRINT.COPY_BUTTON}
                 </Button>
               </Tooltip>
+              <Tooltip
+                content={MESSAGES.BLUEPRINT.PRINT_BUTTON}
+                shortcut={['⌘', 'P']}
+              >
+                <Button
+                  onClick={handlePrint}
+                  variant="outline"
+                  fullWidth={false}
+                  aria-label={MESSAGES.BLUEPRINT.PRINT_ARIA_LABEL}
+                >
+                  <svg
+                    className="w-4 h-4 mr-1.5"
+                    fill="none"
+                    viewBox={SVG_VIEWBOX.STANDARD}
+                    stroke="currentColor"
+                    strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                    aria-hidden="true"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+                    />
+                  </svg>
+                  {MESSAGES.BLUEPRINT.PRINT_BUTTON}
+                </Button>
+              </Tooltip>
               <Button
                 onClick={handleDownloadWithFocus}
                 variant="primary"
@@ -246,13 +285,15 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               >
                 {blueprint}
               </pre>
-              <CopyCodeButton text={blueprint || ''} />
+              <div className="no-print">
+                <CopyCodeButton text={blueprint || ''} />
+              </div>
             </div>
           </div>
         </div>
 
         <footer
-          className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
+          className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER} no-print`}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
