@@ -40,6 +40,19 @@ export const VALIDATION_CONFIG = {
       10
     ),
   },
+
+  /**
+   * Common regex patterns used across the application.
+   * Eliminates duplicated regex definitions in login/signup pages.
+   */
+  COMMON_REGEX: {
+    /** Email validation regex - used in login, signup, and form validation */
+    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    /** Phone number regex - basic US format */
+    PHONE: /^\+?[\d\s\-()]+$/,
+    /** URL regex - basic validation */
+    URL: /^https?:\/\/.+/,
+  },
 } as const;
 
 export const SANITIZATION_CONFIG = {

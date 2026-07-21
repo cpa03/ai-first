@@ -32,7 +32,7 @@ const Button = dynamic(() => import('@/components/Button'), {
   ssr: false,
   loading: () => (
     <button className={SPINNER_PATTERNS.placeholder.container} disabled>
-      Loading...
+      {RESULTS_PAGE_CONTENT.LOADING_SHORT}
     </button>
   ),
 });
