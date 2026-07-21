@@ -87,8 +87,8 @@ function getInternalApiSecret(): string {
       );
     }
     return ENV_ACCESSORS.PLATFORM.NODE_ENV() === 'development'
-      ? 'dev-internal-api-secret-do-not-use-in-production'
-      : 'test-internal-api-secret';
+      ? SECURITY_CONFIG.FALLBACK_SECRETS.DEVELOPMENT
+      : SECURITY_CONFIG.FALLBACK_SECRETS.TEST;
   }
 
   if (secret.length < SECURITY_CONFIG.MIN_SECRET_LENGTH) {
