@@ -374,6 +374,16 @@ export const SECURITY_CONFIG = {
     16,
     128
   ),
+
+  /**
+   * Fallback secrets for non-production environments
+   * These are used when INTERNAL_API_SECRET is not set
+   * WARNING: Never use these in production!
+   */
+  FALLBACK_SECRETS: {
+    DEVELOPMENT: 'dev-internal-api-secret-do-not-use-in-production',
+    TEST: 'test-internal-api-secret',
+  },
 } as const;
 
 /**
