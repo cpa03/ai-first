@@ -54,6 +54,27 @@ export interface InputWithValidationProps extends React.InputHTMLAttributes<
 
 const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
 
+function getCharCountColor(count: number, max: number): string {
+  const ratio = Math.min(count / max, 1.2);
+  if (ratio > 1) return '#b91c1c';
+  if (ratio >= 0.9) {
+    const t = (ratio - 0.9) / 0.1;
+    const r = Math.round(180 + t * (185 - 180));
+    const g = Math.round(119 - t * (119 - 28));
+    const b = Math.round(11 - t * (11 - 28));
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+  if (ratio >= 0.7) {
+    const t = (ratio - 0.7) / 0.2;
+    const r = Math.round(22 + t * (180 - 22));
+    const g = Math.round(163 - t * (163 - 119));
+    const b = Math.round(74 - t * (74 - 11));
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+  if (count > 0) return '#15803d';
+  return '#4b5563';
+}
+
 const InputWithValidationComponent = forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputWithValidationProps
@@ -586,22 +607,18 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <span
-                className={`text-sm font-medium ${TRANSITION_CLASSES.SLOW} ${
+                className={`text-sm font-medium transition-colors duration-300 ease-out ${
                   maxLength && charCount > maxLength
-                    ? `${TEXT_COLORS.ERROR} animate-counter-pulse`
-                    : maxLength &&
-                        charCount >=
-                          maxLength * UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD
-                      ? `${TEXT_COLORS.WARNING} scale-110`
-                      : maxLength &&
-                          charCount >=
-                            maxLength *
-                              (UI_CONFIG.CHAR_COUNT_WARNING_THRESHOLD * 0.7)
-                        ? TEXT_COLORS.WARNING
-                        : isValid && touched
-                          ? TEXT_COLORS.SUCCESS
-                          : TEXT_COLORS.SECONDARY
+                    ? 'animate-counter-pulse'
+                    : ''
                 }`}
+                style={
+                  maxLength
+                    ? {
+                        color: getCharCountColor(charCount, maxLength),
+                      }
+                    : undefined
+                }
                 aria-live="polite"
                 aria-atomic="true"
               >
