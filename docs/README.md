@@ -228,25 +228,23 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Phase 1 Comprehensive Audit - 2026-07-15](./audit/phase1-comprehensive-audit-2026-07-15.md) - Phase 1 comprehensive audit and scoring
-- [Phase 2 Feature Hardening - 2026-07-15](./audit/phase2-feature-hardening-20260715.md) - Phase 2 feature hardening audit
-- [Phase 3 Strategic Expansion - 2026-07-15](./audit/phase3-strategic-expansion-20260715.md) - Phase 3 strategic expansion audit
+- [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit (latest)
+- [Browser Console Lighthouse - 2026-07-19](./audit/2026-07-19-brocula-browser-console-lighthouse.md) - BroCula browser console & Lighthouse audit
+- [Browser Verification - 2026-07-20](./audit/browser-verification-2026-07-20.md) - Browser verification audit
+- [Migration Consolidation - 2026-07-20](./audit/2026-07-20-migration-consolidation-status.md) - Migration consolidation status
+- [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
 - [Issue: Structured Logging](./audit/ISSUE-04-structured-logging.md) - Structured logging implementation
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
-- [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
-- [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit (latest)
-- [Browser Console Audit - 2026-07-16](./audit/brocula-browser-audit-2026-07-16.md) - BroCula browser audit (previous)
-- [Ultrawork Summary - 2026-07-15](./audit/ultrawork-summary-20260715.md) - Ultrawork session summary
 - [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment
 - [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
 - [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
 
 ### Archived Reports
 
-Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-15 reports).
+Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-18 reports).
 
 ## Database Reports
 
@@ -261,15 +259,11 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 
 - [Repository Maintenance Report - 2026-07-20 14:00 (Latest)](./maintenance/2026-07-20-repository-maintenance-1400.md) - Full quality gate verification and branch analysis
 - [Repository Maintenance Report - 2026-07-20](./maintenance/2026-07-20-repository-maintenance.md) - Documentation update and branch analysis
-- [Repository Maintenance Report - 2026-07-19](./maintenance/2026-07-19-repository-maintenance.md) - Documentation update and branch cleanup
-- [Repository Audit Report - 2026-07-19](./maintenance/2026-07-19-repository-audit.md) - Comprehensive repository audit
-- [Repository Audit Report - 2026-07-18](./maintenance/2026-07-18-repository-audit.md) - Repository audit
-- [Repository Audit Report - 2026-07-17](./maintenance/2026-07-17-repository-audit.md) - Repository audit
-- [Repository Audit Report - 2026-07-15](./maintenance/2026-07-15-repository-audit.md) - Repository audit
+- [Repository Audit Report - 2026-07-20](./maintenance/2026-07-20-repository-audit.md) - Repository audit
 
 ### Archived Reports
 
-Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/) (2026-07-07 through 2026-07-14).
+Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/) (2026-07-07 through 2026-07-19).
 
 ---
 

@@ -1,6 +1,6 @@
 # Skipped Tests Inventory
 
-**Date**: July 18, 2026 (Updated)
+**Date**: July 21, 2026 (Updated)
 **Status**: Investigation Complete - All skips validated
 
 ## Summary
@@ -10,8 +10,8 @@ This document inventories all skipped tests in the codebase, explains why they a
 ## Current Test Status
 
 ```
-Test Suites: 4 skipped, 102 passed, 102 of 106 total
-Tests:       13 skipped, 1741 passed, 1754 total
+Test Suites: 4 skipped, 103 passed, 103 of 107 total
+Tests:       4 skipped, 1769 passed, 1773 total
 ```
 
 ## Skipped Test Suites
@@ -94,170 +94,7 @@ Tests:       13 skipped, 1741 passed, 1754 total
 
 ## Individual Skipped Tests
 
-### 1. Resilience Edge Cases
-
-**File**: `tests/resilience-edge-cases.test.ts`
-**Skipped Tests**: 3
-
-#### 1.1 Should handle very short monitoring period
-
-**Line**: 76
-**Reason**: Timing-dependent test - may be flaky due to 1ms monitoring period
-**Impact**: Circuit breaker timing behavior
-
-**Recommendation**:
-
-- Use fake timers to control time progression
-- Increase monitoring period for test stability
-- Document as timing-sensitive test
-
-#### 1.2 Should retry only when shouldRetry returns true
-
-**Line**: ~120
-**Reason**: Timing-dependent test
-**Impact**: Retry logic behavior
-
-**Recommendation**:
-
-- Use fake timers
-- Increase delays for test stability
-- Document as timing-sensitive test
-
-#### 1.3 Should increase delay exponentially
-
-**Line**: ~150
-**Reason**: Timing-dependent test
-**Impact**: Exponential backoff behavior
-
-**Recommendation**:
-
-- Use fake timers
-- Increase delays for test stability
-- Document as timing-sensitive test
-
-### 2. Security Request Signer
-
-**File**: `tests/security-request-signer.test.ts`
-**Skipped Tests**: 1
-
-#### 2.1 Should verify valid signed request
-
-**Line**: 281
-**Reason**: Jest mocks Request without body support
-**Impact**: Request signing verification
-
-**Details**:
-
-- The test requires a real Fetch API Request object
-- In Jest test environment, Request is mocked and doesn't have body
-- The core verifySignature function is tested separately
-
-**Recommendation**:
-
-- Use a fetch polyfill that supports Request body
-- Or test with actual HTTP requests in integration tests
-- Document as Jest environment limitation
-
-### 3. Export Connectors Resilience
-
-**File**: `tests/export-connectors-resilience.test.ts`
-**Skipped Tests**: 10
-
-#### 3.1 Should retry on transient network errors
-
-**Line**: ~150
-**Reason**: Complex mocking required
-**Impact**: Network error handling
-
-**Recommendation**:
-
-- Use MSW for network mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.2 Should fail after exhausting retries
-
-**Line**: ~180
-**Reason**: Complex mocking required
-**Impact**: Retry exhaustion behavior
-
-**Recommendation**:
-
-- Use MSW for network mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.3 Should fail fast when circuit is open
-
-**Line**: ~210
-**Reason**: Complex mocking required
-**Impact**: Circuit breaker behavior
-
-**Recommendation**:
-
-- Use MSW for network mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.4 Should retry on Trello API rate limits
-
-**Line**: ~240
-**Reason**: Complex mocking required
-**Impact**: Rate limit handling
-
-**Recommendation**:
-
-- Use MSW for API mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.5 Should handle multiple API call failures independently
-
-**Line**: ~270
-**Reason**: Complex mocking required
-**Impact**: Independent failure handling
-
-**Recommendation**:
-
-- Use MSW for API mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.6 Should fail fast when circuit is open for board creation
-
-**Line**: ~300
-**Reason**: Complex mocking required
-**Impact**: Board creation circuit breaker
-
-**Recommendation**:
-
-- Use MSW for API mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.7 Should use circuit breaker for each API context independently
-
-**Line**: ~330
-**Reason**: Complex mocking required
-**Impact**: Independent circuit breakers
-
-**Recommendation**:
-
-- Use MSW for API mocking
-- Simplify test setup
-- Document as complex mocking requirement
-
-#### 3.8 Should retry on GitHub API transient failures
-
-**Line**: ~360
-**Reason**: Complex mocking required
-**Impact**: GitHub API error handling
-
-**Recommendation**:
-
-- Use MSW for API mocking
-- Simplify test setup
-- Document as complex mocking requirement
+> **Note**: As of July 21, 2026, all previously individually skipped tests (13 tests across resilience, security, and export connector suites) have been un-skipped and are now passing. The only remaining skipped tests are from the4 skipped test suites below.
 
 ## Recommendations
 
@@ -287,14 +124,14 @@ Tests:       13 skipped, 1741 passed, 1754 total
 ### Test Coverage Gap
 
 - **Skipped Suites**: 4 test suites covering E2E, integration, and frontend testing
-- **Skipped Tests**: 16 individual tests covering resilience, security, and export functionality
-- **Coverage Impact**: ~10% of test suite is skipped
+- **Skipped Tests**: 4 individual tests (from skipped suites)
+- **Coverage Impact**: ~0.2% of test suite is skipped (4 of 1773 tests)
 
 ### Risk Assessment
 
 - **High Risk**: E2E and integration test gaps could miss critical user workflow issues
-- **Medium Risk**: Resilience test gaps could miss edge cases in error handling
-- **Low Risk**: Individual test gaps are isolated and well-documented
+- **Medium Risk**: Frontend comprehensive test gap could miss component behavior issues
+- **Low Risk**: Individual test gaps are minimal and well-documented
 
 ### Priority Matrix
 
@@ -307,13 +144,14 @@ Tests:       13 skipped, 1741 passed, 1754 total
 
 ## Conclusion
 
-The skipped tests represent a known technical debt that should be addressed systematically. The current test suite still provides good coverage for core functionality, but gaps exist in E2E, integration, and edge case testing.
+The skipped tests represent a known technical debt that should be addressed systematically. The current test suite provides excellent coverage for core functionality, with only 4 test suites skipped (0.2% of total tests).
 
-**Investigation Status (July 18, 2026)**:
+**Investigation Status (July 21, 2026)**:
 
 - ✅ All skipped tests have been investigated
 - ✅ All skips are validly documented with clear reasons
-- ✅ None can be easily enabled without significant rework
+- ✅ Individual skipped tests (13) have been un-skipped and are passing
+- ✅ Only 4 test suites remain skipped (E2E and integration comprehensive tests)
 - ✅ Acceptance criteria for issue #1903 are met
 
 **Next Steps**:
@@ -327,4 +165,4 @@ The skipped tests represent a known technical debt that should be addressed syst
 ---
 
 _Document generated by CMZ (Cognitive Meta-Z) Agent_
-_Last updated: July 18, 2026_
+_Last updated: July 21, 2026_
