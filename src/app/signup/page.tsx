@@ -33,6 +33,7 @@ import {
   BG_COLORS,
   VALIDATION_CONFIG,
   FORM_PATTERNS,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -64,7 +65,7 @@ function PasswordMatchIndicator({
 
   return (
     <div
-      className={`flex items-center gap-2 text-sm transition-all duration-200 animate-fade-in ${
+      className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${
         matchStatus === 'match'
           ? TEXT_COLORS.SUCCESS_DARK
           : TEXT_COLORS.WARNING_LIGHT
@@ -231,7 +232,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       <div className="flex items-center gap-2">
         <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className={`h-full ${config.color} transition-all duration-300 ease-out rounded-full`}
+            className={`h-full ${config.color} transition-all ${DURATION_TAILWIND[300]} ease-out rounded-full`}
             style={{ width: `${percentage}%` }}
             role="progressbar"
             aria-valuenow={score}
@@ -241,7 +242,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           />
         </div>
         <span
-          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors duration-200`}
+          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors ${DURATION_TAILWIND[200]}`}
           aria-live="polite"
           aria-atomic="true"
         >
@@ -250,7 +251,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <span className={`text-xs ${config.textColor}`}>{config.label}</span>
         {celebrating && !prefersReducedMotion && (
           <svg
-            className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in duration-200`}
+            className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"

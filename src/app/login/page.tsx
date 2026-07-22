@@ -29,6 +29,7 @@ import {
   LOGIN_PAGE_CONFIG,
   UI_CONFIG,
   VALIDATION_CONFIG,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -314,7 +315,7 @@ export default function LoginPage() {
                   />
                   <span
                     className={`
-                      w-5 h-5 rounded border-2 transition-all duration-200 ease-out
+                      w-5 h-5 rounded border-2 transition-all ${DURATION_TAILWIND[200]} ease-out
                       flex items-center justify-center
                       peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-2
                       peer-hover:border-primary-400
@@ -347,7 +348,7 @@ export default function LoginPage() {
                   </span>
                 </span>
                 <span
-                  className={`text-sm transition-colors duration-200 ${rememberMe ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover:text-gray-900'}`}
+                  className={`text-sm transition-colors ${DURATION_TAILWIND[200]} ${rememberMe ? 'text-gray-900 font-medium' : 'text-gray-700 group-hover:text-gray-900'}`}
                 >
                   {LOGIN_PAGE_CONTENT.FORM.REMEMBER_ME}
                 </span>
