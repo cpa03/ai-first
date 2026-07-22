@@ -52,7 +52,7 @@ mode = "smart"
 main = ".open-next/worker.js"
 
 [build]
-command = "npm run build:cloudflare"
+command = "pnpm run build:cloudflare"
 watch_dir = ".next"
 
 # Assets binding for static files served by Cloudflare
@@ -158,9 +158,9 @@ NEXT_PUBLIC_APP_URL = "https://preview.ai-first.pages.dev"
 # ============================================================
 # Deployment Notes
 # ============================================================
-# Build command: npm run build:cloudflare
-# Deploy command: npm run deploy:cloudflare
-# Preview locally: npm run preview:cloudflare
+# Build command: pnpm run build:cloudflare
+# Deploy command: pnpm run deploy:cloudflare
+# Preview locally: pnpm run preview:cloudflare
 #
 # Environment Variable Management:
 # - Use `wrangler secret put` for secure runtime variables

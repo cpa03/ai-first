@@ -37,4 +37,35 @@ describe('sanitizeHtml Security Bypasses', () => {
     const sanitized = sanitizeHtml(input);
     expect(sanitized.toLowerCase()).not.toContain('onload');
   });
+
+  it('should catch obfuscated javascript protocols with whitespace and control characters', () => {
+    const inputs = [
+      'java\nscript:alert(1)',
+      'java\tscript:alert(1)',
+      'java\rscript:alert(1)',
+      'java\u0000script:alert(1)',
+      'j\ta\nv\ra\ts\nc\rr\ti\np\rt:alert(1)',
+    ];
+
+    for (const input of inputs) {
+      const sanitized = sanitizeHtml(input);
+      expect(sanitized).not.toBe(input);
+      expect(sanitized).toContain('[REDACTED_PROTOCOL]');
+    }
+  });
+
+  it('should catch obfuscated data protocols with whitespace and control characters', () => {
+    const inputs = [
+      'da\nta:text/html,abc',
+      'da\tta:text/html,abc',
+      'da\rta:text/html,abc',
+      'da\u0000ta:text/html,abc',
+    ];
+
+    for (const input of inputs) {
+      const sanitized = sanitizeHtml(input);
+      expect(sanitized).not.toBe(input);
+      expect(sanitized).toContain('[REDACTED_DATA_URI]');
+    }
+  });
 });
