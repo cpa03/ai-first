@@ -1,6 +1,8 @@
 import { VALIDATION_LIMITS } from '../config/constants';
 import { API_ERROR_MESSAGES } from '../config/error-messages';
 import { DB_TABLES } from '../config/database-tables';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@/types/database';
 import type {
   Idea,
   IdeaSession,
@@ -12,14 +14,13 @@ import type {
  * Interface for accessing database clients
  * Implemented by DatabaseService to provide client/admin access
  *
- * Using 'any' for the generic type parameter to allow flexibility
- * while maintaining type safety for the methods that use it
+ * Uses SupabaseClient type for type safety while maintaining
+ * compatibility with different Supabase client versions.
+ * Methods can return null if the client is not initialized.
  */
 export interface ClientProvider {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Flexible type for client compatibility
-  getClient(): any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Flexible type for client compatibility
-  getAdmin(): any;
+  getClient(): SupabaseClient<Database> | null;
+  getAdmin(): SupabaseClient<Database> | null;
 }
 
 /**
