@@ -174,6 +174,9 @@ const nextConfig = {
       process.env.NODE_ENV === 'production'
         ? { exclude: ['error', 'warn'] }
         : false,
+    // Target modern browsers to reduce legacy JavaScript transpilation
+    // Aligns with browserslist: last 2 versions of Chrome, Firefox, Safari, Edge
+    styledComponents: false,
   },
 };
 
