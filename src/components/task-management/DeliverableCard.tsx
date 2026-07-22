@@ -12,9 +12,12 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   MESSAGES,
+  TEXT_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 
 interface DeliverableWithTasks {
   id: string;
@@ -51,8 +54,34 @@ function DeliverableCardComponent({
   );
   const prefersReducedMotion = usePrefersReducedMotion();
   const [animatedProgress, setAnimatedProgress] = useState(0);
+  const [showCompletionCelebration, setShowCompletionCelebration] =
+    useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const prevExpandedRef = useRef(isExpanded);
+  const prevProgressRef = useRef(deliverable.progress);
+  const { particles, fire } = useConfetti();
+
+  // Micro-UX: Fire confetti celebration when deliverable reaches 100% completion
+  // Delightful positive feedback at the exact moment the deliverable is fully done
+  useEffect(() => {
+    const justCompleted =
+      deliverable.progress === 100 && prevProgressRef.current < 100;
+
+    if (justCompleted && !prefersReducedMotion) {
+      triggerHapticFeedback();
+      fire();
+      setShowCompletionCelebration(true);
+
+      const timer = setTimeout(() => {
+        setShowCompletionCelebration(false);
+      }, COMPONENT_CONFIG.DELIVERABLE_CARD.CELEBRATION_DURATION_MS ?? 2000);
+
+      prevProgressRef.current = deliverable.progress;
+      return () => clearTimeout(timer);
+    }
+
+    prevProgressRef.current = deliverable.progress;
+  }, [deliverable.progress, prefersReducedMotion, fire]);
 
   // Micro-UX: Animate progress bar from 0 to actual value when card expands
   // Creates a delightful visual feedback that draws attention to progress
@@ -112,8 +141,12 @@ function DeliverableCardComponent({
     [isExpanded]
   );
 
+  const isCompleted = deliverable.progress === 100;
+
   return (
-    <div className={containerClasses}>
+    <div
+      className={`${containerClasses} ${showCompletionCelebration ? 'animate-deliverable-complete' : ''}`}
+    >
       <button
         onClick={handleToggleExpand}
         aria-expanded={isExpanded}
@@ -123,9 +156,34 @@ function DeliverableCardComponent({
         className={DELIVERABLE_CARD_STYLES.HEADER.BASE}
       >
         <div className="flex-1">
-          <h3 className={DELIVERABLE_CARD_STYLES.HEADER.TITLE}>
-            {deliverable.title}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className={DELIVERABLE_CARD_STYLES.HEADER.TITLE}>
+              {deliverable.title}
+            </h3>
+            {isCompleted && (
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? 'animate-success-pop' : ''}`}
+                role="status"
+                aria-label="Deliverable complete"
+              >
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.THICK}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                Complete
+              </span>
+            )}
+          </div>
           {deliverable.description && (
             <p className={DELIVERABLE_CARD_STYLES.HEADER.DESCRIPTION}>
               {deliverable.description}
@@ -134,7 +192,9 @@ function DeliverableCardComponent({
         </div>
         <div className="flex items-center gap-4">
           <div className="text-right">
-            <div className={DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.VALUE}>
+            <div
+              className={`${DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.VALUE} ${isCompleted ? TEXT_COLORS.SUCCESS_DARK : ''}`}
+            >
               {deliverable.progress}%
             </div>
             <div className={DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.LABEL}>
@@ -206,6 +266,26 @@ function DeliverableCardComponent({
           </div>
         </div>
       )}
+      {/* Micro-UX: Confetti particles for deliverable completion celebration */}
+      {particles.map((particle) => (
+        <span
+          key={particle.id}
+          className="absolute rounded-full pointer-events-none animate-copy-confetti"
+          style={
+            {
+              left: '50%',
+              top: '50%',
+              width: `${particle.size}px`,
+              height: `${particle.size}px`,
+              backgroundColor: particle.color,
+              '--confetti-x': `${particle.x}px`,
+              '--confetti-y': `${particle.y}px`,
+              animationDelay: `${particle.delay}ms`,
+            } as React.CSSProperties
+          }
+          aria-hidden="true"
+        />
+      ))}
     </div>
   );
 }
