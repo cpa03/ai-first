@@ -31,6 +31,7 @@ import {
   KeyboardShortcutsButton,
 } from '@/components/KeyboardShortcutsProvider';
 import Tooltip from '@/components/Tooltip';
+import { FOOTER_PATTERNS } from '@/lib/config/remaining-styles';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
 const jsonLd = {
@@ -214,7 +215,7 @@ export default async function RootLayout({
                 {children}
               </main>
               <footer
-                className="bg-gray-50 border-t border-gray-200"
+                className={FOOTER_PATTERNS.CONTAINER}
                 role="contentinfo"
                 aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.SITE_FOOTER}
               >
@@ -228,7 +229,7 @@ export default async function RootLayout({
                       >
                         {APP_CONFIG.NAME}
                       </Link>
-                      <p className="mt-3 text-sm text-gray-600 leading-relaxed">
+                      <p className={FOOTER_PATTERNS.BRAND_TEXT}>
                         {APP_CONFIG.TAGLINE}
                       </p>
                       {/* Social links */}
@@ -243,7 +244,7 @@ export default async function RootLayout({
                               href={link.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-gray-500 hover:text-gray-900 hover:scale-110 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-1.5 hover:bg-gray-100"
+                              className={FOOTER_PATTERNS.ICON_HOVER}
                               aria-label={link.ariaLabel}
                             >
                               {link.label === 'Twitter' ? (
@@ -298,8 +299,8 @@ export default async function RootLayout({
                   </div>
 
                   {/* Bottom bar */}
-                  <div className="mt-10 pt-6 border-t border-gray-200">
-                    <p className="text-center text-sm text-gray-500">
+                  <div className={FOOTER_PATTERNS.BOTTOM_BORDER}>
+                    <p className={FOOTER_PATTERNS.BOTTOM_TEXT}>
                       {APP_CONFIG.BRANDING.COPYRIGHT}
                     </p>
                   </div>

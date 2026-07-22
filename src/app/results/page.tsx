@@ -23,7 +23,8 @@ import {
   PAGE_LAYOUT_CLASSES,
   ANIMATION_DELAYS,
   COMPONENT_CONFIG,
-  TEXT_SIZE_CLASSES,
+  ELEMENT_PATTERNS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -668,17 +669,11 @@ function ResultsContent() {
             aria-hidden="true"
           >
             <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
-              >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-medium text-gray-500 bg-gray-100 border border-gray-200 rounded shadow-sm`}
-              >
-                E
-              </kbd>
-              <span className="text-gray-400">quick export markdown</span>
+              <kbd className={ELEMENT_PATTERNS.KBD}>{isMac ? '⌘' : 'Ctrl'}</kbd>
+              <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
+              <span className={GRAY_CLASSES.TEXT_400}>
+                quick export markdown
+              </span>
             </span>
           </div>
 
@@ -716,7 +711,7 @@ function ResultsContent() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">
             {RESULTS_PAGE_CONTENT.SHARE_HEADING}
           </h2>
-          <p className="text-gray-600 mb-6">
+          <p className={`${GRAY_CLASSES.TEXT_600} mb-6`}>
             {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
           </p>
           <div className="flex flex-wrap gap-4">

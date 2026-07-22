@@ -32,6 +32,7 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   VALIDATION_CONFIG,
+  FORM_PATTERNS,
 } from '@/lib/config';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -266,10 +267,10 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       </div>
 
       {feedback.length > 0 && strength !== 'strong' && (
-        <ul className="text-xs text-gray-600 space-y-0.5" aria-live="polite">
+        <ul className={FORM_PATTERNS.TIP_LIST} aria-live="polite">
           {feedback.slice(0, 2).map((tip, idx) => (
             <li key={idx} className="flex items-center gap-1">
-              <span className="text-gray-500">
+              <span className={FORM_PATTERNS.TIP_BULLET}>
                 {USER_ONBOARDING_LABELS.BULLET}
               </span>
               {tip}
@@ -585,7 +586,10 @@ export default function SignupPage() {
 
             <CapsLockWarning isOn={isPasswordCapsLockOn} />
 
-            <PasswordRequirementsChecklist password={password} showWhenEmpty={true} />
+            <PasswordRequirementsChecklist
+              password={password}
+              showWhenEmpty={true}
+            />
 
             {password && <PasswordStrengthIndicator password={password} />}
 
