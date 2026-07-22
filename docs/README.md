@@ -228,10 +228,14 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit (latest)
+- [BugFixer Report - 2026-07-22](./audit/bugfixer-report-2026-07-22.md) - BugFixer loop results and type safety fixes
+- [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit (latest)
+- [Browser Console Audit - 2026-07-21](./audit/browser-audit-20260721.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit
 - [Browser Console Lighthouse - 2026-07-19](./audit/2026-07-19-brocula-browser-console-lighthouse.md) - BroCula browser console & Lighthouse audit
 - [Browser Verification - 2026-07-20](./audit/browser-verification-2026-07-20.md) - Browser verification audit
 - [Migration Consolidation - 2026-07-20](./audit/2026-07-20-migration-consolidation-status.md) - Migration consolidation status
+- [Skipped Tests Investigation](./audit/skipped-tests-investigation.md) - Investigation of skipped tests with documented reasons
 - [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
