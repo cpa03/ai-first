@@ -25,6 +25,7 @@ import {
   COMPONENT_CONFIG,
   ELEMENT_PATTERNS,
   GRAY_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import dynamic from 'next/dynamic';
 
@@ -668,7 +669,9 @@ function ResultsContent() {
             className="mt-4 flex items-center gap-2 text-xs text-gray-400"
             aria-hidden="true"
           >
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors ${DURATION_TAILWIND[200]}`}
+            >
               <kbd className={ELEMENT_PATTERNS.KBD}>{isMac ? '⌘' : 'Ctrl'}</kbd>
               <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
               <span className={GRAY_CLASSES.TEXT_400}>

@@ -37,6 +37,7 @@ import {
   UI_DURATIONS,
   DASHBOARD_PATTERNS,
   GRAY_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
@@ -638,7 +639,7 @@ export default function DashboardPage() {
                 triggerHapticFeedback();
                 setFilter(e.target.value);
               }}
-              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all duration-200 ${
+              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? 'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm'
                   : 'border-gray-300 bg-white text-gray-900'
@@ -710,7 +711,7 @@ export default function DashboardPage() {
           {ideas.length > 0 && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <span
-                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all duration-300 ${
+                className={`flex items-center justify-center min-w-[${DASHBOARD_TAILWIND.STATUS_BADGE_MIN_W}] h-5 px-1.5 text-xs font-semibold rounded-full transition-all ${DURATION_TAILWIND[300]} ${
                   filter !== IDEA_STATUS_CONFIG.FILTERS.ALL
                     ? 'bg-primary-600 text-white'
                     : 'bg-primary-100 text-primary-700'
@@ -724,7 +725,7 @@ export default function DashboardPage() {
         </div>
         {filter !== 'all' && (
           <div
-            className={`flex items-center gap-2 transition-all duration-200 ease-out ${
+            className={`flex items-center gap-2 transition-all ${DURATION_TAILWIND[200]} ease-out ${
               isFilterClearing
                 ? 'opacity-0 scale-95 -translate-x-2'
                 : 'animate-fade-in'

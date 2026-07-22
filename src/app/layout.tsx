@@ -20,6 +20,7 @@ import {
   BORDER_COLOR_CLASSES,
   SHADOW_CLASSES,
   LAYOUT_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config/theme';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
 import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
@@ -287,7 +288,7 @@ export default async function RootLayout({
                             <li key={item.href}>
                               <Link
                                 href={item.href}
-                                className="text-sm text-gray-600 hover:text-primary-600 hover:translate-x-1 transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md inline-block"
+                                className={`text-sm text-gray-600 hover:text-primary-600 hover:translate-x-1 transition-all ${DURATION_TAILWIND[200]} ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md inline-block`}
                               >
                                 {item.label}
                               </Link>
