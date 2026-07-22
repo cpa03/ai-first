@@ -109,6 +109,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
   const [isSwiping, setIsSwiping] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
   const progressRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
+  const currentStepRef = useRef(0);
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
   const toastRef = useRef<HTMLDivElement>(null);
@@ -119,29 +120,29 @@ function ToastComponent({ toast, onClose }: ToastProps) {
     const duration = toast.duration || UI_CONSTANTS.TOAST_DURATION;
     const updateInterval = UI_CONSTANTS.TOAST_PROGRESS_INTERVAL;
     const totalSteps = duration / updateInterval;
-    let currentStep = 0;
 
     setRemainingSeconds(Math.ceil(duration / TIME_CONVERSIONS.MS_PER_SECOND));
 
     const progressTimer = setInterval(() => {
       if (isPaused) return;
 
-      currentStep++;
+      currentStepRef.current++;
       const remainingProgress = Math.max(
         0,
         COMPONENT_DEFAULTS.PROGRESS.COMPLETE -
-          (currentStep / totalSteps) * COMPONENT_DEFAULTS.PROGRESS.COMPLETE
+          (currentStepRef.current / totalSteps) *
+            COMPONENT_DEFAULTS.PROGRESS.COMPLETE
       );
       progressRef.current = remainingProgress;
       setProgress(remainingProgress);
 
-      const elapsedMs = currentStep * updateInterval;
+      const elapsedMs = currentStepRef.current * updateInterval;
       const remainingMs = Math.max(0, duration - elapsedMs);
       setRemainingSeconds(
         Math.ceil(remainingMs / TIME_CONVERSIONS.MS_PER_SECOND)
       );
 
-      if (currentStep >= totalSteps) {
+      if (currentStepRef.current >= totalSteps) {
         clearInterval(progressTimer);
         setIsLeaving(true);
         setTimeout(() => onClose(toast.id), ANIMATION_CONFIG.TOAST_EXIT);
@@ -341,6 +342,15 @@ const Toast = memo(ToastComponent);
 function ToastContainerComponent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [isClearingAll, setIsClearingAll] = useState(false);
+  const clearAllTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (clearAllTimeoutRef.current) {
+        clearTimeout(clearAllTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const showToast = useCallback((options: ToastOptions) => {
     const id = generateId();
@@ -356,9 +366,10 @@ function ToastContainerComponent() {
     if (toasts.length <= 1) return;
 
     setIsClearingAll(true);
-    setTimeout(() => {
+    clearAllTimeoutRef.current = setTimeout(() => {
       setToasts([]);
       setIsClearingAll(false);
+      clearAllTimeoutRef.current = null;
     }, ANIMATION_CONFIG.TOAST_EXIT);
   }, [toasts.length]);
 
