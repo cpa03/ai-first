@@ -58,6 +58,8 @@ export default function LoginPage() {
     handleBlur: handlePasswordBlur,
   } = useCapsLock();
 
+  const isFormValid = email.trim().length > 0 && password.length > 0;
+
   useEffect(() => {
     const savedEmail = localStorage.getItem(
       LOCAL_STORAGE_KEYS.REMEMBERED_EMAIL
@@ -365,7 +367,9 @@ export default function LoginPage() {
 
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid}
+            attention={isFormValid && !isLoading}
+            enableTransition
             className="w-full"
             size="lg"
           >

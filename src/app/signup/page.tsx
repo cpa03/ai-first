@@ -325,6 +325,12 @@ export default function SignupPage() {
   );
   const { scrollToError } = useScrollToError();
 
+  const isFormValid =
+    email.trim().length > 0 &&
+    password.length >= PASSWORD_VALIDATION_CONFIG.MIN_LENGTH &&
+    confirmPassword.length > 0 &&
+    password === confirmPassword;
+
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
@@ -640,7 +646,9 @@ export default function SignupPage() {
 
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid}
+            attention={isFormValid && !isLoading}
+            enableTransition
             className="w-full"
             size="lg"
           >
