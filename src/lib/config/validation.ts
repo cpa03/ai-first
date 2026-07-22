@@ -74,8 +74,8 @@ export const SANITIZATION_CONFIG = {
   REGEX: {
     SCRIPT: /<script[^>]*>[\s\S]*?<\/script>/gi,
     EVENT_HANDLER: /[\s/]*on\w+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
-    JAVASCRIPT_PROTOCOL: /(?:javascript|vbscript|livescript)\s*:/gi,
-    DATA_URI: /data\s*:\s*(?:text\/html|image\/svg\+xml)/gi,
+    JAVASCRIPT_PROTOCOL: /(?:j[\s\x00-\x1F]*a[\s\x00-\x1F]*v[\s\x00-\x1F]*a[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|v[\s\x00-\x1F]*b[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|l[\s\x00-\x1F]*i[\s\x00-\x1F]*v[\s\x00-\x1F]*e[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t)[\s\x00-\x1F]*:/gi,
+    DATA_URI: /d[\s\x00-\x1F]*a[\s\x00-\x1F]*t[\s\x00-\x1F]*a[\s\x00-\x1F]*:[\s\x00-\x1F]*(?:text\/html|image\/svg\+xml)/gi,
     STYLE: /[\s/]*style\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]*)/gi,
   },
 
