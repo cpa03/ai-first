@@ -39,6 +39,7 @@ export const GRAY_CLASSES = {
   BORDER_200: 'border-gray-200',
   BORDER_300: 'border-gray-300',
   BORDER_400: 'border-gray-400',
+  HOVER_BORDER_400: 'hover:border-gray-400',
 } as const;
 
 /**
@@ -339,6 +340,30 @@ export const DASHBOARD_PATTERNS = {
 } as const;
 
 /**
+ * Footer patterns
+ * Eliminates hardcoded Tailwind classes in footer sections
+ */
+export const FOOTER_PATTERNS = {
+  CONTAINER: `${GRAY_CLASSES.BG_50} ${GRAY_CLASSES.BORDER_200}`,
+  BRAND_TEXT: `${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_TEXT_800}`,
+  LINK: `${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_TEXT_800} ${TRANSITION_PATTERNS.COLORS}`,
+  ICON_HOVER: `${GRAY_CLASSES.TEXT_500} ${GRAY_CLASSES.HOVER_TEXT_900} hover:scale-110 ${TRANSITION_PATTERNS.ALL} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-1.5 ${GRAY_CLASSES.HOVER_BG_100}`,
+  BOTTOM_BORDER: `mt-10 pt-6 ${GRAY_CLASSES.BORDER_200}`,
+  BOTTOM_TEXT: `text-center text-sm ${GRAY_CLASSES.TEXT_500}`,
+} as const;
+
+/**
+ * Form element patterns
+ * Eliminates hardcoded Tailwind classes in form elements
+ */
+export const FORM_PATTERNS = {
+  TIP_LIST: `text-xs ${GRAY_CLASSES.TEXT_600} space-y-0.5`,
+  TIP_BULLET: GRAY_CLASSES.TEXT_500,
+  FEEDBACK_TEXT: `text-sm ${GRAY_CLASSES.TEXT_500}`,
+  INPUT_BORDER: `${GRAY_CLASSES.BORDER_200} ${GRAY_CLASSES.HOVER_BORDER_400}`,
+} as const;
+
+/**
  * Export all patterns for easy access
  */
 export const REMAINING_STYLES = {
@@ -361,4 +386,6 @@ export const REMAINING_STYLES = {
   FLEX_PATTERNS,
   GRID_PATTERNS,
   COMPONENT_PATTERNS,
+  FOOTER_PATTERNS,
+  FORM_PATTERNS,
 } as const;

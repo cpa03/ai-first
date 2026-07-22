@@ -8,6 +8,7 @@ import {
   ROUTES,
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 
 export default function AuthCallbackPage() {
@@ -45,7 +46,7 @@ export default function AuthCallbackPage() {
         <h1 className="text-xl font-semibold text-gray-900">
           Completing sign in...
         </h1>
-        <p className="text-gray-600">
+        <p className={GRAY_CLASSES.TEXT_600}>
           Please wait while we verify your account.
         </p>
       </div>

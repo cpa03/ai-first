@@ -24,6 +24,7 @@ import {
   API_ROUTES,
   createRouteWithParams,
   UI_CONFIG,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -122,10 +123,10 @@ function ClarifySuccessState({
           <div className={CARD_PATTERNS.CONTENT}>
             {Object.entries(answers).map(([key, value]) => (
               <div key={key} className="text-sm">
-                <span className="font-medium text-gray-700">
+                <span className={`${GRAY_CLASSES.TEXT_700} font-medium`}>
                   {key.replace(/_/g, ' ')}:
                 </span>{' '}
-                <span className="text-gray-600">{value}</span>
+                <span className={GRAY_CLASSES.TEXT_600}>{value}</span>
               </div>
             ))}
           </div>
