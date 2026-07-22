@@ -15,7 +15,7 @@ export interface UseClipboardOptions {
 
 export function useClipboard(options: UseClipboardOptions = {}) {
   const {
-    duration = UI_CONFIG.COPY_FEEDBACK_DURATION || 2000,
+    duration = UI_CONFIG.COPY_FEEDBACK_DURATION,
     onCopy,
     onPaste,
   } = options;

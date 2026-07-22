@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { COMPONENT_CONFIG } from '@/lib/config';
 
 interface UseAnnouncementOptions {
   /** Delay before announcing (ms) - defaults to 0 (next microtask) */
@@ -171,7 +172,7 @@ interface UseToastReturn {
  * @returns Object with toast functions
  */
 export function useToast(options: UseToastOptions = {}): UseToastReturn {
-  const { duration = 3000 } = options;
+  const { duration = COMPONENT_CONFIG.TOAST.SHORT_DURATION_MS } = options;
 
   const showToast = useCallback(
     (toastOptions: {
