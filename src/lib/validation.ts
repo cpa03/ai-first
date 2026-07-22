@@ -241,10 +241,10 @@ const HTML_ESCAPE_REGEX = new RegExp(
 /**
  * Fast-path trigger regex to identify strings that likely need no sanitization.
  * Checks for: <, >, &, ", ', / or any common event handler pattern (on...),
- * or dangerous protocols (javascript:, data:text/html).
+ * or dangerous protocols (javascript:, data:text/html) including obfuscated versions.
  */
 const NEEDS_SANITIZATION_REGEX =
-  /[<>&"'/`]|\bon\w+\s*=|[\s/]*style\s*=|(?:\b|[^a-z0-9])(?:javascript|vbscript|livescript)\s*:|data\s*:\s*(?:text\/html|image\/svg\+xml)/i;
+  /[<>&"'/`]|\bon\w+\s*=|[\s/]*style\s*=|(?:\b|[^a-z0-9])(?:j[\s\x00-\x1F]*a[\s\x00-\x1F]*v[\s\x00-\x1F]*a[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|v[\s\x00-\x1F]*b[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t|l[\s\x00-\x1F]*i[\s\x00-\x1F]*v[\s\x00-\x1F]*e[\s\x00-\x1F]*s[\s\x00-\x1F]*c[\s\x00-\x1F]*r[\s\x00-\x1F]*i[\s\x00-\x1F]*p[\s\x00-\x1F]*t)[\s\x00-\x1F]*:|d[\s\x00-\x1F]*a[\s\x00-\x1F]*t[\s\x00-\x1F]*a[\s\x00-\x1F]*:[\s\x00-\x1F]*(?:text\/html|image\/svg\+xml)/i;
 
 /**
  * Sanitizes HTML content by removing script tags and escaping HTML entities
