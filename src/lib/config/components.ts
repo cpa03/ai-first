@@ -513,6 +513,8 @@ export const COMPONENT_CONFIG = {
       50,
       500
     ),
+    /** Duration of completion celebration animation (ms) */
+    CELEBRATION_DURATION_MS: 2000,
   } as const,
 
   /**

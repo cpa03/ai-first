@@ -1135,6 +1135,39 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Deliverable completion celebration - Micro-UX: adds delightful visual feedback when all tasks in a deliverable are done */
+/* Uses a more pronounced pulse + scale effect to celebrate the larger milestone */
+@keyframes deliverableCompleteCelebration {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 var(--shadow-success-light);
+  }
+  30% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 12px var(--shadow-success-medium);
+  }
+  60% {
+    transform: scale(1.01);
+    box-shadow: 0 0 0 8px var(--shadow-success-light);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+.animate-deliverable-complete {
+  animation: deliverableCompleteCelebration var(--duration-slow)
+    var(--ease-spring) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-deliverable-complete {
+    animation: none;
+    transform: none;
+  }
+}
+
 /* Copy Success Glow Animation - Micro-UX delight for successful copy actions */
 /* Creates a brief, satisfying glow effect that confirms the action to users */
 @keyframes copySuccessGlow {
