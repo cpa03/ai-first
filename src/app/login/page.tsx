@@ -209,7 +209,23 @@ export default function LoginPage() {
         Skip to login form
       </a>
 
-      <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8`}>
+      <div className={`${CONTAINER_WIDTHS.XS} w-full space-y-8 relative`}>
+        {/* Micro-UX: Submitting overlay prevents double-clicks and provides clear visual feedback */}
+        {/* Shows subtle overlay with spinner when form is being submitted */}
+        {isLoading && (
+          <div
+            className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl animate-fade-in"
+            aria-live="assertive"
+            aria-label="Signing in, please wait"
+          >
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+              <span className="text-sm font-medium text-gray-700">
+                Signing in...
+              </span>
+            </div>
+          </div>
+        )}
         <div className={`${LAYOUT_CLASSES.TEXT_CENTER} animate-hero-entrance`}>
           <h1
             className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
