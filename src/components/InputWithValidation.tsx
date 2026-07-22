@@ -26,6 +26,7 @@ import {
   INPUT_HEIGHT_CLASSES,
   TRANSITION_CLASSES,
   PROGRESS_BAR_A11Y,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -607,7 +608,7 @@ const InputWithValidationComponent = forwardRef<
                 </div>
               )}
               <span
-                className={`text-sm font-medium transition-colors duration-300 ease-out ${
+                className={`text-sm font-medium transition-colors ${DURATION_TAILWIND[300]} ease-out ${
                   maxLength && charCount > maxLength
                     ? 'animate-counter-pulse'
                     : ''

@@ -6,6 +6,7 @@ import {
   Z_INDEX_LAYERS,
   SCROLL_PROGRESS_BAR,
   TEXT_SIZE_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
 
@@ -82,7 +83,9 @@ function ScrollProgressComponent() {
     >
       <div
         className={`h-full rounded-r-full bg-gradient-to-r from-primary-500 to-primary-600 ${
-          prefersReducedMotion ? '' : 'transition-all duration-150 ease-out'
+          prefersReducedMotion
+            ? ''
+            : `transition-all ${DURATION_TAILWIND[150]} ease-out`
         }`}
         style={{ width: `${scrollPercent}%` }}
       />
