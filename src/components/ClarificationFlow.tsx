@@ -49,6 +49,8 @@ import CopyButton from '@/components/CopyButton';
 import StepCelebration from '@/components/StepCelebration';
 import Skeleton from '@/components/Skeleton';
 import Tooltip from '@/components/Tooltip';
+import { CapsLockWarning } from '@/components/CapsLockWarning';
+import { useCapsLock } from '@/hooks/useCapsLock';
 import { useClarificationSession } from '@/hooks/useClarificationSession';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
@@ -91,6 +93,12 @@ function ClarificationFlow({
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const questionSectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const {
+    isCapsLockOn,
+    handleKeyDown: capsLockKeyDown,
+    handleKeyUp: capsLockKeyUp,
+    handleBlur: capsLockBlur,
+  } = useCapsLock();
   const [referenceAnnouncement, setReferenceAnnouncement] = useState('');
   const [referenceTriggered, setReferenceTriggered] = useState(false);
   const [slideDirection, setSlideDirection] = useState<'forward' | 'backward'>(
@@ -547,45 +555,61 @@ function ClarificationFlow({
 
           <div className="space-y-4">
             {currentQuestion.type === 'textarea' && (
-              <InputWithValidation
-                id="answer-textarea"
-                name="answer"
-                label={currentQuestion.question}
-                value={currentAnswer}
-                onChange={(e) => setCurrentAnswer(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={PLACEHOLDERS.CLARIFICATION_ANSWER}
-                multiline={true}
-                minLength={MIN_ANSWER_LENGTH}
-                maxLength={MAX_ANSWER_LENGTH}
-                showCharCount={true}
-                helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} ${COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(isMac, currentStep === questions.length - 1)}`}
-                required={true}
-                className={INPUT_HEIGHT_CLASSES.TEXTAREA}
-                ref={textareaRef}
-                disabled={showCelebration || isSubmitting}
-              />
+              <div>
+                <InputWithValidation
+                  id="answer-textarea"
+                  name="answer"
+                  label={currentQuestion.question}
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  onKeyDown={(e) => {
+                    capsLockKeyDown(e);
+                    handleKeyDown(e);
+                  }}
+                  onKeyUp={capsLockKeyUp}
+                  onBlur={capsLockBlur}
+                  placeholder={PLACEHOLDERS.CLARIFICATION_ANSWER}
+                  multiline={true}
+                  minLength={MIN_ANSWER_LENGTH}
+                  maxLength={MAX_ANSWER_LENGTH}
+                  showCharCount={true}
+                  helpText={`${MESSAGES.CLARIFICATION.ANSWER_HELP_TEXT} ${COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(isMac, currentStep === questions.length - 1)}`}
+                  required={true}
+                  className={INPUT_HEIGHT_CLASSES.TEXTAREA}
+                  ref={textareaRef}
+                  disabled={showCelebration || isSubmitting}
+                />
+                <CapsLockWarning isOn={isCapsLockOn} className="mt-1.5" />
+              </div>
             )}
 
             {currentQuestion.type === 'text' && (
-              <InputWithValidation
-                id="answer-text"
-                label={currentQuestion.question}
-                value={currentAnswer}
-                onChange={(e) => setCurrentAnswer(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={PLACEHOLDERS.CLARIFICATION_ANSWER}
-                minLength={MIN_SHORT_ANSWER_LENGTH}
-                maxLength={MAX_SHORT_ANSWER_LENGTH}
-                showCharCount={true}
-                helpText={COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(
-                  isMac,
-                  currentStep === questions.length - 1
-                )}
-                required={true}
-                ref={textInputRef}
-                disabled={showCelebration || isSubmitting}
-              />
+              <div>
+                <InputWithValidation
+                  id="answer-text"
+                  label={currentQuestion.question}
+                  value={currentAnswer}
+                  onChange={(e) => setCurrentAnswer(e.target.value)}
+                  onKeyDown={(e) => {
+                    capsLockKeyDown(e);
+                    handleKeyDown(e);
+                  }}
+                  onKeyUp={capsLockKeyUp}
+                  onBlur={capsLockBlur}
+                  placeholder={PLACEHOLDERS.CLARIFICATION_ANSWER}
+                  minLength={MIN_SHORT_ANSWER_LENGTH}
+                  maxLength={MAX_SHORT_ANSWER_LENGTH}
+                  showCharCount={true}
+                  helpText={COMPONENT_DEFAULTS.CLARIFICATION_FLOW.KEYBOARD_SHORTCUT_TEXT(
+                    isMac,
+                    currentStep === questions.length - 1
+                  )}
+                  required={true}
+                  ref={textInputRef}
+                  disabled={showCelebration || isSubmitting}
+                />
+                <CapsLockWarning isOn={isCapsLockOn} className="mt-1.5" />
+              </div>
             )}
 
             {(currentQuestion.type === 'textarea' ||
