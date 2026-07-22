@@ -326,7 +326,7 @@ function MobileNavComponent() {
                         {link.label}
                       </span>
                       <kbd
-                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono transition-opacity duration-300 ${
+                        className={`inline-flex items-center px-1.5 py-0.5 ${BG_COLORS.PROGRESS_NEUTRAL} ${TEXT_COLORS.MUTED} rounded text-xs font-mono transition-opacity ${DURATION_TAILWIND[300]} ${
                           hintsVisible ? 'opacity-60' : 'opacity-0'
                         }`}
                         aria-hidden="true"

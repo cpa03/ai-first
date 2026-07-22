@@ -11,6 +11,7 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   PROGRESS_BAR_A11Y,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 
 interface PasswordRequirement {
@@ -239,7 +240,7 @@ function PasswordRequirementsChecklistComponent({
             >
               {req.met ? (
                 <svg
-                  className={`w-3 h-3 text-green-700 ${prefersReducedMotion ? '' : 'animate-in zoom-in duration-200'}`}
+                  className={`w-3 h-3 text-green-700 ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

@@ -19,6 +19,7 @@ import {
   TEXT_SIZE_CLASSES,
   TYPOGRAPHY_CLASSES,
   TEXT_COLORS,
+  DURATION_TAILWIND,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -186,7 +187,7 @@ function TooltipComponent({
           className={`
             absolute pointer-events-none
             ${positionClasses[position]}
-            ${prefersReducedMotion ? '' : 'transition-all duration-200 ease-out'}
+            ${prefersReducedMotion ? '' : `transition-all ${DURATION_TAILWIND[200]} ease-out`}
             ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}
           `}
           style={{ zIndex: Z_INDEX_LAYERS.TOAST }}
