@@ -513,8 +513,13 @@ export const COMPONENT_CONFIG = {
       50,
       500
     ),
-    /** Duration of completion celebration animation (ms) */
-    CELEBRATION_DURATION_MS: 2000,
+    /** Duration of completion celebration animation (ms) - Env: COMPONENT_DELIVERABLE_CELEBRATION_DURATION_MS (default: 2000) */
+    CELEBRATION_DURATION_MS: EnvLoader.number(
+      'COMPONENT_DELIVERABLE_CELEBRATION_DURATION_MS',
+      2000,
+      500,
+      5000
+    ),
   } as const,
 
   /**
