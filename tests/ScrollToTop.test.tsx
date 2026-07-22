@@ -26,11 +26,9 @@ describe('ScrollToTop', () => {
     const requestAnimationFrameMock = jest
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation((cb) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const win = window as any;
+        const win = window as Window & { isAnimating?: boolean };
         if (win.isAnimating) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          return setTimeout(() => cb(Date.now()), 0) as any;
+          return setTimeout(() => cb(Date.now()), 0) as unknown as number;
         }
         win.isAnimating = true;
         try {

@@ -3,6 +3,7 @@ import {
   secureRandom,
   timingSafeEqualStrings,
 } from '@/lib/security/crypto';
+import { asInvalidInput } from '../utils/_testHelpers';
 
 describe('generateId Fallback', () => {
   let originalCrypto: unknown;
@@ -56,11 +57,17 @@ describe('timingSafeEqualStrings', () => {
   });
 
   it('should return false if any parameter is not a string', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(timingSafeEqualStrings(null as any, 'hello')).toBe(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(timingSafeEqualStrings('hello', undefined as any)).toBe(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    expect(timingSafeEqualStrings(123 as any, 123 as any)).toBe(false);
+    expect(timingSafeEqualStrings(asInvalidInput<string>(null), 'hello')).toBe(
+      false
+    );
+    expect(
+      timingSafeEqualStrings('hello', asInvalidInput<string>(undefined))
+    ).toBe(false);
+    expect(
+      timingSafeEqualStrings(
+        asInvalidInput<string>(123),
+        asInvalidInput<string>(123)
+      )
+    ).toBe(false);
   });
 });
