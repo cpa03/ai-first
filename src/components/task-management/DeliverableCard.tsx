@@ -74,7 +74,7 @@ function DeliverableCardComponent({
 
       const timer = setTimeout(() => {
         setShowCompletionCelebration(false);
-      }, COMPONENT_CONFIG.DELIVERABLE_CARD.CELEBRATION_DURATION_MS ?? 2000);
+      }, COMPONENT_CONFIG.DELIVERABLE_CARD.CELEBRATION_DURATION_MS);
 
       prevProgressRef.current = deliverable.progress;
       return () => clearTimeout(timer);
