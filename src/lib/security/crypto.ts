@@ -23,15 +23,14 @@ const BYTE_TO_HEX = Array.from({ length: 256 }, (_, i) =>
  * Accessing globalThis.crypto directly is extremely fast and ensures
  * we stay "live" and testable in environments that mock or nuke globalThis.crypto.
  */
-const GLOBAL_OBJ =
+const GLOBAL_OBJ: { crypto?: Crypto } =
   typeof globalThis !== 'undefined'
     ? globalThis
     : typeof self !== 'undefined'
       ? self
       : typeof window !== 'undefined'
         ? window
-        : // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ({} as any);
+        : {};
 
 /**
  * Generate a cryptographically secure, collision-resistant ID.
