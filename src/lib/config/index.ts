@@ -142,6 +142,7 @@ export {
   SHADOW_CLASSES,
   ROUNDED_CLASSES,
   PROGRESS_BAR_A11Y,
+  CHAR_COUNT_COLORS,
   TAILWIND_UTILS,
 } from './theme';
 
@@ -284,6 +285,7 @@ export type {
   ShadowClasses,
   RoundedClasses,
   TailwindUtils,
+  CharCountColors,
 } from './theme';
 
 // Time and Error Message Types

@@ -27,6 +27,7 @@ import {
   TRANSITION_CLASSES,
   PROGRESS_BAR_A11Y,
   DURATION_TAILWIND,
+  CHAR_COUNT_COLORS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -57,23 +58,50 @@ const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
 
 function getCharCountColor(count: number, max: number): string {
   const ratio = Math.min(count / max, 1.2);
-  if (ratio > 1) return '#b91c1c';
+  if (ratio > 1) return CHAR_COUNT_COLORS.OVER_LIMIT;
   if (ratio >= 0.9) {
     const t = (ratio - 0.9) / 0.1;
-    const r = Math.round(180 + t * (185 - 180));
-    const g = Math.round(119 - t * (119 - 28));
-    const b = Math.round(11 - t * (11 - 28));
+    const r = Math.round(
+      CHAR_COUNT_COLORS.WARNING_START.r +
+        t *
+          (CHAR_COUNT_COLORS.WARNING_END.r - CHAR_COUNT_COLORS.WARNING_START.r)
+    );
+    const g = Math.round(
+      CHAR_COUNT_COLORS.WARNING_START.g -
+        t *
+          (CHAR_COUNT_COLORS.WARNING_START.g - CHAR_COUNT_COLORS.WARNING_END.g)
+    );
+    const b = Math.round(
+      CHAR_COUNT_COLORS.WARNING_START.b -
+        t *
+          (CHAR_COUNT_COLORS.WARNING_START.b - CHAR_COUNT_COLORS.WARNING_END.b)
+    );
     return `rgb(${r}, ${g}, ${b})`;
   }
   if (ratio >= 0.7) {
     const t = (ratio - 0.7) / 0.2;
-    const r = Math.round(22 + t * (180 - 22));
-    const g = Math.round(163 - t * (163 - 119));
-    const b = Math.round(74 - t * (74 - 11));
+    const r = Math.round(
+      CHAR_COUNT_COLORS.SUCCESS_START.r +
+        t *
+          (CHAR_COUNT_COLORS.WARNING_START.r -
+            CHAR_COUNT_COLORS.SUCCESS_START.r)
+    );
+    const g = Math.round(
+      CHAR_COUNT_COLORS.SUCCESS_START.g -
+        t *
+          (CHAR_COUNT_COLORS.SUCCESS_START.g -
+            CHAR_COUNT_COLORS.WARNING_START.g)
+    );
+    const b = Math.round(
+      CHAR_COUNT_COLORS.SUCCESS_START.b -
+        t *
+          (CHAR_COUNT_COLORS.SUCCESS_START.b -
+            CHAR_COUNT_COLORS.WARNING_START.b)
+    );
     return `rgb(${r}, ${g}, ${b})`;
   }
-  if (count > 0) return '#15803d';
-  return '#4b5563';
+  if (count > 0) return CHAR_COUNT_COLORS.NORMAL;
+  return CHAR_COUNT_COLORS.EMPTY;
 }
 
 const InputWithValidationComponent = forwardRef<

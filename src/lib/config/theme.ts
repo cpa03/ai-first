@@ -1739,6 +1739,51 @@ export const PROGRESS_BAR_A11Y = {
 } as const;
 
 /**
+ * Character Count Colors
+ * Centralizes hardcoded color values for character count indicators
+ * Eliminates hardcoded #b91c1c, #15803d, #4b5563 in InputWithValidation.tsx
+ *
+ * Usage:
+ * ```typescript
+ * import { CHAR_COUNT_COLORS } from '@/lib/config';
+ * if (ratio > 1) return CHAR_COUNT_COLORS.OVER_LIMIT;
+ * ```
+ */
+export const CHAR_COUNT_COLORS = {
+  /**
+   * Over-limit color (red) - used when character count exceeds max
+   * Env: CHAR_COUNT_COLOR_OVER_LIMIT (default: '#b91c1c')
+   */
+  OVER_LIMIT: EnvLoader.string('CHAR_COUNT_COLOR_OVER_LIMIT', '#b91c1c'),
+
+  /**
+   * Near-limit warning color transition - used for interpolation
+   * These values define the RGB range for the gradient effect
+   */
+  WARNING_START: { r: 180, g: 119, b: 11 },
+  WARNING_END: { r: 185, g: 28, b: 28 },
+
+  /**
+   * Success color transition - used for healthy character count
+   * These values define the RGB range for the gradient effect
+   */
+  SUCCESS_START: { r: 22, g: 163, b: 74 },
+  SUCCESS_END: { r: 180, g: 119, b: 11 },
+
+  /**
+   * Normal/safe color (green) - used when character count is within limits
+   * Env: CHAR_COUNT_COLOR_NORMAL (default: '#15803d')
+   */
+  NORMAL: EnvLoader.string('CHAR_COUNT_COLOR_NORMAL', '#15803d'),
+
+  /**
+   * Empty/neutral color (gray) - used when character count is zero
+   * Env: CHAR_COUNT_COLOR_EMPTY (default: '#4b5563')
+   */
+  EMPTY: EnvLoader.string('CHAR_COUNT_COLOR_EMPTY', '#4b5563'),
+} as const;
+
+/**
  * Combined Tailwind Utility Classes
  * Provides all utility classes in a single object for convenience
  *
@@ -1771,4 +1816,5 @@ export type LayoutClasses = typeof LAYOUT_CLASSES;
 export type TransitionClasses = typeof TRANSITION_CLASSES;
 export type ShadowClasses = typeof SHADOW_CLASSES;
 export type RoundedClasses = typeof ROUNDED_CLASSES;
+export type CharCountColors = typeof CHAR_COUNT_COLORS;
 export type TailwindUtils = typeof TAILWIND_UTILS;
