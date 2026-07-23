@@ -31,6 +31,7 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -434,6 +435,7 @@ function KeyboardShortcutsHelpComponent({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { preferences, updatePreferences } = useShortcutsPreferences();
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   const searchInputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
@@ -442,6 +444,8 @@ function KeyboardShortcutsHelpComponent({
   // Micro-UX: Store the element that had focus before modal opened
   // This enables proper focus restoration when modal closes
   const previouslyFocusedRef = useRef<HTMLElement | null>(null);
+  const selectedItemRef = useRef<HTMLDivElement>(null);
+  const shortcutsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
@@ -579,6 +583,15 @@ function KeyboardShortcutsHelpComponent({
     };
   }, [isOpen, preferences.vimMode, searchQuery, selectedIndex, handleClose]);
 
+  useEffect(() => {
+    if (selectedItemRef.current && shortcutsContainerRef.current) {
+      selectedItemRef.current.scrollIntoView({
+        block: 'nearest',
+        behavior: prefersReducedMotion ? 'auto' : 'smooth',
+      });
+    }
+  }, [selectedIndex, prefersReducedMotion]);
+
   // Micro-UX: Focus trap for accessibility
   // Prevents keyboard users from tabbing outside the modal to elements behind the backdrop
   useEffect(() => {
@@ -685,7 +698,10 @@ function KeyboardShortcutsHelpComponent({
               type="text"
               placeholder={KEYBOARD_SHORTCUTS_MESSAGES.SEARCH_PLACEHOLDER}
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setSelectedIndex(0);
+              }}
               className={`w-full pl-10 pr-10 py-2 text-sm border ${BORDER_COLORS.DEFAULT} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:${TEXT_COLORS.MUTED}`}
               aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.SEARCH_ARIA_LABEL}
             />
@@ -694,6 +710,7 @@ function KeyboardShortcutsHelpComponent({
                 type="button"
                 onClick={() => {
                   setSearchQuery('');
+                  setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
                 className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} hover:text-gray-700 rounded-full hover:bg-gray-200 ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1`}
@@ -845,6 +862,7 @@ function KeyboardShortcutsHelpComponent({
                 type="button"
                 onClick={() => {
                   setSearchQuery('');
+                  setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
                 className={`text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded`}
@@ -866,15 +884,23 @@ function KeyboardShortcutsHelpComponent({
                       (s) => s.description === shortcut.description
                     );
                     return (
-                      <ShortcutRow
+                      <div
                         key={`${context}-${index}`}
-                        shortcut={shortcut}
-                        isMac={isMac}
-                        isSelected={
+                        ref={
                           preferences.vimMode && globalIndex === selectedIndex
+                            ? selectedItemRef
+                            : null
                         }
-                        searchQuery={searchQuery}
-                      />
+                      >
+                        <ShortcutRow
+                          shortcut={shortcut}
+                          isMac={isMac}
+                          isSelected={
+                            preferences.vimMode && globalIndex === selectedIndex
+                          }
+                          searchQuery={searchQuery}
+                        />
+                      </div>
                     );
                   })}
                 </div>
