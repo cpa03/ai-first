@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import CopyButton from './CopyButton';
+import Tooltip from './Tooltip';
 import { createLogger } from '@/lib/logger';
 import { APP_CONFIG } from '@/lib/config/app';
 import {
@@ -76,34 +77,56 @@ export default function ReferralLink({
     }
   };
 
-  // Micro-UX: Click or focus + Enter/Space to select all text for easy custom copy
-  const handleCodeClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
+  const [isSelected, setIsSelected] = useState(false);
+  const selectionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (selectionTimeoutRef.current) {
+        clearTimeout(selectionTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const selectAll = useCallback((element: HTMLElement) => {
     triggerHapticFeedback();
     const selection = window.getSelection();
     if (selection) {
       const range = document.createRange();
-      range.selectNodeContents(e.currentTarget);
+      range.selectNodeContents(element);
       selection.removeAllRanges();
       selection.addRange(range);
     }
+    setIsSelected(true);
+    if (selectionTimeoutRef.current) {
+      clearTimeout(selectionTimeoutRef.current);
+    }
+    selectionTimeoutRef.current = setTimeout(() => {
+      setIsSelected(false);
+    }, 2000);
   }, []);
+
+  // Micro-UX: Click or focus + Enter/Space to select all text for easy custom copy
+  const handleCodeClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    selectAll(e.currentTarget);
+  }, [selectAll]);
 
   const handleCodeKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        triggerHapticFeedback();
-        const selection = window.getSelection();
-        if (selection) {
-          const range = document.createRange();
-          range.selectNodeContents(e.currentTarget);
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
+        selectAll(e.currentTarget);
       }
     },
-    []
+    [selectAll]
   );
+
+  const handleBlur = useCallback(() => {
+    setIsSelected(false);
+    if (selectionTimeoutRef.current) {
+      clearTimeout(selectionTimeoutRef.current);
+    }
+  }, []);
 
   return (
     <div
@@ -120,16 +143,26 @@ export default function ReferralLink({
             {REFERRAL_LINK_LABELS.DESCRIPTION}
           </p>
           <div className="flex items-center gap-2">
-            <code
-              onClick={handleCodeClick}
-              onKeyDown={handleCodeKeyDown}
-              tabIndex={0}
-              title={REFERRAL_LINK_LABELS.CODE_TITLE}
-              aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
-              className={`flex-1 min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+            <Tooltip
+              content={
+                isSelected
+                  ? REFERRAL_LINK_LABELS.CODE_SELECTED_TITLE
+                  : REFERRAL_LINK_LABELS.CODE_TITLE
+              }
+              position="top"
+              className="flex-1 min-w-0"
             >
-              {referralUrl}
-            </code>
+              <code
+                onClick={handleCodeClick}
+                onKeyDown={handleCodeKeyDown}
+                onBlur={handleBlur}
+                tabIndex={0}
+                aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
+                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+              >
+                {referralUrl}
+              </code>
+            </Tooltip>
             <CopyButton
               textToCopy={referralUrl}
               label={REFERRAL_LINK_LABELS.COPY_LABEL}

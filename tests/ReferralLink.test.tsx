@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ReferralLink from '../src/components/ReferralLink';
 
@@ -88,5 +88,79 @@ describe('ReferralLink', () => {
 
     expect(window.getSelection).not.toHaveBeenCalled();
     expect(document.createRange).not.toHaveBeenCalled();
+  });
+
+  describe('Micro-UX selection feedback with Tooltip', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('renders the custom tooltip with the default instructions', () => {
+      render(<ReferralLink referralCode="testcode123" />);
+      const codeElement = screen.getByText(/signup\?ref=testcode123/i);
+
+      // Focus to trigger Tooltip show
+      fireEvent.focus(codeElement);
+
+      // Advance timers to trigger Tooltip setTimeout
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+
+      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+    });
+
+    it('updates the tooltip text to selected when clicked, and reverts on blur', () => {
+      render(<ReferralLink referralCode="testcode123" />);
+      const codeElement = screen.getByText(/signup\?ref=testcode123/i);
+
+      // Focus/hover to show initial tooltip
+      fireEvent.focus(codeElement);
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+
+      // Click to select
+      act(() => {
+        fireEvent.click(codeElement);
+      });
+      expect(screen.getByText('Selected! Press Ctrl+C to copy')).toBeInTheDocument();
+
+      // Blur to revert
+      act(() => {
+        fireEvent.blur(codeElement);
+      });
+      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+    });
+
+    it('updates the tooltip text to selected on Enter, and reverts after timeout', () => {
+      render(<ReferralLink referralCode="testcode123" />);
+      const codeElement = screen.getByText(/signup\?ref=testcode123/i);
+
+      // Focus to show
+      fireEvent.focus(codeElement);
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+
+      // KeyDown Enter
+      act(() => {
+        fireEvent.keyDown(codeElement, { key: 'Enter' });
+      });
+      expect(screen.getByText('Selected! Press Ctrl+C to copy')).toBeInTheDocument();
+
+      // Fast-forward 2 seconds
+      act(() => {
+        jest.advanceTimersByTime(2000);
+      });
+
+      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+    });
   });
 });

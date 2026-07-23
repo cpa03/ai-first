@@ -262,6 +262,8 @@ export const REFERRAL_LINK_LABELS = {
   COPY_TOAST_MESSAGE: 'Referral link copied!',
   /** Code element title attribute */
   CODE_TITLE: 'Click or press Enter/Space to select all',
+  /** Code element title attribute when selected */
+  CODE_SELECTED_TITLE: 'Selected! Press Ctrl+C to copy',
 } as const;
 
 /**
