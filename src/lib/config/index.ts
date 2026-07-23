@@ -482,8 +482,12 @@ export {
   OPACITY_CONFIG,
   RESPONSIVE_PADDING,
   CONTAINER_WIDTHS,
+  FORM_OVERLAY_STYLES,
+  FORM_ARIA_LABELS,
   type PageLayout,
   type OpacityConfig,
+  type FormOverlayStyles,
+  type FormAriaLabels,
 } from './page-layout';
 
 // Tailwind Arbitrary Values Configuration

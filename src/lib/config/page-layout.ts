@@ -112,5 +112,40 @@ export const OPACITY_CONFIG = {
   STEP_CELEBRATION_VISIBLE: 0.8,
 } as const;
 
+/**
+ * Form Loading Overlay Styles
+ * Centralizes the shared pattern used in login/signup pages for submitting overlays
+ * Eliminates hardcoded backdrop-blur, bg-white/60, and z-index values
+ */
+export const FORM_OVERLAY_STYLES = {
+  /** Backdrop blur amount for form submission overlays */
+  BACKDROP_BLUR: 'backdrop-blur-[2px]',
+  /** White overlay opacity for form submission */
+  OVERLAY_BG: 'bg-white/60',
+  /** Z-index for form submission overlay */
+  Z_INDEX: 'z-10',
+  /** Complete overlay class string for form submission loading state */
+  CONTAINER:
+    'absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl animate-fade-in',
+  /** Spinner container classes */
+  SPINNER_CONTAINER: 'flex flex-col items-center gap-3',
+  /** Spinner element classes */
+  SPINNER:
+    'w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin',
+  /** Loading text classes */
+  LOADING_TEXT: 'text-sm font-medium text-gray-700',
+} as const;
+
+/**
+ * ARIA Labels for Form States
+ * Centralizes aria-labels used in form loading overlays
+ */
+export const FORM_ARIA_LABELS = {
+  LOGIN_SUBMITTING: 'Signing in, please wait',
+  SIGNUP_SUBMITTING: 'Creating account, please wait',
+} as const;
+
 export type PageLayout = typeof PAGE_LAYOUT;
 export type OpacityConfig = typeof OPACITY_CONFIG;
+export type FormOverlayStyles = typeof FORM_OVERLAY_STYLES;
+export type FormAriaLabels = typeof FORM_ARIA_LABELS;
