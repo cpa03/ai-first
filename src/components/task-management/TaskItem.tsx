@@ -14,6 +14,7 @@ import {
   SVG_VIEWBOX,
   MESSAGES,
   IDEA_STATUS_CONFIG,
+  SVG_CIRCLE,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -197,9 +198,9 @@ function TaskItemComponent({
               >
                 <circle
                   className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
+                  cx={SVG_CIRCLE.CX_24}
+                  cy={SVG_CIRCLE.CY_24}
+                  r={SVG_CIRCLE.R_10}
                   stroke="currentColor"
                   strokeWidth={TASK_ITEM_STYLES.LOADING_SPINNER.STROKE_WIDTH}
                 />

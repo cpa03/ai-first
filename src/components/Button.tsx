@@ -16,6 +16,7 @@ import {
   SVG_VIEWBOX,
   COMPONENT_CONFIG,
   BUTTON_RIPPLE,
+  SVG_CIRCLE,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { generateId } from '@/lib/security/crypto';
@@ -192,9 +193,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           >
             <circle
               className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
+              cx={SVG_CIRCLE.CX_24}
+              cy={SVG_CIRCLE.CY_24}
+              r={SVG_CIRCLE.R_10}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.SPINNER}
             ></circle>

@@ -12,6 +12,7 @@ import {
   TEXT_COLORS,
   TRANSITION_CLASSES,
   TASK_MANAGEMENT_LABELS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -60,7 +61,10 @@ function TaskManagementHeaderComponent({
       triggerHapticFeedback();
       fire();
       setShowCompletionCelebration(true);
-      const timer = setTimeout(() => setShowCompletionCelebration(false), 2000);
+      const timer = setTimeout(
+        () => setShowCompletionCelebration(false),
+        COMPONENT_CONFIG.DELIVERABLE_CARD.CELEBRATION_DURATION_MS
+      );
       return () => clearTimeout(timer);
     }
     prevProgressRef.current = overallProgress;
@@ -93,7 +97,7 @@ function TaskManagementHeaderComponent({
 
   const summaryText = useMemo(() => {
     return [
-      `📊 Task Progress Summary`,
+      `${TASK_MANAGEMENT_LABELS.PROGRESS_SUMMARY_TITLE}`,
       ``,
       `Progress: ${overallProgress}%`,
       `Tasks: ${completedTasks}/${totalTasks} completed`,
@@ -255,7 +259,9 @@ function TaskManagementHeaderComponent({
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               [
             </kbd>
-            <span className={TRANSITION_CLASSES.COLOR}>expand all</span>
+            <span className={TRANSITION_CLASSES.COLOR}>
+              {TASK_MANAGEMENT_LABELS.EXPAND_ALL_HINT}
+            </span>
           </span>
           <span
             className={`${TEXT_COLORS.MUTED_LIGHT} opacity-50`}
@@ -267,7 +273,9 @@ function TaskManagementHeaderComponent({
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               ]
             </kbd>
-            <span className={TRANSITION_CLASSES.COLOR}>collapse all</span>
+            <span className={TRANSITION_CLASSES.COLOR}>
+              {TASK_MANAGEMENT_LABELS.COLLAPSE_ALL_HINT}
+            </span>
           </span>
         </div>
       </div>
