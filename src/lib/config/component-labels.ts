@@ -541,6 +541,10 @@ export const BLUEPRINT_DISPLAY_LABELS = {
 export const WHY_CHOOSE_SECTION_LABELS = {
   /** ARIA label for the benefits list */
   BENEFITS_LIST_ARIA_LABEL: 'Why choose IdeaFlow benefits',
+  /** Keyboard navigation hint text */
+  KEYBOARD_NAV_HINT: 'Navigate with arrow keys',
+  /** ARIA label for keyboard navigation hint */
+  KEYBOARD_NAV_ARIA_LABEL: 'Keyboard navigation available',
 } as const;
 
 /**
