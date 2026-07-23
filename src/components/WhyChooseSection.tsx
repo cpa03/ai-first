@@ -161,7 +161,7 @@ function WhyChooseSectionComponent() {
         ))}
       </div>
       <div
-        className="hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-400"
+        className="hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-500"
         aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
       >
         <span className="flex items-center gap-1.5">
