@@ -25,6 +25,7 @@ import {
   createRouteWithParams,
   UI_CONFIG,
   GRAY_CLASSES,
+  BREATHE,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -137,7 +138,7 @@ function ClarifySuccessState({
             {/* Micro-UX: Keyboard shortcut hint for blueprint generation */}
             {/* Matches the keyboard hint patterns in dashboard, not-found, and clarification flow */}
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-400 ${prefersReducedMotion ? '' : 'animate-breathe'}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-400 ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd

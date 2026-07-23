@@ -85,7 +85,9 @@ export class Cache<T = unknown> {
     if (this.maxSize || this.ttl) {
       const hasLargeCache = !this.maxSize || this.maxSize >= 10;
       const threshold = hasLargeCache
-        ? (this.ttl ? Math.min(1000, this.ttl / 10) : 1000)
+        ? this.ttl
+          ? Math.min(1000, this.ttl / 10)
+          : 1000
         : 0;
 
       if (now - entry.timestamp >= threshold) {
@@ -126,7 +128,9 @@ export class Cache<T = unknown> {
     if (this.maxSize || this.ttl) {
       const hasLargeCache = !this.maxSize || this.maxSize >= 10;
       const threshold = hasLargeCache
-        ? (this.ttl ? Math.min(1000, this.ttl / 10) : 1000)
+        ? this.ttl
+          ? Math.min(1000, this.ttl / 10)
+          : 1000
         : 0;
 
       if (now - entry.timestamp >= threshold) {

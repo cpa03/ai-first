@@ -223,6 +223,24 @@ export const TYPING_ANIMATIONS = {
 } as const;
 
 /**
+ * Miscellaneous Animation Classes
+ * Other animations used across the application
+ */
+export const MISC_ANIMATIONS = {
+  /** Breathe animation (subtle pulsing effect) */
+  BREATHE: 'animate-breathe',
+
+  /** Hero entrance animation (for page hero sections) */
+  HERO_ENTRANCE: 'animate-hero-entrance',
+
+  /** Ripple ring animation 1 (first ring) */
+  RIPPLE_RING_1: 'animate-ripple-ring-1',
+
+  /** Ripple ring animation 2 (second ring) */
+  RIPPLE_RING_2: 'animate-ripple-ring-2',
+} as const;
+
+/**
  * All Animation Classes Combined
  * Single export for all animation classes
  */
@@ -236,6 +254,7 @@ export const ALL_ANIMATION_CLASSES = {
   ...BADGE_ANIMATIONS,
   ...CHECKLIST_ANIMATIONS,
   ...TYPING_ANIMATIONS,
+  ...MISC_ANIMATIONS,
 } as const;
 
 /**
@@ -251,6 +270,7 @@ export const ANIMATION_CATEGORIES = {
   BADGE: BADGE_ANIMATIONS,
   CHECKLIST: CHECKLIST_ANIMATIONS,
   TYPING: TYPING_ANIMATIONS,
+  MISC: MISC_ANIMATIONS,
 } as const;
 
 // Type for animation classes
@@ -324,3 +344,9 @@ export const REQUIREMENT_MET = CHECKLIST_ANIMATIONS.REQUIREMENT_MET;
 
 // Typing animation quick access
 export const TYPING_DOT = TYPING_ANIMATIONS.TYPING_DOT;
+
+// Misc animation quick access
+export const BREATHE = MISC_ANIMATIONS.BREATHE;
+export const HERO_ENTRANCE = MISC_ANIMATIONS.HERO_ENTRANCE;
+export const RIPPLE_RING_1 = MISC_ANIMATIONS.RIPPLE_RING_1;
+export const RIPPLE_RING_2 = MISC_ANIMATIONS.RIPPLE_RING_2;

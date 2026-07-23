@@ -667,6 +667,10 @@ export {
   CHECKLIST_ITEM,
   REQUIREMENT_MET,
   TYPING_DOT,
+  BREATHE,
+  HERO_ENTRANCE,
+  RIPPLE_RING_1,
+  RIPPLE_RING_2,
   type AnimationClasses,
   type AllAnimationClasses,
 } from './animation-classes';
