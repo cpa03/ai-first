@@ -11,6 +11,7 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLORS,
   BG_COLORS,
+  DRAW_CHECK,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -76,7 +77,7 @@ function IdeaReadyIndicatorComponent({
             strokeLinejoin="round"
             d="M5 13l4 4L19 7"
             className={`
-              ${prefersReducedMotion ? '' : 'animate-draw-check'}
+              ${prefersReducedMotion ? '' : DRAW_CHECK}
               ${showCheckmark ? 'stroke-dashoffset-0' : 'stroke-dashoffset-24'}
             `}
             style={{

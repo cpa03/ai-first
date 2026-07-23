@@ -29,6 +29,7 @@ import {
   DURATION_TAILWIND,
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
+  DRAW_CHECK,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -342,7 +343,7 @@ export default function LoginPage() {
                   >
                     {rememberMe && (
                       <svg
-                        className="w-3 h-3 text-white animate-draw-check"
+                        className={`w-3 h-3 text-white ${DRAW_CHECK}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"

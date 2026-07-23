@@ -29,6 +29,7 @@ import {
   STEP_CELEBRATION_TEXT_CONTAINER,
   STEP_CELEBRATION_STEP_COMPLETE,
   STEP_CELEBRATION_PROGRESS_COMPLETE,
+  DRAW_CHECK,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -247,7 +248,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     d="M5 13l4 4L19 7"
-                    className={shouldAnimate ? 'animate-draw-check' : ''}
+                    className={shouldAnimate ? DRAW_CHECK : ''}
                     style={{
                       strokeDasharray: SVG_ANIMATION.CHECKMARK_PATH_LENGTH,
                       strokeDashoffset: isExiting

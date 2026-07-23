@@ -13,6 +13,7 @@ import {
   TRANSITION_CLASSES,
   TASK_MANAGEMENT_LABELS,
   COMPONENT_CONFIG,
+  BREATHE,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -252,7 +253,7 @@ function TaskManagementHeaderComponent({
         {/* Micro-UX: Keyboard shortcut hints for discoverability */}
         {/* Makes [ and ] shortcuts visible without requiring hover, following the ProgressStepper pattern */}
         <div
-          className="hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-500 animate-breathe"
+          className={`hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-500 ${BREATHE}`}
           aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">

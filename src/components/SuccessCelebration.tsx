@@ -10,6 +10,8 @@ import {
   SVG_VIEWBOX,
   Z_INDEX_LAYERS,
   TEXT_COLORS,
+  RIPPLE_RING_1,
+  RIPPLE_RING_2,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -179,8 +181,12 @@ function SuccessCelebrationComponent({
 
         {shouldAnimate && (
           <>
-            <div className="absolute inset-0 rounded-full border-4 border-green-400 animate-ripple-ring-1" />
-            <div className="absolute inset-0 rounded-full border-4 border-green-300 animate-ripple-ring-2" />
+            <div
+              className={`absolute inset-0 rounded-full border-4 border-green-400 ${RIPPLE_RING_1}`}
+            />
+            <div
+              className={`absolute inset-0 rounded-full border-4 border-green-300 ${RIPPLE_RING_2}`}
+            />
           </>
         )}
       </div>
