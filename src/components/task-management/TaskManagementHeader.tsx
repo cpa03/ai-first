@@ -27,6 +27,9 @@ interface TaskManagementHeaderProps {
   overallProgress: number;
   onExpandAll: () => void;
   onCollapseAll: () => void;
+  statusFilter: 'all' | 'in_progress' | 'completed';
+  onFilterChange: (filter: 'all' | 'in_progress' | 'completed') => void;
+  filterCounts: { all: number; in_progress: number; completed: number };
 }
 
 function TaskManagementHeaderComponent({
@@ -38,6 +41,9 @@ function TaskManagementHeaderComponent({
   overallProgress,
   onExpandAll,
   onCollapseAll,
+  statusFilter,
+  onFilterChange,
+  filterCounts,
 }: TaskManagementHeaderProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const { particles, fire } = useConfetti();
@@ -146,6 +152,58 @@ function TaskManagementHeaderComponent({
       </div>
 
       <div className="mt-4">
+        <div
+          className="flex items-center gap-2 mb-3"
+          role="radiogroup"
+          aria-label={TASK_MANAGEMENT_LABELS.FILTER_ARIA_LABEL}
+        >
+          {(['all', 'in_progress', 'completed'] as const).map((filter) => {
+            const isActive = statusFilter === filter;
+            const count = filterCounts[filter];
+            const label =
+              filter === 'all'
+                ? TASK_MANAGEMENT_LABELS.FILTER_ALL
+                : filter === 'in_progress'
+                  ? TASK_MANAGEMENT_LABELS.FILTER_IN_PROGRESS
+                  : TASK_MANAGEMENT_LABELS.FILTER_COMPLETED;
+            return (
+              <button
+                key={filter}
+                role="radio"
+                aria-checked={isActive}
+                onClick={() => {
+                  triggerHapticFeedback();
+                  onFilterChange(filter);
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+                  isActive
+                    ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 ring-offset-1'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+                }`}
+              >
+                {label}
+                <span
+                  className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full font-semibold ${
+                    isActive
+                      ? 'bg-primary-200 text-primary-800'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
+                >
+                  {count}
+                </span>
+                <kbd
+                  className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ml-0.5`}
+                >
+                  {filter === 'all'
+                    ? '1'
+                    : filter === 'in_progress'
+                      ? '2'
+                      : '3'}
+                </kbd>
+              </button>
+            );
+          })}
+        </div>
         <div className="flex gap-2">
           <Tooltip
             content={MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}

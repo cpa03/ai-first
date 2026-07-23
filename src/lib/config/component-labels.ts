@@ -385,9 +385,16 @@ export const TASK_MANAGEMENT_LABELS = {
   SKELETON_ARIA_LABEL: 'Loading task management data',
   SKELETON_SR_TEXT: 'Loading task management data...',
   KEYBOARD_SHORTCUTS_ARIA_LABEL:
-    'Keyboard shortcuts: [ to expand all, ] to collapse all',
+    'Keyboard shortcuts: [ to expand all, ] to collapse all, 1-3 to filter',
   COPY_SUMMARY_BUTTON: 'Copy Summary',
   COPY_SUMMARY_SUCCESS: 'Copied!',
+  // Task status filter labels
+  FILTER_ALL: 'All',
+  FILTER_IN_PROGRESS: 'In Progress',
+  FILTER_COMPLETED: 'Completed',
+  FILTER_ARIA_LABEL: 'Filter tasks by status',
+  FILTER_ANNOUNCEMENT: (count: number, status: string) =>
+    `Showing ${count} ${status === 'all' ? '' : status} tasks`,
 } as const;
 
 /**
