@@ -10,6 +10,7 @@
 
 import crypto from 'node:crypto';
 import { SECURITY_CONFIG } from '@/lib/config/modular-constants';
+import { timingSafeEqualStrings } from '@/lib/security/crypto';
 import { ENV_ACCESSORS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 
@@ -211,27 +212,15 @@ export function verifySignature(
     path: options.path,
   });
 
-  // Timing-safe comparison to prevent timing attacks
-  try {
-    // Use Buffer.compare for timing-safe comparison
-    const result = crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expected.signature)
-    );
+  // Timing-safe comparison to prevent timing attacks (cross-environment / edge-compatible)
+  const result = timingSafeEqualStrings(signature, expected.signature);
 
-    return {
-      valid: result,
-      error: result
-        ? undefined
-        : API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_SIGNATURE,
-    };
-  } catch {
-    // If buffers are different lengths, timingSafeEqual throws
-    return {
-      valid: false,
-      error: API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_SIGNATURE_FORMAT,
-    };
-  }
+  return {
+    valid: result,
+    error: result
+      ? undefined
+      : API_ERROR_MESSAGES.REQUEST_SIGNER.INVALID_SIGNATURE,
+  };
 }
 
 /**
