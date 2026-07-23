@@ -10,7 +10,11 @@ const { chromium } = require('playwright');
   console.log('\n🦇 BRO-cULA BROWSER AUDIT REPORT 🦇\n');
   console.log('='.repeat(60));
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath:
+      '/home/runner/.cache/ms-playwright/chromium-1228/chrome-linux/chrome',
+  });
   const page = await browser.newPage();
 
   const auditResults = {
