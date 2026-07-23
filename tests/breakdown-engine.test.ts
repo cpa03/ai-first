@@ -233,10 +233,12 @@ describe('BreakdownEngine', () => {
       const { aiService } = require('@/lib/ai');
       const { dbService } = require('@/lib/db');
 
+      aiService.initialize.mockResolvedValue(undefined);
       aiService.callModel.mockRejectedValue(new Error('AI analysis failed'));
       dbService.storeVector.mockResolvedValue(createMockVector());
       dbService.logAgentAction.mockResolvedValue(undefined);
 
+      await breakdownEngine.initialize();
       await expect(
         breakdownEngine.startBreakdown('idea-123', 'Test idea', {}, {})
       ).rejects.toThrow('Idea analysis failed');
@@ -326,6 +328,7 @@ describe('BreakdownEngine', () => {
       });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
+      await breakdownEngine.initialize();
       const session = await breakdownEngine.startBreakdown(
         'idea-123',
         'Test idea',
@@ -394,9 +397,12 @@ describe('BreakdownEngine', () => {
 
     it('should handle database errors gracefully', async () => {
       const { dbService } = require('@/lib/db');
+      const { aiService } = require('@/lib/ai');
 
+      aiService.initialize.mockResolvedValue(undefined);
       dbService.getVectors.mockRejectedValue(new Error('Database error'));
 
+      await breakdownEngine.initialize();
       const session = await breakdownEngine.getBreakdownSession('idea-123');
 
       expect(session).toBeNull();
@@ -485,6 +491,7 @@ describe('BreakdownEngine', () => {
       });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
+      await breakdownEngine.initialize();
       const session = await breakdownEngine.startBreakdown(
         'idea-123',
         'Test idea',
@@ -550,6 +557,7 @@ describe('BreakdownEngine', () => {
       });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
+      await breakdownEngine.initialize();
       const session = await breakdownEngine.startBreakdown(
         'idea-123',
         'Test idea',
@@ -646,6 +654,7 @@ describe('BreakdownEngine', () => {
       });
       dbService.logAgentAction.mockResolvedValue(undefined);
 
+      await breakdownEngine.initialize();
       const session = await breakdownEngine.startBreakdown(
         'idea-123',
         'Test idea',
