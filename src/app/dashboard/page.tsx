@@ -6,6 +6,7 @@ import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
+import { useFocusManagement } from '@/hooks/useAnnouncement';
 import {
   ACTION_COLORS,
   TABLE_PATTERNS,
@@ -302,30 +303,16 @@ export default function DashboardPage() {
     }
   }, [deleteModal.idea, closeDeleteModal]);
 
-  // Refs for focus management
   const modalRef = useRef<HTMLDivElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
   const deleteConfirmInputRef = useRef<HTMLInputElement>(null);
 
-  // Handle focus when modal opens/closes
+  useFocusManagement(deleteModal.isOpen, { delay: 0, restoreFocus: true });
+
   useEffect(() => {
-    let focusTimeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    if (deleteModal.isOpen) {
-      previousFocusRef.current = document.activeElement as HTMLElement;
-      focusTimeoutId = setTimeout(() => {
-        deleteConfirmInputRef.current?.focus();
-      }, 0);
-    } else if (previousFocusRef.current) {
-      previousFocusRef.current.focus();
+    if (deleteConfirmInputRef.current) {
+      deleteConfirmInputRef.current.focus();
     }
-
-    return () => {
-      if (focusTimeoutId) {
-        clearTimeout(focusTimeoutId);
-      }
-    };
   }, [deleteModal.isOpen]);
 
   useEffect(() => {

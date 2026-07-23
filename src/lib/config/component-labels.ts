@@ -376,7 +376,7 @@ export const USER_ONBOARDING_LABELS = {
 } as const;
 
 /**
- * Task Management Labels
+ * TaskManagement Labels
  * Eliminates hardcoded strings in TaskManagement component
  */
 export const TASK_MANAGEMENT_LABELS = {
@@ -385,9 +385,28 @@ export const TASK_MANAGEMENT_LABELS = {
   SKELETON_ARIA_LABEL: 'Loading task management data',
   SKELETON_SR_TEXT: 'Loading task management data...',
   KEYBOARD_SHORTCUTS_ARIA_LABEL:
-    'Keyboard shortcuts: [ to expand all, ] to collapse all',
+    'Keyboard shortcuts: [ to expand all, ] to collapse all, 1-3 to filter',
   COPY_SUMMARY_BUTTON: 'Copy Summary',
   COPY_SUMMARY_SUCCESS: 'Copied!',
+  // Task status filter labels
+  FILTER_ALL: 'All',
+  FILTER_IN_PROGRESS: 'In Progress',
+  FILTER_COMPLETED: 'Completed',
+  FILTER_ARIA_LABEL: 'Filter tasks by status',
+  FILTER_ANNOUNCEMENT: (count: number, status: string) =>
+    `Showing ${count} ${status === 'all' ? '' : status} tasks`,
+  EXPAND_ALL_HINT: 'expand all',
+  COLLAPSE_ALL_HINT: 'collapse all',
+  PROGRESS_SUMMARY_TITLE: '📊 Task Progress Summary',
+} as const;
+
+/**
+ * DeliverableCard Labels
+ * Eliminates hardcoded strings in DeliverableCard component
+ */
+export const DELIVERABLE_CARD_LABELS = {
+  COMPLETE_BADGE: 'Complete',
+  COMPLETE_ARIA_LABEL: 'Deliverable complete',
 } as const;
 
 /**
@@ -541,6 +560,28 @@ export const BLUEPRINT_DISPLAY_LABELS = {
 export const WHY_CHOOSE_SECTION_LABELS = {
   /** ARIA label for the benefits list */
   BENEFITS_LIST_ARIA_LABEL: 'Why choose IdeaFlow benefits',
+  /** Keyboard navigation hint text */
+  KEYBOARD_NAV_HINT: 'Navigate with arrow keys',
+  /** ARIA label for keyboard navigation hint */
+  KEYBOARD_NAV_ARIA_LABEL: 'Keyboard navigation available',
+} as const;
+
+/**
+ * Password Requirements Labels
+ * Eliminates hardcoded aria-labels in PasswordRequirementsChecklist component
+ */
+export const PASSWORD_REQUIREMENTS_LABELS = {
+  /** ARIA label for the password requirements group */
+  GROUP_ARIA_LABEL: (metCount: number, total: number) =>
+    `Password requirements: ${metCount} of ${total} met`,
+  /** ARIA label for the progress bar */
+  PROGRESS_ARIA_LABEL: (metCount: number, total: number) =>
+    `Password requirements progress: ${metCount} of ${total} met`,
+  /** ARIA label for individual requirement item */
+  REQUIREMENT_ARIA_LABEL: (label: string, met: boolean) =>
+    `${label}: ${met ? 'met' : 'not met'}`,
+  /** Header text for password requirements */
+  HEADER_TEXT: 'Password must contain:',
 } as const;
 
 /**
@@ -587,6 +628,7 @@ export const COMPONENT_LABELS = {
   EMAIL_BUTTON: EMAIL_BUTTON_LABELS,
   BLUEPRINT_DISPLAY: BLUEPRINT_DISPLAY_LABELS,
   SCROLL_PROGRESS: SCROLL_PROGRESS_LABELS,
+  PASSWORD_REQUIREMENTS: PASSWORD_REQUIREMENTS_LABELS,
 } as const;
 
 export type ShareButtonLabels = typeof SHARE_BUTTON_LABELS;
@@ -605,6 +647,7 @@ export type KeyboardShortcutsProviderLabels =
 export type IdeaInputLabels = typeof IDEA_INPUT_LABELS;
 export type UserOnboardingLabels = typeof USER_ONBOARDING_LABELS;
 export type TaskManagementLabels = typeof TASK_MANAGEMENT_LABELS;
+export type DeliverableCardLabels = typeof DELIVERABLE_CARD_LABELS;
 export type IdeaReadyIndicatorLabels = typeof IDEA_READY_INDICATOR_LABELS;
 export type StepCelebrationLabels = typeof STEP_CELEBRATION_LABELS;
 export type UserOnboardingCompletionLabels =
@@ -616,4 +659,5 @@ export type EmailButtonLabels = typeof EMAIL_BUTTON_LABELS;
 export type BlueprintDisplayLabels = typeof BLUEPRINT_DISPLAY_LABELS;
 export type WhyChooseSectionLabels = typeof WHY_CHOOSE_SECTION_LABELS;
 export type ScrollProgressLabels = typeof SCROLL_PROGRESS_LABELS;
+export type PasswordRequirementsLabels = typeof PASSWORD_REQUIREMENTS_LABELS;
 export type ComponentLabels = typeof COMPONENT_LABELS;

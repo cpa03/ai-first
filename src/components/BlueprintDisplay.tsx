@@ -16,6 +16,7 @@ import Tooltip from '@/components/Tooltip';
 import { useBlueprintGeneration } from '@/hooks/useBlueprintGeneration';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
+import { useFocusManagement } from '@/hooks/useAnnouncement';
 import {
   MESSAGES,
   COMPONENT_DEFAULTS,
@@ -53,21 +54,27 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
 
   const prefersReducedMotion = usePrefersReducedMotion();
   const headingRef = useRef<HTMLHeadingElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
-  const wasGeneratingRef = useRef(isGenerating);
+  const [wasGenerating, setWasGenerating] = useState(isGenerating);
 
-  // Micro-UX: Add Cmd/Ctrl + C keyboard shortcut to copy blueprint
-  // This provides a familiar shortcut for keyboard users to quickly copy content
+  const { storeFocus } = useFocusManagement(!isGenerating && wasGenerating, {
+    delay: 0,
+    restoreFocus: true,
+  });
+
+  useEffect(() => {
+    if (headingRef.current) {
+      headingRef.current.focus();
+    }
+  }, [isGenerating]);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      // Only handle shortcut when not generating and blueprint is available
       if (
         !isGenerating &&
         blueprint &&
         (e.metaKey || e.ctrlKey) &&
         e.key === 'c'
       ) {
-        // Check if there's a text selection - if so, let the default copy behavior work
         const selection = window.getSelection();
         if (selection && selection.toString().length > 0) {
           return;
@@ -86,27 +93,17 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Focus management: Set focus to heading when blueprint generation completes (Issue #723)
   useEffect(() => {
-    // When generation completes (was generating, now not)
-    if (wasGeneratingRef.current && !isGenerating && headingRef.current) {
-      // Store previous focus
-      previousFocusRef.current = document.activeElement as HTMLElement;
-      // Move focus to heading for screen readers and keyboard users
-      headingRef.current.focus();
-    }
-    // Update ref for next render
-    wasGeneratingRef.current = isGenerating;
+    setWasGenerating(isGenerating);
   }, [isGenerating]);
 
-  // Restore focus after copy/download actions
   const handleCopyWithFocus = () => {
-    previousFocusRef.current = document.activeElement as HTMLElement;
+    storeFocus();
     handleCopy();
   };
 
   const handleDownloadWithFocus = () => {
-    previousFocusRef.current = document.activeElement as HTMLElement;
+    storeFocus();
     handleDownload();
   };
 

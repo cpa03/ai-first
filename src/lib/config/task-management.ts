@@ -196,7 +196,7 @@ export const DELIVERABLE_PROGRESS_CONFIG = {
     NOT_STARTED: {
       bgColor: 'bg-gray-50',
       borderColor: 'border-gray-200',
-      iconColor: 'text-gray-400',
+      iconColor: 'text-gray-500',
     },
   },
 } as const;

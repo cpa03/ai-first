@@ -3,11 +3,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { supabaseClient } from '@/lib/db';
-import Button from '@/components/Button';
-import InputWithValidation from '@/components/InputWithValidation';
-import Alert from '@/components/Alert';
-import { CapsLockWarning } from '@/components/CapsLockWarning';
 import { useCapsLock } from '@/hooks/useCapsLock';
 import {
   OAUTH_PROVIDER_COLORS,
@@ -30,9 +27,24 @@ import {
   UI_CONFIG,
   VALIDATION_CONFIG,
   DURATION_TAILWIND,
+  FORM_OVERLAY_STYLES,
+  FORM_ARIA_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
+
+// Dynamic imports for code splitting - reduce initial bundle size
+const Button = dynamic(() => import('@/components/Button'), { ssr: false });
+const InputWithValidation = dynamic(
+  () => import('@/components/InputWithValidation'),
+  { ssr: false }
+);
+const Alert = dynamic(() => import('@/components/Alert'), { ssr: false });
+const CapsLockWarning = dynamic(
+  () =>
+    import('@/components/CapsLockWarning').then((mod) => mod.CapsLockWarning),
+  { ssr: false }
+);
 
 export default function LoginPage() {
   const { scrollToError } = useScrollToError();
@@ -215,13 +227,13 @@ export default function LoginPage() {
         {/* Shows subtle overlay with spinner when form is being submitted */}
         {isLoading && (
           <div
-            className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl animate-fade-in"
+            className={FORM_OVERLAY_STYLES.CONTAINER}
             aria-live="assertive"
-            aria-label="Signing in, please wait"
+            aria-label={FORM_ARIA_LABELS.LOGIN_SUBMITTING}
           >
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-              <span className="text-sm font-medium text-gray-700">
+            <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
+              <div className={FORM_OVERLAY_STYLES.SPINNER} />
+              <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
                 Signing in...
               </span>
             </div>

@@ -12,8 +12,8 @@ CREATE TABLE ideas (
     user_id UUID REFERENCES auth.users(id),
     title TEXT NOT NULL,
     raw_text TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     status TEXT DEFAULT 'draft' CHECK (status IN ('draft', 'clarified', 'breakdown', 'completed')),
     deleted_at TIMESTAMP WITH TIME ZONE
 );
@@ -34,8 +34,8 @@ CREATE TABLE clarification_sessions (
     idea_id UUID NOT NULL REFERENCES ideas(id) ON DELETE CASCADE,
     status TEXT NOT NULL DEFAULT 'active'
       CHECK (status IN ('active', 'completed', 'cancelled')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Clarification answers table
@@ -44,8 +44,8 @@ CREATE TABLE clarification_answers (
     session_id UUID NOT NULL REFERENCES clarification_sessions(id) ON DELETE CASCADE,
     question_id TEXT NOT NULL,
     answer TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Milestones Table (must be created before deliverables and tasks)
@@ -57,8 +57,8 @@ CREATE TABLE milestones (
     target_date DATE,
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'completed', 'delayed', 'cancelled')),
     priority INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Deliverables table
@@ -69,8 +69,8 @@ CREATE TABLE deliverables (
     description TEXT,
     priority INTEGER DEFAULT 0,
     estimate_hours INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE,
     milestone_id UUID REFERENCES milestones(id) ON DELETE SET NULL,
     completion_percentage INTEGER DEFAULT 0 CHECK (completion_percentage >= 0 AND completion_percentage <= 100),
@@ -89,8 +89,8 @@ CREATE TABLE tasks (
     assignee TEXT,
     status TEXT DEFAULT 'todo' CHECK (status IN ('todo', 'in_progress', 'completed')),
     estimate INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE,
     start_date DATE,
     end_date DATE,
@@ -115,7 +115,7 @@ CREATE TABLE vectors (
     vector_data JSONB,
     reference_type TEXT,
     reference_id TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     embedding vector(1536)
 );
 
@@ -136,8 +136,8 @@ CREATE TABLE task_dependencies (
     dependency_type TEXT DEFAULT 'finish_to_start'
         CHECK (dependency_type IN ('finish_to_start', 'start_to_start', 'finish_to_finish', 'start_to_finish')),
     lag_days INTEGER DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     UNIQUE(predecessor_task_id, successor_task_id)
 );
 
@@ -148,7 +148,7 @@ CREATE TABLE task_assignments (
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     role TEXT DEFAULT 'assignee' CHECK (role IN ('assignee', 'reviewer', 'contributor')),
     allocation_percentage INTEGER DEFAULT 100 CHECK (allocation_percentage > 0 AND allocation_percentage <= 100),
-    assigned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    assigned_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     assigned_by UUID REFERENCES auth.users(id),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     UNIQUE(task_id, user_id, role)
@@ -162,8 +162,8 @@ CREATE TABLE time_tracking (
     hours_logged DECIMAL(5,2) CHECK (hours_logged > 0),
     date_logged DATE NOT NULL,
     notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Task Comments Table
@@ -173,8 +173,8 @@ CREATE TABLE task_comments (
     user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
     comment TEXT NOT NULL,
     parent_comment_id UUID REFERENCES task_comments(id),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE
 );
 
@@ -187,8 +187,8 @@ CREATE TABLE breakdown_sessions (
     confidence_score DECIMAL(3,2) CHECK (confidence_score >= 0 AND confidence_score <= 1),
     processing_time_ms INTEGER,
     status TEXT DEFAULT 'analyzing' CHECK (status IN ('analyzing', 'decomposing', 'scheduling', 'completed', 'failed')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 
 -- Timeline Data Table
@@ -202,8 +202,8 @@ CREATE TABLE timelines (
     phase_data JSONB,
     critical_path JSONB,
     resource_allocation JSONB,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     CONSTRAINT chk_timelines_end_after_start CHECK (end_date >= start_date)
 );
 

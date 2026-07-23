@@ -13,6 +13,7 @@ import {
   PROGRESS_BAR_A11Y,
   DURATION_TAILWIND,
 } from '@/lib/config';
+import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 
 interface PasswordRequirement {
   id: string;
@@ -191,13 +192,15 @@ function PasswordRequirementsChecklistComponent({
     <div
       className={`space-y-2 ${className}`}
       role="group"
-      aria-label={`Password requirements: ${metCount} of ${total} met`}
+      aria-label={PASSWORD_REQUIREMENTS_LABELS.GROUP_ARIA_LABEL(
+        metCount,
+        total
+      )}
     >
-      {/* Micro-UX: Progress bar with count for at-a-glance completion status */}
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <p className="text-xs font-medium text-gray-700">
-            Password must contain:
+            {PASSWORD_REQUIREMENTS_LABELS.HEADER_TEXT}
           </p>
           <span
             className={`text-xs font-medium tabular-nums ${TRANSITION_CLASSES.COLOR_DEFAULT} ${countTextColor}`}
@@ -213,7 +216,10 @@ function PasswordRequirementsChecklistComponent({
           aria-valuenow={metCount}
           aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
           aria-valuemax={total}
-          aria-label={`Password requirements progress: ${metCount} of ${total} met`}
+          aria-label={PASSWORD_REQUIREMENTS_LABELS.PROGRESS_ARIA_LABEL(
+            metCount,
+            total
+          )}
         >
           <div
             className={`h-full ${progressColor} rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}`}
@@ -230,7 +236,10 @@ function PasswordRequirementsChecklistComponent({
                 ? `${TEXT_COLORS.SUCCESS_DARK} font-medium`
                 : TEXT_COLORS.MUTED
             } ${hasAppeared && !prefersReducedMotion ? `animate-checklist-item animate-checklist-item-${index + 1}` : ''} ${newlyMetIds.has(req.id) && !prefersReducedMotion ? 'animate-requirement-met' : ''}`}
-            aria-label={`${req.label}: ${req.met ? 'met' : 'not met'}`}
+            aria-label={PASSWORD_REQUIREMENTS_LABELS.REQUIREMENT_ARIA_LABEL(
+              req.label,
+              req.met
+            )}
           >
             <span
               className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
@@ -254,7 +263,7 @@ function PasswordRequirementsChecklistComponent({
                 </svg>
               ) : (
                 <svg
-                  className="w-3 h-3 text-gray-400"
+                  className="w-3 h-3 text-gray-500"
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

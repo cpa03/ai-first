@@ -125,6 +125,7 @@ export {
   SPINNER_PATTERNS,
   SVG_STROKE_WIDTHS,
   SVG_SIZES,
+  SVG_CIRCLE,
   GAP_SIZES,
   Z_INDEX_LAYERS,
   CARD_PATTERNS,
@@ -397,6 +398,7 @@ export {
   IDEA_INPUT_LABELS,
   USER_ONBOARDING_LABELS,
   TASK_MANAGEMENT_LABELS,
+  DELIVERABLE_CARD_LABELS,
   IDEA_READY_INDICATOR_LABELS,
   STEP_CELEBRATION_LABELS,
   USER_ONBOARDING_COMPLETION_LABELS,
@@ -420,6 +422,7 @@ export {
   type IdeaInputLabels,
   type UserOnboardingLabels,
   type TaskManagementLabels,
+  type DeliverableCardLabels,
   type IdeaReadyIndicatorLabels,
   type StepCelebrationLabels,
   type UserOnboardingCompletionLabels,
@@ -482,8 +485,12 @@ export {
   OPACITY_CONFIG,
   RESPONSIVE_PADDING,
   CONTAINER_WIDTHS,
+  FORM_OVERLAY_STYLES,
+  FORM_ARIA_LABELS,
   type PageLayout,
   type OpacityConfig,
+  type FormOverlayStyles,
+  type FormAriaLabels,
 } from './page-layout';
 
 // Tailwind Arbitrary Values Configuration
@@ -618,6 +625,51 @@ export {
   ANIMATION_PRESETS,
   type AnimationValues,
 } from './animation-values';
+
+// Animation Classes Configuration
+// Centralizes all hardcoded Tailwind animation class names used throughout components
+export {
+  ANIMATION_CLASSES,
+  UI_FEEDBACK_ANIMATIONS,
+  TASK_ANIMATIONS,
+  CELEBRATION_ANIMATIONS,
+  MOBILE_NAV_ANIMATIONS,
+  SCROLL_ANIMATIONS,
+  BADGE_ANIMATIONS,
+  CHECKLIST_ANIMATIONS,
+  TYPING_ANIMATIONS,
+  ALL_ANIMATION_CLASSES,
+  ANIMATION_CATEGORIES,
+  getAnimationClass,
+  getIndexedAnimationClass,
+  FADE_IN,
+  FADE_OUT,
+  SLIDE_DOWN,
+  SLIDE_UP,
+  SCALE_IN,
+  POP,
+  BOUNCE,
+  PULSE,
+  SPIN,
+  SUCCESS_CHECK,
+  SUCCESS_POP,
+  DRAW_CHECK,
+  COPY_SUCCESS_GLOW,
+  FOCUS_RING,
+  TASK_COMPLETE,
+  CHECKBOX_PULSE,
+  DELIVERABLE_COMPLETE,
+  COPY_CONFETTI,
+  MOBILE_MENU_ITEM,
+  SCROLL_TO_TOP_BOUNCE,
+  BADGE_ENTRANCE_GLOW,
+  COMING_SOON_BADGE,
+  CHECKLIST_ITEM,
+  REQUIREMENT_MET,
+  TYPING_DOT,
+  type AnimationClasses,
+  type AllAnimationClasses,
+} from './animation-classes';
 
 // Remaining Hardcoded Styles Configuration
 // Centralizes remaining hardcoded Tailwind classes throughout components

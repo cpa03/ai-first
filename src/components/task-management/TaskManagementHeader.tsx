@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useEffect, useRef, useState } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
 import CopyButton from '@/components/CopyButton';
@@ -12,9 +12,12 @@ import {
   TEXT_COLORS,
   TRANSITION_CLASSES,
   TASK_MANAGEMENT_LABELS,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -25,6 +28,9 @@ interface TaskManagementHeaderProps {
   overallProgress: number;
   onExpandAll: () => void;
   onCollapseAll: () => void;
+  statusFilter: 'all' | 'in_progress' | 'completed';
+  onFilterChange: (filter: 'all' | 'in_progress' | 'completed') => void;
+  filterCounts: { all: number; in_progress: number; completed: number };
 }
 
 function TaskManagementHeaderComponent({
@@ -36,7 +42,34 @@ function TaskManagementHeaderComponent({
   overallProgress,
   onExpandAll,
   onCollapseAll,
+  statusFilter,
+  onFilterChange,
+  filterCounts,
 }: TaskManagementHeaderProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const { particles, fire } = useConfetti();
+  const [showCompletionCelebration, setShowCompletionCelebration] =
+    useState(false);
+  const prevProgressRef = useRef(overallProgress);
+
+  // Micro-UX: Fire confetti celebration when all tasks are completed (100%)
+  // Mirrors the pattern from TaskItem, IdeaInput, and CopyButton for consistent delight
+  useEffect(() => {
+    const justReached100 =
+      overallProgress === 100 && prevProgressRef.current < 100;
+    if (justReached100 && !prefersReducedMotion) {
+      triggerHapticFeedback();
+      fire();
+      setShowCompletionCelebration(true);
+      const timer = setTimeout(
+        () => setShowCompletionCelebration(false),
+        COMPONENT_CONFIG.DELIVERABLE_CARD.CELEBRATION_DURATION_MS
+      );
+      return () => clearTimeout(timer);
+    }
+    prevProgressRef.current = overallProgress;
+  }, [overallProgress, prefersReducedMotion, fire]);
+
   // Micro-UX: Animate stats from 0 to actual values for a polished first impression
   // Creates a delightful count-up effect that makes data feel alive
   const { displayValue: animatedProgress } = useCountUp({
@@ -64,7 +97,7 @@ function TaskManagementHeaderComponent({
 
   const summaryText = useMemo(() => {
     return [
-      `📊 Task Progress Summary`,
+      `${TASK_MANAGEMENT_LABELS.PROGRESS_SUMMARY_TITLE}`,
       ``,
       `Progress: ${overallProgress}%`,
       `Tasks: ${completedTasks}/${totalTasks} completed`,
@@ -81,7 +114,7 @@ function TaskManagementHeaderComponent({
   ]);
 
   return (
-    <div className={TASK_HEADER_STYLES.CONTAINER}>
+    <div className={`${TASK_HEADER_STYLES.CONTAINER} relative`}>
       <div className={TASK_HEADER_STYLES.STATS.CONTAINER}>
         <div>
           <h2 className={TASK_HEADER_STYLES.TITLE}>
@@ -123,6 +156,58 @@ function TaskManagementHeaderComponent({
       </div>
 
       <div className="mt-4">
+        <div
+          className="flex items-center gap-2 mb-3"
+          role="radiogroup"
+          aria-label={TASK_MANAGEMENT_LABELS.FILTER_ARIA_LABEL}
+        >
+          {(['all', 'in_progress', 'completed'] as const).map((filter) => {
+            const isActive = statusFilter === filter;
+            const count = filterCounts[filter];
+            const label =
+              filter === 'all'
+                ? TASK_MANAGEMENT_LABELS.FILTER_ALL
+                : filter === 'in_progress'
+                  ? TASK_MANAGEMENT_LABELS.FILTER_IN_PROGRESS
+                  : TASK_MANAGEMENT_LABELS.FILTER_COMPLETED;
+            return (
+              <button
+                key={filter}
+                role="radio"
+                aria-checked={isActive}
+                onClick={() => {
+                  triggerHapticFeedback();
+                  onFilterChange(filter);
+                }}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
+                  isActive
+                    ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 ring-offset-1'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+                }`}
+              >
+                {label}
+                <span
+                  className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full font-semibold ${
+                    isActive
+                      ? 'bg-primary-200 text-primary-800'
+                      : 'bg-gray-200 text-gray-500'
+                  }`}
+                >
+                  {count}
+                </span>
+                <kbd
+                  className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ml-0.5`}
+                >
+                  {filter === 'all'
+                    ? '1'
+                    : filter === 'in_progress'
+                      ? '2'
+                      : '3'}
+                </kbd>
+              </button>
+            );
+          })}
+        </div>
         <div className="flex gap-2">
           <Tooltip
             content={MESSAGES.TASK_MANAGEMENT.EXPAND_ALL}
@@ -167,14 +252,16 @@ function TaskManagementHeaderComponent({
         {/* Micro-UX: Keyboard shortcut hints for discoverability */}
         {/* Makes [ and ] shortcuts visible without requiring hover, following the ProgressStepper pattern */}
         <div
-          className="hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-400 animate-breathe"
+          className="hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-500 animate-breathe"
           aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               [
             </kbd>
-            <span className={TRANSITION_CLASSES.COLOR}>expand all</span>
+            <span className={TRANSITION_CLASSES.COLOR}>
+              {TASK_MANAGEMENT_LABELS.EXPAND_ALL_HINT}
+            </span>
           </span>
           <span
             className={`${TEXT_COLORS.MUTED_LIGHT} opacity-50`}
@@ -186,10 +273,33 @@ function TaskManagementHeaderComponent({
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               ]
             </kbd>
-            <span className={TRANSITION_CLASSES.COLOR}>collapse all</span>
+            <span className={TRANSITION_CLASSES.COLOR}>
+              {TASK_MANAGEMENT_LABELS.COLLAPSE_ALL_HINT}
+            </span>
           </span>
         </div>
       </div>
+
+      {showCompletionCelebration &&
+        particles.map((particle) => (
+          <span
+            key={particle.id}
+            className="absolute rounded-full pointer-events-none animate-copy-confetti"
+            style={
+              {
+                left: '50%',
+                top: '30%',
+                width: `${particle.size}px`,
+                height: `${particle.size}px`,
+                backgroundColor: particle.color,
+                '--confetti-x': `${particle.x}px`,
+                '--confetti-y': `${particle.y}px`,
+                animationDelay: `${particle.delay}ms`,
+              } as React.CSSProperties
+            }
+            aria-hidden="true"
+          />
+        ))}
     </div>
   );
 }
