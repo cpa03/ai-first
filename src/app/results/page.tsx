@@ -2,13 +2,13 @@
 
 import { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
-import ScrollProgress from '@/components/ScrollProgress';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import { PLATFORM } from '@/lib/dom-utils';
 import {
@@ -27,7 +27,10 @@ import {
   GRAY_CLASSES,
   DURATION_TAILWIND,
 } from '@/lib/config';
-import dynamic from 'next/dynamic';
+
+const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
+  ssr: false,
+});
 
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
