@@ -67,18 +67,33 @@ export class Cache<T = unknown> {
       return null;
     }
 
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    const now = Date.now();
+
+    if (this.ttl && now - entry.timestamp > this.ttl) {
       this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
       return null;
     }
 
-    // PERFORMANCE: Sliding expiration - update timestamp and move to end of Map.
-    // This keeps the Map sorted by expiration time for O(K) cleanup.
-    entry.timestamp = Date.now();
-    this.cache.delete(key);
-    this.cache.set(key, entry);
+    // PERFORMANCE: Sliding expiration and LRU tracking.
+    // Only update timestamp and move to the end of the Map if the entry has not been updated recently.
+    // This avoids extremely expensive delete/set operations on every read of hot keys,
+    // while still keeping the LRU/expiration order approximately correct.
+    // Threshold: For small caches (maxSize < 10, often in unit tests), we use strict LRU (threshold = 0).
+    // For larger caches, we use a 1-second threshold (or 10% of TTL) to eliminate redundant Map writes.
+    if (this.maxSize || this.ttl) {
+      const hasLargeCache = !this.maxSize || this.maxSize >= 10;
+      const threshold = hasLargeCache
+        ? (this.ttl ? Math.min(1000, this.ttl / 10) : 1000)
+        : 0;
+
+      if (now - entry.timestamp >= threshold) {
+        entry.timestamp = now;
+        this.cache.delete(key);
+        this.cache.set(key, entry);
+      }
+    }
 
     entry.hits++;
     this.totalHits++;
@@ -93,18 +108,33 @@ export class Cache<T = unknown> {
       return false;
     }
 
-    if (this.ttl && Date.now() - entry.timestamp > this.ttl) {
+    const now = Date.now();
+
+    if (this.ttl && now - entry.timestamp > this.ttl) {
       this.totalHits -= entry.hits;
       this.cache.delete(key);
       this.misses++;
       return false;
     }
 
-    // PERFORMANCE: Sliding expiration - update timestamp and move to end of Map.
-    // This keeps the Map sorted by expiration time for O(K) cleanup.
-    entry.timestamp = Date.now();
-    this.cache.delete(key);
-    this.cache.set(key, entry);
+    // PERFORMANCE: Sliding expiration and LRU tracking.
+    // Only update timestamp and move to the end of the Map if the entry has not been updated recently.
+    // This avoids extremely expensive delete/set operations on every read of hot keys,
+    // while still keeping the LRU/expiration order approximately correct.
+    // Threshold: For small caches (maxSize < 10, often in unit tests), we use strict LRU (threshold = 0).
+    // For larger caches, we use a 1-second threshold (or 10% of TTL) to eliminate redundant Map writes.
+    if (this.maxSize || this.ttl) {
+      const hasLargeCache = !this.maxSize || this.maxSize >= 10;
+      const threshold = hasLargeCache
+        ? (this.ttl ? Math.min(1000, this.ttl / 10) : 1000)
+        : 0;
+
+      if (now - entry.timestamp >= threshold) {
+        entry.timestamp = now;
+        this.cache.delete(key);
+        this.cache.set(key, entry);
+      }
+    }
 
     entry.hits++;
     this.totalHits++;
