@@ -8,6 +8,7 @@ import {
   TEXT_SIZE_CLASSES,
   DURATION_TAILWIND,
 } from '@/lib/config';
+import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
 
 const SHOW_PERCENTAGE_THRESHOLD = 75;
@@ -91,7 +92,7 @@ function ScrollProgressComponent() {
       />
       {showPercentage && !prefersReducedMotion && (
         <div
-          className={`absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 animate-fade-in`}
+          className={`absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 ${FADE_IN}`}
           aria-hidden="true"
         >
           <span
