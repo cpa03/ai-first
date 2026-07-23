@@ -20,6 +20,13 @@ interface LoadingSpinnerProps {
   animationDelay?: number;
   /** Optional visible text label to display next to the spinner (e.g., "Loading dashboard...") */
   label?: string;
+  /**
+   * Micro-UX: Delay before showing the spinner (in ms).
+   * Prevents visual flickering for fast-loading operations (< 300ms).
+   * If the operation completes before this delay, no spinner is shown at all.
+   * @default 0
+   */
+  showDelay?: number;
 }
 
 function LoadingSpinnerComponent({
@@ -28,9 +35,11 @@ function LoadingSpinnerComponent({
   ariaLabel = COMPONENT_CONFIG.LOADING.DEFAULT_ARIA_LABEL,
   animationDelay = 0,
   label,
+  showDelay = 0,
 }: LoadingSpinnerProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
   const [hasAppeared, setHasAppeared] = useState(false);
+  const [shouldShow, setShouldShow] = useState(showDelay === 0);
 
   // Micro-UX: Track when spinner first becomes visible for entrance animation
   // Creates a subtle fade-in + scale effect that makes the loading state feel more polished
@@ -41,6 +50,18 @@ function LoadingSpinnerComponent({
       });
     }
   }, [prefersReducedMotion]);
+
+  // Micro-UX: Delay showing spinner to prevent visual flickering for fast operations
+  // If showDelay is 0, spinner shows immediately (backwards compatible)
+  useEffect(() => {
+    if (showDelay <= 0) return;
+
+    const timer = setTimeout(() => {
+      setShouldShow(true);
+    }, showDelay);
+
+    return () => clearTimeout(timer);
+  }, [showDelay]);
 
   // PERFORMANCE: Memoize spinner dimensions to prevent recalculation on every render
   // These values only change when the size prop changes
@@ -105,6 +126,9 @@ function LoadingSpinnerComponent({
       animationDelay,
     ]
   );
+
+  // Don't render anything until showDelay has elapsed (prevents visual flickering)
+  if (!shouldShow) return null;
 
   return (
     <div
