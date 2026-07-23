@@ -136,6 +136,8 @@ async function main() {
   try {
     browser = await chromium.launch({
       headless: true,
+      executablePath:
+        '/home/runner/.cache/ms-playwright/chromium-1228/chrome-linux/chrome',
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',
