@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config/landing-page';
-import { UI_STRINGS } from '@/lib/config/ui';
+import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
 import { SVG_VIEWBOX } from '@/lib/config/theme';
 import { WHY_CHOOSE_SECTION_LABELS } from '@/lib/config/component-labels';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -159,6 +159,20 @@ function WhyChooseSectionComponent() {
             </div>
           </div>
         ))}
+      </div>
+      <div
+        className="hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-400"
+        aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
+      >
+        <span className="flex items-center gap-1.5">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            ←
+          </kbd>
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            →
+          </kbd>
+          <span>{WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_HINT}</span>
+        </span>
       </div>
     </section>
   );
