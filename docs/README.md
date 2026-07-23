@@ -228,7 +228,10 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
+- [Browser Console & Lighthouse Audit Summary](./audit/BROWSER_AUDIT_SUMMARY.md) - Latest browser audit summary (2026-07-23)
+- [BugFixer Audit - 2026-07-22](./audit/bugfixer-audit-20260722.md) - Comprehensive bug audit with quality gates
 - [BugFixer Report - 2026-07-22](./audit/bugfixer-report-2026-07-22.md) - BugFixer loop results and type safety fixes
+- [Flexy Modularization Report](./audit/flexy-modularization-report.md) - Code modularization achievement report
 - [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit (latest)
 - [Browser Console Audit - 2026-07-21](./audit/browser-audit-20260721.md) - BroCula browser console & Lighthouse audit
 - [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit
@@ -261,6 +264,7 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 
 ## Maintenance Reports
 
+- [BugFixer Continuous Monitoring Guide](./maintenance/bugfixer-continuous-monitoring.md) - Continuous monitoring approach for repository quality
 - [Repository Maintenance Report - 2026-07-23 15:00](./maintenance/2026-07-23-repository-maintenance-1500.md) - Branch cleanup and documentation verification
 - [Repository Maintenance Report - 2026-07-22 22:00](./maintenance/2026-07-22-repository-maintenance-2200.md) - Quality gate verification and repository health analysis
 - [Repository Maintenance Report - 2026-07-22 18:30](./maintenance/2026-07-22-repository-maintenance-1830.md) - Quality gate verification and repository health analysis
