@@ -326,10 +326,18 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         ))}
         {filteredDeliverables.length === 0 && statusFilter !== 'all' && (
           <div className="text-center py-8">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 mb-3">
               No {statusFilter === 'in_progress' ? 'in progress' : 'completed'}{' '}
               tasks found.
             </p>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleFilterChange('all')}
+              aria-label={TASK_MANAGEMENT_LABELS.SHOW_ALL_TASKS_ARIA}
+            >
+              {TASK_MANAGEMENT_LABELS.SHOW_ALL_TASKS}
+            </Button>
           </div>
         )}
       </div>

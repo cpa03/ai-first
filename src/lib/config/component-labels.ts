@@ -398,6 +398,8 @@ export const TASK_MANAGEMENT_LABELS = {
   EXPAND_ALL_HINT: 'expand all',
   COLLAPSE_ALL_HINT: 'collapse all',
   PROGRESS_SUMMARY_TITLE: '📊 Task Progress Summary',
+  SHOW_ALL_TASKS: 'Show all tasks',
+  SHOW_ALL_TASKS_ARIA: 'Clear filter and show all tasks',
 } as const;
 
 /**
