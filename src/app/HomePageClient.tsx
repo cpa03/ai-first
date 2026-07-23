@@ -3,8 +3,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
-import ShareButton from '@/components/ShareButton';
-import Skeleton from '@/components/Skeleton';
 import { HOME_PAGE_CONFIG } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
 import {
@@ -14,6 +12,14 @@ import {
   BORDER_COLORS,
 } from '@/lib/config/theme';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+
+const ShareButton = dynamic(() => import('@/components/ShareButton'), {
+  ssr: false,
+});
+
+const Skeleton = dynamic(() => import('@/components/Skeleton'), {
+  ssr: false,
+});
 
 // Dynamic imports for heavy components to reduce initial bundle size
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {

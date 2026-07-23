@@ -3,11 +3,8 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { supabaseClient } from '@/lib/db';
-import Button from '@/components/Button';
-import InputWithValidation from '@/components/InputWithValidation';
-import Alert from '@/components/Alert';
-import { CapsLockWarning } from '@/components/CapsLockWarning';
 import { useCapsLock } from '@/hooks/useCapsLock';
 import {
   OAUTH_PROVIDER_COLORS,
@@ -35,6 +32,19 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
+
+// Dynamic imports for code splitting - reduce initial bundle size
+const Button = dynamic(() => import('@/components/Button'), { ssr: false });
+const InputWithValidation = dynamic(
+  () => import('@/components/InputWithValidation'),
+  { ssr: false }
+);
+const Alert = dynamic(() => import('@/components/Alert'), { ssr: false });
+const CapsLockWarning = dynamic(
+  () =>
+    import('@/components/CapsLockWarning').then((mod) => mod.CapsLockWarning),
+  { ssr: false }
+);
 
 export default function LoginPage() {
   const { scrollToError } = useScrollToError();
