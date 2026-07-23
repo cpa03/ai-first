@@ -1275,8 +1275,8 @@ export const TEXT_COLOR_CLASSES = {
   /** Tertiary/muted text (gray-500) */
   MUTED: 'text-gray-500',
 
-  /** Disabled/placeholder text (gray-400) */
-  PLACEHOLDER: 'text-gray-400',
+  /** Disabled/placeholder text (gray-500) */
+  PLACEHOLDER: 'text-gray-500',
 
   /** Primary brand text (primary-600) */
   BRAND: 'text-primary-600',
@@ -1320,8 +1320,8 @@ export const TEXT_COLOR_CLASSES = {
   /** Link text with underline (gray-500 hover:primary-600) */
   LINK: 'text-gray-500 hover:text-primary-600 underline',
 
-  /** Small label text (gray-400) */
-  LABEL: 'text-gray-400',
+  /** Small label text (gray-500) */
+  LABEL: 'text-gray-500',
 
   /** Input text (gray-800) */
   INPUT: 'text-gray-800',

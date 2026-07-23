@@ -320,7 +320,7 @@ export const DASHBOARD_PATTERNS = {
   KEYBOARD_HINTS_GROUP: 'flex items-center gap-4 text-xs text-gray-500',
   KEYBOARD_HINT_ITEM:
     'hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200',
-  KEYBOARD_HINT_LABEL: 'text-gray-400',
+  KEYBOARD_HINT_LABEL: 'text-gray-500',
 
   VIEW_SHORTCUTS_BTN:
     'text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-200',

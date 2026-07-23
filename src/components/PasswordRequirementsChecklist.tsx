@@ -254,7 +254,7 @@ function PasswordRequirementsChecklistComponent({
                 </svg>
               ) : (
                 <svg
-                  className="w-3 h-3 text-gray-400"
+                  className="w-3 h-3 text-gray-500"
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
