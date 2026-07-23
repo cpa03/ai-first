@@ -1019,6 +1019,32 @@ export const SVG_SIZES = {
 } as const;
 
 /**
+ * SVG Center Constants
+ * Centralizes hardcoded cx, cy, and r values for SVG circles
+ * Eliminates hardcoded cx="12" cy="12" r="10" patterns in component files
+ *
+ * Usage:
+ * ```typescript
+ * import { SVG_CIRCLE } from '@/lib/config';
+ * <circle cx={SVG_CIRCLE.CX_24} cy={SVG_CIRCLE.CY_24} r={SVG_CIRCLE.R_10} />
+ * ```
+ */
+export const SVG_CIRCLE = {
+  /** Center X for 24x24 viewBox (standard) */
+  CX_24: '12',
+  /** Center Y for 24x24 viewBox (standard) */
+  CY_24: '12',
+  /** Radius for 24x24 viewBox (standard) */
+  R_10: '10',
+  /** Center X for 16x16 viewBox */
+  CX_16: '8',
+  /** Center Y for 16x16 viewBox */
+  CY_16: '8',
+  /** Radius for 16x16 viewBox */
+  R_6: '6',
+} as const;
+
+/**
  * Gap Size Configuration
  * Centralizes gap Tailwind classes used across all flex/grid layouts.
  * Eliminates hardcoded gap-N classes in 15+ component files.

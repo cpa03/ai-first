@@ -14,6 +14,7 @@ import {
   MESSAGES,
   TEXT_COLORS,
   BG_COLORS,
+  DELIVERABLE_CARD_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -164,7 +165,7 @@ function DeliverableCardComponent({
               <span
                 className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-semibold rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${TEXT_COLORS.SUCCESS_DARK} ${showCompletionCelebration && !prefersReducedMotion ? 'animate-success-pop' : ''}`}
                 role="status"
-                aria-label="Deliverable complete"
+                aria-label={DELIVERABLE_CARD_LABELS.COMPLETE_ARIA_LABEL}
               >
                 <svg
                   className="w-3 h-3"
@@ -180,7 +181,7 @@ function DeliverableCardComponent({
                     d="M5 13l4 4L19 7"
                   />
                 </svg>
-                Complete
+                {DELIVERABLE_CARD_LABELS.COMPLETE_BADGE}
               </span>
             )}
           </div>

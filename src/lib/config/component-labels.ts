@@ -376,7 +376,7 @@ export const USER_ONBOARDING_LABELS = {
 } as const;
 
 /**
- * Task Management Labels
+ * TaskManagement Labels
  * Eliminates hardcoded strings in TaskManagement component
  */
 export const TASK_MANAGEMENT_LABELS = {
@@ -395,6 +395,18 @@ export const TASK_MANAGEMENT_LABELS = {
   FILTER_ARIA_LABEL: 'Filter tasks by status',
   FILTER_ANNOUNCEMENT: (count: number, status: string) =>
     `Showing ${count} ${status === 'all' ? '' : status} tasks`,
+  EXPAND_ALL_HINT: 'expand all',
+  COLLAPSE_ALL_HINT: 'collapse all',
+  PROGRESS_SUMMARY_TITLE: '📊 Task Progress Summary',
+} as const;
+
+/**
+ * DeliverableCard Labels
+ * Eliminates hardcoded strings in DeliverableCard component
+ */
+export const DELIVERABLE_CARD_LABELS = {
+  COMPLETE_BADGE: 'Complete',
+  COMPLETE_ARIA_LABEL: 'Deliverable complete',
 } as const;
 
 /**
@@ -635,6 +647,7 @@ export type KeyboardShortcutsProviderLabels =
 export type IdeaInputLabels = typeof IDEA_INPUT_LABELS;
 export type UserOnboardingLabels = typeof USER_ONBOARDING_LABELS;
 export type TaskManagementLabels = typeof TASK_MANAGEMENT_LABELS;
+export type DeliverableCardLabels = typeof DELIVERABLE_CARD_LABELS;
 export type IdeaReadyIndicatorLabels = typeof IDEA_READY_INDICATOR_LABELS;
 export type StepCelebrationLabels = typeof STEP_CELEBRATION_LABELS;
 export type UserOnboardingCompletionLabels =
