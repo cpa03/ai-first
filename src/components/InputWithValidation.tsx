@@ -475,7 +475,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`w-11 h-11 flex items-center justify-center text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100 ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                  className={`w-11 h-11 flex items-center justify-center text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg

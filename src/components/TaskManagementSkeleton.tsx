@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_LABELS,
   SKELETON_PROGRESS,
 } from '@/lib/config';
+import { FADE_IN } from '@/lib/config/animation-classes';
 
 /**
  * TaskManagementSkeleton - Skeleton loading state for TaskManagement component
@@ -29,7 +30,7 @@ import {
 function TaskManagementSkeletonComponent() {
   return (
     <div
-      className="animate-fade-in"
+      className={FADE_IN}
       role="status"
       aria-live="polite"
       aria-label={TASK_MANAGEMENT_LABELS.SKELETON_ARIA_LABEL}
@@ -70,7 +71,7 @@ function TaskManagementSkeletonComponent() {
         }).map((_, index) => (
           <div
             key={index}
-            className="animate-fade-in"
+            className={FADE_IN}
             style={{
               animationDelay: `${index * ANIMATION_CONFIG.DASHBOARD_STAGGER_DELAY}ms`,
             }}

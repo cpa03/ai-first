@@ -16,6 +16,7 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
   PULSE_DOT,
+  SVG_CIRCLE,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -175,18 +176,18 @@ function AutoSaveIndicatorComponent({
           aria-hidden="true"
         >
           <circle
-            cx="12"
-            cy="12"
-            r="10"
+            cx={SVG_CIRCLE.CX_24}
+            cy={SVG_CIRCLE.CY_24}
+            r={SVG_CIRCLE.R_10}
             stroke="currentColor"
             strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
             className={TEXT_COLORS.MUTED_LIGHT}
           />
           {(saveState === 'typing' || saveState === 'saving') && (
             <circle
-              cx="12"
-              cy="12"
-              r="10"
+              cx={SVG_CIRCLE.CX_24}
+              cy={SVG_CIRCLE.CY_24}
+              r={SVG_CIRCLE.R_10}
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               strokeLinecap="round"

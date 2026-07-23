@@ -8,8 +8,10 @@ All errors follow this structure:
 
 ```json
 {
+  "success": false,
   "error": "Human-readable error message",
   "code": "ERROR_CODE",
+  "fingerprint": "abc123def456...",
   "details": [{ "field": "fieldName", "message": "Specific validation error" }],
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
@@ -23,11 +25,13 @@ All errors follow this structure:
 
 ### Error Response Fields
 
+- `success` (boolean): Always `false` for error responses. Useful for distinguishing success/error responses programmatically.
 - `error` (string): Human-readable error message describing what went wrong
 - `code` (string): Error code for programmatic handling
+- `fingerprint` (string): Base64-encoded error fingerprint for deduplication and debugging. Format: `base64(ERROR_CODE:message).slice(0, 32)`
 - `details` (array, optional): Array of specific validation errors with field and message
 - `timestamp` (string): ISO 8601 timestamp of when the error occurred
-- `requestId` (string, optional): Unique request identifier for tracing and debugging
+- `requestId` (string): Unique request identifier for tracing and debugging
 - `retryable` (boolean): Whether the error can be safely retried
 - `suggestions` (array, optional): Array of actionable suggestions for recovering from the error
 
@@ -65,8 +69,10 @@ Request validation failed. The request body or query parameters don't meet requi
 
 ```json
 {
+  "success": false,
   "error": "Request validation failed",
   "code": "VALIDATION_ERROR",
+  "fingerprint": "VkFMSURBVElPTl9DRVJST1I6UmVxdWVzdCB2YWxpZGF0aW9uIGZhaWxlZA",
   "details": [
     {
       "field": "ideaId",
@@ -110,8 +116,10 @@ Request rate limit exceeded. Too many requests in a short period.
 
 ```json
 {
+  "success": false,
   "error": "Rate limit exceeded. Retry after 60 seconds",
   "code": "RATE_LIMIT_EXCEEDED",
+  "fingerprint": "UkFURV9MSU1JVF9FWENFRURFRDpSYXRlIGxpbWl0IGV4Y2VlZGVk",
   "details": [{ "message": "Limit: 50, Remaining: 0" }],
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
@@ -156,8 +164,10 @@ Unexpected internal server error. Something went wrong on the server.
 
 ```json
 {
+  "success": false,
   "error": "An unexpected error occurred",
   "code": "INTERNAL_ERROR",
+  "fingerprint": "SU5URVJOQUxfRVJST1I6QW4gdW5leHBlY3RlZCBlcnJvciBvY3N1cnJlZA",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
@@ -191,8 +201,10 @@ External service (OpenAI, Notion, etc.) returned an error.
 
 ```json
 {
+  "success": false,
   "error": "External service error: openai - Quota exceeded",
   "code": "EXTERNAL_SERVICE_ERROR",
+  "fingerprint": "RVhURVJOQUxfU0VSVklDRV9FWElDT1I6RXh0ZXJuYWwgc2VydmljZSBlcnJvcg",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
@@ -227,8 +239,10 @@ Operation exceeded time limit and was aborted.
 
 ```json
 {
+  "success": false,
   "error": "Request timed out after 60000ms",
   "code": "TIMEOUT_ERROR",
+  "fingerprint": "VElNRU9VVF9FUkRPUjpSZXF1ZXN0IHRpbWVkIG91dCBhZnRlciA2MDAwMG1z",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
@@ -263,8 +277,10 @@ Authentication failed or missing.
 
 ```json
 {
+  "success": false,
   "error": "Authentication required",
   "code": "AUTHENTICATION_ERROR",
+  "fingerprint": "QVVOVElDQVRJT05fRVJST1I6QXV0aGVudGljYXRpb24gcmVxdWlyZWQ",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
@@ -298,8 +314,10 @@ Insufficient permissions to access resource.
 
 ```json
 {
+  "success": false,
   "error": "You don't have permission to access this resource",
   "code": "AUTHORIZATION_ERROR",
+  "fingerprint": "QVVUSE9SSVJBVElPTl9FUkRPUjpZb3UgZG9uJ3QgaGF2ZSBwZXJtaXNzaW9u",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
@@ -334,8 +352,10 @@ Requested resource not found.
 
 ```json
 {
+  "success": false,
   "error": "Clarification session not found",
   "code": "NOT_FOUND",
+  "fingerprint": "Tk9UX0ZPVU5EOkNsYXJpZmljYXRpb24gc2Vzc2lvbiBub3QgZm91bmQ",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
@@ -369,8 +389,10 @@ Resource conflict or duplicate creation attempt.
 
 ```json
 {
+  "success": false,
   "error": "Clarification session already exists for this idea",
   "code": "CONFLICT",
+  "fingerprint": "Q09ORkxJQ1Q6Q2xhcmlmaWNhdGlvbiBzZXNzaW9uIGFscmVhZHkgZXhpc3Rz",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,
@@ -405,8 +427,10 @@ Service temporarily unavailable for maintenance or high load.
 
 ```json
 {
+  "success": false,
   "error": "Service temporarily unavailable",
   "code": "SERVICE_UNAVAILABLE",
+  "fingerprint": "U0VSVklDRV9VTkFWQUlMQUJMRVNUSVZFUyB0ZW1wb3JhcmlseSB1bmF2YWlsYWJsZQ",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
@@ -441,8 +465,10 @@ Service is not ready to handle requests. This is typically used by health check 
 
 ```json
 {
+  "success": false,
   "error": "Service not ready",
   "code": "NOT_READY",
+  "fingerprint": "Tk9UX1JFQURZOlNlcnZpY2Ugbm90IHJlYWR5",
   "details": [{ "field": "database", "message": "Connection failed: timeout" }],
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
@@ -471,8 +497,10 @@ Circuit breaker is open due to repeated failures of external service.
 
 ```json
 {
+  "success": false,
   "error": "Circuit breaker open for openai. Retry after 2026-01-07T12:01:00Z",
   "code": "CIRCUIT_BREAKER_OPEN",
+  "fingerprint": "Q0lSQ1VJVF9CUkVBS0VSX09QRU46Q2lyY3VpdCBicmVha2VyIG9wZW4",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": true,
@@ -506,8 +534,10 @@ All retry attempts for an operation failed.
 
 ```json
 {
+  "success": false,
   "error": "Failed after 3 attempts",
   "code": "RETRY_EXHAUSTED",
+  "fingerprint": "UkVUUllfRVhBVVNURUQ6RmFpbGVkIGFmdGVyIDMgYXR0ZW1wdHM",
   "timestamp": "2026-01-07T12:00:00Z",
   "requestId": "req_1234567890_abc123",
   "retryable": false,

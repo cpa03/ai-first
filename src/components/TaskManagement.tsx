@@ -52,6 +52,9 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
   const [expandAnnouncement, setExpandAnnouncement] = useState('');
   const [expandTriggered, setExpandTriggered] = useState(false);
   const [focusedTaskIndex, setFocusedTaskIndex] = useState<number>(-1);
+  const [statusFilter, setStatusFilter] = useState<
+    'all' | 'in_progress' | 'completed'
+  >('all');
   const taskRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
 
   const allTasks = useMemo(() => {
@@ -64,6 +67,47 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     }
     return tasks;
   }, [data]);
+
+  const filterCounts = useMemo(() => {
+    const counts = { all: 0, in_progress: 0, completed: 0 };
+    for (const task of allTasks) {
+      counts.all++;
+      if (task.status === 'in_progress') counts.in_progress++;
+      if (task.status === 'completed') counts.completed++;
+    }
+    return counts;
+  }, [allTasks]);
+
+  const handleFilterChange = useCallback(
+    (filter: 'all' | 'in_progress' | 'completed') => {
+      setStatusFilter(filter);
+      setFocusedTaskIndex(-1);
+      triggerHapticFeedback();
+      const filterLabel =
+        filter === 'all'
+          ? 'all'
+          : filter === 'in_progress'
+            ? 'in progress'
+            : 'completed';
+      const count = filterCounts[filter];
+      setExpandAnnouncement(
+        TASK_MANAGEMENT_LABELS.FILTER_ANNOUNCEMENT(count, filterLabel)
+      );
+      setExpandTriggered(true);
+    },
+    [filterCounts]
+  );
+
+  const filteredDeliverables = useMemo(() => {
+    if (!data || data.deliverables.length === 0) return [];
+    if (statusFilter === 'all') return data.deliverables;
+    return data.deliverables
+      .map((d) => ({
+        ...d,
+        tasks: d.tasks.filter((t) => t.status === statusFilter),
+      }))
+      .filter((d) => d.tasks.length > 0);
+  }, [data, statusFilter]);
 
   const focusedTaskId = useMemo(
     () =>
@@ -133,6 +177,18 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
       } else if (e.key === 'Escape') {
         e.preventDefault();
         setFocusedTaskIndex(-1);
+      } else if (e.key === '1') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        handleFilterChange('all');
+      } else if (e.key === '2') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        handleFilterChange('in_progress');
+      } else if (e.key === '3') {
+        e.preventDefault();
+        triggerHapticFeedback();
+        handleFilterChange('completed');
       }
     };
 
@@ -145,6 +201,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     allTasks,
     focusedTaskIndex,
     handleToggleTaskStatus,
+    handleFilterChange,
   ]);
 
   // PERFORMANCE: Memoize reload handler to prevent function recreation on each render
@@ -232,7 +289,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
     );
   }
 
-  const { deliverables, summary } = data;
+  const { summary } = data;
 
   return (
     <div className="space-y-6">
@@ -250,10 +307,13 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         overallProgress={summary.overallProgress}
         onExpandAll={expandAll}
         onCollapseAll={collapseAll}
+        statusFilter={statusFilter}
+        onFilterChange={handleFilterChange}
+        filterCounts={filterCounts}
       />
 
       <div className="space-y-4">
-        {deliverables.map((deliverable) => (
+        {filteredDeliverables.map((deliverable) => (
           <DeliverableCard
             key={deliverable.id}
             deliverable={deliverable}
@@ -264,12 +324,20 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             onToggleTask={handleToggleTaskStatus}
           />
         ))}
+        {filteredDeliverables.length === 0 && statusFilter !== 'all' && (
+          <div className="text-center py-8">
+            <p className="text-sm text-gray-500">
+              No {statusFilter === 'in_progress' ? 'in progress' : 'completed'}{' '}
+              tasks found.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Micro-UX: Keyboard shortcut hints for discoverability */}
       {/* Matches the pattern established on the dashboard page */}
       <div
-        className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400"
+        className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500"
         aria-hidden="true"
       >
         <span className="hidden sm:inline-flex items-center gap-1.5">
@@ -295,6 +363,12 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             ]
           </kbd>
           collapse all
+        </span>
+        <span className="hidden sm:inline-flex items-center gap-1.5">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            1-3
+          </kbd>
+          filter
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>

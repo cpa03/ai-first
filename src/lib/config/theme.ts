@@ -1019,6 +1019,32 @@ export const SVG_SIZES = {
 } as const;
 
 /**
+ * SVG Center Constants
+ * Centralizes hardcoded cx, cy, and r values for SVG circles
+ * Eliminates hardcoded cx="12" cy="12" r="10" patterns in component files
+ *
+ * Usage:
+ * ```typescript
+ * import { SVG_CIRCLE } from '@/lib/config';
+ * <circle cx={SVG_CIRCLE.CX_24} cy={SVG_CIRCLE.CY_24} r={SVG_CIRCLE.R_10} />
+ * ```
+ */
+export const SVG_CIRCLE = {
+  /** Center X for 24x24 viewBox (standard) */
+  CX_24: '12',
+  /** Center Y for 24x24 viewBox (standard) */
+  CY_24: '12',
+  /** Radius for 24x24 viewBox (standard) */
+  R_10: '10',
+  /** Center X for 16x16 viewBox */
+  CX_16: '8',
+  /** Center Y for 16x16 viewBox */
+  CY_16: '8',
+  /** Radius for 16x16 viewBox */
+  R_6: '6',
+} as const;
+
+/**
  * Gap Size Configuration
  * Centralizes gap Tailwind classes used across all flex/grid layouts.
  * Eliminates hardcoded gap-N classes in 15+ component files.
@@ -1275,8 +1301,8 @@ export const TEXT_COLOR_CLASSES = {
   /** Tertiary/muted text (gray-500) */
   MUTED: 'text-gray-500',
 
-  /** Disabled/placeholder text (gray-400) */
-  PLACEHOLDER: 'text-gray-400',
+  /** Disabled/placeholder text (gray-500) */
+  PLACEHOLDER: 'text-gray-500',
 
   /** Primary brand text (primary-600) */
   BRAND: 'text-primary-600',
@@ -1320,8 +1346,8 @@ export const TEXT_COLOR_CLASSES = {
   /** Link text with underline (gray-500 hover:primary-600) */
   LINK: 'text-gray-500 hover:text-primary-600 underline',
 
-  /** Small label text (gray-400) */
-  LABEL: 'text-gray-400',
+  /** Small label text (gray-500) */
+  LABEL: 'text-gray-500',
 
   /** Input text (gray-800) */
   INPUT: 'text-gray-800',

@@ -2,13 +2,13 @@
 
 import { useState, useEffect, Suspense, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { exportManager, exportUtils } from '@/lib/export-connectors';
 import { createLogger } from '@/lib/logger';
 import { fetchWithTimeout } from '@/lib/api-client';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
-import ScrollProgress from '@/components/ScrollProgress';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import { PLATFORM } from '@/lib/dom-utils';
 import {
@@ -25,8 +25,12 @@ import {
   COMPONENT_CONFIG,
   ELEMENT_PATTERNS,
   GRAY_CLASSES,
+  DURATION_TAILWIND,
 } from '@/lib/config';
-import dynamic from 'next/dynamic';
+
+const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
+  ssr: false,
+});
 
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -668,7 +672,9 @@ function ResultsContent() {
             className="mt-4 flex items-center gap-2 text-xs text-gray-400"
             aria-hidden="true"
           >
-            <span className="hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors duration-200">
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors ${DURATION_TAILWIND[200]}`}
+            >
               <kbd className={ELEMENT_PATTERNS.KBD}>{isMac ? '⌘' : 'Ctrl'}</kbd>
               <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
               <span className={GRAY_CLASSES.TEXT_400}>

@@ -312,7 +312,7 @@ const ProgressStepperComponent = function ProgressStepper({
       {/* Micro-UX: Keyboard navigation hints for step navigation */}
       {onStepClick && steps.length > 1 && (
         <div
-          className="hidden sm:flex items-center justify-center gap-2 mt-2 text-xs text-gray-400"
+          className="hidden sm:flex items-center justify-center gap-2 mt-2 text-xs text-gray-500"
           aria-label={PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">

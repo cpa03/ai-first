@@ -33,6 +33,9 @@ import {
   BG_COLORS,
   VALIDATION_CONFIG,
   FORM_PATTERNS,
+  DURATION_TAILWIND,
+  FORM_OVERLAY_STYLES,
+  FORM_ARIA_LABELS,
 } from '@/lib/config';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -64,7 +67,7 @@ function PasswordMatchIndicator({
 
   return (
     <div
-      className={`flex items-center gap-2 text-sm transition-all duration-200 animate-fade-in ${
+      className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${
         matchStatus === 'match'
           ? TEXT_COLORS.SUCCESS_DARK
           : TEXT_COLORS.WARNING_LIGHT
@@ -231,7 +234,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       <div className="flex items-center gap-2">
         <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className={`h-full ${config.color} transition-all duration-300 ease-out rounded-full`}
+            className={`h-full ${config.color} transition-all ${DURATION_TAILWIND[300]} ease-out rounded-full`}
             style={{ width: `${percentage}%` }}
             role="progressbar"
             aria-valuenow={score}
@@ -241,7 +244,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           />
         </div>
         <span
-          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors duration-200`}
+          className={`text-xs font-medium tabular-nums ${config.textColor} transition-colors ${DURATION_TAILWIND[200]}`}
           aria-live="polite"
           aria-atomic="true"
         >
@@ -250,7 +253,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <span className={`text-xs ${config.textColor}`}>{config.label}</span>
         {celebrating && !prefersReducedMotion && (
           <svg
-            className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in duration-200`}
+            className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -527,13 +530,13 @@ export default function SignupPage() {
         {/* Shows subtle overlay with spinner when form is being submitted */}
         {isLoading && (
           <div
-            className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl animate-fade-in"
+            className={FORM_OVERLAY_STYLES.CONTAINER}
             aria-live="assertive"
-            aria-label="Creating account, please wait"
+            aria-label={FORM_ARIA_LABELS.SIGNUP_SUBMITTING}
           >
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-              <span className="text-sm font-medium text-gray-700">
+            <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
+              <div className={FORM_OVERLAY_STYLES.SPINNER} />
+              <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
                 Creating account...
               </span>
             </div>

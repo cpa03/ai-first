@@ -11,11 +11,12 @@ import {
   BG_COLORS,
   BORDER_COLORS,
 } from '@/lib/config';
+import { FADE_IN } from '@/lib/config/animation-classes';
 
 function DashboardSkeletonComponent() {
   return (
     <div
-      className="animate-fade-in"
+      className={FADE_IN}
       role="status"
       aria-live="polite"
       aria-label={DASHBOARD_LABELS.SKELETON_ARIA_LABEL}
@@ -71,7 +72,7 @@ function DashboardSkeletonComponent() {
               }).map((_, index) => (
                 <tr
                   key={index}
-                  className={`animate-fade-in`}
+                  className={`${FADE_IN}`}
                   style={{
                     animationDelay: `${index * ANIMATION_DELAYS.MICRO}ms`,
                   }}
