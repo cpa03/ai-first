@@ -182,6 +182,22 @@ class AIService {
 
   // Initialize AI service with provider-specific config
   async initialize(config: AIModelConfig): Promise<void> {
+    // SECURITY: Validate AI model configuration before initialization
+    // Defense-in-depth: validation also happens in config-service
+    const validationResult = validateAIModelConfig(config);
+    if (!validationResult.valid) {
+      const { AppError, ErrorCode } = await import('./errors');
+      const errorDetails = validationResult.errors
+        .map((e) => e.field + ': ' + e.message)
+        .join('; ');
+      throw new AppError(
+        `Invalid AI model configuration: ${errorDetails}`,
+        ErrorCode.VALIDATION_ERROR,
+        undefined,
+        validationResult.errors
+      );
+    }
+
     // Validate API keys and configuration
     if (config.provider === 'openai' && !this.openai) {
       throw new Error(API_ERROR_MESSAGES.AI.OPENAI_API_KEY_NOT_CONFIGURED);

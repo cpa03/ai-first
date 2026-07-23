@@ -95,8 +95,10 @@ describe('ClarifierAgent', () => {
 
     it('should return fallback questions on AI error', async () => {
       const { aiService } = require('@/lib/ai');
+      aiService.initialize.mockResolvedValue(undefined);
       aiService.callModel.mockRejectedValue(new Error('AI service error'));
 
+      await clarifierAgent.initialize();
       const questions = await clarifierAgent.generateQuestions('Test idea');
 
       expect(questions).toHaveLength(3);
@@ -194,8 +196,11 @@ describe('ClarifierAgent', () => {
     });
 
     it('should throw error if session not found', async () => {
+      const { aiService } = require('@/lib/ai');
+      aiService.initialize.mockResolvedValue(undefined);
       mockDbService.getVectors.mockResolvedValue([]);
 
+      await clarifierAgent.initialize();
       await expect(
         clarifierAgent.submitAnswer('idea-123', 'q_1', 'Test answer')
       ).rejects.toThrow('Clarification session not found');
@@ -269,6 +274,10 @@ describe('ClarifierAgent', () => {
         }),
       ]);
 
+      const { aiService } = require('@/lib/ai');
+      aiService.initialize.mockResolvedValue(undefined);
+      await clarifierAgent.initialize();
+
       await expect(
         clarifierAgent.completeClarification('idea-123')
       ).rejects.toThrow('1 required questions still unanswered');
@@ -330,8 +339,10 @@ describe('ClarifierAgent', () => {
       };
 
       const { aiService } = require('@/lib/ai');
+      aiService.initialize.mockResolvedValue(undefined);
       aiService.callModel.mockRejectedValue(new Error('AI service error'));
 
+      await clarifierAgent.initialize();
       const refinedIdea = await clarifierAgent.generateRefinedIdea(mockSession);
 
       expect(refinedIdea).toContain('Test idea');
