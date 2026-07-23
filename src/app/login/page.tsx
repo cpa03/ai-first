@@ -30,6 +30,8 @@ import {
   UI_CONFIG,
   VALIDATION_CONFIG,
   DURATION_TAILWIND,
+  FORM_OVERLAY_STYLES,
+  FORM_ARIA_LABELS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
@@ -215,13 +217,13 @@ export default function LoginPage() {
         {/* Shows subtle overlay with spinner when form is being submitted */}
         {isLoading && (
           <div
-            className="absolute inset-0 bg-white/60 backdrop-blur-[2px] z-10 flex items-center justify-center rounded-xl animate-fade-in"
+            className={FORM_OVERLAY_STYLES.CONTAINER}
             aria-live="assertive"
-            aria-label="Signing in, please wait"
+            aria-label={FORM_ARIA_LABELS.LOGIN_SUBMITTING}
           >
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-3 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-              <span className="text-sm font-medium text-gray-700">
+            <div className={FORM_OVERLAY_STYLES.SPINNER_CONTAINER}>
+              <div className={FORM_OVERLAY_STYLES.SPINNER} />
+              <span className={FORM_OVERLAY_STYLES.LOADING_TEXT}>
                 Signing in...
               </span>
             </div>
