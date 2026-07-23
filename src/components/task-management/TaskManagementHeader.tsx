@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo, useMemo, useEffect, useRef, useState } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
 import CopyButton from '@/components/CopyButton';
@@ -15,6 +15,8 @@ import {
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 
 interface TaskManagementHeaderProps {
   totalDeliverables: number;
@@ -37,6 +39,27 @@ function TaskManagementHeaderComponent({
   onExpandAll,
   onCollapseAll,
 }: TaskManagementHeaderProps) {
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const { particles, fire } = useConfetti();
+  const [showCompletionCelebration, setShowCompletionCelebration] =
+    useState(false);
+  const prevProgressRef = useRef(overallProgress);
+
+  // Micro-UX: Fire confetti celebration when all tasks are completed (100%)
+  // Mirrors the pattern from TaskItem, IdeaInput, and CopyButton for consistent delight
+  useEffect(() => {
+    const justReached100 =
+      overallProgress === 100 && prevProgressRef.current < 100;
+    if (justReached100 && !prefersReducedMotion) {
+      triggerHapticFeedback();
+      fire();
+      setShowCompletionCelebration(true);
+      const timer = setTimeout(() => setShowCompletionCelebration(false), 2000);
+      return () => clearTimeout(timer);
+    }
+    prevProgressRef.current = overallProgress;
+  }, [overallProgress, prefersReducedMotion, fire]);
+
   // Micro-UX: Animate stats from 0 to actual values for a polished first impression
   // Creates a delightful count-up effect that makes data feel alive
   const { displayValue: animatedProgress } = useCountUp({
@@ -81,7 +104,7 @@ function TaskManagementHeaderComponent({
   ]);
 
   return (
-    <div className={TASK_HEADER_STYLES.CONTAINER}>
+    <div className={`${TASK_HEADER_STYLES.CONTAINER} relative`}>
       <div className={TASK_HEADER_STYLES.STATS.CONTAINER}>
         <div>
           <h2 className={TASK_HEADER_STYLES.TITLE}>
@@ -190,6 +213,27 @@ function TaskManagementHeaderComponent({
           </span>
         </div>
       </div>
+
+      {showCompletionCelebration &&
+        particles.map((particle) => (
+          <span
+            key={particle.id}
+            className="absolute rounded-full pointer-events-none animate-copy-confetti"
+            style={
+              {
+                left: '50%',
+                top: '30%',
+                width: `${particle.size}px`,
+                height: `${particle.size}px`,
+                backgroundColor: particle.color,
+                '--confetti-x': `${particle.x}px`,
+                '--confetti-y': `${particle.y}px`,
+                animationDelay: `${particle.delay}ms`,
+              } as React.CSSProperties
+            }
+            aria-hidden="true"
+          />
+        ))}
     </div>
   );
 }
