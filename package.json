@@ -33,6 +33,7 @@
     "db:reset": "supabase db reset",
     "scan:console": "node scripts/scan-console.js",
     "audit:lighthouse": "node scripts/lighthouse-audit.js",
+    "audit:browser": "node scripts/brocula-audit.js",
     "build:verify": "npm run build && npm run scan:console && npm run audit:lighthouse",
     "analyze": "ANALYZE=true npm run build -- --webpack",
     "build:cloudflare": "opennextjs-cloudflare build",
