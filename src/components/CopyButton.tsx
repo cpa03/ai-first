@@ -76,6 +76,17 @@ const CopyButtonComponent = function CopyButton({
     copy(textToCopy);
   }, [copy, textToCopy]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
+        e.preventDefault();
+        e.stopPropagation();
+        handleCopy();
+      }
+    },
+    [handleCopy]
+  );
+
   const baseClasses = `
     inline-flex items-center justify-center gap-2
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
@@ -123,6 +134,7 @@ const CopyButtonComponent = function CopyButton({
         <span className="relative inline-flex">
           <button
             onClick={handleCopy}
+            onKeyDown={handleKeyDown}
             className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
             aria-label={ariaLabel}
             type="button"
