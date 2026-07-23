@@ -8,6 +8,7 @@ import {
   SVG_VIEWBOX,
   TEXT_COLORS,
 } from '@/lib/config';
+import { FADE_IN } from '@/lib/config/animation-classes';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface CapsLockWarningProps {
@@ -40,7 +41,7 @@ function CapsLockWarningComponent({
   return (
     <div
       className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} text-xs font-medium transition-all ${DURATION_TAILWIND[200]} ease-out ${
-        prefersReducedMotion ? '' : 'animate-fade-in'
+        prefersReducedMotion ? '' : FADE_IN
       } ${className}`}
       role="status"
       aria-live="polite"

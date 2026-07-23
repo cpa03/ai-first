@@ -9,6 +9,7 @@ import {
   TRANSITION_CLASSES,
   LOADING_SPINNER_RIPPLE,
 } from '@/lib/config';
+import { FADE_IN } from '@/lib/config/animation-classes';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 interface LoadingSpinnerProps {
@@ -159,7 +160,7 @@ function LoadingSpinnerComponent({
       </svg>
       {label && (
         <span
-          className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium animate-fade-in`}
+          className={`text-sm ${TEXT_COLOR_CLASSES.BODY} font-medium ${FADE_IN}`}
         >
           {label}
         </span>

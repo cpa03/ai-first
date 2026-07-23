@@ -623,6 +623,51 @@ export {
   type AnimationValues,
 } from './animation-values';
 
+// Animation Classes Configuration
+// Centralizes all hardcoded Tailwind animation class names used throughout components
+export {
+  ANIMATION_CLASSES,
+  UI_FEEDBACK_ANIMATIONS,
+  TASK_ANIMATIONS,
+  CELEBRATION_ANIMATIONS,
+  MOBILE_NAV_ANIMATIONS,
+  SCROLL_ANIMATIONS,
+  BADGE_ANIMATIONS,
+  CHECKLIST_ANIMATIONS,
+  TYPING_ANIMATIONS,
+  ALL_ANIMATION_CLASSES,
+  ANIMATION_CATEGORIES,
+  getAnimationClass,
+  getIndexedAnimationClass,
+  FADE_IN,
+  FADE_OUT,
+  SLIDE_DOWN,
+  SLIDE_UP,
+  SCALE_IN,
+  POP,
+  BOUNCE,
+  PULSE,
+  SPIN,
+  SUCCESS_CHECK,
+  SUCCESS_POP,
+  DRAW_CHECK,
+  COPY_SUCCESS_GLOW,
+  FOCUS_RING,
+  TASK_COMPLETE,
+  CHECKBOX_PULSE,
+  DELIVERABLE_COMPLETE,
+  COPY_CONFETTI,
+  MOBILE_MENU_ITEM,
+  SCROLL_TO_TOP_BOUNCE,
+  BADGE_ENTRANCE_GLOW,
+  COMING_SOON_BADGE,
+  CHECKLIST_ITEM,
+  REQUIREMENT_MET,
+  TYPING_DOT,
+  type AnimationClasses,
+  type AllAnimationClasses,
+} from './animation-classes';
+
 // Remaining Hardcoded Styles Configuration
 // Centralizes remaining hardcoded Tailwind classes throughout components
 export {
