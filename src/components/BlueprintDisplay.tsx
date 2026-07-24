@@ -29,6 +29,7 @@ import {
   BLUEPRINT_DISPLAY_LABELS,
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
+  BADGE_STYLES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -306,7 +307,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               >
                 {MESSAGES.BLUEPRINT.START_OVER_BUTTON}
                 <span
-                  className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
+                  className={`${BADGE_STYLES.COMING_SOON} ${comingSoonBadgeClass}`}
                 >
                   {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                 </span>
@@ -320,7 +321,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               >
                 {MESSAGES.BLUEPRINT.EXPORT_BUTTON}
                 <span
-                  className={`ml-2 text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full ${comingSoonBadgeClass}`}
+                  className={`${BADGE_STYLES.COMING_SOON} ${comingSoonBadgeClass}`}
                 >
                   {MESSAGES.BLUEPRINT.COMING_SOON_BADGE}
                 </span>

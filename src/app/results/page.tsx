@@ -26,6 +26,7 @@ import {
   ELEMENT_PATTERNS,
   GRAY_CLASSES,
   DURATION_TAILWIND,
+  BADGE_STYLES,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -503,7 +504,7 @@ function ResultsContent() {
                     }
                   >
                     {EXPORT_LABELS.NOTION.DEFAULT}
-                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    <span className={BADGE_STYLES.SETUP_REQUIRED}>
                       {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                     </span>
                   </Button>
@@ -544,7 +545,7 @@ function ResultsContent() {
                     }
                   >
                     {EXPORT_LABELS.TRELLO.DEFAULT}
-                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    <span className={BADGE_STYLES.SETUP_REQUIRED}>
                       {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                     </span>
                   </Button>
@@ -587,7 +588,7 @@ function ResultsContent() {
                     }
                   >
                     {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
-                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    <span className={BADGE_STYLES.SETUP_REQUIRED}>
                       {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                     </span>
                   </Button>
@@ -633,7 +634,7 @@ function ResultsContent() {
                     }
                   >
                     {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-                    <span className="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">
+                    <span className={BADGE_STYLES.SETUP_REQUIRED}>
                       {RESULTS_PAGE_CONTENT.SETUP_REQUIRED_LABEL}
                     </span>
                   </Button>

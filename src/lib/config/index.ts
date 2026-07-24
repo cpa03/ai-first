@@ -769,3 +769,12 @@ export {
   MOBILE_NAV_MENU_KEYBOARD_HINT,
   type ComponentStyles,
 } from './component-styles';
+
+// Badge Styles Configuration
+// Centralizes all badge-related Tailwind classes used throughout components
+export {
+  BADGE_STYLES,
+  BADGE_STYLE_ANIMATIONS,
+  type BadgeStyle,
+  type BadgeAnimation,
+} from './badge-styles';
