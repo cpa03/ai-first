@@ -38,11 +38,14 @@ const CopyButton = dynamic(() => import('@/components/CopyButton'), {
 
 const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
-    <section aria-hidden="true" className="mt-16 grid md:grid-cols-3 gap-8">
+    <section
+      aria-hidden="true"
+      className="mt-16 grid md:grid-cols-3 gap-8 min-h-[280px]"
+    >
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="text-center p-6 rounded-xl bg-white border border-gray-100"
+          className="text-center p-6 rounded-xl bg-white border border-gray-100 flex flex-col items-center justify-center"
         >
           <Skeleton variant="circle" className="w-16 h-16 mx-auto mb-4" />
           <Skeleton variant="text" className="h-6 mx-auto mb-2 w-3/4" />
@@ -57,7 +60,10 @@ const WhyChooseSection = dynamic(
   () => import('@/components/WhyChooseSection'),
   {
     loading: () => (
-      <section aria-hidden="true" className="mt-16 bg-gray-50 rounded-lg p-8">
+      <section
+        aria-hidden="true"
+        className="mt-16 bg-gray-50 rounded-lg p-8 min-h-[400px]"
+      >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
