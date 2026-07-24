@@ -23,6 +23,7 @@ import { GET, POST } from '@/app/api/ideas/route';
 import { dbService } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 import { createMockRequest } from './utils/_testHelpers';
+import { buildApiUrl } from './config/test-config';
 import type { IdeaStatus } from '@/lib/config';
 
 const mockDbService = dbService as jest.Mocked<typeof dbService>;
@@ -70,7 +71,7 @@ describe('/api/ideas', () => {
       });
 
       const request = createMockRequest({
-        url: 'http://localhost:3000/api/ideas',
+        url: buildApiUrl('/ideas'),
         method: 'GET',
       });
 
@@ -100,7 +101,7 @@ describe('/api/ideas', () => {
       });
 
       const request = createMockRequest({
-        url: 'http://localhost:3000/api/ideas?status=draft',
+        url: buildApiUrl('/ideas?status=draft'),
         method: 'GET',
       });
 
@@ -127,7 +128,7 @@ describe('/api/ideas', () => {
       });
 
       const request = createMockRequest({
-        url: 'http://localhost:3000/api/ideas?search=test',
+        url: buildApiUrl('/ideas?search=test'),
         method: 'GET',
       });
 
@@ -154,7 +155,7 @@ describe('/api/ideas', () => {
       });
 
       const request = createMockRequest({
-        url: 'http://localhost:3000/api/ideas?page=2&limit=10',
+        url: buildApiUrl('/ideas?page=2&limit=10'),
         method: 'GET',
       });
 

@@ -6,6 +6,16 @@
 
 const { chromium } = require('playwright');
 
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const PAGE_LOAD_TIMEOUT = parseInt(
+  process.env.PAGE_LOAD_TIMEOUT || '10000',
+  10
+);
+const DOM_STABILIZATION_WAIT = parseInt(
+  process.env.DOM_STABILIZATION_WAIT || '2000',
+  10
+);
+
 (async () => {
   console.log('\n🦇 BRO-cULA BROWSER AUDIT REPORT 🦇\n');
   console.log('='.repeat(60));
@@ -67,9 +77,9 @@ const { chromium } = require('playwright');
   for (const route of routes) {
     try {
       const startTime = Date.now();
-      await page.goto(`http://localhost:3000${route.path}`, {
+      await page.goto(`${BASE_URL}${route.path}`, {
         waitUntil: 'domcontentloaded',
-        timeout: 10000,
+        timeout: PAGE_LOAD_TIMEOUT,
       });
       const loadTime = Date.now() - startTime;
 
@@ -141,7 +151,7 @@ const { chromium } = require('playwright');
   console.log('\n♿ ACCESSIBILITY AUDIT\n');
 
   // Check homepage accessibility
-  await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
+  await page.goto(BASE_URL, { waitUntil: 'domcontentloaded' });
 
   const a11yIssues = await page.evaluate(() => {
     const issues = [];

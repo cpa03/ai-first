@@ -78,11 +78,28 @@ export const TEST_CONFIG = {
   /** Base URL for WebSocket connections */
   WS_BASE_URL,
 
+  /** Short timeout for quick operations (ms) - e.g., UI state changes, animations */
+  SHORT_TIMEOUT: getEnvNumber('TEST_SHORT_TIMEOUT', 3000, 100, 10000),
+
   /** Default timeout for async operations in tests (ms) */
   DEFAULT_TIMEOUT: getEnvNumber('TEST_DEFAULT_TIMEOUT', 5000, 100, 60000),
 
   /** Extended timeout for slow operations (ms) */
   EXTENDED_TIMEOUT: getEnvNumber('TEST_EXTENDED_TIMEOUT', 30000, 1000, 120000),
+
+  /** Timeout for e2e tests with page navigation (ms) */
+  E2E_TIMEOUT: getEnvNumber('TEST_E2E_TIMEOUT', 30000, 5000, 120000),
+
+  /** Page load timeout for Playwright (ms) */
+  PAGE_LOAD_TIMEOUT: getEnvNumber('TEST_PAGE_LOAD_TIMEOUT', 10000, 3000, 60000),
+
+  /** Wait time after page load for DOM stabilization (ms) */
+  DOM_STABILIZATION_WAIT: getEnvNumber(
+    'TEST_DOM_STABILIZATION_WAIT',
+    2000,
+    500,
+    10000
+  ),
 
   /** API endpoint paths */
   ENDPOINTS: {
