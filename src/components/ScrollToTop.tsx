@@ -139,6 +139,34 @@ function ScrollToTopComponent({
     }
   }, [smooth, prefersReducedMotion]);
 
+  // Micro-UX: Three-phase color progression for scroll depth indicator
+  // Phase 1 (0-40%): Gray - neutral, user is near the top
+  // Phase 2 (40-75%): Blue - brand color, user is in the middle
+  // Phase 3 (75-100%): Emerald - success color, user is near the bottom
+  const getScrollDepthColor = useCallback((progress: number) => {
+    if (progress <= 40) {
+      return {
+        stroke: 'text-gray-400',
+        text: 'text-gray-500',
+        label: 'Near top',
+      };
+    }
+    if (progress <= 75) {
+      return {
+        stroke: 'text-primary-500',
+        text: 'text-primary-600',
+        label: 'Middle of page',
+      };
+    }
+    return {
+      stroke: 'text-emerald-500',
+      text: 'text-emerald-600',
+      label: 'Near bottom',
+    };
+  }, []);
+
+  const scrollDepthColor = getScrollDepthColor(scrollProgress);
+
   const isNearTop =
     scrollProgress <=
     PROGRESS_PERCENTAGE.MAX - UI_TIMING_CONFIG.SCROLL_NEAR_BOTTOM_THRESHOLD;
@@ -220,11 +248,16 @@ function ScrollToTopComponent({
 
   const tooltipContent = (
     <div className="flex flex-col gap-1.5">
-      <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
-        {isNearTop
-          ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
-          : SCROLL_TO_TOP_LABELS.TITLE}
-      </span>
+      <div className="flex items-center gap-2">
+        <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
+          {isNearTop
+            ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
+            : SCROLL_TO_TOP_LABELS.TITLE}
+        </span>
+        <span className={`${TEXT_SIZE_CLASSES.XS} opacity-70 font-normal`}>
+          &middot; {scrollDepthColor.label}
+        </span>
+      </div>
       <span
         className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED_LIGHT} opacity-80`}
       >
@@ -317,7 +350,7 @@ function ScrollToTopComponent({
                 stroke="currentColor"
                 strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
                 strokeLinecap="round"
-                className={`${TEXT_COLORS.BRAND_LIGHT} transition-all ${DURATION_TAILWIND[150]} ease-out`}
+                className={`${scrollDepthColor.stroke} transition-colors ${DURATION_TAILWIND[300]} ease-out`}
                 style={{
                   strokeDasharray: circumference,
                   strokeDashoffset: strokeDashoffset,
@@ -328,7 +361,7 @@ function ScrollToTopComponent({
 
           {showPercentage && !prefersReducedMotion ? (
             <span
-              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${TEXT_COLORS.BRAND} tabular-nums leading-none group-hover:text-primary-700 transition-colors ${DURATION_TAILWIND[200]}`}
+              className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
               aria-hidden="true"
             >
               {animatedPercentage}
