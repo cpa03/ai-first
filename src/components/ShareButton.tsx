@@ -183,7 +183,11 @@ const ShareButtonComponent = function ShareButton({
   // Uses Shift to avoid conflict with browser save (⌘S)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === 'S') {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === 's'
+      ) {
         if (!isFocusedOnInput(e.target)) {
           e.preventDefault();
           handleShare();
@@ -197,22 +201,24 @@ const ShareButtonComponent = function ShareButton({
 
   const baseClasses = `
     inline-flex items-center justify-center gap-2
-    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out
+    font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
     focus-visible:ring-primary-500 focus-visible:ring-offset-white
-    motion-reduce:transition-none
+    motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
   `;
 
   const variantClasses = {
     default: `
       px-3 py-1.5 text-sm
       bg-primary-600 text-white hover:bg-primary-700
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     'icon-only': `
       p-1.5
       text-gray-500 hover:text-primary-600 hover:bg-primary-50
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
       ${shared ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : ''}
