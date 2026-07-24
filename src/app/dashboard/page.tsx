@@ -903,7 +903,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.STEP_ICON} bg-primary-50 border border-primary-200 ${prefersReducedMotion ? '' : 'animate-float-delay-1'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} bg-primary-50 border border-primary-200 ${prefersReducedMotion ? '' : ANIMATION_DELAYS.CSS_CLASSES.FLOAT_DELAY_1}`}
                   >
                     <svg
                       className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.BRAND_LIGHT}`}
@@ -956,7 +956,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.SUCCESS_VERY_LIGHT} ${BORDER_COLORS.SUCCESS_LIGHTER} ${prefersReducedMotion ? '' : 'animate-float-delay-2'}`}
+                    className={`${DASHBOARD_PATTERNS.STEP_ICON} ${BG_COLORS.SUCCESS_VERY_LIGHT} ${BORDER_COLORS.SUCCESS_LIGHTER} ${prefersReducedMotion ? '' : ANIMATION_DELAYS.CSS_CLASSES.FLOAT_DELAY_2}`}
                   >
                     <svg
                       className={`${DASHBOARD_PATTERNS.STEP_ICON_SIZE} ${TEXT_COLORS.SUCCESS_LIGHT}`}

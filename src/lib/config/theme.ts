@@ -242,6 +242,12 @@ export const ANIMATION_DELAYS = {
   PROGRESS: 700,
   /** Step animation transition duration */
   STEP_ANIMATION: 400,
+  FLOAT_DELAY_1: 300,
+  FLOAT_DELAY_2: 600,
+  CSS_CLASSES: {
+    FLOAT_DELAY_1: 'animate-float-delay-1',
+    FLOAT_DELAY_2: 'animate-float-delay-2',
+  },
   /** Tailwind delay class mapping */
   TAILWIND: {
     0: 'delay-0',
