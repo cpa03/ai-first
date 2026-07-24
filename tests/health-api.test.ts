@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/health/route';
 import { GET as readyHandler } from '@/app/api/health/ready/route';
 import { GET as liveHandler } from '@/app/api/health/live/route';
-import { buildApiUrl } from './config/test-config';
+import { buildApiUrl, BASE_URL } from './config/test-config';
 
 // Mock dependencies
 jest.mock('@/lib/cloudflare', () => ({
@@ -44,7 +44,7 @@ describe('/api/health endpoints', () => {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
     process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-role-key';
     process.env.COST_LIMIT_DAILY = '1000';
-    process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';
+    process.env.NEXT_PUBLIC_APP_URL = BASE_URL;
   });
 
   afterAll(() => {

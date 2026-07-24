@@ -12,6 +12,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import IdeaInput from '@/components/IdeaInput';
 import ClarificationFlow from '@/components/ClarificationFlow';
+import { TEST_CONFIG } from './config/test-config';
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -56,7 +57,7 @@ describe('E2E Critical User Flows', () => {
             'idea-123'
           );
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
     });
 
@@ -94,7 +95,7 @@ describe('E2E Critical User Flows', () => {
         () => {
           expect(screen.getByText(/an error occurred/i)).toBeInTheDocument();
         },
-        { timeout: 5000 }
+        { timeout: TEST_CONFIG.DEFAULT_TIMEOUT }
       );
     });
   });
@@ -122,7 +123,7 @@ describe('E2E Critical User Flows', () => {
         () => {
           expect(mockOnSubmit).toHaveBeenCalledWith(idea, 'idea-123');
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
 
       // Step 2: Clarification questions
@@ -157,7 +158,7 @@ describe('E2E Critical User Flows', () => {
             screen.getAllByText('What is the main goal?')[0]
           ).toBeInTheDocument();
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -175,7 +176,7 @@ describe('E2E Critical User Flows', () => {
             goal: 'Productivity tool',
           });
         },
-        { timeout: 3000 }
+        { timeout: TEST_CONFIG.SHORT_TIMEOUT }
       );
     });
   });
