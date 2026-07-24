@@ -272,15 +272,10 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 - [Repository Maintenance Report - 2026-07-22 22:00](./maintenance/2026-07-22-repository-maintenance-2200.md) - Quality gate verification and repository health analysis
 - [Repository Maintenance Report - 2026-07-22 18:30](./maintenance/2026-07-22-repository-maintenance-1830.md) - Quality gate verification and repository health analysis
 - [Repository Maintenance Report - 2026-07-22](./maintenance/2026-07-22-repository-maintenance.md) - Repository cleanup and branch maintenance (4 merged branches deleted)
-- [Repository Maintenance Report - 2026-07-21 17:08](./maintenance/2026-07-21-repository-maintenance-1708.md) - Quality gate verification and stale branch review
-- [Repository Maintenance Report - 2026-07-21](./maintenance/2026-07-21-repository-maintenance.md) - Daily quality gate verification and branch cleanup (103 stale branches deleted)
-- [Repository Maintenance Report - 2026-07-20 14:00](./maintenance/2026-07-20-repository-maintenance-1400.md) - Full quality gate verification and branch analysis
-- [Repository Maintenance Report - 2026-07-20](./maintenance/2026-07-20-repository-maintenance.md) - Documentation update and branch analysis
-- [Repository Audit Report - 2026-07-20](./maintenance/2026-07-20-repository-audit.md) - Repository audit
 
 ### Archived Reports
 
-Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/) (2026-07-07 through 2026-07-19).
+Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/) (2026-07-07 through 2026-07-21).
 
 ---
 
