@@ -15,6 +15,8 @@ const eslintConfig = defineConfig([
           argsIgnorePattern: '^_',
           varsIgnorePattern: '^_',
           caughtErrorsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+          args: 'none',
         },
       ],
       '@typescript-eslint/no-explicit-any': 'error',
