@@ -43,50 +43,72 @@ function ScrollToTopComponent({
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
 
+  // Keep a reference to the latest visibility state to avoid re-binding the event listener
+  const isVisibleRef = useRef(isVisible);
+  useEffect(() => {
+    isVisibleRef.current = isVisible;
+  }, [isVisible]);
+
   const animatedPercentage = useAnimatedCounter(Math.round(scrollProgress), {
     duration: UI_DURATIONS.ANIMATED_COUNTER,
   });
 
-  const calculateScrollProgress = useCallback(() => {
-    const scrollTop = window.scrollY;
-    const docHeight =
-      document.documentElement.scrollHeight - window.innerHeight;
-    const progress =
-      docHeight > 0
-        ? (scrollTop / docHeight) * PROGRESS_PERCENTAGE.MAX
-        : PROGRESS_PERCENTAGE.MIN;
-    setScrollProgress(Math.min(progress, PROGRESS_PERCENTAGE.MAX));
-  }, []);
-
-  const toggleVisibility = useCallback(() => {
-    const shouldShow = window.scrollY > showAt;
-
-    if (shouldShow && !isVisible) {
-      setIsVisible(true);
-      setHasAppeared(false);
-      requestAnimationFrame(() => {
-        setHasAppeared(true);
-      });
-    } else if (!shouldShow) {
-      setIsVisible(false);
-      setHasAppeared(false);
+  // PERFORMANCE: High-performance scroll handler gated by requestAnimationFrame.
+  // This executes at most once per animation frame, completely eliminating
+  // redundant window.scrollY reads (which can cause layout recalculations)
+  // and RAF register/cancel thrashing during rapid scroll events.
+  const handleScroll = useCallback(() => {
+    if (rafRef.current !== null) {
+      return;
     }
 
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
+    // Set placeholder to prevent re-entry during synchronous test executions
+    rafRef.current = 0;
+
+    const id = requestAnimationFrame(() => {
+      const scrollTop = window.scrollY;
+      const shouldShow = scrollTop > showAt;
+      const currentIsVisible = isVisibleRef.current;
+
+      if (shouldShow && !currentIsVisible) {
+        setIsVisible(true);
+        setHasAppeared(false);
+        requestAnimationFrame(() => {
+          setHasAppeared(true);
+        });
+      } else if (!shouldShow && currentIsVisible) {
+        setIsVisible(false);
+        setHasAppeared(false);
+      }
+
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress =
+        docHeight > 0
+          ? (scrollTop / docHeight) * PROGRESS_PERCENTAGE.MAX
+          : PROGRESS_PERCENTAGE.MIN;
+      setScrollProgress(Math.min(progress, PROGRESS_PERCENTAGE.MAX));
+
+      rafRef.current = null;
+    });
+
+    // If callback hasn't run yet (async in production), assign the actual ID
+    if (rafRef.current !== null) {
+      rafRef.current = id;
     }
-    rafRef.current = requestAnimationFrame(calculateScrollProgress);
-  }, [showAt, calculateScrollProgress, isVisible]);
+  }, [showAt]);
 
   useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    // Run initial scroll check to set visibility if page is already scrolled on mount/HMR
+    handleScroll();
     return () => {
-      window.removeEventListener('scroll', toggleVisibility);
-      if (rafRef.current) {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [toggleVisibility]);
+  }, [handleScroll]);
 
   const scrollToTop = useCallback(() => {
     triggerHapticFeedback();
