@@ -287,6 +287,7 @@ export const SIGNUP_PAGE_CONTENT = {
   PASSWORD_MATCH: {
     MATCH: 'Passwords match',
     MISMATCH: 'Passwords do not match',
+    HINT: 'Re-enter your password to confirm',
   },
   PASSWORD_STRENGTH: {
     GREAT_PASSWORD: 'Great password!',

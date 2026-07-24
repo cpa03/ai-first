@@ -63,7 +63,36 @@ function PasswordMatchIndicator({
     return password === confirmPassword ? 'match' : 'mismatch';
   }, [password, confirmPassword]);
 
-  if (matchStatus === 'empty') return null;
+  // Micro-UX: Show a helpful hint when password exists but confirm field is empty
+  // Guides users to the next step instead of showing nothing
+  if (matchStatus === 'empty') {
+    if (!password) return null;
+    return (
+      <div
+        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in text-gray-500`}
+        role="status"
+        aria-live="polite"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          viewBox={SVG_VIEWBOX.STANDARD}
+          stroke="currentColor"
+          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        <span className="text-xs font-medium">
+          {SIGNUP_PAGE_CONTENT.PASSWORD_MATCH.HINT}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div
