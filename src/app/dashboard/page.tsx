@@ -130,6 +130,26 @@ export default function DashboardPage() {
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleRowClick = useCallback(
+    (e: React.MouseEvent<HTMLTableRowElement>, idea: Idea) => {
+      const target = e.target as HTMLElement;
+      if (
+        target.closest('button') ||
+        target.closest('a') ||
+        target.closest('input')
+      ) {
+        return;
+      }
+      triggerHapticFeedback();
+      if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
+        window.location.href = `/results?ideaId=${idea.id}`;
+      } else {
+        window.location.href = `/clarify?ideaId=${idea.id}`;
+      }
+    },
+    []
+  );
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
   const prefersReducedMotion = usePrefersReducedMotion();
@@ -1007,7 +1027,8 @@ export default function DashboardPage() {
                     data-row-index={index}
                     tabIndex={selectedRowIndex === index ? 0 : -1}
                     aria-selected={selectedRowIndex === index}
-                    className={`${TABLE_PATTERNS.row.hover} table-row-lift animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors ${
+                    onClick={(e) => handleRowClick(e, idea)}
+                    className={`${TABLE_PATTERNS.row.hover} table-row-lift animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors cursor-pointer ${
                       selectedRowIndex === index
                         ? `${DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE} ring-2 ring-primary-400 ring-inset`
                         : ''
