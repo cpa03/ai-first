@@ -21,6 +21,7 @@ import {
   MOBILE_NAV_CLOSE_HINT_TEXT,
   MOBILE_NAV_CLOSE_HINT_KBD,
 } from '@/lib/config';
+import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -280,7 +281,7 @@ function MobileNavComponent() {
           </div>
           <div
             ref={menuRef}
-            id="mobile-menu"
+            id={PAGE_ELEMENT_IDS.MOBILE_MENU}
             className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
             <ul

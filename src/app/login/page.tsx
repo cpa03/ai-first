@@ -31,6 +31,7 @@ import {
   FORM_ARIA_LABELS,
   DRAW_CHECK,
 } from '@/lib/config';
+import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
 
@@ -254,7 +255,7 @@ export default function LoginPage() {
         </div>
 
         <form
-          id="login-form"
+          id={AUTH_ELEMENT_IDS.LOGIN_FORM}
           className={`mt-8 space-y-6 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
@@ -308,12 +309,12 @@ export default function LoginPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <label
-                htmlFor="remember-me"
+                htmlFor={AUTH_ELEMENT_IDS.REMEMBER_ME}
                 className="flex items-center gap-2.5 cursor-pointer group"
               >
                 <span className="relative">
                   <input
-                    id="remember-me"
+                    id={AUTH_ELEMENT_IDS.REMEMBER_ME}
                     name="remember-me"
                     type="checkbox"
                     checked={rememberMe}

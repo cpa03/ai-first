@@ -37,6 +37,7 @@ import {
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
 } from '@/lib/config';
+import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
 import { useScrollToError } from '@/hooks/useScrollToError';
 
@@ -585,7 +586,7 @@ export default function SignupPage() {
         </div>
 
         <form
-          id="signup-form"
+          id={AUTH_ELEMENT_IDS.SIGNUP_FORM}
           className={`mt-8 space-y-6 animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >

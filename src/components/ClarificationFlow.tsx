@@ -37,6 +37,10 @@ import {
   CLARIFICATION_FLOW_STEP_SEPARATOR,
   CLARIFICATION_FLOW_INPUT_LABEL,
 } from '@/lib/config';
+import {
+  CLARIFICATION_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import Alert from '@/components/Alert';
 import Button from '@/components/Button';
@@ -526,8 +530,8 @@ function ClarificationFlow({
       <div
         ref={questionSectionRef}
         key={currentStep}
-        aria-labelledby="question-heading"
-        aria-describedby="question-description"
+        aria-labelledby={ARIA_HEADING_IDS.QUESTION}
+        aria-describedby={CLARIFICATION_ELEMENT_IDS.QUESTION_DESCRIPTION}
         className={CARD_PATTERNS.RESPONSIVE}
       >
         <form
@@ -541,12 +545,15 @@ function ClarificationFlow({
           )}
         >
           <h2
-            id="question-heading"
+            id={CLARIFICATION_ELEMENT_IDS.QUESTION_HEADING}
             className={CLARIFICATION_FLOW_QUESTION_HEADING}
           >
             {currentQuestion.question}
           </h2>
-          <p id="question-description" className="sr-only">
+          <p
+            id={CLARIFICATION_ELEMENT_IDS.QUESTION_DESCRIPTION}
+            className="sr-only"
+          >
             {COMPONENT_DEFAULTS.CLARIFICATION_FLOW.STEP_DESCRIPTION(
               currentStep + 1,
               questions.length
@@ -557,7 +564,7 @@ function ClarificationFlow({
             {currentQuestion.type === 'textarea' && (
               <div>
                 <InputWithValidation
-                  id="answer-textarea"
+                  id={CLARIFICATION_ELEMENT_IDS.ANSWER_TEXTAREA}
                   name="answer"
                   label={currentQuestion.question}
                   value={currentAnswer}
@@ -586,7 +593,7 @@ function ClarificationFlow({
             {currentQuestion.type === 'text' && (
               <div>
                 <InputWithValidation
-                  id="answer-text"
+                  id={CLARIFICATION_ELEMENT_IDS.ANSWER_TEXT}
                   label={currentQuestion.question}
                   value={currentAnswer}
                   onChange={(e) => setCurrentAnswer(e.target.value)}
@@ -684,7 +691,7 @@ function ClarificationFlow({
                 </label>
                 <div className="relative">
                   <select
-                    id="answer-select"
+                    id={CLARIFICATION_ELEMENT_IDS.ANSWER_SELECT}
                     ref={selectRef}
                     value={currentAnswer}
                     onChange={(e) => {

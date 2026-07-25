@@ -23,6 +23,10 @@ import {
   USER_ONBOARDING_COMPLETION_LABELS,
 } from '@/lib/config/component-labels';
 import {
+  ONBOARDING_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
+import {
   TEXT_SIZE_CLASSES,
   TEXT_SIZE_PRESETS,
 } from '@/lib/config/ui-text-sizes';
@@ -378,8 +382,8 @@ export default function UserOnboarding() {
       {/* Tooltip */}
       <div
         role="dialog"
-        aria-labelledby="onboarding-title"
-        aria-describedby="onboarding-content"
+        aria-labelledby={ARIA_HEADING_IDS.ONBOARDING}
+        aria-describedby={ONBOARDING_ELEMENT_IDS.ONBOARDING_CONTENT}
         className={`
           fixed z-[${Z_INDEX_LAYERS.MODAL}] ${CONTAINER_WIDTH_CLASSES.ONBOARDING} ${BG_COLORS.DEFAULT} rounded-xl ${SHADOW_CLASSES.EXTRA_LARGE} 
           border ${BORDER_COLORS.LIGHT} p-5
@@ -427,13 +431,13 @@ export default function UserOnboarding() {
         {/* Content */}
         <div className="mt-2">
           <h3
-            id="onboarding-title"
+            id={ONBOARDING_ELEMENT_IDS.ONBOARDING_TITLE}
             className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY} mb-2`}
           >
             {currentStep.title}
           </h3>
           <p
-            id="onboarding-content"
+            id={ONBOARDING_ELEMENT_IDS.ONBOARDING_CONTENT}
             className={`${TEXT_COLORS.SECONDARY} text-sm leading-relaxed`}
           >
             {currentStep.content}
