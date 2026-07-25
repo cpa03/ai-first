@@ -145,6 +145,7 @@ export {
   PROGRESS_BAR_A11Y,
   CHAR_COUNT_COLORS,
   TAILWIND_UTILS,
+  COMPONENT_STATE_COLORS,
 } from './theme';
 
 // Page Configuration

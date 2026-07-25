@@ -12,6 +12,7 @@ import {
   BG_COLORS,
   PROGRESS_BAR_A11Y,
   DURATION_TAILWIND,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 
@@ -249,7 +250,7 @@ function PasswordRequirementsChecklistComponent({
             >
               {req.met ? (
                 <svg
-                  className={`w-3 h-3 text-green-700 ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
+                  className={`w-3 h-3 ${COMPONENT_STATE_COLORS.PASSWORD.MET_CHECKMARK} ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -263,7 +264,7 @@ function PasswordRequirementsChecklistComponent({
                 </svg>
               ) : (
                 <svg
-                  className="w-3 h-3 text-gray-500"
+                  className={`w-3 h-3 ${COMPONENT_STATE_COLORS.PASSWORD.UNMET_ICON}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

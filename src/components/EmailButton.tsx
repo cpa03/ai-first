@@ -15,6 +15,7 @@ import {
   SVG_VIEWBOX,
   TRANSITION_CLASSES,
   TEXT_COLORS,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -171,7 +172,7 @@ const EmailButtonComponent = function EmailButton({
               </svg>
 
               <svg
-                className={`absolute inset-0 ${SVG_SIZES.MD} text-green-700 ${iconTransition} ${
+                className={`absolute inset-0 ${SVG_SIZES.MD} ${COMPONENT_STATE_COLORS.EMAIL.SUCCESS_CHECKMARK} ${iconTransition} ${
                   state === 'success'
                     ? 'opacity-100 scale-100'
                     : 'opacity-0 scale-50'

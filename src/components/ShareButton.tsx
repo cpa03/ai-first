@@ -12,6 +12,7 @@ import {
   COMPONENT_CONFIG,
   TRANSITION_CLASSES,
   TEXT_COLORS,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -221,7 +222,7 @@ const ShareButtonComponent = function ShareButton({
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
-      ${shared ? 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700' : ''}
+      ${shared ? COMPONENT_STATE_COLORS.SHARED.ICON : ''}
     `,
   };
 
@@ -268,7 +269,7 @@ const ShareButtonComponent = function ShareButton({
               {/* Checkmark icon when shared */}
               <svg
                 className={`
-              absolute inset-0 ${SVG_SIZES.MD} text-green-500 ${TRANSITION_CLASSES.DEFAULT}
+              absolute inset-0 ${SVG_SIZES.MD} ${COMPONENT_STATE_COLORS.SHARED.CHECKMARK} ${TRANSITION_CLASSES.DEFAULT}
               ${shared ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
                 fill="none"

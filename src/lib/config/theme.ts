@@ -1816,6 +1816,102 @@ export const CHAR_COUNT_COLORS = {
 } as const;
 
 /**
+ * Component State Colors
+ * Centralizes hardcoded color classes for component-specific states
+ * Eliminates hardcoded bg-green-50, text-green-700, bg-blue-50, etc. in component files
+ *
+ * Usage:
+ * ```typescript
+ * import { COMPONENT_STATE_COLORS } from '@/lib/config';
+ * <div className={COMPONENT_STATE_COLORS.COPIED.BUTTON}>...</div>
+ * ```
+ */
+export const COMPONENT_STATE_COLORS = {
+  /** CopyButton states */
+  COPIED: {
+    /** Icon-only variant when copied */
+    ICON: 'text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800',
+    /** Checkmark icon color */
+    CHECKMARK: 'text-green-700',
+    /** Default variant when copied */
+    DEFAULT: 'text-green-700',
+  },
+
+  /** ShareButton states */
+  SHARED: {
+    /** Icon-only variant when shared */
+    ICON: 'text-blue-600 bg-blue-50 hover:bg-blue-100 hover:text-blue-700',
+    /** Checkmark icon color */
+    CHECKMARK: 'text-green-500',
+    /** Default variant when shared */
+    DEFAULT: 'text-green-500',
+  },
+
+  /** SuccessCelebration states */
+  CELEBRATION: {
+    /** Success circle background */
+    CIRCLE_BG: 'bg-green-100',
+    /** Ripple ring 1 border */
+    RIPPLE_1: 'border-green-400',
+    /** Ripple ring 2 border */
+    RIPPLE_2: 'border-green-300',
+  },
+
+  /** IdeaReadyIndicator states */
+  IDEA_READY: {
+    /** Ready state background and text */
+    READY: 'bg-green-100 text-green-700',
+    /** Not ready state background and text */
+    NOT_READY: 'bg-gray-100 text-gray-500',
+    /** Checkmark icon color when ready */
+    CHECKMARK: 'text-green-700',
+  },
+
+  /** ErrorBoundary skip link */
+  ERROR_BOUNDARY: {
+    /** Skip link focus background */
+    SKIP_LINK: 'focus:bg-blue-600 focus:text-white',
+  },
+
+  /** BlueprintDisplay copy button */
+  BLUEPRINT: {
+    /** Copied state */
+    COPIED: 'bg-green-100 text-green-700 border border-green-200',
+    /** Default state */
+    DEFAULT:
+      'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300',
+  },
+
+  /** InputWithValidation success flash */
+  INPUT_SUCCESS: {
+    /** Success flash border and ring */
+    FLASH: 'border-green-500 ring-green-500',
+  },
+
+  /** PasswordRequirementsChecklist states */
+  PASSWORD: {
+    /** Met requirement checkmark color */
+    MET_CHECKMARK: 'text-green-700',
+    /** Unmet requirement icon color */
+    UNMET_ICON: 'text-gray-500',
+  },
+
+  /** EmailButton states */
+  EMAIL: {
+    /** Success checkmark color */
+    SUCCESS_CHECKMARK: 'text-green-700',
+  },
+
+  /** ScrollToTop progress colors */
+  SCROLL_PROGRESS: {
+    /** Near bottom stroke color */
+    NEAR_BOTTOM_STROKE: 'text-emerald-500',
+    /** Near bottom text color */
+    NEAR_BOTTOM_TEXT: 'text-emerald-600',
+  },
+} as const;
+
+/**
  * Combined Tailwind Utility Classes
  * Provides all utility classes in a single object for convenience
  *

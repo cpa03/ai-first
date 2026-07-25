@@ -12,6 +12,7 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   DRAW_CHECK,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -57,7 +58,7 @@ function IdeaReadyIndicatorComponent({
         className={`
           relative flex items-center justify-center w-5 h-5 rounded-full
           ${TRANSITION_CLASSES.SLOW_EASE_OUT}
-          ${isReady ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}
+          ${isReady ? COMPONENT_STATE_COLORS.IDEA_READY.READY : COMPONENT_STATE_COLORS.IDEA_READY.NOT_READY}
         `}
       >
         {/* Checkmark SVG with draw animation */}
