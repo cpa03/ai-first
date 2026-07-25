@@ -430,7 +430,7 @@ function ClarificationFlow({
       <details
         ref={detailsRef}
         onToggle={handleToggleReference}
-        className="group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden ${TRANSITION_CLASSES.DEFAULT}"
+        className={`group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
       >
         <summary
           className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none`}
@@ -718,7 +718,7 @@ function ClarificationFlow({
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg
-                      className="w-5 h-5 text-gray-500 ${TRANSITION_CLASSES.TRANSFORM}"
+                      className={`w-5 h-5 text-gray-500 ${TRANSITION_CLASSES.TRANSFORM}`}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
