@@ -53,7 +53,7 @@ CMZ automatically delegates based on task type:
 
 ## Skills Library
 
-28 specialized skills available in `.opencode/skills/`:
+29 specialized skills available in `.opencode/skills/`:
 
 ### Process Skills
 
@@ -73,6 +73,10 @@ CMZ automatically delegates based on task type:
 - `superpowers-parallel-agents` - Parallel agent dispatch for independent tasks
 - `superpowers-receiving-review` - Receiving code review feedback
 - `superpowers-requesting-review` - Requesting code review
+
+### Frontend Skills
+
+- `frontend-ui-ux` - Frontend development and UI/UX design
 
 ### Domain Skills
 
