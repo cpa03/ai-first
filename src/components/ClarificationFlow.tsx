@@ -17,6 +17,8 @@ import {
   TEXT_COLORS,
   TEXT_COLOR_CLASSES,
   BG_COLORS,
+  BG_COLOR_CLASSES,
+  BORDER_COLOR_CLASSES,
   COMPONENT_DEFAULTS,
   LABELS,
   ANIMATION_DELAYS,
@@ -434,10 +436,10 @@ function ClarificationFlow({
       <details
         ref={detailsRef}
         onToggle={handleToggleReference}
-        className={`group mb-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
+        className={`group mb-6 ${BG_COLOR_CLASSES.PAGE} rounded-lg border ${BORDER_COLOR_CLASSES.LIGHT} overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
       >
         <summary
-          className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none`}
+          className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none`}
         >
           <div className="flex items-center gap-2">
             <svg
@@ -455,7 +457,7 @@ function ClarificationFlow({
             </svg>
             <span>{COMPONENT_DEFAULTS.CLARIFICATION_FLOW.REFERENCE_LABEL}</span>
             <kbd
-              className={`hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200 ${TEXT_COLOR_CLASSES.MUTED} rounded text-xs font-mono`}
+              className={`hidden sm:inline-flex items-center px-1.5 py-0.5 ${BG_COLOR_CLASSES.LIGHT} ${TEXT_COLOR_CLASSES.MUTED} rounded text-xs font-mono`}
               aria-hidden="true"
             >
               Alt+R
@@ -476,7 +478,7 @@ function ClarificationFlow({
           </svg>
         </summary>
         <div
-          className={`px-4 pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t border-gray-100 bg-white`}
+          className={`px-4 pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT} ${BG_COLOR_CLASSES.CARD}`}
         >
           <div className="flex justify-between items-start gap-4">
             <p className="italic leading-relaxed">&quot;{idea}&quot;</p>
@@ -493,7 +495,9 @@ function ClarificationFlow({
       <div aria-live="polite" aria-atomic="true">
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-gray-900">
+            <span
+              className={`text-sm font-medium ${TEXT_COLOR_CLASSES.HEADING}`}
+            >
               {LABELS.QUESTION(currentStep)} of {questions.length}
             </span>
             {currentStep === questions.length - 1 && (
@@ -634,7 +638,7 @@ function ClarificationFlow({
                     className={`${TRANSITION_CLASSES.DEFAULT} ${
                       pasteSuccess
                         ? `${TEXT_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} hover:${BG_COLORS.SUCCESS_LIGHT}`
-                        : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                        : `${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} ${BG_COLOR_CLASSES.HOVER_SUBTLE}`
                     }`}
                   >
                     {pasteSuccess ? (
@@ -699,10 +703,10 @@ function ClarificationFlow({
                       setCurrentAnswer(e.target.value);
                     }}
                     onKeyDown={handleKeyDown}
-                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none bg-white pr-10 ${TRANSITION_CLASSES.DEFAULT} hover:border-gray-400 ${
+                    className={`${INPUT_STYLES.BASE} ${INPUT_STYLES.NORMAL} ${INPUT_HEIGHT_CLASSES.SELECT} cursor-pointer appearance-none bg-white pr-10 ${TRANSITION_CLASSES.DEFAULT} ${BORDER_COLOR_CLASSES.HOVER_DEFAULT} ${
                       currentAnswer
-                        ? 'text-gray-900 font-medium'
-                        : 'text-gray-500'
+                        ? `${TEXT_COLOR_CLASSES.HEADING} font-medium`
+                        : `${TEXT_COLOR_CLASSES.MUTED}`
                     }`}
                     aria-required="true"
                     aria-invalid={
@@ -725,7 +729,7 @@ function ClarificationFlow({
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg
-                      className={`w-5 h-5 text-gray-500 ${TRANSITION_CLASSES.TRANSFORM}`}
+                      className={`w-5 h-5 ${TEXT_COLOR_CLASSES.MUTED} ${TRANSITION_CLASSES.TRANSFORM}`}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"

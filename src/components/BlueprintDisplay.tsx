@@ -29,6 +29,8 @@ import {
   BLUEPRINT_DISPLAY_LABELS,
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
+  BORDER_COLOR_CLASSES,
+  BG_COLOR_CLASSES,
   BADGE_STYLES,
   COMPONENT_STATE_COLORS,
 } from '@/lib/config';
@@ -147,7 +149,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           className={CARD_PATTERNS.BASE}
         >
           <header
-            className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
+            className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
           >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <Skeleton className="h-6 sm:h-8 w-36 sm:w-48" variant="text" />
@@ -175,7 +177,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           </div>
 
           <footer
-            className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
+            className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
           >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <Skeleton className="h-3 sm:h-4 w-full sm:w-1/2" variant="text" />
@@ -196,7 +198,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         <h1 className="text-2xl font-bold mb-4">
           {MESSAGES.BLUEPRINT.PAGE_TITLE}
         </h1>
-        <p className="text-sm text-gray-600 mb-2">{idea}</p>
+        <p className={`text-sm ${TEXT_COLOR_CLASSES.BODY} mb-2`}>{idea}</p>
         <hr className="my-4" />
       </div>
       <section
@@ -204,7 +206,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         className={`${CARD_PATTERNS.BASE} no-print`}
       >
         <header
-          className={`border-b border-gray-200 ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
+          className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2
@@ -283,7 +285,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           <div className="prose prose-sm sm:prose-lg max-w-none">
             <div className="relative group">
               <pre
-                className={`whitespace-pre-wrap font-mono text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} bg-gray-50 p-4 sm:p-6 rounded-lg overflow-x-auto`}
+                className={`whitespace-pre-wrap font-mono text-xs sm:text-sm ${TEXT_COLOR_CLASSES.INPUT} ${BG_COLOR_CLASSES.PAGE} p-4 sm:p-6 rounded-lg overflow-x-auto`}
                 aria-label={MESSAGES.BLUEPRINT.ARIA_LABEL_CONTENT}
               >
                 {blueprint}
@@ -296,7 +298,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         </div>
 
         <footer
-          className={`border-t border-gray-200 ${UI_CONFIG.LAYOUT.CARD_FOOTER} no-print`}
+          className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER} no-print`}
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>

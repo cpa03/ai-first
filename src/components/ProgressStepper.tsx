@@ -12,6 +12,7 @@ import {
   TEXT_COLOR_CLASSES,
   TEXT_COLORS,
   BG_COLORS,
+  BORDER_COLOR_CLASSES,
   PROGRESS_BAR_A11Y,
   PROGRESS_BAR_TRACK,
 } from '@/lib/config';
@@ -162,7 +163,7 @@ const ProgressStepperComponent = function ProgressStepper({
                           ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200 animate-gentle-pulse'
                           : step.completed
                             ? `w-3 h-3 bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
-                            : 'w-3 h-3 bg-gray-300'
+                            : `w-3 h-3 ${BORDER_COLOR_CLASSES.DEFAULT}`
                       }
                     `}
                     aria-current={step.current ? 'step' : undefined}
@@ -230,7 +231,7 @@ const ProgressStepperComponent = function ProgressStepper({
                           ? 'border-primary-600 bg-primary-600 text-white'
                           : step.current
                             ? 'border-primary-600 text-primary-600 animate-gentle-pulse'
-                            : `border-gray-300 ${TEXT_COLOR_CLASSES.MUTED}`
+                            : `${BORDER_COLOR_CLASSES.DEFAULT} ${TEXT_COLOR_CLASSES.MUTED}`
                       }
                     `}
                   >
@@ -312,7 +313,7 @@ const ProgressStepperComponent = function ProgressStepper({
       {/* Micro-UX: Keyboard navigation hints for step navigation */}
       {onStepClick && steps.length > 1 && (
         <div
-          className="hidden sm:flex items-center justify-center gap-2 mt-2 text-xs text-gray-500"
+          className={`hidden sm:flex items-center justify-center gap-2 mt-2 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
           aria-label={PROGRESS_STEPPER_LABELS.KEYBOARD_NAV_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">

@@ -165,6 +165,9 @@ export const BG_COLORS = {
   BRAND_LIGHT_HALF: 'bg-primary-50/50',
   BRAND: 'bg-primary-600',
   BRAND_HOVER: 'hover:bg-primary-700',
+
+  /** Darker background (gray-800) - for tooltips and dark UI elements */
+  DARKER: 'bg-gray-800',
 } as const;
 
 /**
@@ -1357,6 +1360,18 @@ export const TEXT_COLOR_CLASSES = {
 
   /** Input text (gray-800) */
   INPUT: 'text-gray-800',
+
+  /** Dark muted text (gray-700) - for stronger emphasis */
+  MUTED_DARK: 'text-gray-700',
+
+  /** Light/disabled text (gray-300) - for disabled or very subtle text */
+  LIGHT: 'text-gray-300',
+
+  /** Hover muted text (gray-700) - for hover state emphasis */
+  HOVER_MUTED: 'hover:text-gray-700',
+
+  /** Hover heading text (gray-900) - for hover state strong emphasis */
+  HOVER_HEADING: 'hover:text-gray-900',
 } as const;
 
 /**
@@ -1413,6 +1428,12 @@ export const BG_COLOR_CLASSES = {
 
   /** Skeleton loading background (gray-200) */
   SKELETON: 'bg-gray-200',
+
+  /** Hover subtle background (gray-100) */
+  HOVER_SUBTLE: 'hover:bg-gray-100',
+
+  /** Hover light background (gray-200) */
+  HOVER_LIGHT: 'hover:bg-gray-200',
 } as const;
 
 /**
@@ -1457,6 +1478,15 @@ export const BORDER_COLOR_CLASSES = {
 
   /** Top border only */
   TOP: 'border-t border-gray-200',
+
+  /** Dark muted border (gray-700) - for stronger separation */
+  MUTED_DARK: 'border-gray-700',
+
+  /** Extra light border (gray-100) - for very subtle separation */
+  EXTRA_LIGHT: 'border-gray-100',
+
+  /** Hover default border (gray-400) */
+  HOVER_DEFAULT: 'hover:border-gray-400',
 } as const;
 
 /**
