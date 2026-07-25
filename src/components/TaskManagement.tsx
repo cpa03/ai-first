@@ -325,16 +325,52 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           />
         ))}
         {filteredDeliverables.length === 0 && statusFilter !== 'all' && (
-          <div className="text-center py-8">
-            <p className="text-sm text-gray-500 mb-3">
+          <div className="text-center py-8 animate-fade-in">
+            {/* Micro-UX: Enhanced filtered empty state with animated icon */}
+            {/* Matches the visual pattern of other empty states in the app */}
+            <div className="relative w-16 h-16 mx-auto mb-4" aria-hidden="true">
+              <div
+                className={PRIMARY_PULSE_CONTAINER}
+                style={{
+                  animationDuration: `${ANIMATION_CONFIG.ERROR_RELOAD_DELAY / 1000}s`,
+                }}
+              />
+              <div className={PRIMARY_PULSE_INNER} />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg
+                  className="w-8 h-8 text-primary-400"
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.LIGHT}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h3
+              className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLOR_CLASSES.HEADING} ${SPACING_CLASSES.SMALL}`}
+            >
               No {statusFilter === 'in_progress' ? 'in progress' : 'completed'}{' '}
-              tasks found.
+              tasks
+            </h3>
+            <p
+              className={`${TEXT_COLOR_CLASSES.BODY} ${SPACING_CLASSES.ELEMENT} max-w-sm mx-auto text-sm`}
+            >
+              {statusFilter === 'in_progress'
+                ? 'All tasks are either pending or completed. Keep up the great work!'
+                : 'No tasks have been completed yet. Start checking off tasks to see them here.'}
             </p>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => handleFilterChange('all')}
               aria-label={TASK_MANAGEMENT_LABELS.SHOW_ALL_TASKS_ARIA}
+              className="mt-2"
             >
               {TASK_MANAGEMENT_LABELS.SHOW_ALL_TASKS}
             </Button>
