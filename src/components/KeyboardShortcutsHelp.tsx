@@ -29,6 +29,10 @@ import {
   KEYBOARD_SHORTCUT_CATEGORY_ICON,
   KEYBOARD_SHORTCUT_FOOTER,
 } from '@/lib/config';
+import {
+  KEYBOARD_SHORTCUTS_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -665,7 +669,7 @@ function KeyboardShortcutsHelpComponent({
       className={`fixed inset-0 z-[${Z_INDEX_LAYERS.MODAL}] flex items-center justify-center p-4`}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="keyboard-shortcuts-title"
+      aria-labelledby={ARIA_HEADING_IDS.KEYBOARD_SHORTCUTS}
     >
       <div
         className={`absolute inset-0 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm transition-opacity ${DURATION_TAILWIND[300]} ${isLeaving ? 'opacity-0' : 'opacity-50'}`}
@@ -788,7 +792,7 @@ function KeyboardShortcutsHelpComponent({
             </div>
             <div>
               <h2
-                id="keyboard-shortcuts-title"
+                id={KEYBOARD_SHORTCUTS_ELEMENT_IDS.TITLE}
                 className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY}`}
               >
                 {KEYBOARD_SHORTCUTS_MESSAGES.TITLE}

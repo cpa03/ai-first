@@ -40,6 +40,10 @@ import {
   GRAY_CLASSES,
   DURATION_TAILWIND,
 } from '@/lib/config';
+import {
+  DASHBOARD_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 // Lazy load Button and LoadingSpinner for code splitting
 const Button = dynamic(() => import('@/components/Button'), {
@@ -640,7 +644,7 @@ export default function DashboardPage() {
           >
             <select
               ref={filterSelectRef}
-              id="status-filter"
+              id={DASHBOARD_ELEMENT_IDS.STATUS_FILTER}
               value={filter}
               onChange={(e) => {
                 triggerHapticFeedback();
@@ -1239,8 +1243,8 @@ export default function DashboardPage() {
           className={MODAL_PATTERNS.overlay}
           role="dialog"
           aria-modal="true"
-          aria-labelledby="delete-modal-title"
-          aria-describedby="delete-modal-description"
+          aria-labelledby={ARIA_HEADING_IDS.DELETE_MODAL}
+          aria-describedby={DASHBOARD_ELEMENT_IDS.DELETE_MODAL_DESCRIPTION}
           onClick={(e) => {
             if (e.target === e.currentTarget) closeDeleteModal();
           }}
@@ -1269,7 +1273,7 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <h3
-                id="delete-modal-title"
+                id={DASHBOARD_ELEMENT_IDS.DELETE_MODAL_TITLE}
                 className={MODAL_PATTERNS.header.title}
               >
                 {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.TITLE}
@@ -1277,7 +1281,7 @@ export default function DashboardPage() {
             </div>
 
             <p
-              id="delete-modal-description"
+              id={DASHBOARD_ELEMENT_IDS.DELETE_MODAL_DESCRIPTION}
               className={MODAL_PATTERNS.header.description}
             >
               {DASHBOARD_PAGE_CONTENT.DELETE_MODAL.CONFIRM} &quot;
@@ -1286,14 +1290,14 @@ export default function DashboardPage() {
 
             <div className="mt-4">
               <label
-                htmlFor="delete-confirm-input"
+                htmlFor={DASHBOARD_ELEMENT_IDS.DELETE_CONFIRM_INPUT}
                 className={DASHBOARD_PATTERNS.DELETE_CONFIRM_LABEL}
               >
                 {DASHBOARD_PAGE_CONTENT.DELETE_CONFIRM.INPUT_LABEL}
               </label>
               <input
                 ref={deleteConfirmInputRef}
-                id="delete-confirm-input"
+                id={DASHBOARD_ELEMENT_IDS.DELETE_CONFIRM_INPUT}
                 type="text"
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
@@ -1303,12 +1307,12 @@ export default function DashboardPage() {
                     ? `${BORDER_COLORS.SUCCESS_MEDIUM} ${BG_COLORS.SUCCESS_VERY_LIGHT} ${RING_COLORS.SUCCESS_MEDIUM} ${BORDER_COLORS.SUCCESS}`
                     : `${BORDER_COLORS.DEFAULT} ${RING_COLORS.PRIMARY} ${BORDER_COLORS.PRIMARY}`
                 }`}
-                aria-describedby="delete-confirm-hint"
+                aria-describedby={DASHBOARD_ELEMENT_IDS.DELETE_CONFIRM_HINT}
                 autoComplete="off"
                 spellCheck="false"
               />
               <p
-                id="delete-confirm-hint"
+                id={DASHBOARD_ELEMENT_IDS.DELETE_CONFIRM_HINT}
                 className={DASHBOARD_PATTERNS.DELETE_CONFIRM_HINT}
               >
                 {deleteConfirmText === deleteModal.idea.title

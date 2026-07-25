@@ -779,3 +779,34 @@ export {
   type BadgeStyle,
   type BadgeAnimation,
 } from './badge-styles';
+
+// Element IDs Configuration
+// Centralizes all HTML element IDs and aria-labelledby values
+// Follows the "Flexy" principle: eliminate hardcoded element IDs
+export {
+  PAGE_ELEMENT_IDS,
+  HOME_PAGE_ELEMENT_IDS,
+  CLARIFICATION_ELEMENT_IDS,
+  IDEA_INPUT_ELEMENT_IDS,
+  BLUEPRINT_ELEMENT_IDS,
+  DASHBOARD_ELEMENT_IDS,
+  AUTH_ELEMENT_IDS,
+  ERROR_ELEMENT_IDS,
+  KEYBOARD_SHORTCUTS_ELEMENT_IDS,
+  ONBOARDING_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+  ARIA_SELECTORS,
+  ALL_ELEMENT_IDS,
+  type PageElementIds,
+  type HomePageElementIds,
+  type ClarificationElementIds,
+  type IdeaInputElementIds,
+  type BlueprintElementIds,
+  type DashboardElementIds,
+  type AuthElementIds,
+  type ErrorElementIds,
+  type KeyboardShortcutsElementIds,
+  type OnboardingElementIds,
+  type AriaHeadingIds,
+  type AriaSelectors,
+} from './element-ids';

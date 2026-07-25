@@ -10,6 +10,10 @@ import {
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
 import { UI_STRINGS } from '@/lib/config/ui';
+import {
+  HOME_PAGE_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 
 function FeatureGridComponent() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -41,10 +45,10 @@ function FeatureGridComponent() {
   return (
     <section
       ref={sectionRef}
-      aria-labelledby="how-it-works-heading"
+      aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}
       className="mt-16 grid md:grid-cols-3 gap-8"
     >
-      <h2 id="how-it-works-heading" className="sr-only">
+      <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
         How It Works
       </h2>
       {FEATURE_CONFIG.FEATURES.map((feature, index) => (

@@ -32,6 +32,10 @@ import {
   BADGE_STYLES,
   COMPONENT_STATE_COLORS,
 } from '@/lib/config';
+import {
+  BLUEPRINT_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
 
@@ -139,7 +143,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         </div>
 
         <section
-          aria-labelledby="skeleton-heading"
+          aria-labelledby={ARIA_HEADING_IDS.SKELETON}
           className={CARD_PATTERNS.BASE}
         >
           <header
@@ -196,7 +200,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         <hr className="my-4" />
       </div>
       <section
-        aria-labelledby="blueprint-heading"
+        aria-labelledby={ARIA_HEADING_IDS.BLUEPRINT}
         className={`${CARD_PATTERNS.BASE} no-print`}
       >
         <header
@@ -204,7 +208,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
         >
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2
-              id="blueprint-heading"
+              id={BLUEPRINT_ELEMENT_IDS.BLUEPRINT_HEADING}
               ref={headingRef}
               className={`text-xl sm:text-2xl font-semibold ${TEXT_COLOR_CLASSES.HEADING}`}
               tabIndex={-1}

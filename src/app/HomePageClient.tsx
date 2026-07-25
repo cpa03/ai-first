@@ -11,6 +11,10 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
 } from '@/lib/config/theme';
+import {
+  HOME_PAGE_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
@@ -128,9 +132,12 @@ export default function HomePageClient() {
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
       {/* Micro-UX: Staggered entrance animation for hero section creates a polished first impression */}
       {/* Respects prefers-reduced-motion for accessibility */}
-      <section aria-labelledby="hero-heading" className="text-center mb-12">
+      <section
+        aria-labelledby={ARIA_HEADING_IDS.HERO}
+        className="text-center mb-12"
+      >
         <h1
-          id="hero-heading"
+          id={HOME_PAGE_ELEMENT_IDS.HERO_HEADING}
           className={`text-4xl font-bold text-gray-900 mb-4 ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
@@ -185,10 +192,10 @@ export default function HomePageClient() {
       </section>
 
       <section
-        aria-labelledby="idea-input-heading"
+        aria-labelledby={ARIA_HEADING_IDS.IDEA_INPUT}
         className={CARD_PATTERNS.BASE}
       >
-        <h2 id="idea-input-heading" className="sr-only">
+        <h2 id={HOME_PAGE_ELEMENT_IDS.IDEA_INPUT_HEADING} className="sr-only">
           Enter Your Idea
         </h2>
         <IdeaInput onSubmit={handleIdeaSubmit} />
@@ -197,11 +204,11 @@ export default function HomePageClient() {
       {idea && (
         <section
           aria-live="polite"
-          aria-labelledby="idea-confirmation-heading"
+          aria-labelledby={ARIA_HEADING_IDS.IDEA_CONFIRMATION}
           className={`mt-8 ${BG_COLORS.INFO_LIGHT} ${BORDER_COLORS.INFO} rounded-lg p-6`}
         >
           <h3
-            id="idea-confirmation-heading"
+            id={HOME_PAGE_ELEMENT_IDS.IDEA_CONFIRMATION_HEADING}
             className={`text-lg font-semibold ${TEXT_COLORS.INFO_DARK} mb-2`}
           >
             {HOME_PAGE_CONFIG.CONFIRMATION.LABEL}
@@ -237,15 +244,15 @@ export default function HomePageClient() {
         </section>
       )}
 
-      <section aria-labelledby="how-it-works-heading">
-        <h2 id="how-it-works-heading" className="sr-only">
+      <section aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}>
+        <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
           How It Works
         </h2>
         <FeatureGrid />
       </section>
 
-      <section aria-labelledby="why-choose-heading">
-        <h2 id="why-choose-heading" className="sr-only">
+      <section aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}>
+        <h2 id={HOME_PAGE_ELEMENT_IDS.WHY_CHOOSE_HEADING} className="sr-only">
           Why Choose IdeaFlow
         </h2>
         <WhyChooseSection />

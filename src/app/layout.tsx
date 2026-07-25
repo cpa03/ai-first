@@ -26,6 +26,7 @@ import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
 import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
 import { ROUTES } from '@/lib/config/routes';
+import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { safeJsonLd } from '@/lib/security/json-ld';
 import {
   KeyboardShortcutsProvider,
@@ -208,7 +209,7 @@ export default async function RootLayout({
                 </div>
               </header>
               <main
-                id="main-content"
+                id={PAGE_ELEMENT_IDS.MAIN_CONTENT}
                 className="flex-1 focus:outline-none"
                 role="main"
                 tabIndex={-1}

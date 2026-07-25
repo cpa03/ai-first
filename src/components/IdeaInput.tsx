@@ -40,6 +40,7 @@ import {
   BG_COLORS,
 } from '@/lib/config/theme';
 import { IDEA_INPUT_LABELS } from '@/lib/config/component-labels';
+import { IDEA_INPUT_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
 import Alert from './Alert';
@@ -344,7 +345,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
       <form onSubmit={handleSubmit} className={IDEA_INPUT_FORM} noValidate>
         <InputWithValidation
           ref={inputRef}
-          id="idea-input"
+          id={IDEA_INPUT_ELEMENT_IDS.IDEA_INPUT}
           name="idea"
           label={IDEA_INPUT_LABELS.INPUT_LABEL}
           value={idea}

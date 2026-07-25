@@ -4,6 +4,8 @@
  * Follows the "Flexy" principle: eliminate hardcoded values
  */
 
+import { ARIA_SELECTORS } from './element-ids';
+
 /**
  * Share Button Labels
  * Eliminates hardcoded strings in ShareButton component
@@ -356,7 +358,7 @@ export const USER_ONBOARDING_LABELS = {
       title: '1. Share Your Idea',
       content:
         'Enter your project idea in natural language. Our AI will help clarify details.',
-      targetSelector: '[aria-labelledby="idea-input-heading"]',
+      targetSelector: ARIA_SELECTORS.IDEA_INPUT_SECTION,
       position: 'top',
     },
     {
@@ -364,14 +366,14 @@ export const USER_ONBOARDING_LABELS = {
       title: '2. Get Your Project Plan',
       content:
         'We break down your idea into tasks, estimate effort, and create a realistic timeline.',
-      targetSelector: '[aria-labelledby="how-it-works-heading"]',
+      targetSelector: ARIA_SELECTORS.HOW_IT_WORKS_SECTION,
       position: 'top',
     },
     {
       id: 'share',
       title: '3. Export or Share',
       content: 'Export to Markdown, Notion, Trello, or share with your team!',
-      targetSelector: '[aria-label*="Share IdeaFlow"]',
+      targetSelector: ARIA_SELECTORS.SHARE_BUTTON,
       position: 'left',
     },
   ],

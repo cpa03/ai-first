@@ -19,6 +19,7 @@ import {
   BG_COLORS,
   COMPONENT_STATE_COLORS,
 } from '@/lib/config/theme';
+import { ERROR_ELEMENT_IDS, ARIA_HEADING_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTHS } from '@/lib/config/page-layout';
@@ -125,12 +126,12 @@ export default class ErrorBoundary extends Component<Props, State> {
             Skip to error content
           </a>
           <div
-            id="error-content"
+            id={ERROR_ELEMENT_IDS.ERROR_CONTENT}
             ref={this.errorRef}
             tabIndex={-1}
             className={`min-h-screen ${BG_COLORS.LIGHT} flex items-center justify-center p-4`}
             role="main"
-            aria-labelledby="error-title"
+            aria-labelledby={ARIA_HEADING_IDS.ERROR}
           >
             <div
               className={`${CONTAINER_WIDTHS.SM} w-full ${CARD_PATTERNS.BASE}`}

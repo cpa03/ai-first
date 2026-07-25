@@ -19,6 +19,7 @@ import {
   BREATHE,
   HERO_ENTRANCE,
 } from '@/lib/config';
+import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import Tooltip from '@/components/Tooltip';
 
@@ -93,7 +94,7 @@ export default function NotFound() {
 
       <div className={`${CONTAINER_WIDTHS.XS} w-full`}>
         <div
-          id="error-content"
+          id={ERROR_ELEMENT_IDS.ERROR_CONTENT}
           className={`${CARD_PATTERNS.CENTERED_LARGE} ${HERO_ENTRANCE}`}
         >
           <div className="relative mb-6">

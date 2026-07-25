@@ -5,6 +5,10 @@ import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
 import { SVG_VIEWBOX } from '@/lib/config/theme';
 import { WHY_CHOOSE_SECTION_LABELS } from '@/lib/config/component-labels';
+import {
+  HOME_PAGE_ELEMENT_IDS,
+  ARIA_HEADING_IDS,
+} from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 function WhyChooseSectionComponent() {
@@ -104,9 +108,12 @@ function WhyChooseSectionComponent() {
     <section
       ref={sectionRef}
       className={SECTION_STYLES.CONTAINER}
-      aria-labelledby="why-choose-heading"
+      aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}
     >
-      <h2 id="why-choose-heading" className={SECTION_STYLES.HEADING}>
+      <h2
+        id={HOME_PAGE_ELEMENT_IDS.WHY_CHOOSE_HEADING}
+        className={SECTION_STYLES.HEADING}
+      >
         {TITLE}
       </h2>
       <div
