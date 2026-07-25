@@ -180,6 +180,16 @@ const ProgressStepperComponent = function ProgressStepper({
             {currentStep + 1} / {steps.length}
           </span>
         </div>
+        {/* Micro-UX: Show current step label on mobile for context */}
+        {/* Helps users understand where they are in the flow without relying on memory */}
+        {steps[currentStep] && (
+          <div
+            className={`px-2 mt-1.5 text-xs font-medium ${TEXT_COLOR_CLASSES.BRAND} truncate`}
+            aria-hidden="true"
+          >
+            {steps[currentStep].label}
+          </div>
+        )}
         <div
           className={`mt-2 ${PROGRESS_BAR_TRACK} mx-2`}
           role="progressbar"
