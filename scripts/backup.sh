@@ -23,33 +23,65 @@ RETENTION_DAYS=30
 VERIFY=false
 TIMESTAMP=$(date +%Y%m%d_%H%M%S)
 BACKUP_NAME="ideaflow_backup_${TIMESTAMP}"
+LOG_FILE="${OUTPUT_DIR}/${BACKUP_NAME}.log"
 
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+
+# Track errors
+ERRORS=()
+WARNINGS=()
 
 # ==============================================================================
 # Helper Functions
 # ==============================================================================
 
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    local msg="[INFO] $(date -u +%Y-%m-%dT%H:%M:%SZ) $1"
+    echo -e "${GREEN}${msg}${NC}"
+    echo "$msg" >> "$LOG_FILE" 2>/dev/null || true
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    local msg="[WARN] $(date -u +%Y-%m-%dT%H:%M:%SZ) $1"
+    echo -e "${YELLOW}${msg}${NC}"
+    echo "$msg" >> "$LOG_FILE" 2>/dev/null || true
+    WARNINGS+=("$1")
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    local msg="[ERROR] $(date -u +%Y-%m-%dT%H:%M:%SZ) $1"
+    echo -e "${RED}${msg}${NC}"
+    echo "$msg" >> "$LOG_FILE" 2>/dev/null || true
+    ERRORS+=("$1")
+}
+
+log_debug() {
+    local msg="[DEBUG] $(date -u +%Y-%m-%dT%H:%M:%SZ) $1"
+    echo -e "${BLUE}${msg}${NC}"
+    echo "$msg" >> "$LOG_FILE" 2>/dev/null || true
 }
 
 show_help() {
     head -20 "$0" | tail -15
     exit 0
 }
+
+# Cleanup function
+cleanup() {
+    local exit_code=$?
+    if [[ $exit_code -ne 0 ]]; then
+        log_error "Backup failed with exit code: $exit_code"
+    fi
+    # Don't delete partial backups on error
+    return $exit_code
+}
+
+trap cleanup EXIT
 
 # ==============================================================================
 # Parse Arguments
@@ -96,6 +128,9 @@ fi
 
 # Create output directory if it doesn't exist
 mkdir -p "$OUTPUT_DIR"
+
+# Initialize log file
+echo "Backup started at $(date -u +%Y-%m-%dT%H:%M:%SZ)" > "$LOG_FILE"
 
 # ==============================================================================
 # Database Backup
@@ -190,6 +225,25 @@ log_info "Backup Name: ${BACKUP_NAME}"
 log_info "Location: ${OUTPUT_DIR}"
 log_info "Size: ${BACKUP_SIZE}"
 log_info "Retention: ${RETENTION_DAYS} days"
+log_info "Warnings: ${#WARNINGS[@]}"
+log_info "Errors: ${#ERRORS[@]}"
 log_info "=========================================="
 
+# Write summary to metadata
+cat >> "${OUTPUT_DIR}/${BACKUP_NAME}_metadata.json" << EOF
+{
+    "backup_size": "${BACKUP_SIZE}",
+    "warnings": ${#WARNINGS[@]},
+    "errors": ${#ERRORS[@]},
+    "completed_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+}
+EOF
+
+# Exit with error if any errors occurred
+if [[ ${#ERRORS[@]} -gt 0 ]]; then
+    log_error "Backup completed with errors"
+    exit 1
+fi
+
+log_info "Backup completed successfully"
 echo "${OUTPUT_DIR}/${BACKUP_NAME}.tar.gz"
