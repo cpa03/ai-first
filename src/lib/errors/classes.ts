@@ -15,6 +15,7 @@ export interface ErrorDetail {
 }
 
 export interface ErrorResponse {
+  success: false;
   error: string;
   code: string;
   fingerprint?: string;
@@ -60,6 +61,7 @@ export class AppError extends Error {
 
   toJSON(): ErrorResponse {
     return {
+      success: false,
       error: redactPII(this.message),
       code: this.code,
       fingerprint: this.fingerprint,
