@@ -223,6 +223,7 @@ Complete index of all IdeaFlow documentation.
 - [Security Verification #1135](./security/SECURITY_VERIFICATION_1135.md) - Supabase service role key exposure verification
 - [Security Sentinel](./security/sentinel.md) - Security vulnerability log
 - [Minimatch Audit - 2026-07-15](./security/minimatch-audit-2026-07-15.md) - Minimatch regex security audit
+- [Security Fix #1739](./security/SECURITY_FIX_1739.md) - Minimatch vulnerability fix documentation
 
 ## Audit Reports
 
@@ -266,6 +267,11 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 ### Archived Reports
 
 Older maintenance reports (2026-07-07 through 2026-07-24) are archived in [maintenance/archive/](./maintenance/archive/).
+
+### Recently Archived
+
+- [BroCula Mission Complete - 2026-07-25](./maintenance/archive/BROCULA_MISSION_COMPLETE.md) - Browser console & Lighthouse audit results
+- [Audit Notes - 2026-07-25](./maintenance/archive/notes.md) - Audit notes and findings
 
 ---
 
