@@ -14,6 +14,7 @@ import {
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
+  loading: () => <div className="h-10 w-24" />,
   ssr: false,
 });
 
@@ -24,7 +25,7 @@ const Skeleton = dynamic(() => import('@/components/Skeleton'), {
 // Dynamic imports for heavy components to reduce initial bundle size
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
   loading: () => (
-    <div className="space-y-4">
+    <div className="space-y-4 min-h-[280px]">
       <Skeleton variant="text" className="h-32 w-full" />
       <Skeleton variant="rect" className="h-10 w-32" />
     </div>
@@ -33,6 +34,7 @@ const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
 });
 
 const CopyButton = dynamic(() => import('@/components/CopyButton'), {
+  loading: () => <div className="h-8 w-20" />,
   ssr: false,
 });
 
