@@ -19,6 +19,8 @@ import {
   TEXT_SIZE_CLASSES,
   TYPOGRAPHY_CLASSES,
   TEXT_COLORS,
+  BG_COLORS,
+  BORDER_COLOR_CLASSES,
   DURATION_TAILWIND,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -195,15 +197,15 @@ function TooltipComponent({
           <div className="relative">
             <div
               className={`
-                px-2.5 py-1.5 bg-gray-800 text-white text-xs font-medium rounded-md
-                shadow-lg border border-gray-700/50 whitespace-normal
+                px-2.5 py-1.5 ${BG_COLORS.DARKER} text-white text-xs font-medium rounded-md
+                shadow-lg border ${BORDER_COLOR_CLASSES.MUTED_DARK}/50 whitespace-normal
                 w-max ${CONTAINER_WIDTH_CLASSES.TOOLTIP} break-words
                 flex items-center gap-2.5
               `}
             >
               <span>{content}</span>
               {shortcut && shortcut.length > 0 && (
-                <div className="flex items-center gap-1 border-l border-gray-700 pl-2 ml-auto">
+                <div className="flex items-center gap-1 border-l ${BORDER_COLOR_CLASSES.MUTED_DARK} pl-2 ml-auto">
                   {shortcut.map((key, i) => (
                     <React.Fragment key={i}>
                       <kbd

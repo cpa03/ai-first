@@ -3,7 +3,7 @@
 import { memo, useEffect, useRef, useState, useCallback } from 'react';
 import { WHY_CHOOSE_CONFIG, FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
-import { SVG_VIEWBOX } from '@/lib/config/theme';
+import { SVG_VIEWBOX, TEXT_COLOR_CLASSES } from '@/lib/config/theme';
 import { WHY_CHOOSE_SECTION_LABELS } from '@/lib/config/component-labels';
 import {
   HOME_PAGE_ELEMENT_IDS,
@@ -168,7 +168,7 @@ function WhyChooseSectionComponent() {
         ))}
       </div>
       <div
-        className="hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-500"
+        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
       >
         <span className="flex items-center gap-1.5">

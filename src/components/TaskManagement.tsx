@@ -381,7 +381,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
       {/* Micro-UX: Keyboard shortcut hints for discoverability */}
       {/* Matches the pattern established on the dashboard page */}
       <div
-        className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-500"
+        className={`mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-hidden="true"
       >
         <span className="hidden sm:inline-flex items-center gap-1.5">

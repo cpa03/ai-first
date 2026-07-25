@@ -14,7 +14,9 @@ import { useAnnouncement } from '@/hooks/useAnnouncement';
 import {
   INPUT_STYLES,
   TEXT_COLORS,
+  TEXT_COLOR_CLASSES,
   BG_COLORS,
+  BG_COLOR_CLASSES,
   SIZES,
   SVG_ANIMATION,
   SVG_SIZES,
@@ -345,7 +347,7 @@ const InputWithValidationComponent = forwardRef<
       <div className="space-y-2">
         <label
           htmlFor={props.id}
-          className="block text-sm font-medium text-gray-900 cursor-pointer"
+          className={`block text-sm font-medium ${TEXT_COLOR_CLASSES.HEADING} cursor-pointer`}
         >
           {label}
           {props.required && (
@@ -477,7 +479,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`w-11 h-11 flex items-center justify-center text-gray-500 hover:text-gray-700 rounded-full hover:bg-gray-100 ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                  className={`w-11 h-11 flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -518,7 +520,7 @@ const InputWithValidationComponent = forwardRef<
                     triggerHapticFeedback();
                     setPasswordVisible(!passwordVisible);
                   }}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 text-gray-600 hover:text-gray-800 rounded-md hover:bg-gray-100 ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                  className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
                   aria-label={
                     passwordVisible
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA
@@ -584,7 +586,10 @@ const InputWithValidationComponent = forwardRef<
         <div className="flex justify-between items-start">
           <div>
             {helpText && !isInvalid && (
-              <p id={`${props.id}-help`} className="text-sm text-gray-600">
+              <p
+                id={`${props.id}-help`}
+                className={`text-sm ${TEXT_COLOR_CLASSES.BODY}`}
+              >
                 {helpText}
               </p>
             )}
