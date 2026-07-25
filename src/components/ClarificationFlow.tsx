@@ -838,9 +838,7 @@ function ClarificationFlow({
           </div>
         </form>
 
-        {/* Micro-UX: Keyboard shortcut hints for question navigation */}
-        {/* Now visible on all screen sizes for improved discoverability */}
-        {/* Number key shortcuts (1-9) allow quick jumping between questions */}
+        {/* Micro-UX: Clickable keyboard shortcut badges for mouse/touch step navigation */}
         {questions.length > 1 && (
           <div className={CLARIFICATION_FLOW_STEP_INDICATOR}>
             <span className="inline-flex items-center gap-1 sm:gap-1.5 flex-wrap justify-center">
@@ -850,28 +848,47 @@ function ClarificationFlow({
                   0,
                   COMPONENT_CONFIG.CLARIFICATION_FLOW.MAX_KEYBOARD_SHORTCUTS
                 )
-                .map((_, index) => (
-                  <span key={index} className="inline-flex items-center">
-                    <kbd
-                      className={
-                        UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
-                      }
-                    >
-                      {index + 1}
-                    </kbd>
-                    {index <
-                      Math.min(
-                        questions.length,
-                        COMPONENT_CONFIG.CLARIFICATION_FLOW
-                          .MAX_KEYBOARD_SHORTCUTS
-                      ) -
-                        1 && (
-                      <span className={CLARIFICATION_FLOW_STEP_SEPARATOR}>
-                        /
-                      </span>
-                    )}
-                  </span>
-                ))}
+                .map((question, index) => {
+                  const isCurrentStep = index === currentStep;
+                  return (
+                    <span key={index} className="inline-flex items-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          triggerHapticFeedback();
+                          goToStep(index);
+                        }}
+                        className={`
+                          ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                          cursor-pointer transition-all duration-200
+                          hover:bg-primary-100 hover:border-primary-400 hover:text-primary-700
+                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1
+                          active:scale-95
+                          ${
+                            isCurrentStep
+                              ? 'bg-primary-100 border-primary-500 text-primary-700 shadow-sm shadow-primary-200/50'
+                              : ''
+                          }
+                        `}
+                        aria-label={`Jump to question ${index + 1}: ${question.question}${isCurrentStep ? ' (current)' : ''}`}
+                        aria-current={isCurrentStep ? 'step' : undefined}
+                      >
+                        {index + 1}
+                      </button>
+                      {index <
+                        Math.min(
+                          questions.length,
+                          COMPONENT_CONFIG.CLARIFICATION_FLOW
+                            .MAX_KEYBOARD_SHORTCUTS
+                        ) -
+                          1 && (
+                        <span className={CLARIFICATION_FLOW_STEP_SEPARATOR}>
+                          /
+                        </span>
+                      )}
+                    </span>
+                  );
+                })}
             </span>
           </div>
         )}
