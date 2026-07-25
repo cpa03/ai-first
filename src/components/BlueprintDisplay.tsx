@@ -30,6 +30,7 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLOR_CLASSES,
   BADGE_STYLES,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { createLogger } from '@/lib/logger';
@@ -397,8 +398,8 @@ function CopyCodeButton({ text }: { text: string }) {
             ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
             ${
               copied
-                ? 'bg-green-100 text-green-700 border border-green-200'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 hover:border-gray-300 shadow-sm opacity-0 group-hover:opacity-100 focus-visible:opacity-100 touch-device-visible'
+                ? COMPONENT_STATE_COLORS.BLUEPRINT.COPIED
+                : `${COMPONENT_STATE_COLORS.BLUEPRINT.DEFAULT} shadow-sm opacity-0 group-hover:opacity-100 focus-visible:opacity-100 touch-device-visible`
             }
           `}
           aria-label={

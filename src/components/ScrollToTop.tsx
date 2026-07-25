@@ -20,6 +20,7 @@ import {
   TRANSITION_CLASSES,
   PROGRESS_PERCENTAGE,
   TYPOGRAPHY_CLASSES,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -159,8 +160,8 @@ function ScrollToTopComponent({
       };
     }
     return {
-      stroke: 'text-emerald-500',
-      text: 'text-emerald-600',
+      stroke: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_STROKE,
+      text: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_TEXT,
       label: 'Near bottom',
     };
   }, []);

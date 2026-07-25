@@ -29,6 +29,7 @@ import {
   DURATION_TAILWIND,
   CHAR_COUNT_COLORS,
   DRAW_CHECK,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -320,7 +321,7 @@ const InputWithValidationComponent = forwardRef<
       paddingClass,
       shouldShake && 'animate-shake',
       showSuccessFlash &&
-        `border-green-500 ring-green-500 ${STATE_SHADOWS.SUCCESS}`,
+        `${COMPONENT_STATE_COLORS.INPUT_SUCCESS.FLASH} ${STATE_SHADOWS.SUCCESS}`,
       showValidCelebration && 'animate-input-valid-celebration',
       className
     );

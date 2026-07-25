@@ -12,6 +12,7 @@ import {
   TEXT_COLORS,
   RIPPLE_RING_1,
   RIPPLE_RING_2,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -150,7 +151,7 @@ function SuccessCelebrationComponent({
     >
       <div className="relative">
         <div
-          className={`w-24 h-24 rounded-full bg-green-100 flex items-center justify-center shadow-lg ${
+          className={`w-24 h-24 rounded-full ${COMPONENT_STATE_COLORS.CELEBRATION.CIRCLE_BG} flex items-center justify-center shadow-lg ${
             shouldAnimate ? 'animate-success-pop' : ''
           }`}
         >
@@ -182,10 +183,10 @@ function SuccessCelebrationComponent({
         {shouldAnimate && (
           <>
             <div
-              className={`absolute inset-0 rounded-full border-4 border-green-400 ${RIPPLE_RING_1}`}
+              className={`absolute inset-0 rounded-full border-4 ${COMPONENT_STATE_COLORS.CELEBRATION.RIPPLE_1} ${RIPPLE_RING_1}`}
             />
             <div
-              className={`absolute inset-0 rounded-full border-4 border-green-300 ${RIPPLE_RING_2}`}
+              className={`absolute inset-0 rounded-full border-4 ${COMPONENT_STATE_COLORS.CELEBRATION.RIPPLE_2} ${RIPPLE_RING_2}`}
             />
           </>
         )}

@@ -11,6 +11,7 @@ import {
   COMPONENT_CONFIG,
   TRANSITION_CLASSES,
   TEXT_COLORS,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
@@ -116,7 +117,7 @@ const CopyButtonComponent = function CopyButton({
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
-      ${copied ? 'text-green-700 bg-green-50 hover:bg-green-100 hover:text-green-800' : ''}
+      ${copied ? COMPONENT_STATE_COLORS.COPIED.ICON : ''}
     `,
   };
 
@@ -159,7 +160,7 @@ const CopyButtonComponent = function CopyButton({
 
               <svg
                 className={`
-              absolute inset-0 ${SVG_SIZES.MD} text-green-700 ${TRANSITION_CLASSES.DEFAULT}
+              absolute inset-0 ${SVG_SIZES.MD} ${COMPONENT_STATE_COLORS.COPIED.CHECKMARK} ${TRANSITION_CLASSES.DEFAULT}
               ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
             `}
                 fill="none"

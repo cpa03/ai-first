@@ -17,6 +17,7 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
   BG_COLORS,
+  COMPONENT_STATE_COLORS,
 } from '@/lib/config/theme';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
@@ -119,7 +120,7 @@ export default class ErrorBoundary extends Component<Props, State> {
         <>
           <a
             href="#error-content"
-            className={`sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[${Z_INDEX_LAYERS.TOAST}] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md`}
+            className={`sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[${Z_INDEX_LAYERS.TOAST}] focus:px-4 focus:py-2 ${COMPONENT_STATE_COLORS.ERROR_BOUNDARY.SKIP_LINK} focus:rounded-md`}
           >
             Skip to error content
           </a>
