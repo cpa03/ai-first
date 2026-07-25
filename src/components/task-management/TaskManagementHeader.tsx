@@ -251,7 +251,7 @@ function TaskManagementHeaderComponent({
           />
         </div>
         {/* Micro-UX: Keyboard shortcut hints for discoverability */}
-        {/* Makes [ and ] shortcuts visible without requiring hover, following the ProgressStepper pattern */}
+        {/* Makes [ ] and 1-3 shortcuts visible without requiring hover, following the ProgressStepper pattern */}
         <div
           className={`hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-500 ${BREATHE}`}
           aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
@@ -276,6 +276,20 @@ function TaskManagementHeaderComponent({
             </kbd>
             <span className={TRANSITION_CLASSES.COLOR}>
               {TASK_MANAGEMENT_LABELS.COLLAPSE_ALL_HINT}
+            </span>
+          </span>
+          <span
+            className={`${TEXT_COLORS.MUTED_LIGHT} opacity-50`}
+            aria-hidden="true"
+          >
+            ·
+          </span>
+          <span className="flex items-center gap-1.5">
+            <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+              1-3
+            </kbd>
+            <span className={TRANSITION_CLASSES.COLOR}>
+              {TASK_MANAGEMENT_LABELS.FILTER_HINT}
             </span>
           </span>
         </div>
