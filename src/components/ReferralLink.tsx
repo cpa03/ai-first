@@ -1,10 +1,17 @@
 'use client';
 
-import React, { useMemo, useCallback, useState, useRef, useEffect } from 'react';
+import React, {
+  useMemo,
+  useCallback,
+  useState,
+  useRef,
+  useEffect,
+} from 'react';
 import CopyButton from './CopyButton';
 import Tooltip from './Tooltip';
 import { createLogger } from '@/lib/logger';
 import { APP_CONFIG } from '@/lib/config/app';
+import { UI_CONFIG } from '@/lib/config/constants';
 import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
@@ -103,13 +110,16 @@ export default function ReferralLink({
     }
     selectionTimeoutRef.current = setTimeout(() => {
       setIsSelected(false);
-    }, 2000);
+    }, UI_CONFIG.COPY_FEEDBACK_DURATION);
   }, []);
 
   // Micro-UX: Click or focus + Enter/Space to select all text for easy custom copy
-  const handleCodeClick = useCallback((e: React.MouseEvent<HTMLElement>) => {
-    selectAll(e.currentTarget);
-  }, [selectAll]);
+  const handleCodeClick = useCallback(
+    (e: React.MouseEvent<HTMLElement>) => {
+      selectAll(e.currentTarget);
+    },
+    [selectAll]
+  );
 
   const handleCodeKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLElement>) => {
