@@ -228,10 +228,8 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Browser Console & Lighthouse Audit Summary](./audit/BROWSER_AUDIT_SUMMARY.md) - Latest browser audit summary (2026-07-23)
+- [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
 - [BugFixer Audit - 2026-07-22](./audit/bugfixer-audit-20260722.md) - Comprehensive bug audit with quality gates
-- [BugFixer Report - 2026-07-22](./audit/bugfixer-report-2026-07-22.md) - BugFixer loop results and type safety fixes
-- [Flexy Modularization Report](./audit/flexy-modularization-report.md) - Code modularization achievement report
 - [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit (latest)
 - [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit
 - [Browser Console Lighthouse - 2026-07-19](./audit/2026-07-19-brocula-browser-console-lighthouse.md) - BroCula browser console & Lighthouse audit
@@ -244,8 +242,6 @@ Complete index of all IdeaFlow documentation.
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
 - [Issue: Structured Logging](./audit/ISSUE-04-structured-logging.md) - Structured logging implementation
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
-- [Flexy Modularization Audit](./audit/flexy-modularity-audit.md) - Code modularization assessment
-- [Modular Architecture Review](./audit/modular-architecture-review.md) - Modular architecture analysis
 - [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
 
 ### Archived Reports
@@ -265,14 +261,11 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 
 - [BugFixer Continuous Monitoring Guide](./maintenance/bugfixer-continuous-monitoring.md) - Continuous monitoring approach for repository quality
 - [Repository Maintenance Report - 2026-07-25 01:30](./maintenance/2026-07-25-repository-maintenance-0130.md) - Cleanup, archived old reports, and stale branch analysis
-- [Repository Maintenance Report - 2026-07-24 22:00](./maintenance/2026-07-24-repository-maintenance-2200.md) - Cleanup and stale branch analysis
 - [Issue Manager Report - 2026-07-23](./maintenance/ISSUE-MANAGER-REPORT-20260723.md) - Issue normalization and duplicate detection
-- [Repository Maintenance Report - 2026-07-23 21:00](./maintenance/2026-07-23-repository-maintenance-2100.md) - Repository health analysis and quality gate verification
-- [Repository Maintenance Report - 2026-07-23 15:00](./maintenance/2026-07-23-repository-maintenance-1500.md) - Branch cleanup and documentation verification
 
 ### Archived Reports
 
-Older maintenance reports are archived in [maintenance/archive/](./maintenance/archive/) (2026-07-07 through 2026-07-22).
+Older maintenance reports (2026-07-07 through 2026-07-24) are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
