@@ -1,16 +1,11 @@
 'use client';
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, ErrorInfo, ReactNode, useCallback } from 'react';
 import Link from 'next/link';
 import Alert from './Alert';
 import Button from './Button';
 import { createLogger } from '@/lib/logger';
-import {
-  UI_CONFIG,
-  MESSAGES,
-  BUTTON_LABELS,
-  COMPONENT_DEFAULTS,
-} from '@/lib/config/ui';
+import { MESSAGES, BUTTON_LABELS, COMPONENT_DEFAULTS } from '@/lib/config/ui';
 import {
   Z_INDEX_LAYERS,
   CARD_PATTERNS,
@@ -24,6 +19,79 @@ import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { TEXT_SIZE_CLASSES } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTHS } from '@/lib/config/page-layout';
 import { ROUTES } from '@/lib/config/routes';
+import { useClipboard } from '@/hooks/useClipboard';
+import { useConfetti } from '@/hooks/useConfetti';
+import StatusAnnouncer from './StatusAnnouncer';
+
+/**
+ * Micro-UX: ErrorCopyButton - Functional component that uses useClipboard hook
+ * Provides consistent copy UX with haptic feedback, status announcements,
+ * and confetti animation, matching the patterns used in CopyButton and EmailButton.
+ *
+ * This replaces the raw navigator.clipboard.writeText() in ErrorBoundary
+ * to ensure all copy operations in the app have consistent UX patterns.
+ */
+function ErrorCopyButton({
+  errorText,
+  copyLabel,
+  copiedLabel,
+  ariaLabel,
+}: {
+  errorText: string;
+  copyLabel: string;
+  copiedLabel: string;
+  ariaLabel: string;
+}) {
+  const { fire, particles } = useConfetti();
+
+  const handleOnCopy = useCallback(() => {
+    fire();
+  }, [fire]);
+
+  const { copy, hasCopied } = useClipboard({
+    onCopy: handleOnCopy,
+  });
+
+  const handleCopy = useCallback(() => {
+    copy(errorText);
+  }, [copy, errorText]);
+
+  return (
+    <>
+      <StatusAnnouncer message={copiedLabel} triggered={hasCopied} />
+      <span className="relative inline-flex">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleCopy}
+          aria-label={ariaLabel}
+        >
+          {hasCopied ? copiedLabel : copyLabel}
+        </Button>
+        {/* Micro-UX: Confetti burst on copy success for delightful positive feedback */}
+        {particles.map((particle) => (
+          <span
+            key={particle.id}
+            className="absolute rounded-full pointer-events-none animate-copy-confetti"
+            style={
+              {
+                left: '50%',
+                top: '50%',
+                width: `${particle.size}px`,
+                height: `${particle.size}px`,
+                backgroundColor: particle.color,
+                '--confetti-x': `${particle.x}px`,
+                '--confetti-y': `${particle.y}px`,
+                animationDelay: `${particle.delay}ms`,
+              } as React.CSSProperties
+            }
+            aria-hidden="true"
+          />
+        ))}
+      </span>
+    </>
+  );
+}
 
 interface Props {
   children: ReactNode;
@@ -34,7 +102,6 @@ interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
-  isCopied: boolean;
   isMac: boolean;
 }
 
@@ -48,7 +115,6 @@ export default class ErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
       errorInfo: null,
-      isCopied: false,
       isMac: false,
     };
   }
@@ -89,7 +155,6 @@ export default class ErrorBoundary extends Component<Props, State> {
       hasError: false,
       error: null,
       errorInfo: null,
-      isCopied: false,
     });
   };
 
@@ -210,23 +275,12 @@ export default class ErrorBoundary extends Component<Props, State> {
                     )}
                   </div>
                   <div className="mt-4 flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        const errorText = `Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || MESSAGES.ERROR_BOUNDARY.NO_STACK_TRACE}`;
-                        navigator.clipboard.writeText(errorText);
-                        this.setState({ isCopied: true });
-                        setTimeout(() => {
-                          this.setState({ isCopied: false });
-                        }, UI_CONFIG.FEEDBACK.COPY_FEEDBACK_DURATION_MS);
-                      }}
-                      aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.CLOSE_ERROR}
-                    >
-                      {this.state.isCopied
-                        ? MESSAGES.BLUEPRINT.COPIED_BUTTON
-                        : MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
-                    </Button>
+                    <ErrorCopyButton
+                      errorText={`Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || MESSAGES.ERROR_BOUNDARY.NO_STACK_TRACE}`}
+                      copyLabel={MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
+                      copiedLabel={MESSAGES.BLUEPRINT.COPIED_BUTTON}
+                      ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.CLOSE_ERROR}
+                    />
                   </div>
                 </details>
               )}
