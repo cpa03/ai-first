@@ -106,15 +106,29 @@ async function main() {
   console.log(`Pages to scan: ${PAGES.join(', ')}`);
   console.log('');
 
-  // Check if server is reachable
+  const http = require('http');
   try {
-    const response = await fetch(BASE_URL);
-    if (!response.ok) {
-      console.error(`❌ Server returned status ${response.status}`);
-      process.exit(1);
-    }
+    await new Promise((resolve, reject) => {
+      const url = new URL(BASE_URL);
+      const req = http.request(url, (res) => {
+        console.log(
+          `✓ Server is reachable at ${BASE_URL} (status: ${res.statusCode})`
+        );
+        res.resume();
+        resolve();
+      });
+      req.on('error', (e) => {
+        console.error(`❌ Cannot reach server at ${BASE_URL}`);
+        console.error(`   Error: ${e.message}`);
+        reject(e);
+      });
+      req.setTimeout(5000, () => {
+        req.destroy();
+        reject(new Error('Connection timeout'));
+      });
+      req.end();
+    });
   } catch (err) {
-    console.error(`❌ Cannot reach server at ${BASE_URL}`);
     console.error('   Make sure the dev server is running');
     process.exit(1);
   }
