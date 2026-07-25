@@ -688,6 +688,22 @@ function ResultsContent() {
             <div className="mt-6 relative">
               <Alert type="success" title={RESULTS_PAGE_CONTENT.SUCCESS_TITLE}>
                 {RESULTS_PAGE_CONTENT.SUCCESS_MESSAGE}
+                <span className="mt-3 block">
+                  <ShareButton
+                    shareTitle="Check out my project blueprint on IdeaFlow!"
+                    shareText="I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!"
+                    label="Share your blueprint"
+                    successLabel="Shared!"
+                    ariaLabel="Share your project blueprint"
+                    onShare={() => {
+                      trackEvent(ANALYTICS_EVENTS.SOCIAL_SHARE, {
+                        share_platform: 'web_share',
+                        idea_id: idea.id,
+                        source: 'export_success_alert',
+                      });
+                    }}
+                  />
+                </span>
               </Alert>
               {showExportSuccess &&
                 particles.map((particle) => (
