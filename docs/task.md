@@ -19,6 +19,13 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ## StorX Feature Analysis & Integration Tasks
 
+### [STRENGTHEN] Ensure unified import pattern for triggerHapticFeedback
+
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-07-25
+- **Details**: Verified that all components utilize the centralized `triggerHapticFeedback` from `src/lib/utils.ts` and that no duplicate/redundant implementations exist.
+
 ### [CONNECT] Connect API endpoints to central config validation
 
 - **Priority**: LOW

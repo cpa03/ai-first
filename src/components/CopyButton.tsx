@@ -92,7 +92,7 @@ const CopyButtonComponent = function CopyButton({
     inline-flex items-center justify-center gap-2
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
     focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-    focus-visible:ring-primary-500 focus-visible:ring-offset-white
+    ${COMPONENT_CONFIG.COPY_FEEDBACK.FOCUS_RING_CLASS} focus-visible:ring-offset-gray-100
     motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
   `;
 
@@ -138,6 +138,7 @@ const CopyButtonComponent = function CopyButton({
             onKeyDown={handleKeyDown}
             className={`${baseClasses} ${variantClasses[variant]} ${glowClass} ${className}`}
             aria-label={ariaLabel}
+            aria-keyshortcuts="Control+C, Meta+C"
             type="button"
           >
             <span

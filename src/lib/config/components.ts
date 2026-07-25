@@ -112,6 +112,7 @@ export const COMPONENT_CONFIG = {
       500,
       10000
     ),
+    FOCUS_RING_CLASS: 'focus-visible:ring-primary-500',
     SCALE: {
       DEFAULT_HOVER: 'hover:scale-[1.02]',
       SUBTLE_HOVER: 'hover:scale-[1.02]',
