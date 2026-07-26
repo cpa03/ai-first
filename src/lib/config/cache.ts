@@ -289,6 +289,36 @@ export const CACHE_CONFIG = {
   } as const,
 
   /**
+   * Cache sliding expiration configuration
+   * Controls when entries are considered "recently updated" for LRU optimization
+   */
+  SLIDING_EXPIRATION: {
+    /**
+     * Minimum time (ms) before an entry is considered "recently updated"
+     * Entries accessed within this window skip the expensive delete/set operation
+     * Env: CACHE_SLIDING_EXPIRATION_THRESHOLD_MS (default: 1000)
+     */
+    THRESHOLD_MS: EnvLoader.number(
+      'CACHE_SLIDING_EXPIRATION_THRESHOLD_MS',
+      1000,
+      100,
+      10000
+    ),
+
+    /**
+     * Percentage of TTL to use as threshold (if TTL is set)
+     * Actual threshold = min(THRESHOLD_MS, TTL / TTL_FRACTION_DIVISOR)
+     * Env: CACHE_SLIDING_EXPIRATION_TTL_FRACTION_DIVISOR (default: 10)
+     */
+    TTL_FRACTION_DIVISOR: EnvLoader.number(
+      'CACHE_SLIDING_EXPIRATION_TTL_FRACTION_DIVISOR',
+      10,
+      2,
+      100
+    ),
+  } as const,
+
+  /**
    * Cache health monitoring thresholds
    * Controls when cache health status changes
    */

@@ -81,13 +81,16 @@ export class Cache<T = unknown> {
     // This avoids extremely expensive delete/set operations on every read of hot keys,
     // while still keeping the LRU/expiration order approximately correct.
     // Threshold: For small caches (maxSize < 10, often in unit tests), we use strict LRU (threshold = 0).
-    // For larger caches, we use a 1-second threshold (or 10% of TTL) to eliminate redundant Map writes.
+    // For larger caches, we use configurable threshold (or TTL fraction) to eliminate redundant Map writes.
     if (this.maxSize || this.ttl) {
       const hasLargeCache = !this.maxSize || this.maxSize >= 10;
       const threshold = hasLargeCache
         ? this.ttl
-          ? Math.min(1000, this.ttl / 10)
-          : 1000
+          ? Math.min(
+              CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS,
+              this.ttl / CACHE_CONFIG.SLIDING_EXPIRATION.TTL_FRACTION_DIVISOR
+            )
+          : CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS
         : 0;
 
       if (now - entry.timestamp >= threshold) {
@@ -124,13 +127,16 @@ export class Cache<T = unknown> {
     // This avoids extremely expensive delete/set operations on every read of hot keys,
     // while still keeping the LRU/expiration order approximately correct.
     // Threshold: For small caches (maxSize < 10, often in unit tests), we use strict LRU (threshold = 0).
-    // For larger caches, we use a 1-second threshold (or 10% of TTL) to eliminate redundant Map writes.
+    // For larger caches, we use configurable threshold (or TTL fraction) to eliminate redundant Map writes.
     if (this.maxSize || this.ttl) {
       const hasLargeCache = !this.maxSize || this.maxSize >= 10;
       const threshold = hasLargeCache
         ? this.ttl
-          ? Math.min(1000, this.ttl / 10)
-          : 1000
+          ? Math.min(
+              CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS,
+              this.ttl / CACHE_CONFIG.SLIDING_EXPIRATION.TTL_FRACTION_DIVISOR
+            )
+          : CACHE_CONFIG.SLIDING_EXPIRATION.THRESHOLD_MS
         : 0;
 
       if (now - entry.timestamp >= threshold) {
