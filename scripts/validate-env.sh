@@ -240,7 +240,6 @@ validate_service_role_key_security() {
     return 0
 }
 
-# Function to validate AI provider setup
 validate_ai_providers() {
     local has_openai=${OPENAI_API_KEY:+true}
     local has_anthropic=${ANTHROPIC_API_KEY:+true}
@@ -251,6 +250,8 @@ validate_ai_providers() {
         else
             print_status "WARN" "OpenAI API key format may be invalid"
         fi
+    else
+        print_status "INFO" "OPENAI_API_KEY is not set"
     fi
     
     if [ "$has_anthropic" = true ]; then
@@ -259,12 +260,15 @@ validate_ai_providers() {
         else
             print_status "WARN" "Anthropic API key format may be invalid"
         fi
+    else
+        print_status "INFO" "ANTHROPIC_API_KEY is not set"
     fi
     
     if [ "$has_openai" = true ] || [ "$has_anthropic" = true ]; then
         return 0
     else
-        print_status "ERROR" "At least one AI provider (OpenAI or Anthropic) must be configured"
+        print_status "ERROR" "At least one AI provider (OPENAI_API_KEY or ANTHROPIC_API_KEY) must be configured"
+        print_status "INFO" "Set at least one of these in your .env.local file"
         return 1
     fi
 }
@@ -468,9 +472,6 @@ main() {
     echo -e "${BLUE}Optional Integrations:${NC}"
     echo
     
-    # Check optional variables
-    check_env_var "OPENAI_API_KEY" "false"
-    check_env_var "ANTHROPIC_API_KEY" "false"
     check_env_var "NOTION_API_KEY" "false"
     check_env_var "TRELLO_API_KEY" "false"
     check_env_var "GOOGLE_CLIENT_ID" "false"
