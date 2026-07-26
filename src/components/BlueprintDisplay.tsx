@@ -75,25 +75,31 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     }
   }, [isGenerating]);
 
+  const handlePrint = useCallback(() => {
+    triggerHapticFeedback();
+    window.print();
+  }, []);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (
-        !isGenerating &&
-        blueprint &&
-        (e.metaKey || e.ctrlKey) &&
-        e.key === 'c'
-      ) {
-        const selection = window.getSelection();
-        if (selection && selection.toString().length > 0) {
-          return;
-        }
+      if (!isGenerating && blueprint && (e.metaKey || e.ctrlKey)) {
+        if (e.key === 'c') {
+          const selection = window.getSelection();
+          if (selection && selection.toString().length > 0) {
+            return;
+          }
 
-        e.preventDefault();
-        triggerHapticFeedback();
-        handleCopy();
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleCopy();
+        } else if (e.key === 'p') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          handlePrint();
+        }
       }
     },
-    [isGenerating, blueprint, handleCopy]
+    [isGenerating, blueprint, handleCopy, handlePrint]
   );
 
   useEffect(() => {
@@ -114,11 +120,6 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
     storeFocus();
     handleDownload();
   };
-
-  const handlePrint = useCallback(() => {
-    triggerHapticFeedback();
-    window.print();
-  }, []);
 
   const comingSoonBadgeClass = prefersReducedMotion
     ? ''
