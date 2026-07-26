@@ -17,7 +17,13 @@
  * ```
  */
 
-import { BG_COLORS, TEXT_COLORS, BORDER_COLORS } from './theme';
+import {
+  BG_COLORS,
+  TEXT_COLORS,
+  BORDER_COLORS,
+  DURATION_TAILWIND,
+} from './theme';
+import { UI_CONFIG } from './ui';
 
 /**
  * Pulse dot indicator styles
@@ -330,6 +336,10 @@ export const CLARIFICATION_FLOW_STEP_SEPARATOR = `${TEXT_COLORS.MUTED_LIGHT} mx-
  * Used in: ClarificationFlow
  */
 export const CLARIFICATION_FLOW_INPUT_LABEL = `block text-sm font-medium ${TEXT_COLORS.PRIMARY} cursor-pointer`;
+
+export const CLARIFICATION_FLOW_STEP_BUTTON_BASE = `${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} cursor-pointer transition-all ${DURATION_TAILWIND[200]} hover:bg-primary-100 hover:border-primary-400 hover:text-primary-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1 active:scale-95`;
+
+export const CLARIFICATION_FLOW_STEP_BUTTON_CURRENT = `bg-primary-100 border-primary-500 text-primary-700 shadow-sm shadow-primary-200/50`;
 
 /**
  * Mobile nav desktop link container styles

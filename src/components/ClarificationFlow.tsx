@@ -38,6 +38,8 @@ import {
   CLARIFICATION_FLOW_STEP_TEXT,
   CLARIFICATION_FLOW_STEP_SEPARATOR,
   CLARIFICATION_FLOW_INPUT_LABEL,
+  CLARIFICATION_FLOW_STEP_BUTTON_BASE,
+  CLARIFICATION_FLOW_STEP_BUTTON_CURRENT,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -933,18 +935,18 @@ function ClarificationFlow({
                           goToStep(index);
                         }}
                         className={`
-                          ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
-                          cursor-pointer transition-all duration-200
-                          hover:bg-primary-100 hover:border-primary-400 hover:text-primary-700
-                          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1
-                          active:scale-95
+                          ${CLARIFICATION_FLOW_STEP_BUTTON_BASE}
                           ${
                             isCurrentStep
-                              ? 'bg-primary-100 border-primary-500 text-primary-700 shadow-sm shadow-primary-200/50'
+                              ? CLARIFICATION_FLOW_STEP_BUTTON_CURRENT
                               : ''
                           }
                         `}
-                        aria-label={`Jump to question ${index + 1}: ${question.question}${isCurrentStep ? ' (current)' : ''}`}
+                        aria-label={CLARIFICATION_FLOW_LABELS.STEP_JUMP_ARIA_LABEL(
+                          index,
+                          question.question,
+                          isCurrentStep
+                        )}
                         aria-current={isCurrentStep ? 'step' : undefined}
                       >
                         {index + 1}

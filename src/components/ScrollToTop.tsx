@@ -149,20 +149,20 @@ function ScrollToTopComponent({
       return {
         stroke: 'text-gray-500',
         text: 'text-gray-500',
-        label: 'Near top',
+        label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_TOP,
       };
     }
     if (progress <= 75) {
       return {
         stroke: 'text-primary-500',
         text: 'text-primary-600',
-        label: 'Middle of page',
+        label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.MIDDLE,
       };
     }
     return {
       stroke: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_STROKE,
       text: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_TEXT,
-      label: 'Near bottom',
+      label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_BOTTOM,
     };
   }, []);
 
