@@ -469,6 +469,9 @@ export const CLARIFICATION_FLOW_LABELS = {
   PASTE_BUTTON: 'Paste',
   PASTE_SUCCESS: 'Pasted!',
   PASTE_ARIA_LABEL: 'Paste answer from clipboard',
+  CLEAR_BUTTON: 'Clear',
+  CLEAR_ARIA_LABEL: 'Clear answer',
+  CLEAR_TOOLTIP: 'Clear your answer (Esc)',
 } as const;
 
 /**

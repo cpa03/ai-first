@@ -250,6 +250,24 @@ function ClarificationFlow({
     }
   }, [currentQuestion, setCurrentAnswer, textareaRef, textInputRef]);
 
+  // Micro-UX: Clear answer handler - matches IdeaInput pattern for consistency
+  // Allows users to quickly reset their answer with clear button or Escape key
+  const handleClear = useCallback(() => {
+    if (currentAnswer.trim()) {
+      triggerHapticFeedback();
+      setCurrentAnswer('');
+      const ref =
+        currentQuestion?.type === 'textarea' ? textareaRef : textInputRef;
+      ref?.current?.focus();
+    }
+  }, [
+    currentAnswer,
+    setCurrentAnswer,
+    currentQuestion,
+    textareaRef,
+    textInputRef,
+  ]);
+
   // Micro-UX: Keyboard shortcut Alt+R to toggle reference idea section
   useEffect(() => {
     if (loading || questions.length === 0) return;
@@ -266,6 +284,11 @@ function ClarificationFlow({
         }
       }
 
+      if (e.key === 'Escape' && currentAnswer.trim() && !isSubmitting) {
+        e.preventDefault();
+        handleClear();
+      }
+
       const stepNumber = parseInt(e.key, 10);
       if (stepNumber >= 1 && stepNumber <= questions.length) {
         e.preventDefault();
@@ -275,7 +298,15 @@ function ClarificationFlow({
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [loading, questions.length, handleToggleReference, goToStep]);
+  }, [
+    loading,
+    questions.length,
+    handleToggleReference,
+    goToStep,
+    handleClear,
+    currentAnswer,
+    isSubmitting,
+  ]);
 
   if (loading) {
     return (
@@ -676,6 +707,45 @@ function ClarificationFlow({
                       ? CLARIFICATION_FLOW_LABELS.PASTE_SUCCESS
                       : CLARIFICATION_FLOW_LABELS.PASTE_BUTTON}
                   </Button>
+                </div>
+              )}
+
+            {(currentQuestion.type === 'textarea' ||
+              currentQuestion.type === 'text') &&
+              currentAnswer.trim() &&
+              !showCelebration &&
+              !isSubmitting && (
+                <div className="flex justify-end">
+                  <Tooltip
+                    content={CLARIFICATION_FLOW_LABELS.CLEAR_TOOLTIP}
+                    shortcut={['Esc']}
+                    position="top"
+                  >
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleClear}
+                      aria-label={CLARIFICATION_FLOW_LABELS.CLEAR_ARIA_LABEL}
+                      className={`${TRANSITION_CLASSES.DEFAULT} ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} ${BG_COLOR_CLASSES.HOVER_SUBTLE}`}
+                    >
+                      <svg
+                        className="w-4 h-4 mr-1"
+                        fill="none"
+                        viewBox={SVG_VIEWBOX.STANDARD}
+                        stroke="currentColor"
+                        strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                      {CLARIFICATION_FLOW_LABELS.CLEAR_BUTTON}
+                    </Button>
+                  </Tooltip>
                 </div>
               )}
 
