@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo, useEffect, useRef, useState } from 'react';
+import { memo, useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import Button from '@/components/Button';
 import Tooltip from '@/components/Tooltip';
 import CopyButton from '@/components/CopyButton';
@@ -52,6 +52,7 @@ function TaskManagementHeaderComponent({
   const [showCompletionCelebration, setShowCompletionCelebration] =
     useState(false);
   const prevProgressRef = useRef(overallProgress);
+  const radioGroupRef = useRef<HTMLDivElement>(null);
 
   // Micro-UX: Fire confetti celebration when all tasks are completed (100%)
   // Mirrors the pattern from TaskItem, IdeaInput, and CopyButton for consistent delight
@@ -114,6 +115,49 @@ function TaskManagementHeaderComponent({
     totalDeliverables,
   ]);
 
+  // Micro-UX: Arrow key navigation within the filter radio group
+  // Follows WAI-ARIA Radio Group pattern: ArrowRight/ArrowDown moves forward, ArrowLeft/ArrowUp moves backward
+  // Wraps around at boundaries for a seamless keyboard experience
+  const FILTER_ORDER = useMemo(
+    () => ['all', 'in_progress', 'completed'] as const,
+    []
+  );
+
+  const handleRadioGroupKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const isArrowKey =
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowDown' ||
+        e.key === 'ArrowLeft' ||
+        e.key === 'ArrowUp';
+      if (!isArrowKey) return;
+
+      e.preventDefault();
+      triggerHapticFeedback();
+
+      const currentIndex = FILTER_ORDER.indexOf(statusFilter);
+      let nextIndex: number;
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        nextIndex = (currentIndex + 1) % FILTER_ORDER.length;
+      } else {
+        nextIndex =
+          (currentIndex - 1 + FILTER_ORDER.length) % FILTER_ORDER.length;
+      }
+
+      const nextFilter = FILTER_ORDER[nextIndex];
+      onFilterChange(nextFilter);
+
+      const radioGroup = radioGroupRef.current;
+      if (radioGroup) {
+        const buttons = radioGroup.querySelectorAll('[role="radio"]');
+        const nextButton = buttons[nextIndex] as HTMLElement;
+        nextButton?.focus();
+      }
+    },
+    [statusFilter, onFilterChange, FILTER_ORDER]
+  );
+
   return (
     <div className={`${TASK_HEADER_STYLES.CONTAINER} relative`}>
       <div className={TASK_HEADER_STYLES.STATS.CONTAINER}>
@@ -158,9 +202,11 @@ function TaskManagementHeaderComponent({
 
       <div className="mt-4">
         <div
+          ref={radioGroupRef}
           className="flex items-center gap-2 mb-3"
           role="radiogroup"
           aria-label={TASK_MANAGEMENT_LABELS.FILTER_ARIA_LABEL}
+          onKeyDown={handleRadioGroupKeyDown}
         >
           {(['all', 'in_progress', 'completed'] as const).map((filter) => {
             const isActive = statusFilter === filter;
@@ -176,6 +222,7 @@ function TaskManagementHeaderComponent({
                 key={filter}
                 role="radio"
                 aria-checked={isActive}
+                tabIndex={isActive ? 0 : -1}
                 onClick={() => {
                   triggerHapticFeedback();
                   onFilterChange(filter);
