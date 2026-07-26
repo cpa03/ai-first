@@ -478,6 +478,8 @@ export const CLARIFICATION_FLOW_LABELS = {
 export const FEATURE_GRID_LABELS = {
   STEP_ARIA_LABEL: (step: number, title: string, description: string) =>
     `Step ${step}: ${title}. ${description}`,
+  STEPS_LIST_ARIA_LABEL: 'How it works: 3 steps',
+  KEYBOARD_NAV_HINT: 'Use arrow keys to navigate between steps',
 } as const;
 
 /**
