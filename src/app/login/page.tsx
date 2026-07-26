@@ -383,6 +383,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full"
             size="lg"
+            enableTransition
           >
             {isLoading
               ? LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING
