@@ -115,13 +115,13 @@ function FeatureGridComponent() {
       <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
         How It Works
       </h2>
-      <div
+      <ul
         className="grid md:grid-cols-3 gap-8"
         role="list"
         aria-label={FEATURE_GRID_LABELS.STEPS_LIST_ARIA_LABEL}
       >
         {FEATURE_CONFIG.FEATURES.map((feature, index) => (
-          <article
+          <li
             key={feature.step}
             data-feature-card
             data-feature-step={feature.step.toString()}
@@ -219,11 +219,11 @@ function FeatureGridComponent() {
                 />
               </>
             )}
-          </article>
+          </li>
         ))}
-      </div>
+      </ul>
       <div
-        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-400`}
+        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-500`}
         aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}
       >
         <span className="flex items-center gap-1.5">

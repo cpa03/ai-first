@@ -138,7 +138,7 @@ function ClarifySuccessState({
             {/* Micro-UX: Keyboard shortcut hint for blueprint generation */}
             {/* Matches the keyboard hint patterns in dashboard, not-found, and clarification flow */}
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-400 ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-500 ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd

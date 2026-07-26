@@ -23,7 +23,7 @@ const DOM_STABILIZATION_WAIT = parseInt(
   const browser = await chromium.launch({
     headless: true,
     executablePath:
-      '/home/runner/.cache/ms-playwright/chromium-1228/chrome-linux/chrome',
+      '/home/runner/.cache/ms-playwright/chromium-1234/chrome-linux/chrome',
   });
   const page = await browser.newPage();
 
