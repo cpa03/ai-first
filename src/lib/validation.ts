@@ -10,6 +10,7 @@ import { SANITIZATION_CONFIG, VALIDATION_CONFIG } from './config/validation';
 import { API_ERROR_MESSAGES } from './config/error-messages';
 import { isString } from './type-guards';
 import { CACHE_CONFIG } from './config/cache';
+import { VALIDATION_ERROR_MESSAGES } from './config/validation-error-messages';
 
 export interface ValidationError {
   field: string;
@@ -43,7 +44,7 @@ export function validateIdea(idea: unknown): ValidationResult {
   if (!idea || typeof idea !== 'string') {
     errors.push({
       field: 'idea',
-      message: 'idea is required and must be a string',
+      message: VALIDATION_ERROR_MESSAGES.IDEA.REQUIRED,
     });
     return { valid: false, errors };
   }
@@ -53,14 +54,14 @@ export function validateIdea(idea: unknown): ValidationResult {
   if (trimmed.length < MIN_IDEA_LENGTH) {
     errors.push({
       field: 'idea',
-      message: `idea must be at least ${MIN_IDEA_LENGTH} characters`,
+      message: VALIDATION_ERROR_MESSAGES.IDEA.TOO_SHORT(MIN_IDEA_LENGTH),
     });
   }
 
   if (trimmed.length > MAX_IDEA_LENGTH) {
     errors.push({
       field: 'idea',
-      message: `idea must not exceed ${MAX_IDEA_LENGTH} characters`,
+      message: VALIDATION_ERROR_MESSAGES.IDEA.TOO_LONG(MAX_IDEA_LENGTH),
     });
   }
 
@@ -86,7 +87,7 @@ export function validateIdeaId(ideaId: unknown): ValidationResult {
   if (!ideaId || typeof ideaId !== 'string') {
     errors.push({
       field: 'ideaId',
-      message: 'ideaId is required and must be a string',
+      message: VALIDATION_ERROR_MESSAGES.IDEA_ID.REQUIRED,
     });
     return { valid: false, errors };
   }
@@ -96,14 +97,14 @@ export function validateIdeaId(ideaId: unknown): ValidationResult {
   if (trimmed.length === 0) {
     errors.push({
       field: 'ideaId',
-      message: 'ideaId cannot be empty',
+      message: VALIDATION_ERROR_MESSAGES.IDEA_ID.EMPTY,
     });
   }
 
   if (trimmed.length > MAX_IDEA_ID_LENGTH) {
     errors.push({
       field: 'ideaId',
-      message: `ideaId must not exceed ${MAX_IDEA_ID_LENGTH} characters`,
+      message: VALIDATION_ERROR_MESSAGES.IDEA_ID.TOO_LONG(MAX_IDEA_ID_LENGTH),
     });
   }
 
@@ -111,8 +112,7 @@ export function validateIdeaId(ideaId: unknown): ValidationResult {
   if (!validFormat) {
     errors.push({
       field: 'ideaId',
-      message:
-        'ideaId must contain only alphanumeric characters, underscores, and hyphens',
+      message: VALIDATION_ERROR_MESSAGES.IDEA_ID.INVALID_FORMAT,
     });
   }
 
@@ -129,8 +129,7 @@ export function validateUserResponses(responses: unknown): ValidationResult {
   if (typeof responses !== 'object' || Array.isArray(responses)) {
     errors.push({
       field: 'userResponses',
-      message:
-        API_ERROR_MESSAGES.ROUTE_VALIDATION.USER_RESPONSES_MUST_BE_OBJECT,
+      message: VALIDATION_ERROR_MESSAGES.USER_RESPONSES.MUST_BE_OBJECT,
     });
     return { valid: false, errors };
   }
@@ -139,7 +138,9 @@ export function validateUserResponses(responses: unknown): ValidationResult {
   if (jsonStr.length > VALIDATION_LIMITS_CONFIG.MAX_USER_RESPONSE_SIZE) {
     errors.push({
       field: 'userResponses',
-      message: `userResponses must not exceed ${VALIDATION_LIMITS_CONFIG.MAX_USER_RESPONSE_SIZE} characters`,
+      message: VALIDATION_ERROR_MESSAGES.USER_RESPONSES.TOO_LONG(
+        VALIDATION_LIMITS_CONFIG.MAX_USER_RESPONSE_SIZE
+      ),
     });
   }
 
@@ -150,14 +151,15 @@ export function validateUserResponses(responses: unknown): ValidationResult {
     ) {
       errors.push({
         field: 'userResponses',
-        message: `Invalid key format: ${key}`,
+        message: VALIDATION_ERROR_MESSAGES.USER_RESPONSES.INVALID_KEY(key),
       });
     }
 
     if (typeof value !== 'string' && value !== null && value !== undefined) {
       errors.push({
         field: 'userResponses',
-        message: `Value for key "${key}" must be a string`,
+        message:
+          VALIDATION_ERROR_MESSAGES.USER_RESPONSES.INVALID_VALUE_TYPE(key),
       });
     }
 
@@ -167,7 +169,10 @@ export function validateUserResponses(responses: unknown): ValidationResult {
     ) {
       errors.push({
         field: 'userResponses',
-        message: `Value for key "${key}" must not exceed ${VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_VALUE_LENGTH} characters`,
+        message: VALIDATION_ERROR_MESSAGES.USER_RESPONSES.VALUE_TOO_LONG(
+          key,
+          VALIDATION_LIMITS_CONFIG.MAX_RESPONSE_VALUE_LENGTH
+        ),
       });
     }
   }
@@ -187,7 +192,7 @@ export function validateRequestSize(
     if (size > maxSizeBytes) {
       errors.push({
         field: 'request',
-        message: `request must not exceed ${maxSizeBytes} bytes`,
+        message: VALIDATION_ERROR_MESSAGES.REQUEST.TOO_LARGE(maxSizeBytes),
       });
     }
   }
@@ -570,7 +575,7 @@ export function validateModelTemperature(
   if (typeof temperature !== 'number' || isNaN(temperature)) {
     errors.push({
       field: 'temperature',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_TEMPERATURE,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.TEMPERATURE.INVALID,
     });
     return { valid: false, errors };
   }
@@ -578,7 +583,7 @@ export function validateModelTemperature(
   if (temperature < VALIDATION.TEMPERATURE_MIN) {
     errors.push({
       field: 'temperature',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TEMPERATURE_TOO_LOW(
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.TEMPERATURE.TOO_LOW(
         VALIDATION.TEMPERATURE_MIN
       ),
     });
@@ -587,7 +592,7 @@ export function validateModelTemperature(
   if (temperature > VALIDATION.TEMPERATURE_MAX) {
     errors.push({
       field: 'temperature',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.TEMPERATURE_TOO_HIGH(
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.TEMPERATURE.TOO_HIGH(
         VALIDATION.TEMPERATURE_MAX
       ),
     });
@@ -610,7 +615,7 @@ export function validateModelMaxTokens(maxTokens: unknown): ValidationResult {
   if (typeof maxTokens !== 'number' || isNaN(maxTokens)) {
     errors.push({
       field: 'maxTokens',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.INVALID_MAX_TOKENS,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MAX_TOKENS.INVALID,
     });
     return { valid: false, errors };
   }
@@ -618,14 +623,14 @@ export function validateModelMaxTokens(maxTokens: unknown): ValidationResult {
   if (!Number.isInteger(maxTokens)) {
     errors.push({
       field: 'maxTokens',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MAX_TOKENS_NOT_INTEGER,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MAX_TOKENS.NOT_INTEGER,
     });
   }
 
   if (maxTokens < VALIDATION.MAX_TOKENS_MIN) {
     errors.push({
       field: 'maxTokens',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MAX_TOKENS_TOO_LOW(
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MAX_TOKENS.TOO_LOW(
         VALIDATION.MAX_TOKENS_MIN
       ),
     });
@@ -634,7 +639,7 @@ export function validateModelMaxTokens(maxTokens: unknown): ValidationResult {
   if (maxTokens > VALIDATION.MAX_TOKENS_MAX) {
     errors.push({
       field: 'maxTokens',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MAX_TOKENS_TOO_HIGH(
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MAX_TOKENS.TOO_HIGH(
         VALIDATION.MAX_TOKENS_MAX
       ),
     });
@@ -653,7 +658,7 @@ export function validateModelName(model: unknown): ValidationResult {
   if (!model || typeof model !== 'string') {
     errors.push({
       field: 'model',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_REQUIRED,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MODEL.REQUIRED,
     });
     return { valid: false, errors };
   }
@@ -662,7 +667,7 @@ export function validateModelName(model: unknown): ValidationResult {
   if (trimmed.length === 0) {
     errors.push({
       field: 'model',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_EMPTY,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MODEL.EMPTY,
     });
     return { valid: false, errors };
   }
@@ -670,7 +675,7 @@ export function validateModelName(model: unknown): ValidationResult {
   if (!VALIDATION.MODEL_NAME_PATTERN.test(trimmed)) {
     errors.push({
       field: 'model',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_INVALID_CHARS,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MODEL.INVALID_CHARS,
     });
   }
 
@@ -680,7 +685,7 @@ export function validateModelName(model: unknown): ValidationResult {
   if (!hasAllowedPrefix) {
     errors.push({
       field: 'model',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.MODEL_INVALID_PREFIX([
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.MODEL.INVALID_PREFIX([
         ...VALIDATION.ALLOWED_MODEL_PREFIXES,
       ]),
     });
@@ -698,7 +703,7 @@ export function validateAIModelConfig(config: unknown): ValidationResult {
   if (!config || typeof config !== 'object') {
     errors.push({
       field: 'config',
-      message: API_ERROR_MESSAGES.ROUTE_VALIDATION.CONFIG_MUST_BE_OBJECT,
+      message: VALIDATION_ERROR_MESSAGES.AI_MODEL.CONFIG.MUST_BE_OBJECT,
     });
     return { valid: false, errors };
   }
