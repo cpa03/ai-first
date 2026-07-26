@@ -93,8 +93,6 @@ const SENSITIVE_VAR_PATTERNS = [
   'IP_ADDRESS', // IP addresses
   'BEARER', // Bearer tokens
   'STACK_TRACE', // Error stack traces
-  'HASH', // Cryptographic hashes
-  'CIPHER', // Cryptographic ciphers
 ] as const;
 
 /**
