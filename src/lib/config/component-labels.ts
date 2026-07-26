@@ -119,6 +119,11 @@ export const SCROLL_TO_TOP_LABELS = {
   /** ARIA label template for scroll-to-bottom button */
   ARIA_LABEL_BOTTOM: (progress: number) =>
     `Scroll to bottom (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
+  SCROLL_DEPTH_LABELS: {
+    NEAR_TOP: 'Near top',
+    MIDDLE: 'Middle of page',
+    NEAR_BOTTOM: 'Near bottom',
+  },
 } as const;
 
 /**
@@ -328,6 +333,8 @@ export const IDEA_INPUT_LABELS = {
   PASTE_ARIA_LABEL: 'Paste from clipboard',
   /** Paste from clipboard button text */
   PASTE_BUTTON: 'Paste',
+  /** Paste success confirmation text */
+  PASTE_SUCCESS: 'Pasted!',
   /** Submit button tooltip text */
   SUBMIT_TOOLTIP: 'Submit your idea',
   /** Submit button tooltip keyboard shortcut */
@@ -472,6 +479,8 @@ export const CLARIFICATION_FLOW_LABELS = {
   CLEAR_BUTTON: 'Clear',
   CLEAR_ARIA_LABEL: 'Clear answer',
   CLEAR_TOOLTIP: 'Clear your answer (Esc)',
+  STEP_JUMP_ARIA_LABEL: (index: number, question: string, isCurrent: boolean) =>
+    `Jump to question ${index + 1}: ${question}${isCurrent ? ' (current)' : ''}`,
 } as const;
 
 /**

@@ -555,7 +555,9 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                       />
                     </svg>
                   )}
-                  {pasteSuccess ? 'Pasted!' : IDEA_INPUT_LABELS.PASTE_BUTTON}
+                  {pasteSuccess
+                    ? IDEA_INPUT_LABELS.PASTE_SUCCESS
+                    : IDEA_INPUT_LABELS.PASTE_BUTTON}
                 </Button>
               </Tooltip>
             )}
