@@ -810,3 +810,45 @@ export {
   type AriaHeadingIds,
   type AriaSelectors,
 } from './element-ids';
+
+// Component Magic Numbers Configuration
+// Centralizes all magic numbers used in React components
+export {
+  COMPONENT_MAGIC_NUMBERS,
+  SPINNER_MAGIC_NUMBERS,
+  PROGRESS_MAGIC_NUMBERS,
+  PARTICLE_MAGIC_NUMBERS,
+  ANIMATION_MAGIC_NUMBERS,
+  FONT_SIZE_MAGIC_NUMBERS,
+  SPACING_MAGIC_NUMBERS,
+  TIMING_MAGIC_NUMBERS,
+} from './component-magic-numbers';
+
+// Component CSS Values Configuration
+// Centralizes all hardcoded CSS values used in React components
+export {
+  COMPONENT_CSS_VALUES,
+  CIRCLE_CLASSES,
+  CARD_CLASSES,
+  CONTAINER_CLASSES,
+  FLEX_CLASSES,
+  TEXT_CLASSES,
+  BUTTON_CLASSES,
+  FORM_CLASSES,
+  LOADING_CLASSES,
+} from './component-css-values';
+
+// Component Text Strings Configuration
+// Centralizes all hardcoded text strings used in React components
+export {
+  COMPONENT_TEXT_STRINGS,
+  LOADING_STRINGS,
+  ERROR_STRINGS,
+  SUCCESS_STRINGS,
+  ACTION_STRINGS,
+  CONFIRMATION_STRINGS,
+  FORM_STRINGS,
+  NAVIGATION_STRINGS,
+  STATUS_STRINGS,
+  TIME_STRINGS,
+} from './component-text-strings';

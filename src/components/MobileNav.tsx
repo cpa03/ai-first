@@ -7,10 +7,8 @@ import {
   UI_CONFIG,
   MOBILE_NAV_CONFIG,
   HAMBURGER_MENU_CONFIG,
-  Z_INDEX_LAYERS,
   CONTAINER_WIDTHS,
   RESPONSIVE_PADDING,
-  MOBILE_NAV_TAILWIND,
   BG_COLORS,
   BORDER_COLORS,
   TEXT_COLORS,
@@ -240,13 +238,13 @@ function MobileNavComponent() {
           aria-hidden="true"
         >
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? `rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none ${isOpen ? 'rotate-45 translate-y-1' : ''}`}
           />
           <span
             className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? 'opacity-0 scale-0' : ''}`}
           />
           <span
-            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? `-rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.LARGE}]` : ''}`}
+            className={`block ${HAMBURGER_MENU_CONFIG.LINE.WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full ${TRANSITION_CLASSES.SLOW} ease-in-out motion-reduce:transition-none mt-1.5 ${isOpen ? '-rotate-45 -translate-y-1' : ''}`}
           />
         </div>
       </button>
@@ -255,7 +253,7 @@ function MobileNavComponent() {
         <>
           {/* Backdrop overlay with close button */}
           <div
-            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in`}
+            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[35] fade-in`}
             onClick={closeMenu}
             onTouchEnd={closeMenu}
             aria-hidden="true"
@@ -271,10 +269,10 @@ function MobileNavComponent() {
                 className={`${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.ICON_SIZE_CLASS} flex flex-col justify-center items-center`}
               >
                 <span
-                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full rotate-45 translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
                 <span
-                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full -rotate-45 -translate-y-[${HAMBURGER_MENU_CONFIG.TRANSLATE_OFFSET.SMALL}] transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
               </div>
             </button>
@@ -282,7 +280,7 @@ function MobileNavComponent() {
           <div
             ref={menuRef}
             id={PAGE_ELEMENT_IDS.MOBILE_MENU}
-            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
+            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[45] animate-slide-down`}
           >
             <ul
               className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 ${BG_COLORS.DEFAULT}`}
@@ -311,7 +309,7 @@ function MobileNavComponent() {
                       className={`
                         w-full text-left px-6 py-4 text-lg font-semibold
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
-                        border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
+                        border-l-[3px] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : 'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50'}
                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}
                       aria-label={link.ariaLabel}

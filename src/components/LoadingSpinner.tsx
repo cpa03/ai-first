@@ -8,6 +8,7 @@ import {
   TEXT_COLOR_CLASSES,
   TRANSITION_CLASSES,
   LOADING_SPINNER_RIPPLE,
+  COMPONENT_MAGIC_NUMBERS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -99,8 +100,8 @@ function LoadingSpinnerComponent({
 
   const borderRingStyle = useMemo(
     () => ({
-      width: `${spinnerDimension + 8}px`,
-      height: `${spinnerDimension + 8}px`,
+      width: `${spinnerDimension + COMPONENT_MAGIC_NUMBERS.SPINNER.PADDING}px`,
+      height: `${spinnerDimension + COMPONENT_MAGIC_NUMBERS.SPINNER.PADDING}px`,
       top: SPINNER_TAILWIND.BORDER_RING_OFFSET,
       left: '50%',
       transform: 'translateX(-50%)',
