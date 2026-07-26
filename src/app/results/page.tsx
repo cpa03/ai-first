@@ -670,7 +670,7 @@ function ResultsContent() {
           {/* Micro-UX: Keyboard shortcut hint for export discoverability */}
           {/* Helps users discover Ctrl+E shortcut for quick markdown export */}
           <div
-            className="mt-4 flex items-center gap-2 text-xs text-gray-400"
+            className="mt-4 flex items-center gap-2 text-xs text-gray-500"
             aria-hidden="true"
           >
             <span

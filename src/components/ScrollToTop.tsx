@@ -147,7 +147,7 @@ function ScrollToTopComponent({
   const getScrollDepthColor = useCallback((progress: number) => {
     if (progress <= 40) {
       return {
-        stroke: 'text-gray-400',
+        stroke: 'text-gray-500',
         text: 'text-gray-500',
         label: 'Near top',
       };

@@ -116,13 +116,13 @@ function WhyChooseSectionComponent() {
       >
         {TITLE}
       </h2>
-      <div
+      <ul
         className={SECTION_STYLES.GRID}
         role="list"
         aria-label={WHY_CHOOSE_SECTION_LABELS.BENEFITS_LIST_ARIA_LABEL}
       >
         {ARTICLES.map((article, index) => (
-          <div
+          <li
             key={article.id}
             data-why-choose-article
             data-article-id={article.id}
@@ -164,9 +164,9 @@ function WhyChooseSectionComponent() {
                 {article.DESCRIPTION}
               </p>
             </div>
-          </div>
+          </li>
         ))}
-      </div>
+      </ul>
       <div
         className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
         aria-label={WHY_CHOOSE_SECTION_LABELS.KEYBOARD_NAV_ARIA_LABEL}
