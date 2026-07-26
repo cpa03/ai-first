@@ -676,6 +676,7 @@ export default function SignupPage() {
             disabled={isLoading}
             className="w-full"
             size="lg"
+            enableTransition
           >
             {isLoading
               ? SIGNUP_PAGE_CONTENT.FORM.SUBMIT_LOADING
