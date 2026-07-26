@@ -19,6 +19,7 @@ import {
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { isFocusedOnInput } from '@/lib/dom-utils';
 
 export interface EmailButtonProps {
   ideaTitle: string;
@@ -117,8 +118,10 @@ const EmailButtonComponent = function EmailButton({
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
-        e.preventDefault();
-        handleEmailClick();
+        if (!isFocusedOnInput(e.target)) {
+          e.preventDefault();
+          handleEmailClick();
+        }
       }
     };
 
