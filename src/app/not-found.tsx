@@ -18,6 +18,7 @@ import {
   NOT_FOUND_LABELS,
   BREATHE,
   HERO_ENTRANCE,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -241,7 +242,9 @@ export default function NotFound() {
             </span>
             <span
               className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
-              style={{ animationDelay: '0.5s' }}
+              style={{
+                animationDelay: `${ANIMATION_CONFIG.NOT_FOUND_PAGE.FIRST_HINT_DELAY}ms`,
+              }}
             >
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
@@ -252,7 +255,9 @@ export default function NotFound() {
             </span>
             <span
               className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
-              style={{ animationDelay: '1s' }}
+              style={{
+                animationDelay: `${ANIMATION_CONFIG.NOT_FOUND_PAGE.SECOND_HINT_DELAY}ms`,
+              }}
             >
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}

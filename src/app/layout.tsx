@@ -37,7 +37,7 @@ import { FOOTER_PATTERNS } from '@/lib/config/remaining-styles';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
 const jsonLd = {
-  '@context': 'https://schema.org',
+  '@context': SEO_CONFIG.SCHEMA_ORG.CONTEXT,
   '@type': 'WebApplication',
   name: 'IdeaFlow',
   description: APP_CONFIG.DESCRIPTION,
@@ -48,7 +48,7 @@ const jsonLd = {
     '@type': 'Offer',
     price: '0',
     priceCurrency: APP_CONFIG.CURRENCY.CODE,
-    availability: 'https://schema.org/InStock',
+    availability: SEO_CONFIG.SCHEMA_ORG.IN_STOCK,
   },
   creator: {
     '@type': 'Organization',

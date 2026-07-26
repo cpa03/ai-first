@@ -122,6 +122,15 @@ export const SEO_CONFIG = {
       return ['/api/', '/admin/'] as readonly string[];
     })(),
   } as const,
+
+  /**
+   * Schema.org URLs for structured data
+   * Centralizes schema.org context and type URLs
+   */
+  SCHEMA_ORG: {
+    CONTEXT: 'https://schema.org',
+    IN_STOCK: 'https://schema.org/InStock',
+  } as const,
 } as const;
 
 export const FONT_CONFIG = {

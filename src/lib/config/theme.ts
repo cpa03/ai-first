@@ -441,6 +441,18 @@ export const SVG_VIEWBOX = {
 } as const;
 
 /**
+ * SVG namespace URLs
+ * Centralizes SVG namespace strings used in SVG elements
+ * Eliminates hardcoded xmlns attributes across components
+ */
+export const SVG_NAMESPACE = {
+  /** Standard SVG namespace */
+  SVG: 'http://www.w3.org/2000/svg',
+  /** XLINK namespace for older SVGs */
+  XLINK: 'http://www.w3.org/1999/xlink',
+} as const;
+
+/**
  * Celebration animation colors
  * Used for success/confetti animations
  * Eliminates hardcoded color values in SuccessCelebration component
