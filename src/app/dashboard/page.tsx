@@ -20,6 +20,7 @@ import {
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  SVG_NAMESPACE,
   LOCAL_STORAGE_KEYS,
   ANIMATION_CONFIG,
   PAGE_LAYOUT_CLASSES,
@@ -1099,7 +1100,7 @@ export default function DashboardPage() {
                           {deletingId === idea.id && (
                             <svg
                               className="animate-spin h-3 w-3"
-                              xmlns="http://www.w3.org/2000/svg"
+                              xmlns={SVG_NAMESPACE.SVG}
                               fill="none"
                               viewBox={SVG_VIEWBOX.STANDARD}
                               aria-hidden="true"

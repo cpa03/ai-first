@@ -237,6 +237,29 @@ export const ANIMATION_CONFIG = {
       1000
     ),
   },
+
+  /**
+   * Not Found Page Animation Values
+   * Centralizes animation delays for the not-found page keyboard hints
+   */
+  NOT_FOUND_PAGE: {
+    /** First keyboard hint animation delay (ms) */
+    /** Env: UI_ANIMATION_NOT_FOUND_FIRST_HINT_DELAY (default: 500) */
+    FIRST_HINT_DELAY: EnvLoader.number(
+      'UI_ANIMATION_NOT_FOUND_FIRST_HINT_DELAY',
+      500,
+      100,
+      2000
+    ),
+    /** Second keyboard hint animation delay (ms) */
+    /** Env: UI_ANIMATION_NOT_FOUND_SECOND_HINT_DELAY (default: 1000) */
+    SECOND_HINT_DELAY: EnvLoader.number(
+      'UI_ANIMATION_NOT_FOUND_SECOND_HINT_DELAY',
+      1000,
+      200,
+      3000
+    ),
+  },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;

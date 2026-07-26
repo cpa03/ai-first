@@ -14,6 +14,7 @@ import {
   BUTTON_STYLES,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  SVG_NAMESPACE,
   COMPONENT_CONFIG,
   BUTTON_RIPPLE,
   SVG_CIRCLE,
@@ -186,7 +187,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         {loading && (
           <svg
             className={`${prefersReducedMotion ? '' : 'animate-spin'} -ml-1 mr-2 h-4 w-4 inline-block`}
-            xmlns="http://www.w3.org/2000/svg"
+            xmlns={SVG_NAMESPACE.SVG}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             aria-hidden="true"
