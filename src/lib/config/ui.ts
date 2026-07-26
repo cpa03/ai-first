@@ -554,7 +554,7 @@ export const COMPONENT_DEFAULTS = {
     STEP_DESCRIPTION: (currentStep: number, totalSteps: number) =>
       `Answer the following question and then click Next to continue or Previous to go back. Question ${currentStep} of ${totalSteps}.`,
     KEYBOARD_SHORTCUT_TEXT: (isMac: boolean, isLastStep: boolean) =>
-      `Press ${isMac ? '⌘' : 'Ctrl'} + Enter to ${isLastStep ? 'complete' : 'submit'}.`,
+      `Press ${isMac ? '⌘' : 'Ctrl'} + Enter to ${isLastStep ? 'complete' : 'submit'}. Press Escape to clear.`,
     SELECT_PLACEHOLDER: 'Select an option...',
   },
 };
