@@ -6,6 +6,7 @@ import React, {
   useState,
   useRef,
   useEffect,
+  memo,
 } from 'react';
 import CopyButton from './CopyButton';
 import Tooltip from './Tooltip';
@@ -48,7 +49,7 @@ export interface ReferralLinkProps {
  * @example
  * <ReferralLink referralCode="user123" />
  */
-export default function ReferralLink({
+function ReferralLinkComponent({
   referralCode,
   baseUrl = typeof window !== 'undefined'
     ? window.location.origin
@@ -207,3 +208,6 @@ export default function ReferralLink({
     </div>
   );
 }
+
+const ReferralLink = memo(ReferralLinkComponent);
+export default ReferralLink;
