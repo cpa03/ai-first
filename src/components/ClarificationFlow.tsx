@@ -40,6 +40,7 @@ import {
   CLARIFICATION_FLOW_INPUT_LABEL,
   CLARIFICATION_FLOW_STEP_BUTTON_BASE,
   CLARIFICATION_FLOW_STEP_BUTTON_CURRENT,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -604,7 +605,7 @@ function ClarificationFlow({
             {estimatedRemainingSeconds !== null &&
               estimatedRemainingSeconds > 0 && (
                 <span className="flex items-center gap-1.5">
-                  <span className="text-gray-400">·</span>
+                  <span className={GRAY_CLASSES.TEXT_400}>·</span>
                   <span>~{formatTime(estimatedRemainingSeconds)} left</span>
                 </span>
               )}
