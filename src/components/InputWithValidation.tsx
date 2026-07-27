@@ -209,14 +209,41 @@ const InputWithValidationComponent = forwardRef<
       [propOnFocus]
     );
 
+    const handleClear = useCallback(() => {
+      triggerHapticFeedback();
+      const emptyValueEvent = {
+        target: { value: '', name: props.name, id: props.id },
+        currentTarget: { value: '', name: props.name, id: props.id },
+        preventDefault: () => {},
+        stopPropagation: () => {},
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      onChange?.(emptyValueEvent);
+      onClear?.();
+
+      const focusTarget = multiline
+        ? internalTextareaRef.current
+        : ref && 'current' in ref
+          ? (ref.current as HTMLInputElement)
+          : null;
+      focusTarget?.focus();
+    }, [onChange, onClear, props.name, props.id, multiline, ref]);
+
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (e.key === 'Enter' && onEnterPress) {
           e.preventDefault();
           onEnterPress();
         }
-        // Micro-UX: Toggle password visibility with Ctrl+Shift+P
-        // Allows keyboard users to quickly verify password input without clicking the toggle button
+        if (
+          e.key === 'Escape' &&
+          clearable &&
+          charCount > 0 &&
+          !props.disabled
+        ) {
+          e.preventDefault();
+          handleClear();
+        }
         if (
           showPasswordToggle &&
           (e.metaKey || e.ctrlKey) &&
@@ -233,7 +260,15 @@ const InputWithValidationComponent = forwardRef<
           );
         }
       },
-      [onEnterPress, showPasswordToggle, propOnKeyDown]
+      [
+        onEnterPress,
+        showPasswordToggle,
+        clearable,
+        charCount,
+        props.disabled,
+        handleClear,
+        propOnKeyDown,
+      ]
     );
 
     // Trigger shake animation when validation error appears
@@ -275,7 +310,6 @@ const InputWithValidationComponent = forwardRef<
 
     const handleChange = useCallback(
       (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        // Micro-UX: Reset touched on change so error clears immediately when correcting
         if (isInvalid) {
           setTouched(false);
         }
@@ -283,26 +317,6 @@ const InputWithValidationComponent = forwardRef<
       },
       [onChange, isInvalid]
     );
-
-    const handleClear = useCallback(() => {
-      triggerHapticFeedback();
-      const emptyValueEvent = {
-        target: { value: '', name: props.name, id: props.id },
-        currentTarget: { value: '', name: props.name, id: props.id },
-        preventDefault: () => {},
-        stopPropagation: () => {},
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      onChange?.(emptyValueEvent);
-      onClear?.();
-
-      const focusTarget = multiline
-        ? internalTextareaRef.current
-        : ref && 'current' in ref
-          ? (ref.current as HTMLInputElement)
-          : null;
-      focusTarget?.focus();
-    }, [onChange, onClear, props.name, props.id, multiline, ref]);
 
     const showClearButton = clearable && charCount > 0 && !props.disabled;
 
@@ -475,7 +489,11 @@ const InputWithValidationComponent = forwardRef<
             <div
               className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? 'right-12' : 'right-3'}`}
             >
-              <Tooltip content={`Clear ${label}`} position="top">
+              <Tooltip
+                content={`Clear ${label}`}
+                shortcut={['Esc']}
+                position="top"
+              >
                 <button
                   type="button"
                   onClick={handleClear}
