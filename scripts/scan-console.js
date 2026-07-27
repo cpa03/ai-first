@@ -7,9 +7,11 @@
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
-const { CONSOLE_SCANNER_CONFIG } = require('./config');
+const { CONSOLE_SCANNER_CONFIG, LIGHTHOUSE_CONFIG } = require('./config');
 
-const { BASE_URL, PAGES } = CONSOLE_SCANNER_CONFIG;
+const { BASE_URL, PAGES, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS } =
+  CONSOLE_SCANNER_CONFIG;
+const { CHROME_PATH } = LIGHTHOUSE_CONFIG;
 
 const consoleLogs = [];
 const errors = [];
@@ -93,11 +95,11 @@ async function scanPage(page, url) {
   try {
     await page.goto(`${BASE_URL}${url}`, {
       waitUntil: 'domcontentloaded',
-      timeout: CONSOLE_SCANNER_CONFIG.NAVIGATION_TIMEOUT,
+      timeout: NAVIGATION_TIMEOUT,
     });
 
     // Wait a bit for any async errors
-    await page.waitForTimeout(CONSOLE_SCANNER_CONFIG.ASYNC_WAIT_MS);
+    await page.waitForTimeout(ASYNC_WAIT_MS);
 
     console.log(
       `✓ Scanned ${url}: ${pageErrors.length} errors, ${pageWarnings.length} warnings`
@@ -118,7 +120,7 @@ async function scanPage(page, url) {
       console.error(`  → Make sure the dev server is running on ${BASE_URL}`);
     } else if (err.message.includes('timeout')) {
       console.error(
-        `  → Page took too long to load (timeout: ${CONSOLE_SCANNER_CONFIG.NAVIGATION_TIMEOUT}ms)`
+        `  → Page took too long to load (timeout: ${NAVIGATION_TIMEOUT}ms)`
       );
     }
 
@@ -136,8 +138,7 @@ async function main() {
   try {
     browser = await chromium.launch({
       headless: true,
-      executablePath:
-        '/home/runner/.cache/ms-playwright/chromium-1234/chrome-linux/chrome',
+      executablePath: CHROME_PATH,
       args: [
         '--no-sandbox',
         '--disable-setuid-sandbox',

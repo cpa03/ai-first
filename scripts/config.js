@@ -305,6 +305,17 @@ const BROWSER_SCANNER_CONFIG = {
   ),
 
   /**
+   * Audit timeout in milliseconds
+   * Env: LIGHTHOUSE_AUDIT_TIMEOUT_MS (default: 60000)
+   */
+  AUDIT_TIMEOUT_MS: getEnvNumber(
+    'LIGHTHOUSE_AUDIT_TIMEOUT_MS',
+    60000,
+    10000,
+    300000
+  ),
+
+  /**
    * Large image width threshold in pixels
    * Env: SCANNER_LARGE_IMAGE_WIDTH (default: 1920)
    */

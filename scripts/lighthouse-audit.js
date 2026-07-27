@@ -17,6 +17,7 @@ const {
   CHROME_PATH,
   THROTTLING,
   SCREEN_EMULATION,
+  AUDIT_TIMEOUT_MS,
 } = LIGHTHOUSE_CONFIG;
 
 const CONFIG = {
@@ -86,8 +87,13 @@ async function runLighthouse(url) {
     // Add timeout to prevent hanging
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(
-        () => reject(new Error('Lighthouse audit timed out after 60 seconds')),
-        60000
+        () =>
+          reject(
+            new Error(
+              `Lighthouse audit timed out after ${AUDIT_TIMEOUT_MS / 1000} seconds`
+            )
+          ),
+        AUDIT_TIMEOUT_MS
       );
     });
 
