@@ -481,6 +481,13 @@ export const CLARIFICATION_FLOW_LABELS = {
   CLEAR_TOOLTIP: 'Clear your answer (Esc)',
   STEP_JUMP_ARIA_LABEL: (index: number, question: string, isCurrent: boolean) =>
     `Jump to question ${index + 1}: ${question}${isCurrent ? ' (current)' : ''}`,
+  // Micro-UX: Timer labels for elapsed time and estimated time remaining
+  ELAPSED_TIME_LABEL: 'Time elapsed',
+  ESTIMATED_TIME_LABEL: 'Estimated time remaining',
+  TIMER_ARIA_LABEL: (elapsed: string, remaining: string | null) =>
+    remaining
+      ? `Time elapsed: ${elapsed}. Estimated time remaining: ${remaining}`
+      : `Time elapsed: ${elapsed}`,
 } as const;
 
 /**

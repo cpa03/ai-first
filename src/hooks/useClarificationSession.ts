@@ -61,6 +61,8 @@ export interface UseClarificationSessionReturn {
   handlePrevious: () => void;
   handleKeyDown: (e: React.KeyboardEvent) => void;
   goToStep: (stepIndex: number) => void;
+  elapsedSeconds: number;
+  estimatedRemainingSeconds: number | null;
 }
 
 const FALLBACK_QUESTIONS: readonly Question[] =
@@ -108,6 +110,8 @@ export function useClarificationSession(
   const selectRef = useRef<HTMLSelectElement>(null);
   const stepTransitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const startTimeRef = useRef<number>(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
 
   const isMac = useMemo(() => PLATFORM.isMac(), []);
 
@@ -241,6 +245,33 @@ export function useClarificationSession(
   }, []);
 
   useEffect(() => {
+    if (!loading && questions.length > 0 && startTimeRef.current === 0) {
+      startTimeRef.current = Date.now();
+    }
+  }, [loading, questions.length]);
+
+  useEffect(() => {
+    if (loading || questions.length === 0 || isSubmitting) return;
+
+    const interval = setInterval(() => {
+      if (isMountedRef.current) {
+        setElapsedSeconds(
+          Math.floor((Date.now() - startTimeRef.current) / 1000)
+        );
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [loading, questions.length, isSubmitting]);
+
+  const estimatedRemainingSeconds = useMemo(() => {
+    if (currentStep === 0 || elapsedSeconds === 0) return null;
+    const avgSecondsPerQuestion = elapsedSeconds / (currentStep + 1);
+    const remainingQuestions = questions.length - currentStep - 1;
+    return Math.ceil(avgSecondsPerQuestion * remainingQuestions);
+  }, [currentStep, elapsedSeconds, questions.length]);
+
+  useEffect(() => {
     const abortController = new AbortController();
 
     const fetchQuestions = async () => {
@@ -332,6 +363,8 @@ export function useClarificationSession(
       handlePrevious,
       handleKeyDown,
       goToStep,
+      elapsedSeconds,
+      estimatedRemainingSeconds,
     }),
     [
       loading,
@@ -354,6 +387,8 @@ export function useClarificationSession(
       handlePrevious,
       handleKeyDown,
       goToStep,
+      elapsedSeconds,
+      estimatedRemainingSeconds,
     ]
   );
 }

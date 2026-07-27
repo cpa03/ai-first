@@ -209,7 +209,7 @@ describe('useClarificationSession', () => {
     });
 
     act(() => {
-      jest.runAllTimers();
+      jest.advanceTimersByTime(400);
     });
 
     expect(result.current.showCelebration).toBe(false);
@@ -246,7 +246,7 @@ describe('useClarificationSession', () => {
     });
 
     act(() => {
-      jest.runAllTimers();
+      jest.advanceTimersByTime(400);
     });
 
     act(() => {
