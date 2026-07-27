@@ -138,7 +138,7 @@ function ClarifySuccessState({
             {/* Micro-UX: Keyboard shortcut hint for blueprint generation */}
             {/* Matches the keyboard hint patterns in dashboard, not-found, and clarification flow */}
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-500 ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd
@@ -308,10 +308,10 @@ function ClarifyPageContent() {
         className={`${CONTAINER_WIDTHS.SM} mx-auto ${RESPONSIVE_PADDING.CLASS} mb-8`}
       >
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4`}>
             {CLARIFY_PAGE_CONTENT.HEADING}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className={`text-lg ${GRAY_CLASSES.TEXT_600}`}>
             {CLARIFY_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>

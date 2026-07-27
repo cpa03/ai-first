@@ -36,6 +36,7 @@ import {
   DURATION_TAILWIND,
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -70,7 +71,7 @@ function PasswordMatchIndicator({
     if (!password) return null;
     return (
       <div
-        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in text-gray-500`}
+        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${GRAY_CLASSES.TEXT_500}`}
         role="status"
         aria-live="polite"
       >

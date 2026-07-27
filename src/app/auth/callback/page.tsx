@@ -43,7 +43,7 @@ export default function AuthCallbackPage() {
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
       <div className={`${CONTAINER_WIDTHS.XS} w-full text-center space-y-4`}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
-        <h1 className="text-xl font-semibold text-gray-900">
+        <h1 className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900}`}>
           Completing sign in...
         </h1>
         <p className={GRAY_CLASSES.TEXT_600}>

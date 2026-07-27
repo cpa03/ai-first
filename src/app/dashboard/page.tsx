@@ -655,7 +655,7 @@ export default function DashboardPage() {
               className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? 'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm'
-                  : 'border-gray-300 bg-white text-gray-900'
+                  : `${GRAY_CLASSES.BORDER_300} bg-white ${GRAY_CLASSES.TEXT_900}`
               }`}
               aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.FILTER_STATUS}
             >

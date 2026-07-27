@@ -19,6 +19,7 @@ import {
   BREATHE,
   HERO_ENTRANCE,
   ANIMATION_CONFIG,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -99,8 +100,12 @@ export default function NotFound() {
           className={`${CARD_PATTERNS.CENTERED_LARGE} ${HERO_ENTRANCE}`}
         >
           <div className="relative mb-6">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-100">
-              <span className="text-4xl font-bold text-gray-300 select-none">
+            <div
+              className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${GRAY_CLASSES.BG_100}`}
+            >
+              <span
+                className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_300} select-none`}
+              >
                 404
               </span>
             </div>
@@ -109,13 +114,13 @@ export default function NotFound() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className={`text-2xl font-bold text-gray-900 mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
+            className={`text-2xl font-bold ${GRAY_CLASSES.TEXT_900} mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
           >
             Page not found
           </h1>
 
           <p
-            className={`text-gray-600 mb-8 max-w-sm mx-auto ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`${GRAY_CLASSES.TEXT_600} mb-8 max-w-sm mx-auto ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It
             may have been moved or doesn&apos;t exist.
