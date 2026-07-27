@@ -80,14 +80,14 @@
     }
   },
   "skills": {
-    "total_available": 34,
+    "total_available": 28,
     "categories": {
       "process": [
         "superpowers-brainstorming",
         "superpowers-writing-plans",
         "superpowers-executing-plans",
         "superpowers-tdd",
-        "systematic-debugging"
+        "superpowers-debugging"
       ],
       "development": [
         "superpowers-subagent-dev",
@@ -98,19 +98,27 @@
       "collaboration": [
         "superpowers-requesting-review",
         "superpowers-receiving-review",
-        "superpowers-parallel-agents"
+        "superpowers-parallel-agents",
+        "superpowers-using",
+        "superpowers-writing-skills"
       ],
-      "domain": ["planning", "git-master", "skill-creator", "skill-builder"],
-      "context": ["context-memory-systems", "context-engineering-memory"],
+      "domain": [
+        "planning",
+        "git-master",
+        "skill-creator",
+        "skill-builder",
+        "ai-agent-engineer"
+      ],
+      "context": ["context-memory-systems"],
       "github": [
         "github-issue-triage",
         "github-pr-triage",
-        "git-commit-message"
+        "ai-agents-git-commit"
       ],
-      "backend": ["codepro-backend-standards", "claude-codepro-backend"],
+      "backend": ["codepro-backend-standards"],
       "debugging": ["claude-code-debugging", "debugging-strategies"],
-      "testing": ["proffesor-testing-qe"],
-      "tools": ["moai-adk-tool", "adk-moai-tool", "ai-agents-git-commit"]
+      "frontend": ["frontend-ui-ux"],
+      "tools": ["adk-moai-tool"]
     }
   }
 }
