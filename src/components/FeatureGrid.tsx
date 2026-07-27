@@ -6,6 +6,7 @@ import {
   DURATION_TAILWIND,
   TYPOGRAPHY_CLASSES,
   TEXT_COLORS,
+  GRADIENT_CONFIG,
 } from '@/lib/config/theme';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
@@ -193,7 +194,7 @@ function FeatureGridComponent() {
                 <div
                   className={`
                   hidden md:block absolute top-1/2 -right-4 
-                  w-8 h-0.5 bg-gradient-to-r from-primary-300 to-primary-100
+                  w-8 h-0.5 ${GRADIENT_CONFIG.CONNECTOR.HORIZONTAL}
                   transform -translate-y-1/2
                   opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100
                   transition-opacity ${DURATION_TAILWIND[500]}
@@ -208,7 +209,7 @@ function FeatureGridComponent() {
                 <div
                   className={`
                   md:hidden absolute left-1/2 -bottom-4
-                  w-0.5 h-8 bg-gradient-to-b from-primary-300 to-primary-100
+                  w-0.5 h-8 ${GRADIENT_CONFIG.CONNECTOR.VERTICAL}
                   transform -translate-x-1/2
                   ${isVisible ? 'fade-in' : 'opacity-0'}
                   group-hover:opacity-100 group-focus-visible:opacity-100

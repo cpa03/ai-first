@@ -147,6 +147,7 @@ export {
   CHAR_COUNT_COLORS,
   TAILWIND_UTILS,
   COMPONENT_STATE_COLORS,
+  GRADIENT_CONFIG,
 } from './theme';
 
 // Page Configuration
@@ -288,6 +289,7 @@ export type {
   ShadowClasses,
   RoundedClasses,
   TailwindUtils,
+  GradientConfig,
   CharCountColors,
 } from './theme';
 
