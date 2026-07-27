@@ -5,14 +5,17 @@
  */
 
 const { chromium } = require('playwright');
+const { LIGHTHOUSE_CONFIG, BROWSER_SCANNER_CONFIG } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+const { BASE_URL, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS } = BROWSER_SCANNER_CONFIG;
+const { CHROME_PATH, AUDIT_TIMEOUT_MS } = LIGHTHOUSE_CONFIG;
+
 const PAGE_LOAD_TIMEOUT = parseInt(
-  process.env.PAGE_LOAD_TIMEOUT || '10000',
+  process.env.PAGE_LOAD_TIMEOUT || String(NAVIGATION_TIMEOUT),
   10
 );
 const DOM_STABILIZATION_WAIT = parseInt(
-  process.env.DOM_STABILIZATION_WAIT || '2000',
+  process.env.DOM_STABILIZATION_WAIT || String(ASYNC_WAIT_MS),
   10
 );
 
@@ -22,8 +25,7 @@ const DOM_STABILIZATION_WAIT = parseInt(
 
   const browser = await chromium.launch({
     headless: true,
-    executablePath:
-      '/home/runner/.cache/ms-playwright/chromium-1234/chrome-linux/chrome',
+    executablePath: CHROME_PATH,
   });
   const page = await browser.newPage();
 
