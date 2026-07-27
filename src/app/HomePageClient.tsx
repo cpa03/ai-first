@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import { HOME_PAGE_CONFIG } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
-import { SKELETON_HEIGHT_CLASSES } from '@/lib/config/ui-dimensions';
 import {
   CARD_PATTERNS,
   BG_COLORS,
@@ -31,7 +30,7 @@ const Skeleton = dynamic(() => import('@/components/Skeleton'), {
 // Dynamic imports for heavy components to reduce initial bundle size
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
   loading: () => (
-    <div className={`space-y-4 ${SKELETON_HEIGHT_CLASSES.STANDARD}`}>
+    <div className="space-y-4 min-h-[160px]">
       <Skeleton variant="text" className="h-32 w-full" />
       <Skeleton variant="rect" className="h-10 w-32" />
     </div>
@@ -48,7 +47,7 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
     <section
       aria-hidden="true"
-      className={`mt-16 grid md:grid-cols-3 gap-8 ${SKELETON_HEIGHT_CLASSES.STANDARD}`}
+      className="mt-16 grid md:grid-cols-3 gap-8 min-h-[300px]"
     >
       {[1, 2, 3].map((i) => (
         <div
@@ -70,7 +69,7 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 ${SKELETON_HEIGHT_CLASSES.TALL}`}
+        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 min-h-[400px]`}
       >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">
