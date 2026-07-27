@@ -21,6 +21,7 @@ import {
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { generateId } from '@/lib/security/crypto';
+import { PLATFORM } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -35,6 +36,8 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   loadingText?: string;
   /** Optional tooltip text to display when button is disabled, explaining why it's disabled */
   disabledTooltip?: string;
+  /** Optional keyboard shortcut keys to display in tooltip (e.g. ['⌘', 'S']) */
+  shortcut?: string[];
   children: React.ReactNode;
 }
 
@@ -56,6 +59,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       enableTransition = false,
       loadingText,
       disabledTooltip,
+      shortcut,
       disabled,
       children,
       className = '',
@@ -67,9 +71,14 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const [justEnabled, setJustEnabled] = useState(false);
+    const [isMac, setIsMac] = useState(false);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
     const wasDisabledRef = useRef(disabled || loading);
     const prefersReducedMotion = usePrefersReducedMotion();
+
+    useEffect(() => {
+      setIsMac(PLATFORM.isMac());
+    }, []);
 
     useEffect(() => {
       const timeouts = timeoutRefs.current;
@@ -224,9 +233,22 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       </button>
     );
 
+    const displayShortcut = shortcut?.map((key) => {
+      if (key === '⌘') return isMac ? '⌘' : 'Ctrl';
+      return key;
+    });
+
     if (disabled && disabledTooltip) {
       return (
         <Tooltip content={disabledTooltip} position="top">
+          {buttonElement}
+        </Tooltip>
+      );
+    }
+
+    if (displayShortcut && displayShortcut.length > 0) {
+      return (
+        <Tooltip content="" shortcut={displayShortcut} position="top">
           {buttonElement}
         </Tooltip>
       );
