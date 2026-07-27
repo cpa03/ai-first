@@ -1954,6 +1954,35 @@ export const COMPONENT_STATE_COLORS = {
 } as const;
 
 /**
+ * Gradient Configuration
+ * Centralizes all gradient Tailwind classes used throughout components
+ * Eliminates hardcoded gradient patterns in dashboard arrows, feature connectors, and scroll progress
+ */
+export const GRADIENT_CONFIG = {
+  /** Dashboard step arrow gradients */
+  ARROW: {
+    /** Step 1→2 arrow: amber to primary transition */
+    STEP_1_TO_2: 'bg-gradient-to-r from-amber-300 to-primary-300',
+    /** Step 2→3 arrow: primary to green transition */
+    STEP_2_TO_3: 'bg-gradient-to-r from-primary-300 to-green-300',
+  },
+
+  /** Feature grid connector line gradients */
+  CONNECTOR: {
+    /** Horizontal connector: primary fade-out */
+    HORIZONTAL: 'bg-gradient-to-r from-primary-300 to-primary-100',
+    /** Vertical connector: primary fade-out */
+    VERTICAL: 'bg-gradient-to-b from-primary-300 to-primary-100',
+  },
+
+  /** Scroll progress bar gradient */
+  SCROLL_PROGRESS_BAR: 'bg-gradient-to-r from-primary-500 to-primary-600',
+
+  /** Referral link background gradient */
+  REFERRAL_BACKGROUND: 'bg-gradient-to-r from-primary-50 to-blue-50',
+} as const;
+
+/**
  * Combined Tailwind Utility Classes
  * Provides all utility classes in a single object for convenience
  *
@@ -1988,3 +2017,4 @@ export type ShadowClasses = typeof SHADOW_CLASSES;
 export type RoundedClasses = typeof ROUNDED_CLASSES;
 export type CharCountColors = typeof CHAR_COUNT_COLORS;
 export type TailwindUtils = typeof TAILWIND_UTILS;
+export type GradientConfig = typeof GRADIENT_CONFIG;

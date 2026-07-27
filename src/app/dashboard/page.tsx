@@ -40,6 +40,7 @@ import {
   DASHBOARD_PATTERNS,
   GRAY_CLASSES,
   DURATION_TAILWIND,
+  GRADIENT_CONFIG,
 } from '@/lib/config';
 import {
   DASHBOARD_ELEMENT_IDS,
@@ -884,7 +885,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} bg-gradient-to-r from-amber-300 to-primary-300`}
+                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} ${GRADIENT_CONFIG.ARROW.STEP_1_TO_2}`}
                   />
                   <svg
                     className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.BRAND_LIGHT}`}
@@ -937,7 +938,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} bg-gradient-to-r from-primary-300 to-green-300`}
+                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} ${GRADIENT_CONFIG.ARROW.STEP_2_TO_3}`}
                   />
                   <svg
                     className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.SUCCESS_LIGHT}`}

@@ -7,6 +7,7 @@ import {
   SCROLL_PROGRESS_BAR,
   TEXT_SIZE_CLASSES,
   DURATION_TAILWIND,
+  GRADIENT_CONFIG,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -83,7 +84,7 @@ function ScrollProgressComponent() {
       }
     >
       <div
-        className={`h-full rounded-r-full bg-gradient-to-r from-primary-500 to-primary-600 ${
+        className={`h-full rounded-r-full ${GRADIENT_CONFIG.SCROLL_PROGRESS_BAR} ${
           prefersReducedMotion
             ? ''
             : `transition-all ${DURATION_TAILWIND[150]} ease-out`
