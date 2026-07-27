@@ -24,6 +24,10 @@ const SENSITIVE_KEYS = [
   'OPENAI_API_KEY',
   'ANTHROPIC_API_KEY',
   'INTERNAL_API_SECRET',
+  'NOTION_API_KEY',
+  'TRELLO_TOKEN',
+  'GITHUB_TOKEN',
+  'GOOGLE_CLIENT_SECRET',
 ] as const;
 
 /**
@@ -116,7 +120,17 @@ export function isSensitiveVar(varName: string): boolean {
 }
 
 // Keys that must NOT have NEXT_PUBLIC_ prefix
-const MUST_BE_PRIVATE = ['SUPABASE_SERVICE_ROLE_KEY', 'ADMIN_API_KEY'] as const;
+const MUST_BE_PRIVATE = [
+  'SUPABASE_SERVICE_ROLE_KEY',
+  'ADMIN_API_KEY',
+  'OPENAI_API_KEY',
+  'ANTHROPIC_API_KEY',
+  'INTERNAL_API_SECRET',
+  'NOTION_API_KEY',
+  'TRELLO_TOKEN',
+  'GITHUB_TOKEN',
+  'GOOGLE_CLIENT_SECRET',
+] as const;
 
 /**
  * Whitelist of legitimate public environment variables that are allowed
@@ -379,6 +393,35 @@ export function validateEnvironment(): ValidationResult {
   if (internalSecret) {
     warnings.push(
       ...checkSecretStrength('INTERNAL_API_SECRET', internalSecret)
+    );
+  }
+
+  const supabaseServiceRoleKey = ENV_ACCESSORS.DATABASE.SUPABASE_SERVICE_ROLE_KEY();
+  if (supabaseServiceRoleKey) {
+    warnings.push(
+      ...checkSecretStrength('SUPABASE_SERVICE_ROLE_KEY', supabaseServiceRoleKey)
+    );
+  }
+
+  const notionApiKey = ENV_ACCESSORS.EXPORT.NOTION_API_KEY();
+  if (notionApiKey) {
+    warnings.push(...checkSecretStrength('NOTION_API_KEY', notionApiKey));
+  }
+
+  const trelloToken = ENV_ACCESSORS.EXPORT.TRELLO_TOKEN();
+  if (trelloToken) {
+    warnings.push(...checkSecretStrength('TRELLO_TOKEN', trelloToken));
+  }
+
+  const githubToken = ENV_ACCESSORS.EXPORT.GITHUB_TOKEN();
+  if (githubToken) {
+    warnings.push(...checkSecretStrength('GITHUB_TOKEN', githubToken));
+  }
+
+  const googleClientSecret = ENV_ACCESSORS.EXPORT.GOOGLE_CLIENT_SECRET();
+  if (googleClientSecret) {
+    warnings.push(
+      ...checkSecretStrength('GOOGLE_CLIENT_SECRET', googleClientSecret)
     );
   }
 
