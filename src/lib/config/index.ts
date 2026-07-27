@@ -589,8 +589,11 @@ export {
   MIN_SIZE_CLASSES,
   TABLE_DIMENSIONS,
   TABLE_CLASSES as UI_TABLE_CLASSES,
+  SKELETON_HEIGHTS,
+  SKELETON_HEIGHT_CLASSES,
   type InputHeights,
   type MinSizes,
+  type SkeletonHeights,
 } from './ui-dimensions';
 
 // Animation Values Configuration
