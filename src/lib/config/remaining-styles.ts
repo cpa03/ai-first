@@ -361,6 +361,22 @@ export const FORM_PATTERNS = {
   TIP_BULLET: GRAY_CLASSES.TEXT_500,
   FEEDBACK_TEXT: `text-sm ${GRAY_CLASSES.TEXT_500}`,
   INPUT_BORDER: `${GRAY_CLASSES.BORDER_200} ${GRAY_CLASSES.HOVER_BORDER_400}`,
+
+  // Auth page patterns - Login/Signup
+  /** OAuth separator horizontal line */
+  OAUTH_SEPARATOR_LINE: `w-full border-t ${GRAY_CLASSES.BORDER_300}`,
+  /** OAuth separator text container */
+  OAUTH_SEPARATOR_TEXT: `px-2 ${GRAY_CLASSES.BG_50} ${GRAY_CLASSES.TEXT_600}`,
+  /** Auth link pattern (forgot password, sign up, sign in) */
+  AUTH_LINK: `font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded`,
+  /** Auth footer text (no account / has account) */
+  AUTH_FOOTER_TEXT: `text-center text-sm ${GRAY_CLASSES.TEXT_600}`,
+  /** Remember me checkbox label - active state */
+  REMEMBER_ME_ACTIVE: `${GRAY_CLASSES.TEXT_900} font-medium`,
+  /** Remember me checkbox label - inactive state */
+  REMEMBER_ME_INACTIVE: `${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900}`,
+  /** Password strength progress bar track */
+  STRENGTH_BAR_TRACK: `flex-1 h-1.5 ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`,
 } as const;
 
 /**
