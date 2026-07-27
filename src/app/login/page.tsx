@@ -31,6 +31,7 @@ import {
   FORM_ARIA_LABELS,
   DRAW_CHECK,
   FORM_PATTERNS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -348,7 +349,7 @@ export default function LoginPage() {
                       ${
                         rememberMe
                           ? 'bg-primary-600 border-primary-600'
-                          : 'bg-white border-gray-300 group-hover:border-primary-400'
+                          : `bg-white ${GRAY_CLASSES.BORDER_300} group-hover:border-primary-400`
                       }
                       ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
                     `}

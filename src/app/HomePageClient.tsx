@@ -12,6 +12,7 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
 } from '@/lib/config/theme';
+import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -52,7 +53,7 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="text-center p-6 rounded-xl bg-white border border-gray-100 flex flex-col items-center justify-center"
+          className={`text-center p-6 rounded-xl bg-white border ${GRAY_CLASSES.BORDER_200} flex flex-col items-center justify-center`}
         >
           <Skeleton variant="circle" className="w-16 h-16 mx-auto mb-4" />
           <Skeleton variant="text" className="h-6 mx-auto mb-2 w-3/4" />
@@ -69,14 +70,14 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className={`mt-16 bg-gray-50 rounded-lg p-8 ${SKELETON_HEIGHT_CLASSES.TALL}`}
+        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 ${SKELETON_HEIGHT_CLASSES.TALL}`}
       >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100"
+              className={`flex items-start space-x-3 p-4 rounded-lg bg-white border ${GRAY_CLASSES.BORDER_200}`}
             >
               <Skeleton
                 variant="circle"
@@ -141,7 +142,7 @@ export default function HomePageClient() {
       >
         <h1
           id={HOME_PAGE_ELEMENT_IDS.HERO_HEADING}
-          className={`text-4xl font-bold text-gray-900 mb-4 ${
+          className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4 ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
@@ -153,7 +154,7 @@ export default function HomePageClient() {
           {HOME_PAGE_CONFIG.HERO.TITLE}
         </h1>
         <p
-          className={`text-xl text-gray-700 max-w-2xl mx-auto ${
+          className={`text-xl ${GRAY_CLASSES.TEXT_700} max-w-2xl mx-auto ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
