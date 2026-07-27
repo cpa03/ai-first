@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
@@ -73,6 +73,17 @@ export default function LoginPage() {
     handleKeyUp: handlePasswordKeyUp,
     handleBlur: handlePasswordBlur,
   } = useCapsLock();
+
+  // Micro-UX: Compute form validity for submit button attention pulse
+  // Shows a subtle animation when form is valid and ready to submit, guiding users to the CTA
+  const isFormValid = useMemo(() => {
+    const trimmedEmail = email.trim();
+    return (
+      trimmedEmail.length > 0 &&
+      VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(trimmedEmail) &&
+      password.length >= PASSWORD_VALIDATION_CONFIG.MIN_LENGTH
+    );
+  }, [email, password]);
 
   useEffect(() => {
     const savedEmail = localStorage.getItem(
@@ -385,6 +396,7 @@ export default function LoginPage() {
             className="w-full"
             size="lg"
             enableTransition
+            attention={isFormValid && !isLoading}
           >
             {isLoading
               ? LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING
