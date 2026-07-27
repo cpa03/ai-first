@@ -172,6 +172,11 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     context: 'navigation',
   },
   {
+    keys: ['Home', 'End'],
+    description: SHORTCUT_DESCRIPTIONS.JUMP_TOP_BOTTOM,
+    context: 'navigation',
+  },
+  {
     keys: ['?'],
     description: SHORTCUT_DESCRIPTIONS.SHOW_SHORTCUTS,
     context: 'global',

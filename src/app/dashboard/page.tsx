@@ -472,6 +472,37 @@ export default function DashboardPage() {
         return;
       }
 
+      // Micro-UX: Home/End keys for quick navigation in ideas list
+      // When a row is selected: Home jumps to first row, End jumps to last row
+      // When no row is selected: Home scrolls to top, End scrolls to bottom
+      if (e.key === 'Home' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        if (ideas.length > 0) {
+          setSelectedRowIndex(0);
+        } else {
+          window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          });
+        }
+        return;
+      }
+
+      if (e.key === 'End' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        if (ideas.length > 0) {
+          setSelectedRowIndex(ideas.length - 1);
+        } else {
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          });
+        }
+        return;
+      }
+
       if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         triggerHapticFeedback();
@@ -1200,6 +1231,21 @@ export default function DashboardPage() {
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_KEYS[0]}
+              </kbd>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_KEYS[1]}
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_LABEL}
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
