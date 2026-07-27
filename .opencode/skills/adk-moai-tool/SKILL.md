@@ -20,6 +20,7 @@ Comprehensive reference for OpenCode.ai - an open-source AI coding agent availab
 ## Quick Reference
 
 **Installation:**
+
 ```bash
 curl -fsSL https://opencode.ai/install | bash
 # or
@@ -27,6 +28,7 @@ npm install -g opencode
 ```
 
 **Start OpenCode:**
+
 ```bash
 opencode              # Launch TUI in current directory
 opencode /path/to/dir # Launch in specific directory
@@ -35,6 +37,7 @@ opencode serve        # Start headless server
 ```
 
 **Essential Commands:**
+
 - `/connect` - Configure API keys
 - `/init` - Generate AGENTS.md
 - `/models` - List available models
@@ -44,10 +47,11 @@ opencode serve        # Start headless server
 - `Ctrl+P` - Command palette
 
 **Configuration Files:**
+
 - `~/.config/opencode/opencode.json` - Global config
 - `./opencode.json` - Project config
 - `AGENTS.md` - Project instructions
-- `.opencode/agent/` - Custom agents
+- `.opencode/agents/` - Custom agents
 - `.opencode/skill/` - Agent skills
 - `.opencode/tool/` - Custom tools
 - `.opencode/command/` - Custom commands
@@ -59,6 +63,7 @@ opencode serve        # Start headless server
 This skill contains 32 comprehensive documentation modules organized by category.
 
 ### Core (7 modules)
+
 - [Introduction](modules/core/intro.md) - Installation, setup, primary use cases
 - [Configuration](modules/core/config.md) - JSON configuration options and merge order
 - [Providers](modules/core/providers.md) - 75+ LLM providers setup
@@ -68,6 +73,7 @@ This skill contains 32 comprehensive documentation modules organized by category
 - [Migration 1.0](modules/core/migration-1.0.md) - Upgrade guide
 
 ### Usage (7 modules)
+
 - [TUI](modules/usage/tui.md) - Terminal interface reference
 - [CLI](modules/usage/cli.md) - Command-line interface
 - [IDE](modules/usage/ide.md) - VS Code/Cursor integration
@@ -77,6 +83,7 @@ This skill contains 32 comprehensive documentation modules organized by category
 - [GitLab](modules/usage/gitlab.md) - GitLab CI/CD integration
 
 ### Configuration (14 modules)
+
 - [Tools](modules/configure/tools.md) - Built-in and custom tools
 - [Rules](modules/configure/rules.md) - AGENTS.md instructions
 - [Agents](modules/configure/agents.md) - Custom agent configuration
@@ -93,6 +100,7 @@ This skill contains 32 comprehensive documentation modules organized by category
 - [Custom Tools](modules/configure/custom-tools.md) - TypeScript tools
 
 ### Development (4 modules)
+
 - [SDK](modules/develop/sdk.md) - JavaScript/TypeScript client
 - [Server](modules/develop/server.md) - HTTP API reference
 - [Plugins](modules/develop/plugins.md) - Plugin development
@@ -107,10 +115,12 @@ See [index.md](index.md) for complete navigation.
 ### Agent Architecture
 
 **Primary Agents** - Main assistants you interact with directly:
+
 - Build: Full tools enabled (default)
 - Plan: Restricted, analysis-focused
 
 **Subagents** - Specialized assistants invoked by primary agents:
+
 - General: Research and multi-step tasks
 - Explore: Fast codebase exploration
 
@@ -124,11 +134,11 @@ See [index.md](index.md) for complete navigation.
 
 ### Tool Permission Levels
 
-| Level | Description |
-|-------|-------------|
+| Level   | Description            |
+| ------- | ---------------------- |
 | `allow` | Auto-approve execution |
-| `ask` | Request user approval |
-| `deny` | Block execution |
+| `ask`   | Request user approval  |
+| `deny`  | Block execution        |
 
 ---
 
@@ -156,6 +166,7 @@ See [index.md](index.md) for complete navigation.
 description: Review current changes
 agent: plan
 ---
+
 Review the following changes:
 !`git diff --staged`
 ```
@@ -177,17 +188,17 @@ Review the following changes:
 ### Custom Tool
 
 ```typescript
-import { tool } from "@opencode-ai/plugin"
+import { tool } from '@opencode-ai/plugin';
 
 export default tool({
-  description: "Query project database",
+  description: 'Query project database',
   args: {
-    query: tool.schema.string().describe("SQL query")
+    query: tool.schema.string().describe('SQL query'),
   },
   async execute(args) {
-    return `Executed: ${args.query}`
-  }
-})
+    return `Executed: ${args.query}`;
+  },
+});
 ```
 
 ---
@@ -199,6 +210,7 @@ export default tool({
 - Discord: https://opencode.ai/discord
 
 Storage Locations:
+
 - Config: `~/.config/opencode/`
 - Data: `~/.local/share/opencode/`
 - Cache: `~/.cache/opencode/`
@@ -214,7 +226,6 @@ Storage Locations:
 - moai-domain-frontend - Frontend development
 - moai-workflow-testing - Testing workflows
 
-
 ---
 
 ## Referenced Files
@@ -223,7 +234,7 @@ Storage Locations:
 
 ### modules/core/intro.md
 
-```markdown
+````markdown
 ---
 source: https://opencode.ai/docs/
 fetched: 2026-01-08
@@ -243,6 +254,7 @@ OpenCode is an open source AI coding agent available in multiple formats: termin
 ```bash
 curl -fsSL https://opencode.ai/install | bash
 ```
+````
 
 ### Package Managers
 
@@ -352,7 +364,7 @@ References to config, providers, and troubleshooting resources.
 
 The page emphasizes providing detailed context and treating the AI agent like a junior developer for optimal results.
 
-```
+````
 
 ### modules/core/config.md
 
@@ -397,7 +409,7 @@ Configuration files are merged together, not replaced. Settings from the followi
     }
   }
 }
-```
+````
 
 - `model`: Primary model (e.g., "anthropic/claude-sonnet-4-5")
 - `small_model`: Lightweight tasks like title generation
@@ -554,9 +566,10 @@ Amazon Bedrock supports the following options:
 Agents can be defined inline in the config or via markdown files:
 
 - Global: `~/.config/opencode/agent/`
-- Project: `.opencode/agent/`
+- Project: `.opencode/agents/`
 
 Configuration includes:
+
 - `description`: What the agent does
 - `model`: Which model to use
 - `prompt`: System prompt for the agent
@@ -569,7 +582,7 @@ Configuration includes:
 - `disabled_providers` takes priority over `enabled_providers`
 - Sharing defaults to manual mode requiring explicit `/share` command
 
-```
+````
 
 ### modules/core/providers.md
 
@@ -604,7 +617,7 @@ Users can override default endpoints:
     }
   }
 }
-```
+````
 
 ## OpenCode Zen
 
@@ -742,6 +755,7 @@ Observability platform supporting 17+ providers with automatic routing. Optional
 ```
 
 Common headers include:
+
 - `Helicone-Cache-Enabled`
 - `Helicone-User-Id`
 - `Helicone-Property-[Name]`
@@ -885,7 +899,7 @@ Key options: `baseURL`, `apiKey`, `headers`, and model `limit` (context/output t
 - Validate npm package (use provider-specific or `@ai-sdk/openai-compatible`)
 - Check `baseURL` correctness
 
-```
+````
 
 ### modules/core/network.md
 
@@ -908,7 +922,7 @@ OpenCode recognizes standard proxy environment variables for routing traffic thr
 export HTTPS_PROXY=https://proxy.example.com:8080
 export HTTP_PROXY=http://proxy.example.com:8080
 export NO_PROXY=localhost,127.0.0.1
-```
+````
 
 **Critical requirement:** The `NO_PROXY` variable must exclude localhost addresses. The TUI relies on local HTTP server communication, and proxying this traffic creates routing loops.
 
@@ -923,6 +937,7 @@ export HTTPS_PROXY=http://username:password@proxy.example.com:8080
 ### Security Best Practices
 
 The documentation advises against hardcoding passwords, recommending:
+
 - Environment variables
 - Secure credential management systems
 
@@ -963,7 +978,7 @@ export NODE_EXTRA_CA_CERTS=/etc/ssl/certs/corporate-ca.pem
 opencode
 ```
 
-```
+````
 
 ### modules/core/enterprise.md
 
@@ -993,7 +1008,7 @@ All processing occurs locally or via direct API calls to the provider. The only 
   "$schema": "https://opencode.ai/config.json",
   "share": "disabled"
 }
-```
+````
 
 ### Code Ownership
 
@@ -1037,7 +1052,7 @@ npm login --registry=https://your-company.jfrog.io/api/npm/npm-virtual/
 
 Organizations interested in implementation should email contact@anoma.ly for pricing and deployment discussions.
 
-```
+````
 
 ### modules/core/troubleshooting.md
 
@@ -1069,16 +1084,16 @@ Files use timestamp naming (e.g., `2025-01-09T123456.log`) with the 10 most rece
 
 ```bash
 opencode --log-level DEBUG
-```
+````
 
 ## Storage Location
 
 Application data resides at:
 
-| Platform | Path |
-|----------|------|
-| macOS/Linux | `~/.local/share/opencode/` |
-| Windows | `%USERPROFILE%\.local\share\opencode` |
+| Platform    | Path                                  |
+| ----------- | ------------------------------------- |
+| macOS/Linux | `~/.local/share/opencode/`            |
+| Windows     | `%USERPROFILE%\.local\share\opencode` |
 
 ### Contents
 
@@ -1153,11 +1168,11 @@ opencode
 
 Install clipboard utilities based on your environment:
 
-| Environment | Required Package |
-|-------------|------------------|
-| X11 | `xclip` or `xsel` |
-| Wayland | `wl-clipboard` |
-| Headless | `xvfb` |
+| Environment | Required Package  |
+| ----------- | ----------------- |
+| X11         | `xclip` or `xsel` |
+| Wayland     | `wl-clipboard`    |
+| Headless    | `xvfb`            |
 
 ```bash
 # For X11
@@ -1167,7 +1182,7 @@ sudo apt install xclip
 sudo apt install wl-clipboard
 ```
 
-```
+````
 
 ### modules/core/migration-1.0.md
 
@@ -1190,7 +1205,7 @@ OpenCode 1.0 represents "a complete rewrite of the TUI," transitioning from a Go
 
 ```bash
 opencode upgrade 1.0.0
-```
+````
 
 ### Revert to Previous Version
 
@@ -1220,12 +1235,12 @@ A toggleable session sidebar provides additional context.
 
 Four keybinds were renamed:
 
-| Old Name | New Name |
-|----------|----------|
-| `messages_revert` | `messages_undo` |
-| `switch_agent` | `agent_cycle` |
+| Old Name               | New Name              |
+| ---------------------- | --------------------- |
+| `messages_revert`      | `messages_undo`       |
+| `switch_agent`         | `agent_cycle`         |
 | `switch_agent_reverse` | `agent_cycle_reverse` |
-| `switch_mode` | `agent_cycle` |
+| `switch_mode`          | `agent_cycle`         |
 
 ### Removed Keybinds
 
@@ -1255,7 +1270,7 @@ The new version maintains compatibility with the existing OpenCode server.
 
 The rewrite focuses on improving performance and capabilities.
 
-```
+````
 
 ### modules/usage/tui.md
 
@@ -1276,13 +1291,14 @@ OpenCode provides an interactive terminal interface (TUI) for working on project
 opencode
 # or
 opencode /path/to/project
-```
+````
 
 ## File References
 
 Users can reference files in messages using `@` to perform fuzzy file searching within the current working directory.
 
 **Example:**
+
 ```
 How is auth handled in @packages/functions/src/api/index.ts?
 ```
@@ -1294,6 +1310,7 @@ The file content is automatically included in conversations.
 Messages beginning with `!` execute shell commands. The command output is then added to the conversation as a tool result.
 
 **Example:**
+
 ```
 !npm test
 ```
@@ -1302,24 +1319,24 @@ Messages beginning with `!` execute shell commands. The command output is then a
 
 All commands use `/` prefix and most include `ctrl+x` keybind shortcuts (ctrl+x is the default leader key):
 
-| Command | Aliases | Description | Keybind |
-|---------|---------|-------------|---------|
-| `/connect` | - | Add a provider and configure API keys | - |
-| `/compact` | `/summarize` | Compact current session | `ctrl+x c` |
-| `/details` | - | Toggle tool execution details | `ctrl+x d` |
-| `/editor` | - | Open external editor for message composition | `ctrl+x e` |
-| `/exit` | `/quit`, `/q` | Exit OpenCode | `ctrl+x q` |
-| `/export` | - | Export conversation to Markdown | `ctrl+x x` |
-| `/help` | - | Show help dialog | `ctrl+x h` |
-| `/init` | - | Create/update AGENTS.md file | `ctrl+x i` |
-| `/models` | - | List available models | `ctrl+x m` |
-| `/new` | `/clear` | Start new session | `ctrl+x n` |
-| `/redo` | - | Redo previously undone message | `ctrl+x r` |
-| `/sessions` | `/resume`, `/continue` | List/switch sessions | `ctrl+x l` |
-| `/share` | - | Share current session | `ctrl+x s` |
-| `/themes` | - | List available themes | `ctrl+x t` |
-| `/undo` | - | Undo last message and revert file changes | `ctrl+x u` |
-| `/unshare` | - | Unshare current session | - |
+| Command     | Aliases                | Description                                  | Keybind    |
+| ----------- | ---------------------- | -------------------------------------------- | ---------- |
+| `/connect`  | -                      | Add a provider and configure API keys        | -          |
+| `/compact`  | `/summarize`           | Compact current session                      | `ctrl+x c` |
+| `/details`  | -                      | Toggle tool execution details                | `ctrl+x d` |
+| `/editor`   | -                      | Open external editor for message composition | `ctrl+x e` |
+| `/exit`     | `/quit`, `/q`          | Exit OpenCode                                | `ctrl+x q` |
+| `/export`   | -                      | Export conversation to Markdown              | `ctrl+x x` |
+| `/help`     | -                      | Show help dialog                             | `ctrl+x h` |
+| `/init`     | -                      | Create/update AGENTS.md file                 | `ctrl+x i` |
+| `/models`   | -                      | List available models                        | `ctrl+x m` |
+| `/new`      | `/clear`               | Start new session                            | `ctrl+x n` |
+| `/redo`     | -                      | Redo previously undone message               | `ctrl+x r` |
+| `/sessions` | `/resume`, `/continue` | List/switch sessions                         | `ctrl+x l` |
+| `/share`    | -                      | Share current session                        | `ctrl+x s` |
+| `/themes`   | -                      | List available themes                        | `ctrl+x t` |
+| `/undo`     | -                      | Undo last message and revert file changes    | `ctrl+x u` |
+| `/unshare`  | -                      | Unshare current session                      | -          |
 
 ## Editor Setup
 
@@ -1349,15 +1366,15 @@ $env:EDITOR = "code --wait"
 
 ### Popular Editors
 
-| Editor | Command |
-|--------|---------|
-| VS Code | `code` |
-| Cursor | `cursor` |
+| Editor   | Command    |
+| -------- | ---------- |
+| VS Code  | `code`     |
+| Cursor   | `cursor`   |
 | Windsurf | `windsurf` |
-| Neovim | `nvim` |
-| Vim | `vim` |
-| Nano | `nano` |
-| Sublime | `subl` |
+| Neovim   | `nvim`     |
+| Vim      | `vim`      |
+| Nano     | `nano`     |
+| Sublime  | `subl`     |
 
 **Note:** Some editors like VS Code need to be started with the `--wait` flag to block until closed.
 
@@ -1377,10 +1394,10 @@ $env:EDITOR = "code --wait"
 
 ### Options
 
-| Option | Description |
-|--------|-------------|
-| `scroll_acceleration` | Enable macOS-style scroll acceleration; takes precedence over scroll_speed |
-| `scroll_speed` | Controls scroll speed (minimum: 1); defaults to 1 on Unix, 3 on Windows; ignored if scroll_acceleration is enabled |
+| Option                | Description                                                                                                        |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `scroll_acceleration` | Enable macOS-style scroll acceleration; takes precedence over scroll_speed                                         |
+| `scroll_speed`        | Controls scroll speed (minimum: 1); defaults to 1 on Unix, 3 on Windows; ignored if scroll_acceleration is enabled |
 
 ## Customization
 
@@ -1390,7 +1407,7 @@ Users can customize TUI view settings through the command palette (`ctrl+x h` or
 
 Toggle whether your username appears in chat messages through the command palette by searching "username" or "hide username."
 
-```
+````
 
 ### modules/usage/cli.md
 
@@ -1418,16 +1435,16 @@ opencode /path/to/project
 
 # Run non-interactive with a prompt
 opencode run "Your prompt here"
-```
+````
 
 ## Global Flags
 
-| Flag | Description |
-|------|-------------|
-| `--help` | Display help information |
-| `--version` | Display version information |
-| `--print-logs` | Print logs to stdout |
-| `--log-level` | Set logging level (DEBUG, INFO, WARN, ERROR) |
+| Flag           | Description                                  |
+| -------------- | -------------------------------------------- |
+| `--help`       | Display help information                     |
+| `--version`    | Display version information                  |
+| `--print-logs` | Print logs to stdout                         |
+| `--log-level`  | Set logging level (DEBUG, INFO, WARN, ERROR) |
 
 ## Core Commands
 
@@ -1476,16 +1493,19 @@ opencode models --refresh  # Refresh cache
 ### Server Modes
 
 **Headless HTTP API Server:**
+
 ```bash
 opencode serve
 ```
 
 **HTTP Server with Web Browser Interface:**
+
 ```bash
 opencode web
 ```
 
 **Agent Client Protocol Server (stdin/stdout):**
+
 ```bash
 opencode acp
 ```
@@ -1521,10 +1541,10 @@ opencode run "Your prompt here"
 
 ## Environment Variables
 
-| Variable | Description |
-|----------|-------------|
-| `OPENCODE_CONFIG_DIR` | Custom configuration directory |
-| `OPENCODE_DISABLE_AUTOUPDATE` | Disable automatic updates |
+| Variable                      | Description                    |
+| ----------------------------- | ------------------------------ |
+| `OPENCODE_CONFIG_DIR`         | Custom configuration directory |
+| `OPENCODE_DISABLE_AUTOUPDATE` | Disable automatic updates      |
 
 ## Advanced Features
 
@@ -1555,7 +1575,7 @@ opencode models
 opencode session export my-session > session.json
 ```
 
-```
+````
 
 ### modules/usage/ide.md
 
@@ -1625,7 +1645,7 @@ For using custom editors with `/editor` or `/export` commands, set the `EDITOR` 
 
 ```bash
 export EDITOR="code --wait"
-```
+````
 
 The `--wait` flag ensures the editor blocks until the file is closed.
 
@@ -1635,7 +1655,7 @@ The `--wait` flag ensures the editor blocks until the file is closed.
 - The extension automatically detects active selections
 - Works with multiple IDE instances simultaneously
 
-```
+````
 
 ### modules/usage/zen.md
 
@@ -1666,22 +1686,25 @@ opencode
 /connect
 # Select "opencode"
 # Enter your API key
-```
+````
 
 ## Available Models
 
 The platform provides access to multiple model families:
 
 ### Premium Models
+
 - GPT 5 series
 - Claude variants (Sonnet, Haiku, Opus)
 - Gemini options
 
 ### Open Source Models
+
 - Qwen3
 - Kimi
 
 ### Free Models (Beta)
+
 - Grok Code
 - GLM 4.7
 - MiniMax M2.1
@@ -1693,11 +1716,11 @@ The platform provides access to multiple model families:
 
 Pay-as-you-go model charging per 1M tokens:
 
-| Model Tier | Input Token Price |
-|------------|-------------------|
-| Economy | $0.40 per 1M tokens |
-| Standard | $3.00 per 1M tokens |
-| Premium | $15.00 per 1M tokens |
+| Model Tier | Input Token Price    |
+| ---------- | -------------------- |
+| Economy    | $0.40 per 1M tokens  |
+| Standard   | $3.00 per 1M tokens  |
+| Premium    | $15.00 per 1M tokens |
 
 Exact pricing varies by model.
 
@@ -1707,14 +1730,15 @@ Exact pricing varies by model.
 
 Workspaces support role-based access:
 
-| Role | Capabilities |
-|------|--------------|
-| Admin | Manage models, members, and billing |
-| Member | Control only personal API keys |
+| Role   | Capabilities                        |
+| ------ | ----------------------------------- |
+| Admin  | Manage models, members, and billing |
+| Member | Control only personal API keys      |
 
 ### Admin Controls
 
 Admins can:
+
 - Disable specific models
 - Set spending limits per team member
 - Manage workspace billing
@@ -1731,10 +1755,10 @@ Users can integrate personal API keys while accessing other Zen models:
 
 ### Data Retention Policies
 
-| Provider | Retention |
-|----------|-----------|
-| Most models | Zero retention |
-| OpenAI | 30-day retention |
+| Provider                | Retention                    |
+| ----------------------- | ---------------------------- |
+| Most models             | Zero retention               |
+| OpenAI                  | 30-day retention             |
 | Free-tier models (beta) | May use data for improvement |
 
 ### Hosting Location
@@ -1759,7 +1783,7 @@ To use Zen models in your config:
 3. Set spending limits for team members
 4. Review data retention policies for sensitive projects
 
-```
+````
 
 ### modules/usage/share.md
 
@@ -1797,7 +1821,7 @@ Users must explicitly invoke `/share` to generate a shareable URL copied to clip
   "$schema": "https://opencode.ai/config.json",
   "share": "manual"
 }
-```
+````
 
 ### Auto-Share
 
@@ -1834,6 +1858,7 @@ The `/unshare` command removes public access and deletes associated conversation
 ### Data Retention
 
 Shared conversations persist until explicitly unshared, including:
+
 - Full conversation history
 - Metadata
 
@@ -1851,27 +1876,28 @@ Shared conversations persist until explicitly unshared, including:
 
 For organizational deployments, sharing can be:
 
-| Option | Description |
-|--------|-------------|
-| Disabled | Completely prevent sharing for compliance |
-| SSO-restricted | Allow only authenticated users |
-| Self-hosted | Host share pages on internal infrastructure |
+| Option         | Description                                 |
+| -------------- | ------------------------------------------- |
+| Disabled       | Completely prevent sharing for compliance   |
+| SSO-restricted | Allow only authenticated users              |
+| Self-hosted    | Host share pages on internal infrastructure |
 
 ## Commands Reference
 
-| Command | Description |
-|---------|-------------|
-| `/share` | Generate shareable link (copies to clipboard) |
-| `/unshare` | Remove public access and delete data |
+| Command    | Description                                   |
+| ---------- | --------------------------------------------- |
+| `/share`   | Generate shareable link (copies to clipboard) |
+| `/unshare` | Remove public access and delete data          |
 
 ## URL Format
 
 Shared conversations use the format:
+
 ```
 https://opncd.ai/s/<share-id>
 ```
 
-```
+````
 
 ### modules/usage/github.md
 
@@ -1908,7 +1934,7 @@ Mention `/opencode` or `/oc` in your comment, and OpenCode will execute tasks wi
 
 ```bash
 opencode github install
-```
+````
 
 ### Manual Configuration
 
@@ -1948,13 +1974,13 @@ jobs:
 
 ## Configuration Parameters
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `model` | Yes | Specifies the AI model in `provider/model` format |
-| `agent` | No | Selects the processing agent; defaults to `default_agent` from config |
-| `share` | No | Controls session sharing (defaults to true for public repos) |
-| `prompt` | No | Customizes behavior through instructions |
-| `token` | No | Provides GitHub authentication; uses installation token by default |
+| Parameter | Required | Description                                                           |
+| --------- | -------- | --------------------------------------------------------------------- |
+| `model`   | Yes      | Specifies the AI model in `provider/model` format                     |
+| `agent`   | No       | Selects the processing agent; defaults to `default_agent` from config |
+| `share`   | No       | Controls session sharing (defaults to true for public repos)          |
+| `prompt`  | No       | Customizes behavior through instructions                              |
+| `token`   | No       | Provides GitHub authentication; uses installation token by default    |
 
 ## Supported Event Types
 
@@ -1969,6 +1995,7 @@ on:
 ```
 
 **Usage:**
+
 ```
 /opencode Explain this issue and suggest a fix
 ```
@@ -1984,6 +2011,7 @@ on:
 ```
 
 **Usage:**
+
 ```
 /oc Can you improve this function?
 ```
@@ -2015,7 +2043,7 @@ Runs on a schedule for maintenance tasks.
 ```yaml
 on:
   schedule:
-    - cron: '0 0 * * *'  # Daily at midnight
+    - cron: '0 0 * * *' # Daily at midnight
 ```
 
 ### Manual Dispatch
@@ -2058,7 +2086,7 @@ Schedule daily checks for outdated dependencies, security vulnerabilities, or co
 3. **Review generated code:** Always review AI-generated changes before merging
 4. **Set appropriate triggers:** Choose triggers that match your workflow
 
-```
+````
 
 ### modules/usage/gitlab.md
 
@@ -2105,7 +2133,7 @@ include:
 
 variables:
   OPENCODE_AUTH: $OPENCODE_AUTH_JSON
-```
+````
 
 ## GitLab Duo Integration
 
@@ -2150,6 +2178,7 @@ OpenCode operates within GitLab CI/CD pipelines, activated by mentioning `@openc
 ```
 
 The assistant handles:
+
 - Branch creation
 - Code implementation
 - Merge request generation
@@ -2186,7 +2215,7 @@ opencode:
 3. **Review generated code:** Always review AI-generated merge requests
 4. **Set appropriate permissions:** Use minimal required GitLab permissions
 
-```
+````
 
 ### modules/configure/tools.md
 
@@ -2218,7 +2247,7 @@ Tools are enabled by default. Disable specific tools via the config:
     "webfetch": true
   }
 }
-```
+````
 
 Wildcard patterns control multiple tools:
 
@@ -2251,21 +2280,21 @@ Agent-specific configurations supersede global settings:
 
 ## Built-in Tools
 
-| Tool | Purpose |
-|------|---------|
-| `bash` | Execute shell commands in your project environment |
-| `edit` | Precise file modifications through exact string replacement |
-| `write` | Create new or overwrite existing files |
-| `read` | Retrieve file contents with line-range support |
-| `grep` | Search file contents using regular expressions |
-| `glob` | Pattern-based file discovery, sorted by modification time |
-| `list` | Directory enumeration with glob pattern filtering |
-| `lsp` | Code intelligence (experimental; requires flag) |
-| `patch` | Apply patch files to codebases |
-| `skill` | Load skill files (SKILL.md) into conversations |
-| `todowrite` | Track multi-step task progress |
-| `todoread` | Retrieve current task list state |
-| `webfetch` | Retrieve web content for documentation lookup |
+| Tool        | Purpose                                                     |
+| ----------- | ----------------------------------------------------------- |
+| `bash`      | Execute shell commands in your project environment          |
+| `edit`      | Precise file modifications through exact string replacement |
+| `write`     | Create new or overwrite existing files                      |
+| `read`      | Retrieve file contents with line-range support              |
+| `grep`      | Search file contents using regular expressions              |
+| `glob`      | Pattern-based file discovery, sorted by modification time   |
+| `list`      | Directory enumeration with glob pattern filtering           |
+| `lsp`       | Code intelligence (experimental; requires flag)             |
+| `patch`     | Apply patch files to codebases                              |
+| `skill`     | Load skill files (SKILL.md) into conversations              |
+| `todowrite` | Track multi-step task progress                              |
+| `todoread`  | Retrieve current task list state                            |
+| `webfetch`  | Retrieve web content for documentation lookup               |
 
 ## Tool Descriptions
 
@@ -2300,6 +2329,7 @@ Directory enumeration with optional glob pattern filtering.
 ### lsp
 
 Code intelligence features including:
+
 - Go to definition
 - Find references
 - Symbol search
@@ -2357,11 +2387,12 @@ Permissions can be configured separately to require approval before tool executi
 ```
 
 Options:
+
 - `"ask"`: Require user approval
 - `"allow"`: Auto-approve
 - `"deny"`: Block tool usage
 
-```
+````
 
 ### modules/configure/rules.md
 
@@ -2386,14 +2417,14 @@ Running the `/init` command scans your project and generates an `AGENTS.md` file
 
 ```bash
 /init
-```
+````
 
 ### File Locations
 
-| Type | Location | Purpose |
-|------|----------|---------|
-| Project-level | `AGENTS.md` in repository root | Version-controlled team rules |
-| Global | `~/.config/opencode/AGENTS.md` | Personal rules across projects |
+| Type          | Location                       | Purpose                        |
+| ------------- | ------------------------------ | ------------------------------ |
+| Project-level | `AGENTS.md` in repository root | Version-controlled team rules  |
+| Global        | `~/.config/opencode/AGENTS.md` | Personal rules across projects |
 
 ### Configuration Support
 
@@ -2415,6 +2446,7 @@ Supports glob patterns for flexible file discovery.
 ## Implementation Example
 
 A typical project `AGENTS.md` establishes:
+
 - Monorepo structure
 - Code standards
 - Naming conventions
@@ -2427,17 +2459,21 @@ A typical project `AGENTS.md` establishes:
 # Project Instructions
 
 ## Architecture
+
 This is an SST v3 monorepo with the following structure:
+
 - `packages/core/` - Shared business logic
 - `packages/functions/` - Lambda handlers
 - `packages/web/` - React frontend
 
 ## Code Standards
+
 - Use TypeScript strict mode
 - Prefer functional components
 - Use barrel exports from index.ts
 
 ## Conventions
+
 - Import order: external, internal, relative
 - Use named exports over default exports
 - File names: kebab-case
@@ -2460,6 +2496,7 @@ Developers can implement "lazy loading" of external references by instructing th
 
 ```markdown
 ## Extended Documentation
+
 When working on authentication, read @docs/auth-patterns.md
 When working on database, read @docs/db-conventions.md
 ```
@@ -2472,11 +2509,7 @@ Use glob patterns to load multiple instruction files:
 
 ```json
 {
-  "instructions": [
-    "AGENTS.md",
-    ".opencode/rules/*.md",
-    "packages/*/AGENTS.md"
-  ]
+  "instructions": ["AGENTS.md", ".opencode/rules/*.md", "packages/*/AGENTS.md"]
 }
 ```
 
@@ -2486,17 +2519,19 @@ Structure rules for specific contexts:
 
 ```markdown
 ## When Working on API
+
 - Use zod for validation
 - Follow REST conventions
 - Include error handling
 
 ## When Working on Frontend
+
 - Use React Query for data fetching
 - Follow component composition patterns
 - Include loading states
 ```
 
-```
+````
 
 ### modules/configure/agents.md
 
@@ -2583,15 +2618,16 @@ In `opencode.json`:
     }
   }
 }
-```
+````
 
 ### Markdown Files
 
 Create markdown files in:
-- Global: `~/.config/opencode/agent/`
-- Per-project: `.opencode/agent/`
 
-**Example: `.opencode/agent/docs-writer.md`**
+- Global: `~/.config/opencode/agent/`
+- Per-project: `.opencode/agents/`
+
+**Example: `.opencode/agents/docs-writer.md`**
 
 ```markdown
 ---
@@ -2603,6 +2639,7 @@ temperature: 0.7
 You are a technical documentation specialist.
 
 Focus on:
+
 - Clear, concise writing
 - Code examples
 - API documentation
@@ -2611,19 +2648,19 @@ Focus on:
 
 ## Configuration Options
 
-| Option | Description | Default |
-|--------|-------------|---------|
-| `description` | Brief description (required) | - |
-| `temperature` | Randomness (0.0-1.0) | Model default |
-| `maxSteps` | Max iterations before text-only response | Unlimited |
-| `disable` | Set true to disable | false |
-| `prompt` | Custom system prompt or file path | - |
-| `model` | Override global model | Global model |
-| `tools` | Enable/disable specific tools | All enabled |
-| `permission` | Tool permissions (ask/allow/deny) | - |
-| `mode` | "primary", "subagent", or "all" | "all" |
-| `hidden` | Hide from @ autocomplete | false |
-| `taskPermissions` | Control subagent invocation | - |
+| Option            | Description                              | Default       |
+| ----------------- | ---------------------------------------- | ------------- |
+| `description`     | Brief description (required)             | -             |
+| `temperature`     | Randomness (0.0-1.0)                     | Model default |
+| `maxSteps`        | Max iterations before text-only response | Unlimited     |
+| `disable`         | Set true to disable                      | false         |
+| `prompt`          | Custom system prompt or file path        | -             |
+| `model`           | Override global model                    | Global model  |
+| `tools`           | Enable/disable specific tools            | All enabled   |
+| `permission`      | Tool permissions (ask/allow/deny)        | -             |
+| `mode`            | "primary", "subagent", or "all"          | "all"         |
+| `hidden`          | Hide from @ autocomplete                 | false         |
+| `taskPermissions` | Control subagent invocation              | -             |
 
 ### Tools Configuration
 
@@ -2669,6 +2706,7 @@ opencode agent create
 ```
 
 The wizard handles:
+
 1. Location selection (global/project)
 2. Description input
 3. System prompt generation
@@ -2743,7 +2781,7 @@ The wizard handles:
 }
 ```
 
-```
+````
 
 ### modules/configure/models.md
 
@@ -2766,7 +2804,7 @@ OpenCode preloads popular providers by default. Users can add credentials via th
 
 ```bash
 /connect
-```
+````
 
 ## Model Selection
 
@@ -2780,14 +2818,14 @@ Access model selection through the `/models` command after configuring your prov
 
 The following models are recommended for code generation and tool calling:
 
-| Model | Provider |
-|-------|----------|
-| GPT 5.2 | OpenAI |
-| GPT 5.1 Codex | OpenAI |
-| Claude Opus 4.5 | Anthropic |
+| Model             | Provider  |
+| ----------------- | --------- |
+| GPT 5.2           | OpenAI    |
+| GPT 5.1 Codex     | OpenAI    |
+| Claude Opus 4.5   | Anthropic |
 | Claude Sonnet 4.5 | Anthropic |
-| Minimax M2.1 | Minimax |
-| Gemini 3 Pro | Google |
+| Minimax M2.1      | Minimax   |
+| Gemini 3 Pro      | Google    |
 
 ## Default Configuration
 
@@ -2853,10 +2891,12 @@ Models support multiple configuration variants for different use cases.
 ### Built-in Variants
 
 **Anthropic:**
+
 - `high` (default): Standard thinking budget
 - `max`: Maximum thinking budget
 
 **OpenAI:**
+
 - `none`: No reasoning
 - `low`: Low reasoning effort
 - `medium`: Medium reasoning effort
@@ -2864,6 +2904,7 @@ Models support multiple configuration variants for different use cases.
 - `xhigh`: Extra high reasoning effort
 
 **Google:**
+
 - `low`: Low effort level
 - `high`: High effort level
 
@@ -2946,7 +2987,7 @@ Models are selected in the following order:
 }
 ```
 
-```
+````
 
 ### modules/configure/themes.md
 
@@ -2971,7 +3012,7 @@ Your terminal must support **truecolor** (24-bit color) for proper theme display
 
 ```bash
 echo $COLORTERM
-```
+````
 
 Should output `truecolor` or `24bit`.
 
@@ -2986,6 +3027,7 @@ export COLORTERM=truecolor
 ### Supported Terminals
 
 Modern terminals with truecolor support:
+
 - iTerm2
 - Alacritty
 - Kitty
@@ -2995,23 +3037,24 @@ Modern terminals with truecolor support:
 
 ## Built-in Themes
 
-| Theme | Description |
-|-------|-------------|
-| `system` | Adapts to terminal background |
-| `tokyonight` | Based on popular editor theme |
-| `everforest` | Nature-inspired color palette |
-| `ayu` | Clean and modern design |
-| `catppuccin` | Soothing pastel theme |
-| `catppuccin-macchiato` | Catppuccin variant |
-| `gruvbox` | Retro groove color scheme |
-| `kanagawa` | Japanese-inspired palette |
-| `nord` | Arctic, north-bluish palette |
-| `matrix` | Green-on-black hacker style |
-| `one-dark` | Atom-inspired theme |
+| Theme                  | Description                   |
+| ---------------------- | ----------------------------- |
+| `system`               | Adapts to terminal background |
+| `tokyonight`           | Based on popular editor theme |
+| `everforest`           | Nature-inspired color palette |
+| `ayu`                  | Clean and modern design       |
+| `catppuccin`           | Soothing pastel theme         |
+| `catppuccin-macchiato` | Catppuccin variant            |
+| `gruvbox`              | Retro groove color scheme     |
+| `kanagawa`             | Japanese-inspired palette     |
+| `nord`                 | Arctic, north-bluish palette  |
+| `matrix`               | Green-on-black hacker style   |
+| `one-dark`             | Atom-inspired theme           |
 
 ## System Theme
 
 The system theme automatically adapts to your terminal's color scheme:
+
 - Generates custom gray scales
 - Uses ANSI colors (0-15)
 - Preserves terminal defaults using `none` values
@@ -3047,6 +3090,7 @@ Select from available themes interactively.
 ### JSON Format
 
 Custom themes support:
+
 - Hex colors: `#ffffff`
 - ANSI values: `0-255`
 - Color references: Reference defined colors
@@ -3137,22 +3181,22 @@ Custom themes support:
 
 ### Theme Properties
 
-| Property | Description |
-|----------|-------------|
-| `primary` | Main accent color |
-| `secondary` | Secondary accent |
-| `accent` | Highlight color |
-| `error` | Error messages |
-| `warning` | Warning messages |
-| `success` | Success messages |
-| `text` | Default text |
-| `background` | Background color |
-| `border` | Border color |
-| `diff.add` | Added lines in diffs |
-| `diff.remove` | Removed lines in diffs |
-| `syntax.*` | Syntax highlighting colors |
+| Property      | Description                |
+| ------------- | -------------------------- |
+| `primary`     | Main accent color          |
+| `secondary`   | Secondary accent           |
+| `accent`      | Highlight color            |
+| `error`       | Error messages             |
+| `warning`     | Warning messages           |
+| `success`     | Success messages           |
+| `text`        | Default text               |
+| `background`  | Background color           |
+| `border`      | Border color               |
+| `diff.add`    | Added lines in diffs       |
+| `diff.remove` | Removed lines in diffs     |
+| `syntax.*`    | Syntax highlighting colors |
 
-```
+````
 
 ### modules/configure/keybinds.md
 
@@ -3188,39 +3232,39 @@ Customize keybinds through the `opencode.json` file using the `"keybinds"` objec
     "cancel": "escape"
   }
 }
-```
+````
 
 ## Notable Default Bindings
 
-| Action | Default Keybind |
-|--------|-----------------|
-| Leader key | `ctrl+x` |
-| New session | `<leader>n` |
-| Model list | `<leader>m` |
-| Agent list | `<leader>a` |
-| Command list | `ctrl+p` |
-| Input submission | `return` |
-| Add newline | `shift+return`, `ctrl+return`, `alt+return`, `ctrl+j` |
+| Action           | Default Keybind                                       |
+| ---------------- | ----------------------------------------------------- |
+| Leader key       | `ctrl+x`                                              |
+| New session      | `<leader>n`                                           |
+| Model list       | `<leader>m`                                           |
+| Agent list       | `<leader>a`                                           |
+| Command list     | `ctrl+p`                                              |
+| Input submission | `return`                                              |
+| Add newline      | `shift+return`, `ctrl+return`, `alt+return`, `ctrl+j` |
 
 ## Common Keybinds
 
-| Action | Keybind |
-|--------|---------|
-| `session_new` | `<leader>n` |
+| Action         | Keybind     |
+| -------------- | ----------- |
+| `session_new`  | `<leader>n` |
 | `session_list` | `<leader>l` |
-| `model_list` | `<leader>m` |
-| `agent_list` | `<leader>a` |
-| `command_list` | `ctrl+p` |
-| `help` | `<leader>h` |
-| `compact` | `<leader>c` |
-| `details` | `<leader>d` |
-| `editor` | `<leader>e` |
-| `export` | `<leader>x` |
-| `share` | `<leader>s` |
-| `themes` | `<leader>t` |
-| `undo` | `<leader>u` |
-| `redo` | `<leader>r` |
-| `quit` | `<leader>q` |
+| `model_list`   | `<leader>m` |
+| `agent_list`   | `<leader>a` |
+| `command_list` | `ctrl+p`    |
+| `help`         | `<leader>h` |
+| `compact`      | `<leader>c` |
+| `details`      | `<leader>d` |
+| `editor`       | `<leader>e` |
+| `export`       | `<leader>x` |
+| `share`        | `<leader>s` |
+| `themes`       | `<leader>t` |
+| `undo`         | `<leader>u` |
+| `redo`         | `<leader>r` |
+| `quit`         | `<leader>q` |
 
 ## Disabling Bindings
 
@@ -3239,17 +3283,17 @@ Set any keybind value to `"none"` to disable it:
 
 The desktop prompt supports standard text editing shortcuts. These are **not configurable** through `opencode.json`:
 
-| Shortcut | Action |
-|----------|--------|
-| `ctrl+a` | Move to line start |
-| `ctrl+e` | Move to line end |
-| `ctrl+w` | Delete word backward |
-| `ctrl+u` | Delete to line start |
-| `ctrl+k` | Delete to line end |
+| Shortcut | Action                      |
+| -------- | --------------------------- |
+| `ctrl+a` | Move to line start          |
+| `ctrl+e` | Move to line end            |
+| `ctrl+w` | Delete word backward        |
+| `ctrl+u` | Delete to line start        |
+| `ctrl+k` | Delete to line end          |
 | `ctrl+b` | Move backward one character |
-| `ctrl+f` | Move forward one character |
-| `alt+b` | Move backward one word |
-| `alt+f` | Move forward one word |
+| `ctrl+f` | Move forward one character  |
+| `alt+b`  | Move backward one word      |
+| `alt+f`  | Move forward one word       |
 
 ## Platform-Specific Configuration
 
@@ -3310,3 +3354,4 @@ OpenCode provides 80+ configurable actions. Use `/help` or check the documentati
 
 ```
 
+```
