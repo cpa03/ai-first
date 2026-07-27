@@ -1,8 +1,91 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import Button from '@/components/Button';
 
 describe('Button', () => {
+  describe('keyboard shortcut tooltip', () => {
+    it('shows tooltip with keyboard shortcut on hover when shortcut prop is provided', async () => {
+      const user = userEvent.setup();
+      render(<Button shortcut={['⌘', 'S']}>Save</Button>);
+      const button = screen.getByRole('button', { name: /save/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+
+      // In test environment (Linux), ⌘ is converted to Ctrl
+      expect(screen.getByText('Ctrl')).toBeInTheDocument();
+      expect(screen.getByText('S')).toBeInTheDocument();
+    });
+
+    it('does not show tooltip when shortcut prop is not provided', async () => {
+      const user = userEvent.setup();
+      render(<Button>Save</Button>);
+      const button = screen.getByRole('button', { name: /save/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+    });
+
+    it('does not show tooltip when button is disabled', async () => {
+      const user = userEvent.setup();
+      render(
+        <Button shortcut={['⌘', 'S']} disabled>
+          Save
+        </Button>
+      );
+      const button = screen.getByRole('button', { name: /save/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+    });
+
+    it('does not show tooltip when button is loading', async () => {
+      const user = userEvent.setup();
+      render(
+        <Button shortcut={['⌘', 'S']} loading>
+          Loading
+        </Button>
+      );
+      const button = screen.getByRole('button', { name: /loading/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+      });
+    });
+
+    it('converts ⌘ to Ctrl on non-Mac platforms', async () => {
+      const user = userEvent.setup();
+      Object.defineProperty(window.navigator, 'platform', {
+        value: 'Win32',
+        configurable: true,
+      });
+
+      render(<Button shortcut={['⌘', 'S']}>Save</Button>);
+      const button = screen.getByRole('button', { name: /save/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Ctrl')).toBeInTheDocument();
+      expect(screen.getByText('S')).toBeInTheDocument();
+    });
+  });
+
   describe('focus ring accessibility', () => {
     it('primary variant has primary focus ring color', () => {
       render(<Button variant="primary">Primary</Button>);
