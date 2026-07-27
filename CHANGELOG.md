@@ -10,26 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - **Stored XSS in Task API** (HIGH): Fixed stored cross-site scripting vulnerability in task creation endpoint
-- **Dependency security updates**: Updated minimatch and fast-xml-parser to patched versions resolving ReDoS and DoS vulnerabilities
+- **Dependency security updates**: Updated minimatch, fast-xml-parser, and sharp to patched versions
 - Enhanced PII redaction with additional patterns
 - Fixed timing leak in authentication endpoints
 - Added secure logging to prevent sensitive data exposure
 - Restricted detailed health endpoint to authorized users
 - **Rate limiting race condition**: Resolved race condition and fingerprint spoofing vulnerability
 
-### Fixed
-
-- Resolved RetryExhaustedError duplicate message bug
-- Fixed middleware deprecation warning in Next.js 15
-- Corrected rate limiting edge cases with IP spoofing
-- Improved PII redaction for hyphenated keys
-- Fixed failing cache test (`has()` method now properly tracks cache hits)
-- Restored template literal interpolation for animations and focus rings
-- Fixed Next.js 16 RouteContext type compatibility
-- Modularized hardcoded error messages in auth, API handler, and export connectors
-
 ### Added
 
+- Home/End keyboard shortcuts for quick list navigation in Dashboard (#3462)
+- Attention pulse animation to login/signup submit buttons when form is valid (#3460)
+- Escape key to clear input in InputWithValidation for better accessibility (#3455)
+- Keyboard shortcut tooltip to Button component
+- Elapsed time and estimated time remaining to clarification flow
 - AutoSaveIndicator component for real-time save status feedback
 - CopyButton component for one-click blueprint copying
 - TaskManagement component for enhanced task visualization
@@ -50,26 +44,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Centralized CopyButton hover scale and micro-UX transitions
 - Extracted hardcoded external API domains to centralized config
 
+### Fixed
+
+- Added requestId parameter to error classes for better error tracing (#3463)
+- Resolved high severity sharp vulnerability in dependencies
+- Resolved RetryExhaustedError duplicate message bug
+- Fixed middleware deprecation warning in Next.js 15
+- Corrected rate limiting edge cases with IP spoofing
+- Improved PII redaction for hyphenated keys
+- Fixed failing cache test (`has()` method now properly tracks cache hits)
+- Restored template literal interpolation for animations and focus rings
+- Fixed Next.js 16 RouteContext type compatibility
+- Modularized hardcoded error messages in auth, API handler, and export connectors
+
 ### Changed
 
+- Replaced remaining hardcoded gray-* classes with GRAY_CLASSES constants (#3464)
+- Extracted hardcoded auth page Tailwind classes to FORM_PATTERNS
+- Extracted hardcoded gradient classes to GRADIENT_CONFIG
+- Extracted hardcoded skeleton heights to ui-dimensions config
+- Repository maintenance: clean up stale branches and redundant files
 - Fixed inconsistent "Last Updated" dates in `docs/roadmap.md`
-- Deleted merged branches: `flexy/modularize-remaining-hardcoded-styles`, `brocula/browser-console-audit-20260719-1246`
 - Updated `docs/roadmap.md` with accurate Phase 1 progress tracking
 - Consolidated duplicate RepoKeeper maintenance reports
 - Compressed archive files to reduce repository size (saved 419KB)
 - Updated documentation index for better discoverability
-- Updated `docs/mvp-feature-status.md` with accurate progress (July 6, 2026)
+- Updated `docs/mvp-feature-status.md` with accurate progress
 - Corrected API route count from 19 to 22 in roadmap documentation
 - Updated test stats to reflect 1671 passing tests across 92 suites
 - Eliminated hardcoded text-[10px] and tooltip strings (#3184)
 - Cleanup redundant docs and fix UI/UX engineer documentation (#3180)
 - Added modularity audit report (#3178)
-- Removed tracked .jules/bolt.md temporary file
+- Removed tracked `.jules/bolt.md` and `.jules/sentinel.md` temporary files
 - Added BroCula browser console audit report
 - Moved BROCULA-AUDIT-2026-07-19.md from root to docs/audit/ (proper organization)
 - Modularized remaining hardcoded values in components
 - Removed stale duplicate agent directory and updated docs index
-- Removed tracked `.jules/sentinel.md` from git (already in .gitignore)
 - Archived older browser console audit (2026-07-15) to audit/archive/
 - Updated docs/README.md audit references
 
