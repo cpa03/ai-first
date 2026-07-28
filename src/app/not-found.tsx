@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Button from '@/components/Button';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
+import { useClipboard } from '@/hooks/useClipboard';
 import { triggerHapticFeedback } from '@/lib/utils';
 import {
   PAGE_LAYOUT_CLASSES,
@@ -35,6 +37,7 @@ export default function NotFound() {
   const router = useRouter();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [isMac, setIsMac] = useState(false);
+  const { copy, hasCopied } = useClipboard({ duration: 2000 });
 
   // Micro-UX: Focus management - focus heading on mount for screen readers
   useEffect(() => {
@@ -75,17 +78,22 @@ export default function NotFound() {
       if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
         const selection = window.getSelection()?.toString();
         if (!selection && typeof navigator !== 'undefined') {
-          navigator.clipboard.writeText(window.location.href).catch(() => {});
+          copy(window.location.href);
+          triggerHapticFeedback();
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleGoBack]);
+  }, [handleGoBack, copy]);
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+      <StatusAnnouncer
+        message={NOT_FOUND_LABELS.COPY_URL_SUCCESS}
+        triggered={hasCopied}
+      />
       {/* Micro-UX: Skip to content link for keyboard users */}
       <a
         href="#error-content"
@@ -261,22 +269,32 @@ export default function NotFound() {
               <span>go home</span>
             </span>
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5`}
               style={{
                 animationDelay: `${ANIMATION_CONFIG.NOT_FOUND_PAGE.SECOND_HINT_DELAY}ms`,
               }}
             >
-              <kbd
-                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
-              >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              <kbd
-                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
-              >
-                C
-              </kbd>
-              <span>{NOT_FOUND_LABELS.COPY_URL_HINT}</span>
+              {hasCopied ? (
+                <span className="text-green-600 font-medium animate-fade-in">
+                  {NOT_FOUND_LABELS.COPY_URL_SUCCESS}
+                </span>
+              ) : (
+                <>
+                  <kbd
+                    className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ${BREATHE}`}
+                  >
+                    {isMac ? '⌘' : 'Ctrl'}
+                  </kbd>
+                  <kbd
+                    className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ${BREATHE}`}
+                  >
+                    C
+                  </kbd>
+                  <span className={BREATHE}>
+                    {NOT_FOUND_LABELS.COPY_URL_HINT}
+                  </span>
+                </>
+              )}
             </span>
           </div>
         </div>
