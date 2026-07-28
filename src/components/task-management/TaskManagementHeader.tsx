@@ -16,6 +16,7 @@ import {
   BREATHE,
   GRAY_CLASSES,
 } from '@/lib/config';
+import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -236,7 +237,7 @@ function TaskManagementHeaderComponent({
               >
                 {label}
                 <span
-                  className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full font-semibold ${
+                  className={`ml-0.5 px-1.5 py-0.5 text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] rounded-full font-semibold ${
                     isActive
                       ? 'bg-primary-200 text-primary-800'
                       : `${GRAY_CLASSES.BG_200} ${GRAY_CLASSES.TEXT_500}`

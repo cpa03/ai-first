@@ -21,6 +21,7 @@ import {
   GRAY_CLASSES,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
+import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -310,7 +311,7 @@ function MobileNavComponent() {
                       className={`
                         w-full text-left px-6 py-4 text-lg font-semibold
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
-                        border-l-[3px] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
+                        border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
                         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}
                       aria-label={link.ariaLabel}
