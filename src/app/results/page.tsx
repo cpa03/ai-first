@@ -732,6 +732,7 @@ function ResultsContent() {
         </div>
 
         {/* Share Options - Growth: Viral sharing for user acquisition */}
+        {/* Micro-UX: Staggered entrance animation matches Export section for visual consistency */}
         <div className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
             className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-6`}
@@ -741,7 +742,14 @@ function ResultsContent() {
           <p className={`${GRAY_CLASSES.TEXT_600} mb-6`}>
             {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div
+            className={`flex flex-wrap gap-4 ${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
+                : undefined
+            }
+          >
             <ShareButton
               shareTitle={`Check out my project blueprint on IdeaFlow!`}
               shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}
