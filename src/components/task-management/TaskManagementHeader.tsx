@@ -301,7 +301,7 @@ function TaskManagementHeaderComponent({
         {/* Micro-UX: Keyboard shortcut hints for discoverability */}
         {/* Makes [ ] and 1-3 shortcuts visible without requiring hover, following the ProgressStepper pattern */}
         <div
-          className={`hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-500 ${BREATHE}`}
+          className={`hidden sm:flex items-center gap-3 mt-2 text-xs ${GRAY_CLASSES.TEXT_500} ${BREATHE}`}
           aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">
