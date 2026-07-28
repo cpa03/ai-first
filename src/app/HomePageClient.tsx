@@ -16,6 +16,7 @@ import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
+import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
@@ -30,7 +31,9 @@ const Skeleton = dynamic(() => import('@/components/Skeleton'), {
 // Dynamic imports for heavy components to reduce initial bundle size
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
   loading: () => (
-    <div className="space-y-4 min-h-[160px]">
+    <div
+      className={`space-y-4 min-h-[${HOMEPAGE_SKELETON_TAILWIND.IDEA_INPUT_MIN_H}]`}
+    >
       <Skeleton variant="text" className="h-32 w-full" />
       <Skeleton variant="rect" className="h-10 w-32" />
     </div>
@@ -47,7 +50,7 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
     <section
       aria-hidden="true"
-      className="mt-16 grid md:grid-cols-3 gap-8 min-h-[300px]"
+      className={`mt-16 grid md:grid-cols-3 gap-8 min-h-[${HOMEPAGE_SKELETON_TAILWIND.FEATURE_GRID_MIN_H}]`}
     >
       {[1, 2, 3].map((i) => (
         <div
@@ -69,7 +72,7 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 min-h-[400px]`}
+        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 min-h-[${HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H}]`}
       >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">

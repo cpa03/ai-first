@@ -62,6 +62,18 @@ export const STEP_CELEBRATION_TAILWIND = {
 } as const;
 
 /**
+ * Homepage skeleton loading Tailwind arbitrary values
+ */
+export const HOMEPAGE_SKELETON_TAILWIND = {
+  /** Minimum height for idea input skeleton - Env: HOMEPAGE_IDEA_INPUT_MIN_H (default: '160px') */
+  IDEA_INPUT_MIN_H: EnvLoader.string('HOMEPAGE_IDEA_INPUT_MIN_H', '160px'),
+  /** Minimum height for feature grid skeleton - Env: HOMEPAGE_FEATURE_GRID_MIN_H (default: '300px') */
+  FEATURE_GRID_MIN_H: EnvLoader.string('HOMEPAGE_FEATURE_GRID_MIN_H', '300px'),
+  /** Minimum height for why choose section skeleton - Env: HOMEPAGE_WHY_CHOOSE_MIN_H (default: '400px') */
+  WHY_CHOOSE_MIN_H: EnvLoader.string('HOMEPAGE_WHY_CHOOSE_MIN_H', '400px'),
+} as const;
+
+/**
  * All Tailwind arbitrary values combined
  */
 export const TAILWIND_ARBITRARY = {
@@ -71,6 +83,7 @@ export const TAILWIND_ARBITRARY = {
   SPINNER: SPINNER_TAILWIND,
   INPUT: INPUT_TAILWIND,
   STEP_CELEBRATION: STEP_CELEBRATION_TAILWIND,
+  HOMEPAGE_SKELETON: HOMEPAGE_SKELETON_TAILWIND,
 } as const;
 
 export type TailwindArbitrary = typeof TAILWIND_ARBITRARY;
