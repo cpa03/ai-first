@@ -146,12 +146,11 @@ The `iterate.yml` workflow runs continuously with 5 agent jobs:
 
 ## Configuration Files
 
-| File                             | Purpose                      |
-| -------------------------------- | ---------------------------- |
-| `opencode.json`                  | OpenCode CLI configuration   |
-| `.opencode/oh-my-openagent.json` | Agent orchestration settings |
-| `.opencode/agents/CMZ.json`      | CMZ agent configuration      |
-| `.opencode/skills/*/SKILL.md`    | Skill documentation          |
+| File                          | Purpose                    |
+| ----------------------------- | -------------------------- |
+| `opencode.json`               | OpenCode CLI configuration |
+| `.opencode/agents/CMZ.json`   | CMZ agent configuration    |
+| `.opencode/skills/*/SKILL.md` | Skill documentation        |
 
 ## Best Practices
 
