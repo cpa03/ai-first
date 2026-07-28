@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import Button from '@/components/Button';
+import StatusAnnouncer from '@/components/StatusAnnouncer';
+import { useClipboard } from '@/hooks/useClipboard';
 import { triggerHapticFeedback } from '@/lib/utils';
 import {
   PAGE_LAYOUT_CLASSES,
@@ -19,6 +21,7 @@ import {
   BREATHE,
   HERO_ENTRANCE,
   ANIMATION_CONFIG,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -34,6 +37,7 @@ export default function NotFound() {
   const router = useRouter();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [isMac, setIsMac] = useState(false);
+  const { copy, hasCopied } = useClipboard({ duration: 2000 });
 
   // Micro-UX: Focus management - focus heading on mount for screen readers
   useEffect(() => {
@@ -74,17 +78,22 @@ export default function NotFound() {
       if ((e.metaKey || e.ctrlKey) && e.key === 'c') {
         const selection = window.getSelection()?.toString();
         if (!selection && typeof navigator !== 'undefined') {
-          navigator.clipboard.writeText(window.location.href).catch(() => {});
+          copy(window.location.href);
+          triggerHapticFeedback();
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [handleGoBack]);
+  }, [handleGoBack, copy]);
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
+      <StatusAnnouncer
+        message={NOT_FOUND_LABELS.COPY_URL_SUCCESS}
+        triggered={hasCopied}
+      />
       {/* Micro-UX: Skip to content link for keyboard users */}
       <a
         href="#error-content"
@@ -99,8 +108,12 @@ export default function NotFound() {
           className={`${CARD_PATTERNS.CENTERED_LARGE} ${HERO_ENTRANCE}`}
         >
           <div className="relative mb-6">
-            <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-100">
-              <span className="text-4xl font-bold text-gray-300 select-none">
+            <div
+              className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${GRAY_CLASSES.BG_100}`}
+            >
+              <span
+                className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_300} select-none`}
+              >
                 404
               </span>
             </div>
@@ -109,13 +122,13 @@ export default function NotFound() {
           <h1
             ref={headingRef}
             tabIndex={-1}
-            className={`text-2xl font-bold text-gray-900 mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
+            className={`text-2xl font-bold ${GRAY_CLASSES.TEXT_900} mb-2 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1} focus:outline-none`}
           >
             Page not found
           </h1>
 
           <p
-            className={`text-gray-600 mb-8 max-w-sm mx-auto ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`${GRAY_CLASSES.TEXT_600} mb-8 max-w-sm mx-auto ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             Sorry, we couldn&apos;t find the page you&apos;re looking for. It
             may have been moved or doesn&apos;t exist.
@@ -210,7 +223,9 @@ export default function NotFound() {
               shortcut={[isMac ? '⌘' : 'Ctrl', 'C']}
               position="top"
             >
-              <span className="text-xs text-gray-500 hidden sm:inline-flex items-center gap-1.5">
+              <span
+                className={`text-xs ${GRAY_CLASSES.TEXT_500} hidden sm:inline-flex items-center gap-1.5`}
+              >
                 <kbd
                   className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
                 >
@@ -227,7 +242,7 @@ export default function NotFound() {
 
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           <div
-            className={`mt-6 flex items-center justify-center gap-4 text-xs text-gray-500 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+            className={`mt-6 flex items-center justify-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
             aria-hidden="true"
           >
             <span
@@ -254,22 +269,32 @@ export default function NotFound() {
               <span>go home</span>
             </span>
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5`}
               style={{
                 animationDelay: `${ANIMATION_CONFIG.NOT_FOUND_PAGE.SECOND_HINT_DELAY}ms`,
               }}
             >
-              <kbd
-                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
-              >
-                {isMac ? '⌘' : 'Ctrl'}
-              </kbd>
-              <kbd
-                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
-              >
-                C
-              </kbd>
-              <span>{NOT_FOUND_LABELS.COPY_URL_HINT}</span>
+              {hasCopied ? (
+                <span className="text-green-600 font-medium animate-fade-in">
+                  {NOT_FOUND_LABELS.COPY_URL_SUCCESS}
+                </span>
+              ) : (
+                <>
+                  <kbd
+                    className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ${BREATHE}`}
+                  >
+                    {isMac ? '⌘' : 'Ctrl'}
+                  </kbd>
+                  <kbd
+                    className={`${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT} ${BREATHE}`}
+                  >
+                    C
+                  </kbd>
+                  <span className={BREATHE}>
+                    {NOT_FOUND_LABELS.COPY_URL_HINT}
+                  </span>
+                </>
+              )}
             </span>
           </div>
         </div>

@@ -122,11 +122,11 @@ const TaskManagement = dynamic(
     ssr: false,
     loading: () => (
       <div className={CARD_PATTERNS.SKELETON}>
-        <div className="h-6 bg-gray-200 rounded w-1/3 mb-4"></div>
+        <div className={`h-6 ${GRAY_CLASSES.BG_200} rounded w-1/3 mb-4`}></div>
         <div className="space-y-3">
-          <div className="h-4 bg-gray-200 rounded"></div>
-          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          <div className="h-4 bg-gray-200 rounded w-4/6"></div>
+          <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded`}></div>
+          <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded w-5/6`}></div>
+          <div className={`h-4 ${GRAY_CLASSES.BG_200} rounded w-4/6`}></div>
         </div>
       </div>
     ),
@@ -387,7 +387,7 @@ function ResultsContent() {
       <ScrollProgress />
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
+          <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900}`}>
             {RESULTS_PAGE_CONTENT.HEADING}
           </h1>
           <Button
@@ -408,7 +408,9 @@ function ResultsContent() {
 
         {/* Export Options */}
         <div className={CARD_PATTERNS.WITH_MARGIN}>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          <h2
+            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-6`}
+          >
             {RESULTS_PAGE_CONTENT.EXPORT_HEADING}
           </h2>
 
@@ -670,11 +672,11 @@ function ResultsContent() {
           {/* Micro-UX: Keyboard shortcut hint for export discoverability */}
           {/* Helps users discover Ctrl+E shortcut for quick markdown export */}
           <div
-            className="mt-4 flex items-center gap-2 text-xs text-gray-500"
+            className={`mt-4 flex items-center gap-2 text-xs ${GRAY_CLASSES.TEXT_500}`}
             aria-hidden="true"
           >
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-600 transition-colors ${DURATION_TAILWIND[200]}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 ${GRAY_CLASSES.HOVER_TEXT_600} transition-colors ${DURATION_TAILWIND[200]}`}
             >
               <kbd className={ELEMENT_PATTERNS.KBD}>{isMac ? '⌘' : 'Ctrl'}</kbd>
               <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
@@ -730,14 +732,24 @@ function ResultsContent() {
         </div>
 
         {/* Share Options - Growth: Viral sharing for user acquisition */}
+        {/* Micro-UX: Staggered entrance animation matches Export section for visual consistency */}
         <div className={CARD_PATTERNS.WITH_MARGIN}>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+          <h2
+            className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-6`}
+          >
             {RESULTS_PAGE_CONTENT.SHARE_HEADING}
           </h2>
           <p className={`${GRAY_CLASSES.TEXT_600} mb-6`}>
             {RESULTS_PAGE_CONTENT.SHARE_MESSAGE}
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div
+            className={`flex flex-wrap gap-4 ${prefersReducedMotion ? '' : 'fade-in'}`}
+            style={
+              !prefersReducedMotion
+                ? { animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }
+                : undefined
+            }
+          >
             <ShareButton
               shareTitle={`Check out my project blueprint on IdeaFlow!`}
               shareText={`I just created a project blueprint using IdeaFlow's AI-powered planning tool. Transform your ideas into action!`}

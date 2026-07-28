@@ -86,7 +86,7 @@ export class AppError extends Error {
 }
 
 export class ValidationError extends AppError {
-  constructor(details: ErrorDetail[]) {
+  constructor(details: ErrorDetail[], requestId?: string) {
     const suggestions = [
       'Check that all required fields are present in your request',
       'Ensure field values match the expected format',
@@ -98,7 +98,8 @@ export class ValidationError extends AppError {
       STATUS_CODES.BAD_REQUEST,
       details,
       false,
-      suggestions
+      suggestions,
+      requestId
     );
     this.name = 'ValidationError';
   }
@@ -108,7 +109,8 @@ export class RateLimitError extends AppError {
   constructor(
     retryAfter: number,
     public readonly limit: number,
-    public readonly remaining: number
+    public readonly remaining: number,
+    requestId?: string
   ) {
     const suggestions = [
       `Wait ${retryAfter} seconds before making another request`,
@@ -126,7 +128,8 @@ export class RateLimitError extends AppError {
       STATUS_CODES.RATE_LIMITED,
       details,
       true,
-      suggestions
+      suggestions,
+      requestId
     );
     this.name = 'RateLimitError';
     this.retryAfter = retryAfter;
@@ -139,7 +142,8 @@ export class ExternalServiceError extends AppError {
   constructor(
     message: string,
     service: string,
-    public readonly originalError?: Error | null
+    public readonly originalError?: Error | null,
+    requestId?: string
   ) {
     const suggestions = [
       'The system will automatically retry this operation',
@@ -153,7 +157,8 @@ export class ExternalServiceError extends AppError {
       STATUS_CODES.BAD_GATEWAY,
       undefined,
       true,
-      suggestions
+      suggestions,
+      requestId
     );
     this.name = 'ExternalServiceError';
     this.service = service;
@@ -165,7 +170,8 @@ export class ExternalServiceError extends AppError {
 export class TimeoutError extends AppError {
   constructor(
     message: string,
-    public readonly timeoutMs: number
+    public readonly timeoutMs: number,
+    requestId?: string
   ) {
     const suggestions = [
       'The operation took too long to complete and was terminated',
@@ -179,14 +185,15 @@ export class TimeoutError extends AppError {
       STATUS_CODES.GATEWAY_TIMEOUT,
       undefined,
       true,
-      suggestions
+      suggestions,
+      requestId
     );
     this.name = 'TimeoutError';
   }
 }
 
 export class CircuitBreakerError extends AppError {
-  constructor(service: string, resetTime: Date) {
+  constructor(service: string, resetTime: Date, requestId?: string) {
     const suggestions = [
       `Wait until ${resetTime.toISOString()} before retrying`,
       `The ${service} service is currently experiencing issues`,
@@ -204,7 +211,8 @@ export class CircuitBreakerError extends AppError {
       STATUS_CODES.SERVICE_UNAVAILABLE,
       details,
       true,
-      suggestions
+      suggestions,
+      requestId
     );
     this.name = 'CircuitBreakerError';
     this.service = service;
@@ -220,7 +228,8 @@ export class RetryExhaustedError extends AppError {
     message: string,
     service: string,
     attempts: number,
-    public readonly originalError?: Error | null
+    public readonly originalError?: Error | null,
+    requestId?: string
   ) {
     const suggestions = [
       `The operation failed after ${attempts} retry attempts`,
@@ -234,7 +243,8 @@ export class RetryExhaustedError extends AppError {
       STATUS_CODES.BAD_GATEWAY,
       undefined,
       true,
-      suggestions
+      suggestions,
+      requestId
     );
     this.name = 'RetryExhaustedError';
     this.service = service;

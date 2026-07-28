@@ -36,6 +36,7 @@ import {
   DURATION_TAILWIND,
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -70,7 +71,7 @@ function PasswordMatchIndicator({
     if (!password) return null;
     return (
       <div
-        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in text-gray-500`}
+        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${GRAY_CLASSES.TEXT_500}`}
         role="status"
         aria-live="polite"
       >
@@ -262,7 +263,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       {/* Shows precise strength score (e.g., "75% Medium") instead of fixed widths */}
       {/* Matches the PasswordRequirementsChecklist pattern of showing "3 of 5" */}
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+        <div className={FORM_PATTERNS.STRENGTH_BAR_TRACK}>
           <div
             className={`h-full ${config.color} transition-all ${DURATION_TAILWIND[300]} ease-out rounded-full`}
             style={{ width: `${percentage}%` }}
@@ -373,6 +374,18 @@ export default function SignupPage() {
     handleKeyUp: handleConfirmPasswordKeyUp,
     handleBlur: handleConfirmPasswordBlur,
   } = useCapsLock();
+
+  // Micro-UX: Compute form validity for submit button attention pulse
+  // Shows a subtle animation when form is valid and ready to submit, guiding users to the CTA
+  const isFormValid = useMemo(() => {
+    const trimmedEmail = email.trim();
+    return (
+      trimmedEmail.length > 0 &&
+      VALIDATION_CONFIG.COMMON_REGEX.EMAIL.test(trimmedEmail) &&
+      password.length >= PASSWORD_VALIDATION_CONFIG.MIN_LENGTH &&
+      password === confirmPassword
+    );
+  }, [email, password, confirmPassword]);
 
   useEffect(() => {
     if (emailError) {
@@ -676,6 +689,8 @@ export default function SignupPage() {
             disabled={isLoading}
             className="w-full"
             size="lg"
+            enableTransition
+            attention={isFormValid && !isLoading}
           >
             {isLoading
               ? SIGNUP_PAGE_CONTENT.FORM.SUBMIT_LOADING
@@ -687,10 +702,10 @@ export default function SignupPage() {
           className={`relative animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300" />
+            <div className={FORM_PATTERNS.OAUTH_SEPARATOR_LINE} />
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-50 text-gray-600">
+            <span className={FORM_PATTERNS.OAUTH_SEPARATOR_TEXT}>
               {SIGNUP_PAGE_CONTENT.OAUTH.SEPARATOR}
             </span>
           </div>
@@ -768,13 +783,10 @@ export default function SignupPage() {
         </div>
 
         <p
-          className={`text-center text-sm text-gray-600 animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+          className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
         >
           {SIGNUP_PAGE_CONTENT.FOOTER.HAS_ACCOUNT}{' '}
-          <Link
-            href={ROUTES.LOGIN}
-            className="font-medium text-primary-600 hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded"
-          >
+          <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
             {SIGNUP_PAGE_CONTENT.FOOTER.SIGN_IN}
           </Link>
         </p>

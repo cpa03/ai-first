@@ -11,10 +11,12 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
 } from '@/lib/config/theme';
+import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
 } from '@/lib/config/element-ids';
+import { HOMEPAGE_SKELETON_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 
 const ShareButton = dynamic(() => import('@/components/ShareButton'), {
@@ -29,7 +31,9 @@ const Skeleton = dynamic(() => import('@/components/Skeleton'), {
 // Dynamic imports for heavy components to reduce initial bundle size
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
   loading: () => (
-    <div className="space-y-4 min-h-[280px]">
+    <div
+      className={`space-y-4 min-h-[${HOMEPAGE_SKELETON_TAILWIND.IDEA_INPUT_MIN_H}]`}
+    >
       <Skeleton variant="text" className="h-32 w-full" />
       <Skeleton variant="rect" className="h-10 w-32" />
     </div>
@@ -46,12 +50,12 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
     <section
       aria-hidden="true"
-      className="mt-16 grid md:grid-cols-3 gap-8 min-h-[280px]"
+      className={`mt-16 grid md:grid-cols-3 gap-8 min-h-[${HOMEPAGE_SKELETON_TAILWIND.FEATURE_GRID_MIN_H}]`}
     >
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="text-center p-6 rounded-xl bg-white border border-gray-100 flex flex-col items-center justify-center"
+          className={`text-center p-6 rounded-xl bg-white border ${GRAY_CLASSES.BORDER_200} flex flex-col items-center justify-center`}
         >
           <Skeleton variant="circle" className="w-16 h-16 mx-auto mb-4" />
           <Skeleton variant="text" className="h-6 mx-auto mb-2 w-3/4" />
@@ -68,14 +72,14 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className="mt-16 bg-gray-50 rounded-lg p-8 min-h-[400px]"
+        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 min-h-[${HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H}]`}
       >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="flex items-start space-x-3 p-4 rounded-lg bg-white border border-gray-100"
+              className={`flex items-start space-x-3 p-4 rounded-lg bg-white border ${GRAY_CLASSES.BORDER_200}`}
             >
               <Skeleton
                 variant="circle"
@@ -140,7 +144,7 @@ export default function HomePageClient() {
       >
         <h1
           id={HOME_PAGE_ELEMENT_IDS.HERO_HEADING}
-          className={`text-4xl font-bold text-gray-900 mb-4 ${
+          className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4 ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
@@ -152,7 +156,7 @@ export default function HomePageClient() {
           {HOME_PAGE_CONFIG.HERO.TITLE}
         </h1>
         <p
-          className={`text-xl text-gray-700 max-w-2xl mx-auto ${
+          className={`text-xl ${GRAY_CLASSES.TEXT_700} max-w-2xl mx-auto ${
             prefersReducedMotion ? '' : 'animate-hero-entrance'
           }`}
           style={
@@ -246,19 +250,10 @@ export default function HomePageClient() {
         </section>
       )}
 
-      <section aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}>
-        <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
-          How It Works
-        </h2>
-        <FeatureGrid />
-      </section>
+      {/* FeatureGrid and WhyChooseSection render their own <section> tags with aria-labelledby */}
+      <FeatureGrid />
 
-      <section aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}>
-        <h2 id={HOME_PAGE_ELEMENT_IDS.WHY_CHOOSE_HEADING} className="sr-only">
-          Why Choose IdeaFlow
-        </h2>
-        <WhyChooseSection />
-      </section>
+      <WhyChooseSection />
 
       {/* Growth: User onboarding guided tour */}
       <UserOnboarding />

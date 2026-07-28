@@ -138,7 +138,7 @@ function ClarifySuccessState({
             {/* Micro-UX: Keyboard shortcut hint for blueprint generation */}
             {/* Matches the keyboard hint patterns in dashboard, not-found, and clarification flow */}
             <span
-              className={`hidden sm:inline-flex items-center gap-1.5 text-xs text-gray-500 ${prefersReducedMotion ? '' : BREATHE}`}
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
               aria-hidden="true"
             >
               <kbd
@@ -171,7 +171,14 @@ function ClarifyPageContent() {
     ideaId: '',
     hasLoaded: false,
   });
+  const [isMac, setIsMac] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const logger = createLogger('ClarifyPage');
+
+  // Micro-UX: Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
 
   // Use useEffect to safely read params after hydration
   // This is necessary to avoid hydration mismatches when reading URL params
@@ -258,10 +265,23 @@ function ClarifyPageContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="warning" title={CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_TITLE}>
           <p>{CLARIFY_PAGE_CONTENT.AUTH_REQUIRED_MESSAGE}</p>
-          <div className="mt-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
             <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {CLARIFY_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
+            {/* Micro-UX: Keyboard shortcut hint for auth-required state */}
+            {/* Matches the keyboard hint patterns in not-found and dashboard pages */}
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '↵' : 'Enter'}
+              </kbd>
+              <span>to go home</span>
+            </span>
           </div>
         </Alert>
       </div>
@@ -274,9 +294,24 @@ function ClarifyPageContent() {
         <div className="slide-up">
           <Alert type="error" title={CLARIFY_PAGE_CONTENT.ERROR_TITLE}>
             <p className="mb-4">{error}</p>
-            <Button onClick={() => router.back()} variant="primary">
-              {CLARIFY_PAGE_CONTENT.BUTTONS.GO_BACK}
-            </Button>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <Button onClick={() => router.back()} variant="primary">
+                {CLARIFY_PAGE_CONTENT.BUTTONS.GO_BACK}
+              </Button>
+              {/* Micro-UX: Keyboard shortcut hint for error state */}
+              {/* Matches the keyboard hint patterns in not-found and dashboard pages */}
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+                aria-hidden="true"
+              >
+                <kbd
+                  className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+                >
+                  {isMac ? '↵' : 'Enter'}
+                </kbd>
+                <span>to go back</span>
+              </span>
+            </div>
           </Alert>
         </div>
       </div>
@@ -308,10 +343,10 @@ function ClarifyPageContent() {
         className={`${CONTAINER_WIDTHS.SM} mx-auto ${RESPONSIVE_PADDING.CLASS} mb-8`}
       >
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
+          <h1 className={`text-3xl font-bold ${GRAY_CLASSES.TEXT_900} mb-4`}>
             {CLARIFY_PAGE_CONTENT.HEADING}
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className={`text-lg ${GRAY_CLASSES.TEXT_600}`}>
             {CLARIFY_PAGE_CONTENT.SUBHEADING}
           </p>
         </div>

@@ -40,6 +40,7 @@ import {
   CLARIFICATION_FLOW_INPUT_LABEL,
   CLARIFICATION_FLOW_STEP_BUTTON_BASE,
   CLARIFICATION_FLOW_STEP_BUTTON_CURRENT,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -96,11 +97,20 @@ function ClarificationFlow({
     handlePrevious,
     handleKeyDown,
     goToStep,
+    elapsedSeconds,
+    estimatedRemainingSeconds,
   } = useClarificationSession(idea, ideaId, onComplete);
 
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const questionSectionRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+
+  const formatTime = useCallback((seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    if (mins === 0) return `${secs}s`;
+    return `${mins}m ${secs}s`;
+  }, []);
   const {
     isCapsLockOn,
     handleKeyDown: capsLockKeyDown,
@@ -562,6 +572,45 @@ function ClarificationFlow({
           currentStep={currentStep}
           onStepClick={goToStep}
         />
+
+        {elapsedSeconds > 0 && (
+          <div
+            className={`mt-2 flex items-center justify-end gap-3 text-xs ${TEXT_COLOR_CLASSES.MUTED}`}
+            role="status"
+            aria-live="polite"
+            aria-label={CLARIFICATION_FLOW_LABELS.TIMER_ARIA_LABEL(
+              formatTime(elapsedSeconds),
+              estimatedRemainingSeconds !== null
+                ? formatTime(estimatedRemainingSeconds)
+                : ''
+            )}
+          >
+            <span className="flex items-center gap-1.5">
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span>{formatTime(elapsedSeconds)}</span>
+            </span>
+            {estimatedRemainingSeconds !== null &&
+              estimatedRemainingSeconds > 0 && (
+                <span className="flex items-center gap-1.5">
+                  <span className={GRAY_CLASSES.TEXT_400}>·</span>
+                  <span>~{formatTime(estimatedRemainingSeconds)} left</span>
+                </span>
+              )}
+          </div>
+        )}
       </div>
 
       <div

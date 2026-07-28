@@ -214,6 +214,7 @@ export const KEYBOARD_SHORTCUTS_HELP_LABELS = {
     NAVIGATE_MENU: 'Navigate menu items',
     NAVIGATE_STEPPER: 'Navigate stepper or tabs',
     NAVIGATE_VIM: 'Navigate up/down (vim)',
+    JUMP_TOP_BOTTOM: 'Jump to first/last item or top/bottom of page',
     SHOW_SHORTCUTS: 'Show keyboard shortcuts',
     COPY_BLUEPRINT: 'Copy blueprint (when no text selected)',
     EXPAND_DELIVERABLES: 'Expand all deliverables',
@@ -481,6 +482,13 @@ export const CLARIFICATION_FLOW_LABELS = {
   CLEAR_TOOLTIP: 'Clear your answer (Esc)',
   STEP_JUMP_ARIA_LABEL: (index: number, question: string, isCurrent: boolean) =>
     `Jump to question ${index + 1}: ${question}${isCurrent ? ' (current)' : ''}`,
+  // Micro-UX: Timer labels for elapsed time and estimated time remaining
+  ELAPSED_TIME_LABEL: 'Time elapsed',
+  ESTIMATED_TIME_LABEL: 'Estimated time remaining',
+  TIMER_ARIA_LABEL: (elapsed: string, remaining: string | null) =>
+    remaining
+      ? `Time elapsed: ${elapsed}. Estimated time remaining: ${remaining}`
+      : `Time elapsed: ${elapsed}`,
 } as const;
 
 /**
@@ -525,6 +533,8 @@ export const DASHBOARD_LABELS = {
     NEW_IDEA_LABEL: 'new idea',
     FILTER_KEY: '/',
     FILTER_LABEL: 'filter',
+    HOME_END_KEYS: ['Home', 'End'],
+    HOME_END_LABEL: 'jump top/bottom',
     HELP_KEY: '?',
     HELP_LABEL: 'shortcuts',
   },

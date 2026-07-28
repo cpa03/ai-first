@@ -14,7 +14,9 @@ import {
   TASK_MANAGEMENT_LABELS,
   COMPONENT_CONFIG,
   BREATHE,
+  GRAY_CLASSES,
 } from '@/lib/config';
+import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -230,15 +232,15 @@ function TaskManagementHeaderComponent({
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
                   isActive
                     ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 ring-offset-1'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+                    : `${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_BG_100} ${GRAY_CLASSES.HOVER_TEXT_800}`
                 }`}
               >
                 {label}
                 <span
-                  className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full font-semibold ${
+                  className={`ml-0.5 px-1.5 py-0.5 text-[${DASHBOARD_TAILWIND.KBD_TEXT_SIZE}] rounded-full font-semibold ${
                     isActive
                       ? 'bg-primary-200 text-primary-800'
-                      : 'bg-gray-200 text-gray-500'
+                      : `${GRAY_CLASSES.BG_200} ${GRAY_CLASSES.TEXT_500}`
                   }`}
                 >
                   {count}
@@ -300,7 +302,7 @@ function TaskManagementHeaderComponent({
         {/* Micro-UX: Keyboard shortcut hints for discoverability */}
         {/* Makes [ ] and 1-3 shortcuts visible without requiring hover, following the ProgressStepper pattern */}
         <div
-          className={`hidden sm:flex items-center gap-3 mt-2 text-xs text-gray-500 ${BREATHE}`}
+          className={`hidden sm:flex items-center gap-3 mt-2 text-xs ${GRAY_CLASSES.TEXT_500} ${BREATHE}`}
           aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
         >
           <span className="flex items-center gap-1.5">

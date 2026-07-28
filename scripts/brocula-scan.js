@@ -8,9 +8,10 @@
 const { chromium } = require('playwright');
 const fs = require('node:fs');
 const path = require('node:path');
+const { BROWSER_SCANNER_CONFIG } = require('./config');
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
-const PAGES = ['/', '/login', '/signup', '/dashboard', '/clarify', '/results'];
+const { BASE_URL, PAGES, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS } =
+  BROWSER_SCANNER_CONFIG;
 
 const errors = [];
 const warnings = [];
@@ -84,10 +85,10 @@ async function scanPage(page, url) {
   try {
     await page.goto(`${BASE_URL}${url}`, {
       waitUntil: 'domcontentloaded',
-      timeout: 30000,
+      timeout: NAVIGATION_TIMEOUT,
     });
 
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(ASYNC_WAIT_MS);
 
     console.log(
       `✓ Scanned ${url}: ${pageErrors.length} errors, ${pageWarnings.length} warnings`
@@ -122,7 +123,7 @@ async function main() {
         console.error(`   Error: ${e.message}`);
         reject(e);
       });
-      req.setTimeout(5000, () => {
+      req.setTimeout(ASYNC_WAIT_MS, () => {
         req.destroy();
         reject(new Error('Connection timeout'));
       });

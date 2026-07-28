@@ -21,6 +21,7 @@ import {
   WHITE_BG_PATTERNS,
   REFERRAL_ICON_CONTAINER,
   DURATION_TAILWIND,
+  GRADIENT_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 
@@ -141,7 +142,7 @@ function ReferralLinkComponent({
 
   return (
     <div
-      className={`bg-gradient-to-r from-primary-50 to-blue-50 rounded-lg p-4 border border-primary-100 ${className}`}
+      className={`${GRADIENT_CONFIG.REFERRAL_BACKGROUND} rounded-lg p-4 border border-primary-100 ${className}`}
       role="region"
       aria-label={REFERRAL_LINK_LABELS.REGION_ARIA_LABEL}
     >

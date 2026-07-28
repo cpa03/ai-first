@@ -8,7 +8,7 @@ const { default: lighthouse } = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 const fs = require('node:fs');
 const path = require('node:path');
-const { LIGHTHOUSE_CONFIG } = require('./config');
+const { LIGHTHOUSE_CONFIG, BROWSER_SCANNER_CONFIG } = require('./config');
 
 const {
   BASE_URL,
@@ -18,6 +18,8 @@ const {
   THROTTLING,
   SCREEN_EMULATION,
 } = LIGHTHOUSE_CONFIG;
+
+const { AUDIT_TIMEOUT_MS } = BROWSER_SCANNER_CONFIG;
 
 const CONFIG = {
   extends: 'lighthouse:default',
@@ -86,8 +88,13 @@ async function runLighthouse(url) {
     // Add timeout to prevent hanging
     const timeoutPromise = new Promise((_, reject) => {
       setTimeout(
-        () => reject(new Error('Lighthouse audit timed out after 60 seconds')),
-        60000
+        () =>
+          reject(
+            new Error(
+              `Lighthouse audit timed out after ${AUDIT_TIMEOUT_MS / 1000} seconds`
+            )
+          ),
+        AUDIT_TIMEOUT_MS
       );
     });
 

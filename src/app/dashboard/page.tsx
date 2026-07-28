@@ -40,6 +40,7 @@ import {
   DASHBOARD_PATTERNS,
   GRAY_CLASSES,
   DURATION_TAILWIND,
+  GRADIENT_CONFIG,
 } from '@/lib/config';
 import {
   DASHBOARD_ELEMENT_IDS,
@@ -471,6 +472,37 @@ export default function DashboardPage() {
         return;
       }
 
+      // Micro-UX: Home/End keys for quick navigation in ideas list
+      // When a row is selected: Home jumps to first row, End jumps to last row
+      // When no row is selected: Home scrolls to top, End scrolls to bottom
+      if (e.key === 'Home' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        if (ideas.length > 0) {
+          setSelectedRowIndex(0);
+        } else {
+          window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          });
+        }
+        return;
+      }
+
+      if (e.key === 'End' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        if (ideas.length > 0) {
+          setSelectedRowIndex(ideas.length - 1);
+        } else {
+          window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          });
+        }
+        return;
+      }
+
       if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
         triggerHapticFeedback();
@@ -654,7 +686,7 @@ export default function DashboardPage() {
               className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? 'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm'
-                  : 'border-gray-300 bg-white text-gray-900'
+                  : `${GRAY_CLASSES.BORDER_300} bg-white ${GRAY_CLASSES.TEXT_900}`
               }`}
               aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.FILTER_STATUS}
             >
@@ -884,7 +916,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} bg-gradient-to-r from-amber-300 to-primary-300`}
+                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} ${GRADIENT_CONFIG.ARROW.STEP_1_TO_2}`}
                   />
                   <svg
                     className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.BRAND_LIGHT}`}
@@ -937,7 +969,7 @@ export default function DashboardPage() {
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }}
                 >
                   <div
-                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} bg-gradient-to-r from-primary-300 to-green-300`}
+                    className={`${DASHBOARD_PATTERNS.ARROW_LINE} ${GRADIENT_CONFIG.ARROW.STEP_2_TO_3}`}
                   />
                   <svg
                     className={`${DASHBOARD_PATTERNS.ARROW_ICON} ${TEXT_COLORS.SUCCESS_LIGHT}`}
@@ -1199,6 +1231,21 @@ export default function DashboardPage() {
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_LABEL}
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_KEYS[0]}
+              </kbd>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_KEYS[1]}
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_LABEL}
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>

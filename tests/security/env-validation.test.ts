@@ -105,6 +105,47 @@ describe('Environment Validation', () => {
         result.warnings.some((w) => w.includes('suspiciously short'))
       ).toBe(true);
     });
+
+    it('should detect NEXT_PUBLIC_ prefix on integration keys', () => {
+      process.env.NEXT_PUBLIC_NOTION_API_KEY = 'notion-exposed';
+      process.env.NEXT_PUBLIC_GITHUB_TOKEN = 'github-exposed';
+      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+
+      const result = validateEnvironment();
+
+      expect(result.valid).toBe(false);
+      expect(
+        result.errors.some((e) => e.includes('NEXT_PUBLIC_NOTION_API_KEY'))
+      ).toBe(true);
+      expect(
+        result.errors.some((e) => e.includes('NEXT_PUBLIC_GITHUB_TOKEN'))
+      ).toBe(true);
+    });
+
+    it('should warn about placeholders and weak strength on integration keys outside development', () => {
+      // Set to production to enable strength/complexity checks
+      Object.defineProperty(process.env, 'NODE_ENV', {
+        value: 'production',
+        writable: true,
+      });
+      process.env.NOTION_API_KEY = 'your_notion_key_here'; // placeholder + too short
+      process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
+
+      const result = validateEnvironment();
+
+      expect(
+        result.warnings.some(
+          (w) => w.includes('NOTION_API_KEY') && w.includes('placeholder')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('NOTION_API_KEY') && w.includes('too short')
+        )
+      ).toBe(true);
+    });
   });
 
   describe('validateEnvironmentStrict', () => {

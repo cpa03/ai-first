@@ -106,6 +106,33 @@ export const TABLE_CLASSES = {
   TITLE_MAX_WIDTH: `max-w-[${TABLE_DIMENSIONS.TITLE_MAX_WIDTH}px]`,
 } as const;
 
+/**
+ * Skeleton Loading Minimum Heights
+ * Used for skeleton placeholders during dynamic imports
+ */
+export const SKELETON_HEIGHTS = {
+  /**
+   * Standard skeleton loading height for medium components
+   * Env: UI_SKELETON_STANDARD_HEIGHT (default: 280)
+   */
+  STANDARD: EnvLoader.number('UI_SKELETON_STANDARD_HEIGHT', 280, 100, 600),
+
+  /**
+   * Tall skeleton loading height for larger sections
+   * Env: UI_SKELETON_TALL_HEIGHT (default: 400)
+   */
+  TALL: EnvLoader.number('UI_SKELETON_TALL_HEIGHT', 400, 200, 800),
+} as const;
+
+/**
+ * Tailwind classes for skeleton loading heights
+ */
+export const SKELETON_HEIGHT_CLASSES = {
+  STANDARD: `min-h-[${SKELETON_HEIGHTS.STANDARD}px]`,
+  TALL: `min-h-[${SKELETON_HEIGHTS.TALL}px]`,
+} as const;
+
 export type InputHeights = typeof INPUT_HEIGHTS;
 export type ContainerWidths = typeof CONTAINER_WIDTHS;
 export type MinSizes = typeof MIN_SIZES;
+export type SkeletonHeights = typeof SKELETON_HEIGHTS;
