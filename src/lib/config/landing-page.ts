@@ -5,6 +5,7 @@
  */
 
 import { EnvLoader } from './environment';
+import { BG_COLORS, TEXT_COLORS } from './theme';
 
 /**
  * Default feature descriptions when not overridden by environment
@@ -119,8 +120,8 @@ export const WHY_CHOOSE_CONFIG = {
   ),
 
   SECTION_STYLES: {
-    CONTAINER: 'mt-16 bg-gray-50 rounded-lg p-8',
-    HEADING: 'text-2xl font-bold text-gray-900 mb-6 text-center',
+    CONTAINER: `mt-16 ${BG_COLORS.LIGHT} rounded-lg p-8`,
+    HEADING: `text-2xl font-bold ${TEXT_COLORS.PRIMARY} mb-6 text-center`,
     GRID: 'grid md:grid-cols-2 gap-6',
   },
 
@@ -138,9 +139,9 @@ export const WHY_CHOOSE_CONFIG = {
       TITLE: 'AI-Powered Intelligence',
       DESCRIPTION:
         'Advanced AI algorithms analyze your ideas and generate comprehensive project plans',
-      ICON_BG: 'bg-green-100',
+      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-700',
+      ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -151,9 +152,9 @@ export const WHY_CHOOSE_CONFIG = {
       TITLE: 'Time-Saving Automation',
       DESCRIPTION:
         'Reduce planning time by 80% with automated task breakdown and timeline generation',
-      ICON_BG: 'bg-green-100',
+      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-700',
+      ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -164,9 +165,9 @@ export const WHY_CHOOSE_CONFIG = {
       TITLE: 'Developer-Friendly',
       DESCRIPTION:
         'Export plans to GitHub, Notion, and other tools your team already uses',
-      ICON_BG: 'bg-green-100',
+      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-700',
+      ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -177,9 +178,9 @@ export const WHY_CHOOSE_CONFIG = {
       TITLE: 'Collaborative Planning',
       DESCRIPTION:
         'Share blueprints with your team and iterate on plans in real-time',
-      ICON_BG: 'bg-green-100',
+      ICON_BG: BG_COLORS.SUCCESS_LIGHT,
       ICON_HOVER_BG: 'group-hover:bg-green-200',
-      ICON_COLOR: 'text-green-700',
+      ICON_COLOR: TEXT_COLORS.SUCCESS_DARK,
       SVG_PATH:
         'M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z',
       HOVER_BORDER: 'hover:border-green-200',
@@ -193,9 +194,8 @@ export const WHY_CHOOSE_CONFIG = {
     ICON_CONTAINER:
       'rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 group-hover:bg-green-200',
     ICON_SVG: 'w-4 h-4 transition-transform duration-300 group-hover:scale-110',
-    TITLE:
-      'font-semibold text-gray-900 mb-1 group-hover:text-green-800 transition-colors duration-200',
-    DESCRIPTION: 'text-gray-700 text-sm',
+    TITLE: `font-semibold ${TEXT_COLORS.PRIMARY} mb-1 group-hover:text-green-800 transition-colors duration-200`,
+    DESCRIPTION: `${TEXT_COLORS.MUTED_DARK} text-sm`,
   },
 } as const;
 
