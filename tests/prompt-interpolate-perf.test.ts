@@ -1,11 +1,20 @@
-import { PromptService, parseTemplate, clearTemplateChunksCache } from '@/lib/prompt-service';
+import {
+  PromptService,
+  parseTemplate,
+  clearTemplateChunksCache,
+} from '@/lib/prompt-service';
 
 // Previous regex-based implementation to verify correctness and compare performance
-function previousInterpolate(template: string, variables: Record<string, any>): string {
+function previousInterpolate(
+  template: string,
+  variables: Record<string, string | number | boolean | object | null>
+): string {
   return template.replace(/\{([^{}]+)\}/g, (match, key) => {
     if (Object.prototype.hasOwnProperty.call(variables, key)) {
       const value = variables[key];
-      return typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value);
+      return typeof value === 'object'
+        ? JSON.stringify(value, null, 2)
+        : String(value);
     }
     return match;
   });
@@ -21,7 +30,8 @@ describe('PromptService Interpolation Performance and Correctness', () => {
 
   describe('Correctness Verification', () => {
     it('should correctly interpolate variables including all types', () => {
-      const template = 'User: {user}, Age: {age}, Active: {active}, Meta: {meta}';
+      const template =
+        'User: {user}, Age: {age}, Active: {active}, Meta: {meta}';
       const variables = {
         user: 'John Doe',
         age: 30,
@@ -50,7 +60,8 @@ describe('PromptService Interpolation Performance and Correctness', () => {
 
   describe('Performance Benchmark', () => {
     it('benchmarks pre-compiled chunk interpolation against regex-based replacement', () => {
-      const template = 'Prompt system check for {agent}. Run task {taskId} on resource {resourceId} with config {config}. Status: {status}.';
+      const template =
+        'Prompt system check for {agent}. Run task {taskId} on resource {resourceId} with config {config}. Status: {status}.';
       const variables = {
         agent: 'ClarifierAgent-Ultimate-Superpowers',
         taskId: 'task_9876543210_abc',
@@ -78,14 +89,20 @@ describe('PromptService Interpolation Performance and Correctness', () => {
       }
       const optDuration = Date.now() - optStart;
 
-      console.log(`[Benchmark] Legacy regex-based interpolate (${iterations} runs): ${legacyDuration}ms`);
-      console.log(`[Benchmark] Optimized pre-compiled chunk interpolate (${iterations} runs): ${optDuration}ms`);
+      console.log(
+        `[Benchmark] Legacy regex-based interpolate (${iterations} runs): ${legacyDuration}ms`
+      );
+      console.log(
+        `[Benchmark] Optimized pre-compiled chunk interpolate (${iterations} runs): ${optDuration}ms`
+      );
 
       const speedup = (legacyDuration / optDuration).toFixed(2);
       console.log(`[Benchmark] Performance gain: ${speedup}x speedup`);
 
       // Verify execution correctness is identical
-      expect(service.interpolate(template, variables)).toBe(previousInterpolate(template, variables));
+      expect(service.interpolate(template, variables)).toBe(
+        previousInterpolate(template, variables)
+      );
     });
   });
 });

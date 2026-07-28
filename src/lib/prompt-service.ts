@@ -21,7 +21,7 @@ const templateChunksCache = new Map<string, TemplateChunk[]>();
  * literal text chunks and variable key placeholders.
  */
 export function parseTemplate(template: string): TemplateChunk[] {
-  let cached = templateChunksCache.get(template);
+  const cached = templateChunksCache.get(template);
   if (cached) {
     return cached;
   }
@@ -127,9 +127,10 @@ export class PromptService {
         const key = chunk.key;
         if (Object.prototype.hasOwnProperty.call(variables, key)) {
           const value = variables[key];
-          result += typeof value === 'object'
-            ? JSON.stringify(value, null, 2)
-            : String(value);
+          result +=
+            typeof value === 'object'
+              ? JSON.stringify(value, null, 2)
+              : String(value);
         } else {
           result += chunk.raw;
         }
