@@ -96,10 +96,14 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
           e.preventDefault();
           triggerHapticFeedback();
           handlePrint();
+        } else if (e.key === 'd') {
+          e.preventDefault();
+          triggerHapticFeedback();
+          handleDownload();
         }
       }
     },
-    [isGenerating, blueprint, handleCopy, handlePrint]
+    [isGenerating, blueprint, handleCopy, handlePrint, handleDownload]
   );
 
   useEffect(() => {
@@ -270,14 +274,19 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   {MESSAGES.BLUEPRINT.PRINT_BUTTON}
                 </Button>
               </Tooltip>
-              <Button
-                onClick={handleDownloadWithFocus}
-                variant="primary"
-                fullWidth={false}
-                aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.DOWNLOAD_BLUEPRINT}
+              <Tooltip
+                content={MESSAGES.BLUEPRINT.DOWNLOAD_BUTTON}
+                shortcut={['⌘', 'D']}
               >
-                {MESSAGES.BLUEPRINT.DOWNLOAD_BUTTON}
-              </Button>
+                <Button
+                  onClick={handleDownloadWithFocus}
+                  variant="primary"
+                  fullWidth={false}
+                  aria-label={COMPONENT_DEFAULTS.ARIA_LABELS.DOWNLOAD_BLUEPRINT}
+                >
+                  {MESSAGES.BLUEPRINT.DOWNLOAD_BUTTON}
+                </Button>
+              </Tooltip>
             </div>
           </div>
         </header>
