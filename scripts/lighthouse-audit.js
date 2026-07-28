@@ -8,7 +8,7 @@ const { default: lighthouse } = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
 const fs = require('node:fs');
 const path = require('node:path');
-const { LIGHTHOUSE_CONFIG } = require('./config');
+const { LIGHTHOUSE_CONFIG, BROWSER_SCANNER_CONFIG } = require('./config');
 
 const {
   BASE_URL,
@@ -17,8 +17,9 @@ const {
   CHROME_PATH,
   THROTTLING,
   SCREEN_EMULATION,
-  AUDIT_TIMEOUT_MS,
 } = LIGHTHOUSE_CONFIG;
+
+const { AUDIT_TIMEOUT_MS } = BROWSER_SCANNER_CONFIG;
 
 const CONFIG = {
   extends: 'lighthouse:default',
