@@ -21,6 +21,7 @@ import {
   PROGRESS_PERCENTAGE,
   TYPOGRAPHY_CLASSES,
   COMPONENT_STATE_COLORS,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -147,8 +148,8 @@ function ScrollToTopComponent({
   const getScrollDepthColor = useCallback((progress: number) => {
     if (progress <= 40) {
       return {
-        stroke: 'text-gray-500',
-        text: 'text-gray-500',
+        stroke: TEXT_COLORS.MUTED,
+        text: TEXT_COLORS.MUTED,
         label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_TOP,
       };
     }
@@ -306,7 +307,7 @@ function ScrollToTopComponent({
             rounded-full ${SHADOW_CLASSES.LARGE}
             border ${BORDER_COLORS.LIGHT}
             ${TRANSITION_CLASSES.SLOW} ease-out
-            hover:bg-gray-50 hover:text-primary-600 hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
+            ${GRAY_CLASSES.HOVER_BG_50} hover:text-primary-600 hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
             hover:border-primary-200
             focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
             focus-visible:scale-110
