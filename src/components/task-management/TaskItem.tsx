@@ -15,6 +15,9 @@ import {
   MESSAGES,
   IDEA_STATUS_CONFIG,
   SVG_CIRCLE,
+  UI_CONFIG,
+  TRANSITION_CLASSES,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -216,11 +219,21 @@ function TaskItemComponent({
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <p className={titleClasses}>{task.title}</p>
-              <span
-                className={`${TASK_ITEM_STYLES.STATUS_BADGE.BASE} ${taskStatus.bgColor} ${taskStatus.color}`}
-              >
-                {taskStatus.label}
-              </span>
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`${TASK_ITEM_STYLES.STATUS_BADGE.BASE} ${taskStatus.bgColor} ${taskStatus.color}`}
+                >
+                  {taskStatus.label}
+                </span>
+                {/* Micro-UX: Keyboard shortcut hint for task toggling */}
+                {/* Follows the pattern from ProgressStepper and TaskManagementHeader for discoverability */}
+                <span
+                  className={`hidden sm:inline-flex items-center ${UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_MINI} ${TRANSITION_CLASSES.DEFAULT} opacity-0 group-hover:opacity-100 ${GRAY_CLASSES.TEXT_500}`}
+                  aria-hidden="true"
+                >
+                  Space
+                </span>
+              </div>
             </div>
 
             {task.description && (
