@@ -200,7 +200,7 @@ function PasswordRequirementsChecklistComponent({
     >
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
-          <p className="text-xs font-medium text-gray-700">
+          <p className={`text-xs font-medium ${TEXT_COLORS.MUTED_DARK}`}>
             {PASSWORD_REQUIREMENTS_LABELS.HEADER_TEXT}
           </p>
           <span

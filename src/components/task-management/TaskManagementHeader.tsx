@@ -14,6 +14,7 @@ import {
   TASK_MANAGEMENT_LABELS,
   COMPONENT_CONFIG,
   BREATHE,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useCountUp } from '@/hooks/useCountUp';
@@ -230,7 +231,7 @@ function TaskManagementHeaderComponent({
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-full ${TRANSITION_CLASSES.DEFAULT} ${
                   isActive
                     ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-500 ring-offset-1'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800'
+                    : `${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_BG_100} ${GRAY_CLASSES.HOVER_TEXT_800}`
                 }`}
               >
                 {label}
@@ -238,7 +239,7 @@ function TaskManagementHeaderComponent({
                   className={`ml-0.5 px-1.5 py-0.5 text-[10px] rounded-full font-semibold ${
                     isActive
                       ? 'bg-primary-200 text-primary-800'
-                      : 'bg-gray-200 text-gray-500'
+                      : `${GRAY_CLASSES.BG_200} ${GRAY_CLASSES.TEXT_500}`
                   }`}
                 >
                   {count}

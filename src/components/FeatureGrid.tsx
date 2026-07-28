@@ -8,6 +8,7 @@ import {
   TEXT_COLORS,
   GRADIENT_CONFIG,
 } from '@/lib/config/theme';
+import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
 import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
@@ -181,7 +182,7 @@ function FeatureGridComponent() {
               {feature.title}
             </h3>
             <p
-              className={`text-gray-700 group-hover:text-gray-800 transition-colors ${DURATION_TAILWIND[300]}`}
+              className={`${TEXT_COLORS.MUTED_DARK} group-hover:${GRAY_CLASSES.TEXT_800} transition-colors ${DURATION_TAILWIND[300]}`}
             >
               {feature.description}
             </p>
@@ -224,7 +225,7 @@ function FeatureGridComponent() {
         ))}
       </ul>
       <div
-        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs text-gray-500`}
+        className={`hidden sm:flex items-center justify-center gap-2 mt-6 text-xs ${TEXT_COLORS.MUTED}`}
         aria-label={FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}
       >
         <span className="flex items-center gap-1.5">

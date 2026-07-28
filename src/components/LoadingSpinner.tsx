@@ -9,6 +9,7 @@ import {
   TRANSITION_CLASSES,
   LOADING_SPINNER_RIPPLE,
   COMPONENT_MAGIC_NUMBERS,
+  BORDER_COLORS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -162,7 +163,7 @@ function LoadingSpinnerComponent({
       <svg
         className={`
           relative z-10 rounded-full
-          ${prefersReducedMotion ? 'border-2 border-gray-400' : 'animate-spin border-2 border-gray-300 border-t-primary-600'}
+          ${prefersReducedMotion ? `border-2 ${BORDER_COLORS.DEFAULT}` : `animate-spin border-2 ${BORDER_COLORS.LIGHT} border-t-primary-600`}
         `}
         style={svgStyle}
         fill="none"

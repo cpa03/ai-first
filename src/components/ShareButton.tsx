@@ -218,7 +218,7 @@ const ShareButtonComponent = function ShareButton({
     `,
     'icon-only': `
       p-1.5
-      text-gray-500 hover:text-primary-600 hover:bg-primary-50
+      ${TEXT_COLORS.MUTED} hover:text-primary-600 hover:bg-primary-50
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-full
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
