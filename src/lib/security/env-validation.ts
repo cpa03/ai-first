@@ -396,10 +396,14 @@ export function validateEnvironment(): ValidationResult {
     );
   }
 
-  const supabaseServiceRoleKey = ENV_ACCESSORS.DATABASE.SUPABASE_SERVICE_ROLE_KEY();
+  const supabaseServiceRoleKey =
+    ENV_ACCESSORS.DATABASE.SUPABASE_SERVICE_ROLE_KEY();
   if (supabaseServiceRoleKey) {
     warnings.push(
-      ...checkSecretStrength('SUPABASE_SERVICE_ROLE_KEY', supabaseServiceRoleKey)
+      ...checkSecretStrength(
+        'SUPABASE_SERVICE_ROLE_KEY',
+        supabaseServiceRoleKey
+      )
     );
   }
 
