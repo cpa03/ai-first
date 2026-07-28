@@ -7,6 +7,61 @@ export interface PromptVariable {
   [key: string]: string | number | object;
 }
 
+export type TemplateChunk = string | { key: string; raw: string };
+
+/**
+ * PERFORMANCE: O(1) Map-based cache for pre-compiled template chunks to completely
+ * eliminate regex-based scanning and matching overhead for frequently used prompts.
+ * Uses a fixed-size cache (capped at 500 entries) to prevent memory leaks.
+ */
+const templateChunksCache = new Map<string, TemplateChunk[]>();
+
+/**
+ * High-performance template parser that compiles a template string into
+ * literal text chunks and variable key placeholders.
+ */
+export function parseTemplate(template: string): TemplateChunk[] {
+  let cached = templateChunksCache.get(template);
+  if (cached) {
+    return cached;
+  }
+
+  const chunks: TemplateChunk[] = [];
+  const regex = /\{([^{}]+)\}/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(template)) !== null) {
+    const matchIndex = match.index;
+    if (matchIndex > lastIndex) {
+      chunks.push(template.substring(lastIndex, matchIndex));
+    }
+    chunks.push({ key: match[1], raw: match[0] });
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < template.length) {
+    chunks.push(template.substring(lastIndex));
+  }
+
+  if (templateChunksCache.size >= 500) {
+    const firstKey = templateChunksCache.keys().next().value;
+    if (firstKey !== undefined) {
+      templateChunksCache.delete(firstKey);
+    }
+  }
+  templateChunksCache.set(template, chunks);
+
+  return chunks;
+}
+
+/**
+ * Clears the pre-compiled template chunks cache.
+ */
+export function clearTemplateChunksCache(): void {
+  templateChunksCache.clear();
+}
+
 export class PromptService {
   private promptsCache: Cache<string>;
 
@@ -58,18 +113,30 @@ export class PromptService {
   }
 
   interpolate(template: string, variables: PromptVariable): string {
-    // Single-pass regex replacement to optimize from O(V * T) to O(T),
-    // where V is the number of variables and T is the template length.
-    // Using [^{}]+ to avoid matching across multiple placeholders or nested braces.
-    return template.replace(/\{([^{}]+)\}/g, (match, key) => {
-      if (Object.prototype.hasOwnProperty.call(variables, key)) {
-        const value = variables[key];
-        return typeof value === 'object'
-          ? JSON.stringify(value, null, 2)
-          : String(value);
+    // PERFORMANCE: Optimized template interpolation using pre-compiled chunks.
+    // Bypasses the overhead of String.prototype.replace(RegExp, Function) and
+    // associated callback function creation/invocation.
+    const chunks = parseTemplate(template);
+    let result = '';
+
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      if (typeof chunk === 'string') {
+        result += chunk;
+      } else {
+        const key = chunk.key;
+        if (Object.prototype.hasOwnProperty.call(variables, key)) {
+          const value = variables[key];
+          result += typeof value === 'object'
+            ? JSON.stringify(value, null, 2)
+            : String(value);
+        } else {
+          result += chunk.raw;
+        }
       }
-      return match;
-    });
+    }
+
+    return result;
   }
 
   async getPrompt(
@@ -101,6 +168,7 @@ export class PromptService {
 
   clearCache(): void {
     this.promptsCache.clear();
+    clearTemplateChunksCache();
   }
 
   getCacheStats(): ReturnType<Cache<string>['getStats']> {
