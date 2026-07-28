@@ -101,6 +101,13 @@ const UserOnboarding = dynamic(() => import('@/components/UserOnboarding'), {
   ssr: false,
 });
 
+// Micro-UX: First-visit keyboard shortcut discovery hint
+// Shows a brief tooltip for new users to discover keyboard shortcuts
+const KeyboardShortcutHint = dynamic(
+  () => import('@/components/KeyboardShortcutHint'),
+  { ssr: false }
+);
+
 export default function HomePageClient() {
   const router = useRouter();
   const [idea, setIdea] = useState('');
@@ -257,6 +264,8 @@ export default function HomePageClient() {
 
       {/* Growth: User onboarding guided tour */}
       <UserOnboarding />
+
+      <KeyboardShortcutHint />
     </div>
   );
 }
