@@ -215,7 +215,9 @@ export default function NotFound() {
               shortcut={[isMac ? '⌘' : 'Ctrl', 'C']}
               position="top"
             >
-              <span className="text-xs text-gray-500 hidden sm:inline-flex items-center gap-1.5">
+              <span
+                className={`text-xs ${GRAY_CLASSES.TEXT_500} hidden sm:inline-flex items-center gap-1.5`}
+              >
                 <kbd
                   className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
                 >
@@ -232,7 +234,7 @@ export default function NotFound() {
 
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           <div
-            className={`mt-6 flex items-center justify-center gap-4 text-xs text-gray-500 ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+            className={`mt-6 flex items-center justify-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
             aria-hidden="true"
           >
             <span
