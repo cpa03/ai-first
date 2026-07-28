@@ -250,19 +250,10 @@ export default function HomePageClient() {
         </section>
       )}
 
-      <section aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}>
-        <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
-          How It Works
-        </h2>
-        <FeatureGrid />
-      </section>
+      {/* FeatureGrid and WhyChooseSection render their own <section> tags with aria-labelledby */}
+      <FeatureGrid />
 
-      <section aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}>
-        <h2 id={HOME_PAGE_ELEMENT_IDS.WHY_CHOOSE_HEADING} className="sr-only">
-          Why Choose IdeaFlow
-        </h2>
-        <WhyChooseSection />
-      </section>
+      <WhyChooseSection />
 
       {/* Growth: User onboarding guided tour */}
       <UserOnboarding />
