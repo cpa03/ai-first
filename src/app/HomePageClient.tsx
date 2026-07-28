@@ -32,7 +32,8 @@ const Skeleton = dynamic(() => import('@/components/Skeleton'), {
 const IdeaInput = dynamic(() => import('@/components/IdeaInput'), {
   loading: () => (
     <div
-      className={`space-y-4 min-h-[${HOMEPAGE_SKELETON_TAILWIND.IDEA_INPUT_MIN_H}]`}
+      className="space-y-4"
+      style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.IDEA_INPUT_MIN_H }}
     >
       <Skeleton variant="text" className="h-32 w-full" />
       <Skeleton variant="rect" className="h-10 w-32" />
@@ -50,7 +51,8 @@ const FeatureGrid = dynamic(() => import('@/components/FeatureGrid'), {
   loading: () => (
     <section
       aria-hidden="true"
-      className={`mt-16 grid md:grid-cols-3 gap-8 min-h-[${HOMEPAGE_SKELETON_TAILWIND.FEATURE_GRID_MIN_H}]`}
+      className="mt-16 grid md:grid-cols-3 gap-8"
+      style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.FEATURE_GRID_MIN_H }}
     >
       {[1, 2, 3].map((i) => (
         <div
@@ -72,7 +74,8 @@ const WhyChooseSection = dynamic(
     loading: () => (
       <section
         aria-hidden="true"
-        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8 min-h-[${HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H}]`}
+        className={`mt-16 ${GRAY_CLASSES.BG_50} rounded-lg p-8`}
+        style={{ minHeight: HOMEPAGE_SKELETON_TAILWIND.WHY_CHOOSE_MIN_H }}
       >
         <Skeleton variant="text" className="h-10 mx-auto mb-6 w-3/4" />
         <div className="grid md:grid-cols-2 gap-6">
