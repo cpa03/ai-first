@@ -261,6 +261,7 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 ## Maintenance Reports
 
 - [BugFixer Continuous Monitoring Guide](./maintenance/bugfixer-continuous-monitoring.md) - Continuous monitoring approach for repository quality
+- [Bugfix Report - 2026-07-29](./maintenance/bugfix-report-2026-07-29.md) - Multiple API bug investigation and verification
 - [Repository Maintenance Report - 2026-07-29](./maintenance/2026-07-29-repository-maintenance-loop.md) - Build/lint verification, documentation integrity, stale branch analysis
 - [Repository Maintenance Report - 2026-07-27](./maintenance/2026-07-27-repository-maintenance-loop.md) - Stale branch cleanup, build/lint verification
 - [Repository Maintenance Report - 2026-07-26 16:48](./maintenance/2026-07-26-repository-maintenance-1648.md) - Build/lint health, documentation accuracy, stale branch analysis
