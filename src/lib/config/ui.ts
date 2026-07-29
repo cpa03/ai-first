@@ -585,6 +585,17 @@ export const COMPONENT_DEFAULTS = {
       `Press ${isMac ? '⌘' : 'Ctrl'} + Enter to ${isLastStep ? 'complete' : 'submit'}. Press Escape to clear.`,
     SELECT_PLACEHOLDER: 'Select an option...',
   },
+
+  /**
+   * Loading page text strings
+   * Centralizes hardcoded loading text used in auth callback and other loading pages
+   */
+  LOADING_TEXT: {
+    AUTH_CALLBACK_TITLE: 'Completing sign in...',
+    AUTH_CALLBACK_MESSAGE: 'Please wait while we verify your account.',
+    GENERAL_LOADING: 'Loading...',
+    PROCESSING: 'Processing...',
+  } as const,
 };
 
 /**

@@ -9,6 +9,8 @@ import {
   PAGE_LAYOUT_CLASSES,
   CONTAINER_WIDTHS,
   GRAY_CLASSES,
+  SPINNER_PATTERNS,
+  COMPONENT_DEFAULTS,
 } from '@/lib/config';
 
 export default function AuthCallbackPage() {
@@ -42,12 +44,14 @@ export default function AuthCallbackPage() {
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
       <div className={`${CONTAINER_WIDTHS.XS} w-full text-center space-y-4`}>
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600 mx-auto"></div>
+        <div
+          className={`animate-spin rounded-full ${SPINNER_PATTERNS.default.size.lg} ${SPINNER_PATTERNS.default.border} border-primary-600 mx-auto`}
+        ></div>
         <h1 className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900}`}>
-          Completing sign in...
+          {COMPONENT_DEFAULTS.LOADING_TEXT.AUTH_CALLBACK_TITLE}
         </h1>
         <p className={GRAY_CLASSES.TEXT_600}>
-          Please wait while we verify your account.
+          {COMPONENT_DEFAULTS.LOADING_TEXT.AUTH_CALLBACK_MESSAGE}
         </p>
       </div>
     </div>
