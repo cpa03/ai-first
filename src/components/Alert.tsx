@@ -13,6 +13,10 @@ import {
   ALERT_LABELS,
   DURATION_TAILWIND,
   TIME_CONVERSIONS,
+  MT_CLASSES,
+  MB_CLASSES,
+  GAP_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -210,7 +214,7 @@ const AlertComponent = function Alert({
       onBlur={handleMouseLeave}
     >
       <svg
-        className={`${SVG_SIZES.LG} ${styles.iconColor} flex-shrink-0 mt-0.5`}
+        className={`${SVG_SIZES.LG} ${styles.iconColor} flex-shrink-0 ${MT_CLASSES.XS}`}
         fill="currentColor"
         viewBox={SVG_VIEWBOX.SMALL}
         aria-hidden="true"
@@ -219,7 +223,9 @@ const AlertComponent = function Alert({
       </svg>
       <div className="flex-1 min-w-0">
         {title && (
-          <h3 className={`text-lg font-semibold ${styles.titleColor} mb-2`}>
+          <h3
+            className={`text-lg font-semibold ${styles.titleColor} ${MB_CLASSES.MD}`}
+          >
             {title}
           </h3>
         )}
@@ -269,9 +275,9 @@ const AlertComponent = function Alert({
               aria-atomic="true"
             >
               {isPaused ? (
-                <span className="flex items-center gap-1">
+                <span className={`flex items-center ${GAP_CLASSES.SM}`}>
                   <svg
-                    className="w-3 h-3"
+                    className={ICON_SIZES.SM}
                     fill="currentColor"
                     viewBox={SVG_VIEWBOX.SMALL}
                     aria-hidden="true"

@@ -18,6 +18,11 @@ import {
   TRANSITION_CLASSES,
   TOAST_CLEAR_ALL_BUTTON,
   TOAST_DISMISS_BUTTON,
+  ICON_SIZES,
+  MT_CLASSES,
+  ML_CLASSES,
+  P_CLASSES,
+  GAP_CLASSES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -241,7 +246,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       }}
     >
       <svg
-        className="w-5 h-5 flex-shrink-0 mt-0.5"
+        className={`${ICON_SIZES.LG} flex-shrink-0 ${MT_CLASSES.XS}`}
         style={{ color: styles.iconColor }}
         fill="currentColor"
         viewBox={SVG_VIEWBOX.SMALL}
@@ -256,11 +261,11 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </div>
       <button
         onClick={handleClose}
-        className={`flex-shrink-0 ml-2 ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md p-1 ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
+        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
         aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
       >
         <svg
-          className="w-4 h-4"
+          className={ICON_SIZES.MD}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
@@ -284,9 +289,9 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           aria-atomic="true"
         >
           {isPaused ? (
-            <span className="flex items-center gap-1">
+            <span className={`flex items-center ${GAP_CLASSES.SM}`}>
               <svg
-                className="w-3 h-3"
+                className={ICON_SIZES.SM}
                 fill="currentColor"
                 viewBox={SVG_VIEWBOX.SMALL}
                 aria-hidden="true"
