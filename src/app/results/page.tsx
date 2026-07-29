@@ -11,6 +11,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import {
   SPINNER_PATTERNS,
   CARD_PATTERNS,
@@ -27,7 +28,6 @@ import {
   UI_CONFIG,
   BREATHE,
   GRAY_CLASSES,
-  DURATION_TAILWIND,
   BADGE_STYLES,
 } from '@/lib/config';
 
@@ -158,6 +158,7 @@ function ResultsContent() {
   // Micro-UX: Confetti celebration on successful export for delightful feedback
   const { particles, fire } = useConfetti();
   const [showExportSuccess, setShowExportSuccess] = useState(false);
+  const { openHelp } = useKeyboardShortcuts();
 
   // Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -348,6 +349,23 @@ function ResultsContent() {
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [error, idea, loading, router]);
+
+  // Micro-UX: ? key opens keyboard shortcuts help panel
+  // Provides discoverability for users who want to see all available shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === '?' && idea && !loading) {
+        e.preventDefault();
+        openHelp();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [idea, loading, openHelp]);
 
   // PERFORMANCE: Memoize formatted answers to prevent unnecessary re-renders of memoized
   // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
@@ -716,21 +734,77 @@ function ResultsContent() {
             </div>
           </div>
 
-          {/* Micro-UX: Keyboard shortcut hint for export discoverability */}
-          {/* Helps users discover Ctrl+E shortcut for quick markdown export */}
+          {/* Micro-UX: Keyboard shortcut hints bar for discoverability */}
+          {/* Shows all available keyboard shortcuts for the results page */}
+          {/* Matches the dashboard keyboard hints bar pattern for consistency */}
           <div
-            className={`mt-4 flex items-center gap-2 text-xs ${GRAY_CLASSES.TEXT_500}`}
-            aria-hidden="true"
+            className={`mt-6 flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg animate-fade-in`}
           >
-            <span
-              className={`hidden sm:inline-flex items-center gap-1.5 ${GRAY_CLASSES.HOVER_TEXT_600} transition-colors ${DURATION_TAILWIND[200]}`}
-            >
-              <kbd className={ELEMENT_PATTERNS.KBD}>{isMac ? '⌘' : 'Ctrl'}</kbd>
-              <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
-              <span className={GRAY_CLASSES.TEXT_400}>
-                quick export markdown
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
+              >
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>C</kbd>
+                <span className="text-gray-500">copy blueprint</span>
               </span>
-            </span>
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
+              >
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>P</kbd>
+                <span className="text-gray-500">print</span>
+              </span>
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
+              >
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>D</kbd>
+                <span className="text-gray-500">download</span>
+              </span>
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
+              >
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
+                <span className="text-gray-500">export markdown</span>
+              </span>
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
+              >
+                <kbd className={ELEMENT_PATTERNS.KBD}>?</kbd>
+                <span className="text-gray-500">all shortcuts</span>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => openHelp()}
+              className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-200"
+              aria-label="Show keyboard shortcuts"
+            >
+              <span>View all shortcuts</span>
+              <svg
+                className="w-3 h-3"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
           </div>
 
           {exportUrl && (
