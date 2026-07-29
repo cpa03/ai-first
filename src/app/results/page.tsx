@@ -29,6 +29,10 @@ import {
   BREATHE,
   GRAY_CLASSES,
   BADGE_STYLES,
+  DASHBOARD_PATTERNS,
+  SVG_SIZES,
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -764,75 +768,73 @@ function ResultsContent() {
           {/* Micro-UX: Keyboard shortcut hints bar for discoverability */}
           {/* Shows all available keyboard shortcuts for the results page */}
           {/* Matches the dashboard keyboard hints bar pattern for consistency */}
-          <div
-            className={`mt-6 flex items-center justify-between px-4 py-3 bg-gray-50 border border-gray-100 rounded-lg animate-fade-in`}
-          >
-            <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span
-                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
-              >
+          <div className={`${DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}`}>
+            <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
                 <kbd className={ELEMENT_PATTERNS.KBD}>C</kbd>
-                <span className="text-gray-500">copy blueprint</span>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  copy blueprint
+                </span>
               </span>
-              <span
-                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
-              >
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
                 <kbd className={ELEMENT_PATTERNS.KBD}>P</kbd>
-                <span className="text-gray-500">print</span>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  print
+                </span>
               </span>
-              <span
-                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
-              >
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
                 <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
-                <span className="text-gray-500">export</span>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  export
+                </span>
               </span>
-              <span
-                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
-              >
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
                 <kbd className={ELEMENT_PATTERNS.KBD}>J</kbd>
-                <span className="text-gray-500">JSON</span>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  JSON
+                </span>
               </span>
-              <span
-                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
-              >
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
                 <kbd className={ELEMENT_PATTERNS.KBD}>T</kbd>
-                <span className="text-gray-500">Trello</span>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  Trello
+                </span>
               </span>
-              <span
-                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
-              >
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>?</kbd>
-                <span className="text-gray-500">all shortcuts</span>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  all shortcuts
+                </span>
               </span>
             </div>
             <button
               type="button"
               onClick={() => openHelp()}
-              className="text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1 transition-colors duration-200"
+              className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
               aria-label="Show keyboard shortcuts"
             >
               <span>View all shortcuts</span>
               <svg
-                className="w-3 h-3"
+                className={SVG_SIZES.SM}
                 fill="none"
-                viewBox="0 0 24 24"
+                viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
-                strokeWidth="2"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               >
                 <path
                   strokeLinecap="round"
