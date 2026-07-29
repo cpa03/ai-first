@@ -10,7 +10,7 @@ import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
-import { PLATFORM } from '@/lib/dom-utils';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import {
   SPINNER_PATTERNS,
   CARD_PATTERNS,
@@ -24,6 +24,8 @@ import {
   ANIMATION_DELAYS,
   COMPONENT_CONFIG,
   ELEMENT_PATTERNS,
+  UI_CONFIG,
+  BREATHE,
   GRAY_CLASSES,
   DURATION_TAILWIND,
   BADGE_STYLES,
@@ -324,6 +326,29 @@ function ResultsContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [exportLoading, idea, handleExport]);
 
+  // Micro-UX: Enter key navigation for error and warning states
+  // Matches the keyboard shortcut patterns in clarify, not-found, and dashboard pages
+  // Provides discoverable keyboard navigation consistent with the rest of the app
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (e.key === 'Enter') {
+        if (error) {
+          e.preventDefault();
+          router.back();
+        } else if (!idea && !loading) {
+          e.preventDefault();
+          router.push(ROUTES.HOME);
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [error, idea, loading, router]);
+
   // PERFORMANCE: Memoize formatted answers to prevent unnecessary re-renders of memoized
   // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
   // NOTE: This must be called before any early returns to comply with Rules of Hooks.
@@ -356,10 +381,21 @@ function ResultsContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="error" title={RESULTS_PAGE_CONTENT.ERROR_TITLE}>
           {error}
-          <div className="mt-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
             <Button onClick={() => router.back()} variant="primary">
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_BACK}
             </Button>
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '↵' : 'Enter'}
+              </kbd>
+              <span>to go back</span>
+            </span>
           </div>
         </Alert>
       </div>
@@ -371,10 +407,21 @@ function ResultsContent() {
       <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
         <Alert type="warning" title={RESULTS_PAGE_CONTENT.WARNING_TITLE}>
           {RESULTS_PAGE_CONTENT.WARNING_MESSAGE}
-          <div className="mt-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-4">
             <Button onClick={() => router.push(ROUTES.HOME)} variant="primary">
               {RESULTS_PAGE_CONTENT.BUTTONS.GO_HOME}
             </Button>
+            <span
+              className={`hidden sm:inline-flex items-center gap-1.5 text-xs ${GRAY_CLASSES.TEXT_500} ${prefersReducedMotion ? '' : BREATHE}`}
+              aria-hidden="true"
+            >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '↵' : 'Enter'}
+              </kbd>
+              <span>to go home</span>
+            </span>
           </div>
         </Alert>
       </div>
