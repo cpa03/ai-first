@@ -12,6 +12,7 @@ import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
 import { UI_STRINGS, UI_CONFIG } from '@/lib/config/ui';
+import { ANIMATION_CONFIG } from '@/lib/config/animation';
 import {
   HOME_PAGE_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -169,7 +170,7 @@ function FeatureGridComponent() {
                 }`}
                 style={{
                   animationDelay: isVisible
-                    ? `${index * 200 + 300}ms`
+                    ? `${index * ANIMATION_CONFIG.FEATURE_GRID.STAGGER + ANIMATION_CONFIG.FEATURE_GRID.BASE_DELAY}ms`
                     : undefined,
                 }}
               >

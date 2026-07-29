@@ -260,6 +260,29 @@ export const ANIMATION_CONFIG = {
       3000
     ),
   },
+
+  /**
+   * Feature Grid Animation Values
+   * Centralizes stagger timing for feature card entrance animations
+   */
+  FEATURE_GRID: {
+    /** Base delay for first card (ms) */
+    /** Env: UI_ANIMATION_FEATURE_GRID_BASE_DELAY (default: 300) */
+    BASE_DELAY: EnvLoader.number(
+      'UI_ANIMATION_FEATURE_GRID_BASE_DELAY',
+      300,
+      100,
+      1000
+    ),
+    /** Stagger delay between cards (ms) */
+    /** Env: UI_ANIMATION_FEATURE_GRID_STAGGER (default: 200) */
+    STAGGER: EnvLoader.number(
+      'UI_ANIMATION_FEATURE_GRID_STAGGER',
+      200,
+      50,
+      500
+    ),
+  },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;

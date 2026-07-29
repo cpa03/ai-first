@@ -115,6 +115,34 @@ export const UI_CONFIG = {
       KBD_STYLE_MINI_DARK: `px-1 py-0.5 bg-gray-700 rounded text-[${EnvLoader.number('UI_TEXT_SIZE_MINI', 9, 7, 12)}px]`,
     },
   },
+
+  KEYBOARD_HINT_DISPLAY_DURATION: EnvLoader.number(
+    'UI_KEYBOARD_HINT_DISPLAY_DURATION',
+    8000,
+    3000,
+    30000
+  ),
+
+  KEYBOARD_HINT_DELAY: EnvLoader.number(
+    'UI_KEYBOARD_HINT_DELAY',
+    2000,
+    500,
+    10000
+  ),
+
+  KEYBOARD_HINT_EXIT_ANIMATION: EnvLoader.number(
+    'UI_KEYBOARD_HINT_EXIT_ANIMATION',
+    300,
+    100,
+    1000
+  ),
+
+  SCROLL_PROGRESS_SHOW_THRESHOLD: EnvLoader.number(
+    'UI_SCROLL_PROGRESS_SHOW_THRESHOLD',
+    75,
+    50,
+    100
+  ),
 } as const;
 
 export const LABELS = {

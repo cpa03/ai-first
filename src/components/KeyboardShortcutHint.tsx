@@ -11,12 +11,10 @@ import {
   TEXT_COLORS,
   BORDER_COLORS,
   SHADOW_CLASSES,
+  UI_CONFIG,
 } from '@/lib/config';
 
 const STORAGE_KEY = 'ideaflow-keyboard-hint-shown';
-const HINT_DISPLAY_DURATION_MS = 8000;
-const HINT_DELAY_MS = 2000;
-const EXIT_ANIMATION_MS = 300;
 
 interface KeyboardShortcutHintProps {
   storageKey?: string;
@@ -25,7 +23,7 @@ interface KeyboardShortcutHintProps {
 
 function KeyboardShortcutHintComponent({
   storageKey = STORAGE_KEY,
-  displayDuration = HINT_DISPLAY_DURATION_MS,
+  displayDuration = UI_CONFIG.KEYBOARD_HINT_DISPLAY_DURATION,
 }: KeyboardShortcutHintProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -44,7 +42,7 @@ function KeyboardShortcutHintComponent({
 
     const timer = setTimeout(() => {
       setIsVisible(true);
-    }, HINT_DELAY_MS);
+    }, UI_CONFIG.KEYBOARD_HINT_DELAY);
 
     return () => clearTimeout(timer);
   }, [storageKey]);
@@ -62,7 +60,7 @@ function KeyboardShortcutHintComponent({
         setIsVisible(false);
         setIsExiting(false);
       },
-      prefersReducedMotion ? 0 : EXIT_ANIMATION_MS
+      prefersReducedMotion ? 0 : UI_CONFIG.KEYBOARD_HINT_EXIT_ANIMATION
     );
   }, [storageKey, prefersReducedMotion]);
 
@@ -109,7 +107,7 @@ function KeyboardShortcutHintComponent({
         style={{
           transitionDuration: prefersReducedMotion
             ? '0ms'
-            : `${EXIT_ANIMATION_MS}ms`,
+            : `${UI_CONFIG.KEYBOARD_HINT_EXIT_ANIMATION}ms`,
         }}
       >
         <div className="flex items-start gap-3">
