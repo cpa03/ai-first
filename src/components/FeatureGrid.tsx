@@ -141,6 +141,7 @@ function FeatureGridComponent() {
               gradient-border-hover card-lift feature-card-focus
               bg-white
               focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
+              focus-visible:scale-[1.02] focus-visible:shadow-lg focus-visible:shadow-primary-100/50
               motion-reduce:transition-none
               ${isVisible ? animationClasses[index] : 'opacity-0'}
               ${focusedIndex === index ? 'ring-2 ring-primary-500 ring-offset-2' : ''}
