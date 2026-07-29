@@ -111,6 +111,38 @@ export function timingSafeEqualStrings(a: string, b: string): boolean {
 }
 
 /**
+ * Timing-safe Uint8Array comparison to prevent timing attacks.
+ * This is compatible with both Node.js and Edge/Browser/Cloudflare Worker runtimes,
+ * as it does not rely on any platform-specific Node modules.
+ *
+ * It uses a constant-time loop over the elements of both arrays.
+ *
+ * @param a - First Uint8Array
+ * @param b - Second Uint8Array
+ * @returns true if the arrays are identical in content and length, false otherwise
+ */
+export function timingSafeEqualArrays(a: Uint8Array, b: Uint8Array): boolean {
+  if (!(a instanceof Uint8Array) || !(b instanceof Uint8Array)) {
+    return false;
+  }
+
+  const aLen = a.length;
+  const bLen = b.length;
+  let result = 0;
+
+  // We loop over the maximum length to ensure the execution time
+  // depends primarily on the length of the inputs, not where they differ.
+  const maxLen = Math.max(aLen, bLen);
+  for (let i = 0; i < maxLen; i++) {
+    const byteA = i < aLen ? a[i] : 0;
+    const byteB = i < bLen ? b[i] : 0;
+    result |= byteA ^ byteB;
+  }
+
+  return result === 0 && aLen === bLen;
+}
+
+/**
  * Generate a simple, deterministic 32-bit hash for a string.
  * Uses a hardened djb2 algorithm with bitwise OR wrapping to maintain
  * 32-bit precision across all environments.

@@ -29,3 +29,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** Request signature verification in `src/lib/security/request-signer.ts` utilized Node.js's native `crypto.timingSafeEqual`, which expects buffers of identical length. When signature lengths differed, it threw a `TypeError`. Although caught, this created a timing discrepancy (try-throw vs normal flow execution path) and was incompatible with serverless/Edge environments (Cloudflare Workers, Vercel Edge) lacking complete Node polyfills.
 **Learning:** Standard timing-safe utilities in core platforms often enforce strict type or size restrictions that leak length/format validation details via exceptions, bypassing the constant-time design. Furthermore, relying on Node-specific objects (`Buffer`, `node:crypto` functions) restricts deployment portability.
 **Prevention:** Use a runtime-agnostic, constant-time character-comparison function (like `timingSafeEqualStrings`) that operates on variable-length inputs without throwing exceptions, guaranteeing constant-time behavior across all environments.
+
+## 2026-07-29 - Timing Side-Channel in Byte Array Comparisons
+
+**Vulnerability:** The local `safeEqual` comparison function in `src/lib/auth.ts` returned `false` immediately on length mismatches before checking byte contents. While SHA-256 hashes are of a fixed size, this early return pattern leaks length/format details via a timing side-channel and represents an insecure coding pattern.
+**Learning:** Handcrafted comparison algorithms often inadvertently prioritize efficiency over constant-time security constraints. Even when input sizes are expected to be fixed, early-returning short circuits allow timing leaks.
+**Prevention:** Always use a platform-agnostic, constant-time comparison helper (such as `timingSafeEqualArrays`) that iterates across the maximum of both inputs' lengths to ensure uniform execution times under all circumstances.

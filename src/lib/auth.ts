@@ -6,6 +6,7 @@ import { STATUS_CODES } from '@/lib/config/http';
 import { SecurityAuditLog } from '@/lib/security/audit-log';
 import { SECURITY_ENV_KEYS, PLATFORM_ENV_KEYS } from '@/lib/config/env-keys';
 import { API_ERROR_MESSAGES } from '@/lib/config';
+import { timingSafeEqualArrays } from '@/lib/security/crypto';
 
 const logger = createLogger('auth');
 let warnedAboutMissingKey = false;
@@ -24,15 +25,6 @@ export interface AuthenticatedUser {
   id: string;
   email?: string;
   role?: string;
-}
-
-function safeEqual(a: Uint8Array, b: Uint8Array): boolean {
-  if (a.length !== b.length) return false;
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
-    result |= a[i] ^ b[i];
-  }
-  return result === 0;
 }
 
 export async function isAdminAuthenticated(request: Request): Promise<boolean> {
@@ -95,7 +87,7 @@ export async function isAdminAuthenticated(request: Request): Promise<boolean> {
       encoder.encode(credentials)
     );
 
-    const authenticated = safeEqual(
+    const authenticated = timingSafeEqualArrays(
       new Uint8Array(expectedHash),
       new Uint8Array(actualHash)
     );
