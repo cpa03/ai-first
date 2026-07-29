@@ -238,6 +238,18 @@ function FeatureGridComponent() {
           </kbd>
           <span>{FEATURE_GRID_LABELS.KEYBOARD_NAV_HINT}</span>
         </span>
+        <span className={`${TEXT_COLORS.MUTED_LIGHT}`} aria-hidden="true">
+          ·
+        </span>
+        <span className="flex items-center gap-1.5">
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            Home
+          </kbd>
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            End
+          </kbd>
+          <span>jump to first/last</span>
+        </span>
       </div>
     </section>
   );
