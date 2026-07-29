@@ -860,3 +860,29 @@ export {
   STATUS_STRINGS,
   TIME_STRINGS,
 } from './component-text-strings';
+
+// Centralizes all hardcoded spacing values (gap, mt, mb, mr, ml, p, pt, pb, pr, pl)
+export {
+  GAP_CLASSES,
+  MT_CLASSES,
+  MB_CLASSES,
+  MR_CLASSES,
+  ML_CLASSES,
+  P_CLASSES,
+  PT_CLASSES,
+  PB_CLASSES,
+  PR_CLASSES,
+  PL_CLASSES,
+  COMMON_SPACING_PATTERNS,
+  RESPONSIVE_SPACING,
+} from './spacing';
+
+// Centralizes all hardcoded icon size values (w-N h-N patterns)
+export {
+  ICON_SIZES,
+  WIDTH_ONLY,
+  HEIGHT_ONLY,
+  SKELETON_SIZES,
+  ICON_PATTERNS,
+  MINI_BUTTON_SIZES,
+} from './icon-sizes';
