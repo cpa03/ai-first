@@ -30,6 +30,7 @@ import {
   STEP_CELEBRATION_STEP_COMPLETE,
   STEP_CELEBRATION_PROGRESS_COMPLETE,
   DRAW_CHECK,
+  ANIMATION_MAGIC_NUMBERS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -77,10 +78,10 @@ function StepCelebrationComponent({
     return Array.from({ length: count }, (_, i) => ({
       id: i,
       x:
-        Math.cos((i / count) * Math.PI * 2) *
+        Math.cos((i / count) * ANIMATION_MAGIC_NUMBERS.ANGLE_MULTIPLIER) *
         COMPONENT_CONFIG.STEP_CELEBRATION.RADIUS_MULTIPLIER,
       y:
-        Math.sin((i / count) * Math.PI * 2) *
+        Math.sin((i / count) * ANIMATION_MAGIC_NUMBERS.ANGLE_MULTIPLIER) *
         COMPONENT_CONFIG.STEP_CELEBRATION.RADIUS_MULTIPLIER,
       rotation: (i / count) * ANIMATION_PHYSICS.FULL_ROTATION_DEGREES,
       scale:

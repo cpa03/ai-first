@@ -17,6 +17,7 @@ import {
   BORDER_COLORS,
   PULSE_DOT,
   SVG_CIRCLE,
+  SVG_ANIMATION,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -141,8 +142,8 @@ function AutoSaveIndicatorComponent({
     const seconds = Math.floor(diff / TIME_CONVERSIONS.MS_PER_SECOND);
 
     if (seconds < 10) return AUTO_SAVE_INDICATOR_LABELS.JUST_NOW;
-    if (seconds < 60) return `${seconds}s ago`;
-    const minutes = Math.floor(seconds / 60);
+    if (seconds < TIME_CONVERSIONS.SECONDS_PER_MINUTE) return `${seconds}s ago`;
+    const minutes = Math.floor(seconds / TIME_CONVERSIONS.SECONDS_PER_MINUTE);
     if (minutes < 60) return `${minutes}m ago`;
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
@@ -192,8 +193,8 @@ function AutoSaveIndicatorComponent({
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               strokeLinecap="round"
               className={`text-primary-500 transition-all ${DURATION_TAILWIND[100]}`}
-              strokeDasharray={`${2 * Math.PI * 10}`}
-              strokeDashoffset={`${2 * Math.PI * 10 * (1 - progress / 100)}`}
+              strokeDasharray={`${SVG_ANIMATION.PROGRESS.getCircumference(Number(SVG_CIRCLE.R_10))}`}
+              strokeDashoffset={`${SVG_ANIMATION.PROGRESS.getDashOffset(SVG_ANIMATION.PROGRESS.getCircumference(Number(SVG_CIRCLE.R_10)), progress)}`}
             />
           )}
         </svg>
