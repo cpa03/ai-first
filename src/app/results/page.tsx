@@ -313,12 +313,39 @@ function ResultsContent() {
     [idea, session, fire]
   );
 
+  // Micro-UX: Keyboard shortcuts for all export formats
+  // Provides power users with quick access to all export options via keyboard
+  // Matches the existing Cmd+E pattern for markdown export
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
-        e.preventDefault();
+      if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey) {
         if (!exportLoading && idea) {
-          handleExport('markdown');
+          switch (e.key.toLowerCase()) {
+            case 'e':
+              e.preventDefault();
+              handleExport('markdown');
+              break;
+            case 'j':
+              e.preventDefault();
+              handleExport('json');
+              break;
+            case 'n':
+              e.preventDefault();
+              handleExport('notion');
+              break;
+            case 't':
+              e.preventDefault();
+              handleExport('trello');
+              break;
+            case 'g':
+              e.preventDefault();
+              handleExport('google-tasks');
+              break;
+            case 'h':
+              e.preventDefault();
+              handleExport('github-projects');
+              break;
+          }
         }
       }
     };
@@ -765,8 +792,8 @@ function ResultsContent() {
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
-                <kbd className={ELEMENT_PATTERNS.KBD}>D</kbd>
-                <span className="text-gray-500">download</span>
+                <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
+                <span className="text-gray-500">export</span>
               </span>
               <span
                 className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
@@ -774,8 +801,17 @@ function ResultsContent() {
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
-                <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
-                <span className="text-gray-500">export markdown</span>
+                <kbd className={ELEMENT_PATTERNS.KBD}>J</kbd>
+                <span className="text-gray-500">JSON</span>
+              </span>
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
+              >
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>T</kbd>
+                <span className="text-gray-500">Trello</span>
               </span>
               <span
                 className={`hidden sm:inline-flex items-center gap-1.5 hover:text-gray-700 transition-colors duration-200`}
