@@ -229,9 +229,10 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
+- [BroCula Browser Audit - 2026-07-29](./maintenance/BROCULA-AUDIT-2026-07-29.md) - BroCula browser console & Lighthouse audit (latest)
 - [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
 - [BugFixer Audit - 2026-07-22](./audit/bugfixer-audit-20260722.md) - Comprehensive bug audit with quality gates
-- [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit (latest)
+- [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit
 - [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit
 - [Browser Console Lighthouse - 2026-07-19](./audit/2026-07-19-brocula-browser-console-lighthouse.md) - BroCula browser console & Lighthouse audit
 - [Browser Verification - 2026-07-20](./audit/browser-verification-2026-07-20.md) - Browser verification audit
