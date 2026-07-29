@@ -37,6 +37,7 @@ import {
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useFocusManagement } from '@/hooks/useAnnouncement';
 
 const { CONTEXT_LABELS, CONTEXT_ORDER, SHORTCUT_DESCRIPTIONS } =
   KEYBOARD_SHORTCUTS_HELP_LABELS;
@@ -451,11 +452,16 @@ function KeyboardShortcutsHelpComponent({
   const modalRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  // Micro-UX: Store the element that had focus before modal opened
-  // This enables proper focus restoration when modal closes
-  const previouslyFocusedRef = useRef<HTMLElement | null>(null);
   const selectedItemRef = useRef<HTMLDivElement>(null);
   const shortcutsContainerRef = useRef<HTMLDivElement>(null);
+
+  const { storeFocus, restoreFocus: restoreFocusFn } = useFocusManagement(
+    isOpen,
+    {
+      delay: 0,
+      restoreFocus: true,
+    }
+  );
 
   useEffect(() => {
     return () => {
@@ -470,8 +476,6 @@ function KeyboardShortcutsHelpComponent({
     setIsMac(PLATFORM.isMac());
   }, []);
 
-  // Micro-UX: Close handler with focus restoration
-  // Restores focus to the element that triggered the modal for seamless keyboard navigation
   const handleClose = useCallback(() => {
     triggerHapticFeedback();
     setIsLeaving(true);
@@ -480,18 +484,13 @@ function KeyboardShortcutsHelpComponent({
       setSearchQuery('');
       setSelectedIndex(0);
       onClose();
-      if (previouslyFocusedRef.current) {
-        previouslyFocusedRef.current.focus();
-        previouslyFocusedRef.current = null;
-      }
+      restoreFocusFn();
     }, ANIMATION_CONFIG.STANDARD);
-  }, [onClose]);
+  }, [onClose, restoreFocusFn]);
 
-  // Micro-UX: Handle open state with focus management
-  // Save previously focused element and trap focus within modal
   useEffect(() => {
     if (isOpen) {
-      previouslyFocusedRef.current = document.activeElement as HTMLElement;
+      storeFocus();
       requestAnimationFrame(() => searchInputRef.current?.focus());
       document.body.style.overflow = 'hidden';
     } else {
@@ -500,7 +499,7 @@ function KeyboardShortcutsHelpComponent({
     return () => {
       document.body.style.overflow = 'unset';
     };
-  }, [isOpen]);
+  }, [isOpen, storeFocus]);
 
   // Handle escape and click outside
   useEffect(() => {
