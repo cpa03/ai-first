@@ -36,6 +36,7 @@ import {
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 
 // Dynamic imports for code splitting - reduce initial bundle size
 const Button = dynamic(() => import('@/components/Button'), { ssr: false });
@@ -65,9 +66,15 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
+  const [isMac, setIsMac] = useState(false);
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+
+  // Micro-UX: Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
   const {
     isCapsLockOn: isPasswordCapsLockOn,
     handleKeyDown: handlePasswordKeyDown,
@@ -226,6 +233,28 @@ export default function LoginPage() {
     },
     []
   );
+
+  // Micro-UX: Cmd/Ctrl+Enter keyboard shortcut for form submission
+  // Matches the pattern of IdeaInput (⌘Enter) and ClarificationFlow (⌘Enter)
+  // Provides quick keyboard access for power users without needing to click the submit button
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        if (
+          !isFocusedOnInput(e.target) ||
+          e.target === emailInputRef.current ||
+          e.target === passwordInputRef.current
+        ) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          submitForm();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [submitForm]);
 
   return (
     <div className={PAGE_LAYOUT_CLASSES.AUTH_CONTAINER}>
@@ -391,18 +420,39 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full"
-            size="lg"
-            enableTransition
-            attention={isFormValid && !isLoading}
-          >
-            {isLoading
-              ? LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING
-              : LOGIN_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
-          </Button>
+          <div className="space-y-2">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full"
+              size="lg"
+              enableTransition
+              attention={isFormValid && !isLoading}
+              shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
+            >
+              {isLoading
+                ? LOGIN_PAGE_CONTENT.FORM.SUBMIT_LOADING
+                : LOGIN_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
+            </Button>
+            <p
+              className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} text-center hidden sm:block`}
+              aria-hidden="true"
+            >
+              Press{' '}
+              <kbd
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+              >
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              {' + '}
+              <kbd
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+              >
+                Enter
+              </kbd>
+              {' to submit'}
+            </p>
+          </div>
         </form>
 
         <div
