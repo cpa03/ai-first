@@ -8,11 +8,10 @@ import {
   TEXT_SIZE_CLASSES,
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
+  UI_CONFIG,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
-
-const SHOW_PERCENTAGE_THRESHOLD = 75;
 
 /**
  * ScrollProgress - Visual scroll position indicator
@@ -33,7 +32,8 @@ function ScrollProgressComponent() {
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
 
-  const showPercentage = scrollPercent >= SHOW_PERCENTAGE_THRESHOLD;
+  const showPercentage =
+    scrollPercent >= UI_CONFIG.SCROLL_PROGRESS_SHOW_THRESHOLD;
   const displayPercentage = Math.round(scrollPercent);
 
   const handleScroll = useCallback(() => {
