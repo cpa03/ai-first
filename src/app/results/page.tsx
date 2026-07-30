@@ -554,6 +554,7 @@ function ResultsContent() {
             >
               <Tooltip
                 content={RESULTS_PAGE_CONTENT.TOOLTIPS.JSON}
+                shortcut={[isMac ? '⌘' : 'Ctrl', 'J']}
                 position="top"
               >
                 <Button
@@ -579,19 +580,26 @@ function ResultsContent() {
               }
             >
               {connectorHealth.notion?.configured ? (
-                <Button
-                  variant="outline"
-                  onClick={() => handleExport('notion')}
-                  loading={exportingFormat === 'notion'}
-                  loadingText={EXPORT_LABELS.NOTION.LOADING}
-                  disabled={exportLoading && exportingFormat !== 'notion'}
-                  aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'N']}
+                  position="top"
                 >
-                  {EXPORT_LABELS.NOTION.DEFAULT}
-                </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleExport('notion')}
+                    loading={exportingFormat === 'notion'}
+                    loadingText={EXPORT_LABELS.NOTION.LOADING}
+                    disabled={exportLoading && exportingFormat !== 'notion'}
+                    aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_NOTION}
+                  >
+                    {EXPORT_LABELS.NOTION.DEFAULT}
+                  </Button>
+                </Tooltip>
               ) : (
                 <Tooltip
                   content={RESULTS_PAGE_CONTENT.TOOLTIPS.NOTION}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'N']}
                   position="top"
                 >
                   <Button
@@ -620,19 +628,26 @@ function ResultsContent() {
               }
             >
               {connectorHealth.trello?.configured ? (
-                <Button
-                  variant="outline"
-                  onClick={() => handleExport('trello')}
-                  loading={exportingFormat === 'trello'}
-                  loadingText={EXPORT_LABELS.TRELLO.LOADING}
-                  disabled={exportLoading && exportingFormat !== 'trello'}
-                  aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'T']}
+                  position="top"
                 >
-                  {EXPORT_LABELS.TRELLO.DEFAULT}
-                </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleExport('trello')}
+                    loading={exportingFormat === 'trello'}
+                    loadingText={EXPORT_LABELS.TRELLO.LOADING}
+                    disabled={exportLoading && exportingFormat !== 'trello'}
+                    aria-label={RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_TRELLO}
+                  >
+                    {EXPORT_LABELS.TRELLO.DEFAULT}
+                  </Button>
+                </Tooltip>
               ) : (
                 <Tooltip
                   content={RESULTS_PAGE_CONTENT.TOOLTIPS.TRELLO}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'T']}
                   position="top"
                 >
                   <Button
@@ -661,21 +676,30 @@ function ResultsContent() {
               }
             >
               {connectorHealth['google-tasks']?.configured ? (
-                <Button
-                  variant="outline"
-                  onClick={() => handleExport('google-tasks')}
-                  loading={exportingFormat === 'google-tasks'}
-                  loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
-                  disabled={exportLoading && exportingFormat !== 'google-tasks'}
-                  aria-label={
-                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS
-                  }
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'G']}
+                  position="top"
                 >
-                  {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
-                </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleExport('google-tasks')}
+                    loading={exportingFormat === 'google-tasks'}
+                    loadingText={EXPORT_LABELS.GOOGLE_TASKS.LOADING}
+                    disabled={
+                      exportLoading && exportingFormat !== 'google-tasks'
+                    }
+                    aria-label={
+                      RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GOOGLE_TASKS
+                    }
+                  >
+                    {EXPORT_LABELS.GOOGLE_TASKS.DEFAULT}
+                  </Button>
+                </Tooltip>
               ) : (
                 <Tooltip
                   content={RESULTS_PAGE_CONTENT.TOOLTIPS.GOOGLE_TASKS}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'G']}
                   position="top"
                 >
                   <Button
@@ -704,23 +728,30 @@ function ResultsContent() {
               }
             >
               {connectorHealth['github-projects']?.configured ? (
-                <Button
-                  variant="outline"
-                  onClick={() => handleExport('github-projects')}
-                  loading={exportingFormat === 'github-projects'}
-                  loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
-                  disabled={
-                    exportLoading && exportingFormat !== 'github-projects'
-                  }
-                  aria-label={
-                    RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
-                  }
+                <Tooltip
+                  content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'H']}
+                  position="top"
                 >
-                  {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
-                </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleExport('github-projects')}
+                    loading={exportingFormat === 'github-projects'}
+                    loadingText={EXPORT_LABELS.GITHUB_PROJECTS.LOADING}
+                    disabled={
+                      exportLoading && exportingFormat !== 'github-projects'
+                    }
+                    aria-label={
+                      RESULTS_PAGE_CONTENT.ARIA_LABELS.EXPORT_GITHUB_PROJECTS
+                    }
+                  >
+                    {EXPORT_LABELS.GITHUB_PROJECTS.DEFAULT}
+                  </Button>
+                </Tooltip>
               ) : (
                 <Tooltip
                   content={RESULTS_PAGE_CONTENT.TOOLTIPS.GITHUB_PROJECTS}
+                  shortcut={[isMac ? '⌘' : 'Ctrl', 'H']}
                   position="top"
                 >
                   <Button
@@ -810,9 +841,36 @@ function ResultsContent() {
                 <kbd className={ELEMENT_PATTERNS.KBD}>
                   {isMac ? '⌘' : 'Ctrl'}
                 </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>N</kbd>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  Notion
+                </span>
+              </span>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
                 <kbd className={ELEMENT_PATTERNS.KBD}>T</kbd>
                 <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                   Trello
+                </span>
+              </span>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>G</kbd>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  Google
+                </span>
+              </span>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>H</kbd>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  GitHub
                 </span>
               </span>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
