@@ -331,6 +331,84 @@ const BROWSER_SCANNER_CONFIG = {
     480,
     2160
   ),
+
+  /**
+   * Chrome flags for browser automation
+   * Centralizes all Chrome launch flags used across audit scripts
+   */
+  CHROME_FLAGS: {
+    /**
+     * Common flags for all Chrome instances
+     * Env: CHROME_FLAGS (default: '--no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage')
+     */
+    COMMON: getEnvString(
+      'CHROME_FLAGS',
+      '--no-sandbox,--disable-setuid-sandbox,--disable-dev-shm-usage'
+    ).split(','),
+
+    /**
+     * Additional flags for Lighthouse Chrome instances
+     * Env: LIGHTHOUSE_CHROME_FLAGS (default: '--headless,--disable-gpu')
+     */
+    LIGHTHOUSE: getEnvString(
+      'LIGHTHOUSE_CHROME_FLAGS',
+      '--headless,--disable-gpu'
+    ).split(','),
+  },
+
+  /**
+   * User agent string for browser automation
+   * Env: BROWSER_USER_AGENT (default: Mozilla/5.0 Chrome/120)
+   */
+  USER_AGENT: getEnvString(
+    'BROWSER_USER_AGENT',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  ),
+
+  /**
+   * Audit thresholds for performance checks
+   */
+  AUDIT_THRESHOLDS: {
+    /**
+     * Maximum DOM size before warning
+     * Env: AUDIT_MAX_DOM_SIZE (default: 1500)
+     */
+    MAX_DOM_SIZE: getEnvNumber('AUDIT_MAX_DOM_SIZE', 1500, 500, 5000),
+
+    /**
+     * Maximum number of scripts before warning
+     * Env: AUDIT_MAX_SCRIPT_COUNT (default: 20)
+     */
+    MAX_SCRIPT_COUNT: getEnvNumber('AUDIT_MAX_SCRIPT_COUNT', 20, 5, 50),
+
+    /**
+     * Maximum number of images without lazy loading before warning
+     * Env: AUDIT_MAX_IMAGES_NO_LAZY (default: 3)
+     */
+    MAX_IMAGES_NO_LAZY: getEnvNumber('AUDIT_MAX_IMAGES_NO_LAZY', 3, 1, 10),
+
+    /**
+     * Page load time thresholds in milliseconds
+     */
+    PAGE_LOAD: {
+      /**
+       * Fast load time threshold
+       * Env: AUDIT_PAGE_LOAD_FAST_MS (default: 1000)
+       */
+      FAST: getEnvNumber('AUDIT_PAGE_LOAD_FAST_MS', 1000, 100, 3000),
+
+      /**
+       * Acceptable load time threshold
+       * Env: AUDIT_PAGE_LOAD_ACCEPTABLE_MS (default: 3000)
+       */
+      ACCEPTABLE: getEnvNumber(
+        'AUDIT_PAGE_LOAD_ACCEPTABLE_MS',
+        3000,
+        1000,
+        10000
+      ),
+    },
+  },
 };
 
 module.exports = {

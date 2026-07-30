@@ -10,7 +10,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { BROWSER_SCANNER_CONFIG } = require('./config');
 
-const { BASE_URL, PAGES, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS } =
+const { BASE_URL, PAGES, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS, CHROME_FLAGS } =
   BROWSER_SCANNER_CONFIG;
 
 const errors = [];
@@ -136,11 +136,7 @@ async function main() {
 
   const browser = await chromium.launch({
     headless: true,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-dev-shm-usage',
-    ],
+    args: CHROME_FLAGS.COMMON,
   });
 
   try {
