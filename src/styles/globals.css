@@ -688,6 +688,29 @@
   }
 }
 
+/* Task updating pulse animation - subtle feedback during task status updates */
+@keyframes taskUpdatingPulse {
+  0%,
+  100% {
+    opacity: 1;
+    background-color: transparent;
+  }
+  50% {
+    opacity: 0.85;
+    background-color: rgb(59 130 246 / 0.05);
+  }
+}
+
+.animate-task-updating-pulse {
+  animation: taskUpdatingPulse 1.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-task-updating-pulse {
+    animation: none;
+  }
+}
+
 /* Button glow pulse animation - adds delightful hover effect to primary CTAs */
 /* Creates a soft breathing glow that draws attention and adds modern polish */
 @keyframes glowPulse {
