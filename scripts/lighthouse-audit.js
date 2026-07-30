@@ -19,7 +19,7 @@ const {
   SCREEN_EMULATION,
 } = LIGHTHOUSE_CONFIG;
 
-const { AUDIT_TIMEOUT_MS } = BROWSER_SCANNER_CONFIG;
+const { AUDIT_TIMEOUT_MS, CHROME_FLAGS, USER_AGENT } = BROWSER_SCANNER_CONFIG;
 
 const CONFIG = {
   extends: 'lighthouse:default',
@@ -41,8 +41,7 @@ const CONFIG = {
       deviceScaleFactor: SCREEN_EMULATION.DEVICE_SCALE_FACTOR,
       disabled: false,
     },
-    emulatedUserAgent:
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    emulatedUserAgent: USER_AGENT,
   },
 };
 
@@ -60,13 +59,7 @@ async function runLighthouse(url) {
   try {
     chrome = await chromeLauncher.launch({
       chromePath: CHROME_PATH,
-      chromeFlags: [
-        '--no-sandbox',
-        '--headless',
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--disable-setuid-sandbox',
-      ],
+      chromeFlags: [...CHROME_FLAGS.COMMON, ...CHROME_FLAGS.LIGHTHOUSE],
     });
   } catch (launchError) {
     console.error(`  ✗ Failed to launch Chrome: ${launchError.message}`);
@@ -74,13 +67,7 @@ async function runLighthouse(url) {
 
     // Try without explicit path
     chrome = await chromeLauncher.launch({
-      chromeFlags: [
-        '--no-sandbox',
-        '--headless',
-        '--disable-gpu',
-        '--disable-dev-shm-usage',
-        '--disable-setuid-sandbox',
-      ],
+      chromeFlags: [...CHROME_FLAGS.COMMON, ...CHROME_FLAGS.LIGHTHOUSE],
     });
   }
 

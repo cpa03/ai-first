@@ -7,7 +7,13 @@
 const { chromium } = require('playwright');
 const { LIGHTHOUSE_CONFIG, BROWSER_SCANNER_CONFIG } = require('./config');
 
-const { BASE_URL, NAVIGATION_TIMEOUT, ASYNC_WAIT_MS } = BROWSER_SCANNER_CONFIG;
+const {
+  BASE_URL,
+  NAVIGATION_TIMEOUT,
+  ASYNC_WAIT_MS,
+  CHROME_FLAGS,
+  AUDIT_THRESHOLDS,
+} = BROWSER_SCANNER_CONFIG;
 const { CHROME_PATH, AUDIT_TIMEOUT_MS } = LIGHTHOUSE_CONFIG;
 
 const PAGE_LOAD_TIMEOUT = parseInt(
@@ -97,17 +103,23 @@ const DOM_STABILIZATION_WAIT = parseInt(
           images: images.length,
           scripts: scripts.length,
           stylesheets: stylesheets.length,
-          // Check for large DOM
-          hasLargeDOM: allElements.length > 1500,
         };
       });
 
-      const status = loadTime < 1000 ? '✅' : loadTime < 3000 ? '⚠️' : '❌';
+      const { PAGE_LOAD, MAX_DOM_SIZE, MAX_SCRIPT_COUNT, MAX_IMAGES_NO_LAZY } =
+        AUDIT_THRESHOLDS;
+
+      const status =
+        loadTime < PAGE_LOAD.FAST
+          ? '✅'
+          : loadTime < PAGE_LOAD.ACCEPTABLE
+            ? '⚠️'
+            : '❌';
       console.log(
         `${status} ${route.name}: ${loadTime}ms | DOM: ${domInfo.totalElements} nodes`
       );
 
-      if (domInfo.hasLargeDOM) {
+      if (domInfo.totalElements > MAX_DOM_SIZE) {
         auditResults.optimizationOpportunities.push({
           type: 'Large DOM',
           route: route.name,
@@ -229,11 +241,10 @@ const DOM_STABILIZATION_WAIT = parseInt(
     const scripts = document.querySelectorAll('script[src]');
     return {
       scriptCount: scripts.length,
-      hasManyScripts: scripts.length > 20,
     };
   });
 
-  if (bundleInfo.hasManyScripts) {
+  if (bundleInfo.scriptCount > MAX_SCRIPT_COUNT) {
     auditResults.optimizationOpportunities.push({
       type: 'Many Scripts',
       value: bundleInfo.scriptCount,
@@ -258,7 +269,7 @@ const DOM_STABILIZATION_WAIT = parseInt(
     };
   });
 
-  if (imageInfo.withoutLazy > 3) {
+  if (imageInfo.withoutLazy > MAX_IMAGES_NO_LAZY) {
     auditResults.optimizationOpportunities.push({
       type: 'Image Lazy Loading',
       value: imageInfo.withoutLazy,
