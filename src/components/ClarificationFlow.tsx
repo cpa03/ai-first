@@ -122,6 +122,8 @@ function ClarificationFlow({
   const [slideDirection, setSlideDirection] = useState<'forward' | 'backward'>(
     'forward'
   );
+  const [estimatePulse, setEstimatePulse] = useState(false);
+  const prevEstimateRef = useRef<number | null>(null);
   const prevStepRef = useRef(currentStep);
   const [pasteSuccess, setPasteSuccess] = useState(false);
   const pasteSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -227,6 +229,21 @@ function ClarificationFlow({
     textInputRef,
     selectRef,
   ]);
+
+  // Micro-UX: Pulse animation when estimated time remaining changes
+  // Gives users a subtle visual cue that the estimate has been recalculated
+  useEffect(() => {
+    if (estimatedRemainingSeconds === null || prefersReducedMotion) return;
+    if (
+      prevEstimateRef.current !== null &&
+      prevEstimateRef.current !== estimatedRemainingSeconds
+    ) {
+      setEstimatePulse(true);
+      const timer = setTimeout(() => setEstimatePulse(false), 600);
+      return () => clearTimeout(timer);
+    }
+    prevEstimateRef.current = estimatedRemainingSeconds;
+  }, [estimatedRemainingSeconds, prefersReducedMotion]);
 
   const handleToggleReference = useCallback(() => {
     const details = detailsRef.current;
@@ -606,7 +623,15 @@ function ClarificationFlow({
               estimatedRemainingSeconds > 0 && (
                 <span className="flex items-center gap-1.5">
                   <span className={GRAY_CLASSES.TEXT_400}>·</span>
-                  <span>~{formatTime(estimatedRemainingSeconds)} left</span>
+                  <span
+                    className={`transition-all duration-300 ${
+                      estimatePulse
+                        ? 'text-primary-600 font-medium scale-105'
+                        : ''
+                    }`}
+                  >
+                    ~{formatTime(estimatedRemainingSeconds)} left
+                  </span>
                 </span>
               )}
           </div>
