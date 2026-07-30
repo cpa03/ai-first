@@ -59,12 +59,14 @@ export default function NotFound() {
   }, [router]);
 
   // Micro-UX: Keyboard shortcuts for quick navigation
-  // Enter = Go back, Escape = Go home, Ctrl/Cmd+C = Copy URL (matches ErrorBoundary pattern)
+  // Enter/Cmd+Enter = Go back, Escape = Go home, Ctrl/Cmd+C = Copy URL (matches ErrorBoundary pattern)
+  // Cmd+Enter matches login/signup pages for consistency
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFocusedOnInput(e.target)) return;
 
-      if (e.key === 'Enter' && !e.metaKey && !e.ctrlKey) {
+      // Enter or Cmd/Ctrl+Enter = Go back (consistent with login/signup pages)
+      if (e.key === 'Enter') {
         e.preventDefault();
         handleGoBack();
       }
@@ -248,6 +250,11 @@ export default function NotFound() {
             <span
               className={`hidden sm:inline-flex items-center gap-1.5 ${BREATHE}`}
             >
+              <kbd
+                className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
+              >
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
               <kbd
                 className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}
               >
