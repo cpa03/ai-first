@@ -36,6 +36,7 @@ import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import Tooltip from './Tooltip';
 
 /**
  * Onboarding Tour Steps
@@ -409,26 +410,30 @@ export default function UserOnboarding() {
         />
 
         {/* Close button */}
-        <button
-          onClick={handleSkip}
-          className={`absolute top-3 right-3 ${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md`}
-          aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
-        >
-          <svg
-            className={ICON_SIZES.LG}
-            fill="none"
-            stroke="currentColor"
-            viewBox={SVG_VIEWBOX.STANDARD}
-            aria-hidden="true"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+        <div className="absolute top-3 right-3">
+          <Tooltip content="Skip tour" shortcut={['Esc']} position="bottom">
+            <button
+              onClick={handleSkip}
+              className={`${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md`}
+              aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
+            >
+              <svg
+                className={ICON_SIZES.LG}
+                fill="none"
+                stroke="currentColor"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </Tooltip>
+        </div>
 
         {/* Content */}
         <div className="mt-2">
