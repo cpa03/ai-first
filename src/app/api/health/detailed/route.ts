@@ -94,6 +94,7 @@ interface HealthResponse {
     service: string;
     state: string;
     failures: number;
+    nextAttemptTime?: string;
   }>;
   externalRateLimits: ExternalRateLimitStats;
 }
@@ -234,6 +235,7 @@ async function handleGet(context: ApiContext) {
     service,
     state: status.state,
     failures: status.failures,
+    nextAttemptTime: status.nextAttemptTime,
   }));
 
   const connectors = await exportManager.getConnectorsHealth();
