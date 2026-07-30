@@ -244,7 +244,7 @@ const DOM_STABILIZATION_WAIT = parseInt(
     };
   });
 
-  if (bundleInfo.scriptCount > MAX_SCRIPT_COUNT) {
+  if (bundleInfo.scriptCount > AUDIT_THRESHOLDS.MAX_SCRIPT_COUNT) {
     auditResults.optimizationOpportunities.push({
       type: 'Many Scripts',
       value: bundleInfo.scriptCount,
@@ -269,7 +269,7 @@ const DOM_STABILIZATION_WAIT = parseInt(
     };
   });
 
-  if (imageInfo.withoutLazy > MAX_IMAGES_NO_LAZY) {
+  if (imageInfo.withoutLazy > AUDIT_THRESHOLDS.MAX_IMAGES_NO_LAZY) {
     auditResults.optimizationOpportunities.push({
       type: 'Image Lazy Loading',
       value: imageInfo.withoutLazy,
