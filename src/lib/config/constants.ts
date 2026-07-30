@@ -21,7 +21,9 @@ export { HEALTH_CONFIG, MEMORY_CONFIG, MEMORY_UNITS } from './health';
 export { IDEA_STATUS_CONFIG, type IdeaStatus } from './idea-status-config';
 export {
   SESSION_TRACKING_CONFIG,
+  CLARIFICATION_TIMER_CONFIG,
   type SessionTrackingConfig,
+  type ClarificationTimerConfig,
 } from './session-tracking';
 
 // Re-export from newly extracted domain-specific modules
