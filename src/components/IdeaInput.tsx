@@ -495,6 +495,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           <div className={IDEA_INPUT_STATUS_ITEMS}>
             <div
               className={`flex items-center gap-2 text-sm ${TEXT_COLOR_CLASSES.BODY}`}
+              role="group"
               aria-label={MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}
             >
               <kbd className={KBD_CLASSES}>{isMac ? '⌘' : 'Ctrl'}</kbd>
