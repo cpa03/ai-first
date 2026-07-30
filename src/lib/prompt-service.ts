@@ -44,7 +44,10 @@ export function parseTemplate(template: string): TemplateChunk[] {
     chunks.push(template.substring(lastIndex));
   }
 
-  if (templateChunksCache.size >= 500) {
+  if (
+    templateChunksCache.size >=
+    CACHE_CONFIG.SERVICES.PROMPT.CHUNK_CACHE_MAX_SIZE
+  ) {
     const firstKey = templateChunksCache.keys().next().value;
     if (firstKey !== undefined) {
       templateChunksCache.delete(firstKey);

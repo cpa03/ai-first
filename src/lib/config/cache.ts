@@ -135,6 +135,17 @@ export const CACHE_CONFIG = {
         10,
         2000
       ),
+      /**
+       * Maximum number of pre-compiled template chunks to cache
+       * Prevents memory leaks by capping the chunk cache size
+       * Env: CACHE_SERVICE_PROMPT_CHUNK_CACHE_MAX_SIZE (default: 500)
+       */
+      CHUNK_CACHE_MAX_SIZE: EnvLoader.number(
+        'CACHE_SERVICE_PROMPT_CHUNK_CACHE_MAX_SIZE',
+        500,
+        50,
+        5000
+      ),
     } as const,
 
     /**
