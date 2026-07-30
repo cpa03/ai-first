@@ -40,6 +40,10 @@ jest.mock('@/lib/config', () => ({
     COMPLETE: 100,
     ZERO: 0,
   },
+  CLARIFICATION_TIMER_CONFIG: {
+    INTERVAL_MS: 1000,
+    MIN_TRANSITION_MS: 500,
+  },
 }));
 
 const mockFetch = require('@/lib/api-client').fetchWithTimeout as jest.Mock;

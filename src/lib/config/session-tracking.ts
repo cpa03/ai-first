@@ -49,4 +49,39 @@ export const SESSION_TRACKING_CONFIG = {
   ),
 } as const;
 
+/**
+ * Configuration for clarification session timer
+ * Extracted from useClarificationSession hook for modularity
+ */
+export const CLARIFICATION_TIMER_CONFIG = {
+  /**
+   * Timer update interval in milliseconds.
+   * How often the elapsed time counter updates during clarification flow.
+   *
+   * Env: CLARIFICATION_TIMER_INTERVAL_MS
+   * Default: 1000 (1 second)
+   */
+  INTERVAL_MS: EnvLoader.number(
+    'CLARIFICATION_TIMER_INTERVAL_MS',
+    1000,
+    100,
+    5000
+  ),
+
+  /**
+   * Minimum time between question transitions in milliseconds.
+   * Prevents rapid-fire transitions that could confuse users.
+   *
+   * Env: CLARIFICATION_MIN_TRANSITION_MS
+   * Default: 500 (0.5 seconds)
+   */
+  MIN_TRANSITION_MS: EnvLoader.number(
+    'CLARIFICATION_MIN_TRANSITION_MS',
+    500,
+    100,
+    2000
+  ),
+} as const;
+
 export type SessionTrackingConfig = typeof SESSION_TRACKING_CONFIG;
+export type ClarificationTimerConfig = typeof CLARIFICATION_TIMER_CONFIG;

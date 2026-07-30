@@ -12,6 +12,7 @@ import {
   API_ENDPOINTS,
   HTTP_HEADERS,
   PROGRESS_PERCENTAGE,
+  CLARIFICATION_TIMER_CONFIG,
 } from '@/lib/config';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -256,10 +257,13 @@ export function useClarificationSession(
     const interval = setInterval(() => {
       if (isMountedRef.current) {
         setElapsedSeconds(
-          Math.floor((Date.now() - startTimeRef.current) / 1000)
+          Math.floor(
+            (Date.now() - startTimeRef.current) /
+              CLARIFICATION_TIMER_CONFIG.INTERVAL_MS
+          )
         );
       }
-    }, 1000);
+    }, CLARIFICATION_TIMER_CONFIG.INTERVAL_MS);
 
     return () => clearInterval(interval);
   }, [loading, questions.length, isSubmitting]);
