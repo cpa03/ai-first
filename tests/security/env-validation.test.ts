@@ -109,6 +109,7 @@ describe('Environment Validation', () => {
     it('should detect NEXT_PUBLIC_ prefix on integration keys', () => {
       process.env.NEXT_PUBLIC_NOTION_API_KEY = 'notion-exposed';
       process.env.NEXT_PUBLIC_GITHUB_TOKEN = 'github-exposed';
+      process.env.NEXT_PUBLIC_TRELLO_API_KEY = 'trello-exposed';
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
@@ -121,6 +122,9 @@ describe('Environment Validation', () => {
       expect(
         result.errors.some((e) => e.includes('NEXT_PUBLIC_GITHUB_TOKEN'))
       ).toBe(true);
+      expect(
+        result.errors.some((e) => e.includes('NEXT_PUBLIC_TRELLO_API_KEY'))
+      ).toBe(true);
     });
 
     it('should warn about placeholders and weak strength on integration keys outside development', () => {
@@ -130,6 +134,7 @@ describe('Environment Validation', () => {
         writable: true,
       });
       process.env.NOTION_API_KEY = 'your_notion_key_here'; // placeholder + too short
+      process.env.TRELLO_API_KEY = 'your_trello_key_here'; // placeholder + too short
       process.env.NEXT_PUBLIC_SUPABASE_URL = 'https://test.supabase.co';
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'test-anon-key';
 
@@ -143,6 +148,16 @@ describe('Environment Validation', () => {
       expect(
         result.warnings.some(
           (w) => w.includes('NOTION_API_KEY') && w.includes('too short')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('TRELLO_API_KEY') && w.includes('placeholder')
+        )
+      ).toBe(true);
+      expect(
+        result.warnings.some(
+          (w) => w.includes('TRELLO_API_KEY') && w.includes('too short')
         )
       ).toBe(true);
     });

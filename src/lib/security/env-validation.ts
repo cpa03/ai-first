@@ -25,6 +25,7 @@ const SENSITIVE_KEYS = [
   'ANTHROPIC_API_KEY',
   'INTERNAL_API_SECRET',
   'NOTION_API_KEY',
+  'TRELLO_API_KEY',
   'TRELLO_TOKEN',
   'GITHUB_TOKEN',
   'GOOGLE_CLIENT_SECRET',
@@ -127,6 +128,7 @@ const MUST_BE_PRIVATE = [
   'ANTHROPIC_API_KEY',
   'INTERNAL_API_SECRET',
   'NOTION_API_KEY',
+  'TRELLO_API_KEY',
   'TRELLO_TOKEN',
   'GITHUB_TOKEN',
   'GOOGLE_CLIENT_SECRET',
@@ -417,6 +419,11 @@ export function validateEnvironment(): ValidationResult {
   const notionApiKey = ENV_ACCESSORS.EXPORT.NOTION_API_KEY();
   if (notionApiKey) {
     warnings.push(...checkSecretStrength('NOTION_API_KEY', notionApiKey));
+  }
+
+  const trelloApiKey = ENV_ACCESSORS.EXPORT.TRELLO_API_KEY();
+  if (trelloApiKey) {
+    warnings.push(...checkSecretStrength('TRELLO_API_KEY', trelloApiKey));
   }
 
   const trelloToken = ENV_ACCESSORS.EXPORT.TRELLO_TOKEN();
