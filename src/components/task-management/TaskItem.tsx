@@ -136,13 +136,16 @@ function TaskItemComponent({
       ? 'motion-reduce:transition-none motion-reduce:hover:transform-none'
       : '';
     const focusClass = focused ? 'ring-2 ring-primary-400 ring-offset-1' : '';
-    return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass} ${focusClass}`;
+    const updatingClass =
+      isUpdating && !prefersReducedMotion ? 'animate-task-updating-pulse' : '';
+    return `${base} ${riskIndicator} ${celebrationClass} ${reducedMotionClass} ${focusClass} ${updatingClass}`;
   }, [
     isCompleted,
     showCelebration,
     task.risk_level,
     prefersReducedMotion,
     focused,
+    isUpdating,
   ]);
 
   return (
