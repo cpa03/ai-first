@@ -22,6 +22,7 @@ import {
   TYPOGRAPHY_CLASSES,
   COMPONENT_STATE_COLORS,
   GRAY_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -301,7 +302,7 @@ function ScrollToTopComponent({
           tabIndex={0}
           className={`
             group
-            w-12 h-12
+            ${ICON_SIZES.XXXXL}
             flex items-center justify-center
             ${BG_COLORS.DEFAULT} ${TEXT_COLORS.SECONDARY}
             rounded-full ${SHADOW_CLASSES.LARGE}
@@ -371,7 +372,7 @@ function ScrollToTopComponent({
           ) : (
             <svg
               className={`
-                relative z-10 w-5 h-5 transition-all ${DURATION_TAILWIND[200]}
+                relative z-10 ${ICON_SIZES.LG} transition-all ${DURATION_TAILWIND[200]}
                 ${prefersReducedMotion ? '' : isNearTop ? 'group-hover:translate-y-0.5' : 'group-hover:-translate-y-0.5'}
               `}
               fill="none"

@@ -29,6 +29,7 @@ import {
   KEYBOARD_SHORTCUT_CATEGORY_ICON,
   KEYBOARD_SHORTCUT_FOOTER,
   GRAY_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import {
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
@@ -690,7 +691,7 @@ function KeyboardShortcutsHelpComponent({
         >
           <div className="relative">
             <svg
-              className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 ${TEXT_COLORS.SECONDARY}`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 ${ICON_SIZES.MD} ${TEXT_COLORS.SECONDARY}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -726,7 +727,7 @@ function KeyboardShortcutsHelpComponent({
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
-                  className="w-4 h-4"
+                  className={ICON_SIZES.MD}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -782,7 +783,7 @@ function KeyboardShortcutsHelpComponent({
           <div className="flex items-center gap-3">
             <div className={KEYBOARD_SHORTCUT_CATEGORY_ICON}>
               <svg
-                className="w-5 h-5 text-primary-600"
+                className={`${ICON_SIZES.LG} text-primary-600`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
@@ -820,7 +821,7 @@ function KeyboardShortcutsHelpComponent({
             aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLOSE_ARIA_LABEL}
           >
             <svg
-              className="w-5 h-5"
+              className={ICON_SIZES.LG}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -842,10 +843,10 @@ function KeyboardShortcutsHelpComponent({
           {flatShortcuts.length === 0 && searchQuery ? (
             <div className="flex flex-col items-center justify-center py-12 text-center">
               <div
-                className={`w-16 h-16 rounded-full ${BG_COLORS.LIGHTER} flex items-center justify-center mb-4`}
+                className={`${ICON_SIZES.HUGE} rounded-full ${BG_COLORS.LIGHTER} flex items-center justify-center mb-4`}
               >
                 <svg
-                  className={`w-8 h-8 ${TEXT_COLORS.SECONDARY}`}
+                  className={`${ICON_SIZES.XXL} ${TEXT_COLORS.SECONDARY}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
