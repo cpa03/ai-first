@@ -25,6 +25,7 @@ import {
   UI_CONFIG,
   PRIMARY_PULSE_CONTAINER,
   PRIMARY_PULSE_INNER,
+  ICON_SIZES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import type { Task } from '@/lib/db';
@@ -231,7 +232,10 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
       <div className={CARD_PATTERNS.BASE}>
         <div className="flex flex-col items-center text-center py-6">
           {/* Micro-UX improvement: Friendly animated empty state with visual guidance */}
-          <div className="relative w-24 h-24 mb-6" aria-hidden="true">
+          <div
+            className={`relative ${ICON_SIZES.MASSIVE} mb-6`}
+            aria-hidden="true"
+          >
             <div
               className={PRIMARY_PULSE_CONTAINER}
               style={{
@@ -241,7 +245,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             <div className={PRIMARY_PULSE_INNER} />
             <div className="absolute inset-0 flex items-center justify-center">
               <svg
-                className="w-10 h-10 text-primary-500"
+                className={`${ICON_SIZES.XXXL} text-primary-500`}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
@@ -269,7 +273,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
             className={`${LAYOUT_CLASSES.FLEX_ROW} gap-2 ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.MUTED} ${BG_COLOR_CLASSES.PAGE} px-4 py-2 ${ROUNDED_CLASSES.LARGE}`}
           >
             <svg
-              className="w-4 h-4 text-primary-500 flex-shrink-0"
+              className={`${ICON_SIZES.MD} text-primary-500 flex-shrink-0`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -328,7 +332,10 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           <div className="text-center py-8 animate-fade-in">
             {/* Micro-UX: Enhanced filtered empty state with animated icon */}
             {/* Matches the visual pattern of other empty states in the app */}
-            <div className="relative w-16 h-16 mx-auto mb-4" aria-hidden="true">
+            <div
+              className={`relative ${ICON_SIZES.HUGE} mx-auto mb-4`}
+              aria-hidden="true"
+            >
               <div
                 className={PRIMARY_PULSE_CONTAINER}
                 style={{
@@ -338,7 +345,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
               <div className={PRIMARY_PULSE_INNER} />
               <div className="absolute inset-0 flex items-center justify-center">
                 <svg
-                  className="w-8 h-8 text-primary-400"
+                  className={`${ICON_SIZES.XXL} text-primary-400`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

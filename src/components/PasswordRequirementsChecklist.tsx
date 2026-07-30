@@ -13,6 +13,7 @@ import {
   PROGRESS_BAR_A11Y,
   DURATION_TAILWIND,
   COMPONENT_STATE_COLORS,
+  ICON_SIZES,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 
@@ -243,14 +244,14 @@ function PasswordRequirementsChecklistComponent({
             )}
           >
             <span
-              className={`flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
+              className={`flex-shrink-0 ${ICON_SIZES.MD} rounded-full flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT} ${
                 req.met ? BG_COLORS.SUCCESS_LIGHT : BG_COLORS.LIGHTER
               }`}
               aria-hidden="true"
             >
               {req.met ? (
                 <svg
-                  className={`w-3 h-3 ${COMPONENT_STATE_COLORS.PASSWORD.MET_CHECKMARK} ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
+                  className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.MET_CHECKMARK} ${prefersReducedMotion ? '' : `animate-in zoom-in ${DURATION_TAILWIND[200]}`}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -264,7 +265,7 @@ function PasswordRequirementsChecklistComponent({
                 </svg>
               ) : (
                 <svg
-                  className={`w-3 h-3 ${COMPONENT_STATE_COLORS.PASSWORD.UNMET_ICON}`}
+                  className={`${ICON_SIZES.SM} ${COMPONENT_STATE_COLORS.PASSWORD.UNMET_ICON}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -293,10 +294,10 @@ function PasswordRequirementsChecklistComponent({
           aria-live="polite"
         >
           <span
-            className={`inline-flex items-center justify-center w-4 h-4 rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
+            className={`inline-flex items-center justify-center ${ICON_SIZES.MD} rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
           >
             <svg
-              className="w-3 h-3"
+              className={ICON_SIZES.SM}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

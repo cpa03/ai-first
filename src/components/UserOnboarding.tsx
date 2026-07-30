@@ -18,6 +18,7 @@ import {
   TYPOGRAPHY_CLASSES,
   PROGRESS_BAR_A11Y,
 } from '@/lib/config/theme';
+import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import {
   USER_ONBOARDING_LABELS,
   USER_ONBOARDING_COMPLETION_LABELS,
@@ -326,14 +327,14 @@ export default function UserOnboarding() {
           }`}
         >
           <div
-            className={`w-20 h-20 mx-auto mb-5 rounded-full flex items-center justify-center ${
+            className={`${ICON_SIZES.XXL_20} mx-auto mb-5 rounded-full flex items-center justify-center ${
               prefersReducedMotion
                 ? BG_COLORS.SUCCESS_LIGHT
                 : `${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`
             }`}
           >
             <svg
-              className={`w-10 h-10 ${TEXT_COLORS.SUCCESS_DARK} ${prefersReducedMotion ? '' : 'animate-success-check'}`}
+              className={`${ICON_SIZES.XXXL} ${TEXT_COLORS.SUCCESS_DARK} ${prefersReducedMotion ? '' : 'animate-success-check'}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -413,7 +414,7 @@ export default function UserOnboarding() {
           aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
         >
           <svg
-            className="w-5 h-5"
+            className={ICON_SIZES.LG}
             fill="none"
             stroke="currentColor"
             viewBox={SVG_VIEWBOX.STANDARD}

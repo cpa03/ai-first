@@ -15,6 +15,7 @@ import {
   BORDER_COLOR_CLASSES,
   PROGRESS_BAR_A11Y,
   PROGRESS_BAR_TRACK,
+  ICON_SIZES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -160,10 +161,10 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${isClickable ? 'cursor-pointer hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2' : 'cursor-default'}
                       ${
                         step.current
-                          ? 'w-4 h-4 bg-primary-600 scale-110 shadow-md shadow-primary-200 animate-gentle-pulse'
+                          ? `${ICON_SIZES.MD} bg-primary-600 scale-110 shadow-md shadow-primary-200 animate-gentle-pulse`
                           : step.completed
-                            ? `w-3 h-3 bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
-                            : `w-3 h-3 ${BORDER_COLOR_CLASSES.DEFAULT}`
+                            ? `${ICON_SIZES.SM} bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
+                            : `${ICON_SIZES.SM} ${BORDER_COLOR_CLASSES.DEFAULT}`
                       }
                     `}
                     aria-current={step.current ? 'step' : undefined}
@@ -232,7 +233,7 @@ const ProgressStepperComponent = function ProgressStepper({
                   <div
                     className={`
                       flex items-center justify-center
-                      w-10 h-10 rounded-full border-2
+                      ${ICON_SIZES.XXXL} rounded-full border-2
                       font-medium text-sm ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE}
                       ${TRANSITION_CLASSES.SLOW}
                       ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
@@ -247,7 +248,7 @@ const ProgressStepperComponent = function ProgressStepper({
                   >
                     {step.completed ? (
                       <svg
-                        className={`w-6 h-6 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`}
+                        className={`${ICON_SIZES.XL} ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"

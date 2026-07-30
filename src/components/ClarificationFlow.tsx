@@ -41,6 +41,8 @@ import {
   CLARIFICATION_FLOW_STEP_BUTTON_BASE,
   CLARIFICATION_FLOW_STEP_BUTTON_CURRENT,
   GRAY_CLASSES,
+  ICON_SIZES,
+  ICON_PATTERNS,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -392,7 +394,7 @@ function ClarificationFlow({
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
-                className="w-2 h-2 rounded-full bg-primary-200 animate-pulse"
+                className={`${ICON_SIZES.XS} rounded-full bg-primary-200 animate-pulse`}
                 style={{
                   animationDelay: `${i * ANIMATION_DELAYS.LONG}ms`,
                   animationDuration: `${ANIMATION_CONFIG.SLOW}ms`,
@@ -474,7 +476,7 @@ function ClarificationFlow({
             className={`${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.BRAND_HOVER}`}
           >
             <svg
-              className="w-4 h-4 mr-1.5"
+              className={ICON_PATTERNS.ICON_WITH_MARGIN_SM}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -518,7 +520,7 @@ function ClarificationFlow({
         >
           <div className="flex items-center gap-2">
             <svg
-              className={`w-4 h-4 ${TEXT_COLOR_CLASSES.MUTED}`}
+              className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.MUTED}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
@@ -539,7 +541,7 @@ function ClarificationFlow({
             </kbd>
           </div>
           <svg
-            className={`w-4 h-4 ${TEXT_COLOR_CLASSES.PLACEHOLDER} ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180`}
+            className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.PLACEHOLDER} ${TRANSITION_CLASSES.TRANSFORM} transform group-open:rotate-180`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -765,7 +767,7 @@ function ClarificationFlow({
                   >
                     {pasteSuccess ? (
                       <svg
-                        className={`w-4 h-4 mr-1 ${TEXT_COLORS.SUCCESS_MEDIUM}`}
+                        className={`${ICON_PATTERNS.ICON_WITH_MARGIN_SM} ${TEXT_COLORS.SUCCESS_MEDIUM}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"
@@ -780,7 +782,7 @@ function ClarificationFlow({
                       </svg>
                     ) : (
                       <svg
-                        className="w-4 h-4 mr-1"
+                        className={ICON_PATTERNS.ICON_WITH_MARGIN_SM}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"
@@ -821,7 +823,7 @@ function ClarificationFlow({
                       className={`${TRANSITION_CLASSES.DEFAULT} ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} ${BG_COLOR_CLASSES.HOVER_SUBTLE}`}
                     >
                       <svg
-                        className="w-4 h-4 mr-1"
+                        className={ICON_PATTERNS.ICON_WITH_MARGIN_SM}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"
@@ -890,7 +892,7 @@ function ClarificationFlow({
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                     <svg
-                      className={`w-5 h-5 ${TEXT_COLOR_CLASSES.MUTED} ${TRANSITION_CLASSES.TRANSFORM}`}
+                      className={`${ICON_SIZES.LG} ${TEXT_COLOR_CLASSES.MUTED} ${TRANSITION_CLASSES.TRANSFORM}`}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"
@@ -912,7 +914,7 @@ function ClarificationFlow({
                     aria-live="polite"
                   >
                     <svg
-                      className="w-4 h-4"
+                      className={ICON_SIZES.MD}
                       fill="none"
                       viewBox={SVG_VIEWBOX.STANDARD}
                       stroke="currentColor"

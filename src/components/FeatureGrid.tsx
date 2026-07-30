@@ -8,6 +8,7 @@ import {
   TEXT_COLORS,
   GRADIENT_CONFIG,
 } from '@/lib/config/theme';
+import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
@@ -154,14 +155,14 @@ function FeatureGridComponent() {
             )}
           >
             <div
-              className="
-              bg-primary-100 rounded-full w-16 h-16 
+              className={`
+              bg-primary-100 rounded-full ${ICON_SIZES.HUGE} 
               flex items-center justify-center mx-auto mb-4
               transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
               group-hover:bg-primary-200
               group-focus-visible:scale-110 group-focus-visible:bg-primary-200 group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50
               motion-reduce:transition-none motion-reduce:group-hover:scale-100
-            "
+            `}
               aria-hidden="true"
             >
               <span

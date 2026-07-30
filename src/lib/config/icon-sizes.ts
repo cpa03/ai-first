@@ -31,6 +31,8 @@ export const ICON_SIZES = {
   XXXXL: 'w-12 h-12',
   /** w-16 h-16 = 64px */
   HUGE: 'w-16 h-16',
+  /** w-20 h-20 = 80px */
+  XXL_20: 'w-20 h-20',
   /** w-24 h-24 = 96px */
   MASSIVE: 'w-24 h-24',
 } as const;

@@ -32,6 +32,7 @@ import {
   CHAR_COUNT_COLORS,
   DRAW_CHECK,
   COMPONENT_STATE_COLORS,
+  ICON_SIZES,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -434,7 +435,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className={`w-5 h-5 text-green-800 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
+                    className={`${ICON_SIZES.LG} text-green-800 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -467,7 +468,7 @@ const InputWithValidationComponent = forwardRef<
               >
                 <div className="pointer-events-none">
                   <svg
-                    className={`w-5 h-5 ${TEXT_COLORS.ERROR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}`}
+                    className={`${ICON_SIZES.LG} ${TEXT_COLORS.ERROR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
