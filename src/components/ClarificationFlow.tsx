@@ -297,19 +297,31 @@ function ClarificationFlow({
     textInputRef,
   ]);
 
-  // Micro-UX: Keyboard shortcut Alt+R to toggle reference idea section
+  // Micro-UX: Keyboard shortcuts for reference toggle and back-to-edit navigation
   useEffect(() => {
     if (loading || questions.length === 0) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFocusedOnInput(e.target) || e.metaKey || e.ctrlKey) return;
 
+      // Alt+R: Toggle reference idea section
       if (e.key === 'r' && e.altKey) {
         e.preventDefault();
         const details = detailsRef.current;
         if (details) {
           details.open = !details.open;
           handleToggleReference();
+        }
+      }
+
+      // Alt+B: Navigate back to edit (consistent with Alt+R pattern)
+      if (e.key === 'b' && e.altKey) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        if (onBackToEdit) {
+          onBackToEdit();
+        } else {
+          router.push('/');
         }
       }
 
@@ -335,6 +347,8 @@ function ClarificationFlow({
     handleClear,
     currentAnswer,
     isSubmitting,
+    onBackToEdit,
+    router,
   ]);
 
   if (loading) {
@@ -442,6 +456,7 @@ function ClarificationFlow({
       <div className="mb-6 flex items-center justify-between">
         <Tooltip
           content={CLARIFICATION_FLOW_LABELS.BACK_TO_EDIT_TOOLTIP}
+          shortcut={['Alt', 'B']}
           position="top"
         >
           <Button
