@@ -13,6 +13,7 @@ import {
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
 } from '@/lib/config';
+import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
@@ -91,7 +92,7 @@ const CopyButtonComponent = function CopyButton({
   const baseClasses = `
     inline-flex items-center justify-center gap-2
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
+    ${FOCUS_RING_PATTERNS.DEFAULT}
     ${COMPONENT_CONFIG.COPY_FEEDBACK.FOCUS_RING_CLASS} focus-visible:ring-offset-gray-100
     motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
   `;

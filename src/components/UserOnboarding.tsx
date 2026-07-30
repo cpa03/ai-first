@@ -32,6 +32,7 @@ import {
   TEXT_SIZE_PRESETS,
 } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
+import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -413,7 +414,7 @@ export default function UserOnboarding() {
           <Tooltip content="Skip tour" shortcut={['Esc']} position="bottom">
             <button
               onClick={handleSkip}
-              className={`${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md`}
+              className={`${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md`}
               aria-label={USER_ONBOARDING_LABELS.SKIP_ARIA_LABEL}
             >
               <svg
@@ -516,14 +517,14 @@ export default function UserOnboarding() {
             {currentStepIndex > 0 && (
               <button
                 onClick={handlePrev}
-                className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+                className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
               </button>
             )}
             <button
               onClick={handleNext}
-              className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+              className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
             >
               {isLastStep
                 ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON

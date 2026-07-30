@@ -17,6 +17,7 @@ import {
   PROGRESS_BAR_TRACK,
   ICON_SIZES,
 } from '@/lib/config';
+import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -158,7 +159,7 @@ const ProgressStepperComponent = function ProgressStepper({
                     disabled={!isClickable}
                     className={`
                       rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}
-                      ${isClickable ? 'cursor-pointer hover:scale-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2' : 'cursor-default'}
+                      ${isClickable ? `cursor-pointer hover:scale-125 ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}
                       ${
                         step.current
                           ? `${ICON_SIZES.MD} bg-primary-600 scale-110 shadow-md shadow-primary-200 animate-gentle-pulse`

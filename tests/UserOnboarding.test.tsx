@@ -64,7 +64,9 @@ describe('UserOnboarding Component', () => {
     });
 
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Skip onboarding tour/i })).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: /Skip onboarding tour/i })
+    ).toBeInTheDocument();
   });
 
   it('should not render if user has already completed onboarding', () => {
@@ -104,7 +106,9 @@ describe('UserOnboarding Component', () => {
       jest.advanceTimersByTime(2000);
     });
 
-    const skipButton = screen.getByRole('button', { name: /Skip onboarding tour/i });
+    const skipButton = screen.getByRole('button', {
+      name: /Skip onboarding tour/i,
+    });
     expect(skipButton).toBeInTheDocument();
 
     act(() => {
