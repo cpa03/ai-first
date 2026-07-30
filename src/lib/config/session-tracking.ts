@@ -81,6 +81,20 @@ export const CLARIFICATION_TIMER_CONFIG = {
     100,
     2000
   ),
+
+  /**
+   * Duration of the estimate pulse animation in milliseconds.
+   * Visual cue when estimated time remaining changes.
+   *
+   * Env: CLARIFICATION_PULSE_DURATION_MS
+   * Default: 600 (0.6 seconds)
+   */
+  PULSE_DURATION_MS: EnvLoader.number(
+    'CLARIFICATION_PULSE_DURATION_MS',
+    600,
+    200,
+    2000
+  ),
 } as const;
 
 export type SessionTrackingConfig = typeof SESSION_TRACKING_CONFIG;

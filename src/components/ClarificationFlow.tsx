@@ -43,6 +43,7 @@ import {
   GRAY_CLASSES,
   ICON_SIZES,
   ICON_PATTERNS,
+  CLARIFICATION_TIMER_CONFIG,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -241,7 +242,10 @@ function ClarificationFlow({
       prevEstimateRef.current !== estimatedRemainingSeconds
     ) {
       setEstimatePulse(true);
-      const timer = setTimeout(() => setEstimatePulse(false), 600);
+      const timer = setTimeout(
+        () => setEstimatePulse(false),
+        CLARIFICATION_TIMER_CONFIG.PULSE_DURATION_MS
+      );
       return () => clearTimeout(timer);
     }
     prevEstimateRef.current = estimatedRemainingSeconds;

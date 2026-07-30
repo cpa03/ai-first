@@ -22,6 +22,7 @@ import {
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
+import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -206,7 +207,7 @@ function MobileNavComponent() {
                     px-4 py-3 text-sm sm:text-base font-medium
                     ${TRANSITION_CLASSES.SLOW} ease-out
                     border-b-2                     ${active ? 'border-primary-600 text-primary-600' : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 hover:border-primary-300`}
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
+                    ${FOCUS_RING_PATTERNS.DEFAULT} rounded-t-md ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} inline-flex items-center
                     ${active ? 'bg-primary-50/30' : `${GRAY_CLASSES.HOVER_BG_50}`}
                   `}
                   aria-label={link.ariaLabel}
@@ -227,7 +228,7 @@ function MobileNavComponent() {
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className={`${GRAY_CLASSES.TEXT_700} ${GRAY_CLASSES.HOVER_TEXT_900} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} ${TRANSITION_CLASSES.DEFAULT}`}
+        className={`${GRAY_CLASSES.TEXT_700} ${GRAY_CLASSES.HOVER_TEXT_900} ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md p-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MIN_SIZE} ${TRANSITION_CLASSES.DEFAULT}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-controls="mobile-menu"
@@ -264,7 +265,7 @@ function MobileNavComponent() {
             <button
               type="button"
               onClick={closeMenu}
-              className={`absolute top-4 right-4 ${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.SIZE_CLASS} flex items-center justify-center rounded-full bg-white/90 shadow-lg ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_TEXT_900} hover:bg-white ${TRANSITION_CLASSES.DEFAULT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+              className={`absolute top-4 right-4 ${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.SIZE_CLASS} flex items-center justify-center rounded-full bg-white/90 shadow-lg ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_TEXT_900} hover:bg-white ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT}`}
               aria-label={MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL}
             >
               <div
@@ -312,7 +313,7 @@ function MobileNavComponent() {
                         w-full text-left px-6 py-4 text-lg font-semibold
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
                         border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
-                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
+                        ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}
                       aria-label={link.ariaLabel}
                       aria-current={active ? 'page' : undefined}

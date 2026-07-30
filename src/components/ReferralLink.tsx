@@ -23,6 +23,7 @@ import {
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
 } from '@/lib/config';
+import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 
 // Logger for growth tracking events
@@ -170,7 +171,7 @@ function ReferralLinkComponent({
                 onBlur={handleBlur}
                 tabIndex={0}
                 aria-label={`${referralUrl}. Press Space or Enter to select the link.`}
-                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+                className={`w-full min-w-0 px-3 py-2 ${WHITE_BG_PATTERNS.DEFAULT} border border-primary-200 rounded-md text-sm text-primary-800 truncate font-mono cursor-pointer ${GRAY_CLASSES.HOVER_BG_50} transition-all ${DURATION_TAILWIND[200]} outline-none ${FOCUS_RING_PATTERNS.DEFAULT}`}
               >
                 {referralUrl}
               </code>
