@@ -5,6 +5,7 @@
  */
 
 import { EnvLoader } from './environment';
+import { PLATFORM } from '@/lib/dom-utils';
 
 /**
  * Browser settings URLs for different browsers
@@ -151,14 +152,13 @@ export const NOTIFICATION_CONFIG = {
       return BROWSER_SETTINGS_URLS.DEFAULT;
     }
 
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    if (userAgent.includes('edge')) {
+    if (PLATFORM.isEdge()) {
       return BROWSER_SETTINGS_URLS.EDGE;
     }
-    if (userAgent.includes('firefox')) {
+    if (PLATFORM.isFirefox()) {
       return BROWSER_SETTINGS_URLS.FIREFOX;
     }
-    if (userAgent.includes('safari') && !userAgent.includes('chrome')) {
+    if (PLATFORM.isSafari()) {
       return BROWSER_SETTINGS_URLS.SAFARI;
     }
     return BROWSER_SETTINGS_URLS.CHROME;

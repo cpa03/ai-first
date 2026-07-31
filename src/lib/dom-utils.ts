@@ -144,6 +144,37 @@ export const PLATFORM = {
   getModifierKey(): string {
     return PLATFORM.isMac() ? '⌘' : 'Ctrl';
   },
+
+  /**
+   * Check if the current browser is Microsoft Edge.
+   */
+  isEdge(): boolean {
+    if (typeof navigator === 'undefined') {
+      return false;
+    }
+    return navigator.userAgent.toLowerCase().includes('edge');
+  },
+
+  /**
+   * Check if the current browser is Firefox.
+   */
+  isFirefox(): boolean {
+    if (typeof navigator === 'undefined') {
+      return false;
+    }
+    return navigator.userAgent.toLowerCase().includes('firefox');
+  },
+
+  /**
+   * Check if the current browser is Safari.
+   */
+  isSafari(): boolean {
+    if (typeof navigator === 'undefined') {
+      return false;
+    }
+    const ua = navigator.userAgent.toLowerCase();
+    return ua.includes('safari') && !ua.includes('chrome');
+  },
 } as const;
 
 /**
