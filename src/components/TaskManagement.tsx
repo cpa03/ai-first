@@ -395,6 +395,9 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
           <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
             ↑↓
           </kbd>
+          <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
+            jk
+          </kbd>
           navigate
         </span>
         <span className="hidden sm:inline-flex items-center gap-1.5">
