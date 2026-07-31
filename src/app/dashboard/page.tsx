@@ -123,6 +123,7 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [removingId, setRemovingId] = useState<string | null>(null);
   const [deleteModal, setDeleteModal] = useState<{
     isOpen: boolean;
     idea: Idea | null;
@@ -136,6 +137,7 @@ export default function DashboardPage() {
   const filterSelectRef = useRef<HTMLSelectElement>(null);
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const deleteAnimationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleRowClick = useCallback(
     (e: React.MouseEvent<HTMLTableRowElement>, idea: Idea) => {
@@ -243,11 +245,14 @@ export default function DashboardPage() {
     }
   }, [fetchIdeas, authLoading, isAuthenticated]);
 
-  // Cleanup filter clear timeout on unmount
+  // Cleanup filter clear timeout and delete animation timeout on unmount
   useEffect(() => {
     return () => {
       if (filterClearTimeoutRef.current) {
         clearTimeout(filterClearTimeoutRef.current);
+      }
+      if (deleteAnimationTimeoutRef.current) {
+        clearTimeout(deleteAnimationTimeoutRef.current);
       }
     };
   }, []);
@@ -302,11 +307,23 @@ export default function DashboardPage() {
         );
       }
 
-      setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
-      setPagination((prev) =>
-        prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
-      );
       closeDeleteModal();
+
+      if (prefersReducedMotion) {
+        setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+        setPagination((prev) =>
+          prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
+        );
+      } else {
+        setRemovingId(id);
+        deleteAnimationTimeoutRef.current = setTimeout(() => {
+          setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+          setPagination((prev) =>
+            prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
+          );
+          setRemovingId(null);
+        }, 300);
+      }
 
       if (typeof window !== 'undefined') {
         const win = window as Window & {
@@ -327,7 +344,7 @@ export default function DashboardPage() {
     } finally {
       setDeletingId(null);
     }
-  }, [deleteModal.idea, closeDeleteModal]);
+  }, [deleteModal.idea, closeDeleteModal, prefersReducedMotion]);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -1065,7 +1082,11 @@ export default function DashboardPage() {
                     tabIndex={selectedRowIndex === index ? 0 : -1}
                     aria-selected={selectedRowIndex === index}
                     onClick={(e) => handleRowClick(e, idea)}
-                    className={`${TABLE_PATTERNS.row.hover} table-row-lift animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)} transition-colors cursor-pointer ${
+                    className={`${TABLE_PATTERNS.row.hover} table-row-lift transition-colors cursor-pointer ${
+                      removingId === idea.id
+                        ? 'animate-dashboard-row-remove'
+                        : `animate-dashboard-row animate-dashboard-row-${Math.min(index + 1, 10)}`
+                    } ${
                       selectedRowIndex === index
                         ? `${DASHBOARD_PATTERNS.SELECT_OPTION_ACTIVE} ring-2 ring-primary-400 ring-inset`
                         : ''

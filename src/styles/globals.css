@@ -1299,11 +1299,37 @@ button[aria-disabled='true'].btn-glow-hover {
   animation-delay: calc(9 * var(--dashboard-stagger-delay, 50ms));
 }
 
+/* Dashboard row exit animation - smooth fade-out + slide-up when row is removed */
+@keyframes dashboardRowRemove {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scaleY(1);
+  }
+  40% {
+    opacity: 0.6;
+    transform: translateX(10px) scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(20px) scaleY(0);
+  }
+}
+
+.animate-dashboard-row-remove {
+  animation: dashboardRowRemove 300ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  pointer-events: none;
+}
+
 /* Reduced motion support for dashboard row animations */
 @media (prefers-reduced-motion: reduce) {
   .animate-dashboard-row {
     animation: none;
     opacity: 1;
+    transform: none;
+  }
+  .animate-dashboard-row-remove {
+    animation: none;
+    opacity: 0;
     transform: none;
   }
 }
