@@ -478,6 +478,7 @@ export default function LoginPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'google'}
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING}
+            enableTransition
             aria-label={
               oauthLoading === 'google'
                 ? LOGIN_PAGE_CONTENT.OAUTH.GOOGLE_LOADING_ARIA_LABEL
@@ -515,6 +516,7 @@ export default function LoginPage() {
             disabled={oauthLoading !== null}
             loading={oauthLoading === 'github'}
             loadingText={LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING}
+            enableTransition
             aria-label={
               oauthLoading === 'github'
                 ? LOGIN_PAGE_CONTENT.OAUTH.GITHUB_LOADING_ARIA_LABEL
