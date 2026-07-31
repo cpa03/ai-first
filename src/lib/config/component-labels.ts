@@ -630,6 +630,17 @@ export const SCROLL_PROGRESS_LABELS = {
 } as const;
 
 /**
+ * KeyboardShortcutHint Labels
+ * Eliminates hardcoded aria-labels and strings in KeyboardShortcutHint component
+ */
+export const KEYBOARD_SHORTCUT_HINT_LABELS = {
+  /** ARIA label for the dismiss button */
+  DISMISS_ARIA_LABEL: 'Dismiss keyboard shortcut hint',
+  /** Screen reader text for the hint */
+  SR_TEXT: 'Keyboard shortcut hint',
+} as const;
+
+/**
  * Component Labels - Combined export
  * Provides all component labels in a single object
  */
@@ -643,6 +654,7 @@ export const COMPONENT_LABELS = {
   TOAST_CONTAINER: TOAST_CONTAINER_LABELS,
   AUTO_SAVE_INDICATOR: AUTO_SAVE_INDICATOR_LABELS,
   KEYBOARD_SHORTCUTS_HELP: KEYBOARD_SHORTCUTS_HELP_LABELS,
+  KEYBOARD_SHORTCUT_HINT: KEYBOARD_SHORTCUT_HINT_LABELS,
   PROGRESS_STEPPER: PROGRESS_STEPPER_LABELS,
   REFERRAL_LINK: REFERRAL_LINK_LABELS,
   ALERT: ALERT_LABELS,
@@ -670,6 +682,7 @@ export type ScrollToTopLabels = typeof SCROLL_TO_TOP_LABELS;
 export type ToastContainerLabels = typeof TOAST_CONTAINER_LABELS;
 export type AutoSaveIndicatorLabels = typeof AUTO_SAVE_INDICATOR_LABELS;
 export type KeyboardShortcutsHelpLabels = typeof KEYBOARD_SHORTCUTS_HELP_LABELS;
+export type KeyboardShortcutHintLabels = typeof KEYBOARD_SHORTCUT_HINT_LABELS;
 export type ProgressStepperLabels = typeof PROGRESS_STEPPER_LABELS;
 export type ReferralLinkLabels = typeof REFERRAL_LINK_LABELS;
 export type AlertLabels = typeof ALERT_LABELS;
