@@ -996,6 +996,26 @@ function ClarificationFlow({
                   {currentStep === questions.length - 1 ? 'submit' : 'next'}
                 </span>
               </span>
+              {questions.length > 1 && (
+                <span className="flex items-center gap-1.5">
+                  <kbd
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                    }
+                  >
+                    1
+                  </kbd>
+                  <span>–</span>
+                  <kbd
+                    className={
+                      UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT
+                    }
+                  >
+                    {questions.length}
+                  </kbd>
+                  <span>jump</span>
+                </span>
+              )}
             </div>
 
             <Button
