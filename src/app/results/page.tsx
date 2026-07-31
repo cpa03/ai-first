@@ -33,6 +33,7 @@ import {
   SVG_SIZES,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  KEYBOARD_SHORTCUTS_HELP_LABELS,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -884,7 +885,10 @@ function ResultsContent() {
               type="button"
               onClick={() => openHelp()}
               className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
-              aria-label="Show keyboard shortcuts"
+              aria-label={
+                KEYBOARD_SHORTCUTS_HELP_LABELS.SHORTCUT_DESCRIPTIONS
+                  .SHOW_SHORTCUTS
+              }
             >
               <span>View all shortcuts</span>
               <svg

@@ -12,6 +12,7 @@ import {
   BORDER_COLORS,
   SHADOW_CLASSES,
   UI_CONFIG,
+  KEYBOARD_SHORTCUT_HINT_LABELS,
 } from '@/lib/config';
 
 const STORAGE_KEY = 'ideaflow-keyboard-hint-shown';
@@ -151,7 +152,7 @@ function KeyboardShortcutHintComponent({
             type="button"
             onClick={dismiss}
             className={`flex-shrink-0 p-1 rounded-lg ${TEXT_COLORS.MUTED} hover:${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} ${TRANSITION_CLASSES.COLOR}`}
-            aria-label="Dismiss keyboard shortcut hint"
+            aria-label={KEYBOARD_SHORTCUT_HINT_LABELS.DISMISS_ARIA_LABEL}
           >
             <svg
               className="w-4 h-4"
