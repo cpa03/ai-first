@@ -230,16 +230,16 @@ Complete index of all IdeaFlow documentation.
 ### Active Reports
 
 - [BroCula Browser Audit - 2026-07-31](./audit/brocula-audit-20260731.md) - BroCula browser console & Lighthouse audit (latest)
-- [BroCula Browser Audit - 2026-07-26](./audit/brocula-audit-20260726.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - BroCula browser console & Lighthouse audit
+- [BroCula Browser Audit - 2026-07-28](./audit/browser-audit-20260728.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-27](./audit/browser-audit-summary-20260727.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-26](./audit/browser-audit-20260726.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-25](./audit/browser-audit-20260725.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-21](./audit/browser-audit-20260721.md) - BroCula browser console & Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
 - [BugFixer Audit - 2026-07-22](./audit/bugfixer-audit-20260722.md) - Comprehensive bug audit with quality gates
-- [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-20](./audit/2026-07-20-browser-console-audit.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Lighthouse - 2026-07-19](./audit/2026-07-19-brocula-browser-console-lighthouse.md) - BroCula browser console & Lighthouse audit
-- [Browser Verification - 2026-07-20](./audit/browser-verification-2026-07-20.md) - Browser verification audit
-- [Migration Consolidation - 2026-07-20](./audit/2026-07-20-migration-consolidation-status.md) - Migration consolidation status
 - [Skipped Tests Investigation](./audit/skipped-tests-investigation.md) - Investigation of skipped tests with documented reasons
-- [Bug Scan Report - 2026-07-14](./audit/bug-scan-report-2026-07-14.md) - Latest bug scan and health check results
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
@@ -249,7 +249,7 @@ Complete index of all IdeaFlow documentation.
 
 ### Archived Reports
 
-Older audit reports are archived in [audit/archive/](./audit/archive/) (includes 2026-07-08 through 2026-07-18 reports).
+Older audit reports (2026-07-08 through 2026-07-20) are archived in [audit/archive/](./audit/archive/).
 
 ## Database Reports
 
@@ -262,23 +262,22 @@ Older audit reports are archived in [audit/archive/](./audit/archive/) (includes
 
 ## Maintenance Reports
 
+- [Repository Maintenance Report - 2026-07-31 12:00](./maintenance/2026-07-31-repository-maintenance-loop-1200.md) - Build/lint verification, documentation integrity, stale branch analysis
 - [BugFixer Continuous Monitoring Guide](./maintenance/bugfixer-continuous-monitoring.md) - Continuous monitoring approach for repository quality
 - [Bugfix Report - 2026-07-29](./maintenance/bugfix-report-2026-07-29.md) - Multiple API bug investigation and verification
 - [Bugfix Verification - P2 Issues](./maintenance/BUGFIX_VERIFICATION.md) - Verification of P2 bug fixes (#319, #318, #549)
 - [Repository Maintenance Report - 2026-07-29](./maintenance/2026-07-29-repository-maintenance-loop.md) - Build/lint verification, documentation integrity, stale branch analysis
-- [Repository Maintenance Report - 2026-07-27](./maintenance/2026-07-27-repository-maintenance-loop.md) - Stale branch cleanup, build/lint verification
-- [Repository Maintenance Report - 2026-07-26 16:48](./maintenance/2026-07-26-repository-maintenance-1648.md) - Build/lint health, documentation accuracy, stale branch analysis
-- [Repository Maintenance Report - 2026-07-25 01:30](./maintenance/2026-07-25-repository-maintenance-0130.md) - Cleanup, archived old reports, and stale branch analysis
-- [Issue Manager Report - 2026-07-23](./maintenance/archive/ISSUE-MANAGER-REPORT-20260723.md) - Issue normalization and duplicate detection
+- [Repository Maintenance Report - 2026-07-30](./maintenance/2026-07-30-repository-maintenance-loop.md) - Build/lint verification, documentation integrity
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-07-24) are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-07-28) are archived in [maintenance/archive/](./maintenance/archive/).
 
 ### Recently Archived
 
-- [BroCula Mission Complete - 2026-07-25](./maintenance/archive/BROCULA_MISSION_COMPLETE.md) - Browser console & Lighthouse audit results
-- [Audit Notes - 2026-07-25](./maintenance/archive/notes.md) - Audit notes and findings
+- [Repository Maintenance Report - 2026-07-28 22:00](./maintenance/archive/2026-07-28-repository-maintenance-2200.md) - Build/lint verification
+- [Repository Maintenance Report - 2026-07-27](./maintenance/archive/2026-07-27-repository-maintenance-loop.md) - Stale branch cleanup, build/lint verification
+- [Repository Maintenance Report - 2026-07-26 16:48](./maintenance/archive/2026-07-26-repository-maintenance-1648.md) - Build/lint health, documentation accuracy
 
 ---
 
