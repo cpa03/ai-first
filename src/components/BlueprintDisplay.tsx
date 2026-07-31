@@ -33,6 +33,8 @@ import {
   BG_COLOR_CLASSES,
   BADGE_STYLES,
   COMPONENT_STATE_COLORS,
+  ICON_SIZES,
+  MR_CLASSES,
 } from '@/lib/config';
 import {
   BLUEPRINT_ELEMENT_IDS,
@@ -258,7 +260,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                   aria-label={MESSAGES.BLUEPRINT.PRINT_ARIA_LABEL}
                 >
                   <svg
-                    className="w-4 h-4 mr-1.5"
+                    className={`${ICON_SIZES.MD} ${MR_CLASSES.MD_SM}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"

@@ -22,6 +22,7 @@ import {
   REFERRAL_ICON_CONTAINER,
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
+  ICON_SIZES,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -191,7 +192,7 @@ function ReferralLinkComponent({
         <div className="flex-shrink-0 hidden sm:block">
           <div className={REFERRAL_ICON_CONTAINER}>
             <svg
-              className="w-6 h-6 text-primary-600"
+              className={`${ICON_SIZES.XL} text-primary-600`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

@@ -13,6 +13,7 @@ import {
   RIPPLE_RING_1,
   RIPPLE_RING_2,
   COMPONENT_STATE_COLORS,
+  ICON_SIZES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -151,12 +152,12 @@ function SuccessCelebrationComponent({
     >
       <div className="relative">
         <div
-          className={`w-24 h-24 rounded-full ${COMPONENT_STATE_COLORS.CELEBRATION.CIRCLE_BG} flex items-center justify-center shadow-lg ${
+          className={`${ICON_SIZES.MASSIVE} rounded-full ${COMPONENT_STATE_COLORS.CELEBRATION.CIRCLE_BG} flex items-center justify-center shadow-lg ${
             shouldAnimate ? 'animate-success-pop' : ''
           }`}
         >
           <svg
-            className={`w-12 h-12 ${TEXT_COLORS.SUCCESS_DARK} ${
+            className={`${ICON_SIZES.XXXXL} ${TEXT_COLORS.SUCCESS_DARK} ${
               shouldAnimate ? 'animate-success-check' : ''
             }`}
             fill="none"

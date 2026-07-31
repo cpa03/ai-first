@@ -494,8 +494,8 @@ export default function UserOnboarding() {
                     index === currentStepIndex
                       ? `w-6 h-2 ${BG_COLORS.BRAND}`
                       : index < currentStepIndex
-                        ? `w-2 h-2 ${BG_COLORS.BRAND} opacity-60 hover:opacity-80 cursor-pointer`
-                        : `w-2 h-2 ${BG_COLORS.LIGHTER} ${TEXT_COLORS.MUTED}`
+                        ? `${ICON_SIZES.XS} ${BG_COLORS.BRAND} opacity-60 hover:opacity-80 cursor-pointer`
+                        : `${ICON_SIZES.XS} ${BG_COLORS.LIGHTER} ${TEXT_COLORS.MUTED}`
                   }`}
                   aria-label={
                     index === currentStepIndex

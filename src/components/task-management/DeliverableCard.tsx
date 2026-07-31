@@ -15,6 +15,7 @@ import {
   TEXT_COLORS,
   BG_COLORS,
   DELIVERABLE_CARD_LABELS,
+  ICON_SIZES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -168,7 +169,7 @@ function DeliverableCardComponent({
                 aria-label={DELIVERABLE_CARD_LABELS.COMPLETE_ARIA_LABEL}
               >
                 <svg
-                  className="w-3 h-3"
+                  className={ICON_SIZES.SM}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

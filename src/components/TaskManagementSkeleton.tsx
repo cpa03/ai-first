@@ -11,6 +11,7 @@ import {
   TASK_MANAGEMENT_LABELS,
   SKELETON_PROGRESS,
   GRAY_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -95,7 +96,7 @@ function TaskManagementSkeletonComponent() {
                     <Skeleton className="h-3 w-24 ml-auto" variant="text" />
                   </div>
                   <svg
-                    className={`w-5 h-5 ${GRAY_CLASSES.TEXT_300}`}
+                    className={`${ICON_SIZES.LG} ${GRAY_CLASSES.TEXT_300}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox={SVG_VIEWBOX.STANDARD}

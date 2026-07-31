@@ -18,6 +18,7 @@ import {
   PULSE_DOT,
   SVG_CIRCLE,
   SVG_ANIMATION,
+  ICON_SIZES,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -168,10 +169,10 @@ function AutoSaveIndicatorComponent({
       aria-atomic="true"
     >
       {/* Progress Ring */}
-      <div className="relative w-4 h-4">
+      <div className={`relative ${ICON_SIZES.MD}`}>
         {/* Background ring */}
         <svg
-          className="w-4 h-4 -rotate-90"
+          className={`${ICON_SIZES.MD} -rotate-90`}
           viewBox={SVG_VIEWBOX.STANDARD}
           fill="none"
           aria-hidden="true"
