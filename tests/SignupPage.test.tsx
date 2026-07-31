@@ -40,7 +40,7 @@ const mockSignUp = jest.fn().mockResolvedValue({ data: {}, error: null });
 jest.mock('@/lib/db', () => ({
   supabaseClient: {
     auth: {
-      signUp: (...args: any[]) => mockSignUp(...args),
+      signUp: (..._args: unknown[]) => mockSignUp(..._args),
     },
   },
 }));
@@ -50,7 +50,9 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
     jest.clearAllMocks();
     mockSignUp.mockResolvedValue({ data: {}, error: null });
     (PLATFORM.isMac as jest.Mock).mockReturnValue(false);
-    (require('@/lib/dom-utils').isFocusedOnInput as jest.Mock).mockReturnValue(false);
+    (require('@/lib/dom-utils').isFocusedOnInput as jest.Mock).mockReturnValue(
+      false
+    );
   });
 
   it('renders correct keyboard shortcut help hint for Windows/Linux when isMac is false', () => {
@@ -58,7 +60,10 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
 
     // Check for "Ctrl" + "Enter" helper text elements
     const kbdElements = screen.getAllByText((content, element) => {
-      return element?.tagName.toLowerCase() === 'kbd' && (content === 'Ctrl' || content === 'Enter');
+      return (
+        element?.tagName.toLowerCase() === 'kbd' &&
+        (content === 'Ctrl' || content === 'Enter')
+      );
     });
     expect(kbdElements[0]).toHaveTextContent('Ctrl');
     expect(kbdElements[1]).toHaveTextContent('Enter');
@@ -69,7 +74,10 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
     render(<SignupPage />);
 
     const kbdElements = screen.getAllByText((content, element) => {
-      return element?.tagName.toLowerCase() === 'kbd' && (content === '⌘' || content === 'Enter');
+      return (
+        element?.tagName.toLowerCase() === 'kbd' &&
+        (content === '⌘' || content === 'Enter')
+      );
     });
     expect(kbdElements[0]).toHaveTextContent('⌘');
     expect(kbdElements[1]).toHaveTextContent('Enter');
@@ -80,8 +88,12 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
 
     // Fill the email and password fields using container selectors
     const emailInput = container.querySelector('#email') as HTMLInputElement;
-    const passwordInput = container.querySelector('#password') as HTMLInputElement;
-    const confirmPasswordInput = container.querySelector('#confirmPassword') as HTMLInputElement;
+    const passwordInput = container.querySelector(
+      '#password'
+    ) as HTMLInputElement;
+    const confirmPasswordInput = container.querySelector(
+      '#confirmPassword'
+    ) as HTMLInputElement;
 
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
@@ -89,7 +101,9 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'ValidPassword1!' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'ValidPassword1!' } });
+    fireEvent.change(confirmPasswordInput, {
+      target: { value: 'ValidPassword1!' },
+    });
 
     // Dispatch Ctrl+Enter keydown event globally inside act
     await act(async () => {
@@ -110,12 +124,18 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
     const { container } = render(<SignupPage />);
 
     const emailInput = container.querySelector('#email') as HTMLInputElement;
-    const passwordInput = container.querySelector('#password') as HTMLInputElement;
-    const confirmPasswordInput = container.querySelector('#confirmPassword') as HTMLInputElement;
+    const passwordInput = container.querySelector(
+      '#password'
+    ) as HTMLInputElement;
+    const confirmPasswordInput = container.querySelector(
+      '#confirmPassword'
+    ) as HTMLInputElement;
 
     fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
     fireEvent.change(passwordInput, { target: { value: 'ValidPassword1!' } });
-    fireEvent.change(confirmPasswordInput, { target: { value: 'ValidPassword1!' } });
+    fireEvent.change(confirmPasswordInput, {
+      target: { value: 'ValidPassword1!' },
+    });
 
     await act(async () => {
       fireEvent.keyDown(container, { key: 'Enter', metaKey: true });
@@ -125,7 +145,9 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
   });
 
   it('does not submit form via global Ctrl+Enter when typing in other elements and inputs are not focused', async () => {
-    (require('@/lib/dom-utils').isFocusedOnInput as jest.Mock).mockReturnValue(true);
+    (require('@/lib/dom-utils').isFocusedOnInput as jest.Mock).mockReturnValue(
+      true
+    );
     const { container } = render(<SignupPage />);
 
     await act(async () => {
