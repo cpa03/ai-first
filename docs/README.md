@@ -259,7 +259,8 @@ Older audit reports (2026-07-08 through 2026-07-28) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-07-31 (17:00 Loop)](./maintenance/2026-07-31-repository-maintenance-loop.md) - Build/lint verification, documentation integrity, stale branch analysis (latest)
+- [Repository Maintenance Report - 2026-07-31 (20:54 Loop)](./maintenance/2026-07-31-repository-maintenance-loop-2054.md) - Comprehensive audit: file redundancy, documentation integrity, code quality (latest)
+- [Repository Maintenance Report - 2026-07-31 (17:00 Loop)](./maintenance/2026-07-31-repository-maintenance-loop.md) - Build/lint verification, documentation integrity, stale branch analysis
 - [CMZ Analysis - 2026-07-31](./maintenance/2026-07-31-czm-analysis.md) - CMZ autonomous agent analysis
 - [Phase 2 Feature Hardening - 2026-07-31](./maintenance/2026-07-31-phase2-feature-hardening.md) - Feature hardening report
 - [Phase 3 Strategic Expansion - 2026-07-31](./maintenance/2026-07-31-phase3-strategic-expansion.md) - Strategic expansion report
