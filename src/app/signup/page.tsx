@@ -11,6 +11,7 @@ import { PasswordRequirementsChecklist } from '@/components/PasswordRequirements
 import { useCapsLock } from '@/hooks/useCapsLock';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import {
   OAUTH_PROVIDER_COLORS,
   PASSWORD_VALIDATION_CONFIG,
@@ -357,11 +358,17 @@ export default function SignupPage() {
   const [passwordError, setPasswordError] = useState<string | undefined>(
     undefined
   );
+  const [isMac, setIsMac] = useState(false);
   const { scrollToError } = useScrollToError();
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
+
+  // Micro-UX: Detect platform for keyboard shortcut display
+  useEffect(() => {
+    setIsMac(PLATFORM.isMac());
+  }, []);
   const {
     isCapsLockOn: isPasswordCapsLockOn,
     handleKeyDown: handlePasswordKeyDown,
@@ -474,6 +481,29 @@ export default function SignupPage() {
     const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
     await handleSubmit(fakeEvent);
   }, [handleSubmit]);
+
+  // Micro-UX: Cmd/Ctrl+Enter keyboard shortcut for form submission
+  // Matches the pattern of IdeaInput (⌘Enter), ClarificationFlow (⌘Enter) and LoginPage (⌘Enter)
+  // Provides quick keyboard access for power users without needing to click the submit button
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        if (
+          !isFocusedOnInput(e.target) ||
+          e.target === emailInputRef.current ||
+          e.target === passwordInputRef.current ||
+          e.target === confirmPasswordInputRef.current
+        ) {
+          e.preventDefault();
+          triggerHapticFeedback();
+          submitForm();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [submitForm]);
 
   const handleOAuthSignUp = useCallback(
     async (provider: 'google' | 'github') => {
@@ -684,18 +714,39 @@ export default function SignupPage() {
             />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full"
-            size="lg"
-            enableTransition
-            attention={isFormValid && !isLoading}
-          >
-            {isLoading
-              ? SIGNUP_PAGE_CONTENT.FORM.SUBMIT_LOADING
-              : SIGNUP_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
-          </Button>
+          <div className="space-y-2">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full"
+              size="lg"
+              enableTransition
+              attention={isFormValid && !isLoading}
+              shortcut={isMac ? ['⌘', 'Enter'] : ['Ctrl', 'Enter']}
+            >
+              {isLoading
+                ? SIGNUP_PAGE_CONTENT.FORM.SUBMIT_LOADING
+                : SIGNUP_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
+            </Button>
+            <p
+              className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} text-center hidden sm:block`}
+              aria-hidden="true"
+            >
+              Press{' '}
+              <kbd
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+              >
+                {isMac ? '⌘' : 'Ctrl'}
+              </kbd>
+              {' + '}
+              <kbd
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+              >
+                Enter
+              </kbd>
+              {' to submit'}
+            </p>
+          </div>
         </form>
 
         <div
