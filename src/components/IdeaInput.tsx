@@ -28,6 +28,7 @@ import {
   IDEA_INPUT_STATUS_ITEMS,
   IDEA_INPUT_STATUS_ITEM,
   IDEA_INPUT_SEND_ICON,
+  ICON_SIZES,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -376,7 +377,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
                 className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
               >
                 <svg
-                  className="w-3 h-3"
+                  className={ICON_SIZES.SM}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

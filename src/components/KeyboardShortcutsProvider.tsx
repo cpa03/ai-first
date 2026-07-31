@@ -12,6 +12,7 @@ import {
   COMPONENT_CONFIG,
   GRAY_TEXT_COMBOS,
   FOCUS_RING_PATTERNS,
+  ICON_SIZES,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
@@ -102,7 +103,7 @@ function KeyboardShortcutsButtonComponent() {
         type="button"
       >
         <svg
-          className="w-5 h-5"
+          className={ICON_SIZES.LG}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"

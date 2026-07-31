@@ -13,6 +13,7 @@ import {
   SHADOW_CLASSES,
   UI_CONFIG,
   KEYBOARD_SHORTCUT_HINT_LABELS,
+  ICON_SIZES,
 } from '@/lib/config';
 
 const STORAGE_KEY = 'ideaflow-keyboard-hint-shown';
@@ -112,9 +113,11 @@ function KeyboardShortcutHintComponent({
         }}
       >
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center">
+          <div
+            className={`flex-shrink-0 ${ICON_SIZES.XXL} rounded-lg bg-primary-100 flex items-center justify-center`}
+          >
             <svg
-              className="w-4 h-4 text-primary-600"
+              className={`${ICON_SIZES.MD} text-primary-600`}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -155,7 +158,7 @@ function KeyboardShortcutHintComponent({
             aria-label={KEYBOARD_SHORTCUT_HINT_LABELS.DISMISS_ARIA_LABEL}
           >
             <svg
-              className="w-4 h-4"
+              className={ICON_SIZES.MD}
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

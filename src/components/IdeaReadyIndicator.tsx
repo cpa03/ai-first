@@ -13,6 +13,7 @@ import {
   BG_COLORS,
   DRAW_CHECK,
   COMPONENT_STATE_COLORS,
+  ICON_SIZES,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -56,7 +57,7 @@ function IdeaReadyIndicatorComponent({
     >
       <div
         className={`
-          relative flex items-center justify-center w-5 h-5 rounded-full
+          relative flex items-center justify-center ${ICON_SIZES.LG} rounded-full
           ${TRANSITION_CLASSES.SLOW_EASE_OUT}
           ${isReady ? COMPONENT_STATE_COLORS.IDEA_READY.READY : COMPONENT_STATE_COLORS.IDEA_READY.NOT_READY}
         `}
@@ -64,7 +65,7 @@ function IdeaReadyIndicatorComponent({
         {/* Checkmark SVG with draw animation */}
         <svg
           className={`
-            w-3 h-3 ${TRANSITION_CLASSES.SLOW}
+            ${ICON_SIZES.SM} ${TRANSITION_CLASSES.SLOW}
             ${showCheckmark ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}
           `}
           fill="none"
