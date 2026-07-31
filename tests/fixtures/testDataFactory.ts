@@ -55,8 +55,8 @@ export interface TestClarificationSession {
 export class TestDataFactory {
   static createIdea(overrides: Partial<TestIdea> = {}): TestIdea {
     return {
-      id: `idea_${Math.random().toString(36).substr(2, 9)}`,
-      user_id: `user_${Math.random().toString(36).substr(2, 9)}`,
+      id: `idea_${Math.random().toString(36).substring(2, 11)}`,
+      user_id: `user_${Math.random().toString(36).substring(2, 11)}`,
       title: 'Test Project Idea',
       raw_text: 'This is a test project idea for testing purposes.',
       status: 'draft',
@@ -70,8 +70,8 @@ export class TestDataFactory {
     overrides: Partial<TestDeliverable> = {}
   ): TestDeliverable {
     return {
-      id: `del_${Math.random().toString(36).substr(2, 9)}`,
-      idea_id: `idea_${Math.random().toString(36).substr(2, 9)}`,
+      id: `del_${Math.random().toString(36).substring(2, 11)}`,
+      idea_id: `idea_${Math.random().toString(36).substring(2, 11)}`,
       title: 'Test Deliverable',
       description: 'This is a test deliverable description.',
       priority: 1,
@@ -84,8 +84,8 @@ export class TestDataFactory {
 
   static createTask(overrides: Partial<TestTask> = {}): TestTask {
     return {
-      id: `task_${Math.random().toString(36).substr(2, 9)}`,
-      deliverable_id: `del_${Math.random().toString(36).substr(2, 9)}`,
+      id: `task_${Math.random().toString(36).substring(2, 11)}`,
+      deliverable_id: `del_${Math.random().toString(36).substring(2, 11)}`,
       title: 'Test Task',
       description: 'This is a test task description.',
       assignee: 'Test User',
@@ -100,7 +100,7 @@ export class TestDataFactory {
     overrides: Partial<TestClarificationQuestion> = {}
   ): TestClarificationQuestion {
     return {
-      id: `q_${Math.random().toString(36).substr(2, 9)}`,
+      id: `q_${Math.random().toString(36).substring(2, 11)}`,
       question: 'What is the main problem you are trying to solve?',
       type: 'open',
       required: true,
@@ -129,7 +129,7 @@ export class TestDataFactory {
     ];
 
     return {
-      ideaId: `idea_${Math.random().toString(36).substr(2, 9)}`,
+      ideaId: `idea_${Math.random().toString(36).substring(2, 11)}`,
       originalIdea: 'Test idea for clarification',
       questions,
       answers: {},
@@ -308,7 +308,9 @@ export const MockResponseGenerator = {
 // Test utilities
 export const TestUtils = {
   generateRandomString(length: number = 10): string {
-    return Math.random().toString(36).substr(2, length);
+    return Math.random()
+      .toString(36)
+      .substring(2, 2 + length);
   },
 
   generateRandomEmail(): string {
