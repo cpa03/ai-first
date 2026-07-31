@@ -14,9 +14,8 @@ import {
   UI_CONFIG,
   KEYBOARD_SHORTCUT_HINT_LABELS,
   ICON_SIZES,
+  LOCAL_STORAGE_KEYS,
 } from '@/lib/config';
-
-const STORAGE_KEY = 'ideaflow-keyboard-hint-shown';
 
 interface KeyboardShortcutHintProps {
   storageKey?: string;
@@ -24,7 +23,7 @@ interface KeyboardShortcutHintProps {
 }
 
 function KeyboardShortcutHintComponent({
-  storageKey = STORAGE_KEY,
+  storageKey = LOCAL_STORAGE_KEYS.DASHBOARD_KEYBOARD_HINT_SHOWN,
   displayDuration = UI_CONFIG.KEYBOARD_HINT_DISPLAY_DURATION,
 }: KeyboardShortcutHintProps) {
   const [isVisible, setIsVisible] = useState(false);

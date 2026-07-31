@@ -23,6 +23,7 @@ import {
   COMPONENT_STATE_COLORS,
   GRAY_CLASSES,
   ICON_SIZES,
+  PAGE_ELEMENT_IDS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -124,7 +125,7 @@ function ScrollToTopComponent({
       });
     }
 
-    const mainContent = document.getElementById('main-content');
+    const mainContent = document.getElementById(PAGE_ELEMENT_IDS.MAIN_CONTENT);
     if (mainContent) {
       mainContent.focus({ preventScroll: true });
     }
