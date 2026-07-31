@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server';
 import { createLogger } from '@/lib/logger';
 import { withApiHandler, ApiContext } from '@/lib/api-handler';
 import { STATUS_CODES } from '@/lib/config';
@@ -68,12 +67,12 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
         contentType,
       });
       // Return 204 anyway - don't block browser reporting
-      return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });
+      return new Response(null, { status: STATUS_CODES.NO_CONTENT });
     }
 
     if (!reportData?.['csp-report']) {
       logger.warn('CSP report missing csp-report field', { reportData });
-      return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });
+      return new Response(null, { status: STATUS_CODES.NO_CONTENT });
     }
 
     // Extract violation details from report
@@ -106,7 +105,7 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
     });
 
     // Return 204 No Content - browsers don't need a response
-    return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });
+    return new Response(null, { status: STATUS_CODES.NO_CONTENT });
   } catch (error) {
     logger.error('Error processing CSP report', {
       error:
@@ -115,7 +114,7 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
           : API_ERROR_MESSAGES.FALLBACK.UNKNOWN_ERROR,
     });
     // Still return 204 to avoid blocking browser reporting
-    return new NextResponse(null, { status: STATUS_CODES.NO_CONTENT });
+    return new Response(null, { status: STATUS_CODES.NO_CONTENT });
   }
 }
 
@@ -124,15 +123,20 @@ async function handleCSPReport(context: ApiContext): Promise<Response> {
  *
  * Uses withApiHandler wrapper for standardized middleware (rate limiting, logging).
  * Preserves 204 response behavior for browser CSP reporting compatibility.
+ * SECURITY: skipCSRF is set to true because CSP reports are sent out-of-band by the browser
+ * and do not have side effects on user sessions, so CSRF verification is not required.
  */
-export const POST = withApiHandler(handleCSPReport, { rateLimit: 'lenient' });
+export const POST = withApiHandler(handleCSPReport, {
+  rateLimit: 'lenient',
+  skipCSRF: true,
+});
 
 /**
  * OPTIONS handler for CORS preflight
  * Browsers may send preflight requests before CSP reports
  */
 export async function OPTIONS(): Promise<Response> {
-  return new NextResponse(null, {
+  return new Response(null, {
     status: STATUS_CODES.NO_CONTENT,
     headers: {
       'Access-Control-Allow-Origin': SECURITY_CONFIG.CORS.ALLOW_ORIGIN,
