@@ -59,6 +59,9 @@ export const INPUT_VALIDATION_LABELS = {
   FIX_ERROR_TOOLTIP: 'Please fix this error',
   /** Character limit progress aria-label */
   CHAR_LIMIT_PROGRESS_ARIA: 'Character limit progress',
+  /** Character limit warning message when approaching max */
+  CHAR_LIMIT_WARNING: (charsRemaining: number) =>
+    `${charsRemaining} character${charsRemaining !== 1 ? 's' : ''} remaining`,
 } as const;
 
 /**
