@@ -323,14 +323,12 @@ const InputWithValidationComponent = forwardRef<
 
     const hasIcon = (isValid && charCount > 0) || isInvalid;
 
-    // Calculate padding based on which icons are visible
-    // Each icon needs ~40px (pr-10), so both need ~80px (pr-20)
     const paddingClass =
       hasIcon && showClearButton
-        ? 'pr-20'
+        ? INPUT_STYLES.ICON_PADDING.DOUBLE
         : hasIcon || showClearButton
-          ? 'pr-10'
-          : '';
+          ? INPUT_STYLES.ICON_PADDING.SINGLE
+          : INPUT_STYLES.ICON_PADDING.NONE;
 
     const baseInputClasses = cn(
       INPUT_STYLES.BASE,

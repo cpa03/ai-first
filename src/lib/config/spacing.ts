@@ -163,6 +163,31 @@ export const PB_CLASSES = {
 } as const;
 
 /**
+ * Padding Y (vertical) classes
+ * Replaces hardcoded py-* classes throughout components
+ */
+export const PY_CLASSES = {
+  /** py-0 = 0px */
+  NONE: 'py-0',
+  /** py-0.5 = 2px */
+  XS: 'py-0.5',
+  /** py-1 = 4px */
+  SM: 'py-1',
+  /** py-2 = 8px */
+  MD: 'py-2',
+  /** py-3 = 12px */
+  LG: 'py-3',
+  /** py-4 = 16px */
+  XL: 'py-4',
+  /** py-6 = 24px */
+  XXL: 'py-6',
+  /** py-8 = 32px */
+  XXXL: 'py-8',
+  /** py-12 = 48px */
+  XXXXL: 'py-12',
+} as const;
+
+/**
  * Padding right classes
  * Replaces hardcoded pr-* classes throughout components
  */
@@ -232,4 +257,5 @@ export const RESPONSIVE_SPACING = {
 export type GapClasses = typeof GAP_CLASSES;
 export type MtClasses = typeof MT_CLASSES;
 export type MbClasses = typeof MB_CLASSES;
+export type PyClasses = typeof PY_CLASSES;
 export type CommonSpacingPatterns = typeof COMMON_SPACING_PATTERNS;

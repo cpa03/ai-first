@@ -8,6 +8,7 @@ import {
   TEXT_COLORS,
   GRADIENT_CONFIG,
 } from '@/lib/config/theme';
+import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
@@ -114,13 +115,13 @@ function FeatureGridComponent() {
     <section
       ref={sectionRef}
       aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}
-      className="mt-16"
+      className={MT_CLASSES.XXXXL}
     >
       <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
         How It Works
       </h2>
       <ul
-        className="grid md:grid-cols-3 gap-8"
+        className={`grid md:grid-cols-3 ${GAP_CLASSES.XXXL}`}
         role="list"
         aria-label={FEATURE_GRID_LABELS.STEPS_LIST_ARIA_LABEL}
       >

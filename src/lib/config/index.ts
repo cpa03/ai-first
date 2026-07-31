@@ -861,7 +861,7 @@ export {
   TIME_STRINGS,
 } from './component-text-strings';
 
-// Centralizes all hardcoded spacing values (gap, mt, mb, mr, ml, p, pt, pb, pr, pl)
+// Centralizes all hardcoded spacing values (gap, mt, mb, mr, ml, p, pt, pb, pr, pl, py)
 export {
   GAP_CLASSES,
   MT_CLASSES,
@@ -871,6 +871,7 @@ export {
   P_CLASSES,
   PT_CLASSES,
   PB_CLASSES,
+  PY_CLASSES,
   PR_CLASSES,
   PL_CLASSES,
   COMMON_SPACING_PATTERNS,
