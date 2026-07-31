@@ -680,6 +680,29 @@ const InputWithValidationComponent = forwardRef<
               </span>
             </div>
           )}
+          {showCharCount && maxLength && charCount > 0 && (
+            <div
+              className={`text-xs transition-all ${DURATION_TAILWIND[300]} ease-out ${
+                maxLength - charCount <= maxLength * 0.1
+                  ? `${TEXT_COLORS.ERROR} font-medium`
+                  : maxLength - charCount <= maxLength * 0.2
+                    ? `${TEXT_COLORS.WARNING} font-medium`
+                    : TEXT_COLOR_CLASSES.MUTED
+              }`}
+              aria-live="polite"
+              aria-atomic="true"
+            >
+              {maxLength - charCount <= maxLength * 0.1
+                ? INPUT_VALIDATION_LABELS.CHAR_LIMIT_WARNING(
+                    maxLength - charCount
+                  )
+                : maxLength - charCount <= maxLength * 0.2
+                  ? INPUT_VALIDATION_LABELS.CHAR_LIMIT_WARNING(
+                      maxLength - charCount
+                    )
+                  : null}
+            </div>
+          )}
         </div>
       </div>
     );
