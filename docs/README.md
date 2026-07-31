@@ -231,25 +231,20 @@ Complete index of all IdeaFlow documentation.
 
 - [BroCula Browser Audit - 2026-07-31](./audit/brocula-audit-20260731.md) - BroCula browser console & Lighthouse audit (latest)
 - [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - BroCula browser console & Lighthouse audit
-- [BroCula Browser Audit - 2026-07-28](./audit/browser-audit-20260728.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-27](./audit/browser-audit-summary-20260727.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-26](./audit/browser-audit-20260726.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-25](./audit/browser-audit-20260725.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-22](./audit/browser-audit-20260722.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-21](./audit/browser-audit-20260721.md) - BroCula browser console & Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
-- [BugFixer Audit - 2026-07-22](./audit/bugfixer-audit-20260722.md) - Comprehensive bug audit with quality gates
+- [Flexy Modularization Audit (legacy)](./audit/flexy-modularization-audit.md) - Earlier modularization assessment
 - [Skipped Tests Investigation](./audit/skipped-tests-investigation.md) - Investigation of skipped tests with documented reasons
 - [Issue: Large Files](./audit/ISSUE-01-large-files.md) - Files exceeding 250 LOC maintainability threshold
 - [Issue: API Test Coverage](./audit/ISSUE-02-api-test-coverage.md) - API route test coverage gaps
 - [Issue: CSRF Protection](./audit/ISSUE-03-csrf-protection.md) - CSRF protection audit
 - [Issue: Structured Logging](./audit/ISSUE-04-structured-logging.md) - Structured logging implementation
 - [Issue: Cloudflare Deployment](./audit/ISSUE-05-cloudflare-deployment.md) - Cloudflare deployment configuration
-- [YAML Corruption Fix](./audit/yaml-corruption-fix.md) - YAML corruption fix documentation
+- [Phase 1 Diagnostic Report](./audit/phase1-diagnostic-report.md) - Phase 1 system diagnostic
+- [Phase 2 Hardening Report](./audit/phase2-hardening-report.md) - Phase 2 security hardening
 
 ### Archived Reports
 
-Older audit reports (2026-07-08 through 2026-07-20) are archived in [audit/archive/](./audit/archive/).
+Older audit reports (2026-07-08 through 2026-07-28) are archived in [audit/archive/](./audit/archive/).
 
 ## Database Reports
 
@@ -262,22 +257,16 @@ Older audit reports (2026-07-08 through 2026-07-20) are archived in [audit/archi
 
 ## Maintenance Reports
 
-- [Repository Maintenance Report - 2026-07-31 12:00](./maintenance/2026-07-31-repository-maintenance-loop-1200.md) - Build/lint verification, documentation integrity, stale branch analysis
-- [BugFixer Continuous Monitoring Guide](./maintenance/bugfixer-continuous-monitoring.md) - Continuous monitoring approach for repository quality
-- [Bugfix Report - 2026-07-29](./maintenance/bugfix-report-2026-07-29.md) - Multiple API bug investigation and verification
-- [Bugfix Verification - P2 Issues](./maintenance/BUGFIX_VERIFICATION.md) - Verification of P2 bug fixes (#319, #318, #549)
-- [Repository Maintenance Report - 2026-07-29](./maintenance/2026-07-29-repository-maintenance-loop.md) - Build/lint verification, documentation integrity, stale branch analysis
-- [Repository Maintenance Report - 2026-07-30](./maintenance/2026-07-30-repository-maintenance-loop.md) - Build/lint verification, documentation integrity
+### Active Reports
+
+- [Repository Maintenance Report - 2026-07-31](./maintenance/2026-07-31-repository-maintenance-loop.md) - Build/lint verification, documentation integrity, stale branch analysis (latest)
+- [CMZ Analysis - 2026-07-31](./maintenance/2026-07-31-czm-analysis.md) - CMZ autonomous agent analysis
+- [Phase 2 Feature Hardening - 2026-07-31](./maintenance/2026-07-31-phase2-feature-hardening.md) - Feature hardening report
+- [Phase 3 Strategic Expansion - 2026-07-31](./maintenance/2026-07-31-phase3-strategic-expansion.md) - Strategic expansion report
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-07-28) are archived in [maintenance/archive/](./maintenance/archive/).
-
-### Recently Archived
-
-- [Repository Maintenance Report - 2026-07-28 22:00](./maintenance/archive/2026-07-28-repository-maintenance-2200.md) - Build/lint verification
-- [Repository Maintenance Report - 2026-07-27](./maintenance/archive/2026-07-27-repository-maintenance-loop.md) - Stale branch cleanup, build/lint verification
-- [Repository Maintenance Report - 2026-07-26 16:48](./maintenance/archive/2026-07-26-repository-maintenance-1648.md) - Build/lint health, documentation accuracy
+Older maintenance reports (2026-07-07 through 2026-07-30) are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
