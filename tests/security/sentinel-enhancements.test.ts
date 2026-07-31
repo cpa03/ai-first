@@ -2,12 +2,14 @@ import { sanitizeHtml } from '@/lib/validation';
 import { withApiHandler } from '@/lib/api-handler/wrapper';
 import { detectSuspiciousPatterns } from '@/lib/security/suspicious-patterns';
 import { NextRequest } from 'next/server';
+import { POST as handleCSPReportPOST } from '@/app/api/csp-report/route';
 
 // Mock dependencies
 jest.mock('@/lib/security/audit-log', () => ({
   SecurityAuditLog: {
     logEvent: jest.fn(),
     logRateLimit: jest.fn(),
+    logCSPViolation: jest.fn(),
   },
 }));
 
@@ -109,6 +111,27 @@ describe('Sentinel Security Enhancements', () => {
       const response = await wrapped(request, { params: Promise.resolve({}) });
       expect(response.status).toBe(200);
       expect(mockHandler).toHaveBeenCalled();
+    });
+  });
+
+  describe('CSP Report Endpoint CSRF Bypass', () => {
+    it('should allow POST requests without Origin or Referer headers by skipping CSRF validation', async () => {
+      const request = new NextRequest('http://localhost/api/csp-report', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          'csp-report': {
+            'document-uri': 'http://localhost/api/test',
+            'violated-directive': 'script-src',
+            'blocked-uri': 'http://evil.com/malicious.js',
+          },
+        }),
+      });
+
+      const response = await handleCSPReportPOST(request, { params: Promise.resolve({}) });
+      expect(response.status).toBe(204);
     });
   });
 });

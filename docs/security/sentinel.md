@@ -35,3 +35,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The local `safeEqual` comparison function in `src/lib/auth.ts` returned `false` immediately on length mismatches before checking byte contents. While SHA-256 hashes are of a fixed size, this early return pattern leaks length/format details via a timing side-channel and represents an insecure coding pattern.
 **Learning:** Handcrafted comparison algorithms often inadvertently prioritize efficiency over constant-time security constraints. Even when input sizes are expected to be fixed, early-returning short circuits allow timing leaks.
 **Prevention:** Always use a platform-agnostic, constant-time comparison helper (such as `timingSafeEqualArrays`) that iterates across the maximum of both inputs' lengths to ensure uniform execution times under all circumstances.
+
+## 2026-07-31 - CSRF Blockage on Browser Out-of-Band Security Reporting (CSP Reports)
+
+**Vulnerability:** The Content Security Policy violation report endpoint (`/api/csp-report`) processed incoming `POST` requests through the standard `withApiHandler` wrapper. Because `skipCSRF` was not enabled, the wrapper subjected all inbound reports to full CSRF verification, rejecting legitimate browser-level reports when security-conscious browsers omitted or modified the `Origin` or `Referer` headers.
+**Learning:** Browsers dispatch native security notifications (like CSP reports) out-of-band. Because they are not standard user-driven AJAX calls, they do not carry custom anti-csrf headers. Subjecting these telemetry routes to session/origin CSRF validation causes reports to fail silently or be blocked, degrading security audit visibility.
+**Prevention:** Always bypass CSRF origin and token validation on telemetry/auditing API endpoints (like CSP reports) that do not perform state changes or side effects on behalf of user sessions.
