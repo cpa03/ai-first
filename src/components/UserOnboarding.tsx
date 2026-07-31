@@ -36,6 +36,7 @@ import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
+import { useConfetti } from '@/hooks/useConfetti';
 import Tooltip from './Tooltip';
 
 /**
@@ -87,6 +88,7 @@ export default function UserOnboarding() {
   const animatingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const prefersReducedMotion = usePrefersReducedMotion();
+  const { particles, fire } = useConfetti();
 
   const currentStep = TOUR_STEPS[currentStepIndex];
   const isLastStep = currentStepIndex === TOUR_STEPS.length - 1;
@@ -210,6 +212,7 @@ export default function UserOnboarding() {
     if (isLastStep) {
       triggerHapticFeedback();
       setShowCelebration(true);
+      fire(); // Micro-UX: Confetti burst on onboarding completion
 
       celebrationTimeoutRef.current = setTimeout(
         () => {
@@ -232,7 +235,7 @@ export default function UserOnboarding() {
       () => setIsAnimating(false),
       ANIMATION_CONFIG.MOUNT_DELAY
     );
-  }, [isLastStep, prefersReducedMotion]);
+  }, [isLastStep, prefersReducedMotion, fire]);
 
   /**
    * Handle skipping/dismissing onboarding
@@ -328,6 +331,26 @@ export default function UserOnboarding() {
               : `animate-in fade-in zoom-in ${DURATION_TAILWIND[300]}`
           }`}
         >
+          {/* Confetti particles */}
+          {particles.map((particle) => (
+            <span
+              key={particle.id}
+              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              style={
+                {
+                  left: '50%',
+                  top: '50%',
+                  width: `${particle.size}px`,
+                  height: `${particle.size}px`,
+                  backgroundColor: particle.color,
+                  '--confetti-x': `${particle.x}px`,
+                  '--confetti-y': `${particle.y}px`,
+                  animationDelay: `${particle.delay}ms`,
+                } as React.CSSProperties
+              }
+              aria-hidden="true"
+            />
+          ))}
           <div
             className={`${ICON_SIZES.XXL_20} mx-auto mb-5 rounded-full flex items-center justify-center ${
               prefersReducedMotion
