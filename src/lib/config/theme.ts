@@ -204,6 +204,16 @@ export const INPUT_STYLES = {
     RING_COLORS.SUCCESS,
     FOCUS_SHADOWS.SUCCESS,
   ].join(' '),
+
+  /** Right padding classes based on icon visibility - eliminates hardcoded pr-* values */
+  ICON_PADDING: {
+    /** No icons - no extra padding */
+    NONE: '',
+    /** One icon visible - pr-10 (40px) */
+    SINGLE: 'pr-10',
+    /** Two icons visible - pr-20 (80px) */
+    DOUBLE: 'pr-20',
+  },
 } as const;
 
 /**

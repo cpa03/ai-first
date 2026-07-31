@@ -23,6 +23,8 @@ import {
   LABELS,
   ANIMATION_DELAYS,
   ANIMATION_CONFIG,
+  ANIMATION_VALUES,
+  DURATION_TAILWIND,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   UI_CONFIG,
@@ -44,6 +46,7 @@ import {
   ICON_SIZES,
   ICON_PATTERNS,
   CLARIFICATION_TIMER_CONFIG,
+  PY_CLASSES,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -363,7 +366,9 @@ function ClarificationFlow({
         <LoadingAnnouncer
           message={MESSAGES.CLARIFICATION.GENERATING_QUESTIONS}
         />
-        <div className="flex flex-col items-center justify-center py-12">
+        <div
+          className={`flex flex-col items-center justify-center ${PY_CLASSES.XXXXL}`}
+        >
           <LoadingSpinner
             size="lg"
             ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.LOADING_QUESTIONS}
@@ -441,7 +446,9 @@ function ClarificationFlow({
   if (!currentQuestion) {
     return (
       <div className={`${CONTAINER_WIDTHS.SM} mx-auto`}>
-        <div className="flex flex-col items-center justify-center py-12">
+        <div
+          className={`flex flex-col items-center justify-center ${PY_CLASSES.XXXXL}`}
+        >
           <LoadingSpinner size="lg" />
           <p className={`mt-4 ${TEXT_COLOR_CLASSES.BODY} text-sm`}>
             {MESSAGES.CLARIFICATION.LOADING_QUESTION}
@@ -645,9 +652,9 @@ function ClarificationFlow({
                 <span className="flex items-center gap-1.5">
                   <span className={GRAY_CLASSES.TEXT_400}>·</span>
                   <span
-                    className={`transition-all duration-300 ${
+                    className={`transition-all ${DURATION_TAILWIND[300]} ${
                       estimatePulse
-                        ? 'text-primary-600 font-medium scale-105'
+                        ? `text-primary-600 font-medium ${ANIMATION_VALUES.SCALE_CLASSES.LARGE}`
                         : ''
                     }`}
                   >
