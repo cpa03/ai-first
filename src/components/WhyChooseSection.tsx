@@ -16,6 +16,7 @@ function WhyChooseSectionComponent() {
   const sectionRef = useRef<HTMLElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const [announcement, setAnnouncement] = useState('');
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -90,9 +91,19 @@ function WhyChooseSectionComponent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [ARTICLES]);
 
-  const handleFocus = useCallback((index: number) => {
-    setFocusedIndex(index);
-  }, []);
+  const handleFocus = useCallback(
+    (index: number) => {
+      setFocusedIndex(index);
+      setAnnouncement(
+        WHY_CHOOSE_SECTION_LABELS.ITEM_NAVIGATION_ANNOUNCEMENT(
+          ARTICLES[index].TITLE,
+          index + 1,
+          ARTICLES.length
+        )
+      );
+    },
+    [ARTICLES]
+  );
 
   const handleBlur = useCallback(() => {
     setFocusedIndex(null);
@@ -110,6 +121,14 @@ function WhyChooseSectionComponent() {
       className={SECTION_STYLES.CONTAINER}
       aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}
     >
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
       <h2
         id={HOME_PAGE_ELEMENT_IDS.WHY_CHOOSE_HEADING}
         className={SECTION_STYLES.HEADING}
