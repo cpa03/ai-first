@@ -235,7 +235,11 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
   const percentage = Math.round((score / NORMALIZATION.MAX_SCORE) * 100);
 
   const strengthConfig = {
-    empty: { label: '', color: 'bg-gray-200', textColor: '' },
+    empty: {
+      label: STRENGTH_LABELS.EMPTY,
+      color: STRENGTH_COLORS.EMPTY,
+      textColor: '',
+    },
     weak: {
       label: STRENGTH_LABELS.WEAK,
       color: STRENGTH_COLORS.WEAK,
