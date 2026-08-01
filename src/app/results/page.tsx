@@ -875,6 +875,16 @@ function ResultsContent() {
                 </span>
               </span>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+                <kbd className={ELEMENT_PATTERNS.KBD}>
+                  {isMac ? '⌘' : 'Ctrl'}
+                </kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>⇧</kbd>
+                <kbd className={ELEMENT_PATTERNS.KBD}>E</kbd>
+                <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                  email
+                </span>
+              </span>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
                 <kbd className={ELEMENT_PATTERNS.KBD}>?</kbd>
                 <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                   all shortcuts

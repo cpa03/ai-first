@@ -115,9 +115,16 @@ const EmailButtonComponent = function EmailButton({
     }
   }, [ideaTitle, ideaContent, sessionAnswers, onEmailSent, state, fire]);
 
+  // Micro-UX: Keyboard shortcut Ctrl/Cmd+Shift+E for email
+  // Uses Shift to avoid conflict with Ctrl+E (export markdown) on results page
+  // Consistent with ShareButton pattern (Ctrl/Cmd+Shift+S)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+      if (
+        (e.metaKey || e.ctrlKey) &&
+        e.shiftKey &&
+        e.key.toLowerCase() === 'e'
+      ) {
         if (!isFocusedOnInput(e.target)) {
           e.preventDefault();
           handleEmailClick();
