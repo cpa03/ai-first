@@ -238,7 +238,7 @@ const LHCI_CONFIG = {
 
 /**
  * Browser Scanner Configuration
- * Used by brocula-scan.js, scan-console-firefox.js, and performance-audit-firefox.js
+ * Used by brocula-audit.js and lighthouse-audit.js
  * Centralizes all hardcoded values from browser-based audit scripts
  */
 const BROWSER_SCANNER_CONFIG = {
