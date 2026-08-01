@@ -262,24 +262,33 @@ function MobileNavComponent() {
             onTouchEnd={closeMenu}
             aria-hidden="true"
           >
-            {/* Micro-UX improvement: Close button for better discoverability */}
+            {/* Micro-UX improvement: Enhanced close button for better discoverability */}
+            {/* Added entrance animation, larger touch target, and keyboard shortcut hint */}
             <button
               type="button"
               onClick={closeMenu}
-              className={`absolute top-4 right-4 ${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.SIZE_CLASS} flex items-center justify-center rounded-full bg-white/90 shadow-lg ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.HOVER_TEXT_900} hover:bg-white ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT}`}
-              aria-label={MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL}
+              className={`absolute top-4 right-4 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-white shadow-xl border border-gray-200 ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:bg-gray-50 hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
+              aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
+              title="Press Escape to close"
             >
-              <div
-                className={`${HAMBURGER_MENU_CONFIG.CLOSE_BUTTON.ICON_SIZE_CLASS} flex flex-col justify-center items-center`}
-              >
+              <div className="w-5 h-5 flex flex-col justify-center items-center">
                 <span
-                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block w-5 h-0.5 bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
                 <span
-                  className={`block ${HAMBURGER_MENU_CONFIG.LINE.CLOSE_WIDTH_CLASS} ${HAMBURGER_MENU_CONFIG.LINE.HEIGHT_CLASS} bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block w-5 h-0.5 bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
               </div>
             </button>
+            {/* Micro-UX: Subtle keyboard shortcut hint near close button */}
+            <div
+              className="absolute top-4 right-16 animate-fade-in"
+              style={{ animationDelay: '200ms' }}
+            >
+              <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/80 shadow-sm text-xs text-gray-500 font-mono backdrop-blur-sm">
+                Esc
+              </span>
+            </div>
           </div>
           <div
             ref={menuRef}
