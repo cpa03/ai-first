@@ -96,6 +96,16 @@ function PasswordRequirementsChecklistComponent({
   const total = requirements.length;
   const progressPercent = total > 0 ? (metCount / total) * 100 : 0;
 
+  const getStrengthLevel = (count: number): 'WEAK' | 'MEDIUM' | 'STRONG' => {
+    if (count <= 1) return 'WEAK';
+    if (count <= 3) return 'MEDIUM';
+    return 'STRONG';
+  };
+
+  const strengthLevel = getStrengthLevel(metCount);
+  const strengthLabel =
+    PASSWORD_REQUIREMENTS_LABELS.STRENGTH_LABELS[strengthLevel];
+
   // Micro-UX: Celebrate when user first meets ALL password requirements
   // Provides delightful positive feedback at the exact moment of full compliance
   useEffect(() => {
@@ -209,7 +219,7 @@ function PasswordRequirementsChecklistComponent({
             aria-live="polite"
             aria-atomic="true"
           >
-            {metCount} of {total}
+            {strengthLabel} · {metCount} of {total}
           </span>
         </div>
         <div
