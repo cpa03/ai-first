@@ -328,7 +328,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
             className={`inline-flex items-center justify-center ${ICON_SIZES.MD} rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
           >
             <svg
-              className="w-2.5 h-2.5"
+              className={ICON_SIZES.SM_XS}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
