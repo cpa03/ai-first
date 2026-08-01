@@ -64,9 +64,9 @@
 ### Issue Fixed
 
 **Source**: `docs/README.md`  
-**Link**: `[Issue Manager Report - 2026-07-23](./archive/ISSUE-MANAGER-REPORT-20260723.md)`  
+**Link**: `[Issue Manager Report - 2026-07-23](./ISSUE-MANAGER-REPORT-20260723.md)`  
 **Problem**: File was archived but link not updated  
-**Fix**: Updated to `./archive/ISSUE-MANAGER-REPORT-20260723.md`
+**Fix**: Updated to `./ISSUE-MANAGER-REPORT-20260723.md`
 
 ## Recommendations
 
