@@ -2,6 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import Button from '@/components/Button';
+import Tooltip from '@/components/Tooltip';
 
 describe('Button', () => {
   describe('keyboard shortcut tooltip', () => {
@@ -83,6 +84,43 @@ describe('Button', () => {
 
       expect(screen.getByText('Ctrl')).toBeInTheDocument();
       expect(screen.getByText('S')).toBeInTheDocument();
+    });
+
+    it('does not render separator border-l when content is empty and only shortcut is provided', async () => {
+      const user = userEvent.setup();
+      render(<Button shortcut={['⌘', 'S']}>Save</Button>);
+      const button = screen.getByRole('button', { name: /save/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+
+      const ctrlElement = screen.getByText('Ctrl');
+      const container = ctrlElement.parentElement;
+      expect(container).not.toHaveClass('border-l');
+    });
+
+    it('renders separator border-l when both content and shortcut are provided in Tooltip', async () => {
+      const user = userEvent.setup();
+      render(
+        <Tooltip content="Tooltip content" shortcut={['⌘', 'S']}>
+          <button>Hover me</button>
+        </Tooltip>
+      );
+      const button = screen.getByRole('button', { name: /hover me/i });
+
+      await user.hover(button);
+
+      await waitFor(() => {
+        expect(screen.getByRole('tooltip')).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('Tooltip content')).toBeInTheDocument();
+      const ctrlElement = screen.getByText('Ctrl');
+      const container = ctrlElement.parentElement;
+      expect(container).toHaveClass('border-l');
     });
   });
 

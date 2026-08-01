@@ -203,9 +203,13 @@ function TooltipComponent({
                 flex items-center gap-2.5
               `}
             >
-              <span>{content}</span>
+              {content && <span>{content}</span>}
               {shortcut && shortcut.length > 0 && (
-                <div className="flex items-center gap-1 border-l ${BORDER_COLOR_CLASSES.MUTED_DARK} pl-2 ml-auto">
+                <div
+                  className={`flex items-center gap-1 pl-2 ml-auto ${
+                    content ? `border-l ${BORDER_COLOR_CLASSES.MUTED_DARK}` : ''
+                  }`}
+                >
                   {shortcut.map((key, i) => (
                     <React.Fragment key={i}>
                       <kbd
