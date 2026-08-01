@@ -98,6 +98,8 @@ export const UI_CONFIG = {
       MIN_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_MIN_PX', 44, 24, 64)}px]`,
       SMALL_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44),
       SMALL_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_SMALL_PX', 32, 24, 44)}px]`,
+      MEDIUM_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_MEDIUM_PX', 48, 44, 56),
+      MEDIUM_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_MEDIUM_PX', 48, 44, 56)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_MEDIUM_PX', 48, 44, 56)}px]`,
       LARGE_SIZE_PX: EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72),
       LARGE_SIZE: `min-h-[${EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72)}px] min-w-[${EnvLoader.number('UI_TOUCH_TARGET_LARGE_PX', 56, 44, 72)}px]`,
       KEYBOARD_SIZE_PX: EnvLoader.number('UI_KEYBOARD_TARGET_PX', 44, 36, 64),

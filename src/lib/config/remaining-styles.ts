@@ -90,8 +90,11 @@ export const BUTTON_HOVER_PATTERNS = {
  * Common element patterns
  */
 export const ELEMENT_PATTERNS = {
-  // Keyboard shortcut badge
+  // Keyboard shortcut badge - light theme (white background)
   KBD: `px-1.5 py-0.5 text-xs font-mono ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`,
+
+  // Keyboard shortcut badge - dark theme (dark background for skip links, headers)
+  KBD_DARK: 'px-1.5 py-0.5 bg-black/20 rounded text-xs font-sans',
 
   // Status badge
   STATUS_BADGE: `px-1.5 py-0.5 font-mono text-xs font-medium ${GRAY_CLASSES.TEXT_500} ${GRAY_CLASSES.BG_100} border ${GRAY_CLASSES.BORDER_200} rounded`,
