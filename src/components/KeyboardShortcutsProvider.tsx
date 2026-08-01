@@ -14,6 +14,7 @@ import {
   FOCUS_RING_PATTERNS,
   ICON_SIZES,
 } from '@/lib/config';
+import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { PLATFORM } from '@/lib/dom-utils';
 import {
@@ -98,7 +99,7 @@ function KeyboardShortcutsButtonComponent() {
     >
       <button
         onClick={openHelp}
-        className={`p-2 ${GRAY_TEXT_COMBOS.MUTED_HOVER} hover:bg-gray-100 rounded-lg transition-colors ${FOCUS_RING_PATTERNS.DEFAULT} ${showDiscoverPulse ? 'animate-discover-pulse' : ''}`}
+        className={`p-2 ${GRAY_TEXT_COMBOS.MUTED_HOVER} ${GRAY_CLASSES.HOVER_BG_100} rounded-lg transition-colors ${FOCUS_RING_PATTERNS.DEFAULT} ${showDiscoverPulse ? 'animate-discover-pulse' : ''}`}
         aria-label={KEYBOARD_SHORTCUTS_PROVIDER_LABELS.HELP_BUTTON_ARIA_LABEL}
         type="button"
       >

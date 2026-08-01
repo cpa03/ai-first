@@ -22,7 +22,7 @@ import {
   LAYOUT_CLASSES,
   DURATION_TAILWIND,
 } from '@/lib/config/theme';
-import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
+import { GRAY_CLASSES, ELEMENT_PATTERNS } from '@/lib/config/remaining-styles';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
 import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
 import { PAGE_LAYOUT_CLASSES } from '@/lib/config/page-layout';
@@ -182,7 +182,9 @@ export default async function RootLayout({
                   />
                 </svg>
                 Skip to main content
-                <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-black/20 rounded text-xs font-sans">
+                <kbd
+                  className={`hidden sm:inline-flex items-center ${ELEMENT_PATTERNS.KBD_DARK}`}
+                >
                   Tab
                 </kbd>
               </span>

@@ -267,7 +267,7 @@ function MobileNavComponent() {
             <button
               type="button"
               onClick={closeMenu}
-              className={`absolute top-4 right-4 min-w-[48px] min-h-[48px] flex items-center justify-center rounded-full bg-white shadow-xl border border-gray-200 ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:bg-gray-50 hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
+              className={`absolute top-4 right-4 ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.MEDIUM_SIZE} flex items-center justify-center rounded-full bg-white shadow-xl ${BORDER_COLORS.LIGHT} ${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900} hover:bg-gray-50 hover:shadow-2xl hover:scale-105 active:scale-95 ${TRANSITION_CLASSES.DEFAULT} ${FOCUS_RING_PATTERNS.DEFAULT} animate-fade-in`}
               aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
               title="Press Escape to close"
             >
