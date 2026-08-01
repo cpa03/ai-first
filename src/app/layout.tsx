@@ -182,7 +182,7 @@ export default async function RootLayout({
                   />
                 </svg>
                 Skip to main content
-                <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-white/30 rounded text-xs font-sans">
+                <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-black/20 rounded text-xs font-sans">
                   Tab
                 </kbd>
               </span>
