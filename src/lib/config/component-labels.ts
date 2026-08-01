@@ -598,6 +598,9 @@ export const WHY_CHOOSE_SECTION_LABELS = {
   KEYBOARD_NAV_HINT: 'Navigate with arrow keys',
   /** ARIA label for keyboard navigation hint */
   KEYBOARD_NAV_ARIA_LABEL: 'Keyboard navigation available',
+  /** Screen reader announcement when navigating between items */
+  ITEM_NAVIGATION_ANNOUNCEMENT: (title: string, index: number, total: number) =>
+    `${title}, item ${index} of ${total}`,
 } as const;
 
 /**
