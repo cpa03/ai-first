@@ -41,6 +41,7 @@ import {
   GRAY_CLASSES,
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
+  ICON_SIZES,
 } from '@/lib/config';
 import {
   DASHBOARD_ELEMENT_IDS,
@@ -595,7 +596,7 @@ export default function DashboardPage() {
       };
       win.showToast?.({
         type: 'info',
-        message: 'Tip: Press j/k to navigate ideas, Enter to open',
+        message: DASHBOARD_PAGE_CONTENT.KEYBOARD_SHORTCUTS.HINT_TIP,
       });
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.DASHBOARD_KEYBOARD_HINT_SHOWN,
@@ -702,8 +703,8 @@ export default function DashboardPage() {
               }}
               className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
-                  ? 'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm'
-                  : `${GRAY_CLASSES.BORDER_300} bg-white ${GRAY_CLASSES.TEXT_900}`
+                  ? DASHBOARD_PATTERNS.FILTER_ACTIVE
+                  : DASHBOARD_PATTERNS.FILTER_INACTIVE
               }`}
               aria-label={DASHBOARD_PAGE_CONTENT.ARIA_LABELS.FILTER_STATUS}
             >
@@ -794,7 +795,7 @@ export default function DashboardPage() {
           >
             <span className={DASHBOARD_PATTERNS.STATUS_BADGE_ACTIVE}>
               <svg
-                className="w-3 h-3 mr-1"
+                className={`${ICON_SIZES.SM} mr-1`}
                 fill="currentColor"
                 viewBox={SVG_VIEWBOX.SMALL}
                 aria-hidden="true"
@@ -1290,7 +1291,7 @@ export default function DashboardPage() {
           >
             <span>{DASHBOARD_PAGE_CONTENT.VIEW_ALL_SHORTCUTS}</span>
             <svg
-              className="w-3 h-3"
+              className={ICON_SIZES.SM}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"

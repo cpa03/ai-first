@@ -38,6 +38,7 @@ import {
   FORM_OVERLAY_STYLES,
   FORM_ARIA_LABELS,
   GRAY_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -77,7 +78,7 @@ function PasswordMatchIndicator({
         aria-live="polite"
       >
         <svg
-          className="w-4 h-4"
+          className={ICON_SIZES.MD}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
@@ -109,7 +110,7 @@ function PasswordMatchIndicator({
     >
       {matchStatus === 'match' ? (
         <svg
-          className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_DARK}`}
+          className={`${ICON_SIZES.MD} ${TEXT_COLORS.SUCCESS_DARK}`}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
@@ -124,7 +125,7 @@ function PasswordMatchIndicator({
         </svg>
       ) : (
         <svg
-          className={`w-4 h-4 ${TEXT_COLORS.WARNING_MEDIUM}`}
+          className={`${ICON_SIZES.MD} ${TEXT_COLORS.WARNING_MEDIUM}`}
           fill="none"
           viewBox={SVG_VIEWBOX.STANDARD}
           stroke="currentColor"
@@ -285,7 +286,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
         <span className={`text-xs ${config.textColor}`}>{config.label}</span>
         {celebrating && !prefersReducedMotion && (
           <svg
-            className={`w-4 h-4 ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
+            className={`${ICON_SIZES.MD} ${TEXT_COLORS.SUCCESS_MEDIUM} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
             fill="none"
             viewBox={SVG_VIEWBOX.STANDARD}
             stroke="currentColor"
@@ -320,7 +321,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
           aria-live="polite"
         >
           <span
-            className={`inline-flex items-center justify-center w-4 h-4 rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
+            className={`inline-flex items-center justify-center ${ICON_SIZES.MD} rounded-full ${BG_COLORS.SUCCESS_LIGHT}`}
           >
             <svg
               className="w-2.5 h-2.5"

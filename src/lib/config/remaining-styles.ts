@@ -4,6 +4,8 @@
  * Follows the "Flexy" principle: eliminate hardcoded values and make modular systems
  */
 
+import { DURATION_TAILWIND } from './theme';
+
 /**
  * Gray color classes for text, backgrounds, and borders
  * Replaces hardcoded gray-* classes throughout components
@@ -330,6 +332,12 @@ export const DASHBOARD_PATTERNS = {
 
   SELECT_OPTION_ACTIVE: 'bg-primary-50 font-medium',
 
+  /** Filter select active state - when filter is not 'all' */
+  FILTER_ACTIVE:
+    'border-primary-300 bg-primary-50 text-primary-900 font-medium shadow-sm',
+  /** Filter select inactive state - default state */
+  FILTER_INACTIVE: `${GRAY_CLASSES.BORDER_300} bg-white ${GRAY_CLASSES.TEXT_900}`,
+
   FILTER_CLEAR_GROUP:
     'flex items-center gap-2 transition-all duration-200 ease-out',
 
@@ -375,6 +383,12 @@ export const FORM_PATTERNS = {
   REMEMBER_ME_ACTIVE: `${GRAY_CLASSES.TEXT_900} font-medium`,
   /** Remember me checkbox label - inactive state */
   REMEMBER_ME_INACTIVE: `${GRAY_CLASSES.TEXT_700} hover:${GRAY_CLASSES.TEXT_900}`,
+  /** Custom checkbox indicator - base styles */
+  CHECKBOX_BASE: `w-5 h-5 rounded border-2 transition-all ${DURATION_TAILWIND[200]} ease-out flex items-center justify-center peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-2 peer-hover:border-primary-400`,
+  /** Custom checkbox indicator - checked state */
+  CHECKBOX_CHECKED: 'bg-primary-600 border-primary-600',
+  /** Custom checkbox indicator - unchecked state */
+  CHECKBOX_UNCHECKED: `bg-white ${GRAY_CLASSES.BORDER_300} group-hover:border-primary-400`,
   /** Password strength progress bar track */
   STRENGTH_BAR_TRACK: `flex-1 h-1.5 ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`,
 } as const;

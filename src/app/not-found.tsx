@@ -22,6 +22,7 @@ import {
   HERO_ENTRANCE,
   ANIMATION_CONFIG,
   GRAY_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
@@ -145,7 +146,7 @@ export default function NotFound() {
               className="inline-flex items-center justify-center gap-2"
             >
               <svg
-                className="w-4 h-4"
+                className={ICON_SIZES.MD}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"
@@ -167,7 +168,7 @@ export default function NotFound() {
                 className="inline-flex items-center justify-center gap-2 w-full"
               >
                 <svg
-                  className="w-4 h-4"
+                  className={ICON_SIZES.MD}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -190,7 +191,7 @@ export default function NotFound() {
                 className="inline-flex items-center justify-center gap-2 w-full"
               >
                 <svg
-                  className="w-4 h-4"
+                  className={ICON_SIZES.MD}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"

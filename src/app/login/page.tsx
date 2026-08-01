@@ -32,6 +32,7 @@ import {
   DRAW_CHECK,
   FORM_PATTERNS,
   GRAY_CLASSES,
+  ICON_SIZES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -371,22 +372,15 @@ export default function LoginPage() {
                   />
                   <span
                     className={`
-                      w-5 h-5 rounded border-2 transition-all ${DURATION_TAILWIND[200]} ease-out
-                      flex items-center justify-center
-                      peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-2
-                      peer-hover:border-primary-400
-                      ${
-                        rememberMe
-                          ? 'bg-primary-600 border-primary-600'
-                          : `bg-white ${GRAY_CLASSES.BORDER_300} group-hover:border-primary-400`
-                      }
+                      ${FORM_PATTERNS.CHECKBOX_BASE}
+                      ${rememberMe ? FORM_PATTERNS.CHECKBOX_CHECKED : FORM_PATTERNS.CHECKBOX_UNCHECKED}
                       ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
                     `}
                     aria-hidden="true"
                   >
                     {rememberMe && (
                       <svg
-                        className={`w-3 h-3 text-white ${DRAW_CHECK}`}
+                        className={`${ICON_SIZES.MD_SM} text-white ${DRAW_CHECK}`}
                         fill="none"
                         viewBox={SVG_VIEWBOX.STANDARD}
                         stroke="currentColor"
