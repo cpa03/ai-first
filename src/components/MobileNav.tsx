@@ -19,6 +19,7 @@ import {
   MOBILE_NAV_CLOSE_HINT_TEXT,
   MOBILE_NAV_CLOSE_HINT_KBD,
   GRAY_CLASSES,
+  Z_INDEX_LAYERS,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -256,7 +257,7 @@ function MobileNavComponent() {
         <>
           {/* Backdrop overlay with close button */}
           <div
-            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[35] fade-in`}
+            className={`fixed inset-0 top-16 ${BG_COLORS.OVERLAY_DARK} backdrop-blur-sm z-[${Z_INDEX_LAYERS.MOBILE_OVERLAY}] fade-in`}
             onClick={closeMenu}
             onTouchEnd={closeMenu}
             aria-hidden="true"
@@ -283,7 +284,7 @@ function MobileNavComponent() {
           <div
             ref={menuRef}
             id={PAGE_ELEMENT_IDS.MOBILE_MENU}
-            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[45] animate-slide-down`}
+            className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
             <ul
               className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 ${BG_COLORS.DEFAULT}`}
