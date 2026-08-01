@@ -616,6 +616,12 @@ export const PASSWORD_REQUIREMENTS_LABELS = {
     `${label}: ${met ? 'met' : 'not met'}`,
   /** Header text for password requirements */
   HEADER_TEXT: 'Password must contain:',
+  /** Password strength labels based on requirements met */
+  STRENGTH_LABELS: {
+    WEAK: 'Weak',
+    MEDIUM: 'Medium',
+    STRONG: 'Strong',
+  } as const,
 } as const;
 
 /**
