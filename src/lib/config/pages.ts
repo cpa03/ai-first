@@ -458,6 +458,8 @@ export const DASHBOARD_PAGE_CONTENT = {
       ESC: 'Esc',
       DEL: 'Del',
     },
+    /** Keyboard hint tip shown to users */
+    HINT_TIP: 'Tip: Press j/k to navigate ideas, Enter to open',
   },
   ERRORS: {
     FETCH_FAILED: 'Failed to fetch ideas',
