@@ -111,7 +111,9 @@ describe('ReferralLink', () => {
         jest.advanceTimersByTime(500);
       });
 
-      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+      expect(
+        screen.getByText('Click or press Enter/Space to select all')
+      ).toBeInTheDocument();
     });
 
     it('updates the tooltip text to selected when clicked, and reverts on blur', () => {
@@ -123,19 +125,25 @@ describe('ReferralLink', () => {
       act(() => {
         jest.advanceTimersByTime(500);
       });
-      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+      expect(
+        screen.getByText('Click or press Enter/Space to select all')
+      ).toBeInTheDocument();
 
       // Click to select
       act(() => {
         fireEvent.click(codeElement);
       });
-      expect(screen.getByText('Selected! Press Ctrl+C to copy')).toBeInTheDocument();
+      expect(
+        screen.getByText('Selected! Press Ctrl+C to copy')
+      ).toBeInTheDocument();
 
       // Blur to revert
       act(() => {
         fireEvent.blur(codeElement);
       });
-      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+      expect(
+        screen.getByText('Click or press Enter/Space to select all')
+      ).toBeInTheDocument();
     });
 
     it('updates the tooltip text to selected on Enter, and reverts after timeout', () => {
@@ -147,20 +155,26 @@ describe('ReferralLink', () => {
       act(() => {
         jest.advanceTimersByTime(500);
       });
-      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+      expect(
+        screen.getByText('Click or press Enter/Space to select all')
+      ).toBeInTheDocument();
 
       // KeyDown Enter
       act(() => {
         fireEvent.keyDown(codeElement, { key: 'Enter' });
       });
-      expect(screen.getByText('Selected! Press Ctrl+C to copy')).toBeInTheDocument();
+      expect(
+        screen.getByText('Selected! Press Ctrl+C to copy')
+      ).toBeInTheDocument();
 
       // Fast-forward 2 seconds
       act(() => {
         jest.advanceTimersByTime(2000);
       });
 
-      expect(screen.getByText('Click or press Enter/Space to select all')).toBeInTheDocument();
+      expect(
+        screen.getByText('Click or press Enter/Space to select all')
+      ).toBeInTheDocument();
     });
   });
 });

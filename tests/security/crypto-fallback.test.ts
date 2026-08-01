@@ -75,27 +75,80 @@ describe('timingSafeEqualStrings', () => {
 
 describe('timingSafeEqualArrays', () => {
   it('should return true for identical Uint8Arrays', () => {
-    expect(timingSafeEqualArrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3]))).toBe(true);
-    expect(timingSafeEqualArrays(new Uint8Array([]), new Uint8Array([]))).toBe(true);
-    expect(timingSafeEqualArrays(new Uint8Array([255]), new Uint8Array([255]))).toBe(true);
+    expect(
+      timingSafeEqualArrays(
+        new Uint8Array([1, 2, 3]),
+        new Uint8Array([1, 2, 3])
+      )
+    ).toBe(true);
+    expect(timingSafeEqualArrays(new Uint8Array([]), new Uint8Array([]))).toBe(
+      true
+    );
+    expect(
+      timingSafeEqualArrays(new Uint8Array([255]), new Uint8Array([255]))
+    ).toBe(true);
   });
 
   it('should return false for different Uint8Arrays of the same length', () => {
-    expect(timingSafeEqualArrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 4]))).toBe(false);
-    expect(timingSafeEqualArrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 9, 3]))).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        new Uint8Array([1, 2, 3]),
+        new Uint8Array([1, 2, 4])
+      )
+    ).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        new Uint8Array([1, 2, 3]),
+        new Uint8Array([1, 9, 3])
+      )
+    ).toBe(false);
   });
 
   it('should return false for Uint8Arrays of different lengths', () => {
-    expect(timingSafeEqualArrays(new Uint8Array([1, 2, 3]), new Uint8Array([1, 2, 3, 4]))).toBe(false);
-    expect(timingSafeEqualArrays(new Uint8Array([1, 2, 3, 4]), new Uint8Array([1, 2, 3]))).toBe(false);
-    expect(timingSafeEqualArrays(new Uint8Array([1]), new Uint8Array([]))).toBe(false);
-    expect(timingSafeEqualArrays(new Uint8Array([]), new Uint8Array([1]))).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        new Uint8Array([1, 2, 3]),
+        new Uint8Array([1, 2, 3, 4])
+      )
+    ).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        new Uint8Array([1, 2, 3, 4]),
+        new Uint8Array([1, 2, 3])
+      )
+    ).toBe(false);
+    expect(timingSafeEqualArrays(new Uint8Array([1]), new Uint8Array([]))).toBe(
+      false
+    );
+    expect(timingSafeEqualArrays(new Uint8Array([]), new Uint8Array([1]))).toBe(
+      false
+    );
   });
 
   it('should return false if any parameter is not a Uint8Array', () => {
-    expect(timingSafeEqualArrays(asInvalidInput<Uint8Array>(null), new Uint8Array([1]))).toBe(false);
-    expect(timingSafeEqualArrays(new Uint8Array([1]), asInvalidInput<Uint8Array>(undefined))).toBe(false);
-    expect(timingSafeEqualArrays(asInvalidInput<Uint8Array>('not-array'), asInvalidInput<Uint8Array>('not-array'))).toBe(false);
-    expect(timingSafeEqualArrays(asInvalidInput<Uint8Array>([1, 2, 3]), asInvalidInput<Uint8Array>([1, 2, 3]))).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        asInvalidInput<Uint8Array>(null),
+        new Uint8Array([1])
+      )
+    ).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        new Uint8Array([1]),
+        asInvalidInput<Uint8Array>(undefined)
+      )
+    ).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        asInvalidInput<Uint8Array>('not-array'),
+        asInvalidInput<Uint8Array>('not-array')
+      )
+    ).toBe(false);
+    expect(
+      timingSafeEqualArrays(
+        asInvalidInput<Uint8Array>([1, 2, 3]),
+        asInvalidInput<Uint8Array>([1, 2, 3])
+      )
+    ).toBe(false);
   });
 });

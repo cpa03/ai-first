@@ -378,7 +378,9 @@ export function validateEnvironment(): ValidationResult {
   // PERFORMANCE/COMPATIBILITY: Bypass strict validation during the Next.js production build phase,
   // since production environment secrets are not available in the build container.
   if (process.env.NEXT_PHASE === 'phase-production-build') {
-    logger.info('Bypassing environment validation during Next.js production build phase');
+    logger.info(
+      'Bypassing environment validation during Next.js production build phase'
+    );
     return { valid: true, errors: [], warnings: [] };
   }
 

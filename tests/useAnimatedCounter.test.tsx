@@ -25,10 +25,12 @@ describe('useAnimatedCounter', () => {
     nextRafId = 1;
 
     // Mock requestAnimationFrame to capture callbacks and run them on-demand
-    window.requestAnimationFrame = jest.fn().mockImplementation((cb: (time: number) => void) => {
-      rafCallbacks.push(cb);
-      return nextRafId++;
-    });
+    window.requestAnimationFrame = jest
+      .fn()
+      .mockImplementation((cb: (time: number) => void) => {
+        rafCallbacks.push(cb);
+        return nextRafId++;
+      });
 
     window.cancelAnimationFrame = jest.fn().mockImplementation((id: number) => {
       // Clear callbacks or simple mock representation

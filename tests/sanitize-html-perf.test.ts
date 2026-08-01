@@ -23,16 +23,22 @@ describe('sanitizeHtml Performance and Cache Correctness', () => {
       sanitizeHtml(plainText);
     }
     const end = performance.now();
-    console.log(`Plain text sanitizeHtml x ${iterations}: ${(end - start).toFixed(2)}ms`);
+    console.log(
+      `Plain text sanitizeHtml x ${iterations}: ${(end - start).toFixed(2)}ms`
+    );
 
     const start2 = performance.now();
     for (let i = 0; i < iterations; i++) {
       sanitizeHtml(htmlText);
     }
     const end2 = performance.now();
-    console.log(`HTML text sanitizeHtml x ${iterations}: ${(end2 - start2).toFixed(2)}ms`);
+    console.log(
+      `HTML text sanitizeHtml x ${iterations}: ${(end2 - start2).toFixed(2)}ms`
+    );
 
-    console.log(`Cold (uncached) scan took ${durationCold.toFixed(4)}ms vs cached average.`);
+    console.log(
+      `Cold (uncached) scan took ${durationCold.toFixed(4)}ms vs cached average.`
+    );
   });
 
   test('Cache Eviction and Cleaning', () => {

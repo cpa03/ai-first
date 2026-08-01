@@ -130,7 +130,9 @@ describe('Sentinel Security Enhancements', () => {
         }),
       });
 
-      const response = await handleCSPReportPOST(request, { params: Promise.resolve({}) });
+      const response = await handleCSPReportPOST(request, {
+        params: Promise.resolve({}),
+      });
       expect(response.status).toBe(204);
     });
   });
