@@ -205,7 +205,7 @@ function AutoSaveIndicatorComponent({
           {saveState === 'typing' && <span className={PULSE_DOT} />}
           {saveState === 'saving' && (
             <svg
-              className="w-2.5 h-2.5 text-primary-500 animate-spin"
+              className={`${ICON_SIZES.SM_XS} text-primary-500 animate-spin`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               aria-hidden="true"
@@ -223,7 +223,7 @@ function AutoSaveIndicatorComponent({
           )}
           {saveState === 'saved' && (
             <svg
-              className={`w-2.5 h-2.5 ${TEXT_COLORS.SUCCESS_LIGHT} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
+              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.SUCCESS_LIGHT} animate-in zoom-in ${DURATION_TAILWIND[200]}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
