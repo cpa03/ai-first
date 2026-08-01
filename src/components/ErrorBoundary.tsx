@@ -279,7 +279,9 @@ export default class ErrorBoundary extends Component<Props, State> {
                       errorText={`Error: ${this.state.error?.toString()}\n\nStack:\n${this.state.errorInfo?.componentStack || MESSAGES.ERROR_BOUNDARY.NO_STACK_TRACE}`}
                       copyLabel={MESSAGES.ERROR_BOUNDARY.COPY_BUTTON}
                       copiedLabel={MESSAGES.BLUEPRINT.COPIED_BUTTON}
-                      ariaLabel={COMPONENT_DEFAULTS.ARIA_LABELS.CLOSE_ERROR}
+                      ariaLabel={
+                        COMPONENT_DEFAULTS.ARIA_LABELS.COPY_ERROR_DETAILS
+                      }
                     />
                   </div>
                 </details>

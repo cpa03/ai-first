@@ -563,6 +563,7 @@ export const COMPONENT_DEFAULTS = {
     COPY_IDEA: 'Copy original idea',
     COPY_BLUEPRINT: 'Copy blueprint to clipboard',
     DOWNLOAD_BLUEPRINT: 'Download blueprint as Markdown file',
+    COPY_ERROR_DETAILS: 'Copy error details to clipboard',
     CLOSE_ERROR: 'Dismiss error',
   } as const,
 
