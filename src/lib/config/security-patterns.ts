@@ -235,7 +235,9 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
 
   ssrf: [
     {
-      pattern: /(localhost|127\.0\.0\.1|0\.0\.0\.0|::1)/i,
+      // SECURITY: Upgraded pattern to detect any loopback IP in the class A range 127.0.0.0/8
+      // with boundary safety, including shorthands (e.g. 127.1, 127.0.1, 127.12.34.56) and zero IP ([::])
+      pattern: /(localhost|\b127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}\b|\b127\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
       severity: 2,
       description: 'Localhost SSRF attempt',
     },
@@ -256,8 +258,11 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Internal service access attempt',
     },
     {
+      // SECURITY: Enhanced to detect protocol-relative (//) and optional scheme (http(s)://) SSRF patterns,
+      // avoiding raw naked decimal/hex numbers to prevent catastrophic false positives with Unix timestamps,
+      // database IDs, CSS colors, or system hashes.
       pattern:
-        /(?:https?|gopher|ftp|dict|file):\/\/(?:0x[0-9a-f]+|[0-9]{8,12}|0[0-7]{10,12})\b/i,
+        /(?:(?:https?|gopher|ftp|dict|file):)?\/\/(?:0x[0-9a-f]+|[0-9]{8,12}|0[0-7]{10,12})\b/i,
       severity: 3,
       description: 'Non-standard IP encoding SSRF (hex, decimal, or octal)',
     },

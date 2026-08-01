@@ -46,4 +46,47 @@ describe('Suspicious Pattern Detection Bypasses', () => {
     expect(result.detected).toBe(true);
     expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
   });
+
+  it('should detect SSRF with shorthand loopback IPs', () => {
+    const cases = [
+      'https://example.com/api/test?url=http://127.1',
+      'https://example.com/api/test?url=http://127.0.1',
+      'https://example.com/api/test?url=http://127.12.34.56',
+    ];
+    for (const url of cases) {
+      const request = createMockRequest(url);
+      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
+    }
+  });
+
+  it('should detect SSRF with protocol-relative or optional non-standard IP encodings', () => {
+    const cases = [
+      'https://example.com/api/test?url=//0x7f000001',
+      'https://example.com/api/test?url=//2130706433',
+      'https://example.com/api/test?url=http://0x7f000001',
+      'https://example.com/api/test?url=http://2130706433',
+    ];
+    for (const url of cases) {
+      const request = createMockRequest(url);
+      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
+    }
+  });
+
+  it('should detect SSRF with non-standard encodings of cloud metadata IP', () => {
+    const cases = [
+      'https://example.com/api/test?url=http://2851972862', // Decimal 169.254.169.254
+      'https://example.com/api/test?url=http://0xa9feaffe', // Hex 169.254.169.254
+      'https://example.com/api/test?url=http://025177527776', // Octal 169.254.169.254
+    ];
+    for (const url of cases) {
+      const request = createMockRequest(url);
+      const result = detectSuspiciousPatterns(request, { minSeverity: 1 });
+      expect(result.detected).toBe(true);
+      expect(result.patterns.some((p) => p.category === 'ssrf')).toBe(true);
+    }
+  });
 });
