@@ -100,20 +100,18 @@ backups/
 
 #### Backup Restoration Testing
 
-Run the restoration test script monthly to ensure backups are recoverable:
+Run the backup verification script monthly to ensure backups are recoverable:
 
 ```bash
-# Test restoration of latest backup
-./scripts/backup-restore-test.sh
+# Verify latest backup
+./scripts/backup-verify.sh
 
-# Test restoration of specific backup
-./scripts/backup-restore-test.sh --backup ./backups/ideaflow_backup_YYYYMMDD_HHMMSS.tar.gz
-
-# Test with custom directory
-./scripts/backup-restore-test.sh --test-dir /tmp/restore-test
+# Run backup and verify
+./scripts/backup.sh && ./scripts/backup-verify.sh
 ```
 
 The restoration test validates:
+
 - Backup file accessibility and readability
 - Archive integrity (tar.gz validation)
 - Successful extraction
@@ -321,7 +319,7 @@ The restoration test validates:
 
 ### Monthly Drills
 
-- Run `./scripts/backup-restore-test.sh` to verify backup recoverability
+- Run `./scripts/backup-verify.sh` to verify backup recoverability
 - Test backup restoration procedures
 - Verify recovery procedures work correctly
 - Update documentation based on findings
