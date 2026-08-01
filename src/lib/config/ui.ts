@@ -371,6 +371,7 @@ export const PASSWORD_VALIDATION_CONFIG = {
     STRONG: 'Strong',
   },
   STRENGTH_COLORS: {
+    EMPTY: 'bg-gray-200',
     WEAK: 'bg-red-500',
     MEDIUM: 'bg-amber-500',
     STRONG: 'bg-green-500',
