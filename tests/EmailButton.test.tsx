@@ -43,21 +43,21 @@ describe('EmailButton Keyboard Shortcuts & Functionality', () => {
     expect(decodedUrl).toContain('Summary:\nFlow Content');
   });
 
-  it('opens email client via Ctrl+E keyboard shortcut when not in input', async () => {
+  it('opens email client via Ctrl+Shift+E keyboard shortcut when not in input', async () => {
     render(<EmailButton ideaTitle="My Idea" ideaContent="Flow Content" />);
 
     await act(async () => {
-      fireEvent.keyDown(document, { key: 'e', ctrlKey: true });
+      fireEvent.keyDown(document, { key: 'e', ctrlKey: true, shiftKey: true });
     });
 
     expect(mockOpen).toHaveBeenCalled();
   });
 
-  it('opens email client via Cmd+E keyboard shortcut when not in input', async () => {
+  it('opens email client via Cmd+Shift+E keyboard shortcut when not in input', async () => {
     render(<EmailButton ideaTitle="My Idea" ideaContent="Flow Content" />);
 
     await act(async () => {
-      fireEvent.keyDown(document, { key: 'e', metaKey: true });
+      fireEvent.keyDown(document, { key: 'e', metaKey: true, shiftKey: true });
     });
 
     expect(mockOpen).toHaveBeenCalled();
