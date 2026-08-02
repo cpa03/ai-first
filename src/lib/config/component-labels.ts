@@ -288,6 +288,8 @@ export const ALERT_LABELS = {
   DISMISS_TOOLTIP: 'Dismiss alert',
   /** Paused state label for countdown */
   PAUSED_LABEL: 'Paused',
+  /** Snooze button aria-label */
+  SNOOZE_ARIA_LABEL: 'Extend alert by 5 seconds',
 } as const;
 
 /**

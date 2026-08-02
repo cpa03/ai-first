@@ -70,6 +70,8 @@ const ALERT_DISMISS_DELAYS: Record<string, number> = {
   info: COMPONENT_CONFIG.ALERT.INFO_DISMISS_MS,
 };
 
+const SNOOZE_DURATION_MS = 5000; // Extend by 5 seconds on snooze
+
 const AlertComponent = function Alert({
   type,
   title,
@@ -86,16 +88,19 @@ const AlertComponent = function Alert({
     COMPONENT_DEFAULTS.PROGRESS.COMPLETE
   );
   const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [currentDelay, setCurrentDelay] = useState<number | null>(null);
   const styles = ALERT_STYLES[type];
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const progressRef = useRef<NodeJS.Timeout | null>(null);
   const progressValueRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
+  const currentStepRef = useRef(0);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const shouldAutoDismiss =
     autoDismiss && (type === 'success' || type === 'info') && onClose;
 
   const effectiveDelay =
+    currentDelay ??
     dismissDelay ??
     ALERT_DISMISS_DELAYS[type] ??
     COMPONENT_CONFIG.ALERT.DEFAULT_DISMISS_MS;
@@ -120,7 +125,6 @@ const AlertComponent = function Alert({
 
     const updateInterval = COMPONENT_CONFIG.ALERT.PROGRESS_INTERVAL_MS;
     const totalSteps = effectiveDelay / updateInterval;
-    let currentStep = 0;
 
     // Micro-UX: Initialize countdown display with remaining seconds
     setRemainingSeconds(
@@ -128,23 +132,24 @@ const AlertComponent = function Alert({
     );
 
     progressRef.current = setInterval(() => {
-      currentStep++;
+      currentStepRef.current++;
       const remainingProgress = Math.max(
         0,
         COMPONENT_DEFAULTS.PROGRESS.COMPLETE -
-          (currentStep / totalSteps) * COMPONENT_DEFAULTS.PROGRESS.COMPLETE
+          (currentStepRef.current / totalSteps) *
+            COMPONENT_DEFAULTS.PROGRESS.COMPLETE
       );
       progressValueRef.current = remainingProgress;
       setProgress(remainingProgress);
 
       // Micro-UX: Update countdown display every second for user feedback
-      const elapsedMs = currentStep * updateInterval;
+      const elapsedMs = currentStepRef.current * updateInterval;
       const remainingMs = Math.max(0, effectiveDelay - elapsedMs);
       setRemainingSeconds(
         Math.ceil(remainingMs / TIME_CONVERSIONS.MS_PER_SECOND)
       );
 
-      if (currentStep >= totalSteps) {
+      if (currentStepRef.current >= totalSteps) {
         cleanupTimers();
         setIsExiting(true);
         timeoutRef.current = setTimeout(() => {
@@ -166,6 +171,14 @@ const AlertComponent = function Alert({
       onClose?.();
     }, ANIMATION_CONFIG.ALERT_EXIT);
   }, [cleanupTimers, onClose]);
+
+  const handleSnooze = useCallback(() => {
+    triggerHapticFeedback();
+    cleanupTimers();
+    currentStepRef.current = 0;
+    setCurrentDelay((prev) => (prev ?? effectiveDelay) + SNOOZE_DURATION_MS);
+    setProgress(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
+  }, [cleanupTimers, effectiveDelay]);
 
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -268,35 +281,43 @@ const AlertComponent = function Alert({
             }}
             aria-hidden="true"
           />
-          {/* Micro-UX: Show countdown timer for auto-dismiss alerts */}
-          {/* Gives users predictable timing and control over alert dismissal */}
-          {remainingSeconds > 0 && (
-            <div
-              className="absolute bottom-1.5 right-2 text-xs font-medium opacity-60 tabular-nums"
-              aria-live="polite"
-              aria-atomic="true"
+          <div
+            className="absolute bottom-1.5 right-2 flex items-center gap-1.5"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            {remainingSeconds > 0 && (
+              <span className="text-xs font-medium opacity-60 tabular-nums">
+                {isPaused ? (
+                  <span className={`flex items-center ${GAP_CLASSES.SM}`}>
+                    <svg
+                      className={ICON_SIZES.SM}
+                      fill="currentColor"
+                      viewBox={SVG_VIEWBOX.SMALL}
+                      aria-hidden="true"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {ALERT_LABELS.PAUSED_LABEL}
+                  </span>
+                ) : (
+                  `${remainingSeconds}s`
+                )}
+              </span>
+            )}
+            <button
+              onClick={handleSnooze}
+              className="text-xs font-medium opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded focus:outline-none focus:ring-1 focus:ring-current"
+              aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
+              type="button"
             >
-              {isPaused ? (
-                <span className={`flex items-center ${GAP_CLASSES.SM}`}>
-                  <svg
-                    className={ICON_SIZES.SM}
-                    fill="currentColor"
-                    viewBox={SVG_VIEWBOX.SMALL}
-                    aria-hidden="true"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  {ALERT_LABELS.PAUSED_LABEL}
-                </span>
-              ) : (
-                `${remainingSeconds}s`
-              )}
-            </div>
-          )}
+              +{SNOOZE_DURATION_MS / TIME_CONVERSIONS.MS_PER_SECOND}s
+            </button>
+          </div>
         </>
       )}
     </div>
