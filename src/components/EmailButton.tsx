@@ -157,7 +157,12 @@ const EmailButtonComponent = function EmailButton({
             loading={state === 'loading'}
             onClick={handleEmailClick}
             aria-label={ariaLabel}
-            className={className}
+            className={`
+              hover:-translate-y-0.5 active:translate-y-0
+              transition-all ${TRANSITION_CLASSES.DEFAULT} ease-out transform
+              motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
+              ${className}
+            `}
           >
             <span
               className={`relative flex items-center justify-center ${SVG_SIZES.MD}`}
