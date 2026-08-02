@@ -56,12 +56,19 @@ const ProgressStepperComponent = function ProgressStepper({
   const onStepClickRef = useRef(onStepClick);
   const stepsCountRef = useRef(steps.length);
 
-  // Sync refs in effect to avoid listener churn while respecting React rules
+  // Sync refs using specific dependency effects to guarantee they always hold
+  // the up-to-date values while fully adhering to React purity standards and lint rules.
   useEffect(() => {
     currentStepRef.current = currentStep;
+  }, [currentStep]);
+
+  useEffect(() => {
     onStepClickRef.current = onStepClick;
+  }, [onStepClick]);
+
+  useEffect(() => {
     stepsCountRef.current = steps.length;
-  });
+  }, [steps.length]);
 
   useEffect(() => {
     if (prefersReducedMotion) {
