@@ -14,6 +14,7 @@ import {
   DRAW_CHECK,
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 
 interface IdeaReadyIndicatorProps {
@@ -89,7 +90,7 @@ function IdeaReadyIndicatorComponent({
                 : SVG_ANIMATION.DASH_OFFSET.FULL,
               transition: prefersReducedMotion
                 ? 'none'
-                : 'stroke-dashoffset 0.4s ease-out 0.1s',
+                : ANIMATION_CONFIG.CHECKMARK.STROKE_TRANSITION,
             }}
           />
         </svg>

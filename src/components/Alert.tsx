@@ -262,7 +262,9 @@ const AlertComponent = function Alert({
             className={`absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
             style={{
               width: `${progress}%`,
-              transitionDuration: isPaused ? '0ms' : '75ms',
+              transitionDuration: isPaused
+                ? '0ms'
+                : `${ANIMATION_CONFIG.PROGRESS.TRANSITION}ms`,
             }}
             aria-hidden="true"
           />
