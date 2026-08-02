@@ -69,8 +69,10 @@ function PasswordRequirementsChecklistComponent({
   const [showCompleteCelebration, setShowCompleteCelebration] = useState(false);
   const [hasAppeared, setHasAppeared] = useState(false);
   const [newlyMetIds, setNewlyMetIds] = useState<Set<string>>(new Set());
+  const [announcement, setAnnouncement] = useState('');
   const prevAllMetRef = useRef(false);
   const prevMetIdsRef = useRef<Set<string>>(new Set());
+  const prevMetCountRef = useRef(0);
   const celebrationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const newlyMetTimeoutsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
 
@@ -165,8 +167,6 @@ function PasswordRequirementsChecklistComponent({
     prevMetIdsRef.current = currentMetIds;
   }, [requirements, prefersReducedMotion]);
 
-  // Micro-UX: Track when checklist first becomes visible for staggered entrance animation
-  // Creates a delightful cascading reveal that guides user attention through requirements
   useEffect(() => {
     if (password && !hasAppeared && !prefersReducedMotion) {
       requestAnimationFrame(() => {
@@ -177,6 +177,17 @@ function PasswordRequirementsChecklistComponent({
       setHasAppeared(false);
     }
   }, [password, hasAppeared, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prevMetCountRef.current !== metCount) {
+      if (prevMetCountRef.current > 0 || metCount > 0) {
+        setAnnouncement(
+          PASSWORD_REQUIREMENTS_LABELS.PROGRESS_ANNOUNCEMENT(metCount, total)
+        );
+      }
+      prevMetCountRef.current = metCount;
+    }
+  }, [metCount, total]);
 
   if (!password && !showWhenEmpty) return null;
 
@@ -209,6 +220,14 @@ function PasswordRequirementsChecklistComponent({
         total
       )}
     >
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <p className={`text-xs font-medium ${TEXT_COLORS.MUTED_DARK}`}>
@@ -216,8 +235,6 @@ function PasswordRequirementsChecklistComponent({
           </p>
           <span
             className={`text-xs font-medium tabular-nums ${TRANSITION_CLASSES.COLOR_DEFAULT} ${countTextColor}`}
-            aria-live="polite"
-            aria-atomic="true"
           >
             {strengthLabel} · {metCount} of {total}
           </span>
@@ -239,7 +256,7 @@ function PasswordRequirementsChecklistComponent({
           />
         </div>
       </div>
-      <ul className="space-y-1.5" aria-live="polite" aria-atomic="true">
+      <ul className="space-y-1.5">
         {requirements.map((req, index) => (
           <li
             key={req.id}
