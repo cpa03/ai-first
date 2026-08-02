@@ -1865,6 +1865,21 @@ export const CHAR_COUNT_COLORS = {
    * Env: CHAR_COUNT_COLOR_EMPTY (default: '#4b5563')
    */
   EMPTY: EnvLoader.string('CHAR_COUNT_COLOR_EMPTY', '#4b5563'),
+
+  /**
+   * Color transition thresholds for gradient interpolation
+   * Used in getCharCountColor() for smooth color transitions
+   */
+  THRESHOLDS: {
+    /** Warning zone starts at this ratio (e.g., 0.9 = 90% of max) */
+    WARNING_START: 0.9,
+    /** Warning zone range width (e.g., 0.1 = 10% of max) */
+    WARNING_RANGE: 0.1,
+    /** Success zone starts at this ratio (e.g., 0.7 = 70% of max) */
+    SUCCESS_START: 0.7,
+    /** Success zone range width (e.g., 0.2 = 20% of max) */
+    SUCCESS_RANGE: 0.2,
+  },
 } as const;
 
 /**

@@ -428,6 +428,13 @@ export const COMPONENT_CONFIG = {
       10,
       200
     ),
+    /** Snooze duration extension (ms) - Env: COMPONENT_ALERT_SNOOZE_DURATION_MS (default: 5000) */
+    SNOOZE_DURATION_MS: EnvLoader.number(
+      'COMPONENT_ALERT_SNOOZE_DURATION_MS',
+      5000,
+      1000,
+      30000
+    ),
   },
 
   DASHBOARD: {

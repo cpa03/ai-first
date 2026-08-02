@@ -25,6 +25,8 @@ export const SPINNER_MAGIC_NUMBERS = {
   DEFAULT_PULSE_RING_SIZE: 40,
   /** Default spinner dimension */
   DEFAULT_DIMENSION: 32,
+  /** Pulse ring size multiplier relative to spinner dimension */
+  PULSE_RING_MULTIPLIER: 1.4,
 } as const;
 
 /**
