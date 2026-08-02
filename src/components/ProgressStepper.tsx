@@ -56,11 +56,12 @@ const ProgressStepperComponent = function ProgressStepper({
   const onStepClickRef = useRef(onStepClick);
   const stepsCountRef = useRef(steps.length);
 
-  // Sync refs directly in the render phase for maximum efficiency,
-  // completely avoiding scheduling and running an effect callback on every render.
-  currentStepRef.current = currentStep;
-  onStepClickRef.current = onStepClick;
-  stepsCountRef.current = steps.length;
+  // Sync refs in effect to avoid listener churn while respecting React rules
+  useEffect(() => {
+    currentStepRef.current = currentStep;
+    onStepClickRef.current = onStepClick;
+    stepsCountRef.current = steps.length;
+  });
 
   useEffect(() => {
     if (prefersReducedMotion) {
