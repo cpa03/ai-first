@@ -3,6 +3,7 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import SignupPage from '@/app/signup/page';
 import { PLATFORM } from '@/lib/dom-utils';
+import { KeyboardShortcutsProvider } from '@/components/KeyboardShortcutsProvider';
 
 // Mock Next.js router
 const mockPush = jest.fn();
@@ -56,7 +57,11 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
   });
 
   it('renders correct keyboard shortcut help hint for Windows/Linux when isMac is false', () => {
-    render(<SignupPage />);
+    render(
+      <KeyboardShortcutsProvider>
+        <SignupPage />
+      </KeyboardShortcutsProvider>
+    );
 
     // Check for "Ctrl" + "Enter" helper text elements
     const kbdElements = screen.getAllByText((content, element) => {
@@ -71,7 +76,11 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
 
   it('renders correct keyboard shortcut help hint for macOS when isMac is true', () => {
     (PLATFORM.isMac as jest.Mock).mockReturnValue(true);
-    render(<SignupPage />);
+    render(
+      <KeyboardShortcutsProvider>
+        <SignupPage />
+      </KeyboardShortcutsProvider>
+    );
 
     const kbdElements = screen.getAllByText((content, element) => {
       return (
@@ -84,7 +93,11 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
   });
 
   it('submits form via global Ctrl+Enter key press', async () => {
-    const { container } = render(<SignupPage />);
+    const { container } = render(
+      <KeyboardShortcutsProvider>
+        <SignupPage />
+      </KeyboardShortcutsProvider>
+    );
 
     // Fill the email and password fields using container selectors
     const emailInput = container.querySelector('#email') as HTMLInputElement;
@@ -121,7 +134,11 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
 
   it('submits form via global Cmd+Enter key press', async () => {
     (PLATFORM.isMac as jest.Mock).mockReturnValue(true);
-    const { container } = render(<SignupPage />);
+    const { container } = render(
+      <KeyboardShortcutsProvider>
+        <SignupPage />
+      </KeyboardShortcutsProvider>
+    );
 
     const emailInput = container.querySelector('#email') as HTMLInputElement;
     const passwordInput = container.querySelector(
@@ -148,7 +165,11 @@ describe('SignupPage Keyboard Submission and Platform-aware UI', () => {
     (require('@/lib/dom-utils').isFocusedOnInput as jest.Mock).mockReturnValue(
       true
     );
-    const { container } = render(<SignupPage />);
+    const { container } = render(
+      <KeyboardShortcutsProvider>
+        <SignupPage />
+      </KeyboardShortcutsProvider>
+    );
 
     await act(async () => {
       fireEvent.keyDown(container, { key: 'Enter', ctrlKey: true });
