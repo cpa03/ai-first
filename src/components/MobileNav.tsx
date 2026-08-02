@@ -20,6 +20,7 @@ import {
   MOBILE_NAV_CLOSE_HINT_KBD,
   GRAY_CLASSES,
   Z_INDEX_LAYERS,
+  ANIMATION_CONFIG,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -283,7 +284,9 @@ function MobileNavComponent() {
             {/* Micro-UX: Subtle keyboard shortcut hint near close button */}
             <div
               className="absolute top-4 right-16 animate-fade-in"
-              style={{ animationDelay: '200ms' }}
+              style={{
+                animationDelay: `${ANIMATION_CONFIG.MOBILE_NAV.HINT_DELAY}ms`,
+              }}
             >
               <span className="inline-flex items-center px-2 py-1 rounded-md bg-white/80 shadow-sm text-xs text-gray-500 font-mono backdrop-blur-sm">
                 Esc

@@ -222,7 +222,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
                 )}
                 className={`transition-all ${DURATION_TAILWIND[700]} ease-out`}
                 style={{
-                  filter: `drop-shadow(0 0 6px ${CELEBRATION_COLORS.SHADOWS.DROP_SHADOW})`,
+                  filter: `drop-shadow(0 0 ${ANIMATION_CONFIG.SHADOW_BLUR.DROP}px ${CELEBRATION_COLORS.SHADOWS.DROP_SHADOW})`,
                 }}
               />
             </svg>
@@ -318,7 +318,7 @@ absolute inset-0 ${WHITE_BG_PATTERNS.TRANSPARENT} backdrop-blur-[${STEP_CELEBRAT
               className={`h-full ${GRADIENT_PATTERNS.PROGRESS_BAR}`}
               style={{
                 width: `${progress}%`,
-                boxShadow: `0 0 8px ${CELEBRATION_COLORS.SHADOWS.BOX_SHADOW}`,
+                boxShadow: `0 0 ${ANIMATION_CONFIG.SHADOW_BLUR.BOX}px ${CELEBRATION_COLORS.SHADOWS.BOX_SHADOW}`,
               }}
             />
           </div>

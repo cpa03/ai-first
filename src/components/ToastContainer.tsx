@@ -330,7 +330,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           width: `${progress}%`,
           transitionDuration: isPaused
             ? '0ms'
-            : `${UI_CONSTANTS.TOAST_PROGRESS_TRANSITION_MS}ms`,
+            : `${ANIMATION_CONFIG.PROGRESS.TRANSITION}ms`,
         }}
         aria-hidden="true"
       />

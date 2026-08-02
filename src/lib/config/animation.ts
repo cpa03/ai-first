@@ -283,6 +283,62 @@ export const ANIMATION_CONFIG = {
       500
     ),
   },
+
+  /**
+   * Mobile Navigation Animation Values
+   * Centralizes animation timing for mobile navigation components
+   */
+  MOBILE_NAV: {
+    /** Delay before showing keyboard shortcut hint (ms) */
+    /** Env: UI_ANIMATION_MOBILE_NAV_HINT_DELAY (default: 200) */
+    HINT_DELAY: EnvLoader.number(
+      'UI_ANIMATION_MOBILE_NAV_HINT_DELAY',
+      200,
+      50,
+      1000
+    ),
+  },
+
+  /**
+   * Progress Bar Animation Values
+   * Centralizes animation timing for progress bars and indicators
+   */
+  PROGRESS: {
+    /** Transition duration for progress bar updates (ms) */
+    /** Env: UI_ANIMATION_PROGRESS_TRANSITION (default: 75) */
+    TRANSITION: EnvLoader.number(
+      'UI_ANIMATION_PROGRESS_TRANSITION',
+      75,
+      10,
+      500
+    ),
+  },
+
+  /**
+   * SVG Checkmark Animation Values
+   * Centralizes CSS transition values for SVG checkmark animations
+   */
+  CHECKMARK: {
+    /** CSS transition for stroke-dashoffset animation */
+    /** Env: UI_ANIMATION_CHECKMARK_STROKE (default: 'stroke-dashoffset 0.4s ease-out 0.1s') */
+    STROKE_TRANSITION: EnvLoader.string(
+      'UI_ANIMATION_CHECKMARK_STROKE',
+      'stroke-dashoffset 0.4s ease-out 0.1s'
+    ),
+  },
+
+  /**
+   * Shadow Animation Values
+   * Centralizes CSS shadow blur values for celebration animations
+   */
+  SHADOW_BLUR: {
+    /** Drop shadow blur radius (px) */
+    /** Env: UI_ANIMATION_SHADOW_DROP_BLUR (default: 6) */
+    DROP: EnvLoader.number('UI_ANIMATION_SHADOW_DROP_BLUR', 6, 0, 20),
+    /** Box shadow blur radius (px) */
+    /** Env: UI_ANIMATION_SHADOW_BOX_BLUR (default: 8) */
+    BOX: EnvLoader.number('UI_ANIMATION_SHADOW_BOX_BLUR', 8, 0, 20),
+  },
 } as const;
 
 export type AnimationConfig = typeof ANIMATION_CONFIG;
