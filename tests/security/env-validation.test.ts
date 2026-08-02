@@ -7,6 +7,7 @@ import {
   validateEnvironment,
   validateEnvironmentStrict,
   checkNoPublicPrefix,
+  isSensitiveVar,
 } from '@/lib/security/env-validation';
 
 describe('Environment Validation', () => {
@@ -196,6 +197,22 @@ describe('Environment Validation', () => {
       process.env.NEXT_PUBLIC_SUPABASE_SERVICE_ROLE_KEY = 'exposed';
 
       expect(checkNoPublicPrefix()).toBe(false);
+    });
+  });
+
+  describe('isSensitiveVar', () => {
+    it('should identify sensitive variables correctly', () => {
+      expect(isSensitiveVar('ADMIN_API_KEY')).toBe(true);
+      expect(isSensitiveVar('DB_PASSWORD')).toBe(true);
+      expect(isSensitiveVar('SESSION_SECRET')).toBe(true);
+      expect(isSensitiveVar('MY_HASH_VAL')).toBe(true);
+      expect(isSensitiveVar('CIPHER_KEY')).toBe(true);
+    });
+
+    it('should return false for non-sensitive variables', () => {
+      expect(isSensitiveVar('NODE_ENV')).toBe(false);
+      expect(isSensitiveVar('PORT')).toBe(false);
+      expect(isSensitiveVar('APP_NAME')).toBe(false);
     });
   });
 });
