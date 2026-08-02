@@ -106,7 +106,7 @@ describe('IdeaInput', () => {
     });
 
     const encouragementMessage = document.querySelector(
-      '.text-primary-600.animate-fade-in'
+      '.text-primary-700.animate-fade-in'
     );
     expect(encouragementMessage).toBeInTheDocument();
     expect(encouragementMessage?.textContent).toContain('Great start');

@@ -33,11 +33,14 @@ import {
   FORM_PATTERNS,
   GRAY_CLASSES,
   ICON_SIZES,
+  DASHBOARD_PATTERNS,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { useScrollToError } from '@/hooks/useScrollToError';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
 // Dynamic imports for code splitting - reduce initial bundle size
 const Button = dynamic(() => import('@/components/Button'), { ssr: false });
@@ -71,6 +74,9 @@ export default function LoginPage() {
 
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
+
+  // Micro-UX: Keyboard shortcuts help
+  const { openHelp } = useKeyboardShortcuts();
 
   // Micro-UX: Detect platform for keyboard shortcut display
   useEffect(() => {
@@ -543,6 +549,28 @@ export default function LoginPage() {
             {LOGIN_PAGE_CONTENT.FOOTER.SIGN_UP}
           </Link>
         </p>
+
+        <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+          <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                ?
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Shortcuts
+              </span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={openHelp}
+            className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+          >
+            View all
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -120,18 +120,18 @@ export const TEXT_COLORS = {
   ERROR: 'text-red-700',
   ERROR_LIGHT: 'text-red-500',
   SUCCESS: 'text-green-800',
-  SUCCESS_LIGHT: 'text-green-500',
+  SUCCESS_LIGHT: 'text-green-700',
   SUCCESS_LIGHTER: 'text-green-100',
-  SUCCESS_MEDIUM: 'text-green-600',
+  SUCCESS_MEDIUM: 'text-green-700',
   SUCCESS_DARK: 'text-green-700',
-  SUCCESS_VERY_LIGHT: 'text-green-400',
+  SUCCESS_VERY_LIGHT: 'text-green-700',
   WARNING: 'text-amber-700',
-  WARNING_LIGHT: 'text-amber-600',
-  WARNING_MEDIUM: 'text-amber-500',
+  WARNING_LIGHT: 'text-amber-700',
+  WARNING_MEDIUM: 'text-amber-700',
   INFO: 'text-blue-800',
   INFO_LIGHT: 'text-blue-600',
   INFO_DARK: 'text-blue-900',
-  BRAND: 'text-primary-600',
+  BRAND: 'text-primary-700',
   BRAND_LIGHT: 'text-primary-500',
   HOVER_SECONDARY: 'hover:text-gray-600',
   HOVER_PRIMARY: 'hover:text-gray-900',
@@ -1336,7 +1336,7 @@ export const TEXT_COLOR_CLASSES = {
   PLACEHOLDER: 'text-gray-500',
 
   /** Primary brand text (primary-600) */
-  BRAND: 'text-primary-600',
+  BRAND: 'text-primary-700',
 
   /** Primary brand text hover (primary-900) */
   BRAND_HOVER: 'hover:text-primary-900',
@@ -1351,16 +1351,16 @@ export const TEXT_COLOR_CLASSES = {
   SUCCESS_DARK: 'text-green-700',
 
   /** Success medium text (green-600) */
-  SUCCESS_MEDIUM: 'text-green-600',
+  SUCCESS_MEDIUM: 'text-green-700',
 
   /** Warning text (amber-700) */
   WARNING: 'text-amber-700',
 
   /** Warning light text (amber-600) */
-  WARNING_LIGHT: 'text-amber-600',
+  WARNING_LIGHT: 'text-amber-700',
 
   /** Warning medium text (amber-500) */
-  WARNING_MEDIUM: 'text-amber-500',
+  WARNING_MEDIUM: 'text-amber-700',
 
   /** Info text (blue-800) */
   INFO: 'text-blue-800',
@@ -1914,7 +1914,7 @@ export const COMPONENT_STATE_COLORS = {
     /** Ready state background and text */
     READY: 'bg-green-100 text-green-700',
     /** Not ready state background and text */
-    NOT_READY: 'bg-gray-100 text-gray-500',
+    NOT_READY: 'bg-gray-100 text-gray-800',
     /** Checkmark icon color when ready */
     CHECKMARK: 'text-green-700',
   },
