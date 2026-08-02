@@ -244,9 +244,9 @@ function AutoSaveIndicatorComponent({
       <span
         className={`font-medium transition-colors ${DURATION_TAILWIND[200]} ${
           saveState === 'typing'
-            ? TEXT_COLORS.MUTED
+            ? `${TEXT_COLORS.MUTED} motion-safe:animate-pulse`
             : saveState === 'saving'
-              ? TEXT_COLORS.BRAND
+              ? `${TEXT_COLORS.BRAND} motion-safe:animate-pulse`
               : TEXT_COLORS.SUCCESS_DARK
         }`}
       >
