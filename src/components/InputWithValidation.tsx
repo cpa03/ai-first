@@ -338,6 +338,7 @@ const InputWithValidationComponent = forwardRef<
       showSuccessFlash &&
         `${COMPONENT_STATE_COLORS.INPUT_SUCCESS.FLASH} ${STATE_SHADOWS.SUCCESS}`,
       showValidCelebration && 'animate-input-valid-celebration',
+      isFocused && !currentValue.trim() && 'animate-placeholder-breathe',
       className
     );
 
@@ -377,7 +378,7 @@ const InputWithValidationComponent = forwardRef<
               id={props.id}
               value={value}
               onChange={handleChange}
-              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''} ${textareaResizeClass} ${INPUT_HEIGHT_CLASSES.TEXTAREA} overflow-hidden`}
+              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring-glow' : ''} ${textareaResizeClass} ${INPUT_HEIGHT_CLASSES.TEXTAREA} overflow-hidden`}
               aria-invalid={isInvalid}
               aria-required={props.required}
               aria-describedby={
@@ -398,7 +399,7 @@ const InputWithValidationComponent = forwardRef<
               id={props.id}
               value={value}
               onChange={handleChange}
-              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring' : ''}`}
+              className={`${baseInputClasses} ${isFocused ? 'animate-focus-ring-glow' : ''}`}
               type={
                 showPasswordToggle && inputType === 'password'
                   ? passwordVisible

@@ -2032,6 +2032,56 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* Placeholder Breathing Animation - Micro-UX delight for input focus states */
+/* Creates a subtle opacity pulse on placeholder text when input is focused but empty */
+/* Draws attention to empty fields and makes the input feel alive and inviting */
+@keyframes placeholderBreathe {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-placeholder-breathe {
+  animation: placeholderBreathe 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for placeholder breathing */
+@media (prefers-reduced-motion: reduce) {
+  .animate-placeholder-breathe {
+    animation: none;
+    opacity: 0.6;
+  }
+}
+
+/* Focus ring glow animation for enhanced visual feedback */
+@keyframes focusRingGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.4);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px rgb(59 130 246 / 0.2),
+      0 0 12px -2px rgb(59 130 246 / 0.3);
+  }
+}
+
+.animate-focus-ring-glow {
+  animation: focusRingGlow 2s ease-in-out infinite;
+}
+
+/* Reduced motion support for focus ring glow */
+@media (prefers-reduced-motion: reduce) {
+  .animate-focus-ring-glow {
+    animation: none;
+    box-shadow: 0 0 0 2px rgb(59 130 246 / 0.4);
+  }
+}
+
 @media print {
   body {
     background: white !important;
