@@ -14,6 +14,7 @@ import {
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
 } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { ToastOptions } from '@/components/ToastContainer';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -203,8 +204,7 @@ const ShareButtonComponent = function ShareButton({
   const baseClasses = `
     inline-flex items-center justify-center gap-2
     font-medium ${TRANSITION_CLASSES.DEFAULT} ease-out transform
-    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2
-    focus-visible:ring-primary-500 focus-visible:ring-offset-white
+    ${FOCUS_RING_OFFSET_PATTERNS.ON_DARK}
     motion-reduce:transition-none motion-reduce:hover:transform-none motion-reduce:hover:scale-100 motion-reduce:active:scale-100
   `;
 

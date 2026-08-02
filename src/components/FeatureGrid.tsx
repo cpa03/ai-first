@@ -8,6 +8,7 @@ import {
   TEXT_COLORS,
   GRADIENT_CONFIG,
 } from '@/lib/config/theme';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
 import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
@@ -143,7 +144,7 @@ function FeatureGridComponent() {
               group relative text-center p-6 rounded-xl
               gradient-border-hover card-lift feature-card-focus
               bg-white
-              focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
+              ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
               focus-visible:scale-[1.02] focus-visible:shadow-lg focus-visible:shadow-primary-100/50
               motion-reduce:transition-none
               ${isVisible ? animationClasses[index] : 'opacity-0'}

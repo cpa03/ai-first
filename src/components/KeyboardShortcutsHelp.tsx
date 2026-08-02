@@ -33,6 +33,7 @@ import {
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
 } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -405,7 +406,7 @@ const ShortcutRow = memo(function ShortcutRow({
       <button
         type="button"
         onClick={handleCopyShortcut}
-        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-1`}
+        className={`flex items-center gap-1.5 flex-shrink-0 ml-4 p-1 -m-1 rounded-md ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.FAST} ${FOCUS_RING_OFFSET_PATTERNS.COMPACT}`}
         aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.COPY_SHORTCUT_ARIA_LABEL(
           displayKeys
         )}
@@ -725,7 +726,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-1`}
+                className={`absolute right-3 top-1/2 -translate-y-1/2 p-0.5 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_700} rounded-full ${GRAY_CLASSES.HOVER_BG_100} ${TRANSITION_CLASSES.COLOR} focus:outline-none focus:ring-2 focus:ring-primary-500 ${FOCUS_RING_OFFSET_PATTERNS.COMPACT.split(' ').pop()}`}
                 aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               >
                 <svg
@@ -819,7 +820,7 @@ function KeyboardShortcutsHelpComponent({
           <button
             ref={closeButtonRef}
             onClick={handleClose}
-            className={`p-2 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_800} ${GRAY_CLASSES.HOVER_BG_100} rounded-lg ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2`}
+            className={`p-2 ${TEXT_COLORS.SECONDARY} ${GRAY_CLASSES.HOVER_TEXT_800} ${GRAY_CLASSES.HOVER_BG_100} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}`}
             aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.CLOSE_ARIA_LABEL}
           >
             <svg
@@ -879,7 +880,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded`}
+                className={`text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} rounded`}
               >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               </button>

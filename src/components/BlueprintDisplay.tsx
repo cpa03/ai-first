@@ -36,6 +36,7 @@ import {
   ICON_SIZES,
   MR_CLASSES,
 } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
   BLUEPRINT_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -412,7 +413,7 @@ function CopyCodeButton({ text }: { text: string }) {
             flex items-center gap-1.5 px-2.5 py-1.5 
             text-xs font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}
-            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+            ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}
             ${prefersReducedMotion ? '' : 'motion-reduce:transition-none'}
             ${
               copied
