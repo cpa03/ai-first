@@ -26,6 +26,8 @@ import {
   PRIMARY_PULSE_CONTAINER,
   PRIMARY_PULSE_INNER,
   ICON_SIZES,
+  SPACE_Y_PATTERNS,
+  FLEX_PATTERNS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import type { Task } from '@/lib/db';
@@ -230,7 +232,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
   if (!data || data.deliverables.length === 0) {
     return (
       <div className={CARD_PATTERNS.BASE}>
-        <div className="flex flex-col items-center text-center py-6">
+        <div className={`${FLEX_PATTERNS.COL} items-center text-center py-6`}>
           {/* Micro-UX improvement: Friendly animated empty state with visual guidance */}
           <div
             className={`relative ${ICON_SIZES.MASSIVE} mb-6`}
@@ -296,7 +298,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
   const { summary } = data;
 
   return (
-    <div className="space-y-6">
+    <div className={SPACE_Y_PATTERNS.XL}>
       <StatusAnnouncer
         message={expandAnnouncement}
         triggered={expandTriggered}
@@ -316,7 +318,7 @@ function TaskManagementComponent({ ideaId }: TaskManagementProps) {
         filterCounts={filterCounts}
       />
 
-      <div className="space-y-4">
+      <div className={SPACE_Y_PATTERNS.LG}>
         {filteredDeliverables.map((deliverable) => (
           <DeliverableCard
             key={deliverable.id}

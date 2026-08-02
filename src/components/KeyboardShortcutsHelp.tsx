@@ -30,6 +30,8 @@ import {
   KEYBOARD_SHORTCUT_FOOTER,
   GRAY_CLASSES,
   ICON_SIZES,
+  FLEX_PATTERNS,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import {
   KEYBOARD_SHORTCUTS_ELEMENT_IDS,
@@ -756,7 +758,7 @@ function KeyboardShortcutsHelpComponent({
               />
               {KEYBOARD_SHORTCUTS_MESSAGES.VIM_MODE_LABEL}
             </label>
-            <div className="flex items-center gap-2">
+            <div className={FLEX_PATTERNS.GAP_MD}>
               {searchQuery && (
                 <span
                   className={`text-xs text-primary-600 font-medium px-2 py-0.5 bg-primary-50 rounded-full`}
@@ -780,7 +782,7 @@ function KeyboardShortcutsHelpComponent({
         <div
           className={`flex items-center justify-between px-6 py-4 border-b ${BORDER_COLORS.DEFAULT} ${BG_COLORS.LIGHT}`}
         >
-          <div className="flex items-center gap-3">
+          <div className={FLEX_PATTERNS.GAP_LG}>
             <div className={KEYBOARD_SHORTCUT_CATEGORY_ICON}>
               <svg
                 className={`${ICON_SIZES.LG} text-primary-600`}
@@ -841,7 +843,9 @@ function KeyboardShortcutsHelpComponent({
           className={`overflow-y-auto ${SIZES.COMPONENT.SCROLLABLE_MAX_HEIGHT} p-6`}
         >
           {flatShortcuts.length === 0 && searchQuery ? (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div
+              className={`${FLEX_PATTERNS.COL} items-center justify-center py-12 text-center`}
+            >
               <div
                 className={`${ICON_SIZES.HUGE} rounded-full ${BG_COLORS.LIGHTER} flex items-center justify-center mb-4`}
               >
@@ -888,7 +892,7 @@ function KeyboardShortcutsHelpComponent({
                 >
                   {contextLabels[context as KeyboardShortcut['context']]}
                 </h3>
-                <div className="space-y-1">
+                <div className={SPACE_Y_PATTERNS.XS}>
                   {shortcuts.map((shortcut, index) => {
                     const globalIndex = flatShortcuts.findIndex(
                       (s) => s.description === shortcut.description

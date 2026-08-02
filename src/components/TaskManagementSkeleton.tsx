@@ -12,6 +12,9 @@ import {
   SKELETON_PROGRESS,
   GRAY_CLASSES,
   ICON_SIZES,
+  FLEX_PATTERNS,
+  SPACE_Y_PATTERNS,
+  SPACING_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -41,12 +44,14 @@ function TaskManagementSkeletonComponent() {
 
       {/* Header skeleton - mirrors TaskManagementHeader layout */}
       <div className={CARD_PATTERNS.BASE}>
-        <div className="flex justify-between items-start mb-4">
-          <div className="space-y-2">
+        <div
+          className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.MB4}`}
+        >
+          <div className={SPACE_Y_PATTERNS.SM}>
             <Skeleton className="h-6 w-48" variant="text" />
             <Skeleton className="h-4 w-32" variant="text" />
           </div>
-          <div className="text-right space-y-2">
+          <div className={`text-right ${SPACE_Y_PATTERNS.SM}`}>
             <Skeleton className="h-8 w-16 ml-auto" variant="text" />
             <Skeleton className="h-4 w-32 ml-auto" variant="text" />
             <Skeleton className="h-3 w-40 ml-auto" variant="text" />
@@ -59,14 +64,14 @@ function TaskManagementSkeletonComponent() {
         </div>
 
         {/* Action buttons skeleton */}
-        <div className="flex gap-2">
+        <div className={`${FLEX_PATTERNS.ROW} ${SPACING_PATTERNS.GAP2}`}>
           <Skeleton className="h-9 w-28" variant="rect" />
           <Skeleton className="h-9 w-32" variant="rect" />
         </div>
       </div>
 
       {/* Deliverable cards skeleton - mirrors DeliverableCard layout */}
-      <div className="space-y-4 mt-6">
+      <div className={`${SPACE_Y_PATTERNS.LG} ${SPACING_PATTERNS.MT6}`}>
         {Array.from({
           length:
             COMPONENT_CONFIG.TASK_MANAGEMENT?.SKELETON_DELIVERABLE_COUNT ?? 3,
@@ -82,12 +87,12 @@ function TaskManagementSkeletonComponent() {
               className={`${CARD_PATTERNS.BASE} border-l-4 border-l-gray-200`}
             >
               {/* Deliverable header */}
-              <div className="flex justify-between items-center">
+              <div className={FLEX_PATTERNS.BETWEEN}>
                 <div className="flex-1">
                   <Skeleton className="h-5 w-48 mb-2" variant="text" />
                   <Skeleton className="h-4 w-64" variant="text" />
                 </div>
-                <div className="flex items-center gap-4">
+                <div className={FLEX_PATTERNS.GAP_XL}>
                   <div className="text-right">
                     <Skeleton
                       className="h-5 w-12 mb-1 ml-auto"

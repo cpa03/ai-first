@@ -29,6 +29,7 @@ import {
   IDEA_INPUT_STATUS_ITEM,
   IDEA_INPUT_SEND_ICON,
   ICON_SIZES,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -458,7 +459,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         />
 
         {writingProgress > 5 && (
-          <div className="space-y-2">
+          <div className={SPACE_Y_PATTERNS.SM}>
             <div
               className={`relative h-1.5 ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`}
             >

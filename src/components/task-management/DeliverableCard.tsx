@@ -16,6 +16,8 @@ import {
   BG_COLORS,
   DELIVERABLE_CARD_LABELS,
   ICON_SIZES,
+  FLEX_PATTERNS,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -158,7 +160,7 @@ function DeliverableCardComponent({
         className={DELIVERABLE_CARD_STYLES.HEADER.BASE}
       >
         <div className="flex-1">
-          <div className="flex items-center gap-2">
+          <div className={FLEX_PATTERNS.GAP_MD}>
             <h3 className={DELIVERABLE_CARD_STYLES.HEADER.TITLE}>
               {deliverable.title}
             </h3>
@@ -192,7 +194,7 @@ function DeliverableCardComponent({
             </p>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        <div className={FLEX_PATTERNS.GAP_XL}>
           <div className="text-right">
             <div
               className={`${DELIVERABLE_CARD_STYLES.HEADER.PROGRESS.VALUE} ${isCompleted ? TEXT_COLORS.SUCCESS_DARK : ''}`}
@@ -249,7 +251,7 @@ function DeliverableCardComponent({
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className={SPACE_Y_PATTERNS.SM}>
             {deliverable.tasks.length === 0 ? (
               <p className={DELIVERABLE_CARD_STYLES.CONTENT.EMPTY_STATE}>
                 {MESSAGES.TASK_MANAGEMENT.DELIVERABLE_EMPTY}

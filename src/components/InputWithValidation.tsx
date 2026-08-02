@@ -33,6 +33,8 @@ import {
   DRAW_CHECK,
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
+  SPACE_Y_PATTERNS,
+  FLEX_PATTERNS,
 } from '@/lib/config';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
@@ -358,7 +360,7 @@ const InputWithValidationComponent = forwardRef<
       multiline && autoResize ? 'resize-none' : 'resize-y';
 
     return (
-      <div className="space-y-2">
+      <div className={SPACE_Y_PATTERNS.SM}>
         <label
           htmlFor={props.id}
           className={`block text-sm font-medium ${TEXT_COLOR_CLASSES.HEADING} cursor-pointer`}
@@ -601,7 +603,7 @@ const InputWithValidationComponent = forwardRef<
           )}
         </div>
 
-        <div className="flex justify-between items-start">
+        <div className={FLEX_PATTERNS.BETWEEN_START}>
           <div>
             {helpText && !isInvalid && (
               <p
@@ -631,7 +633,7 @@ const InputWithValidationComponent = forwardRef<
           </div>
 
           {showCharCount && (
-            <div className="flex items-center gap-2">
+            <div className={FLEX_PATTERNS.GAP_MD}>
               {maxLength && (
                 <div
                   className={`w-16 h-1.5 ${BG_COLORS.PROGRESS_NEUTRAL} rounded-full overflow-hidden relative`}
