@@ -175,6 +175,8 @@ export const TYPOGRAPHY_PATTERNS = {
 
 /**
  * Spacing patterns
+ * Centralizes all hardcoded spacing values (gap, mt, mb, mr, ml, p, pt, pb, pr, pl, py)
+ * Follows the "Flexy" principle: eliminate hardcoded values and make modular systems
  */
 export const SPACING_PATTERNS = {
   // Padding
@@ -188,18 +190,58 @@ export const SPACING_PATTERNS = {
   PY4: 'py-4',
 
   // Margins
+  MT1: 'mt-1',
   MT2: 'mt-2',
   MT4: 'mt-4',
+  MT6: 'mt-6',
+  MT8: 'mt-8',
   MR4: 'mr-4',
   MB1: 'mb-1',
+  MB2: 'mb-2',
   MB4: 'mb-4',
+  MB6: 'mb-6',
   ML4: 'ml-4',
 
   // Gaps
+  GAP0_5: 'gap-0.5',
   GAP1: 'gap-1',
+  GAP1_5: 'gap-1.5',
   GAP2: 'gap-2',
   GAP3: 'gap-3',
   GAP4: 'gap-4',
+  GAP6: 'gap-6',
+} as const;
+
+/**
+ * Space-y patterns for vertical stacking
+ * Centralizes all hardcoded space-y-* classes throughout components
+ */
+export const SPACE_Y_PATTERNS = {
+  /** space-y-1 = 4px */
+  XS: 'space-y-1',
+  /** space-y-1.5 = 6px */
+  SM_MD: 'space-y-1.5',
+  /** space-y-2 = 8px */
+  SM: 'space-y-2',
+  /** space-y-3 = 12px */
+  MD: 'space-y-3',
+  /** space-y-4 = 16px */
+  LG: 'space-y-4',
+  /** space-y-6 = 24px */
+  XL: 'space-y-6',
+} as const;
+
+/**
+ * Space-x patterns for horizontal stacking
+ * Centralizes all hardcoded space-x-* classes throughout components
+ */
+export const SPACE_X_PATTERNS = {
+  /** space-x-2 = 8px */
+  SM: 'space-x-2',
+  /** space-x-3 = 12px */
+  MD: 'space-x-3',
+  /** space-x-4 = 16px */
+  LG: 'space-x-4',
 } as const;
 
 /**
@@ -253,6 +295,8 @@ export const POSITION_PATTERNS = {
 
 /**
  * Flex patterns
+ * Centralizes all hardcoded flex-* classes throughout components
+ * Follows the "Flexy" principle: eliminate hardcoded values and make modular systems
  */
 export const FLEX_PATTERNS = {
   ROW: 'flex flex-row',
@@ -260,15 +304,50 @@ export const FLEX_PATTERNS = {
   CENTER: 'flex items-center justify-center',
   BETWEEN: 'flex items-center justify-between',
   WRAP: 'flex flex-wrap',
+
+  // Direction patterns
+  ROW_SM: 'flex sm:flex-row',
+  COL_SM: 'flex flex-col sm:flex-row',
+
+  // Alignment patterns
+  CENTER_GAP_SM: 'flex items-center justify-center gap-2',
+  CENTER_GAP_MD: 'flex items-center justify-center gap-3',
+  CENTER_GAP_LG: 'flex items-center justify-center gap-4',
+  BETWEEN_CENTER: 'flex justify-between items-center',
+  BETWEEN_START: 'flex justify-between items-start',
+  END: 'flex justify-end',
+  START_CENTER: 'flex items-start gap-2',
+
+  // Gap patterns
+  GAP_XS: 'flex items-center gap-1',
+  GAP_SM: 'flex items-center gap-1.5',
+  GAP_MD: 'flex items-center gap-2',
+  GAP_LG: 'flex items-center gap-3',
+  GAP_XL: 'flex items-center gap-4',
+
+  // Responsive patterns
+  RESPONSIVE_BETWEEN:
+    'flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4',
+  RESPONSIVE_COL: 'flex flex-col sm:flex-row gap-2 w-full sm:w-auto',
+  RESPONSIVE_CENTER:
+    'flex flex-col sm:flex-row sm:items-center justify-between gap-3',
+  RESPONSIVE_GAP: 'flex items-center gap-2 sm:gap-4',
 } as const;
 
 /**
  * Grid patterns
+ * Centralizes all hardcoded grid-* classes throughout components
+ * Follows the "Flexy" principle: eliminate hardcoded values and make modular systems
  */
 export const GRID_PATTERNS = {
   COL_2: 'grid grid-cols-2',
   COL_3: 'grid grid-cols-3',
   COL_4: 'grid grid-cols-4',
+
+  // Responsive grid patterns
+  RESPONSIVE_COL_2: 'grid grid-cols-1 sm:grid-cols-2',
+  RESPONSIVE_COL_3: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+  RESPONSIVE_COL_4: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
 } as const;
 
 /**
@@ -412,6 +491,8 @@ export const REMAINING_STYLES = {
   TRANSITION_PATTERNS,
   TYPOGRAPHY_PATTERNS,
   SPACING_PATTERNS,
+  SPACE_Y_PATTERNS,
+  SPACE_X_PATTERNS,
   BORDER_PATTERNS,
   SHADOW_PATTERNS,
   ROUNDED_PATTERNS,

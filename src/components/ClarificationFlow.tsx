@@ -47,6 +47,9 @@ import {
   ICON_PATTERNS,
   CLARIFICATION_TIMER_CONFIG,
   PY_CLASSES,
+  SPACE_Y_PATTERNS,
+  FLEX_PATTERNS,
+  SPACING_PATTERNS,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -381,25 +384,25 @@ function ClarificationFlow({
         <div
           className={`${CARD_PATTERNS.RESPONSIVE} mt-6 space-y-6 animate-fade-in`}
         >
-          <div className="space-y-3">
+          <div className={SPACE_Y_PATTERNS.MD}>
             <Skeleton className="h-6 w-3/4" variant="text" />
             <Skeleton className="h-4 w-full" variant="text" />
             <Skeleton className="h-4 w-5/6" variant="text" />
           </div>
 
-          <div className="space-y-4">
+          <div className={SPACE_Y_PATTERNS.LG}>
             <Skeleton className="h-10 w-full" variant="rect" />
             <Skeleton className="h-24 w-full" variant="rect" />
           </div>
 
-          <div className="flex justify-between items-center pt-4">
+          <div className={`${FLEX_PATTERNS.BETWEEN_CENTER} pt-4`}>
             <Skeleton className="h-10 w-24" variant="rect" />
             <Skeleton className="h-10 w-28" variant="rect" />
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-center gap-2">
-          <div className="flex gap-1.5">
+        <div className={`${FLEX_PATTERNS.CENTER_GAP_MD}`}>
+          <div className={FLEX_PATTERNS.GAP_SM}>
             {[0, 1, 2].map((i) => (
               <div
                 key={i}
@@ -417,7 +420,7 @@ function ClarificationFlow({
         </div>
 
         {error && (
-          <div className="mb-6 slide-up">
+          <div className={`${SPACING_PATTERNS.MB6} slide-up`}>
             <Alert type="error" title={MESSAGES.ERRORS.DEFAULT}>
               <p>{error}</p>
               <p className={CLARIFICATION_FLOW_INFO_TEXT}>
@@ -466,7 +469,7 @@ function ClarificationFlow({
         show={showCelebration}
       />
 
-      <div className="mb-6 flex items-center justify-between">
+      <div className={`${SPACING_PATTERNS.MB6} ${FLEX_PATTERNS.BETWEEN}`}>
         <Tooltip
           content={CLARIFICATION_FLOW_LABELS.BACK_TO_EDIT_TOOLTIP}
           shortcut={['Alt', 'B']}
@@ -529,7 +532,7 @@ function ClarificationFlow({
         <summary
           className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none`}
         >
-          <div className="flex items-center gap-2">
+          <div className={FLEX_PATTERNS.GAP_MD}>
             <svg
               className={`${ICON_SIZES.MD} ${TEXT_COLOR_CLASSES.MUTED}`}
               fill="none"
@@ -568,7 +571,9 @@ function ClarificationFlow({
         <div
           className={`px-4 pb-4 pt-2 text-sm ${TEXT_COLOR_CLASSES.BODY} border-t ${BORDER_COLOR_CLASSES.EXTRA_LIGHT} ${BG_COLOR_CLASSES.CARD}`}
         >
-          <div className="flex justify-between items-start gap-4">
+          <div
+            className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.GAP4}`}
+          >
             <p className="italic leading-relaxed">&quot;{idea}&quot;</p>
             <CopyButton
               textToCopy={idea}
@@ -581,8 +586,10 @@ function ClarificationFlow({
       </details>
 
       <div aria-live="polite" aria-atomic="true">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2">
+        <div
+          className={`${FLEX_PATTERNS.BETWEEN_CENTER} ${SPACING_PATTERNS.MB2}`}
+        >
+          <div className={FLEX_PATTERNS.GAP_MD}>
             <span
               className={`text-sm font-medium ${TEXT_COLOR_CLASSES.HEADING}`}
             >
@@ -630,7 +637,7 @@ function ClarificationFlow({
                 : ''
             )}
           >
-            <span className="flex items-center gap-1.5">
+            <span className={FLEX_PATTERNS.GAP_SM}>
               <svg
                 className="w-3.5 h-3.5"
                 fill="none"
@@ -649,7 +656,7 @@ function ClarificationFlow({
             </span>
             {estimatedRemainingSeconds !== null &&
               estimatedRemainingSeconds > 0 && (
-                <span className="flex items-center gap-1.5">
+                <span className={FLEX_PATTERNS.GAP_SM}>
                   <span className={GRAY_CLASSES.TEXT_400}>·</span>
                   <span
                     className={`transition-all ${DURATION_TAILWIND[300]} ${
@@ -699,7 +706,7 @@ function ClarificationFlow({
             )}
           </p>
 
-          <div className="space-y-4">
+          <div className={SPACE_Y_PATTERNS.LG}>
             {currentQuestion.type === 'textarea' && (
               <div>
                 <InputWithValidation
@@ -763,7 +770,7 @@ function ClarificationFlow({
               !currentAnswer.trim() &&
               !showCelebration &&
               !isSubmitting && (
-                <div className="flex justify-end">
+                <div className={FLEX_PATTERNS.END}>
                   <Button
                     type="button"
                     variant="ghost"
@@ -819,7 +826,7 @@ function ClarificationFlow({
               currentAnswer.trim() &&
               !showCelebration &&
               !isSubmitting && (
-                <div className="flex justify-end">
+                <div className={FLEX_PATTERNS.END}>
                   <Tooltip
                     content={CLARIFICATION_FLOW_LABELS.CLEAR_TOOLTIP}
                     shortcut={['Esc']}
@@ -854,7 +861,7 @@ function ClarificationFlow({
               )}
 
             {currentQuestion.type === 'select' && currentQuestion.options && (
-              <div className="space-y-2">
+              <div className={SPACE_Y_PATTERNS.SM}>
                 <label
                   htmlFor="answer-select"
                   className={CLARIFICATION_FLOW_INPUT_LABEL}
@@ -945,7 +952,9 @@ function ClarificationFlow({
             )}
           </div>
 
-          <div className="flex justify-between items-center mt-8">
+          <div
+            className={`${FLEX_PATTERNS.BETWEEN_CENTER} ${SPACING_PATTERNS.MT8}`}
+          >
             <Button
               type="button"
               variant="secondary"
@@ -960,7 +969,7 @@ function ClarificationFlow({
               aria-hidden="true"
             >
               {currentStep > 0 && (
-                <span className="flex items-center gap-1.5">
+                <span className={FLEX_PATTERNS.GAP_SM}>
                   <kbd
                     className={
                       UI_CONFIG.ACCESSIBILITY.KEYBOARD
@@ -979,7 +988,7 @@ function ClarificationFlow({
                   <span>prev</span>
                 </span>
               )}
-              <span className="flex items-center gap-1.5">
+              <span className={FLEX_PATTERNS.GAP_SM}>
                 <kbd
                   className={
                     UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT_WITH_GAP
@@ -997,7 +1006,7 @@ function ClarificationFlow({
                 </span>
               </span>
               {questions.length > 1 && (
-                <span className="flex items-center gap-1.5">
+                <span className={FLEX_PATTERNS.GAP_SM}>
                   <kbd
                     className={
                       UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT

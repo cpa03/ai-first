@@ -18,6 +18,8 @@ import {
   UI_CONFIG,
   TRANSITION_CLASSES,
   GRAY_CLASSES,
+  FLEX_PATTERNS,
+  SPACING_PATTERNS,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -220,9 +222,11 @@ function TaskItemComponent({
           </div>
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
+            <div
+              className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.GAP2}`}
+            >
               <p className={titleClasses}>{task.title}</p>
-              <div className="flex items-center gap-1.5">
+              <div className={FLEX_PATTERNS.GAP_SM}>
                 <span
                   className={`${TASK_ITEM_STYLES.STATUS_BADGE.BASE} ${taskStatus.bgColor} ${taskStatus.color}`}
                 >
@@ -250,7 +254,7 @@ function TaskItemComponent({
               aria-hidden="true"
             >
               {task.estimate > 0 && (
-                <span className="flex items-center gap-1">
+                <span className={FLEX_PATTERNS.GAP_XS}>
                   <svg
                     className={TASK_ITEM_STYLES.METADATA.ICON}
                     fill="none"
@@ -270,7 +274,7 @@ function TaskItemComponent({
                 </span>
               )}
               {task.assignee && (
-                <span className="flex items-center gap-1">
+                <span className={FLEX_PATTERNS.GAP_XS}>
                   <svg
                     className={TASK_ITEM_STYLES.METADATA.ICON}
                     fill="none"

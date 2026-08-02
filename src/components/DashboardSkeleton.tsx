@@ -10,6 +10,8 @@ import {
   DASHBOARD_LABELS,
   BG_COLORS,
   BORDER_COLORS,
+  FLEX_PATTERNS,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -23,8 +25,8 @@ function DashboardSkeletonComponent() {
     >
       <span className="sr-only">{DASHBOARD_LABELS.SKELETON_SR_TEXT}</span>
 
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
-        <div className="space-y-2">
+      <div className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} mb-8`}>
+        <div className={SPACE_Y_PATTERNS.SM}>
           <Skeleton className="h-8 w-48" variant="text" />
           <Skeleton className="h-4 w-32" variant="text" />
         </div>

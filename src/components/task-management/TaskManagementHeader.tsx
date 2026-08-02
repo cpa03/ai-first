@@ -15,6 +15,7 @@ import {
   COMPONENT_CONFIG,
   BREATHE,
   GRAY_CLASSES,
+  FLEX_PATTERNS,
 } from '@/lib/config';
 import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -205,7 +206,7 @@ function TaskManagementHeaderComponent({
       <div className="mt-4">
         <div
           ref={radioGroupRef}
-          className="flex items-center gap-2 mb-3"
+          className={`${FLEX_PATTERNS.GAP_MD} mb-3`}
           role="radiogroup"
           aria-label={TASK_MANAGEMENT_LABELS.FILTER_ARIA_LABEL}
           onKeyDown={handleRadioGroupKeyDown}
@@ -305,7 +306,7 @@ function TaskManagementHeaderComponent({
           className={`hidden sm:flex items-center gap-3 mt-2 text-xs ${GRAY_CLASSES.TEXT_500} ${BREATHE}`}
           aria-label={TASK_MANAGEMENT_LABELS.KEYBOARD_SHORTCUTS_ARIA_LABEL}
         >
-          <span className="flex items-center gap-1.5">
+          <span className={FLEX_PATTERNS.GAP_SM}>
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               [
             </kbd>
@@ -319,7 +320,7 @@ function TaskManagementHeaderComponent({
           >
             ·
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className={FLEX_PATTERNS.GAP_SM}>
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               ]
             </kbd>
@@ -333,7 +334,7 @@ function TaskManagementHeaderComponent({
           >
             ·
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className={FLEX_PATTERNS.GAP_SM}>
             <kbd className={UI_CONFIG.ACCESSIBILITY.KEYBOARD.KBD_STYLE_COMPACT}>
               1-3
             </kbd>
