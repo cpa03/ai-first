@@ -119,7 +119,7 @@ describe('PasswordRequirementsChecklist', () => {
     ).toBeInTheDocument();
 
     // Success status text should be rendered
-    const statusText = screen.getByRole('status');
-    expect(statusText).toHaveTextContent(/All requirements met/i);
+    const statusText = screen.getByText(/All requirements met/i);
+    expect(statusText).toBeInTheDocument();
   });
 });

@@ -625,6 +625,9 @@ export const PASSWORD_REQUIREMENTS_LABELS = {
     MEDIUM: 'Medium',
     STRONG: 'Strong',
   } as const,
+  /** Screen reader announcement when requirement count changes */
+  PROGRESS_ANNOUNCEMENT: (metCount: number, total: number) =>
+    `${metCount} of ${total} requirements met`,
 } as const;
 
 /**
