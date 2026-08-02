@@ -374,7 +374,7 @@ export default function AuthCallbackPage() {
           >
             <span className="hidden sm:inline-flex items-center gap-1.5">
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
               >
                 Esc
               </kbd>
@@ -383,7 +383,7 @@ export default function AuthCallbackPage() {
             {hasTimedOut && (
               <span className="hidden sm:inline-flex items-center gap-1.5">
                 <kbd
-                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+                  className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
                 >
                   Enter
                 </kbd>
