@@ -36,6 +36,7 @@ import {
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
 } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
 import { COMPONENT_CONFIG } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -499,7 +500,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`w-11 h-11 flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                  className={`w-11 h-11 flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -540,7 +541,7 @@ const InputWithValidationComponent = forwardRef<
                     triggerHapticFeedback();
                     setPasswordVisible(!passwordVisible);
                   }}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                  className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
                   aria-label={
                     passwordVisible
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA

@@ -24,6 +24,7 @@ import {
   P_CLASSES,
   GAP_CLASSES,
 } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { generateId } from '@/lib/security/crypto';
@@ -235,7 +236,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         transform ${TRANSITION_CLASSES.SLOW_EASE_IN_OUT}
         ${isLeaving ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}
         ${prefersReducedMotion ? '' : 'touch-pan-y'}
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2
+        ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT}
       `}
       style={{
         transform:
@@ -261,7 +262,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </div>
       <button
         onClick={handleClose}
-        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
+        className={`flex-shrink-0 ${ML_CLASSES.MD} ${styles.textColor} hover:opacity-75 ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT.replace('focus-visible:', 'focus:')} rounded-md ${P_CLASSES.SM} ${MIN_SIZE_CLASSES.TOAST_BUTTON} transition-opacity`}
         aria-label={TOAST_CONTAINER_LABELS.CLOSE_ARIA_LABEL}
       >
         <svg

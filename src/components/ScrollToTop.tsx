@@ -25,6 +25,7 @@ import {
   ICON_SIZES,
   PAGE_ELEMENT_IDS,
 } from '@/lib/config';
+import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
@@ -311,7 +312,7 @@ function ScrollToTopComponent({
             ${TRANSITION_CLASSES.SLOW} ease-out
             ${GRAY_CLASSES.HOVER_BG_50} hover:text-primary-600 hover:${SHADOW_CLASSES.EXTRA_LARGE} hover:scale-110
             hover:border-primary-200
-            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary-500/40 focus-visible:ring-offset-2
+            ${FOCUS_RING_OFFSET_PATTERNS.LARGE}
             focus-visible:scale-110
             active:scale-95
             ${prefersReducedMotion ? '' : hasAppeared ? 'animate-scroll-to-top-bounce' : 'opacity-0'}

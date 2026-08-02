@@ -891,3 +891,12 @@ export {
   ICON_PATTERNS,
   MINI_BUTTON_SIZES,
 } from './icon-sizes';
+
+// Focus Ring Offsets Configuration
+// Centralizes all hardcoded ring-offset-* values used throughout components
+export {
+  RING_OFFSET_CLASSES,
+  FOCUS_RING_OFFSET_PATTERNS,
+  BORDER_WIDTH_CLASSES,
+  BORDER_RADIUS_CLASSES,
+} from './focus-ring-offsets';
