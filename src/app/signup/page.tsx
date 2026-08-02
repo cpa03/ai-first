@@ -739,13 +739,13 @@ export default function SignupPage() {
             >
               Press{' '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
               >
                 {isMac ? '⌘' : 'Ctrl'}
               </kbd>
               {' + '}
               <kbd
-                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} rounded text-xs font-mono`}
+                className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
               >
                 Enter
               </kbd>

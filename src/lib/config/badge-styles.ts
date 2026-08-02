@@ -80,7 +80,7 @@ export const BADGE_STYLES = {
   NEW_FEATURE: `ml-2 ${BADGE_BASE} ${BADGE_COLORS.PURPLE}`,
 
   /** Status badge - compact style for status indicators */
-  STATUS: `px-1.5 py-0.5 font-mono text-xs font-medium ${GRAY_CLASSES.TEXT_500} ${GRAY_CLASSES.BG_100} border ${GRAY_CLASSES.BORDER_200} rounded`,
+  STATUS: `px-1.5 py-0.5 font-mono text-xs font-medium ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.BG_100} border ${GRAY_CLASSES.BORDER_200} rounded`,
 
   /** Keyboard shortcut badge */
   KBD: `px-1.5 py-0.5 text-xs font-mono ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`,

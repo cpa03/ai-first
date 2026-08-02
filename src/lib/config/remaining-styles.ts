@@ -97,7 +97,7 @@ export const ELEMENT_PATTERNS = {
   KBD_DARK: 'px-1.5 py-0.5 bg-black/20 rounded text-xs font-sans',
 
   // Status badge
-  STATUS_BADGE: `px-1.5 py-0.5 font-mono text-xs font-medium ${GRAY_CLASSES.TEXT_500} ${GRAY_CLASSES.BG_100} border ${GRAY_CLASSES.BORDER_200} rounded`,
+  STATUS_BADGE: `px-1.5 py-0.5 font-mono text-xs font-medium ${GRAY_CLASSES.TEXT_600} ${GRAY_CLASSES.BG_100} border ${GRAY_CLASSES.BORDER_200} rounded`,
 
   // Divider
   DIVIDER: `${GRAY_CLASSES.TEXT_300} mx-0.5`,
