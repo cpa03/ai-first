@@ -50,6 +50,18 @@ const ProgressStepperComponent = function ProgressStepper({
   const animatedProgressRef = useRef(0);
   const prevCurrentStepRef = useRef(currentStep);
 
+  // PERFORMANCE: Track values in refs to avoid tearing down and re-binding
+  // the global keyboard event listener (listener churn) on every step or prop change.
+  const currentStepRef = useRef(currentStep);
+  const onStepClickRef = useRef(onStepClick);
+  const stepsCountRef = useRef(steps.length);
+
+  // Sync refs directly in the render phase for maximum efficiency,
+  // completely avoiding scheduling and running an effect callback on every render.
+  currentStepRef.current = currentStep;
+  onStepClickRef.current = onStepClick;
+  stepsCountRef.current = steps.length;
+
   useEffect(() => {
     if (prefersReducedMotion) {
       setAnimatedProgress(progressPercentage);
@@ -114,30 +126,37 @@ const ProgressStepperComponent = function ProgressStepper({
   }, [currentStep, steps.length]);
 
   useEffect(() => {
-    if (!onStepClick) return;
+    // Only register the keydown listener if onStepClick callback exists.
+    if (!onStepClickRef.current) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (isFocusedOnInput(e.target)) return;
       if (e.metaKey || e.ctrlKey || e.altKey) return;
 
+      const currentStepVal = currentStepRef.current;
+      const stepsCountVal = stepsCountRef.current;
+      const onStepClickFn = onStepClickRef.current;
+
+      if (!onStepClickFn) return;
+
       if (e.key === 'ArrowRight') {
         e.preventDefault();
-        if (currentStep < steps.length - 1) {
+        if (currentStepVal < stepsCountVal - 1) {
           triggerHapticFeedback();
-          onStepClick(currentStep + 1);
+          onStepClickFn(currentStepVal + 1);
         }
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        if (currentStep > 0) {
+        if (currentStepVal > 0) {
           triggerHapticFeedback();
-          onStepClick(currentStep - 1);
+          onStepClickFn(currentStepVal - 1);
         }
       }
     };
 
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onStepClick, currentStep, steps.length]);
+  }, []); // Run exactly once on mount, zero unbind/rebind cycles over the component lifetime!
 
   return (
     <nav
