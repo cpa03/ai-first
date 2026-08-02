@@ -140,27 +140,33 @@ export default function NotFound() {
           <div
             className={`flex flex-col sm:flex-row gap-3 justify-center ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
           >
-            <Button
-              variant="primary"
-              onClick={handleGoBack}
-              className="inline-flex items-center justify-center gap-2"
+            <Tooltip
+              content={NOT_FOUND_LABELS.GO_BACK_TOOLTIP}
+              shortcut={[isMac ? '⌘' : 'Ctrl', 'Enter']}
+              position="top"
             >
-              <svg
-                className={ICON_SIZES.MD}
-                fill="none"
-                viewBox={SVG_VIEWBOX.STANDARD}
-                stroke="currentColor"
-                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
-                aria-hidden="true"
+              <Button
+                variant="primary"
+                onClick={handleGoBack}
+                className="inline-flex items-center justify-center gap-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                />
-              </svg>
-              Go back
-            </Button>
+                <svg
+                  className={ICON_SIZES.MD}
+                  fill="none"
+                  viewBox={SVG_VIEWBOX.STANDARD}
+                  stroke="currentColor"
+                  strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                  />
+                </svg>
+                Go back
+              </Button>
+            </Tooltip>
 
             <Link href={ROUTES.HOME}>
               <Button
