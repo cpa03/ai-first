@@ -66,9 +66,10 @@ const MIN_TEXTAREA_HEIGHT = SIZES.TEXTAREA.MIN_HEIGHT;
 
 function getCharCountColor(count: number, max: number): string {
   const ratio = Math.min(count / max, 1.2);
+  const { THRESHOLDS } = CHAR_COUNT_COLORS;
   if (ratio > 1) return CHAR_COUNT_COLORS.OVER_LIMIT;
-  if (ratio >= 0.9) {
-    const t = (ratio - 0.9) / 0.1;
+  if (ratio >= THRESHOLDS.WARNING_START) {
+    const t = (ratio - THRESHOLDS.WARNING_START) / THRESHOLDS.WARNING_RANGE;
     const r = Math.round(
       CHAR_COUNT_COLORS.WARNING_START.r +
         t *
@@ -86,8 +87,8 @@ function getCharCountColor(count: number, max: number): string {
     );
     return `rgb(${r}, ${g}, ${b})`;
   }
-  if (ratio >= 0.7) {
-    const t = (ratio - 0.7) / 0.2;
+  if (ratio >= THRESHOLDS.SUCCESS_START) {
+    const t = (ratio - THRESHOLDS.SUCCESS_START) / THRESHOLDS.SUCCESS_RANGE;
     const r = Math.round(
       CHAR_COUNT_COLORS.SUCCESS_START.r +
         t *

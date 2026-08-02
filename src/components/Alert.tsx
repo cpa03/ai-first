@@ -70,8 +70,6 @@ const ALERT_DISMISS_DELAYS: Record<string, number> = {
   info: COMPONENT_CONFIG.ALERT.INFO_DISMISS_MS,
 };
 
-const SNOOZE_DURATION_MS = 5000; // Extend by 5 seconds on snooze
-
 const AlertComponent = function Alert({
   type,
   title,
@@ -176,7 +174,10 @@ const AlertComponent = function Alert({
     triggerHapticFeedback();
     cleanupTimers();
     currentStepRef.current = 0;
-    setCurrentDelay((prev) => (prev ?? effectiveDelay) + SNOOZE_DURATION_MS);
+    setCurrentDelay(
+      (prev) =>
+        (prev ?? effectiveDelay) + COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS
+    );
     setProgress(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   }, [cleanupTimers, effectiveDelay]);
 
@@ -315,7 +316,10 @@ const AlertComponent = function Alert({
               aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
               type="button"
             >
-              +{SNOOZE_DURATION_MS / TIME_CONVERSIONS.MS_PER_SECOND}s
+              +
+              {COMPONENT_CONFIG.ALERT.SNOOZE_DURATION_MS /
+                TIME_CONVERSIONS.MS_PER_SECOND}
+              s
             </button>
           </div>
         </>

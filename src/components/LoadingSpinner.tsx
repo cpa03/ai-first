@@ -73,7 +73,8 @@ function LoadingSpinnerComponent({
         size.toUpperCase() as keyof typeof COMPONENT_CONFIG.SPINNER.SIZES
       ];
     const dimension = spinnerSize.width;
-    const pulseRing = dimension * 1.4;
+    const pulseRing =
+      dimension * COMPONENT_MAGIC_NUMBERS.SPINNER.PULSE_RING_MULTIPLIER;
     const pulseRingOffset = (pulseRing - dimension) / 2;
 
     return { spinnerSize, dimension, pulseRing, pulseRingOffset };
