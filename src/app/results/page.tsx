@@ -11,6 +11,7 @@ import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import { trackEvent, ANALYTICS_EVENTS, trackFunnelStep } from '@/lib/analytics';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { triggerHapticFeedback } from '@/lib/utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 import {
   SPINNER_PATTERNS,
@@ -34,6 +35,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_HELP_LABELS,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
