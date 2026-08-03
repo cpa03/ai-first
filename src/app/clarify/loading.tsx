@@ -1,5 +1,10 @@
 import Skeleton from '@/components/Skeleton';
-import { CARD_PATTERNS, PAGE_LAYOUT_CLASSES } from '@/lib/config';
+import {
+  CARD_PATTERNS,
+  PAGE_LAYOUT_CLASSES,
+  COMPONENT_CONFIG,
+} from '@/lib/config';
+import { COMPONENT_DEFAULTS } from '@/lib/config/ui';
 
 /**
  * Route-level loading state for /clarify.
@@ -8,6 +13,8 @@ import { CARD_PATTERNS, PAGE_LAYOUT_CLASSES } from '@/lib/config';
  * page component mounts and its Suspense boundary activates. Mirrors the
  * centered card layout of the actual clarify page for visual continuity.
  */
+const SKELETON_SHOW_DELAY = COMPONENT_CONFIG.SKELETON.DEFAULT_SHOW_DELAY_MS;
+
 export default function ClarifyLoading() {
   return (
     <div className="py-12">
@@ -16,12 +23,12 @@ export default function ClarifyLoading() {
           <Skeleton
             className="h-9 w-64 mx-auto"
             variant="text"
-            showDelay={300}
+            showDelay={SKELETON_SHOW_DELAY}
           />
           <Skeleton
             className="h-5 w-80 mx-auto"
             variant="text"
-            showDelay={300}
+            showDelay={SKELETON_SHOW_DELAY}
           />
         </div>
       </div>
@@ -30,15 +37,23 @@ export default function ClarifyLoading() {
         <div className={`${CARD_PATTERNS.ANIMATED} space-y-6`}>
           {/* Question skeleton */}
           <div className="space-y-3">
-            <Skeleton className="h-5 w-3/4" variant="text" showDelay={300} />
-            <Skeleton className="h-4 w-full" variant="text" showDelay={300} />
+            <Skeleton
+              className="h-5 w-3/4"
+              variant="text"
+              showDelay={SKELETON_SHOW_DELAY}
+            />
+            <Skeleton
+              className="h-4 w-full"
+              variant="text"
+              showDelay={SKELETON_SHOW_DELAY}
+            />
           </div>
 
           {/* Input field skeleton */}
           <Skeleton
             className="h-12 w-full rounded-lg"
             variant="rect"
-            showDelay={300}
+            showDelay={SKELETON_SHOW_DELAY}
           />
 
           {/* Button skeletons */}
@@ -46,12 +61,12 @@ export default function ClarifyLoading() {
             <Skeleton
               className="h-10 w-28 rounded-lg"
               variant="rect"
-              showDelay={300}
+              showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
               className="h-10 w-24 rounded-lg"
               variant="rect"
-              showDelay={300}
+              showDelay={SKELETON_SHOW_DELAY}
             />
           </div>
 
@@ -60,22 +75,22 @@ export default function ClarifyLoading() {
             <Skeleton
               className="h-2.5 w-2.5 rounded-full"
               variant="circle"
-              showDelay={300}
+              showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
               className="h-2.5 w-2.5 rounded-full"
               variant="circle"
-              showDelay={300}
+              showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
               className="h-2.5 w-2.5 rounded-full"
               variant="circle"
-              showDelay={300}
+              showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
               className="h-2.5 w-2.5 rounded-full"
               variant="circle"
-              showDelay={300}
+              showDelay={SKELETON_SHOW_DELAY}
             />
           </div>
         </div>
@@ -88,7 +103,7 @@ export default function ClarifyLoading() {
         aria-live="polite"
         aria-atomic="true"
       >
-        Loading clarification questions…
+        {COMPONENT_DEFAULTS.LOADING_TEXT.CLARIFICATION_QUESTIONS}
       </div>
     </div>
   );

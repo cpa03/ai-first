@@ -17,6 +17,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   ICON_SIZES,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -36,8 +37,8 @@ import Tooltip from '@/components/Tooltip';
  * 5. Progress indication: Subtle animation feedback
  */
 
-// Micro-UX: Timeout threshold (15 seconds) - shows helpful message if auth takes too long
-const TIMEOUT_THRESHOLD_SECONDS = 15;
+const TIMEOUT_THRESHOLD_SECONDS =
+  COMPONENT_CONFIG.AUTH_CALLBACK.TIMEOUT_SECONDS;
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -71,7 +72,7 @@ export default function AuthCallbackPage() {
         }
         return next;
       });
-    }, 1000);
+    }, COMPONENT_CONFIG.AUTH_CALLBACK.TRACKING_INTERVAL_MS);
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -88,7 +89,7 @@ export default function AuthCallbackPage() {
     // Brief delay to allow announcement before redirect
     setTimeout(() => {
       router.push(ROUTES.LOGIN);
-    }, 500);
+    }, COMPONENT_CONFIG.AUTH_CALLBACK.REDIRECT_DELAY_MS);
   }, [router]);
 
   // Micro-UX: Retry authentication
@@ -135,7 +136,7 @@ export default function AuthCallbackPage() {
         }
         return next;
       });
-    }, 1000);
+    }, COMPONENT_CONFIG.AUTH_CALLBACK.TRACKING_INTERVAL_MS);
 
     handleAuthCallback();
   }, [router]);

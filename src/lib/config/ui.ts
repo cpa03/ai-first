@@ -599,6 +599,8 @@ export const COMPONENT_DEFAULTS = {
     AUTH_CALLBACK_MESSAGE: 'Please wait while we verify your account.',
     GENERAL_LOADING: 'Loading...',
     PROCESSING: 'Processing...',
+    PROJECT_BLUEPRINT: 'Loading project blueprint…',
+    CLARIFICATION_QUESTIONS: 'Loading clarification questions…',
   } as const,
 };
 
