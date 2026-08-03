@@ -2082,6 +2082,34 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 }
 
+/* FeatureGrid Connector Reveal Animation - Micro-UX delight for step flow visualization */
+/* Creates a smooth fade-in effect for connector arrows when the section becomes visible */
+/* Shows the complete flow at a glance, not just on hover, helping users understand the journey */
+@keyframes connectorReveal {
+  from {
+    opacity: 0;
+    transform: scaleX(0) scaleY(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1) scaleY(1);
+  }
+}
+
+.animate-connector-reveal {
+  animation: connectorReveal var(--duration-slow) var(--ease-out-expo) forwards;
+}
+
+/* Reduced motion support for connector reveal */
+@media (prefers-reduced-motion: reduce) {
+  .animate-connector-reveal {
+    animation: none;
+    opacity: 0.6;
+    transform: none;
+  }
+}
+
+/* Print Styles */
 @media print {
   body {
     background: white !important;

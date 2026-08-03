@@ -195,32 +195,34 @@ function FeatureGridComponent() {
             {index < FEATURE_CONFIG.FEATURES.length - 1 && (
               <>
                 {/* Desktop: Horizontal connector arrow */}
-                {/* Micro-UX: Show on hover AND focus-visible for keyboard accessibility */}
-                {/* Micro-UX: Staggered animation delay creates a polished sequential reveal */}
+                {/* Micro-UX: Animate in with staggered delay when section becomes visible */}
+                {/* Shows the complete flow at a glance, not just on hover */}
+                {/* Still enhances on hover/focus-visible for interactive feedback */}
                 <div
                   className={`
                   hidden md:block absolute top-1/2 -right-4 
                   w-8 h-0.5 ${GRADIENT_CONFIG.CONNECTOR.HORIZONTAL}
                   transform -translate-y-1/2
-                  opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100
+                  ${isVisible ? 'animate-connector-reveal' : 'opacity-0'}
+                  group-hover:opacity-100 group-focus-visible:opacity-100
                   transition-opacity ${DURATION_TAILWIND[500]}
-                  ${index === 0 ? ANIMATION_DELAYS.TAILWIND[100] : index === 1 ? ANIMATION_DELAYS.TAILWIND[200] : ANIMATION_DELAYS.TAILWIND[300]}
+                  ${index === 0 ? ANIMATION_DELAYS.TAILWIND[200] : index === 1 ? ANIMATION_DELAYS.TAILWIND[300] : ANIMATION_DELAYS.TAILWIND[500]}
                   motion-reduce:opacity-0
                 `}
                   aria-hidden="true"
                 />
                 {/* Mobile: Vertical connector line for step flow clarity */}
-                {/* Micro-UX: Show on hover AND focus-visible for keyboard accessibility */}
-                {/* Micro-UX: Staggered animation delay creates a polished sequential reveal */}
+                {/* Micro-UX: Animate in with staggered delay when section becomes visible */}
+                {/* Shows the complete flow at a glance, not just on hover */}
                 <div
                   className={`
                   md:hidden absolute left-1/2 -bottom-4
                   w-0.5 h-8 ${GRADIENT_CONFIG.CONNECTOR.VERTICAL}
                   transform -translate-x-1/2
-                  ${isVisible ? 'fade-in' : 'opacity-0'}
+                  ${isVisible ? 'animate-connector-reveal' : 'opacity-0'}
                   group-hover:opacity-100 group-focus-visible:opacity-100
                   transition-opacity ${DURATION_TAILWIND[500]}
-                  ${index === 0 ? ANIMATION_DELAYS.TAILWIND[100] : index === 1 ? ANIMATION_DELAYS.TAILWIND[200] : ANIMATION_DELAYS.TAILWIND[300]}
+                  ${index === 0 ? ANIMATION_DELAYS.TAILWIND[200] : index === 1 ? ANIMATION_DELAYS.TAILWIND[300] : ANIMATION_DELAYS.TAILWIND[500]}
                 `}
                   aria-hidden="true"
                 />
