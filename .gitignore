@@ -1,37 +1,45 @@
+# ============================================================
 # Dependencies
+# ============================================================
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# ============================================================
 # Next.js
+# ============================================================
 .next/
 out/
 dist/
+# next-env.d.ts should be committed - see Next.js docs
+.swc/
+.next/cache/
 
+# ============================================================
 # Environment variables
+# ============================================================
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Vercel
+# ============================================================
+# Vercel & Cloudflare
+# ============================================================
 .vercel
-
-# OpenNext Cloudflare build output
 .open-next/
 .wrangler/
 
+# ============================================================
 # TypeScript
+# ============================================================
 *.tsbuildinfo
-# next-env.d.ts should be committed - see Next.js docs
 
-# SWC (Next.js compiler cache)
-.swc/
-.next/cache/
-
+# ============================================================
 # IDE
+# ============================================================
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
@@ -39,106 +47,89 @@ dist/
 !.vscode/tasks.json
 .idea/
 
+# ============================================================
 # OS
+# ============================================================
 .DS_Store
 Thumbs.db
 
-# Logs
+# ============================================================
+# Logs & Generated Reports
+# ============================================================
 *.log
 task_plan.md
-
-# Generated reports (by npm scripts)
 console-scan-report.json
 lighthouse-report.json
 
-# Runtime data
+# ============================================================
+# Coverage & Testing
+# ============================================================
+coverage/
+*.lcov
+.nyc_output
+
+# ============================================================
+# Caches
+# ============================================================
+.npm
+.eslintcache
+.cache
+.parcel-cache
+.yarn-integrity
+
+# ============================================================
+# Build Artifacts
+# ============================================================
+*.tgz
 pids
 *.pid
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
-*.lcov
-
-# nyc test coverage
-.nyc_output
-
-# Dependency directories
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional eslint cache
-.eslintcache
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# pnpm lock file (we use npm)
+# ============================================================
+# Package Manager
+# ============================================================
+# We use npm; ignore others
 pnpm-lock.yaml
 
-# parcel-bundler cache (https://parceljs.org/)
-.cache
-.parcel-cache
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-# Git worktrees
+# ============================================================
+# Git Worktrees
+# ============================================================
 .worktrees/
 
-# Agent temporary directories
-# .Jules/ - Bolt AI temporary files
+# ============================================================
+# Agent Temporary Directories
+# ============================================================
 .Jules/
-# .jules/ - Bolt AI temporary files (lowercase variant)
 .jules/
-# .omo/ - Ralph loop temporary files
 .omo/
-# .sisyphus/ is for Sisyphus agent state persistence
 .sisyphus/
 
-# OpenCode CLI - ignore auto-generated node_modules
+# ============================================================
+# OpenCode CLI
+# ============================================================
 .opencode/node_modules/
 .opencode/package-lock.json
 
-# Codegraph - generated database
+# ============================================================
+# Codegraph
+# ============================================================
 .codegraph/
 
-# Archive backups (should not be committed)
+# ============================================================
+# Archive Backups (binary artifacts should not be committed)
+# Note: docs/archive/README.md is intentionally tracked
+# ============================================================
 docs/archive/*.gz
 docs/archive/*.zip
 docs/archive/*.tar
 docs/archive/*.tar.gz
-# Note: docs/archive/README.md is intentionally tracked for documentation
 
-# Temporary agent reports (auto-generated, should not be committed)
-# Case-insensitive patterns for audit reports (excluding docs/audit/ which tracks legitimate reports)
+# ============================================================
+# Temporary Agent Reports (auto-generated, should not be committed)
+# Case-insensitive patterns for agent-generated reports
+# Exceptions for docs/audit/ and docs/maintenance/ track legitimate reports
+# ============================================================
 *[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Aa][Uu][Dd][Ii][Tt]*.md
 *[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Vv][Ee][Rr][Ii][Ff][Ii][Cc][Aa][Tt][Ii][Oo][Nn]*.md
 *[Bb][Rr][Oo][Cc][Uu][Ll][Aa]*[Ss][Cc][Aa][Nn]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
@@ -149,13 +140,14 @@ docs/archive/*.tar.gz
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Cc][Hh][Ee][Cc][Kk]*.md
 *[Hh][Ee][Aa][Ll][Tt][Hh]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
 *[Bb][Uu][Gg]*[Ss][Cc][Aa][Nn]*[Rr][Ee][Pp][Oo][Rr][Tt]*.md
-# Exceptions for docs/audit/ - legitimate tracked audit reports
-!docs/audit/
-docs/audits/
-docs/reports/
-docs/stale-branches-report.md
 
-# Exception for docs/maintenance/ - legitimate tracked maintenance reports
+# Exceptions for tracked directories
+!docs/audit/
 !docs/maintenance/
 !docs/maintenance/archive/
 !docs/maintenance/archive/*
+
+# Ignore directories for reports that are not tracked
+docs/audits/
+docs/reports/
+docs/stale-branches-report.md

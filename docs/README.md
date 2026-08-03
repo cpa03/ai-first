@@ -229,7 +229,8 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [BroCula Browser Audit - 2026-07-31](./audit/brocula-audit-20260731.md) - BroCula browser console & Lighthouse audit (latest)
+- [Browser Audit - 2026-08-01](./audit/browser-audit-2026-08-01.md) - Browser console & Lighthouse audit (latest)
+- [BroCula Browser Audit - 2026-07-31](./audit/brocula-audit-20260731.md) - BroCula browser console & Lighthouse audit
 - [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - BroCula browser console & Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
 - [Flexy Modularization Audit (legacy)](./audit/flexy-modularization-audit.md) - Earlier modularization assessment
@@ -244,7 +245,7 @@ Complete index of all IdeaFlow documentation.
 
 ### Archived Reports
 
-Older audit reports (2026-07-08 through 2026-07-28) are archived in [audit/archive/](./audit/archive/).
+Older audit reports (2026-07-08 through 2026-07-29) are archived in [audit/archive/](./audit/archive/).
 
 ## Database Reports
 
@@ -261,19 +262,13 @@ Older audit reports (2026-07-08 through 2026-07-28) are archived in [audit/archi
 
 - [Repository Maintenance Report - 2026-08-03](./maintenance/2026-08-03-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure (latest)
 - [Repository Maintenance Report - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
-- [Repository Maintenance Report - 2026-07-31 (20:54 Loop)](./maintenance/2026-07-31-repository-maintenance-loop-2054.md) - Comprehensive audit: file redundancy, documentation integrity, code quality
-- [CMZ Analysis - 2026-07-31](./maintenance/2026-07-31-czm-analysis.md) - CMZ autonomous agent analysis
-- [Phase 2 Feature Hardening - 2026-07-31](./maintenance/2026-07-31-phase2-feature-hardening.md) - Feature hardening report
-- [Phase 3 Strategic Expansion - 2026-07-31](./maintenance/2026-07-31-phase3-strategic-expansion.md) - Strategic expansion report
-- [Bugfix Maintenance Report - 2026-08-01](./maintenance/bugfix-maintenance-report-2026-08-01.md) - BugFixer maintenance report
-- [Bugfix Maintenance Report - 2026-07-31](./maintenance/bugfix-maintenance-report-2026-07-31.md) - BugFixer maintenance report
 - [Repository Audit - 2026-08-01](./maintenance/2026-08-01-repository-audit.md) - Repository audit with branch analysis
 - [BugFixer Audit - 2026-08-01](./maintenance/2026-08-01-bugfixer-audit.md) - BugFixer comprehensive audit
 - [Repository Maintenance Loop - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-loop.md) - Maintenance loop report
 
 ### Archived Reports
 
-Older maintenance reports (2026-07-07 through 2026-07-30) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
+Older maintenance reports (2026-07-07 through 2026-07-31) and superseded loop reports are archived in [maintenance/archive/](./maintenance/archive/).
 
 ---
 
