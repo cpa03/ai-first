@@ -845,7 +845,7 @@ export const TABLE_PATTERNS = {
   /** Table body row styles */
   row: {
     default: '',
-    hover: 'hover:bg-gray-50',
+    hover: 'hover:bg-gray-100',
     even: '',
     odd: '',
   },
