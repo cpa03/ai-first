@@ -548,7 +548,9 @@ export function cleanupExpiredEntries(): void {
   const now = Date.now();
   const windowStart = now - RATE_LIMIT_CLEANUP_CONFIG.CLEANUP_WINDOW_MS;
 
-  for (const [key, requests] of rateLimitStore.entries()) {
+  // PERFORMANCE: Replaced rateLimitStore.entries() with native Map forEach traversal
+  // to avoid intermediate [key, requests] array allocation and MapIterator instantiation.
+  rateLimitStore.forEach((requests, key) => {
     // PERFORMANCE: Use O(log N) binary search instead of O(N) linear scan
     // to find the first valid entry in the history.
     const firstValidIndex = findFirstValidIndex(requests, windowStart);
@@ -561,7 +563,7 @@ export function cleanupExpiredEntries(): void {
       rateLimitStore.set(key, requests.slice(firstValidIndex));
     }
     // If firstValidIndex is 0, all requests are still valid; no action needed.
-  }
+  });
 }
 
 let cleanupIntervalId: ReturnType<typeof setInterval> | null = null;
@@ -706,7 +708,9 @@ export function getRateLimitStats() {
     topUsers: [] as Array<{ identifier: string; count: number }>,
   };
 
-  for (const [identifier, requests] of rateLimitStore.entries()) {
+  // PERFORMANCE: Replaced rateLimitStore.entries() with native Map forEach traversal
+  // to avoid intermediate [key, requests] array allocation and MapIterator instantiation.
+  rateLimitStore.forEach((requests, identifier) => {
     // PERFORMANCE: Use O(log N) binary search for stats collection.
     // This provides a measurable speedup for admin dashboards when many requests are tracked.
     const firstValidIndex = findFirstValidIndex(requests, windowStart);
@@ -723,7 +727,7 @@ export function getRateLimitStats() {
       identifier,
       count: recentCount,
     });
-  }
+  });
 
   stats.topUsers.sort((a, b) => b.count - a.count);
   stats.topUsers = stats.topUsers.slice(
