@@ -259,7 +259,8 @@ Older audit reports (2026-07-08 through 2026-07-28) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure (latest)
+- [Repository Maintenance Report - 2026-08-03](./maintenance/2026-08-03-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure (latest)
+- [Repository Maintenance Report - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
 - [Repository Maintenance Report - 2026-07-31 (20:54 Loop)](./maintenance/2026-07-31-repository-maintenance-loop-2054.md) - Comprehensive audit: file redundancy, documentation integrity, code quality
 - [CMZ Analysis - 2026-07-31](./maintenance/2026-07-31-czm-analysis.md) - CMZ autonomous agent analysis
 - [Phase 2 Feature Hardening - 2026-07-31](./maintenance/2026-07-31-phase2-feature-hardening.md) - Feature hardening report
