@@ -61,6 +61,8 @@ async function scanPage(page, url) {
       text.includes('Global error handlers registered') ||
       text.includes('Global error handlers unregistered');
 
+    const isReactDevToolsLog = type === 'timeStamp';
+
     if (
       type === 'error' &&
       !isExpectedAPIError &&
@@ -71,7 +73,8 @@ async function scanPage(page, url) {
       errors.push(logEntry);
     } else if (
       (type === 'warning' || text.toLowerCase().includes('warning')) &&
-      !isExpectedDevWarning
+      !isExpectedDevWarning &&
+      !isReactDevToolsLog
     ) {
       pageWarnings.push(logEntry);
       warnings.push(logEntry);
