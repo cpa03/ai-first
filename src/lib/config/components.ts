@@ -142,6 +142,15 @@ export const COMPONENT_CONFIG = {
       SUBTLE_HOVER: 'hover:scale-[1.02]',
       ICON_HOVER: 'hover:scale-[1.08]',
     } as const,
+    /** CopyButton variant styles - eliminates hardcoded Tailwind classes */
+    VARIANT_CLASSES: {
+      DEFAULT:
+        'px-3 py-1.5 text-sm bg-primary-100 text-primary-700 hover:bg-primary-200 hover:-translate-y-0.5 active:translate-y-0 rounded-md',
+      SUBTLE:
+        'px-2 py-1 text-xs text-primary-600 hover:text-primary-800 hover:bg-primary-50 hover:-translate-y-0.5 active:translate-y-0 rounded underline-offset-2 hover:underline',
+      ICON_ONLY:
+        'p-1.5 hover:text-primary-600 hover:bg-primary-50 hover:-translate-y-0.5 active:translate-y-0 rounded-full',
+    } as const,
   } as const,
 
   CONFETTI: {
