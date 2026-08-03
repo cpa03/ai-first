@@ -99,24 +99,18 @@ const CopyButtonComponent = function CopyButton({
 
   const variantClasses = {
     default: `
-      px-3 py-1.5 text-sm
-      bg-primary-100 text-primary-700 hover:bg-primary-200
-      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
-      rounded-md
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.VARIANT_CLASSES.DEFAULT}
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER}
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}
     `,
     subtle: `
-      px-2 py-1 text-xs
-      text-primary-600 hover:text-primary-800 hover:bg-primary-50
-      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.SUBTLE_HOVER} hover:-translate-y-0.5 active:translate-y-0
-      rounded
-      underline-offset-2 hover:underline
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.VARIANT_CLASSES.SUBTLE}
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.SUBTLE_HOVER}
     `,
     'icon-only': `
-      p-1.5
-      ${TEXT_COLORS.MUTED} hover:text-primary-600 hover:bg-primary-50
-      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER} hover:-translate-y-0.5 active:translate-y-0
-      rounded-full
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.VARIANT_CLASSES.ICON_ONLY}
+      ${TEXT_COLORS.MUTED}
+      ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.ICON_HOVER}
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.COMPACT}
       ${copied ? COMPONENT_STATE_COLORS.COPIED.ICON : ''}
     `,
