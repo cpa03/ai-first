@@ -46,6 +46,30 @@ export const COMPONENT_CONFIG = {
     DEFAULT_ARIA_LABEL: 'Loading...',
   } as const,
 
+  AUTH_CALLBACK: {
+    /** Timeout threshold before showing helpful message (seconds) - Env: COMPONENT_AUTH_CALLBACK_TIMEOUT_SECONDS (default: 15) */
+    TIMEOUT_SECONDS: EnvLoader.number(
+      'COMPONENT_AUTH_CALLBACK_TIMEOUT_SECONDS',
+      15,
+      5,
+      60
+    ),
+    /** Interval for tracking elapsed time (ms) - Env: COMPONENT_AUTH_TRACKING_INTERVAL_MS (default: 1000) */
+    TRACKING_INTERVAL_MS: EnvLoader.number(
+      'COMPONENT_AUTH_TRACKING_INTERVAL_MS',
+      1000,
+      500,
+      5000
+    ),
+    /** Delay before redirect after cancel (ms) - Env: COMPONENT_AUTH_REDIRECT_DELAY_MS (default: 500) */
+    REDIRECT_DELAY_MS: EnvLoader.number(
+      'COMPONENT_AUTH_REDIRECT_DELAY_MS',
+      500,
+      100,
+      2000
+    ),
+  } as const,
+
   INPUT: {
     /** Env: COMPONENT_INPUT_VALIDATION_DEBOUNCE_MS (default: 300) */
     VALIDATION_DEBOUNCE_MS: EnvLoader.number(
@@ -208,6 +232,16 @@ export const COMPONENT_CONFIG = {
       750,
       100,
       3000
+    ),
+  } as const,
+
+  SKELETON: {
+    /** Default showDelay for skeleton components (ms) - Env: COMPONENT_SKELETON_SHOW_DELAY_MS (default: 300) */
+    DEFAULT_SHOW_DELAY_MS: EnvLoader.number(
+      'COMPONENT_SKELETON_SHOW_DELAY_MS',
+      300,
+      0,
+      1000
     ),
   } as const,
 
