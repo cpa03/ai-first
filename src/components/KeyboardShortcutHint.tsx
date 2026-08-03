@@ -80,6 +80,20 @@ function KeyboardShortcutHintComponent({
   }, [isVisible, isExiting, displayDuration, dismiss]);
 
   useEffect(() => {
+    if (!isVisible || isExiting) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        dismiss();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isVisible, isExiting, dismiss]);
+
+  useEffect(() => {
     return () => {
       if (exitTimeoutRef.current) {
         clearTimeout(exitTimeoutRef.current);
@@ -154,7 +168,7 @@ function KeyboardShortcutHintComponent({
             type="button"
             onClick={dismiss}
             className={`flex-shrink-0 p-1 rounded-lg ${TEXT_COLORS.MUTED} hover:${TEXT_COLORS.SECONDARY} hover:${BG_COLORS.LIGHT} ${TRANSITION_CLASSES.COLOR}`}
-            aria-label={KEYBOARD_SHORTCUT_HINT_LABELS.DISMISS_ARIA_LABEL}
+            aria-label={`${KEYBOARD_SHORTCUT_HINT_LABELS.DISMISS_ARIA_LABEL} (Escape)`}
           >
             <svg
               className={ICON_SIZES.MD}
