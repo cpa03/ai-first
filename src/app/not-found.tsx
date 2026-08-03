@@ -23,7 +23,9 @@ import {
   ANIMATION_CONFIG,
   GRAY_CLASSES,
   ICON_SIZES,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
+import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import Tooltip from '@/components/Tooltip';
@@ -38,7 +40,10 @@ export default function NotFound() {
   const router = useRouter();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [isMac, setIsMac] = useState(false);
-  const { copy, hasCopied } = useClipboard({ duration: 2000 });
+  const { copy, hasCopied } = useClipboard({
+    duration: (COMPONENT_CONFIG as ComponentConfig).NOT_FOUND_PAGE
+      .CLIPBOARD_DURATION_MS,
+  });
 
   // Micro-UX: Focus management - focus heading on mount for screen readers
   useEffect(() => {

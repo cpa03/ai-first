@@ -42,7 +42,9 @@ import {
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
   ICON_SIZES,
+  COMPONENT_CONFIG,
 } from '@/lib/config';
+import type { ComponentConfig } from '@/lib/config/components';
 import {
   DASHBOARD_ELEMENT_IDS,
   ARIA_HEADING_IDS,
@@ -317,13 +319,17 @@ export default function DashboardPage() {
         );
       } else {
         setRemovingId(id);
-        deleteAnimationTimeoutRef.current = setTimeout(() => {
-          setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
-          setPagination((prev) =>
-            prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
-          );
-          setRemovingId(null);
-        }, 300);
+        deleteAnimationTimeoutRef.current = setTimeout(
+          () => {
+            setIdeas((prevIdeas) => prevIdeas.filter((idea) => idea.id !== id));
+            setPagination((prev) =>
+              prev ? { ...prev, total: Math.max(0, prev.total - 1) } : null
+            );
+            setRemovingId(null);
+          },
+          (COMPONENT_CONFIG as ComponentConfig).DASHBOARD_PAGE
+            .DELETE_ANIMATION_DELAY_MS
+        );
       }
 
       if (typeof window !== 'undefined') {
