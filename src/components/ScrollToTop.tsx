@@ -25,6 +25,7 @@ import {
   ICON_SIZES,
   PAGE_ELEMENT_IDS,
 } from '@/lib/config';
+import type { ComponentConfig } from '@/lib/config/components';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -104,7 +105,11 @@ function ScrollToTopComponent({
         setHasReachedEnd(true);
         setShowReachedEndCelebration(true);
         triggerHapticFeedback();
-        setTimeout(() => setShowReachedEndCelebration(false), 1500);
+        setTimeout(
+          () => setShowReachedEndCelebration(false),
+          (COMPONENT_CONFIG as ComponentConfig).SCROLL_TO_TOP
+            .CELEBRATION_DURATION_MS
+        );
       } else if (!reachedEnd) {
         setHasReachedEnd(false);
       }

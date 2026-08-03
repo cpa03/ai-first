@@ -402,6 +402,13 @@ export const COMPONENT_CONFIG = {
       0.1,
       0.5
     ),
+    /** Duration to show reached-end celebration (ms) - Env: COMPONENT_SCROLL_TO_TOP_CELEBRATION_DURATION_MS (default: 1500) */
+    CELEBRATION_DURATION_MS: EnvLoader.number(
+      'COMPONENT_SCROLL_TO_TOP_CELEBRATION_DURATION_MS',
+      1500,
+      500,
+      5000
+    ),
   } as const,
 
   COUNT_UP: {
@@ -574,6 +581,32 @@ export const COMPONENT_CONFIG = {
       9,
       1,
       20
+    ),
+  } as const,
+
+  /**
+   * NotFound page settings
+   */
+  NOT_FOUND_PAGE: {
+    /** Clipboard copy feedback duration (ms) - Env: COMPONENT_NOT_FOUND_CLIPBOARD_DURATION_MS (default: 2000) */
+    CLIPBOARD_DURATION_MS: EnvLoader.number(
+      'COMPONENT_NOT_FOUND_CLIPBOARD_DURATION_MS',
+      2000,
+      500,
+      10000
+    ),
+  } as const,
+
+  /**
+   * Dashboard page settings
+   */
+  DASHBOARD_PAGE: {
+    /** Delete animation delay before removing item (ms) - Env: COMPONENT_DASHBOARD_DELETE_ANIMATION_DELAY_MS (default: 300) */
+    DELETE_ANIMATION_DELAY_MS: EnvLoader.number(
+      'COMPONENT_DASHBOARD_DELETE_ANIMATION_DELAY_MS',
+      300,
+      100,
+      2000
     ),
   } as const,
 } as const;
