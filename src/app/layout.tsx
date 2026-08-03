@@ -20,7 +20,6 @@ import {
   BORDER_COLOR_CLASSES,
   SHADOW_CLASSES,
   LAYOUT_CLASSES,
-  DURATION_TAILWIND,
 } from '@/lib/config/theme';
 import { GRAY_CLASSES, ELEMENT_PATTERNS } from '@/lib/config/remaining-styles';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
@@ -34,6 +33,7 @@ import {
   KeyboardShortcutsButton,
 } from '@/components/KeyboardShortcutsProvider';
 import Tooltip from '@/components/Tooltip';
+import FooterNav from '@/components/FooterNav';
 import { FOOTER_PATTERNS } from '@/lib/config/remaining-styles';
 
 // JSON-LD Structured Data for SEO - Growth: Better search visibility
@@ -281,28 +281,8 @@ export default async function RootLayout({
                       </div>
                     </div>
 
-                    {/* Navigation columns */}
-                    {FOOTER_NAV_CONFIG.COLUMNS.map((column) => (
-                      <div key={column.title}>
-                        <p
-                          className={`text-sm font-semibold ${GRAY_CLASSES.TEXT_900} uppercase tracking-wider`}
-                        >
-                          {column.title}
-                        </p>
-                        <ul className="mt-4 space-y-3">
-                          {column.items.map((item) => (
-                            <li key={item.href}>
-                              <Link
-                                href={item.href}
-                                className={`text-sm text-gray-600 hover:text-primary-600 hover:translate-x-1 transition-all ${DURATION_TAILWIND[200]} ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md inline-block`}
-                              >
-                                {item.label}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                    {/* Navigation columns - FooterNav highlights the current page */}
+                    <FooterNav columns={FOOTER_NAV_CONFIG.COLUMNS} />
                   </div>
 
                   {/* Bottom bar */}
