@@ -435,7 +435,7 @@ export default function LoginPage() {
                 : LOGIN_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} text-center hidden sm:block`}
+              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
               Press{' '}

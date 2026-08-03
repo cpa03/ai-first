@@ -76,7 +76,7 @@ function PasswordMatchIndicator({
     if (!password) return null;
     return (
       <div
-        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${GRAY_CLASSES.TEXT_500}`}
+        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${GRAY_CLASSES.TEXT_600}`}
         role="status"
         aria-live="polite"
       >
@@ -741,7 +741,7 @@ export default function SignupPage() {
                 : SIGNUP_PAGE_CONTENT.FORM.SUBMIT_BUTTON}
             </Button>
             <p
-              className={`text-xs ${TEXT_COLOR_CLASSES.MUTED} text-center hidden sm:block`}
+              className={`text-xs ${TEXT_COLOR_CLASSES.BODY} text-center hidden sm:block`}
               aria-hidden="true"
             >
               Press{' '}
