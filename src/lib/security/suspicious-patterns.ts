@@ -351,7 +351,10 @@ export function detectSuspiciousPatterns(
   try {
     if (typeof request.headers.entries === 'function') {
       for (const [key, value] of request.headers.entries()) {
-        if (!SKIP_HEADERS.has(key.toLowerCase())) {
+        // PERFORMANCE: Check SKIP_HEADERS first with the raw key before allocating and computing
+        // key.toLowerCase() for lowercase/standard keys. This avoids millions of string allocations
+        // and garbage collection overhead under high request volumes.
+        if (!SKIP_HEADERS.has(key) && !SKIP_HEADERS.has(key.toLowerCase())) {
           // Scan BOTH key and value for injection patterns
           const keyFindings = scanString(key, 'header', minSeverity, key);
           patterns.push(...keyFindings);
