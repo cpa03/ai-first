@@ -35,6 +35,9 @@ import {
   ICON_SIZES,
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
+  INPUT_ACTION_POSITION,
+  INPUT_ACTION_SIZES,
+  INPUT_ACTION_STYLES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { UI_CONFIG } from '@/lib/config/constants';
@@ -429,16 +432,20 @@ const InputWithValidationComponent = forwardRef<
 
           {isValid && charCount > 0 && (
             <div
-              className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={
+                multiline
+                  ? INPUT_ACTION_POSITION.VALIDATION_ICON_MULTILINE
+                  : INPUT_ACTION_POSITION.VALIDATION_ICON_DEFAULT
+              }
             >
               <Tooltip
                 content={`${label} is valid`}
                 position="top"
                 disabled={false}
               >
-                <div className="pointer-events-none">
+                <div className={INPUT_ACTION_STYLES.VALIDATION_ICON}>
                   <svg
-                    className={`${ICON_SIZES.LG} text-green-800 animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
+                    className={`${ICON_SIZES.LG} ${TEXT_COLORS.SUCCESS_DARK} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT} ${DRAW_CHECK}`}
                     fill="none"
                     viewBox={SVG_VIEWBOX.STANDARD}
                     stroke="currentColor"
@@ -462,14 +469,18 @@ const InputWithValidationComponent = forwardRef<
 
           {isInvalid && (
             <div
-              className={`absolute right-3 ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} pointer-events-none`}
+              className={
+                multiline
+                  ? INPUT_ACTION_POSITION.VALIDATION_ICON_MULTILINE
+                  : INPUT_ACTION_POSITION.VALIDATION_ICON_DEFAULT
+              }
             >
               <Tooltip
                 content={INPUT_VALIDATION_LABELS.FIX_ERROR_TOOLTIP}
                 position="top"
                 disabled={false}
               >
-                <div className="pointer-events-none">
+                <div className={INPUT_ACTION_STYLES.VALIDATION_ICON}>
                   <svg
                     className={`${ICON_SIZES.LG} ${TEXT_COLORS.ERROR} animate-in fade-in ${TRANSITION_CLASSES.DEFAULT}`}
                     fill="none"
@@ -491,7 +502,13 @@ const InputWithValidationComponent = forwardRef<
 
           {showClearButton && (
             <div
-              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showPasswordToggle ? 'right-12' : 'right-3'}`}
+              className={
+                multiline
+                  ? INPUT_ACTION_POSITION.CLEAR_MULTILINE
+                  : hasIcon || showPasswordToggle
+                    ? INPUT_ACTION_POSITION.CLEAR_WITH_ICON
+                    : INPUT_ACTION_POSITION.CLEAR_DEFAULT
+              }
             >
               <Tooltip
                 content={`Clear ${label}`}
@@ -501,7 +518,7 @@ const InputWithValidationComponent = forwardRef<
                 <button
                   type="button"
                   onClick={handleClear}
-                  className={`w-11 h-11 flex items-center justify-center ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} rounded-full ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT} disabled:opacity-0`}
+                  className={`${INPUT_ACTION_SIZES.CLEAR_BUTTON} ${INPUT_ACTION_STYLES.CLEAR_BUTTON} ${TEXT_COLOR_CLASSES.MUTED} ${TEXT_COLOR_CLASSES.HOVER_MUTED} ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} ${TRANSITION_CLASSES.DEFAULT}`}
                   aria-label={`Clear ${label}`}
                 >
                   <svg
@@ -525,7 +542,13 @@ const InputWithValidationComponent = forwardRef<
 
           {showPasswordToggle && !multiline && (
             <div
-              className={`absolute ${multiline ? 'top-3' : 'top-1/2 -translate-y-1/2'} ${hasIcon || showClearButton ? 'right-20' : 'right-14'}`}
+              className={
+                multiline
+                  ? INPUT_ACTION_POSITION.PASSWORD_TOGGLE_MULTILINE
+                  : hasIcon || showClearButton
+                    ? INPUT_ACTION_POSITION.PASSWORD_TOGGLE_WITH_ICON
+                    : INPUT_ACTION_POSITION.PASSWORD_TOGGLE_DEFAULT
+              }
             >
               <Tooltip
                 content={
@@ -542,7 +565,7 @@ const InputWithValidationComponent = forwardRef<
                     triggerHapticFeedback();
                     setPasswordVisible(!passwordVisible);
                   }}
-                  className={`flex items-center gap-1.5 px-2 py-1.5 ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} rounded-md ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} animate-in fade-in zoom-in ${TRANSITION_CLASSES.DEFAULT}`}
+                  className={`${INPUT_ACTION_SIZES.PASSWORD_TOGGLE} ${INPUT_ACTION_STYLES.PASSWORD_TOGGLE} ${TEXT_COLOR_CLASSES.BODY} ${TEXT_COLOR_CLASSES.HOVER_HEADING} ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${TRANSITION_CLASSES.DEFAULT_EASE_OUT} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} ${TRANSITION_CLASSES.DEFAULT}`}
                   aria-label={
                     passwordVisible
                       ? INPUT_VALIDATION_LABELS.HIDE_PASSWORD_ARIA

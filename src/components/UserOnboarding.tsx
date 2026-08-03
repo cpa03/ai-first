@@ -33,6 +33,7 @@ import {
 } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
+import { INPUT_ACTION_POSITION } from '@/lib/config/input-action-buttons';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -433,7 +434,7 @@ export default function UserOnboarding() {
         />
 
         {/* Close button */}
-        <div className="absolute top-3 right-3">
+        <div className={INPUT_ACTION_POSITION.CLOSE_TOP_RIGHT}>
           <Tooltip content="Skip tour" shortcut={['Esc']} position="bottom">
             <button
               onClick={handleSkip}

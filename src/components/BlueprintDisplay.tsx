@@ -35,6 +35,7 @@ import {
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
   MR_CLASSES,
+  INPUT_ACTION_POSITION,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -409,7 +410,7 @@ function CopyCodeButton({ text }: { text: string }) {
         <button
           onClick={handleCopy}
           className={`
-            absolute top-3 right-3 
+            ${INPUT_ACTION_POSITION.TOP_RIGHT}
             flex items-center gap-1.5 px-2.5 py-1.5 
             text-xs font-medium rounded-md
             ${TRANSITION_CLASSES.DEFAULT_EASE_OUT}

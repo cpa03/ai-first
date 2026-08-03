@@ -900,3 +900,15 @@ export {
   BORDER_WIDTH_CLASSES,
   BORDER_RADIUS_CLASSES,
 } from './focus-ring-offsets';
+
+// Input Action Buttons Configuration
+// Centralizes hardcoded positioning and sizing values for input action buttons
+export {
+  INPUT_ACTION_POSITION,
+  INPUT_ACTION_SIZES,
+  INPUT_ACTION_STYLES,
+  getInputActionPosition,
+  type InputActionPosition,
+  type InputActionSizes,
+  type InputActionStyles,
+} from './input-action-buttons';
