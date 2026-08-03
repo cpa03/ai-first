@@ -287,9 +287,41 @@ export default async function RootLayout({
 
                   {/* Bottom bar */}
                   <div className={FOOTER_PATTERNS.BOTTOM_BORDER}>
-                    <p className={FOOTER_PATTERNS.BOTTOM_TEXT}>
-                      {APP_CONFIG.BRANDING.COPYRIGHT}
-                    </p>
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+                      <p className={FOOTER_PATTERNS.BOTTOM_TEXT}>
+                        {APP_CONFIG.BRANDING.COPYRIGHT}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                          const mainContent = document.getElementById(
+                            PAGE_ELEMENT_IDS.MAIN_CONTENT
+                          );
+                          if (mainContent) {
+                            mainContent.focus({ preventScroll: true });
+                          }
+                        }}
+                        className={`text-sm ${GRAY_CLASSES.TEXT_500} ${GRAY_CLASSES.HOVER_TEXT_900} ${GRAY_CLASSES.HOVER_BG_100} transition-all duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md px-2 py-1 inline-flex items-center gap-1.5`}
+                        aria-label="Back to top"
+                      >
+                        <svg
+                          className="w-3.5 h-3.5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          aria-hidden="true"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 10l7-7m0 0l7 7m-7-7v18"
+                          />
+                        </svg>
+                        Back to top
+                      </button>
+                    </div>
                   </div>
                 </div>
               </footer>
