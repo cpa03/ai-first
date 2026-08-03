@@ -413,6 +413,52 @@ export const MOBILE_NAV_MENU_KEYBOARD_HINT = (visible: boolean) => `
 `;
 
 /**
+ * Loading page skeleton styles
+ * Used in: ResultsLoading, ClarifyLoading
+ */
+export const SKELETON_SIZES = {
+  // Text skeletons
+  TEXT_H9_W48: 'h-9 w-48',
+  TEXT_H5_W80: 'h-5 w-80',
+  TEXT_H6_W64: 'h-6 w-64',
+  TEXT_H6_W40: 'h-6 w-40',
+  TEXT_H7_W40: 'h-7 w-40 mb-6',
+  TEXT_H5_W34: 'h-5 w-3/4',
+  TEXT_H4_WFULL: 'h-4 w-full',
+  TEXT_H4_W56: 'h-4 w-5/6',
+  TEXT_H4_W46: 'h-4 w-4/6',
+  TEXT_H4_W34: 'h-4 w-3/4',
+  TEXT_H4_W23: 'h-4 w-2/3',
+  TEXT_H12_WFULL: 'h-12 w-full rounded-lg',
+  TEXT_H10_W28: 'h-10 w-28 rounded-lg',
+  TEXT_H10_W24: 'h-10 w-24 rounded-lg',
+  TEXT_H11_ROUNDED: 'h-11 rounded-lg',
+  TEXT_H25_ROUNDED: 'h-2.5 w-2.5 rounded-full',
+  TEXT_HPX_WFULL: 'h-px w-full',
+} as const;
+
+/**
+ * Loading page layout styles
+ * Used in: ResultsLoading, ClarifyLoading
+ */
+export const LOADING_PAGE_STYLES = {
+  HEADER_CONTAINER: 'flex justify-between items-center mb-8',
+  SECTION_WITH_MARGIN: 'mt-8 space-y-4',
+  EXPORT_SECTION: 'mt-8',
+  EXPORT_GRID: 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',
+  BLUEPRINT_CONTENT: 'space-y-4',
+  TASK_CONTENT: 'space-y-3',
+  QUESTION_CONTAINER: 'space-y-3',
+  BUTTON_CONTAINER: 'flex gap-3',
+  PROGRESS_DOTS: 'flex justify-center gap-2 pt-2',
+  PY12: 'py-12',
+  MX_AUTO_PX4: 'mx-auto px-4',
+  MX_AUTO_PX4_MB8: 'mx-auto px-4 mb-8',
+  TEXT_CENTER: 'text-center space-y-4',
+  SR_ONLY: 'sr-only',
+} as const;
+
+/**
  * All component styles grouped by component
  */
 export const COMPONENT_STYLES = {
@@ -446,6 +492,8 @@ export const COMPONENT_STYLES = {
   // Loading styles
   LOADING: {
     SPINNER_RIPPLE: LOADING_SPINNER_RIPPLE,
+    SKELETON_SIZES,
+    PAGE_STYLES: LOADING_PAGE_STYLES,
   },
 
   // Keyboard shortcuts styles

@@ -3,144 +3,138 @@ import {
   CARD_PATTERNS,
   PAGE_LAYOUT_CLASSES,
   COMPONENT_CONFIG,
+  COMPONENT_STYLES,
 } from '@/lib/config';
 import { COMPONENT_DEFAULTS } from '@/lib/config/ui';
 
-/**
- * Route-level loading state for /results.
- *
- * Provides instant skeleton feedback during route transitions — before the
- * page component mounts and its Suspense boundary activates. Mirrors the
- * centered container layout of the actual results page for visual continuity.
- */
 const SKELETON_SHOW_DELAY = COMPONENT_CONFIG.SKELETON.DEFAULT_SHOW_DELAY_MS;
+const { SKELETON_SIZES, PAGE_STYLES } = COMPONENT_STYLES.LOADING;
 
 export default function ResultsLoading() {
   return (
     <div className={PAGE_LAYOUT_CLASSES.CONTAINER_MD}>
-      {/* Header skeleton */}
-      <div className="flex justify-between items-center mb-8">
+      <div className={PAGE_STYLES.HEADER_CONTAINER}>
         <Skeleton
-          className="h-9 w-48"
+          className={SKELETON_SIZES.TEXT_H9_W48}
           variant="text"
           showDelay={SKELETON_SHOW_DELAY}
         />
         <Skeleton
-          className="h-10 w-24 rounded-lg"
+          className={SKELETON_SIZES.TEXT_H10_W24}
           variant="rect"
           showDelay={SKELETON_SHOW_DELAY}
         />
       </div>
 
-      {/* Blueprint section skeleton */}
-      <div className={`${CARD_PATTERNS.CENTERED} space-y-4`}>
-        <Skeleton
-          className="h-6 w-1/3"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <Skeleton
-          className="h-4 w-full"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <Skeleton
-          className="h-4 w-5/6"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <Skeleton
-          className="h-4 w-4/6"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <Skeleton
-          className="h-px w-full"
-          variant="rect"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <Skeleton
-          className="h-4 w-3/4"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <Skeleton
-          className="h-4 w-2/3"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-      </div>
-
-      {/* Task management skeleton */}
-      <div className="mt-8 space-y-4">
-        <Skeleton
-          className="h-6 w-40"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <div className={`${CARD_PATTERNS.WITH_MARGIN} space-y-3`}>
-          <Skeleton
-            className="h-4 w-full"
-            variant="text"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-4 w-5/6"
-            variant="text"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-4 w-4/6"
-            variant="text"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-        </div>
-      </div>
-
-      {/* Export buttons skeleton */}
-      <div className="mt-8">
-        <Skeleton
-          className="h-7 w-40 mb-6"
-          variant="text"
-          showDelay={SKELETON_SHOW_DELAY}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Skeleton
-            className="h-11 rounded-lg"
-            variant="rect"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-11 rounded-lg"
-            variant="rect"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-11 rounded-lg"
-            variant="rect"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-11 rounded-lg"
-            variant="rect"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-11 rounded-lg"
-            variant="rect"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-          <Skeleton
-            className="h-11 rounded-lg"
-            variant="rect"
-            showDelay={SKELETON_SHOW_DELAY}
-          />
-        </div>
-      </div>
-
-      {/* Screen reader announcement */}
       <div
-        className="sr-only"
+        className={`${CARD_PATTERNS.CENTERED} ${PAGE_STYLES.BLUEPRINT_CONTENT}`}
+      >
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H4_W23}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H4_WFULL}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H4_W56}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H4_W46}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_HPX_WFULL}
+          variant="rect"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H4_W34}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H4_W23}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+      </div>
+
+      <div className={PAGE_STYLES.SECTION_WITH_MARGIN}>
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H6_W40}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <div
+          className={`${CARD_PATTERNS.WITH_MARGIN} ${PAGE_STYLES.TASK_CONTENT}`}
+        >
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H4_WFULL}
+            variant="text"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H4_W56}
+            variant="text"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H4_W46}
+            variant="text"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+        </div>
+      </div>
+
+      <div className={PAGE_STYLES.EXPORT_SECTION}>
+        <Skeleton
+          className={SKELETON_SIZES.TEXT_H7_W40}
+          variant="text"
+          showDelay={SKELETON_SHOW_DELAY}
+        />
+        <div className={PAGE_STYLES.EXPORT_GRID}>
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H11_ROUNDED}
+            variant="rect"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H11_ROUNDED}
+            variant="rect"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H11_ROUNDED}
+            variant="rect"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H11_ROUNDED}
+            variant="rect"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H11_ROUNDED}
+            variant="rect"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+          <Skeleton
+            className={SKELETON_SIZES.TEXT_H11_ROUNDED}
+            variant="rect"
+            showDelay={SKELETON_SHOW_DELAY}
+          />
+        </div>
+      </div>
+
+      <div
+        className={PAGE_STYLES.SR_ONLY}
         role="status"
         aria-live="polite"
         aria-atomic="true"

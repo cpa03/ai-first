@@ -3,92 +3,87 @@ import {
   CARD_PATTERNS,
   PAGE_LAYOUT_CLASSES,
   COMPONENT_CONFIG,
+  COMPONENT_STYLES,
 } from '@/lib/config';
 import { COMPONENT_DEFAULTS } from '@/lib/config/ui';
 
-/**
- * Route-level loading state for /clarify.
- *
- * Provides instant skeleton feedback during route transitions — before the
- * page component mounts and its Suspense boundary activates. Mirrors the
- * centered card layout of the actual clarify page for visual continuity.
- */
 const SKELETON_SHOW_DELAY = COMPONENT_CONFIG.SKELETON.DEFAULT_SHOW_DELAY_MS;
+const { SKELETON_SIZES, PAGE_STYLES } = COMPONENT_STYLES.LOADING;
 
 export default function ClarifyLoading() {
   return (
-    <div className="py-12">
-      <div className={`${PAGE_LAYOUT_CLASSES.CONTAINER_SM} mx-auto px-4 mb-8`}>
-        <div className="text-center space-y-4">
+    <div className={PAGE_STYLES.PY12}>
+      <div
+        className={`${PAGE_LAYOUT_CLASSES.CONTAINER_SM} ${PAGE_STYLES.MX_AUTO_PX4_MB8}`}
+      >
+        <div className={PAGE_STYLES.TEXT_CENTER}>
           <Skeleton
-            className="h-9 w-64 mx-auto"
+            className={`${SKELETON_SIZES.TEXT_H6_W64} mx-auto`}
             variant="text"
             showDelay={SKELETON_SHOW_DELAY}
           />
           <Skeleton
-            className="h-5 w-80 mx-auto"
+            className={`${SKELETON_SIZES.TEXT_H5_W80} mx-auto`}
             variant="text"
             showDelay={SKELETON_SHOW_DELAY}
           />
         </div>
       </div>
 
-      <div className={`${PAGE_LAYOUT_CLASSES.CONTAINER_SM} mx-auto px-4`}>
+      <div
+        className={`${PAGE_LAYOUT_CLASSES.CONTAINER_SM} ${PAGE_STYLES.MX_AUTO_PX4}`}
+      >
         <div className={`${CARD_PATTERNS.ANIMATED} space-y-6`}>
-          {/* Question skeleton */}
-          <div className="space-y-3">
+          <div className={PAGE_STYLES.QUESTION_CONTAINER}>
             <Skeleton
-              className="h-5 w-3/4"
+              className={SKELETON_SIZES.TEXT_H5_W34}
               variant="text"
               showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
-              className="h-4 w-full"
+              className={SKELETON_SIZES.TEXT_H4_WFULL}
               variant="text"
               showDelay={SKELETON_SHOW_DELAY}
             />
           </div>
 
-          {/* Input field skeleton */}
           <Skeleton
-            className="h-12 w-full rounded-lg"
+            className={SKELETON_SIZES.TEXT_H12_WFULL}
             variant="rect"
             showDelay={SKELETON_SHOW_DELAY}
           />
 
-          {/* Button skeletons */}
-          <div className="flex gap-3">
+          <div className={PAGE_STYLES.BUTTON_CONTAINER}>
             <Skeleton
-              className="h-10 w-28 rounded-lg"
+              className={SKELETON_SIZES.TEXT_H10_W28}
               variant="rect"
               showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
-              className="h-10 w-24 rounded-lg"
+              className={SKELETON_SIZES.TEXT_H10_W24}
               variant="rect"
               showDelay={SKELETON_SHOW_DELAY}
             />
           </div>
 
-          {/* Progress dots */}
-          <div className="flex justify-center gap-2 pt-2">
+          <div className={PAGE_STYLES.PROGRESS_DOTS}>
             <Skeleton
-              className="h-2.5 w-2.5 rounded-full"
+              className={SKELETON_SIZES.TEXT_H25_ROUNDED}
               variant="circle"
               showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
-              className="h-2.5 w-2.5 rounded-full"
+              className={SKELETON_SIZES.TEXT_H25_ROUNDED}
               variant="circle"
               showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
-              className="h-2.5 w-2.5 rounded-full"
+              className={SKELETON_SIZES.TEXT_H25_ROUNDED}
               variant="circle"
               showDelay={SKELETON_SHOW_DELAY}
             />
             <Skeleton
-              className="h-2.5 w-2.5 rounded-full"
+              className={SKELETON_SIZES.TEXT_H25_ROUNDED}
               variant="circle"
               showDelay={SKELETON_SHOW_DELAY}
             />
@@ -96,9 +91,8 @@ export default function ClarifyLoading() {
         </div>
       </div>
 
-      {/* Screen reader announcement */}
       <div
-        className="sr-only"
+        className={PAGE_STYLES.SR_ONLY}
         role="status"
         aria-live="polite"
         aria-atomic="true"
