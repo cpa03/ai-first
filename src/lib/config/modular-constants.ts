@@ -534,6 +534,37 @@ export const PROGRESS_PERCENTAGE = {
 } as const;
 
 /**
+ * Scroll Depth Threshold Configuration
+ * Centralizes scroll depth percentage thresholds used for UI state transitions
+ * Replaces hardcoded 40%, 75%, 95% values in scroll-related components
+ */
+export const SCROLL_DEPTH_THRESHOLDS = {
+  /**
+   * Near top threshold (40%)
+   * Below this percentage, scroll progress is considered "near top"
+   * Used for color progression in ScrollToTop component
+   * Env: SCROLL_DEPTH_NEAR_TOP (default: 40)
+   */
+  NEAR_TOP: EnvLoader.number('SCROLL_DEPTH_NEAR_TOP', 40, 10, 60),
+
+  /**
+   * Middle threshold (75%)
+   * Between NEAR_TOP and this value, scroll progress is considered "middle"
+   * Used for color progression in ScrollToTop component
+   * Env: SCROLL_DEPTH_MIDDLE (default: 75)
+   */
+  MIDDLE: EnvLoader.number('SCROLL_DEPTH_MIDDLE', 75, 50, 90),
+
+  /**
+   * Near bottom / reached end threshold (95%)
+   * Above this percentage, scroll progress is considered "near bottom"
+   * Triggers "reached end" celebration in ScrollToTop component
+   * Env: SCROLL_DEPTH_REACHED_END (default: 95)
+   */
+  REACHED_END: EnvLoader.number('SCROLL_DEPTH_REACHED_END', 95, 80, 100),
+} as const;
+
+/**
  * Time Conversion Configuration
  * Centralizes time unit conversion constants
  * Replaces hardcoded "1000" for ms-to-seconds conversions, etc.
@@ -597,6 +628,7 @@ export const MODULAR_CONSTANTS = {
   ID_PREFIX: ID_PREFIX_CONFIG,
   ERROR_CONTEXT: ERROR_CONTEXT_CONFIG,
   PRECISION: PRECISION_CONFIG,
+  SCROLL_DEPTH_THRESHOLDS,
 } as const;
 
 export type ModularConstants = typeof MODULAR_CONSTANTS;

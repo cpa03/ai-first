@@ -19,6 +19,7 @@ import {
   SHADOW_CLASSES,
   TRANSITION_CLASSES,
   PROGRESS_PERCENTAGE,
+  SCROLL_DEPTH_THRESHOLDS,
   TYPOGRAPHY_CLASSES,
   COMPONENT_STATE_COLORS,
   GRAY_CLASSES,
@@ -100,7 +101,7 @@ function ScrollToTopComponent({
       const clampedProgress = Math.min(progress, PROGRESS_PERCENTAGE.MAX);
       setScrollProgress(clampedProgress);
 
-      const reachedEnd = clampedProgress >= 95;
+      const reachedEnd = clampedProgress >= SCROLL_DEPTH_THRESHOLDS.REACHED_END;
       if (reachedEnd && !prevHasReachedEndRef.current) {
         setHasReachedEnd(true);
         setShowReachedEndCelebration(true);
@@ -178,14 +179,14 @@ function ScrollToTopComponent({
           label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.REACHED_END,
         };
       }
-      if (progress <= 40) {
+      if (progress <= SCROLL_DEPTH_THRESHOLDS.NEAR_TOP) {
         return {
           stroke: TEXT_COLORS.MUTED,
           text: TEXT_COLORS.MUTED,
           label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_TOP,
         };
       }
-      if (progress <= 75) {
+      if (progress <= SCROLL_DEPTH_THRESHOLDS.MIDDLE) {
         return {
           stroke: 'text-primary-500',
           text: 'text-primary-600',

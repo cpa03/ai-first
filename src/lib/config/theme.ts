@@ -6,6 +6,7 @@
  */
 
 import { EnvLoader } from './environment';
+import { PROGRESS_PERCENTAGE } from './modular-constants';
 
 /**
  * State shadow utilities for form inputs (non-focus states)
@@ -771,7 +772,8 @@ export const DELIVERABLE_STYLES = {
    * @returns Style object with bgColor and borderColor
    */
   getByProgress: (progress: number) => {
-    if (progress === 100) return DELIVERABLE_STYLES.COMPLETED;
+    if (progress === PROGRESS_PERCENTAGE.COMPLETE)
+      return DELIVERABLE_STYLES.COMPLETED;
     if (progress > 0) return DELIVERABLE_STYLES.IN_PROGRESS;
     return DELIVERABLE_STYLES.NOT_STARTED;
   },

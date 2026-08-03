@@ -18,6 +18,7 @@ import {
   ICON_SIZES,
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -69,7 +70,8 @@ function DeliverableCardComponent({
   // Delightful positive feedback at the exact moment the deliverable is fully done
   useEffect(() => {
     const justCompleted =
-      deliverable.progress === 100 && prevProgressRef.current < 100;
+      deliverable.progress === PROGRESS_PERCENTAGE.COMPLETE &&
+      prevProgressRef.current < PROGRESS_PERCENTAGE.COMPLETE;
 
     if (justCompleted && !prefersReducedMotion) {
       triggerHapticFeedback();
@@ -145,7 +147,7 @@ function DeliverableCardComponent({
     [isExpanded]
   );
 
-  const isCompleted = deliverable.progress === 100;
+  const isCompleted = deliverable.progress === PROGRESS_PERCENTAGE.COMPLETE;
 
   return (
     <div
