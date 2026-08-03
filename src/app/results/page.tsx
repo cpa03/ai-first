@@ -399,6 +399,42 @@ function ResultsContent() {
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [idea, loading, openHelp]);
 
+  // Micro-UX: Section jump shortcuts for quick navigation on long results pages
+  // b = Blueprint, t = Tasks, e = Exports
+  // Matches the j/k navigation pattern from dashboard for consistency
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFocusedOnInput(e.target)) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      if (!idea || loading) return;
+
+      const scrollToSection = (id: string) => {
+        e.preventDefault();
+        triggerHapticFeedback();
+        document.getElementById(id)?.scrollIntoView({
+          behavior: prefersReducedMotion ? 'auto' : 'smooth',
+          block: 'start',
+        });
+      };
+
+      switch (e.key) {
+        case 'b':
+          scrollToSection('blueprint-section');
+          break;
+        case 't':
+          scrollToSection('tasks-section');
+          break;
+        case 'e':
+          scrollToSection('exports-section');
+          break;
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [idea, loading, prefersReducedMotion]);
+
   // PERFORMANCE: Memoize formatted answers to prevent unnecessary re-renders of memoized
   // child components (BlueprintDisplay, EmailButton) when ResultsContent re-renders.
   // NOTE: This must be called before any early returns to comply with Rules of Hooks.
@@ -496,15 +532,17 @@ function ResultsContent() {
           </Button>
         </div>
 
-        <BlueprintDisplay idea={idea.raw_text} answers={formattedAnswers} />
+        <div id="blueprint-section">
+          <BlueprintDisplay idea={idea.raw_text} answers={formattedAnswers} />
+        </div>
 
         {/* Task Management */}
-        <div className="mt-8">
+        <div id="tasks-section" className="mt-8">
           <TaskManagement ideaId={idea.id} />
         </div>
 
         {/* Export Options */}
-        <div className={CARD_PATTERNS.WITH_MARGIN}>
+        <div id="exports-section" className={CARD_PATTERNS.WITH_MARGIN}>
           <h2
             className={`text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-6`}
           >
@@ -996,6 +1034,58 @@ function ResultsContent() {
               }}
             />
           </div>
+        </div>
+
+        <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
+          <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                b
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Blueprint
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                t
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Tasks
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                e
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Exports
+              </span>
+            </span>
+            <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
+              <kbd
+                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
+              >
+                ?
+              </kbd>
+              <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
+                Shortcuts
+              </span>
+            </span>
+          </div>
+          <button
+            type="button"
+            onClick={() => openHelp()}
+            className={DASHBOARD_PATTERNS.VIEW_SHORTCUTS_BTN}
+          >
+            View all
+          </button>
         </div>
       </div>
     </>
