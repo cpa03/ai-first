@@ -16,6 +16,7 @@ import {
   BREATHE,
   GRAY_CLASSES,
   FLEX_PATTERNS,
+  PROGRESS_PERCENTAGE,
 } from '@/lib/config';
 import { DASHBOARD_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -61,7 +62,8 @@ function TaskManagementHeaderComponent({
   // Mirrors the pattern from TaskItem, IdeaInput, and CopyButton for consistent delight
   useEffect(() => {
     const justReached100 =
-      overallProgress === 100 && prevProgressRef.current < 100;
+      overallProgress === PROGRESS_PERCENTAGE.COMPLETE &&
+      prevProgressRef.current < PROGRESS_PERCENTAGE.COMPLETE;
     if (justReached100 && !prefersReducedMotion) {
       triggerHapticFeedback();
       fire();
