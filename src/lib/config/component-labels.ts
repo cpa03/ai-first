@@ -122,10 +122,18 @@ export const SCROLL_TO_TOP_LABELS = {
   /** ARIA label template for scroll-to-bottom button */
   ARIA_LABEL_BOTTOM: (progress: number) =>
     `Scroll to bottom (${progress}% scrolled). Use arrow keys to scroll by 25%, Home or End to go to top or bottom.`,
+  /** ARIA label for reached-end state */
+  ARIA_LABEL_REACHED_END:
+    'You have reached the end of the page. Press to scroll back to top.',
+  /** Tooltip title for reached-end state */
+  TITLE_REACHED_END: 'Reached the end',
+  /** Screen reader text for reached-end state */
+  SR_TEXT_REACHED_END: 'You have reached the end of the page',
   SCROLL_DEPTH_LABELS: {
     NEAR_TOP: 'Near top',
     MIDDLE: 'Middle of page',
     NEAR_BOTTOM: 'Near bottom',
+    REACHED_END: 'End of page',
   },
 } as const;
 
