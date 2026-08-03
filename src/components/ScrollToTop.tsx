@@ -45,8 +45,12 @@ function ScrollToTopComponent({
   const [isVisible, setIsVisible] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [hasAppeared, setHasAppeared] = useState(false);
+  const [hasReachedEnd, setHasReachedEnd] = useState(false);
+  const [showReachedEndCelebration, setShowReachedEndCelebration] =
+    useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
   const rafRef = useRef<number | null>(null);
+  const prevHasReachedEndRef = useRef(false);
 
   // Keep a reference to the latest visibility state to avoid re-binding the event listener
   const isVisibleRef = useRef(isVisible);
@@ -92,7 +96,19 @@ function ScrollToTopComponent({
         docHeight > 0
           ? (scrollTop / docHeight) * PROGRESS_PERCENTAGE.MAX
           : PROGRESS_PERCENTAGE.MIN;
-      setScrollProgress(Math.min(progress, PROGRESS_PERCENTAGE.MAX));
+      const clampedProgress = Math.min(progress, PROGRESS_PERCENTAGE.MAX);
+      setScrollProgress(clampedProgress);
+
+      const reachedEnd = clampedProgress >= 95;
+      if (reachedEnd && !prevHasReachedEndRef.current) {
+        setHasReachedEnd(true);
+        setShowReachedEndCelebration(true);
+        triggerHapticFeedback();
+        setTimeout(() => setShowReachedEndCelebration(false), 1500);
+      } else if (!reachedEnd) {
+        setHasReachedEnd(false);
+      }
+      prevHasReachedEndRef.current = reachedEnd;
 
       rafRef.current = null;
     });
@@ -148,29 +164,39 @@ function ScrollToTopComponent({
   // Phase 1 (0-40%): Gray - neutral, user is near the top
   // Phase 2 (40-75%): Blue - brand color, user is in the middle
   // Phase 3 (75-100%): Emerald - success color, user is near the bottom
-  const getScrollDepthColor = useCallback((progress: number) => {
-    if (progress <= 40) {
+  const getScrollDepthColor = useCallback(
+    (progress: number, reachedEnd: boolean) => {
+      if (reachedEnd) {
+        return {
+          stroke: 'text-emerald-500',
+          text: 'text-emerald-600',
+          label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.REACHED_END,
+        };
+      }
+      if (progress <= 40) {
+        return {
+          stroke: TEXT_COLORS.MUTED,
+          text: TEXT_COLORS.MUTED,
+          label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_TOP,
+        };
+      }
+      if (progress <= 75) {
+        return {
+          stroke: 'text-primary-500',
+          text: 'text-primary-600',
+          label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.MIDDLE,
+        };
+      }
       return {
-        stroke: TEXT_COLORS.MUTED,
-        text: TEXT_COLORS.MUTED,
-        label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_TOP,
+        stroke: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_STROKE,
+        text: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_TEXT,
+        label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_BOTTOM,
       };
-    }
-    if (progress <= 75) {
-      return {
-        stroke: 'text-primary-500',
-        text: 'text-primary-600',
-        label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.MIDDLE,
-      };
-    }
-    return {
-      stroke: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_STROKE,
-      text: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.NEAR_BOTTOM_TEXT,
-      label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.NEAR_BOTTOM,
-    };
-  }, []);
+    },
+    []
+  );
 
-  const scrollDepthColor = getScrollDepthColor(scrollProgress);
+  const scrollDepthColor = getScrollDepthColor(scrollProgress, hasReachedEnd);
 
   const isNearTop =
     scrollProgress <=
@@ -255,9 +281,11 @@ function ScrollToTopComponent({
     <div className="flex flex-col gap-1.5">
       <div className="flex items-center gap-2">
         <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
-          {isNearTop
-            ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
-            : SCROLL_TO_TOP_LABELS.TITLE}
+          {hasReachedEnd
+            ? SCROLL_TO_TOP_LABELS.TITLE_REACHED_END
+            : isNearTop
+              ? SCROLL_TO_TOP_LABELS.TITLE_BOTTOM
+              : SCROLL_TO_TOP_LABELS.TITLE}
         </span>
         <span className={`${TEXT_SIZE_CLASSES.XS} opacity-70 font-normal`}>
           &middot; {scrollDepthColor.label}
@@ -266,31 +294,37 @@ function ScrollToTopComponent({
       <span
         className={`${TEXT_SIZE_CLASSES.XS} ${TEXT_COLORS.MUTED_LIGHT} opacity-80`}
       >
-        <kbd
-          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
-        >
-          {SCROLL_TO_TOP_LABELS.KEYS.UP}
-        </kbd>{' '}
-        <kbd
-          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
-        >
-          {SCROLL_TO_TOP_LABELS.KEYS.DOWN}
-        </kbd>{' '}
-        {SCROLL_TO_TOP_LABELS.SCROLL_INSTRUCTION}
-        <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
-        <kbd
-          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
-        >
-          {SCROLL_TO_TOP_LABELS.KEYS.HOME}
-        </kbd>{' '}
-        {SCROLL_TO_TOP_LABELS.TOP}
-        <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
-        <kbd
-          className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
-        >
-          {SCROLL_TO_TOP_LABELS.KEYS.END}
-        </kbd>{' '}
-        {SCROLL_TO_TOP_LABELS.BOTTOM}
+        {hasReachedEnd ? (
+          <span>Press to scroll back to top</span>
+        ) : (
+          <>
+            <kbd
+              className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
+            >
+              {SCROLL_TO_TOP_LABELS.KEYS.UP}
+            </kbd>{' '}
+            <kbd
+              className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
+            >
+              {SCROLL_TO_TOP_LABELS.KEYS.DOWN}
+            </kbd>{' '}
+            {SCROLL_TO_TOP_LABELS.SCROLL_INSTRUCTION}
+            <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
+            <kbd
+              className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
+            >
+              {SCROLL_TO_TOP_LABELS.KEYS.HOME}
+            </kbd>{' '}
+            {SCROLL_TO_TOP_LABELS.TOP}
+            <span className="mx-1">{SCROLL_TO_TOP_LABELS.SEPARATOR}</span>
+            <kbd
+              className={`px-1 py-0.5 ${BG_COLORS.DARK} rounded ${TEXT_SIZE_PRESETS.KBD}`}
+            >
+              {SCROLL_TO_TOP_LABELS.KEYS.END}
+            </kbd>{' '}
+            {SCROLL_TO_TOP_LABELS.BOTTOM}
+          </>
+        )}
       </span>
     </div>
   );
@@ -319,11 +353,13 @@ function ScrollToTopComponent({
             ${className}
           `}
           aria-label={
-            isNearTop
-              ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_BOTTOM(
-                  Math.round(scrollProgress)
-                )
-              : SCROLL_TO_TOP_LABELS.ARIA_LABEL(Math.round(scrollProgress))
+            hasReachedEnd
+              ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_REACHED_END
+              : isNearTop
+                ? SCROLL_TO_TOP_LABELS.ARIA_LABEL_BOTTOM(
+                    Math.round(scrollProgress)
+                  )
+                : SCROLL_TO_TOP_LABELS.ARIA_LABEL(Math.round(scrollProgress))
           }
           aria-live="polite"
           type="button"
@@ -364,7 +400,22 @@ function ScrollToTopComponent({
             </svg>
           )}
 
-          {showPercentage && !prefersReducedMotion ? (
+          {hasReachedEnd && !prefersReducedMotion ? (
+            <svg
+              className={`relative z-10 ${ICON_SIZES.LG} text-emerald-500 ${showReachedEndCelebration ? 'animate-success-pop' : ''}`}
+              fill="none"
+              viewBox={SVG_VIEWBOX.STANDARD}
+              stroke="currentColor"
+              strokeWidth={SVG_STROKE_WIDTHS.THICK}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          ) : showPercentage && !prefersReducedMotion ? (
             <span
               className={`relative z-10 ${TEXT_SIZE_CLASSES.XS} font-semibold ${scrollDepthColor.text} tabular-nums leading-none transition-colors ${DURATION_TAILWIND[300]} ease-out`}
               aria-hidden="true"
@@ -400,9 +451,11 @@ function ScrollToTopComponent({
           )}
 
           <span className="sr-only">
-            {isNearTop
-              ? SCROLL_TO_TOP_LABELS.SR_TEXT_BOTTOM
-              : SCROLL_TO_TOP_LABELS.SR_TEXT}
+            {hasReachedEnd
+              ? SCROLL_TO_TOP_LABELS.SR_TEXT_REACHED_END
+              : isNearTop
+                ? SCROLL_TO_TOP_LABELS.SR_TEXT_BOTTOM
+                : SCROLL_TO_TOP_LABELS.SR_TEXT}
           </span>
         </button>
       </Tooltip>
