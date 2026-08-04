@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { fetchWithTimeout } from '@/lib/api-client';
 import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
@@ -17,7 +16,6 @@ import {
   DASHBOARD_FILTER_LABELS,
   API_ERROR_MESSAGES,
   ROUTES,
-  createRouteWithParams,
   API_ROUTES,
   DASHBOARD_PAGE_CONTENT,
   SVG_STROKE_WIDTHS,
@@ -121,7 +119,6 @@ const formatDateAbsolute = (dateString: string): string => {
 };
 
 export default function DashboardPage() {
-  const router = useRouter();
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -156,12 +153,12 @@ export default function DashboardPage() {
       }
       triggerHapticFeedback();
       if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
-        router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId: idea.id }));
+        window.location.href = `/results?ideaId=${idea.id}`;
       } else {
-        router.push(createRouteWithParams(ROUTES.CLARIFY, { ideaId: idea.id }));
+        window.location.href = `/clarify?ideaId=${idea.id}`;
       }
     },
-    [router]
+    []
   );
   const { isAuthenticated, isLoading: authLoading, userId } = useAuthCheck();
   const { openHelp } = useKeyboardShortcuts();
@@ -463,9 +460,9 @@ export default function DashboardPage() {
         if (idea) {
           triggerHapticFeedback();
           if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
-            router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId: idea.id }));
+            window.location.href = `/results?ideaId=${idea.id}`;
           } else {
-            router.push(createRouteWithParams(ROUTES.CLARIFY, { ideaId: idea.id }));
+            window.location.href = `/clarify?ideaId=${idea.id}`;
           }
         }
         return;
@@ -558,7 +555,7 @@ export default function DashboardPage() {
       ) {
         e.preventDefault();
         triggerHapticFeedback();
-        router.push(ROUTES.HOME);
+        window.location.href = ROUTES.HOME;
       }
     };
 
@@ -574,7 +571,6 @@ export default function DashboardPage() {
     filter,
     handleClearFilter,
     openHelp,
-    router,
   ]);
 
   useEffect(() => {
