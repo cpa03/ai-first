@@ -143,6 +143,7 @@ docs/archive/*.tar.gz
 
 # Exceptions for tracked directories
 !docs/audit/
+!docs/audit/BROCULA-AUDIT-*.md
 !docs/maintenance/
 !docs/maintenance/archive/
 !docs/maintenance/archive/*
