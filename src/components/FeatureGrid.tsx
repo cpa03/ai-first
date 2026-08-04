@@ -7,6 +7,7 @@ import {
   TYPOGRAPHY_CLASSES,
   TEXT_COLORS,
   GRADIENT_CONFIG,
+  BG_COLORS,
 } from '@/lib/config/theme';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
@@ -158,11 +159,11 @@ function FeatureGridComponent() {
           >
             <div
               className={`
-              bg-primary-100 rounded-full ${ICON_SIZES.HUGE} 
+              ${BG_COLORS.BRAND_100} rounded-full ${ICON_SIZES.HUGE}
               flex items-center justify-center mx-auto mb-4
               transition-all ${DURATION_TAILWIND[300]} group-hover:scale-110
-              group-hover:bg-primary-200
-              group-focus-visible:scale-110 group-focus-visible:bg-primary-200 group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50
+              group-hover:${BG_COLORS.BRAND_200}
+              group-focus-visible:scale-110 group-focus-visible:${BG_COLORS.BRAND_200} group-focus-visible:shadow-lg group-focus-visible:shadow-primary-200/50
               motion-reduce:transition-none motion-reduce:group-hover:scale-100
             `}
               aria-hidden="true"

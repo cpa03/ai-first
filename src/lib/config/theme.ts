@@ -164,6 +164,8 @@ export const BG_COLORS = {
   BRAND_LIGHT: 'bg-primary-50',
   BRAND_LIGHTER: 'bg-primary-50/30',
   BRAND_LIGHT_HALF: 'bg-primary-50/50',
+  BRAND_100: 'bg-primary-100',
+  BRAND_200: 'bg-primary-200',
   BRAND: 'bg-primary-600',
   BRAND_HOVER: 'hover:bg-primary-700',
 
@@ -2008,6 +2010,73 @@ export const GRADIENT_CONFIG = {
   /** Referral link background gradient */
   REFERRAL_BACKGROUND: 'bg-gradient-to-r from-primary-50 to-blue-50',
 } as const;
+
+/**
+ * Reusable Focus Ring Pattern
+ * Centralizes the repeated focus-visible ring pattern used across 14+ files
+ * Eliminates hardcoded 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2'
+ *
+ * Usage:
+ * ```typescript
+ * import { PRIMARY_FOCUS_RING } from '@/lib/config';
+ * <button className={`${PRIMARY_FOCUS_RING} rounded-md`}>...</button>
+ * ```
+ */
+export const PRIMARY_FOCUS_RING =
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2';
+
+/**
+ * Primary Link Style
+ * Centralizes the repeated primary link pattern used in layout, signup, keyboard shortcuts
+ * Eliminates hardcoded 'text-primary-600 hover:text-primary-500/700/800' combinations
+ *
+ * Usage:
+ * ```typescript
+ * import { PRIMARY_LINK } from '@/lib/config';
+ * <a className={PRIMARY_LINK}>Link text</a>
+ * ```
+ */
+export const PRIMARY_LINK =
+  'text-primary-600 hover:text-primary-700 font-medium transition-colors';
+
+/**
+ * Primary Link with Focus Ring
+ * Combines PRIMARY_LINK with PRIMARY_FOCUS_RING for interactive links
+ *
+ * Usage:
+ * ```typescript
+ * import { PRIMARY_LINK_FOCUS } from '@/lib/config';
+ * <a className={PRIMARY_LINK_FOCUS}>Link text</a>
+ * ```
+ */
+export const PRIMARY_LINK_FOCUS = `${PRIMARY_LINK} ${PRIMARY_FOCUS_RING} rounded`;
+
+/**
+ * Primary Active Navigation Link
+ * Centralizes the repeated active nav link pattern used in MobileNav, FooterNav
+ * Eliminates hardcoded 'border-primary-600 text-primary-600 bg-primary-50' combinations
+ *
+ * Usage:
+ * ```typescript
+ * import { PRIMARY_ACTIVE_LINK } from '@/lib/config';
+ * <a className={active ? PRIMARY_ACTIVE_LINK : INACTIVE_LINK}>Nav item</a>
+ * ```
+ */
+export const PRIMARY_ACTIVE_LINK =
+  'border-primary-600 text-primary-600 bg-primary-50/50';
+
+/**
+ * Primary Inactive Navigation Link with Hover
+ * Centralizes the repeated inactive nav link pattern
+ *
+ * Usage:
+ * ```typescript
+ * import { PRIMARY_INACTIVE_LINK } from '@/lib/config';
+ * <a className={active ? PRIMARY_ACTIVE_LINK : PRIMARY_INACTIVE_LINK}>Nav item</a>
+ * ```
+ */
+export const PRIMARY_INACTIVE_LINK =
+  'border-transparent text-gray-800 hover:text-primary-600 hover:bg-gray-50';
 
 /**
  * Combined Tailwind Utility Classes

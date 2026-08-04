@@ -13,6 +13,7 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
+  BG_COLORS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { ToastOptions } from '@/components/ToastContainer';
@@ -211,7 +212,7 @@ const ShareButtonComponent = function ShareButton({
   const variantClasses = {
     default: `
       px-3 py-1.5 text-sm
-      bg-primary-600 text-white hover:bg-primary-700
+      ${BG_COLORS.BRAND} text-white ${BG_COLORS.BRAND_HOVER}
       ${COMPONENT_CONFIG.COPY_FEEDBACK.SCALE.DEFAULT_HOVER} hover:-translate-y-0.5 active:translate-y-0
       rounded-md
       ${COMPONENT_CONFIG.BUTTON.SCALE_CLASSES.DEFAULT}

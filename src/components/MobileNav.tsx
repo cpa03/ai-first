@@ -21,6 +21,7 @@ import {
   GRAY_CLASSES,
   Z_INDEX_LAYERS,
   ANIMATION_CONFIG,
+  PRIMARY_ACTIVE_LINK,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -325,7 +326,7 @@ function MobileNavComponent() {
                       className={`
                         w-full text-left px-6 py-4 text-lg font-semibold
                         ${TRANSITION_CLASSES.SLOW} ease-out rounded-md
-                        border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? 'border-primary-600 bg-primary-50/50 text-primary-600' : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
+                        border-l-[${MOBILE_NAV_TAILWIND.ACTIVE_LINK_BORDER_W}] ${active ? PRIMARY_ACTIVE_LINK : `border-transparent ${GRAY_CLASSES.TEXT_800} hover:text-primary-600 ${GRAY_CLASSES.HOVER_BG_50}`}
                         ${FOCUS_RING_PATTERNS.DEFAULT} ${UI_CONFIG.ACCESSIBILITY.TOUCH_TARGET.LARGE_SIZE} flex items-center justify-between
                       `}
                       aria-label={link.ariaLabel}

@@ -3,7 +3,11 @@
 import { memo, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { GRAY_CLASSES, DURATION_TAILWIND } from '@/lib/config';
+import {
+  GRAY_CLASSES,
+  DURATION_TAILWIND,
+  PRIMARY_FOCUS_RING,
+} from '@/lib/config';
 
 interface FooterNavColumn {
   readonly title: string;
@@ -47,7 +51,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
                     href={item.href}
                     className={`
                       text-sm transition-all ${DURATION_TAILWIND[200]} ease-out
-                      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md
+                      ${PRIMARY_FOCUS_RING} rounded-md
                       inline-flex items-center gap-1.5
                       ${active ? 'text-primary-600 font-semibold' : `${GRAY_CLASSES.TEXT_600} hover:text-primary-600 hover:translate-x-1`}
                     `}
