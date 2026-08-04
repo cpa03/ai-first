@@ -28,6 +28,7 @@ import {
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
+import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import Tooltip from '@/components/Tooltip';
 
 // Lazy load CopyButton for code splitting
@@ -40,6 +41,7 @@ export default function NotFound() {
   const router = useRouter();
   const headingRef = useRef<HTMLHeadingElement>(null);
   const [isMac, setIsMac] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
   const { copy, hasCopied } = useClipboard({
     duration: (COMPONENT_CONFIG as ComponentConfig).NOT_FOUND_PAGE
       .CLIPBOARD_DURATION_MS,
@@ -120,7 +122,7 @@ export default function NotFound() {
               className={`inline-flex items-center justify-center w-24 h-24 rounded-full ${GRAY_CLASSES.BG_100}`}
             >
               <span
-                className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_300} select-none`}
+                className={`text-4xl font-bold ${GRAY_CLASSES.TEXT_300} select-none ${prefersReducedMotion ? '' : BREATHE}`}
               >
                 404
               </span>
