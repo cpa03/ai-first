@@ -36,6 +36,7 @@ import {
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_HELP_LABELS,
   KBD_HINT_STYLE,
+  CONFETTI_DOT,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -982,7 +983,7 @@ function ResultsContent() {
                 particles.map((particle) => (
                   <span
                     key={particle.id}
-                    className="absolute rounded-full pointer-events-none animate-copy-confetti"
+                    className={CONFETTI_DOT}
                     style={
                       {
                         left: '50%',

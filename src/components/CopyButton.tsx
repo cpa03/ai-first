@@ -12,6 +12,7 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { ToastOptions } from '@/components/ToastContainer';
@@ -187,7 +188,7 @@ const CopyButtonComponent = function CopyButton({
           {particles.map((particle) => (
             <span
               key={particle.id}
-              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              className={CONFETTI_DOT}
               style={
                 {
                   left: '50%',

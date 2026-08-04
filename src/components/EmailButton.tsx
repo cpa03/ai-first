@@ -16,6 +16,7 @@ import {
   TRANSITION_CLASSES,
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { EMAIL_BUTTON_LABELS } from '@/lib/config/component-labels';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -217,7 +218,7 @@ const EmailButtonComponent = function EmailButton({
           {particles.map((particle) => (
             <span
               key={particle.id}
-              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              className={CONFETTI_DOT}
               style={
                 {
                   left: '50%',
