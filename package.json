@@ -119,7 +119,7 @@
     "@aws-sdk/client-lambda": "^3.750.0",
     "fast-xml-parser": "^5.3.6",
     "brace-expansion": "^5.0.8",
-    "minimatch": "^10.0.3",
+    "minimatch": "^10.2.6",
     "@tootallnate/once": "3.0.1",
     "postcss": "^8.5.10",
     "ws": "^8.20.0",
