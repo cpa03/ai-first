@@ -27,7 +27,6 @@ import {
   ANIMATION_DELAYS,
   DASHBOARD_LABELS,
   DASHBOARD_TAILWIND,
-  TEXT_SIZE_CLASSES,
   STATUS_CODES,
   IDEA_STATUS_CONFIG,
   SIZES,
@@ -38,11 +37,11 @@ import {
   RING_COLORS,
   UI_DURATIONS,
   DASHBOARD_PATTERNS,
-  GRAY_CLASSES,
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  KBD_HINT_STYLE,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -1197,14 +1196,10 @@ export default function DashboardPage() {
         <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
           <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[0]}
               </kbd>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NAVIGATE_KEYS[1]}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1212,9 +1207,7 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.OPEN_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1222,9 +1215,7 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DESELECT_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1232,9 +1223,7 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.DELETE_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1242,9 +1231,7 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.NEW_IDEA_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1252,9 +1239,7 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.FILTER_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1262,14 +1247,10 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_KEYS[0]}
               </kbd>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.HOME_END_KEYS[1]}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
@@ -1277,9 +1258,7 @@ export default function DashboardPage() {
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
+              <kbd className={KBD_HINT_STYLE}>
                 {DASHBOARD_LABELS.KEYBOARD_HINTS.HELP_KEY}
               </kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>

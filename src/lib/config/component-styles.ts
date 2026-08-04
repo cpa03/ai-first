@@ -24,6 +24,8 @@ import {
   DURATION_TAILWIND,
 } from './theme';
 import { UI_CONFIG } from './ui';
+import { TEXT_SIZE_CLASSES } from './ui-text-sizes';
+import { GRAY_CLASSES } from './remaining-styles';
 
 /**
  * Pulse dot indicator styles
@@ -36,6 +38,13 @@ export const PULSE_DOT = `w-2 h-2 rounded-full ${BG_COLORS.BRAND_LIGHT} animate-
  * Used in: MobileNav (keyboard shortcuts hints)
  */
 export const KBD_STYLE = `px-1.5 py-0.5 text-xs font-mono ${TEXT_COLORS.MUTED} ${BG_COLORS.DEFAULT} ${BORDER_COLORS.LIGHT} rounded shadow-sm`;
+
+/**
+ * Keyboard hint kbd styles for dashboard and results pages
+ * Used in: Dashboard, Results, Login, Signup pages (keyboard shortcut hints)
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const KBD_HINT_STYLE = `px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`;
 
 /**
  * Toast clear all button styles

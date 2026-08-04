@@ -40,7 +40,7 @@ import {
   GRAY_CLASSES,
   ICON_SIZES,
   DASHBOARD_PATTERNS,
-  TEXT_SIZE_CLASSES,
+  KBD_HINT_STYLE,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -857,11 +857,7 @@ export default function SignupPage() {
         <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
           <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
-                ?
-              </kbd>
+              <kbd className={KBD_HINT_STYLE}>?</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Shortcuts
               </span>
