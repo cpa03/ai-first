@@ -354,7 +354,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
           onChange={handleIdeaChange}
           onKeyDown={handleKeyDown}
           placeholder={PLACEHOLDERS.IDEA_INPUT}
-          helpText={`${IDEA_INPUT_LABELS.HELP_TEXT_PREFIX} ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. ${IDEA_INPUT_LABELS.HELP_TEXT_ESCAPE_HINT}. ${IDEA_INPUT_LABELS.HELP_TEXT_PASTE_HINT}.`}
+          helpText={`${IDEA_INPUT_LABELS.HELP_TEXT_PREFIX} ${MESSAGES.IDEA_INPUT.KEYBOARD_SHORTCUT_LABEL(isMac)}. ${MESSAGES.IDEA_INPUT.NEW_LINE_SHORTCUT_LABEL(isMac)}. ${IDEA_INPUT_LABELS.HELP_TEXT_ESCAPE_HINT}. ${IDEA_INPUT_LABELS.HELP_TEXT_PASTE_HINT(isMac)}.`}
           multiline={true}
           minLength={MIN_IDEA_LENGTH}
           maxLength={MAX_IDEA_LENGTH}
