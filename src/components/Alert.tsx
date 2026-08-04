@@ -18,6 +18,7 @@ import {
   GAP_CLASSES,
   ICON_SIZES,
   GRAY_CLASSES,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -342,7 +343,7 @@ const AlertComponent = function Alert({
           {shouldAutoDismiss && (
             <span className="flex items-center gap-1">
               <kbd
-                className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded text-[10px] font-mono`}
+                className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
               >
                 s
               </kbd>
@@ -351,7 +352,7 @@ const AlertComponent = function Alert({
           )}
           <span className="flex items-center gap-1">
             <kbd
-              className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded text-[10px] font-mono`}
+              className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded ${TEXT_SIZE_CLASSES.XS} font-mono`}
             >
               d
             </kbd>
