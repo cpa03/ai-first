@@ -153,10 +153,8 @@ export default function DashboardPage() {
       }
       triggerHapticFeedback();
       if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
-        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = `/results?ideaId=${idea.id}`;
       } else {
-        // eslint-disable-next-line @next/next/no-location-assign-relative-destination
         window.location.href = `/clarify?ideaId=${idea.id}`;
       }
     },
@@ -462,10 +460,8 @@ export default function DashboardPage() {
         if (idea) {
           triggerHapticFeedback();
           if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
-            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
             window.location.href = `/results?ideaId=${idea.id}`;
           } else {
-            // eslint-disable-next-line @next/next/no-location-assign-relative-destination
             window.location.href = `/clarify?ideaId=${idea.id}`;
           }
         }
