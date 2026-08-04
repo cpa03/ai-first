@@ -17,6 +17,7 @@ import {
   MB_CLASSES,
   GAP_CLASSES,
   ICON_SIZES,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -340,14 +341,18 @@ const AlertComponent = function Alert({
         >
           {shouldAutoDismiss && (
             <span className="flex items-center gap-1">
-              <kbd className="px-1 py-0.5 bg-gray-200/50 rounded text-[10px] font-mono">
+              <kbd
+                className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded text-[10px] font-mono`}
+              >
                 s
               </kbd>
               <span>snooze</span>
             </span>
           )}
           <span className="flex items-center gap-1">
-            <kbd className="px-1 py-0.5 bg-gray-200/50 rounded text-[10px] font-mono">
+            <kbd
+              className={`px-1 py-0.5 ${GRAY_CLASSES.BG_200_50} rounded text-[10px] font-mono`}
+            >
               d
             </kbd>
             <span>dismiss</span>
