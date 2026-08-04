@@ -53,7 +53,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
                       text-sm transition-all ${DURATION_TAILWIND[200]} ease-out
                       ${PRIMARY_FOCUS_RING} rounded-md
                       inline-flex items-center gap-1.5
-                      ${active ? 'text-primary-600 font-semibold' : `${GRAY_CLASSES.TEXT_600} hover:text-primary-600 hover:translate-x-1`}
+                      ${active ? 'text-primary-600 font-semibold' : `${GRAY_CLASSES.TEXT_600} hover:text-primary-600 hover:translate-x-1 motion-reduce:hover:transform-none`}
                     `}
                     aria-label={item.ariaLabel}
                     aria-current={active ? 'page' : undefined}
