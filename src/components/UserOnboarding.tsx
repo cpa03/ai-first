@@ -38,6 +38,7 @@ import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useConfetti } from '@/hooks/useConfetti';
 import Tooltip from './Tooltip';
+import { CONFETTI_DOT } from '@/lib/config';
 
 /**
  * Onboarding Tour Steps
@@ -335,7 +336,7 @@ export default function UserOnboarding() {
           {particles.map((particle) => (
             <span
               key={particle.id}
-              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              className={CONFETTI_DOT}
               style={
                 {
                   left: '50%',

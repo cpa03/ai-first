@@ -239,10 +239,18 @@ export const IDEA_INPUT_CONTAINER = `relative`;
 export const IDEA_INPUT_LOADING_INDICATOR = `w-3 h-3`;
 
 /**
- * Idea input confetti dot styles
+ * General confetti dot styles
+ * Used in: CopyButton, ShareButton, BlueprintDisplay, EmailButton, ErrorBoundary,
+ *          TaskManagementHeader, DeliverableCard, TaskItem, UserOnboarding, ResultsPage
+ * Follows the "Flexy" principle: eliminate hardcoded values
+ */
+export const CONFETTI_DOT = `absolute rounded-full pointer-events-none animate-copy-confetti`;
+
+/**
+ * Idea input confetti dot styles (alias for backward compatibility)
  * Used in: IdeaInput
  */
-export const IDEA_INPUT_CONFETTI_DOT = `absolute rounded-full pointer-events-none animate-copy-confetti`;
+export const IDEA_INPUT_CONFETTI_DOT = CONFETTI_DOT;
 
 /**
  * Idea input feedback text styles
@@ -479,6 +487,7 @@ export const COMPONENT_STYLES = {
   BUTTON_RIPPLE,
   SCROLL_PROGRESS_BAR,
   ERROR_FALLBACK_CONTAINER,
+  CONFETTI_DOT,
 
   // Toast styles
   TOAST: {

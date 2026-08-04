@@ -22,6 +22,7 @@ import { ROUTES } from '@/lib/config/routes';
 import { useClipboard } from '@/hooks/useClipboard';
 import { useConfetti } from '@/hooks/useConfetti';
 import StatusAnnouncer from './StatusAnnouncer';
+import { CONFETTI_DOT } from '@/lib/config';
 
 /**
  * Micro-UX: ErrorCopyButton - Functional component that uses useClipboard hook
@@ -72,7 +73,7 @@ function ErrorCopyButton({
         {particles.map((particle) => (
           <span
             key={particle.id}
-            className="absolute rounded-full pointer-events-none animate-copy-confetti"
+            className={CONFETTI_DOT}
             style={
               {
                 left: '50%',

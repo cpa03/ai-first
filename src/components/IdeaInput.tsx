@@ -30,6 +30,7 @@ import {
   IDEA_INPUT_SEND_ICON,
   ICON_SIZES,
   SPACE_Y_PATTERNS,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -397,7 +398,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             {milestoneParticles.map((particle) => (
               <span
                 key={particle.id}
-                className="absolute rounded-full pointer-events-none animate-copy-confetti"
+                className={CONFETTI_DOT}
                 style={
                   {
                     left: '50%',

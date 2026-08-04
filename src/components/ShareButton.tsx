@@ -14,6 +14,7 @@ import {
   TEXT_COLORS,
   COMPONENT_STATE_COLORS,
   BG_COLORS,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { ToastOptions } from '@/components/ToastContainer';
@@ -301,7 +302,7 @@ const ShareButtonComponent = function ShareButton({
           {particles.map((particle) => (
             <span
               key={particle.id}
-              className="absolute rounded-full pointer-events-none animate-copy-confetti"
+              className={CONFETTI_DOT}
               style={
                 {
                   left: '50%',

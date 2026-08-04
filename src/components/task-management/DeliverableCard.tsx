@@ -19,6 +19,7 @@ import {
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   PROGRESS_PERCENTAGE,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -276,7 +277,7 @@ function DeliverableCardComponent({
       {particles.map((particle) => (
         <span
           key={particle.id}
-          className="absolute rounded-full pointer-events-none animate-copy-confetti"
+          className={CONFETTI_DOT}
           style={
             {
               left: '50%',

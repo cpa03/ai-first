@@ -35,6 +35,7 @@ import {
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
   MR_CLASSES,
+  CONFETTI_DOT,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -467,7 +468,7 @@ function CopyCodeButton({ text }: { text: string }) {
       {particles.map((particle) => (
         <span
           key={particle.id}
-          className="absolute rounded-full pointer-events-none animate-copy-confetti"
+          className={CONFETTI_DOT}
           style={
             {
               left: '50%',
