@@ -23,6 +23,7 @@ import {
   ML_CLASSES,
   P_CLASSES,
   GAP_CLASSES,
+  GRAY_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -318,7 +319,9 @@ function ToastComponent({ toast, onClose }: ToastProps) {
           className={`absolute bottom-1 right-1 flex items-center gap-1 text-[10px] opacity-0 transition-opacity ${DURATION_TAILWIND[200]} animate-fade-in`}
           aria-hidden="true"
         >
-          <kbd className="px-1 py-0.5 bg-white/80 border border-gray-200 rounded text-[10px] font-mono text-gray-500">
+          <kbd
+            className={`px-1 py-0.5 bg-white/80 border ${GRAY_CLASSES.BORDER_200} rounded text-[10px] font-mono ${GRAY_CLASSES.TEXT_500}`}
+          >
             Esc
           </kbd>
         </div>

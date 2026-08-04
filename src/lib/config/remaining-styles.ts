@@ -30,6 +30,7 @@ export const GRAY_CLASSES = {
   BG_50: 'bg-gray-50',
   BG_100: 'bg-gray-100',
   BG_200: 'bg-gray-200',
+  BG_200_50: 'bg-gray-200/50',
   BG_800: 'bg-gray-800',
   BG_900: 'bg-gray-900',
 
