@@ -35,7 +35,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   KEYBOARD_SHORTCUTS_HELP_LABELS,
-  TEXT_SIZE_CLASSES,
+  KBD_HINT_STYLE,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -1041,41 +1041,25 @@ function ResultsContent() {
         <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
           <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
-                b
-              </kbd>
+              <kbd className={KBD_HINT_STYLE}>b</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Blueprint
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
-                t
-              </kbd>
+              <kbd className={KBD_HINT_STYLE}>t</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Tasks
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
-                e
-              </kbd>
+              <kbd className={KBD_HINT_STYLE}>e</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Exports
               </span>
             </span>
             <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_ITEM}>
-              <kbd
-                className={`px-1.5 py-0.5 font-mono ${TEXT_SIZE_CLASSES.XS} font-semibold ${GRAY_CLASSES.TEXT_600} bg-white border ${GRAY_CLASSES.BORDER_200} rounded shadow-sm`}
-              >
-                ?
-              </kbd>
+              <kbd className={KBD_HINT_STYLE}>?</kbd>
               <span className={DASHBOARD_PATTERNS.KEYBOARD_HINT_LABEL}>
                 Shortcuts
               </span>
