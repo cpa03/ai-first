@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import {
   COMPONENT_CONFIG,
   ANIMATION_DELAYS,
@@ -142,33 +142,31 @@ function AutoSaveIndicatorComponent({
    * high CPU overhead of instantiating new Intl formatters on every render or interval tick.
    * This provides a substantial performance speedup (up to ~150x) compared to
    * toLocaleTimeString() and toLocaleString().
+   *
+   * Using useMemo instead of useRef to comply with React's rules:
+   * refs cannot be accessed during render, but useMemo can be.
    */
-  const timeFormatterRef = useRef<Intl.DateTimeFormat | null>(null);
-  const exactFormatterRef = useRef<Intl.DateTimeFormat | null>(null);
-
-  const getCachedTimeFormatter = (): Intl.DateTimeFormat => {
-    if (!timeFormatterRef.current) {
-      timeFormatterRef.current = new Intl.DateTimeFormat(undefined, {
+  const timeFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
         hour: '2-digit',
         minute: '2-digit',
-      });
-    }
-    return timeFormatterRef.current;
-  };
+      }),
+    []
+  );
 
-  const getCachedExactFormatter = (): Intl.DateTimeFormat => {
-    if (!exactFormatterRef.current) {
-      exactFormatterRef.current = new Intl.DateTimeFormat('en-US', {
+  const exactFormatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat('en-US', {
         weekday: 'short',
         month: 'short',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-      });
-    }
-    return exactFormatterRef.current;
-  };
+      }),
+    []
+  );
 
   const formatLastSaved = (date: Date): string => {
     const now = new Date();
@@ -179,11 +177,11 @@ function AutoSaveIndicatorComponent({
     if (seconds < TIME_CONVERSIONS.SECONDS_PER_MINUTE) return `${seconds}s ago`;
     const minutes = Math.floor(seconds / TIME_CONVERSIONS.SECONDS_PER_MINUTE);
     if (minutes < 60) return `${minutes}m ago`;
-    return getCachedTimeFormatter().format(date);
+    return timeFormatter.format(date);
   };
 
   const formatExactTimestamp = (date: Date): string => {
-    return getCachedExactFormatter().format(date);
+    return exactFormatter.format(date);
   };
 
   if (!showIndicator) return null;
