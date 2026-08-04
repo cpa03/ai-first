@@ -114,11 +114,13 @@ function ToastComponent({ toast, onClose }: ToastProps) {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
   const [remainingSeconds, setRemainingSeconds] = useState(0);
+  const [showShortcutHint, setShowShortcutHint] = useState(false);
   const progressRef = useRef(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   const currentStepRef = useRef(0);
   const touchStartXRef = useRef<number>(0);
   const touchCurrentXRef = useRef<number>(0);
   const toastRef = useRef<HTMLDivElement>(null);
+  const shortcutHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const prefersReducedMotion = usePrefersReducedMotion();
 
@@ -157,6 +159,34 @@ function ToastComponent({ toast, onClose }: ToastProps) {
 
     return () => clearInterval(progressTimer);
   }, [toast.id, toast.duration, onClose, isPaused]);
+
+  // Micro-UX: Show keyboard shortcut hint briefly when toast appears
+  // Helps users discover that they can press Escape to dismiss the toast
+  useEffect(() => {
+    if (!prefersReducedMotion) {
+      const timer = setTimeout(() => {
+        setShowShortcutHint(true);
+        shortcutHintTimeoutRef.current = setTimeout(() => {
+          setShowShortcutHint(false);
+        }, UI_CONSTANTS.TOAST_SHORTCUT_HINT_DURATION);
+      }, UI_CONSTANTS.TOAST_SHORTCUT_HINT_DELAY);
+      return () => clearTimeout(timer);
+    }
+    return () => {
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+  }, [prefersReducedMotion]);
+
+  // Cleanup shortcut hint timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (shortcutHintTimeoutRef.current) {
+        clearTimeout(shortcutHintTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleMouseEnter = () => {
     setIsPaused(true);
@@ -283,6 +313,16 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       <span className="sr-only">
         {TOAST_CONTAINER_LABELS.DISMISS_INSTRUCTION}
       </span>
+      {showShortcutHint && !prefersReducedMotion && (
+        <div
+          className={`absolute bottom-1 right-1 flex items-center gap-1 text-[10px] opacity-0 transition-opacity ${DURATION_TAILWIND[200]} animate-fade-in`}
+          aria-hidden="true"
+        >
+          <kbd className="px-1 py-0.5 bg-white/80 border border-gray-200 rounded text-[10px] font-mono text-gray-500">
+            Esc
+          </kbd>
+        </div>
+      )}
       {remainingSeconds > 0 && !prefersReducedMotion && (
         <div
           className={TOAST_DISMISS_BUTTON}

@@ -122,6 +122,30 @@ export const UI_CONFIG = {
   ),
 
   /**
+   * Toast keyboard shortcut hint duration (in milliseconds)
+   * How long the keyboard shortcut hint is visible after toast appears
+   * Env: UI_TOAST_SHORTCUT_HINT_DURATION (default: 2000)
+   */
+  TOAST_SHORTCUT_HINT_DURATION: EnvLoader.number(
+    'UI_TOAST_SHORTCUT_HINT_DURATION',
+    2000,
+    500,
+    5000
+  ),
+
+  /**
+   * Toast keyboard shortcut hint delay (in milliseconds)
+   * Delay before showing the keyboard shortcut hint
+   * Env: UI_TOAST_SHORTCUT_HINT_DELAY (default: 500)
+   */
+  TOAST_SHORTCUT_HINT_DELAY: EnvLoader.number(
+    'UI_TOAST_SHORTCUT_HINT_DELAY',
+    500,
+    100,
+    2000
+  ),
+
+  /**
    * Scroll percentage threshold for showing percentage text in ScrollToTop button
    * Env: UI_SCROLL_PERCENTAGE_THRESHOLD (default: 10)
    */
