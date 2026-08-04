@@ -181,18 +181,23 @@ const AlertComponent = function Alert({
     setProgress(COMPONENT_DEFAULTS.PROGRESS.COMPLETE);
   }, [cleanupTimers, effectiveDelay]);
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
       if (e.key === 'Escape' && onClose) {
+        e.preventDefault();
         handleClose();
       }
-    };
-
-    if (onClose) {
-      document.addEventListener('keydown', handleEscape);
-      return () => document.removeEventListener('keydown', handleEscape);
-    }
-  }, [onClose, handleClose]);
+      if (e.key === 's' && shouldAutoDismiss) {
+        e.preventDefault();
+        handleSnooze();
+      }
+      if (e.key === 'd' && onClose) {
+        e.preventDefault();
+        handleClose();
+      }
+    },
+    [handleClose, handleSnooze, shouldAutoDismiss, onClose]
+  );
 
   if (!isVisible) return null;
 
@@ -215,17 +220,21 @@ const AlertComponent = function Alert({
   return (
     <div
       role="alert"
+      tabIndex={0}
       aria-live={type === 'error' ? 'assertive' : 'polite'}
+      aria-label={`${type} alert. ${ALERT_LABELS.SNOOZE_SHORTCUT_HINT}. ${ALERT_LABELS.DISMISS_SHORTCUT_HINT}`}
       className={`
         ${styles.container} ${ALERT_BASE_STYLES.container}
         ${ALERT_BASE_STYLES.transition}
         ${visibilityClass}
+        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
         ${className}
       `}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onFocus={handleMouseEnter}
       onBlur={handleMouseLeave}
+      onKeyDown={handleKeyDown}
     >
       <svg
         className={`${SVG_SIZES.LG} ${styles.iconColor} flex-shrink-0 ${MT_CLASSES.XS}`}
@@ -323,6 +332,27 @@ const AlertComponent = function Alert({
             </button>
           </div>
         </>
+      )}
+      {onClose && (
+        <div
+          className="absolute bottom-1.5 left-2 flex items-center gap-2 text-xs opacity-0 focus-within:opacity-60 hover:opacity-60 transition-opacity"
+          aria-hidden="true"
+        >
+          {shouldAutoDismiss && (
+            <span className="flex items-center gap-1">
+              <kbd className="px-1 py-0.5 bg-gray-200/50 rounded text-[10px] font-mono">
+                s
+              </kbd>
+              <span>snooze</span>
+            </span>
+          )}
+          <span className="flex items-center gap-1">
+            <kbd className="px-1 py-0.5 bg-gray-200/50 rounded text-[10px] font-mono">
+              d
+            </kbd>
+            <span>dismiss</span>
+          </span>
+        </div>
       )}
     </div>
   );
