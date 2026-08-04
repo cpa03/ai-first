@@ -88,7 +88,7 @@ export const TEXT_CLASSES = {
   /** Small text styles */
   SMALL: 'text-sm text-gray-500',
   /** Caption styles */
-  CAPTION: 'text-xs text-gray-400',
+  CAPTION: 'text-xs text-gray-600',
 } as const;
 
 /**
