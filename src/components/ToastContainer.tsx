@@ -24,6 +24,7 @@ import {
   P_CLASSES,
   GAP_CLASSES,
   GRAY_CLASSES,
+  TEXT_SIZE_CLASSES,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -316,11 +317,11 @@ function ToastComponent({ toast, onClose }: ToastProps) {
       </span>
       {showShortcutHint && !prefersReducedMotion && (
         <div
-          className={`absolute bottom-1 right-1 flex items-center gap-1 text-[10px] opacity-0 transition-opacity ${DURATION_TAILWIND[200]} animate-fade-in`}
+          className={`absolute bottom-1 right-1 flex items-center gap-1 ${TEXT_SIZE_CLASSES.XS} opacity-0 transition-opacity ${DURATION_TAILWIND[200]} animate-fade-in`}
           aria-hidden="true"
         >
           <kbd
-            className={`px-1 py-0.5 bg-white/80 border ${GRAY_CLASSES.BORDER_200} rounded text-[10px] font-mono ${GRAY_CLASSES.TEXT_500}`}
+            className={`px-1 py-0.5 bg-white/80 border ${GRAY_CLASSES.BORDER_200} rounded ${TEXT_SIZE_CLASSES.XS} font-mono ${GRAY_CLASSES.TEXT_500}`}
           >
             Esc
           </kbd>
