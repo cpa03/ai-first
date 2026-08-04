@@ -102,7 +102,7 @@ function KeyboardShortcutHintComponent({
         className={`
           ${BG_COLORS.DEFAULT} ${SHADOW_CLASSES.LARGE} rounded-xl
           border ${BORDER_COLORS.LIGHT}
-          p-4 ${TRANSITION_CLASSES.DEFAULT}
+          p-4 transition-opacity transition-transform will-change-transform
           ${isExiting ? 'opacity-0 translate-y-2 scale-95' : 'opacity-100 translate-y-0 scale-100'}
         `}
         style={{

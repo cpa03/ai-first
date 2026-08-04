@@ -120,6 +120,7 @@ function WhyChooseSectionComponent() {
       ref={sectionRef}
       className={SECTION_STYLES.CONTAINER}
       aria-labelledby={ARIA_HEADING_IDS.WHY_CHOOSE}
+      style={{ contain: 'layout' }}
     >
       <div
         role="status"

@@ -210,6 +210,7 @@ export default function HomePageClient() {
       <section
         aria-labelledby={ARIA_HEADING_IDS.IDEA_INPUT}
         className={CARD_PATTERNS.BASE}
+        style={{ contain: 'layout' }}
       >
         <h2 id={HOME_PAGE_ELEMENT_IDS.IDEA_INPUT_HEADING} className="sr-only">
           Enter Your Idea
