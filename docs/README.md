@@ -216,6 +216,7 @@ Complete index of all IdeaFlow documentation.
 
 - [Flexy Modularity Plan](./plans/2026-06-30-flexy-modularization.md) - Hardcoded values elimination (completed)
 - [Decompose Database Service](./plans/2026-05-12-decompose-database-service.md) - Database service decomposition
+- [Browser Console Audit Plan](./plans/2026-07-18-browser-console-audit.md) - Browser console audit planning
 
 ## Security Reports
 
@@ -230,8 +231,7 @@ Complete index of all IdeaFlow documentation.
 ### Active Reports
 
 - [Browser Audit - 2026-08-01](./audit/browser-audit-2026-08-01.md) - Browser console & Lighthouse audit (latest)
-- [BroCula Browser Audit - 2026-07-31](./audit/brocula-audit-20260731.md) - BroCula browser console & Lighthouse audit
-- [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - BroCula browser console & Lighthouse audit
+- [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - Browser console & Lighthouse audit
 - [Flexy Modularization Audit - 2026-07-24](./audit/flexy-modularization-audit-20260724.md) - Code modularization assessment (authoritative)
 - [Flexy Modularization Audit (legacy)](./audit/flexy-modularization-audit.md) - Earlier modularization assessment
 - [Skipped Tests Investigation](./audit/skipped-tests-investigation.md) - Investigation of skipped tests with documented reasons
@@ -261,7 +261,12 @@ Older audit reports (2026-07-08 through 2026-07-29) are archived in [audit/archi
 ### Active Reports
 
 - [Repository Maintenance Report - 2026-08-03](./maintenance/2026-08-03-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure (latest)
-- [Repository Maintenance Report - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
+- [BugFixer Audit - 2026-08-03](./maintenance/2026-08-03-bugfixer-audit.md) - BugFixer comprehensive audit
+- [CMZ Execution Log - 2026-08-02](./maintenance/2026-08-02-execution-log.md) - CMZ autonomous agent execution log
+- [CMZ Execution Summary - 2026-08-02](./maintenance/2026-08-02-execution-summary.md) - CMZ autonomous agent execution summary
+- [Phase 2 Hardening Report - 2026-08-02](./maintenance/2026-08-02-phase2-hardening-report.md) - Phase 2 feature hardening and integration
+- [Phase 3 Strategic Expansion - 2026-08-02](./maintenance/2026-08-02-phase3-strategic-expansion.md) - Phase 3 strategic expansion report
+- [RepoKeeper Audit - 2026-08-02](./maintenance/2026-08-02-repokeeper-audit.md) - RepoKeeper maintenance audit
 - [Repository Audit - 2026-08-01](./maintenance/2026-08-01-repository-audit.md) - Repository audit with branch analysis
 - [BugFixer Audit - 2026-08-01](./maintenance/2026-08-01-bugfixer-audit.md) - BugFixer comprehensive audit
 - [Repository Maintenance Loop - 2026-08-01](./maintenance/2026-08-01-repository-maintenance-loop.md) - Maintenance loop report
