@@ -6,6 +6,7 @@ import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import MobileNav from '@/components/MobileNav';
 import ToastContainer from '@/components/ToastContainer';
 import ScrollToTop from '@/components/ScrollToTop';
+import ScrollToTopButton from '@/components/ScrollToTopButton';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG } from '@/lib/config/seo';
@@ -292,9 +293,7 @@ export default async function RootLayout({
                       <p className={FOOTER_PATTERNS.BOTTOM_TEXT}>
                         {APP_CONFIG.BRANDING.COPYRIGHT}
                       </p>
-                      <p className={`text-sm ${GRAY_CLASSES.TEXT_500}`}>
-                        Scroll to top
-                      </p>
+                      <ScrollToTopButton />
                     </div>
                   </div>
                 </div>
