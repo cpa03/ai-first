@@ -117,6 +117,7 @@ function FeatureGridComponent() {
       ref={sectionRef}
       aria-labelledby={ARIA_HEADING_IDS.HOW_IT_WORKS}
       className={MT_CLASSES.XXXXL}
+      style={{ contain: 'layout' }}
     >
       <h2 id={HOME_PAGE_ELEMENT_IDS.HOW_IT_WORKS_HEADING} className="sr-only">
         How It Works
