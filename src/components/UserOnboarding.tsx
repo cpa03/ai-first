@@ -538,21 +538,28 @@ export default function UserOnboarding() {
           {/* Action buttons */}
           <div className="flex gap-2">
             {currentStepIndex > 0 && (
-              <button
-                onClick={handlePrev}
-                className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
-              >
-                {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
-              </button>
+              <Tooltip content="Go to previous step" shortcut={['←']}>
+                <button
+                  onClick={handlePrev}
+                  className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
+                >
+                  {USER_ONBOARDING_COMPLETION_LABELS.BACK_BUTTON}
+                </button>
+              </Tooltip>
             )}
-            <button
-              onClick={handleNext}
-              className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
+            <Tooltip
+              content={isLastStep ? 'Start using IdeaFlow' : 'Go to next step'}
+              shortcut={['→']}
             >
-              {isLastStep
-                ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON
-                : USER_ONBOARDING_COMPLETION_LABELS.NEXT_BUTTON}
-            </button>
+              <button
+                onClick={handleNext}
+                className={`px-4 py-1.5 text-sm ${BG_COLORS.BRAND} text-white rounded-lg ${BG_COLORS.BRAND_HOVER} ${TRANSITION_CLASSES.COLOR} font-medium ${FOCUS_RING_PATTERNS.DEFAULT}`}
+              >
+                {isLastStep
+                  ? USER_ONBOARDING_COMPLETION_LABELS.GET_STARTED_BUTTON
+                  : USER_ONBOARDING_COMPLETION_LABELS.NEXT_BUTTON}
+              </button>
+            </Tooltip>
           </div>
         </div>
       </div>
