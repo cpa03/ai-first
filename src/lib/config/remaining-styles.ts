@@ -13,7 +13,7 @@ import { DURATION_TAILWIND } from './theme';
 export const GRAY_CLASSES = {
   // Text colors
   TEXT_300: 'text-gray-300',
-  TEXT_400: 'text-gray-400',
+  TEXT_400: 'text-gray-600',
   TEXT_500: 'text-gray-500',
   TEXT_600: 'text-gray-600',
   TEXT_700: 'text-gray-700',

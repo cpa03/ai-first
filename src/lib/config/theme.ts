@@ -116,7 +116,7 @@ export const TEXT_COLORS = {
   SECONDARY: 'text-gray-600',
   MUTED: 'text-gray-500',
   MUTED_LIGHT: 'text-gray-200',
-  MUTED_DARK: 'text-gray-400',
+  MUTED_DARK: 'text-gray-600',
   MUTED_LIGHTER: 'text-gray-100',
   ERROR: 'text-red-700',
   ERROR_LIGHT: 'text-red-500',
