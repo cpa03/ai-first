@@ -176,8 +176,8 @@ ls -lh /tmp/backups/ai-first_*
 ## Related Documentation
 
 - [Disaster Recovery Plan](disaster-recovery.md)
-- [Security Procedures](SECURITY.md)
-- [Deployment Guide](CONTRIBUTING.md)
+- [Security Procedures](security/SECURITY_VALIDATION.md)
+- [Deployment Guide](deploy.md)
 
 ## Maintenance
 
