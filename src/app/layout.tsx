@@ -20,6 +20,7 @@ import {
   BORDER_COLOR_CLASSES,
   SHADOW_CLASSES,
   LAYOUT_CLASSES,
+  PRIMARY_FOCUS_RING,
 } from '@/lib/config/theme';
 import { GRAY_CLASSES, ELEMENT_PATTERNS } from '@/lib/config/remaining-styles';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
@@ -199,7 +200,7 @@ export default async function RootLayout({
                     <div className="flex items-center">
                       <Link
                         href={ROUTES.HOME}
-                        className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900} hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md px-2 py-1`}
+                        className={`text-xl font-semibold ${GRAY_CLASSES.TEXT_900} hover:text-primary-600 transition-colors ${PRIMARY_FOCUS_RING} rounded-md px-2 py-1`}
                       >
                         IdeaFlow
                       </Link>
@@ -230,7 +231,7 @@ export default async function RootLayout({
                     <div className="col-span-2 md:col-span-1">
                       <Link
                         href={ROUTES.HOME}
-                        className={`text-lg font-semibold ${GRAY_CLASSES.TEXT_900} hover:text-primary-600 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded-md`}
+                        className={`text-lg font-semibold ${GRAY_CLASSES.TEXT_900} hover:text-primary-600 transition-colors ${PRIMARY_FOCUS_RING} rounded-md`}
                       >
                         {APP_CONFIG.NAME}
                       </Link>

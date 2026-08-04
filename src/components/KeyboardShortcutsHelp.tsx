@@ -32,6 +32,7 @@ import {
   ICON_SIZES,
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
+  PRIMARY_LINK,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -880,7 +881,7 @@ function KeyboardShortcutsHelpComponent({
                   setSelectedIndex(0);
                   searchInputRef.current?.focus();
                 }}
-                className={`text-sm font-medium text-primary-600 hover:text-primary-800 underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} rounded`}
+                className={`text-sm font-medium ${PRIMARY_LINK} underline underline-offset-2 ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_OFFSET_PATTERNS.DEFAULT} rounded`}
               >
                 {KEYBOARD_SHORTCUTS_HELP_LABELS.CLEAR_SEARCH_LABEL}
               </button>

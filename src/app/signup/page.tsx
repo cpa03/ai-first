@@ -41,6 +41,7 @@ import {
   ICON_SIZES,
   DASHBOARD_PATTERNS,
   KBD_HINT_STYLE,
+  PRIMARY_FOCUS_RING,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -591,7 +592,7 @@ export default function SignupPage() {
           </p>
           <Link
             href={ROUTES.LOGIN}
-            className={`inline-block font-medium text-primary-600 hover:text-primary-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 rounded animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`inline-block font-medium text-primary-600 hover:text-primary-500 ${PRIMARY_FOCUS_RING} rounded animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.RETURN_LINK}
           </Link>
