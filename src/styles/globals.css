@@ -1813,6 +1813,11 @@ button[aria-disabled='true'].btn-glow-hover {
   position: relative;
 }
 
+/* Tactile click/active compression - physical active state transition */
+.table-row-lift:active {
+  transform: translateY(0) scale(0.99);
+}
+
 /* Enhanced lift effect for keyboard-selected rows */
 .table-row-lift[aria-selected='true'] {
   transform: translateY(var(--transform-slide-up-sm));
@@ -1828,6 +1833,7 @@ button[aria-disabled='true'].btn-glow-hover {
   }
 
   .table-row-lift:hover,
+  .table-row-lift:active,
   .table-row-lift[aria-selected='true'] {
     transform: none;
     box-shadow: none;

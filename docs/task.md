@@ -10,7 +10,29 @@ This file contains only **active tasks** that are currently in progress or pendi
 
 ---
 
+## BugLover Task
+
+### [x] error: Next.js relative window.location.href assignment warning
+- **Priority**: HIGH
+- **Status**: COMPLETE
+- **Date**: 2026-08-04
+- **Details**: Resolved the `@next/next/no-location-assign-relative-destination` ESLint warnings inside `src/app/dashboard/page.tsx` by introducing `useRouter` from `'next/navigation'` and replacing relative assignments with standard client-side routing.
+
+---
+
 ## StorX Feature Analysis & Integration Tasks
+
+### [CONNECT] Connect Dashboard Row Click handlers to Router API and central route configs
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-04
+- **Details**: Integrated the dashboard row click handlers directly with `useRouter().push()` and central `createRouteWithParams` configurations, removing relative hardcoded url strings and linking them with the app's central routing system.
+
+### [STRENGTHEN] Standardize Dashboard Row Hover and Active tactile states
+- **Priority**: MEDIUM
+- **Status**: COMPLETE
+- **Date**: 2026-08-04
+- **Details**: Strengthened the interactive behavior of `table-row-lift` in `src/styles/globals.css` with a physical active click translation/compression to scale `0.99`, providing elegant tactile feedback while fully complying with `prefers-reduced-motion` settings.
 
 ### [STRENGTHEN] Standardize EmailButton Hover and Active States
 - **Priority**: MEDIUM

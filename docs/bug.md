@@ -8,6 +8,23 @@ _None - all bugs fixed!_
 
 ---
 
+### [x] Bug 5: Next.js relative window.location.href assignment warning in src/app/dashboard/page.tsx
+
+**File:** `src/app/dashboard/page.tsx`
+**Severity:** MEDIUM
+**Status:** ✅ FIXED
+
+**Description:**
+ESLint flagged multiple warnings (`@next/next/no-location-assign-relative-destination`) on the use of `window.location.href` for routing to relative destinations like `/results` and `/clarify`. This causes full page refreshes instead of smooth Next.js client-side router page transitions.
+
+**Root Cause:**
+Directly assigning `window.location.href` in a Client Component's event handlers triggers standard Next.js linting warnings because it bypasses the Next.js router.
+
+**Fix:**
+Imported and integrated `useRouter` from `next/navigation`. Replaced all `window.location.href` relative assignments with `router.push()`, utilizing modular helper `createRouteWithParams` and standardized `ROUTES` configurations to eliminate hardcoded path strings.
+
+---
+
 ### [x] Bug 4: shouldRetry string matching bug in resilience test
 
 **File:** `tests/resilience-edge-cases.test.ts:355`  
