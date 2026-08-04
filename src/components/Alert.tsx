@@ -183,7 +183,7 @@ const AlertComponent = function Alert({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && onClose) {
         e.preventDefault();
         handleClose();
       }
@@ -191,12 +191,12 @@ const AlertComponent = function Alert({
         e.preventDefault();
         handleSnooze();
       }
-      if (e.key === 'd') {
+      if (e.key === 'd' && onClose) {
         e.preventDefault();
         handleClose();
       }
     },
-    [handleClose, handleSnooze, shouldAutoDismiss]
+    [handleClose, handleSnooze, shouldAutoDismiss, onClose]
   );
 
   if (!isVisible) return null;
