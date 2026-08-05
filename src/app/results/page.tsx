@@ -37,6 +37,7 @@ import {
   KEYBOARD_SHORTCUTS_HELP_LABELS,
   KBD_HINT_STYLE,
   CONFETTI_DOT,
+  ICON_SIZES,
 } from '@/lib/config';
 
 const ScrollProgress = dynamic(() => import('@/components/ScrollProgress'), {
@@ -1038,6 +1039,48 @@ function ResultsContent() {
             />
           </div>
         </div>
+
+        {/* Micro-UX: "Start New Idea" CTA closes the user journey loop */}
+        {/* Encourages repeat usage by providing a clear next step after reviewing results */}
+        <section
+          className={`${CARD_PATTERNS.WITH_MARGIN} text-center`}
+          aria-labelledby="start-new-idea-cta"
+        >
+          <div className="py-4">
+            <h2
+              id="start-new-idea-cta"
+              className={`text-xl sm:text-2xl font-semibold ${GRAY_CLASSES.TEXT_900} mb-2`}
+            >
+              {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.TITLE}
+            </h2>
+            <p className={`${GRAY_CLASSES.TEXT_600} mb-6 max-w-md mx-auto`}>
+              {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.DESCRIPTION}
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => router.push(ROUTES.HOME)}
+              aria-label={RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.ARIA_LABEL}
+              className={`inline-flex items-center gap-2 ${prefersReducedMotion ? '' : 'hover:-translate-y-0.5 active:translate-y-0'} transition-transform`}
+            >
+              <svg
+                className={`${ICON_SIZES.MD}`}
+                fill="none"
+                viewBox={SVG_VIEWBOX.STANDARD}
+                stroke="currentColor"
+                strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              {RESULTS_PAGE_CONTENT.NEW_IDEA_CTA.BUTTON}
+            </Button>
+          </div>
+        </section>
 
         <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_BAR}>
           <div className={DASHBOARD_PATTERNS.KEYBOARD_HINTS_GROUP}>

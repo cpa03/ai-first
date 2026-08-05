@@ -386,6 +386,14 @@ export const RESULTS_PAGE_CONTENT = {
     EXPORT_GITHUB_PROJECTS_SETUP:
       'Export to GitHub Projects - requires API configuration',
   },
+  /** Micro-UX: "Start New Idea" CTA at bottom of results page to close the user journey loop */
+  NEW_IDEA_CTA: {
+    TITLE: 'Got another idea?',
+    DESCRIPTION:
+      'Turn your next idea into an actionable plan with AI-powered breakdowns.',
+    BUTTON: 'Start New Idea',
+    ARIA_LABEL: 'Start a new idea and create another project blueprint',
+  },
 } as const;
 
 /**
