@@ -34,6 +34,13 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   enableTransition?: boolean;
   /** Optional loading message to display next to the spinner (e.g., "Saving...", "Submitting...") */
   loadingText?: string;
+  /**
+   * Micro-UX: Delay before showing the loading spinner (in ms).
+   * Prevents visual flickering for fast-loading operations (< 300ms).
+   * If the loading state completes before this delay, no spinner is shown at all.
+   * @default 0
+   */
+  showDelay?: number;
   /** Optional tooltip text to display when button is disabled, explaining why it's disabled */
   disabledTooltip?: string;
   /** Optional keyboard shortcut keys to display in tooltip (e.g. ['⌘', 'S']) */
@@ -58,6 +65,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
       attention = false,
       enableTransition = false,
       loadingText,
+      showDelay = 0,
       disabledTooltip,
       shortcut,
       disabled,
@@ -72,6 +80,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
     const [ripples, setRipples] = useState<Ripple[]>([]);
     const [justEnabled, setJustEnabled] = useState(false);
     const [isMac, setIsMac] = useState(false);
+    const [shouldShowSpinner, setShouldShowSpinner] = useState(showDelay === 0);
     const timeoutRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
     const wasDisabledRef = useRef(disabled || loading);
     const prefersReducedMotion = usePrefersReducedMotion();
@@ -101,6 +110,19 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
 
       wasDisabledRef.current = isCurrentlyDisabled;
     }, [disabled, loading, enableTransition]);
+
+    useEffect(() => {
+      if (showDelay <= 0 || !loading) {
+        setShouldShowSpinner(showDelay === 0);
+        return;
+      }
+
+      const timer = setTimeout(() => {
+        setShouldShowSpinner(true);
+      }, showDelay);
+
+      return () => clearTimeout(timer);
+    }, [loading, showDelay]);
 
     const createRipple = useCallback(
       (
@@ -193,7 +215,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading}
         {...restProps}
       >
-        {loading && (
+        {loading && shouldShowSpinner && (
           <svg
             className={`${prefersReducedMotion ? '' : 'animate-spin'} -ml-1 mr-2 h-4 w-4 inline-block`}
             xmlns={SVG_NAMESPACE.SVG}
@@ -216,7 +238,7 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
             ></path>
           </svg>
         )}
-        {loading && loadingText ? loadingText : children}
+        {loading && shouldShowSpinner && loadingText ? loadingText : children}
         {ripples.map((ripple) => (
           <span
             key={ripple.id}
