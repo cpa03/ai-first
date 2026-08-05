@@ -50,6 +50,7 @@ import {
   SPACE_Y_PATTERNS,
   FLEX_PATTERNS,
   SPACING_PATTERNS,
+  SKELETON_SIZE_PATTERNS,
 } from '@/lib/config';
 import {
   CLARIFICATION_ELEMENT_IDS,
@@ -385,19 +386,37 @@ function ClarificationFlow({
           className={`${CARD_PATTERNS.RESPONSIVE} mt-6 space-y-6 animate-fade-in`}
         >
           <div className={SPACE_Y_PATTERNS.MD}>
-            <Skeleton className="h-6 w-3/4" variant="text" />
-            <Skeleton className="h-4 w-full" variant="text" />
-            <Skeleton className="h-4 w-5/6" variant="text" />
+            <Skeleton className={SKELETON_SIZE_PATTERNS.TITLE} variant="text" />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.BODY_FULL}
+              variant="text"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.BODY_FIVE_SIXTHS}
+              variant="text"
+            />
           </div>
 
           <div className={SPACE_Y_PATTERNS.LG}>
-            <Skeleton className="h-10 w-full" variant="rect" />
-            <Skeleton className="h-24 w-full" variant="rect" />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.INPUT_FULL}
+              variant="rect"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.CONTAINER_LG}
+              variant="rect"
+            />
           </div>
 
           <div className={`${FLEX_PATTERNS.BETWEEN_CENTER} pt-4`}>
-            <Skeleton className="h-10 w-24" variant="rect" />
-            <Skeleton className="h-10 w-28" variant="rect" />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.INPUT_SM}
+              variant="rect"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.INPUT_MD}
+              variant="rect"
+            />
           </div>
         </div>
 

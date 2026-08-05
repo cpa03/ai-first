@@ -36,6 +36,7 @@ import {
   ICON_SIZES,
   MR_CLASSES,
   CONFETTI_DOT,
+  SKELETON_SIZE_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -161,27 +162,62 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             className={`border-b ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_HEADER}`}
           >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <Skeleton className="h-6 sm:h-8 w-36 sm:w-48" variant="text" />
-              <Skeleton className="h-10 w-full sm:w-40" />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.HEADING_SM}
+                variant="text"
+              />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.INPUT_RESPONSIVE_SM}
+              />
             </div>
           </header>
 
           <div className={UI_CONFIG.LAYOUT.CARD_BODY}>
-            <Skeleton className="h-5 sm:h-6 w-3/4" variant="text" />
-            <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
-            <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
-            <Skeleton className="h-3 sm:h-4 w-5/6" variant="text" />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.SUBTITLE_SM}
+              variant="text"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
+              variant="text"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
+              variant="text"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.CAPTION_SM_FIVE_SIXTHS}
+              variant="text"
+            />
 
             <div className="mt-6 sm:mt-8 space-y-2">
-              <Skeleton className="h-4 sm:h-5 w-1/2" variant="text" />
-              <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
-              <Skeleton className="h-3 sm:h-4 w-full" variant="text" />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.SUBTITLE_RESPONSIVE_SM}
+                variant="text"
+              />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
+                variant="text"
+              />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
+                variant="text"
+              />
             </div>
 
             <div className="mt-4 sm:mt-6 space-y-2">
-              <Skeleton className="h-4 sm:h-5 w-1/2" variant="text" />
-              <Skeleton className="h-3 sm:h-4 w-11/12" variant="text" />
-              <Skeleton className="h-3 sm:h-4 w-10/12" variant="text" />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.SUBTITLE_RESPONSIVE_SM}
+                variant="text"
+              />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.CAPTION_SM_ELEVEN_TWELFTHS}
+                variant="text"
+              />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.CAPTION_SM_TEN_TWELFTHS}
+                variant="text"
+              />
             </div>
           </div>
 
@@ -189,10 +225,17 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             className={`border-t ${BORDER_COLOR_CLASSES.LIGHT} ${UI_CONFIG.LAYOUT.CARD_FOOTER}`}
           >
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <Skeleton className="h-3 sm:h-4 w-full sm:w-1/2" variant="text" />
+              <Skeleton
+                className={SKELETON_SIZE_PATTERNS.CAPTION_SM_HALF}
+                variant="text"
+              />
               <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
-                <Skeleton className="h-10 w-full sm:w-28" />
-                <Skeleton className="h-10 w-full sm:w-36" />
+                <Skeleton
+                  className={SKELETON_SIZE_PATTERNS.BUTTON_RESPONSIVE_SM}
+                />
+                <Skeleton
+                  className={SKELETON_SIZE_PATTERNS.BUTTON_RESPONSIVE_MD}
+                />
               </div>
             </div>
           </footer>
