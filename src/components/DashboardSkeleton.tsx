@@ -12,6 +12,7 @@ import {
   BORDER_COLORS,
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
+  SKELETON_SIZE_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -27,15 +28,24 @@ function DashboardSkeletonComponent() {
 
       <div className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} mb-8`}>
         <div className={SPACE_Y_PATTERNS.SM}>
-          <Skeleton className="h-8 w-48" variant="text" />
-          <Skeleton className="h-4 w-32" variant="text" />
+          <Skeleton
+            className={SKELETON_SIZE_PATTERNS.HEADING_SM}
+            variant="text"
+          />
+          <Skeleton
+            className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
+            variant="text"
+          />
         </div>
-        <Skeleton className="h-10 w-28" variant="rect" />
+        <Skeleton className={SKELETON_SIZE_PATTERNS.BUTTON_SM} variant="rect" />
       </div>
 
       <div className="mb-6 flex flex-wrap items-center gap-4">
-        <Skeleton className="h-10 w-40" variant="rect" />
-        <Skeleton className="h-4 w-20" variant="text" />
+        <Skeleton
+          className={SKELETON_SIZE_PATTERNS.BUTTON_RESPONSIVE_SM}
+          variant="rect"
+        />
+        <Skeleton className={SKELETON_SIZE_PATTERNS.BADGE_SM} variant="text" />
       </div>
 
       <div className={CARD_PATTERNS.OVERFLOW_HIDDEN}>
@@ -80,19 +90,37 @@ function DashboardSkeletonComponent() {
                   }}
                 >
                   <td className={TABLE_PATTERNS.cell.padding}>
-                    <Skeleton className="h-4 w-48 max-w-full" variant="text" />
+                    <Skeleton
+                      className={SKELETON_SIZE_PATTERNS.TAG_MD}
+                      variant="text"
+                    />
                   </td>
                   <td className={TABLE_PATTERNS.cell.padding}>
-                    <Skeleton className="h-5 w-20" variant="rect" />
+                    <Skeleton
+                      className={SKELETON_SIZE_PATTERNS.BADGE_SM}
+                      variant="rect"
+                    />
                   </td>
                   <td className={TABLE_PATTERNS.cell.padding}>
-                    <Skeleton className="h-4 w-24" variant="text" />
+                    <Skeleton
+                      className={SKELETON_SIZE_PATTERNS.TAG_SM}
+                      variant="text"
+                    />
                   </td>
                   <td className={TABLE_PATTERNS.actions.container}>
                     <div className={TABLE_PATTERNS.actions.buttonGroup}>
-                      <Skeleton className="h-6 w-16" variant="text" />
-                      <Skeleton className="h-6 w-12" variant="text" />
-                      <Skeleton className="h-6 w-14" variant="text" />
+                      <Skeleton
+                        className={SKELETON_SIZE_PATTERNS.TAG_SM}
+                        variant="text"
+                      />
+                      <Skeleton
+                        className={SKELETON_SIZE_PATTERNS.BADGE_SM}
+                        variant="text"
+                      />
+                      <Skeleton
+                        className={SKELETON_SIZE_PATTERNS.TAG_SM}
+                        variant="text"
+                      />
                     </div>
                   </td>
                 </tr>
@@ -103,7 +131,10 @@ function DashboardSkeletonComponent() {
       </div>
 
       <div className="mt-3 flex items-center gap-4">
-        <Skeleton className="h-3 w-32" variant="text" />
+        <Skeleton
+          className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
+          variant="text"
+        />
       </div>
     </div>
   );

@@ -1282,6 +1282,157 @@ export const SKELETON_PATTERNS = {
 } as const;
 
 /**
+ * Skeleton Size Patterns
+ * Centralizes common skeleton size combinations used across components
+ * Eliminates hardcoded className values like "h-6 w-3/4" in Skeleton components
+ */
+export const SKELETON_SIZE_PATTERNS = {
+  /** Title skeleton: h-6 w-3/4 */
+  TITLE: 'h-6 w-3/4',
+
+  /** Subtitle skeleton: h-5 w-1/2 */
+  SUBTITLE: 'h-5 w-1/2',
+
+  /** Body text skeleton: h-4 w-full */
+  BODY_FULL: 'h-4 w-full',
+
+  /** Body text skeleton 3/4 width: h-4 w-3/4 */
+  BODY_THREE_QUARTERS: 'h-4 w-3/4',
+
+  /** Body text skeleton 5/6 width: h-4 w-5/6 */
+  BODY_FIVE_SIXTHS: 'h-4 w-5/6',
+
+  /** Body text skeleton 2/3 width: h-4 w-2/3 */
+  BODY_TWO_THIRDS: 'h-4 w-2/3',
+
+  /** Body text skeleton 1/2 width: h-4 w-1/2 */
+  BODY_HALF: 'h-4 w-1/2',
+
+  /** Input skeleton: h-10 w-full */
+  INPUT_FULL: 'h-10 w-full',
+
+  /** Input skeleton: h-10 w-24 */
+  INPUT_SM: 'h-10 w-24',
+
+  /** Input skeleton: h-10 w-28 */
+  INPUT_MD: 'h-10 w-28',
+
+  /** Input skeleton: h-10 w-32 */
+  INPUT_LG: 'h-10 w-32',
+
+  /** Input skeleton: h-10 w-36 */
+  INPUT_XL: 'h-10 w-36',
+
+  /** Input skeleton: h-10 w-40 */
+  INPUT_XXL: 'h-10 w-40',
+
+  /** Button skeleton: h-9 w-28 */
+  BUTTON_SM: 'h-9 w-28',
+
+  /** Button skeleton: h-9 w-32 */
+  BUTTON_MD: 'h-9 w-32',
+
+  /** Large text skeleton: h-6 sm:h-8 w-36 sm:w-48 */
+  HEADING_SM: 'h-6 sm:h-8 w-36 sm:w-48',
+
+  /** Medium text skeleton: h-5 sm:h-6 w-3/4 */
+  SUBTITLE_SM: 'h-5 sm:h-6 w-3/4',
+
+  /** Small text skeleton: h-3 sm:h-4 w-full */
+  CAPTION_SM: 'h-3 sm:h-4 w-full',
+
+  /** Small text skeleton 5/6 width: h-3 sm:h-4 w-5/6 */
+  CAPTION_SM_FIVE_SIXTHS: 'h-3 sm:h-4 w-5/6',
+
+  /** Small text skeleton 11/12 width: h-3 sm:h-4 w-11/12 */
+  CAPTION_SM_ELEVEN_TWELFTHS: 'h-3 sm:h-4 w-11/12',
+
+  /** Small text skeleton 10/12 width: h-3 sm:h-4 w-10/12 */
+  CAPTION_SM_TEN_TWELFTHS: 'h-3 sm:h-4 w-10/12',
+
+  /** Small text skeleton 1/2 width: h-3 sm:h-4 w-1/2 */
+  CAPTION_SM_HALF: 'h-3 sm:h-4 w-1/2',
+
+  /** Large input skeleton: h-10 w-full sm:w-40 */
+  INPUT_RESPONSIVE_SM: 'h-10 w-full sm:w-40',
+
+  /** Large input skeleton: h-10 w-full sm:w-28 */
+  BUTTON_RESPONSIVE_SM: 'h-10 w-full sm:w-28',
+
+  /** Large input skeleton: h-10 w-full sm:w-36 */
+  BUTTON_RESPONSIVE_MD: 'h-10 w-full sm:w-36',
+
+  /** Medium text skeleton: h-4 sm:h-5 w-1/2 */
+  SUBTITLE_RESPONSIVE_SM: 'h-4 sm:h-5 w-1/2',
+
+  /** Medium text skeleton: h-4 sm:h-5 w-1/2 */
+  BODY_RESPONSIVE_SM: 'h-4 sm:h-5 w-1/2',
+
+  /** Container skeleton: h-24 w-full */
+  CONTAINER_LG: 'h-24 w-full',
+
+  /** Container skeleton: h-32 w-full */
+  CONTAINER_XL: 'h-32 w-full',
+
+  /** Avatar skeleton: h-8 w-8 */
+  AVATAR_SM: 'h-8 w-8',
+
+  /** Avatar skeleton: h-12 w-12 */
+  AVATAR_MD: 'h-12 w-12',
+
+  /** Avatar skeleton: h-16 w-16 */
+  AVATAR_LG: 'h-16 w-16',
+
+  /** Icon skeleton: h-5 w-5 */
+  ICON_SM: 'h-5 w-5',
+
+  /** Icon skeleton: h-6 w-6 */
+  ICON_MD: 'h-6 w-6',
+
+  /** Icon skeleton: h-8 w-8 */
+  ICON_LG: 'h-8 w-8',
+
+  /** Progress bar skeleton: h-2 w-full */
+  PROGRESS_SM: 'h-2 w-full',
+
+  /** Progress bar skeleton: h-3 w-full */
+  PROGRESS_MD: 'h-3 w-full',
+
+  /** Progress bar skeleton: h-4 w-full */
+  PROGRESS_LG: 'h-4 w-full',
+
+  /** Badge skeleton: h-5 w-12 */
+  BADGE_SM: 'h-5 w-12',
+
+  /** Badge skeleton: h-5 w-16 */
+  BADGE_MD: 'h-5 w-16',
+
+  /** Badge skeleton: h-5 w-20 */
+  BADGE_LG: 'h-5 w-20',
+
+  /** Tag skeleton: h-4 w-16 */
+  TAG_SM: 'h-4 w-16',
+
+  /** Tag skeleton: h-4 w-20 */
+  TAG_MD: 'h-4 w-20',
+
+  /** Tag skeleton: h-4 w-24 */
+  TAG_LG: 'h-4 w-24',
+
+  /** Divider skeleton: h-px w-full */
+  DIVIDER: 'h-px w-full',
+
+  /** Spacer skeleton: h-4 w-full */
+  SPACER_SM: 'h-4 w-full',
+
+  /** Spacer skeleton: h-6 w-full */
+  SPACER_MD: 'h-6 w-full',
+
+  /** Spacer skeleton: h-8 w-full */
+  SPACER_LG: 'h-8 w-full',
+} as const;
+
+/**
  * Gradient Patterns
  * Centralizes gradient styling used across components
  * Eliminates hardcoded gradient classes in login, signup, and other pages

@@ -15,6 +15,7 @@ import {
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   SPACING_PATTERNS,
+  SKELETON_SIZE_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -48,13 +49,28 @@ function TaskManagementSkeletonComponent() {
           className={`${FLEX_PATTERNS.BETWEEN_START} ${SPACING_PATTERNS.MB4}`}
         >
           <div className={SPACE_Y_PATTERNS.SM}>
-            <Skeleton className="h-6 w-48" variant="text" />
-            <Skeleton className="h-4 w-32" variant="text" />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.TAG_MD}
+              variant="text"
+            />
+            <Skeleton
+              className={SKELETON_SIZE_PATTERNS.TAG_SM}
+              variant="text"
+            />
           </div>
           <div className={`text-right ${SPACE_Y_PATTERNS.SM}`}>
-            <Skeleton className="h-8 w-16 ml-auto" variant="text" />
-            <Skeleton className="h-4 w-32 ml-auto" variant="text" />
-            <Skeleton className="h-3 w-40 ml-auto" variant="text" />
+            <Skeleton
+              className={`${SKELETON_SIZE_PATTERNS.ICON_LG} ml-auto`}
+              variant="text"
+            />
+            <Skeleton
+              className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ml-auto`}
+              variant="text"
+            />
+            <Skeleton
+              className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ml-auto`}
+              variant="text"
+            />
           </div>
         </div>
 
@@ -65,8 +81,14 @@ function TaskManagementSkeletonComponent() {
 
         {/* Action buttons skeleton */}
         <div className={`${FLEX_PATTERNS.ROW} ${SPACING_PATTERNS.GAP2}`}>
-          <Skeleton className="h-9 w-28" variant="rect" />
-          <Skeleton className="h-9 w-32" variant="rect" />
+          <Skeleton
+            className={SKELETON_SIZE_PATTERNS.BUTTON_SM}
+            variant="rect"
+          />
+          <Skeleton
+            className={SKELETON_SIZE_PATTERNS.BUTTON_MD}
+            variant="rect"
+          />
         </div>
       </div>
 
@@ -89,16 +111,25 @@ function TaskManagementSkeletonComponent() {
               {/* Deliverable header */}
               <div className={FLEX_PATTERNS.BETWEEN}>
                 <div className="flex-1">
-                  <Skeleton className="h-5 w-48 mb-2" variant="text" />
-                  <Skeleton className="h-4 w-64" variant="text" />
+                  <Skeleton
+                    className={`${SKELETON_SIZE_PATTERNS.TAG_MD} mb-2`}
+                    variant="text"
+                  />
+                  <Skeleton
+                    className={SKELETON_SIZE_PATTERNS.TAG_LG}
+                    variant="text"
+                  />
                 </div>
                 <div className={FLEX_PATTERNS.GAP_XL}>
                   <div className="text-right">
                     <Skeleton
-                      className="h-5 w-12 mb-1 ml-auto"
+                      className={`${SKELETON_SIZE_PATTERNS.BADGE_SM} mb-1 ml-auto`}
                       variant="text"
                     />
-                    <Skeleton className="h-3 w-24 ml-auto" variant="text" />
+                    <Skeleton
+                      className={`${SKELETON_SIZE_PATTERNS.CAPTION_SM} ml-auto`}
+                      variant="text"
+                    />
                   </div>
                   <svg
                     className={`${ICON_SIZES.LG} ${GRAY_CLASSES.TEXT_300}`}
