@@ -368,6 +368,10 @@ export const USER_ONBOARDING_LABELS = {
   COMPLETION_ARIA_LABEL: 'Onboarding complete',
   PROGRESS_ARIA_LABEL: 'Onboarding progress',
   SKIP_ARIA_LABEL: 'Skip onboarding tour',
+  SKIP_TOOLTIP_LABEL: 'Skip tour',
+  PREV_STEP_TOOLTIP_LABEL: 'Go to previous step',
+  NEXT_STEP_TOOLTIP_LABEL: 'Go to next step',
+  START_TOOLTIP_LABEL: 'Start using IdeaFlow',
   SEPARATOR: '·',
   BULLET: '•',
   TOUR_STEPS: [
