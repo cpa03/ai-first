@@ -15,6 +15,8 @@ import {
   KEYBOARD_SHORTCUT_HINT_LABELS,
   ICON_SIZES,
   LOCAL_STORAGE_KEYS,
+  SVG_STROKE_WIDTHS,
+  SVG_VIEWBOX,
 } from '@/lib/config';
 
 interface KeyboardShortcutHintProps {
@@ -118,9 +120,9 @@ function KeyboardShortcutHintComponent({
             <svg
               className={`${ICON_SIZES.MD} text-primary-600`}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <path
@@ -159,9 +161,9 @@ function KeyboardShortcutHintComponent({
             <svg
               className={ICON_SIZES.MD}
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
-              strokeWidth={2}
+              strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               aria-hidden="true"
             >
               <path
