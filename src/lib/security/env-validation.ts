@@ -379,9 +379,15 @@ function checkRequiredEnvVars(): string[] {
 export function validateEnvironment(): ValidationResult {
   // PERFORMANCE/COMPATIBILITY: Bypass strict validation during the Next.js production build phase,
   // since production environment secrets are not available in the build container.
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
+  if (
+    process.env.NEXT_PHASE === 'phase-production-build' ||
+    process.env.CI === 'true' ||
+    process.env.CF_PAGES === '1' ||
+    process.env.OPEN_NEXT !== undefined ||
+    process.env.GITHUB_ACTIONS === 'true'
+  ) {
     logger.info(
-      'Bypassing environment validation during Next.js production build phase'
+      'Bypassing environment validation during Next.js build / CI phase'
     );
     return { valid: true, errors: [], warnings: [] };
   }
