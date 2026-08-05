@@ -435,7 +435,11 @@ export default function UserOnboarding() {
 
         {/* Close button */}
         <div className="absolute top-3 right-3">
-          <Tooltip content="Skip tour" shortcut={['Esc']} position="bottom">
+          <Tooltip
+            content={USER_ONBOARDING_LABELS.SKIP_TOOLTIP_LABEL}
+            shortcut={['Esc']}
+            position="bottom"
+          >
             <button
               onClick={handleSkip}
               className={`${TEXT_COLORS.MUTED_DARK} ${TEXT_COLORS.HOVER_SECONDARY} ${TRANSITION_CLASSES.COLOR} p-1 ${FOCUS_RING_PATTERNS.DEFAULT} rounded-md`}
@@ -539,7 +543,10 @@ export default function UserOnboarding() {
           {/* Action buttons */}
           <div className="flex gap-2">
             {currentStepIndex > 0 && (
-              <Tooltip content="Go to previous step" shortcut={['←']}>
+              <Tooltip
+                content={USER_ONBOARDING_LABELS.PREV_STEP_TOOLTIP_LABEL}
+                shortcut={['←']}
+              >
                 <button
                   onClick={handlePrev}
                   className={`px-3 py-1.5 text-sm ${TEXT_COLORS.SECONDARY} ${TEXT_COLORS.HOVER_PRIMARY} ${BG_COLORS.LIGHTER} rounded-lg ${TRANSITION_CLASSES.COLOR} ${FOCUS_RING_PATTERNS.DEFAULT}`}
@@ -549,7 +556,11 @@ export default function UserOnboarding() {
               </Tooltip>
             )}
             <Tooltip
-              content={isLastStep ? 'Start using IdeaFlow' : 'Go to next step'}
+              content={
+                isLastStep
+                  ? USER_ONBOARDING_LABELS.START_TOOLTIP_LABEL
+                  : USER_ONBOARDING_LABELS.NEXT_STEP_TOOLTIP_LABEL
+              }
               shortcut={['→']}
             >
               <button
