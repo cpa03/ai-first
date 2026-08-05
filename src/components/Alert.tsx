@@ -19,6 +19,7 @@ import {
   ICON_SIZES,
   GRAY_CLASSES,
   TEXT_SIZE_CLASSES,
+  FOCUS_RING_OFFSET_PATTERNS,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -229,7 +230,7 @@ const AlertComponent = function Alert({
         ${styles.container} ${ALERT_BASE_STYLES.container}
         ${ALERT_BASE_STYLES.transition}
         ${visibilityClass}
-        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+        ${FOCUS_RING_OFFSET_PATTERNS.FOCUS}
         ${className}
       `}
       onMouseEnter={handleMouseEnter}
@@ -323,7 +324,7 @@ const AlertComponent = function Alert({
             )}
             <button
               onClick={handleSnooze}
-              className="text-xs font-medium opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded focus:outline-none focus:ring-1 focus:ring-current"
+              className={`text-xs font-medium opacity-50 hover:opacity-100 transition-opacity p-0.5 rounded ${FOCUS_RING_OFFSET_PATTERNS.SUBTLE}`}
               aria-label={ALERT_LABELS.SNOOZE_ARIA_LABEL}
               type="button"
             >

@@ -217,7 +217,7 @@ function AutoSaveIndicatorComponent({
               stroke="currentColor"
               strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
               strokeLinecap="round"
-              className={`text-primary-500 transition-all ${DURATION_TAILWIND[100]}`}
+              className={`${TEXT_COLORS.BRAND_LIGHT} transition-all ${DURATION_TAILWIND[100]}`}
               strokeDasharray={`${SVG_ANIMATION.PROGRESS.getCircumference(Number(SVG_CIRCLE.R_10))}`}
               strokeDashoffset={`${SVG_ANIMATION.PROGRESS.getDashOffset(SVG_ANIMATION.PROGRESS.getCircumference(Number(SVG_CIRCLE.R_10)), progress)}`}
             />
@@ -229,7 +229,7 @@ function AutoSaveIndicatorComponent({
           {saveState === 'typing' && <span className={PULSE_DOT} />}
           {saveState === 'saving' && (
             <svg
-              className={`${ICON_SIZES.SM_XS} text-primary-500 animate-spin`}
+              className={`${ICON_SIZES.SM_XS} ${TEXT_COLORS.BRAND_LIGHT} animate-spin`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               aria-hidden="true"

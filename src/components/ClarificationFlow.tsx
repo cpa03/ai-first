@@ -48,6 +48,7 @@ import {
   CLARIFICATION_TIMER_CONFIG,
   PY_CLASSES,
   SPACE_Y_PATTERNS,
+  FOCUS_RING_OFFSET_PATTERNS,
   FLEX_PATTERNS,
   SPACING_PATTERNS,
   SKELETON_SIZE_PATTERNS,
@@ -549,7 +550,7 @@ function ClarificationFlow({
         className={`group mb-6 ${BG_COLOR_CLASSES.PAGE} rounded-lg border ${BORDER_COLOR_CLASSES.LIGHT} overflow-hidden ${TRANSITION_CLASSES.DEFAULT}`}
       >
         <summary
-          className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} focus:outline-none focus:ring-2 focus:ring-primary-500 flex justify-between items-center list-none select-none`}
+          className={`px-4 py-3 text-sm font-medium ${TEXT_COLOR_CLASSES.BODY} cursor-pointer ${BG_COLOR_CLASSES.HOVER_SUBTLE} ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} flex justify-between items-center list-none select-none`}
         >
           <div className={FLEX_PATTERNS.GAP_MD}>
             <svg
