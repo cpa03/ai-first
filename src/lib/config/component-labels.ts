@@ -661,6 +661,11 @@ export const SCROLL_PROGRESS_LABELS = {
     `Page scroll progress: ${percentage}%`,
   /** Screen reader text for scroll progress */
   SR_TEXT: (percentage: number) => `${percentage}% scrolled`,
+  /** Tooltip text for click-to-scroll functionality */
+  CLICK_TO_SCROLL_TOOLTIP: 'Click to jump to this position',
+  /** ARIA label for click-to-scroll button */
+  CLICK_TO_SCROLL_ARIA: (percentage: number) =>
+    `Scroll to ${percentage}% of page`,
 } as const;
 
 /**
