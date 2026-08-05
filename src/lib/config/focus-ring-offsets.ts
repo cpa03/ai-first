@@ -24,9 +24,13 @@ export const RING_OFFSET_CLASSES = {
  * Replaces hardcoded focus-visible:ring-* focus-visible:ring-offset-* patterns
  */
 export const FOCUS_RING_OFFSET_PATTERNS = {
-  /** Standard focus ring with 2px offset */
+  /** Standard focus ring with 2px offset (focus-visible) */
   DEFAULT:
     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+
+  /** Standard focus ring with 2px offset (focus - for elements that need focus on click) */
+  FOCUS:
+    'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2',
 
   /** Focus ring with 1px offset for compact elements */
   COMPACT:
@@ -55,6 +59,13 @@ export const FOCUS_RING_OFFSET_PATTERNS = {
   /** Focus ring for checkboxes and small elements */
   CHECKBOX:
     'peer-focus-visible:ring-2 peer-focus-visible:ring-primary-500 peer-focus-visible:ring-offset-2',
+
+  /** Subtle focus ring with ring-current color */
+  SUBTLE: 'focus:outline-none focus:ring-1 focus:ring-current',
+
+  /** Focus ring with border-transparent for inputs */
+  INPUT:
+    'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
 } as const;
 
 /**

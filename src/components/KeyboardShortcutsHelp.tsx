@@ -716,7 +716,7 @@ function KeyboardShortcutsHelpComponent({
                 setSearchQuery(e.target.value);
                 setSelectedIndex(0);
               }}
-              className={`w-full pl-10 pr-10 py-2 text-sm border ${BORDER_COLORS.DEFAULT} rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder:${TEXT_COLORS.MUTED}`}
+              className={`w-full pl-10 pr-10 py-2 text-sm border ${BORDER_COLORS.DEFAULT} rounded-lg ${FOCUS_RING_OFFSET_PATTERNS.INPUT} placeholder:${TEXT_COLORS.MUTED}`}
               aria-label={KEYBOARD_SHORTCUTS_HELP_LABELS.SEARCH_ARIA_LABEL}
             />
             {searchQuery && (

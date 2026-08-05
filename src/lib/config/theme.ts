@@ -133,6 +133,7 @@ export const TEXT_COLORS = {
   INFO_LIGHT: 'text-blue-600',
   INFO_DARK: 'text-blue-900',
   BRAND: 'text-primary-700',
+  BRAND_600: 'text-primary-600',
   BRAND_LIGHT: 'text-primary-500',
   HOVER_SECONDARY: 'hover:text-gray-600',
   HOVER_PRIMARY: 'hover:text-gray-900',
@@ -167,6 +168,7 @@ export const BG_COLORS = {
   BRAND_100: 'bg-primary-100',
   BRAND_200: 'bg-primary-200',
   BRAND: 'bg-primary-600',
+  BRAND_500: 'bg-primary-500',
   BRAND_HOVER: 'hover:bg-primary-700',
 
   /** Darker background (gray-800) - for tooltips and dark UI elements */

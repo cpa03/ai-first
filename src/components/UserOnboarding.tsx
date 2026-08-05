@@ -424,7 +424,7 @@ export default function UserOnboarding() {
       >
         {/* Progress bar */}
         <div
-          className={`absolute top-0 left-0 h-1 bg-primary-500 rounded-t-xl transition-all ${DURATION_TAILWIND[300]}`}
+          className={`absolute top-0 left-0 h-1 ${BG_COLORS.BRAND_500} rounded-t-xl transition-all ${DURATION_TAILWIND[300]}`}
           style={{ width: `${progress}%` }}
           role="progressbar"
           aria-valuenow={progress}

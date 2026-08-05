@@ -9,6 +9,7 @@ import {
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
   ICON_SIZES,
+  FOCUS_RING_OFFSET_PATTERNS,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 
@@ -65,7 +66,7 @@ function ScrollToTopButtonComponent() {
         text-sm ${GRAY_CLASSES.TEXT_500}
         ${TRANSITION_CLASSES.COLOR} ease-out
         hover:text-primary-600
-        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md
+        ${FOCUS_RING_OFFSET_PATTERNS.FOCUS} rounded-md
         inline-flex items-center gap-1.5
         group
       `}

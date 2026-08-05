@@ -115,10 +115,10 @@ function KeyboardShortcutHintComponent({
       >
         <div className="flex items-start gap-3">
           <div
-            className={`flex-shrink-0 ${ICON_SIZES.XXL} rounded-lg bg-primary-100 flex items-center justify-center`}
+            className={`flex-shrink-0 ${ICON_SIZES.XXL} rounded-lg ${BG_COLORS.BRAND_100} flex items-center justify-center`}
           >
             <svg
-              className={`${ICON_SIZES.MD} text-primary-600`}
+              className={`${ICON_SIZES.MD} ${TEXT_COLORS.BRAND_600}`}
               fill="none"
               viewBox={SVG_VIEWBOX.STANDARD}
               stroke="currentColor"
