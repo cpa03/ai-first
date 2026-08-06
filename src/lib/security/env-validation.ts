@@ -351,7 +351,13 @@ function checkAiProviderKeyFormat(): string[] {
 
 function checkRequiredEnvVars(): string[] {
   const errors: string[] = [];
-  if (ENV_ACCESSORS.PLATFORM.CI()) return errors;
+  if (
+    ENV_ACCESSORS.PLATFORM.CI() ||
+    process.env.CF_PAGES === '1' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.CF_WORKER === 'true' ||
+    process.env.OPENNEXT_CLOUDFLARE === 'true'
+  ) return errors;
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
@@ -379,7 +385,13 @@ function checkRequiredEnvVars(): string[] {
 export function validateEnvironment(): ValidationResult {
   // PERFORMANCE/COMPATIBILITY: Bypass strict validation during the Next.js production build phase,
   // since production environment secrets are not available in the build container.
-  if (process.env.NEXT_PHASE === 'phase-production-build') {
+  if (
+    process.env.NEXT_PHASE === 'phase-production-build' ||
+    process.env.CF_PAGES === '1' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.CF_WORKER === 'true' ||
+    process.env.OPENNEXT_CLOUDFLARE === 'true'
+  ) {
     logger.info(
       'Bypassing environment validation during Next.js production build phase'
     );
