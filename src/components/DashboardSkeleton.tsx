@@ -13,6 +13,9 @@ import {
   FLEX_PATTERNS,
   SPACE_Y_PATTERNS,
   SKELETON_SIZE_PATTERNS,
+  MB_CLASSES,
+  MT_CLASSES,
+  COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 
@@ -26,7 +29,7 @@ function DashboardSkeletonComponent() {
     >
       <span className="sr-only">{DASHBOARD_LABELS.SKELETON_SR_TEXT}</span>
 
-      <div className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} mb-8`}>
+      <div className={`${FLEX_PATTERNS.RESPONSIVE_BETWEEN} ${MB_CLASSES.XXXL}`}>
         <div className={SPACE_Y_PATTERNS.SM}>
           <Skeleton
             className={SKELETON_SIZE_PATTERNS.HEADING_SM}
@@ -40,7 +43,9 @@ function DashboardSkeletonComponent() {
         <Skeleton className={SKELETON_SIZE_PATTERNS.BUTTON_SM} variant="rect" />
       </div>
 
-      <div className="mb-6 flex flex-wrap items-center gap-4">
+      <div
+        className={`${MB_CLASSES.XXL} flex flex-wrap items-center ${COMMON_SPACING_PATTERNS.FLEX_CENTER_LG}`}
+      >
         <Skeleton
           className={SKELETON_SIZE_PATTERNS.BUTTON_RESPONSIVE_SM}
           variant="rect"
@@ -130,7 +135,9 @@ function DashboardSkeletonComponent() {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-4">
+      <div
+        className={`${MT_CLASSES.LG} ${COMMON_SPACING_PATTERNS.FLEX_CENTER_LG}`}
+      >
         <Skeleton
           className={SKELETON_SIZE_PATTERNS.CAPTION_SM}
           variant="text"

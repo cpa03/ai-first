@@ -48,6 +48,8 @@ export const MT_CLASSES = {
   LG: 'mt-3',
   /** mt-4 = 16px */
   XL: 'mt-4',
+  /** mt-5 = 20px */
+  XXL_SM: 'mt-5',
   /** mt-6 = 24px */
   XXL: 'mt-6',
   /** mt-8 = 32px */
@@ -71,6 +73,8 @@ export const MB_CLASSES = {
   LG: 'mb-3',
   /** mb-4 = 16px */
   XL: 'mb-4',
+  /** mb-5 = 20px */
+  XXL_SM: 'mb-5',
   /** mb-6 = 24px */
   XXL: 'mb-6',
   /** mb-8 = 32px */
