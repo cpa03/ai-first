@@ -560,6 +560,7 @@ export const NOT_FOUND_PAGE_CONFIG = {
     STEP_3: 'delay-200',
     STEP_4: 'delay-250',
     STEP_5: 'delay-300',
+    STEP_6: 'delay-350',
   } as const,
 } as const;
 

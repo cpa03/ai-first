@@ -24,6 +24,10 @@ import {
   GRAY_CLASSES,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  TRANSITION_CLASSES,
+  TEXT_COLORS,
+  BG_COLORS,
+  BORDER_COLORS,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import { ERROR_ELEMENT_IDS } from '@/lib/config/element-ids';
@@ -317,6 +321,95 @@ export default function NotFound() {
                 </>
               )}
             </span>
+          </div>
+
+          {/* Micro-UX: Popular pages suggestions to help users find what they're looking for */}
+          {/* Provides quick access to common destinations, reducing frustration from 404 errors */}
+          <div
+            className={`mt-8 pt-6 border-t ${BORDER_COLORS.LIGHT} ${HERO_ENTRANCE} ${NOT_FOUND_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_6}`}
+          >
+            <h2
+              id="popular-pages-heading"
+              className={`text-sm font-medium ${GRAY_CLASSES.TEXT_700} mb-4 text-center`}
+            >
+              Popular pages
+            </h2>
+            <nav aria-labelledby="popular-pages-heading">
+              <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  {
+                    href: ROUTES.HOME,
+                    label: 'Home',
+                    description: 'Start a new idea',
+                    icon: (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                      />
+                    ),
+                  },
+                  {
+                    href: ROUTES.DASHBOARD,
+                    label: 'Dashboard',
+                    description: 'View your ideas',
+                    icon: (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                      />
+                    ),
+                  },
+                  {
+                    href: ROUTES.SIGNUP,
+                    label: 'Sign up',
+                    description: 'Create an account',
+                    icon: (
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                      />
+                    ),
+                  },
+                ].map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`group flex items-center gap-3 p-3 rounded-lg border ${BORDER_COLORS.LIGHT} ${BG_COLORS.DEFAULT} hover:${BORDER_COLORS.PRIMARY_LIGHT} hover:${BG_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT} focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2`}
+                    >
+                      <span
+                        className={`flex-shrink-0 w-10 h-10 rounded-full ${BG_COLORS.LIGHT} group-hover:${BG_COLORS.BRAND_LIGHT} flex items-center justify-center ${TRANSITION_CLASSES.DEFAULT}`}
+                      >
+                        <svg
+                          className={`w-5 h-5 ${GRAY_CLASSES.TEXT_500} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
+                          fill="none"
+                          viewBox={SVG_VIEWBOX.STANDARD}
+                          stroke="currentColor"
+                          strokeWidth={SVG_STROKE_WIDTHS.STANDARD}
+                          aria-hidden="true"
+                        >
+                          {item.icon}
+                        </svg>
+                      </span>
+                      <span className="text-left">
+                        <span
+                          className={`block text-sm font-medium ${GRAY_CLASSES.TEXT_900} group-hover:${TEXT_COLORS.BRAND_LIGHT} ${TRANSITION_CLASSES.DEFAULT}`}
+                        >
+                          {item.label}
+                        </span>
+                        <span
+                          className={`block text-xs ${GRAY_CLASSES.TEXT_500}`}
+                        >
+                          {item.description}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
