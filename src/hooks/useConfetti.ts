@@ -3,7 +3,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { CONFETTI_COLORS, COMPONENT_CONFIG } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { generateId } from '@/lib/security/crypto';
 
 export interface ConfettiParticle {
   id: string;
@@ -13,6 +12,13 @@ export interface ConfettiParticle {
   delay: number;
   size: number;
 }
+
+/**
+ * Module-level auto-incrementing counter for generating high-performance unique
+ * IDs for transient UI visual assets (e.g. confetti particles) without the heavy
+ * CPU/entropy overhead of cryptographically secure ID generation (such as `generateId()`).
+ */
+let confettiIdCounter = 0;
 
 /**
  * useConfetti Hook
@@ -57,8 +63,10 @@ export function useConfetti() {
         CONFETTI_COLORS.MIN_SIZE +
         Math.random() * CONFETTI_COLORS.MAX_SIZE_VARIANCE;
 
+      // PERFORMANCE (⚡ Bolt): Use an incrementing counter instead of `generateId()`
+      // to avoid expensive cryptographic random UUID generation overhead during animation triggers.
       newParticles.push({
-        id: `confetti-${Date.now()}-${i}-${generateId()}`,
+        id: `confetti-${Date.now()}-${i}-${confettiIdCounter++}`,
         x: Math.cos(angle) * distance,
         y: Math.sin(angle) * distance,
         color: CONFETTI_COLORS.PRIMARY[i % CONFETTI_COLORS.PRIMARY.length],
