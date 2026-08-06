@@ -47,3 +47,9 @@ This document tracks security vulnerabilities discovered and lessons learned to 
 **Vulnerability:** The Server-Side Request Forgery (SSRF) detection patterns in `src/lib/config/security-patterns.ts` were vulnerable to bypasses using shorthand IPv4 loopback notation (e.g. `127.1`, `127.0.1`), class A loopback subnet ranges (e.g., `127.12.34.56`), and non-standard/omitted protocol prefixes (e.g., `//0x7f000001` or raw numeric/hex formats like `2130706433` or `0x7f000001`).
 **Learning:** Security rules that strictly check contiguous strings or expect specific protocol schemes (`http(s)://`) are easily bypassed by browsers and parsers that automatically normalize or resolve alternate IP formats, protocol-relative syntax, or omitted schemes.
 **Prevention:** Design input validation and security patterns defensively to match any standard loopback address in the entire `127.0.0.0/8` block and support optional, omitted, or protocol-relative schemes for non-standard IP encodings.
+
+## 2026-08-06 - SSRF Bypass via Advanced IPv6 Loopback and Unspecified Addresses
+
+**Vulnerability:** SSRF blocklist patterns in `src/lib/config/security-patterns.ts` did not detect advanced/alternate IPv6 loopback (e.g., `[0:0:0:0:0:0:0:1]`, `[0::1]`) and unspecified (e.g., `[0:0:0:0:0:0:0:0]`, `[0::0]`, `[0::]`) representations. Attackers can leverage these representations to bypass naive SSRF filters since web clients still resolve them to local targets.
+**Learning:** Regex-based SSRF mitigations often overlook the rich variety of formats supported by IPv6 (e.g., full-length, double-colon compressed, optional trailing colons, and varying zero-padding).
+**Prevention:** Always design IPv6 loopback patterns defensively with robust patterns that match brackets containing any valid IPv6 loopback and unspecified variants (both compressed and full-length, ending in 0 or 1).

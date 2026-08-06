@@ -209,7 +209,12 @@ export const ENV_ACCESSORS = {
   /** Platform detection keys */
   PLATFORM: {
     NODE_ENV: () => EnvLoader.string(PLATFORM_ENV_KEYS.NODE_ENV, 'development'),
-    CI: () => EnvLoader.boolean(PLATFORM_ENV_KEYS.CI, false),
+    CI: () =>
+      EnvLoader.boolean(PLATFORM_ENV_KEYS.CI, false) ||
+      process.env.GITHUB_ACTIONS === 'true' ||
+      process.env.VERCEL === '1' ||
+      process.env.CF_PAGES === '1' ||
+      process.env.CF_WORKER === 'true',
     JEST_WORKER_ID: () =>
       EnvLoader.string(PLATFORM_ENV_KEYS.JEST_WORKER_ID, ''),
     VITEST_WORKER_ID: () =>
