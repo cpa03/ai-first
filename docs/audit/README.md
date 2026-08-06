@@ -12,7 +12,9 @@ This directory contains security audits, code quality reports, and compliance in
 | [ISSUE-04-structured-logging.md](./ISSUE-04-structured-logging.md)       | 2026-07    | Structured logging implementation           |
 | [ISSUE-05-cloudflare-deployment.md](./ISSUE-05-cloudflare-deployment.md) | 2026-07    | Cloudflare deployment audit                 |
 | [flexy-modularization-audit.md](./flexy-modularization-audit.md)         | 2026-07-24 | Flexy modularity improvement audit          |
-| [browser-console-audit-20260805.md](./browser-console-audit-20260805.md) | 2026-08-05 | Browser console & Lighthouse audit (latest) |
+| [browser-console-audit-20260806.md](./browser-console-audit-20260806.md) | 2026-08-06 | Browser console & Lighthouse audit (latest) |
+| [BROCULA-20260806.md](./BROCULA-20260806.md)                             | 2026-08-06 | BroCula browser audit (latest)              |
+| [browser-console-audit-20260805.md](./browser-console-audit-20260805.md) | 2026-08-05 | Browser console & Lighthouse audit          |
 | [BROCULA-AUDIT-20260804.md](./BROCULA-AUDIT-20260804.md)                 | 2026-08-04 | BroCula browser audit                       |
 | [browser-audit-2026-08-01.md](./browser-audit-2026-08-01.md)             | 2026-08-01 | Browser audit                               |
 | [browser-audit-20260731.md](./browser-audit-20260731.md)                 | 2026-07-31 | Browser compatibility audit                 |
