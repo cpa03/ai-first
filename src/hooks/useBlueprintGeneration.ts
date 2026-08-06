@@ -6,7 +6,7 @@ import { UI_CONFIG } from '@/lib/config/constants';
 import { ANIMATION_DELAYS } from '@/lib/config';
 import { createLogger } from '@/lib/logger';
 import { API_ERROR_MESSAGES } from '@/lib/config/error-messages';
-import { ToastOptions } from '@/components/ToastContainer';
+import { useToast } from '@/hooks/useAnnouncement';
 
 const logger = createLogger('useBlueprintGeneration');
 
@@ -156,14 +156,12 @@ export function useBlueprintGeneration(
     a.click();
   }, [blueprint]);
 
+  const { showToast } = useToast();
+
   /**
    * Copies the blueprint to clipboard with toast feedback
    */
   const handleCopy = useCallback(async () => {
-    const win = window as unknown as Window & {
-      showToast?: (options: ToastOptions) => void;
-    };
-
     try {
       await navigator.clipboard.writeText(blueprint);
       setCopied(true);
@@ -172,24 +170,20 @@ export function useBlueprintGeneration(
         UI_CONFIG.COPY_FEEDBACK_DURATION
       );
 
-      if (typeof window !== 'undefined' && win.showToast) {
-        win.showToast({
-          type: 'success',
-          message: API_ERROR_MESSAGES.HOOKS.BLUEPRINT_COPIED,
-          duration: UI_CONFIG.TOAST_DURATION,
-        });
-      }
+      showToast({
+        type: 'success',
+        message: API_ERROR_MESSAGES.HOOKS.BLUEPRINT_COPIED,
+        duration: UI_CONFIG.TOAST_DURATION,
+      });
     } catch (err) {
       logger.error('Failed to copy blueprint', err);
-      if (typeof window !== 'undefined' && win.showToast) {
-        win.showToast({
-          type: 'error',
-          message: API_ERROR_MESSAGES.HOOKS.BLUEPRINT_COPY_FAILED,
-          duration: UI_CONFIG.TOAST_DURATION,
-        });
-      }
+      showToast({
+        type: 'error',
+        message: API_ERROR_MESSAGES.HOOKS.BLUEPRINT_COPY_FAILED,
+        duration: UI_CONFIG.TOAST_DURATION,
+      });
     }
-  }, [blueprint]);
+  }, [blueprint, showToast]);
 
   /**
    * Dismisses the celebration animation
