@@ -264,7 +264,10 @@ Older audit reports (2026-07-08 through 2026-07-29) are archived in [audit/archi
 
 ### Active Reports
 
-- [Repository Maintenance Report - 2026-08-04](./maintenance/2026-08-04-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure (latest)
+- [Repository Maintenance Report - 2026-08-06](./maintenance/2026-08-06-repository-maintenance-report.md) - Comprehensive health check: lint/type-check, stale branch cleanup, documentation sync (latest)
+- [Repository Maintenance Report - 2026-08-05](./maintenance/2026-08-05-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, empty directory cleanup
+- [Repository Health Check - 2026-08-05](./maintenance/2026-08-05-health-check.md) - Repository health check with branch analysis
+- [Repository Maintenance Report - 2026-08-04](./maintenance/2026-08-04-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
 - [Repository Maintenance Report - 2026-08-03](./maintenance/2026-08-03-repository-maintenance-report.md) - Comprehensive health check: build/lint/tests, documentation, repository structure
 - [BugFixer Audit - 2026-08-03](./maintenance/2026-08-03-bugfixer-audit.md) - BugFixer comprehensive audit
 - [CMZ Execution Log - 2026-08-02](./maintenance/2026-08-02-execution-log.md) - CMZ autonomous agent execution log
