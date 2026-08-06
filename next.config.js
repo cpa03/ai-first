@@ -2,8 +2,11 @@ const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
 
-const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
-initOpenNextCloudflareForDev();
+// Only initialize Cloudflare dev mode in development
+if (process.env.NODE_ENV !== 'production') {
+  const { initOpenNextCloudflareForDev } = require('@opennextjs/cloudflare');
+  initOpenNextCloudflareForDev();
+}
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
