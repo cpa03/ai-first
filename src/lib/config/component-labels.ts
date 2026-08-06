@@ -666,6 +666,11 @@ export const SCROLL_PROGRESS_LABELS = {
   /** ARIA label for click-to-scroll button */
   CLICK_TO_SCROLL_ARIA: (percentage: number) =>
     `Scroll to ${percentage}% of page`,
+  /** ARIA label for scroll progress with keyboard navigation instructions */
+  KEYBOARD_ARIA: (percentage: number) =>
+    `Scroll progress: ${percentage}%. Use arrow keys to navigate.`,
+  /** Keyboard navigation instructions tooltip */
+  KEYBOARD_HINT: 'Use arrow keys to navigate',
 } as const;
 
 /**
