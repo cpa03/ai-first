@@ -189,9 +189,9 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${isClickable ? `cursor-pointer hover:scale-125 ${FOCUS_RING_PATTERNS.DEFAULT}` : 'cursor-default'}
                       ${
                         step.current
-                          ? `${ICON_SIZES.MD} bg-primary-600 scale-110 shadow-md shadow-primary-200 animate-gentle-pulse`
+                          ? `${ICON_SIZES.MD} ${BG_COLORS.BRAND} scale-110 shadow-md shadow-primary-200 animate-gentle-pulse`
                           : step.completed
-                            ? `${ICON_SIZES.SM} bg-primary-600 ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
+                            ? `${ICON_SIZES.SM} ${BG_COLORS.BRAND} ${!prefersReducedMotion && animatingStep === index ? 'animate-step-check-pop' : ''}`
                             : `${ICON_SIZES.SM} ${BORDER_COLOR_CLASSES.DEFAULT}`
                       }
                     `}
@@ -232,7 +232,7 @@ const ProgressStepperComponent = function ProgressStepper({
           )}
         >
           <div
-            className={`h-full bg-primary-600 rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}`}
+            className={`h-full ${BG_COLORS.BRAND} rounded-full ${TRANSITION_CLASSES.SLOW_EASE_OUT}`}
             style={{ width: `${animatedProgress}%` }}
           />
         </div>
@@ -267,7 +267,7 @@ const ProgressStepperComponent = function ProgressStepper({
                       ${isClickable ? 'group-hover:scale-110 group-hover:shadow-md group-focus-visible:ring-2 group-focus-visible:ring-primary-500 group-focus-visible:ring-offset-2' : ''}
                       ${
                         step.completed
-                          ? 'border-primary-600 bg-primary-600 text-white'
+                          ? `border-primary-600 ${BG_COLORS.BRAND} text-white`
                           : step.current
                             ? 'border-primary-600 text-primary-600 animate-gentle-pulse'
                             : `${BORDER_COLOR_CLASSES.DEFAULT} ${TEXT_COLOR_CLASSES.MUTED}`
