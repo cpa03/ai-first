@@ -23,7 +23,7 @@ import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
  * Follows the pattern established by ScrollToTop component for consistency.
  */
 function ScrollToTopButtonComponent() {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHoveredOrFocused, setIsHoveredOrFocused] = useState(false);
   const prefersReducedMotion = usePrefersReducedMotion();
 
   const handleScrollToTop = useCallback(() => {
@@ -60,8 +60,10 @@ function ScrollToTopButtonComponent() {
       type="button"
       onClick={handleScrollToTop}
       onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => setIsHoveredOrFocused(true)}
+      onMouseLeave={() => setIsHoveredOrFocused(false)}
+      onFocus={() => setIsHoveredOrFocused(true)}
+      onBlur={() => setIsHoveredOrFocused(false)}
       className={`
         text-sm ${GRAY_CLASSES.TEXT_500}
         ${TRANSITION_CLASSES.COLOR} ease-out
@@ -75,7 +77,7 @@ function ScrollToTopButtonComponent() {
       <span>Scroll to top</span>
       <svg
         className={`${ICON_SIZES.SM} transition-transform ${TRANSITION_CLASSES.DEFAULT} ${
-          isHovered && !prefersReducedMotion ? '-translate-y-0.5' : ''
+          isHoveredOrFocused && !prefersReducedMotion ? '-translate-y-0.5' : ''
         }`}
         fill="none"
         viewBox={SVG_VIEWBOX.STANDARD}
