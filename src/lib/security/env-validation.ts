@@ -354,6 +354,8 @@ function checkRequiredEnvVars(): string[] {
   if (
     ENV_ACCESSORS.PLATFORM.CI() ||
     process.env.CF_PAGES === '1' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.CF_WORKER === 'true' ||
     process.env.OPENNEXT_CLOUDFLARE === 'true'
   ) return errors;
   const required = [
@@ -386,6 +388,8 @@ export function validateEnvironment(): ValidationResult {
   if (
     process.env.NEXT_PHASE === 'phase-production-build' ||
     process.env.CF_PAGES === '1' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.CF_WORKER === 'true' ||
     process.env.OPENNEXT_CLOUDFLARE === 'true'
   ) {
     logger.info(
