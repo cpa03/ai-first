@@ -248,27 +248,28 @@ validate_ai_providers() {
         if [[ $OPENAI_API_KEY =~ ^sk-.* ]]; then
             print_status "OK" "OpenAI API key format is valid"
         else
-            print_status "WARN" "OpenAI API key format may be invalid"
+            print_status "WARN" "OpenAI API key format may be invalid (expected: sk-...)"
         fi
-    else
-        print_status "INFO" "OPENAI_API_KEY is not set"
     fi
     
     if [ "$has_anthropic" = true ]; then
         if [[ $ANTHROPIC_API_KEY =~ ^sk-ant-.* ]]; then
             print_status "OK" "Anthropic API key format is valid"
         else
-            print_status "WARN" "Anthropic API key format may be invalid"
+            print_status "WARN" "Anthropic API key format may be invalid (expected: sk-ant-...)"
         fi
-    else
-        print_status "INFO" "ANTHROPIC_API_KEY is not set"
     fi
     
     if [ "$has_openai" = true ] || [ "$has_anthropic" = true ]; then
+        local provider_count=0
+        [ "$has_openai" = true ] && ((provider_count++))
+        [ "$has_anthropic" = true ] && ((provider_count++))
+        print_status "OK" "AI provider configured ($provider_count of 2 set - at least one required)"
         return 0
     else
-        print_status "ERROR" "At least one AI provider (OPENAI_API_KEY or ANTHROPIC_API_KEY) must be configured"
-        print_status "INFO" "Set at least one of these in your .env.local file"
+        print_status "ERROR" "At least one AI provider is REQUIRED"
+        print_status "INFO" "Set OPENAI_API_KEY or ANTHROPIC_API_KEY in your .env.local file"
+        print_status "INFO" "See docs/environment-setup.md for AI provider setup instructions"
         return 1
     fi
 }
