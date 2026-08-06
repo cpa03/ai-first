@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useState, useEffect, useRef } from 'react';
 import {
   DURATION_TAILWIND,
   SVG_SIZES,
@@ -35,13 +35,36 @@ function CapsLockWarningComponent({
   className = '',
 }: CapsLockWarningProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
+  const prevIsOnRef = useRef(isOn);
 
-  if (!isOn) return null;
+  useEffect(() => {
+    if (isOn && !prevIsOnRef.current) {
+      setShouldRender(true);
+      setIsExiting(false);
+    }
+    prevIsOnRef.current = isOn;
+  }, [isOn]);
+
+  useEffect(() => {
+    if (!isOn && prevIsOnRef.current) {
+      setIsExiting(true);
+      // Allow the exit animation to complete before unmounting
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsExiting(false);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [isOn]);
+
+  if (!shouldRender) return null;
 
   return (
     <div
       className={`flex items-center gap-1.5 ${TEXT_COLORS.WARNING_LIGHT} text-xs font-medium transition-all ${DURATION_TAILWIND[200]} ease-out ${
-        prefersReducedMotion ? '' : FADE_IN
+        prefersReducedMotion ? '' : isExiting ? 'opacity-0 scale-95' : FADE_IN
       } ${className}`}
       role="status"
       aria-live="polite"
