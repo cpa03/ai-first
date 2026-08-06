@@ -242,6 +242,13 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
       description: 'Localhost SSRF attempt',
     },
     {
+      // SECURITY: Added to detect advanced IPv6 loopback (e.g., [0:0:0:0:0:0:0:1], [0::1])
+      // and unspecified (e.g., [0:0:0:0:0:0:0:0], [0::0], [0::]) loopback representations.
+      pattern: /(?:\[0*(?:0{1,4}:){1,7}0*1\]|\[0*::+0*1\]|\[0*(?:0{1,4}:){1,7}0*0\]|\[0*::+0*0?\])/i,
+      severity: 2,
+      description: 'Advanced IPv6 loopback SSRF attempt',
+    },
+    {
       pattern:
         /(169\.254\.169\.254|168\.63\.129\.16|100\.100\.100\.200|192\.0\.0\.192|metadata\.google|fd00:ec2::254)/i,
       severity: 3,
