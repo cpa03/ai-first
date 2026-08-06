@@ -208,7 +208,10 @@ function validateEnvironmentConfig(): { errors: string[]; warnings: string[] } {
     process.env.CI === 'true' ||
     process.env.GITHUB_ACTIONS === 'true' ||
     process.env.VERCEL === '1' ||
-    process.env.CF_WORKER === 'true';
+    process.env.CF_WORKER === 'true' ||
+    process.env.CF_PAGES === '1' ||
+    process.env.CF_PAGES === 'true' ||
+    process.env.OPENNEXT_CLOUDFLARE === 'true';
 
   const requiredEnvVars = APP_CONFIG.ENV_VARS.REQUIRED;
   const missingVars: string[] = [];
