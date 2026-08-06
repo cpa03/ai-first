@@ -15,6 +15,7 @@ import {
   MESSAGES,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
+import { useToast } from '@/hooks/useAnnouncement';
 
 export interface DeliverableWithTasks extends Deliverable {
   tasks: Task[];
@@ -62,6 +63,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
   const [expandedDeliverables, setExpandedDeliverables] = useState<Set<string>>(
     new Set()
   );
+  const { showToast } = useToast();
 
   // Track previous data for rollback on error (per-task to handle rapid toggles)
   const previousDataByTaskRef = useRef<Map<string, TasksResponse | null>>(
@@ -274,10 +276,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
           triggerHapticFeedback();
           const task = findTask();
           if (task) {
-            const win = window as unknown as {
-              showToast?: (options: { type: string; message: string }) => void;
-            };
-            win.showToast?.({
+            showToast({
               type: 'success',
               message: MESSAGES.TASK_MANAGEMENT.TASK_COMPLETED_SUCCESS(
                 task.title
@@ -333,10 +332,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         }
 
         if (typeof window !== 'undefined') {
-          const win = window as unknown as {
-            showToast?: (options: { type: string; message: string }) => void;
-          };
-          win.showToast?.({
+          showToast({
             type: 'error',
             message:
               err instanceof Error
@@ -354,7 +350,7 @@ export function useTaskManagement(ideaId: string): UseTaskManagementReturn {
         setUpdatingTaskId(null);
       }
     },
-    [logger, applyTaskStatusUpdate]
+    [logger, applyTaskStatusUpdate, showToast]
   );
 
   // Toggle deliverable expansion

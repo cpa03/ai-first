@@ -63,6 +63,11 @@ jest.mock('@/lib/config', () => ({
   ANIMATION_DELAYS: {
     CLEANUP: 100,
   },
+  COMPONENT_CONFIG: {
+    TOAST: {
+      SHORT_DURATION_MS: 3000,
+    },
+  },
 }));
 
 describe('useBlueprintGeneration', () => {
