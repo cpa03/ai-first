@@ -35,7 +35,7 @@ function CapsLockWarningComponent({
   className = '',
 }: CapsLockWarningProps) {
   const prefersReducedMotion = usePrefersReducedMotion();
-  const [shouldRender, setShouldRender] = useState(false);
+  const [shouldRender, setShouldRender] = useState(isOn);
   const [isExiting, setIsExiting] = useState(false);
   const prevIsOnRef = useRef(isOn);
 
