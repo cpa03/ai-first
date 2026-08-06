@@ -19,6 +19,8 @@ import {
   SVG_CIRCLE,
   SVG_ANIMATION,
   ICON_SIZES,
+  COMMON_SPACING_PATTERNS,
+  COORDINATE_POSITION_PATTERNS,
 } from '@/lib/config';
 import Tooltip from './Tooltip';
 
@@ -188,7 +190,7 @@ function AutoSaveIndicatorComponent({
 
   return (
     <div
-      className={`flex items-center gap-2 text-xs transition-all ${DURATION_TAILWIND[300]} ${className}`}
+      className={`${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs transition-all ${DURATION_TAILWIND[300]} ${className}`}
       aria-live="polite"
       aria-atomic="true"
     >
@@ -225,7 +227,9 @@ function AutoSaveIndicatorComponent({
         </svg>
 
         {/* State Icon */}
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className={`${COORDINATE_POSITION_PATTERNS.INSET} flex items-center justify-center`}
+        >
           {saveState === 'typing' && <span className={PULSE_DOT} />}
           {saveState === 'saving' && (
             <svg
@@ -277,14 +281,14 @@ function AutoSaveIndicatorComponent({
         {saveState === 'typing' && AUTO_SAVE_INDICATOR_LABELS.TYPING}
         {saveState === 'saving' && AUTO_SAVE_INDICATOR_LABELS.SAVING}
         {saveState === 'saved' && (
-          <span className="flex items-center gap-1">
+          <span className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
             <span className={`animate-in fade-in ${DURATION_TAILWIND[200]}`}>
               {AUTO_SAVE_INDICATOR_LABELS.SAVED}
             </span>
             {lastSaved && (
               <Tooltip
                 content={
-                  <div className="flex flex-col gap-1">
+                  <div className={COMMON_SPACING_PATTERNS.FLEX_COL_SM}>
                     <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
                       {AUTO_SAVE_INDICATOR_LABELS.LAST_SAVED}
                     </span>

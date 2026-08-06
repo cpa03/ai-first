@@ -17,6 +17,7 @@ import {
   LOCAL_STORAGE_KEYS,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 
 interface KeyboardShortcutHintProps {
@@ -113,7 +114,7 @@ function KeyboardShortcutHintComponent({
             : `${UI_CONFIG.KEYBOARD_HINT_EXIT_ANIMATION}ms`,
         }}
       >
-        <div className="flex items-start gap-3">
+        <div className={COMMON_SPACING_PATTERNS.FLEX_START_MD}>
           <div
             className={`flex-shrink-0 ${ICON_SIZES.XXL} rounded-lg ${BG_COLORS.BRAND_100} flex items-center justify-center`}
           >
