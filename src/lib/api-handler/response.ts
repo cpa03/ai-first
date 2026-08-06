@@ -4,24 +4,16 @@ import { APP_CONFIG } from '@/lib/config/app';
 import type { RateLimitInfo } from '@/lib/rate-limit';
 import type { ApiResponse } from './types';
 import { generateRequestId } from '@/lib/errors';
-import type { ErrorCode } from '@/lib/errors';
+import type { ErrorCode, ErrorResponse } from '@/lib/errors';
 
 const API_VERSION = APP_CONFIG.VERSION;
 
 /**
- * Standard error response format matching ApiErrorResponse interface
+ * Standard error response format.
+ *
+ * @see {@link ErrorResponse} in errors/classes.ts for the canonical interface definition
  */
-export interface StandardErrorResponse {
-  success: false;
-  error: string;
-  code: string;
-  fingerprint: string;
-  details?: Array<{ field?: string; message: string; code?: string }>;
-  timestamp: string;
-  requestId: string;
-  retryable: boolean;
-  suggestions?: string[];
-}
+export type StandardErrorResponse = ErrorResponse;
 
 /**
  * Creates a standardized error response with all required fields
