@@ -152,7 +152,7 @@ function ScrollProgressComponent() {
       ref={barRef}
       className={`${SCROLL_PROGRESS_BAR} ${
         isHovered || isDragging ? 'h-1.5 cursor-pointer' : 'cursor-pointer'
-      } ${TRANSITION_CLASSES.DEFAULT}`}
+      } focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white/60 ${TRANSITION_CLASSES.DEFAULT}`}
       style={{ zIndex: Z_INDEX_LAYERS.STICKY }}
       role="slider"
       aria-valuenow={displayPercentage}
@@ -160,11 +160,11 @@ function ScrollProgressComponent() {
       aria-valuemax={100}
       aria-label={
         showPercentage
-          ? SCROLL_PROGRESS_LABELS.CLICK_TO_SCROLL_ARIA(displayPercentage)
+          ? SCROLL_PROGRESS_LABELS.KEYBOARD_ARIA(displayPercentage)
           : SCROLL_PROGRESS_LABELS.ARIA_LABEL
       }
-      aria-roledescription="Click to scroll"
-      title={SCROLL_PROGRESS_LABELS.CLICK_TO_SCROLL_TOOLTIP}
+      aria-roledescription="Use arrow keys to navigate"
+      title={SCROLL_PROGRESS_LABELS.KEYBOARD_HINT}
       onClick={handleClick}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -175,12 +175,52 @@ function ScrollProgressComponent() {
         setIsDragging(false);
       }}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          window.scrollTo({
-            top: (scrollPercent / 100) * document.documentElement.scrollHeight,
-            behavior: prefersReducedMotion ? 'auto' : 'smooth',
-          });
+        const docHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
+        const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowUp': {
+            e.preventDefault();
+            const step = e.shiftKey ? 20 : 5;
+            const nextPercent = Math.min(scrollPercent + step, 100);
+            window.scrollTo({
+              top: (nextPercent / 100) * docHeight,
+              behavior,
+            });
+            break;
+          }
+          case 'ArrowLeft':
+          case 'ArrowDown': {
+            e.preventDefault();
+            const step = e.shiftKey ? 20 : 5;
+            const prevPercent = Math.max(scrollPercent - step, 0);
+            window.scrollTo({
+              top: (prevPercent / 100) * docHeight,
+              behavior,
+            });
+            break;
+          }
+          case 'Home': {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior });
+            break;
+          }
+          case 'End': {
+            e.preventDefault();
+            window.scrollTo({ top: docHeight, behavior });
+            break;
+          }
+          case 'Enter':
+          case ' ': {
+            e.preventDefault();
+            window.scrollTo({
+              top: (scrollPercent / 100) * docHeight,
+              behavior,
+            });
+            break;
+          }
         }
       }}
       tabIndex={0}
