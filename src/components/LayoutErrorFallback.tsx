@@ -14,6 +14,9 @@ import {
   BORDER_COLORS,
   TEXT_COLORS,
   TEXT_SIZE_CLASSES,
+  RESPONSIVE_SPACING,
+  MT_CLASSES,
+  COMMON_SPACING_PATTERNS,
 } from '@/lib/config';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 
@@ -57,8 +60,10 @@ function LayoutErrorFallbackComponent({
       >
         <Alert type="error" title={title}>
           {message}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center mt-4">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+          <div
+            className={`${RESPONSIVE_SPACING.RESPONSIVE_ROW} justify-center ${MT_CLASSES.XL}`}
+          >
+            <div className={RESPONSIVE_SPACING.RESPONSIVE_GAP}>
               <Button
                 variant="primary"
                 onClick={() => window.location.reload()}
@@ -66,7 +71,7 @@ function LayoutErrorFallbackComponent({
                 {LAYOUT_ERROR_LABELS.RETRY_BUTTON}
               </Button>
               <span
-                className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
+                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED}`}
                 aria-hidden="true"
               >
                 <kbd
@@ -77,12 +82,12 @@ function LayoutErrorFallbackComponent({
                 <span>to retry</span>
               </span>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            <div className={RESPONSIVE_SPACING.RESPONSIVE_GAP}>
               <Link href={ROUTES.HOME} passHref>
                 <Button variant="secondary">{homeLabel}</Button>
               </Link>
               <span
-                className={`hidden sm:flex items-center gap-1 text-xs ${TEXT_COLORS.MUTED}`}
+                className={`hidden sm:flex ${COMMON_SPACING_PATTERNS.FLEX_CENTER_SM} text-xs ${TEXT_COLORS.MUTED}`}
                 aria-hidden="true"
               >
                 <kbd

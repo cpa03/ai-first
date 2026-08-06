@@ -927,3 +927,18 @@ export {
   ARROW_DOWN,
   REFRESH_CIRCLE,
 } from './svg-icon-paths';
+
+// Positioning Configuration
+// Centralizes all hardcoded positioning values (top, right, bottom, left)
+export {
+  TOP_CLASSES,
+  RIGHT_CLASSES,
+  BOTTOM_CLASSES,
+  LEFT_CLASSES,
+  COORDINATE_POSITION_PATTERNS,
+  type TopClasses,
+  type RightClasses,
+  type BottomClasses,
+  type LeftClasses,
+  type CoordinatePositionPatterns,
+} from './positioning';

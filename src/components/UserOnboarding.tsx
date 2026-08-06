@@ -33,6 +33,8 @@ import {
 } from '@/lib/config/ui-text-sizes';
 import { CONTAINER_WIDTH_CLASSES } from '@/lib/config/ui-dimensions';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
+import { COORDINATE_POSITION_PATTERNS } from '@/lib/config/positioning';
+import { MT_CLASSES, COMMON_SPACING_PATTERNS } from '@/lib/config/spacing';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -434,7 +436,7 @@ export default function UserOnboarding() {
         />
 
         {/* Close button */}
-        <div className="absolute top-3 right-3">
+        <div className={COORDINATE_POSITION_PATTERNS.TOP_RIGHT_SM}>
           <Tooltip
             content={USER_ONBOARDING_LABELS.SKIP_TOOLTIP_LABEL}
             shortcut={['Esc']}
@@ -464,7 +466,7 @@ export default function UserOnboarding() {
         </div>
 
         {/* Content */}
-        <div className="mt-2">
+        <div className={MT_CLASSES.MD}>
           <h3
             id={ONBOARDING_ELEMENT_IDS.ONBOARDING_TITLE}
             className={`${TYPOGRAPHY_CLASSES.SUBHEADING} ${TEXT_COLORS.PRIMARY} mb-2`}
@@ -480,10 +482,12 @@ export default function UserOnboarding() {
         </div>
 
         {/* Navigation buttons */}
-        <div className="flex items-center justify-between mt-5">
-          <div className="flex flex-col gap-1.5">
+        <div
+          className={`${COMMON_SPACING_PATTERNS.FLEX_BETWEEN} ${MT_CLASSES.XXL_SM}`}
+        >
+          <div className={COMMON_SPACING_PATTERNS.FLEX_COL_SM}>
             <div
-              className="flex items-center gap-1.5"
+              className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}
               role="group"
               aria-label={USER_ONBOARDING_LABELS.PROGRESS_ARIA_LABEL}
             >
@@ -541,7 +545,7 @@ export default function UserOnboarding() {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-2">
+          <div className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
             {currentStepIndex > 0 && (
               <Tooltip
                 content={USER_ONBOARDING_LABELS.PREV_STEP_TOOLTIP_LABEL}

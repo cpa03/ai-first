@@ -25,6 +25,8 @@ import {
   GRAY_CLASSES,
   ICON_SIZES,
   PAGE_ELEMENT_IDS,
+  COMMON_SPACING_PATTERNS,
+  COORDINATE_POSITION_PATTERNS,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
@@ -284,8 +286,8 @@ function ScrollToTopComponent({
     scrollProgress >= UI_TIMING_CONFIG.SCROLL_PERCENTAGE_THRESHOLD;
 
   const tooltipContent = (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-2">
+    <div className={COMMON_SPACING_PATTERNS.FLEX_COL_SM}>
+      <div className={COMMON_SPACING_PATTERNS.FLEX_CENTER_SM}>
         <span className={TYPOGRAPHY_CLASSES.MEDIUM}>
           {hasReachedEnd
             ? SCROLL_TO_TOP_LABELS.TITLE_REACHED_END
@@ -372,7 +374,7 @@ function ScrollToTopComponent({
         >
           {!prefersReducedMotion && (
             <svg
-              className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none"
+              className={`${COORDINATE_POSITION_PATTERNS.INSET} w-full h-full -rotate-90 pointer-events-none`}
               viewBox={SVG_VIEWBOX.LARGE}
               aria-hidden="true"
               role="progressbar"
