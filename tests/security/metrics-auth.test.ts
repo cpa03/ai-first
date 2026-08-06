@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/metrics/route';
+import { buildApiUrl } from '../config/test-config';
 
 // Mock the dependencies
 jest.mock('@/lib/metrics', () => ({
@@ -33,7 +34,7 @@ describe('Metrics API Security', () => {
     });
     delete process.env.ADMIN_API_KEY;
 
-    const request = new NextRequest('http://localhost:3000/api/metrics', {
+    const request = new NextRequest(buildApiUrl('/metrics'), {
       method: 'GET',
     });
 
@@ -53,7 +54,7 @@ describe('Metrics API Security', () => {
     });
     process.env.ADMIN_API_KEY = 'super-secret-key';
 
-    const request = new NextRequest('http://localhost:3000/api/metrics', {
+    const request = new NextRequest(buildApiUrl('/metrics'), {
       method: 'GET',
       headers: {
         // No authorization header

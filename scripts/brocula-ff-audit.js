@@ -1,8 +1,12 @@
 #!/usr/bin/env node
 /**
  * BroCula Firefox Audit - Works on ARM64
+ *
+ * Uses centralized BROWSER_SCANNER_CONFIG for all configuration values.
+ * Override via environment variables (see scripts/config.js).
  */
 const { firefox } = require('playwright');
+const { BROWSER_SCANNER_CONFIG } = require('./config');
 
 (async () => {
   console.log('\n🦇 BRO-CULA BROWSER AUDIT (Firefox) 🦇\n');
@@ -57,9 +61,9 @@ const { firefox } = require('playwright');
   for (const route of routes) {
     try {
       const startTime = Date.now();
-      await page.goto(`http://localhost:3000${route.path}`, {
+      await page.goto(`${BROWSER_SCANNER_CONFIG.BASE_URL}${route.path}`, {
         waitUntil: 'domcontentloaded',
-        timeout: 30000,
+        timeout: BROWSER_SCANNER_CONFIG.NAVIGATION_TIMEOUT,
       });
       const loadTime = Date.now() - startTime;
 
@@ -86,7 +90,13 @@ const { firefox } = require('playwright');
         };
       });
 
-      const status = loadTime < 1000 ? '✅' : loadTime < 3000 ? '⚠️' : '❌';
+      const status =
+        loadTime < BROWSER_SCANNER_CONFIG.AUDIT_THRESHOLDS.PAGE_LOAD.FAST
+          ? '✅'
+          : loadTime <
+              BROWSER_SCANNER_CONFIG.AUDIT_THRESHOLDS.PAGE_LOAD.ACCEPTABLE
+            ? '⚠️'
+            : '❌';
       console.log(
         `${status} ${route.name}: ${loadTime}ms | DOM: ${domInfo.totalElements} nodes | Scripts: ${domInfo.scripts} | Images: ${domInfo.images}`
       );
@@ -98,7 +108,10 @@ const { firefox } = require('playwright');
         ...domInfo,
       });
 
-      if (domInfo.totalElements > 1500) {
+      if (
+        domInfo.totalElements >
+        BROWSER_SCANNER_CONFIG.AUDIT_THRESHOLDS.MAX_DOM_SIZE
+      ) {
         auditResults.optimizationOpportunities.push({
           type: 'Large DOM',
           route: route.name,
@@ -107,7 +120,10 @@ const { firefox } = require('playwright');
         });
       }
 
-      if (domInfo.imagesWithoutLazy > 3) {
+      if (
+        domInfo.imagesWithoutLazy >
+        BROWSER_SCANNER_CONFIG.AUDIT_THRESHOLDS.MAX_IMAGES_NO_LAZY
+      ) {
         auditResults.optimizationOpportunities.push({
           type: 'Image Lazy Loading',
           route: route.name,
@@ -147,7 +163,9 @@ const { firefox } = require('playwright');
 
   console.log('\n♿ ACCESSIBILITY AUDIT\n');
 
-  await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
+  await page.goto(BROWSER_SCANNER_CONFIG.BASE_URL, {
+    waitUntil: 'domcontentloaded',
+  });
 
   const a11yIssues = await page.evaluate(() => {
     const issues = [];
