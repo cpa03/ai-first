@@ -942,3 +942,24 @@ export {
   type LeftClasses,
   type CoordinatePositionPatterns,
 } from './positioning';
+
+// Dot Indicators Configuration
+// Centralizes all hardcoded dot indicator patterns used throughout components
+export {
+  DOT_INDICATORS,
+  DOT_SIZES,
+  DOT_SHAPES,
+  DOT_COLORS,
+  TYPING_INDICATOR_DOT,
+  FOOTER_NAV_DOT,
+  PROGRESS_DOT,
+  STATUS_DOT,
+  TYPING_INDICATOR_DOT_PATTERN,
+  ACTIVE_DOT,
+  INACTIVE_DOT,
+  createDotPattern,
+  type DotIndicators,
+  type DotSize,
+  type DotShape,
+  type DotColor,
+} from './dot-indicators';
