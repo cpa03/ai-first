@@ -237,14 +237,16 @@ export const SUSPICIOUS_PATTERNS_CONFIG: Record<
     {
       // SECURITY: Upgraded pattern to detect any loopback IP in the class A range 127.0.0.0/8
       // with boundary safety, including shorthands (e.g. 127.1, 127.0.1, 127.12.34.56) and zero IP ([::])
-      pattern: /(localhost|\b127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}\b|\b127\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
+      pattern:
+        /(localhost|\b127\.(?:[0-9]{1,3}\.){1,3}[0-9]{1,3}\b|\b127\.1\b|\b0\.0\.0\.0\b|::1|\[::\])/i,
       severity: 2,
       description: 'Localhost SSRF attempt',
     },
     {
       // SECURITY: Added to detect advanced IPv6 loopback (e.g., [0:0:0:0:0:0:0:1], [0::1])
       // and unspecified (e.g., [0:0:0:0:0:0:0:0], [0::0], [0::]) loopback representations.
-      pattern: /(?:\[0*(?:0{1,4}:){1,7}0*1\]|\[0*::+0*1\]|\[0*(?:0{1,4}:){1,7}0*0\]|\[0*::+0*0?\])/i,
+      pattern:
+        /(?:\[0*(?:0{1,4}:){1,7}0*1\]|\[0*::+0*1\]|\[0*(?:0{1,4}:){1,7}0*0\]|\[0*::+0*0?\])/i,
       severity: 2,
       description: 'Advanced IPv6 loopback SSRF attempt',
     },

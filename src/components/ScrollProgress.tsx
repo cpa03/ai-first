@@ -13,6 +13,7 @@ import {
   ICON_SIZES,
   SVG_STROKE_WIDTHS,
   SVG_VIEWBOX,
+  PROGRESS_BAR_A11Y,
 } from '@/lib/config';
 import { FADE_IN } from '@/lib/config/animation-classes';
 import { SCROLL_PROGRESS_LABELS } from '@/lib/config/component-labels';
@@ -156,8 +157,8 @@ function ScrollProgressComponent() {
       style={{ zIndex: Z_INDEX_LAYERS.STICKY }}
       role="slider"
       aria-valuenow={displayPercentage}
-      aria-valuemin={0}
-      aria-valuemax={100}
+      aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
+      aria-valuemax={PROGRESS_BAR_A11Y.VALUE_MAX}
       aria-label={
         showPercentage
           ? SCROLL_PROGRESS_LABELS.KEYBOARD_ARIA(displayPercentage)
