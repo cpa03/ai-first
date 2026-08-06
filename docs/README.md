@@ -230,7 +230,8 @@ Complete index of all IdeaFlow documentation.
 
 ### Active Reports
 
-- [Browser Console Audit - 2026-08-05](./audit/browser-console-audit-20260805.md) - Browser console & Lighthouse audit (latest)
+- [BroCula Browser Audit - 2026-08-06](./audit/BROCULA-20260806.md) - Browser console & Lighthouse audit (latest)
+- [Browser Console Audit - 2026-08-05](./audit/browser-console-audit-20260805.md) - Browser console & Lighthouse audit
 - [BroCula Browser Audit - 2026-08-04](./audit/BROCULA-AUDIT-20260804.md) - Browser console & Lighthouse audit
 - [Browser Audit - 2026-08-01](./audit/browser-audit-2026-08-01.md) - Browser console & Lighthouse audit
 - [Browser Console Audit - 2026-07-31](./audit/browser-audit-20260731.md) - Browser console & Lighthouse audit
