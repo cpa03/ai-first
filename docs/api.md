@@ -30,8 +30,6 @@ The IdeaFlow API serves specific user needs. This section maps API endpoints to 
 
 ## Base URL
 
-## Base URL
-
 ```text
 http://localhost:3000 (development)
 https://your-domain.com (production)
@@ -1208,8 +1206,6 @@ Authorization: Bearer <your-supabase-token>
 **Rate Limit:** `moderate` (30 requests/minute)
 
 ---
-
-## Tasks API
 
 ## Tasks API
 
