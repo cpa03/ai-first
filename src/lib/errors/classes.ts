@@ -3,10 +3,15 @@
  */
 
 import { redactPII, redactPIIInObject } from '../pii-redaction';
-import { STATUS_CODES } from '../config/constants';
+import { STATUS_CODES, ERROR_CONFIG } from '../config/constants';
 import { API_ROUTES } from '../config/api-routes';
+import { generateId } from '../security/crypto';
 import { ErrorCode } from './codes';
 import { generateErrorFingerprint } from './fingerprint';
+
+function generateRequestId(): string {
+  return `${ERROR_CONFIG.REQUEST_ID.PREFIX}${generateId()}`;
+}
 
 export interface ErrorDetail {
   field?: string;
@@ -14,15 +19,51 @@ export interface ErrorDetail {
   code?: string;
 }
 
+/**
+ * Standardized API error response format.
+ *
+ * This is the canonical error response interface used across all API routes.
+ * All error responses MUST conform to this shape to ensure consistent client-side handling.
+ *
+ * @example
+ * ```json
+ * {
+ *   "success": false,
+ *   "error": "Request validation failed",
+ *   "code": "VALIDATION_ERROR",
+ *   "fingerprint": "VkO8qJ3x...",
+ *   "details": [
+ *     { "field": "title", "message": "Title is required" }
+ *   ],
+ *   "timestamp": "2026-08-06T12:00:00.000Z",
+ *   "requestId": "req_abc123",
+ *   "retryable": false,
+ *   "suggestions": [
+ *     "Check that all required fields are present in your request"
+ *   ]
+ * }
+ * ```
+ *
+ * @see {@link StandardErrorResponse} in api-handler/response.ts for the canonical definition
+ */
 export interface ErrorResponse {
+  /** Always false for error responses */
   success: false;
+  /** Human-readable error message */
   error: string;
+  /** Machine-readable error code (e.g., VALIDATION_ERROR, NOT_FOUND) */
   code: string;
-  fingerprint?: string;
+  /** Error fingerprint for deduplication and tracking (base64-encoded, 32 chars) */
+  fingerprint: string;
+  /** Optional field-level validation errors */
   details?: ErrorDetail[];
+  /** ISO 8601 timestamp of when the error occurred */
   timestamp: string;
-  requestId?: string;
-  retryable?: boolean;
+  /** Unique request identifier for tracing and support */
+  requestId: string;
+  /** Whether the operation can be safely retried */
+  retryable: boolean;
+  /** Optional suggestions for resolving the error */
   suggestions?: string[];
 }
 
@@ -69,7 +110,7 @@ export class AppError extends Error {
         ? (redactPIIInObject(this.details) as unknown as ErrorDetail[])
         : undefined,
       timestamp: new Date().toISOString(),
-      requestId: this._requestId,
+      requestId: this._requestId || generateRequestId(),
       retryable: this.retryable,
       suggestions: this.suggestions,
     };
