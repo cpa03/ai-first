@@ -20,9 +20,15 @@ import {
   SVG_CIRCLE,
 } from '@/lib/config';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
-import { generateId } from '@/lib/security/crypto';
 import { PLATFORM } from '@/lib/dom-utils';
 import Tooltip from './Tooltip';
+
+/**
+ * Module-level auto-incrementing counter for generating high-performance unique
+ * IDs for transient button ripple visual effects without the heavy CPU/entropy
+ * overhead of cryptographically secure ID generation (such as `generateId()`).
+ */
+let rippleIdCounter = 0;
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
@@ -162,7 +168,9 @@ const ButtonComponent = forwardRef<HTMLButtonElement, ButtonProps>(
           y = mouseEvent.clientY - rect.top - size / 2;
         }
 
-        const rippleId = `ripple-${Date.now()}-${generateId()}`;
+        // PERFORMANCE (⚡ Bolt): Use an incrementing counter instead of `generateId()`
+        // to avoid expensive cryptographic random UUID generation overhead during user click events.
+        const rippleId = `ripple-${Date.now()}-${rippleIdCounter++}`;
         const newRipple: Ripple = {
           id: rippleId,
           x,

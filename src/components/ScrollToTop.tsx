@@ -176,8 +176,8 @@ function ScrollToTopComponent({
     (progress: number, reachedEnd: boolean) => {
       if (reachedEnd) {
         return {
-          stroke: 'text-emerald-500',
-          text: 'text-emerald-600',
+          stroke: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.REACHED_END_STROKE,
+          text: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.REACHED_END_TEXT,
           label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.REACHED_END,
         };
       }
@@ -190,8 +190,8 @@ function ScrollToTopComponent({
       }
       if (progress <= SCROLL_DEPTH_THRESHOLDS.MIDDLE) {
         return {
-          stroke: 'text-primary-500',
-          text: 'text-primary-600',
+          stroke: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.MIDDLE_STROKE,
+          text: COMPONENT_STATE_COLORS.SCROLL_PROGRESS.MIDDLE_TEXT,
           label: SCROLL_TO_TOP_LABELS.SCROLL_DEPTH_LABELS.MIDDLE,
         };
       }

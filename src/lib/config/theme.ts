@@ -2132,6 +2132,14 @@ export const COMPONENT_STATE_COLORS = {
     NEAR_BOTTOM_STROKE: 'text-emerald-500',
     /** Near bottom text color */
     NEAR_BOTTOM_TEXT: 'text-emerald-600',
+    /** Middle stroke color (brand) */
+    MIDDLE_STROKE: 'text-primary-500',
+    /** Middle text color (brand) */
+    MIDDLE_TEXT: 'text-primary-600',
+    /** Reached end stroke color */
+    REACHED_END_STROKE: 'text-emerald-500',
+    /** Reached end text color */
+    REACHED_END_TEXT: 'text-emerald-600',
   },
 } as const;
 

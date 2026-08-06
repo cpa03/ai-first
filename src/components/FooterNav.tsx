@@ -7,6 +7,7 @@ import {
   GRAY_CLASSES,
   DURATION_TAILWIND,
   PRIMARY_FOCUS_RING,
+  ACTIVE_DOT,
 } from '@/lib/config';
 
 interface FooterNavColumn {
@@ -60,7 +61,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
                   >
                     {active && (
                       <span
-                        className="w-1.5 h-1.5 rounded-full bg-primary-600 shrink-0"
+                        className={`${ACTIVE_DOT} shrink-0`}
                         aria-hidden="true"
                       />
                     )}

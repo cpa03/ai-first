@@ -24,15 +24,16 @@ npm run env:check && npm run dev
 # 5. Verify (open new terminal)
 curl http://localhost:3000/api/health
 ```
+
 ## Prerequisites
 
 Before starting, verify your environment meets these requirements:
 
-| Tool | Version | Validation Command | Expected Result |
-|------|---------|-------------------|-----------------|
-| Node.js | 20+ | `node --version` | v20.0.0 or higher |
-| npm | 9+ | `npm --version` | 9.0.0 or higher |
-| Git | 2.x | `git --version` | git version 2.x.x |
+| Tool    | Version | Validation Command | Expected Result   |
+| ------- | ------- | ------------------ | ----------------- |
+| Node.js | 20+     | `node --version`   | v20.0.0 or higher |
+| npm     | 9+      | `npm --version`    | 9.0.0 or higher   |
+| Git     | 2.x     | `git --version`    | git version 2.x.x |
 
 ### Verify Your Setup
 
@@ -74,8 +75,13 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 ### AI Provider Configuration (at least one required)
 
+Set **at least one** of the following API keys. You can configure both for fallback support.
+
 ```bash
+# Option 1: OpenAI (recommended)
 OPENAI_API_KEY=your_openai_api_key
+
+# Option 2: Anthropic (alternative)
 ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
