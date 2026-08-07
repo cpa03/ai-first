@@ -23,6 +23,7 @@ import {
   LAYOUT_CLASSES,
   PRIMARY_FOCUS_RING,
 } from '@/lib/config/theme';
+import { ICON_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES, ELEMENT_PATTERNS } from '@/lib/config/remaining-styles';
 import { FOOTER_NAV_CONFIG } from '@/lib/config/navigation';
 import { DASHBOARD_PAGE_CONTENT } from '@/lib/config/pages';
@@ -170,7 +171,7 @@ export default async function RootLayout({
             <a href="#main-content" className="skip-link">
               <span className="flex items-center gap-2">
                 <svg
-                  className="w-4 h-4"
+                  className={ICON_SIZES.MD}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -256,7 +257,7 @@ export default async function RootLayout({
                             >
                               {link.label === 'Twitter' ? (
                                 <svg
-                                  className="w-5 h-5"
+                                  className={ICON_SIZES.LG}
                                   fill="currentColor"
                                   viewBox={SVG_VIEWBOX.STANDARD}
                                   aria-hidden="true"
@@ -265,7 +266,7 @@ export default async function RootLayout({
                                 </svg>
                               ) : (
                                 <svg
-                                  className="w-5 h-5"
+                                  className={ICON_SIZES.LG}
                                   fill="currentColor"
                                   viewBox={SVG_VIEWBOX.STANDARD}
                                   aria-hidden="true"
