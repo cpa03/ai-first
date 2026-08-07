@@ -22,6 +22,7 @@ import {
   Z_INDEX_LAYERS,
   ANIMATION_CONFIG,
   PRIMARY_ACTIVE_LINK,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
@@ -305,7 +306,7 @@ function MobileNavComponent() {
             className={`fixed top-16 left-0 right-0 ${BG_COLORS.DEFAULT} border-b ${BORDER_COLORS.LIGHT} shadow-2xl z-[${Z_INDEX_LAYERS.MOBILE_MENU}] animate-slide-down`}
           >
             <ul
-              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 space-y-2 ${BG_COLORS.DEFAULT}`}
+              className={`${CONTAINER_WIDTHS.XL} mx-auto ${RESPONSIVE_PADDING.CLASS} py-8 ${SPACE_Y_PATTERNS.SM} ${BG_COLORS.DEFAULT}`}
             >
               {navLinks.map((link, index) => {
                 const active = isActive(link.href);

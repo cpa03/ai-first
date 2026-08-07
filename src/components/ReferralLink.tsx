@@ -23,6 +23,7 @@ import {
   DURATION_TAILWIND,
   GRADIENT_CONFIG,
   ICON_SIZES,
+  FLEX_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -189,7 +190,7 @@ function ReferralLinkComponent({
           </div>
         </div>
 
-        <div className="flex-shrink-0 hidden sm:block">
+        <div className={FLEX_PATTERNS.SHRINK_0_HIDDEN_SM}>
           <div className={REFERRAL_ICON_CONTAINER}>
             <svg
               className={`${ICON_SIZES.XL} text-primary-600`}

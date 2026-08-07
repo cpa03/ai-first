@@ -14,6 +14,8 @@ import {
   DURATION_TAILWIND,
   COMPONENT_STATE_COLORS,
   ICON_SIZES,
+  HEIGHT_ONLY,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 import { PASSWORD_REQUIREMENTS_LABELS } from '@/lib/config/component-labels';
 
@@ -228,7 +230,7 @@ function PasswordRequirementsChecklistComponent({
       >
         {announcement}
       </div>
-      <div className="space-y-1.5">
+      <div className={SPACE_Y_PATTERNS.SM_MD}>
         <div className="flex items-center justify-between">
           <p className={`text-xs font-medium ${TEXT_COLORS.MUTED_DARK}`}>
             {PASSWORD_REQUIREMENTS_LABELS.HEADER_TEXT}
@@ -240,7 +242,7 @@ function PasswordRequirementsChecklistComponent({
           </span>
         </div>
         <div
-          className={`h-1.5 ${progressBgColor} rounded-full overflow-hidden ${TRANSITION_CLASSES.COLOR_SLOW}`}
+          className={`${HEIGHT_ONLY.SM_XS} ${progressBgColor} rounded-full overflow-hidden ${TRANSITION_CLASSES.COLOR_SLOW}`}
           role="progressbar"
           aria-valuenow={metCount}
           aria-valuemin={PROGRESS_BAR_A11Y.VALUE_MIN}
@@ -256,7 +258,7 @@ function PasswordRequirementsChecklistComponent({
           />
         </div>
       </div>
-      <ul className="space-y-1.5">
+      <ul className={SPACE_Y_PATTERNS.SM_MD}>
         {requirements.map((req, index) => (
           <li
             key={req.id}

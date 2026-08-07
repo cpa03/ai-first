@@ -333,6 +333,10 @@ export const FLEX_PATTERNS = {
   RESPONSIVE_CENTER:
     'flex flex-col sm:flex-row sm:items-center justify-between gap-3',
   RESPONSIVE_GAP: 'flex items-center gap-2 sm:gap-4',
+
+  // Shrink patterns
+  SHRINK_0: 'flex-shrink-0',
+  SHRINK_0_HIDDEN_SM: 'flex-shrink-0 hidden sm:block',
 } as const;
 
 /**

@@ -44,6 +44,8 @@ export const ICON_SIZES = {
 export const WIDTH_ONLY = {
   /** w-3 = 12px */
   SM: 'w-3',
+  /** w-3.5 = 14px */
+  SM_MD: 'w-3.5',
   /** w-4 = 16px */
   MD: 'w-4',
   /** w-5 = 20px */
@@ -67,8 +69,16 @@ export const WIDTH_ONLY = {
  * Replaces hardcoded h-* classes throughout components
  */
 export const HEIGHT_ONLY = {
+  /** h-0.5 = 2px */
+  XXS: 'h-0.5',
+  /** h-1 = 4px */
+  XS: 'h-1',
+  /** h-1.5 = 6px */
+  SM_XS: 'h-1.5',
   /** h-3 = 12px */
   SM: 'h-3',
+  /** h-3.5 = 14px */
+  SM_MD: 'h-3.5',
   /** h-4 = 16px */
   MD: 'h-4',
   /** h-5 = 20px */

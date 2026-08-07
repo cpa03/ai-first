@@ -37,6 +37,8 @@ import {
   MR_CLASSES,
   CONFETTI_DOT,
   SKELETON_SIZE_PATTERNS,
+  SPACE_Y_PATTERNS,
+  SPACE_X_PATTERNS,
 } from '@/lib/config';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import {
@@ -190,7 +192,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               variant="text"
             />
 
-            <div className="mt-6 sm:mt-8 space-y-2">
+            <div className={`mt-6 sm:mt-8 ${SPACE_Y_PATTERNS.SM}`}>
               <Skeleton
                 className={SKELETON_SIZE_PATTERNS.SUBTITLE_RESPONSIVE_SM}
                 variant="text"
@@ -205,7 +207,7 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
               />
             </div>
 
-            <div className="mt-4 sm:mt-6 space-y-2">
+            <div className={`mt-4 sm:mt-6 ${SPACE_Y_PATTERNS.SM}`}>
               <Skeleton
                 className={SKELETON_SIZE_PATTERNS.SUBTITLE_RESPONSIVE_SM}
                 variant="text"
@@ -229,7 +231,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
                 className={SKELETON_SIZE_PATTERNS.CAPTION_SM_HALF}
                 variant="text"
               />
-              <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
+              <div
+                className={`flex sm:${SPACE_X_PATTERNS.LG} ${SPACE_Y_PATTERNS.SM} sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row`}
+              >
                 <Skeleton
                   className={SKELETON_SIZE_PATTERNS.BUTTON_RESPONSIVE_SM}
                 />
@@ -361,7 +365,9 @@ const BlueprintDisplayComponent = function BlueprintDisplay({
             <p className={`text-xs sm:text-sm ${TEXT_COLOR_CLASSES.BODY}`}>
               {MESSAGES.BLUEPRINT.FOOTER_TEXT}
             </p>
-            <div className="flex sm:space-x-4 space-y-2 sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row">
+            <div
+              className={`flex sm:${SPACE_X_PATTERNS.LG} ${SPACE_Y_PATTERNS.SM} sm:space-y-0 w-full sm:w-auto flex-col sm:flex-row`}
+            >
               <Button
                 variant="secondary"
                 fullWidth={false}

@@ -8,6 +8,7 @@ import {
   DURATION_TAILWIND,
   PRIMARY_FOCUS_RING,
   ACTIVE_DOT,
+  SPACE_Y_PATTERNS,
 } from '@/lib/config';
 
 interface FooterNavColumn {
@@ -43,7 +44,7 @@ function FooterNavComponent({ columns }: FooterNavProps) {
           >
             {column.title}
           </p>
-          <ul className="mt-4 space-y-3">
+          <ul className={`mt-4 ${SPACE_Y_PATTERNS.MD}`}>
             {column.items.map((item) => {
               const active = isActive(item.href);
               return (

@@ -31,6 +31,7 @@ import {
   ICON_SIZES,
   SPACE_Y_PATTERNS,
   CONFETTI_DOT,
+  HEIGHT_ONLY,
 } from '@/lib/config';
 import { API_ENDPOINTS } from '@/lib/config/api-endpoints';
 import {
@@ -462,7 +463,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
         {writingProgress > 5 && (
           <div className={SPACE_Y_PATTERNS.SM}>
             <div
-              className={`relative h-1.5 ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`}
+              className={`relative ${HEIGHT_ONLY.SM_XS} ${GRAY_CLASSES.BG_200} rounded-full overflow-hidden`}
             >
               <div
                 className={`absolute left-0 top-0 h-full ${TRANSITION_CLASSES.SLOW_EASE_OUT} rounded-full ${
