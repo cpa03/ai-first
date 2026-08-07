@@ -300,7 +300,9 @@ export default function NotFound() {
               }}
             >
               {hasCopied ? (
-                <span className="text-green-600 font-medium animate-fade-in">
+                <span
+                  className={`${TEXT_COLORS.SUCCESS_MEDIUM_DARK} font-medium animate-fade-in`}
+                >
                   {NOT_FOUND_LABELS.COPY_URL_SUCCESS}
                 </span>
               ) : (
