@@ -220,6 +220,31 @@ const keyboardShortcuts: KeyboardShortcut[] = [
     context: 'global',
     action: 'downloadMarkdown',
   },
+  {
+    keys: ['⌘', '⇧', 'S'],
+    description: SHORTCUT_DESCRIPTIONS.SHARE_IDEA,
+    context: 'global',
+  },
+  {
+    keys: ['⌘', '⇧', 'E'],
+    description: SHORTCUT_DESCRIPTIONS.EMAIL_BLUEPRINT,
+    context: 'global',
+  },
+  {
+    keys: ['⌘', '⇧', 'V'],
+    description: SHORTCUT_DESCRIPTIONS.PASTE_FROM_CLIPBOARD,
+    context: 'form',
+  },
+  {
+    keys: ['s'],
+    description: SHORTCUT_DESCRIPTIONS.SNOOZE_ALERT,
+    context: 'modal',
+  },
+  {
+    keys: ['d'],
+    description: SHORTCUT_DESCRIPTIONS.DISMISS_ALERT,
+    context: 'modal',
+  },
 ];
 
 const contextLabels: Record<KeyboardShortcut['context'], string> =
