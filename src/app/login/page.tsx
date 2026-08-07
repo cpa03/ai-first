@@ -43,16 +43,14 @@ import { isFocusedOnInput, PLATFORM } from '@/lib/dom-utils';
 import { useKeyboardShortcuts } from '@/components/KeyboardShortcutsProvider';
 
 // Dynamic imports for code splitting - reduce initial bundle size
-const Button = dynamic(() => import('@/components/Button'), { ssr: false });
+// SSR enabled to prevent CLS (Cumulative Layout Shift) - components render on server
+const Button = dynamic(() => import('@/components/Button'));
 const InputWithValidation = dynamic(
-  () => import('@/components/InputWithValidation'),
-  { ssr: false }
+  () => import('@/components/InputWithValidation')
 );
-const Alert = dynamic(() => import('@/components/Alert'), { ssr: false });
-const CapsLockWarning = dynamic(
-  () =>
-    import('@/components/CapsLockWarning').then((mod) => mod.CapsLockWarning),
-  { ssr: false }
+const Alert = dynamic(() => import('@/components/Alert'));
+const CapsLockWarning = dynamic(() =>
+  import('@/components/CapsLockWarning').then((mod) => mod.CapsLockWarning)
 );
 
 export default function LoginPage() {
