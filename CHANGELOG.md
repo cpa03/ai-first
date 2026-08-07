@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Header scroll shadow for visual feedback on scroll
+- Popular pages suggestions to 404 page for better UX
+- CSS loading optimization and script analysis tool
+- DOM utility helpers and platform detection optimization
+- Standardized error response format across all API routes (#3707)
+- Real-Time Collaboration Indicators user story (US-COLLAB-001)
 - Home/End keyboard shortcuts for quick list navigation in Dashboard (#3462)
 - Attention pulse animation to login/signup submit buttons when form is valid (#3460)
 - Escape key to clear input in InputWithValidation for better accessibility (#3455)
@@ -46,6 +52,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **js-yaml vulnerability** (HIGH): Updated js-yaml to fix high severity security vulnerability
+- Standardized toast notification pattern across all hooks for consistency (#3701)
+- Removed duplicate section headers in api.md (#3704)
+- Scroll progress ARIA attributes refactored to use PROGRESS_BAR_A11Y constants
 - Added requestId parameter to error classes for better error tracing (#3463)
 - Resolved high severity sharp vulnerability in dependencies
 - Resolved RetryExhaustedError duplicate message bug
@@ -59,6 +69,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Performance**: Conditionally initialize Cloudflare dev mode for faster startup
+- **Performance**: Optimized CSS loading and added script analysis tool
+- **Performance**: Optimized DOM utility helpers and platform detection
+- Modularized hardcoded icon sizes in layout, login, and signup pages (#3711)
+- Modularized remaining hardcoded w-N h-N values across components
 - Replaced remaining hardcoded gray-* classes with GRAY_CLASSES constants (#3464)
 - Extracted hardcoded auth page Tailwind classes to FORM_PATTERNS
 - Extracted hardcoded gradient classes to GRADIENT_CONFIG
