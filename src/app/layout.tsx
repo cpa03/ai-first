@@ -7,6 +7,7 @@ import MobileNav from '@/components/MobileNav';
 import ToastContainer from '@/components/ToastContainer';
 import ScrollToTop from '@/components/ScrollToTop';
 import ScrollToTopButton from '@/components/ScrollToTopButton';
+import ScrollShadow from '@/components/ScrollShadow';
 import Link from 'next/link';
 import { Inter, JetBrains_Mono } from 'next/font/google';
 import { SEO_CONFIG } from '@/lib/config/seo';
@@ -167,6 +168,7 @@ export default async function RootLayout({
       >
         <ErrorBoundary>
           <GlobalErrorHandler />
+          <ScrollShadow />
           <KeyboardShortcutsProvider>
             <a href="#main-content" className="skip-link">
               <span className="flex items-center gap-2">
