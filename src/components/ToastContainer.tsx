@@ -328,11 +328,7 @@ function ToastComponent({ toast, onClose }: ToastProps) {
         </div>
       )}
       {remainingSeconds > 0 && !prefersReducedMotion && (
-        <div
-          className={TOAST_DISMISS_BUTTON}
-          aria-live="polite"
-          aria-atomic="true"
-        >
+        <div className={TOAST_DISMISS_BUTTON} aria-hidden="true">
           {isPaused ? (
             <span className={`flex items-center ${GAP_CLASSES.SM}`}>
               <svg
