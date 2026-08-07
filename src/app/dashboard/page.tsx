@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic';
 import { useAuthCheck } from '@/hooks/useAuthCheck';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
 import { useAnimatedCounter } from '@/hooks/useAnimatedCounter';
-import { useFocusManagement } from '@/hooks/useAnnouncement';
+import { useFocusManagement, useToast } from '@/hooks/useAnnouncement';
 import {
   ACTION_COLORS,
   TABLE_PATTERNS,
@@ -143,6 +143,7 @@ export default function DashboardPage() {
   const tableBodyRef = useRef<HTMLTableSectionElement>(null);
   const filterClearTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const deleteAnimationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { showToast } = useToast();
 
   const handleRowClick = useCallback(
     (e: React.MouseEvent<HTMLTableRowElement>, idea: Idea) => {
@@ -334,15 +335,10 @@ export default function DashboardPage() {
         );
       }
 
-      if (typeof window !== 'undefined') {
-        const win = window as Window & {
-          showToast?: (options: { type: string; message: string }) => void;
-        };
-        win.showToast?.({
-          type: 'success',
-          message: `"${ideaTitle}" deleted successfully`,
-        });
-      }
+      showToast({
+        type: 'success',
+        message: `"${ideaTitle}" deleted successfully`,
+      });
     } catch (err) {
       logger.error('Error deleting idea:', err);
       setError(
@@ -353,7 +349,7 @@ export default function DashboardPage() {
     } finally {
       setDeletingId(null);
     }
-  }, [deleteModal.idea, closeDeleteModal, prefersReducedMotion]);
+  }, [deleteModal.idea, closeDeleteModal, prefersReducedMotion, showToast]);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const cancelButtonRef = useRef<HTMLButtonElement>(null);
@@ -463,9 +459,13 @@ export default function DashboardPage() {
         if (idea) {
           triggerHapticFeedback();
           if (idea.status === IDEA_STATUS_CONFIG.TYPES.COMPLETED) {
-            router.push(createRouteWithParams(ROUTES.RESULTS, { ideaId: idea.id }));
+            router.push(
+              createRouteWithParams(ROUTES.RESULTS, { ideaId: idea.id })
+            );
           } else {
-            router.push(createRouteWithParams(ROUTES.CLARIFY, { ideaId: idea.id }));
+            router.push(
+              createRouteWithParams(ROUTES.CLARIFY, { ideaId: idea.id })
+            );
           }
         }
         return;
@@ -600,10 +600,7 @@ export default function DashboardPage() {
     if (hintShown) return;
 
     const timer = setTimeout(() => {
-      const win = window as Window & {
-        showToast?: (options: { type: string; message: string }) => void;
-      };
-      win.showToast?.({
+      showToast({
         type: 'info',
         message: DASHBOARD_PAGE_CONTENT.KEYBOARD_SHORTCUTS.HINT_TIP,
       });
@@ -614,7 +611,7 @@ export default function DashboardPage() {
     }, ANIMATION_CONFIG.DASHBOARD_KEYBOARD_HINT_DELAY);
 
     return () => clearTimeout(timer);
-  }, [loading, error, ideas.length]);
+  }, [loading, error, ideas.length, showToast]);
 
   if (loading) {
     return (
