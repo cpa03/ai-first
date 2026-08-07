@@ -171,6 +171,7 @@ const nextConfig = {
       'clsx',
       'tailwind-merge',
     ],
+    optimizeCss: true,
   },
   compiler: {
     removeConsole:
