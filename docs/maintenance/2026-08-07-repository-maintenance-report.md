@@ -28,7 +28,25 @@ Routine repository maintenance performed by RepoKeeper agent. Repository is in e
 | `a2b09f36` | docs: Add US-COLLAB-001 user story                                |
 | `12deb289` | Merge PR #3707: Standardize error response format                 |
 
-## Stale Remote Branches (Unmerged)
+## Merged Branches (Ready for Cleanup)
+
+The following 9 remote branches have been merged into main and can be safely deleted:
+
+| Branch                                                          | Status |
+| --------------------------------------------------------------- | ------ |
+| `origin/brocula/browser-console-audit-20260805`                 | Merged |
+| `origin/brocula/browser-console-lighthouse-audit-20260805-2054` | Merged |
+| `origin/brocula/perf-optimization-20260806`                     | Merged |
+| `origin/bugfix/a11y-toast-consistency`                          | Merged |
+| `origin/feature/standardize-error-response-format`              | Merged |
+| `origin/flexy/modularize-skeleton-patterns-20260805`            | Merged |
+| `origin/palette/button-showdelay-ux-20260805`                   | Merged |
+| `origin/palette/recent-pages-404-ux`                            | Merged |
+| `origin/palette/start-new-idea-cta-20260805-1332`               | Merged |
+
+**Action**: Delete these branches to reduce repository clutter.
+
+## Unmerged Branches (Active Work)
 
 The following 11 remote branches have unmerged commits:
 
