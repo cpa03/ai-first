@@ -898,6 +898,11 @@ export {
   SKELETON_SIZES,
   ICON_PATTERNS,
   MINI_BUTTON_SIZES,
+  INPUT_BUTTON_SIZES,
+  PROGRESS_BAR_SIZES,
+  CONNECTOR_SIZES,
+  INDICATOR_SIZES,
+  HAMBURGER_SIZES,
 } from './icon-sizes';
 
 // Focus Ring Offsets Configuration

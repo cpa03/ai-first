@@ -197,7 +197,7 @@ function SuccessCelebrationComponent({
         particles.map((particle) => (
           <div
             key={particle.id}
-            className="absolute w-2 h-2 rounded-sm"
+            className={`absolute ${ICON_SIZES.XS} rounded-sm`}
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
