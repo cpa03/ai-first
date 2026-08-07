@@ -376,7 +376,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
               aria-live="polite"
             >
               <span
-                className={`inline-flex items-center justify-center w-5 h-5 rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
+                className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
               >
                 <svg
                   className={ICON_SIZES.SM}
@@ -428,7 +428,7 @@ function IdeaInputComponent({ onSubmit }: IdeaInputProps) {
             aria-live="polite"
           >
             <span
-              className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-primary-100 text-primary-700 text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
+              className={`inline-flex items-center justify-center ${ICON_SIZES.LG} rounded-full bg-primary-100 text-primary-700 text-xs ${TYPOGRAPHY_CLASSES.BOLD}`}
             >
               {charactersNeededData.charsNeeded}
             </span>

@@ -26,6 +26,7 @@ import {
 import { PAGE_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { MOBILE_NAV_TAILWIND } from '@/lib/config/tailwind-arbitrary';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
+import { HAMBURGER_SIZES } from '@/lib/config/icon-sizes';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
 import { usePrefersReducedMotion } from '@/hooks/usePrefersReducedMotion';
@@ -273,12 +274,14 @@ function MobileNavComponent() {
               aria-label={`${MOBILE_NAV_CONFIG.CLOSE_ARIA_LABEL} (Escape)`}
               title="Press Escape to close"
             >
-              <div className="w-5 h-5 flex flex-col justify-center items-center">
+              <div
+                className={`${HAMBURGER_SIZES.CONTAINER} flex flex-col justify-center items-center`}
+              >
                 <span
-                  className={`block w-5 h-0.5 bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block ${HAMBURGER_SIZES.LINE} bg-current rounded-full rotate-45 translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
                 <span
-                  className={`block w-5 h-0.5 bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
+                  className={`block ${HAMBURGER_SIZES.LINE} bg-current rounded-full -rotate-45 -translate-y-0.5 transition-transform ${DURATION_TAILWIND[200]}`}
                 />
               </div>
             </button>

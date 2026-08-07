@@ -11,7 +11,7 @@ import {
 } from '@/lib/config/theme';
 import { FOCUS_RING_OFFSET_PATTERNS } from '@/lib/config/focus-ring-offsets';
 import { MT_CLASSES, GAP_CLASSES } from '@/lib/config/spacing';
-import { ICON_SIZES } from '@/lib/config/icon-sizes';
+import { ICON_SIZES, CONNECTOR_SIZES } from '@/lib/config/icon-sizes';
 import { GRAY_CLASSES } from '@/lib/config/remaining-styles';
 import { FEATURE_CONFIG } from '@/lib/config/landing-page';
 import { FEATURE_GRID_LABELS } from '@/lib/config/component-labels';
@@ -203,7 +203,7 @@ function FeatureGridComponent() {
                 <div
                   className={`
                   hidden md:block absolute top-1/2 -right-4 
-                  w-8 h-0.5 ${GRADIENT_CONFIG.CONNECTOR.HORIZONTAL}
+                  ${CONNECTOR_SIZES.HORIZONTAL} ${GRADIENT_CONFIG.CONNECTOR.HORIZONTAL}
                   transform -translate-y-1/2
                   ${isVisible ? 'animate-connector-reveal' : 'opacity-0'}
                   group-hover:opacity-100 group-focus-visible:opacity-100
@@ -219,7 +219,7 @@ function FeatureGridComponent() {
                 <div
                   className={`
                   md:hidden absolute left-1/2 -bottom-4
-                  w-0.5 h-8 ${GRADIENT_CONFIG.CONNECTOR.VERTICAL}
+                  ${CONNECTOR_SIZES.VERTICAL} ${GRADIENT_CONFIG.CONNECTOR.VERTICAL}
                   transform -translate-x-1/2
                   ${isVisible ? 'animate-connector-reveal' : 'opacity-0'}
                   group-hover:opacity-100 group-focus-visible:opacity-100
