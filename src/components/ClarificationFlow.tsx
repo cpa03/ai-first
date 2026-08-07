@@ -384,7 +384,7 @@ function ClarificationFlow({
         </div>
 
         <div
-          className={`${CARD_PATTERNS.RESPONSIVE} mt-6 space-y-6 animate-fade-in`}
+          className={`${CARD_PATTERNS.RESPONSIVE} mt-6 ${SPACE_Y_PATTERNS.XL} animate-fade-in`}
         >
           <div className={SPACE_Y_PATTERNS.MD}>
             <Skeleton className={SKELETON_SIZE_PATTERNS.TITLE} variant="text" />
@@ -659,7 +659,7 @@ function ClarificationFlow({
           >
             <span className={FLEX_PATTERNS.GAP_SM}>
               <svg
-                className="w-3.5 h-3.5"
+                className={ICON_SIZES.MD_SM}
                 fill="none"
                 viewBox={SVG_VIEWBOX.STANDARD}
                 stroke="currentColor"

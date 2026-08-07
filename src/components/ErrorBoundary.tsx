@@ -22,7 +22,7 @@ import { ROUTES } from '@/lib/config/routes';
 import { useClipboard } from '@/hooks/useClipboard';
 import { useConfetti } from '@/hooks/useConfetti';
 import StatusAnnouncer from './StatusAnnouncer';
-import { CONFETTI_DOT } from '@/lib/config';
+import { CONFETTI_DOT, SPACE_Y_PATTERNS } from '@/lib/config';
 
 /**
  * Micro-UX: ErrorCopyButton - Functional component that uses useClipboard hook
@@ -210,7 +210,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                 <p className={`${TEXT_COLORS.SECONDARY} mb-4`}>
                   {MESSAGES.ERROR_BOUNDARY.DESCRIPTION}
                 </p>
-                <div className="mt-6 space-y-4">
+                <div className={`mt-6 ${SPACE_Y_PATTERNS.LG}`}>
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <Button
                       variant="primary"

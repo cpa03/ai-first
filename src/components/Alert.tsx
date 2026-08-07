@@ -22,6 +22,7 @@ import {
   FOCUS_RING_OFFSET_PATTERNS,
   COORDINATE_POSITION_PATTERNS,
   COMMON_SPACING_PATTERNS,
+  HEIGHT_ONLY,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import Tooltip from './Tooltip';
@@ -287,7 +288,7 @@ const AlertComponent = function Alert({
       {shouldAutoDismiss && !prefersReducedMotion && (
         <>
           <div
-            className={`absolute bottom-0 left-0 h-0.5 bg-current opacity-30 transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
+            className={`absolute bottom-0 left-0 ${HEIGHT_ONLY.XXS} bg-current opacity-30 transition-all ${DURATION_TAILWIND[75]} ease-linear rounded-b-lg`}
             style={{
               width: `${progress}%`,
               transitionDuration: isPaused
