@@ -499,7 +499,7 @@ export default function UserOnboarding() {
                       setCurrentStepIndex(index);
                     }
                   }}
-                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${
+                  className={`rounded-full transition-all ${DURATION_TAILWIND[200]} ease-out ${FOCUS_RING_PATTERNS.DEFAULT} ${
                     index === currentStepIndex
                       ? `${INDICATOR_SIZES.PILL} ${BG_COLORS.BRAND}`
                       : index < currentStepIndex
