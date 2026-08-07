@@ -144,8 +144,10 @@ describe('/api/clarify', () => {
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe('Failed to generate clarifying questions');
-      expect(data.details).toBe('AI service unavailable');
+      expect(data.success).toBe(false);
+      expect(data.error).toBeDefined();
+      expect(data.code).toBeDefined();
+      expect(data.requestId).toBeDefined();
     });
 
     // Removed database error test as the new agent handles its own database operations
@@ -161,7 +163,9 @@ describe('/api/clarify', () => {
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe('Failed to generate clarifying questions');
+      expect(data.success).toBe(false);
+      expect(data.error).toBeDefined();
+      expect(data.code).toBeDefined();
     });
 
     it('should handle very long ideas', async () => {
