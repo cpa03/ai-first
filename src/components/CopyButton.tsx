@@ -15,11 +15,11 @@ import {
   CONFETTI_DOT,
 } from '@/lib/config';
 import { FOCUS_RING_PATTERNS } from '@/lib/config/remaining-styles';
-import { ToastOptions } from '@/components/ToastContainer';
 import Tooltip from './Tooltip';
 import StatusAnnouncer from './StatusAnnouncer';
 import { useConfetti } from '@/hooks/useConfetti';
 import { useClipboard } from '@/hooks/useClipboard';
+import { useToast } from '@/hooks/useAnnouncement';
 
 export interface CopyButtonProps {
   textToCopy: string;
@@ -48,27 +48,22 @@ const CopyButtonComponent = function CopyButton({
   onCopy,
 }: CopyButtonProps) {
   const { fire, particles } = useConfetti();
+  const { showToast: showToastFn } = useToast();
 
   const handleOnCopy = useCallback(() => {
     fire();
     if (onCopy) onCopy();
 
-    if (showToast && typeof window !== 'undefined') {
-      const win = window as unknown as Window & {
-        showToast?: (options: ToastOptions) => void;
-      };
-      if (win.showToast) {
-        win.showToast({
-          type: 'success',
-          message: toastMessage,
-          duration: UI_CONFIG.TOAST_DURATION,
-        });
-      }
+    if (showToast) {
+      showToastFn({
+        type: 'success',
+        message: toastMessage,
+      });
     }
     logger.debug('Successfully copied text to clipboard', {
       textLength: textToCopy.length,
     });
-  }, [fire, onCopy, showToast, toastMessage, textToCopy.length]);
+  }, [fire, onCopy, showToast, showToastFn, toastMessage, textToCopy.length]);
 
   const { copy, hasCopied: copied } = useClipboard({
     onCopy: handleOnCopy,
