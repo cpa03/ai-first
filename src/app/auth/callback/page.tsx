@@ -18,6 +18,7 @@ import {
   SVG_VIEWBOX,
   ICON_SIZES,
   COMPONENT_CONFIG,
+  UI_CONFIG,
 } from '@/lib/config';
 import { triggerHapticFeedback } from '@/lib/utils';
 import { isFocusedOnInput } from '@/lib/dom-utils';
@@ -65,9 +66,7 @@ export default function AuthCallbackPage() {
         const next = prev + 1;
         if (next >= TIMEOUT_THRESHOLD_SECONDS && processingRef.current) {
           setHasTimedOut(true);
-          setAnnouncement(
-            'Authentication is taking longer than expected. You can cancel and try again.'
-          );
+          setAnnouncement(COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.ANNOUNCE_TIMEOUT);
           setAnnouncementTriggered(true);
         }
         return next;
@@ -84,7 +83,7 @@ export default function AuthCallbackPage() {
     triggerHapticFeedback();
     if (intervalRef.current) clearInterval(intervalRef.current);
     processingRef.current = false;
-    setAnnouncement('Authentication cancelled. Redirecting to login...');
+    setAnnouncement(COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.ANNOUNCE_CANCEL);
     setAnnouncementTriggered(true);
     // Brief delay to allow announcement before redirect
     setTimeout(() => {
@@ -98,7 +97,7 @@ export default function AuthCallbackPage() {
     if (intervalRef.current) clearInterval(intervalRef.current);
     setHasTimedOut(false);
     setElapsedSeconds(0);
-    setAnnouncement('Retrying authentication...');
+    setAnnouncement(COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.ANNOUNCE_RETRY);
     setAnnouncementTriggered(true);
 
     // Restart the auth process
@@ -129,9 +128,7 @@ export default function AuthCallbackPage() {
         const next = prev + 1;
         if (next >= TIMEOUT_THRESHOLD_SECONDS) {
           setHasTimedOut(true);
-          setAnnouncement(
-            'Authentication is taking longer than expected. You can cancel and try again.'
-          );
+          setAnnouncement(COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.ANNOUNCE_TIMEOUT);
           setAnnouncementTriggered(true);
         }
         return next;
@@ -182,9 +179,7 @@ export default function AuthCallbackPage() {
         // Success - clear timers and redirect
         if (intervalRef.current) clearInterval(intervalRef.current);
         processingRef.current = false;
-        setAnnouncement(
-          'Authentication successful. Redirecting to dashboard...'
-        );
+        setAnnouncement(COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.ANNOUNCE_SUCCESS);
         setAnnouncementTriggered(true);
         router.push(ROUTES.DASHBOARD);
         router.refresh();
@@ -192,7 +187,7 @@ export default function AuthCallbackPage() {
         // Error - clear timers and redirect to login with error
         if (intervalRef.current) clearInterval(intervalRef.current);
         processingRef.current = false;
-        setAnnouncement('Authentication failed. Redirecting to login...');
+        setAnnouncement(COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.ANNOUNCE_FAILURE);
         setAnnouncementTriggered(true);
         router.push(`${ROUTES.LOGIN}?error=auth_callback_failed`);
       }
@@ -226,9 +221,9 @@ export default function AuthCallbackPage() {
       {/* Micro-UX: Skip to content link for keyboard users */}
       <a
         href="#auth-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-md"
+        className={`${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.BASE} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.BG} ${UI_CONFIG.ACCESSIBILITY.SKIP_LINK.COLORS.TEXT}`}
       >
-        Skip to authentication content
+        {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.SKIP_LINK}
       </a>
 
       <div id="auth-content" className={`${CONTAINER_WIDTHS.XS} w-full`}>
@@ -279,9 +274,14 @@ export default function AuthCallbackPage() {
               role="alert"
               aria-live="assertive"
             >
-              <div className="flex items-start gap-3">
+              <div
+                className={
+                  COMPONENT_CONFIG.AUTH_CALLBACK.STYLES
+                    .TIMEOUT_WARNING_CONTAINER
+                }
+              >
                 <svg
-                  className={`${ICON_SIZES.MD} text-amber-600 flex-shrink-0 mt-0.5`}
+                  className={`${ICON_SIZES.MD} ${TEXT_COLORS.WARNING_ICON} ${COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.TIMEOUT_WARNING_ICON}`}
                   fill="none"
                   viewBox={SVG_VIEWBOX.STANDARD}
                   stroke="currentColor"
@@ -295,12 +295,15 @@ export default function AuthCallbackPage() {
                   />
                 </svg>
                 <div className="flex-1">
-                  <p className={`text-sm font-medium ${TEXT_COLORS.WARNING}`}>
-                    Authentication is taking longer than expected
+                  <p
+                    className={`${COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.TIMEOUT_WARNING_TITLE} ${TEXT_COLORS.WARNING}`}
+                  >
+                    {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.TIMEOUT_TITLE}
                   </p>
-                  <p className={`text-xs ${TEXT_COLORS.WARNING} mt-1`}>
-                    This might be due to a slow network connection or server
-                    issue.
+                  <p
+                    className={`${COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.TIMEOUT_WARNING_DESCRIPTION} ${TEXT_COLORS.WARNING}`}
+                  >
+                    {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.TIMEOUT_DESCRIPTION}
                   </p>
                 </div>
               </div>
@@ -308,10 +311,12 @@ export default function AuthCallbackPage() {
           )}
 
           {/* Micro-UX: Action buttons with keyboard shortcuts */}
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div
+            className={COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.BUTTONS_CONTAINER}
+          >
             {hasTimedOut && (
               <Tooltip
-                content="Retry authentication"
+                content={COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.RETRY_TOOLTIP}
                 shortcut={['Enter']}
                 position="top"
               >
@@ -334,13 +339,13 @@ export default function AuthCallbackPage() {
                       d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                     />
                   </svg>
-                  Retry
+                  {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.RETRY_BUTTON}
                 </Button>
               </Tooltip>
             )}
 
             <Tooltip
-              content="Cancel and go back to login"
+              content={COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.CANCEL_TOOLTIP}
               shortcut={['Esc']}
               position="top"
             >
@@ -363,32 +368,44 @@ export default function AuthCallbackPage() {
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
-                Cancel
+                {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.CANCEL_BUTTON}
               </Button>
             </Tooltip>
           </div>
 
           {/* Micro-UX: Keyboard shortcut hints for discoverability */}
           <div
-            className={`flex items-center justify-center gap-4 text-xs ${TEXT_COLORS.MUTED}`}
+            className={`${COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.KEYBOARD_HINTS} ${TEXT_COLORS.MUTED}`}
             aria-hidden="true"
           >
-            <span className="hidden sm:inline-flex items-center gap-1.5">
+            <span
+              className={
+                COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.KEYBOARD_HINT_ITEM
+              }
+            >
               <kbd
                 className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
               >
                 Esc
               </kbd>
-              <span>cancel</span>
+              <span>
+                {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.KEYBOARD_HINT_CANCEL}
+              </span>
             </span>
             {hasTimedOut && (
-              <span className="hidden sm:inline-flex items-center gap-1.5">
+              <span
+                className={
+                  COMPONENT_CONFIG.AUTH_CALLBACK.STYLES.KEYBOARD_HINT_ITEM
+                }
+              >
                 <kbd
                   className={`px-1.5 py-0.5 ${GRAY_CLASSES.BG_100} ${GRAY_CLASSES.TEXT_600} rounded text-xs font-mono`}
                 >
                   Enter
                 </kbd>
-                <span>retry</span>
+                <span>
+                  {COMPONENT_CONFIG.AUTH_CALLBACK.TEXT.KEYBOARD_HINT_RETRY}
+                </span>
               </span>
             )}
           </div>
