@@ -145,6 +145,7 @@ docs/archive/*.tar.gz
 !docs/audit/
 !docs/audit/BROCULA-AUDIT-*.md
 !docs/maintenance/
+!docs/maintenance/*.md
 !docs/maintenance/archive/
 !docs/maintenance/archive/*
 
