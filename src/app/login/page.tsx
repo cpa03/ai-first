@@ -37,6 +37,7 @@ import {
   KBD_HINT_STYLE,
   SPACE_Y_PATTERNS,
   GAP_CLASSES,
+  HERO_ENTRANCE,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { triggerHapticFeedback } from '@/lib/utils';
@@ -292,14 +293,14 @@ export default function LoginPage() {
             </div>
           </div>
         )}
-        <div className={`${LAYOUT_CLASSES.TEXT_CENTER} animate-hero-entrance`}>
+        <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
           <h1
             className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
           >
             {LOGIN_PAGE_CONTENT.HEADING}
           </h1>
           <p
-            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
+            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
           >
             {LOGIN_PAGE_CONTENT.SUBHEADING}
           </p>
@@ -307,7 +308,7 @@ export default function LoginPage() {
 
         <form
           id={AUTH_ELEMENT_IDS.LOGIN_FORM}
-          className={`mt-8 ${SPACE_Y_PATTERNS.XL} animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+          className={`mt-8 ${SPACE_Y_PATTERNS.XL} ${HERO_ENTRANCE} ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
           {error && (
@@ -458,7 +459,7 @@ export default function LoginPage() {
         </form>
 
         <div
-          className={`relative animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+          className={`relative ${HERO_ENTRANCE} ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
           <div className="absolute inset-0 flex items-center">
             <div className={FORM_PATTERNS.OAUTH_SEPARATOR_LINE} />
@@ -471,7 +472,7 @@ export default function LoginPage() {
         </div>
 
         <div
-          className={`grid grid-cols-2 gap-3 animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+          className={`grid grid-cols-2 gap-3 ${HERO_ENTRANCE} ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
         >
           <Button
             type="button"
@@ -547,7 +548,7 @@ export default function LoginPage() {
         </div>
 
         <p
-          className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} animate-hero-entrance ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+          className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} ${HERO_ENTRANCE} ${LOGIN_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
         >
           {LOGIN_PAGE_CONTENT.FOOTER.NO_ACCOUNT}{' '}
           <Link href={ROUTES.SIGNUP} className={FORM_PATTERNS.AUTH_LINK}>

@@ -44,6 +44,8 @@ import {
   COMPONENT_CONFIG,
   KBD_HINT_STYLE,
   createRouteWithParams,
+  FADE_IN,
+  FOCUS_RING,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
 import {
@@ -707,7 +709,7 @@ export default function DashboardPage() {
                 triggerHapticFeedback();
                 setFilter(e.target.value);
               }}
-              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer animate-focus-ring transition-all ${DURATION_TAILWIND[200]} ${
+              className={`block w-full sm:w-auto px-4 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer ${FOCUS_RING} transition-all ${DURATION_TAILWIND[200]} ${
                 filter !== 'all'
                   ? DASHBOARD_PATTERNS.FILTER_ACTIVE
                   : DASHBOARD_PATTERNS.FILTER_INACTIVE
@@ -794,9 +796,7 @@ export default function DashboardPage() {
         {filter !== 'all' && (
           <div
             className={`flex items-center gap-2 transition-all ${DURATION_TAILWIND[200]} ease-out ${
-              isFilterClearing
-                ? 'opacity-0 scale-95 -translate-x-2'
-                : 'animate-fade-in'
+              isFilterClearing ? 'opacity-0 scale-95 -translate-x-2' : FADE_IN
             }`}
           >
             <span className={DASHBOARD_PATTERNS.STATUS_BADGE_ACTIVE}>
@@ -906,7 +906,7 @@ export default function DashboardPage() {
               >
                 {/* Step 1: Idea */}
                 <div
-                  className="flex flex-col items-center gap-2 animate-fade-in"
+                  className={`flex flex-col items-center gap-2 ${FADE_IN}`}
                   role="listitem"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.IMMEDIATE }}
                 >
@@ -935,7 +935,7 @@ export default function DashboardPage() {
 
                 {/* Arrow 1 */}
                 <div
-                  className={`${DASHBOARD_PATTERNS.ARROW_CONTAINER} animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
+                  className={`${DASHBOARD_PATTERNS.ARROW_CONTAINER} ${FADE_IN} ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
                   aria-hidden="true"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.MEDIUM }}
                 >
@@ -959,7 +959,7 @@ export default function DashboardPage() {
 
                 {/* Step 2: Clarify */}
                 <div
-                  className="flex flex-col items-center gap-2 animate-fade-in"
+                  className={`flex flex-col items-center gap-2 ${FADE_IN}`}
                   role="listitem"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.STANDARD }}
                 >
@@ -988,7 +988,7 @@ export default function DashboardPage() {
 
                 {/* Arrow 2 */}
                 <div
-                  className={`${DASHBOARD_PATTERNS.ARROW_CONTAINER} animate-fade-in ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
+                  className={`${DASHBOARD_PATTERNS.ARROW_CONTAINER} ${FADE_IN} ${SIZES.COMPONENT.ARROW_NEGATIVE_MARGIN}`}
                   aria-hidden="true"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.EXTENDED }}
                 >
@@ -1012,7 +1012,7 @@ export default function DashboardPage() {
 
                 {/* Step 3: Blueprint */}
                 <div
-                  className="flex flex-col items-center gap-2 animate-fade-in"
+                  className={`flex flex-col items-center gap-2 ${FADE_IN}`}
                   role="listitem"
                   style={{ animationDelay: ANIMATION_DELAYS.INLINE.RIPPLE }}
                 >

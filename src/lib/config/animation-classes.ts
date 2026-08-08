@@ -211,6 +211,9 @@ export const CHECKLIST_ANIMATIONS = {
 
   /** Requirement met animation */
   REQUIREMENT_MET: 'animate-requirement-met',
+
+  /** Password strong celebration animation */
+  PASSWORD_STRONG_CELEBRATION: 'animate-password-strong-celebration',
 } as const;
 
 /**

@@ -43,6 +43,10 @@ import {
   KBD_HINT_STYLE,
   PRIMARY_FOCUS_RING,
   SPACE_Y_PATTERNS,
+  HERO_ENTRANCE,
+  FADE_IN,
+  SUCCESS_POP,
+  CHECKLIST_ANIMATIONS,
 } from '@/lib/config';
 import { AUTH_ELEMENT_IDS } from '@/lib/config/element-ids';
 import { USER_ONBOARDING_LABELS } from '@/lib/config/component-labels';
@@ -78,7 +82,7 @@ function PasswordMatchIndicator({
     if (!password) return null;
     return (
       <div
-        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${GRAY_CLASSES.TEXT_600}`}
+        className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} ${FADE_IN} ${GRAY_CLASSES.TEXT_600}`}
         role="status"
         aria-live="polite"
       >
@@ -105,7 +109,7 @@ function PasswordMatchIndicator({
 
   return (
     <div
-      className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} animate-fade-in ${
+      className={`flex items-center gap-2 text-sm transition-all ${DURATION_TAILWIND[200]} ${FADE_IN} ${
         matchStatus === 'match'
           ? TEXT_COLORS.SUCCESS_DARK
           : TEXT_COLORS.WARNING_LIGHT
@@ -268,7 +272,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
 
   return (
     <div
-      className={`${SPACE_Y_PATTERNS.SM} ${celebrating && !prefersReducedMotion ? 'animate-password-strong-celebration' : ''}`}
+      className={`${SPACE_Y_PATTERNS.SM} ${celebrating && !prefersReducedMotion ? CHECKLIST_ANIMATIONS.PASSWORD_STRONG_CELEBRATION : ''}`}
     >
       {/* Micro-UX: Granular progress bar with percentage label */}
       {/* Shows precise strength score (e.g., "75% Medium") instead of fixed widths */}
@@ -325,7 +329,7 @@ function PasswordStrengthIndicator({ password }: { password: string }) {
       )}
       {strength === 'strong' && (
         <div
-          className={`flex items-center gap-1.5 text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium animate-fade-in`}
+          className={`flex items-center gap-1.5 text-xs ${TEXT_COLORS.SUCCESS_DARK} font-medium ${FADE_IN}`}
           role="status"
           aria-live="polite"
         >
@@ -565,7 +569,7 @@ export default function SignupPage() {
           {/* Micro-UX: Staggered entrance animation for signup success creates a */}
           {/* delightful celebration moment when account creation succeeds */}
           <div
-            className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${BG_COLORS.SUCCESS_LIGHT} animate-success-pop`}
+            className={`mx-auto flex items-center justify-center h-12 w-12 rounded-full ${BG_COLORS.SUCCESS_LIGHT} ${SUCCESS_POP}`}
           >
             <svg
               className={`h-6 w-6 ${TEXT_COLORS.SUCCESS_DARK}`}
@@ -582,12 +586,12 @@ export default function SignupPage() {
             </svg>
           </div>
           <h1
-            className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} animate-hero-entrance`}
+            className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING} ${HERO_ENTRANCE}`}
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.HEADING}
           </h1>
           <p
-            className={`${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
+            className={`${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.MESSAGE_PREFIX}{' '}
             <strong>{email}</strong>.{' '}
@@ -595,7 +599,7 @@ export default function SignupPage() {
           </p>
           <Link
             href={ROUTES.LOGIN}
-            className={`inline-block font-medium text-primary-600 hover:text-primary-500 ${PRIMARY_FOCUS_RING} rounded animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+            className={`inline-block font-medium text-primary-600 hover:text-primary-500 ${PRIMARY_FOCUS_RING} rounded ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           >
             {SIGNUP_PAGE_CONTENT.SUCCESS.RETURN_LINK}
           </Link>
@@ -633,14 +637,14 @@ export default function SignupPage() {
             </div>
           </div>
         )}
-        <div className={`${LAYOUT_CLASSES.TEXT_CENTER} animate-hero-entrance`}>
+        <div className={`${LAYOUT_CLASSES.TEXT_CENTER} ${HERO_ENTRANCE}`}>
           <h1
             className={`${TYPOGRAPHY_CLASSES.PAGE_HEADING} ${TEXT_COLOR_CLASSES.HEADING}`}
           >
             {SIGNUP_PAGE_CONTENT.HEADING}
           </h1>
           <p
-            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
+            className={`${SPACING_CLASSES.TOP_SMALL} ${TYPOGRAPHY_CLASSES.SMALL} ${TEXT_COLOR_CLASSES.BODY} ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_1}`}
           >
             {SIGNUP_PAGE_CONTENT.SUBHEADING}
           </p>
@@ -648,7 +652,7 @@ export default function SignupPage() {
 
         <form
           id={AUTH_ELEMENT_IDS.SIGNUP_FORM}
-          className={`mt-8 ${SPACE_Y_PATTERNS.XL} animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
+          className={`mt-8 ${SPACE_Y_PATTERNS.XL} ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_2}`}
           onSubmit={handleSubmit}
         >
           {error && (
@@ -768,7 +772,7 @@ export default function SignupPage() {
         </form>
 
         <div
-          className={`relative animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
+          className={`relative ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_3}`}
         >
           <div className="absolute inset-0 flex items-center">
             <div className={FORM_PATTERNS.OAUTH_SEPARATOR_LINE} />
@@ -781,7 +785,7 @@ export default function SignupPage() {
         </div>
 
         <div
-          className={`grid grid-cols-2 gap-3 animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
+          className={`grid grid-cols-2 gap-3 ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_4}`}
         >
           <Button
             type="button"
@@ -855,7 +859,7 @@ export default function SignupPage() {
         </div>
 
         <p
-          className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} animate-hero-entrance ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
+          className={`${FORM_PATTERNS.AUTH_FOOTER_TEXT} ${HERO_ENTRANCE} ${SIGNUP_PAGE_CONFIG.HERO_ANIMATION_DELAYS.STEP_5}`}
         >
           {SIGNUP_PAGE_CONTENT.FOOTER.HAS_ACCOUNT}{' '}
           <Link href={ROUTES.LOGIN} className={FORM_PATTERNS.AUTH_LINK}>
