@@ -26,8 +26,9 @@ interface TypingIndicatorProps {
  *
  * Accessibility:
  * - Respects prefers-reduced-motion
- * - Uses aria-hidden since it's purely decorative
- * - Fades out smoothly for screen readers
+ * - Uses role="status" and aria-live="polite" on parent container
+ * - Keeps decorative pulsing dots hidden from screen readers via aria-hidden="true"
+ * - Keeps screen reader text accessible to screen readers
  */
 function TypingIndicatorComponent({
   isTyping,
@@ -83,24 +84,27 @@ function TypingIndicatorComponent({
   return (
     <div
       className={`inline-flex items-center gap-1 ${className}`}
-      aria-hidden="true"
+      role="status"
+      aria-live="polite"
     >
-      {/* Animated dots */}
-      {[0, 1, 2].map((index) => (
-        <span
-          key={index}
-          className={`
-            ${TYPING_INDICATOR_DOT_PATTERN}
-            ${TRANSITION_CLASSES.COLOR}
-            ${isAnimating && !prefersReducedMotion ? 'animate-typing-dot' : 'opacity-40'}
-          `}
-          style={{
-            animationDelay: `${index * ANIMATION_CONFIG.TYPING_INDICATOR.DOT_STAGGER}ms`,
-          }}
-        />
-      ))}
+      {/* Animated dots - hidden from screen readers */}
+      <span className="inline-flex items-center gap-1" aria-hidden="true">
+        {[0, 1, 2].map((index) => (
+          <span
+            key={index}
+            className={`
+              ${TYPING_INDICATOR_DOT_PATTERN}
+              ${TRANSITION_CLASSES.COLOR}
+              ${isAnimating && !prefersReducedMotion ? 'animate-typing-dot' : 'opacity-40'}
+            `}
+            style={{
+              animationDelay: `${index * ANIMATION_CONFIG.TYPING_INDICATOR.DOT_STAGGER}ms`,
+            }}
+          />
+        ))}
+      </span>
       {/* Screen reader text for accessibility */}
-      <span className="sr-only">Typing</span>
+      <span className="sr-only">Typing...</span>
     </div>
   );
 }
