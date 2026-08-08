@@ -43,6 +43,7 @@ import {
   ICON_SIZES,
   COMPONENT_CONFIG,
   KBD_HINT_STYLE,
+  GRAY_CLASSES,
   createRouteWithParams,
 } from '@/lib/config';
 import type { ComponentConfig } from '@/lib/config/components';
@@ -471,6 +472,21 @@ export default function DashboardPage() {
         return;
       }
 
+      // Micro-UX: Enter key clears active filter when filtered results are empty
+      // Provides a quick keyboard shortcut to dismiss the "no matching ideas" empty state
+      // Matches the hint text shown in the filtered empty state
+      if (
+        e.key === 'Enter' &&
+        ideas.length === 0 &&
+        filter !== 'all' &&
+        selectedRowIndex === -1
+      ) {
+        e.preventDefault();
+        triggerHapticFeedback();
+        handleClearFilter();
+        return;
+      }
+
       if (e.key === 'Escape') {
         e.preventDefault();
         // Micro-UX: Escape key clears active filter or deselects row
@@ -877,15 +893,33 @@ export default function DashboardPage() {
                     : filter
                 )}
               </p>
-              <div className="flex justify-center gap-3">
-                <Button variant="outline" onClick={() => setFilter('all')}>
-                  {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
-                </Button>
-                <Link href={ROUTES.HOME}>
-                  <Button variant="primary">
-                    {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.CREATE_NEW_IDEA}
+              <div className="flex flex-col items-center gap-3">
+                <div className="flex justify-center gap-3">
+                  <Button variant="outline" onClick={() => setFilter('all')}>
+                    {DASHBOARD_PAGE_CONTENT.CLEAR_FILTER}
                   </Button>
-                </Link>
+                  <Link href={ROUTES.HOME}>
+                    <Button variant="primary">
+                      {DASHBOARD_PAGE_CONTENT.EMPTY_STATE.CREATE_NEW_IDEA}
+                    </Button>
+                  </Link>
+                </div>
+                {/* Micro-UX: Keyboard shortcut hints for the filtered empty state */}
+                {/* Provides discoverability for quick actions: Enter to clear filter, n to create new idea */}
+                {/* Matches the keyboard hints pattern used elsewhere in the dashboard */}
+                <span
+                  className={`hidden sm:inline-flex items-center gap-4 text-xs ${GRAY_CLASSES.TEXT_500}`}
+                  aria-hidden="true"
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    <kbd className={KBD_HINT_STYLE}>Enter</kbd>
+                    <span>clear filter</span>
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <kbd className={KBD_HINT_STYLE}>n</kbd>
+                    <span>new idea</span>
+                  </span>
+                </span>
               </div>
             </>
           ) : (
