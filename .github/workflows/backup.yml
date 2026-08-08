@@ -1,0 +1,190 @@
+# ==============================================================================
+# Automated Backup Workflow for IdeaFlow
+# ==============================================================================
+# This workflow runs automated database backups on a schedule.
+# Addresses issue #756: Missing automated backup and disaster recovery procedures.
+#
+# Schedule:
+# - Daily at 2:00 UTC (primary backup)
+# - Weekly on Sunday at 3:00 UTC (verification)
+#
+# Required Secrets:
+# - SUPABASE_URL: Supabase project URL
+# - SUPABASE_SERVICE_ROLE_KEY: Supabase service role key
+# ==============================================================================
+
+name: Automated Backup
+
+on:
+  schedule:
+    # Daily backup at 2:00 UTC
+    - cron: "0 2 * * *"
+    # Weekly verification on Sunday at 3:00 UTC
+    - cron: "0 3 * * 0"
+  workflow_dispatch:
+    inputs:
+      backup_type:
+        description: "Backup type (full/verify)"
+        required: false
+        default: "full"
+        type: choice
+        options:
+          - full
+          - verify
+
+permissions:
+  contents: write
+  actions: read
+
+env:
+  BACKUP_RETENTION_DAYS: 30
+
+jobs:
+  # ==============================================================================
+  # Job 1: Database Backup
+  # ==============================================================================
+  backup:
+    name: "Database Backup"
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'schedule' && github.event.schedule == '0 2 * * *' ||
+      github.event_name == 'workflow_dispatch' && github.event.inputs.backup_type == 'full'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Make backup scripts executable
+        run: chmod +x scripts/backup*.sh
+
+      - name: Run database backup
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "🚀 Starting automated database backup..."
+          ./scripts/backup.sh --output-dir ./backups --retention ${{ env.BACKUP_RETENTION_DAYS }} --verify
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-${{ github.run_id }}
+          path: backups/
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Backup summary
+        if: always()
+        run: |
+          echo "## Backup Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Retention**: ${{ env.BACKUP_RETENTION_DAYS }} days" >> $GITHUB_STEP_SUMMARY
+
+  # ==============================================================================
+  # Job 2: Backup Verification
+  # ==============================================================================
+  verify:
+    name: "Backup Verification"
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'schedule' && github.event.schedule == '0 3 * * 0' ||
+      github.event_name == 'workflow_dispatch' && github.event.inputs.backup_type == 'verify'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Make backup scripts executable
+        run: chmod +x scripts/backup*.sh
+
+      - name: Download latest backup
+        uses: actions/download-artifact@v4
+        with:
+          name: backup-*
+          path: backups/
+        continue-on-error: true
+
+      - name: Run backup verification
+        run: |
+          echo "🔍 Starting backup verification..."
+          
+          # Find the latest backup
+          LATEST_BACKUP=$(find ./backups -name "ideaflow_backup_*.tar.gz" -type f -printf '%T@ %p\n' 2>/dev/null | sort -n | tail -1 | cut -d' ' -f2-)
+          
+          if [[ -z "$LATEST_BACKUP" ]]; then
+            echo "⚠️ No backup found to verify"
+            echo "### Verification Result" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ No backup found to verify" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+          
+          echo "Verifying backup: $LATEST_BACKUP"
+          ./scripts/backup-verify.sh --backup "$LATEST_BACKUP" --test-restore
+
+      - name: Verification summary
+        if: always()
+        run: |
+          echo "## Verification Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Run ID**: ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Timestamp**: $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> $GITHUB_STEP_SUMMARY
+
+  # ==============================================================================
+  # Job 3: Backup Monitoring
+  # ==============================================================================
+  monitor:
+    name: "Backup Health Check"
+    runs-on: ubuntu-latest
+    needs: [backup]
+    if: success() || failure()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make backup scripts executable
+        run: chmod +x scripts/backup*.sh
+
+      - name: Check backup health
+        run: |
+          echo "🏥 Running backup health check..."
+          ./scripts/backup-monitor.sh --check
+
+      - name: Generate backup report
+        run: |
+          ./scripts/backup-monitor.sh --report
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backup-report-${{ github.run_id }}
+          path: reports/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Alert on failure
+        if: failure()
+        run: |
+          echo "## ⚠️ Backup Alert" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The backup workflow encountered issues." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Recommended Actions" >> $GITHUB_STEP_SUMMARY
+          echo "1. Check the backup logs for errors" >> $GITHUB_STEP_SUMMARY
+          echo "2. Verify Supabase credentials are valid" >> $GITHUB_STEP_SUMMARY
+          echo "3. Manual backup: \`npm run backup\`" >> $GITHUB_STEP_SUMMARY
