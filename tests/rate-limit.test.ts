@@ -799,3 +799,51 @@ describe('RateLimitInfo interface', () => {
     expect(info.reset).toBeGreaterThan(Date.now());
   });
 });
+
+describe('Race condition prevention', () => {
+  beforeEach(() => {
+    clearRateLimitStore();
+  });
+
+  it('should handle concurrent requests without race conditions', async () => {
+    const identifier = 'concurrent-test-user';
+    const limit = 5;
+    const config = { limit, windowMs: 60000 };
+
+    const promises = Array.from({ length: 10 }, () =>
+      checkRateLimit(identifier, config)
+    );
+
+    const results = await Promise.all(promises);
+
+    const allowedCount = results.filter((r) => r.allowed).length;
+    const blockedCount = results.filter((r) => !r.allowed).length;
+
+    expect(allowedCount).toBe(limit);
+    expect(blockedCount).toBe(10 - limit);
+
+    const allowedResults = results.filter((r) => r.allowed);
+    const remainingCounts = allowedResults.map((r) => r.info.remaining);
+
+    expect(remainingCounts).toContain(limit - 1);
+    expect(remainingCounts).toContain(0);
+  });
+
+  it('should maintain atomicity under high concurrency', async () => {
+    const identifier = 'atomicity-test-user';
+    const limit = 100;
+    const config = { limit, windowMs: 60000 };
+
+    const promises = Array.from({ length: 200 }, () =>
+      checkRateLimit(identifier, config)
+    );
+
+    const results = await Promise.all(promises);
+
+    const allowedCount = results.filter((r) => r.allowed).length;
+    const blockedCount = results.filter((r) => !r.allowed).length;
+
+    expect(allowedCount).toBe(limit);
+    expect(blockedCount).toBe(100);
+  });
+});
