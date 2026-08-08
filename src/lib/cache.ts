@@ -313,8 +313,15 @@ export class Cache<T = unknown> {
       status,
       size: stats.size,
       maxSize: this.maxSize,
-      utilizationPercent: Math.round(utilizationPercent * 100) / 100,
-      hitRate: Math.round(stats.hitRate * 10000) / 10000,
+      utilizationPercent:
+        Math.round(
+          utilizationPercent *
+            Math.pow(10, CACHE_CONFIG.PRECISION.UTILIZATION_DECIMALS)
+        ) / Math.pow(10, CACHE_CONFIG.PRECISION.UTILIZATION_DECIMALS),
+      hitRate:
+        Math.round(
+          stats.hitRate * Math.pow(10, CACHE_CONFIG.PRECISION.HIT_RATE_DECIMALS)
+        ) / Math.pow(10, CACHE_CONFIG.PRECISION.HIT_RATE_DECIMALS),
       oldestEntryAge,
       ttl: this.ttl,
       recommendation:
